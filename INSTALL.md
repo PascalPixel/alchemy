@@ -1,38 +1,49 @@
-# Instructions
+# Build Alchemy
 
-These instructions build **The Broken Seal** ☀️ from source in all six
-editions and check each one against the SHA-1 in [`rom.sha1`](rom.sha1). ☀️
-needs no ROM: every byte comes from the source in this repository. **The Lost
-Age** ⚓️ still copies part of itself from your own cartridge dump; see
-[The Lost Age](#the-lost-age-) below.
+These instructions build **The Broken Seal** (`tbs`) in all six editions, then check the results against the published hashes. It needs no input ROM: its code and data are rebuilt from the source in this repository.
 
-The build is tested on Apple Silicon macOS and on 64-bit ARM and x86-64
-Linux. [agscc's README](agscc/README.md#hosts) lists the other hosts its
-compilers were tested on. Other systems are untested.
+**The Lost Age** (`tla`) is still incomplete and needs your own cartridge dumps. Its additional setup is [below](#the-lost-age).
 
-## macOS
+The full build is tested on Apple Silicon macOS and 64-bit ARM and x86-64 Linux. [agscc's host notes](agscc/README.md#hosts) describe the compiler tests on other hosts. Native Windows and WSL are not currently validated by this project.
 
-Install the Xcode command line tools (`xcode-select --install`), which bring
-clang, `make`, `git`, `curl` and `patch`, then the ARM binutils and `xz` (for
-example `brew install arm-none-eabi-binutils xz`) and Rust with Cargo from
-[rustup](https://rustup.rs). CI uses Rust 1.98.1.
+## 1. Install prerequisites
 
-## Linux
+### Linux
 
-Install a C compiler (clang or GCC), `make`, `git`, `curl`, `patch`, `xz`,
-`sha1sum`, the ARM binutils and Rust with Cargo from
-[rustup](https://rustup.rs). On Debian/Ubuntu-based distributions:
+Install a C compiler, Make, Git, curl, patch, xz, sha1sum and ARM binutils. On Debian or Ubuntu:
 
 ```sh
 sudo apt install build-essential git curl patch xz-utils binutils-arm-none-eabi
 ```
 
-## Installation
+Install Rust and Cargo using [rustup](https://rustup.rs). CI uses Rust 1.98.1.
 
-The first setup needs a network connection. It reaches GitHub (the compiler
-submodules), crates.io (the locked Rust dependencies) and ftp.gnu.org (GNU
-binutils 2.10 and GCC 2.95.2, each checked against a pinned SHA-256 before
-use). After setup, building needs no network.
+### macOS
+
+Install Apple's command-line developer tools:
+
+```sh
+xcode-select --install
+```
+
+They provide Clang, Make, Git, curl and patch. Install ARM binutils and xz, for example with Homebrew:
+
+```sh
+brew install arm-none-eabi-binutils xz
+```
+
+If you already have ARM tools installed, check that the shell finds the newly installed binutils:
+
+```sh
+command -v arm-none-eabi-objdump
+arm-none-eabi-objdump --version
+```
+
+An older installation earlier on `PATH` can affect the tools' tests even when ROM builds match. On Apple Silicon, Homebrew normally installs under `/opt/homebrew`; put its `bin` directory before older ARM tool installations.
+
+Install Rust and Cargo using [rustup](https://rustup.rs). CI uses Rust 1.98.1. Rosetta is not needed.
+
+## 2. Get the source and build the tools
 
 ```sh
 git clone --recursive https://github.com/PascalPixel/alchemy.git
@@ -40,130 +51,82 @@ cd alchemy
 make bootstrap
 ```
 
-In a clone made without `--recursive`, run
-`git submodule update --init --recursive` first.
+Use a checkout path without spaces. If you cloned without `--recursive`, run `git submodule update --init --recursive` before bootstrapping.
 
-`make bootstrap` builds the project's small tools, then the three compilers
-from the `agscc` submodule's source, the assembler their output needs (GNU
-binutils 2.10's), and the compilers' runtime library. Everything it makes goes
-in `tools/out/`. On an 18-core Apple Silicon Mac it takes about two minutes.
+The first setup downloads the compiler sources from GitHub, Rust dependencies from crates.io, and GNU binutils 2.10 and GCC 2.95.2 from ftp.gnu.org. The GNU archives are checked against pinned SHA-256 hashes. Once setup is complete, building needs no network connection.
 
-The compilers are one fixed set: GCC 2.96 (the development snapshot of 31
-July 2000, which names itself `2.96 20000731 (experimental)`; the FSF never
-released a 2.96) for the games' Thumb code, GCC 2.95.2 for their ARM code,
-and pret's agbcc for the sound and flash libraries.
-[CONTRIBUTING.md](CONTRIBUTING.md#compilers) gives each
-one's options and the reasons for them.
+`make bootstrap` builds the tools, the pinned compilers, their assembler and runtime library. Generated tools go under `tools/out/`; no compiler is installed system-wide. On the tested 18-core Apple Silicon Mac, setup takes about two minutes. The historical compiler sources emit many warnings on current hosts; look for the command's exit status and a final Make error when diagnosing a failure.
 
-## Build The Broken Seal ☀️
+The matching compiler choices and their fixed options are documented in [AGENTS.md](AGENTS.md#compilers); their source is in the `agscc` submodule.
+
+## 3. Build and verify The Broken Seal
+
+For the English edition:
+
+```sh
+make compare-tbs-en
+```
+
+Success ends with:
+
+```text
+out/tbs-en/tbs-en.gba: OK
+```
+
+To build and verify all six editions:
 
 ```sh
 make -j8 compare-tbs
 ```
 
-This builds all six editions and checks each against `rom.sha1`. Each prints
-one line:
+Each edition prints its own `OK`. The output files are `out/<edition>/<edition>.gba`. Language suffixes are `ja`, `en`, `de`, `es`, `fr` and `it`. Choose a parallel job count near your available CPU cores.
 
-```
-out/tbs-ja/tbs-ja.gba: OK
-out/tbs-en/tbs-en.gba: OK
-...
-```
+`compare` checks against [rom.sha1](rom.sha1), so it is for the unchanged game. After deliberately changing the game, use `make tbs-en` to build without that check.
 
-The built ROMs are `out/<edition>/<edition>.gba`.
+## The Lost Age
 
-# Building guidance
-
-## Parallel builds
-
-Use `make -jN`, with N about the number of cores.
-
-## Compare ROM to the original
-
-To build one edition, run `make compare-tbs-en` and so on, with `ja`, `en`,
-`de`, `es`, `fr` or `it`; `make compare` is the Japanese edition. To check
-against your own cartridge, compare your dump's SHA-1 with the line for its
-edition in `rom.sha1`.
-
-## The Lost Age ⚓️
-
-Part of ⚓️ is still copied from the original: its scaffold under `recon/tla`
-includes bytes from your own dump with `.incbin "baserom.gba"`, as pret's
-projects did before they finished. Put your dumps in `roms/`, named
-`tla-ja.gba`, `tla-en.gba`, `tla-de.gba`, `tla-es.gba`, `tla-fr.gba` and
-`tla-it.gba`. The build checks each against `rom.sha1` before it uses it.
-Then:
+Put your own dumps in `roms/`, named `tla-ja.gba`, `tla-en.gba`, `tla-de.gba`, `tla-es.gba`, `tla-fr.gba` and `tla-it.gba`. Each edition's build checks its input against `rom.sha1` before using it. You need only the dump for the edition you choose to build:
 
 ```sh
-make compare-tla-ja    # the Japanese edition
-make compare-tla       # all six ⚓️ editions
-make compare-editions  # all twelve editions of both games
+make compare-tla-en    # English only
+make -j8 compare-tla   # all six TLA editions
+make -j8 compare-editions  # both games, all twelve editions
 ```
 
-`roms/` and every `.gba` file are ignored by git. Never commit a ROM or any
-other copy of the original games.
+The unfinished source under `recon/tla` copies the parts still being reconstructed from those dumps. `roms/` and generated `.gba` files are ignored by Git and must never be committed.
 
-## A modern compiler
+## Editors and a current compiler
+
+[clangd](https://clangd.llvm.org/installation.html) uses the checked-in `.clangd` and `compile_flags.txt` for completion and diagnostics. Build the edition first so its generated message headers exist. The editor configuration uses the English modern-build view; it does not check every edition or the matching compiler's behavior. Use `clang-format` with `.clang-format` for formatting, and reload the language server after changing its configuration.
+
+The optional `make modern` check compiles the six first-game editions' C with a current ARM GCC. Install `arm-none-eabi-gcc` on Homebrew or `gcc-arm-none-eabi` on Debian/Ubuntu, then run:
 
 ```sh
 make modern
 ```
 
-This compiles the six ☀️ editions' C with a current `arm-none-eabi-gcc`, as
-pret's `make modern` does: every file must compile without errors, and the
-warnings are for the cleanup to read. Install the compiler from your package
-manager (for example Homebrew's `arm-none-eabi-gcc`, or Debian's
-`gcc-arm-none-eabi`), or name another one with
-`make modern MODERN_CC=/path/to/arm-none-eabi-gcc`.
-
-## Editors and formatting
-
-Use a current [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
-for C formatting. It reads the repository's `.clang-format` in any editor
-that supports it, or from the command line:
+Or select a compiler explicitly:
 
 ```sh
-clang-format -i games/tbs/src/menu/menu.c
+make modern MODERN_CC=/path/to/arm-none-eabi-gcc
 ```
 
-[clangd](https://clangd.llvm.org/installation.html) supplies C diagnostics,
-completion and source fixes. The checked-in `compile_flags.txt` and `.clangd`
-give it the ARM target, integer types and include paths for each game's
-English modern-build view. No editor-specific project settings are needed.
-Build the English edition first to generate its message headers. Reload the
-editor's language server after changing the configuration.
+Check `arm-none-eabi-gcc --version` if the command rejects a compiler option. GCC 16.2.0 is tested on macOS. The old Arm 2019 toolchain's GCC 9.2.1 does not accept the current diagnostic flags. This optional compiler is separate from the historical matching compilers built by `make bootstrap`.
 
-Formatting fixes layout; clangd's source fixes address individual diagnostics.
-The project disables unused-include hints because headers also supply
-declarations indirectly and their order affects matching.
+This produces objects under `out/<edition>/modern/`. It checks that the C compiles; it does not link a ROM, create a PC executable or compare hashes.
 
-## See the build
+## Troubleshooting
 
-Every rule the ROM is built by is in the [Makefile](Makefile), and make prints
-each command as it runs it: each C file's compiler with its full options, each
-assembler, each overlay's link and packing, the main link, objcopy and the
-header fix-up. Every game Thumb file of an edition compiles with one option
-set, for example ☀️'s:
+| Symptom | Check |
+| --- | --- |
+| `cargo` is missing | Install Rust with rustup and open a new terminal so its environment is loaded. |
+| `arm-none-eabi-as`, `ld` or `ar` is missing | Install ARM binutils and ensure its executables are on `PATH`. |
+| `agscc` is empty or compiler sources are missing | Run `git submodule update --init --recursive`, then `make bootstrap`. |
+| A download fails during bootstrap | Check access to GitHub, crates.io and ftp.gnu.org, then rerun `make bootstrap`. |
+| `make modern` rejects `-fdiagnostics-plain-output` | Select a current ARM GCC with `MODERN_CC`; check which installation your shell finds. |
+| An ARM disassembly test differs only in instruction spelling | Check for older ARM binutils earlier on `PATH` than the installed package. |
+| A TLA dump is missing or its hash fails | Check its edition, filename and SHA-1 against `rom.sha1`. |
+| Hash comparison fails after an intentional edit | Build with `make tbs-en`; a modified game is expected to have a different hash. |
+| An unchanged checkout fails | Save the first error and the command, revision, OS and tool versions when reporting it. |
 
-```
-tools/out/compilers/xgcc -Btools/out/compilers/ -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -I... -DTBS_EDITION_EN=1 -Iout/tbs-en -S -o out/tbs-en/obj/games/tbs/src/battle/battle.s games/tbs/src/battle/battle.c
-```
-
-## Tests
-
-```sh
-make test
-```
-
-runs the tools' tests. `make land` builds and compares all twelve editions,
-runs the tests and counts progress, so it needs the ⚓️ dumps as well.
-
-# Useful additional tools
-
-The `alchemy` tool (`tools/out/cargo-target/release/alchemy`) holds the
-matching aids and the progress count; `alchemy --help` lists them:
-
-- `alchemy diff DRAFT.c` compares a C draft with the code it would replace.
-- `alchemy permute DRAFT.c` searches rewrites of a draft toward a match.
-- `alchemy progress` counts DONE code and data in each edition built
-  (`make progress`).
+Make prints the build commands as they run. To remove generated game files and rebuild, `make clean` removes `out/` and generated assets, while retaining the source and bootstrapped tools. Save any generated output you want to keep first.

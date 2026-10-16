@@ -1,5 +1,5 @@
 /* Near miss, differ 4 of 247 (two reordered pairs), 2026-10-15: The Broken
- * Seal's Owner_RefreshClassActions on this game's tables: one clearing pass
+ * Seal's Unit_RefreshPsynergy on this game's tables: one clearing pass
  * with both marks (0xc000), class abilities as halfwords with their level
  * at +2, and the class mark ored as a constant. Remaining: in both fill
  * loops' preheaders the native loads the pooled halfword zero before the
@@ -45,7 +45,7 @@ s32 Owner_UpdateClassActions(s32 owner)
 
     st = UnitGet(owner);
     ability = (u16 *)st->actionSlots;
-    cls = (struct ClassAbilities *)Owner_GetRecordStride84(st->classIndex);
+    cls = (struct ClassAbilities *)Class_GetDefinition(st->classIndex);
     if (st->classIndex == 0)
         return 0;
     mask = OWNER_ACTION_CLASS | OWNER_ACTION_ITEM;

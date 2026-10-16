@@ -36,7 +36,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_CameraMoveToActor, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_SetBlock30Values12Zero, 1
+	.set import.FieldFx_LastLightning, 1
 	.set import.BattleFx_StartBufferBlend, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1

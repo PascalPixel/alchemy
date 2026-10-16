@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Graphics_TransformPaletteBuffer
+	.global Palette_Transform
 	.thumb_func
-Graphics_TransformPaletteBuffer:
+Palette_Transform:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -209,7 +209,7 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
 
     // The shards, projected from the battle camera.
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
+    Transform_SetLookAt(view->eye, view->pos);
     if (frame > 3) {
       Func_08144aac(effect->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {

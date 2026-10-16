@@ -2932,7 +2932,7 @@ Func_0200276c:
 	str r0, [r5]
 	lsls r1, r1, #2
 	adds r2, r6, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	str r0, [r5, #4]
 	movs r0, #56
 	bl Runtime_ReleaseHeapBlock

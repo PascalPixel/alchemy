@@ -1276,7 +1276,7 @@ Func_081039fc:
 	str r0, [r5]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	movs r3, #1
 	str r3, [sp, #96]
 	b .L_08104488
@@ -1291,7 +1291,7 @@ Func_081039fc:
 	bgt .L_08104488
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	ldr r2, [sp, #88]
 	ldr r0, [sp, #24]
 	lsls r3, r2, #2

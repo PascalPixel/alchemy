@@ -45,7 +45,7 @@ Func_02005d24:
 	.global Func_02005d2c
 	.thumb_func
 Func_02005d2c:
-	overlay_veneer Bg0_ClearTilemapFar
+	overlay_veneer DebugText_ClearFar
 	.global Func_02005d34
 	.thumb_func
 Func_02005d34:

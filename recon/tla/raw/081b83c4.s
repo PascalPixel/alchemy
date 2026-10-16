@@ -3912,7 +3912,7 @@ Func_081b83c4:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #116]
 	ldr r1, [sp, #36]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r5, [sp, #96]
 	cmp r5, #0
 	beq .L_081ba250

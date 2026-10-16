@@ -12,7 +12,7 @@ Func_081a76f8:
 	ldr r6, .L_081a7764
 	bl Scheduler_ResetTaskTable
 	movs r0, #1
-	bl Blend_SetDarkenTarget16
+	bl Fade_ToBlack
 	bl Func_08014b70
 	movs r0, #1
 	bl WaitFrames
@@ -110,8 +110,8 @@ Func_081a76f8:
 	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	movs r0, #1
-	bl Blend_SetBrightenTarget0
-	bl Blend_WaitForTransition
+	bl Fade_FromWhite
+	bl Fade_Wait
 	ldr r3, .L_081a7804
 	movs r2, #128
 	lsls r2, r2, #19

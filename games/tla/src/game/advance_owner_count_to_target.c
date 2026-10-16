@@ -10,7 +10,7 @@
 struct LevelUpResult;
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
 void UnitCalc(s32);
-u32 Owner_GetLevelThreshold(s32 owner, s32 level);
+u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 
 // Levels the owner up once its experience reaches the next level's threshold;
 // returns the result record then, and 0 otherwise.
@@ -23,7 +23,7 @@ struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
    */
   asm("");
   if ((owner->experience >=
-       Owner_GetLevelThreshold(owner_id, owner->level + 1)) &&
+       Unit_GetExperienceForLevel(owner_id, owner->level + 1)) &&
       (Owner_LevelUp(owner_id, value) != NULL)) {
     return value;
   }
@@ -35,7 +35,7 @@ struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
 // unit : キャラクター番号
 // lv   : 目標のレベル
 //--------------------------------------------------------------------------
-void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv) {
+void Unit_LevelUpTo(s32 unit, s32 lv) {
   u8 res[16]; // struct LevelUpResult の受け取り（使わない）
   s32 cur = ((struct BattleUnit *)UnitGet(unit))->level;
 

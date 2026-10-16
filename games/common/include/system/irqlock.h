@@ -51,7 +51,7 @@
 /* FAKEMATCH: the do { } while (0) wrapper steers: it keeps the restore apart
  * from the code before it. Written plainly as REG_IME = saved, 7 of the 8
  * Scheduler_ functions in ☀️'s runtime.c that lock differ 2 in tbs-en
- * (Scheduler_DisableOverlayCallbacks matches either way), and ⚓️'s
+ * (Scheduler_ResumeOverlayTasks matches either way), and ⚓️'s
  * Func_0813f89c and Func_08143114 differ 2 in all six editions;
  * BattlePresentation_SetPaletteLevel's plain restore matches, and through
  * IRQ_UNLOCK it differs 2 in all six (measured 2026-10-13). Not every use

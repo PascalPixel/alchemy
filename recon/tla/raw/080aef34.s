@@ -94,7 +94,7 @@ Inventory_Equip:
 	mov r0, r8
 	orrs r2, r1
 	strh r2, [r7, r3]
-	bl Owner_RefreshClassActions
+	bl Unit_RefreshPsynergy
 	mov r0, r8
 	bl UnitCalc
 	movs r0, #0

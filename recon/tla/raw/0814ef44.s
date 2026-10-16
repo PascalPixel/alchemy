@@ -891,7 +891,7 @@ BattleFx_RunSeriesA:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #20]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, [r5, #8]
 	ldr r1, [sp, #28]
 	str r3, [r1]

@@ -38,7 +38,7 @@
 	.set import.Engine_EventOpenMessage, 1
 	.set import.Engine_EventShowMessage, 1
 	.set import.Engine_ActorFaceDirection, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Event_RequestDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

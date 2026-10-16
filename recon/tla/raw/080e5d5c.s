@@ -289,7 +289,7 @@ Func_080e5d5c:
 	ldr r2, [sp, #28]
 	lsls r1, r1, #4
 	str r0, [sp, #12]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, [sp, #28]
 	movs r4, #196
 	lsls r4, r4, #5
@@ -342,7 +342,7 @@ Func_080e5d5c:
 	lsls r1, r1, #1
 	ldr r2, [sp, #28]
 	str r0, [sp, #20]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, [sp, #28]
 	str r0, [sp, #16]
 	movs r4, #128

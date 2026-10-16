@@ -156,8 +156,8 @@ static void Scene_RunPrimarySequence(void) {
   Actor_SetSpeed(9, 65536, 32768);
   Actor_WalkTo(8, 136, 384);
   Actor_WalkToAndWait(9, 152, 384);
-  Actor_FaceDirection(8, 16384, 0);
-  Actor_FaceDirection(9, 16384, 0);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_FaceDirection(9, FACING_SOUTH, 0);
   Engine_ActorSetAnimation(8, 1);
   Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
@@ -177,7 +177,7 @@ static void Scene_RunScene3c3SequenceA(void) {
   Engine_EventBegin();
   Actor_SetSpeed(0, 0x19999, 0xcccc);
   Actor_WalkToAndWait(0, 120, 0x1b6);
-  Actor_FaceDirection(0, 0xc000, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
   record = Actor_Get(0);
   if (record != 0) {
     Actor_SetPosition(11, record->x.fixed, record->z.fixed);
@@ -185,31 +185,31 @@ static void Scene_RunScene3c3SequenceA(void) {
   Engine_TaskWait(1);
   Actor_SetSpeed(11, 0x19999, 0xcccc);
   Actor_WalkToAndWait(11, 108, 0x1af);
-  Actor_FaceDirection(11, 0xd000, 10);
-  Actor_ShowEmote(11, 0x100, 20);
-  Actor_FaceDirection(11, 0xd000, 20);
-  Actor_FaceDirection(11, 0, 40);
-  Actor_FaceDirection(11, 0xd000, 40);
-  Actor_FaceDirection(11, 0, 20);
+  Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 10);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT, 20);
+  Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(11, FACING_EAST, 40);
+  Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(11, FACING_EAST, 20);
   Engine_ActorStartRepeatedMotion(11, 2);
   Engine_EventSetMessage(MsgSuhallaMeaning);
   Event_ShowMessageAndWait(11, 0, 40);
-  Actor_ShowEmote(8, 0x100, 0);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
   Engine_ActorRunRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 10);
   Actor_WalkToAndWait(11, 132, 0x1a4);
-  Actor_FaceDirection(11, 0xd000, 0);
-  Actor_FaceDirection(0, 0xe000, 0);
+  Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   Actor_WalkToAndWait(11, 138, 0x1a0);
-  Actor_FaceDirection(11, 0xb000, 10);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(11, 2);
   Event_ShowMessageAndWait(11, 0, 40);
   Engine_ActorRunRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 40);
-  Actor_ShowEmote(9, 0x100, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT, 20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Event_ShowMessageAndWait(9, 0, 20);
-  Actor_FaceDirection(0, 0xc000, 0);
+  Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_WalkToAndWait(11, 144, 0x1a4);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(9, 2);
@@ -217,23 +217,23 @@ static void Scene_RunScene3c3SequenceA(void) {
   Actor_SetAttachedEffect(9, 0x102);
   Engine_ActorStartRepeatedMotion(9, 3);
   Event_ShowMessageAndWait(9, 0, 20);
-  Actor_FaceDirection(11, 0x5000, 20);
+  Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(11, 0);
   if (GameFlag_IsSet(0x9b0) != 0) {
-    Actor_FaceDirection(11, 0xd000, 40);
+    Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 40);
     Actor_SetAttachedEffect(11, 0x102);
     Engine_EventWait(40);
     Event_ShowMessageAndWait(11, 0, 10);
   } else {
     gEventWork->message += 1;
   }
-  Actor_FaceDirection(11, 0x5000, 10);
+  Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(11, 0, 40);
-  Actor_ShowEmote(11, 0x100, 40);
-  Actor_FaceDirection(11, 0xb000, 10);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT, 40);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 10);
   Event_ShowMessageAndWait(11, 0, 10);
   Actor_WalkToAndWait(11, 138, 0x1a0);
-  Actor_FaceDirection(11, 0xb000, 20);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorStartRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 10);
   Actor_SetAttachedEffect(11, 0x102);
@@ -242,7 +242,7 @@ static void Scene_RunScene3c3SequenceA(void) {
   Event_ShowMessageAndWait(11, 0, 20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(0, 0xe000, 10);
+  Actor_FaceDirection(0, FACING_NORTHEAST, 10);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(9, 0, 10);
@@ -251,7 +251,7 @@ static void Scene_RunScene3c3SequenceA(void) {
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(11, 0, 20);
-  Actor_FaceDirection(11, 0x5000, 10);
+  Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(11, 0, 10);
   Engine_ActorSetAnimation(11, 2);
   record = Actor_Get(0);

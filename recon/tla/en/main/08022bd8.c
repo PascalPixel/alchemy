@@ -6,7 +6,7 @@ extern u8 Tile_CopyStridedCodeSize[];
 
 extern const u8 gObject_ShadowTiles[];
 
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 
 void ObjectSystem_Configure(s32 mode)
 {
@@ -23,12 +23,12 @@ void ObjectSystem_Configure(s32 mode)
         objects = Runtime_AllocateHeapBlock(4, 0xe00);
         states = Runtime_AllocateHeapBlock(3, 0x600);
     }
-    PaletteDma_LoadBlock();
+    Palette_LoadBasicObjColors();
     zero = 0;
     Dma_Set((const void *)&zero, objects, 0x85000380, (volatile u32 *)0x040000d4);
     zero = 0;
     Dma_Set((const void *)&zero, states, 0x85000180, (volatile u32 *)0x040000d4);
-    VramBlock_LoadCached(93, 128, gObject_ShadowTiles);
+    VramCache_Load(93, 128, gObject_ShadowTiles);
     size = (u32)Tile_CopyStridedCodeSize;
     table = Runtime_AllocateHeapBlock(53, size);
     Dma_Set((const void *)Func_0800a418, table, 0x84000000 | (size >> 2),

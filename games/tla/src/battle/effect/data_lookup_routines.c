@@ -15,13 +15,13 @@
 
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
-s32 EffectRuntime_LookupByTableEntry(u32 index, s32 steps) {
+s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
 
   return Encounter_SelectEnemyGroup(table[index], steps);
 }
 
-s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1) {
+s32 Encounter_RollWorldMap(s32 arg0, s32 arg1) {
   return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)arg0), arg1);
 }
 

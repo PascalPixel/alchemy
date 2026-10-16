@@ -47,7 +47,7 @@ void Menu_LoadSelectedResource(void) {
 
   if (transfer->kind == 0)
     transfer->slot = Resource_FindFreeEntry();
-  transfer->tile = VramBlock_LoadCached(transfer->slot, 0x400, buffer);
+  transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
   transfer->kind = 1;
   transfer->base = no;
   transfer->scale = 40;

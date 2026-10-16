@@ -91,7 +91,7 @@ Func_080ea14c:
 	lsls r1, r1, #4
 	mov r2, r9
 	str r0, [sp, #32]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r5, #174
 	movs r1, #0
 	lsls r5, r5, #5
@@ -170,7 +170,7 @@ Func_080ea14c:
 	adds r1, r5, #0
 	mov r2, r9
 	str r0, [sp, #28]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #232
 	lsls r3, r3, #5
 	adds r3, #86

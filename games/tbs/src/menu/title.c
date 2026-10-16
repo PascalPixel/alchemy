@@ -65,12 +65,12 @@ s32 Title_Run(void) {
     Title_RevealScreen(0);
     Engine_TaskWait(120);
     wait = 0;
-    if (gKeyState == 0) {
+    if (gKeysPressed == 0) {
       do {
         Engine_TaskWait(1);
         if (++wait > 3599)
           break;
-      } while (gKeyState == 0);
+      } while (gKeysPressed == 0);
     }
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
@@ -79,8 +79,8 @@ s32 Title_Run(void) {
     Engine_AudioPlayCue(67);
     ScrollFar_Entry00(0);
     Engine_AudioPlayCue(17);
-    Blend_SetDarkenTarget16(60);
-    Blend_WaitForTransition();
+    Fade_ToBlack(60);
+    Fade_Wait();
     Engine_EventWait(240);
     Engine_AudioPlayCue(19);
     Event_SetDestination((s32)&SceneId_Clear, 2);
@@ -96,8 +96,8 @@ s32 Title_Run(void) {
         Engine_AudioPlayCue(70);
         if (PaletteFar_Entry00(1) == 0) {
           Engine_AudioPlayCue(17);
-          Blend_SetDarkenTarget16(30);
-          Blend_WaitForTransition();
+          Fade_ToBlack(30);
+          Fade_Wait();
           wait = 0;
           if (gKeysHeld == 0) {
             do {
@@ -115,13 +115,13 @@ s32 Title_Run(void) {
   } else {
     Engine_AudioPlayCue(64);
     PaletteFar_Entry00(0);
-    Party_ApplyStatePreset();
+    Party_EndChildhood();
     Event_SetDestination((s32)&SceneId_Vale, 16);
     Engine_AudioPlayCue(17);
   }
   Engine_AudioPlayCue(17);
-  Blend_SetDarkenTarget16(30);
-  Blend_WaitForTransition();
+  Fade_ToBlack(30);
+  Fade_Wait();
   Engine_EventWait(60);
   Engine_AudioPlayCue(19);
   return 0;
@@ -251,7 +251,7 @@ static void Title_LoadBackground(void) {
   s32 blank;
 
   id = (s32)&ResourceId_GoldenSunLogo;
-  Blend_SetDarkenTarget16(0);
+  Fade_ToBlack(0);
   REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blank = 0x1ff;

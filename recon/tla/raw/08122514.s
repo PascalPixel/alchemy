@@ -44,7 +44,7 @@ Func_08122514:
 	adds r3, r3, r0
 	ldrh r0, [r5]
 	mov r8, r3
-	bl Owner_GetRecordFar
+	bl Enemy_GetDefinitionFar
 	ldrh r3, [r5]
 	mov r10, r0
 	cmp r3, #101
@@ -225,7 +225,7 @@ Func_08122514:
 	lsls r2, r2, #1
 	ldrh r0, [r3, r2]
 .L_081226ba:
-	bl Owner_GetRecordFar
+	bl Enemy_GetDefinitionFar
 	mov r10, r0
 .L_081226c0:
 	ldr r1, [sp, #28]
@@ -654,7 +654,7 @@ Func_08122514:
 	add r2, sp, #32
 	mov r9, r2
 	mov r0, r9
-	bl Trade_ListFlaggedEntriesFar
+	bl Summon_ListLearnedFar
 	adds r5, r0, #0
 	subs r5, #1
 	cmp r5, #0

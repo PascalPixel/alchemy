@@ -22,6 +22,6 @@ const u8 *Func_02000138(void) {
 }
 
 void Func_02000160(s32 owner, s32 delta) {
-  Party_AdvanceOwnerCountToTarget(owner, UnitGet(owner)[15] + delta);
+  Unit_LevelUpTo(owner, UnitGet(owner)[15] + delta);
   UnitCalc(owner);
 }

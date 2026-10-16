@@ -10,7 +10,7 @@
 #include "iwram_call.h"
 s32 Trig_Sin(s32);
 
-void Camera_SetAngleParameters(s32 value, s32 param1, s32 param2) {
+void Projection_SetFieldOfView(s32 value, s32 param1, s32 param2) {
   s32 half;
   s32 first;
   s32 result;
@@ -23,7 +23,7 @@ void Camera_SetAngleParameters(s32 value, s32 param1, s32 param2) {
   gCameraSceneParameters[2] = param2;
 }
 
-void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2) {
+void Projection_Set(u32 value0, u32 value1, u32 value2) {
   u32 *work = gCameraSceneParameters;
   work[0] = value0;
   work[1] = value1;

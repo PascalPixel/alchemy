@@ -25,7 +25,7 @@ Func_08118958:
 	bl Func_08014b70
 	bl Scheduler_ResetTaskTable
 	bl Runtime_InitializeHeap
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	adds r0, r5, #0
 	movs r6, #69
 	bl GameFlag_SetBit
@@ -172,7 +172,7 @@ Func_08118958:
 	bl Func_08014b70
 	bl Scheduler_ResetTaskTable
 	bl Runtime_InitializeHeap
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	b .L_081189ae
 .L_08118ab8:
 	movs r0, #177

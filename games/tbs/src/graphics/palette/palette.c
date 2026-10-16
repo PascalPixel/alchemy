@@ -30,35 +30,38 @@
 #include "frame.h"
 #include "oambuf.h"
 
+// A sprite of the "Press Start" prompt, linked into a render slot each frame:
+// OAM attributes 0 to 2 with the position split out.
 struct IntroSprite {
-  u32 unk0;
+  u32 next; // the render slot link
   u8 y;
-  u8 unk5;
+  u8 attr0High; // shape and mode bits of attribute 0
   u16 x : 9;
-  u16 unk6 : 7;
+  u16 attr1High : 7; // flip and size bits of attribute 1
   s32 tile;
 };
 
+// The title intro's state, in heap slot 43.
 struct IntroWork {
-  s32 backRows;
-  s32 frontRows;
+  s32 backRows; // rows of the far background copied in as it scrolls
+  s32 frontRows; // rows of the near background copied in
   s32 frame;
   s32 tick;
   s32 state;
-  s32 rise;
+  s32 rise; // how far the sprites have risen
   union {
     struct OamShadow objects[120];
     struct {
-      u8 unk18[0x68];
+      u8 introObjects[0x68]; // objects[0] to [12], still the intro's
       struct IntroSprite sprites[8];
     } prompt;
   } area;
 };
 
-// 六列のスプライトの x
+// The x of each of the six columns of intro sprites
 const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
 
-// プロンプトの明るさ（60 フレームで一巡）
+// The prompt's blend level over its 60-frame pulse
 // clang-format off
 const u8 gTitle_PromptBlendLevels[60] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
@@ -68,32 +71,42 @@ const u8 gTitle_PromptBlendLevels[60] = {
 };
 // clang-format on
 
-#define OBJ(i) (work->area.objects[i])
+// Entry `i` of the intro's OAM shadow
+#define INTRO_OBJ(i) (work->area.objects[i])
 
-#define WRAP256(v)                                                             \
+// Brings `v` into 0..255 by whole turns of 256
+#define WRAP_TO_BYTE(v)                                                             \
   while ((v) > 255)                                                            \
     (v) -= 256;                                                                \
   while ((v) < 0)                                                              \
   (v) += 256
 
-#define PLACE(column, half)                                                    \
+// Sets x and y to the top left of a sprite of half-width `half` centred on
+// column `column`, on the slope that runs from `base` at x = 104 to `top` at
+// x = 184
+#define PLACE_ON_SLOPE(column, half)                                           \
   x = gTitle_IntroSpriteColumns[column] - (half);                              \
   y = (top - base) * ((x + (half)) - 104) / 80 + base - (half);                \
-  WRAP256(y)
+  WRAP_TO_BYTE(y)
 
-#define QUAD(i, size, shape, tile)                                             \
-  OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);                \
-  OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400); \
-  OBJ((i) + 2).attr01 =                                                        \
+// Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
+// the four quarters of one picture at (x, y)
+#define MIRRORED_QUAD(i, size, shape, tile)                                             \
+  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);                \
+  INTRO_OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400); \
+  INTRO_OBJ((i) + 2).attr01 =                                                        \
       ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400);             \
-  OBJ((i) + 3).attr01 =                                                        \
+  INTRO_OBJ((i) + 3).attr01 =                                                        \
       ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400);    \
-  OBJ(i).attr2 = (tile);                                                       \
-  OBJ((i) + 1).attr2 = (tile);                                                 \
-  OBJ((i) + 2).attr2 = (tile);                                                 \
-  OBJ((i) + 3).attr2 = (tile)
+  INTRO_OBJ(i).attr2 = (tile);                                                       \
+  INTRO_OBJ((i) + 1).attr2 = (tile);                                                 \
+  INTRO_OBJ((i) + 2).attr2 = (tile);                                                 \
+  INTRO_OBJ((i) + 3).attr2 = (tile)
 
-void Title_PlaceIntroSprites(void) {
+// A VBlank task of the title intro: places the rising sprites along the
+// slope of the scrolling background, alternating two sets every other frame
+// so twice as many show, hides the rest and copies the list to OAM.
+void Title_UpdateIntroSprites(void) {
   /* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words
    * (tag in oambuf.h): without the qualifier differ 205, 471 instructions for
    * 496. */
@@ -115,41 +128,43 @@ void Title_PlaceIntroSprites(void) {
   top = 144 - work->rise;
   if (work->frame < 0x118) {
     if ((work->tick & 1) == 0) {
-      PLACE(0, 16);
-      QUAD(n, 16, 0x40000000, 232);
+      PLACE_ON_SLOPE(0, 16);
+      MIRRORED_QUAD(n, 16, 0x40000000, 232);
       n += 4;
-      PLACE(2, 16);
-      OBJ(n).attr01 = ((x + 4) << 16) | y | 0x80002400;
-      OBJ(n).attr2 = 128;
+      PLACE_ON_SLOPE(2, 16);
+      INTRO_OBJ(n).attr01 = ((x + 4) << 16) | y | 0x80002400;
+      INTRO_OBJ(n).attr2 = 128;
       n++;
-      PLACE(4, 32);
-      QUAD(n, 32, 0x80000000, 192);
+      PLACE_ON_SLOPE(4, 32);
+      MIRRORED_QUAD(n, 32, 0x80000000, 192);
       n += 4;
     } else {
-      PLACE(1, 16);
-      QUAD(n, 16, 0x40000000, 232);
+      PLACE_ON_SLOPE(1, 16);
+      MIRRORED_QUAD(n, 16, 0x40000000, 232);
       n += 4;
-      PLACE(3, 16);
-      QUAD(n, 16, 0x40000000, 224);
+      PLACE_ON_SLOPE(3, 16);
+      MIRRORED_QUAD(n, 16, 0x40000000, 224);
       n += 4;
-      PLACE(5, 32);
-      QUAD(n, 32, 0x80000000, 160);
+      PLACE_ON_SLOPE(5, 32);
+      MIRRORED_QUAD(n, 32, 0x80000000, 160);
       n += 4;
     }
   }
   for (; n <= 119; n++)
-    OBJ(n).attr01 = 0x400020a0;
+    INTRO_OBJ(n).attr01 = 0x400020a0;
   REG_BLDCNT = 0x3f50;
   REG_BLDALPHA = 0x0e0e;
-  Dma_Set(&OBJ(0), OAM, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
+  Dma_Set(&INTRO_OBJ(0), OAM, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
   line = 32 - gBgScroll[1].y;
-  WRAP256(line);
-  OBJ(12).attr01 = line | 0xc05c2000;
-  OBJ(12).attr2 = 0x800;
-  Dma_Set(&OBJ(12), (u8 *)OAM + n * 8, 0x84000002, REG_DMA3);
-  Dma_Set(&OBJ(0), OAM, 0x84000008, REG_DMA3);
+  WRAP_TO_BYTE(line);
+  INTRO_OBJ(12).attr01 = line | 0xc05c2000;
+  INTRO_OBJ(12).attr2 = 0x800;
+  Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + n * 8, 0x84000002, REG_DMA3);
+  Dma_Set(&INTRO_OBJ(0), OAM, 0x84000008, REG_DMA3);
 }
 
+// Loads the title intro's two scrolling backgrounds and its sprite tiles,
+// builds their maps and sets the blending and windows.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *data;
@@ -232,6 +247,8 @@ void Title_LoadIntroBackgrounds(void) {
   REG_BLDCNT = 0x3f44;
 }
 
+// The "Press Start" prompt: its tile count, rows and sprites, and where it
+// stands, by edition.
 #if defined(TBS_EDITION_DE)
 #define PROMPT_TILES 8
 #else
@@ -256,6 +273,11 @@ void Title_LoadIntroBackgrounds(void) {
 #define PROMPT_Y 124
 #endif
 
+// Plays the title intro: the backgrounds scroll down and the sprites rise
+// until frame 278 (A or Start skips ahead), then the screen flashes white
+// into the title picture. With `prompt` set the "Press Start" prompt pulses
+// for up to a minute, otherwise the picture stays five seconds. Returns 1
+// when A or Start was pressed on the title picture.
 s32 Title_ShowIntro(s32 prompt) {
   struct IntroWork *work;
   s32 result;
@@ -273,18 +295,18 @@ s32 Title_ShowIntro(s32 prompt) {
   blank = 0x1ff;
   saved = gCpuLoadDisplayEnabled;
   work = Runtime_AllocateHeapBlock(43, 224);
-  Bg0_ClearTilemap();
-  Resource_InitializeTable();
+  DebugText_Clear();
+  VramCache_Reset();
   WaitFrames(1);
   Scheduler_ResetTaskTable();
   gOamCopyEnabled = result;
   gCpuLoadDisplayEnabled = result;
   Title_LoadIntroBackgrounds();
-  TitlePalette_InitializeBuffers();
-  Graphics_TransformSmallPalette(2, 0);
+  PaletteFade_Init();
+  PaletteFade_SetCurrent(2, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0xf740, 0x20000);
-  Graphics_UpdatePaletteInterpolation(60);
-  Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);
+  PaletteFade_Start(60);
+  Scheduler_AddOrUpdateCallback(Title_UpdateIntroSprites, 0x480);
 
   for (;;) {
     s32 frame;
@@ -292,7 +314,8 @@ s32 Title_ShowIntro(s32 prompt) {
     s32 tick;
 
     frame = work->frame;
-    if (frame > 20 && frame < 239 && (gKeyState & (KEY_A | KEY_START)) != 0) {
+    if (frame > 20 && frame < 239 &&
+        (gKeysPressed & (KEY_A | KEY_START)) != 0) {
       work->state = 1;
       work->frame = 239;
       frame = 239;
@@ -347,8 +370,8 @@ s32 Title_ShowIntro(s32 prompt) {
     } else if (next == 289) {
       work->state = 0;
     } else if (next == 280) {
-      Blend_SetBrightenTarget16(1);
-      Scheduler_RemoveCallback(Title_PlaceIntroSprites);
+      Fade_ToWhite(1);
+      Scheduler_RemoveCallback(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
       WaitFrames(1);
       REG_BG2CNT = 0x681;
@@ -375,15 +398,15 @@ s32 Title_ShowIntro(s32 prompt) {
   }
 
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = Runtime_AllocateBlock(14, 0x400);
     struct IntroSprite *sprite = work->area.prompt.sprites;
 
     Resource_DecodeByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
-      s32 block = VramBlock_LoadCached(Resource_FindFreeEntry(), 128,
-                                       buffer + (i << 8) / 2);
+      s32 block =
+          VramCache_Load(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
       u32 *out = (u32 *)sprite;
 
       *out++ = 0;
@@ -393,8 +416,8 @@ s32 Title_ShowIntro(s32 prompt) {
     }
     Runtime_ReleaseHeapBlock(14);
   }
-  Blend_SetBrightenTarget0(30);
-  Blend_WaitForTransition();
+  Fade_FromWhite(30);
+  Fade_Wait();
   REG_DISPCNT = 0x1540;
   if (prompt != 0)
     limit = 3600;
@@ -432,7 +455,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_BLDCNT = 0x2f50;
       REG_BLDALPHA = (16 - level) * 256 + level;
     }
-    if ((gKeyState & (KEY_A | KEY_START)) != 0) {
+    if ((gKeysPressed & (KEY_A | KEY_START)) != 0) {
       result = 1;
       break;
     }
@@ -446,8 +469,13 @@ s32 Title_ShowIntro(s32 prompt) {
   return result;
 }
 
+// An empty routine.
 void Title_NoOpPalette(void) {}
 
+// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
+// holds two seconds; otherwise it waits a second, fades in, holds three
+// seconds and fades out, faster once skipped. Returns -1 when A or Start
+// skipped it.
 s32 Title_ShowSplashScreen(s32 mode) {
   s32 result;
   u8 *data;
@@ -463,8 +491,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   resource = (s32)&ResourceId_NintendoLogo;
   blank = 0x1ff;
   Scheduler_ResetTaskTable();
-  Blend_SetDarkenTarget16(1);
-  Bg0_ClearTilemap();
+  Fade_ToBlack(1);
+  DebugText_Clear();
   WaitFrames(1);
   REG_BG2CNT = 0x681;
   REG_DISPCNT = 0x1440;
@@ -488,13 +516,13 @@ s32 Title_ShowSplashScreen(s32 mode) {
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   REG_DISPCNT = 0x1540;
   if (mode == 0) {
-    Blend_SetDarkenTarget0(1);
-    Blend_WaitForTransition();
+    Fade_FromBlack(1);
+    Fade_Wait();
     for (y = 0; y < 120; y++) {
-      if (gKeyState & (KEY_A | KEY_START)) {
+      if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
       }
@@ -503,20 +531,20 @@ s32 Title_ShowSplashScreen(s32 mode) {
     return result;
   }
   for (y = 0; y < 60; y++) {
-    if (gKeyState & (KEY_A | KEY_START)) {
+    if (gKeysPressed & (KEY_A | KEY_START)) {
       result = -1;
       break;
     }
     WaitFrames(1);
   }
   if (result != 0)
-    Blend_SetDarkenTarget0(8);
+    Fade_FromBlack(8);
   else
-    Blend_SetDarkenTarget0(60);
-  Blend_WaitForTransition();
+    Fade_FromBlack(60);
+  Fade_Wait();
   if (result == 0) {
     for (y = 0; y < 180; y++) {
-      if (gKeyState & (KEY_A | KEY_START)) {
+      if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
       }
@@ -524,13 +552,15 @@ s32 Title_ShowSplashScreen(s32 mode) {
     }
   }
   if (result != 0)
-    Blend_SetDarkenTarget16(8);
+    Fade_ToBlack(8);
   else
-    Blend_SetDarkenTarget16(60);
-  Blend_WaitForTransition();
+    Fade_ToBlack(60);
+  Fade_Wait();
   return result;
 }
 
+// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
+// A or Start ends it early. Returns 0.
 s32 Title_ShowAnimatedSplash(void) {
   s32 result;
   u32 i;
@@ -541,8 +571,8 @@ s32 Title_ShowAnimatedSplash(void) {
   result = 0;
   resource = (s32)&ResourceId_CamelotLogo;
   Scheduler_ResetTaskTable();
-  Blend_SetDarkenTarget16(1);
-  Bg0_ClearTilemap();
+  Fade_ToBlack(1);
+  DebugText_Clear();
   WaitFrames(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
@@ -567,36 +597,30 @@ s32 Title_ShowAnimatedSplash(void) {
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
-  Blend_SetBrightenTarget0(1);
-  Blend_WaitForTransition();
+  DebugText_Clear();
+  Fade_FromWhite(1);
+  Fade_Wait();
   REG_DISPCNT = 0x1540;
   for (i = 0; i < 120; i++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + buffer, BG_CHAR_BLOCK(1) + 0x100,
             DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
-    if (gKeyState & (KEY_A | KEY_START))
+    if (gKeysPressed & (KEY_A | KEY_START))
       break;
     WaitFrames(1);
   }
   return result;
 }
 
+// An empty routine.
 void Graphics_NoOpColor(void) {}
 
-//--------------------------------------------------------------------------
-// interpolate_buffers.c
-// パレット：フェードの 1 フレームあたりの変化量を求める
-//--------------------------------------------------------------------------
+// The palette fade (struct PaletteFade) keeps the saved palettes, the
+// colour components shown now, the target components and each one's step.
 
-//--------------------------------------------------------------------------
-// 512 色の RGB 成分（1536 個）について、今の値から目標の値までを
-// frames で割った変化量を step に書く
-// src    : 今の成分
-// dst    : 目標の成分
-// step   : 変化量の書き込み先
-// frames : かけるフレーム数（0 以下なら何もしない）
-//--------------------------------------------------------------------------
-void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step,
+// Writes to `step` each of the 1536 colour components' change per frame,
+// from `src` now to `dst` over `frames` frames (nothing when `frames` is not
+// positive).
+void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step,
                                         s32 frames) {
   s32 n;
   s32 from;
@@ -616,8 +640,11 @@ void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step,
   }
 }
 
-void TitlePalette_UpdateFade(void) {
-  struct TitlePaletteWork *work = gPaletteBufferWork;
+// A task that steps the palette fade each frame: adds the step to every
+// colour component until the fade is done, packs the components into the
+// spare RGB555 copy of the palettes and queues both halves for VBlank.
+void PaletteFade_Update(void) {
+  struct PaletteFade *work = gPaletteBufferWork;
   u16 *delta = work->delta;
   u16 *current;
   u16 *packed;
@@ -655,7 +682,14 @@ void TitlePalette_UpdateFade(void) {
   IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(bank + 256), 0x84000080);
 }
 
-void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
+// Transforms the 512 colours at `src` into colour components at `dst` (three
+// per colour, each in the high bits of a halfword). `mode` picks the
+// transform: a colour below 0x8000 fills every colour with it; 0x8000 takes
+// that colour from src[0]; 0x10000 to 0x10007 are the whole-palette filters
+// (plain, grey, sepia and the others); the TINT, BLEND and SPLIT flags carry
+// a colour in their low bits; anything else is the address of components to
+// copy. `half` 1 does only the background palettes, 2 only the sprites'.
+void Palette_Transform(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 cnt = 512;
   s32 r;
@@ -907,65 +941,67 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-void TitlePalette_InitializeBuffers(void) {
-  struct TitlePaletteWork *buffer;
+// Allocates the palette fade, saves both hardware palettes in it as the
+// starting colours and schedules PaletteFade_Update.
+void PaletteFade_Init(void) {
+  struct PaletteFade *buffer;
   s32 operation;
 
   buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
   Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
-  Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);
+  Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette,
+                                  buffer->target, 0);
   operation = 3200;
-  Scheduler_AddOrUpdateCallback(TitlePalette_UpdateFade, operation);
+  Scheduler_AddOrUpdateCallback(PaletteFade_Update, operation);
 }
 
-void Runtime_ScheduleCallbackAndReleaseBlock32A(void) {
-  Scheduler_RemoveCallback(&TitlePalette_UpdateFade);
+// Stops the palette fade and frees its buffers.
+void PaletteFade_Release(void) {
+  Scheduler_RemoveCallback(&PaletteFade_Update);
   Runtime_ReleaseHeapBlock(0x20);
 }
 
-void Graphics_TransformLargePalette(s32 index, s32 transform) {
-  struct TitlePaletteWork *target = gPaletteBufferWork;
+// Sets the palette fade's target: the saved palettes through `index`, a
+// Palette_Transform mode, for half `transform`.
+void PaletteFade_SetTarget(s32 index, s32 transform) {
+  struct PaletteFade *target = gPaletteBufferWork;
 
   if (target != NULL)
-    Graphics_TransformPaletteBuffer(index, target->palette, target->target,
+    Palette_Transform(index, target->palette, target->target,
                                     transform);
 }
 
-void Graphics_TransformSmallPalette(s32 index, s32 transform) {
-  struct TitlePaletteWork *target = gPaletteBufferWork;
+// Sets the colours shown now: the saved palettes through mode `index`.
+void PaletteFade_SetCurrent(s32 index, s32 transform) {
+  struct PaletteFade *target = gPaletteBufferWork;
 
   if (target != NULL)
-    Graphics_TransformPaletteBuffer(index, target, target->current, transform);
+    Palette_Transform(index, target, target->current, transform);
 }
 
-void Graphics_SetPaletteTransformValue(s32 value) {
-  struct TitlePaletteWork *target = gPaletteBufferWork;
+// Replaces the first saved colour, the backdrop.
+void PaletteFade_SetBackdrop(s32 value) {
+  struct PaletteFade *target = gPaletteBufferWork;
 
   if (target != NULL)
     target->palette[0] = value;
 }
 
-void Graphics_UpdatePaletteInterpolation(s32 value) {
-  struct TitlePaletteWork *state = gPaletteBufferWork;
+// Starts fading the shown colours to the target over `value` frames.
+void PaletteFade_Start(s32 value) {
+  struct PaletteFade *state = gPaletteBufferWork;
 
   if (state != NULL) {
     state->duration = value;
     state->step = 0;
-    Graphics_InterpolatePaletteBuffers(state->current, state->target,
+    PaletteFade_ComputeSteps(state->current, state->target,
                                        state->delta, value);
   }
 }
 
-//--------------------------------------------------------------------------
-// palette.c
-// パレット：RGB555 の成分を範囲に収める
-//--------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------
-// 5 ビットの成分を 0〜31 に収める
-//--------------------------------------------------------------------------
+// Clamps a five-bit colour channel to 0..31.
 s32 Graphics_ClampRgb555Channel(s32 val) {
   if (val > 31)
     return 31;
@@ -974,21 +1010,18 @@ s32 Graphics_ClampRgb555Channel(s32 val) {
   return val;
 }
 
-//--------------------------------------------------------------------------
-// 値の上限を 0x7c00（RGB555 の青の最大と同じ値）に収める。下限はない
-//--------------------------------------------------------------------------
+// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
+// into the high bits reaches. There is no lower bound.
 s32 Graphics_ClampRgb555Component(s32 val) {
   if (val > 0x7c00)
     val = 0x7c00;
   return val;
 }
 
-//--------------------------------------------------------------------------
-// Graphics_TransformPaletteBuffer の色変換が使う曲線
-// palbuf.h と同じく const なしの配列（const にするとコードが一致しない）
-//--------------------------------------------------------------------------
+// The response curves of Palette_Transform's filters. Like the
+// declarations in palbuf.h they are not const: as const the code differs.
 
-// 色の成分（0..31）を 0..(31 << 10) に写す曲線
+// Maps a channel (0..31) to a component (0..31 << 10)
 // clang-format off
 u16 gPalette_ChannelCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
@@ -997,7 +1030,7 @@ u16 gPalette_ChannelCurve[32] = {
     21015, 22386, 23808, 25283, 26812, 28397, 30041, 31744
 };
 
-// 明るめの曲線
+// A brighter curve
 u16 gPalette_ChannelCurveLight[32] = {
     0, 613, 1247, 1902, 2580, 3281, 4005, 4753,
     5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680,
@@ -1005,7 +1038,7 @@ u16 gPalette_ChannelCurveLight[32] = {
     21801, 23101, 24440, 25818, 27237, 28697, 30199, 31744
 };
 
-// コントラストの強い曲線（25 以上は最大）
+// A high-contrast curve (25 and above are full)
 u16 gPalette_ChannelCurveContrast[32] = {
     0, 360, 759, 1201, 1689, 2226, 2817, 3466,
     4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365,

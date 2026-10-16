@@ -1845,7 +1845,7 @@ static void FieldScene_RunRoofEnsembleSequence(void) {
   Engine_EventWait(20);
   FieldScene_RunParticleRain();
   Engine_EventWait(60);
-  UiText_DrawQuantityPairWithCue(2, 144);
+  Party_LearnAbility(2, 144);
   Engine_ActorSetAnimationAndWait(8, 3);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(8, 0, 20);

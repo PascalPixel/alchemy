@@ -64,7 +64,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered) {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_staged_actor.h"
 
-static void EV15_SCRIPT(void) { BattleFx_RunPageEffectForSlot(15, 0, 6); }
+static void EV15_SCRIPT(void) { Djinn_JoinParty(15, 0, 6); }
 
 static void Resource3b4_EmptyHookA(void) {}
 
@@ -683,9 +683,9 @@ static void EV60_SCRIPT(void) {
       }
     }
     Engine_GameFlagClear(0x207);
-    battle_owner_69();
+    Field_ClimbUp();
   } else if (facing == 0x4000) {
-    FieldEffect_UpdateGridPlacement();
+    Field_ClimbDown();
   } else if (facing == 0) {
     if (Engine_GameFlagIsSet(0x206) != 0) {
       {
@@ -796,11 +796,11 @@ static void SceneActor_BranchOnSlotZeroAtTile38(void) {
     u16 facing = ((u16 *)slot0)[3];
 
     if (facing == 0xc000) {
-      battle_owner_69();
+      Field_ClimbUp();
       return;
     }
     if (facing == 0x4000) {
-      FieldEffect_UpdateGridPlacement();
+      Field_ClimbDown();
       return;
     }
   }

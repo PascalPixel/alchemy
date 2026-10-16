@@ -77,7 +77,7 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions,
                     targetScaleY,
                     (u32)&((struct EffectOptions *)0)->targetScaleY);
 
-static void EV08_TALK(void) { BattleFx_RunPageEffectForSlot(8, 2, 1); }
+static void EV08_TALK(void) { Djinn_JoinParty(8, 2, 1); }
 
 static void EV11_TALK(void) { BattleFx_SetPhaseRequest(0xB, 0x3E); }
 

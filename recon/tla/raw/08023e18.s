@@ -69,13 +69,13 @@ Func_08023e18:
 	.2byte 0xf800
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Graphics_PrepareTransferAndRun
+	bl Transform_ApplyLookAt
 	b .L_08023eb2
 .L_08023ea6:
 	bl SceneTransform_RewindStack
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 .L_08023eb2:
 	movs r3, #192
 	lsls r3, r3, #18

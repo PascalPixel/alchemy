@@ -22,6 +22,6 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
       Ram_MapCellBuffer);
   Map_UpdateCurrentTileBlock();
-  Scheduler_DisableCallbacks(MapAnimation_Update);
+  Scheduler_ResumeTasks(MapAnimation_Update);
   WaitFrames(1);
 }

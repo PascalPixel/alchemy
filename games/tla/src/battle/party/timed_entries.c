@@ -84,11 +84,11 @@ s32 BattleUnit_TickReflect(s32 id) {
 
 s32 BattleUnit_TickAgilityModifier(s32 id) {
   struct BattleUnit *unit = UnitGet(id);
-  u8 *value = &unit->agiCnt;
+  u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
-      unit->agiLv = 0;
+      unit->agilityStage = 0;
       return 1;
     }
   }
@@ -103,7 +103,7 @@ s32 BattlePlacement_UpdateTimedEntries(void) {
   s32 removed;
   s32 initialCount;
 
-  list = &Trade_GetOfferStateFar(0)->list;
+  list = &Djinn_GetRecoveryTableFar(0)->list;
   initialCount = list->count;
   index = 0;
   removed = 0;
@@ -126,7 +126,7 @@ s32 BattlePlacement_UpdateTimedEntries(void) {
         u8 id = expiredEntry->unitId;
 
         Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
-        Trade_RemoveOfferFar(id, expiredEntry->element, expiredEntry->index);
+        DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
         UnitCalcFar(id);
         removed = 1;
       } else {

@@ -59,7 +59,7 @@ void SceneTransform_RewindStack(void) {
 //--------------------------------------------------------------------------
 // 今の行列を退避する（1 段まで）
 //--------------------------------------------------------------------------
-void Graphics_SaveTransferWorkOnce(void) {
+void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
     Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
     gTransformStackDepth++;
@@ -70,21 +70,19 @@ void Graphics_SaveTransferWorkOnce(void) {
 //--------------------------------------------------------------------------
 // 今の行列を dst に写す
 //--------------------------------------------------------------------------
-void Graphics_SaveTransferWork(void *dst) {
-  Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3);
-}
+void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
 
 //--------------------------------------------------------------------------
 // src の行列を今の行列にする
 //--------------------------------------------------------------------------
-void Graphics_LoadTransferWork(const void *src) {
+void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
 }
 
 //--------------------------------------------------------------------------
 // 退避した行列を戻す
 //--------------------------------------------------------------------------
-void Graphics_RestoreTransferWork(void) {
+void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
     gTransformStackTop -= sizeof(gTransform);

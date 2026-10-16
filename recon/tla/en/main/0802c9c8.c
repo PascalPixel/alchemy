@@ -50,7 +50,7 @@ s32 Map_LoadAreaGraphics(void)
     value = 0;
     Map_UpdateCurrentTileBlock();
     state->animationActive = value;
-    Scheduler_DisableCallbacks(MapAnimation_Update);
+    Scheduler_ResumeTasks(MapAnimation_Update);
     state->framePending = value;
     state->frameShown = value;
     Func_0802d088(state->area, 0);

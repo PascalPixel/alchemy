@@ -16,7 +16,7 @@ void Func_080d9b08(void) {
   Dma_Fill32(0, work, sizeof(struct WorkA0));
   work->vramEntry = Resource_FindFreeEntry();
   Resource_DecodeType01(gData_080f0c04, buffer);
-  VramBlock_LoadCached(work->vramEntry, 64, buffer);
+  VramCache_Load(work->vramEntry, 64, buffer);
   Scheduler_AddOrUpdateCallback(Func_080d9b80, 0x480);
   Scheduler_AddOrUpdateCallback(Func_080d9d40, 0x48f);
   MemFree(buffer);

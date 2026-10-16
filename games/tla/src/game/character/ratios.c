@@ -37,19 +37,21 @@ void UnitRatio(s32 ownerId) {
   }
 }
 
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input) {
+// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
+// gauges inline.
+void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 value;
 
-  if (input > state->maxHp) {
-    value = state->maxHp;
+  if (hp > unit->maxHp) {
+    value = unit->maxHp;
   } else {
     value = 0;
-    if (input >= 0) {
-      value = input;
+    if (hp >= 0) {
+      value = hp;
     }
   }
-  state->hp = value;
-  value = ((value << 16) >> 2) / state->maxHp;
+  unit->hp = value;
+  value = ((value << 16) >> 2) / unit->maxHp;
 
   {
     s32 output = 0x4000;
@@ -60,13 +62,13 @@ void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input) {
         output = value;
       }
     }
-    state->hpGauge = output;
-    if ((output << 16) == 0 && state->hp != 0) {
-      state->hpGauge = 1;
+    unit->hpGauge = output;
+    if ((output << 16) == 0 && unit->hp != 0) {
+      unit->hpGauge = 1;
     }
   }
 
-  value = (state->pp << 14) / state->maxPp;
+  value = (unit->pp << 14) / unit->maxPp;
   {
     s32 output = 0x4000;
 
@@ -76,9 +78,9 @@ void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input) {
         output = value;
       }
     }
-    state->ppGauge = output;
-    if ((output << 16) == 0 && state->pp != 0) {
-      state->ppGauge = 1;
+    unit->ppGauge = output;
+    if ((output << 16) == 0 && unit->pp != 0) {
+      unit->ppGauge = 1;
     }
   }
 }

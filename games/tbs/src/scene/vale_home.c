@@ -456,7 +456,7 @@ s32 ValeHome_RestoreEntryState(void) {
   } else {
     if (Engine_GameFlagIsSet(0x834) != 0) {
       FieldFx_StartGroundParticles();
-      BattleFx_StartTwelveFrameBlend();
+      FieldFx_StartLightning();
       Map_CopyCellAttributes(21, 38, 1, 1, 18, 41);
       record = Engine_GameFlagIsSet(0x840);
       if (record != 0) {
@@ -508,7 +508,7 @@ s32 ValeHome_RestoreEntryState(void) {
           if (Engine_GameFlagIsSet(0x834) != 0) {
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            BattleFx_SetBlock30Values128One();
+            FieldFx_ResumeLightning();
           }
         }
       }
@@ -677,7 +677,7 @@ static void ValeHome_RunScriptScene(void) {
   Event_PrepareObjectAndApplyValue(1, 0);
   Engine_EventOpenScreen();
   Engine_AudioPlayCue(17);
-  BattleFx_SetBlock30Values128One();
+  FieldFx_ResumeLightning();
   Engine_ActorSetPosition(23, 0x690000, 0x10b0000);
   Engine_TaskWait(1);
   Actor_SetSpeed(0, 0x13333, 0x9999);
@@ -808,7 +808,7 @@ static void FieldScene_RunGroupChoreography(void) {
   {
     const void *message = &SceneId_ValeHome;
 
-    Party_SetFields1ceAnd1d0((s32)message, 19);
+    Event_SetNextDestination((s32)message, 19);
     Event_SetDefeatDestination((s32)message, 19);
   }
   BattleFx_SetWeightedResult(12, 4);
@@ -848,7 +848,7 @@ static void ValeHome_RunActorPairEffectScene(void) {
     work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
   Engine_EventOpenScreen();
-  BattleFx_SetBlock30Values128One();
+  FieldFx_ResumeLightning();
   Engine_EventWaitForScreen();
   Engine_EventWait(80);
   Actor_FaceDirection(23, 0x3000, 0);
@@ -874,14 +874,14 @@ static void ValeHome_RunActorPairEffectScene(void) {
   Object_SetActionCallbackAndRefreshById(24,
                                          (s32)gValeHome_Actor24BounceActions);
   Engine_EventWait(40);
-  BattleFx_SetBlock30ValuesMaxZero();
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_StopLightning();
+  FieldFx_LastLightning();
   Engine_TaskWait(20);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Engine_TaskWait(60);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Engine_TaskWait(20);
-  BattleFx_SetBlock30ValuesMaxZero();
+  FieldFx_StopLightning();
   Engine_EventWait(40);
   gEventWork->transitionFrames = 120;
   Engine_EventCloseScreen();
@@ -900,7 +900,7 @@ static void Scene_RunExtendedActorSequence(void) {
   s32 v6;
   const u8 *pairActions;
 
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_EventBegin();
   Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
   Camera_MoveTo(0xb40000, 0x100000, 0x26a0000, 0);

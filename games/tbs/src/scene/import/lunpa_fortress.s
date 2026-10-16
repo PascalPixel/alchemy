@@ -60,7 +60,7 @@
 	.set import.Engine_EventGetViewCenter, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.Engine_BattleFxSetWeightedResult, 1
-	.set import.Engine_PartySetFields1ceAnd1d0, 1
+	.set import.Engine_EventSetNextDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_BattleFxPlayCueAndStartEmitterOnTarget, 1

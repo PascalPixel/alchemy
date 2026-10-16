@@ -89,7 +89,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
     // The stars turn about a point 80 pixels in front of the camera.
     camera = Ram_HeapSlots->cameraWork;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     SceneTransform_ApplyPosition(record);
     star = STARS;
     for (i = 0; i != 64; i++, star++) {

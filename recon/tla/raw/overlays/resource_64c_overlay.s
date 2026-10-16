@@ -3007,7 +3007,7 @@ Func_02001be0:
 	ldrsh r0, [r3, r2]
 	lsls r1, r1, #1
 	ldr r2, .L_02009d54
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 .L_02009d4a:
 	pop {r5, r6, r7, pc}
 .L_02009d4c:

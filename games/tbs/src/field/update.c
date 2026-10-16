@@ -5,11 +5,12 @@
 #include "mulq16.h"
 #include "script_motion.h"
 
-#define OBJECT_SLOTS 8
-#define TARGET_UNSET ((s32)0x80000000)
-#define TURN_MAX 0x1000 // 1 フレームに回れる角度
+#define OBJECT_SLOTS 8 // script-driven objects updated each frame
+#define TARGET_UNSET ((s32)0x80000000) // no movement target
+#define TURN_MAX 0x1000                // the most an object turns in one frame
 
-// 常駐ルーチンを絶対番地で呼ぶ。RAM へ写したこのコードからも届く。
+// Calls a resident IWRAM routine at its absolute address, which this code
+// still reaches when it runs from its copy in RAM.
 #define IWRAM_ENTRY(type, offset) ((type)(IwramIrqMain + (offset)))
 #define IwramSqrt IWRAM_ENTRY(s32 (*)(s32 value), Iwram_SqrtOffset)
 #define IwramRatioMulQ14                                                       \
@@ -20,18 +21,22 @@ typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 extern struct ScriptMotionObject *gObjectSlots;
 extern ScriptCommandFn gScriptObject_CommandTable[];
 
-// このコードと一緒に写される中継 (updfar.s)
+// Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
 s32 IwramSqrtFarArm(s32 value);
 s32 IwramRatioMulQ14FarArm(s32 divisor, s32 value);
 
-// 物体 8 個の台本と動きを 1 フレーム進める。
+// Advances the eight script-driven objects by one frame. For each live one:
+// run its hook, then its script (unless it waits or is paused); steer it
+// towards its target, or brake it when it has none; apply gravity and
+// bounce off the ground; detect arrival at the target; and turn it to face
+// the way it moves. Copied to RAM and run from there.
 void Object_UpdateAll(void) {
   struct ScriptMotionObject *obj;
   s32 y;
   s32 arrived;
-  struct ScriptMotionObject *next;
-  s32 n;
+  struct ScriptMotionObject *nextObj;
+  s32 nextIndex;
   s32 i;
   s32 x;
   s32 z;
@@ -44,9 +49,10 @@ void Object_UpdateAll(void) {
   s32 turn;
   u16 angle;
 
-  for (i = 0, obj = gObjectSlots; i < OBJECT_SLOTS; i = n, obj = next) {
-    n = i + 1;
-    next = obj + 1;
+  for (i = 0, obj = gObjectSlots; i < OBJECT_SLOTS;
+       i = nextIndex, obj = nextObj) {
+    nextIndex = i + 1;
+    nextObj = obj + 1;
     if (obj->script == NULL)
       continue;
     if (obj->hook != NULL)
@@ -56,16 +62,17 @@ void Object_UpdateAll(void) {
     if (obj->paused != 0)
       continue;
 
-    // 待ち、または台本
+    // Count down a wait, or run commands until one yields for this frame.
+    // Words above 63 are operands, which the cursor steps over.
     if (obj->wait != 0) {
       obj->wait--;
     } else {
       for (;;) {
         s32 cursor = (s16)obj->scriptCursor;
-        u32 cmd = obj->script->word[cursor];
+        u32 command = obj->script->word[cursor];
 
-        if (cmd <= 63) {
-          if (gScriptObject_CommandTable[cmd](obj) == 0)
+        if (command <= 63) {
+          if (gScriptObject_CommandTable[command](obj) == 0)
             break;
         } else {
           obj->scriptCursor++;
@@ -81,7 +88,9 @@ void Object_UpdateAll(void) {
     if (obj->frozen == 0) {
       arrived = 0;
       if (obj->targetX != TARGET_UNSET) {
-        // 目標へ加速
+        // Accelerate towards the target. The first distance is in whole
+        // pixels, to stay in range; under 256 pixels it is measured again in
+        // 16.16.
         dx = (obj->targetX - x) / 65536;
         dz = (obj->targetZ - z) / 65536;
         dist = IwramSqrt(dx * dx + dz * dz) << 16;
@@ -97,18 +106,19 @@ void Object_UpdateAll(void) {
           ratio = IwramRatioMulQ14(dist, obj->acceleration);
           vx = obj->velocityX + MulQ16(dx, ratio);
           obj->velocityX = vx;
+          // dx now carries the new z velocity.
           dx = obj->velocityZ + MulQ16(dz, ratio);
           obj->velocityZ = dx;
           dist = IwramSqrt(MulQ16(vx, vx) + MulQ16(dx, dx)) << 8;
           if (dist > obj->speedLimit) {
-            // 最高速度
+            // Too fast: scale the velocity back to the speed limit.
             ratio = IwramRatioMulQ14(dist, obj->speedLimit);
             obj->velocityX = MulQ16(vx, ratio);
             obj->velocityZ = MulQ16(dx, ratio);
           }
         }
       } else {
-        // 減速
+        // No target: brake by the acceleration until the object stops.
         dx = obj->velocityX;
         dz = obj->velocityZ;
         dist = IwramSqrtFarArm(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
@@ -127,7 +137,7 @@ void Object_UpdateAll(void) {
         }
       }
 
-      // 重力と跳ね返り
+      // Gravity, and a bounce that loses energy on landing.
       if (obj->motionFlags & 2) {
         ground = obj->terrainHeight;
         if (y > ground)
@@ -146,19 +156,20 @@ void Object_UpdateAll(void) {
     y += obj->velocityY;
     z += obj->velocityZ;
 
-    // 到着: 目標に着いた、または通り過ぎた
+    // Arrived: the watched axis reached the target, or crossed it this frame
+    // (the sign of the offset changed).
     switch (obj->arrivalAxis) {
-    case 16:
+    case ARRIVAL_AXIS_X:
       if (x == obj->targetX ||
           ((obj->x - obj->targetX) ^ (x - obj->targetX)) < 0)
         arrived = 1;
       break;
-    case 17:
+    case ARRIVAL_AXIS_Y:
       if (y == obj->targetY ||
           ((obj->y - obj->targetY) ^ (y - obj->targetY)) < 0)
         arrived = 1;
       break;
-    case 18:
+    case ARRIVAL_AXIS_Z:
       if (z == obj->targetZ ||
           ((obj->z - obj->targetZ) ^ (z - obj->targetZ)) < 0)
         arrived = 1;
@@ -184,7 +195,7 @@ void Object_UpdateAll(void) {
     obj->y = y;
     obj->z = z;
 
-    // 進む方へ向きを変える
+    // Turn to face the direction of travel.
     if (obj->steeringFlags & 1) {
       x = obj->velocityX;
       z = obj->velocityZ;

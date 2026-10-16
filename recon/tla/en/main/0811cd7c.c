@@ -17,7 +17,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
-void Camera_StoreSceneParameters(s32 span, u32 depth, s32 range);
+void Projection_Set(s32 span, u32 depth, s32 range);
 
 void Camera_ConfigureScene(s32 pos)
 {
@@ -47,7 +47,7 @@ void Camera_ConfigureScene(s32 pos)
     Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
     result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
-    Camera_StoreSceneParameters(0, result, 0x07920000);
+    Projection_Set(0, result, 0x07920000);
 
     gCameraSceneParameters[4] = pos + 120;
     secondary->active = 1;

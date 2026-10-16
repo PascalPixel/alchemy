@@ -1,8 +1,10 @@
 #include "unit/object/zonedata.h"
 #include "types.h"
 
-// {種類, 地形 (-1 = 全て), フラグ, 結果}, -1 で終わり
-const s16 gBattleFx_ResultRules[132] = {
+// The world map's encounter zones (struct TerrainRule): {terrain kind, terrain
+// behavior (-1 for any), flag (-1, or a flag that turns the rule off once set),
+// zone}, ended by kind -1.
+const s16 gWorldMap_EncounterRules[132] = {
     1,  4,  -1, 7,  1,  7,  -1, 7,  1,  1,  -1, 7,  1,  2,  -1, 8,  2,  4,  -1,
     13, 2,  7,  -1, 13, 2,  1,  -1, 13, 2,  2,  -1, 14, 21, 5,  -1, 29, 21, 6,
     -1, 30, 31, 1,  -1, 37, 31, 2,  -1, 38, 3,  3,  -1, 45, 3,  4,  -1, 45, 3,
@@ -12,7 +14,7 @@ const s16 gBattleFx_ResultRules[132] = {
     -1, 80, 6,  7,  -1, 80, 6,  1,  -1, 80, 6,  2,  -1, 81, -1, 0,  0,  0,
 };
 
-// {確率, 区域}
+// The encounter of each Djinni battle (BattleFx_GetPhaseResult): {zone, slot}.
 const u16 gEncounter_AreaEntryTable[160] = {
     100, 0, 100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0,
     100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0, 100, 1,

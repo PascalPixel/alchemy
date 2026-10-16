@@ -79,7 +79,7 @@ Func_080fbe6c:
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r6, .L_080fbf50
 	movs r5, #32
 	ldr r0, [sp, #16]
@@ -167,7 +167,7 @@ Func_080fbe6c:
 	ldr r0, [sp, #16]
 	lsls r1, r1, #1
 	mov r2, r10
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	mov r0, r8
 	movs r3, #32
 	adds r0, #1

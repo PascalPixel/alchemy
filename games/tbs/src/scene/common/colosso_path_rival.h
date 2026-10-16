@@ -144,7 +144,7 @@ static void Colosso_DrawGauge(void) {
     }
   }
   if (gauge->level == 0) {
-    Resource_ActivateEntry(gauge->vramBlock);
+    VramCache_ReleaseVram(gauge->vramBlock);
     return;
   }
 

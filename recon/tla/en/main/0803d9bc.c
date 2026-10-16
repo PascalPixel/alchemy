@@ -47,6 +47,6 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src,
     if (reuse == 0)
         *src = Resource_FindFreeEntry();
 
-    *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
+    *dst = VramCache_Load(*src, 0x80, &work->f400);
     Runtime_ReleaseHeapBlock(0x44);
 }

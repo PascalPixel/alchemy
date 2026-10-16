@@ -261,7 +261,7 @@ Func_0817d174:
 	mov r1, r10
 	adds r1, #12
 	mov r0, r10
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r1, #0
 	ldr r0, [sp, #44]
 	str r1, [sp, #20]

@@ -22,10 +22,10 @@ MemFree:
 	.thumb_func
 Func_020007ac:
 	overlay_veneer Resource_DecodeType01Far
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -33,7 +33,7 @@ Resource_FindFreeEntry:
 	.global Func_020007c4
 	.thumb_func
 Func_020007c4:
-	overlay_veneer Bg0_ClearTilemapFar
+	overlay_veneer DebugText_ClearFar
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:

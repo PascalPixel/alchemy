@@ -522,7 +522,7 @@ Func_08181910:
 	ldr r3, .L_08181e80
 	strb r4, [r5]
 	str r3, [r7, #8]
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	mov r1, r8
 	ldr r0, [r1, #20]
 	lsls r0, r0, #11
@@ -537,7 +537,7 @@ Func_08181910:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	ldr r3, .L_08181e8c
 	mov r4, r8
 	str r3, [r7, #8]
@@ -619,7 +619,7 @@ Func_08181910:
 	movs r6, #0
 	adds r5, #80
 .L_08181dd6:
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	adds r0, r5, #0
 	bl Func_080150e4
 	movs r1, #1
@@ -642,7 +642,7 @@ Func_08181910:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	movs r3, #128
 	lsls r3, r3, #7
 	adds r6, #1

@@ -12,11 +12,11 @@
 // The summons in the order the menus list them.
 extern u8 gSummon_OrderList[29];
 
-u32 *Trade_GetOfferState();
+u32 *Djinn_GetRecoveryTable();
 
 // Lists the summons, in the game's order, whose bit is set in the state's
 // first word, ends the list with 32 and returns how many it listed.
-s32 Trade_ListFlaggedEntries(u8 *output) {
+s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 28;
   s32 count = 0;
@@ -30,7 +30,7 @@ s32 Trade_ListFlaggedEntries(u8 *output) {
     /* FAKEMATCH: the word is pinned to the r3 it takes in the native, so
        the and keeps its result there; in a plain local the word and the
        bit trade registers (differ 10). */
-    register u32 flags asm("r3") = *Trade_GetOfferState(0);
+    register u32 flags asm("r3") = *Djinn_GetRecoveryTable(0);
 
     /* FAKEMATCH: the barrier loads the word before the bit is started,
        as the native does; plainly the copy of the one is scheduled
@@ -55,7 +55,7 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
 }
 
 void Func_080aff94(s32 bit) {
-  u32 *state = Trade_GetOfferState(0);
+  u32 *state = Djinn_GetRecoveryTable(0);
   /* FAKEMATCH: the native loads the flags word before it builds the bit; the
    * plain form builds the bit first (one reordered pair, differ 2). The word is
    * pinned to the r3 it already takes: in a plain local the two registers trade

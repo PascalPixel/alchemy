@@ -49,7 +49,7 @@ Owner_LevelUp:
 	strh r3, [r6]
 	ldrb r1, [r0, #15]
 	mov r0, r11
-	bl Owner_GetLevelThreshold
+	bl Unit_GetExperienceForLevel
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3
@@ -281,7 +281,7 @@ Owner_LevelUp:
 	adds r3, #1
 	strb r2, [r3]
 	mov r0, r11
-	bl Owner_RefreshClassActions
+	bl Unit_RefreshPsynergy
 	mov r0, r11
 	bl UnitCalc
 .L_080afb6a:

@@ -1058,7 +1058,7 @@ static void EV05_TOUCH(void) {
   {
     s32 actor = (s32)&SceneId_VenusAerie;
 
-    Party_SetFields1ceAnd1d0(actor, 2);
+    Event_SetNextDestination(actor, 2);
     Event_SetDefeatDestination(actor, 9);
   }
   BattleFx_SetWeightedResult(98, 1);
@@ -1697,10 +1697,10 @@ static void Scene_RunPairedActorEffectSequence(void) {
   VenusAerie_FlashScreen();
   Event_Wait(20);
   Battle_SetStart(3);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_VenusAerie, 3);
+  Event_SetNextDestination((s32)&SceneId_VenusAerie, 3);
   Event_SetDefeatDestination((s32)&SceneId_VenusAerie, 9);
   BattleFx_SetWeightedResult(98, 0);
-  Owner_RefreshRatiosOnFlag();
+  Party_RestorePpOfLitElements();
   GameFlag_Set(0x351);
 }
 

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Owner_DetermineClass
+	.global Class_Determine
 	.thumb_func
-Owner_DetermineClass:
+Class_Determine:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +24,7 @@ Owner_DetermineClass:
 	mov r5, sp
 	adds r0, r7, #0
 	adds r2, r5, #0
-	bl Owner_GetDigitValues
+	bl Unit_GetElementLevels
 	mov r12, r11
 	mov r0, r11
 	movs r4, #0

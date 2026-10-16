@@ -16,16 +16,16 @@ struct DebugPartyEntry {
 extern struct DebugPartyEntry gData_0812a174[];
 
 void Party_RemoveActiveOwnerFar(s32 owner);
-struct TradeOfferState *Trade_GetOfferStateFar(s32 owner);
+struct TradeOfferState *Djinn_GetRecoveryTableFar(s32 owner);
 s32 Party_AddActiveOwnerFar(s32 owner);
-void Party_AdvanceOwnerCountToTargetFar(s32 owner, s32 level);
-void OwnerAction_AddFar(s32 owner, s32 action);
+void Unit_LevelUpToFar(s32 owner, s32 level);
+void Unit_LearnPsynergyFar(s32 owner, s32 action);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
-void Owner_RefreshDerivedDataFar(s32 owner);
+void Unit_UpdateClassFar(s32 owner);
 
 s32 DebugParty_LoadPreset(s32 preset)
 {
@@ -47,7 +47,7 @@ s32 DebugParty_LoadPreset(s32 preset)
     Party_RemoveActiveOwnerFar(4);
     Party_RemoveActiveOwnerFar(6);
     Party_RemoveActiveOwnerFar(7);
-    Trade_GetOfferStateFar(0)->count = done;
+    Djinn_GetRecoveryTableFar(0)->count = done;
 
     set = 0;
     for (i = 0; i < 4; i++)
@@ -73,7 +73,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             continue;
 
         Party_AddActiveOwnerFar(owner);
-        Party_AdvanceOwnerCountToTargetFar(owner, gData_0812a174[row].level);
+        Unit_LevelUpToFar(owner, gData_0812a174[row].level);
         state = UnitGet(owner);
         for (i = 0; i < 4; i++) {
             ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
@@ -86,7 +86,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
         for (i = 0; i < 2; i++) {
             if (gData_0812a174[row].actions[i] != 0)
-                OwnerAction_AddFar(owner, gData_0812a174[row].actions[i]);
+                Unit_LearnPsynergyFar(owner, gData_0812a174[row].actions[i]);
         }
         for (i = 0; i < 4; i++) {
             for (j = 0; j < gData_0812a174[row].djinnCounts[i]; j++) {
@@ -101,7 +101,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             if (gData_0812a174[row].items[i] != 0)
                 Inventory_EquipFar(owner, Inventory_AddItemFar(owner, gData_0812a174[row].items[i]));
         }
-        Owner_RefreshDerivedDataFar(owner);
+        Unit_UpdateClassFar(owner);
     }
     return done;
 }

@@ -97,7 +97,7 @@ Func_080e572c:
 	movs r1, #64
 	ldr r2, .L_080e5a50
 	str r0, [sp, #16]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r1, .L_080e5a54
 	str r0, [sp, #12]
 	movs r0, #128
@@ -209,7 +209,7 @@ Func_080e572c:
 	mov r2, r9
 	lsls r1, r1, #3
 	mov r11, r0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #168
 	lsls r3, r3, #5
 	adds r3, #6

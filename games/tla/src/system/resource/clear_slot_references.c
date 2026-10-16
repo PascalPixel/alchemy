@@ -1,7 +1,7 @@
 #include "resource.h"
 #include "vram_tab.h"
 
-s32 ResourceTable_GetLongestFreeBlockRun(void) {
+s32 VramCache_GetLongestFreeRun(void) {
   u8 *marker = gResourceBlockOwners;
   s32 run;
   s32 longest;
@@ -50,7 +50,7 @@ s32 Func_08014220(void) {
   return freeCount;
 }
 
-s32 Resource_ClearSlotReferences(s32 resourceId) {
+s32 VramCache_FreeBlocks(s32 resourceId) {
   s32 clearedCount = 0;
   s32 remaining;
   u8 *marker;

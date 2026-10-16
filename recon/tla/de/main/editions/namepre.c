@@ -25,10 +25,10 @@ s32 UpdateNameEntries(void)
     index = 0;
     while (index <= 2) {
         name_entry = UnitGet(index + 128);
-        if (SerialRuntime_BeginTransferB(name_entry) == -1) {
+        if (SerialRuntime_BeginReceive(name_entry) == -1) {
             break;
         }
-        SerialRuntime_WaitForTransferB();
+        SerialRuntime_WaitForReceive();
         if (name_entry[298] != 0) {
             named_count += 1;
         }
@@ -55,8 +55,8 @@ s32 UpdateNameEntries(void)
     }
     MemFree(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(340);
-    if (SerialRuntime_BeginTransferB(Resource_FarCall005(1)) != -1) {
-        SerialRuntime_WaitForTransferB();
+    if (SerialRuntime_BeginReceive(Resource_FarCall005(1)) != -1) {
+        SerialRuntime_WaitForReceive();
         WaitFrames(2);
     }
     MemFree(buffer);

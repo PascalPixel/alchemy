@@ -14,7 +14,7 @@
 // step   : 変化量の書き込み先
 // frames : かけるフレーム数（0 以下なら何もしない）
 //--------------------------------------------------------------------------
-void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step,
+void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step,
                                         s32 frames) {
   s32 n;
   s32 from;

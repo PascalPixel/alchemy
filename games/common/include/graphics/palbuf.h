@@ -5,7 +5,7 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct TitlePaletteWork {
+struct PaletteFade {
   u16 palette[512];
   u16 current[0x600];
   u16 target[0x600];
@@ -17,16 +17,16 @@ struct TitlePaletteWork {
   u8 padding3003;
 };
 
-LAYOUT_SIZE_GUARD(TitlePaletteWork_Size, struct TitlePaletteWork, 0x3004);
-LAYOUT_OFFSET_GUARD(TitlePaletteWork_Current, struct TitlePaletteWork, current,
+LAYOUT_SIZE_GUARD(PaletteFade_Size, struct PaletteFade, 0x3004);
+LAYOUT_OFFSET_GUARD(PaletteFade_Current, struct PaletteFade, current,
                     0x400);
-LAYOUT_OFFSET_GUARD(TitlePaletteWork_Target, struct TitlePaletteWork, target,
+LAYOUT_OFFSET_GUARD(PaletteFade_Target, struct PaletteFade, target,
                     0x1000);
-LAYOUT_OFFSET_GUARD(TitlePaletteWork_Delta, struct TitlePaletteWork, delta,
+LAYOUT_OFFSET_GUARD(PaletteFade_Delta, struct PaletteFade, delta,
                     0x1c00);
-LAYOUT_OFFSET_GUARD(TitlePaletteWork_Packed, struct TitlePaletteWork, packed,
+LAYOUT_OFFSET_GUARD(PaletteFade_Packed, struct PaletteFade, packed,
                     0x2800);
-LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page,
+LAYOUT_OFFSET_GUARD(PaletteFade_Page, struct PaletteFade, page,
                     0x3000);
 
 struct BattleEffectBuffers {
@@ -74,17 +74,17 @@ enum PaletteTransform {
 };
 
 #if GAME_TLA
-void Graphics_TransformPaletteBuffer(u32 mode, u16 *source, u16 *destination,
+void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                                      s32 half);
 
-void TitlePalette_InitializeBuffers(void);
-void TitlePalette_UpdateFade(void);
-void Graphics_TransformLargePalette(s32 index, s32 transform);
-void Graphics_SetPaletteTransformValue(s32 value);
-void Graphics_UpdatePaletteInterpolation(s32 frames);
-void Graphics_InterpolatePaletteBuffers(s16 *source, s16 *target, s16 *step,
+void PaletteFade_Init(void);
+void PaletteFade_Update(void);
+void PaletteFade_SetTarget(s32 index, s32 transform);
+void PaletteFade_SetBackdrop(s32 value);
+void PaletteFade_Start(s32 frames);
+void PaletteFade_ComputeSteps(s16 *source, s16 *target, s16 *step,
                                         s32 frames);
-void Runtime_ScheduleCallbackAndReleaseBlock32A(void);
+void PaletteFade_Release(void);
 #endif
 
 #endif

@@ -102,10 +102,10 @@ PartyInventory_Add:
 	.thumb_func
 Inventory_Discard:
 	overlay_veneer Inventory_DiscardFar
-	.global Owner_RefreshClassActions
+	.global Unit_RefreshPsynergy
 	.thumb_func
-Owner_RefreshClassActions:
-	overlay_veneer Owner_RefreshClassActionsFar
+Unit_RefreshPsynergy:
+	overlay_veneer Unit_RefreshPsynergyFar
 	.global Inventory_CountItem
 	.thumb_func
 Inventory_CountItem:

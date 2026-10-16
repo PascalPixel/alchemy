@@ -258,7 +258,7 @@ static void EV26_TOUCH(void) {
 
 static void EV27_SEARCH(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MSGNO(MsgMogallForestBrokenSign), 1);
   Engine_EventEnd();
 }
@@ -319,7 +319,7 @@ static void EV14_PSYNERGY_1(void) {
   Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(30);
   Engine_ActorStartRepeatedMotion(11, 2);
-  Engine_ActorShowEmote(11, 0x103, 0);
+  Engine_ActorShowEmote(11, EMOTE_IN_FRONT | 3, 0);
   Engine_AudioPlayCue(147);
   Engine_EventWait(60);
 
@@ -540,7 +540,7 @@ static void MogallForest_TransferActorFourteen(void) {
   Engine_ActorSetSpriteFlags(record, 0);
   Engine_EventWait(30);
   GameFlag_Set(0x305);
-  Actor_SetPosition(17, 0x1a80000, 0x1e00000);
+  Actor_SetPosition(17, PIXELS(424), PIXELS(480));
   Engine_EventEnd();
 }
 
@@ -750,7 +750,7 @@ static void EV19_PSYNERGY(void) {
   Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(30);
   Engine_ActorStartRepeatedMotion(15, 2);
-  Engine_ActorShowEmote(15, 0x103, 0);
+  Engine_ActorShowEmote(15, EMOTE_IN_FRONT | 3, 0);
   Engine_AudioPlayCue(147);
   Engine_EventWait(60);
   first = Object_GetById(ACTOR_PARTY_LEADER);
@@ -861,7 +861,7 @@ static void MogallForest_TransferActorEighteen(void) {
   Engine_ActorSetSpriteFlags(record, 0);
   Engine_EventWait(30);
   GameFlag_Set(0x30a);
-  Actor_SetPosition(22, 0x2e80000, 0x1f80000);
+  Actor_SetPosition(22, PIXELS(744), PIXELS(504));
   Engine_EventEnd();
 }
 
@@ -915,13 +915,13 @@ static void EV22_TOUCH(void) {
 
   rec7 = Object_GetById(18);
   Engine_EventBegin();
-  Actor_SetPosition(18, 0x880000, 0x1680000);
+  Actor_SetPosition(18, PIXELS(136), PIXELS(360));
   FieldScene_RunSixCallSetupSequence(18, 1);
   MogallForest_HopActorTo(18, 136, 0x198, 0x80000);
   Engine_EventWait(10);
   Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0,
                1, 0);
-  Actor_FaceDirection(18, 0xc000, 40);
+  Actor_FaceDirection(18, FACING_NORTH, 40);
   Actor_SetAttachedEffect(18, 0x102);
   Engine_ActorRunRepeatedMotion(18, 2);
   Engine_CameraFollowActor(18, 1);
@@ -953,7 +953,7 @@ static void EV23_TOUCH(void) {
   Engine_EventBegin();
   Engine_ActorSetChildValue(18, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
-  Actor_SetPosition(18, 0x880000, 0x1680000);
+  Actor_SetPosition(18, PIXELS(136), PIXELS(360));
   Engine_CameraSetSpeed(0x8000, 0x1000);
   Camera_MoveTo(0x880000, -1, 0x1880000, 1);
   Engine_CameraWaitForMove();
@@ -963,7 +963,7 @@ static void EV23_TOUCH(void) {
   Engine_ActorStartRepeatedMotion(0, 2);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_MapWaitWorkValuesBelow256();
-  Engine_ActorFaceDirection(0, 0xc000, 20);
+  Engine_ActorFaceDirection(0, FACING_NORTH, 20);
   Engine_EventWait(40);
   Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
   MogallForest_SpawnPuffRing(18);
@@ -1002,7 +1002,7 @@ static void EV23_TOUCH(void) {
   }
   Engine_EventWait(10);
   Battle_SetStart(3);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_MogallForest3, 15);
+  Event_SetNextDestination((s32)&SceneId_MogallForest3, 15);
   BattleFx_SetWeightedResult(53, 1);
   Engine_EventEnd();
 }
@@ -1042,15 +1042,15 @@ s32 FieldScene_RunSceneEntryHook(void) {
         Engine_EventBegin();
         Engine_TaskWait(1);
         Engine_ActorSetChildValue(10, 1);
-        Actor_SetPosition(10, 0x5c0000, 0x780000);
-        Actor_FaceDirection(10, 0xd000, 0);
+        Actor_SetPosition(10, PIXELS(92), PIXELS(120));
+        Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 0);
         Actor_SetSpeed(0, 0x6666, 0x3333);
         Engine_ActorWalkTo(0, 136, 64);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Engine_ActorWaitForMove(0);
         Engine_EventWait(30);
-        Actor_ShowEmote(10, 256, 0);
+        Actor_ShowEmote(10, EMOTE_IN_FRONT, 0);
         Engine_ActorRunRepeatedMotion(10, 2);
         Engine_EventWait(30);
         MogallForest_HopActorTo(10, 136, 116, 0x70000);
@@ -1068,7 +1068,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
         break;
       }
       Engine_ActorSetChildValue(10, 15);
-      Actor_SetPosition(10, 0x880000, 0x740000);
+      Actor_SetPosition(10, PIXELS(136), PIXELS(116));
       break;
 
     case 7:
@@ -1085,7 +1085,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
         actor->y.fixed = 0x200000;
       }
       Engine_TaskWait(1);
-      Engine_ActorSetPosition(16, 0x2780000, 0x1b80000);
+      Engine_ActorSetPosition(16, PIXELS(632), PIXELS(440));
       if (Engine_GameFlagIsSet(0xfd4) == 0) {
         InitializeStagedActorSceneOrbitingEffect(16);
       }
@@ -1099,7 +1099,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
         break;
       }
       Engine_TaskWait(1);
-      Actor_SetPosition(9, 0x2100000, 0x1980000);
+      Actor_SetPosition(9, PIXELS(528), PIXELS(408));
       Engine_ActorSetAnimation(9, 4);
       Map_CopyCellAttributes(38, 27, 4, 2, 31, 25);
       Object_GetById(9)->priorityFlags = 2;
@@ -1132,7 +1132,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
         s32 attr = 0;
 
         Engine_TaskWait(1);
-        Actor_SetPosition(10, 0x2280000, 0x1fe0000);
+        Actor_SetPosition(10, PIXELS(552), PIXELS(510));
         Engine_ActorSetAnimation(10, 4);
         Object_GetById(10)->priorityFlags = 2;
         Map_CopyCellAttributes(44, 30, 2, 4, 34, 30);
@@ -1157,8 +1157,8 @@ s32 FieldScene_RunSceneEntryHook(void) {
       if (Engine_GameFlagIsSet(0x305) == 0) {
         break;
       }
-      Actor_SetPosition(14, 0x1a80000, 0x1e00000);
-      Actor_SetPosition(17, 0x1a80000, 0x1e00000);
+      Actor_SetPosition(14, PIXELS(424), PIXELS(480));
+      Actor_SetPosition(17, PIXELS(424), PIXELS(480));
       break;
     }
   } else if (area == (s32)&SceneId_MogallForest3) {
@@ -1211,11 +1211,11 @@ s32 FieldScene_RunSceneEntryHook(void) {
       } else {
         Engine_TaskWait(1);
         Engine_ActorSetAnimation(9, 4);
-        Engine_ActorSetPosition(9, 0x2ba0000, 0x18e0000);
+        Engine_ActorSetPosition(9, PIXELS(698), PIXELS(398));
         Object_GetById(9)->priorityFlags |= 2;
         Map_CopyCellAttributes(26, 20, 2, 4, 42, 23);
         Engine_GameFlagSet(532);
-        Actor_SetPosition(14, 0x2780000, 0x1b80000);
+        Actor_SetPosition(14, PIXELS(632), PIXELS(440));
         Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
       }
       if (Engine_GameFlagIsSet(0x313) == 0) {
@@ -1223,7 +1223,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
       } else {
         Engine_TaskWait(1);
         Engine_ActorSetAnimation(11, 4);
-        Engine_ActorSetPosition(11, 0x29a0000, 0x2260000);
+        Engine_ActorSetPosition(11, PIXELS(666), PIXELS(550));
         Object_GetById(11)->priorityFlags = 2;
         Map_CopyCellAttributes(26, 20, 2, 4, 40, 32);
       }
@@ -1238,8 +1238,8 @@ s32 FieldScene_RunSceneEntryHook(void) {
         Engine_ActorSetChildValue(18, 15);
         Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
         if (Engine_GameFlagIsSet(0x30a) != 0) {
-          Actor_SetPosition(22, 0x2e80000, 0x1f80000);
-          Actor_SetPosition(18, 0x2e80000, 0x1f80000);
+          Actor_SetPosition(22, PIXELS(744), PIXELS(504));
+          Actor_SetPosition(18, PIXELS(744), PIXELS(504));
         }
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

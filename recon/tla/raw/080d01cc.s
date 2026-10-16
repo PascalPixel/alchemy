@@ -34,9 +34,9 @@ DisplayTransition_Start:
 	.4byte .L_080d0408
 .L_080d020c:
 	movs r0, #0
-	bl Blend_SetDarkenTarget16
+	bl Fade_ToBlack
 	mov r0, r10
-	bl Blend_SetDarkenTarget0
+	bl Fade_FromBlack
 	movs r0, #1
 	bl WaitFrames
 	b .L_080d04d2

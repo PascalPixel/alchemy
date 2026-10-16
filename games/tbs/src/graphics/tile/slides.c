@@ -171,7 +171,7 @@ s32 DisplayScroll_RunSlideshow(void) {
   gOamCopyEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
   gDebugTextEnabled = 0;
-  gOptionMirror = 0;
+  gIdleSleepEnabled = 0;
   Scheduler_ResetTaskTable();
   Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames,
                                 0x480);
@@ -201,7 +201,7 @@ s32 DisplayScroll_RunSlideshow(void) {
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(0x1040, &REG_DISPCNT);
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   gOamCopyEnabled = 1;
   return 0;
 }

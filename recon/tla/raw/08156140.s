@@ -1253,7 +1253,7 @@ BattleFx_RunProjectileVolley:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #116]
 	ldr r1, [sp, #48]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r4, #0
 	str r4, [sp, #72]
 	str r4, [sp, #136]

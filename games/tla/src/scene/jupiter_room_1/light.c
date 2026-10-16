@@ -15,7 +15,7 @@ extern s16 gData_0200239e;
 void *MemAlloc(s32 size);
 void Func_02001a4c(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void VramCache_Load(s32 entry, s32 size, void *source);
 void MemFree(void *block);
 void Func_02000b3c(void);
 struct FieldActor *Object_GetById(s32 id);
@@ -29,7 +29,7 @@ static inline void *BumpAlloc(s32 size) {
 static inline void VramLoad(s32 entry, s32 size, void *source) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's
    * constant */
-  VramBlock_LoadCached(entry, size, source);
+  VramCache_Load(entry, size, source);
 }
 
 void Func_02000cf8(void) {

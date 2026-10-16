@@ -51,6 +51,9 @@ struct BattleEventState {
   s32 flags;
 };
 
+// Six enemies at most, and a turn's queue of up to 20 actions.
+enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
+
 struct BattleWork {
   s32 enemyGroup;
   s16 spriteSlots[6];
@@ -75,11 +78,11 @@ struct BattleWork {
   u8 unk053;
   s32 promptSlot;
   s16 partyUnits[7];
-  s16 enemyIds[7];
+  s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; // ends with BATTLE_UNIT_LIST_END
   struct BattleObj slots[14];
   u8 placement[14];
   u8 unk2ea[2];
-  struct BattleActionRecord actions[20];
+  struct BattleActionRecord actions[BATTLE_ACTION_CAPACITY];
   u8 unk42c[0x104];
   struct BattleSpoils spoils;
   u16 palette[128];

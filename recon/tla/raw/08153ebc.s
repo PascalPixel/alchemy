@@ -332,7 +332,7 @@ Func_08153ebc:
 	ands r0, r2
 	bl SceneTransform_ApplyYaw
 	adds r0, r6, #0
-	bl Graphics_SaveTransferWork
+	bl Transform_Store
 	movs r3, #1
 	add r11, r3
 	mov r0, r11
@@ -814,7 +814,7 @@ Func_08153ebc:
 	cmp r3, #0
 	ble .L_0815456a
 	adds r0, r7, #0
-	bl Graphics_LoadTransferWork
+	bl Transform_Load
 	ldr r3, [r5]
 	ldr r2, [sp, #20]
 	adds r1, r6, #0
@@ -896,7 +896,7 @@ Func_08153ebc:
 	ldr r3, .L_08154650
 	strh r2, [r3, #4]
 	bl Func_0814cca8
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

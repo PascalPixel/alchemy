@@ -750,7 +750,7 @@ static void EV50_TOUCH(void) {
   Engine_EventWait(10);
   BattleFx_SetWeightedResult(72, last - place + 1);
   Battle_SetStart(3);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_ColossoLog, 4);
+  Event_SetNextDestination((s32)&SceneId_ColossoLog, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoLog, 5);
   Engine_GameFlagSet(0x11a);
 }
@@ -1056,7 +1056,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
 
   Engine_ActorDestroy(39);
   Engine_ActorDestroy(40);
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_AudioPlayCue(17);
   Engine_EventBegin();
   Actor_SetPosition(8, 0x6080000, 0xc00000);
@@ -1516,7 +1516,7 @@ static void EV36_TALK(s32 event) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
       Engine_ActorFaceDirection(0, 0xc000, 20);
-      battle_owner_69();
+      Field_ClimbUp();
       Camera_MoveTo(-1, -1, -1, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
       actor = Object_GetById(0);

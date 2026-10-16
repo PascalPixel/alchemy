@@ -86,7 +86,7 @@ Func_0803dc1c:
 	adds r2, r6, #0
 	ldrh r0, [r3]
 	lsls r1, r1, #1
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #230

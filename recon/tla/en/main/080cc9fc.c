@@ -10,7 +10,7 @@ extern const u8 gDebug_PaletteSwatchTiles[];
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
 void Ui_LoadWindowGraphics(void);
-void Bg0_ClearTilemap(void);
+void DebugText_Clear(void);
 
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
@@ -148,5 +148,5 @@ redraw:
         WaitFrames(1);
     }
     Ui_LoadWindowGraphics();
-    Bg0_ClearTilemap();
+    DebugText_Clear();
 }

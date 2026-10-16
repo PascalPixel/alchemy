@@ -2194,7 +2194,7 @@ Func_02001420:
 	movs r1, #128
 	adds r2, r6, #0
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r6, #0
 	bl MemFree
 	mov r1, r8

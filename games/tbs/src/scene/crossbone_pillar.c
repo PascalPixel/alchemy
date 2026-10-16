@@ -921,7 +921,7 @@ static void CrossbonePillar_PushPillar(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunSingleStep(void) { battle_owner_69(); }
+static void FieldScene_RunSingleStep(void) { Field_ClimbUp(); }
 
 static void CrossbonePillar_RunStagedCellScene(void) {
   struct FieldActor *leader = Object_GetById(0);
@@ -934,7 +934,7 @@ static void CrossbonePillar_RunStagedCellScene(void) {
   if (StagedActor_FindAtTile(p, leader) != NULL) {
     CrossbonePillar_PushPillar();
   } else if (FieldScene_RunScene3b3SequenceD() == 0) {
-    FieldEffect_UpdateGridPlacement();
+    Field_ClimbDown();
   }
 }
 

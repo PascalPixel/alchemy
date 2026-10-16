@@ -127,7 +127,7 @@ static void EV11_TALK(void) {
 
 static void ValeInteriors_RequestWindowExit(s32 value) {
   if (Engine_GameFlagIsSet(0x834) != 0)
-    BattleFx_SetBlock30ValuesMaxZero();
+    FieldFx_StopLightning();
   Engine_AudioPlayCue(123);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   gEventWork->transitionFrames = 16;
@@ -174,13 +174,13 @@ s32 Scene_RunSupplementalSequenceOne(void) {
     Engine_ActorSetPosition(20, 0, 0);
     Engine_ActorSetPosition(21, 0, 0);
     Engine_ActorSetPosition(22, 0, 0);
-    BattleFx_StartTwelveFrameBlend();
+    FieldFx_StartLightning();
     ((struct FieldBlendWork *)scene[3])->loud = 1;
-    BattleFx_SetBlock30Values12Zero();
+    FieldFx_LastLightning();
     Engine_TaskWait(30);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    BattleFx_SetBlock30Values128One();
+    FieldFx_ResumeLightning();
   }
   if (Engine_GameFlagIsSet(0x87a) != 0) {
     if (gGameState.entrance == 6) {

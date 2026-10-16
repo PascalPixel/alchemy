@@ -154,7 +154,7 @@ void Func_08148a54(struct BattleEffectArgument *effect) {
     if (frame == gData_081979a8[effect->variant * 2 + 1] - 16)
       Func_081180e8(133);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     for (i = 0; i != gData_081979a8[effect->variant * 2]; i++) {
       point = &work->particles[i];

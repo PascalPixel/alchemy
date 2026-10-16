@@ -23,7 +23,7 @@ Func_0804a134:
 	movs r0, #128
 	str r1, [sp, #60]
 	str r1, [sp, #56]
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	str r0, [sp, #52]
 	adds r0, r6, #0
 	bl UnitGet
@@ -109,7 +109,7 @@ Func_0804a134:
 	movs r7, #4
 .L_0804a208:
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	ldr r2, [sp, #4]
 	subs r7, #1
 	stmia r2!, {r0}
@@ -117,7 +117,7 @@ Func_0804a134:
 	str r1, [sp, #4]
 	movs r1, #1
 	negs r1, r1
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_0804a238
 	mov r1, r10
 	ands r0, r3
@@ -589,7 +589,7 @@ Func_0804a134:
 	str r1, [r0, #8]
 	ldr r0, [sp, #52]
 	ldr r1, .L_0804a620
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_0804a610
 	ldr r2, [sp, #12]
 	ands r0, r3
@@ -781,7 +781,7 @@ Func_0804a134:
 	beq .L_0804a79c
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	ldr r1, [sp, #68]
 	mov r3, r11
 	adds r3, #5
@@ -828,7 +828,7 @@ Func_0804a134:
 	beq .L_0804a80e
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	mov r0, r11
 	cmp r0, #0
 	beq .L_0804a7c8

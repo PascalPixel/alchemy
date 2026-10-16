@@ -13,7 +13,7 @@
 	.set import.Engine_BlendSetDarkenTarget16, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
-	.set import.SerialRuntime_BeginTransferA, 1
+	.set import.SerialRuntime_BeginSend, 1
 	.set import.UiWindow_Create, 1
 	.set import.UiWork_Finalize, 1
 	.set import.UiText_ShowPositionedMessageAndWait, 1
@@ -45,7 +45,7 @@
 	.set import.GameFlag_ClearBit, 1
 	.set import.Party_AddActiveOwner, 1
 	.set import.Party_RemoveActiveOwner, 1
-	.set import.Party_SetFlag32AndRefreshMembers, 1
+	.set import.Party_BeginChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1
 	.set import.Engine_EventWait, 1
@@ -54,6 +54,6 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Object_CallSpawnRoutineAtOrigin, 1
+	.set import.Menu_AskYesNo, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

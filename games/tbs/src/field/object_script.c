@@ -6,17 +6,16 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 物体スクリプト: エンジンが自分で始めるスクリプトと命令の表
 // Field object scripts: the ones the engine starts itself, and the command
 // table.
 //--------------------------------------------------------------------------
 
-// 何もせず本スクリプトへ戻る
+// Does nothing and returns to the idle script.
 const s32 gObjectDispatch_DefaultScript[] = {
     SC_END,
 };
 
-// 毎フレーム 1 つの命令を繰り返す
+// The scripts below each repeat one command every frame.
 const s32 gObjectDispatch_Table0Script[] = {
     SC_KEY_COUNT,
     SC_WAIT(1),
@@ -57,7 +56,7 @@ const s32 gObjectDispatch_Table6Script[] = {
     SC_END,
 };
 
-// 命令の番号ごとの処理。0x24 から先は SC_END と同じ。
+// The handler for each script command number; 0x24 onwards act as SC_END.
 const ScriptCommandFn gScriptObject_CommandTable[47] = {
     Script_StoreLookupResult,            // 0x00 SC_WAIT
     Script_WaitForEvent,                 // 0x01 SC_SYNC

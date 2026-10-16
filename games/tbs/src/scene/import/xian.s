@@ -46,7 +46,7 @@
 	.set import.Engine_ActorSetSpritePriority, 1
 	.set import.Engine_ActorShowEmote, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_SetQueuedSoundAndPlay, 1
 	.set import.BattleFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1

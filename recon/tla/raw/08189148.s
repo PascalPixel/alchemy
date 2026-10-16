@@ -706,7 +706,7 @@ Func_08189148:
 	ldr r1, [sp, #16]
 	ldr r0, [sp, #16]
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r4, [sp, #12]
 	cmp r4, #65
 	bls .L_081896d4

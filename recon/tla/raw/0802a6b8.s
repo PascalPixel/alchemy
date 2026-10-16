@@ -21,7 +21,7 @@ Func_0802a6b8:
 	strh r3, [r1]
 	movs r0, #0
 	sub sp, #8
-	bl Blend_SetDarkenTarget0
+	bl Fade_FromBlack
 	ldr r2, .L_0802a8f8
 	lsls r3, r5, #1
 	adds r3, r3, r5

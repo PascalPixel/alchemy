@@ -216,7 +216,7 @@ Func_08148a54:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r1, #0
 	mov r2, r8
 	mov r10, r1

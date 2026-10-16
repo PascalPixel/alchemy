@@ -3,7 +3,7 @@
 extern struct GabombaStatueChamberObject *gData_02002058;
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void VramCache_Load(s32 entry, s32 size, void *source);
 void Func_02001d90(s32 item);
 void Func_02000ef0();
 
@@ -30,7 +30,7 @@ void Func_02000f00(void) {
     sprite->unk1b[0] = zero;
     block = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02001d90(230);
-    VramBlock_LoadCached(sprite->vramBlock, 128, block + 0x400);
+    VramCache_Load(sprite->vramBlock, 128, block + 0x400);
     Runtime_ReleaseHeapBlock(68);
   }
 }
@@ -58,7 +58,7 @@ void Func_02000f88(void) {
     sprite->unk1b[0] = zero;
     block = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02001d90(242);
-    VramBlock_LoadCached(sprite->vramBlock, 128, block + 0x400);
+    VramCache_Load(sprite->vramBlock, 128, block + 0x400);
     Runtime_ReleaseHeapBlock(68);
   }
 }

@@ -14,7 +14,6 @@
 #include "text/msg_ids.h"
 
 void UiText_DrawCharacterAtOffsetFar();
-void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
 
 void UiText_DrawStatComparison(const struct BattleUnit *alt,

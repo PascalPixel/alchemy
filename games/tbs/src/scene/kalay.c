@@ -61,7 +61,7 @@ static __inline__ void ClearStep(struct FieldActor *a) {
   a->timer = z;
 }
 
-static void EV12_TALK(void) { BattleFx_RunPageEffectForSlot(0xC, 2, 3); }
+static void EV12_TALK(void) { Djinn_JoinParty(0xC, 2, 3); }
 
 static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect) {
   u32 action;

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global ResourceTable_AllocateBlocks
+	.global VramCache_AllocateBlocks
 	.thumb_func
-ResourceTable_AllocateBlocks:
+VramCache_AllocateBlocks:
 	push {r5, r6, r7, lr}
 	adds r5, r0, #0
 	lsrs r1, r1, #6

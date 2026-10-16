@@ -18,10 +18,9 @@
 // キャッシュ no に、今の大きさのまま src を写しなおす
 // 戻り値 : OBJ のタイル番号
 //--------------------------------------------------------------------------
-s32 Resource_GetBuffer(s32 no, s32 src) {
+s32 VramCache_Reload(s32 no, s32 src) {
 #if GAME_TLA
-  return VramBlock_LoadCached(no, gResourceTableEntries[no].size,
-                              (const void *)src);
+  return VramCache_Load(no, gResourceTableEntries[no].size, (const void *)src);
 #endif
 }
 

@@ -35,7 +35,7 @@ static void FieldScene_PlaceSlots14And15(void);
 static void SceneActor_SetMode3AndFlagBit1(s32 no);
 static void FieldScene_RunScene3aeSequenceA(void);
 
-static void EV14_TALK(void) { BattleFx_RunPageEffectForSlot(0xE, 0, 5); }
+static void EV14_TALK(void) { Djinn_JoinParty(0xE, 0, 5); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;

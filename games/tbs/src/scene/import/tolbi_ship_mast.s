@@ -37,8 +37,8 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Battle_GetWorkObject1e0, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.FieldEffect_UpdateGridPlacement, 1
-	.set import.battle_owner_69, 1
+	.set import.Field_ClimbDown, 1
+	.set import.Field_ClimbUp, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

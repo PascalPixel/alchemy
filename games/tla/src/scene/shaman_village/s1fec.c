@@ -2,7 +2,7 @@
 
 u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02004884(s32 resource);
 
 struct ShamanVillageObject *Func_02001fec(void) {
@@ -24,7 +24,7 @@ struct ShamanVillageObject *Func_02001fec(void) {
     sprite->unk1b[0] = 0;
     buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02004884(65);
-    VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
+    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     Runtime_ReleaseHeapBlock(68);
   }
   return object;

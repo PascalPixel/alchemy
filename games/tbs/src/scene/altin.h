@@ -5,45 +5,38 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-struct AngledSlot {
-  u8 head[6];
-  u16 angle;
-};
-
-struct SceneMotion {
+// A field actor as Altin's water effects use it: the water beast hopping in
+// the flood and the spray drifting off its spout reuse the actor's own
+// fields after the motion state.
+struct WaterActor {
   u8 unk00[8];
   s32 x;
   s32 y;
   s32 z;
-  s32 ground;
+  s32 ground; // the terrain height under the actor
   s32 scaleX;
   s32 scaleY;
   u8 unk20[8];
-  s32 velocity;
+  s32 velocityY; // upward speed of a hop, zero on the ground
   u8 unk2c[47];
-  u8 state;
+  u8 onGround;
   u8 unk5c[8];
   s16 timer;
-  s16 delay;
-  s32 active;
-  void (*callback)(struct SceneMotion *);
+  s16 shakeFrames; // frames until a landing's screen shake is calmed
+  s32 counter;     // the beast: 1 while airborne; a spray: frames to live
+  void (*update)(struct WaterActor *);
 };
 
-struct Actor {
-  s32 f00;
-  s32 f04;
-  s32 f08;
-};
-
-struct SpanActor {
+// The few fields of a spray particle set up when it spawns.
+struct SprayActor {
   u8 head[18];
   u8 gap18[6];
-  s32 span;
-  s32 reach;
+  s32 scaleX;
+  s32 scaleY;
   u8 gap32[48];
-  u8 *attached;
+  struct FieldSpritePriority *sprite;
   u8 gap84;
-  u8 state;
+  u8 motionFlags;
 };
 
 #endif

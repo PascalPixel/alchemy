@@ -40,7 +40,7 @@
 	.set import.Engine_ActorJump, 1
 	.set import.Engine_ActorStartRepeatedMotion, 1
 	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.BattleFx_RunRisingObjectSequence, 1
+	.set import.Actor_JumpDownLedge, 1
 	.set import.Engine_ActorFaceEachOther, 1
 	.set import.Engine_ActorSetChildValue, 1
 	.set import.ObjectGroup_SetChildValue, 1
@@ -57,8 +57,8 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetPhaseRequest, 1
-	.set import.FieldEffect_UpdateGridPlacement, 1
-	.set import.battle_owner_69, 1
+	.set import.Field_ClimbDown, 1
+	.set import.Field_ClimbUp, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

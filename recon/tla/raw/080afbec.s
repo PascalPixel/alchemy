@@ -195,7 +195,7 @@ Func_080afbec:
 	adds r1, r5, #0
 	adds r1, #36
 	ldr r0, [sp, #12]
-	bl Owner_CalculateBaseElements
+	bl Unit_CalcBaseElements
 	ldr r0, [sp, #12]
 	bl UnitCalc
 	movs r3, #149

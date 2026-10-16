@@ -2,6 +2,10 @@
 #define ALCHEMY_FARCALL_H
 
 // The far-call banks (games/tbs/src/system/far_call) as C declarations.
+// A stub is 8 bytes that jump to a routine of its bank, and code in other
+// banks calls the routine through it. A stub is usually named for its
+// routine with Far added: a call to UiText_DrawNumberAtOffsetFar runs
+// UiText_DrawNumberAtOffset in the window bank.
 // Each bank is one list: FAR_CALL names a stub and declares it, FAR_ENTRY
 // names a stub no declaration is established for, FAR_SLOT is a stub with
 // no name. The bank's assembly reads the same list for the stubs.
@@ -55,7 +59,7 @@ struct WorldPosition;
 // have empty parameters instead, a declaration with no prototype: the
 // bytes show their callers passing other arguments than the target takes,
 // which C89 accepts only with no prototype in scope. They are the
-// blank-display runners (the entrance in r0), OwnerAction_AddFar (called
+// blank-display runners (the entrance in r0), Unit_LearnPsynergyFar (called
 // with none), Party_ShowJoinedMessageFar (two), UiTimedNotice_CreateFar,
 // Menu_RunWorkspaceResultLoopFar and Runtime_GetBuildStampTimeFar (one
 // each). The near call UiWork_ResetCounters is declared the same way in

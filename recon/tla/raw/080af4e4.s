@@ -21,7 +21,7 @@ Owner_UpdateClassActions:
 	add r5, r9
 	mov r8, r0
 	ldrb r0, [r5]
-	bl Owner_GetRecordStride84
+	bl Class_GetDefinition
 	ldrb r3, [r5]
 	movs r4, #192
 	mov r11, r0

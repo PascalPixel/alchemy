@@ -223,7 +223,7 @@ static void EV23_TALK(void) {
 
 static void EV250_RAISED(void) {
 #if EDITION_INTERNATIONAL
-  Battle_InitializeRenderObject();
+  Leader_StopMoving();
 #endif
   Engine_EventSetMessage(MsgVaultWeDontHaveTimeFor);
   Engine_EventShowMessage(GARET, 0);
@@ -1043,7 +1043,7 @@ static void EV08_TALK(void) {
   GameFlag_Set(2132);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   base = (s32)&SceneId_VaultInteriors;
-  Party_SetFields1ceAnd1d0(base, 17);
+  Event_SetNextDestination(base, 17);
   Event_SetDefeatDestination(base, 16);
   Battle_SetStart(3);
   BattleFx_SetWeightedResult(12, 5);
@@ -1773,7 +1773,7 @@ static void VaultInteriors_RunVaultEvent(void) {
   SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
   Event_ShowMessage(10, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_VaultInteriors, 17);
+  Event_SetNextDestination((s32)&SceneId_VaultInteriors, 17);
   Event_SetDefeatDestination((s32)&SceneId_VaultInteriors, 16);
   Battle_SetStart(3);
   BattleFx_SetWeightedResult(12, 5);

@@ -8,7 +8,7 @@
 	.set import.MemAlloc, 1
 	.set import.MemFree, 1
 	.set import.Resource_DecodeType01, 1
-	.set import.Resource_ActivateEntry, 1
+	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
 	.set import.Runtime_PushSlotEntry, 1
@@ -49,12 +49,12 @@
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Engine_DisplayScrollStartHBlankDma, 1
 	.set import.DisplayScroll_DisarmHBlankDma, 1
 	.set import.Engine_MapObjectSetPosition, 1
 	.set import.BattleFx_EmitRandomParticle, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_SetQueuedSoundAndPlay, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

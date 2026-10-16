@@ -49,7 +49,7 @@ Func_080e4730:
 	adds r1, r5, #0
 	mov r2, r10
 	str r0, [sp, #28]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r6, #144
 	str r0, [sp, #24]
 	lsls r6, r6, #5
@@ -168,7 +168,7 @@ Func_080e4730:
 	movs r2, #0
 	adds r1, r5, #0
 	str r0, [sp, #32]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r5, r0, #0
 	movs r0, #200
 	lsls r0, r0, #5

@@ -3,18 +3,14 @@
 #include "edition.h"
 #include "text_font.h"
 
-//--------------------------------------------------------------------------
-// 文字と絵の表: 冠詞, 濁点, カーソルと揺れ
-// Window tables: each edition's articles, the kana marks and sprite motion.
-//--------------------------------------------------------------------------
+// Window text tables: each edition's articles and possessives, the kana
+// marks and the sprite motion curves.
 
-//--------------------------------------------------------------------------
-// 冠詞と所有の語 (言語ごと)
-//--------------------------------------------------------------------------
-
-// window.c は冠詞の表を struct ArticleTable (s8 *text[種類の数]) として
-// まるごと写して読む。どの表も ROM の .rodata にある。語はそれぞれの表の
-// 前に並ぶ。
+// Articles and possessives, by edition. An item or name carries an article
+// class (the {article_class:N} code of its message), and the message builder
+// (UiText_AppendArticleName in window.c) copies the class's word in front of
+// the name. window.c copies each table whole as a struct ArticleTable. Each
+// table's words come before it in .rodata.
 
 #if defined(TBS_EDITION_DE)
 
@@ -25,14 +21,16 @@ static const s8 sArticleEine[] = "eine ";
 static const s8 sArticleDie[] = "die ";
 static const s8 sArticleDas[] = "das ";
 
-// 種類ごとの冠詞
+// The article of each article class.
 const s8 *const gUiText_ArticleTable[8] = {
     gUiText_ArticleEmpty, sArticleEin,          sArticleEine,
     sArticleDie,          sArticleDas,          gUiText_ArticleEmpty,
     gUiText_ArticleEmpty, gUiText_ArticleEmpty,
 };
 
-// 数える語 (gUiText_NumberWords が {単数, 複数} に並べる)
+// Counted nouns, each plural before its singular; gUiText_NumberWords
+// (graphics/text/numwords.c) pairs them as {singular, plural}. "K\xe4pfe" is
+// the ROM's spelling of K\xe4mpfe.
 const u8 gUiText_NumberWord0[] = "K\xe4pfe";
 const u8 gUiText_NumberWord1[] = "Kampf";
 const u8 gUiText_NumberWord2[] = "Tickets";
@@ -47,7 +45,7 @@ const u8 gUiText_NumberWord9[] = "Punkt";
 static const s8 sPossessiveDein[] = "dein ";
 static const s8 sPossessiveDeine[] = "deine ";
 
-// 道具の性 (gUiText_ItemGenders) ごとの所有の語
+// The possessive ("your") for each item gender (gUiText_ItemGenders).
 const s8 *const gUiText_ItemPossessives[4] = {
     sPossessiveDein,
     sPossessiveDeine,
@@ -64,7 +62,7 @@ static const s8 sArticleLa[] = "la ";
 static const s8 sArticleLos[] = "los ";
 static const s8 sArticleLas[] = "las ";
 
-// 種類ごとの定冠詞
+// The definite article of each article class.
 const s8 *const gUiText_ArticleTable[5] = {
     gUiText_ArticleEmpty, sArticleEl, sArticleLa, sArticleLos, sArticleLas,
 };
@@ -74,7 +72,7 @@ static const s8 sArticleUna[] = "una ";
 static const s8 sArticleUnos[] = "unos ";
 static const s8 sArticleUnas[] = "unas ";
 
-// 種類ごとの不定冠詞
+// The indefinite article of each article class.
 const s8 *const gUiText_IndefiniteArticles[5] = {
     gUiText_ArticleEmpty, sArticleUn, sArticleUna, sArticleUnos, sArticleUnas,
 };
@@ -82,7 +80,7 @@ const s8 *const gUiText_IndefiniteArticles[5] = {
 static const s8 sPossessiveTu[] = "tu ";
 static const s8 sPossessiveTus[] = "tus ";
 
-// {単数, 複数} の所有の語
+// The possessive ("your") for {singular, plural}.
 const s8 *const gUiText_ItemPossessives[2] = {
     sPossessiveTu,
     sPossessiveTus,
@@ -100,7 +98,7 @@ static const s8 sArticleUn[] = "un ";
 static const s8 sArticleUne[] = "une ";
 static const s8 sArticleDes[] = "des ";
 
-// 種類ごとの冠詞
+// The article of each article class.
 const s8 *const gUiText_ArticleTable[8] = {
     gUiText_ArticleEmpty, sArticleLe, sArticleLa,  sArticleL,
     sArticleLes,          sArticleUn, sArticleUne, sArticleDes,
@@ -123,7 +121,7 @@ static const s8 sArticleUnElided[] = "un' ";
 static const s8 sArticleUno[] = "uno ";
 static const s8 sArticleUna[] = "una ";
 
-// 種類ごとの冠詞
+// The article of each article class.
 const s8 *const gUiText_ArticleTable[11] = {
     gUiText_ArticleEmpty, sArticleIl,  sArticleL,   sArticleLa,
     sArticleLo,           sArticleLe,  sArticleGli, sArticleUn,
@@ -133,7 +131,7 @@ const s8 *const gUiText_ArticleTable[11] = {
 static const s8 sPossessiveIlTuo[] = "Il tuo ";
 static const s8 sPossessiveLaTua[] = "la tua ";
 
-// 道具の性 (gUiText_ItemGenders) ごとの所有の語
+// The possessive ("your") for each item gender (gUiText_ItemGenders).
 const s8 *const gUiText_ItemPossessives[4] = {
     sPossessiveIlTuo,
     sPossessiveLaTua,
@@ -150,7 +148,7 @@ static const s8 sArticleAn[] = "an ";
 static const s8 sArticleSome[] = "some ";
 static const s8 sArticleThe[] = "the ";
 
-// 種類ごとの冠詞
+// The article of each article class.
 const s8 *const gUiText_ArticleTable[8] = {
     gUiText_ArticleEmpty, sArticleA,
     sArticleAn,           sArticleSome,
@@ -160,11 +158,9 @@ const s8 *const gUiText_ArticleTable[8] = {
 
 #endif
 
-//--------------------------------------------------------------------------
-// 濁点とスプライトの動き
-//--------------------------------------------------------------------------
-
 #if !EDITION_INTERNATIONAL
+// The glyph drawn over a kana for the mark in its code's top two bits: none,
+// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
 // clang-format off
 const u16 gUiText_MarkGlyphCodes[] = {
     TEXT_MARK_NONE,
@@ -174,7 +170,8 @@ const u16 gUiText_MarkGlyphCodes[] = {
 };
 #endif
 
-// カーソルの上下
+// The pointing hand's bob: a smooth rise and fall of 8 pixels over 80
+// frames.
 const u8 gUiSprite_CursorBobOffsets[80] = {
     0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
     5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
@@ -183,7 +180,8 @@ const u8 gUiSprite_CursorBobOffsets[80] = {
     5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
 };
 
-// 半径 4 の円
+// A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0
+// while y rises at each side.
 const s8 gUiSprite_WobbleOffsets[40] = {
     0, 4, 1, 4, 2, 3, 3, 2,
     4, 1, 4, 0, 4, 1, 3, 2,
@@ -192,11 +190,12 @@ const s8 gUiSprite_WobbleOffsets[40] = {
     -4, 1, -3, 2, -2, 3, -1, 4,
 };
 
+// Nothing in the game reads these 16 bytes.
 const u8 gUiSprite_WobbleTail[16] = {
     4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-// 弾み
+// A hop of up to 8 pixels over 16 frames.
 const u8 gUiSprite_BounceOffsets[16] = {
     0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };

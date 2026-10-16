@@ -215,7 +215,7 @@ Func_080e7844:
 	lsls r1, r1, #4
 	ldr r2, [sp, #72]
 	str r0, [sp, #48]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	str r0, [sp, #44]
 	ldr r0, [sp, #72]
 	movs r1, #211

@@ -49,7 +49,7 @@ Func_02003af0:
 	.global Func_02003af8
 	.thumb_func
 Func_02003af8:
-	overlay_veneer Bg0_ClearTilemapFar
+	overlay_veneer DebugText_ClearFar
 	.global Func_02003b00
 	.thumb_func
 Func_02003b00:

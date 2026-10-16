@@ -204,7 +204,7 @@ Func_080cb2b8:
 	ldr r0, [sp, #12]
 	adds r1, r5, #0
 	adds r0, #8
-	bl BattleFx_ApplyLookupResult
+	bl Encounter_RollWorldMap
 	b .L_080cb44a
 .L_080cb438:
 	movs r3, #4
@@ -215,7 +215,7 @@ Func_080cb2b8:
 .L_080cb442:
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl EffectRuntime_LookupByTableEntry
+	bl Encounter_RollTerrain
 .L_080cb44a:
 	movs r3, #178
 	lsls r3, r3, #1

@@ -5,12 +5,12 @@
 
 extern u8 gProjection[];
 
-void Camera_StoreSceneParameters(s32, u32, s32);
+void Projection_Set(s32, u32, s32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void Graphics_PrepareTransferInIwramWork();
+void Transform_SetLookAt();
 s32 Render_ProjectPoint();
 
 /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
@@ -42,7 +42,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 
     blend = Iwram_RatioMulQ14;
     result = blend(span, alpha);
-    Camera_StoreSceneParameters(span, result, span * 2);
+    Projection_Set(span, result, span * 2);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(pos);
     SceneTransform_ApplyYaw((s16)scene->yaw);
@@ -54,7 +54,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     hud[3] = 120;
     hud[4] = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(scene, pos);
+    Transform_SetLookAt(scene, pos);
     Render_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(
@@ -66,5 +66,5 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     half = scale * 0xff;
     width = half * 2;
     result = blend(width, alpha);
-    Camera_StoreSceneParameters(width, result, half * 4);
+    Projection_Set(width, result, half * 4);
 }

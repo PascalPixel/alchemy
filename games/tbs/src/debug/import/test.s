@@ -33,13 +33,13 @@
 	.set import.Engine_DebugGetItem, 1
 	.set import.Inventory_AddItem, 1
 	.set import.PartyInventory_Add, 1
-	.set import.Owner_AdjustFirstValue, 1
-	.set import.UnitPpAdd, 1
+	.set import.Unit_AddHp, 1
+	.set import.Unit_AddPp, 1
 	.set import.Party_AddActiveOwner, 1
 	.set import.Party_RemoveActiveOwner, 1
 	.set import.Djinn_AddToOwner, 1
 	.set import.Djinn_Activate, 1
-	.set import.Party_AdvanceOwnerCountToTarget, 1
+	.set import.Unit_LevelUpTo, 1
 	.set import.Item_AdjustCounter, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_ES

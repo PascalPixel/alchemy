@@ -172,7 +172,7 @@ u8 *TolbiShipMast_GetPlacements(void) {
 
 u8 *TolbiShipMast_GetEvents(void) { return (u8 *)gTolbiShipMast_SceneTableE; }
 
-static void EV10_TOUCH(void) { FieldEffect_UpdateGridPlacement(); }
+static void EV10_TOUCH(void) { Field_ClimbDown(); }
 
 static void EV11_SEARCH(void) {
   if (Engine_GameFlagIsSet(FLAG_MAST_923) != 0 ||
@@ -204,7 +204,7 @@ s32 TolbiShipMast_ApplyEntryState(void) {
     if (Engine_GameFlagIsSet(0x109) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
-      battle_owner_69();
+      Field_ClimbUp();
       leader->y.fixed = 0x380000;
       Camera_MoveTo(-1, -1, -1, 0);
       Engine_TaskWait(1);

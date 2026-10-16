@@ -5,4 +5,4 @@
 	overlay_veneer LemurianShip_GetExits
 	overlay_veneer LemurianShip_GetPlacements
 	overlay_veneer LemurianShip_GetEvents
-	overlay_veneer LemurianShip_GetDefaultResult
+	overlay_veneer LemurianShip_GetRegions

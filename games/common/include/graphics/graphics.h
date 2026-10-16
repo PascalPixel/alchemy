@@ -14,15 +14,15 @@ struct UiWindow;
 extern u8 gBlendBrighten;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it five functions of tbs's runtime.c differ in tbs-en:
- * Blend_ConfigureTransition (31), Blend_SetDarkenTarget0 (19),
- * Blend_SetBrightenTarget0, Blend_SetBrightenTarget16 and
- * Blend_SetDarkenTarget16 (7 each). */
+ * Fade_Start (31), Fade_FromBlack (19),
+ * Fade_FromWhite, Fade_ToWhite and
+ * Fade_ToBlack (7 each). */
 extern volatile u8 gBlendDuration;
 extern u8 gBlendFramesLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it BlendTransition_Update: differ 29 in tbs-en, 45 instructions
+ * own; without it Fade_Update: differ 29 in tbs-en, 45 instructions
  * for 46. */
 extern volatile u8 gBlendTargetLevel;
 extern u8 gRomShiftedTilePair[];
@@ -61,7 +61,7 @@ void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
 #if GAME_TLA
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
+void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
 void PartyStatusDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
@@ -290,7 +290,7 @@ void Resource_ClearOwnerListAndCounters(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 s32 ItemIcon_Compose(s32, s32);
-void OwnerAction_AddFar(void);
+void Unit_LearnPsynergyFar(void);
 void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(struct RenderOutput *node);
 #ifndef OWN_Resource_DecodeByteLzInRam
@@ -298,21 +298,23 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #endif
 s32 Resource_LoadByMode(s32 mode, s32 value);
 void Runtime_RemapBytesByTableFar(void *buffer, s32 size);
-void Text_FormatSignedDecimalToWork(s32);
+void NumberText_FormatDecimal(s32);
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                   s32 arg4);
 #ifndef OWN_UiIcon_BuildAbilityIconTiles
 void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                                   s32 reuse);
 #endif
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x,
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawString(u8 *text, s32 output, s32 x, s32 y);
-void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
+void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
+                                  s32 y);
+void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 #ifndef OWN_UiText_DrawStringInWindowFar
-void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
+void UiText_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
-void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
+void UiText_RenderWideStringInWindow(u16 *text, s32 window, s32 x, s32 y);
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void UiWork_AnimateSpriteSlots(void);

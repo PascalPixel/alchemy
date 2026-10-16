@@ -70,7 +70,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
-  tile = VramBlock_LoadCached(slot, 0, 0);
+  tile = VramCache_Load(slot, 0, 0);
   if (tile == 0)
     return NULL;
   found->slot = slot;

@@ -125,4 +125,4 @@ s32 Math_IntegerSqrt(s32 value) {
 
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
-s32 Runtime_GetLowTableAddress(void) { return (s32)gSystem_BasicColorPalette; }
+s32 Palette_GetBasicObjColors(void) { return (s32)gSystem_BasicColorPalette; }

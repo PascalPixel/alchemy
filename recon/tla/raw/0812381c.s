@@ -95,7 +95,7 @@ Func_0812381c:
 	movs r1, #192
 	adds r0, r5, #0
 	lsls r1, r1, #24
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_081238f2
 	movs r0, #8
@@ -986,7 +986,7 @@ Func_0812381c:
 	asrs r1, r1, #24
 	ands r1, r6
 	ands r2, r3
-	bl Trade_CanOfferDjinnFar
+	bl Djinn_IsReadyFar
 	cmp r0, #0
 	bne .L_08124086
 	b .L_08124182
@@ -1017,7 +1017,7 @@ Func_0812381c:
 	asrs r1, r1, #24
 	ands r1, r6
 	ands r2, r3
-	bl Trade_RemoveOfferFar
+	bl DjinnRecovery_RemoveFar
 	mov r2, r10
 	ldr r3, [r2]
 	movs r4, #0
@@ -1139,7 +1139,7 @@ Func_0812381c:
 	asrs r1, r1, #24
 	ands r2, r3
 	ands r1, r6
-	bl Trade_AddOfferFar
+	bl DjinnRecovery_AddStandbyFar
 	adds r0, r7, #0
 	bl BattleActGet
 	adds r5, r0, #0
@@ -1199,7 +1199,7 @@ Func_0812381c:
 	beq .L_08124256
 	movs r0, #1
 .L_08124256:
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	adds r0, #8
 	str r0, [sp, #4]
 	mov r3, r8
@@ -1883,7 +1883,7 @@ Func_0812381c:
 	str r3, [r2, #84]
 	mov r1, r8
 	ldrb r0, [r1, #3]
-	bl BattleEffectRevCheckFar
+	bl Battle_IsReviveEffectFar
 	cmp r0, #0
 	beq .L_0812478e
 	mov r2, r11

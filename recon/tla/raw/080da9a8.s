@@ -57,7 +57,7 @@ Func_080da9a8:
 	ldr r0, [r7]
 	mov r1, r8
 	adds r2, r6, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	b .L_080daa60
 .L_080daa28:
 	adds r1, r6, #0
@@ -82,7 +82,7 @@ Func_080da9a8:
 	ldr r0, [r7]
 	mov r1, r8
 	adds r2, r6, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 .L_080daa60:
 	movs r1, #144
 	lsls r1, r1, #3

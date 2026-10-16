@@ -82,10 +82,10 @@ PartyInventory_Add:
 	.thumb_func
 Party_ListActiveOwners:
 	overlay_veneer Party_ListActiveOwnersFar
-	.global Party_AdvanceOwnerCountToTarget
+	.global Unit_LevelUpTo
 	.thumb_func
-Party_AdvanceOwnerCountToTarget:
-	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+Unit_LevelUpTo:
+	overlay_veneer Unit_LevelUpToFar
 	.global PartyInventory_HasSpace
 	.thumb_func
 PartyInventory_HasSpace:

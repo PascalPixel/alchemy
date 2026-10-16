@@ -12,10 +12,10 @@
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
 	.set import.Sound_LoadPresetParameters, 1
-	.set import.SerialRuntime_BeginTransferA, 1
-	.set import.SerialRuntime_BeginTransferB, 1
+	.set import.SerialRuntime_BeginSend, 1
+	.set import.SerialRuntime_BeginReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
-	.set import.Scheduler_SetCallbackMask, 1
+	.set import.Scheduler_SetTaskFlags, 1
 	.set import.Engine_MapRedraw, 1
 	.set import.Engine_MapCopyCellsTo, 1
 	.set import.Map_ClearLayerEntryFlag, 1
@@ -31,7 +31,7 @@
 	.set import.UiWork_ClearValueNameTables, 1
 	.set import.UiText_DrawQuantity, 1
 	.set import.SaveState_ProcessSelectedSlot, 1
-	.set import.Trade_GetOfferState, 1
+	.set import.Djinn_GetRecoveryTable, 1
 	.set import.UnitGet, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -39,7 +39,7 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountActiveOwners, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventBegin, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_EventChooseYesNo, 1
@@ -53,7 +53,7 @@
 	.set import.Engine_EventShowMessage, 1
 	.set import.Event_SetDestination, 1
 	.set import.BattleFx_SetWeightedResult, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

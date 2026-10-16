@@ -39,7 +39,7 @@ u32 BattleRandomPercent(void) { return (BattleRandom() * 100) >> 16; }
 // add   : わざの威力
 // bonus : 属性の差（力 - たいせい）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
+s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   s32 dmg;
   s32 val;
 
@@ -47,7 +47,7 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
   dmg = bonus;
   if (atk < 0)
     atk = 0;
-  val = Curve_LookupScaledValue(dmg, 1) * (atk + (add * 2));
+  val = Battle_GetElementMultiplier(dmg, 1) * (atk + (add * 2));
   if (val < 0)
     val += 0x1ff;
   dmg = val >> 9;
@@ -63,10 +63,10 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
 // bonus : 属性の差（力 - たいせい）
 // rate  : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate) {
+s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
   s32 val;
 
-  val = Curve_LookupScaledValue(bonus, 0) * power * rate;
+  val = Battle_GetElementMultiplier(bonus, 0) * power * rate;
   if (val < 0)
     val = val + 0xffff;
   return val >> 16;
@@ -80,11 +80,11 @@ s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate) {
 // element  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
 // rate : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate) {
+s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
   s32 val;
   u32 prod;
 
-  prod = Curve_LookupScaledValue(element * 2 - 200, 0) * power;
+  prod = Battle_GetElementMultiplier(element * 2 - 200, 0) * power;
   prod = rate * prod;
   val = prod;
   if (val < 0)
@@ -92,7 +92,7 @@ s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate) {
   return val >> 16;
 }
 
-s32 Owner_GetDefaultElement(void *state);
+s32 Enemy_GetAttackElement(void *state);
 
 //--------------------------------------------------------------------------
 // ユニットの攻撃の属性を返す（4 は属性なし）
@@ -105,7 +105,7 @@ s32 Item_GetEquippedElement(s32 id) {
 
   unit = UnitGet(id);
   if (unit->classIndex == 0)
-    return Owner_GetDefaultElement(unit);
+    return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1 : 武器
   if (item != NULL)
     return item->element;

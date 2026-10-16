@@ -44,7 +44,8 @@ s32 BattleUnit_TickCharm(s32 unitId);
 s32 BattleUnit_TickStun(s32 unitId);
 s32 BattleUnit_TickSleep(s32 unitId);
 
-#define MESSAGE_PUSH(m) BattleEvPush(BATTLE_EVENT_MESSAGE, (m))
+// Pushes a message to show, waiting for the player to read it.
+#define PUSH_MESSAGE(message) BattleEvPush(BATTLE_EVENT_MESSAGE, (message))
 
 // L・R を押しているあいだカメラの yaw を 512 ずつ動かす。同じ関数がふたつある
 #define DEFINE_ADJUST_CAMERA(name)                                             \

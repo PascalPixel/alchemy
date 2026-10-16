@@ -31,7 +31,7 @@ Func_08124e20:
 	b .L_08124f9a
 .L_08124e54:
 	mov r0, r9
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	movs r2, #148
 	adds r3, r0, #0
 	movs r5, #8
@@ -146,7 +146,7 @@ Func_08124e20:
 	ldrb r1, [r6]
 	ldrb r2, [r6, #1]
 	adds r0, r5, #0
-	bl Trade_RemoveOfferFar
+	bl DjinnRecovery_RemoveFar
 	adds r0, r5, #0
 	bl UnitCalcFar
 	adds r0, r5, #0
@@ -303,7 +303,7 @@ Func_08124e20:
 .L_08125084:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -346,7 +346,7 @@ Func_08124e20:
 .L_081250e0:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl UnitPpAddFar
+	bl Unit_AddPpFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity

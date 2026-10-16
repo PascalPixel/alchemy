@@ -238,7 +238,7 @@ Func_080fe638:
 	str r0, [sp, #28]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	movs r6, #1
 .L_080fe826:
 	movs r0, #168

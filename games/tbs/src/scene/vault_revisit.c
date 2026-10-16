@@ -373,7 +373,7 @@ static void EV12_TOUCH(void) {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_toggle.h"
 
-static void EV21_TALK(void) { BattleFx_RunPageEffectForSlot(21, 0, 4); }
+static void EV21_TALK(void) { Djinn_JoinParty(21, 0, 4); }
 
 static void EV18_SCRIPT(void) {
   PartyInventory_Discard(231);

@@ -53,7 +53,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 
     x = Resource_FindFreeEntry();
     if (x < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(x, 128, (const void *)gResource_FixedBlockBTiles);
+        VramCache_Load(x, 128, (const void *)gResource_FixedBlockBTiles);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         work->cursor.output = out;
         x = win->x * 8;
@@ -64,7 +64,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     x = Resource_FindFreeEntry();
     if (x < RESOURCE_SLOTS) {
         Dma_Set(gWorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), 0x80000020, REG_DMA3);
-        VramBlock_LoadCached(x, 256, gWorkspaceOptions_SliderTiles);
+        VramCache_Load(x, 256, gWorkspaceOptions_SliderTiles);
         y = 0;
         out = RenderOutput_Create(x, 0x40004000, win, 134, y);
         ((u8 *)&out->table)[1] = (((u8 *)&out->table)[1] & 15) | 224;
@@ -81,7 +81,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 
     x = Resource_FindFreeEntry();
     if (x < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(x, 256, 0);
+        VramCache_Load(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[0].output = out;
@@ -93,7 +93,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 
     x = Resource_FindFreeEntry();
     if (x < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(x, 256, 0);
+        VramCache_Load(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[1].output = out;

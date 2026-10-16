@@ -6,7 +6,7 @@ extern volatile u32 gKeysRepeat;
 
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Audio_PlayCue(s32 cue);
-void Runtime_SetMainState19(void);
+void Input_ResetKeyRepeat(void);
 
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page)
 {
@@ -43,7 +43,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
             if (*cursor > per_page - 1)
                 *cursor = per_page - 1;
         }
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         result = 1;
         goto done;
     }
@@ -56,7 +56,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
             if (*cursor > per_page - 1)
                 *cursor = per_page - 1;
         }
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         result = 1;
         goto done;
     }

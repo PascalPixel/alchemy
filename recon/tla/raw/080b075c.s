@@ -42,7 +42,7 @@ Func_080b075c:
 	b .L_080b0a82
 .L_080b07a8:
 	mov r0, r8
-	bl BattleEffectRevCheck
+	bl Battle_IsReviveEffect
 	cmp r0, #0
 	beq .L_080b07be
 	movs r7, #56
@@ -291,11 +291,11 @@ Func_080b075c:
 	ble .L_080b0a3e
 	ldr r1, [sp, #0]
 	adds r0, r5, #0
-	bl Owner_GetResistanceValue
+	bl Unit_GetElementLevel
 	adds r5, r0, #0
 	ldr r1, [sp, #0]
 	mov r0, r11
-	bl Owner_GetResistanceValue
+	bl Unit_GetElementLevel
 	mov r4, r10
 	ldrb r3, [r4]
 	subs r5, r5, r0

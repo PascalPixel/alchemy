@@ -570,7 +570,7 @@ Func_080f9644:
 	bne .L_080f9af4
 .L_080f9b1a:
 	adds r0, r7, #0
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	adds r0, r7, #0
 	bl UnitCalcFar
 	bl ItemMenu_SetItemWin3
@@ -802,9 +802,9 @@ Func_080f9644:
 	adds r7, #255
 	add r7, r9
 	ldrb r0, [r5]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r7]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]
 	bl UnitCalcFar
 	ldrb r0, [r7]
@@ -1168,9 +1168,9 @@ Func_080f9644:
 	adds r7, #255
 	add r7, r9
 	ldrb r0, [r5]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r7]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]
 	bl UnitCalcFar
 	ldrb r0, [r7]
@@ -1292,7 +1292,7 @@ Func_080f9644:
 	b .L_080fa280
 .L_080fa0f8:
 	ldrb r0, [r7]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r7]
 	bl UnitCalcFar
 	mov r3, r9
@@ -1373,7 +1373,7 @@ Func_080f9644:
 	ands r3, r1
 	strh r3, [r0, r2]
 	ldrb r0, [r6]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r6]
 	bl UnitCalcFar
 	mov r1, r9

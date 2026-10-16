@@ -16,7 +16,7 @@ void VramBlock_Load93(void) {
   const u8 *data = gData_0802e89c;
   s32 size = 128;
 
-  VramBlock_LoadCached(93, size, data);
+  VramCache_Load(93, size, data);
 }
 
 struct AnimationEntry *AnimationObject_Allocate(s32 id) {

@@ -26,26 +26,26 @@ struct SparkObject;
 struct UiWindow;
 union FieldObject;
 
-void MapGroupTable_SelectEntry(s32 kind);
-void Party_SetReturnPoint(s32 reason);
+void Scene_TakeExit(s32 exitKind);
+void Scene_ReturnFromBattle(s32 result);
 s32 BattleFx_GetResourceGroup(s32 scene);
 void Game_ResetForNewGame(s32 mode);
-void BattleFx_LoadResourceGroup(s32 unused);
+void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
 void Audio_PlayCueFromEventWork(void);
-void BattleFx_SelectLocationRule(s32 use_rules);
+void Encounter_SelectSceneZones(s32 useRules);
 s32 BattleFx_LookupResult(void *pos);
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
-s32 EffectRuntime_LookupByTableEntry(u32 terrain, s32 steps);
-s32 BattleFx_ApplyLookupResult(s32 pos, s32 steps);
+s32 Encounter_RollTerrain(u32 terrain, s32 steps);
+s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 BattleFx_GetWeightedResult(s32 zone, s32 slot);
-s16 BattleFx_GetPhaseResult(s32 no);
+s16 BattleFx_GetPhaseResult(s32 djinni);
 void Scene_ResolveInteractionResult(void);
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
-void Party_ResolveTablePair(void);
+void Scene_SetDefeatReturnPoint(void);
 s16 Event_GetSpecialValue(void);
-void BattleFx_SetSpecialFromTable(void);
-void BattleFx_SelectResultPointer(s32 arg0);
+void Battle_SelectSceneBackdrop(void);
+void Battle_SelectTerrainBackdrop(s32 behavior);
 /* BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype
  * in scope, as in object.c above its definition: in one file its definition
  * would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult,
@@ -68,26 +68,27 @@ struct ActionDescriptor {
   u8 flags;
 };
 
-// シーンのイベント表の 1 件（struct SceneEvent と同じ 12 バイト）
+// One of the scene's events (the same 12 bytes as struct SceneEvent).
 struct EffectDescriptor {
-  s32 flags; // 下位 4bit が種類（SceneEventKind、7 は止めた相手と話す）
-  u8 value;  // 相手（オブジェクト番号など）
+  s32 flags; // the low 4 bits are the kind (SceneEventKind; 7 talks to
+             // the actor the party stopped)
+  u8 value;  // the target (an actor or a tile code)
   u8 unused05;
-  s16 condition; // GameFlag_IsConditionActive の条件
-  s32 result;    // 0x10000 未満はメッセージ、それ以上は呼ぶ関数
+  s16 condition; // as for GameFlag_IsConditionActive
+  s32 result;    // below 0x10000 a message, else a function to call
 };
 
-#define OBJ_LAST 66 // 調べるオブジェクト番号の最後
+#define OBJ_LAST 66 // the last actor slot searched
 
 //--------------------------------------------------------------------------
-// マップのマーカー物体
+// The map's marker actors (chests and Psynergy stones)
 //--------------------------------------------------------------------------
 #define MARKER_MAX 10
 
-#define MODE_WORLD_MAP 3 // ワールドマップ
+#define MODE_WORLD_MAP 3 // the world map
 
-s32 Party_RemapCharacterIdByFlags(s32 arg0);
-s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1);
+s32 Party_RemapCharacterIdByFlags(s32 character);
+s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 flag20);
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 void ObjectTable_DestroyAtIndex(s32 index);
 void ObjectTable_ResetForObject(struct ScenePlacement *table);
@@ -96,15 +97,15 @@ void *ObjectTable_GetSlotAddress(u32 index);
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry);
 void BattleEffect_ClearOutOfBoundsObjects(void);
 void BattleEffect_ClearAllObjects(void);
-void ObjectTable_ClearBattleSlots(void);
+void ObjectTable_ClearAll(void);
 void *ObjectTable_Get(u32 index);
 void ObjectTable_Snapshot(void);
 void ObjectTable_Restore(void);
 
-void BattleFx_ResetCounters(void);
-s32 BattleFx_SumCounters(void);
-s32 GetFocusedObjectCollision(void);
-void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ);
+void Field_ClearRequests(void);
+s32 Field_CountRequests(void);
+s32 Field_GetCollisionAheadOfLeader(void);
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ);
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled);
@@ -113,56 +114,56 @@ void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 s32 Field_RunScene(s32 entrance);
 s32 Object_GetTriggerTileAheadOfCurrent(void);
-void BattleMap_ApplyEntranceView(void);
+void Scene_ApplyEntrance(void);
 void Debug_RunPaletteEditor(void);
 
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
-u32 BattleFx_CheckDescriptorKind3Result(s32 flags, s32 result);
-struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value);
+u32 Event_SearchIgnoresCondition(s32 flags, s32 result);
+struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 value);
 void Runtime_CallWorkBlockEntry(void);
 s32 BattleFx_FindDescriptorWithOverride(s32 id);
-s32 BattleFx_RunDescriptorAction(s32 id);
-s32 BattleFx_RunKind6DescriptorAction(s32 value);
-s32 BattleAction_RunDescriptor(s32 value);
-s32 Battle_DispatchInputEvent(s32 event);
-s32 Field_RunTileAction(s32 tile);
+s32 Scene_TalkToActor(s32 id);
+s32 Scene_RunRaisedEvent(s32 value);
+s32 Scene_RunTouchOrExit(s32 value);
+s32 Field_RunPushTileEvent(s32 event);
+s32 Field_SearchTile(s32 tile);
 s32 BattleFx_MapKeyThroughTable(s32 mode);
 s32 BattleEffect_SelectNearbyObject(s32 id);
 s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode);
 s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode);
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette);
 void Battle_ResetEffectCounter(void);
-s32 Event_FindFacingTrigger(s32 source);
-s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot);
+s32 Field_FindItemEvent(s32 source);
+s32 Field_UseItem(s32 arg, s32 slot);
 void *BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result);
-s32 BattleFx_ExecutePackedAbilityEffect(s32 packed);
-s32 BattleCommand_ExecuteSelectedAction(u32 code);
+s32 Field_RunPsynergyEvents(s32 packed);
+s32 Field_UsePsynergy(u32 code);
 s32 BattleFx_HasMatchingEvent5(s32 group);
 u32 BattleFx_HasTrigger(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
-void Battle_PlaceMapMarkers(void);
-s32 EffectRuntime_FindSlotByObject(s32 id);
+void Field_PlaceMapMarkers(void);
+s32 Marker_FindSlot(s32 id);
 void EffectRuntime_ReservedNoOp(void);
-void EffectRuntime_SetMode5AndPlayCue(s32 id);
-void EffectRuntime_SetMode7AndLaunch(s32 id);
-void EffectRuntime_SetMode4AndPlayCue(s32 id);
-void EffectRuntime_SetMode2(s32 id);
-struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id);
-void EffectRuntime_ClearCurrentFlags(s32 id);
+void Marker_CloseChest(s32 id);
+void Marker_LaunchMimic(s32 id);
+void Marker_OpenChest(s32 id);
+void Marker_ShowOpened(s32 id);
+struct ObjectRuntime *Marker_GetActor(s32 id);
+void Marker_Hide(s32 id);
 void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y);
 
 void BattleFx_EmitRandomParticle(void);
-void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter);
+void ItemDisplay_EmitSparkles(struct ObjectRuntime *emitter);
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
 void Object_DestroyIfPresent(void *object);
-void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);
+void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags);
 void BattleFx_StartEffectObject22(s32 value, s32 flags);
 void BattleFx_ClearRandomParticles(void);
-void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source);
-u32 EffectRuntime_IsActive(void);
+void RevealMarker_EmitSparkles(const struct FieldActor *source);
+u32 Field_IsRevealActive(void);
 void FieldEffect_SpawnNearbyMarkers(void);
 
 void BattleFx_StartWindowHBlankDma(void);
@@ -185,7 +186,7 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
 void BattlePalette_UpdateBlend(void);
 /* BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
  * scope: in one file its definition would come before
- * BattleFx_StartTwelveFrameBlend and BattleFx_StartBufferBlend, and they change
+ * FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
  * (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
  * object|psynergy_effects. */
 void BattleEffect_InitializeBuffers(void);
@@ -196,7 +197,7 @@ void BattleFx_SetPrimaryBufferValue(u32 col);
 void BattleFx_StartBufferInterpolation(s32 frames);
 s32 BattleFx_ClampRgb555Channel(s32 value);
 s32 BattleFx_ClampRgb555Component(s32 value);
-void Object_EffectSpawnCallback(void);
+void FadeOverlay_DrawMarks(void);
 void BattleFx_StartFadeOverlay(void *object);
 void Object_EnableEffectSpawnCallback(void);
 void Object_DisableEffectSpawnCallback(void);

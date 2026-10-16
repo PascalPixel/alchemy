@@ -80,7 +80,7 @@ struct SpawnParams {
   u8 unk22[6];
 };
 
-static void EV22_TALK(void) { BattleFx_RunPageEffectForSlot(22, 1, 2); }
+static void EV22_TALK(void) { Djinn_JoinParty(22, 1, 2); }
 
 static void Actor_UpdatePresentationFlag(void) {
   struct SceneState *scene = (void *)Object_GetById(0);

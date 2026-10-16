@@ -63,7 +63,7 @@ Camera_ConfigureScene:
 	ldr r2, .L_0811ce48
 	adds r1, r0, #0
 	movs r0, #0
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	ldr r2, .L_0811ce4c
 	mov r3, r10
 	adds r3, #120

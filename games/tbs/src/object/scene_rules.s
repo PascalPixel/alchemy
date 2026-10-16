@@ -1,7 +1,7 @@
 	.include "games/common/include/game/ed_asm.h"
 
-@ シーンの曲: シーンかグループと入口 (-1 はどれでも) から、
-@ フラグ (-1 は常に) が立っている最初の行の曲
+@ Field music: the music of the first rule matching the scene or its group and
+@ the entrance (-1 for any) whose flag (-1 for always) is set.
 	.macro scene_cue scene:req, entrance:req, flag:req, cue:req
 	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000, \flag, \cue
 	.endm
@@ -9,7 +9,7 @@
 	.2byte \group, \entrance & 0x7fff, \flag, \cue
 	.endm
 
-@ 地名: シーンかグループと入口 (-1 はどれでも) から地名番号
+@ Place names: the name of the scene or its group and the entrance (-1 for any).
 	.macro scene_name scene:req, entrance:req, name:req
 	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000
 	.4byte \name
@@ -19,12 +19,13 @@
 	.4byte \name
 	.endm
 
-@ 戻り先: シーンと入口 (-1 はどれでも) から、記録するシーンと入口
+@ Defeat return points: the scene and entrance (-1 for any), then the scene and
+@ entrance the party returns to after a defeat there.
 	.macro return_to scene:req, entrance:req, saved:req, saved_entrance:req
 	.2byte SceneId_\scene, \entrance, SceneId_\saved, \saved_entrance
 	.endm
 
-@ 戦闘の背景と、それを使うシーン
+@ A battle backdrop and the scenes that use it.
 	.macro backdrop resource:req, scenes:vararg
 	.2byte ResourceId_\resource, 0x8000
 	.ifnb \scenes
@@ -162,7 +163,7 @@ gScene_InteractionRuleTable:
 	group_cue 58, -1, -1, 22
 	group_cue 59, -1, -1, 9
 	group_cue 60, -1, -1, 9
-	.2byte -1, -1, -1, 0	@ 終わり
+	.2byte -1, -1, -1, 0	@ end
 
 	.global gScene_AreaNameRules
 gScene_AreaNameRules:
@@ -294,9 +295,9 @@ gScene_AreaNameRules:
 	group_name 68, -1, 105
 	group_name 69, -1, 106
 	group_name 70, -1, 107
-	.2byte -1, -1	@ 終わり
+	.2byte -1, -1	@ end
 	.4byte -1
-	.2byte 0, 0	@ 終わりの後の 0 の行
+	.2byte 0, 0	@ a row of zeros after the end
 	.4byte 0
 
 	.global gParty_PairResolveRules
@@ -319,9 +320,9 @@ gParty_PairResolveRules:
 	return_to Suhalla, -1, SuhallaInteriors, 6
 	return_to Lalivero, -1, LaliveroInteriors1, 12
 	return_to LinkLobby, -1, LinkLobby, 1
-	.2byte -1, -1, -1, -1	@ 終わり
+	.2byte -1, -1, -1, -1	@ end
 
-@ 合うシーンがなければ最後の背景
+@ A scene not listed takes the last backdrop.
 	.global gBattle_BackdropScenes
 gBattle_BackdropScenes:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeHome, ValeKraden
@@ -355,4 +356,4 @@ gBattle_BackdropScenes:
 	backdrop VenusLighthouseBackdrop, VenusLighthouse2, VenusLighthouse3, VenusLighthouse4, VenusLighthouse5, VenusLighthouse6
 	backdrop VenusAerieBackdrop, VenusAerie
 	backdrop GomaCaveBackdrop
-	.4byte 0	@ 終わり
+	.4byte 0	@ end

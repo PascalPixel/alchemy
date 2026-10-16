@@ -25,11 +25,11 @@ Scheduler_RemoveCallbackFar:
 	.global Func_02001bf4
 	.thumb_func
 Func_02001bf4:
-	overlay_veneer Scheduler_EnableCallbacksFar
+	overlay_veneer Scheduler_SuspendTasksFar
 	.global Func_02001bfc
 	.thumb_func
 Func_02001bfc:
-	overlay_veneer Scheduler_DisableCallbacksFar
+	overlay_veneer Scheduler_ResumeTasksFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -50,10 +50,10 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 Func_02001c24:
 	overlay_veneer Resource_DecodeByteLzInRamFar
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:

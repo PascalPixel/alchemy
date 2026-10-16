@@ -470,7 +470,7 @@ Func_0810106c:
 	ldrb r2, [r5]
 	ldrb r1, [r3]
 	ldrb r0, [r6]
-	bl Trade_AddOfferFar
+	bl DjinnRecovery_AddStandbyFar
 	b .L_08101576
 .L_08101416:
 	movs r1, #188
@@ -645,7 +645,7 @@ Func_0810106c:
 	ldrb r2, [r5]
 	ldrb r1, [r3]
 	ldrb r0, [r6]
-	bl Trade_RemoveOfferFar
+	bl DjinnRecovery_RemoveFar
 .L_08101576:
 	adds r4, r0, #0
 	ldrb r0, [r6]

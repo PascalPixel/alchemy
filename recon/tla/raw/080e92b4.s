@@ -129,7 +129,7 @@ Func_080e92b4:
 	lsls r1, r1, #3
 	ldr r2, [sp, #20]
 	str r0, [sp, #72]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, [sp, #84]
 	str r0, [sp, #68]
 	movs r1, #242
@@ -465,7 +465,7 @@ Func_080e92b4:
 	mov r3, r11
 	ldrb r0, [r3, #16]
 	movs r2, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r1, .L_080e97bc
 	lsls r0, r0, #5
 	adds r5, r0, r1

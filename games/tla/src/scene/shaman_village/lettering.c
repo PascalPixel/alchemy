@@ -22,7 +22,7 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters load the size after
    * the tile address; a direct call loads it between the shift and the add
    * (differ 2). */
-  return VramBlock_LoadCached(block, size, data);
+  return VramCache_Load(block, size, data);
 }
 
 // Decodes the lettering sheet, sends one graphic's palette to OBJ palette 15

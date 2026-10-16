@@ -192,13 +192,13 @@ Func_081a6ea0:
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	ldr r3, .L_081a7064
 	movs r2, #128
 	lsls r2, r2, #19
 	strh r3, [r2]
 	movs r0, #10
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	movs r3, #176
 	add r5, sp, #4
 	strh r3, [r5, #2]
@@ -323,9 +323,9 @@ Func_081a6ea0:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #20
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	mov r2, r10
 	mov r3, r8
 	strh r6, [r5, #2]
@@ -341,9 +341,9 @@ Func_081a6ea0:
 .L_081a715e:
 	movs r0, #0
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #10
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	movs r0, #10
 	bl WaitFrames
 .L_081a7172:

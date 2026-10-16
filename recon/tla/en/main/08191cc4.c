@@ -20,7 +20,7 @@ extern s32 gCameraSceneParameters[];
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void Func_08118088(s32 actor, s32 mode);
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 
 // Summon 25's teardown: sets each target back on the ground at the battle
@@ -49,7 +49,7 @@ void Func_08191cc4(void) {
   transition->active = 0;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  PaletteDma_LoadBlock();
+  Palette_LoadBasicObjColors();
   // The battle's background (The Broken Seal's battle->background).
   BattleBackground_LoadFar(1, *(u16 *)battle->unk670, 24);
 }

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global TitlePalette_UpdateFade
+	.global PaletteFade_Update
 	.thumb_func
-TitlePalette_UpdateFade:
+PaletteFade_Update:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

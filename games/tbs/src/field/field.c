@@ -64,16 +64,15 @@
 #include "unit/field/curve_data.h"
 #include "unit/field/griddata.h"
 
-//--------------------------------------------------------------------------
-// source を destination に展開して destination を返す
-// source[0・1] : コマンドの列までのオフセット（0 なら圧縮なしで source + 2
-// を返す） source + 2   : そのまま写すバイトの列 コマンドの列 :
-// 制御バイトを下位ビットから 1 ビットずつ読む
-//   1 : そのまま写すバイトを 1 つ写す
-//   0 : 2 バイト（上位・下位）を読む。0 なら終わり。
-//       下位 12 ビットが距離、上位 4 ビット + 2 が長さ（4 ビットが 0
-//       なら次のバイト + 18） source + 2 から距離だけ前のところから写す
-//--------------------------------------------------------------------------
+// Decompresses an LZ stream from source into destination and returns
+// destination. The stream starts with a little-endian halfword: the offset of
+// its command bytes, or 0 for an uncompressed block, whose data (source + 2)
+// is returned as it is. The literal bytes follow that halfword. Each command
+// byte gives eight flags, low bit first: 1 copies the next literal byte; 0
+// reads a big-endian halfword whose low 12 bits are a distance and high 4
+// bits a length - 2 (or, when 0, the next byte + 16 + 2), and copies that many
+// bytes from the literals' start minus the distance. A zero halfword ends the
+// stream.
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
@@ -93,10 +92,10 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   base = literal;
   start = destination;
   command++;
-  control |= 0x100; // 8 ビット読み終えたしるし
+  control |= 0x100; // a marker bit, shifted down as the flags are read
   for (;;) {
     if ((control & 1) != 0) {
-      if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
+      if (control != 1) // only the marker is left: read the next command
         *destination++ = *literal++;
     } else {
       token = *command++ << 8;
@@ -125,90 +124,117 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   return start;
 }
 
+// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
+// run from RAM) and uploads a finished buffer to sprite VRAM
+// (Tile_CopyStrided).
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
+// Animation script commands. A script is pairs of bytes, a command and its
+// argument; a command below 239 shows that frame for `arg` frames at normal
+// speed (the timer counts sixteenths, less AnimationEntry.step each frame).
+enum AnimationCommand {
+  ANIM_CMD_END = 239,      // blank the layer and stop its script
+  ANIM_CMD_SET_KIND = 240, // use facing table `arg`
+  ANIM_CMD_HOLD = 241,     // stay on this command and frame for good
+  ANIM_CMD_WAIT = 245,     // keep the current frame `arg` frames longer
+  ANIM_CMD_JUMP = 253,     // continue at script position `arg`
+  ANIM_CMD_PLAY = 254,     // switch to animation `arg`
+  ANIM_CMD_BLANK = 255     // show nothing for `arg`
+};
+
+// Advances a sprite's animation layers by one frame, picks each layer's frame
+// for the facing dir, and when any frame changed redraws the sprite: the
+// layers composed by priority into one pixel buffer, an optional outline,
+// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
+// 0's frame for this facing is drawn mirrored.
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
-  s32 changed;
+  s32 mirrored;
   u32 size;
-  struct ObjectSystemWork *ctx;
-  DrawFn draw;
-  s32 held;
-  struct AnimationEntry *e;
-  void *block;
-  u8 *buf;
-  u8 *tmp;
+  struct ObjectSystemWork *system;
+  DrawFn decodeFrame;
+  s32 decoderWasLoaded;
+  struct AnimationEntry *layer;
+  void *code;
+  u8 *pixels;
+  u8 *unpacked;
   void *decoded;
-  u16 order[4];
+  u16 drawOrder[4];
   s32 i;
   s32 k;
-  s32 n;
+  s32 drawCount;
   u32 key;
   s32 arg;
-  s32 base;
-  u32 attr;
+  s32 frame;
+  u32 facing;
   s32 tile;
 
-  changed = 0;
-  ctx = (*(void *(*)[]) & gMenuCtrlWork)[0];
-  held = 1;
-  draw =
+  // The object system's work and the frame decoder sit in the heap slot
+  // table; load the decoder into RAM for this call if no one else has.
+  mirrored = 0;
+  system = (*(void *(*)[]) & gMenuCtrlWork)[0];
+  decoderWasLoaded = 1;
+  decodeFrame =
       (DrawFn)(*(void *(*)[]) &
-               gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
-  if (draw == 0) {
-    block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER,
-                                      (s32)Render_DecodeFrameCodeSize);
-    Dma_Set(Render_DecodeFrame, block,
+               gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH - HEAP_SLOT_MENU_CONTROL];
+  if (decodeFrame == 0) {
+    code = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH,
+                                     (s32)Render_DecodeFrameCodeSize);
+    Dma_Set(Render_DecodeFrame, code,
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE32 | DMA_32BIT),
             REG_DMA3);
-    draw = (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER -
-                                                    HEAP_SLOT_MENU_CONTROL];
-    held = 0;
+    decodeFrame =
+        (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                 HEAP_SLOT_MENU_CONTROL];
+    decoderWasLoaded = 0;
   }
 
+  // Step each layer's script: read commands until one shows a frame for a
+  // while, else count the current frame's time down.
   for (i = 0; i < obj->count; i++) {
-    e = obj->entries[i];
-    if (e == 0) {
+    layer = obj->entries[i];
+    if (layer == 0) {
       continue;
     }
-    if (e->script == 0) {
+    if (layer->script == 0) {
       continue;
     }
     /* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command
      * back-edges and the decoded frame value separate from the hold reload. */
   read_command:
-    if ((s16)e->timer <= 0) {
-      base = e->script[e->pos++];
-      arg = e->script[e->pos++];
-      switch (base) {
-      case 254:
-        Animation_SetWorkEntry(e, arg);
+    if ((s16)layer->timer <= 0) {
+      frame = layer->script[layer->pos++];
+      arg = layer->script[layer->pos++];
+      switch (frame) {
+      case ANIM_CMD_PLAY:
+        Animation_SetWorkEntry(layer, arg);
         obj->lastNo = arg;
         break;
-      case 253:
-        e->pos = arg;
+      case ANIM_CMD_JUMP:
+        layer->pos = arg;
         break;
-      case 245:
-        e->timer += arg << 4;
+      case ANIM_CMD_WAIT:
+        layer->timer += arg << 4;
         break;
-      case 241:
-        e->pos -= 2;
+      case ANIM_CMD_HOLD:
+        layer->pos -= 2;
         goto framed;
-      case 240:
-        e->kind = arg;
+      case ANIM_CMD_SET_KIND:
+        layer->kind = arg;
         break;
-      case 255:
-        e->frameBase = 255;
-        base = 255;
-        e->timer += arg << 4;
+      case ANIM_CMD_BLANK:
+        layer->frameBase = 255;
+        frame = 255;
+        layer->timer += arg << 4;
         goto select_direction;
-      case 239:
-        e->frameBase = 255;
-        e->script = 0;
-        base = 255;
+      case ANIM_CMD_END:
+        layer->frameBase = 255;
+        layer->script = 0;
+        frame = 255;
         obj->count--;
         goto select_direction;
+      // Unused commands, skipped. 251 is not among them: it shows as a frame.
       case 242:
       case 243:
       case 244:
@@ -220,123 +246,135 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       case 252:
         break;
       default:
-        e->frameBase = base;
-        e->timer += arg << 4;
+        layer->frameBase = frame;
+        layer->timer += arg << 4;
         goto select_direction;
       }
       goto read_command;
     }
-    e->timer = e->timer - e->step;
+    layer->timer = layer->timer - layer->step;
   framed:
-    base = e->frameBase;
+    frame = layer->frameBase;
   select_direction:
-    switch (e->kind) {
+    // The facing table of the layer's kind gives an offset from the base
+    // frame (low three bits) and whether to mirror it (bit 7).
+    switch (layer->kind) {
     case 1:
-      attr = gAnimationFacing_Kind1[dir >> 13];
+      facing = gAnimationFacing_Kind1[dir >> 13];
       break;
     case 2:
     case 20:
-      attr = gAnimationFacing_Kind2[dir >> 13];
+      facing = gAnimationFacing_Kind2[dir >> 13];
       break;
     case 22:
-      attr = gAnimationFacing_Kind22[dir >> 13];
+      facing = gAnimationFacing_Kind22[dir >> 13];
       break;
     case 3:
-      attr = gAnimationFacing_Kind3[dir >> 12];
+      facing = gAnimationFacing_Kind3[dir >> 12];
       break;
     case 4:
-      attr = gAnimationFacing_Kind4[dir >> 10];
+      facing = gAnimationFacing_Kind4[dir >> 10];
       break;
     case 5:
-      attr = gAnimationFacing_Kind5[dir >> 12];
+      facing = gAnimationFacing_Kind5[dir >> 12];
       break;
     case 6:
-      attr = gAnimationFacing_Kind6[dir >> 10];
+      facing = gAnimationFacing_Kind6[dir >> 10];
       break;
     case 8:
-      attr = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+      facing = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
     case 88:
-      attr = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+      facing = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
     default:
-      attr = 0;
+      facing = 0;
       break;
     }
-    base += attr & 7;
-    if (i == 0 && (attr >> 7) != 0) {
-      changed = 1;
+    frame += facing & 7;
+    if (i == 0 && (facing >> 7) != 0) {
+      mirrored = 1;
     }
-    if (e->frame != base) {
-      e->frame = base;
+    if (layer->frame != frame) {
+      layer->frame = frame;
       obj->dirty = 1;
     }
   }
 
   if (obj->dirty != 0) {
     size = obj->width * obj->height;
-    buf = MemAlloc(size);
-    Iwram_ClearWords(buf, size);
+    pixels = MemAlloc(size);
+    Iwram_ClearWords(pixels, size);
 
-    n = -1;
+    // Sort the visible layers by priority (0-3), then by index, with an
+    // insertion sort on keys of (priority << 8) | index.
+    drawCount = -1;
     for (i = obj->count - 1; i >= 0; i--) {
-      e = obj->entries[i];
-      if (e == 0) {
+      layer = obj->entries[i];
+      if (layer == 0) {
         continue;
       }
-      if (e->frames == 0) {
+      if (layer->frames == 0) {
         continue;
       }
-      if (e->frame == 255) {
+      if (layer->frame == 255) {
         continue;
       }
-      key = e->priority;
+      key = layer->priority;
       if (key > 3) {
         continue;
       }
       key = (key << 8) | i;
       /* FAKEMATCH: needed to match: the first shift written apart and the scan
        * left by goto keep the scan unrotated, with its step at the top. */
-      k = n;
-      if (k >= 0 && order[k] > key) {
-        order[k + 1] = order[k];
+      k = drawCount;
+      if (k >= 0 && drawOrder[k] > key) {
+        drawOrder[k + 1] = drawOrder[k];
         for (;;) {
           k--;
           if (k < 0)
             goto insert;
-          if (order[k] <= key)
+          if (drawOrder[k] <= key)
             goto insert;
-          order[k + 1] = order[k];
+          drawOrder[k + 1] = drawOrder[k];
         }
       }
     insert:
-      order[k + 1] = key;
-      n++;
+      drawOrder[k + 1] = key;
+      drawCount++;
     }
-    n++;
+    drawCount++;
 
-    for (i = 0; i < n; i++) {
-      e = obj->entries[*(u8 *)&order[i]];
-      if (e->mode == 1) {
-        Resource_DecodeType01(e->frames[e->frame], buf);
-      } else if (e->mode == 3) {
-        if (e->param != 0) {
-          tmp = MemAlloc(0x400);
-          draw(Resource_DecompressLz(e->frames[e->frame], tmp), buf, e->param);
-          MemFree(tmp);
+    // Draw the layers in that order. A layer's frames are stored by its
+    // codec: 1 is the type-01 format, 3 LZ (unpacked first, or drawn
+    // through a scratch buffer when the layer has a draw parameter), and
+    // anything else raw for the decoder.
+    for (i = 0; i < drawCount; i++) {
+      layer = obj->entries[*(u8 *)&drawOrder[i]];
+      if (layer->mode == 1) {
+        Resource_DecodeType01(layer->frames[layer->frame], pixels);
+      } else if (layer->mode == 3) {
+        if (layer->param != 0) {
+          unpacked = MemAlloc(0x400);
+          decodeFrame(
+              Resource_DecompressLz(layer->frames[layer->frame], unpacked),
+              pixels, layer->param);
+          MemFree(unpacked);
         } else {
-          decoded = Iwram_Decompress(e->frames[e->frame], buf);
+          decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
           if (decoded != 0) {
-            draw(decoded, buf, 0);
+            decodeFrame(decoded, pixels, 0);
           }
         }
       } else {
-        draw(e->frames[e->frame], buf, e->param);
+        decodeFrame(layer->frames[layer->frame], pixels, layer->param);
       }
     }
 
+    // Outline: a pixel whose four neighbours are all drawn becomes the fill
+    // colour, and any other drawn pixel the edge colour.
     if ((obj->flags & 2) != 0) {
-      u8 *mask;
+      u8 *inside;
       u8 edge;
       u8 fill;
       u32 w;
@@ -344,14 +382,14 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       u8 *src;
       u8 *dst;
 
-      mask = MemAlloc(size);
+      inside = MemAlloc(size);
       w = obj->width;
       h = obj->height;
-      edge = ctx->edge;
-      fill = ctx->fill;
-      Iwram_ClearWords(mask, size);
-      src = buf + w + 1;
-      dst = mask + w + 1;
+      edge = system->edge;
+      fill = system->fill;
+      Iwram_ClearWords(inside, size);
+      src = pixels + w + 1;
+      dst = inside + w + 1;
       for (i = 1; i < h - 1; i++) {
         for (k = 1; k < w - 1; k++) {
           if (src[-1] != 0 && src[1] != 0 && *(src - w) != 0 && src[w] != 0) {
@@ -363,8 +401,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         dst += 2;
         src += 2;
       }
-      src = buf;
-      dst = mask;
+      src = pixels;
+      dst = inside;
       for (i = 0; i < size; i++) {
         if (*dst != 0) {
           *src = fill;
@@ -374,27 +412,32 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         dst++;
         src++;
       }
-      MemFree(mask);
+      MemFree(inside);
     }
 
-    tile = VramBlock_LoadCached(obj->slot, size, 0);
+    // Upload the pixels to the sprite's tiles in VRAM.
+    tile = VramCache_Load(obj->slot, size, 0);
     {
       void *vram = (void *)(0x06010000 + (tile << 5));
-      ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width,
+      ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
                                                       obj->height, vram);
     }
     obj->part[0].tile = tile;
     obj->dirty = 0;
-    ctx->used += size;
-    MemFree(buf);
+    system->used += size;
+    MemFree(pixels);
   }
 
-  if (held == 0) {
-    Runtime_ReleaseHeapBlock(52);
+  if (decoderWasLoaded == 0) {
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
   }
-  return changed;
+  return mirrored;
 }
 
+// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
+// image centred on screenX and raised height above screenY, the shadow at
+// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
+// parts use the double-size affine mode.
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale) {
@@ -430,8 +473,14 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   shadow->y = y;
 }
 
+// Places a sprite for the scrolling camera and queues it for drawing. pos is
+// (screen x, height, screen y, ground height) in 16.16 pixels, scale its
+// (x, y) scale and facing its facing angle. Builds an affine matrix when the
+// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
+// has one) and then the image in a draw slot by depth; an object 100 pixels
+// or more below the ground takes slot 1 instead, its shadow slot 0.
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
-                                    s32 *scale, s32 mode) {
+                                    s32 *scale, s32 facing) {
   s32 matrix;
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
@@ -439,11 +488,11 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   s32 sizeHalf = 4;
   s32 affine;
   s32 scaleX = *scale++;
-  s32 px = *pos++;
+  s32 screenX = *pos++;
   s32 scaleY = *scale;
-  s32 py = *pos++;
-  s32 pz = *pos++;
-  s32 pw = *pos;
+  s32 height = *pos++;
+  s32 screenY = *pos++;
+  s32 groundHeight = *pos;
   s32 slot;
   /* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the
    * 68-byte frame; removing them leaves 44 bytes. */
@@ -456,7 +505,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   s32 depth;
   struct AnimationSpritePart *part;
 
-  flip = Sprite_ComposeAnimationFrame(sprite, mode);
+  flip = Sprite_ComposeAnimationFrame(sprite, facing);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
@@ -477,26 +526,26 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
     size = 16;
     sizeHalf = 8;
   }
-  if (py <= -0x640000) {
+  if (height <= -0x640000) {
     slot = 1;
     depth = 0;
   } else {
-    slot = (pz >> 17) + 10;
+    slot = (screenY >> 17) + 10;
     depth = 2;
   }
-  y = ((pz - pw) >> 16) - sizeHalf;
+  y = ((screenY - groundHeight) >> 16) - sizeHalf;
   if (sprite->flags & 1) {
     if (y < 160) {
       part = &sprite->part[1];
       part->affine = affine;
       part->affineIndex = matrix;
-      part->x = (px >> 16) - size;
+      part->x = (screenX >> 16) - size;
       part->y = y;
       Runtime_PushSlotEntry(part, depth);
     }
   }
-  x = (px >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
-  y = ((pz - py) >> 16) - halfHeight -
+  x = (screenX >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
+  y = ((screenY - height) >> 16) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   if (x < 240 && y < 160) {
     part = &sprite->part[0];
@@ -508,8 +557,14 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   }
 }
 
+// Places a sprite at 3D point for the fixed camera and queues it for drawing:
+// projected to the screen and scaled by its distance (unless displayFlags bit
+// 1 keeps its own scale), with an affine matrix as needed and its shadow on
+// the ground below. depth 0 sorts it by distance; any other value is its draw
+// slot. A sprite off screen gives up its VRAM cache entry unless displayFlags
+// bit 0 holds it.
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 mode, s32 depth) {
+                                 s32 *scale, s32 facing, s32 depth) {
   s32 flip;
   u32 halfHeight;
   u32 size;
@@ -519,7 +574,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   s32 screen[3];
   struct AffineTransform effect;
   s32 z;
-  s32 base;
+  s32 roundedScale;
   s32 scaleX;
   s32 scaleY;
   s32 offsetX;
@@ -538,10 +593,10 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
       size = 8;
-      flip = Sprite_ComposeAnimationFrame(sprite, mode);
-      base = (z + 0x400) & -0x800;
-      scaleX = Iwram_MulQ16(base, *scale++);
-      scaleY = Iwram_MulQ16(base, *scale);
+      flip = Sprite_ComposeAnimationFrame(sprite, facing);
+      roundedScale = (z + 0x400) & -0x800;
+      scaleX = Iwram_MulQ16(roundedScale, *scale++);
+      scaleY = Iwram_MulQ16(roundedScale, *scale);
       if (scaleX > 0x1f7ff)
         scaleX = 0x1f800;
       if (scaleY > 0x1f7ff)
@@ -605,27 +660,29 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
     }
   }
   if (!(sprite->displayFlags & 1)) {
-    Resource_ActivateEntry(sprite->slot);
+    VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = 1;
   }
 }
 
-void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value) {
-  struct AnimationObject *parent = raw_parent;
-  if (parent != 0) {
-    u32 n = parent->count;
+// Sets the draw parameter of each of a sprite's layers to value, except
+// layers whose parameter is 15, and marks the sprite for redrawing.
+void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
+  struct AnimationObject *sprite = rawSprite;
+  if (sprite != 0) {
+    u32 count = sprite->count;
 
-    if (n != 0) {
-      struct AnimationEntry **p = parent->entries;
-      u32 cnt = n;
+    if (count != 0) {
+      struct AnimationEntry **entry = sprite->entries;
+      u32 remaining = count;
       do {
-        struct AnimationEntry *child = *p++;
-        if (child->param != 15)
-          child->param = value;
-        cnt--;
-      } while (cnt != 0);
+        struct AnimationEntry *layer = *entry++;
+        if (layer->param != 15)
+          layer->param = value;
+        remaining--;
+      } while (remaining != 0);
     }
-    parent->dirty = 1;
+    sprite->dirty = 1;
   }
 }
 
@@ -638,6 +695,12 @@ enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
 
 extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
+// Loads the frames of animation id number into resource slot slot's buffer:
+// the resource listed for it in gResourceSlot_NumberTable, decoded, its frame
+// offsets turned into pointers, and for variant 1-5 its pixel colours (those
+// up to 0xdf) remapped through that variant's conversion table. Returns the
+// image's size in pixels (width * height), or 0 when the slot or id is not
+// known.
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ObjectSystemWork *work;
@@ -701,302 +764,334 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   return metadata->width * metadata->height;
 }
 
+// Returns the buffer loaded into the resource slot whose tag is key, or 0.
 s32 Animation_LookupValueByKey(s32 key) {
-  u32 no;
-  struct ResourceSlot *p = gMenuCtrlWork->slots;
+  u32 i;
+  struct ResourceSlot *slot = gMenuCtrlWork->slots;
 
-  for (no = 0; no < RESOURCE_SLOT_COUNT; no++, p++) {
-    if (p->tag == key)
-      return (s32)p->buffer;
+  for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
+    if (slot->tag == key)
+      return (s32)slot->buffer;
   }
   return 0;
 }
 
-s32 Animation_InitializeObjects(struct AnimationObject *state) {
-  s32 index;
+// Resets each layer of a sprite from its animation's metadata: its facing
+// kind, frames, scripts and codec, with no frame shown and no script
+// running. The first layer also sets the sprite's size, scale and offsets.
+// Returns 0.
+s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
+  s32 i;
 
-  for (index = 0; index < state->count; index++) {
-    struct AnimationEntry *object = state->entries[index];
+  for (i = 0; i < sprite->count; i++) {
+    struct AnimationEntry *layer = sprite->entries[i];
     struct AnimationMetadata *metadata =
-        Resource_GetMetadataRecordFar(object->animId);
+        Resource_GetMetadataRecordFar(layer->animId);
     void **frames;
 
     if (metadata->width == 0)
       continue;
 
-    if (index == 0) {
-      state->width = metadata->width;
-      state->height = metadata->height;
-      state->scale = metadata->scale << 8;
-      state->offsetY = metadata->adjustY;
-      state->offsetX = metadata->adjustX;
+    if (i == 0) {
+      sprite->width = metadata->width;
+      sprite->height = metadata->height;
+      sprite->scale = metadata->scale << 8;
+      sprite->offsetY = metadata->adjustY;
+      sprite->offsetX = metadata->adjustX;
     }
 
     frames = metadata->frames;
     if (frames == 0)
-      frames = (void **)Animation_LookupValueByKey(object->animId);
+      frames = (void **)Animation_LookupValueByKey(layer->animId);
 
-    object->kind = metadata->drawKind;
-    object->frames = frames;
-    object->scripts = metadata->animation;
-    object->mode = metadata->frameCodec;
-    object->frame = 0xff;
-    object->script = 0;
-    object->pos = 0;
+    layer->kind = metadata->drawKind;
+    layer->frames = frames;
+    layer->scripts = metadata->animation;
+    layer->mode = metadata->frameCodec;
+    layer->frame = 0xff;
+    layer->script = 0;
+    layer->pos = 0;
   }
 
   return 0;
 }
 
-void Animation_InitWorkFromMetadata(struct AnimationEntry *work) {
-  void **value;
-  s32 z;
-  struct AnimationMetadata *info;
-
-  if (work != NULL) {
-    info = Resource_GetMetadataRecordFar(work->animId);
-    if (info->width != 0) {
-      value = info->frames;
-      if (value == 0)
-        value = (void **)Animation_LookupValueByKey(work->animId);
-      work->kind = info->drawKind;
-      work->scripts = info->animation;
-      work->frames = value;
-      work->mode = info->frameCodec;
-      z = 0;
-      work->frame = 0xff;
-      work->script = (u8 *)z;
-      work->pos = z;
-    }
-  }
-}
-
-s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id) {
-  s32 value = (s32)state->entries[0];
-  s32 index = 0;
-  struct AnimationEntry **slot;
+// Resets one animation layer from its animation's metadata, as
+// Animation_InitializeObjects does for each layer.
+void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
+  void **frames;
+  s32 zero;
   struct AnimationMetadata *metadata;
 
-  if (value != 0) {
-    slot = &state->entries[0];
+  if (layer != NULL) {
+    metadata = Resource_GetMetadataRecordFar(layer->animId);
+    if (metadata->width != 0) {
+      frames = metadata->frames;
+      if (frames == 0)
+        frames = (void **)Animation_LookupValueByKey(layer->animId);
+      layer->kind = metadata->drawKind;
+      layer->scripts = metadata->animation;
+      layer->frames = frames;
+      layer->mode = metadata->frameCodec;
+      zero = 0;
+      layer->frame = 0xff;
+      layer->script = (u8 *)zero;
+      layer->pos = zero;
+    }
+  }
+}
+
+// Adds a layer of animation id to a sprite, in its first free layer of
+// four. The first layer also sets the sprite's size, scale and offsets.
+// Returns the layer, 0 when no layer record is free, or -1 when the sprite
+// has four layers already.
+s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
+  s32 layer = (s32)sprite->entries[0];
+  s32 freeIndex = 0;
+  struct AnimationEntry **entry;
+  struct AnimationMetadata *metadata;
+
+  if (layer != 0) {
+    entry = &sprite->entries[0];
     do {
-      index++;
-      if (index > 3)
+      freeIndex++;
+      if (freeIndex > 3)
         break;
-      slot++;
-      value = (s32)*slot;
-    } while (value != 0);
+      entry++;
+      layer = (s32)*entry;
+    } while (layer != 0);
   }
-  if (index == 4)
+  if (freeIndex == 4)
     return -1;
-  value = (s32)AnimationObject_Allocate(id);
-  if (value == 0)
+  layer = (s32)AnimationObject_Allocate(id);
+  if (layer == 0)
     return 0;
-  state->entries[index] = (struct AnimationEntry *)value;
+  sprite->entries[freeIndex] = (struct AnimationEntry *)layer;
   metadata = Resource_GetMetadataRecordFar(id);
-  if (state->count == 0) {
-    state->width = metadata->width;
-    state->height = metadata->height;
-    state->scale = metadata->scale << 8;
-    state->offsetY = metadata->adjustY;
-    state->offsetX = metadata->adjustX;
+  if (sprite->count == 0) {
+    sprite->width = metadata->width;
+    sprite->height = metadata->height;
+    sprite->scale = metadata->scale << 8;
+    sprite->offsetY = metadata->adjustY;
+    sprite->offsetX = metadata->adjustX;
   }
-  if (index == state->count)
-    state->count = index + 1;
-  return value;
+  if (freeIndex == sprite->count)
+    sprite->count = freeIndex + 1;
+  return layer;
 }
 
-void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle) {
-  s32 count;
-  u32 slot;
+// Removes the layer handle from a sprite and clears it, trimming the
+// sprite's layer count when no later layer remains.
+void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer) {
+  s32 laterLayers;
+  u32 index;
   u32 i;
 
-  if (state != NULL && handle != 0) {
-    ResourceMetadata_ClearRecord(handle);
-    for (slot = 0; slot <= 3; slot++) {
-      if (handle == (s32)state->entries[slot])
+  if (sprite != NULL && layer != 0) {
+    ResourceMetadata_ClearRecord(layer);
+    for (index = 0; index <= 3; index++) {
+      if (layer == (s32)sprite->entries[index])
         break;
     }
-    if (slot != 4) {
-      state->entries[slot] = 0;
-      count = 0;
-      for (i = slot + 1; i <= 3; i++) {
-        if (state->entries[i] != 0)
-          count++;
+    if (index != 4) {
+      sprite->entries[index] = 0;
+      laterLayers = 0;
+      for (i = index + 1; i <= 3; i++) {
+        if (sprite->entries[i] != 0)
+          laterLayers++;
       }
-      if (count == 0)
-        state->count = slot;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
 
-void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no) {
-  struct AnimationEntry *v;
-  s32 cnt;
+// Removes and clears a sprite's layer number no (0-3), trimming the sprite's
+// layer count when no later layer remains.
+void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
+  struct AnimationEntry *layer;
+  s32 laterLayers;
   u32 i;
 
-  if (group != NULL && no <= 3) {
-    v = group->entries[no];
-    if (v != NULL) {
-      ResourceMetadata_ClearRecord(v);
-      group->entries[no] = NULL;
-      cnt = 0;
-      for (i = no + 1; i <= 3; i++) {
-        if (group->entries[i] != NULL)
-          cnt++;
+  if (sprite != NULL && index <= 3) {
+    layer = sprite->entries[index];
+    if (layer != NULL) {
+      ResourceMetadata_ClearRecord(layer);
+      sprite->entries[index] = NULL;
+      laterLayers = 0;
+      for (i = index + 1; i <= 3; i++) {
+        if (sprite->entries[i] != NULL)
+          laterLayers++;
       }
-      if (cnt == 0)
-        group->count = no;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
 
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no) {
-  s32 hi;
-  struct AnimationMetadata *info;
-  s32 value;
+// Starts animation no on a layer: from its first command, unless bit 7 of no
+// is set. An animation number the layer's metadata does not have is ignored.
+void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
+  s32 keepPlace;
+  struct AnimationMetadata *metadata;
+  s32 script;
 
-  hi = 0x80 & no;
-  if (work->scripts != 0) {
-    info = Resource_GetMetadataRecordFar(work->animId);
-    if (no < info->animationCount) {
-      value = (s32)work->scripts[no];
-      work->kind = info->drawKind;
-      work->script = (u8 *)value;
-      work->step = 0x10;
-      if (hi == 0) {
-        work->pos = hi;
-        work->timer = hi;
+  keepPlace = 0x80 & animation;
+  if (layer->scripts != 0) {
+    metadata = Resource_GetMetadataRecordFar(layer->animId);
+    if (animation < metadata->animationCount) {
+      script = (s32)layer->scripts[animation];
+      layer->kind = metadata->drawKind;
+      layer->script = (u8 *)script;
+      layer->step = 0x10;
+      if (keepPlace == 0) {
+        layer->pos = keepPlace;
+        layer->timer = keepPlace;
       }
     }
   }
 }
 
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags) {
-  s32 highBit;
-  s32 index;
+// Starts animation flags & 0x7f on every layer of a sprite (bit 7 keeps
+// each layer's place and timer), unless the sprite plays it already. The
+// first layer's animation also sets the sprite's offsets. Returns 0.
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
+                                     s32 animation) {
+  s32 keepPlace;
+  s32 i;
 
-  highBit = flags & 0x80;
-  flags &= 0x7f;
+  keepPlace = animation & 0x80;
+  animation &= 0x7f;
 
-  /* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an
-   * entry cursor and uses 12 bytes. 2026-10-13: for (index = 0; index <
-   * state->count; index++) strength-reduces entries[index] into that cursor
+  /* FAKEMATCH: the i/test loop keeps an 8-byte frame; a for loop spills an
+   * layer cursor and uses 12 bytes. 2026-10-13: for (i = 0; i <
+   * sprite->count; i++) strength-reduces entries[i] into that cursor
    * (82 instructions for 76, differ 30). */
-  if (state->lastNo != flags) {
-    index = 0;
+  if (sprite->lastNo != animation) {
+    i = 0;
     goto test_entry;
   entry_loop:
     {
-      struct AnimationEntry *entry = state->entries[index];
+      struct AnimationEntry *layer = sprite->entries[i];
       struct AnimationMetadata *metadata;
       s32 selectedAnimation;
 
-      if (entry != 0 && entry->scripts != 0) {
-        metadata = Resource_GetMetadataRecordFar(entry->animId);
-        if (flags < metadata->animationCount) {
-          selectedAnimation = (s32)entry->scripts[flags];
-          entry->kind = metadata->drawKind;
-          entry->script = (u8 *)selectedAnimation;
-          entry->step = 0x10;
-          if (highBit == 0) {
-            entry->pos = 0;
-            entry->timer = 0;
+      if (layer != 0 && layer->scripts != 0) {
+        metadata = Resource_GetMetadataRecordFar(layer->animId);
+        if (animation < metadata->animationCount) {
+          selectedAnimation = (s32)layer->scripts[animation];
+          layer->kind = metadata->drawKind;
+          layer->script = (u8 *)selectedAnimation;
+          layer->step = 0x10;
+          if (keepPlace == 0) {
+            layer->pos = 0;
+            layer->timer = 0;
           }
-          if (index == 0) {
-            state->offsetY = metadata->adjustY;
-            state->offsetX = metadata->adjustX;
+          if (i == 0) {
+            sprite->offsetY = metadata->adjustY;
+            sprite->offsetX = metadata->adjustX;
           }
         }
       }
     }
-    index++;
+    i++;
   test_entry:
-    if (index < state->count)
+    if (i < sprite->count)
       goto entry_loop;
-    state->lastNo = flags;
+    sprite->lastNo = animation;
   }
   return 0;
 }
 
-s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group,
-                                          s32 val) {
-  u8 n = group->count;
-  struct AnimationEntry **p;
-  s32 cnt;
+// Sets the frame timer of each animated layer of a sprite to val frames.
+// Returns 0.
+s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
+                                          s32 frames) {
+  u8 count = sprite->count;
+  struct AnimationEntry **layerList;
+  s32 remaining;
 
-  if (n != 0) {
-    val <<= 4;
-    p = group->entries;
-    cnt = n;
+  if (count != 0) {
+    frames <<= 4;
+    layerList = sprite->entries;
+    remaining = count;
     do {
-      struct AnimationEntry *entry = *p++;
-      if (entry != 0 && entry->scripts != 0)
-        entry->timer = val;
-      cnt--;
-    } while (cnt != 0);
+      struct AnimationEntry *layer = *layerList++;
+      if (layer != 0 && layer->scripts != 0)
+        layer->timer = frames;
+      remaining--;
+    } while (remaining != 0);
   }
   return 0;
 }
 
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group,
-                                          s32 val) {
-  u8 n = group->count;
-  if (n != 0) {
-    struct AnimationEntry **p = group->entries;
-    s32 cnt = n;
+// Sets the timer step, the animation speed, of each animated layer of a
+// sprite (16 is normal speed).
+void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
+                                          s32 step) {
+  u8 count = sprite->count;
+  if (count != 0) {
+    struct AnimationEntry **layerList = sprite->entries;
+    s32 remaining = count;
     do {
-      struct AnimationEntry *entry = *p++;
-      if (entry != 0 && entry->scripts != 0)
-        entry->step = val;
-      cnt--;
-    } while (cnt != 0);
+      struct AnimationEntry *layer = *layerList++;
+      if (layer != 0 && layer->scripts != 0)
+        layer->step = step;
+      remaining--;
+    } while (remaining != 0);
   }
 }
 
+// Allocates and zeroes the 64 sprites and 64 animation layers (from the
+// fixed blocks in mode 3, the heap otherwise), sets up the palette DMA,
+// loads the shadow tiles into VRAM cache entry 93 and puts the sprite tile
+// uploader in RAM.
 void ObjectSystem_Configure(s32 mode) {
-  void *objects;
-  void *states;
+  void *sprites;
+  void *layers;
   volatile u32 zero;
 
   if (mode == 3) {
-    objects = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
+    sprites = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
                                            sizeof(struct AnimationObject));
-    states = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT *
+    layers = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT *
                                           sizeof(struct AnimationEntry));
   } else {
-    objects = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT *
+    sprites = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT *
                                                sizeof(struct AnimationObject));
-    states = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
+    layers = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
                                               sizeof(struct AnimationEntry));
   }
-  PaletteDma_LoadBlock();
-  Dma_Fill32Cell(zero, 0, objects,
+  Palette_LoadBasicObjColors();
+  Dma_Fill32Cell(zero, 0, sprites,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
-  Dma_Fill32Cell(zero, 0, states,
+  Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-  VramBlock_LoadCached(93, 128, gObject_ShadowTiles);
+  VramCache_Load(93, 128, gObject_ShadowTiles);
   RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
+// Takes a free animation layer record and starts it on animation id's first
+// animation. Returns the layer, or NULL when none is free or the id has no
+// image.
 struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   struct AnimationMetadata *metadata;
-  struct AnimationEntry *entry;
+  struct AnimationEntry *candidate;
   struct AnimationEntry *found;
-  struct AnimationEntry *object;
+  struct AnimationEntry *layer;
   s32 i;
   void **frames;
   u8 **animation;
 
   found = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
-  entry = gAnimationObjects[0];
-  object = NULL;
+  candidate = gAnimationObjects[0];
+  layer = NULL;
 
   if (metadata->width != 0) {
-    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, entry++) {
-      if (entry->kind == 0) {
-        found = entry;
+    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, candidate++) {
+      if (candidate->kind == 0) {
+        found = candidate;
         break;
       }
     }
@@ -1005,87 +1100,77 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
        * not wait on the animId store, so the zero for pos and param loads first
        * as native; the typed read swaps the two (differ 2). */
       frames = (void **)*(s32 *)&metadata->frames;
-      object = found;
-      object->animId = id;
+      layer = found;
+      layer->animId = id;
       if (frames == 0)
         frames = (void **)Animation_LookupValueByKey(id);
 
       animation = metadata->animation;
-      object->scripts = animation;
-      object->frames = frames;
-      object->mode = metadata->frameCodec;
-      object->frame = 0xff;
-      object->script = animation[0];
-      object->pos = 0;
-      object->kind = metadata->drawKind;
-      object->param = 0;
+      layer->scripts = animation;
+      layer->frames = frames;
+      layer->mode = metadata->frameCodec;
+      layer->frame = 0xff;
+      layer->script = animation[0];
+      layer->pos = 0;
+      layer->kind = metadata->drawKind;
+      layer->param = 0;
     }
   }
-  return object;
+  return layer;
 }
 
-//--------------------------------------------------------------------------
-// object.c
-// リソース：アニメの記録を消す
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// AnimationEntry 1 つ分を 0 で埋める（NULL なら何もしない）
-//--------------------------------------------------------------------------
+// Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
 void ResourceMetadata_ClearRecord(void *dst) {
   if (dst != 0) {
     Dma_Fill32(0, dst, sizeof(struct AnimationEntry));
   }
 }
 
-//--------------------------------------------------------------------------
-// resource_obj.c
-// リソース：アニメのスプライトオブジェクトの作成・解放と、コマの長さ
-//--------------------------------------------------------------------------
+// Creating and releasing animated sprites, and measuring animation lengths.
 
 typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
-//--------------------------------------------------------------------------
-// アニメ id のスプライトオブジェクトを作る
-// あいている 64 個のオブジェクトの 1 つと VRAM キャッシュを使う
-// 戻り値 : オブジェクト（作れなければ NULL）
-//--------------------------------------------------------------------------
+// Creates a sprite for animation id, taking one of the 64 free sprites and a
+// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
+// no room or the id has no image.
 struct ResourceObject *ResourceObject_Create(s32 id) {
-  struct AnimationMetadata *meta;
-  struct AnimationObject *obj;
-  struct AnimationObject *found;
-  u32 *word;
+  struct AnimationMetadata *metadata;
+  struct AnimationObject *sprite;
+  struct AnimationObject *freeSprite;
+  u32 *attribute;
   s32 slot;
   s32 tile;
   s32 i;
   u32 shape;
 
-  found = NULL;
-  meta = Resource_GetMetadataRecordFar(id);
+  freeSprite = NULL;
+  metadata = Resource_GetMetadataRecordFar(id);
   slot = Resource_FindFreeEntry();
-  obj = gSpriteObjects;
-  if (meta->width == 0)
+  sprite = gSpriteObjects;
+  if (metadata->width == 0)
     return NULL;
-  for (i = 0; i <= 63; i++, obj++) {
-    if (obj->width == 0) // 幅 0 はあき
-    {
-      found = obj;
+  // A width of 0 marks a free sprite.
+  for (i = 0; i <= 63; i++, sprite++) {
+    if (sprite->width == 0) {
+      freeSprite = sprite;
       break;
     }
   }
-  if (found == NULL)
+  if (freeSprite == NULL)
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
-  tile = VramBlock_LoadCached(slot, 0, 0);
+  tile = VramCache_Load(slot, 0, 0);
   if (tile == 0)
     return NULL;
-  found->slot = slot;
-  found->rotation = 0;
-  found->flags = 1;
+  freeSprite->slot = slot;
+  freeSprite->rotation = 0;
+  freeSprite->flags = 1;
 
-  // 幅・高さ（ドット）から OBJ の形とサイズのビット（属性 0・1）
-  switch ((u32)((meta->width << 8) + meta->height)) {
+  // The OAM shape and size bits (attributes 0 and 1) for the image's width
+  // and height in pixels.
+  switch ((u32)((metadata->width << 8) + metadata->height)) {
   case 0x0808: // 8x8
     shape = 0;
     break;
@@ -1121,72 +1206,69 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
     break;
   }
 
-  // パーツ 0：256 色、優先度 2
-  // パーツ 1：16x8・256 色、VRAM キャッシュ 93 のタイル、優先度 2
-  word = (u32 *)found->part;
-  *word++ = 0;
-  *word++ = shape | 0x2000;
-  *word++ = tile | 0x800;
-  *word++ = 0;
-  *word++ = 0x6000;
-  *word = (gVramBlockCache[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register(obj, id) == -1) {
+  // Part 0 is the image: 256 colours, priority 2. Part 1 is its shadow: a
+  // 16x8, 256-colour sprite of the shadow tiles (VRAM cache 93), priority 2.
+  attribute = (u32 *)freeSprite->part;
+  *attribute++ = 0;
+  *attribute++ = shape | 0x2000;
+  *attribute++ = tile | 0x800;
+  *attribute++ = 0;
+  *attribute++ = 0x6000;
+  *attribute = (gVramBlockCache[93].offset >> 5) | 0x800;
+  if (ResourceMetadata_Register(sprite, id) == -1) {
     /* FAKEMATCH: native dead -1 after Register (movs/negs); empty arm
        after a same-byte reload keeps the carrier (differ 32 -> 0). */
-    found->dirty = found->dirty;
+    freeSprite->dirty = freeSprite->dirty;
   }
-  return (struct ResourceObject *)found;
+  return (struct ResourceObject *)freeSprite;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトを解放する
-// VRAM キャッシュ（flags のビット 0 が立っていなければ）と 4 つの子を
-// 返し、ワーク 56 バイトを 0 で埋める
-//--------------------------------------------------------------------------
-void ResourceObject_Release(struct ResourceObjectWork *work) {
-  s32 n;
-  void **child;
+// Releases a sprite: its VRAM cache entry (unless bit 0 of flags is set),
+// its four animation layers, and then zeroes its 56 bytes.
+void ResourceObject_Release(struct ResourceObjectWork *sprite) {
+  s32 remaining;
+  void **layer;
 
-  if (work) {
-    if (!(work->flags & 1))
-      Resource_ResetEntry(work->resource);
-    child = work->children;
-    n = 3;
+  if (sprite) {
+    if (!(sprite->flags & 1))
+      Resource_ResetEntry(sprite->resource);
+    layer = sprite->children;
+    remaining = 3;
     do {
-      ResourceMetadata_ClearRecord(*child++);
-    } while (--n >= 0);
-    Dma_Fill32(0, work, sizeof(*work));
+      ResourceMetadata_ClearRecord(*layer++);
+    } while (--remaining >= 0);
+    Dma_Fill32(0, sprite, sizeof(*sprite));
   }
 }
 
-//--------------------------------------------------------------------------
-// アニメ id の no 番の、はじめの cnt コマの長さを足す
-// コマンドは 2 バイト（コマンド・値）で、254・241・253・239 で終わる。
-// 245・255・238 以下のコマンドの値を足す
-//--------------------------------------------------------------------------
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
-  struct AnimationMetadata *info;
-  u8 *p;
-  u8 op;
-  u8 val;
+// Returns how long the first frameCount frames of animation number animation
+// of id last: the sum of the arguments of its frame, wait and blank commands,
+// up to frameCount of them or the first play, hold, jump or end command.
+s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
+  struct AnimationMetadata *metadata;
+  u8 *script;
+  u8 command;
+  u8 arg;
   s32 sum = 0;
 
-  info = Resource_GetMetadataRecordFar(id);
-  if (no >= info->animationCount) {
+  metadata = Resource_GetMetadataRecordFar(id);
+  if (animation >= metadata->animationCount) {
     return 0;
   }
-  p = ((u8 **)info->animation)[no];
+  script = ((u8 **)metadata->animation)[animation];
   for (;;) {
-    op = p[0];
-    val = p[1];
-    p += 2;
-    if (op == 254 || op == 241 || op == 253 || op == 239) {
+    command = script[0];
+    arg = script[1];
+    script += 2;
+    if (command == ANIM_CMD_PLAY || command == ANIM_CMD_HOLD ||
+        command == ANIM_CMD_JUMP || command == ANIM_CMD_END) {
       break;
     }
-    if (op == 245 || op == 255 || op <= 238) {
-      sum += val;
-      cnt--;
-      if (cnt == 0) {
+    if (command == ANIM_CMD_WAIT || command == ANIM_CMD_BLANK ||
+        command < ANIM_CMD_END) {
+      sum += arg;
+      frameCount--;
+      if (frameCount == 0) {
         break;
       }
     }
@@ -1194,130 +1276,117 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   return sum;
 }
 
-//--------------------------------------------------------------------------
-// object.c
-// オブジェクト：フィールドのオブジェクトの作成・解放と、毎フレームの表示
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 絵を 1 ドットずつ消す処理の 1 回分
-// 8×8 ドット（256 色）のキャラごとに、消す順の表にしたがって 1 ドット消す
-// キャラごとに pos を 1 ずつずらし、pos が 64 から 127 のキャラだけ消す
-// obj : 絵（AnimationObject）
-// pos : 何回目か（0 から 127）
-//--------------------------------------------------------------------------
+// Field objects: creating and releasing them, and drawing them each frame.
+
+// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
+// colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
+// tile runs one step ahead of the last, and only tiles whose step is 64-127
+// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
+// (0-127).
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
-  u16 *dst;
-  s32 cnt;
-  u32 n;
-  u8 *table;
+  u16 *tile;
+  s32 tileCount;
+  u32 i;
+  u8 *order;
   u32 highMask;
   u32 indexMask;
   u8 offsetMask;
 
-  struct AnimationObject *spr = (struct AnimationObject *)obj;
+  struct AnimationObject *sprite = (struct AnimationObject *)obj;
 
-  dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset); // OBJ の VRAM
-  cnt = (spr->width * spr->height) / 64;
-  n = 0;
+  // The sprite's tiles in OBJ VRAM.
+  tile = (u16 *)(0x06010000 + gVramBlockCache[sprite->slot].offset);
+  tileCount = (sprite->width * sprite->height) / 64;
+  i = 0;
 
-  if (n < cnt) {
-    table = gMap_TileDissolveOrder;
+  if (i < tileCount) {
+    order = gMap_TileDissolveOrder;
     highMask = 0xff00;
     indexMask = 0x3f;
     offsetMask = 0x3e;
 
-    for (; n < cnt; n++, dst += 32, pos++) {
+    for (; i < tileCount; i++, tile += 32, pos++) {
       if ((pos - 64) <= 63) {
-        u8 dot;
-        u16 *cell;
-        u32 odd;
+        u8 pixel;
+        u16 *pixelPair;
+        u32 isOdd;
 
-        // VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-        dot = table[(pos + n * 16) & indexMask];
-        cell = (u16 *)((u8 *)dst + (dot & offsetMask));
-        odd = 1;
-        odd &= dot;
-        if (odd != 0)
-          *cell = *(u8 *)cell;
+        // VRAM takes no byte writes: rewrite the pixel pair, clearing one.
+        pixel = order[(pos + i * 16) & indexMask];
+        pixelPair = (u16 *)((u8 *)tile + (pixel & offsetMask));
+        isOdd = 1;
+        isOdd &= pixel;
+        if (isOdd != 0)
+          *pixelPair = *(u8 *)pixelPair;
         else
-          *cell &= highMask;
+          *pixelPair &= highMask;
       }
     }
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵を 1 ドットずつ消す。1 フレームに 4 回分、32 フレームで消え終わる
-// obj : 絵（AnimationObject）
-//--------------------------------------------------------------------------
-void Map_RenderAnimatedTileFramesForObject(u8 *obj) {
-  u32 pos;
+// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
+void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
+  u32 step;
 
-  pos = 0;
+  step = 0;
   do {
-    Map_RenderAnimatedTileFrame(obj, pos);
-    Map_RenderAnimatedTileFrame(obj, pos + 1);
-    Map_RenderAnimatedTileFrame(obj, pos + 2);
-    Map_RenderAnimatedTileFrame(obj, pos + 3);
-    pos += 4;
+    Map_RenderAnimatedTileFrame(sprite, step);
+    Map_RenderAnimatedTileFrame(sprite, step + 1);
+    Map_RenderAnimatedTileFrame(sprite, step + 2);
+    Map_RenderAnimatedTileFrame(sprite, step + 3);
+    step += 4;
     WaitFrames(1);
-  } while (pos <= 127);
+  } while (step <= 127);
 }
 
-//--------------------------------------------------------------------------
-// いくつもの絵を、いっしょに 1 ドットずつ消す（32 フレーム）
-// table : 絵の並び
-// cnt : 絵の数
-//--------------------------------------------------------------------------
-void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
-  u8 **top;
-  u8 **p;
-  s32 n;
-  u32 pos;
-  u32 pos1;
-  u32 pos2;
-  u32 pos3;
+// Dissolves count sprites together, pixel by pixel, over 32 frames.
+void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
+  u8 **first;
+  u8 **sprite;
+  s32 remaining;
+  u32 step;
+  u32 step1;
+  u32 step2;
+  u32 step3;
 
-  top = table;
-  pos = 0;
+  first = sprites;
+  step = 0;
   do {
-    if (cnt > 0) {
-      pos1 = pos + 1;
-      pos2 = pos + 2;
-      p = top;
-      pos3 = pos + 3;
-      n = cnt;
+    if (count > 0) {
+      step1 = step + 1;
+      step2 = step + 2;
+      sprite = first;
+      step3 = step + 3;
+      remaining = count;
       do {
-        Map_RenderAnimatedTileFrame(*p, pos);
-        Map_RenderAnimatedTileFrame(*p, pos1);
-        Map_RenderAnimatedTileFrame(*p, pos2);
-        n -= 1;
-        Map_RenderAnimatedTileFrame(*p++, pos3);
-      } while (n != 0);
+        Map_RenderAnimatedTileFrame(*sprite, step);
+        Map_RenderAnimatedTileFrame(*sprite, step1);
+        Map_RenderAnimatedTileFrame(*sprite, step2);
+        remaining -= 1;
+        Map_RenderAnimatedTileFrame(*sprite++, step3);
+      } while (remaining != 0);
     }
     WaitFrames(1U);
-    pos += 4;
-  } while (pos <= 0x7fU);
+    step += 4;
+  } while (step <= 0x7fU);
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトの画面上の位置（ドット）を out[0], out[1] に返す
-// 画面のまわりの範囲にいれば 0、外なら 0, 0 として -1
-// obj : オブジェクト
-// out : x と y
-//--------------------------------------------------------------------------
+// Writes obj's position on the screen, in pixels, to out[0] and out[1] and
+// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
+// returns -1.
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
-  struct MapScrollWork *map = gMapWork[0];
-  s32 *org = &map->viewX;
-  s32 ox;
-  s32 oz;
+  struct MapScrollWork *mapWork = gMapWork[0];
+  s32 *view = &mapWork->viewX;
+  s32 viewX;
+  s32 viewZ;
   s32 x;
   s32 y;
 
-  ox = org[0] & 0xffff0000;
-  oz = org[1] & 0xffff0000;
-  x = obj->x - ox;
-  y = obj->z - oz;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  x = obj->x - viewX;
+  y = obj->z - viewZ;
   if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000) {
     *out++ = x >> 16;
     *out = y >> 16;
@@ -1328,21 +1397,19 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
   return -1;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトのしくみを用意する
-// 64 個のオブジェクトの領域をとって 0 でうめ、毎フレームの処理を登録する
-// mode : 4 なら動きの処理を Object_UpdateAllMotion で、3 と 4 は固定カメラ
-//--------------------------------------------------------------------------
+// Sets up the object system: allocates and zeroes the 64 objects and
+// registers the per-frame updates. Mode 4 moves objects with
+// Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
 void ObjectSystem_Initialize(s32 mode) {
-  struct ObjectSystemWork *sys;
-  struct ObjectRuntime *objs;
+  struct ObjectSystemWork *system;
+  struct ObjectRuntime *objects;
   volatile u32 fill;
 
-  sys = Runtime_AllocateBlock(6, sizeof(*sys));
-  objs = Runtime_AllocateBlock(5, 64 * sizeof(*objs));
+  system = Runtime_AllocateBlock(6, sizeof(*system));
+  objects = Runtime_AllocateBlock(5, 64 * sizeof(*objects));
   ObjectSystem_Configure(mode);
-  Dma_Fill32Cell(fill, 0, objs, 64 * sizeof(*objs));
-  Dma_Fill32Cell(fill, 0, sys, sizeof(*sys));
+  Dma_Fill32Cell(fill, 0, objects, 64 * sizeof(*objects));
+  Dma_Fill32Cell(fill, 0, system, sizeof(*system));
   if (mode == 4)
     Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
   else
@@ -1354,144 +1421,128 @@ void ObjectSystem_Initialize(s32 mode) {
     gIwram_Data2 = 0;
     gIwram_Data1 = 0;
   }
-  sys->edge = 15;
-  sys->fill = 0;
+  system->edge = 15;
+  system->fill = 0;
 }
 
-//--------------------------------------------------------------------------
-// 何もしない
-//--------------------------------------------------------------------------
+// Does nothing.
 void ResourceTable_ReservedNoOpC0C4(void) {}
 
-//--------------------------------------------------------------------------
-// 何もしない
-//--------------------------------------------------------------------------
+// Does nothing.
 void ResourceTable_ReservedNoOp2(void) {}
 
-//--------------------------------------------------------------------------
-// 64 個のうち、使われていない（スクリプトのない）オブジェクトを返す
-// 空きがなければ 0
-//--------------------------------------------------------------------------
+// Returns the first of the 64 objects not in use (with no script), or 0.
 void *ObjectDispatch_FindFreeObject(void) {
   struct ObjectRuntime *obj = gObjectSlots;
-  void *ret = 0;
-  s32 n = 0;
+  void *found = 0;
+  s32 i = 0;
 
-  while (n <= 63) {
+  while (i <= 63) {
     if (obj->script == 0) {
-      ret = obj;
+      found = obj;
       break;
     }
-    n++;
+    i++;
     obj++;
   }
-  return ret;
+  return found;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトの絵を解放し、オブジェクトを 0 でうめて空きにする
-// obj : オブジェクト
-//--------------------------------------------------------------------------
+// Releases an object's sprites and zeroes it, freeing it.
 void ObjectDispatch_Release(struct DispatchObject *obj) {
-  s32 n;
-  struct ResourceObjectWork **child;
+  s32 remaining;
+  struct ResourceObjectWork **spriteList;
 
   if (obj) {
     switch (obj->kind & 15) {
-    case 1: // 絵がひとつ
+    case 1: // one sprite
       ResourceObject_Release(obj->target.child);
       break;
-    case 2: // 絵が 4 つまで
-      child = (struct ResourceObjectWork **)obj->target.children;
-      n = 3;
+    case 2: // up to four sprites
+      spriteList = (struct ResourceObjectWork **)obj->target.children;
+      remaining = 3;
       do {
-        struct ResourceObjectWork *res = *child++;
-        if (res)
-          ResourceObject_Release(res);
-      } while (--n >= 0);
+        struct ResourceObjectWork *sprite = *spriteList++;
+        if (sprite)
+          ResourceObject_Release(sprite);
+      } while (--remaining >= 0);
       break;
     }
     Dma_Fill32(0, obj, sizeof(struct ObjectRuntime));
   }
 }
 
-//--------------------------------------------------------------------------
-// フィールドのオブジェクトを作る。空きがなければ 0
-// id      : 4096 で割った商が種類（0 絵ひとつ、2 絵ふたつ）、下の 12 ビットが絵
-// x, y, z : 位置（16.16 固定小数）
-//--------------------------------------------------------------------------
+// Creates a field object at (x, y, z), in 16.16 pixels, or returns 0 when
+// none is free. id / 4096 is the kind (0: one sprite, 2: two sprites, id
+// and id + 1) and the low 12 bits the sprite's animation id.
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *obj;
-  struct FieldActor *act;
-  struct ScriptMotionObject *mot;
-  struct ScriptObjectRuntime *sc;
-  void *spr;
+  struct FieldActor *actor;
+  struct ScriptMotionObject *motion;
+  struct ScriptObjectRuntime *scripted;
+  void *sprite;
   s32 kind;
-  void **ent;
+  void **spriteList;
 
   ObjectDispatch_FindFreeObject();
   kind = id / 4096;
   id &= 0xfff;
   obj = ObjectDispatch_FindFreeObject();
   if (obj != NULL) {
-    act = (struct FieldActor *)obj;
-    act->radius = 16;
+    actor = (struct FieldActor *)obj;
+    actor->radius = 16;
     switch (kind) {
     case 0:
-      spr = ResourceObject_Create(id);
-      if (spr != NULL) {
+      sprite = ResourceObject_Create(id);
+      if (sprite != NULL) {
         obj->animationKind = 1;
-        obj->animation = spr;
-        act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+        obj->animation = sprite;
+        actor->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
       } else {
         obj->animationKind = 0;
       }
       break;
     case 2:
-      // 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
-      ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
+      // Take a zeroed list of four sprites, and fill it with id and id + 1.
+      spriteList = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
       obj->animationKind = kind;
-      obj->animation = ent;
-      Dma_Fill32(0, ent, 0x10);
-      spr = ResourceObject_Create(id);
-      if (spr != NULL) {
-        act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
-        *ent++ = spr;
+      obj->animation = spriteList;
+      Dma_Fill32(0, spriteList, 0x10);
+      sprite = ResourceObject_Create(id);
+      if (sprite != NULL) {
+        actor->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+        *spriteList++ = sprite;
       }
-      spr = ResourceObject_Create(id + 1);
-      if (spr != NULL)
-        *ent = spr;
+      sprite = ResourceObject_Create(id + 1);
+      if (sprite != NULL)
+        *spriteList = sprite;
       break;
     }
   }
   if (obj != NULL) {
-    mot = (struct ScriptMotionObject *)obj;
-    sc = (struct ScriptObjectRuntime *)obj;
+    motion = (struct ScriptMotionObject *)obj;
+    scripted = (struct ScriptObjectRuntime *)obj;
     Object_SetPositionAndResetMotion(obj, x, y, z);
     obj->script = (s32 *)gObjectDispatch_DefaultScript;
     obj->speedLimit = 0x20000;
     obj->step = 0;
-    act->scaleX = 0x10000;
-    act->scaleY = 0x10000;
+    actor->scaleX = 0x10000;
+    actor->scaleY = 0x10000;
     obj->acceleration = 0x10000;
     obj->flags = 3;
-    mot->gravity = 0x10000;
-    mot->vertical.bounce = 0x4000;
+    motion->gravity = 0x10000;
+    motion->vertical.bounce = 0x4000;
     obj->unk59 = 0;
     obj->actionFlags = 1;
-    act->riseBaseY = 0;
+    actor->riseBaseY = 0;
     obj->angle = 0x4000;
-    sc->homeX = x / 65536; // もとの位置（ドット）
-    sc->homeZ = z / 65536;
+    scripted->homeX = x / 65536; // its home position, in pixels
+    scripted->homeZ = z / 65536;
   }
   return obj;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトにスクリプトを与え、はじめから動かす
-// obj    : オブジェクト
-// script : スクリプト
-//--------------------------------------------------------------------------
+// Gives an object a script and starts it from the top.
 void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
   if (obj != 0) {
     obj->value04 = 0;
@@ -1502,67 +1553,65 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつならその絵に、絵の組ならある絵すべてに apply(絵, value) を呼ぶ
-//--------------------------------------------------------------------------
+// Defines name(object, value), which calls apply(sprite, value) on an
+// object's one sprite, or on each sprite of its group.
 #define DEFINE_APPLY_TO_CHILDREN(name, object_type, apply)                     \
-  void name(object_type raw, s32 value) {                                      \
+  void name(object_type rawObject, s32 value) {                                \
     struct DispatchObject *obj;                                                \
-    void **list;                                                               \
-    s32 n;                                                                     \
-    void *spr;                                                                 \
+    void **sprites;                                                            \
+    s32 remaining;                                                             \
+    void *sprite;                                                              \
                                                                                \
-    obj = raw;                                                                 \
+    obj = rawObject;                                                           \
     if (obj != 0) {                                                            \
       switch (obj->kind & 0xf) {                                               \
       case 1:                                                                  \
         apply(obj->target.child, value);                                       \
         break;                                                                 \
       case 2:                                                                  \
-        list = obj->target.children;                                           \
-        n = 3;                                                                 \
+        sprites = obj->target.children;                                        \
+        remaining = 3;                                                         \
         do {                                                                   \
-          spr = *list++;                                                       \
-          if (spr != 0)                                                        \
-            apply(spr, value);                                                 \
-          n--;                                                                 \
-        } while (n >= 0);                                                      \
+          sprite = *sprites++;                                                 \
+          if (sprite != 0)                                                     \
+            apply(sprite, value);                                              \
+          remaining--;                                                         \
+        } while (remaining >= 0);                                              \
         break;                                                                 \
       }                                                                        \
     }                                                                          \
   }
 
-// オブジェクトの絵（すべて）のアニメを no にする
+// Switches all of an object's sprites to animation value.
 DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyArgumentToChildren, void *,
                          AnimationObjects_SelectAnimation)
 
-// オブジェクトの絵（すべて）の AnimationObjects_SetActiveTimerSteps を呼ぶ
+// Sets the animation speed (timer step) of all of an object's sprites.
 DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren,
                          struct DispatchObject *,
                          AnimationObjects_SetActiveTimerSteps)
 
-//--------------------------------------------------------------------------
-// 上のふたつをいっしょに：アニメを no にし、steps をわたす
-//--------------------------------------------------------------------------
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
-                                        s32 steps) {
-  void **list;
-  void *spr;
-  s32 n;
+// Both of the above: switches all of an object's sprites to animation and
+// sets their timer step to step.
+void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj,
+                                        s32 animation, s32 step) {
+  void **sprites;
+  void *sprite;
+  s32 i;
 
   if (obj != 0) {
     switch (obj->kind & 15) {
     case 1:
-      AnimationObjects_SelectAnimation(obj->target.child, no);
-      AnimationObjects_SetActiveTimerSteps(obj->target.child, steps);
+      AnimationObjects_SelectAnimation(obj->target.child, animation);
+      AnimationObjects_SetActiveTimerSteps(obj->target.child, step);
       break;
     case 2:
-      list = obj->target.children;
-      for (n = 3; n >= 0; n--) {
-        spr = *list++;
-        if (spr != 0) {
-          AnimationObjects_SelectAnimation(spr, no);
-          AnimationObjects_SetActiveTimerSteps(spr, steps);
+      sprites = obj->target.children;
+      for (i = 3; i >= 0; i--) {
+        sprite = *sprites++;
+        if (sprite != 0) {
+          AnimationObjects_SelectAnimation(sprite, animation);
+          AnimationObjects_SetActiveTimerSteps(sprite, step);
         }
       }
       break;
@@ -1570,72 +1619,76 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の回転を設定する
-//--------------------------------------------------------------------------
-void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot) {
+// Sets the rotation of an object's sprite, when it has just one.
+void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rotation) {
   if (obj != 0 && (obj->kind & 0xf) == 1)
-    ((struct FieldSprite *)obj->target.child)->rotation = rot;
+    ((struct FieldSprite *)obj->target.child)->rotation = rotation;
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、アニメ番号を no にして初めから動かす
-// no が負ならなにもしない
-//--------------------------------------------------------------------------
-void Animation_SetIndexAndInitObjects(void *raw, s32 no) {
-  struct DispatchObject *obj = raw;
-  struct AnimationObject *spr;
+// Gives a one-sprite object's first layer animation id animId and restarts
+// its layers.
+// A negative animId does nothing.
+void Animation_SetIndexAndInitObjects(void *rawObject, s32 animId) {
+  struct DispatchObject *obj = rawObject;
+  struct AnimationObject *sprite;
 
   if (obj != NULL && (obj->kind & 0xf) == 1) {
-    spr = obj->target.child;
-    if (no >= 0) {
-      spr->entries[0]->animId = no;
-      Animation_InitializeObjects(spr);
+    sprite = obj->target.child;
+    if (animId >= 0) {
+      sprite->entries[0]->animId = animId;
+      Animation_InitializeObjects(sprite);
     }
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、その絵に no の情報を登録する
-// no が負ならなにもしない
-//--------------------------------------------------------------------------
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
+// Adds a layer of animation id animId to a one-sprite object's sprite.
+// A negative animId does nothing.
+void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj,
+                                          s32 animId) {
   if (obj != 0 && (obj->kind & 0xf) == 1) {
-    struct AnimationObject *spr = obj->target.child;
-    if (no >= 0)
-      ResourceMetadata_Register(spr, no);
+    struct AnimationObject *sprite = obj->target.child;
+    if (animId >= 0)
+      ResourceMetadata_Register(sprite, animId);
   }
 }
 
-//--------------------------------------------------------------------------
-// 決まったスクリプトでオブジェクトを動かしはじめる
-//--------------------------------------------------------------------------
+// Starts an object on the script that approaches its linked object
+// (SC_APPROACH_LINK), linked to arg. The functions below start the engine's
+// other scripts (object_script.c).
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj,
                                                s32 arg) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
   obj->argument = arg;
 }
 
+// Starts an object on the script that runs SC_KEY_COUNT every frame.
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
+// Starts an object on the script that moves it by the keys (SC_KEYS).
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
+// Starts an object on the player control script (SC_PLAYER).
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
+// Starts an object on the world map control script (SC_WORLD).
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
+// Starts an object on the idle script (a lone SC_END).
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
+// Starts an object on the camera script (SC_CAMERA). With a leader to
+// follow (arg), it also gets a speed limit of 4 pixels a frame and an
+// acceleration of 0.5 (value30 and value34 are those fields).
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
                                                s32 arg) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
@@ -1647,27 +1700,23 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
   }
 }
 
-//--------------------------------------------------------------------------
-// スクリプトが命令 0x10 に来るまで待つ（300 フレームまで）
-//--------------------------------------------------------------------------
-void ObjectDispatch_WaitForValue16(void *raw) {
-  struct ScriptInterpreter *sc = raw;
-  s32 cnt;
+// Waits until the object's script reaches SC_END (0x10), at most 300 frames.
+void ObjectDispatch_WaitForValue16(void *rawObject) {
+  struct ScriptInterpreter *interpreter = rawObject;
+  s32 frames;
 
-  cnt = 0;
-  if (sc->script[sc->cursor] != 0x10) {
+  frames = 0;
+  if (interpreter->script[interpreter->cursor] != 0x10) {
     do {
       WaitFrames(1);
-      cnt++;
-      if (cnt > 299)
+      frames++;
+      if (frames > 299)
         break;
-    } while (sc->script[sc->cursor] != 0x10);
+    } while (interpreter->script[interpreter->cursor] != 0x10);
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の flags を設定する
-//--------------------------------------------------------------------------
+// Sets the flags of a one-sprite object's sprite (bit 0: draw its shadow).
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
   if (obj != NULL) {
     if ((obj->kind & 0xf) == 1)
@@ -1675,66 +1724,61 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の半透明のしかたを設定する
-//--------------------------------------------------------------------------
+// Sets the OAM blend mode of a one-sprite object's sprite.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode) {
   if (obj != 0 && obj->kind == 1) {
-    struct FieldSprite *spr = obj->target.child;
-    spr->blendMode = mode;
+    struct FieldSprite *sprite = obj->target.child;
+    sprite->blendMode = mode;
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の displayFlags の bit1 を設定する
-//--------------------------------------------------------------------------
-void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on) {
+// Sets bit 1 of a one-sprite object's displayFlags: when set, the fixed
+// camera draws it at its own scale, not scaled by distance.
+void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj,
+                                         u32 fixedScale) {
   if (obj != 0 && obj->kind == 1) {
-    struct FieldSprite *spr = obj->target.child;
-    spr->unk1d1 = on;
+    struct FieldSprite *sprite = obj->target.child;
+    sprite->unk1d1 = fixedScale;
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、ObjectGroup_SetChildValueUnlessFifteen を呼ぶ
-//--------------------------------------------------------------------------
-void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
+// Sets the draw parameter of a one-sprite object's layers (see
+// ObjectGroup_SetChildValueUnlessFifteen).
+void Animation_ApplyChildValues(struct DispatchObject *obj, u32 param) {
   if (obj != NULL && obj->kind == 1)
-    ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, val);
+    ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, param);
 }
 
-//--------------------------------------------------------------------------
-// カメラの処理を動かし、BG1-3 を消して OBJ を出す
-//--------------------------------------------------------------------------
+// Suspends the object camera updates, starts the palette back to normal and,
+// a frame later, shows BG0 and the sprites with BG1-3 hidden.
 void Graphics_EnableObjLayerAndCallbacks(void) {
-  Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
-  Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
   BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleFx_StartBufferInterpolationFar(1);
   WaitFrames(1);
   REG_DISPCNT = (REG_DISPCNT & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
-//--------------------------------------------------------------------------
-// カメラの処理を止め、BG1-3 と OBJ を消す
-//--------------------------------------------------------------------------
+// Resumes the object camera updates and hides BG1-3 and the sprites.
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
-  Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
-  Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
   REG_DISPCNT &= 0xe1ff;
 }
 
+// Returns 1.
 s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
-// マップのセル
+// A map cell's word, as the camera reads it.
 struct CameraTile {
-  u32 unk00 : 12;
-  u32 layer : 2;    // 0 でなければ、上にいるオブジェクトのレイヤー + 1
-  u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
+  u32 block : 12;   // the block (metatile) number
+  u32 layer : 2;    // if not 0, the layer of an object standing on it, + 1
+  u32 priority : 2; // if not 0, the priority of an object standing on it
   u32 unk10 : 16;
 };
 
-// オブジェクトの絵（OAM の属性をふくむ）
+// An object's sprite, with its OAM attributes, as the camera reads it.
 struct CameraSprite {
   u8 unk00[4];
   u16 y : 8;
@@ -1756,13 +1800,13 @@ struct CameraSprite {
   u16 secondPalette : 4;
   u8 unk16[2];
   s32 scale;
-  u8 resource; // VRAM ブロックの番号
+  u8 resource; // its VRAM cache entry
   u8 flags1d;
   u8 unk1e[7];
-  u8 activated;
+  u8 dirty; // redraw when next placed
 };
 
-// オブジェクト
+// A field object, as the camera reads it.
 struct CameraObject {
   u32 active;
   u16 unk04;
@@ -1778,7 +1822,7 @@ struct CameraObject {
   u8 flags;
   u8 unk24[0x2c];
   void *sprite;
-  u8 kind; // 1 絵ひとつ、2 絵が 4 つまで
+  u8 kind; // 1: one sprite, 2: up to four
   u8 unk55[7];
   u8 held;
   u8 unk5d[0x13];
@@ -1789,10 +1833,10 @@ struct CameraLayer {
   u8 unk04[44];
 };
 
-// マップ
+// The map work, as the camera reads it.
 struct CameraState {
   u8 unk000[0xe4];
-  s32 x; // 見ている位置
+  s32 x; // the view's position
   s32 z;
   u8 unk0ec[0x44];
   struct CameraLayer layers[1];
@@ -1804,52 +1848,50 @@ struct CameraPoint {
   s32 z;
 };
 
-// 固定カメラ
+// The fixed camera.
 struct FixedCamera {
   struct CameraPoint eye;
   struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    // あればこちらの視点を使う
-  struct CameraPoint *targetOverride; // あればこちらの注視点を使う
+  struct CameraPoint *eyeOverride;    // when set, used as the eye
+  struct CameraPoint *targetOverride; // when set, used as the target
 };
 
-//--------------------------------------------------------------------------
-// 毎フレーム：オブジェクトの絵を画面に置く（ふつうのカメラ）
-// 画面のまわりにいるオブジェクトは、足もとのセルからレイヤーと優先度を決めて
-// 置く。外にいれば絵の VRAM ブロックを手放す
-//--------------------------------------------------------------------------
+// Each frame, with the scrolling camera: places every object's sprite on the
+// screen. An object on or near the screen takes its layer and priority from
+// the cell under it; one off screen gives up its VRAM cache entry.
 void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH: frame local: unused; the native frame keeps room for
      three points above the position. Measured (2026-10-13): without it
      the frame is 44 bytes for 80 (differ 4, the two sp adjustments). */
   struct CameraPoint spare[3];
-  s32 cnt;
-  struct CameraState *map;
-  s32 camX;
-  s32 camZ;
-  struct ObjectSystemWork *sync;
+  s32 i;
+  struct CameraState *mapWork;
+  s32 viewX;
+  s32 viewZ;
+  struct ObjectSystemWork *system;
   struct CameraObject *obj;
-  struct CameraSprite *spr;
-  s32 *cam;
+  struct CameraSprite *sprite;
+  s32 *view;
   u32 kind;
   s32 dx;
   s32 dz;
-  s32 top;
+  s32 screenTop;
   struct CameraTile *tile;
-  u32 bits;
+  u32 priority;
   s32 scale[2];
   s32 pos[4];
-  u32 bitsVal;
+  u32 layerPlusOne;
 
-  map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
-  cam = &map->x;
-  camX = cam[0] & 0xffff0000;
-  camZ = cam[1] & 0xffff0000;
-  sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
-  // 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
+  mapWork = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
+  view = &mapWork->x;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+  // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-  sync->used = 0;
+  system->used = 0;
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
-  for (cnt = 0; cnt < 64; cnt++, obj++) {
+  for (i = 0; i < 64; i++, obj++) {
     if (obj->active == 0)
       continue;
     if (obj->x != 0 || obj->z != 0) {
@@ -1858,64 +1900,64 @@ void ObjectSystem_UpdateCamera(void) {
         continue;
       if (kind != 1)
         continue;
-      if (sync->suspended != 0 && obj->held == 0) {
+      if (system->suspended != 0 && obj->held == 0) {
         struct CameraSprite *frozen = obj->sprite;
 
-        Resource_ActivateEntry(frozen->resource);
-        frozen->activated = kind;
+        VramCache_ReleaseVram(frozen->resource);
+        frozen->dirty = kind;
         continue;
       }
-      dx = obj->x - camX;
-      dz = obj->z - camZ;
-      top = dz - obj->y;
-      spr = obj->sprite;
-      if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 &&
-          top < 0xe00000) {
-        // 足もとのセルの情報
-        tile = &map->layers[obj->layer]
+      dx = obj->x - viewX;
+      dz = obj->z - viewZ;
+      screenTop = dz - obj->y;
+      sprite = obj->sprite;
+      if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
+          screenTop < 0xe00000) {
+        // The cell under the object.
+        tile = &mapWork->layers[obj->layer]
                     .tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
         if (obj->flags & 1) {
-          bits = tile->priority;
-          if (bits != 0) {
-            spr->priority = bits;
-            spr->secondPriority = bits;
+          priority = tile->priority;
+          if (priority != 0) {
+            sprite->priority = priority;
+            sprite->secondPriority = priority;
           }
         }
-        bitsVal = tile->layer;
-        if (bitsVal != 0)
-          obj->layer = bitsVal - 1;
-        scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
-        scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
+        layerPlusOne = tile->layer;
+        if (layerPlusOne != 0)
+          obj->layer = layerPlusOne - 1;
+        scale[0] = Iwram_MulQ16(obj->scaleX, sprite->scale);
+        scale[1] = Iwram_MulQ16(obj->scaleY, sprite->scale);
         pos[0] = dx;
         pos[1] = obj->y;
         pos[2] = dz;
         pos[3] = obj->height;
         if (obj->flags & 2) {
-          pos[1] += 0xfec00000; // -20 ドット
+          pos[1] += 0xfec00000; // -20 pixels
           pos[2] += 0xfec00000;
           pos[3] += 0xfec00000;
         }
         if (obj->flags & 4) {
-          pos[1] += 0x1400000; // +20 ドット
+          pos[1] += 0x1400000; // +20 pixels
           pos[2] += 0x1400000;
           pos[3] += 0x1400000;
         }
-        Render_ApplyProjectedPlacement(spr, pos, scale, obj->angle);
+        Render_ApplyProjectedPlacement(sprite, pos, scale, obj->angle);
         continue;
       }
       if (obj->held == 0) {
-        if (!(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
-          spr->activated = 1;
+        if (!(sprite->flags1d & 1)) {
+          VramCache_ReleaseVram(sprite->resource);
+          sprite->dirty = 1;
         }
       }
     } else {
       kind = obj->kind & 15;
       if (kind == 1) {
-        spr = obj->sprite;
-        if (obj->held == 0 && !(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
-          spr->activated = kind;
+        sprite = obj->sprite;
+        if (obj->held == 0 && !(sprite->flags1d & 1)) {
+          VramCache_ReleaseVram(sprite->resource);
+          sprite->dirty = kind;
         }
       }
     }
@@ -1923,58 +1965,57 @@ void ObjectSystem_UpdateCamera(void) {
   Runtime_ReleaseHeapBlock(52);
 }
 
+// Returns 1.
 s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
-//--------------------------------------------------------------------------
-// 毎フレーム：オブジェクトの絵を画面に置く（固定カメラ）
-// 視点と注視点から向きを決め、64 番目のオブジェクトから順に置く
-// コマンドを選んでいるあいだ（フラグ 363）は、決まった向きの行列を使い
-// 大きさを 1 倍にする
-//--------------------------------------------------------------------------
+// Each frame, with the fixed camera: places every object's sprite, from the
+// 64th object down, facing them by the angle from the eye to the target.
+// While battle commands are chosen (flag 363, set by
+// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0 scale.
 void ObjectSystem_UpdateCameraFixed(void) {
-  s32 cnt;
-  struct FixedCamera *cam;
-  struct ObjectSystemWork *sync;
+  s32 i;
+  struct FixedCamera *camera;
+  struct ObjectSystemWork *system;
   struct CameraPoint *eye;
   struct CameraPoint *target;
   struct CameraObject *obj;
   s32 angle;
-  s32 part;
+  s32 p;
   s32 kind;
   s32 *pos;
-  s32 one;
-  void **parts;
-  void *spr;
-  s32 scale2[2];
+  s32 unitScale;
+  void **sprites;
+  void *sprite;
+  s32 groupScale[2];
   s32 scale[2];
   /* FAKEMATCH: frame local: unused; the native frame keeps room for two
      points above the scales. Measured (2026-10-13): without it the frame
      is 28 bytes for 52 (differ 4, the two sp adjustments). */
   struct CameraPoint spare[2];
 
-  cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
-  sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+  camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+  system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-  eye = &cam->eye;
-  target = &cam->target;
-  if (cam->eyeOverride != NULL)
-    eye = cam->eyeOverride;
-  if (cam->targetOverride != NULL)
-    target = cam->targetOverride;
+  eye = &camera->eye;
+  target = &camera->target;
+  if (camera->eyeOverride != NULL)
+    eye = camera->eyeOverride;
+  if (camera->targetOverride != NULL)
+    target = camera->targetOverride;
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
-  sync->used = 0;
+  system->used = 0;
   Render_ResetTransformState();
   if (GameFlag_TestFar(363)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
-    Graphics_PrepareTransferAndRun(eye, target);
+    Transform_ApplyLookAt(eye, target);
   } else {
-    Graphics_PrepareTransferInIwramWork(eye, target);
+    Transform_SetLookAt(eye, target);
   }
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
   obj += 63;
-  one = 0x10000;
-  for (cnt = 63; cnt >= 0; cnt--, obj--) {
+  unitScale = 0x10000;
+  for (i = 63; i >= 0; i--, obj--) {
     if (obj->active == 0)
       continue;
     kind = obj->kind & 15;
@@ -1983,27 +2024,27 @@ void ObjectSystem_UpdateCameraFixed(void) {
       pos = &obj->x;
       scale[0] = obj->scaleX;
       scale[1] = obj->scaleY;
-      spr = obj->sprite;
+      sprite = obj->sprite;
       if (GameFlag_TestFar(363)) {
-        scale[0] = one;
-        scale[1] = one;
+        scale[0] = unitScale;
+        scale[1] = unitScale;
       }
-      Render_PlaceProjectedSprite(spr, pos, scale, obj->angle + angle,
+      Render_PlaceProjectedSprite(sprite, pos, scale, obj->angle + angle,
                                   obj->layer);
       break;
     case 2:
-      scale2[0] = obj->scaleX;
-      scale2[1] = obj->scaleY;
+      groupScale[0] = obj->scaleX;
+      groupScale[1] = obj->scaleY;
       if (GameFlag_TestFar(363)) {
-        scale2[0] = one;
-        scale2[1] = one;
+        groupScale[0] = unitScale;
+        groupScale[1] = unitScale;
       }
-      parts = obj->sprite;
-      for (part = 3; part >= 0; part--) {
-        spr = *parts++;
-        if (spr != NULL)
-          Render_PlaceProjectedSprite(spr, &obj->x, scale2, obj->angle + angle,
-                                      obj->layer);
+      sprites = obj->sprite;
+      for (p = 3; p >= 0; p--) {
+        sprite = *sprites++;
+        if (sprite != NULL)
+          Render_PlaceProjectedSprite(sprite, &obj->x, groupScale,
+                                      obj->angle + angle, obj->layer);
       }
       break;
     case 0:
@@ -2013,53 +2054,49 @@ void ObjectSystem_UpdateCameraFixed(void) {
   Runtime_ReleaseHeapBlock(52);
 }
 
-//--------------------------------------------------------------------------
-// script.c
-// オブジェクトスクリプト：位置の移動と byte54 の命令
-//--------------------------------------------------------------------------
+// Object script commands that move the cursor and set byte54.
 
-//--------------------------------------------------------------------------
-// スクリプトの読む位置を移し、1 を返して次の命令を続けて実行する
-//--------------------------------------------------------------------------
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc) {
+// SC_BASE: restarts the script at the next word, and returns 1 to run on.
+s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter) {
   s32 zero;
 
-  // 命令の次の語を新しい先頭にする
-  sc->script = sc->script + sc->cursor + 1;
+  // The word after the command becomes the script's start.
+  interpreter->script = interpreter->script + interpreter->cursor + 1;
   zero = 0;
-  sc->cursor = zero;
+  interpreter->cursor = zero;
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// byte54 を 0 にして、次の命令へ
-//--------------------------------------------------------------------------
-s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
-  sc->byte54 = 0;
-  sc->cursor++;
+// SC_B54_OFF: clears byte54 and moves on to the next command.
+s32 Script_ClearByte54(struct ScriptInterpreter *interpreter) {
+  interpreter->byte54 = 0;
+  interpreter->cursor++;
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// byte54 を 1 にして、次の命令へ
-//--------------------------------------------------------------------------
-s32 Script_SetByte54(struct ScriptInterpreter *sc) {
-  sc->byte54 = 1;
-  sc->cursor++;
+// SC_B54_ON: sets byte54 and moves on to the next command.
+s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
+  interpreter->byte54 = 1;
+  interpreter->cursor++;
   return 1;
 }
 
-void Script_WaitForEventTimeout(s32 arg0) {
-  s32 cnt;
+// Waits until the object has arrived at its target (Object_IsTargetUnset),
+// at most 600 frames.
+void Script_WaitForEventTimeout(s32 object) {
+  s32 frames;
 
-  cnt = 0;
-  while (cnt <= 0x257 &&
-         Object_IsTargetUnset((struct ObjectRuntime *)arg0) == 0) {
+  frames = 0;
+  while (frames <= 0x257 &&
+         Object_IsTargetUnset((struct ObjectRuntime *)object) == 0) {
     WaitFrames(1);
-    cnt++;
+    frames++;
   }
 }
 
+// Returns 1 when the object has no movement target: none of its target
+// coordinates set, or for an object moved by the ground (any motion flag)
+// neither its target x nor z.
 s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   s32 first;
   s32 second;
@@ -2084,17 +2121,21 @@ typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn gScriptObject_CommandTable[];
 
+// value squared.
 static __inline__ s32 Square(s32 value) { return value * value; }
 
+// Advances all 64 field objects by one frame, as Object_UpdateAll does for
+// the eight script objects, with the field's extras: free flight in 3D,
+// terrain following, floating, and solid objects that refuse to overlap.
 void Object_UpdateAllThumb(void) {
   struct ScriptMotionObject *obj;
   const struct ScriptMotionWords *script;
-  s32 cnt;
-  s32 px;
-  s32 py;
-  s32 pz;
+  s32 i;
+  s32 x;
+  s32 y;
+  s32 z;
   s32 ground;
-  s32 reached;
+  s32 arrived;
   s32 pos[3];
   s32 dx;
   s32 dy;
@@ -2105,15 +2146,15 @@ void Object_UpdateAllThumb(void) {
   s32 dist;
   s32 len;
   s32 ratio;
-  s32 rem;
-  s32 half;
-  s32 work;
-  u32 cmd;
+  s32 slowed;
+  s32 maxClimb;
+  s32 turn;
+  u32 command;
   u32 phase;
 
   obj = gObjectSlots;
-  for (cnt = 63; cnt >= 0; cnt--, obj++) {
-    reached = 0;
+  for (i = 63; i >= 0; i--, obj++) {
+    arrived = 0;
 
     script = obj->script;
     if (script == NULL)
@@ -2128,13 +2169,14 @@ void Object_UpdateAllThumb(void) {
     if (obj->paused != 0)
       continue;
 
+    // Count down a wait, or run commands until one yields for this frame.
     if (obj->wait != 0) {
       obj->wait--;
     } else {
       for (;;) {
-        cmd = script->word[(s16)obj->scriptCursor];
-        if (cmd <= 63) {
-          if (gScriptObject_CommandTable[cmd](obj) == 0)
+        command = script->word[(s16)obj->scriptCursor];
+        if (command <= 63) {
+          if (gScriptObject_CommandTable[command](obj) == 0)
             break;
         } else {
           obj->scriptCursor++;
@@ -2145,21 +2187,23 @@ void Object_UpdateAllThumb(void) {
         continue;
     }
 
-    px = obj->x;
-    py = obj->y;
-    pz = obj->z;
+    x = obj->x;
+    y = obj->y;
+    z = obj->z;
 
     if (obj->frozen == 0) {
+      // Free flight (no motion flags): steer in 3D towards the target,
+      // capped at the speed limit, or brake when there is none.
       if (obj->motionFlags == 0) {
         if (obj->targetX != TARGET_UNSET) {
-          dx = (obj->targetX - px) / 65536;
-          dy = (obj->targetY - py) / 65536;
-          dz = (obj->targetZ - pz) / 65536;
+          dx = (obj->targetX - x) / 65536;
+          dy = (obj->targetY - y) / 65536;
+          dz = (obj->targetZ - z) / 65536;
           dist = Iwram_Sqrt(Square(dx) + Square(dy) + Square(dz));
           if (dist == 0) {
-            px = obj->targetX;
-            py = obj->targetY;
-            pz = obj->targetZ;
+            x = obj->targetX;
+            y = obj->targetY;
+            z = obj->targetZ;
           } else {
             ratio = Iwram_RatioMulQ14(dist << 16, obj->acceleration);
             obj->velocityX += dx * ratio;
@@ -2184,10 +2228,10 @@ void Object_UpdateAllThumb(void) {
           len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                           Iwram_MulQ16(dz, dz));
           if (len != 0) {
-            rem = len - obj->acceleration;
-            if (rem < 0)
-              rem = 0;
-            ratio = Iwram_RatioMulQ14(len, rem);
+            slowed = len - obj->acceleration;
+            if (slowed < 0)
+              slowed = 0;
+            ratio = Iwram_RatioMulQ14(len, slowed);
             obj->velocityX = Iwram_MulQ16(dx, ratio);
             obj->velocityY = Iwram_MulQ16(dy, ratio);
             obj->velocityZ = Iwram_MulQ16(dz, ratio);
@@ -2198,18 +2242,19 @@ void Object_UpdateAllThumb(void) {
           }
         }
       } else {
+        // On the ground: steer in the XZ plane the same way.
         if (obj->targetX != TARGET_UNSET) {
-          dx = (obj->targetX - px) / 65536;
-          dz = (obj->targetZ - pz) / 65536;
+          dx = (obj->targetX - x) / 65536;
+          dz = (obj->targetZ - z) / 65536;
           dist = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
           if (dist <= 0x00ffffff) {
-            dx = obj->targetX - px;
-            dz = obj->targetZ - pz;
+            dx = obj->targetX - x;
+            dz = obj->targetZ - z;
             dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
           }
           if (dist == 0) {
-            px = obj->targetX;
-            pz = obj->targetZ;
+            x = obj->targetX;
+            z = obj->targetZ;
           } else {
             ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
             obj->velocityX += Iwram_MulQ16(dx, ratio);
@@ -2228,10 +2273,10 @@ void Object_UpdateAllThumb(void) {
           dz = obj->velocityZ;
           len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
           if (len != 0) {
-            rem = len - obj->acceleration;
-            if (rem < 0)
-              rem = 0;
-            ratio = Iwram_RatioMulQ14(len, rem);
+            slowed = len - obj->acceleration;
+            if (slowed < 0)
+              slowed = 0;
+            ratio = Iwram_RatioMulQ14(len, slowed);
             obj->velocityX = Iwram_MulQ16(dx, ratio);
             obj->velocityZ = Iwram_MulQ16(dz, ratio);
           } else {
@@ -2240,18 +2285,23 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
+        // Follow the terrain: take the ground height where the object is
+        // going and move with its change, unless the object is 4 or more
+        // pixels above the ground. Unless bit 4 is set, a climb or drop also
+        // slows it, by three times the change (at most half its
+        // acceleration).
         if ((obj->motionFlags & 1) != 0) {
-          vx = px + obj->velocityX;
-          vz = pz + obj->velocityZ;
+          vx = x + obj->velocityX;
+          vz = z + obj->velocityZ;
           ground = Map_GetTerrainHeight(obj->terrainId, vx, vz);
           vy = ground - obj->terrainHeight;
-          if (ground - py > -0x40000)
-            py += vy;
+          if (ground - y > -0x40000)
+            y += vy;
           if (vy < 0)
             vy = -vy;
-          half = obj->acceleration / 2;
-          if (vy > half)
-            vy = half;
+          maxClimb = obj->acceleration / 2;
+          if (vy > maxClimb)
+            vy = maxClimb;
           vy *= 3;
           if (vy != 0 && (obj->motionFlags & 0x10) == 0) {
             dx = obj->velocityX;
@@ -2260,10 +2310,10 @@ void Object_UpdateAllThumb(void) {
             len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                             Iwram_MulQ16(dz, dz));
             if (len != 0) {
-              rem = len - vy;
-              if (rem < 0)
-                rem = 0;
-              ratio = Iwram_RatioMulQ14(len, rem);
+              slowed = len - vy;
+              if (slowed < 0)
+                slowed = 0;
+              ratio = Iwram_RatioMulQ14(len, slowed);
               obj->velocityX = Iwram_MulQ16(dx, ratio);
               obj->velocityY = Iwram_MulQ16(dy, ratio);
               obj->velocityZ = Iwram_MulQ16(dz, ratio);
@@ -2272,12 +2322,13 @@ void Object_UpdateAllThumb(void) {
           obj->terrainHeight = ground;
         }
 
+        // Gravity, and a bounce that loses energy on landing.
         if ((obj->motionFlags & 2) != 0) {
           ground = obj->terrainHeight;
-          if (py > ground) {
+          if (y > ground) {
             obj->velocityY -= obj->gravity;
           } else if (obj->velocityY < 0) {
-            py = ground;
+            y = ground;
             obj->velocityY =
                 -Iwram_MulQ16(obj->velocityY, obj->vertical.bounce);
             if ((obj->velocityY < 0 ? -obj->velocityY : obj->velocityY) <=
@@ -2286,6 +2337,7 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
+        // Float: bob up and down on a triangle wave (bit 3 makes it bigger).
         if ((obj->motionFlags & 4) != 0) {
           phase = (obj->vertical.phase & 0x3f);
           if ((obj->motionFlags & 8) != 0)
@@ -2299,14 +2351,15 @@ void Object_UpdateAllThumb(void) {
       }
     }
 
-    px += obj->velocityX;
-    py += obj->velocityY;
-    pz += obj->velocityZ;
+    x += obj->velocityX;
+    y += obj->velocityY;
+    z += obj->velocityZ;
 
+    // A solid object does not move into another; count the refusals.
     if ((obj->collisionFlags & 0x80) != 0) {
-      pos[0] = px;
-      pos[1] = py;
-      pos[2] = pz;
+      pos[0] = x;
+      pos[1] = y;
+      pos[2] = z;
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)obj, pos) !=
           0) {
         obj->refused++;
@@ -2315,34 +2368,35 @@ void Object_UpdateAllThumb(void) {
       obj->refused = 0;
     }
 
+    // Arrived: the watched axis reached the target, or crossed it.
     switch (obj->arrivalAxis) {
-    case 16:
-      if (px == obj->targetX ||
-          ((obj->x - obj->targetX) ^ (px - obj->targetX)) < 0)
-        reached = 1;
+    case ARRIVAL_AXIS_X:
+      if (x == obj->targetX ||
+          ((obj->x - obj->targetX) ^ (x - obj->targetX)) < 0)
+        arrived = 1;
       break;
-    case 17:
-      if (py == obj->targetY ||
-          ((obj->y - obj->targetY) ^ (py - obj->targetY)) < 0)
-        reached = 1;
+    case ARRIVAL_AXIS_Y:
+      if (y == obj->targetY ||
+          ((obj->y - obj->targetY) ^ (y - obj->targetY)) < 0)
+        arrived = 1;
       break;
-    case 18:
-      if (pz == obj->targetZ ||
-          ((obj->z - obj->targetZ) ^ (pz - obj->targetZ)) < 0)
-        reached = 1;
+    case ARRIVAL_AXIS_Z:
+      if (z == obj->targetZ ||
+          ((obj->z - obj->targetZ) ^ (z - obj->targetZ)) < 0)
+        arrived = 1;
       break;
     default:
       break;
     }
 
-    if (reached != 0) {
+    if (arrived != 0) {
       if (obj->snapToTarget != 0) {
-        px = obj->targetX;
+        x = obj->targetX;
         obj->velocityX = 0;
-        pz = obj->targetZ;
+        z = obj->targetZ;
         obj->velocityZ = 0;
         if (obj->motionFlags == 0) {
-          py = obj->targetY;
+          y = obj->targetY;
           obj->velocityY = 0;
         }
       }
@@ -2352,44 +2406,38 @@ void Object_UpdateAllThumb(void) {
       obj->arrivalAxis = 0;
     }
 
-    obj->x = px;
-    obj->y = py;
-    obj->z = pz;
+    obj->x = x;
+    obj->y = y;
+    obj->z = z;
 
+    // Turn to face the direction of travel, at most 0x1000 a frame.
     if ((obj->steeringFlags & 1) != 0) {
-      px = obj->velocityX;
-      pz = obj->velocityZ;
-      if (px != 0 || pz != 0) {
+      x = obj->velocityX;
+      z = obj->velocityZ;
+      if (x != 0 || z != 0) {
         s32 limit;
 
-        work = (s16)(ArcTan2(pz, px) - obj->facing);
+        turn = (s16)(ArcTan2(z, x) - obj->facing);
         limit = 0x1000;
-        if (work > limit)
-          work = limit;
+        if (turn > limit)
+          turn = limit;
         limit = -0x1000;
-        if (work < limit)
-          work = limit;
-        obj->facing += work;
+        if (turn < limit)
+          turn = limit;
+        obj->facing += turn;
       }
     }
   }
 }
 
-//--------------------------------------------------------------------------
-// motion_set_position_and_reset_motion.c
-// オブジェクト：位置の設定と移動の取り消し
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 位置を置き、移動先を「なし」に、速度を 0 にする
-// obj     : オブジェクト
-// x, y, z : 位置（16.16 固定小数）
-//--------------------------------------------------------------------------
+// Places obj at (x, y, z), in 16.16 pixels, clears its movement target and
+// stops it.
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
                                       s32 z) {
   obj->z = z;
-  obj->targetX = 0x80000000; // 移動先なし
-  obj->targetY = 0x80000000;
-  obj->targetZ = 0x80000000;
+  obj->targetX = TARGET_UNSET;
+  obj->targetY = TARGET_UNSET;
+  obj->targetZ = TARGET_UNSET;
   obj->x = x;
   obj->y = y;
   obj->velocityX = 0;
@@ -2397,6 +2445,12 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
   obj->velocityZ = 0;
 }
 
+// Sends an object towards (x, y, z), in 16.16 pixels. Within a pixel it
+// arrives at once. Unless it snaps to its target, the target is pulled in
+// by half its braking distance (speed limit squared over acceleration), or
+// to halfway when that is further, as the object coasts on. Picks the
+// axis to watch for arrival: the one with the furthest to go (y only for a
+// free-flying object).
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 dist;
@@ -2420,9 +2474,9 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
     object->x = x;
     object->y = y;
     object->z = z;
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     return;
   }
   if (object->snapToTarget == 0) {
@@ -2447,19 +2501,20 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   dist = y - object->y;
   dz = z - object->z;
   axis = &object->arrivalAxis;
-  *axis = 16;
+  *axis = ARRIVAL_AXIS_X;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
-    *axis = 18;
+    *axis = ARRIVAL_AXIS_Z;
     dx = dz;
   }
   if (object->flags == 0) {
     if (dx < 0)
       dx = -dx;
     if (dx < (dist < 0 ? -dist : dist))
-      *axis = 17;
+      *axis = ARRIVAL_AXIS_Y;
   }
 }
 
+// Copies Object_UpdateAll (ARM code) to the heap, runs it once and frees it.
 void Object_RunUpdateAllFromHeap(void) {
   void (*routine)(void);
 
@@ -2468,6 +2523,9 @@ void Object_RunUpdateAllFromHeap(void) {
   MemFree(routine);
 }
 
+// Advances the first 14 objects' motion by one frame, without running their
+// scripts: steering towards a target or braking, gravity and bouncing,
+// arrival, and turning to face the direction of travel.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *obj;
   s32 cnt;
@@ -2603,6 +2661,8 @@ void Object_UpdateAllMotion(void) {
   }
 }
 
+// SC_WAIT(n): waits n frames; this frame counts as the first. Returns 0 to
+// end the object's commands for this frame.
 s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
   s16 cursor = interpreter->cursor;
 
@@ -2611,6 +2671,9 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
+// SC_SYNC: waits until the object arrives at its target, or until a solid
+// object has blocked it for 60 frames (delay is the blocked count, which
+// the update raises). Returns 1 (run on) once it has, 0 (wait) until then.
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
   if (interpreter->delay > 0x3B) {
     interpreter->delay = 0;
@@ -2624,6 +2687,9 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
+// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
+// it again next frame; zero moves on, past the command unless fn moved the
+// cursor itself.
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initial = interpreter->cursor;
   ScriptCommand callback = (ScriptCommand)interpreter->script[initial + 1];
@@ -2635,6 +2701,9 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
+// matched without the bit that tells them apart), searching its first 1024
+// words, or 0 (the start) when key is 0 or not found. Clears the wait.
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   u32 *entries;
   s32 index;
@@ -2658,6 +2727,8 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   return 0;
 }
 
+// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
+// moves on; with n = SC_FOREVER it always jumps.
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
@@ -2684,12 +2755,14 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_JUMP(to): jumps to label to.
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
   interpreter->cursor = Script_FindLabel(
       interpreter, interpreter->script[interpreter->cursor + 1]);
   return 1;
 }
 
+// SC_IF(to): jumps to label to when the last test was true.
 u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
@@ -2703,6 +2776,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_IFNOT(to): jumps to label to when the last test was false.
 u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
@@ -2716,6 +2790,7 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_END: hands the object back to the idle script. Returns 0.
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter) {
   s32 result;
 
@@ -2724,6 +2799,7 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter) {
   return result;
 }
 
+// SC_FLAG_CHECK(f): tests game flag f.
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   interpreter->conditionResult =
       GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
@@ -2731,7 +2807,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// フラグの今の値を conditionResult に入れてから、change でフラグを書き換える
+// Defines a flag command: stores the flag's current value in conditionResult,
+// then changes the flag with change.
 #define DEFINE_FLAG_AND_TEST(name, change)                                     \
   s32 name(struct ScriptInterpreter *interpreter) {                            \
     s32 value;                                                                 \
@@ -2743,9 +2820,11 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
     return 1;                                                                  \
   }
 
+// SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
 DEFINE_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
 DEFINE_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
+// SC_FLAG_REV(f): tests game flag f, then flips it.
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
   s32 result;
@@ -2762,6 +2841,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_ARG(v): switches the object's sprites to animation v.
 s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_ApplyArgumentToChildren(
       interpreter, interpreter->script[interpreter->cursor + 1]);
@@ -2769,22 +2849,27 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_FREE: releases the object. Returns 0.
 s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_Release((struct DispatchObject *)interpreter);
   return 0;
 }
 
+// SC_NOP(v): does nothing with its operand.
 s32 Script_SkipCommand(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
 
+// SC_SE(n): sends sound command n (a sound effect).
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter) {
   AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }
 
+// Returns -1 when an object at position values would overlap a solid
+// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0.
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   s32 index;
   u8 *flags;
@@ -2804,6 +2889,8 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
 }
 
 struct ScriptObjectEntry *
+// Returns the first solid object that an object at position values would
+// overlap, as ScriptObject_CheckOverlap tests, or NULL.
 ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values) {
   s32 index;
@@ -2823,7 +2910,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
   return NULL;
 }
 
-// 命令語の次の 3 語を座標として place にわたす
+// Passes the three words after the command to place as a position.
 static __inline__ s32 ApplyPosition(struct ScriptInterpreter *interpreter,
                                     void (*place)(struct ObjectRuntime *object,
                                                   s32 x, s32 y, s32 z)) {
@@ -2844,14 +2931,17 @@ static __inline__ s32 ApplyPosition(struct ScriptInterpreter *interpreter,
   return 1;
 }
 
+// SC_POS(x, y, z): places the object at (x, y, z) and stops it.
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter) {
   return ApplyPosition(interpreter, Object_SetPositionAndResetMotion);
 }
 
+// SC_MOVE(x, y, z): sends the object towards (x, y, z).
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter) {
   return ApplyPosition(interpreter, Object_SetMoveTarget);
 }
 
+// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object) {
   u8 *entry = (u8 *)(object->script + (s16)object->scriptCursor);
   s32 *cursor = (s32 *)(entry + 4);
@@ -2865,6 +2955,8 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object) {
   return 1;
 }
 
+// SC_FACE_LINK: stores the angle from the object to its linked object in
+// scriptValue.
 s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object) {
   struct ScriptObjectRuntime *target;
 
@@ -2875,6 +2967,7 @@ s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object) {
   return 1;
 }
 
+// SC_MOVE_LINK: sends the object towards its linked object.
 s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object) {
   struct ScriptObjectRuntime *target;
 
@@ -2885,9 +2978,16 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object) {
   return 1;
 }
 
+// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
+// that is never filled in; the operands are skipped unread.
 s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object) {
   s32 offset[3];
 
+  // BUG: offset is never set, so the target is the position plus whatever
+  // the stack held.
+#ifdef UBFIX
+  offset[0] = offset[1] = offset[2] = 0;
+#endif
   Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + offset[0],
                        object->y + offset[1], object->z + offset[2]);
   object->scriptCursor += 3;
@@ -2902,6 +3002,11 @@ struct MapScrollBounds {
   s32 bottom;
 };
 
+// SC_CAMERA: keeps the camera object on its leader (linkedObject), clamped
+// to 120 pixels inside the map's left and right edges and a band above and
+// below the leader. It closes an eighth of the distance a frame, at most
+// its speed limit, and a quarter of a large height difference; when action
+// is set it jumps there at once.
 s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
   struct ObjectRuntime *leader;
   struct MapScrollBounds *bounds;
@@ -2945,8 +3050,8 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
       obj->y = y;
       obj->z = z;
     } else {
-      // XZ 平面の距離: dy は Object_SetMoveTarget
-      // と同じ形で求めるが距離には使わない
+      // The distance in the XZ plane: dy is computed as in
+      // Object_SetMoveTarget but not used for the distance.
       dx = (x - obj->x) / 0x10000;
       /* FAKEMATCH: dead code: this dy is overwritten below and the compiler
        * drops it, but its references rank y above the bounds in global
@@ -2986,6 +3091,9 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
 extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 
+// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
+// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
+// within 16 it stands (animation 1) and waits for the next frame.
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
   s32 len;
   s32 mz;
@@ -3020,6 +3128,11 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
   return 0;
 }
 
+// SC_WANDER(base, range, limit): walks to a random point base to base +
+// range away, within 90 degrees either side of its heading (scriptValue),
+// that no solid object or wall blocks, with clear ground 8 pixels further at
+// 45 degrees either side, and within limit pixels of home. After seven
+// failed tries it turns around (turnedBack) and waits for the next frame.
 s32 Object_Wander(struct ScriptObjectRuntime *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
@@ -3090,6 +3203,9 @@ retry:
   return 1;
 }
 
+// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
+// more ground around the point, while it is within limit pixels of home;
+// outside that, or when no point works, it heads back towards home.
 s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
@@ -3210,8 +3326,8 @@ typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 
 extern OperandFunc gScript_OperandHandlerTable[];
 
-// 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は
-// comparisonResult) 32 ビットの項目
+// Defines the handler for a 32-bit work value: set it, add to it, or compare
+// it (into comparisonResult).
 #define DEFINE_OPERAND_WORD(name, field)                                       \
   void name(struct ScriptOperands *state, s32 operation, s32 value) {          \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -3225,7 +3341,7 @@ extern OperandFunc gScript_OperandHandlerTable[];
     state->comparisonResult = state->field == value;                           \
   }
 
-// アドレスの項目: 加算は value の 4 倍 (4 バイト単位)
+// The same for an address: an add steps by value words (value * 4 bytes).
 #define DEFINE_OPERAND_ADDRESS(name, field)                                    \
   void name(struct ScriptOperands *state, s32 operation, s32 value) {          \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -3239,7 +3355,7 @@ extern OperandFunc gScript_OperandHandlerTable[];
     state->comparisonResult = state->field == value;                           \
   }
 
-// 8 ビット、16 ビットの項目: 比較は項目の型に切り詰めた値と行う
+// The same for an 8- or 16-bit value: a compare narrows value to its type.
 #define DEFINE_OPERAND_NARROW(name, field, type)                               \
   void name(struct ScriptOperands *state, s32 operation, s32 value) {          \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -3251,8 +3367,12 @@ extern OperandFunc gScript_OperandHandlerTable[];
     }                                                                          \
   }
 
+// The work value handlers, one for each entry of enum ScriptWork (see
+// gScript_OperandHandlerTable in operand.c); each names the object field it
+// sets, adds to or compares.
 DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
 
+// Work value SW_CURSOR: sets, adds to or compares the script cursor.
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
                                s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -3270,6 +3390,7 @@ DEFINE_OPERAND_WORD(Script_SetOrCompareX, word08)
 DEFINE_OPERAND_WORD(Script_SetOrCompareY, word0c)
 DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word10)
 
+// Work value SW_RADIUS: sets, adds to or compares the object's radius.
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -3308,6 +3429,7 @@ DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte5a, u8)
 DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte5b, u8)
 DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte5d, u8)
 
+// Work value SW_WAIT: sets, adds to or compares the wait counter.
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
                                    s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -3330,7 +3452,8 @@ DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word6c)
 DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte62, u8)
 DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte63, u8)
 
-// 命令語の次の 2 語 (項目の番号と値) を読み、項目の関数に operation をわたす
+// Reads the two words after the command (a work value number and a value)
+// and passes operation to that value's handler.
 static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation) {
   s16 index = work->cursor;
   const s32 *command = (const s32 *)work->scriptAddress + index + 1;
@@ -3342,22 +3465,27 @@ static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation) {
   return 1;
 }
 
+// SC_SET(w, v): sets work value w to v.
 s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_SET);
 }
 
+// SC_ADD(w, v): adds v to work value w.
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_ADD);
 }
 
+// SC_CMP(w, v): tests whether work value w equals v.
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_COMPARE);
 }
 
+// Stores value as a halfword.
 static __inline__ void StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
+// Stores value in the word that the object's unk6c points at.
 void ObjectDispatch_SetUpdateValue(void *raw, s32 value) {
   struct ObjectRuntime *object = raw;
 
@@ -3367,12 +3495,17 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value) {
 
 #if EDITION_INTERNATIONAL
 
-#define ASSIGNED_KEYS gKeyState
+#define ASSIGNED_KEYS gKeysPressed
 #else
 
 #define ASSIGNED_KEYS gKeysHeld
 #endif
 
+// Handles a shortcut key's assignment: the top two bits of value choose
+// what it requests (0 a Psynergy, 1 the other kind, stored in unk180) and
+// the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
+// R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
+// request.
 u32 Field_StoreAssignedKeyValue(u32 value) {
   u32 selector = value >> 14;
   u32 request = 0x3FFF & value;
@@ -3400,38 +3533,43 @@ u32 Field_StoreAssignedKeyValue(u32 value) {
   return request;
 }
 
+// Checks the keys the player has configured: Select, A and Start set their
+// flag in the event work and return 1; the two shortcut keys pass on their
+// assignment (Field_StoreAssignedKeyValue). Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct EventRuntime *work = gEventWork;
   s32 result = 0;
 
   if (work == NULL)
     return 0;
-  if (gKeyState & gGameState.selectKeys) {
+  if (gKeysPressed & gGameState.selectKeys) {
     work->unk172[0] = 1;
     result = 1;
-  } else if (gKeyState & gGameState.aKeys) {
+  } else if (gKeysPressed & gGameState.aKeys) {
     work->unk172[1] = 1;
     result = 1;
-  } else if (gKeyState & gGameState.startKeys) {
+  } else if (gKeysPressed & gGameState.startKeys) {
     work->unk172[2] = 1;
     result = 1;
-  } else if (gKeyState & gGameState.firstShortcutKeys) {
+  } else if (gKeysPressed & gGameState.firstShortcutKeys) {
     result = Field_StoreAssignedKeyValue(gGameState.firstShortcut);
-  } else if (gKeyState & gGameState.secondShortcutKeys) {
+  } else if (gKeysPressed & gGameState.secondShortcutKeys) {
     result = Field_StoreAssignedKeyValue(gGameState.secondShortcut);
   }
   return result;
 }
 
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
+// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
+// with radii radiusA and radiusB (pixels); -1 otherwise.
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
   const struct FieldPosition *first = (const struct FieldPosition *)a;
   const struct FieldPosition *second = (const struct FieldPosition *)b;
-  const s32 *first_word = &first->x;
-  const s32 *second_word = &second->x;
-  s32 dx = (*first_word++ - *second_word++) >> 16;
-  s32 dy = (*first_word++ - *second_word++) >> 16;
-  s32 dz = (*first_word - *second_word) >> 16;
-  s32 radius = radius_a + radius_b;
+  const s32 *firstCoord = &first->x;
+  const s32 *secondCoord = &second->x;
+  s32 dx = (*firstCoord++ - *secondCoord++) >> 16;
+  s32 dy = (*firstCoord++ - *secondCoord++) >> 16;
+  s32 dz = (*firstCoord - *secondCoord) >> 16;
+  s32 radius = radiusA + radiusB;
 
   if (!(dx > 0x400000) && !(dz > 0x400000) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
@@ -3445,6 +3583,10 @@ struct WorldMapSprite {
   u8 *shadow;
 };
 
+// SC_PLAYER: moves the player on the field by the direction pad: walking or
+// running, sliding around walls, pushing movable objects, turning, playing
+// the matching animation and leaving footprints. Also checks the configured
+// keys. Returns 1.
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -3463,6 +3605,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
 
   collision = 0;
   pushed = 0;
+  // Debug (flag 350): beep when fewer than 136 of the 512 resource blocks
+  // are free.
   if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
     s32 free;
     s32 block;
@@ -3507,6 +3651,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
         goto wait_d;
     }
   }
+  // Walk, or run with the dash keys (animation 5 instead of 2); flag 0x17f
+  // and B move much faster.
   if (gKeysHeld & gGameState.dashKeys) {
     object->speedLimit = 0x18000;
     object->acceleration = 0x4000;
@@ -3522,6 +3668,11 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
     mode = 5;
   }
 
+  // Step 8 pixels the way the direction pad points, when that step and the
+  // ones 22.5 and 45 degrees either side are clear (debug L walks through
+  // walls); otherwise try headings up to 67.5 degrees off. Bit 2 of
+  // collision means no direction is held, bit 0 that every heading is
+  // blocked.
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
@@ -3610,6 +3761,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
       collision |= 1;
 
     push_objects:
+      // Push the movable objects (unk59 bit 1) just ahead 4 pixels further,
+      // when they have room; any other solid object there blocks the step
+      // (bit 1 of collision). Pushing slows the player down.
       contact.x = object->x;
       contact.y = object->y;
       contact.z = object->z;
@@ -3656,9 +3810,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
                 if (Map_CheckObjectStep(other, &testPosition) == 0) {
                   Vector_AddPolarOffset(0x4000, direction,
                                         (struct FieldPosition *)&other->x);
-                  other->targetX = -0x80000000;
-                  other->targetY = -0x80000000;
-                  other->targetZ = -0x80000000;
+                  other->targetX = TARGET_UNSET;
+                  other->targetY = TARGET_UNSET;
+                  other->targetZ = TARGET_UNSET;
                   pushed |= 1;
                   continue;
                 }
@@ -3674,6 +3828,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
       }
     }
   }
+  // Count the blocked steps, and pick the animation: push (8), bump (9, or
+  // 22 when the leader is down) or walk / run.
   if (gEventWork != NULL) {
     if (collision & 3)
       gEventWork->blockedSteps++;
@@ -3693,10 +3849,12 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
     ObjectDispatch_ApplyArgumentToChildren(object, mode);
   }
 
+  // Blocked: stop and turn towards the pad, at most 0x1000 a frame.
+  // Otherwise move to the step, keeping the speed but along the heading.
   if (collision != 0) {
-    object->targetX = -0x80000000;
-    object->targetY = -0x80000000;
-    object->targetZ = -0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if (collision & 3) {
@@ -3726,6 +3884,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
       object->action--;
   }
 
+  // Leave a footprint (object kind 25) every 18 walking or 12 running
+  // frames on maps that show them, alternating left and right.
   rotation = (u16)angle;
   if (((struct MapScrollWork *)gMapWork[0])->footprints != 0 &&
       object->action == 0 && collision == 0) {
@@ -3773,6 +3933,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
 #define WORLD_PROBE_RADIUS 0x80000
 #endif
 
+// SC_WORLD: moves the player on the world map by the direction pad, as
+// SC_PLAYER does on the field, and turns the world map camera with the pad.
+// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
 s32 Object_MoveOnWorldMap(struct ObjectRuntime *object) {
   struct FieldPosition position;
 #if EDITION_INTERNATIONAL
@@ -3985,9 +4148,9 @@ update_object:
     ObjectDispatch_ApplyArgumentToChildren(object, mode);
 
   if (collision != 0) {
-    object->targetX = -0x80000000;
-    object->targetY = -0x80000000;
-    object->targetZ = -0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
@@ -4058,6 +4221,8 @@ update_object:
   return 1;
 }
 
+// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
+// Returns 1.
 s32 Field_CheckConfiguredKeysAndCount(void *work) {
   struct ObjectRuntime *object = work;
 
@@ -4066,6 +4231,10 @@ s32 Field_CheckConfiguredKeysAndCount(void *work) {
   return 1;
 }
 
+// SC_KEYS: moves an object 8 pixels at a time by the direction pad, with up
+// and down changing its height (y) rather than its depth. Refuses steps
+// into an occupied cell, across a change of collision code, or onto ground
+// too high (up) or too low (down). Returns 1.
 s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   struct FieldPosition pos;
   /* FAKEMATCH: never used; its 68 bytes are the native frame space no
@@ -4140,9 +4309,9 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   }
   ObjectDispatch_ApplyArgumentToChildren(object, motion);
   if (blocked != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -4153,34 +4322,32 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   return 1;
 }
 
+// Remaps cnt bytes of buf in place through gRuntime_ByteRemapTable.
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt) {
-  s32 n;
-  u8 *p;
+  s32 remaining;
+  u8 *byte;
   u8 *table;
 
-  p = buf;
+  byte = buf;
   table = gRuntime_ByteRemapTable;
-  n = cnt - 1;
-  if (n != -1) {
+  remaining = cnt - 1;
+  if (remaining != -1) {
     do {
-      n -= 1;
-      *p = table[*p];
-      p += 1;
-    } while (n != -1);
+      remaining -= 1;
+      *byte = table[*byte];
+      byte += 1;
+    } while (remaining != -1);
   }
 }
 
-//--------------------------------------------------------------------------
-// decode_staged_buffer.c
-// マップ：展開したブロックのデータを gMapBlocks にほどく
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 展開バッファの [1] が方式、[2] からが 16 ビットのデータ
-// size : 方式のバイトを含む長さ（偶数ならデータなし）
-//   方式 0 : そのまま写す
-//   方式 1 : 上位バイトの列のあとに下位バイトの列。前の値と XOR して戻す
-//   方式 2 : 前の値と XOR して戻す
-//--------------------------------------------------------------------------
+// Unpacks the staged block data into gMapBlocks. Byte 1 of the staged buffer
+// (Ram_MapCellBuffer) is the method, and the
+// 16-bit data follows from byte 2. size counts the method byte too (an even
+// size means no data). Methods:
+//   0: copy as it is
+//   1: all the high bytes, then all the low bytes; each value is XORed with
+//      the one before
+//   2: each value is XORed with the one before
 void Tilemap_DecodeStagedBuffer(s32 size) {
   u16 *dst;
   u16 *src;
@@ -4224,27 +4391,31 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
 
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
+// Gives each map cell whose block number is 0xfff (a placeholder) a number
+// of its own, counting up from 0 in map order.
 void Graphics_RenumberFillerEntries(void) {
-  u32 *p = (u32 *)gMapCellBuffer;
-  u32 cnt = 128 << 7;
+  u32 *cell = (u32 *)gMapCellBuffer;
+  u32 remaining = 128 << 7;
   u32 mask = 0xfff;
-  s32 no = -1;
+  s32 number = -1;
 
   do {
-    u32 value = *p++;
-    u32 idx = value & mask;
+    u32 value = *cell++;
+    u32 block = value & mask;
 
-    if (idx == mask) {
-      if (no != idx) {
-        no++;
+    if (block == mask) {
+      if (number != block) {
+        number++;
       }
-      value = value + no - idx;
-      p[-1] = value;
+      value = value + number - block;
+      cell[-1] = value;
     }
-    cnt--;
-  } while (cnt != 0);
+    remaining--;
+  } while (remaining != 0);
 }
 
+// Converts the map's cells in place with Tile_ConvertMap, run from RAM, from
+// a saved copy of the staged buffer.
 void Tilemap_ConvertBuffer(void) {
   u8 *saved;
   ConvertFn routine;
@@ -4259,21 +4430,25 @@ void Tilemap_ConvertBuffer(void) {
   MemFree(saved);
 }
 
+// Copies one tile column of a block (metatile) into a BG map: its top and
+// bottom tile entries, left or right by parity.
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod,
                                  u32 parity) {
-  u16 *colors;
+  u16 *entry;
   u8 *destination;
   u32 index = ((*map << 20) >> 18) + parity;
 
-  colors = (u16 *)Ram_MapBlocks;
-  colors += index;
+  entry = (u16 *)Ram_MapBlocks;
+  entry += index;
   destination = base + (rowmod + colmod + parity) * 2;
-  *(u16 *)destination = *colors;
-  colors = (u16 *)(Ram_MapBlocks + 4);
-  colors += index;
-  *(u16 *)(destination + 64) = *colors;
+  *(u16 *)destination = *entry;
+  entry = (u16 *)(Ram_MapBlocks + 4);
+  entry += index;
+  *(u16 *)(destination + 64) = *entry;
 }
 
+// Copies a whole block (metatile) into a BG map: its top two tile entries
+// and its bottom two, a map row (64 bytes) below.
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod,
                                       u32 colmod) {
   u32 *tiles;
@@ -4320,6 +4495,11 @@ struct SceneHeader {
   s32 script;
 };
 
+// Loads layered scene index from gMap_LayeredScenes: its blocks, collision,
+// cells, tile animations, blend script and event script; sets up the three
+// background layers' origins, parallax and wrap from the scene header; loads
+// the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
+// loaded; and starts the layer scrolling. Returns 2.
 s32 Map_LoadLayeredScene(s32 index) {
   struct SceneEntry *entry;
   struct MapScrollWork *work;
@@ -4336,7 +4516,7 @@ s32 Map_LoadLayeredScene(s32 index) {
 
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Blend_SetDarkenTarget0(0);
+  Fade_FromBlack(0);
   entry = &gMap_LayeredScenes[index];
   work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
@@ -4462,6 +4642,8 @@ s32 Map_LoadLayeredScene(s32 index) {
   return 2;
 }
 
+// Centres the camera on the point the map follows (origin: x, height, z),
+// or on (0, 0) when there is none, and scrolls the layers there.
 void Map_ApplyWorkOriginAndSpan(void) {
   struct MapScrollWork *work = gMapWork[0];
   s32 x;
@@ -4482,15 +4664,18 @@ void Map_ApplyWorkOriginAndSpan(void) {
   Map_UpdateLayerScroll();
 }
 
-void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2) {
-  u8 *dest = BG_SCREEN_BLOCK(5) + (a0 << 11);
-  u32 row = ((a2 / 2) & 0x7F) << 7;
-  u32 rowmod = (a2 & 30) << 5;
-  u32 col = (a1 / 2) & 0x7F;
-  u32 colmod = a1 & 30;
-  u32 counter;
+// Draws a row of 16 blocks (32 tiles) of a layer's cells into its BG map
+// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
+// wraps every 32 tiles.
+void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
+  u8 *dest = BG_SCREEN_BLOCK(5) + (layer << 11);
+  u32 row = ((tileY / 2) & 0x7F) << 7;
+  u32 rowmod = (tileY & 30) << 5;
+  u32 col = (tileX / 2) & 0x7F;
+  u32 colmod = tileX & 30;
+  u32 i;
 
-  for (counter = 0; counter <= 15; counter++) {
+  for (i = 0; i <= 15; i++) {
     u32 *map = (u32 *)Ram_MapCellBuffer;
     u32 *tiles;
     u8 *cell;
@@ -4510,16 +4695,18 @@ void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2) {
   }
 }
 
-void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2) {
-  u8 *destination = BG_SCREEN_BLOCK(5) + (a0 << 11);
-  u32 row = ((a2 / 2) & 0x7F) << 7;
-  u32 rowmod = (a2 & 30) << 5;
-  u32 col = (a1 / 2) & 0x7F;
-  u32 colmod = a1 & 30;
-  u32 parity = a1 & 1;
-  u32 counter;
+// Draws a column of 11 blocks of a layer's cells, one tile wide, into its BG
+// map, starting at tile (tileX, tileY).
+void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
+  u8 *destination = BG_SCREEN_BLOCK(5) + (layer << 11);
+  u32 row = ((tileY / 2) & 0x7F) << 7;
+  u32 rowmod = (tileY & 30) << 5;
+  u32 col = (tileX / 2) & 0x7F;
+  u32 colmod = tileX & 30;
+  u32 parity = tileX & 1;
+  u32 i;
 
-  for (counter = 0; counter <= 10; counter++) {
+  for (i = 0; i <= 10; i++) {
     u32 *map = (u32 *)Ram_MapCellBuffer;
 
     map += row + col;
@@ -4530,6 +4717,11 @@ void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2) {
   }
 }
 
+// Each frame on a layered map: centres the view on the point the map follows
+// (origin), clamped to the map's bounds and shaken by any decaying screen
+// shake; then scrolls each of the three layers by its parallax scale and
+// automatic scroll (wrapping at its period), draws the block column or row
+// that scrolls into view, and sets its BG scroll.
 void Map_UpdateLayerScroll(void) {
   struct MapScrollWork *work;
   struct MapLayerScroll *layer;
@@ -4600,9 +4792,9 @@ void Map_UpdateLayerScroll(void) {
     y = baseY / 0x80000;
     if ((layer->x ^ baseX) & 0x80000) {
       if (layer->x < baseX)
-        Map_RenderPaletteMappedBlock(i, x + 30, y);
+        Map_RenderMetatileColumn(i, x + 30, y);
       else
-        Map_RenderPaletteMappedBlock(i, x, y);
+        Map_RenderMetatileColumn(i, x, y);
     }
     if ((layer->y ^ baseY) & 0x100000) {
       if (layer->y < baseY)
@@ -4617,6 +4809,8 @@ void Map_UpdateLayerScroll(void) {
   }
 }
 
+// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
+// and redraws every enabled layer's BG map around it.
 void Map_SetCameraCenter(s32 x, s32 y) {
   u32 no;
   u8 *dest;
@@ -4677,11 +4871,14 @@ void Map_SetCameraCenter(s32 x, s32 y) {
   }
 }
 
-// レイヤーの表示範囲の左上（セル）
+// The top left of a layer's visible area, in cells.
 struct TilePos {
   s32 x, y;
 };
 
+// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
+// (dstX, dstY), width by height cells, keeping each destination's
+// attributes, and redraws the copied cells that are on screen.
 void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH: needed to match: temporary sharing preserves register allocation
@@ -4776,8 +4973,12 @@ struct MapCopyCommand {
 } __attribute__((packed, aligned(2)));
 typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
 
-void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
-                                  u32 destination_y) {
+// Plays a map edit sequence (struct MapCopyCommand records, ended by a
+// source of 0xffff): copies each record's rectangle of block numbers to
+// (destinationX, destinationY) and waits its delay in frames. Doors and
+// other changing scenery are drawn this way.
+void Map_PlayMetatileCopySequence(u16 *command, s32 destinationX,
+                                  u32 destinationY) {
   struct MapCopyCommand *record = (struct MapCopyCommand *)command;
   u32 source = record->source;
   u32 end = 0xffff;
@@ -4796,14 +4997,14 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
     s16 *args = (s16 *)(command + 1);
 
     while (1) {
-      s32 source_y = args[0];
+      s32 sourceY = args[0];
       s32 width = args[1];
       s32 height = args[2];
       s32 delay = args[3];
       args += 5;
 
-      Map_CopyMetatileIndicesRect(source, (u16)source_y, destination_x,
-                                  destination_y, (u16)width, (u16)height);
+      Map_CopyMetatileIndicesRect(source, (u16)sourceY, destinationX,
+                                  destinationY, (u16)width, (u16)height);
       record++;
       WaitFrames((u16)delay);
       source = record->source;
@@ -4824,23 +5025,16 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
   }
 }
 
-//--------------------------------------------------------------------------
-// mapcopy.c
-// マップ：セルの矩形の写し
-//--------------------------------------------------------------------------
+// Map: copying rectangles of cells.
 
 #define MAP_CELLS ((u32 *)gMapCellBuffer)
-#define MAP_CELL_TILE_MASK 0x00000fff      // ブロック番号
-#define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // 属性
+#define MAP_CELL_TILE_MASK 0x00000fff      // the block (metatile) number
+#define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // the cell's attributes
 
-//--------------------------------------------------------------------------
-// セル（16×16 ドット）の矩形をそのまま写す
-// 写した先が BG レイヤーの表示範囲（16×12 セル）にあれば、
-// VRAM の BG マップにもブロックの 2×2 キャラを書く
-// srcX, srcY  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
+// Copies a rectangle of cells (16x16 pixels each) as they are, from
+// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
+// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
+// that layer's BG map in VRAM too.
 void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y = dstY;
@@ -4852,7 +5046,7 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   struct TilePos *pos = view;
   s32 x;
 
-  // 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
+  // The three layers' visible areas: their scroll positions in cells.
   i = 2;
   while (i >= 0) {
     s32 tmp5;
@@ -4894,12 +5088,13 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         i = 0;
         tmp6 = tmp13;
         offset = tmp6;
-        // 表示中のレイヤーなら、VRAM の BG マップ（レイヤーごとに 0x800）へ
+        // In a layer's visible area, write its BG map in VRAM too (0x800
+        // bytes per layer).
         for (; i < 3; i += 1) {
           if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y &&
               pos->y + 12 > y) {
-            // ブロック（8 バイト）の上の段の 2 キャラと、下の段（0x40 先）の 2
-            // キャラ
+            // The block's (8 bytes) top two tiles, and its bottom two 0x40
+            // bytes further on.
             u32 *tmp;
             u32 tmp2;
             u32 tmp4;
@@ -4945,7 +5140,7 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
             *dest = tmp2;
             break;
           }
-          n = 0x800; // つぎのレイヤーの BG マップ
+          n = 0x800; // the next layer's BG map
           offset += n;
           pos++;
         }
@@ -4957,12 +5152,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-//--------------------------------------------------------------------------
-// セルの矩形の属性だけを写す。写す先のブロック番号はそのまま
-// srcX, srcY  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
+// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
+// (dstX, dstY), width by height cells, keeping each destination cell's
+// block number.
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *dst = MAP_CELLS;
@@ -4985,13 +5177,9 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-//--------------------------------------------------------------------------
-// セルの矩形のブロック番号だけを写す。写す先の属性はそのまま
-// 表示範囲にあれば VRAM の BG マップも書きかえる
-// srcX, srcY  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
+// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
+// to (dstX, dstY), width by height cells, keeping each destination cell's
+// attributes; cells in a visible area update the BG maps too.
 void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                            s32 dstY) {
   /* FAKEMATCH: needed to match: word/index temporaries preserve register
@@ -5009,7 +5197,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   struct TilePos *pos = view;
   s32 x;
 
-  // 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
+  // The three layers' visible areas: their scroll positions in cells.
   i = 2;
   while (i >= 0) {
     s32 tmp5;
@@ -5050,12 +5238,13 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         tmp13 = n * 4;
         tmp6 = tmp13;
         offset = tmp6;
-        // 表示中のレイヤーなら、VRAM の BG マップ（レイヤーごとに 0x800）へ
+        // In a layer's visible area, write its BG map in VRAM too (0x800
+        // bytes per layer).
         for (; i < 3; i += 1) {
           if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y &&
               pos->y + 12 > y) {
-            // ブロック（8 バイト）の上の段の 2 キャラと、下の段（0x40 先）の 2
-            // キャラ
+            // The block's (8 bytes) top two tiles, and its bottom two 0x40
+            // bytes further on.
             u32 scr, blk;
             u8 *dest, *tiles;
 
@@ -5077,7 +5266,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
             *(u32 *)dest = *(u32 *)tiles;
             break;
           }
-          n = 0x800; // つぎのレイヤーの BG マップ
+          n = 0x800; // the next layer's BG map
           offset += n;
           pos++;
         }
@@ -5089,6 +5278,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
+// Sets bits 9-11 of the map's flags from v, keeping the others.
 void Map_SetWorkFlagBits9To11(u32 v) {
   struct MapState *state = gMapWork[0];
   u32 mask = v & 0xe00;
@@ -5098,8 +5288,10 @@ void Map_SetWorkFlagBits9To11(u32 v) {
   state->flags = flags;
 }
 
+// Writes a halfword register (value first).
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
 
+// Writes a halfword register (register first).
 static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
@@ -5116,6 +5308,10 @@ struct WorldCell {
 
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
+// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's block
+// buffer, decompressing it from the area's graphics, and with update set
+// also draws it into the layer's BG map. Returns 0 when that quarter already
+// shows the tile (and update is 0), else 1.
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveWork *work = gMapWork[0];
   u32 *graphics = work->tiles;
@@ -5167,6 +5363,10 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   return 1;
 }
 
+// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
+// camera work, the projection, the per-scanline ground plane routine in RAM
+// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+// HBlank updates.
 s32 Map_InitializePerspectiveScene(void) {
   struct PerspectiveWork *work;
   struct BattleCamera *camera;
@@ -5188,7 +5388,7 @@ s32 Map_InitializePerspectiveScene(void) {
 
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Blend_SetDarkenTarget0(0);
+  Fade_FromBlack(0);
   work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
   Dma_Fill32Cell(fill, 0, work, sizeof(struct PerspectiveWork));
   work->viewX = 0;
@@ -5252,7 +5452,7 @@ s32 Map_InitializePerspectiveScene(void) {
   *turn = 0;
   gProjection.centerX = 120;
   gProjection.centerY = 96;
-  Camera_StoreSceneParameters(farPlane, farPlane >> 1, farPlane << 1);
+  Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   position[0] = 0;
   position[1] = 0;
   position[2] = 0;
@@ -5267,7 +5467,7 @@ s32 Map_InitializePerspectiveScene(void) {
   vector.z = farPlane;
   Iwram_TransformVector((const s32 *)&vector, (s32 *)camera);
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(camera->eye, position);
+  Transform_SetLookAt(camera->eye, position);
   RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
   WorldMap_BuildScanlineTable(
       Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), position,
@@ -5306,6 +5506,8 @@ s32 Map_InitializePerspectiveScene(void) {
     work->tileIds[i] = i;
 }
 
+// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the
+// tile id grid, and draws it at once when it is next to the view.
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   struct PerspectiveWork *window;
   s32 *position;
@@ -5337,6 +5539,9 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   }
 }
 
+// Loads the world map's palette and tiles for the area at (x, z): the second
+// set where the ground there is terrain kind 21. Fills the BG maps, and for
+// the second set swaps in its own tiles at ids 10-12 and 26-28.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
   struct PerspectiveWork *state;
   u32 *resources;
@@ -5399,6 +5604,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   MemFree(buffer);
 }
 
+// HBlank setup each frame on the world map: copies the first scanline's BG2
+// and BG3 affine parameters, starts the HBlank DMA for the rest, and turns
+// the window on or off for the window's top and bottom.
 void MapAnimation_ApplyAffineFrame(void) {
   struct MapAffinePair(*lines)[160] =
       ((struct MapFrameWork *)WORK_SLOT(7))->pages;
@@ -5446,6 +5654,7 @@ void MapAnimation_ApplyAffineFrame(void) {
   work->windowPending = 0;
 }
 
+// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void CopyEntry(u8 *map, u8 *destination) {
   u32 palette = *(u16 *)map;
   u16 *colors = (u16 *)Ram_MapCellBuffer;
@@ -5455,6 +5664,8 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination) {
   *(u16 *)(destination + 64) = *colors;
 }
 
+// Draws world map row `value` (in tiles) into the BG map: 32 cells, then 32
+// more a screen block on.
 void Map_RenderPaletteMappedRow(u32 value) {
   u8 *map;
   u8 *destination;
@@ -5481,6 +5692,7 @@ void Map_RenderPaletteMappedRow(u32 value) {
   } while (counter <= 31);
 }
 
+// Draws world map column `value` (in tiles) into the BG map: 64 cells down.
 void Map_RenderPaletteMappedColumn(u32 value) {
   u8 *map;
   u8 *destination;
@@ -5497,6 +5709,9 @@ void Map_RenderPaletteMappedColumn(u32 value) {
   } while (counter <= 63);
 }
 
+// Each frame on the world map: loads tiles as the view moves, shakes and
+// follows the player, draws the BG row or column that scrolls into view,
+// moves the camera, and builds the ground plane's scanline table.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *cam = WORK_SLOT(HEAP_SLOT_CAMERA);
   struct MapFrameWork *map = WORK_SLOT(7);
@@ -5554,7 +5769,7 @@ void WorldMap_UpdateView(void) {
   }
   gProjection.centerX = 120;
   gProjection.centerY = 96;
-  Camera_StoreSceneParameters(distance, height / 2, height * 2);
+  Projection_Set(distance, height / 2, height * 2);
   pos[0] = *target++;
   pos[1] = 0;
   pos[2] = target[1];
@@ -5567,7 +5782,7 @@ void WorldMap_UpdateView(void) {
   local.z = height + 0x10000;
   Iwram_TransformVector((s32 *)&local, (s32 *)cam);
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(cam, pos);
+  Transform_SetLookAt(cam, pos);
   if (gScanlinePitch != view->pitch) {
     s32 c = Trig_Cos(view->pitch);
     s32 s = Trig_Sin(view->pitch);
@@ -5580,6 +5795,7 @@ void WorldMap_UpdateView(void) {
       cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
+// Loads and draws the 2x2 world map tiles around the player in both layers.
 void Map_UpdateCurrentTileBlock(void) {
   struct PerspectiveWork *window = gMapWork[0];
   s32 x0 = 0;
@@ -5613,6 +5829,8 @@ void Map_UpdateCurrentTileBlock(void) {
   }
 }
 
+// Loads the first of the 2x2 world map tiles around the player that is not
+// shown yet (at most one a frame), without drawing it.
 void Map_UpdateCurrentTileBlockUntilBlocked(void) {
   struct PerspectiveWork *window = gMapWork[0];
   s32 x0 = 0;
@@ -5643,19 +5861,22 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void) {
   }
 }
 
+// VBlank: shows BG1 and copies the decoded frame's tiles into VRAM.
 void MapAnimation_PresentFrame(void) {
   Io_Write16(0x682, &REG_BG1CNT);
   Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
           DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
+// Starts a full-screen BG1 animation on the world map: saves BG1's tiles,
+// decodes the first frame and hands the window and VBlank to it.
 void MapAnimation_Start(void) {
   struct MapFrameWork *pages = WORK_SLOT(7);
   struct PerspectiveWork *work = WORK_SLOT(8);
   s32 one = 1;
 
   work->animationActive = one;
-  Scheduler_EnableCallbacks(MapAnimation_Update);
+  Scheduler_SuspendTasks(MapAnimation_Update);
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800,
           REG_DMA3);
   WaitFrames(1);
@@ -5666,11 +5887,14 @@ void MapAnimation_Start(void) {
   gVBlankHook = MapAnimation_PresentFrame;
 }
 
+// VBlank: shows BG1 and copies the area's tiles back into VRAM.
 void Map_ShowBg1FromBuffer(void) {
   Io_Write16(0x501, &REG_BG1CNT);
   Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
 }
 
+// Reloads the world map area's palette and tiles after a BG1 animation, puts
+// the default cells back and stops the animation.
 void Map_LoadAreaGraphics(void) {
   struct PerspectiveWork *state;
   u32 *resources;
@@ -5699,10 +5923,11 @@ void Map_LoadAreaGraphics(void) {
       Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
   Map_UpdateCurrentTileBlock();
   state->animationActive = 0;
-  Scheduler_DisableCallbacks(MapAnimation_Update);
+  Scheduler_ResumeTasks(MapAnimation_Update);
   WaitFrames(1);
 }
 
+// Puts the default world map cells back after a BG1 animation and stops it.
 void Map_LoadDefaultCellsAndUpdateBlock(void) {
   struct PerspectiveWork *work = gMapWork[0];
   gVBlankHook = Map_ShowBg1FromBuffer;
@@ -5712,10 +5937,14 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
   Map_UpdateCurrentTileBlock();
-  Scheduler_DisableCallbacks(MapAnimation_Update);
+  Scheduler_ResumeTasks(MapAnimation_Update);
   WaitFrames(1);
 }
 
+// Each frame: runs the 16 tile animation channels. A channel script is
+// groups of four halfwords (source tile, count, destination tile, frames to
+// wait) that copy tiles into VRAM; 0xfeNN jumps to group NN, 0xfeff stops,
+// and 0xffff loops to the start.
 void MapAnimation_Update(void) {
   /* FAKEMATCH: each channel is written (state->anim + i), not through a channel
    * pointer: a pointer anim = state->anim + i (or &state->anim[i], declared in
@@ -5773,6 +6002,7 @@ void MapAnimation_Update(void) {
   }
 }
 
+// Resumes tile animation channel no.
 void Map_ClearLayerEntryFlag(u32 no) {
   struct MapState *state = gMapWork[0];
   struct MapAnimation *anim = &state->anim[no];
@@ -5780,6 +6010,7 @@ void Map_ClearLayerEntryFlag(u32 no) {
   anim->paused = 0;
 }
 
+// Pauses tile animation channel no.
 void Map_SetLayerEntryFlag(u32 no) {
   struct MapState *state = gMapWork[0];
   struct MapAnimation *anim = &state->anim[no];
@@ -5787,6 +6018,8 @@ void Map_SetLayerEntryFlag(u32 no) {
   anim->paused = 1;
 }
 
+// Starts the tile animation channels a map's animation script lists: each
+// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
 void MapAnimation_StartChannels(const u16 *script) {
   struct MapState *state;
   s32 count;
@@ -5816,16 +6049,21 @@ void MapAnimation_StartChannels(const u16 *script) {
     Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
 }
 
+// Suspends the tile animations, unless a BG1 animation is running.
 void Map_EnableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
-    Scheduler_EnableCallbacks(MapAnimation_Update);
+    Scheduler_SuspendTasks(MapAnimation_Update);
 }
 
+// Resumes the tile animations, unless a BG1 animation is running.
 void Map_DisableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
-    Scheduler_DisableCallbacks(MapAnimation_Update);
+    Scheduler_ResumeTasks(MapAnimation_Update);
 }
 
+// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
+// any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
+// halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
 void DisplayBlend_RunScript(void) {
   struct MapState *work = gMapWork[0];
   struct BlendScriptState *state;
@@ -5878,6 +6116,7 @@ again:
   state->delay = value + 0xffff;
 }
 
+// Starts a map's blend script, unless it is empty.
 void DisplayBlend_StartScript(u16 *script) {
   struct BlendScriptState *state;
   s32 started;
@@ -5898,14 +6137,18 @@ void DisplayBlend_StartScript(u16 *script) {
     Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
 }
 
+// Suspends the blend script.
 void DisplayBlend_EnableRunScript(void) {
-  Scheduler_EnableCallbacks(DisplayBlend_RunScript);
+  Scheduler_SuspendTasks(DisplayBlend_RunScript);
 }
 
+// Resumes the blend script.
 void DisplayBlend_DisableRunScript(void) {
-  Scheduler_DisableCallbacks(DisplayBlend_RunScript);
+  Scheduler_ResumeTasks(DisplayBlend_RunScript);
 }
 
+// Allocates the palette cycling queue (heap slot 28) with its four entries
+// cleared.
 void Runtime_AllocateAndClearQueue(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -5928,6 +6171,9 @@ void Runtime_AllocateAndClearQueue(void) {
   queue->count = 0;
 }
 
+// Adds a palette cycle: count colours of background palette bank from
+// colour index, rotated by one every delay + 1 frames. Returns 0, or -1
+// when all four cycles are taken.
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count) {
   struct PaletteSnapshotWork *work;
   struct PaletteSnapshot *entry;
@@ -5952,15 +6198,19 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count) {
   return 0;
 }
 
+// Stops the palette cycles and frees their queue (heap slot 28).
 void Runtime_ScheduleCallbackAndReleaseBlock28(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(0x1C);
 }
 
+// Starts running the palette cycles each frame.
 void Scheduler_ScheduleCallbackBAfterFrames(void) {
   Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 
+// Each frame: advances each palette cycle whose timer has run out by one
+// colour, writing the rotated colours back to the palette.
 void PaletteQueue_StepCycles(void) {
   struct PaletteSnapshotWork *work = gPaletteWork;
   u8 i;
@@ -5991,35 +6241,43 @@ void PaletteQueue_StepCycles(void) {
   }
 }
 
+// The terrain height functions (gMap_TerrainHeightFunctions): each takes a
+// cell's height samples after its kind byte and a pixel (x, y) within the
+// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
+// is flat: the first sample everywhere.
 s32 Curve_GetFirstSampleA(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LerpTwoSamples(const s8 *samples, s32 position) {
+// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
+s32 Curve_LerpTwoSamples(const s8 *samples, s32 x) {
   s32 start;
   s32 delta;
 
   start = samples[0] << CURVE_VALUE_SHIFT;
-  delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
+  delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * x;
   if (delta < 0) {
     delta += CURVE_FULL_STEPS - 1;
   }
   return start + (delta >> 4);
 }
 
-s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position) {
+// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
+s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 y) {
   s32 base;
   s32 offset;
 
   base = samples[0] << CURVE_VALUE_SHIFT;
-  offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
+  offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * y;
   if (offset < 0) {
     offset += CURVE_FULL_STEPS - 1;
   }
   return base + (offset >> 4);
 }
 
-s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
+// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
+// it and the higher of the two on it.
+s32 Curve_StepAtSummedPosition(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 maximum;
@@ -6031,7 +6289,7 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
   if (second > first) {
     maximum = second;
   }
-  position = start + end;
+  position = x + y;
   if (position == CURVE_FULL_STEPS - 1) {
     return maximum;
   }
@@ -6041,12 +6299,14 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
-s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
+// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
+// y > x and the higher of the two on it.
+s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 maximum;
   s32 difference;
-  u32 position = start;
+  u32 position = x;
 
   first = samples[0] << CURVE_VALUE_SHIFT;
   second = samples[1] << CURVE_VALUE_SHIFT;
@@ -6054,7 +6314,7 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
   if (second > first) {
     maximum = second;
   }
-  difference = end - position;
+  difference = y - position;
   position = difference + CURVE_FULL_STEPS - 1;
   if (position == CURVE_FULL_STEPS - 1) {
     return maximum;
@@ -6065,7 +6325,9 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
-s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end) {
+// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
+// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
+s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 middle;
   s32 last;
@@ -6074,19 +6336,21 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end) {
   first = *samples++ << CURVE_VALUE_SHIFT;
   middle = *samples << CURVE_VALUE_SHIFT;
   last = samples[1] << CURVE_VALUE_SHIFT;
-  start += end;
-  if (start == CURVE_FULL_STEPS - 1) {
+  x += y;
+  if (x == CURVE_FULL_STEPS - 1) {
     result = middle;
-  } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-    result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
+  } else if ((u32)x < CURVE_FULL_STEPS - 1) {
+    result = first + (middle - first) * x / (CURVE_FULL_STEPS - 1);
   } else {
-    start -= (CURVE_FULL_STEPS - 1);
-    result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
+    x -= (CURVE_FULL_STEPS - 1);
+    result = middle + (last - middle) * x / (CURVE_FULL_STEPS - 1);
   }
   return result;
 }
 
-s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
+// A slope that bends on the diagonal x = y: from sample 0 at the top right
+// corner to sample 1 on the diagonal to sample 2 at the bottom left.
+s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 third;
@@ -6096,16 +6360,16 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
   first = *samples++ << CURVE_VALUE_SHIFT;
   second = samples[0] << CURVE_VALUE_SHIFT;
   third = samples[1];
-  difference = end - start;
-  start = difference + CURVE_FULL_STEPS - 1;
+  difference = y - x;
+  x = difference + CURVE_FULL_STEPS - 1;
   third <<= CURVE_VALUE_SHIFT;
 
-  if (start == CURVE_FULL_STEPS - 1)
+  if (x == CURVE_FULL_STEPS - 1)
     return second;
 
-  if ((u32)start < CURVE_FULL_STEPS - 1) {
+  if ((u32)x < CURVE_FULL_STEPS - 1) {
     delta = second - first;
-    difference = delta * start;
+    difference = delta * x;
     if (difference < 0)
       difference += CURVE_FULL_STEPS - 1;
     difference >>= 4;
@@ -6118,41 +6382,47 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
   return second + difference;
 }
 
-s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row) {
+// A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
+// 1, sample 0 in the corners.
+s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 x, s32 y) {
   s32 start;
 
   start = samples[0] << CURVE_VALUE_SHIFT;
   return start + (((samples[1] << CURVE_VALUE_SHIFT) - start) *
-                  gCurve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
+                  gCurve_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
 
-s32 Curve_StepAtHalf(const s8 *samples, u32 position) {
+// A step along x: sample 0 for x < 8, sample 1 from x = 8.
+s32 Curve_StepAtHalf(const s8 *samples, u32 x) {
   s32 value;
-  if (position < CURVE_HALF_STEPS)
+  if (x < CURVE_HALF_STEPS)
     value = samples[0];
   else
     value = samples[1];
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position) {
+// A step along y: sample 0 for y < 8, sample 1 from y = 8.
+s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 y) {
   s32 value;
-  if (position < CURVE_HALF_STEPS)
+  if (y < CURVE_HALF_STEPS)
     value = samples[0];
   else
     value = samples[1];
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position) {
+// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
+// x = 8, towards sample 2 at x = 16.
+s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x) {
   s32 a;
   s32 b;
   s32 delta;
 
   a = *samples++ << CURVE_VALUE_SHIFT;
   b = *samples++ << CURVE_VALUE_SHIFT;
-  if (position < CURVE_HALF_STEPS) {
-    delta = (b - a) * position;
+  if (x < CURVE_HALF_STEPS) {
+    delta = (b - a) * x;
     if (delta < 0) {
       delta += CURVE_HALF_STEPS - 1;
     }
@@ -6163,7 +6433,7 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position) {
     s32 pos;
 
     a = *samples << CURVE_VALUE_SHIFT;
-    pos = position;
+    pos = x;
     a -= b;
     pos -= CURVE_HALF_STEPS;
     delta = a * pos;
@@ -6174,7 +6444,8 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position) {
   }
 }
 
-s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
+// The same along y.
+s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y) {
   s32 a;
   s32 b;
   s32 pos;
@@ -6183,8 +6454,8 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
 
   a = *samples++ << CURVE_VALUE_SHIFT;
   b = *samples++ << CURVE_VALUE_SHIFT;
-  if (position < CURVE_HALF_STEPS) {
-    delta = (b - a) * position;
+  if (y < CURVE_HALF_STEPS) {
+    delta = (b - a) * y;
     if (delta < 0) {
       delta += CURVE_HALF_STEPS - 1;
     }
@@ -6192,7 +6463,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
   }
 
   a = *samples << CURVE_VALUE_SHIFT;
-  pos = position;
+  pos = y;
   a -= b;
   pos -= CURVE_HALF_STEPS;
   tail = a * pos;
@@ -6202,22 +6473,23 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
   return b + (tail >> 3);
 }
 
-s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row) {
-  return samples[gCurve_SampleIndexTable[position + (row << 4)]]
+// The sample gCurve_SampleIndexTable picks for (x, y).
+s32 Curve_LookupSampleByTable(const s8 *samples, u32 x, u32 y) {
+  return samples[gCurve_SampleIndexTable[x + (y << 4)]] << CURVE_VALUE_SHIFT;
+}
+
+// The same, with the table mirrored left to right.
+s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 x, u32 y) {
+  return samples[gCurve_SampleIndexTable[((y << 4) - x) + CURVE_FULL_STEPS - 1]]
          << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position,
-                                      u32 row) {
-  return samples[gCurve_SampleIndexTable[((row << 4) - position) +
-                                         CURVE_FULL_STEPS - 1]]
-         << CURVE_VALUE_SHIFT;
-}
-
+// Flat, as Curve_GetFirstSampleA.
 s32 Curve_GetFirstSampleB(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
 
+// Flat, as Curve_GetFirstSampleA.
 s32 Curve_GetFirstSampleC(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
@@ -6226,6 +6498,8 @@ typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
 
 extern TerrainHeightFn gMap_TerrainHeightFunctions[16];
 
+// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
+// height function of the cell's terrain kind applied to its samples.
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapState *work = gMapWork[0];
   struct MapCell *cells;
@@ -6243,6 +6517,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
                                                          y & 15);
 }
 
+// Returns the terrain kind (the low four bits of the first collision byte)
+// of a layer's cell at (x, y) in 16.16 pixels.
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y) {
   struct MapState *state = gMapWork[0];
   struct MapCell *map;
@@ -6263,6 +6539,7 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y) {
   return *(Ram_MapCollision + attr * 4) & 15;
 }
 
+// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   struct MapState *state;
   struct MapCell *cells;
@@ -6278,6 +6555,7 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   return cells->collisionCode;
 }
 
+// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   struct MapState *state = gMapWork[0];
 
@@ -6291,6 +6569,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   }
 }
 
+// Returns the top two bits of the block word of the cell at pixel (x, y).
 s32 Map_GetCellHighFlags(s32 x, s32 y) {
   s32 tileX = x / 16;
   s32 tileY = y / 16;
@@ -6300,6 +6579,9 @@ s32 Map_GetCellHighFlags(s32 x, s32 y) {
   return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
+// Returns whether an object can step to position: 2 when the cell there is
+// a wall (collision code 0xff), 1 when the ground is more than 8 pixels
+// higher than the object's, -1 when it is more than 12 pixels lower, else 0.
 s32 Map_CheckObjectStep(struct ObjectRuntime *object,
                         struct FieldPosition *position) {
   struct MapState *state;
@@ -6333,6 +6615,8 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   return 0;
 }
 
+// Returns 0 when the cell under position (its x, and y less its height) in
+// layer 2 is a wall (collision code 0xff), else -1.
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   s32 x;
   s32 y;
@@ -6353,37 +6637,40 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   return (cell->collisionCode != 0xff) - 1;
 }
 
+// Returns the world map's collision value (1-15) at position: from the upper
+// collision layer where it has one, else the lower, else 7. Each layer is a
+// tile map of 4-bit collision pixels.
 s32 GetWorldMapCollision(struct WorldPosition *position) {
-  s32 x_step = position->x >> 17;
+  s32 stepX = position->x >> 17;
   s32 y = position->y;
-  s32 y_step = y >> 17;
+  s32 stepY = y >> 17;
   u32 cell;
-  u32 pixel_offset;
+  u32 pixelOffset;
   u8 tile;
-  u8 packed_pixels;
+  u8 pixelPair;
   u32 result;
 
-  cell = (((y_step / 8) & 63) << 6) + ((x_step / 8) & 63);
-  pixel_offset = (((y_step / 2) & 3) << 1) + ((x_step / 4) & 1);
+  cell = (((stepY / 8) & 63) << 6) + ((stepX / 8) & 63);
+  pixelOffset = (((stepY / 2) & 3) << 1) + ((stepX / 4) & 1);
 
   tile = BG_SCREEN_BLOCK(10)[cell];
-  packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
-  if (packed_pixels != 0) {
-    if (x_step & 2)
-      result = packed_pixels >> 4;
+  pixelPair = *(Ram_MapCollision + 0x800 + (tile << 3) + pixelOffset);
+  if (pixelPair != 0) {
+    if (stepX & 2)
+      result = pixelPair >> 4;
     else
-      result = packed_pixels & 15;
+      result = pixelPair & 15;
     if (result != 0)
       return result;
   }
 
   tile = BG_SCREEN_BLOCK(8)[cell];
-  packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
-  if (packed_pixels != 0) {
-    if (x_step & 2)
-      result = packed_pixels >> 4;
+  pixelPair = *(Ram_MapCollision + (tile << 3) + pixelOffset);
+  if (pixelPair != 0) {
+    if (stepX & 2)
+      result = pixelPair >> 4;
     else
-      result = packed_pixels & 15;
+      result = pixelPair & 15;
     if (result != 0)
       return result;
   }
@@ -6391,6 +6678,8 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   return 7;
 }
 
+// Returns 0 when the world map at position can be walked on (collision 5 to
+// 12), else -1.
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position) {
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
@@ -6398,6 +6687,9 @@ s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position) {
   return -1;
 }
 
+// Returns the world map's terrain behaviour at position from
+// gWorldMap_TerrainBehaviorTable, and stores the block's terrain kind in
+// terrainKind.
 s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                                s32 *terrainKind) {
   s32 selector = GetWorldMapCollision(position);
@@ -6427,36 +6719,43 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
-void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2) {
+// Shakes the screen: sets the map's x and y shake amplitude and its decay
+// (16.16), leaving any negative value unchanged.
+void Runtime_SetWorkTripleIfNonNegative(s32 shakeX, s32 shakeY,
+                                        s32 shakeDecay) {
   struct MapScrollWork *work;
 
   work = gMapWork[0];
-  if (value0 >= 0) {
-    work->shakeX = value0;
+  if (shakeX >= 0) {
+    work->shakeX = shakeX;
   }
-  if (value1 >= 0) {
-    work->shakeY = value1;
+  if (shakeY >= 0) {
+    work->shakeY = shakeY;
   }
-  if (value2 >= 0) {
-    work->shakeDecay = value2;
+  if (shakeDecay >= 0) {
+    work->shakeDecay = shakeDecay;
   }
 }
 
+// Waits until the screen shake has died down (both amplitudes under 1/256
+// pixel), at most 300 frames, then stops it.
 void Map_WaitWorkValuesBelow256(void) {
   struct MapScrollWork *work;
-  s32 cnt;
+  s32 frames;
 
   work = gMapWork[0];
-  cnt = 0;
+  frames = 0;
   if (work->shakeX > 255 || work->shakeY > 255) {
   wait:
     WaitFrames(1);
-    if (++cnt < 300 && (work->shakeX > 255 || work->shakeY > 255))
+    if (++frames < 300 && (work->shakeX > 255 || work->shakeY > 255))
       goto wait;
   }
   work->shakeDecay = 0;
 }
 
+// Runs TileMap_DrawRows from RAM on a and b, with the BG tile buffer's
+// second half and the decode buffer as its work areas.
 void Resource_RunCopiedDecoder(s32 a, s32 b) {
   u8 *base;
 
@@ -6476,6 +6775,11 @@ void Resource_RunCopiedDecoder(s32 a, s32 b) {
   Runtime_ReleaseHeapBlock(49);
 }
 
+// Builds the world map ground plane's per-scanline terms for the camera's
+// pitch (depth is its cotangent): for each of the 160 lines, where its ray
+// meets the ground, the line's width scale and its distance, or zeros above
+// the horizon. Transform_UpdateVertices turns these into the affine
+// parameters each frame.
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct MapScanline *row) {
   s32 ground[3];
@@ -6530,27 +6834,37 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
   }
 }
 
+// One animation layer the sprite viewer edits.
 struct IconColumn {
-  s16 no;
-  s16 animation;
-  u8 on;
+  s16 number;    // sprite number
+  s16 animation; // animation shown
+  u8 on;         // layer shown
   s8 priority;
   s8 param;
 };
 
+// A debug sprite viewer, which never returns. It shows a sprite (with up to
+// three more animation layers) once for each of its facings, in a ring.
+// Start with the direction pad moves the ring; otherwise up and down choose
+// a layer and left and right what to edit: 0 the animation, 1 the sprite
+// number (ten at a time with Start), 2 the priority, 3 the draw parameter,
+// changed with L and R. A restarts the animation, or in the other modes
+// turns a layer on or off. Pressing Start toggles the shadows; B turns the
+// ring. Select reloads the far-call resources (the alternate set unless B is
+// held) and starts over.
 void Ui_RunIconMonitor(void) {
-  struct IconColumn ent[4];
+  struct IconColumn layers[4];
   struct AnimationMetadata *metadata;
   struct AnimationObject *table;
   volatile s32 zero;
-  s32 no;
+  s32 number;
   s32 x;
   s32 y;
   u32 mode;
   s32 flag;
-  struct AnimationPosition *work;
+  struct AnimationPosition *ring;
   s32 slot;
-  u32 cnt;
+  u32 steps;
   s32 alt;
   s32 moved;
   /* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared
@@ -6568,47 +6882,47 @@ void Ui_RunIconMonitor(void) {
   mode = 1;
   flag = 1;
   slot = 0;
-  work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
+  ring = Runtime_AllocateBlock(9, 10 * sizeof(*ring));
   gDecodeFillByte = 3;
 
-  Dma_Fill32Cell(zero, 0, work, 4);
-  Dma_Fill32Cell(zero, 0, ent, sizeof(ent));
+  Dma_Fill32Cell(zero, 0, ring, 4);
+  Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
 
-  no = Ui_FindNextNumberWithMetadata(-1, 1);
+  number = Ui_FindNextNumberWithMetadata(-1, 1);
   for (i = 0; i <= 3; i++) {
-    ent[i].animation = 1;
-    ent[i].priority = 1;
-    ent[i].no = no;
+    layers[i].animation = 1;
+    layers[i].priority = 1;
+    layers[i].number = number;
   }
-  ent[0].on = 1;
+  layers[0].on = 1;
   gDebugMode = 2;
   REG_BLDCNT = 0x3F42;
   PLTT_BACKDROP = 0x01E0;
   REG_DISPCNT = 0x1140;
-  Blend_SetDarkenTarget0(1);
+  Fade_FromBlack(1);
 
 restart:
   Runtime_InitializeHeap();
   Scheduler_ResetTaskTable();
-  work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
-  Resource_InitializeTable();
+  ring = Runtime_AllocateBlock(9, 10 * sizeof(*ring));
+  VramCache_Reset();
   ObjectSystem_Initialize(2);
-  ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);
-  metadata = Resource_GetMetadataRecordFar(ent[0].no);
+  ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, layers[0].number, 0);
+  metadata = Resource_GetMetadataRecordFar(layers[0].number);
   if (metadata->drawKind == 20) {
-    ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, ent[0].no + 1, 0);
+    ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].number + 1, 0);
   }
 
   for (i = 0; i <= 9; i++) {
-    metadata = Resource_GetMetadataRecordFar(ent[0].no);
+    metadata = Resource_GetMetadataRecordFar(layers[0].number);
     alt = 0;
     if (metadata->drawKind == 20 && (i & 1) != 0) {
       alt = 1;
     }
-    alt = (s32)ResourceObject_Create(ent[0].no + alt + (alt << 12));
-    ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
-    ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
-    ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
+    alt = (s32)ResourceObject_Create(layers[0].number + alt + (alt << 12));
+    ResourceMetadata_Register((struct AnimationObject *)alt, layers[1].number);
+    ResourceMetadata_Register((struct AnimationObject *)alt, layers[2].number);
+    ResourceMetadata_Register((struct AnimationObject *)alt, layers[3].number);
     /* FAKEMATCH: needed to match: the native adds the flags offset to the
      * object's own register (r5) in place; a separate address takes a copy.
      * Measured 2026-10-13: ((struct AnimationObject *)alt)->flags = flag, the
@@ -6619,16 +6933,16 @@ restart:
   }
 
   for (i = 0; i <= 3; i++) {
-    if (ent[i].on != 0) {
-      Ui_SetGridColumnPriority(i, ent[i].priority);
+    if (layers[i].on != 0) {
+      Ui_SetGridColumnPriority(i, layers[i].priority);
     } else {
       Ui_SetGridColumnPriority(i, 8);
     }
-    Ui_SetGridColumnParameter(i, ent[i].param);
-    Ui_FillGridColumnFromMetadata(i, ent[i].animation);
+    Ui_SetGridColumnParameter(i, layers[i].param);
+    Ui_FillGridColumnFromMetadata(i, layers[i].animation);
   }
 
-  Map_BuildProbeRing(x, y, work);
+  Map_BuildProbeRing(x, y, ring);
   Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
 
 next:
@@ -6650,7 +6964,7 @@ next:
       if ((*held & KEY_DOWN) != 0) {
         y++;
       }
-      Map_BuildProbeRing(x, y, work);
+      Map_BuildProbeRing(x, y, ring);
     } else {
       (void)gKeysRepeat;
       if ((*repeat & KEY_UP) != 0) {
@@ -6668,7 +6982,7 @@ next:
       }
     }
 
-    if ((gKeyState & KEY_START) != 0) {
+    if ((gKeysPressed & KEY_START) != 0) {
       table = gSpriteObjects;
       flag ^= 1;
       for (i = 0; i <= 9; i++) {
@@ -6683,42 +6997,44 @@ next:
         break;
       }
       if ((gKeysRepeat & KEY_L) != 0) {
-        ent[slot].animation--;
-        if (ent[slot].animation < 0) {
-          ent[slot].animation = 0;
+        layers[slot].animation--;
+        if (layers[slot].animation < 0) {
+          layers[slot].animation = 0;
         }
         if (slot == 0) {
-          ent[1].animation = ent[0].animation;
+          layers[1].animation = layers[0].animation;
         }
         goto next;
       }
       if ((gKeysRepeat & KEY_R) == 0) {
         break;
       }
-      ent[slot].animation++;
-      if (ent[slot].animation > 99) {
-        ent[slot].animation = 99;
+      layers[slot].animation++;
+      if (layers[slot].animation > 99) {
+        layers[slot].animation = 99;
       }
       if (slot == 0) {
-        ent[1].animation = ent[0].animation;
+        layers[1].animation = layers[0].animation;
       }
       goto next;
 
     case 1:
       moved = 0;
-      cnt = 1;
+      steps = 1;
       if ((*held & KEY_START) != 0) {
-        cnt = 10;
+        steps = 10;
       }
       if ((*repeat & KEY_L) != 0) {
-        for (i = 0; i < cnt; i++) {
-          ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, -1);
+        for (i = 0; i < steps; i++) {
+          layers[slot].number =
+              Ui_FindNextNumberWithMetadata(layers[slot].number, -1);
         }
         moved = 1;
       }
       if ((*repeat & KEY_R) != 0) {
-        for (i = 0; i < cnt; i++) {
-          ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, 1);
+        for (i = 0; i < steps; i++) {
+          layers[slot].number =
+              Ui_FindNextNumberWithMetadata(layers[slot].number, 1);
         }
         moved = 1;
       }
@@ -6728,59 +7044,59 @@ next:
       if (slot == 0) {
         goto restart;
       }
-      if (ent[slot].on != 0) {
-        Ui_SetGridColumnNumber(slot, ent[slot].no);
-        Ui_SetGridColumnPriority(slot, ent[slot].priority);
-        Ui_SetGridColumnParameter(slot, ent[slot].param);
-        Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+      if (layers[slot].on != 0) {
+        Ui_SetGridColumnNumber(slot, layers[slot].number);
+        Ui_SetGridColumnPriority(slot, layers[slot].priority);
+        Ui_SetGridColumnParameter(slot, layers[slot].param);
+        Ui_FillGridColumnFromMetadata(slot, layers[slot].animation);
       }
       goto next;
 
     case 2:
       moved = 0;
       if ((*repeat & KEY_L) != 0) {
-        ent[slot].priority--;
-        if (ent[slot].priority < 0) {
-          ent[slot].priority = 3;
+        layers[slot].priority--;
+        if (layers[slot].priority < 0) {
+          layers[slot].priority = 3;
         }
         moved = 1;
       }
       if ((*repeat & KEY_R) != 0) {
-        ent[slot].priority++;
-        if (ent[slot].priority > 3) {
-          ent[slot].priority = 0;
+        layers[slot].priority++;
+        if (layers[slot].priority > 3) {
+          layers[slot].priority = 0;
         }
         moved = 1;
       }
       if (moved == 0) {
         break;
       }
-      if (ent[slot].on != 0) {
-        Ui_SetGridColumnPriority(slot, ent[slot].priority);
+      if (layers[slot].on != 0) {
+        Ui_SetGridColumnPriority(slot, layers[slot].priority);
       }
       goto next;
 
     case 3:
       moved = 0;
       if ((*repeat & KEY_L) != 0) {
-        ent[slot].param--;
-        if (ent[slot].param < 0) {
-          ent[slot].param = 15;
+        layers[slot].param--;
+        if (layers[slot].param < 0) {
+          layers[slot].param = 15;
         }
         moved = 1;
       }
       if ((*repeat & KEY_R) != 0) {
-        ent[slot].param++;
-        if (ent[slot].param > 15) {
-          ent[slot].param = 0;
+        layers[slot].param++;
+        if (layers[slot].param > 15) {
+          layers[slot].param = 0;
         }
         moved = 1;
       }
       if (moved == 0) {
         break;
       }
-      if (ent[slot].on != 0) {
-        Ui_SetGridColumnParameter(slot, ent[slot].param);
+      if (layers[slot].on != 0) {
+        Ui_SetGridColumnParameter(slot, layers[slot].param);
       }
       goto next;
 
@@ -6791,18 +7107,18 @@ next:
     if ((*repeat & KEY_A) != 0) {
       if (mode == 0) {
         if (slot != 1) {
-          if (ent[slot].on != 0) {
-            Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+          if (layers[slot].on != 0) {
+            Ui_FillGridColumnFromMetadata(slot, layers[slot].animation);
             if (slot == 0) {
-              Ui_FillGridColumnFromMetadata(1, ent[1].animation);
+              Ui_FillGridColumnFromMetadata(1, layers[1].animation);
             }
           }
           goto next;
         }
       } else if (slot != 0) {
-        ent[slot].on ^= 1;
-        Ui_SetGridColumnPriority(slot,
-                                 ent[slot].on != 0 ? ent[slot].priority : 8);
+        layers[slot].on ^= 1;
+        Ui_SetGridColumnPriority(
+            slot, layers[slot].on != 0 ? layers[slot].priority : 8);
         goto next;
       }
     }
@@ -6822,6 +7138,8 @@ next:
   }
 }
 
+// Returns the next sprite number after start, stepping by step (1 or -1)
+// and wrapping within 0-511, that has an image.
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step) {
   for (;;) {
     start += step;
@@ -6847,6 +7165,9 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step) {
   }
 }
 
+// Lays out the sprite viewer's ring around pixel (x, z): one position per
+// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
+// pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out) {
   struct AnimationPosition *pair;
   s32 angle;
@@ -6951,8 +7272,8 @@ struct Vec2 {
   s32 y;
 };
 
-// gSpriteObjects の 10 個それぞれについて、slot 番のエントリの field を value
-// にする
+// Defines name(slot, value), which sets field of entry slot (0-3) in each of
+// the first ten sprites to value.
 #define DEFINE_SET_GRID_COLUMN(name, field)                                    \
   void name(s32 slot, s32 value) {                                             \
     struct AnimationObject *object = gSpriteObjects;                           \
@@ -6965,9 +7286,13 @@ struct Vec2 {
     }                                                                          \
   }
 
+// Set the draw parameter or the priority of one layer of the viewer's ten
+// sprites.
 DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
 DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
+// Starts animation value on layer slot of each of the viewer's ten sprites,
+// each one 16 timer units behind the last.
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value) {
   s32 count;
   struct AnimationObject *object;
@@ -6998,6 +7323,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value) {
   } while (count <= 9);
 }
 
+// Gives layer slot of each of the viewer's ten sprites the sprite number no.
 void Ui_SetGridColumnNumber(s32 slot, s32 no) {
   struct AnimationObject *object = gSpriteObjects;
   s32 i;
@@ -7013,6 +7339,8 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no) {
   }
 }
 
+// Each frame in the sprite viewer: places each copy of the sprite at its
+// ring position, facing the way that position stands for.
 void Battle_PlaceActorsByFormationKind(void) {
   struct AnimationObject *actor = WORK_SLOT(4);
   u32 kind = actor->entries[0]->kind;

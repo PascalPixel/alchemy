@@ -164,7 +164,7 @@ static void EV14_TALK(void) {
 
 static void ValeBabi_CloseScreenAndExit(s32 object) {
   if (Engine_GameFlagIsSet(0x834) != 0) {
-    BattleFx_SetBlock30ValuesMaxZero();
+    FieldFx_StopLightning();
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_EventCloseScreen();
@@ -276,13 +276,13 @@ s32 ValeBabi_RestoreEntryState(void) {
             ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
                 SCENE_TRANSITION(TRANSITION_WINDOW, 9);
             if (Engine_GameFlagIsSet(0x834) != 0) {
-              BattleFx_StartTwelveFrameBlend();
+              FieldFx_StartLightning();
               ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
-              BattleFx_SetBlock30Values12Zero();
+              FieldFx_LastLightning();
               Engine_TaskWait(30);
               Engine_EventOpenScreen();
               Engine_EventWaitForScreen();
-              BattleFx_SetBlock30Values128One();
+              FieldFx_ResumeLightning();
             } else {
               Engine_MapRedraw();
               Engine_TaskWait(1);
@@ -350,14 +350,14 @@ static void FieldScene_RunComplexActorSequence(void) {
   Engine_TaskWait(1);
   (*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   (*control)->transitionFrames = 64;
-  BattleFx_StartTwelveFrameBlend();
+  FieldFx_StartLightning();
   (*(struct FieldBlendWork **)((u8 *)control + Ram_SceneMapStateOffset))->loud =
       1;
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Engine_TaskWait(30);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  BattleFx_SetBlock30Values128One();
+  FieldFx_ResumeLightning();
   Engine_ActorSetAnimationAndWait(8, 4);
   Engine_EventSetMessage(base + 2);
   Event_ShowMessageAndWait(36872, 0, 60);
@@ -493,9 +493,9 @@ static void FieldScene_RunPaletteRampSequence(void) {
   DisplayBlend_EnableRunScript();
   SetBlendTarget(0x3f42);
   Io_Write16(0x100c, &REG_BLDALPHA);
-  BattleFx_StartTwelveFrameBlend();
+  FieldFx_StartLightning();
   ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Engine_TaskWait(30);
   Engine_CameraFollowActor(8, 1);
   Actor_SetSpeed(8, 0x18000, 0xc000);

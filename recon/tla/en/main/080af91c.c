@@ -10,7 +10,7 @@
  * (differ 2); with the doubled band as a second operand the shift is
  * emitted twice (differ 9); five minutes of alchemy permute, 8,200
  * candidates, none better. The unit is common's struct BattleUnit; its
- * neighbour Owner_GetLevelThreshold is C in level_hook.c. */
+ * neighbour Unit_GetExperienceForLevel is C in level_hook.c. */
 #include "owner_state.h"
 #include "mem.h"
 #include "types.h"
@@ -63,9 +63,9 @@ struct LevelUpWork {
 };
 
 void MemFree(void *buffer);
-u32 Owner_GetLevelThreshold(s32 owner, s32 level);
+u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 struct OwnerGrowth *Character_GetDefinition(s32 owner);
-s32 Owner_RefreshClassActions(s32 owner);
+s32 Unit_RefreshPsynergy(s32 owner);
 void UnitCalc(s32 owner);
 u32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
@@ -96,7 +96,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     if (level < 99) {
         st->level++;
         res->level = level + 1;
-        threshold = Owner_GetLevelThreshold(owner, st->level);
+        threshold = Unit_GetExperienceForLevel(owner, st->level);
         if (threshold != (u32)-1 && st->experience < threshold)
             st->experience = threshold;
         work->growth = Character_GetDefinition(owner);
@@ -134,7 +134,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         st->baseTurns = 1;
         st->base20 = 0;
         st->base21 = 0;
-        Owner_RefreshClassActions(owner);
+        Unit_RefreshPsynergy(owner);
         UnitCalc(owner);
     }
     MemFree(work);

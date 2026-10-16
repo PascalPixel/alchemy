@@ -203,7 +203,7 @@ static void EV11_TOUCH(void) {
     Engine_ActorSetAnimation(0, 0);
     Engine_EventWait(20);
     Engine_AudioPlayCue(21);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
     rec = Object_GetById(0);
     if (rec != 0) {
       Engine_ActorSetPosition(16, rec->x.fixed, rec->z.fixed);
@@ -211,7 +211,7 @@ static void EV11_TOUCH(void) {
     Actor_SetSpeed(16, 0x16666, 0xb333);
     Actor_WalkToAndWait(16, 0x120, 206);
     Engine_EventWait(40);
-    Actor_ShowEmote(16, 0x100, 0);
+    Actor_ShowEmote(16, EMOTE_IN_FRONT, 0);
     Engine_ActorJump(16, 4, 60);
     SetSolSanctumActorStep(16, 20);
     rec = Object_GetById(0);
@@ -226,9 +226,9 @@ static void EV11_TOUCH(void) {
     Actor_SetSpeed(5, 0x8000, 0x4000);
     Actor_WalkTo(1, 0x118, 248);
     Actor_WalkToAndWait(5, 0x128, 248);
-    Engine_ActorSetAnimation(1, 1);
-    Actor_FaceDirection(1, 0xd000, 0);
-    Actor_FaceDirection(5, 0xb000, 30);
+    Engine_ActorSetAnimation(1, ANIM_STAND);
+    Actor_FaceDirection(1, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST + FACING_STEP, 30);
     Engine_CameraSetSpeed(0x9999, 0x1333);
     Engine_CameraMoveTo(0x1200000, -1, 0xd50000, 1);
     Actor_SetSpeed(16, 0x6666, 0x3333);
@@ -236,60 +236,60 @@ static void EV11_TOUCH(void) {
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(16, 2);
     SetSolSanctumActorStep(16, 6);
-    Actor_FaceDirection(16, 0x4000, 60);
+    Actor_FaceDirection(16, FACING_SOUTH, 60);
     SetSolSanctumActorStep(16, 20);
-    Engine_ActorFaceDirection(16, 0, 40);
+    Engine_ActorFaceDirection(16, FACING_EAST, 40);
     Engine_ActorSetAnimationAndWait(16, 3);
     Engine_EventWait(10);
-    Actor_FaceDirection(16, 0x8000, 40);
+    Actor_FaceDirection(16, FACING_WEST, 40);
     Engine_ActorSetAnimationAndWait(16, 3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(5, 2);
-    Actor_FaceDirection(5, 0x9000, 10);
+    Actor_FaceDirection(5, FACING_WEST + FACING_STEP, 10);
     SetSolSanctumActorStep(5, 10);
     Engine_ActorRunRepeatedMotion(1, 2);
-    Actor_FaceDirection(1, 0xf000, 10);
+    Actor_FaceDirection(1, FACING_NORTHEAST + FACING_STEP, 10);
     SetSolSanctumActorStep(1, 6);
     Actor_SetAttachedEffect(5, 0x102);
     Engine_EventWait(40);
-    Actor_FaceDirection(5, 0xa000, 10);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 10);
     SetSolSanctumActorStep(0x2005, 10);
     Engine_ActorRunRepeatedMotion(16, 2);
     Engine_EventWait(10);
-    Actor_FaceDirection(16, 0xa000, 20);
+    Actor_FaceDirection(16, FACING_NORTHWEST, 20);
     Actor_SetAttachedEffect(16, 0x102);
     Engine_EventWait(20);
-    Actor_FaceDirection(0, 0x5000, 40);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(5, 0xa000, 40);
-    Actor_ShowEmote(1, 0x101, 20);
+    Actor_FaceDirection(0, FACING_SOUTH + FACING_STEP, 40);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 40);
+    Actor_ShowEmote(1, EMOTE_IN_FRONT | 1, 20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(16, 4);
     Engine_EventWait(40);
     SetSolSanctumActorStep(16, 20);
-    Actor_ShowEmote(5, 0x101, 40);
+    Actor_ShowEmote(5, EMOTE_IN_FRONT | 1, 40);
     SetSolSanctumActorStep(5, 60);
     Engine_ActorSetAnimationAndWait(16, 3);
     SetSolSanctumActorStep(16, 10);
-    Actor_ShowEmote(0, 0x105, 0);
-    Actor_ShowEmote(1, 0x105, 0);
-    Actor_ShowEmote(5, 0x105, 60);
+    Actor_ShowEmote(0, EMOTE_IN_FRONT | 5, 0);
+    Actor_ShowEmote(1, EMOTE_IN_FRONT | 5, 0);
+    Actor_ShowEmote(5, EMOTE_IN_FRONT | 5, 60);
     Engine_ActorRunRepeatedMotion(1, 2);
     Engine_EventWait(20);
     SetSolSanctumActorStep(1, 10);
     Engine_ActorSetAnimationAndWait(16, 3);
     Engine_EventWait(20);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(5, 0x102, 80);
-    Actor_ShowEmote(16, 0x105, 80);
+    Actor_ShowEmote(0, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(5, EMOTE_IN_FRONT | 2, 80);
+    Actor_ShowEmote(16, EMOTE_IN_FRONT | 5, 80);
     SetSolSanctumActorStep(16, 6);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(1, 0xf000, 0);
-    Actor_FaceDirection(5, 0x9000, 60);
-    Actor_FaceDirection(16, 0x4000, 10);
+    Actor_FaceDirection(0, FACING_SOUTH, 0);
+    Actor_FaceDirection(1, FACING_NORTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(5, FACING_WEST + FACING_STEP, 60);
+    Actor_FaceDirection(16, FACING_SOUTH, 10);
     Engine_ActorRunRepeatedMotion(16, 3);
     Engine_EventWait(6);
     Engine_EventOpenMessage(16, 0);
@@ -297,24 +297,24 @@ static void EV11_TOUCH(void) {
       Engine_EventSetMessage(MsgSolThank);
     } else {
       Engine_EventSetMessage(MsgSolGoBackVillage);
-      Actor_ShowEmote(16, 0x107, 20);
+      Actor_ShowEmote(16, EMOTE_IN_FRONT | 7, 20);
     }
     Engine_ActorJump(16, 4, 20);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(5, 0xa000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
     SetSolSanctumActorStep(16, 6);
     Engine_EventSetMessage(MsgSolPutWayDont);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(5, 4);
     SetSolSanctumActorStep(0x2005, 6);
-    Engine_ActorSetAnimationAndWait(1, 3);
+    Engine_ActorSetAnimationAndWait(1, ANIM_NOD);
     SetSolSanctumActorStep(1, 20);
     Engine_ActorJump(16, 6, 20);
-    Actor_ShowEmote(16, 0x104, 20);
+    Actor_ShowEmote(16, EMOTE_IN_FRONT | 4, 20);
     SetSolSanctumActorStep(16, 30);
-    Engine_ActorSetAnimation(0, 3);
-    Engine_ActorSetAnimation(1, 3);
+    Engine_ActorSetAnimation(0, ANIM_NOD);
+    Engine_ActorSetAnimation(1, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(5, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(16, 3);
@@ -330,7 +330,7 @@ static void EV11_TOUCH(void) {
     }
     Engine_ActorWaitForMove(16);
     Engine_ActorSetPosition(16, 0, 0);
-    Engine_ActorSetAnimation(1, 2);
+    Engine_ActorSetAnimation(1, ANIM_WALK);
     rec = Object_GetById(0);
     if (rec != 0) {
       Engine_ActorSetDestination(GARET, rec->x.part.pixel, rec->z.part.pixel);
@@ -362,10 +362,10 @@ static void Scene_EnterInnerSanctum(void) {
   if (record != 0) {
     Actor_SetPosition(ACTOR_KRADEN, record->x.fixed, record->z.fixed);
   }
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 1);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d8, 168);
-  Actor_FaceDirection(ACTOR_KRADEN, 0, 60);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 60);
   Engine_ActorJump(ACTOR_KRADEN, 4, 40);
   SetSolSanctumActorStep(16, 6);
   Camera_SetSpeed(0x26666, 0x4ccc);
@@ -376,25 +376,25 @@ static void Scene_EnterInnerSanctum(void) {
   Camera_MoveTo(0x1ec0000, -1, 0xa80000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
   SetSolSanctumActorStep(0x4010, 6);
-  Actor_FaceDirection(ACTOR_KRADEN, 0, 60);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_OpenMessage(0x4010, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolLunaSolRooms);
   } else {
     Engine_EventSetMessage(MsgSolRoomLunaOne);
   }
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   SetSolSanctumActorStep(0x4010, 10);
   request = MsgSolMeanLookFarther;
   Engine_EventSetMessage(request);
-  Actor_FaceDirection(ACTOR_KRADEN, 0, 40);
-  Actor_ShowEmote(ACTOR_KRADEN, 0x105, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
   Event_OpenMessage(0x4010, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -407,7 +407,7 @@ static void Scene_EnterInnerSanctum(void) {
   Engine_CameraFollowActor(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 0x1e6, 131);
   Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 120);
-  Actor_FaceDirection(ACTOR_KRADEN, 0xc000, 2);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 2);
   Camera_SetSpeed(0x40000, 0x8000);
   GameFlag_Set(FLAG_INNER_SANCTUM_ENTERED);
 }
@@ -440,7 +440,7 @@ static void EV09_TOUCH(void) {
     Engine_EventWait(4);
     Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
   } else if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
-    Actor_SetPosition(ACTOR_KRADEN, 0x1880000, 0xa80000);
+    Actor_SetPosition(ACTOR_KRADEN, PIXELS(392), PIXELS(168));
     Engine_EventWait(4);
     Actor_SetSpeed(ACTOR_KRADEN, 0x20000, 0x10000);
   }
@@ -451,10 +451,10 @@ static void EV09_TOUCH(void) {
     GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
   }
   Actor_WalkToAndWait(ACTOR_KRADEN, 0x120, 0xe8);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x4000, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   if (GameFlag_IsSet(0x810) != 0 ||
       GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
     Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
@@ -631,7 +631,7 @@ static void FieldScene_PrepareStatueTransition(void) {
   Map_CopyCellsTo(14, 41, 32, 41, 8, 4);
   Camera_MoveTo(0x23e0000, -1, 0x9e0000, 0);
   Engine_MapRedraw();
-  Actor_SetPosition(ACTOR_KRADEN, 0x23e0000, 0x780000);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(574), PIXELS(120));
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
   ColorBuffer_ApplyTarget(0x2051cc, 1);
@@ -662,8 +662,8 @@ static void Scene_SpringStatueTrap(void) {
   Engine_EventBegin();
   FieldScene_PrepareStatueTransition();
   Engine_EventSetMessage(MsgSolWhatsHappeningAtTheTrap);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x4000, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, 256, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(ACTOR_KRADEN, 6, 30);
   Camera_MoveTo(37617664, -1, 11403264, 1);
   Engine_CameraWaitForMove();
@@ -731,8 +731,8 @@ static void FieldScene_RunClosingSequence(void) {
   gSolLunaRooms_Light3Timer = 0;
   gSolLunaRooms_Light4Timer = 0;
   Engine_EventSetMessage(MsgSolWhatsHappening);
-  Actor_FaceDirection(ACTOR_KRADEN, 16384, 20);
-  Actor_ShowEmote(ACTOR_KRADEN, 256, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(ACTOR_KRADEN, 6, 30);
   Camera_MoveTo(37617664, -1, 11403264, 1);
   Engine_CameraWaitForMove();
@@ -838,7 +838,7 @@ static void FieldScene_RunFlaggedSequence(void) {
     GameFlag_Set(2089);
   }
   FieldScene_PrepareStatueTransition();
-  Actor_FaceDirection(ACTOR_KRADEN, 16384, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Engine_ActorJump(ACTOR_KRADEN, 6, 30);
   Camera_MoveTo(37617664, -1, 11403264, 1);
   Engine_CameraWaitForMove();
@@ -908,8 +908,8 @@ static void EV08_TOUCH(void) {
     if (CheckAllStatueLights() == 0) {
     } else {
       Engine_EventBegin();
-      Actor_SetPosition(ACTOR_KRADEN, 0x2410000, 0x930000);
-      Actor_FaceDirection(ACTOR_KRADEN, 0x4000, 1);
+      Actor_SetPosition(ACTOR_KRADEN, PIXELS(577), PIXELS(147));
+      Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 1);
       Camera_MoveTo(0x23e0000, -1, 0xb80000, 1);
       Engine_EventSetMessage(MsgSolThePictureOfLunaChanged);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
@@ -921,7 +921,7 @@ static void EV08_TOUCH(void) {
       Engine_EventWait(6);
       Engine_ActorJump(ACTOR_KRADEN, 6, 30);
       SetSolSanctumActorStep(16, 6);
-      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Engine_EventWait(2);
       Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
       SetSolSanctumActorStep(16, 6);
@@ -930,7 +930,7 @@ static void EV08_TOUCH(void) {
       Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
       Engine_EventWait(30);
       SetSolSanctumActorStep(16, 6);
-      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 184);
       Engine_EventWait(6);
       Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -938,7 +938,7 @@ static void EV08_TOUCH(void) {
       SetSolSanctumActorStep(0x4010, 6);
       Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 208);
       Engine_EventWait(40);
-      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+      Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Engine_EventWait(6);
       Actor_SetSpeed(ACTOR_KRADEN, 0x8000, 0x4000);
       Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
@@ -959,10 +959,10 @@ static void FieldScene_RunActorPositionTransition(void) {
   Engine_AudioPlayCue(21);
   Actor_WalkToAndWait(0, 0x178, 184);
   Engine_ActorSetAnimation(0, 0);
-  Actor_SetPosition(16, 0x1780000, 0xb80000);
+  Actor_SetPosition(16, PIXELS(376), PIXELS(184));
   Actor_SetSpeed(16, 0x10000, 0x8000);
   Actor_WalkToAndWait(16, 0x188, 168);
-  Actor_FaceDirection(16, 0x8000, 30);
+  Actor_FaceDirection(16, FACING_WEST, 30);
   Engine_ActorSetAnimation(16, 1);
   Engine_EventSetMessage(MsgSolLookSymbolFloor);
   Engine_ActorJump(16, 4, 30);
@@ -972,7 +972,7 @@ static void FieldScene_RunActorPositionTransition(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   SetSolSanctumActorStep(16, 6);
   Actor_WalkToAndWait(16, 0x178, 184);
-  Actor_SetPosition(16, 0x6480000, 0x6480000);
+  Actor_SetPosition(16, PIXELS(1608), PIXELS(1608));
   Engine_EventWait(4);
   Engine_GameFlagSet(0x811);
 }
@@ -990,15 +990,15 @@ static void EV20_SEARCH(void) {
     Actor_WalkToAndWait(0, 0x120, 120);
     Engine_ActorSetAnimation(0, 0);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 30);
-    Actor_SetPosition(16, 0x1200000, 0x780000);
+    Actor_SetPosition(16, PIXELS(288), PIXELS(120));
     Actor_SetSpeed(16, 0x10000, 0x8000);
     Actor_WalkToAndWait(16, 0x114, 136);
     Actor_WalkTo(16, 0x108, 136);
     Actor_WalkToAndWait(0, 0x138, 136);
-    Engine_ActorSetAnimation(0, 1);
+    Engine_ActorSetAnimation(0, ANIM_STAND);
     Engine_ActorSetAnimation(16, 1);
-    Actor_FaceDirection(0, 0xb000, 0);
-    Engine_ActorFaceDirection(16, 0xd000, 20);
+    Actor_FaceDirection(0, FACING_NORTHWEST + FACING_STEP, 0);
+    Engine_ActorFaceDirection(16, FACING_NORTH + FACING_STEP, 20);
     if (GameFlag_IsSet(0x819) == 0) {
       Engine_AudioPlayCue(220);
     }
@@ -1015,8 +1015,8 @@ static void EV20_SEARCH(void) {
       Map_CopyCellsTo(0, 32, 17, 39, 2, 1);
       Map_CopyCellsTo(44, 59, 17, 40, 2, 1);
       Engine_EventWait(10);
-      Actor_ShowEmote(0, 0x100, 0);
-      Actor_ShowEmote(16, 0x100, 0);
+      Actor_ShowEmote(0, EMOTE_IN_FRONT, 0);
+      Actor_ShowEmote(16, EMOTE_IN_FRONT, 0);
       Map_CopyCellsTo(42, 62, 17, 36, 2, 3);
       Map_CopyCellsTo(0, 32, 17, 40, 2, 1);
       Map_CopyCellsTo(44, 59, 17, 41, 2, 1);
@@ -1032,7 +1032,7 @@ static void EV20_SEARCH(void) {
     }
     Object_LinkPair(16, 0, 30);
     Engine_ActorSetAnimation(16, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimation(16, 1);
     Engine_ActorSetAnimation(0, 0);
     Engine_EventSetMessage(MsgSolHa);
@@ -1040,14 +1040,14 @@ static void EV20_SEARCH(void) {
     Engine_ActorSetAnimationAndWait(16, 3);
     Engine_ActorSetAnimation(16, 1);
     Engine_EventShowMessage(32784, 0);
-    Engine_ActorSetAnimation(0, 3);
+    Engine_ActorSetAnimation(0, ANIM_NOD);
     Engine_EventWait(60);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     Engine_CameraSetSpeed(0x9999, 0x1333);
     Engine_CameraMoveTo(0x11f0000, -1, 0x720000, 1);
     Engine_ActorWalkToAndWait(0, 0x120, 120);
     Engine_EventWait(20);
-    Actor_FaceDirection(0, 0xc000, 20);
+    Actor_FaceDirection(0, FACING_NORTH, 20);
     Actor_SetSpeed(0, 0x4ccc, 0x2666);
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
     /* FAKEMATCH: register choice only: the zero goes through the sprite
@@ -1081,7 +1081,7 @@ static void EV20_SEARCH(void) {
     Actor_WalkToAndWait(16, 0x120, 120);
     Engine_ActorRunRepeatedMotion(16, 2);
     Engine_EventWait(20);
-    Actor_FaceDirection(16, 0xc000, 20);
+    Actor_FaceDirection(16, FACING_NORTH, 20);
     Engine_ActorSetSpeed(16, 0x4ccc, 0x2666);
     actor = Object_GetById(16);
     /* FAKEMATCH: register choice and order only: the mask temporary
@@ -1154,7 +1154,7 @@ s32 SolLunaRooms_RestoreEntryState(void) {
   } else {
     Engine_GameFlagSet(0x200);
     if (Engine_GameFlagIsSet(0x80a) != 0) {
-      Actor_SetPosition(16, 0x2400000, 0x780000);
+      Actor_SetPosition(16, PIXELS(576), PIXELS(120));
     }
   }
   if (gGameState.entrance == 4) {
@@ -1295,8 +1295,8 @@ static void SolLunaRooms_RunLightScene(void) {
   Engine_ColorBufferApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
-  Actor_SetPosition(1, 0x1180000, 0x860000);
-  Actor_FaceDirection(1, 0xa000, 0);
+  Actor_SetPosition(1, PIXELS(280), PIXELS(134));
+  Actor_FaceDirection(1, FACING_NORTHWEST, 0);
   ((struct EventGlobals *)&gEventWork)->event->transitionFrames = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1312,23 +1312,23 @@ static void SolLunaRooms_RunLightScene(void) {
   Actor_SetAttachedEffect(0, 0x102);
   Engine_ActorSetAttachedEffect(1, 0x102);
   Engine_EventWait(60);
-  Actor_FaceDirection(0, 0x2000, 20);
-  Actor_FaceDirection(1, 0xe000, 40);
-  Actor_FaceDirection(0, 0x9000, 40);
-  Actor_FaceDirection(1, 0x5000, 80);
-  Actor_FaceDirection(0, 0x8000, 10);
-  Actor_FaceDirection(1, 0x1000, 60);
+  Actor_FaceDirection(0, FACING_SOUTHEAST, 20);
+  Actor_FaceDirection(1, FACING_NORTHEAST, 40);
+  Actor_FaceDirection(0, FACING_WEST + FACING_STEP, 40);
+  Actor_FaceDirection(1, FACING_SOUTH + FACING_STEP, 80);
+  Actor_FaceDirection(0, FACING_WEST, 10);
+  Actor_FaceDirection(1, FACING_EAST + FACING_STEP, 60);
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
   Engine_EventWait(20);
-  Actor_FaceDirection(0, 0x6000, 0);
-  Actor_FaceDirection(1, 0xe000, 20);
+  Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(1, FACING_NORTHEAST, 20);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(1, 2);
   Engine_EventSetMessage(MsgSolFloatingEyeThing);
   Engine_EventOpenMessage(1, 0);
   Engine_EventChooseYesNo(0, 0);
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   Engine_EventWait(40);
   Engine_AudioPlayCue(107);
   Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
@@ -1349,9 +1349,9 @@ static void SolLunaRooms_RunLightScene(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(1, 2);
   SetSolSanctumActorStep(1, 10);
-  Engine_ActorSetAnimation(0, 3);
-  Engine_ActorSetAnimationAndWait(1, 3);
-  Engine_ActorSetAnimation(1, 2);
+  Engine_ActorSetAnimation(0, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(1, ANIM_NOD);
+  Engine_ActorSetAnimation(1, ANIM_WALK);
   leader = Object_GetById(0);
   if (leader != NULL) {
     Engine_ActorSetDestination(1, leader->x.part.pixel, leader->z.part.pixel);
@@ -1381,7 +1381,7 @@ static void EV16_TALK(void) {
     Engine_EventSetMessage(MsgSolKradenJustWaitOverThere);
   }
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_KRADEN, 0xc000, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 10);
   Engine_EventEnd();
 }
 

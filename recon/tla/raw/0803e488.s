@@ -85,7 +85,7 @@ Func_0803e488:
 	adds r2, r1, r2
 	ldrh r0, [r6, r3]
 	movs r1, #128
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, .L_0803e554
 	ldrh r2, [r5, #8]
 	ands r0, r3

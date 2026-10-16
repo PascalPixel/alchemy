@@ -415,7 +415,7 @@ void Mercury_RunActorMove(void) {
     for (i = 0;; i++) {
       if ((i & 15) == 0)
         OverlayObject_SpawnKind24AtObject(actor);
-      if (i > 31 && gKeyState != 0)
+      if (i > 31 && gKeysPressed != 0)
         break;
       Engine_TaskWait(1);
     }

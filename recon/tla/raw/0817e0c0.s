@@ -555,7 +555,7 @@ Func_0817e0c0:
 	ldr r6, .L_0817e658
 	adds r1, r0, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r2, #0
 	mov r8, r2
 	add r7, sp, #60

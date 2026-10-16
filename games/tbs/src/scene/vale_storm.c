@@ -65,8 +65,8 @@ s32 Math_RemainderUnsigned(s32, s32);
 
 union PairObject;
 
-s32 gValeStorm_ShakeDone;
-s32 gValeStorm_ShakeShift;
+static s32 sShakeDone;
+static s32 sShakeShift;
 
 static s32 ValeStorm_RerollHeadingOnCountdown(struct FieldActor *object) {
   s32 loaded = object->timer;
@@ -364,7 +364,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   }
   if (gGameState.entrance != 15 || Engine_GameFlagIsSet(0x87b) != 0) {
     Effect_SoundAndFlash();
-    BattleFx_StartTwelveFrameBlend();
+    FieldFx_StartLightning();
   }
   if (Engine_GameFlagIsSet(0x210) != 0) {
     EV15_TOUCH();
@@ -411,7 +411,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   gEventWork->transitionFrames = 24;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  BattleFx_SetBlock30Values128One();
+  FieldFx_ResumeLightning();
   return 0;
 }
 
@@ -420,8 +420,8 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
 
   Engine_EventBegin();
   Effect_SoundAndFlash();
-  BattleFx_StartTwelveFrameBlend();
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_StartLightning();
+  FieldFx_LastLightning();
   Engine_TaskWait(60);
   Camera_SetSpeed(0x4000, 0x800);
   Camera_MoveTo(0x13c0000, 0xa00000, 0x3700000, 1);
@@ -431,7 +431,7 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  BattleFx_SetBlock30Values128One();
+  FieldFx_ResumeLightning();
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps1, 50, 44);
   Actor_SetAttachedEffect(22, 0x101);
@@ -1048,9 +1048,9 @@ static void EV34_TOUCH(void) {
       SceneActor_SetModeByFrameBit1(Actor_Get(29));
       Engine_TaskWait(1);
     }
-    phase = &gValeStorm_ShakeShift;
+    phase = &sShakeShift;
     steps = (s32)FieldScene_RunFourPairedSteps;
-    gValeStorm_ShakeDone = 0;
+    sShakeDone = 0;
     *phase = 0;
     FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
     callback = (s32)SceneState_SetValue19ThenCall;
@@ -1104,7 +1104,7 @@ static void EV34_TOUCH(void) {
     Actor_SetAttachedEffect(30, 0x102);
     Engine_ActorRunRepeatedMotion(30, 2);
     Event_ShowMessage(30, 0);
-    gValeStorm_ShakeDone = 1;
+    sShakeDone = 1;
     Engine_ActorSetAnimation(29, 1);
     Engine_TaskWait(1);
     Actor_SetChildValue(29, 0);
@@ -1181,7 +1181,7 @@ static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
 }
 
 static void ActorPresentation_SetFourActorsModeByBit(void) {
-  if (((gFrameCount >> gValeStorm_ShakeShift) & 3) != 0) {
+  if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(32), 1);
     Storm_SetActorFrameMode(Object_GetById(33), 1);
     Storm_SetActorFrameMode(Object_GetById(30), 1);
@@ -1757,11 +1757,11 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Actor_EnableActionCallback(8, entryActions);
   Event_Wait(10);
   Actor_EnableActionCallback(26, entryActions);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Event_Wait(10);
   Actor_EnableActionCallback(0, entryActions);
   Event_Wait(10);
-  BattleFx_SetBlock30ValuesMaxZero();
+  FieldFx_StopLightning();
   Actor_EnableActionCallback(22, entryActions);
   Event_Wait(128);
   EV14_TOUCH();
@@ -1835,7 +1835,7 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Event_Wait(40);
   Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
   Event_Wait(60);
-  BattleFx_SetBlock30ValuesMaxZero();
+  FieldFx_StopLightning();
   Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
   Event_Wait(1);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -2071,7 +2071,7 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   BattleFx_PlayQueuedSound();
   Event_Wait(60);
   Party_RemoveOwnerRestored(1);
-  BattleFx_SetBlock30Values128One();
+  FieldFx_ResumeLightning();
 }
 
 struct Pulse {
@@ -2356,7 +2356,7 @@ static void SceneActor_SetModeByFrameBit1(s32 o) {
   {
     u32 *frame = &gFrameCount;
 
-    v = (gValeStorm_ShakeShift << 3) + 16;
+    v = (sShakeShift << 3) + 16;
     if (Math_RemainderUnsigned(*frame, v) == 0) {
       ValeStorm_SpawnEffectPair((union PairObject *)o);
     }
@@ -2371,7 +2371,7 @@ static void OverlayObject_UpdateRandomSlotByFrame(s32 obj) {
     t = (gFrameCount >> 1);
     Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
   }
-  n = (gValeStorm_ShakeShift << 3) + 16;
+  n = (sShakeShift << 3) + 16;
   if (Math_RemainderUnsigned(gFrameCount, n) == 0) {
     ValeStorm_SpawnEffectPair((union PairObject *)obj);
   }
@@ -2448,7 +2448,7 @@ static void FieldScene_RunFourPairedSteps(void) {
   OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(32));
   OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(33));
   OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(30));
-  if (gValeStorm_ShakeDone == 0) {
+  if (sShakeDone == 0) {
     OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(29));
   }
 }

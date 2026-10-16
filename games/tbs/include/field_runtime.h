@@ -51,7 +51,7 @@ struct FieldStepWork {
   s16 stepEvent;
   s16 warpEvent;
   u8 unk170[0xc];
-  u16 unk17c;
+  u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
   s16 psynergyRequest;
   u8 unk180[2];
   u16 raisedTrigger;
@@ -82,6 +82,8 @@ LAYOUT_OFFSET_GUARD(FieldStepWork_Events, struct FieldStepWork, events, 0x10);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Actors, struct FieldStepWork, actors, 0x14);
 LAYOUT_OFFSET_GUARD(FieldStepWork_StepEvent, struct FieldStepWork, stepEvent,
                     0x16c);
+LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterEnemyGroup, struct FieldStepWork,
+                    encounterEnemyGroup, 0x17c);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Mode, struct FieldStepWork, mode, 0x19e);
 LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterRate, struct FieldStepWork,
                     encounterRate, 0x1b0);

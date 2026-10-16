@@ -131,7 +131,7 @@ void Func_020051b0(s32 a);
 void Func_02005240(s32 id, s32 target);
 void Event_StartScreenTransition(void);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void VramBlock_LoadCached(s32 block, s32 count, const void *data);
+void VramCache_Load(s32 block, s32 count, const void *data);
 void Runtime_ReleaseHeapBlock(s32 slot);
 extern struct ObjectRuntime *gData_020062ac;
 extern s32 gData_02005548[];

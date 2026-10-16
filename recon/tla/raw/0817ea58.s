@@ -3750,10 +3750,10 @@ Func_0817ea58:
 	cmp r4, #57
 	bne .L_08180714
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	ldr r7, [sp, #128]
 	str r0, [r7, #84]
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

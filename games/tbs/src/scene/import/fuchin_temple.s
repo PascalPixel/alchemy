@@ -24,7 +24,7 @@
 	.set import.Engine_EventEnd, 1
 	.set import.FieldScene_PrepareActors, 1
 	.set import.Engine_EventChooseYesNo, 1
-	.set import.UiText_DrawQuantityPairWithCue, 1
+	.set import.Party_LearnAbility, 1
 	.set import.Object_GetById, 1
 	.set import.Engine_ActorDestroy, 1
 	.set import.Engine_ActorSetSpeed, 1

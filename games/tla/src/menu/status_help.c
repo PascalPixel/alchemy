@@ -17,7 +17,7 @@ struct StatusOwner {
 
 extern u8 MsgYourNameAndLevelExperience[];
 struct StatusOwner *UnitGet(s32 owner);
-u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
+u32 Unit_GetExperienceForLevelFar(s32 owner_id, s32 level);
 void UiText_DrawQuantity(s32 value, s32 digits);
 void *MemAlloc(s32 size);
 void MemFree(void *buffer);
@@ -38,9 +38,10 @@ void Func_080ff2e8(void *window, s32 help, s32 full) {
     if (state->level == 99)
       help = 8;
     else
-      UiText_DrawQuantity(Owner_GetLevelThresholdFar(*owner, state->level + 1) -
-                              state->experience,
-                          5);
+      UiText_DrawQuantity(
+          Unit_GetExperienceForLevelFar(*owner, state->level + 1) -
+              state->experience,
+          5);
   }
   buffer = MemAlloc(HELP_LENGTH * 2);
   UiText_CopyMessageStringFar(help + (s32)MsgYourNameAndLevelExperience, buffer,

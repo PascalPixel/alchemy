@@ -162,7 +162,7 @@ static void EV16_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV27_TALK(void) { BattleFx_RunPageEffectForSlot(27, 0, 1); }
+static void EV27_TALK(void) { Djinn_JoinParty(27, 0, 1); }
 
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_Kolima3) {

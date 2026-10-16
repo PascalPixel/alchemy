@@ -12,16 +12,23 @@ struct RenderInput;
 struct RenderOutput;
 struct UiWindow;
 
+// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
+// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
+// type, ending with LIST_ORDER_END.
+#define LIST_ORDER_TYPE_MASK 0x7f
+#define LIST_ORDER_EQUIPPED 0x80
+#define LIST_ORDER_END 0xff
+
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
 void UiWindow_InitializeWork(s32 unused);
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags);
 void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode);
-void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y);
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win);
-void UiText_DrawStatComparison(const struct BattleUnit *alt,
-                               const struct BattleUnit *base, s32 work);
+void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window);
+void UiText_DrawStatComparison(const struct BattleUnit *after,
+                               const struct BattleUnit *before, s32 window);
 s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x,
                               s32 y);
 s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y);
@@ -51,7 +58,7 @@ void Palette_LightenBankHighlight(s32 bank);
 void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 page_size,
                             s32 selected_page, s32 right_edge);
 void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field);
+                               s32 width, s32 height, u32 palette);
 void Palette_CopyObjectBankToBackground14(void);
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
 void UiText_DrawWorkValueWithLabel(s32 work);
@@ -119,7 +126,8 @@ s32 ItemMenu_ConfirmDrop(s32 a0);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 void Resource_LoadPairedBlocks(void);
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index);
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
+s32 ItemMenu_DrawItemDetailPage(s32 window, void *work,
+                                struct MenuResult *state);
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
                           const struct MenuResult *state);
 s32 InventoryMenu_ItemNamePageReturnTrue(void);
@@ -170,11 +178,11 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
 void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
                                          s32 message_variant,
                                          s32 preserve_variant);
-void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
+void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
                                       s32 mode);
 void Runtime_RunBusyWaitDelay(void);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id);
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 id);
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index);
 void Menu_BuildPatternTiles(void);
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused);

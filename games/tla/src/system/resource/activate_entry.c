@@ -22,14 +22,14 @@ s32 Resource_ResetEntry(u32 resourceIndex) {
    */
   asm("" : "+l"(entry) : "l"(offset));
   if (offset != VRAM_CACHE_OFFSET_FREE) {
-    Resource_ClearSlotReferences(resourceIndex);
+    VramCache_FreeBlocks(resourceIndex);
     entry->offset |= VRAM_CACHE_OFFSET_FREE;
     entry->size = 0;
   }
   return 0;
 }
 
-s32 Resource_ActivateEntry(u32 resourceIndex) {
+s32 VramCache_ReleaseVram(u32 resourceIndex) {
   u16 *entry = (u16 *)&gResourceTableEntries[resourceIndex];
 
   if (resourceIndex > 95)
@@ -37,7 +37,7 @@ s32 Resource_ActivateEntry(u32 resourceIndex) {
   if (*entry > 16) {
     s32 value;
 
-    Resource_ClearSlotReferences(resourceIndex);
+    VramCache_FreeBlocks(resourceIndex);
     value = 1;
     *entry = value;
   }
@@ -47,7 +47,7 @@ s32 Resource_ActivateEntry(u32 resourceIndex) {
 // Loads size bytes from src into the object VRAM of cache entry no, reusing
 // its blocks when the size is unchanged (src 0 loads nothing, -1 clears);
 // returns the tile number, or 0 when it does not fit.
-s32 VramBlock_LoadCached(u32 no, u32 size, const void *src) {
+s32 VramCache_Load(u32 no, u32 size, const void *src) {
   struct VramBlockCacheEntry *entry;
   s32 offset;
   void *dst;
@@ -72,12 +72,12 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src) {
   if (entry->size > 16) {
     if (entry->size != size) {
       Resource_ResetEntry(no);
-      offset = ResourceTable_AllocateBlocks(no, size);
+      offset = VramCache_AllocateBlocks(no, size);
     } else {
       offset = entry->offset;
     }
   } else {
-    offset = ResourceTable_AllocateBlocks(no, size);
+    offset = VramCache_AllocateBlocks(no, size);
   }
 
   if (offset != -1) {

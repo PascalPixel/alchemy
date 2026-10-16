@@ -741,7 +741,7 @@ Func_0817d724:
 	lsls r1, r1, #9
 	adds r2, r7, #0
 	bl Func_080151e4
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #44]
 	ldr r0, [r1]
@@ -766,7 +766,7 @@ Func_0817d724:
 	mov r7, r11
 	adds r0, r5, #0
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	cmp r7, #133
 	bgt .L_0817dd80
 	mov r3, r11

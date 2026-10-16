@@ -72,7 +72,7 @@ void FieldEffect_InitSparkles(void) {
   buf = Runtime_AllocateBlock(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f38b2, buf);
   work->vramEntry = Resource_FindFreeEntry();
-  work->tileBase = VramBlock_LoadCached(work->vramEntry, 0x200, buf);
+  work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
   Runtime_ReleaseHeapBlock(56);
 
   i = 0;

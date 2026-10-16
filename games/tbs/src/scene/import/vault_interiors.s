@@ -69,13 +69,13 @@
 	.set import.Map_SetViewBounds, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
 	.ifndef TBS_EDITION_JA
 	.set import.Engine_LeaderCheckAhead, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.Battle_InitializeRenderObject, 1
+	.set import.Leader_StopMoving, 1
 	.endif
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1

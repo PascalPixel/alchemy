@@ -169,7 +169,7 @@ void Func_08146638(struct BattleEffectArgument *effect) {
         if (size > 10)
           size = 10;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         SceneTransform_ApplyPosition(bolt);
         nearest = 0;
         for (j = 0; j != RING_POINTS; j++) {

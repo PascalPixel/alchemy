@@ -165,10 +165,10 @@ static void EV01_TALK(void) {
 
   UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
   p = &gMenuTest_SlotOffsets;
-  Party_AdvanceOwnerCountToTarget(0, *p);
-  Party_AdvanceOwnerCountToTarget(1, *p);
-  Party_AdvanceOwnerCountToTarget(3, *p);
-  Party_AdvanceOwnerCountToTarget(2, *p);
+  Unit_LevelUpTo(0, *p);
+  Unit_LevelUpTo(1, *p);
+  Unit_LevelUpTo(3, *p);
+  Unit_LevelUpTo(2, *p);
   *p += 10;
   UnitCalc(0);
   UnitCalc(1);
@@ -463,14 +463,14 @@ static void EV10_TALK(void) {
   u8 *record;
 
   UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
-  FieldOwner_AdjustFirstValue(0, -100);
-  FieldOwner_AdjustFirstValue(1, -100);
-  FieldOwner_AdjustFirstValue(2, -33);
-  FieldOwner_AdjustFirstValue(3, -100);
-  UnitPpAdd(0, -50);
-  UnitPpAdd(1, -40);
-  UnitPpAdd(2, -35);
-  UnitPpAdd(3, -20);
+  FieldUnit_AddHp(0, -100);
+  FieldUnit_AddHp(1, -100);
+  FieldUnit_AddHp(2, -33);
+  FieldUnit_AddHp(3, -100);
+  Unit_AddPp(0, -50);
+  Unit_AddPp(1, -40);
+  Unit_AddPp(2, -35);
+  Unit_AddPp(3, -20);
   record = UnitGet(0);
   record[0x131] = 1;
   record += 0x140;
@@ -563,14 +563,14 @@ static void DebugMenu_SelectItem(void) {
         UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
     }
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(item) == -1) {
         Engine_AudioPlayCue(113);
         break;
       }
       Engine_AudioPlayCue(175);
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       Engine_AudioPlayCue(113);
       break;
     }
@@ -686,16 +686,16 @@ s32 CommandTable_ConfigureCommandList(void) {
   Item_AdjustCounter(140, 1);
   Item_AdjustCounter(151, 1);
 #if EDITION_INTERNATIONAL
-  Party_AdvanceOwnerCountToTarget(ISAAC, 50);
-  Party_AdvanceOwnerCountToTarget(GARET, 30);
-  Party_AdvanceOwnerCountToTarget(MIA, 30);
+  Unit_LevelUpTo(ISAAC, 50);
+  Unit_LevelUpTo(GARET, 30);
+  Unit_LevelUpTo(MIA, 30);
 #else
   gGameState.coins = 777777;
-  Party_AdvanceOwnerCountToTarget(ISAAC, 30);
-  Party_AdvanceOwnerCountToTarget(GARET, 30);
-  Party_AdvanceOwnerCountToTarget(MIA, 30);
+  Unit_LevelUpTo(ISAAC, 30);
+  Unit_LevelUpTo(GARET, 30);
+  Unit_LevelUpTo(MIA, 30);
 #endif
-  Party_AdvanceOwnerCountToTarget(IVAN, 30);
+  Unit_LevelUpTo(IVAN, 30);
   UnitCalc(ISAAC);
   UnitCalc(GARET);
   UnitCalc(MIA);

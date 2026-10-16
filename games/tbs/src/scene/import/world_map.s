@@ -41,8 +41,8 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Djinn_AddToOwner, 1
-	.set import.Trade_AddOffer, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.DjinnRecovery_AddStandby, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.PartyInventory_Discard, 1
 	.set import.Engine_EventWait, 1
 	.set import.Engine_EventBegin, 1
@@ -98,7 +98,7 @@
 	.set import.Engine_ActorLookup, 1
 	.set import.Engine_PsynergyBegin, 1
 	.set import.BattleEffect_CleanupSceneObjects, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_ScheduleRatioTransition, 1
 	.set import.Event_WaitForZoomTransition, 1
 	.set import.ItemMenu_Open, 1

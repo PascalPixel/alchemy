@@ -2322,7 +2322,7 @@ Func_020017a8:
 	lsls r1, r1, #1
 	adds r2, r7, #0
 	str r0, [sp, #4]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	mov r9, r0
 	movs r0, #176
 	lsls r0, r0, #4
@@ -2390,7 +2390,7 @@ Func_020017a8:
 .L_0200989c:
 	.4byte 0x000001f6
 .L_020098a0:
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r1, #176
 	lsls r1, r1, #4
 	movs r2, #168
@@ -3504,7 +3504,7 @@ Func_0200216c:
 	adds r2, r5, #0
 	lsls r1, r1, #1
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r5, #0
 	bl MemFree
 	movs r1, #144

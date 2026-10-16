@@ -275,11 +275,15 @@ $(BUILD)/obj/%.o: %.mid $(MID2AGS)
 # humanizing pass's to read.
 
 MODERN_CC ?= arm-none-eabi-gcc
+# Older current GCC releases do not know this separate diagnostic's name.
+MODERN_DECLARATION_TYPE_ERROR := $(shell $(MODERN_CC) -Werror -Werror=declaration-missing-parameter-type \
+                               -x c -fsyntax-only /dev/null >/dev/null 2>&1 && \
+                               printf '%s' '-Werror=declaration-missing-parameter-type')
 MODERN_CFLAGS := -mthumb-interwork -mcpu=arm7tdmi -mabi=apcs-gnu -O2 -fno-toplevel-reorder -std=gnu89 \
                  -ffreestanding -nostdinc -fno-zero-initialized-in-bss -fno-tree-loop-distribute-patterns \
                  -DMODERN=1 -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter \
                  -Wno-missing-field-initializers -Wno-pointer-sign -fdiagnostics-plain-output \
-                 -Werror=implicit-int -Werror=missing-parameter-type -Werror=declaration-missing-parameter-type \
+                 -Werror=implicit-int -Werror=missing-parameter-type $(MODERN_DECLARATION_TYPE_ERROR) \
                  $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
 MODERN_OBJS := $(patsubst %.c,$(BUILD)/modern/%.o,$(filter %.c,$(SRCS)))
 

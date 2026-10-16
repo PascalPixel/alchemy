@@ -19,7 +19,7 @@ Func_080457d0:
 	str r0, [sp, #48]
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r2, #0
 	movs r1, #1
 	str r2, [sp, #40]
@@ -200,7 +200,7 @@ Func_080457d0:
 	movs r5, #1
 	str r5, [r0, r3]
 	movs r0, #0
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	ldr r3, [r0]
 	movs r5, #2
 	cmp r3, #0

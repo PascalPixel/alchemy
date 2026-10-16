@@ -1,26 +1,26 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Owner_AdjustFirstValueFar
+	.global Unit_AddHpFar
 	.thumb_func
-Owner_AdjustFirstValueFar:
-	overlay_veneer Owner_AdjustFirstValue
-	.global UnitPpAddFar
+Unit_AddHpFar:
+	overlay_veneer Unit_AddHp
+	.global Unit_AddPpFar
 	.thumb_func
-UnitPpAddFar:
-	overlay_veneer UnitPpAdd
+Unit_AddPpFar:
+	overlay_veneer Unit_AddPp
 	.global UnitRatioFar
 	.thumb_func
 UnitRatioFar:
 	overlay_veneer UnitRatio
-	.global Owner_UpdateRatioPairFar
+	.global Unit_SetHpFar
 	.thumb_func
-Owner_UpdateRatioPairFar:
-	overlay_veneer Owner_UpdateRatioPair
-	.global Owner_UpdateSecondInputAndRatiosFar
+Unit_SetHpFar:
+	overlay_veneer Unit_SetHp
+	.global Unit_SetPpFar
 	.thumb_func
-Owner_UpdateSecondInputAndRatiosFar:
-	overlay_veneer Owner_UpdateSecondInputAndRatios
+Unit_SetPpFar:
+	overlay_veneer Unit_SetPp
 	.global BattleUnitSetFar
 	.thumb_func
 BattleUnitSetFar:
@@ -56,19 +56,19 @@ BattleHitCheck:
 	.global BattleAtkCalc
 	.thumb_func
 BattleAtkCalc:
-	overlay_veneer Owner_ScaleAdjustedAmount
+	overlay_veneer Battle_CalcAttackDamage
 	.global BattlePowerCalc
 	.thumb_func
 BattlePowerCalc:
-	overlay_veneer Owner_ScaleValueByCurve
+	overlay_veneer Battle_CalcPsynergyPower
 	.global BattleRecoveryCalc
 	.thumb_func
 BattleRecoveryCalc:
-	overlay_veneer Owner_ScaleValueByOffsetCurve
-	.global Owner_GetRecordFar
+	overlay_veneer Battle_CalcRecovery
+	.global Enemy_GetDefinitionFar
 	.thumb_func
-Owner_GetRecordFar:
-	overlay_veneer Owner_GetRecord
+Enemy_GetDefinitionFar:
+	overlay_veneer Enemy_GetDefinition
 	.global BattleRandomFar
 	.thumb_func
 BattleRandomFar:
@@ -85,22 +85,22 @@ Djinn_ActivateFar:
 	.thumb_func
 Djinn_DeactivateFar:
 	overlay_veneer Djinn_Deactivate
-	.global Trade_RemoveOfferFar
+	.global DjinnRecovery_RemoveFar
 	.thumb_func
-Trade_RemoveOfferFar:
-	overlay_veneer Trade_RemoveOffer
-	.global Trade_AddOfferFar
+DjinnRecovery_RemoveFar:
+	overlay_veneer DjinnRecovery_Remove
+	.global DjinnRecovery_AddStandbyFar
 	.thumb_func
-Trade_AddOfferFar:
-	overlay_veneer Trade_AddOffer
+DjinnRecovery_AddStandbyFar:
+	overlay_veneer DjinnRecovery_AddStandby
 	.global Djinn_TransferFar
 	.thumb_func
 Djinn_TransferFar:
 	overlay_veneer Djinn_Transfer
-	.global Trade_ListFlaggedEntriesFar
+	.global Summon_ListLearnedFar
 	.thumb_func
-Trade_ListFlaggedEntriesFar:
-	overlay_veneer Trade_ListFlaggedEntries
+Summon_ListLearnedFar:
+	overlay_veneer Summon_ListLearned
 	.global SummonDefinition_Get
 	.thumb_func
 SummonDefinition_Get:
@@ -109,15 +109,15 @@ SummonDefinition_Get:
 	.thumb_func
 Djinn_GetDefinitionHeaderFar:
 	overlay_veneer Djinn_GetDefinitionHeader
-	.global Party_AdvanceOwnerCountToTargetFar
+	.global Unit_LevelUpToFar
 	.thumb_func
-Party_AdvanceOwnerCountToTargetFar:
-	overlay_veneer Party_AdvanceOwnerCountToTarget
-	.global Owner_GetResistanceValueFar
+Unit_LevelUpToFar:
+	overlay_veneer Unit_LevelUpTo
+	.global Unit_GetElementLevelFar
 	.thumb_func
-Owner_GetResistanceValueFar:
-	overlay_veneer Owner_GetResistanceValue
-	.global Trade_CountPendingOffersFar
+Unit_GetElementLevelFar:
+	overlay_veneer Unit_GetElementLevel
+	.global DjinnRecovery_CountStandbyFar
 	.thumb_func
-Trade_CountPendingOffersFar:
-	overlay_veneer Trade_CountPendingOffers
+DjinnRecovery_CountStandbyFar:
+	overlay_veneer DjinnRecovery_CountStandby

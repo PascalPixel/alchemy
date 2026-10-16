@@ -1,13 +1,14 @@
 	.section .rodata
 	.balign 4
-@ カメラ追従
+@ The camera follows its target.
 	.global Object_CameraFollowScript
 Object_CameraFollowScript:
 	.4byte 11, 0, 1, 12, 65535, 0, 16
 	.global gObject_IdleScript
 gObject_IdleScript:
 	.4byte 16
-@ 場面の配置 {絵, 条件, 動作, x, y, z, 向き, 話す向き, フラグ}
+@ The party leader's placement table (struct ScenePlacement): {sprite,
+@ condition, behavior, x, y, z, facing, talk facing, flags}
 	.global gField_DefaultPlacements
 gField_DefaultPlacements:
 	.2byte 0, -1
@@ -18,7 +19,7 @@ gField_DefaultPlacements:
 	.4byte 0, 0, 0, 0
 	.2byte 0x0000
 	.byte 0, 0
-@ 画面切り替えの形 {first, second, {数, 値, x0, x1, y0, y1} x 3}
+@ Display transition shapes: {first, second, {count, value, x0, x1, y0, y1} x 3}
 	.global gDisplayTransition_Shapes
 gDisplayTransition_Shapes:
 	.2byte 1, 32639
@@ -315,7 +316,7 @@ gObjectMotion_TurnTowardLinkedScript:
 	.global gObjectMotion_LinkedActionScript
 gObjectMotion_LinkedActionScript:
 	.4byte 5, 0, 1, 12, 65535, 0
-@ 地面の粒, 光の粒, きらめき
+@ Ground particles, motes of light and sparkles
 	.global gFieldFx_GroundParticleTiles
 gFieldFx_GroundParticleTiles:
 	.incbin "games/common/src/field/common/effect/ground.4bpp16x16.plz"
@@ -336,7 +337,7 @@ gBattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.4byte gBattleFx_ShortEffectScript, gBattleFx_MediumEffectScript, gBattleFx_LongEffectScript
-@ {タイル << 16 | フラグ, 地名}
+@ {tile << 16 | flag, place name}
 	.global gWorldMap_PlaceMarkers
 gWorldMap_PlaceMarkers:
 	.4byte 0x10183, 3

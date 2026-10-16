@@ -1,7 +1,11 @@
 #include "unit/field/facing.h"
 #include "types.h"
 
-// 向きごとのフレーム番号 (0x80 = 左右反転)
+// Facing tables: for each animation kind, the frame to draw for each sector
+// of the facing angle. Sprite_ComposeAnimationFrame adds the low three bits
+// to the animation's base frame, and bit 7 (0x80) mirrors the sprite.
+// Kinds 1, 2 and 22 have eight sectors, 3 and 5 sixteen, 4 and 6 sixty-four;
+// kinds 8 and 88 have eight sectors centred on the eight compass directions.
 // clang-format off
 const u8 gAnimationFacing_Kind1[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
@@ -56,7 +60,7 @@ const u8 gAnimationFacing_Kind6[64] = {
     0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
 };
 
-// タイル消去の画素順
+// The order in which a map tile's 64 pixels dissolve.
 const u8 gMap_TileDissolveOrder[64] = {
     4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
     50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
@@ -64,9 +68,10 @@ const u8 gMap_TileDissolveOrder[64] = {
     6, 48, 52, 9, 43, 28, 0, 40, 24, 34, 20, 47, 54, 39, 38, 18,
 };
 
+// Two bytes after the dissolve order; nothing in this file reads them.
 const u16 gMap_TileDissolveTail = 0x01ff;
 
-// 固定カメラの行列 (Q16)
+// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
 const s32 gCamera_FixedViewMatrix[12] = {
     0x10000, 0, 0,
     -0xcccc, 0x10000, 0,
@@ -74,7 +79,7 @@ const s32 gCamera_FixedViewMatrix[12] = {
     0, 0, 0,
 };
 
-// 三角波
+// One period of a triangle wave, which bobs a floating object up and down.
 const s32 gScriptObject_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
     7, 6, 5, 4, 3, 2, 1, 0,
@@ -82,28 +87,32 @@ const s32 gScriptObject_CycleTable[32] = {
     -7, -6, -5, -4, -3, -2, -1, 0,
 };
 
-// 待機スクリプト
+// The idle script an object returns to when its own one ends: a lone SC_END,
+// which reloads it.
 const s32 gScript_MainScript[1] = {
     16,
 };
 
+// Halfwords that follow the main script; nothing reads them.
 const s16 gScript_MainScriptTail[8] = {
     0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 
-// 十字キー入力ごとの向き (0xffff = 入力なし)
+// The heading for each state of the direction pad (bits 4-7 of the keys);
+// 0xffff means no direction is held.
 const u16 gWorldMap_KeyHeadings[16] = {
     0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
     0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
 };
 
-// 足跡のスクリプト
+// Two scripts for the world map's footprint and dust effects: wait 120 or 30
+// frames, then release the object (command 27, SC_FREE).
 const s32 gWorldMap_FootprintActions[6] = {
     0, 120, 27,
     0, 30, 27,
 };
 
-// 十字キー入力ごとの旋回量
+// The world map camera's turn rate for each state of the direction pad.
 const s32 gWorldMap_KeyYaws[16] = {
     0, -512, 512, 0,
     0, -384, 384, 0,

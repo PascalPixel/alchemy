@@ -1321,7 +1321,7 @@ Func_0814153c:
 	bne .L_08141f9a
 	bl Func_08020388
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	ldr r1, [sp, #68]
 	movs r4, #240
 	str r0, [r1, #84]
@@ -1363,7 +1363,7 @@ Func_0814153c:
 	cmp r8, r3
 	bne .L_08141fda
 .L_08142008:
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	ldr r3, .L_08142048
 	ldr r2, .L_08142064
 	movs r6, #128

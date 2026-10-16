@@ -5,8 +5,8 @@
 
 s32 Runtime_BlankDisplayAndRun(void);
 void Camera_ResetSceneDefaults(void);
-s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1);
-s16 Math_ScaleByRatio(s16 arg0, s16 arg1);
+s32 FixedPoint_Multiply8_8(s32 a, s32 b);
+s16 Math_ScaleByRatio(s16 numerator, s16 denominator);
 s16 FixedPoint_Reciprocal(s16 value);
 extern const s32 gLuckyDice_UnusedSigns[];
 extern const u8 gLuckyDice_LabelCounts[];

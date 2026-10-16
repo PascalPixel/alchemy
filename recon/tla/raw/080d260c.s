@@ -128,7 +128,7 @@ PartyInventory_GiveItem:
 	bne .L_080d2712
 .L_080d2720:
 	ldr r0, [sp, #8]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldr r0, [sp, #8]
 	bl UnitCalcFar
 	adds r0, r6, #0

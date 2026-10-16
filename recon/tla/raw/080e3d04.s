@@ -410,7 +410,7 @@ Func_080e3d04:
 	adds r1, r5, #0
 	mov r2, r8
 	str r0, [sp, #8]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #192
 	lsls r3, r3, #5
 	mov r9, r0
@@ -470,7 +470,7 @@ Func_080e3d04:
 	lsls r1, r1, #4
 	mov r2, r8
 	mov r11, r0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #192
 	lsls r3, r3, #5
 	mov r9, r0

@@ -13,7 +13,7 @@
 #include "transform.h"
 
 extern u32 gCameraSceneParameters[];
-void Camera_StoreSceneParameters(s32 span, u32 depth, s32 range);
+void Projection_Set(s32 span, u32 depth, s32 range);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
@@ -41,7 +41,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
-  Camera_StoreSceneParameters(span, result, span * 2);
+  Projection_Set(span, result, span * 2);
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(pos);
   SceneTransform_ApplyYaw((s16)scene->yaw);
@@ -53,7 +53,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(scene->eye, pos);
+  Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
@@ -61,5 +61,5 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
-  Camera_StoreSceneParameters(width, result, half * 4);
+  Projection_Set(width, result, half * 4);
 }

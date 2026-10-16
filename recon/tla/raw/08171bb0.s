@@ -494,7 +494,7 @@ Func_08171bb0:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #64]
 	ldr r1, [sp, #36]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r2, [sp, #88]
 	cmp r2, #1
 	bhi .L_08172010
@@ -1433,7 +1433,7 @@ Func_08171bb0:
 	asrs r0, r0, #16
 	movs r5, #64
 	subs r5, r5, r0
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	mov r2, r8
 	lsls r3, r2, #3
 	subs r5, r5, r3
@@ -1474,7 +1474,7 @@ Func_08171bb0:
 	bl Func_08196958
 	mov r0, r11
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	movs r3, #1
 	add r8, r3
 	mov r4, r8
@@ -1811,7 +1811,7 @@ Func_08171bb0:
 	lsls r6, r6, #9
 	lsls r5, r2, #11
 .L_08172992:
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	ldr r4, [sp, #92]
 	ldr r3, [r4, #4]
 	cmp r3, #1
@@ -1852,7 +1852,7 @@ Func_08171bb0:
 	bl Func_081969ac
 	mov r0, r11
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	movs r3, #1
 	movs r2, #128
 	add r8, r3

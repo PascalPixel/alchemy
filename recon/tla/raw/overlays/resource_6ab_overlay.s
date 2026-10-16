@@ -979,7 +979,7 @@ Func_02000ae4:
 	ldrb r0, [r6, #16]
 	movs r1, #128
 	adds r2, r5, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 	cmp r7, #0
@@ -1287,7 +1287,7 @@ Func_02000e80:
 	ldrb r0, [r6, #16]
 	movs r1, #128
 	adds r2, r5, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 .L_ja_02008f20:
@@ -1695,7 +1695,7 @@ Func_02000e80:
 	ldrb r0, [r6, #16]
 	movs r1, #128
 	adds r2, r5, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 .L_02008f48:
@@ -1897,7 +1897,7 @@ Func_02000e80:
 	ldrb r0, [r6, #16]
 	movs r1, #128
 	adds r2, r5, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 .L_02009112:
@@ -6668,7 +6668,7 @@ Func_02003930:
 	adds r2, r5, #0
 	lsls r1, r1, #1
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r5, #0
 	bl MemFree
 	movs r1, #144

@@ -20,18 +20,18 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 s32 BattleUnit_TickAttackModifier(s32 unitId) {
   struct BattleUnit *state = UnitGet(unitId);
 
-  if (state->atkCnt != 0) {
+  if (state->attackTurns != 0) {
     s32 zero;
-    state->atkCnt--;
+    state->attackTurns--;
     zero = 0;
-    if ((s8)state->atkCnt == 0) {
-      state->atkLv = zero;
+    if ((s8)state->attackTurns == 0) {
+      state->attackStage = zero;
       return 1;
     }
-    if (state->atkLv < 0) {
-      if (BattleUnit_RollCounterEarlyEnd(unitId, state->atkCnt, 30) != 0) {
-        state->atkLv = zero;
-        state->atkCnt = zero;
+    if (state->attackStage < 0) {
+      if (BattleUnit_RollCounterEarlyEnd(unitId, state->attackTurns, 30) != 0) {
+        state->attackStage = zero;
+        state->attackTurns = zero;
         return 1;
       }
     }
@@ -42,16 +42,16 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
 s32 BattleUnit_TickDefenseModifier(s32 unitId) {
   struct BattleUnit *state = UnitGet(unitId);
 
-  if (state->defCnt != 0) {
-    state->defCnt--;
-    if (state->defCnt == 0) {
-      state->defLv = 0;
+  if (state->defenseTurns != 0) {
+    state->defenseTurns--;
+    if (state->defenseTurns == 0) {
+      state->defenseStage = 0;
       return 1;
     }
-    if (state->defLv < 0 &&
-        BattleUnit_RollCounterEarlyEnd(unitId, state->defCnt, 20) != 0) {
-      state->defLv = 0;
-      state->defCnt = 0;
+    if (state->defenseStage < 0 &&
+        BattleUnit_RollCounterEarlyEnd(unitId, state->defenseTurns, 20) != 0) {
+      state->defenseStage = 0;
+      state->defenseTurns = 0;
       return 1;
     }
   }
@@ -61,16 +61,17 @@ s32 BattleUnit_TickDefenseModifier(s32 unitId) {
 s32 BattleUnit_TickResistanceModifier(s32 unitId) {
   struct BattleUnit *state = UnitGet(unitId);
 
-  if (state->resCnt != 0) {
-    state->resCnt--;
-    if (state->resCnt == 0) {
-      state->resLv = 0;
+  if (state->resistanceTurns != 0) {
+    state->resistanceTurns--;
+    if (state->resistanceTurns == 0) {
+      state->resistanceStage = 0;
       return 1;
     }
-    if (state->resLv < 0 &&
-        BattleUnit_RollCounterEarlyEnd(unitId, state->resCnt, 20) != 0) {
-      state->resLv = 0;
-      state->resCnt = 0;
+    if (state->resistanceStage < 0 &&
+        BattleUnit_RollCounterEarlyEnd(unitId, state->resistanceTurns, 20) !=
+            0) {
+      state->resistanceStage = 0;
+      state->resistanceTurns = 0;
       return 1;
     }
   }

@@ -47,7 +47,7 @@ void FieldMotes_Start(void)
     tiles = Runtime_AllocateBlock(56, 0x400);
     Resource_DecodeByteLzInRam(gData_080f385e, tiles);
     work->vramEntry = Resource_FindFreeEntry();
-    work->tileBase = VramBlock_LoadCached(work->vramEntry, 0x300, tiles);
+    work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
     Runtime_ReleaseHeapBlock(56);
     i = 0;
     slots = Ram_HeapSlots;

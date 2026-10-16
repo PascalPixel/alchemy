@@ -62,7 +62,7 @@ u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 static void SceneState_AddToRecordCount(s32 id, s32 amount) {
   u8 *entry = UnitGet(id);
 
-  Party_AdvanceOwnerCountToTarget(id, entry[15] + amount);
+  Unit_LevelUpTo(id, entry[15] + amount);
   UnitCalc(id);
 }
 
@@ -107,19 +107,19 @@ static void EV11_TALK(void) {
       UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
     }
 
-    if ((gKeyState & 8) != 0 || (gKeyState & 4) != 0) {
+    if ((gKeysPressed & 8) != 0 || (gKeysPressed & 4) != 0) {
       Scene_AddToListedRecordCounts(5);
       Engine_AudioPlayCue(93);
       flag = 1;
     }
 
-    if ((gKeyState & 1) != 0) {
+    if ((gKeysPressed & 1) != 0) {
       Scene_AddToListedRecordCounts(1);
       Engine_AudioPlayCue(91);
       flag = 1;
     }
 
-    if ((gKeyState & 2) != 0) {
+    if ((gKeysPressed & 2) != 0) {
       Engine_AudioPlayCue(113);
       RenderOutput_RedrawSavedRect(win);
       Engine_TaskWait(1);
@@ -183,14 +183,14 @@ static void EV08_TALK(void) {
         UiText_DrawStringInWindow(gItemLevelItemFull, window, 0, 32);
       }
     }
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(item) == -1) {
         Engine_AudioPlayCue(113);
         break;
       }
       Engine_AudioPlayCue(175);
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       Engine_AudioPlayCue(113);
       break;
     }
@@ -291,7 +291,7 @@ static void ItemLevel_SelectAbility(void) {
       UiText_DrawCharacterAtOffset(index, window, 0, 24);
       UiText_DrawResource(index, window, 0, 48);
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       Engine_AudioPlayCue(113);
       break;
     }

@@ -40,9 +40,9 @@ struct TradeOfferState {
   struct TradeOfferList list;
 };
 
-s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 djinn);
-struct TradeOfferState *Trade_GetOfferStateFar(s32 side);
-void Trade_AddOfferFar(s32 owner, s32 element, s32 djinn);
+s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 djinn);
+struct TradeOfferState *Djinn_GetRecoveryTableFar(s32 side);
+void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
 
 // Adds to the trade offers every djinn an active owner can offer that is
 // not offered yet; owners above 7 offer on the second side.
@@ -61,15 +61,15 @@ void Func_08118eb0(void) {
     owner = owners[n];
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
-        if (Trade_CanOfferDjinnFar(owner, element, djinn) != 0) {
-          list = &Trade_GetOfferStateFar(owner > 7)->list;
+        if (Djinn_IsReadyFar(owner, element, djinn) != 0) {
+          list = &Djinn_GetRecoveryTableFar(owner > 7)->list;
           for (i = 0; i < list->count; i++) {
             if (element == list->offers[i].element &&
                 djinn == list->offers[i].djinn)
               break;
           }
           if (i == list->count)
-            Trade_AddOfferFar(owner, element, djinn);
+            DjinnRecovery_AddStandbyFar(owner, element, djinn);
         }
       }
     }

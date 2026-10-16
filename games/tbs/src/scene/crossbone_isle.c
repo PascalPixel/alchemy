@@ -131,7 +131,7 @@ static void EV10_TOUCH(void) {
 
   Engine_EventBegin();
   base = (u8 *)&gGameState;
-  Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
+  Event_SetNextDestination(*(s16 *)(base + 448), 5);
   base[555] = 3;
   BattleFx_SetWeightedResult(84, 5);
   Engine_EventEnd();
@@ -349,7 +349,7 @@ static void EV03_TOUCH(void) {
   if (Engine_GameFlagIsSet(gGameState.scene +
                            (0x8c8 - (s32)&SceneId_CrossboneIsle6)) == 0) {
     Engine_EventBegin();
-    Party_SetFields1ceAnd1d0(gGameState.scene, 5);
+    Event_SetNextDestination(gGameState.scene, 5);
     ((u8 *)((s16 (*)[1]) & gGameState))[0x22b] = 3;
     switch (gGameState.scene - (s32)&SceneId_CrossboneIsle6) {
     case 0:

@@ -95,7 +95,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   }
   slot = Resource_FindFreeEntry();
   if (slot != 96) {
-    VramBlock_LoadCached(slot, 0x100, buf);
+    VramCache_Load(slot, 0x100, buf);
     sprite = RenderOutput_CreateFar(slot, 0x80008000,
                                     (struct RenderInput *)window, x, y);
   }

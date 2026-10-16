@@ -10,10 +10,10 @@
 	.set import.Runtime_PushSlotEntry, 1
 	.set import.Resource_GetTableEntry, 1
 	.set import.RuntimeDispatch_NoOpHook, 1
-	.set import.Blend_SetDarkenTarget16, 1
-	.set import.Blend_WaitForTransition, 1
+	.set import.Fade_ToBlack, 1
+	.set import.Fade_Wait, 1
 	.set import.SaveState_ScanRecordFlags, 1
-	.set import.Party_ApplyStatePreset, 1
+	.set import.Party_EndChildhood, 1
 	.set import.Engine_EventWait, 1
 	.set import.Object_GetById, 1
 	.set import.Event_SetDestination, 1

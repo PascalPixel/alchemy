@@ -497,7 +497,7 @@ BattleFx_RenderMode:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #48]
 	ldr r1, [sp, #24]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r2, [sp, #44]
 	ldr r4, [sp, #36]
 	ldr r3, [r2, #8]

@@ -5,10 +5,10 @@
 	.thumb_func
 Djinn_IsActiveFar:
 	overlay_veneer Djinn_IsActive
-	.global Trade_CanOfferDjinnFar
+	.global Djinn_IsReadyFar
 	.thumb_func
-Trade_CanOfferDjinnFar:
-	overlay_veneer Trade_CanOfferDjinn
+Djinn_IsReadyFar:
+	overlay_veneer Djinn_IsReady
 	.global Item_CanOwnerEquip
 	.thumb_func
 Item_CanOwnerEquip:

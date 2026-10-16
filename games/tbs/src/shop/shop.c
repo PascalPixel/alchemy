@@ -80,22 +80,22 @@ void Shop_InitializeCursorWork(void) {
   work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
   slot = Resource_FindFreeEntry();
   work->cursorIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_HandTiles);
+  VramCache_Load(slot, 128, gShop_HandTiles);
   slot = Resource_FindFreeEntry();
   work->previousPageIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_UpArrowTiles);
+  VramCache_Load(slot, 128, gShop_UpArrowTiles);
   slot = Resource_FindFreeEntry();
   work->nextPageIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_DownArrowTiles);
+  VramCache_Load(slot, 128, gShop_DownArrowTiles);
   slot = Resource_FindFreeEntry();
   work->gemIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_GemTiles);
+  VramCache_Load(slot, 128, gShop_GemTiles);
   slot = Resource_FindFreeEntry();
   work->statDownIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_SmallDownArrowTiles);
+  VramCache_Load(slot, 128, gShop_SmallDownArrowTiles);
   slot = Resource_FindFreeEntry();
   work->statUpIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_SmallUpArrowTiles);
+  VramCache_Load(slot, 128, gShop_SmallUpArrowTiles);
   Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
@@ -393,7 +393,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   }
   slot = Resource_FindFreeEntry();
   if (slot != 96) {
-    VramBlock_LoadCached(slot, 0x100, buf);
+    VramCache_Load(slot, 0x100, buf);
     sprite = RenderOutput_CreateFar(slot, 0x80008000,
                                     (struct RenderInput *)window, x, y);
   }
@@ -588,13 +588,13 @@ next_page:
       RenderOutput_RedrawSavedRectFar((struct UiWindow *)priceWindow);
       Shop_DrawItemPrice(priceWindow, itemId, stockItem->price, 0);
     }
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       selected = cursor;
       AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = 0;
       break;
     }
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
@@ -670,7 +670,7 @@ next_page:
       else
         Shop_DrawEquipComparison(itemWindow, member, shop->selectedItem);
     }
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       slot = Inventory_AddItemFar(member, shop->selectedItem);
       if (slot < 0) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
@@ -708,7 +708,7 @@ next_page:
       result = 0;
       break;
     }
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
@@ -1119,19 +1119,19 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   if (window != 0) {
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
-      VramBlock_LoadCached(slot, 0x100, 0);
+      VramCache_Load(slot, 0x100, 0);
       RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0,
                              0);
       sprite = RenderOutput_CreateFar(slot, 0x40004000,
                                       (struct RenderInput *)window, 32, 0);
       sprite->oam.index += 4;
       for (;;) {
-        if (gKeyState & KEY_A) {
+        if (gKeysPressed & KEY_A) {
           AudioCommand_PlayFar(112);
           result = count + 1;
           break;
         }
-        if (gKeyState & KEY_B) {
+        if (gKeysPressed & KEY_B) {
           AudioCommand_PlayFar(113);
           result = -1;
           break;
@@ -1154,7 +1154,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           Shop_FillSelector(minimum + maximum, 0, buffer);
           Shop_FillSelector(minimum + count + 1, 10, buffer);
           Shop_FillSelector(minimum, 2, buffer);
-          VramBlock_LoadCached(slot, 0x100, buffer);
+          VramCache_Load(slot, 0x100, buffer);
           result = count + 1;
 #if EDITION_INTERNATIONAL
           UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
@@ -1195,7 +1195,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
       addedSlot = Inventory_AddItemFar(unitId, itemId);
       Party_AdjustCoinsFar(0 - item->price);
       remaining -= 1;
-      Party_AdjustSixDigitCounterBFar(item->price);
+      Party_AdjustShopCreditFar(item->price);
       Shop_DrawMoney();
     } while (remaining != 0);
   }
@@ -1317,7 +1317,7 @@ s32 Shop_PickUnit(void) {
       Shop_DrawUnitGrid(shop->itemWindow, unitId);
     }
 
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       WaitFrames(1);
       if (Inventory_CountFar(unitId) == 0) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
@@ -1334,7 +1334,7 @@ s32 Shop_PickUnit(void) {
       continue;
     }
 
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       Menu_ReleaseEntryObjectsFar();
       UiWork_FinalizeFar(listWindow, 2);
@@ -1400,12 +1400,12 @@ s32 Shop_SelectSell(s32 unitId) {
         Shop_DrawMsg(priceWindow, itemId + MsgItemPlainName);
       }
 
-      if ((gKeyState & KEY_A) != 0) {
+      if ((gKeysPressed & KEY_A) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = 0;
         break;
       }
-      if ((gKeyState & KEY_B) != 0) {
+      if ((gKeysPressed & KEY_B) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         break;
@@ -1659,12 +1659,12 @@ s32 Shop_SelectRepair(s32 unitId) {
         Shop_DrawItemPrice(listWindow, itemId, price, 2);
         Shop_DrawMsg(priceWindow, itemId + MsgItemPlainName);
       }
-      if ((gKeyState & KEY_A) != 0) {
+      if ((gKeysPressed & KEY_A) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = 0;
         break;
       }
-      if ((gKeyState & KEY_B) != 0) {
+      if ((gKeysPressed & KEY_B) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         break;
@@ -1836,7 +1836,7 @@ void Shop_BuySpecialItem(void *window, s32 itemWindow) {
       Shop_DrawParty((s32)window, selectedIndex, shop->selectedItem);
       Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
     }
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         AudioCommand_PlayFar(0x71);
@@ -1852,11 +1852,11 @@ void Shop_BuySpecialItem(void *window, s32 itemWindow) {
       AudioCommand_PlayFar(0x65);
       UiMessage_ShowAndRestoreState(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
-      Party_AdjustSixDigitCounterBFar(-price);
-      Party_AdjustCounterCappedAt28Far(1);
+      Party_AdjustShopCreditFar(-price);
+      Party_AdjustShopGiftsFar(1);
       break;
     }
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       UiMessage_ShowAndRestoreState(MsgDontWantIt);
       AudioCommand_PlayFar(0x71);
       break;
@@ -2341,7 +2341,7 @@ s32 Sanctum_RunPartyService(void) {
       Shop_DrawSelectMsg(priceWindow, unitId);
     }
 
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       WaitFrames(1);
       price = Shop_ServicePrice(unitId, kind);
       if (Shop_CanServe(unitId, kind) == 0) {
@@ -2378,7 +2378,7 @@ s32 Sanctum_RunPartyService(void) {
       }
       break;
     }
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       break;
     }
@@ -2769,7 +2769,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
     }
 
     WaitFrames(1);
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       if (Inventory_CountFar(unitId) == 0) {
         AudioCommand_PlayFar(0x71);
         continue;
@@ -2789,7 +2789,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
       break;
     }
 
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(0x71);
       *selectedUnit = -1;
       *selectedItem = -1;
@@ -2865,7 +2865,7 @@ s32 Shop_SelectUse(s32 actor) {
 
     WaitFrames(1);
 
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       status = Inventory_CheckDiscardFar(actor, selection);
       if (status == 0) {
         AudioCommand_PlayFar(112);
@@ -2884,7 +2884,7 @@ s32 Shop_SelectUse(s32 actor) {
       continue;
     }
 
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;

@@ -1138,7 +1138,7 @@ Func_0816729c:
 	bne .L_08167b72
 	movs r0, #1
 	bl WaitFrames
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

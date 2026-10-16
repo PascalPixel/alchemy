@@ -24,7 +24,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
 
   creature = UnitGet(arg0);
   if (creature->side == 1) {
-    Owner_UpdateRatioPairFar(creature, 0);
+    Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);
     ActivateBattleObjectSlot(arg0);
     runtime = BattleObjGet(arg0);

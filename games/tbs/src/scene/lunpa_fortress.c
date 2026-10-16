@@ -350,11 +350,11 @@ static void EV08_KEY(void) {
 
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+  Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   WAIT(10);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ItemShowFound(ITEM_CELL_KEY, 3);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_PartyGiveItem(ITEM_CELL_KEY, 0);
   Engine_GameFlagSet(0xf2e);
   Engine_ActorSetPosition(8, 0, 0);
@@ -441,7 +441,7 @@ static void EV91_SET(void) {
   Engine_ActorSetDestinationOffset(9, 0, 0);
   OBJ_MODE(9, 0);
   OBJ_FACE(9, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(9, 256, 0);
+  Engine_ActorShowEmote(9, EMOTE_IN_FRONT, 0);
   RunActorScriptedSequenceA(10);
   EV_END();
 }
@@ -815,7 +815,7 @@ static void RunActor9ScriptedSequence(void) {
 
     MESSAGE_SET(t);
     MESSAGE_PUT(9, 0);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
     MESSAGE_SET(t + 1);
   }
   MESSAGE_PUT(9, 0);
@@ -827,12 +827,12 @@ static void RunActor9ScriptedSequence(void) {
 static void RunActorScriptedSequenceA(s32 actorId) {
   EV_BEGIN();
   EV_BEGIN();
-  Engine_ActorShowEmote(actorId, 256, 1);
+  Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT, 1);
   Engine_ActorSetDestinationOffset(actorId, 0, 0);
   Engine_ActorEnableActionCallback(actorId, 1);
   OBJ_MODE(actorId, 0);
   OBJ_FACE(actorId, ACTOR_PARTY_LEADER, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorSetDestinationOffset(actorId, 0, 0);
   Engine_ActorEnableActionCallback(actorId, 1);
   Engine_ActorStop(actorId);
@@ -844,7 +844,7 @@ static void RunActorScriptedSequenceA(s32 actorId) {
     MESSAGE_SET(t);
     MESSAGE_PUT(actorId, 0);
     OBJ_FACE(ACTOR_PARTY_LEADER, actorId, 0);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
     MESSAGE_SET(t + 1);
   }
   MESSAGE_PUT(actorId, 0);
@@ -884,7 +884,7 @@ static void RunActorScriptedSequenceB(s32 handle) {
   id = MsgLunpaIntruder;
   MESSAGE_SET(id);
   MESSAGE_PUT(handle, 0);
-  OBJ_EMOTE(handle, 258, 60);
+  OBJ_EMOTE(handle, EMOTE_IN_FRONT | 2, 60);
   MESSAGE_SET(id + 1);
   MESSAGE_PUT(handle, 0);
   id += 2;
@@ -913,7 +913,7 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 a0) {
   MESSAGE_SET(intruder);
   MESSAGE_PUT(a0, 0);
   WAIT(120);
-  OBJ_EMOTE(a0, 0x101, 60);
+  OBJ_EMOTE(a0, EMOTE_IN_FRONT | 1, 60);
   MESSAGE_SET((intruder + 1));
   MESSAGE_PUT(a0, 0);
   Engine_ActorRunRepeatedMotion(a0, 1);
@@ -942,9 +942,9 @@ static void RunActorScriptedSequenceD(s32 actorId) {
 
 static void EV33_CHECK(void) {
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(113);
-  Engine_ActorShowEmote(15, 256, 60);
+  Engine_ActorShowEmote(15, EMOTE_IN_FRONT, 60);
   TurnActorToSceneDirection(15);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   Battle_SetStart(3);
@@ -956,9 +956,9 @@ static void EV33_CHECK(void) {
 
 static void EV30_TREASURE_CHEST(void) {
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(113);
-  Engine_ActorShowEmote(11, 256, 60);
+  Engine_ActorShowEmote(11, EMOTE_IN_FRONT, 60);
   TurnActorToSceneDirection(11);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   Battle_SetStart(3);
@@ -971,25 +971,25 @@ static void EV30_TREASURE_CHEST(void) {
 static void EV31_GUARD(void) {
   s32 line;
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   OBJ_MODE(12, 1);
   OBJ_MODE(13, 1);
   OBJ_MODE(14, 1);
   SE(113);
-  OBJ_EMOTE(12, 0x100, 0);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT, 0);
   WAIT(30);
   OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
   line = MsgLunpaWho3;
   MESSAGE_SET(line);
   MESSAGE_PUT(12, 0);
-  OBJ_EMOTE(13, 0x100, 0);
-  OBJ_EMOTE(14, 0x100, 0);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(14, EMOTE_IN_FRONT, 0);
   OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
   WAIT(65);
-  OBJ_DIR(13, 0x5000, 0);
-  OBJ_DIR(14, 0xd000, 0);
+  OBJ_DIR(13, FACING_SOUTH + FACING_STEP, 0);
+  OBJ_DIR(14, FACING_NORTH + FACING_STEP, 0);
   MESSAGE_SET((line + 1));
   MESSAGE_PUT(13, 0);
   Engine_ActorSetAnimationAndWait(14, 3);
@@ -1018,7 +1018,7 @@ static void EV31_GUARD(void) {
   MESSAGE_SET((line + 6));
   MESSAGE_PUT(12, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress2, 31);
+  Engine_EventSetNextDestination((s32)&SceneId_LunpaFortress2, 31);
   Battle_SetStart(3);
   Engine_BattleFxSetWeightedResult(98, 3);
   OBJ_POS_SET(12, 0, 0);
@@ -1043,9 +1043,9 @@ static void FieldScene_RunSequenceTail(void) {
 
 static void EV32_TOUCH(void) {
 
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(113);
-  Engine_ActorShowEmote(16, 256, 60);
+  Engine_ActorShowEmote(16, EMOTE_IN_FRONT, 60);
   TurnActorToSceneDirection(16);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   Battle_SetStart(3);
@@ -1059,16 +1059,16 @@ static void EV50_MAIN(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
   SE(113);
-  Engine_ActorShowEmote(12, 256, 60);
+  Engine_ActorShowEmote(12, EMOTE_IN_FRONT, 60);
   {
     s32 t = MsgLunpaWho2;
 
     MESSAGE_SET(t);
     MESSAGE_PUT(12, 0);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 50);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 50);
     MESSAGE_SET(t + 1);
   }
   MESSAGE_PUT(12, 0);
@@ -1085,16 +1085,16 @@ static void EV51_MAIN(void) {
   EV_BEGIN();
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(113);
-  OBJ_EMOTE(21, 0x100, 0);
-  OBJ_EMOTE(13, 0x100, 60);
+  OBJ_EMOTE(21, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT, 60);
   OBJ_FACE(21, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
   msg = MsgLunpaWho2;
   MESSAGE_SET(msg);
   MESSAGE_PUT(13, 0);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x102, 30);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 30);
   MESSAGE_SET(msg + 1);
   MESSAGE_PUT(13, 0);
   Engine_EventCloseScreen();
@@ -1202,7 +1202,7 @@ static void LunpaFortress_GatherPartyAroundActorTwelve(void) {
   if (actor != NULL) {
     Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
   }
-  OBJ_DIR(ACTOR_PARTY_LEADER, 0, 0);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   OBJ_SPEED(IVAN, 0xb333, 0x5999);
   OBJ_WALK(IVAN, 456, 192);
   OBJ_SPEED(MIA, 0xb333, 0x5999);
@@ -1227,11 +1227,11 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   SE(145);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x100, 0);
-  OBJ_EMOTE(GARET, 0x100, 0);
-  OBJ_EMOTE(IVAN, 0x100, 0);
-  OBJ_EMOTE(MIA, 0x100, 0);
-  OBJ_EMOTE(12, 0x100, 0);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT, 0);
   WAIT(60);
 }
 
@@ -1259,12 +1259,12 @@ static void LunpaFortress_PositionPartyForMonster(void) {
   OBJ_SPEED(GARET, 0x10000, 0x8000);
   OBJ_WALK(GARET, 480, 224);
   Engine_ActorWaitForMove(GARET);
-  OBJ_DIR(GARET, 0xc000, 0);
+  OBJ_DIR(GARET, FACING_NORTH, 0);
   Engine_ActorWaitForMove(IVAN);
-  OBJ_DIR(IVAN, 0xc000, 0);
+  OBJ_DIR(IVAN, FACING_NORTH, 0);
   Engine_ActorWaitForMove(MIA);
-  OBJ_DIR(MIA, 0xc000, 0);
-  OBJ_DIR(ACTOR_PARTY_LEADER, 0xc000, 0);
+  OBJ_DIR(MIA, FACING_NORTH, 0);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 }
 
 static void EV20_CUTSCENE(void) {
@@ -1279,8 +1279,8 @@ static void EV20_CUTSCENE(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
     OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
     LunpaFortress_GatherPartyAroundActorTwelve();
-    OBJ_EMOTE(12, 256, 60);
-    OBJ_DIR(12, 32768, 0);
+    OBJ_EMOTE(12, EMOTE_IN_FRONT, 60);
+    OBJ_DIR(12, FACING_WEST, 0);
     Engine_ActorJump(12, 4, 0);
     Engine_ActorSetSpriteFlags(Actor_Get(12), 1);
     WAIT(30);
@@ -1288,10 +1288,10 @@ static void EV20_CUTSCENE(void) {
     OBJ_WALK(2, 464, 192);
     Engine_ActorWaitForMove(IVAN);
     WAIT(30);
-    OBJ_DIR(ACTOR_PARTY_LEADER, 16384, 0);
-    OBJ_DIR(IVAN, 16384, 0);
-    OBJ_DIR(GARET, 16384, 0);
-    OBJ_DIR(MIA, 16384, 0);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    OBJ_DIR(IVAN, FACING_SOUTH, 0);
+    OBJ_DIR(GARET, FACING_SOUTH, 0);
+    OBJ_DIR(MIA, FACING_SOUTH, 0);
     OBJ_POS_SET(13, 456, 320);
     Camera_SetSpeed(131072, 16384);
     textLine = MsgLunpaBackMoreGuess;
@@ -1299,7 +1299,7 @@ static void EV20_CUTSCENE(void) {
     MESSAGE_PUT(13, 0);
     OBJ_WALK(13, 458, 272);
     Engine_ActorWaitForMove(13);
-    OBJ_DIR(13, 20480, 0);
+    OBJ_DIR(13, FACING_SOUTH + FACING_STEP, 0);
     WAIT(40);
     Actor_SetDestinationOffset(13, -8, 8);
     Engine_ActorWaitForMove(13);
@@ -1323,10 +1323,10 @@ static void EV20_CUTSCENE(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     WAIT(1);
     Battle_SetStart(3);
-    Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress4, 4);
+    Engine_EventSetNextDestination((s32)&SceneId_LunpaFortress4, 4);
     Engine_BattleFxSetWeightedResult(98, 4);
   } else {
-    OBJ_MODE(ACTOR_PARTY_LEADER, 1);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
     SE(17);
     WAIT(30);
     textLine = MsgLunpaTimeEat;
@@ -1334,7 +1334,7 @@ static void EV20_CUTSCENE(void) {
     MESSAGE_PUT(12, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
     WAIT(140);
-    OBJ_DIR(12, 32768, 0);
+    OBJ_DIR(12, FACING_WEST, 0);
     Engine_ActorJump(12, 4, 0);
     Engine_ActorSetSpriteFlags(Actor_Get(12), 1);
     MESSAGE_SET(textLine + 1);
@@ -1349,15 +1349,15 @@ static void EV20_CUTSCENE(void) {
     WAIT(30);
     MESSAGE_SET(textLine + 2);
     MESSAGE_PUT(IVAN, 0);
-    OBJ_EMOTE(12, 256, 0);
+    OBJ_EMOTE(12, EMOTE_IN_FRONT, 0);
     WAIT(110);
     SE(60);
     MESSAGE_SET(textLine + 3);
     MESSAGE_PUT(12, 0);
     WAIT(30);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(20);
-    OBJ_MODE(IVAN, 1);
+    OBJ_MODE(IVAN, ANIM_STAND);
     Engine_ActorStartRepeatedMotion(12, 1);
     WAIT(20);
     OBJ_SPEED(12, 26214, 13107);
@@ -1365,23 +1365,23 @@ static void EV20_CUTSCENE(void) {
     Engine_ActorWaitForMove(12);
     OBJ_MODE(12, 1);
     WAIT(20);
-    OBJ_DIR(12, 45056, 0);
+    OBJ_DIR(12, FACING_NORTHWEST + FACING_STEP, 0);
     WAIT(30);
-    OBJ_DIR(12, 20480, 0);
+    OBJ_DIR(12, FACING_SOUTH + FACING_STEP, 0);
     WAIT(30);
     OBJ_FACE(12, IVAN, 0);
     WAIT(20);
     MESSAGE_SET(textLine + 4);
     MESSAGE_PUT(12, 0);
     WAIT(40);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(20);
-    OBJ_EMOTE(12, 264, 0);
+    OBJ_EMOTE(12, EMOTE_IN_FRONT | 8, 0);
     WAIT(120);
     MESSAGE_SET(textLine + 5);
     MESSAGE_PUT(12, 0);
     WAIT(25);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
+    Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(30);
     Engine_ActorSetAnimationAndWait(12, 3);
     WAIT(40);
@@ -1404,7 +1404,7 @@ static void EV20_CUTSCENE(void) {
     OBJ_FACE(IVAN, 13, 0);
     OBJ_FACE(GARET, 13, 0);
     WAIT(5);
-    OBJ_DIR(MIA, 16384, 0);
+    OBJ_DIR(MIA, FACING_SOUTH, 0);
     OBJ_FACE(12, 13, 0);
     WAIT(30);
     SE(61);
@@ -1416,11 +1416,11 @@ static void EV20_CUTSCENE(void) {
     Engine_CameraFollowActor(13, 1);
     Engine_ActorWaitForMove(13);
     Engine_CameraFollowActor(GARET, 1);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 258, 0);
-    OBJ_EMOTE(IVAN, 258, 0);
-    OBJ_EMOTE(GARET, 258, 0);
-    OBJ_EMOTE(MIA, 258, 0);
-    OBJ_EMOTE(12, 258, 0);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(12, EMOTE_IN_FRONT | 2, 0);
     WAIT(60);
     OBJ_FACE(12, 13, 0);
     Engine_ActorStartRepeatedMotion(12, 2);
@@ -1446,46 +1446,46 @@ static void EV20_CUTSCENE(void) {
     WAIT(60);
     MESSAGE_SET(textLine + 12);
     MESSAGE_PUT(13, 0);
-    OBJ_EMOTE(1, 259, 0);
+    OBJ_EMOTE(1, EMOTE_IN_FRONT | 3, 0);
     WAIT(60);
     OBJ_MODE(13, 4);
     MESSAGE_SET(textLine + 13);
     MESSAGE_PUT(13, 0);
     OBJ_WALK(1, 456, 248);
     Engine_ActorWaitForMove(GARET);
-    OBJ_DIR(1, 16384, 0);
+    OBJ_DIR(1, FACING_SOUTH, 0);
     MESSAGE_SET(textLine + 14);
     MESSAGE_PUT(GARET, 0);
     OBJ_WALK(2, 472, 216);
     Engine_ActorWaitForMove(IVAN);
-    OBJ_DIR(2, 16384, 0);
+    OBJ_DIR(2, FACING_SOUTH, 0);
     WAIT(10);
     MESSAGE_SET(textLine + 15);
     MESSAGE_PUT(IVAN, 0);
-    OBJ_EMOTE(12, 261, 0);
+    OBJ_EMOTE(12, EMOTE_IN_FRONT | 5, 0);
     WAIT(60);
     MESSAGE_SET(textLine + 16);
     MESSAGE_PUT(12, 0);
     OBJ_WALK(3, 440, 216);
     Engine_ActorWaitForMove(MIA);
     OBJ_FACE(MIA, 13, 0);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
+    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     WAIT(10);
     MESSAGE_SET(textLine + 17);
     MESSAGE_PUT(MIA, 0);
     OBJ_MODE(13, 4);
     MESSAGE_SET(textLine + 18);
     MESSAGE_PUT(13, 0);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 258, 0);
-    OBJ_EMOTE(GARET, 258, 0);
-    OBJ_EMOTE(MIA, 258, 0);
-    OBJ_EMOTE(IVAN, 258, 0);
-    OBJ_EMOTE(13, 264, 0);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(13, EMOTE_IN_FRONT | 8, 0);
     WAIT(60);
     MESSAGE_SET(textLine + 19);
     MESSAGE_PUT(13, 0);
     WAIT(20);
-    OBJ_EMOTE(1, 259, 0);
+    OBJ_EMOTE(1, EMOTE_IN_FRONT | 3, 0);
     WAIT(60);
     MESSAGE_SET(textLine + 20);
     MESSAGE_PUT(GARET, 0);
@@ -1495,7 +1495,7 @@ static void EV20_CUTSCENE(void) {
     MESSAGE_PUT(13, 0);
     OBJ_WALK(13, 456, 280);
     Engine_ActorWaitForMove(13);
-    OBJ_DIR(13, 20480, 0);
+    OBJ_DIR(13, FACING_SOUTH + FACING_STEP, 0);
     WAIT(80);
     Actor_SetDestinationOffset(13, -8, 8);
     Engine_ActorWaitForMove(13);
@@ -1520,7 +1520,7 @@ static void EV20_CUTSCENE(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     WAIT(1);
     Battle_SetStart(3);
-    Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress4, 4);
+    Engine_EventSetNextDestination((s32)&SceneId_LunpaFortress4, 4);
     Engine_BattleFxSetWeightedResult(98, 4);
   }
   EV_END();
@@ -1540,22 +1540,22 @@ static void FieldScene_RunMainScriptSequence(void) {
   record = Actor_Get(12);
   Engine_ActorSetSpriteFlags(record, 1);
   OBJ_POS_SET(ACTOR_PARTY_LEADER, 456, 184);
-  OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   OBJ_POS_SET(GARET, 440, 192);
-  OBJ_DIR(GARET, 0x4000, 0);
+  OBJ_DIR(GARET, FACING_SOUTH, 0);
   OBJ_POS_SET(MIA, 488, 184);
-  OBJ_DIR(MIA, 0x4000, 0);
+  OBJ_DIR(MIA, FACING_SOUTH, 0);
   OBJ_POS_SET(IVAN, 472, 184);
-  OBJ_DIR(IVAN, 0x4000, 0);
+  OBJ_DIR(IVAN, FACING_SOUTH, 0);
   OBJ_POS_SET(12, 520, 224);
-  OBJ_DIR(12, 0xb000, 0);
+  OBJ_DIR(12, FACING_NORTHWEST + FACING_STEP, 0);
   OBJ_POS_SET(11, 448, 237);
-  OBJ_DIR(11, 0x8000, 0);
+  OBJ_DIR(11, FACING_WEST, 0);
   OBJ_POS_SET(15, 448, 238);
   Engine_ActorSetSpritePriority(15, 3);
   OBJ_MODE(11, 3);
   OBJ_POS_SET(13, 458, 243);
-  OBJ_DIR(13, 0x4000, 0);
+  OBJ_DIR(13, FACING_SOUTH, 0);
   OBJ_MODE(13, 5);
   Engine_EventOpenScreen();
   WAIT(120);
@@ -1563,12 +1563,12 @@ static void FieldScene_RunMainScriptSequence(void) {
   scriptA = MsgLunpaUhnnGetOff;
   MESSAGE_SET(scriptA);
   MESSAGE_PUT(13, 0);
-  OBJ_EMOTE(GARET, 0x101, 60);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 60);
   MESSAGE_SET((scriptA + 1));
   MESSAGE_PUT(GARET, 0);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 1);
-  OBJ_EMOTE(IVAN, 0x101, 1);
-  OBJ_EMOTE(MIA, 0x101, 1);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 1);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 1);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 1);
   WAIT(60);
   OBJ_FACE(12, 13, 0);
   WAIT(60);
@@ -1595,13 +1595,13 @@ static void FieldScene_RunMainScriptSequence(void) {
   Engine_ActorStartRepeatedMotion(IVAN, 1);
   MESSAGE_SET((scriptA + 5));
   MESSAGE_PUT(IVAN, 0);
-  OBJ_EMOTE(MIA, 0x105, 0);
-  OBJ_MODE(MIA, 4);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 5, 0);
+  OBJ_MODE(MIA, ANIM_SHAKE_HEAD);
   WAIT(80);
-  OBJ_MODE(MIA, 1);
+  OBJ_MODE(MIA, ANIM_STAND);
   MESSAGE_SET((scriptA + 6));
   MESSAGE_PUT(MIA, 0);
-  OBJ_EMOTE(12, 0x102, 65);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT | 2, 65);
   Engine_ActorStartRepeatedMotion(12, 2);
   WAIT(100);
   MESSAGE_SET((scriptA + 7));
@@ -1618,9 +1618,9 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_SET((scriptA + 10));
   MESSAGE_OPEN(MIA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    OBJ_MODE(IVAN, 3);
-    OBJ_MODE(GARET, 3);
-    OBJ_MODE(MIA, 3);
+    OBJ_MODE(IVAN, ANIM_NOD);
+    OBJ_MODE(GARET, ANIM_NOD);
+    OBJ_MODE(MIA, ANIM_NOD);
     OBJ_FACE(12, 13, 0);
     WAIT(60);
   } else {
@@ -1645,10 +1645,10 @@ static void FieldScene_RunMainScriptSequence(void) {
     OBJ_FACE(GARET, 12, 0);
     OBJ_FACE(MIA, 12, 0);
     OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
-    OBJ_MODE(IVAN, 3);
-    OBJ_MODE(GARET, 3);
-    OBJ_MODE(MIA, 3);
-    OBJ_MODE(ACTOR_PARTY_LEADER, 3);
+    OBJ_MODE(IVAN, ANIM_NOD);
+    OBJ_MODE(GARET, ANIM_NOD);
+    OBJ_MODE(MIA, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
     WAIT(80);
     OBJ_FACE(12, 13, 0);
     OBJ_FACE(IVAN, 13, 0);
@@ -1666,25 +1666,25 @@ static void FieldScene_RunMainScriptSequence(void) {
   Engine_ActorWaitForMove(GARET);
   OBJ_WALK(GARET, 440, 248);
   Engine_ActorWaitForMove(GARET);
-  OBJ_DIR(GARET, 0xc000, 0);
+  OBJ_DIR(GARET, FACING_NORTH, 0);
   OBJ_WALK(ACTOR_PARTY_LEADER, 440, 216);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_DIR(ACTOR_PARTY_LEADER, 0, 0);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   OBJ_WALK(MIA, 488, 248);
   Engine_ActorWaitForMove(MIA);
   OBJ_WALK(MIA, 456, 248);
   Engine_ActorWaitForMove(MIA);
-  OBJ_DIR(MIA, 0xc000, 0);
+  OBJ_DIR(MIA, FACING_NORTH, 0);
   OBJ_WALK(IVAN, 456, 216);
   Engine_ActorWaitForMove(IVAN);
-  OBJ_DIR(IVAN, 0x8000, 0);
+  OBJ_DIR(IVAN, FACING_WEST, 0);
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   WAIT(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  OBJ_MODE(IVAN, 3);
-  OBJ_MODE(GARET, 3);
-  OBJ_MODE(MIA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
   WAIT(100);
   SE(226);
   OBJ_MODE(13, 7);
@@ -1703,15 +1703,15 @@ static void FieldScene_RunMainScriptSequence(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   SE(0x120);
   WAIT(60);
-  OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
-  OBJ_DIR(GARET, 0xc000, 0);
-  OBJ_DIR(IVAN, 0x4000, 0);
-  OBJ_DIR(MIA, 0xc000, 0);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  OBJ_DIR(GARET, FACING_NORTH, 0);
+  OBJ_DIR(IVAN, FACING_SOUTH, 0);
+  OBJ_DIR(MIA, FACING_NORTH, 0);
   WAIT(60);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 3);
-  OBJ_MODE(GARET, 3);
-  OBJ_MODE(IVAN, 3);
-  OBJ_MODE(MIA, 3);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
   WAIT(100);
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0xb333, 0x5999);
   OBJ_SPEED(GARET, 0xb333, 0x5999);
@@ -1719,26 +1719,26 @@ static void FieldScene_RunMainScriptSequence(void) {
   OBJ_SPEED(MIA, 0xb333, 0x5999);
   OBJ_WALK(ACTOR_PARTY_LEADER, 456, 184);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 1);
-  OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   OBJ_WALK(GARET, 464, 256);
   Engine_ActorWaitForMove(GARET);
   OBJ_WALK(GARET, 480, 248);
   Engine_ActorWaitForMove(GARET);
   OBJ_WALK(GARET, 440, 192);
   Engine_ActorWaitForMove(GARET);
-  OBJ_MODE(GARET, 1);
-  OBJ_DIR(GARET, 0x4000, 0);
+  OBJ_MODE(GARET, ANIM_STAND);
+  OBJ_DIR(GARET, FACING_SOUTH, 0);
   OBJ_WALK(MIA, 488, 248);
   Engine_ActorWaitForMove(MIA);
   OBJ_WALK(MIA, 488, 184);
   OBJ_WALK(IVAN, 472, 184);
   Engine_ActorWaitForMove(IVAN);
-  OBJ_MODE(IVAN, 1);
-  OBJ_DIR(IVAN, 0x4000, 0);
+  OBJ_MODE(IVAN, ANIM_STAND);
+  OBJ_DIR(IVAN, FACING_SOUTH, 0);
   Engine_ActorWaitForMove(MIA);
-  OBJ_MODE(MIA, 1);
-  OBJ_DIR(MIA, 0x4000, 0);
+  OBJ_MODE(MIA, ANIM_STAND);
+  OBJ_DIR(MIA, FACING_SOUTH, 0);
   WAIT(30);
   WAIT(60);
   scriptB = MsgLunpaAbleGet;
@@ -1754,12 +1754,12 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(20);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   WAIT(10);
-  OBJ_EMOTE(MIA, 0x101, 80);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 80);
   OBJ_FACE(MIA, 13, 0);
   OBJ_FACE(IVAN, 13, 0);
   MESSAGE_SET((scriptB + 2));
   MESSAGE_PUT(MIA, 0);
-  OBJ_EMOTE(13, 0x102, 70);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT | 2, 70);
   Engine_ActorStartRepeatedMotion(13, 2);
   WAIT(60);
   OBJ_MODE(13, 5);
@@ -1767,35 +1767,35 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_SET((scriptB + 3));
   MESSAGE_PUT(13, 0);
   OBJ_MODE(13, 7);
-  OBJ_EMOTE(IVAN, 0x108, 40);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 8, 40);
   MESSAGE_SET((scriptB + 4));
   MESSAGE_PUT(IVAN, 0);
   Engine_ActorSetAnimationAndWait(12, 3);
-  OBJ_EMOTE(GARET, 0x103, 60);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 3, 60);
   OBJ_WALK(GARET, 440, 208);
   Engine_ActorWaitForMove(GARET);
   OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
   MESSAGE_SET((scriptB + 5));
   MESSAGE_PUT(GARET, 0);
   WAIT(20);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
-  OBJ_EMOTE(IVAN, 0x101, 0);
-  OBJ_EMOTE(MIA, 0x101, 0);
-  OBJ_EMOTE(12, 0x101, 0);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT | 1, 0);
   WAIT(70);
   OBJ_FACE(GARET, IVAN, 0);
-  OBJ_EMOTE(GARET, 0x102, 75);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 75);
   OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
-  OBJ_MODE(GARET, 4);
+  OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
   MESSAGE_SET((scriptB + 6));
   MESSAGE_PUT(GARET, 0);
-  OBJ_EMOTE(12, 0x101, 0);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT | 1, 0);
   WAIT(60);
   MESSAGE_SET((scriptB + 7));
   MESSAGE_PUT(12, 0);
   OBJ_WALK(GARET, 448, 208);
   Engine_ActorWaitForMove(GARET);
-  OBJ_MODE(GARET, 1);
+  OBJ_MODE(GARET, ANIM_STAND);
   OBJ_FACE(GARET, 12, 0);
   MESSAGE_SET((scriptB + 8));
   MESSAGE_PUT(GARET, 0);
@@ -1805,7 +1805,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(60);
   MESSAGE_SET((scriptB + 9));
   MESSAGE_PUT(12, 0);
-  OBJ_MODE(GARET, 4);
+  OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
   WAIT(60);
   MESSAGE_SET((scriptB + 10));
   MESSAGE_PUT(GARET, 0);
@@ -1818,7 +1818,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_SET((scriptB + 12));
   MESSAGE_PUT(GARET, 0);
   WAIT(30);
-  OBJ_EMOTE(MIA, 0x100, 80);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 80);
   OBJ_FACE(MIA, GARET, 0);
   MESSAGE_SET((scriptB + 13));
   MESSAGE_PUT(MIA, 0);
@@ -1830,17 +1830,17 @@ static void FieldScene_RunMainScriptSequence(void) {
   OBJ_FACE(GARET, 13, 0);
   OBJ_FACE(MIA, 13, 0);
   WAIT(120);
-  OBJ_EMOTE(13, 0x102, 30);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT | 2, 30);
   Engine_ActorStartRepeatedMotion(13, 1);
   WAIT(120);
   Engine_ActorStartRepeatedMotion(12, 1);
   WAIT(60);
   MESSAGE_SET((scriptB + 15));
   MESSAGE_PUT(12, 0);
-  OBJ_EMOTE(GARET, 0x107, 110);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 7, 110);
   OBJ_WALK(GARET, 456, 212);
   Engine_ActorWaitForMove(GARET);
-  OBJ_MODE(GARET, 1);
+  OBJ_MODE(GARET, ANIM_STAND);
   MESSAGE_SET((scriptB + 16));
   MESSAGE_PUT(GARET, 0);
   OBJ_FACE(IVAN, GARET, 0);
@@ -1859,7 +1859,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   OBJ_FACE(13, 13, 0);
   OBJ_FACE(12, 13, 0);
   WAIT(80);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   WAIT(30);
   MESSAGE_SET((scriptB + 18));
   MESSAGE_PUT(GARET, 0);
@@ -1867,7 +1867,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(70);
   MESSAGE_SET((scriptB + 19));
   MESSAGE_PUT(13, 0);
-  OBJ_EMOTE(MIA, 0x100, 60);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 60);
   MESSAGE_SET((scriptB + 20));
   MESSAGE_PUT(MIA, 0);
   OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
@@ -1909,8 +1909,8 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_SET((scriptC + 1));
   MESSAGE_PUT(14, 0);
   Engine_ActorWaitForMove(14);
-  OBJ_DIR(14, 0xd000, 0);
-  OBJ_EMOTE(13, 0x102, 80);
+  OBJ_DIR(14, FACING_NORTH + FACING_STEP, 0);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT | 2, 80);
   OBJ_MODE(14, 4);
   WAIT(89);
   MESSAGE_SET((scriptC + 2));
@@ -1919,10 +1919,10 @@ static void FieldScene_RunMainScriptSequence(void) {
   Engine_ActorSetAnimationAndWait(14, 3);
   MESSAGE_SET((scriptC + 3));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(13, 0x100, 80);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT, 80);
   OBJ_MODE(14, 4);
   WAIT(80);
-  OBJ_DIR(14, 0x3000, 0);
+  OBJ_DIR(14, FACING_SOUTHEAST + FACING_STEP, 0);
   WAIT(20);
   MESSAGE_SET((scriptC + 4));
   MESSAGE_PUT(14, 0);
@@ -1936,10 +1936,10 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_SET((scriptC + 6));
   MESSAGE_PUT(14, 0);
   Engine_ActorStartRepeatedMotion(13, 1);
-  OBJ_EMOTE(13, 0x102, 80);
+  OBJ_EMOTE(13, EMOTE_IN_FRONT | 2, 80);
   MESSAGE_SET((scriptC + 7));
   MESSAGE_PUT(13, 0);
-  OBJ_EMOTE(14, 0x103, 60);
+  OBJ_EMOTE(14, EMOTE_IN_FRONT | 3, 60);
   MESSAGE_SET((scriptC + 8));
   MESSAGE_PUT(14, 0);
   Engine_ActorSetAnimationAndWait(14, 3);
@@ -1965,10 +1965,10 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_SET((scriptC + 12));
   MESSAGE_PUT(14, 0);
   OBJ_MODE(14, 3);
-  OBJ_EMOTE(12, 0x102, 60);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT | 2, 60);
   MESSAGE_SET((scriptC + 13));
   MESSAGE_PUT(12, 0);
-  OBJ_EMOTE(14, 0x100, 70);
+  OBJ_EMOTE(14, EMOTE_IN_FRONT, 70);
   MESSAGE_SET((scriptC + 14));
   MESSAGE_PUT(14, 0);
   OBJ_MODE(12, 3);
@@ -1976,15 +1976,15 @@ static void FieldScene_RunMainScriptSequence(void) {
   OBJ_MODE(14, 3);
   WAIT(120);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 14, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 3);
-  OBJ_MODE(IVAN, 3);
-  OBJ_MODE(GARET, 3);
-  OBJ_MODE(MIA, 3);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
   WAIT(120);
-  OBJ_EMOTE(14, 0x108, 180);
+  OBJ_EMOTE(14, EMOTE_IN_FRONT | 8, 180);
   MESSAGE_SET((scriptC + 15));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(12, 0x101, 80);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT | 1, 80);
   MESSAGE_SET((scriptC + 16));
   MESSAGE_PUT(12, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
@@ -1999,10 +1999,10 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(60);
   MESSAGE_SET((scriptC + 17));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
-  OBJ_EMOTE(GARET, 0x101, 0);
-  OBJ_EMOTE(IVAN, 0x101, 0);
-  OBJ_EMOTE(MIA, 0x101, 0);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
   WAIT(100);
   MESSAGE_SET((scriptC + 18));
   MESSAGE_PUT(GARET, 0);
@@ -2014,29 +2014,29 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(20);
   MESSAGE_SET((scriptC + 20));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
-  OBJ_EMOTE(GARET, 0x101, 0);
-  OBJ_EMOTE(IVAN, 0x101, 0);
-  OBJ_EMOTE(MIA, 0x101, 0);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
   WAIT(120);
   OBJ_MODE(14, 4);
   WAIT(120);
   MESSAGE_SET((scriptC + 21));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(14, 0x102, 90);
+  OBJ_EMOTE(14, EMOTE_IN_FRONT | 2, 90);
   MESSAGE_SET((scriptC + 22));
   MESSAGE_PUT(14, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 3);
-  OBJ_MODE(IVAN, 3);
-  OBJ_MODE(MIA, 3);
-  OBJ_MODE(GARET, 3);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
+  OBJ_MODE(GARET, ANIM_NOD);
   OBJ_MODE(12, 3);
   WAIT(80);
   OBJ_MODE(14, 4);
   WAIT(120);
   MESSAGE_SET((scriptC + 23));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(12, 0x100, 60);
+  OBJ_EMOTE(12, EMOTE_IN_FRONT, 60);
   MESSAGE_SET((scriptC + 24));
   MESSAGE_PUT(12, 0);
   OBJ_FACE(14, 12, 0);
@@ -2045,11 +2045,11 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(50);
   MESSAGE_SET((scriptC + 25));
   MESSAGE_PUT(14, 0);
-  OBJ_MODE(GARET, 3);
+  OBJ_MODE(GARET, ANIM_NOD);
   WAIT(70);
   MESSAGE_SET((scriptC + 26));
   MESSAGE_PUT(GARET, 0);
-  OBJ_MODE(MIA, 3);
+  OBJ_MODE(MIA, ANIM_NOD);
   MESSAGE_SET((scriptC + 27));
   MESSAGE_PUT(MIA, 0);
   OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
@@ -2057,10 +2057,10 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(20);
   MESSAGE_SET((scriptC + 28));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(IVAN, 0x101, 90);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 90);
   MESSAGE_SET((scriptC + 29));
   MESSAGE_PUT(IVAN, 0);
-  OBJ_DIR(14, 0x5000, 0);
+  OBJ_DIR(14, FACING_SOUTH + FACING_STEP, 0);
   WAIT(20);
   MESSAGE_SET((scriptC + 30));
   MESSAGE_PUT(14, 0);
@@ -2074,14 +2074,14 @@ static void FieldScene_RunMainScriptSequence(void) {
   WAIT(20);
   MESSAGE_SET((scriptC + 32));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(GARET, 0x100, 70);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 70);
   MESSAGE_SET((scriptC + 33));
   MESSAGE_PUT(GARET, 0);
   OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
   WAIT(30);
   MESSAGE_SET((scriptC + 34));
   MESSAGE_PUT(14, 0);
-  OBJ_EMOTE(MIA, 0x100, 80);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 80);
   MESSAGE_SET((scriptC + 35));
   MESSAGE_PUT(MIA, 0);
   Engine_ActorSetAnimationAndWait(14, 3);
@@ -2089,7 +2089,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   MESSAGE_PUT(14, 0);
   OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
   WAIT(30);
-  OBJ_MODE(IVAN, 3);
+  OBJ_MODE(IVAN, ANIM_NOD);
   WAIT(100);
   MESSAGE_SET((scriptC + 37));
   MESSAGE_OPEN(IVAN, 0);
@@ -2098,29 +2098,29 @@ static void FieldScene_RunMainScriptSequence(void) {
     MESSAGE_PUT(14, 0);
   }
   WAIT(30);
-  OBJ_MODE(GARET, 3);
-  OBJ_MODE(IVAN, 3);
-  OBJ_MODE(MIA, 3);
+  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(IVAN, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
   WAIT(100);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 3);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   OBJ_MODE(12, 3);
   WAIT(100);
-  OBJ_MODE(GARET, 2);
+  OBJ_MODE(GARET, ANIM_WALK);
   record = Actor_Get(0);
   if (record != 0) {
     Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   OBJ_POS_SET(GARET, 0, 0);
-  OBJ_MODE(IVAN, 2);
+  OBJ_MODE(IVAN, ANIM_WALK);
   record = Actor_Get(0);
   if (record != 0) {
     Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   OBJ_POS_SET(IVAN, 0, 0);
-  OBJ_MODE(MIA, 2);
+  OBJ_MODE(MIA, ANIM_WALK);
   record = Actor_Get(0);
   if (record != 0) {
     Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
@@ -2132,7 +2132,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   OBJ_WALK(12, 472, 184);
   Engine_ActorWaitForMove(12);
   OBJ_MODE(12, 1);
-  OBJ_DIR(12, 0x3000, 0);
+  OBJ_DIR(12, FACING_SOUTHEAST + FACING_STEP, 0);
   OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
   OBJ_MODE(14, 3);
   WAIT(20);
@@ -2143,7 +2143,7 @@ static void FieldScene_RunMainScriptSequence(void) {
   Engine_ActorRunRepeatedMotion(13, 2);
   MESSAGE_SET((scriptC + 40));
   MESSAGE_PUT(13, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 3);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   WAIT(30);
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   OBJ_SPEED(12, 0x10000, 0x8000);
@@ -2157,8 +2157,8 @@ static void FieldScene_RunMainScriptSequence(void) {
   OBJ_FACE(ACTOR_PARTY_LEADER, 14, 0);
   Engine_ActorWaitForMove(12);
   OBJ_FACE(12, 14, 0);
-  OBJ_DIR(12, 0x3000, 0);
-  OBJ_MODE(ACTOR_PARTY_LEADER, 3);
+  OBJ_DIR(12, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   WAIT(5);
   OBJ_MODE(12, 3);
   WAIT(100);
@@ -2218,11 +2218,11 @@ static void EV21_MESSAGE(void) {
     MESSAGE_PUT(21, 0);
     break;
   case 5:
-    Engine_ActorFaceDirection(21, 0xd000, 0);
+    Engine_ActorFaceDirection(21, FACING_NORTH + FACING_STEP, 0);
     WAIT(50);
-    Engine_ActorFaceDirection(21, 0xb000, 0);
+    Engine_ActorFaceDirection(21, FACING_NORTHWEST + FACING_STEP, 0);
     WAIT(50);
-    Engine_ActorFaceDirection(21, 0x5000, 0);
+    Engine_ActorFaceDirection(21, FACING_SOUTH + FACING_STEP, 0);
     WAIT(50);
     MESSAGE_SET(MsgLunpaTakeCareAnybody);
     MESSAGE_PUT(21, 0);
@@ -2234,19 +2234,19 @@ static void EV21_MAIN(void) {
 
   s32 msg;
 
-  OBJ_EMOTE(21, 0x101, 30);
-  OBJ_DIR(21, 0xd000, 0);
+  OBJ_EMOTE(21, EMOTE_IN_FRONT | 1, 30);
+  OBJ_DIR(21, FACING_NORTH + FACING_STEP, 0);
   WAIT(50);
-  OBJ_DIR(21, 0xb000, 0);
+  OBJ_DIR(21, FACING_NORTHWEST + FACING_STEP, 0);
   WAIT(50);
-  OBJ_DIR(21, 0x5000, 0);
+  OBJ_DIR(21, FACING_SOUTH + FACING_STEP, 0);
   WAIT(50);
   msg = MsgLunpaLeftGuardHearsSomeone;
   MESSAGE_SET(msg);
   MESSAGE_PUT(21, 0);
   OBJ_MODE(21, 4);
   WAIT(60);
-  OBJ_DIR(21, 0xb000, 0);
+  OBJ_DIR(21, FACING_NORTHWEST + FACING_STEP, 0);
   WAIT(40);
   MESSAGE_SET(msg + 1);
   MESSAGE_PUT(21, 0);
@@ -2267,7 +2267,7 @@ static void EV25_DONPA(void) {
       MESSAGE_OPEN(25, 0);
       EV_END();
     } else {
-      OBJ_EMOTE(25, 0x102, 30);
+      OBJ_EMOTE(25, EMOTE_IN_FRONT | 2, 30);
       OBJ_FACE(25, ACTOR_PARTY_LEADER, 0);
       msg = MsgLunpaShhhPleaseDont;
       MESSAGE_SET(msg);
@@ -2278,14 +2278,14 @@ static void EV25_DONPA(void) {
       WAIT(60);
       Engine_CameraMoveToActor(0, 1);
       WAIT(20);
-      OBJ_EMOTE(25, 0x105, 60);
+      OBJ_EMOTE(25, EMOTE_IN_FRONT | 5, 60);
       MESSAGE_SET(msg + 1);
       MESSAGE_PUT(25, 0);
-      OBJ_EMOTE(25, 0x107, 60);
+      OBJ_EMOTE(25, EMOTE_IN_FRONT | 7, 60);
       MESSAGE_SET(msg + 2);
       MESSAGE_PUT(25, 0);
       WAIT(70);
-      OBJ_EMOTE(25, 0x100, 60);
+      OBJ_EMOTE(25, EMOTE_IN_FRONT, 60);
       OBJ_FACE(25, ACTOR_PARTY_LEADER, 0);
       MESSAGE_SET(msg + 3);
       MESSAGE_OPEN(25, 0);
@@ -2297,7 +2297,7 @@ static void EV25_DONPA(void) {
         MESSAGE_OPEN(25, 0);
       }
       WAIT(60);
-      OBJ_EMOTE(25, 0x105, 60);
+      OBJ_EMOTE(25, EMOTE_IN_FRONT | 5, 60);
       msg2 = MsgLunpaDonpaKnowsCoddled;
       MESSAGE_SET(msg2);
       MESSAGE_OPEN(25, 0);
@@ -2364,7 +2364,7 @@ static void EV24_MAIN(void) {
       OBJ_SPEED(DERIVED_ID, 26214, 13107);
       OBJ_WALK(DERIVED_ID, 880, 112);
       Engine_ActorWaitForMove(DERIVED_ID);
-      OBJ_DIR(DERIVED_ID, 53248, 0);
+      OBJ_DIR(DERIVED_ID, FACING_NORTH + FACING_STEP, 0);
       MESSAGE_SET(sequence_id + 3);
       MESSAGE_PUT(PRIMARY_ID, 0);
       OBJ_MODE(PRIMARY_ID, 3);
@@ -2437,7 +2437,7 @@ static void EV20_MAIN(void) {
       msg = MsgLunpaWhWhWho;
       MESSAGE_SET(msg);
       MESSAGE_PUT(20, 0);
-      OBJ_EMOTE(20, 0x102, 30);
+      OBJ_EMOTE(20, EMOTE_IN_FRONT | 2, 30);
       MESSAGE_SET(msg + 1);
       MESSAGE_PUT(20, 0);
       WAIT(30);
@@ -2447,7 +2447,7 @@ static void EV20_MAIN(void) {
     msg2 = MsgLunpaDontLookNearly;
     MESSAGE_SET(msg2);
     MESSAGE_PUT(20, 0);
-    OBJ_EMOTE(20, 0x101, 40);
+    OBJ_EMOTE(20, EMOTE_IN_FRONT | 1, 40);
     MESSAGE_SET(msg2 + 1);
     MESSAGE_OPEN(20, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -2509,7 +2509,7 @@ s32 FieldScene_DispatchActorUpdate(void) {
   if (gGameState.scene == (s32)&SceneId_LunpaFortress4) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Engine_ActorSetSpriteFlags(Actor_Get(12), 0);
-    OBJ_DIR(12, 0, 0);
+    OBJ_DIR(12, FACING_EAST, 0);
     OBJ_MODE(12, 0);
     ActivateFiveActorGroupFromFlags();
     actor = Actor_Get(8);
@@ -2534,9 +2534,9 @@ s32 FieldScene_DispatchActorUpdate(void) {
       if (FLAG_CHECK(0x941) != 0) {
         OBJ_POS_SET(12, 0, 0);
         OBJ_POS_SET(16, 432, 344);
-        OBJ_DIR(16, 0x5000, 0);
+        OBJ_DIR(16, FACING_SOUTH + FACING_STEP, 0);
         OBJ_POS_SET(13, 456, 288);
-        OBJ_DIR(13, 0x5000, 0);
+        OBJ_DIR(13, FACING_SOUTH + FACING_STEP, 0);
         OBJ_POS_SET(17, 456, 320);
         Engine_ActorSetSpriteFlags(Actor_Get(17), 0);
       }

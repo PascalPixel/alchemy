@@ -1288,7 +1288,6 @@ SECTIONS
     "*/games/tla/src/graphics/window/initialize_work.o"(.text)
     "*/games/tla/src/menu/lifecycle.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000fa170)
-    "*/games/tla/src/graphics/text/numright.o"(.text)
     "*/games/tla/src/graphics/render/value_rows.o"(.text)
     "*/games/tla/src/graphics/tile/create_with_resource_variant.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000fa888)

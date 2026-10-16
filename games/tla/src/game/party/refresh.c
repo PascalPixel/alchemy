@@ -10,7 +10,7 @@ s32 UnitCalc(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
-// The Broken Seal の Owner_RefreshActiveRatios
+// The Broken Seal の Party_RestoreHpPp
 void Func_080ae16c(s32 arg0) {
   s32 count;
   s32 n;
@@ -75,7 +75,7 @@ void Func_080ae16c(s32 arg0) {
 
 extern const u8 gCharacter_ElementGroupTable[];
 
-// The Broken Seal の Owner_RefreshRatiosOnFlag
+// The Broken Seal の Party_RestorePpOfLitElements
 void Func_080ae220(void) {
   s32 count;
   s32 n;

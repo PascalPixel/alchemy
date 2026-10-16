@@ -43,7 +43,7 @@ void MapAnimation_Start(void) {
   active = &work->animationActive;
   one = 1;
   *active = one;
-  Scheduler_EnableCallbacks(MapAnimation_Update);
+  Scheduler_SuspendTasks(MapAnimation_Update);
   work->framePending = one;
   resources = work->resources;
   Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);

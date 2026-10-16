@@ -4,38 +4,40 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *LemurianShip_GetEntrances(void);
-s32 LemurianShip_GetDefaultResult(void);
-u8 *LemurianShip_GetExits(void);
-u8 *LemurianShip_GetPlacements(void);
-u8 *LemurianShip_GetEvents(void);
+struct SceneRegion;
+
+const struct SceneEntrance *LemurianShip_GetEntrances(void);
+const struct SceneRegion *LemurianShip_GetRegions(void);
+const u32 *LemurianShip_GetExits(void);
+const struct ScenePlacement *LemurianShip_GetPlacements(void);
+const struct SceneEvent *LemurianShip_GetEvents(void);
 s32 LemurianShip_SetupScene(void);
 void DisplayScroll_ArmHBlankDma(void);
 void DisplayScroll_BuildAndSwapHBlankPage(void);
-extern struct SceneEvent gLemurianShip_PaletteFrames[];
-extern s32 gLemurianShip_DriftScript[];
-extern s16 gLemurianShip_WaveSine[256];
-extern struct SceneEntrance gLemurianShip_SceneTableA[];
-extern u32 gLemurianShip_SceneTableB[];
-extern struct ScenePlacement gLemurianShip_SceneTableC[];
-extern struct SceneEvent gLemurianShip_SceneTableD[];
-extern s32 gLemurianShip_ShimmerActive;
-extern s32 gLemurianShip_ShimmerPhase;
-extern s32 gLemurianShip_Count;
-extern s32 gLemurianShip_CountTicks;
-extern s32 gLemurianShip_DriftActive;
-extern s32 gLemurianShip_SwellActive;
-extern s32 gLemurianShip_SwellPhase;
-extern s32 gLemurianShip_SwellLayerSixY;
-extern s32 gLemurianShip_SwellLayerSevenY;
-extern s32 gLemurianShip_StoredSlot0;
-extern s32 gLemurianShip_StoredRecord1;
-extern s32 gLemurianShip_StoredSlot3;
-extern s32 gLemurianShip_StoredRecord2;
-extern u32 gLemurianShip_PaletteStep[];
-extern s32 gLemurianShip_ActionScriptA[];
-extern s32 gLemurianShip_ActionScriptB[];
-extern s32 gLemurianShip_ActionScriptC[];
-extern s32 gLemurianShip_ActionScriptD[];
+extern struct SceneEvent gShipGlowPalettes[];
+extern s32 gSprayFallScript[];
+extern s16 gRippleSine[256];
+extern struct SceneEntrance gLemurianShipEntrances[];
+extern u32 gLemurianShipExits[];
+extern struct ScenePlacement gLemurianShipPlacements[];
+extern struct SceneEvent gLemurianShipEvents[];
+extern s32 gOrbGlowActive;
+extern s32 gOrbGlowPhase;
+extern s32 gOrbGlowStrength;
+extern s32 gOrbGlowFadeFrames;
+extern s32 gSprayActive;
+extern s32 gSwellActive;
+extern s32 gSwellPhase;
+extern s32 gShipHullY;
+extern s32 gShipDeckY;
+extern s32 gLeaderDeckY;
+extern s32 gGaretDeckY;
+extern s32 gMiaDeckY;
+extern s32 gIvanDeckY;
+extern u32 gShipGlowStep[];
+extern s32 gLeaderBoardsShip[];
+extern s32 gGaretBoardsShip[];
+extern s32 gIvanBoardsShip[];
+extern s32 gMiaBoardsShip[];
 
 #endif

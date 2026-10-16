@@ -1569,7 +1569,7 @@ Func_08173aac:
 	ldr r0, [sp, #24]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	adds r0, r7, #0
 	add r5, sp, #200
 	adds r1, r5, #0
@@ -1955,7 +1955,7 @@ Func_08173aac:
 	adds r0, r0, r2
 	mov r3, r9
 	str r0, [r3, #4]
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	movs r3, #168
 	lsls r3, r3, #5
 	adds r3, #85
@@ -1976,7 +1976,7 @@ Func_08173aac:
 	ldr r1, [sp, #20]
 	movs r2, #4
 	bl Func_08196958
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	mov r0, r10
 	bl Func_08196a7c
 	movs r4, #1
@@ -3518,7 +3518,7 @@ Func_08173aac:
 	movs r4, #0
 	mov r8, r4
 .L_0817568a:
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	bl Random16
 	movs r3, #3
 	ldr r5, [sp, #48]
@@ -3670,7 +3670,7 @@ Func_08173aac:
 	bl Func_08196958
 	mov r0, r10
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 .L_081757be:
 	movs r1, #1
 	add r8, r1

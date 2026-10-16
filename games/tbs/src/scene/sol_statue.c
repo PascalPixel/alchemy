@@ -170,11 +170,11 @@ static void FieldScene_SetupStagedActors(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetPosition(ACTOR_KRADEN, 0x2400000, 0xe80000);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(232));
   Engine_EventWait(1);
   Engine_EventSetMessage(MsgSolKradenYouFoundIt);
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Actor_SetPosition(ACTOR_KRADEN, 0x2400000, 0x1180000);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(280));
   Camera_SetSpeed(0xcccc, 0x1999);
   Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
@@ -215,12 +215,12 @@ static void FieldScene_SetupStagedActors(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Actor_SetPosition(ACTOR_KRADEN, 0x1a80000, 0xc80000);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(424), PIXELS(200));
   Engine_TaskWait(1);
   Event_SayThenWait(ACTOR_KRADEN, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Actor_SetPosition(ACTOR_KRADEN, 0x2400000, 0xb80000);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(184));
   Camera_MoveTo(0x23e0000, -1, 0xb40000, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -314,7 +314,7 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Engine_ActorSetPosition(8, 0x2400000, 0x1280000);
+  Engine_ActorSetPosition(8, PIXELS(576), PIXELS(296));
   Engine_EventWait(1);
   Engine_EventSetMessage(MsgSolWait);
   Event_SayThenWait(8, 6);
@@ -328,7 +328,7 @@ static void FieldScene_RunStagedActorScene(void) {
   Event_SayThenWait(5, 6);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(6);
-  Engine_ActorFaceDirection(8, 0x9000, 0);
+  Engine_ActorFaceDirection(8, FACING_WEST + FACING_STEP, 0);
   Engine_EventWait(10);
   Engine_CameraSetSpeed(0x59999, 0xb333);
   Camera_MoveTo(0x11f0000, -1, 0xb00000, 1);
@@ -339,7 +339,7 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(8, 3);
   Engine_EventWait(10);
-  Actor_FaceDirection(8, 0xc000, 0);
+  Actor_FaceDirection(8, FACING_NORTH, 0);
   Engine_EventWait(10);
   Engine_ActorJump(8, 6, 0);
   Actor_SetSpeed(8, 0x30000, 0x20000);
@@ -347,9 +347,9 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(8, 3);
   Event_SayThenWait(8, 6);
-  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(5, 3);
-  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(8, 3);
   Event_SayThenWait(8, 6);
@@ -369,7 +369,7 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_EventWait(40);
   Engine_ActorJump(8, 6, 0);
   Actor_WalkToAndWait(8, 0x240, 216);
-  Actor_FaceDirection(8, 0x8000, 0);
+  Actor_FaceDirection(8, FACING_WEST, 0);
   Engine_EventWait(10);
   Actor_SetSpeed(8, 0x13333, 0x9999);
   Engine_ActorWalkTo(8, 0x1b0, 200);
@@ -381,14 +381,14 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_ActorSetAnimation(8, 1);
   Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
   Engine_EventWait(20);
-  Engine_ActorFaceDirection(8, 0, 0);
+  Engine_ActorFaceDirection(8, FACING_EAST, 0);
   Engine_EventWait(30);
   Actor_WalkToAndWait(8, 0x240, 216);
-  Actor_FaceDirection(8, 0xc000, 0);
+  Actor_FaceDirection(8, FACING_NORTH, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(0, 0x4000, 0);
-  Actor_FaceDirection(5, 0x4000, 0);
-  Actor_FaceDirection(GARET, 0x4000, 0);
+  Actor_FaceDirection(0, FACING_SOUTH, 0);
+  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Engine_CameraSetSpeed(0xcccc, 0x1999);
   Engine_CameraMoveTo(0x23e0000, -1, 0xab0000, 1);
   Engine_ActorJump(8, 6, 0);
@@ -398,19 +398,19 @@ static void FieldScene_RunStagedActorScene(void) {
   Event_SayThenWait(8, 6);
   Engine_ActorSetAnimationAndWait(8, 4);
   Event_SayThenWait(8, 20);
-  Engine_ActorShowEmote(5, 0x102, 0);
+  Engine_ActorShowEmote(5, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_SayThenWait(5, 6);
   Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_ActorFaceDirection(8, 0x8000, 0);
+  Engine_ActorFaceDirection(8, FACING_WEST, 0);
   Engine_EventWait(40);
-  Engine_ActorFaceDirection(8, 0xc000, 0);
+  Engine_ActorFaceDirection(8, FACING_NORTH, 0);
   Engine_EventWait(30);
   Event_SayThenWait(8, 6);
-  Actor_ShowEmote(0, 0x101, 0);
-  Actor_ShowEmote(1, 0x101, 0);
-  Actor_ShowEmote(JENNA, 0x101, 0);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(1, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(60);
   Engine_ActorSetAnimationAndWait(8, 4);
   Event_SayThenWait(8, 6);
@@ -419,9 +419,9 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_ActorFaceEachOther(JENNA, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(40);
   UiText_OpenMessageAtObject(8, 0);
-  Actor_FaceDirection(0, 0x4000, 0);
-  Actor_FaceDirection(5, 0x4000, 0);
-  Actor_FaceDirection(1, 0x4000, 0);
+  Actor_FaceDirection(0, FACING_SOUTH, 0);
+  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(1, FACING_SOUTH, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolHonestlyDoubtUnderstand);
   } else {
@@ -431,12 +431,12 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_EventSetMessage(MsgSolTryFindSolution);
   Engine_ActorRunRepeatedMotion(8, 2);
   Event_SayThenWait(8, 6);
-  Engine_ActorShowEmote(1, 0x102, 0);
+  Engine_ActorShowEmote(1, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(60);
   Event_SayThenWait(1, 6);
   Engine_ActorSetAnimationAndWait(8, 3);
   Event_SayThenWait(8, 6);
-  Engine_ActorFaceDirection(8, 0x4000, 0);
+  Engine_ActorFaceDirection(8, FACING_SOUTH, 0);
   Engine_EventWait(20);
   Engine_ActorJump(8, 6, 0);
   Actor_WalkToAndWait(8, 0x240, 216);
@@ -449,7 +449,7 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(40);
   Event_SayThenWait(8, 6);
-  Engine_ActorFaceDirection(8, 0xc000, 0);
+  Engine_ActorFaceDirection(8, FACING_NORTH, 0);
   Engine_EventWait(30);
   Event_SayThenWait(8, 6);
   Engine_ActorSetAnimationAndWait(8, 3);
@@ -460,10 +460,10 @@ static void FieldScene_RunStagedActorScene(void) {
   Engine_CameraMoveTo(0x2400000, -1, 0x880000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorFaceDirection(5, 0, 0);
+  Engine_ActorFaceDirection(5, FACING_EAST, 0);
   Engine_EventWait(10);
   Event_SayThenWait(5, 6);
-  Engine_ActorSetAnimation(1, 3);
+  Engine_ActorSetAnimation(1, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(5, 3);
   Actor_SetSpeed(1, 0x10000, 0x8000);
   Actor_SetSpeed(5, 0x10000, 0x8000);
@@ -474,7 +474,7 @@ static void FieldScene_RunStagedActorScene(void) {
   }
   Engine_ActorWaitForMove(5);
   Engine_ActorSetPosition(5, 0, 0);
-  Engine_ActorSetAnimation(1, 2);
+  Engine_ActorSetAnimation(1, ANIM_WALK);
   record = Object_GetById(0);
   if (record != 0) {
     Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
@@ -500,7 +500,7 @@ static void SolStatue_RunSealOpenedSequence(void) {
   leader = Object_GetById(0);
   if (leader->z.fixed < 0xb30000) {
     Actor_WalkToAndWait(0, 0x23f, 132);
-    Actor_FaceDirection(0, 0x4000, 0);
+    Actor_FaceDirection(0, FACING_SOUTH, 0);
     Engine_EventWait(30);
     saved = work->focus;
     point.x = leader->x.fixed;
@@ -515,7 +515,7 @@ static void SolStatue_RunSealOpenedSequence(void) {
     side = 1;
   } else {
     Actor_WalkToAndWait(0, 0x241, 222);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
     Engine_EventWait(30);
     point.x = leader->x.fixed;
     point.y = leader->y.fixed;
@@ -660,57 +660,57 @@ s32 Scene_RunGuardSequenceB(void) {
     Actor_SetPosition(GARET, 0, 0);
   }
   if (GameFlag_IsSet(0x818) != 0) {
-    Actor_SetPosition(18, 0x1200000, 0xb20000);
-    Actor_SetPosition(17, 0x6480000, 0x6480000);
-    Actor_SetPosition(10, 0xe80000, 0x780000);
-    Actor_SetPosition(12, 0x1580000, 0x780000);
-    Actor_SetPosition(10, 0xe80000, 0x780000);
+    Actor_SetPosition(18, PIXELS(288), PIXELS(178));
+    Actor_SetPosition(17, PIXELS(1608), PIXELS(1608));
+    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
     Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    Actor_SetPosition(12, 0x1580000, 0x780000);
+    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
     Map_CopyCellAttributes(0, 1, 2, 1, 17, 7);
   } else if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0 &&
              GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
-    Actor_SetPosition(10, 0xe80000, 0x780000);
-    Actor_SetPosition(12, 0x1580000, 0x780000);
+    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
-    Actor_SetPosition(10, 0xe80000, 0x780000);
+    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
     Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    Actor_SetPosition(12, 0x1580000, 0x780000);
+    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
     Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   } else {
     if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
-      Actor_SetPosition(10, 0xe80000, 0x780000);
+      Actor_SetPosition(10, PIXELS(232), PIXELS(120));
       Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
     }
     if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
-      Actor_SetPosition(12, 0x1580000, 0x780000);
+      Actor_SetPosition(12, PIXELS(344), PIXELS(120));
       Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     }
   }
   if (GameFlag_IsSet(0x80b) != 0) {
-    Actor_SetPosition(9, 0x1f80000, 0x980000);
+    Actor_SetPosition(9, PIXELS(504), PIXELS(152));
     Map_CopyCellsTo(2, 28, 34, 10, 2, 1);
     Map_CopyCellsTo(2, 30, 16, 10, 2, 1);
     Map_CopyCellsTo(0, 55, 32, 40, 4, 3);
   }
   if (GameFlag_IsSet(0x80c) != 0) {
-    Actor_SetPosition(11, 0x2880000, 0x980000);
+    Actor_SetPosition(11, PIXELS(648), PIXELS(152));
     Map_CopyCellsTo(4, 28, 36, 10, 2, 1);
     Map_CopyCellsTo(4, 30, 18, 10, 2, 1);
     Map_CopyCellsTo(4, 55, 36, 40, 4, 3);
   }
   if (GameFlag_IsSet(0x80d) != 0) {
-    Actor_SetPosition(13, 0x1f80000, 0xc80000);
+    Actor_SetPosition(13, PIXELS(504), PIXELS(200));
     Map_CopyCellsTo(2, 29, 34, 11, 2, 1);
     Map_CopyCellsTo(2, 31, 16, 11, 2, 1);
     Map_CopyCellsTo(0, 58, 32, 43, 4, 1);
   }
   if (GameFlag_IsSet(0x80e) != 0) {
-    Actor_SetPosition(15, 0x2880000, 0xc80000);
+    Actor_SetPosition(15, PIXELS(648), PIXELS(200));
     Map_CopyCellsTo(4, 29, 36, 11, 2, 1);
     Map_CopyCellsTo(4, 31, 18, 11, 2, 1);
     Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
@@ -891,7 +891,7 @@ static void EV17_PSYNERGY(void) {
         Engine_AudioPlayCue(189);
         Engine_ActorSetDestination(17, 0x120, 178);
         Engine_EventWait(8);
-        Actor_SetPosition(18, 0x1200000, 0xb20000);
+        Actor_SetPosition(18, PIXELS(288), PIXELS(178));
         statue->targetX = ACTOR_NO_TARGET;
         statue->targetY = ACTOR_NO_TARGET;
         statue->targetZ = ACTOR_NO_TARGET;
@@ -953,7 +953,7 @@ static void EV32_TOUCH(void) {
       Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, 136);
       Actor_SetDestination(17, 0x120, 120);
       Engine_ActorWaitForMove(17);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Engine_EventEnd();
     }
   }
@@ -1048,7 +1048,7 @@ static void SolStatue_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4) {
   p10b = (p10 << 4);
   Engine_ActorSetDestination(p9, (p8b + 8), (p10b + 8));
   Engine_ActorWaitForMove(p9);
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   Engine_EventEnd();
   p9b = ((a3 << 4) + 8);
   p10c = ((a4 << 4) + 8);
@@ -1359,7 +1359,7 @@ static void Scene_ShineLeftBeam(void) {
       if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
-      Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
       Engine_EventWait(30);
       GameFlag_Set(FLAG_LEFT_BEAM_SHINING);
       if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
@@ -1382,7 +1382,7 @@ static void Scene_ShineRightBeam(void) {
       if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
-      Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
       Engine_EventWait(30);
       GameFlag_Set(FLAG_RIGHT_BEAM_SHINING);
       if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {

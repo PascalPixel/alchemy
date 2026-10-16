@@ -1375,7 +1375,6 @@ SECTIONS
     "*/games/tla/src/system/scheduler/disable_overlay_callbacks_with_flags.o"(.text)
     "*/games/tla/src/graphics/window/initialize_work.o"(.text)
     "*/games/tla/src/menu/lifecycle.o"(.text)
-    "*/games/tla/src/graphics/text/numright.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000f8170)
     "*/games/tla/src/graphics/render/value_rows.o"(.text)
     "*/games/tla/src/graphics/tile/create_with_resource_variant.o"(.text)

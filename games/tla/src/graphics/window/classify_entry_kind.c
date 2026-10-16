@@ -20,7 +20,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   u8 effect;
 
   kind = 0;
-  type = act->targetFlag & 15;
+  type = act->flags & 15;
   if (type == 1) // HPかいふく
     kind = 1;
   if (type == 11) // PPかいふく
@@ -33,7 +33,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
     kind = 4;
   if (effect == 64) // 状態異常をすべてなおす
     kind = 6;
-  if (BattleEffectRevCheckFar(act->effect) != 0) // ふっき
+  if (Battle_IsReviveEffectFar(act->effect) != 0) // ふっき
     kind = 5;
   return kind;
 }

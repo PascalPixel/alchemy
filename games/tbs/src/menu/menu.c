@@ -1,3 +1,5 @@
+// The German, Spanish, French and Italian Psynergy menus save the window
+// tiles they draw over (0x2000 bytes from 0x06004000) and restore them after.
 #include "unit/menu/menu.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -57,25 +59,50 @@
 #include "a9_motion.h"
 #include "battle_effect.h"
 #include "four_object_motion.h"
+#include "item_ids.h"
 
 extern u8 IwramCopyWords[];
 
 s32 _call_via_r3(void *, void *, s32, void *);
 
+// UiWindow_UpdateOrCreate: keep an existing window as it is, without redrawing
+// its saved rectangle. The low byte of the flags is the window style.
+#define WINDOW_KEEP_EXISTING 0x100
+#define WINDOW_STYLE_MASK 0xff
+
+// BattleAct.flags: where an ability or item can be used, as the Psynergy
+// list says ("Usable in the field", "Usable in battle").
+#define ACTION_USABLE_IN_FIELD 0x40
+#define ACTION_USABLE_IN_BATTLE 0x80
+
+// Game flags of the menus. Start was pressed: every menu screen unwinds and
+// the whole menu closes.
+#define FLAG_MENU_START_PRESSED 0x150
+// The info window holds a message the next selection must not draw over.
+#define FLAG_MENU_INFO_KEPT 0x151
+
+// Pauses the field while a menu is open: stops the overlay's scheduler
+// callbacks and the map update, and clears game flags 0x166 and 0x152.
+// Returns nothing useful; callers ignore the value.
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
-  Scheduler_DisableOverlayCallbacks();
+  Scheduler_ResumeOverlayTasks();
   Map_DisableUpdateCallbackFar();
-  GameFlag_ClearBitFar(0x166);
-  GameFlag_ClearBitFar(0x152);
+  GameFlag_ClearBitFar(0x166); // meaning not known yet
+  GameFlag_ClearBitFar(0x152); // set, it stops BattlePalette_UpdateBlend
 }
 
+// Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:
+// sets flags 0x152 and 0x166 again and restarts the map update and the
+// overlay's scheduler callbacks. Returns the scheduler's result.
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   GameFlag_SetBitFar(0x152);
   GameFlag_SetBitFar(0x166);
   Map_EnableUpdateCallbackFar();
-  return Scheduler_EnableUnmaskedOverlayCallbacks();
+  return Scheduler_SuspendOverlayTasks();
 }
 
+// Clears the whole menu work area (0x29c words) and sets its defaults: no
+// pane selected, one entry in each pane, and a 1x1 cursor grid.
 void UiWindow_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = gMenuWork;
 
@@ -87,37 +114,32 @@ void UiWindow_InitializeWork(s32 unused) {
   work->rowCount = 1;
 }
 
-//--------------------------------------------------------------------------
-// lifecycle.c
-// ウィンドウ：ハンドルで持つウィンドウを開く・閉じる
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// *handle のウィンドウがなければ作って 1 を返す
-// すでにあれば 0 を返し、flags に 0x100 がなければ保存した矩形で描きなおす
-// flags : 下位 8 ビットがウィンドウの種類
-//--------------------------------------------------------------------------
+// Opens the window kept in *handle, or redraws it if it is already open.
+//
+// If *handle is empty, creates a window at (x, y), w by h tiles, in the style
+// given by the low byte of flags, stores it in *handle and returns 1. If the
+// window exists, redraws its saved rectangle (unless flags has
+// WINDOW_KEEP_EXISTING) and returns 0.
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
                             s32 flags) {
-  s32 cur;
+  s32 window;
   s32 style;
 
-  cur = *handle;
-  if (cur != 0) {
-    if (0x100 & flags) {
+  window = *handle;
+  if (window != 0) {
+    if (WINDOW_KEEP_EXISTING & flags) {
       return 0;
     }
-    RenderOutput_RedrawSavedRectFar((struct UiWindow *)cur);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
     return 0;
   }
-  style = flags & 0xff;
+  style = flags & WINDOW_STYLE_MASK;
   *handle = UiWindow_CreateFar(x, y, w, h, style);
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// *handle のウィンドウがあれば閉じて、ハンドルを NULL にする
-// style はそのまま UiWork_FinalizeFar に渡る
-//--------------------------------------------------------------------------
+// Closes the window kept in *handle, if any, and clears the handle. style is
+// passed on to UiWork_FinalizeFar and chooses how the window closes.
 void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   if (*handle != NULL) {
     UiWork_FinalizeFar(*handle, style);
@@ -125,16 +147,39 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   }
 }
 
+// The status panel's name and ailment column starts further left in the
+// international editions, whose ailment labels are longer.
 #if EDITION_INTERNATIONAL
 #define STATUS_X 32
 #else
 #define STATUS_X 40
 #endif
 
+// What Menu_DrawOwnerStatusPanel shows below the name and ailments: the low
+// byte of its mode.
+enum StatusPanelKind {
+  STATUS_PANEL_EXPERIENCE = 0, // class, HP, PP and experience
+  STATUS_PANEL_EQUIP = 2,      // stats if the item were equipped
+  STATUS_PANEL_LEARN = 4,      // the Psynergy a Psynergy item teaches
+  STATUS_PANEL_CLASS = 6,      // class, HP and PP
+  STATUS_PANEL_STATS = 8,      // Attack, Defense, Agility and Luck
+};
+#define STATUS_PANEL_KIND_MASK 0xff
+// Keeps the open window, the name and the ailments, and redraws only the
+// part below them.
+#define STATUS_PANEL_LOWER_ONLY 0x100
+
+// Copies one BattleUnit with the resident IWRAM word copy.
 static inline void Owner_Copy(void *dst, void *src) {
-  _call_via_r3(dst, src, 0x14c, IwramCopyWords);
+  _call_via_r3(dst, src, sizeof(struct BattleUnit), IwramCopyWords);
 }
 
+// Draws the item menu's status panel for the party member owner (window at
+// tile 0,5, 13 by 12): the name, up to two ailments or the level, and below
+// them what mode's panel kind asks for. slot is the inventory slot of the
+// item the panel is about, for the equipment and Psynergy item panels. The
+// first parameter, the status window, is not used: the window is the menu
+// work's.
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
@@ -142,48 +187,51 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
   struct InventoryMenuState *state;
   struct BattleUnit *unit;
   s32 window;
-  s32 cnt;
+  s32 ailmentRows;
   s32 value;
-  u8 avail[8];
+  u8 ailments[8];
 
   created = 0;
   state = gMenuWork;
   unit = UnitGetFar(owner);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
-  if (!(mode & 0x100))
-    created =
-        UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 258);
+  if (!(mode & STATUS_PANEL_LOWER_ONLY))
+    created = UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
+                                      WINDOW_KEEP_EXISTING | 2);
   window = (s32)state->statusWindow;
-  if (!(mode & 0x100)) {
+
+  // The name, then each ailment the member has, one row each; the level
+  // takes the third row when no more than one ailment is shown.
+  if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
     if (!created) {
       WaitFrames(1);
       UiWindow_ClearInteriorTilesFar((void *)state->statusWindow, 0, 0, 88, 32);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_X, 0);
-    CharacterMenu_BuildAvailability(avail, 1, owner);
-    cnt = 0;
-    if (avail[CHARACTER_POISON]) {
+    CharacterMenu_BuildAvailability(ailments, 1, owner);
+    ailmentRows = 0;
+    if (ailments[CHARACTER_POISON]) {
       UiText_DrawCharacterAtOffsetFar(MsgPoisonLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (avail[CHARACTER_VENOM]) {
+    if (ailments[CHARACTER_VENOM]) {
       UiText_DrawCharacterAtOffsetFar(MsgVenomLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (avail[CHARACTER_CURSE]) {
+    if (ailments[CHARACTER_CURSE]) {
       UiText_DrawCharacterAtOffsetFar(MsgCurseLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (avail[CHARACTER_HAUNT]) {
+    if (ailments[CHARACTER_HAUNT]) {
       UiText_DrawCharacterAtOffsetFar(MsgHauntLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (cnt < 2) {
+    if (ailmentRows < 2) {
       value = unit->level;
 #if EDITION_INTERNATIONAL
       UiText_DrawStringAtOffsetFar(gUi_LvString, window, 40, 16);
@@ -193,15 +241,18 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
       UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
     }
   }
+
+  // Clear the lower part and redraw the member's portrait.
   if (!created) {
     WaitFrames(1);
     UiWindow_ClearInteriorTilesFar((void *)state->statusWindow, 0, 32, 88, 80);
   }
   RenderOutput_ClearListFar((void *)window);
-  if (!(mode & 0x100))
+  if (!(mode & STATUS_PANEL_LOWER_ONLY))
     state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
-  switch (mode & 0xff) {
-  case 0:
+
+  switch (mode & STATUS_PANEL_KIND_MASK) {
+  case STATUS_PANEL_EXPERIENCE:
     value = unit->classIndex + MsgClassName;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
@@ -209,13 +260,13 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
     UiText_DrawCharacterAtOffsetFar(MsgExpLabel, window, 0, 64);
     UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
     break;
-  case 6:
+  case STATUS_PANEL_CLASS:
     value = unit->classIndex + MsgClassName;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
     break;
-  case 2:
-  case 3: {
+  case STATUS_PANEL_EQUIP:
+  case STATUS_PANEL_EQUIP + 1: { // draws the same panel
     void *backup;
 
     if (!Item_CanOwnerEquip(owner, item)) {
@@ -226,7 +277,10 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
 #endif
       break;
     }
-    backup = MemAlloc(0x14c);
+    // Equip (or, previewing a removal, unequip) the item on the real unit,
+    // recalculate its stats, show them against the saved copy, then put the
+    // unit back as it was.
+    backup = MemAlloc(sizeof(struct BattleUnit));
     Owner_Copy(backup, unit);
     if (state->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -238,49 +292,54 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
     MemFree(backup);
     break;
   }
-  case 4: {
-    s32 id = def->actionId;
-    s32 found = 0;
+  case STATUS_PANEL_LEARN: {
+    s32 psynergy = def->actionId;
+    s32 known = 0;
     s32 i;
 
     for (i = 0; i < 32; i++) {
-      if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) == id) {
-        found = 1;
+      if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) ==
+          psynergy) {
+        known = 1;
         break;
       }
     }
+    // The Psynergy's name and "Learned" or "Will learn"; Spanish puts the
+    // label above the name.
 #if defined(TBS_EDITION_ES)
-    if (found) {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 56);
+    if (known) {
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 56);
       UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0, 48);
     } else {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 56);
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 56);
       UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0, 48);
     }
 #else
-    if (found) {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 48);
+    if (known) {
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 48);
       UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0, 56);
     } else {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 48);
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 48);
       UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0, 56);
     }
 #endif
     break;
   }
-  case 8: {
-    s32 base = MsgPanelStatLabel;
+  case STATUS_PANEL_STATS: {
+    // The labels are consecutive messages: Attack, Defense, Status, Luck and
+    // Agility.
+    s32 labels = MsgPanelStatLabel;
 
-    UiText_DrawCharacterAtOffsetFar(base, window, 0, 40);
+    UiText_DrawCharacterAtOffsetFar(labels, window, 0, 40); // "Attack"
     value = unit->atk;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 40);
-    UiText_DrawCharacterAtOffsetFar(base + 1, window, 0, 48);
+    UiText_DrawCharacterAtOffsetFar(labels + 1, window, 0, 48); // "Defense"
     value = unit->def;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 48);
-    UiText_DrawCharacterAtOffsetFar(base + 4, window, 0, 56);
+    UiText_DrawCharacterAtOffsetFar(labels + 4, window, 0, 56); // "Agility"
     value = unit->agi;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 56);
-    UiText_DrawCharacterAtOffsetFar(base + 3, window, 0, 64);
+    UiText_DrawCharacterAtOffsetFar(labels + 3, window, 0, 64); // "Luck"
     value = unit->luck;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 64);
     break;
@@ -289,144 +348,221 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
 }
 
 #if EDITION_INTERNATIONAL
-//--------------------------------------------------------------------------
-// num のけた数を数え、右はしが x になるように 1 けた 8 ドットで書く
-// （1 けたの数も 2 けた分の幅をとる）
-// win  : 書き込み先のウィンドウ
-//--------------------------------------------------------------------------
-void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y) {
-  s32 v = num;
-  s32 digits = 1;
+// The pixels the field allows each digit. The Latin font's digits are 7
+// pixels wide, so the digits themselves take a pixel less each.
+#define FIELD_PIXELS_PER_DIGIT 8
 
-  while (digits <= 15) {
-    v = v / 10;
-    if (v <= 9) {
+// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
+// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
+// adds one for each division by ten that leaves 10 or more, then adds the
+// leading digit; a number under 10 has its one digit counted as both, which
+// is where the minimum of 2 comes from.
+static inline s32 CountDigitsAtLeastTwo(s32 number) {
+  s32 count;
+
+  // 16 only bounds the loop: an s32 has at most 10 digits, so the count
+  // always stops first.
+  for (count = 1; count < 16; count++) {
+    number /= 10;
+    if (number < 10) {
       break;
     }
-    digits++;
   }
+  count++; // the leading digit
+  return count;
+}
 
-  digits++;
-  x -= digits * 8;
-  UiText_DrawNumberAtOffsetFar(num, digits, win, x, y);
+// Draws number right-aligned in a field that ends at pixel column x and
+// allows 8 pixels for each digit, at least two digits wide.
+//
+// The international editions draw a character's HP and PP with it
+// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
+// four-character fields padded with spaces, which keeps the digits in line
+// because the Japanese font's space is as wide as a digit (7 pixels). The
+// Latin font's space is 5 pixels, so here each figure gets a field as wide
+// as its digits instead.
+//
+// The number writer draws the digits 7 pixels apart, so a number ends about
+// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
+// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
+// before x.
+//
+// number: the value to draw, 0 or more
+// window: the window to draw in, its struct RenderInput pointer held as an
+//         s32, as its callers hold it
+// x:      the field's right edge, in pixels within the window
+// y:      the pixel row of the text, within the window
+void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
+  s32 width = CountDigitsAtLeastTwo(number);
+
+  // Step x back to the field's left edge; the number writer right-aligns the
+  // number in a field of width characters. x changes in place: a separate
+  // left-edge local changes the registers.
+  x -= width * FIELD_PIXELS_PER_DIGIT;
+  UiText_DrawNumberAtOffsetFar(number, width, window, x, y);
 }
 
 #endif
-//--------------------------------------------------------------------------
-// ウィンドウの y 40 に HP、y 48 に PP を書く
-// HP は最大の 1/4 未満なら色 4、0 なら色 2 で書く
-// unit : キャラクター
-// win  : 書き込み先のウィンドウ
-//--------------------------------------------------------------------------
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
-  s16 val;
+
+// Draws a character's HP and PP into window as two rows, "HP current/maximum"
+// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
+// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
+// then the colour goes back to 15, the default text colour.
+//
+// unit:   the character whose figures are drawn
+// window: the window to draw in, its struct RenderInput pointer held as an
+//         s32
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
+  // Each figure in turn, as an s16. Read straight from unit, the figures
+  // compile differently.
+  s16 value;
 
 #if EDITION_INTERNATIONAL
-  UiText_DrawStringAtOffsetFar(gUi_HpString, win, 0, 40);
-  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 40);
-  val = unit->maxHp;
-  UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
-  val = unit->hp;
-  if (val < ((u16)unit->maxHp << 16) >> 18) {
+  // The label at the left and a slash at 48. A current figure ends before
+  // the slash, at 48, and a maximum at 88, each in a field as wide as its
+  // digits.
+  UiText_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
+  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
+  value = unit->maxHp;
+  UiText_DrawNumberRightAligned(value, window, 88, 40);
+  value = unit->hp;
+  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
     UiWork_SetParamNibbleFar(4);
   }
-  if (val == 0) {
+  if (value == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
+  UiText_DrawNumberRightAligned(value, window, 48, 40);
   UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringAtOffsetFar(gUi_PpString, win, 0, 48);
-  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 48);
-  val = unit->pp;
-  UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
-  val = unit->maxPp;
-  UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
+  UiText_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
+  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
+  value = unit->pp;
+  UiText_DrawNumberRightAligned(value, window, 48, 48);
+  value = unit->maxPp;
+  UiText_DrawNumberRightAligned(value, window, 88, 48);
 #else
-  UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, win, 0, 40);
-  val = unit->maxHp;
-  UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
-  val = unit->hp;
-  if (val < ((u16)unit->maxHp << 16) >> 18) {
+  // Each row string ("HP    /" and "EP    /") holds the label and the slash,
+  // one character to an 8-pixel cell, the slash in the cell at 48. Each
+  // figure is four characters padded with spaces: the current one drawn
+  // from 16 at the font's widths, the maximum from 56 a cell a character,
+  // ending at 88.
+  UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
+  value = unit->maxHp;
+  UiText_DrawNumberInWindowFar(value, 4, window, 56, 40);
+  value = unit->hp;
+  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
     UiWork_SetParamNibbleFar(4);
   }
-  if (val == 0) {
+  if (value == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
+  UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
   UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, win, 0, 48);
-  val = unit->pp;
-  UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
-  val = unit->maxPp;
-  UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
+  UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
+  value = unit->pp;
+  UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
+  value = unit->maxPp;
+  UiText_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }
-void UiText_DrawStatComparison(const struct BattleUnit *alt,
-                               const struct BattleUnit *base, s32 work) {
-  UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, work, 0, 32);
-  UiText_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
-  if (alt->atk != base->atk) {
-    UiText_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
-    if (alt->atk > base->atk) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 36, 0);
+
+// Text colours of the status panel's numbers.
+#define TEXT_COLOR_LOW_HP 4 // HP under a quarter of the maximum
+#define TEXT_COLOR_NO_HP 2  // HP 0
+#define TEXT_COLOR_NORMAL 15
+
+// The stat arrows: the up and down arrow sprites the menu loads into its two
+// resource slots (Resource_LoadPairedBlocks).
+enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
+
+// Writes Attack, Defense and Agility into a status window as they are now
+// (before), and beside each one that changes its new value (after) with an up
+// or down arrow: the equipment preview.
+void UiText_DrawStatComparison(const struct BattleUnit *after,
+                               const struct BattleUnit *before, s32 window) {
+  UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, window, 0, 32);
+  UiText_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
+  if (after->atk != before->atk) {
+    UiText_DrawNumberAtOffsetFar(after->atk, 3, window, 64, 40);
+    if (after->atk > before->atk) {
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 36,
+                                   STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 36, 1);
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 36,
+                                   STAT_ARROW_DOWN);
     }
   }
-  UiText_DrawCharacterAtOffsetFar(MsgPanelDefenseLabel, work, 0, 48);
-  UiText_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
-  if (alt->def != base->def) {
-    UiText_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
-    if (alt->def > base->def) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 52, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgPanelDefenseLabel, window, 0, 48);
+  UiText_DrawNumberAtOffsetFar(before->def, 3, window, 16, 56);
+  if (after->def != before->def) {
+    UiText_DrawNumberAtOffsetFar(after->def, 3, window, 64, 56);
+    if (after->def > before->def) {
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 52,
+                                   STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 52, 1);
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 52,
+                                   STAT_ARROW_DOWN);
     }
   }
-  UiText_DrawCharacterAtOffsetFar(MsgAgilityLabel, work, 0, 64);
-  UiText_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
-  if (alt->agi != base->agi) {
-    UiText_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
-    if (alt->agi > base->agi) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 68, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgAgilityLabel, window, 0, 64);
+  UiText_DrawNumberAtOffsetFar(before->agi, 3, window, 16, 72);
+  if (after->agi != before->agi) {
+    UiText_DrawNumberAtOffsetFar(after->agi, 3, window, 64, 72);
+    if (after->agi > before->agi) {
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 68,
+                                   STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 68, 1);
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 68,
+                                   STAT_ARROW_DOWN);
     }
   }
 }
 
-s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x,
-                              s32 y) {
-  s32 entryId;
-  s32 result;
-  result = 0;
-  entryId = Resource_FindFreeEntry();
-  if (entryId != 0) {
-    VramBlock_LoadCached(entryId, 0x80, gUiIcon_ResourceTiles);
-    result = (s32)RenderOutput_CreateFar(entryId, 0x40000000, window, x, y);
-  }
-  return result;
-}
+// RenderOutput.active as the menu sets it: shown, or hidden but kept.
+#define ICON_SHOWN 1
+#define ICON_HIDDEN 13
 
-s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
-  s32 slot;
-  unsigned char copyMode;
-  int resourceMode;
+// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons.
+#define ICON_SPRITE_16X16 0x40000000
+// Size of one 16x16 4bpp sprite tile block.
+#define ICON_TILE_BYTES 0x80
+
+// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
+// into a free VRAM block. Returns the sprite, or 0 when no block is free.
+// Nothing calls it; UiIcon_CreateWithResourceVariant is the one in use.
+UNUSED s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused,
+                                     s32 x, s32 y) {
+  s32 block;
   s32 icon;
   icon = 0;
-  icon = 0;
-  slot = Resource_FindFreeEntry();
-  resourceMode = 0x80;
-  if (slot != 0) {
-    VramBlock_LoadCached(slot, copyMode = resourceMode, gUiIcon_ResourceTiles);
-    icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
+  block = Resource_FindFreeEntry();
+  if (block != 0) {
+    VramCache_Load(block, ICON_TILE_BYTES, gUiIcon_ResourceTiles);
+    icon = (s32)RenderOutput_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
   }
   return icon;
 }
 
+// Creates the menu's hand cursor sprite in window at (x, y), loading the
+// hand's tiles into a free VRAM block. Returns the sprite, or 0 when no
+// block is free.
+s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
+  s32 block;
+  s32 icon;
+
+  icon = 0;
+  block = Resource_FindFreeEntry();
+  if (block != 0) {
+    VramCache_Load(block, ICON_TILE_BYTES, gUiIcon_ResourceTiles);
+    icon = (s32)RenderOutput_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
+  }
+  return icon;
+}
+
+// Shows a menu icon at its stored position, without rotation or scaling.
 void UiIcon_PrepareObject(struct RenderOutput *object) {
   if (object != NULL) {
-    object->active = 1;
+    object->active = ICON_SHOWN;
     object->oam.x = object->x;
     object->oam.y = object->y;
     object->oam.matrix = 0;
@@ -436,141 +572,160 @@ void UiIcon_PrepareObject(struct RenderOutput *object) {
 
 //--------------------------------------------------------------------------
 // call_icon_routine.c
-// メニュー：えらんだキャラクターのグラフィックを読みなおす
+// Menu: reload the chosen character's graphics
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// キャラクターのグラフィックをスロット 0 に読む
-// menu : 呼び出し元のメニュー（使わない）
-// unit : キャラクター番号
-//--------------------------------------------------------------------------
+
+// Loads the graphics of character unit into menu entry slot 0. menu, the
+// calling menu, is not used.
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }
 
+// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
+// in it, hidden for now. Selects no tab yet. Returns the window.
 s32 UiMenu_CreateCursor(void *source) {
   struct PsynergyMenuState *work = source;
-  s32 handle;
+  s32 window;
   s32 zero = 0;
-  s32 state;
-  struct RenderOutput *object;
+  s32 sentinel;
+  struct RenderOutput *cursor;
 
   work->auxiliaryWindow = zero;
   UiWindow_UpdateOrCreate(&work->auxiliaryWindow, zero, zero, 13, 5, 2);
-  handle = work->auxiliaryWindow;
-  object = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
-      (struct RenderInput *)handle, -8, 11);
-  object->active = 13;
+  window = work->auxiliaryWindow;
+  cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
+      (struct RenderInput *)window, -8, 11);
+  cursor->active = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->tabIndex[1] = zero;
-  work->paneIcon[0] = object;
-  state = 254;
-  object->sentinel = state;
-  state -= 255;
-  work->paneIcon[1]->sentinel = state;
-  return handle;
+  work->paneIcon[0] = cursor;
+  sentinel = 254;
+  cursor->sentinel = sentinel;
+  sentinel -= 255;
+  work->paneIcon[1]->sentinel = sentinel; // -1
+  return window;
 }
 
+// Creates a walking figure for each active party member, side by side under
+// the window source: origin (originX, originY) in tiles from the window's
+// corner, each figure 16 + spacing pixels after the last, at full scale.
+// Clears the unused figure slots and starts the callback that places them
+// every frame.
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
-  u16 entryIds[14];
-  struct PsynergyMenuState *entryState = gMenuWork;
+  u16 ownerIds[14];
+  struct PsynergyMenuState *menu = gMenuWork;
   struct RenderInput *window = source;
-  s32 entryCount = (u16)Party_ListActiveOwnersFar(entryIds);
+  s32 ownerCount = (u16)Party_ListActiveOwnersFar(ownerIds);
   s32 i;
 
-  entryState->tabCounts[0] = entryCount;
-  for (i = 0; i < entryCount; i++) {
-    struct AnimationObject *entryObject =
+  menu->tabCounts[0] = ownerCount;
+  for (i = 0; i < ownerCount; i++) {
+    struct AnimationObject *figure =
         (struct AnimationObject *)ResourceObject_CreateFar(
-            Party_RemapCharacterIdByFlagsFar(entryIds[i]));
-    if (entryObject != 0) {
-      s32 entryX;
-      s32 sourceX;
-      s32 positionX;
+            Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
+    if (figure != 0) {
+      s32 offsetX;
+      s32 windowX;
+      s32 tileX;
 
-      entryState->tabObjects[i] = entryObject;
-      sourceX = window->x;
-      entryX = spacing + 16;
-      entryX *= i;
-      positionX = originX + sourceX;
-      entryState->tabX[i] = positionX * 8 + entryX;
-      entryState->rowPositions[i] = (originY + window->y) * 8 + 16;
-      entryState->ownerScale[i] = 0x10000;
-      ((struct FieldSprite *)entryObject)->priority = 0;
-      entryObject->flags = 0;
-      AnimationObjects_SelectAnimationFar(entryObject, 1);
+      menu->tabObjects[i] = figure;
+      windowX = window->x;
+      offsetX = spacing + 16;
+      offsetX *= i;
+      tileX = originX + windowX;
+      menu->tabX[i] = tileX * 8 + offsetX;
+      menu->rowPositions[i] = (originY + window->y) * 8 + 16;
+      menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
+      ((struct FieldSprite *)figure)->priority = 0;
+      figure->flags = 0;
+      AnimationObjects_SelectAnimationFar(figure, 1);
     }
   }
   for (; i < 8; i++) {
-    entryState->tabObjects[i] = 0;
+    menu->tabObjects[i] = 0;
   }
   {
-    s32 delayFrames = 200;
-    delayFrames <<= 4;
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms,
-                                  delayFrames);
+    s32 priority = 200;
+    priority <<= 4;
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
   }
 }
 
+// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
+// stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
-  u32 buf[7];
-  struct PsynergyMenuState *base = gMenuWork;
+  u32 ownerIds[7];
+  struct PsynergyMenuState *menu = gMenuWork;
   s32 count;
-  void **p;
+  void **figures;
   s32 i;
 
-  count = (u16)Party_ListActiveOwnersFar(buf);
+  count = (u16)Party_ListActiveOwnersFar(ownerIds);
   if (count != 0) {
-    p = (void **)base->tabObjects;
+    figures = (void **)menu->tabObjects;
     i = count;
     do {
-      void *entry = *p++;
+      void *figure = *figures++;
 
-      if (entry != 0) {
-        ResourceObject_ReleaseFar(entry);
+      if (figure != 0) {
+        ResourceObject_ReleaseFar(figure);
       }
     } while (--i != 0);
   }
   Scheduler_RemoveCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
 }
 
+// Scheduler callback: each frame, places every party member sprite created by
+// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
+// the field's projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
   struct PsynergyMenuState *menu = gMenuWork;
-  s32 pos[2];
-  s32 trans[4];
+  s32 scale[2];
+  s32 position[4];
   s32 i;
-  s32 cnt;
+  s32 count;
 
-  cnt = (u16)Party_CountActiveOwnersFar();
-  for (i = 0; i < cnt; i++) {
-    struct AnimationObject *obj = menu->tabObjects[i];
-    s32 top = 0x01e20000 - (menu->rowPositions[i] << 16);
+  count = (u16)Party_CountActiveOwnersFar();
+  for (i = 0; i < count; i++) {
+    struct AnimationObject *figure = menu->tabObjects[i];
+    // 482 less the row's screen y, in 16.16.
+    s32 placeY = 0x01e20000 - (menu->rowPositions[i] << 16);
 
-    if (obj != 0) {
-      obj->part[0].priority = 0;
-      pos[0] = menu->ownerScale[i];
-      pos[1] = menu->ownerScale[i];
-      trans[0] = menu->tabX[i] << 16;
-      trans[1] = top;
-      trans[2] = (menu->rowPositions[i] << 16) + top;
-      trans[3] = 0;
-      Object_ApplyProjectedPlacementFar(obj, trans, pos, 0x4000);
+    if (figure != 0) {
+      figure->part[0].priority = 0;
+      scale[0] = menu->ownerScale[i];
+      scale[1] = menu->ownerScale[i];
+      position[0] = menu->tabX[i] << 16;
+      position[1] = placeY;
+      position[2] = (menu->rowPositions[i] << 16) + placeY; // always 482
+      position[3] = 0;
+      Object_ApplyProjectedPlacementFar(figure, position, scale, 0x4000);
     }
   }
 }
 
+// The cursor bobs through an 8-step table, one step every two frames.
+#define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
+
+// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
+// window, bobbing.
 void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuState *work = gMenuWork;
   struct RenderOutput *cursor = work->paneIcon[0];
 
   cursor->oam.x = cursor->x =
-      gUiMenu_CursorBobX[(gFrameCount >> 1) & 7] + xOffset +
+      gUiMenu_CursorBobX[CURSOR_BOB_STEP()] + xOffset +
       ((struct RenderInput *)work->auxiliaryWindow)->x * 8 + 8;
   cursor->oam.y = cursor->y =
-      gUiMenu_CursorBobY[(gFrameCount >> 1) & 7] + yOffset +
+      gUiMenu_CursorBobY[CURSOR_BOB_STEP()] + yOffset +
       ((struct RenderInput *)work->auxiliaryWindow)->y * 8 + 8;
 }
 
+// Slides the hand cursor from where it is to (x, y) inside the menu's
+// top-left window over two frames, in 1/16 pixel steps. Positions carry a
+// 64-pixel bias while moving so that they stay positive. Does nothing, once,
+// after skipSlide is set.
 void UiMenu_SlideCursor(s32 x, s32 y) {
 
   struct PsynergyMenuState *work = gMenuWork;
@@ -578,10 +733,10 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   s32 steps;
   s32 startX;
   s32 startY;
-  s32 px;
-  s32 py;
-  s32 dx;
-  s32 dy;
+  s32 fineX;
+  s32 fineY;
+  s32 stepX;
+  s32 stepY;
 
   steps = 2;
   if (work->skipSlide != 0) {
@@ -590,35 +745,36 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   }
   cursor = work->paneIcon[0];
   {
-    s32 spriteX = cursor->oam.x + 64;
-    s32 spriteY = cursor->oam.y + 64;
+    s32 biasedX = cursor->oam.x + 64;
+    s32 biasedY = cursor->oam.y + 64;
 
-    cursor->x = spriteX;
-    cursor->y = spriteY;
+    cursor->x = biasedX;
+    cursor->y = biasedY;
   }
   x += 64;
   y += 64;
   if (cursor->x - 8 > 0)
     cursor->x -= 8;
-  py = cursor->y;
-  if (py - 8 > 0) {
+  fineY = cursor->y;
+  if (fineY - 8 > 0) {
     cursor->y -= 8;
-    py = cursor->y;
+    fineY = cursor->y;
   }
   startX = cursor->x << 4;
-  dx = ((x << 4) - startX + 1) / steps;
-  startY = py << 4;
-  dy = ((y << 4) - startY + 1) / steps;
-  px = startX;
-  py = startY;
+  stepX = ((x << 4) - startX + 1) / steps;
+  startY = fineY << 4;
+  stepY = ((y << 4) - startY + 1) / steps;
+  fineX = startX;
+  fineY = startY;
   do {
-    px += dx;
+    // 64 - 8 = 56: the bias less the window border.
+    fineX += stepX;
     cursor->oam.x = cursor->x =
-        (px >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->x << 3) -
+        (fineX >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->x << 3) -
         56;
-    py += dy;
+    fineY += stepY;
     cursor->oam.y = cursor->y =
-        (py >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->y << 3) -
+        (fineY >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->y << 3) -
         56;
     steps--;
     if (steps != 0)
@@ -626,12 +782,16 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-void PsynergyMenu_ReservedNoOp(void) {}
+// Does nothing; nothing calls it.
+UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
-void PsynergyMenu_RefreshOwnerEntriesDefault(void) {
-  PsynergyMenu_RefreshOwnerEntries(0x6C, 0x28, 8);
+// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
+UNUSED void PsynergyMenu_RefreshOwnerEntriesDefault(void) {
+  PsynergyMenu_RefreshOwnerEntries(108, 40, 8);
 }
 
+// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
+// columns wide, from (originX, originY); empty slots keep their place.
 void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   struct RenderOutput **slot;
   struct RenderOutput **scan;
@@ -646,69 +806,78 @@ void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
     }
     index++;
     slot++;
-  } while (index <= 0x1F);
+  } while (index < 32);
 }
 
+// Places the icon in *slot at grid cell index (0 above 31) of a grid of
+// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
                                      s32 originX, s32 originY, s32 columns) {
-  struct RenderOutput *object;
+  struct RenderOutput *icon;
 
-  if (index > 0x1F) {
+  if (index > 31) {
     index = 0;
   }
-  object = *slot;
-  object->y = (index / columns) * 0x10 + originY;
-  object->x = (index % columns) * 0x10 + originX;
-  UiIcon_PrepareObject(object);
+  icon = *slot;
+  icon->y = (index / columns) * 16 + originY;
+  icon->x = (index % columns) * 16 + originX;
+  UiIcon_PrepareObject(icon);
 }
 
 //--------------------------------------------------------------------------
 // position_owner_entry.c
-// アイテムメニュー：持ち物のアイコンを格子の位置に置く
+// Item menu: place the inventory icons on their grid
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// i 番目（15 より大きければ 0）を、横 cols 個の格子（1 つ 24x16 ドット）の
-// 位置に置く
-// x0, y0 : 格子の左上
-//--------------------------------------------------------------------------
+
+// Places the item icon in *slot at grid cell i (0 above 15) of a grid of
+// 24x16 cells, cols wide, from (x0, y0), and shows it.
 void ItemMenu_PosOwner(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
                        s32 cols) {
-  struct RenderOutput *obj;
+  struct RenderOutput *icon;
 
   if (i > 15)
     i = 0;
-  obj = *slot;
-  obj->y = i / cols * 16 + y0;
-  obj->x = i % cols * 24 + x0;
-  UiIcon_PrepareObject(obj);
+  icon = *slot;
+  icon->y = i / cols * 16 + y0;
+  icon->x = i % cols * 24 + x0;
+  UiIcon_PrepareObject(icon);
 }
 
+// Lays the inventory's 15 item icons out five to a row from (116, y): y is
+// 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct RenderOutput **slot;
   struct RenderOutput **scan;
-  struct RenderOutput *object;
+  struct RenderOutput *icon;
   s32 index;
   s32 originY;
   struct InventoryMenuState *menu;
 
   menu = gMenuWork;
-  originY = 0x38;
+  originY = 56;
   if (layout != 1) {
-    originY = 0x28;
+    originY = 40;
   }
   slot = menu->entryIcons;
   index = 0;
   scan = slot;
   do {
-    object = *scan++;
-    if (object != NULL) {
-      ItemMenu_PosOwner(slot, index, 0x74, originY, 5);
+    icon = *scan++;
+    if (icon != NULL) {
+      ItemMenu_PosOwner(slot, index, 116, originY, 5);
     }
     index++;
     slot++;
-  } while (index <= 0xE);
+  } while (index < 15);
 }
 
+// Shows message in the item menu, with the hand cursor hidden meanwhile.
+//
+// With y == -1 the message goes into the info window; otherwise a modal
+// window sized to the message opens at (x, y). With x == -1 the message stays
+// up and FLAG_MENU_INFO_KEPT records that the info window holds it (the next
+// selection keeps it instead of drawing the item name); otherwise it waits
+// for A, B or Start and clears it again.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 window;
@@ -717,11 +886,11 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   s32 top;
   s32 left;
 
-  menu->paneIcons[0]->active = 13;
+  menu->paneIcons[0]->active = ICON_HIDDEN;
   if (y != -1) {
     UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
     if (UiWindow_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
-                                0x102) == 0)
+                                WINDOW_KEEP_EXISTING | 2) == 0)
       UiWindow_SetBounds((struct RenderInput *)menu->modalWindow, x, y, width,
                          height);
     window = (s32)menu->modalWindow;
@@ -742,24 +911,28 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
     WaitFrames(1);
     do {
       WaitFrames(1);
-    } while (!(gKeyState & KEY_A) && !(gKeyState & KEY_B) &&
-             !(gKeyState & KEY_START));
+    } while (!(gKeysPressed & KEY_A) && !(gKeysPressed & KEY_B) &&
+             !(gKeysPressed & KEY_START));
 #if EDITION_INTERNATIONAL
     if (y == -1)
       RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 #endif
     RenderOutput_ClearListFar((void *)window);
   } else {
-    GameFlag_SetBitFar(0x151);
+    GameFlag_SetBitFar(FLAG_MENU_INFO_KEPT);
   }
   menu->completionFlag = 1;
-  menu->paneIcons[0]->active = 1;
+  menu->paneIcons[0]->active = ICON_SHOWN;
 #if EDITION_INTERNATIONAL
   if (y != -1)
     UiWindow_CloseIfOpen(&menu->modalWindow, 1);
 #endif
 }
 
+// Sorts a party member's 15 inventory slots by the list order of mode (see
+// Menu_CopyListOrder): items are grouped by the order's item types and, within
+// a type, run from the highest item id down. Empty slots go to the end.
+// L + A in the item menu cycles through the modes. Returns 1.
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
@@ -769,12 +942,12 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   s32 i;
   s32 count;
   s32 best;
-  s32 best_slot;
-  s32 sorted_count;
+  s32 bestSlot;
+  s32 sortedCount;
   s32 value;
 
-  best_slot = 0;
-  sorted_count = 0;
+  bestSlot = 0;
+  sortedCount = 0;
   Menu_CopyListOrder(mode, order);
 
   for (i = 0; i < 15; i++)
@@ -789,29 +962,32 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   for (i = count; i < 15; i++)
     sorted[i] = 0;
 
+  // One pass for each entry of the order: move its items across, the highest
+  // id first, until none is left.
   pass = 0;
-  while (order[pass] != 0xff) {
+  while (order[pass] != LIST_ORDER_END) {
     for (;;) {
       best = 0;
       for (i = 0; i < count; i++) {
         if (items[i] == 0)
           continue;
         item = Item_GetDirectFar(items[i]);
-        if ((order[pass] & 0x7f) != item->type)
+        if ((order[pass] & LIST_ORDER_TYPE_MASK) != item->type)
           continue;
-        if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
+        if ((order[pass] & LIST_ORDER_EQUIPPED) &&
+            (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
         value = items[i] & ITEM_ID_MASK;
         if (best < value) {
-          best_slot = i;
+          bestSlot = i;
           best = value;
         }
       }
       if (best == 0)
         break;
-      sorted[sorted_count] = items[best_slot];
-      items[best_slot] = 0;
-      sorted_count++;
+      sorted[sortedCount] = items[bestSlot];
+      items[bestSlot] = 0;
+      sortedCount++;
     }
     pass++;
   }
@@ -823,12 +999,11 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
 
 //--------------------------------------------------------------------------
 // copy_list_order.c
-// メニュー：並べかえの順番の表を写す
+// Menu: copy a sort order table
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// mode 0〜2 の順番の表（それ以外は標準の表）を order に写す
-// 表は 0xff で終わる。写すのは 0xff を含めて 32 バイトまで
-//--------------------------------------------------------------------------
+
+// Copies the list order of mode 0 to 2 (any other mode: the default order)
+// into order, up to and including its LIST_ORDER_END and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
@@ -847,49 +1022,60 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   }
   *order = *src;
   n = 0;
-  if (*order != 0xff) {
+  if (*order != LIST_ORDER_END) {
     do {
       if (++n > 31)
         break;
       src++;
       order++;
       *order = *src;
-    } while (*order != 0xff);
+    } while (*order != LIST_ORDER_END);
   }
 }
 
+// The page indicator: the window font's digit tiles for pages 1, 2, ..., and
+// the two caps around them.
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
+// Moves a paged list's cursor and page with the d-pad's repeating keys.
+//
+// count entries are shown per_page at a time; *cursor is the row on the page
+// and *page the page. Vertical lists (horizontal 0) move the cursor with Up
+// and Down and turn pages with Left and Right; horizontal lists the other way
+// round. Moving past either end wraps round; turning to a shorter page pulls
+// the cursor up to its last entry. Returns 1 after a page turn, 0 after a
+// cursor move and -1 when nothing moved or the list is empty.
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
                          s32 *page) {
   s32 pages;
   s32 next;
   s32 previous;
-  s32 page_forward;
+  s32 pageForward;
   s32 result;
 
   result = -1;
   if (count == 0)
     return result;
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(0x06002500); // animate the page arrows
   pages = count / per_page;
   if (count % per_page != 0)
     pages++;
+  // horizontal is reused for the page-back key.
   if (horizontal) {
     next = gKeysRepeat & KEY_RIGHT;
     previous = gKeysRepeat & KEY_LEFT;
     horizontal = gKeysRepeat & KEY_UP;
-    page_forward = gKeysRepeat & KEY_DOWN;
+    pageForward = gKeysRepeat & KEY_DOWN;
   } else {
     next = gKeysRepeat & KEY_DOWN;
     previous = gKeysRepeat & KEY_UP;
     horizontal = gKeysRepeat & KEY_LEFT;
-    page_forward = gKeysRepeat & KEY_RIGHT;
+    pageForward = gKeysRepeat & KEY_RIGHT;
   }
   if (horizontal) {
-    AudioCommand_PlayFar(111);
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;
     if (*cursor + *page * per_page > count - 1) {
@@ -897,12 +1083,12 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
       if (*cursor > per_page - 1)
         *cursor = per_page - 1;
     }
-    Runtime_SetMainState19();
+    Input_ResetKeyRepeat(); // restart the key repeat delay
     result = 1;
     return result;
   }
-  if (page_forward) {
-    AudioCommand_PlayFar(111);
+  if (pageForward) {
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     if (++*page > pages - 1)
       *page = 0;
     if (*cursor + *page * per_page > count - 1) {
@@ -910,12 +1096,12 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
       if (*cursor > per_page - 1)
         *cursor = per_page - 1;
     }
-    Runtime_SetMainState19();
+    Input_ResetKeyRepeat();
     result = 1;
     return result;
   }
   if (previous) {
-    AudioCommand_PlayFar(111);
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     if (--*cursor < 0) {
       *cursor = per_page - 1;
       *cursor = count - *page * per_page - 1;
@@ -928,7 +1114,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   if (next == 0)
     return result;
   {
-    AudioCommand_PlayFar(111);
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     result = 0;
     if (++*cursor == count - *page * per_page)
       *cursor = result;
@@ -938,6 +1124,9 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   return 0;
 }
 
+// Copies the last background palette (15) into background palette bank and
+// lightens its colour 4 by 9 steps in each channel: the highlight colour of
+// the menu's selected rows.
 void Palette_LightenBankHighlight(s32 bank) {
   u16 *palette = (u16 *)(0x05000000 + (bank << 5));
   u32 red;
@@ -961,6 +1150,9 @@ void Palette_LightenBankHighlight(s32 bank) {
   palette[4] = (blue << 10) | (green << 5) | red;
 }
 
+// Draws a paged list's page numbers on the top border of window, ending at
+// tile rightEdge: one digit per page between two caps, selectedPage in
+// palette 14 and the others in palette 15. Draws nothing for a single page.
 void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
                             s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
@@ -980,9 +1172,9 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
-        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2);
+        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2); // palette 14
       else
-        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3);
+        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3); // palette 15
       tile++;
       x++;
     }
@@ -991,14 +1183,19 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
   }
 }
 
+// Switches a rectangle of a window's text between palette 15 (normal) and 14
+// (the highlight made by Palette_LightenBankHighlight): palette is the new
+// palette number. Only bit 12 of each map entry is cleared before it is set,
+// so this works between those two palettes. (x, y) and the size are in tiles
+// inside the window's border; the rectangle is clipped to the screen.
 void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field) {
+                               s32 width, s32 height, u32 palette) {
   struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-  u8 *base = (u8 *)work->tilemap;
+  u8 *tilemap = (u8 *)work->tilemap;
 
   x += object->x + 1;
   y += object->y + 1;
-  field <<= 12;
+  palette <<= 12;
   if (x < 0) {
     width += x;
     x = 0;
@@ -1014,18 +1211,19 @@ void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
     height = 20 - y;
   }
   if (width > 0 && height > 0) {
+    // Byte offset of the first entry: 32 two-byte entries a row.
     y <<= 6;
     x = y + (x << 1);
     do {
-      u16 *pixel = (u16 *)(x + (u32)base);
+      u16 *entry = (u16 *)(x + (u32)tilemap);
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
+        u32 value = *entry;
         value &= 0xFFFFEFFF;
-        value |= field;
+        value |= palette;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *entry = value;
+        entry++;
       }
       height--;
       x += 64;
@@ -1034,11 +1232,16 @@ void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
   }
 }
 
+// Copies the first sprite palette into background palette 14, then colour 4
+// of background palette 15 over its colour 14.
 void Palette_CopyObjectBankToBackground14(void) {
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
 }
 
+// Shows the item icons of one page of the item list: entries first to
+// first + pageSize - 1, one row of 16 pixels each from (x, y). Hides all the
+// others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
   struct RenderOutput *icon;
@@ -1047,7 +1250,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   for (i = 0; i < 32; i++) {
     icon = menu->entryIcons[i];
     if (icon != NULL)
-      icon->active = 13;
+      icon->active = ICON_HIDDEN;
   }
   for (i = first;
        i < pageSize + first && (icon = menu->entryIcons[i]) != NULL &&
@@ -1056,18 +1259,20 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
     UiIcon_PrepareObject(icon);
-    icon->active = 1;
+    icon->active = ICON_SHOWN;
   }
 }
 
+// Writes the party's coins and the "Coins" label into window (work).
 void UiText_DrawWorkValueWithLabel(s32 work) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, work, 8, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, work, 0x40, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, work, 64, 0);
 #if !EDITION_INTERNATIONAL
   UiWindow_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif
 }
 
+// Moves and resizes a window, in tiles.
 void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
                         s32 height) {
   if (window != NULL) {
@@ -1078,6 +1283,7 @@ void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
   }
 }
 
+// Marks the window system busy with the menu, or no longer busy.
 void UiWork_SetMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
 }
@@ -1086,53 +1292,63 @@ void UiWork_ClearMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
 }
 
+// Plays a sound and returns 1.
 s32 Audio_PlayCueReturnOne(s32 cue) {
   AudioCommand_PlayFar(cue);
   return 1;
 }
 
+// Scheduler callback while a menu runs: on Start, plays the cancel sound,
+// sets FLAG_MENU_START_PRESSED and removes itself.
 void Menu_CancelSoundTick(void) {
-  if (gKeyState & KEY_START) {
+  if (gKeysPressed & KEY_START) {
     AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-    GameFlag_SetBitFar(0x150);
+    GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
     Scheduler_RemoveCallback(Menu_CancelSoundTick);
   }
 }
 
+// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
+// Menu_CancelSoundTick.
 void Menu_CancelSoundReset(void) {
-  GameFlag_ClearBitFar(0x150);
+  GameFlag_ClearBitFar(FLAG_MENU_START_PRESSED);
   Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
 }
 
+// Stops watching for Start, if Start has not removed the watch already.
 void Menu_EnsureCancelSound(void) {
-  if (GameFlag_TestFar(0x150) == 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     Scheduler_RemoveCallback(Menu_CancelSoundTick);
   }
 }
 
-void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(15); }
+// Set the window text colour: normal (15), no HP (2) and low HP (4).
+void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
 
-void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(2); }
+void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
 
-void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(4); }
+void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
 
-// イベントの作業領域（struct EventWork）の別の見え方。0x180 と 0x19a
-// は共有ヘッダーにまだ名前がない
+// The event work as the item picker sees it: what the player chose, for the
+// event script. The shared header has no names for these two fields yet.
 struct AssetSelectionResult {
   s32 unk000[0x60];
-  u16 unk180;
+  u16 chosenItem; // owner << 10 | item id
   u8 unk182[0x18];
-  u16 unk19a;
+  u16 chosenSlot; // the owner's inventory slot
 };
 
+// The item picker an event script opens (window command 3): the item menu,
+// in which the player chooses one party member's item. Records the choice in
+// the event work and returns 1 if one was made.
 s32 RunAssetSelectionScreen(void) {
 #if EDITION_INTERNATIONAL
   void *backup;
 #endif
   struct InventoryMenuState *screen;
-  s32 index;
-  s32 value;
-  s32 category;
+  s32 item;
+  s32 target;
+  s32 owner;
   s32 result;
 #if EDITION_INTERNATIONAL
   s32 size;
@@ -1140,6 +1356,7 @@ s32 RunAssetSelectionScreen(void) {
   void **process;
   void **cache;
 
+  // Open the menu over the field, which stops moving.
 #if EDITION_INTERNATIONAL
   size = 0x2000;
   backup = Runtime_BumpAllocateAlternatePool(size);
@@ -1157,21 +1374,26 @@ s32 RunAssetSelectionScreen(void) {
   Link_DrawShiftedTilePairFar(0x06002500);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if EDITION_INTERNATIONAL
+  // Save the window tiles the menu draws over, and fill them with colour 3.
   Scheduler_EnableOverlayCallbacksWithFlags();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
   Iwram_FillWords((void *)0x06004000, size, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
+
+  // Let the player choose.
   Menu_CancelSoundReset();
-  result = ItemMenu_RunCommands(&category, &value, &index);
+  result = ItemMenu_RunCommands(&owner, &target, &item);
   Menu_EnsureCancelSound();
   if (result == 1) {
     struct AssetSelectionResult *selection =
         cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
 
-    selection->unk180 = (category << 10) | (index & ITEM_ID_MASK);
-    selection->unk19a = screen->selectedSlots[0];
+    selection->chosenItem = (owner << 10) | (item & ITEM_ID_MASK);
+    selection->chosenSlot = screen->selectedSlots[0];
   }
+
+  // Close the menu and give the screen back to the field.
   RenderOutput_ClearListFar(screen->statusWindow);
   process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL];
   ((struct UiRenderWork *)*process)->menuBusy = 1;
@@ -1196,6 +1418,8 @@ s32 RunAssetSelectionScreen(void) {
   return result;
 }
 
+// The x of the small message windows "Dropped it.", "You were cursed!" and
+// "Removed".
 #if EDITION_INTERNATIONAL
 #define MODAL_SHORT_X 14
 #define MODAL_REMOVED_X 14
@@ -1204,6 +1428,10 @@ s32 RunAssetSelectionScreen(void) {
 #define MODAL_REMOVED_X 17
 #endif
 
+// The most items of one kind a stack holds.
+#define INVENTORY_STACK_MAX 30
+
+// The resident IWRAM word copy, called through its address.
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
 #define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
@@ -1217,6 +1445,7 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src,
   return copy(dst, src, size);
 }
 
+// The steps of the item menu's command loop (ItemMenu_RunCommands).
 enum ItemMenuStep {
   ITEM_STEP_OWNER = 0,
   ITEM_STEP_ITEM = 1,
@@ -1226,13 +1455,18 @@ enum ItemMenuStep {
   ITEM_STEP_DROP = 5,
   ITEM_STEP_TARGET = 6,
   ITEM_STEP_TRADE = 7,
-  ITEM_STEP_IDLE = 8,
+  ITEM_STEP_IDLE = 8, // nothing sets it
   ITEM_STEP_COMMAND = 9,
   ITEM_STEP_INSPECT = 10,
   ITEM_STEP_REMOVE = 11,
-  ITEM_STEP_QUANTITY = 12
+  ITEM_STEP_QUANTITY = 12 // nothing sets it
 };
 
+// Runs the item menu: choose a party member, one of their items and a command
+// (Use, Equip, Give, Drop, Remove or Inspect), then carry it out, until the
+// player backs out or presses Start. Returns 1 when an item is to be used
+// outside the menu, with its owner, target and item id in the out parameters;
+// -1 when the player backed out or pressed Start; 0 otherwise.
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
 #if !EDITION_INTERNATIONAL
@@ -1250,14 +1484,14 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   u32 state;
   s32 command;
   s32 result;
-  s32 qty;
+  s32 heldCount;
   s32 amount;
   s32 aborted;
-  s32 work;
-  s32 n;
+  s32 dropped;
+  s32 giveTarget;
   u8 movedSource;
   u8 movedTarget;
-  s8 stack;
+  s8 stackSize;
 
   done = 0;
 #if !EDITION_INTERNATIONAL
@@ -1269,13 +1503,14 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   state = ITEM_STEP_OWNER;
   menu = gMenuWork;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
+    // Choose whose items to look at.
     case ITEM_STEP_OWNER:
       menu->selectedSlots[0] = 0;
       ItemMenu_SetMsgWin3();
       ItemMenu_SetItemWin3();
-      menu->selectedItemIcon->active = 13;
+      menu->selectedItemIcon->active = ICON_HIDDEN;
       ItemMenu_DrawMsg(0, MsgWhoseItem);
 #if EDITION_INTERNATIONAL
       RenderOutput_RedrawSavedRectFar(menu->infoWindow);
@@ -1300,6 +1535,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
+    // Choose one of their items.
     case ITEM_STEP_ITEM:
       if (ItemMenu_Count(menu->paneOwner[0]) == 0) {
         state = ITEM_STEP_OWNER;
@@ -1307,8 +1543,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       ItemMenu_SetMsgWin3();
       ItemMenu_SetItemWin3();
-      menu->selectedItemIcon->active = 13;
-      menu->paneIcons[0]->active = 1;
+      menu->selectedItemIcon->active = ICON_HIDDEN;
+      menu->paneIcons[0]->active = ICON_SHOWN;
       ItemMenu_DrawMsg(0, MsgWhichItem);
       selection = ItemMenu_RunList(0);
       state = ITEM_STEP_OWNER;
@@ -1319,6 +1555,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_COMMAND;
       break;
 
+    // Choose what to do with it. An item that starts an effect on the field
+    // (BattleFx_HasTriggerFar) closes the menu and is returned to the caller;
+    // other usable items are used here.
     case ITEM_STEP_COMMAND:
       command = ItemMenu_ChooseCmd();
       if (command == -1) {
@@ -1354,7 +1593,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #if !EDITION_INTERNATIONAL
           RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
-          menu->paneIcons[0]->active = 13;
+          menu->paneIcons[0]->active = ICON_HIDDEN;
           menu->itemCount =
               ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
@@ -1385,6 +1624,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       break;
 
+    // Use the item on the party member chosen.
     case ITEM_STEP_USE:
       ItemMenu_HideAllIcons();
       ItemMenu_SetMsgWin5();
@@ -1401,7 +1641,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
         command = 0;
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & ITEM_ID_MASK) != 0) {
-          command = 8;
+          command = STATUS_PANEL_STATS;
         }
         result = ItemMenu_Use();
         Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, menu->paneOwner[1],
@@ -1413,7 +1653,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #if !EDITION_INTERNATIONAL
           RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
-          menu->paneIcons[0]->active = 13;
+          menu->paneIcons[0]->active = ICON_HIDDEN;
           ItemMenu_TryBreak();
           state = ITEM_STEP_ITEM;
         }
@@ -1426,6 +1666,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       break;
 
+    // Give: choose to whom.
     case ITEM_STEP_TARGET:
       ItemMenu_SetMsgWin5();
       ItemMenu_SetItemWin5();
@@ -1434,9 +1675,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       UiText_DrawCharacterAtOffsetFar(MsgGiveToWhom, (s32)menu->messageWindow,
                                       16, 16);
 #if EDITION_INTERNATIONAL
-      n = ItemMenu_SelectTarget(1);
+      giveTarget = ItemMenu_SelectTarget(1);
       state = ITEM_STEP_GIVE;
-      if (n == -1) {
+      if (giveTarget == -1) {
 #else
       chosen = ItemMenu_SelectTarget(1);
       state = ITEM_STEP_GIVE;
@@ -1448,15 +1689,16 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       break;
 
+    // Drop the item, or some of a stack, after confirming.
     case ITEM_STEP_DROP:
       ItemMenu_HideAllIcons();
       item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
       result = 0;
       if ((item->flags & ITEM_STACKABLE) != 0) {
-        qty = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
-        if (qty > 1) {
+        heldCount = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
+        if (heldCount > 1) {
           ItemMenu_DrawItemHead();
-          result = ItemMenu_SelectGiveQuantity(0, qty, 1);
+          result = ItemMenu_SelectGiveQuantity(0, heldCount, 1);
         }
       }
       if (result == -1) {
@@ -1468,7 +1710,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                      (menu->selectedItems[0] & ITEM_ID_MASK) |
                                          (result << INVENTORY_QUANTITY_SHIFT),
                                      (u8)menu->selectedItemIcon->index, 0);
-      menu->selectedItemIcon->active = 1;
+      menu->selectedItemIcon->active = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
       menu->selectedItemIcon->y = 28;
       UiIcon_PrepareObject(menu->selectedItemIcon);
@@ -1478,7 +1720,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #if EDITION_INTERNATIONAL
         command = menu->paneOwner[0];
         UnitGetFar(command);
-        for (work = 0; work < result + 1; work++) {
+        for (dropped = 0; dropped < result + 1; dropped++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
           Item_AdjustCounterFar(menu->selectedItems[0] & ITEM_ID_MASK, 1);
         }
@@ -1486,7 +1728,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #else
         owner = menu->paneOwner[0];
         UnitGetFar(owner);
-        for (work = 0; work < result + 1; work++) {
+        for (dropped = 0; dropped < result + 1; dropped++) {
           Inventory_RemoveFar(owner, menu->selectedSlots[0]);
           Item_AdjustCounterFar(menu->selectedItems[0] & ITEM_ID_MASK, 1);
         }
@@ -1494,8 +1736,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
         ItemMenu_SetItemWin3();
         ItemMenu_RefreshOwner(menu->paneOwner[0], 0);
-        menu->selectedItemIcon->active = 13;
-        menu->paneIcons[0]->active = 13;
+        menu->selectedItemIcon->active = ICON_HIDDEN;
+        menu->paneIcons[0]->active = ICON_HIDDEN;
         WaitFrames(1);
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(MsgDroppedIt, MODAL_SHORT_X, 13);
@@ -1505,31 +1747,34 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         state = ITEM_STEP_COMMAND;
       }
       UnitCalcFar(menu->paneOwner[0]);
-      menu->selectedItemIcon->active = 13;
+      menu->selectedItemIcon->active = ICON_HIDDEN;
       Event_ClearInvalidPackedValuesFar();
       break;
 
+    // Give the item, or some of a stack, to the chosen member. A full
+    // inventory offers a trade instead; the new holder may equip it.
     case ITEM_STEP_GIVE:
       aborted = 0;
       item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
       if ((item->flags & ITEM_STACKABLE) != 0) {
-        qty = InventoryMenu_GetItemQuantity(
+        heldCount = InventoryMenu_GetItemQuantity(
             menu->paneOwner[1], menu->selectedItems[0] & ITEM_ID_MASK);
-        if (qty == 30) {
+        if (heldCount == INVENTORY_STACK_MAX) {
           aborted = 1;
         }
-        if (ItemMenu_Count(menu->paneOwner[1]) == 15 && qty == 0) {
+        if (ItemMenu_Count(menu->paneOwner[1]) == INVENTORY_SLOTS &&
+            heldCount == 0) {
           state = ITEM_STEP_TRADE;
           break;
         }
-        stack = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
+        stackSize = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
         if (aborted == 0) {
-          if (qty + stack > 30) {
-            amount = 30 - qty;
+          if (heldCount + stackSize > INVENTORY_STACK_MAX) {
+            amount = INVENTORY_STACK_MAX - heldCount;
           } else {
-            amount = stack;
+            amount = stackSize;
           }
-          if (stack > 1) {
+          if (stackSize > 1) {
             result = ItemMenu_SelectGiveQuantity(0, amount, 0);
           } else {
             result = 0;
@@ -1539,11 +1784,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             break;
           }
           for (command = 0; command < result + 1; command++) {
-            qty = Inventory_AddItemFar(menu->paneOwner[1],
-                                       menu->selectedItems[0] & 0x5ff);
-            if (qty != -1) {
+            heldCount = Inventory_AddItemFar(
+                menu->paneOwner[1],
+                menu->selectedItems[0] & (ITEM_ID_MASK | INVENTORY_BROKEN));
+            if (heldCount != -1) {
               Inventory_RemoveFar(menu->paneOwner[0], menu->selectedSlots[0]);
-              menu->selectedSlots[1] = qty;
+              menu->selectedSlots[1] = heldCount;
             } else {
               aborted = 1;
             }
@@ -1551,7 +1797,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
       } else {
         result = Inventory_AddItemFar(menu->paneOwner[1],
-                                      menu->selectedItems[0] & 0x5ff);
+                                      menu->selectedItems[0] &
+                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           state = ITEM_STEP_TRADE;
           break;
@@ -1565,8 +1812,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       UnitCalcFar(menu->paneOwner[0]);
       UnitCalcFar(menu->paneOwner[1]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[0]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[1]);
+      Unit_RefreshPsynergyFar(menu->paneOwner[0]);
+      Unit_RefreshPsynergyFar(menu->paneOwner[1]);
       result = 1;
       if (aborted == 0) {
         menu->paneOwner[0] = menu->paneOwner[1];
@@ -1578,11 +1825,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
       }
-      if (GameFlag_TestFar(0x150) != 0) {
+      if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
         break;
       }
       ItemMenu_RefreshOwner(menu->paneOwner[1], 1);
-      menu->paneIcons[0]->active = 13;
+      menu->paneIcons[0]->active = ICON_HIDDEN;
       WaitFrames(1);
       if (aborted == 1) {
         RenderOutput_ClearListFar(menu->infoWindow);
@@ -1597,10 +1844,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & ITEM_CURSED) != 0) {
-            AudioCommand_PlayFar(0x67);
+            AudioCommand_PlayFar(103); // the curse sound
             RenderOutput_ClearListFar(menu->infoWindow);
-            InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, MODAL_SHORT_X,
-                                           14);
+            InventoryMenu_ShowModalMessage(MsgEquippedIt +
+                                               7, // "You were cursed!"
+                                           MODAL_SHORT_X, 14);
           }
         }
       }
@@ -1608,6 +1856,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_OWNER;
       break;
 
+    // Trade: the receiver gives back one of their items. Both units are saved
+    // first and restored if any part of the swap fails.
     case ITEM_STEP_TRADE:
       aborted = 0;
       ItemMenu_SetMsgWin3();
@@ -1664,7 +1914,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       movedTarget++;
       while (movedSource != 0) {
         result = Inventory_AddItemFar(menu->paneOwner[1],
-                                      menu->selectedItems[0] & 0x5ff);
+                                      menu->selectedItems[0] &
+                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           aborted = 1;
           break;
@@ -1674,7 +1925,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       while (movedTarget != 0) {
         result = Inventory_AddItemFar(menu->paneOwner[0],
-                                      menu->selectedItems[1] & 0x5ff);
+                                      menu->selectedItems[1] &
+                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           aborted = 1;
           break;
@@ -1696,8 +1948,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       } else {
         UnitCalcFar(menu->paneOwner[0]);
         UnitCalcFar(menu->paneOwner[1]);
-        Owner_RefreshClassActionsFar(menu->paneOwner[0]);
-        Owner_RefreshClassActionsFar(menu->paneOwner[1]);
+        Unit_RefreshPsynergyFar(menu->paneOwner[0]);
+        Unit_RefreshPsynergyFar(menu->paneOwner[1]);
         ItemMenu_SetMsgWin5();
 #if EDITION_INTERNATIONAL
         ItemMenu_SetMsgWin6();
@@ -1708,7 +1960,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedItems[0] &= ITEM_ID_MASK;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
-        if (GameFlag_TestFar(0x150) == 0) {
+        if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
           RenderOutput_ClearListFar(menu->infoWindow);
           ItemMenu_SetItemWin5();
           ItemMenu_RefreshOwner(menu->paneOwner[1], 1);
@@ -1719,10 +1971,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-              AudioCommand_PlayFar(0x67);
+              AudioCommand_PlayFar(103); // the curse sound
               RenderOutput_ClearListFar(menu->infoWindow);
-              InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, MODAL_SHORT_X,
-                                             14);
+              InventoryMenu_ShowModalMessage(MsgEquippedIt +
+                                                 7, // "You were cursed!"
+                                             MODAL_SHORT_X, 14);
             }
           } else {
 #if defined(TBS_EDITION_IT)
@@ -1739,6 +1992,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_OWNER;
       break;
 
+    // Equip the item.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->paneOwner[0], menu->selectedSlots[0]);
       if (result == -1) {
@@ -1755,8 +2009,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       UnitCalcFar(menu->paneOwner[0]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[0]);
-      menu->paneIcons[0]->active = 13;
+      Unit_RefreshPsynergyFar(menu->paneOwner[0]);
+      menu->paneIcons[0]->active = ICON_HIDDEN;
       menu->itemCount =
           ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
@@ -1767,19 +2021,21 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & ITEM_CURSED) != 0) {
-        AudioCommand_PlayFar(0x67);
+        AudioCommand_PlayFar(103); // the curse sound
         RenderOutput_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, MODAL_SHORT_X, 8);
+        InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, // "You were cursed!"
+                                       MODAL_SHORT_X, 8);
       }
       state = ITEM_STEP_ITEM;
       break;
 
+    // Unequip it.
     case ITEM_STEP_REMOVE:
       UnitGetFar(menu->paneOwner[0])->inventory[menu->selectedSlots[0]] &=
           ~INVENTORY_EQUIPPED;
       UnitCalcFar(menu->paneOwner[0]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[0]);
-      menu->paneIcons[0]->active = 13;
+      Unit_RefreshPsynergyFar(menu->paneOwner[0]);
+      menu->paneIcons[0]->active = ICON_HIDDEN;
       menu->itemCount =
           ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
@@ -1794,20 +2050,23 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
+    // Show its description.
     case ITEM_STEP_INSPECT:
-      menu->paneIcons[0]->active = 13;
+      menu->paneIcons[0]->active = ICON_HIDDEN;
       Menu_SelectQuantity(menu->selectedItems[0]);
       RenderOutput_RedrawSavedRectFar(menu->statusWindow);
       ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                 menu->paneOwner[0]);
-      menu->paneIcons[0]->active = 1;
+      menu->paneIcons[0]->active = ICON_SHOWN;
       state = ITEM_STEP_COMMAND;
       break;
 
+    // Not reached from any command: choose a quantity, then do nothing with
+    // it.
     case ITEM_STEP_QUANTITY:
       result = ItemMenu_SelectGiveQuantity(0, 30, 0);
       if (result != -1) {
-        qty = result;
+        heldCount = result;
       }
       state = ITEM_STEP_ITEM;
       break;
@@ -1821,12 +2080,16 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     }
   }
 
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     ret = -1;
   }
   return ret;
 }
 
+// Uses the selected item from the owner in pane 0 on the member in pane 1.
+// On failure plays the error sound, shows why in the info window and returns
+// -1; otherwise plays the item's animation, recalculates both members and
+// returns 1.
 s32 ItemMenu_Use(void) {
   struct InventoryMenuState *menu;
   s32 result;
@@ -1853,6 +2116,9 @@ s32 ItemMenu_Use(void) {
   return 1;
 }
 
+// Sets up the item menu's first screen: the cursor window with the party's
+// figures, the info window along the bottom, and an 8 by 2 cursor grid. The
+// parameters are not used.
 void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 index;
@@ -1877,6 +2143,9 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns) {
   }
 }
 
+// Creates the 32 item icon sprites in window, off screen until placed: slots 0
+// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
+// slot of the same number.
 void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1) {
   struct RenderOutput **output0;
   s32 index0;
@@ -1916,8 +2185,9 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1) {
   } while (index2 <= 31);
 }
 
+// Hides all 32 item icons.
 void ItemMenu_HideAllIcons(void) {
-  s32 hiddenState = 13;
+  s32 hiddenState = ICON_HIDDEN;
   struct RenderOutput **icons =
       ((struct InventoryMenuState *)gMenuWork)->entryIcons;
   s32 slot;
@@ -1931,10 +2201,11 @@ void ItemMenu_HideAllIcons(void) {
 }
 
 #if EDITION_INTERNATIONAL
+// Hides the item icons in the first column of the five-wide item grid.
 void ItemMenu_HidePageIcons(void) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 slot = 0;
-  s32 hiddenState = 13;
+  s32 hiddenState = ICON_HIDDEN;
   struct RenderOutput **iconSlot = menu->entryIcons;
 
   do {
@@ -1948,6 +2219,8 @@ void ItemMenu_HidePageIcons(void) {
 }
 #endif
 
+// Closes the item menu: releases the party figures, hides the icons and the
+// cursor, and closes every window the menu opened.
 void ItemMenu_Close(void) {
   struct InventoryMenuState *menu;
   struct RenderOutput *cursor;
@@ -1957,7 +2230,7 @@ void ItemMenu_Close(void) {
   ItemMenu_HideAllIcons();
   WaitFrames(1);
   cursor = menu->cursor;
-  cursor->active = 0xD;
+  cursor->active = ICON_HIDDEN;
   UiWindow_CloseIfOpen(&menu->mainWindow, 1);
   UiWindow_CloseIfOpen(&menu->itemWindow, 1);
   UiWindow_CloseIfOpen(&menu->messageWindow, 1);
@@ -1971,6 +2244,8 @@ void ItemMenu_Close(void) {
   UiWindow_CloseIfOpen(&menu->unknownWindow40, 1);
 }
 
+// Lets the player choose a party member in pane (0 or 1), starting from the
+// member chosen last. Returns the member's id, or -1 when the player backs out.
 s32 ItemMenu_PrepOwner(s32 pane) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 result = 0;
@@ -1994,6 +2269,11 @@ s32 ItemMenu_PrepOwner(s32 pane) {
   return result;
 }
 
+// The party member row of the item menu. Left and Right move between members,
+// showing each one's items and status; holding R shows their equipment
+// instead; L + A sorts the member's items, a new sort order each press; A
+// chooses a member who has items and B backs out. Returns the chosen member's
+// id, or -1.
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct InventoryMenuState *menu;
   s32 selection;
@@ -2001,26 +2281,27 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   s32 result;
   struct BattleUnit *owner;
   u8 sortMode;
-  s32 byCategory;
-  s32 pending;
+  s32 showEquipment;
+  s32 redraw;
   s32 window;
   s32 i;
 
   menu = gMenuWork;
   selection = menu->paneIndex[0];
   count = menu->paneCount[0];
-  pending = 1;
+  redraw = 1;
   result = 0;
   sortMode = 0;
-  byCategory = 0;
+  showEquipment = 0;
   owner = UnitGetFar(ownerIds[selection]);
   if (UiWindow_UpdateOrCreate((s32 *)&menu->itemWindow, 13, 3, 17, 10, 2))
     Menu_SpawnIconEntries(menu, (s32)menu->itemWindow);
   if (UiWindow_UpdateOrCreate((s32 *)&menu->helpWindow, 13, 13, 17, 4, 2)) {
     menu->selectedItemIcon = RenderOutput_CreateFromResourceFar(
         2, 0, (struct RenderInput *)menu->helpWindow, 0, result);
-    menu->selectedItemIcon->active = 13;
+    menu->selectedItemIcon->active = ICON_HIDDEN;
   }
+  // The help text: L + A sorts, R shows the equipment.
 #if EDITION_INTERNATIONAL
   UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, (s32)menu->helpWindow, 0,
                                   0);
@@ -2036,66 +2317,70 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1,
                                   (s32)menu->helpWindow, 32, 8);
 #endif
-  menu->paneIcons[0]->active = pending;
-  while (!GameFlag_TestFar(0x150)) {
+  menu->paneIcons[0]->active = redraw; // ICON_SHOWN
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     selection = (selection + count) % count;
     UiMenu_PositionCursor(selection * 24 - 10, 16);
-    if (pending) {
+    if (redraw) {
       sortMode = 0;
-      pending = 0;
+      redraw = 0;
       window = (s32)menu->statusWindow;
       owner = UnitGetFar(ownerIds[selection]);
-      if (byCategory) {
+      if (showEquipment) {
         menu->itemCount =
             ItemMenu_Collect(UnitGetFar(ownerIds[selection]), menu->items, 0);
         ItemMenu_OpenCategory(ownerIds[selection]);
-        Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0, 8);
+        Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0,
+                                  STATUS_PANEL_STATS);
       } else {
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
-        Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0, 0);
+        Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0,
+                                  STATUS_PANEL_EXPERIENCE);
       }
+      // Raise the chosen member's figure.
       for (i = 3; i >= 0; i--)
         menu->ownerY[i] = 30;
       menu->ownerY[selection] = 26;
     }
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    // L + A sorts, cycling through the four sort orders.
+    if (gKeysPressed & KEY_A) {
       if (gKeysHeld & KEY_L) {
         sortMode = (sortMode + 4) % 4;
         InventoryMenu_SortByListOrder(owner->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       } else if (ItemMenu_Count(ownerIds[selection])) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       } else {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       }
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (gKeyState & KEY_R) {
-      byCategory = 1;
-      pending = 1;
+    if (gKeysPressed & KEY_R) {
+      showEquipment = 1;
+      redraw = 1;
     }
-    if (!(gKeysHeld & KEY_R) && byCategory == 1) {
-      byCategory = 0;
-      pending = 1;
+    if (!(gKeysHeld & KEY_R) && showEquipment == 1) {
+      showEquipment = 0;
+      redraw = 1;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
-      pending = 1;
+      redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection++;
-      pending = 1;
+      redraw = 1;
     }
   }
   menu->paneIndex[0] = selection;
@@ -2104,6 +2389,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   return result;
 }
 
+// Shows the equipment view of member ownerId's items in the item window.
 void ItemMenu_OpenCategory(s32 ownerId) {
   struct InventoryMenuState *menu;
 
@@ -2113,23 +2399,29 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory((s32)menu->itemWindow, ownerId, 0);
 }
 
+// Chooses the party member to use (mode 0) or give (mode 1) the selected item
+// to. Using shows each member's status as the cursor passes; giving shows each
+// member's items, how many of this item they already hold, or that they would
+// have to trade, and the equipment preview. The party members who can equip
+// the item move while the cursor is up. Returns the chosen member's id, or -1
+// when the player backs out; giving cannot choose the item's owner.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
   struct InventoryMenuState *menu;
   s32 window;
   s32 count;
   s32 selection;
-  s32 pending;
+  s32 redraw;
   u8 result;
   s32 shown;
-  s32 quantity;
+  s32 heldCount;
   struct RenderOutput *marker;
 
   menu = gMenuWork;
   window = (s32)menu->itemWindow;
   selection = menu->paneIndex[1];
   count = menu->partyCount;
-  pending = 1;
+  redraw = 1;
   result = 0;
   shown = 0;
   UiWindow_SetBounds((struct RenderInput *)window, 13, 5, 17, 12);
@@ -2137,42 +2429,46 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   UnitGetFar(menu->ownerIds[menu->paneIndex[0]]);
   Scheduler_AddOrUpdateCallback(EquipmentMenu_UpdateCompatibilityIndicators,
                                 0xc80);
-  while (!GameFlag_TestFar(0x150)) {
-    if (pending) {
-      pending = 0;
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+    if (redraw) {
+      redraw = 0;
       selection = (selection + count) % count;
       window = (s32)menu->itemWindow;
       UnitGetFar(menu->ownerIds[selection]);
+      // The marker over the chosen member.
       marker = menu->paneIcons[1];
       marker->oam.x = marker->x =
           ((menu->mainWindow->x + selection * 3) << 3) - 2;
+      // Giving: the member's items and how many of this one they hold.
       if (mode == 1) {
         ItemMenu_RefreshOwner(menu->ownerIds[selection], 1);
         UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
         UiWindow_ClearInteriorTilesFar((void *)window, 0, 72, 120, 80);
         if (selection != menu->paneIndex[0]) {
-          quantity = InventoryMenu_GetItemQuantity(
+          heldCount = InventoryMenu_GetItemQuantity(
               menu->ownerIds[selection], menu->selectedItems[0] & ITEM_ID_MASK);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TBS_EDITION_IT)
-          if (ItemMenu_Count(menu->ownerIds[selection]) == 15 && quantity == 0)
+          if (ItemMenu_Count(menu->ownerIds[selection]) == INVENTORY_SLOTS &&
+              heldCount == 0)
             UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window, 0, 72);
-          else if (quantity != 0) {
-            UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
+          else if (heldCount != 0) {
+            UiText_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
             UiText_DrawCharacterAtOffsetFar(MsgInStock, window, STOCK_LABEL_X,
                                             72);
           } else {
             UiText_DrawCharacterAtOffsetFar(MsgNoneInStock, window, 16, 72);
           }
 #else
-          if (quantity != 0) {
-            UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
+          if (heldCount != 0) {
+            UiText_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
             UiText_DrawCharacterAtOffsetFar(MsgInStock, window, STOCK_LABEL_X,
                                             72);
           } else {
             UiText_DrawCharacterAtOffsetFar(MsgNoneInStock, window, 16, 72);
           }
-          if (ItemMenu_Count(menu->ownerIds[selection]) == 15 && quantity == 0)
+          if (ItemMenu_Count(menu->ownerIds[selection]) == INVENTORY_SLOTS &&
+              heldCount == 0)
 #if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window, 0, 72);
 #else
@@ -2183,16 +2479,17 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                   menu->ownerIds[selection]);
       }
+      // Using: the member's status, and the item's name once.
       if (mode == 0) {
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & ITEM_ID_MASK))
           Menu_DrawOwnerStatusPanel((s32)menu->statusWindow,
                                     menu->ownerIds[selection],
-                                    menu->selectedSlots[0], 8);
+                                    menu->selectedSlots[0], STATUS_PANEL_STATS);
         else
-          Menu_DrawOwnerStatusPanel((s32)menu->statusWindow,
-                                    menu->ownerIds[selection],
-                                    menu->selectedSlots[0], 0);
-        if (!GameFlag_TestFar(0x151) && !shown) {
+          Menu_DrawOwnerStatusPanel(
+              (s32)menu->statusWindow, menu->ownerIds[selection],
+              menu->selectedSlots[0], STATUS_PANEL_EXPERIENCE);
+        if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
 #if EDITION_INTERNATIONAL
           RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
           UiText_DrawCharacterAtOffsetFar(
@@ -2206,41 +2503,41 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 #endif
           shown = 1;
         } else {
-          GameFlag_ClearBitFar(0x151);
+          GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
         }
       }
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         continue;
       }
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = menu->ownerIds[selection];
       break;
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = 255;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
-      pending = 1;
+      redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
-      pending = 1;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      redraw = 1;
       selection++;
     }
   }
   marker = menu->paneIcons[1];
   menu->paneIndex[1] = selection;
   UiIcon_PrepareObject(marker);
-  marker->active = 13;
+  marker->active = ICON_HIDDEN;
   EquipmentMenu_StartCompatibilityIndicators();
   WaitFrames(1);
   menu->paneIndex[1] = selection;
@@ -2249,6 +2546,9 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   return (s8)result;
 }
 
+// Scheduler callback while choosing a member to give an item to: every 32
+// frames, sets each party figure's animation by whether that member can equip
+// the item (3) or not (1).
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct InventoryMenuState *menu;
   s8 memberIndex;
@@ -2270,6 +2570,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   }
 }
 
+// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
+// back to animation 1 and removes the callback.
 void EquipmentMenu_StartCompatibilityIndicators(void) {
   struct InventoryMenuState *menu;
   s8 memberIndex;
@@ -2286,17 +2588,20 @@ void EquipmentMenu_StartCompatibilityIndicators(void) {
   Scheduler_RemoveCallback(&EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
-s32 ItemMenu_IsSpecial(s32 item_id) {
-  switch (item_id) {
-  case 0xC1:
-  case 0xC2:
-  case 0xC3:
-  case 0xC4:
+// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
+// and Lucky Pepper), whose use shows the stats panel instead of HP and PP.
+s32 ItemMenu_IsSpecial(s32 itemId) {
+  switch (itemId) {
+  case ITEM_APPLE:
+  case ITEM_HARD_NUT:
+  case ITEM_MINT:
+  case ITEM_LUCKY_PEPPER:
     return 1;
   }
   return 0;
 }
 
+// Clears the message window and writes message into it.
 void ItemMenu_DrawMsg(s32 unused, s32 message) {
   struct InventoryMenuState *menu;
 
@@ -2305,6 +2610,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message) {
   UiText_DrawCharacterAtOffsetFar(message, (s32)menu->messageWindow, 0, 0);
 }
 
+// Hides the icon of each of the 32 list entries whose item is 0.
 void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 slot;
@@ -2312,24 +2618,25 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
   for (slot = 0; slot < 32; slot++) {
     if (items[slot] == 0) {
       UiIcon_PrepareObject(menu->entryIcons[slot]);
-      menu->entryIcons[slot]->active = 13;
+      menu->entryIcons[slot]->active = ICON_HIDDEN;
     }
   }
 }
 
-s32 ItemMenu_Count(s32 owner_id) {
-  s32 item_id;
+// Returns how many of member ownerId's 15 inventory slots hold an item.
+s32 ItemMenu_Count(s32 ownerId) {
+  s32 itemId;
   s32 remaining;
   s32 count;
   u16 *slots;
 
   count = 0;
-  slots = UnitGetFar(owner_id)->inventory;
-  remaining = 0xE;
+  slots = UnitGetFar(ownerId)->inventory;
+  remaining = INVENTORY_SLOTS - 1;
   do {
-    item_id = ITEM_ID_MASK & *slots;
+    itemId = ITEM_ID_MASK & *slots;
     slots += 1;
-    if (item_id != 0) {
+    if (itemId != 0) {
       count += 1;
     }
     remaining -= 1;
@@ -2337,33 +2644,38 @@ s32 ItemMenu_Count(s32 owner_id) {
   return count;
 }
 
+// Returns how many of item (an item id) member owner holds: the quantity of
+// its first stack, or 0. The Spanish and Italian editions add up every stack
+// of it.
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item) {
-  struct BattleUnit *state;
+  struct BattleUnit *unit;
   s32 i;
   s32 quantity;
 
   quantity = 0;
-  state = UnitGetFar(owner);
+  unit = UnitGetFar(owner);
   i = 0;
   do {
-    if (state->inventory[i] != 0 &&
-        (state->inventory[i] & ITEM_ID_MASK) == item) {
+    if (unit->inventory[i] != 0 &&
+        (unit->inventory[i] & ITEM_ID_MASK) == item) {
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-      quantity += (state->inventory[i] & INVENTORY_QUANTITY_MASK) >>
+      quantity += (unit->inventory[i] & INVENTORY_QUANTITY_MASK) >>
                   INVENTORY_QUANTITY_SHIFT;
       quantity++;
 #else
-      quantity = (state->inventory[i] & INVENTORY_QUANTITY_MASK) >>
+      quantity = (unit->inventory[i] & INVENTORY_QUANTITY_MASK) >>
                  INVENTORY_QUANTITY_SHIFT;
       quantity++;
       break;
 #endif
     }
     i++;
-  } while (i <= 14);
+  } while (i < INVENTORY_SLOTS);
   return quantity;
 }
 
+// Copies member owner's items into the list items (32 entries), skipping empty
+// slots and clearing the rest. Returns how many there are. mode is not used.
 s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode) {
   s32 count;
   s32 i;
@@ -2372,7 +2684,7 @@ s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode) {
     items[i] = 0;
   }
   count = 0;
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     items[i] = 0;
     if (owner->inventory[i] != 0) {
       items[count] = owner->inventory[i];
@@ -2382,6 +2694,9 @@ s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode) {
   return count;
 }
 
+// Loads each listed item's icon into its item icon sprite, the first 15 entries
+// of items, and hides the icons of empty entries. style 0 draws the list's
+// icons; any other style the equipment view's (graphics kind 7).
 void ItemMenu_DrawIcons(u16 *items, s32 style) {
   s32 remaining;
   u16 *entries;
@@ -2390,7 +2705,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
 
   icons = ((struct InventoryMenuState *)gMenuWork)->entryIcons;
   entries = items;
-  remaining = 14;
+  remaining = INVENTORY_SLOTS - 1;
   do {
     itemId = *entries++;
     if (itemId != 0) {
@@ -2406,6 +2721,8 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
   Menu_HideEmptyEntryIcons(items);
 }
 
+// Shows member ownerId's items in the item window, laid out for layout mode
+// (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   struct InventoryMenuState *menu;
   struct BattleUnit *owner;
@@ -2423,8 +2740,15 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
                                     24);
 }
 
-void InventoryMenu_NoOp(void) {}
+// Does nothing; nothing calls it.
+UNUSED void InventoryMenu_NoOp(void) {}
 
+// Shows in the status panel what the item in owner's inventory slot would mean
+// to member target: for a usable item, target's status; for equipment, target's
+// stats with it equipped; for a Psynergy item, the Psynergy it teaches. When
+// target is someone else, the item is put into a copy of target's inventory for
+// the preview, making room first if it is full, and target is restored after.
+// mode 1 redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   /* FAKEMATCH: Reusing the expired owner value for the saved unit keeps
      owner in r8 and style in r10; a separate saved pointer swaps those
@@ -2438,21 +2762,21 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   s32 equipped;
 
   if (mode == 1)
-    style = 0x100;
+    style = STATUS_PANEL_LOWER_ONLY;
   switch (Item_GetDirectFar(item & ITEM_ID_MASK)->type) {
-  case 0:
+  case 0: // usable items
     Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
     break;
-  case 1:
-  case 2:
-  case 3:
-  case 4:
-  case 5:
+  case 1: // weapons
+  case 2: // armor
+  case 3: // shields, gloves and armlets
+  case 4: // helmets
+  case 5: // boots
   case 7:
-  case 8:
-  case 9:
+  case 8: // rings
+  case 9: // shirts
     if (owner == target) {
-      style |= 2;
+      style |= STATUS_PANEL_EQUIP;
       Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
     } else {
       s32 size;
@@ -2466,7 +2790,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
         item &= ~INVENTORY_EQUIPPED;
         equipped = Inventory_AddItemFar(target, item);
         if (equipped != -1) {
-          style |= 2;
+          style |= STATUS_PANEL_EQUIP;
           Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, equipped,
                                     style);
         } else {
@@ -2480,9 +2804,9 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       MemFree((void *)owner);
     }
     break;
-  case 6:
+  case 6: // Psynergy items
     if (target == owner) {
-      style |= 4;
+      style |= STATUS_PANEL_LEARN;
       Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
     } else {
       s32 size;
@@ -2497,7 +2821,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       if (equipped != 0) {
         equipped = Inventory_AddItemFar(target, item);
         if (equipped != -1) {
-          style |= 4;
+          style |= STATUS_PANEL_LEARN;
           Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, equipped,
                                     style);
         } else {
@@ -2515,24 +2839,27 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   }
 }
 
+// Makes room in member owner's inventory: if no slot is free, removes the whole
+// stack in the first slot that is not equipped. Returns 1 when a slot is free
+// (or was freed), 0 otherwise.
 s32 Inventory_RemoveFirstUnflagged(s32 owner) {
-  struct BattleUnit *state = UnitGetFar(owner);
+  struct BattleUnit *unit = UnitGetFar(owner);
   s32 result = 0;
   s32 i;
 
-  for (i = 0; i < 15; i++) {
-    if (state->inventory[i] == 0) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
+    if (unit->inventory[i] == 0) {
       result = 1;
       break;
     }
-    if ((state->inventory[i] & INVENTORY_EQUIPPED) == 0) {
-      s32 quantity = state->inventory[i] >> INVENTORY_QUANTITY_SHIFT;
+    if ((unit->inventory[i] & INVENTORY_EQUIPPED) == 0) {
+      s32 quantity = unit->inventory[i] >> INVENTORY_QUANTITY_SHIFT;
       s32 count = quantity + 1;
-      s32 cnt;
+      s32 n;
 
       if (quantity == 0)
         count = 1;
-      for (cnt = 0; cnt < count; cnt++)
+      for (n = 0; n < count; n++)
         result = Inventory_RemoveFar(owner, i);
       if (result != 2)
         return 0;
@@ -2545,6 +2872,8 @@ s32 Inventory_RemoveFirstUnflagged(s32 owner) {
 
 #if EDITION_INTERNATIONAL
 
+// The x and y of the item command cursor on column and row of the command grid
+// (three commands to a row).
 s32 ItemMenu_CmdCursorX(s32 column, s32 row) {
   if (column > 2 || row > 2 || column < 0 || row < 0)
     return 0;
@@ -2555,35 +2884,47 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row) {
   s32 y;
 
   (void)column;
-  y = 0x1E;
+  y = 30;
   if (row != 0) {
-    y = 0x26;
+    y = 38;
   }
   return y;
 }
 #endif
 
+// Each item command's state in the grid.
+#define COMMAND_DISABLED (-1)
+#define COMMAND_AVAILABLE 1
+
+// The item command grid: Use, Equip and Details on the top row, Give, Remove
+// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
+// them). Disabled commands are grey and refuse A. The status panel follows the
+// cursor: the owner's status on Use, the stats with the item equipped on Equip
+// and Details, and without it on the bottom row, where Give also shows who can
+// equip it. The cursor starts on the command chosen last, or on the first
+// available one. Returns the command chosen, or -1 when the player backs out.
 s32 ItemMenu_ChooseCmd(void) {
   struct InventoryMenuState *menu;
   s8 commandStorage[6];
   u16 *redrawFlag;
-  s32 col;
-  s32 saved;
+  s32 column;
+  s32 lastCommand;
   s32 row;
   s32 index;
-  s32 needRedraw;
+  s32 redraw;
   s8 *commandStates;
   s32 x;
   s32 y;
 
   index = 0;
-  col = 0;
+  column = 0;
   row = 0;
   menu = gMenuWork;
-  needRedraw = 1;
+  redraw = 1;
   commandStates = commandStorage;
   ItemMenu_BuildCmd(commandStates);
   redrawFlag = &menu->flags;
+  // Draw the item's name and the command grid, unless they are up already.
   if (*redrawFlag != 1) {
     s32 messageWindow;
 
@@ -2592,7 +2933,7 @@ s32 ItemMenu_ChooseCmd(void) {
     messageWindow = (s32)menu->messageWindow;
     ItemMenu_SetMsgWin7();
     RenderOutput_RedrawSavedRectFar((void *)messageWindow);
-    UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 0x10, 3);
+    UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     ItemMenu_DrawItemHead();
     ItemMenu_DrawCmd(commandStates, messageWindow);
 #if EDITION_INTERNATIONAL
@@ -2609,55 +2950,57 @@ s32 ItemMenu_ChooseCmd(void) {
   }
   *redrawFlag = 0;
 
-  saved = (s8)menu->listMode;
-  if (saved == -1) {
-    if (commandStates[2] == 1) {
-      col = 2;
+  // Start on the command chosen last, or on the first one available.
+  lastCommand = (s8)menu->listMode;
+  if (lastCommand == -1) {
+    if (commandStates[ITEM_COMMAND_INSPECT] == COMMAND_AVAILABLE) {
+      column = 2;
       row = 0;
     }
-    if (commandStates[3] == 1) {
-      col = 0;
+    if (commandStates[ITEM_COMMAND_GIVE] == COMMAND_AVAILABLE) {
+      column = 0;
       row = 1;
     }
-    if (commandStates[1] == 1) {
-      col = 1;
+    if (commandStates[ITEM_COMMAND_EQUIP] == COMMAND_AVAILABLE) {
+      column = 1;
       row = 0;
     }
-    if (commandStates[4] == 1) {
-      col = 1;
+    if (commandStates[ITEM_COMMAND_REMOVE] == COMMAND_AVAILABLE) {
+      column = 1;
       row = 1;
     }
-    if (commandStates[0] == 1) {
-      col = 0;
+    if (commandStates[ITEM_COMMAND_USE] == COMMAND_AVAILABLE) {
+      column = 0;
       row = 0;
     }
   } else {
-    col = (s8)(saved % 3);
-    row = (s8)(saved / 3);
-    index = row * 3 + col;
+    column = (s8)(lastCommand % 3);
+    row = (s8)(lastCommand / 3);
+    index = row * 3 + column;
   }
 #if EDITION_INTERNATIONAL
-  x = ItemMenu_CmdCursorX(col, row);
-  y = ItemMenu_CmdCursorY(col, row);
+  x = ItemMenu_CmdCursorX(column, row);
+  y = ItemMenu_CmdCursorY(column, row);
   UiMenu_SlideCursor(x, y);
 #else
-  UiMenu_SlideCursor(col * 40 + 86, row * 8 + 30);
+  UiMenu_SlideCursor(column * 40 + 86, row * 8 + 30);
 #endif
 
   for (;;) {
-    if (GameFlag_TestFar(0x150) != 0)
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0)
       break;
-    if (needRedraw != 0) {
-      needRedraw = 0;
-      col = (col + 3) % 3;
+    if (redraw != 0) {
+      redraw = 0;
+      column = (column + 3) % 3;
       row = (row + 2) % 2;
-      index = row * 3 + col;
+      index = row * 3 + column;
       EquipmentMenu_StartCompatibilityIndicators();
+      // Preview the item in the status panel for the command under the cursor.
       if (index > 2) {
         menu->equipPreview = 1;
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                   menu->paneOwner[0]);
-        if (index == 3) {
+        if (index == ITEM_COMMAND_GIVE) {
           Scheduler_AddOrUpdateCallback(
               &EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
         }
@@ -2667,47 +3010,47 @@ s32 ItemMenu_ChooseCmd(void) {
                                   menu->paneOwner[0]);
       } else {
         Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, menu->paneOwner[0],
-                                  0, 0);
+                                  0, STATUS_PANEL_EXPERIENCE);
       }
     }
 #if EDITION_INTERNATIONAL
-    x = ItemMenu_CmdCursorX(col, row);
-    y = ItemMenu_CmdCursorY(col, row);
+    x = ItemMenu_CmdCursorX(column, row);
+    y = ItemMenu_CmdCursorY(column, row);
     UiMenu_PositionCursor(x, y);
 #else
-    UiMenu_PositionCursor(col * 40 + 86, row * 8 + 30);
+    UiMenu_PositionCursor(column * 40 + 86, row * 8 + 30);
 #endif
     WaitFrames(1);
 
-    if ((gKeyState & KEY_A) != 0) {
-      if (commandStates[index] == -1) {
-        AudioCommand_PlayFar(114);
+    if ((gKeysPressed & KEY_A) != 0) {
+      if (commandStates[index] == COMMAND_DISABLED) {
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       } else {
         switch (index) {
-        case 0:
-          AudioCommand_PlayFar(174);
+        case ITEM_COMMAND_USE:
+          AudioCommand_PlayFar(174); // Use
           break;
-        case 1:
-          AudioCommand_PlayFar(175);
+        case ITEM_COMMAND_EQUIP:
+          AudioCommand_PlayFar(175); // Equip
           break;
-        case 2:
-        case 3:
-        case 5:
-          AudioCommand_PlayFar(112);
+        case ITEM_COMMAND_INSPECT:
+        case ITEM_COMMAND_GIVE:
+        case ITEM_COMMAND_DROP:
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
           break;
-        case 4:
-          AudioCommand_PlayFar(117);
+        case ITEM_COMMAND_REMOVE:
+          AudioCommand_PlayFar(117); // Remove
           break;
         default:
-          AudioCommand_PlayFar(112);
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
           break;
         }
         menu->listMode = index;
         break;
       }
     }
-    if ((gKeyState & KEY_B) != 0) {
-      AudioCommand_PlayFar(113);
+    if ((gKeysPressed & KEY_B) != 0) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       index = -1;
       menu->listMode = index;
       break;
@@ -2715,20 +3058,20 @@ s32 ItemMenu_ChooseCmd(void) {
 
     if ((gKeysRepeat & KEY_UP) != 0) {
       row -= 1;
-      needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      redraw = 1;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_DOWN) != 0) {
       row += 1;
-      needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      redraw = 1;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      col += 1;
-      needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      column += 1;
+      redraw = 1;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_LEFT) != 0) {
-      col -= 1;
-      needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      column -= 1;
+      redraw = 1;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     }
   }
 
@@ -2737,9 +3080,11 @@ s32 ItemMenu_ChooseCmd(void) {
   return index;
 }
 
-#define COMMAND_DISABLED (-1)
-#define COMMAND_AVAILABLE 1
-
+// Fills commandStates (indexed by ItemMenuCommand) for the selected item:
+// Use for usable items the owner can use here and for field items, Equip for
+// equipment the owner can wear and is not wearing, Remove for worn equipment
+// that is not cursed, Give with someone to give to, Drop unless the item is
+// indispensable, and neither for cursed equipment being worn.
 void ItemMenu_BuildCmd(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
@@ -2747,7 +3092,7 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
   menu = gMenuWork;
   item = Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0]);
 
-  if (item->type == 0) {
+  if (item->type == 0) { // usable items
     commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
     commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
   } else {
@@ -2797,62 +3142,72 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
     commandStates[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
 }
 
+// The x of the command grid's middle column.
 #if EDITION_INTERNATIONAL
-#define ITEM_TEXT_X 0x20
+#define ITEM_TEXT_X 32
 #else
-#define ITEM_TEXT_X 0x28
+#define ITEM_TEXT_X 40
 #endif
 
-void ItemMenu_DrawCmd(const s8 *command_states, s32 window) {
+#define TEXT_COLOR_DISABLED 14
+
+// Writes the six command names into window, the disabled ones in grey.
+void ItemMenu_DrawCmd(const s8 *commandStates, s32 window) {
   s32 disabled;
   s32 value;
   u32 message;
 
-  UiWork_SetParamNibbleFar(0xf);
-  value = command_states[ITEM_COMMAND_USE];
-  disabled = -1;
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  value = commandStates[ITEM_COMMAND_USE];
+  disabled = COMMAND_DISABLED;
   if (value == disabled)
-    UiWork_SetParamNibbleFar(0xe);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
 
   message = MsgItemCommandUse;
-  UiText_DrawCharacterAtOffsetFar(message, window, 0, 0x18);
-  UiWork_SetParamNibbleFar(0xf);
-  if (command_states[ITEM_COMMAND_EQUIP] == disabled)
-    UiWork_SetParamNibbleFar(0xe);
-
-  UiText_DrawCharacterAtOffsetFar(message + 1, window, ITEM_TEXT_X, 0x18);
-  UiWork_SetParamNibbleFar(0xf);
-  if (command_states[ITEM_COMMAND_GIVE] == disabled)
-    UiWork_SetParamNibbleFar(0xe);
-
-  UiText_DrawCharacterAtOffsetFar(message + 2, window, 0, 0x20);
-  UiWork_SetParamNibbleFar(0xf);
-  if (command_states[ITEM_COMMAND_DROP] == disabled)
-    UiWork_SetParamNibbleFar(0xe);
-
-  UiText_DrawCharacterAtOffsetFar(message + 3, window, 0x50, 0x20);
-  UiWork_SetParamNibbleFar(0xf);
-  if (command_states[ITEM_COMMAND_INSPECT] == disabled)
-    UiWork_SetParamNibbleFar(0xe);
-
-  UiText_DrawCharacterAtOffsetFar(message + 4, window, 0x50, 0x18);
-  UiWork_SetParamNibbleFar(0xf);
-  if (command_states[ITEM_COMMAND_REMOVE] == disabled)
-    UiWork_SetParamNibbleFar(0xe);
-
-  UiText_DrawCharacterAtOffsetFar(message + 5, window, ITEM_TEXT_X, 0x20);
-  UiWork_SetParamNibbleFar(0xf);
+  UiText_DrawCharacterAtOffsetFar(message, window, 0, 24); // "Use"
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
+    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+  UiText_DrawCharacterAtOffsetFar(message + 1, window, ITEM_TEXT_X,
+                                  24); // "Equip"
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  if (commandStates[ITEM_COMMAND_GIVE] == disabled)
+    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+  UiText_DrawCharacterAtOffsetFar(message + 2, window, 0, 32); // "Give"
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  if (commandStates[ITEM_COMMAND_DROP] == disabled)
+    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+  UiText_DrawCharacterAtOffsetFar(message + 3, window, 80, 32); // "Drop"
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
+    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+  UiText_DrawCharacterAtOffsetFar(message + 4, window, 80, 24); // "Details"
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
+    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+  // "Remove"
+  UiText_DrawCharacterAtOffsetFar(message + 5, window, ITEM_TEXT_X, 32);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 }
 
+// Says how owner can use itemId (an inventory entry) from the item menu:
+// 0  the item works on the field (BattleFx_HasTriggerFar), or its action is
+//    usable neither in the field nor in battle, and is used once the menu
+//    closes;
+// 1  usable in the field: choose a party member to use it on;
+// 2  usable in the field on the whole party at once (range 0xff);
+// -1 it cannot be used here: it has no action, it is equipment the owner
+//    cannot wear or of use type 3, or its action is usable only in battle.
+// Usable items always qualify; equipment only when the owner can wear it.
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
-  s32 masked = itemId;
+  s32 itemIdOnly = itemId;
   struct ItemDefinition *def;
   s32 result = -1;
 
-  masked &= ITEM_ID_MASK;
-  def = Item_GetDirectFar(masked);
+  itemIdOnly &= ITEM_ID_MASK;
+  def = Item_GetDirectFar(itemIdOnly);
 
-  if (BattleFx_HasTriggerFar(masked) != 0) {
+  if (BattleFx_HasTriggerFar(itemIdOnly) != 0) {
     return 0;
   }
 
@@ -2861,9 +3216,9 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
         BattleActGet(def->actionId & OWNER_ACTION_ID_MASK);
 
     if (def->actionId != 0) {
-      if (def->type != 0) {
+      if (def->type != 0) { // equipment
         if (def->useType != 3) {
-          if (Item_CanOwnerEquip(owner, masked) != 0) {
+          if (Item_CanOwnerEquip(owner, itemIdOnly) != 0) {
             result = 1;
           }
         }
@@ -2872,10 +3227,10 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
       }
 
       if (result == 1) {
-        s32 mask = 0x80;
-        u8 flags = action->targetFlag;
+        s32 mask = ACTION_USABLE_IN_BATTLE;
+        u8 flags = action->flags;
 
-        if ((flags & 0x40) != 0) {
+        if ((flags & ACTION_USABLE_IN_FIELD) != 0) {
           u8 range = action->range;
           result = (range == 0xff) ? 2 : 1;
         } else {
@@ -2888,10 +3243,13 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   return result;
 }
 
+// After the selected item is used: an item of use type 2 breaks one time in
+// eight, with the break sound and "It broke!".
 void ItemMenu_TryBreak(void) {
   struct InventoryMenuState *menu;
 
   menu = gMenuWork;
+  // One time in eight.
   if ((Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0])->useType ==
        2) &&
       (Random16() < 0x2000U)) {
@@ -2904,6 +3262,8 @@ void ItemMenu_TryBreak(void) {
   }
 }
 
+// Opens the details window (top left, 13 by 10 tiles) and describes the item
+// in pane itemIndex there. Returns 1.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct InventoryMenuState *menu = gMenuWork;
 
@@ -2917,81 +3277,87 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   return 1;
 }
 
+// The item menu's Details screen: describes the item entry value in a large
+// window (the whole top half in the international editions) and waits for A or
+// B. Up and Down move an unused counter from 0 to 4. Returns the counter, or
+// -1 after B.
 s32 Menu_SelectQuantity(s32 value) {
 #if EDITION_INTERNATIONAL
   s32 changed = 1;
   struct InventoryMenuState *menu = gMenuWork;
-  struct RenderOutput *confirmState = menu->selectedItemIcon;
+  struct RenderOutput *itemIcon = menu->selectedItemIcon;
 #else
   struct InventoryMenuState *menu = gMenuWork;
   s32 changed = 1;
 #endif
   s32 window;
-  s32 quantity = 0;
+  s32 counter = 0;
 
 #if EDITION_INTERNATIONAL
-  confirmState->active = 13;
+  itemIcon->active = ICON_HIDDEN;
   window = UiWindow_CreateFar(0, 0, 30, 10, 2);
 #else
   window = UiWindow_CreateFar(0, 0, 13, 10, 2);
 #endif
+  // Freeze the party figures and hide the cursor meanwhile.
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
   {
-    struct RenderOutput *iconState = menu->cursor;
-    iconState->active = 13;
+    struct RenderOutput *cursor = menu->cursor;
+    cursor->active = ICON_HIDDEN;
   }
   Palette_CopyObjectBankToBackground14();
   WaitFrames(1);
 
   for (;;) {
-    if (GameFlag_TestFar(336) != 0)
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0)
       break;
 
     if (changed != 0) {
       changed = 0;
-      quantity = (quantity + 5) % 5;
+      counter = (counter + 5) % 5;
       ItemMenu_DrawItemDetails(window, value);
     }
 
-    if (gKeyState & 1)
+    if (gKeysPressed & KEY_A)
       break;
-    if (gKeyState & 2) {
-      quantity = -1;
+    if (gKeysPressed & KEY_B) {
+      counter = -1;
       break;
     }
 
-    if (gKeysRepeat & 0x40) {
-      quantity -= 1;
+    if (gKeysRepeat & KEY_UP) {
+      counter -= 1;
       changed = 1;
     }
-    if (gKeysRepeat & 0x80) {
-      quantity += 1;
+    if (gKeysRepeat & KEY_DOWN) {
+      counter += 1;
       changed = 1;
     }
     WaitFrames(1);
   }
 
+  // Close the window and bring the menu back.
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
   WaitFrames(1);
   UiWork_FinalizeFar((void *)window, 1);
   RenderOutput_RedrawSavedRectFar(menu->mainWindow);
   Palette_LightenBankHighlight(14);
   {
-    s32 delay = 0xc80;
+    s32 priority = 0xc80;
 
     Scheduler_AddOrUpdateCallback(
-        (const void *)Menu_UpdateEntryObjectTransforms, delay);
+        (const void *)Menu_UpdateEntryObjectTransforms, priority);
   }
 
   {
-    struct RenderOutput *iconState = menu->cursor;
+    struct RenderOutput *cursor = menu->cursor;
 #if EDITION_INTERNATIONAL
-    iconState->active = 1;
+    cursor->active = ICON_SHOWN;
 #else
     u8 one = 1;
 
-    iconState->active = one;
+    cursor->active = one;
     menu->flags = one;
 #endif
   }
@@ -2999,33 +3365,41 @@ s32 Menu_SelectQuantity(s32 value) {
   UiWindow_DrawFrameFar(13, 0, 17, 10);
 #endif
 
-  return quantity;
+  return counter;
 }
 
+// Writes the description of the item entry item into window, one line a row:
+// for equipment its Attack and Defense bonuses, then each of its effects
+// (flat bonuses, rates as multipliers, elemental Power and Resist with the
+// element's icon, and the effects that are only text), whether it is cursed or
+// bestows Psynergy, whether it is used up or may break, and for a stack how
+// many there are. An item with nothing to say is rare, important, or
+// undescribed.
 void ItemMenu_DrawItemDetails(s32 window, s32 item) {
   struct ItemDefinition *def;
   s32 i;
-  s32 found;
+  s32 hasEffects;
   s32 amount;
-  s32 consumable;
+  s32 bestowsPsynergy;
   s8 row;
 
   row = 0;
-  consumable = 0;
+  bestowsPsynergy = 0;
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
+  // Equipment: a heading, then its Attack and Defense bonuses.
   if (def->type != 0) {
-    found = 0;
+    hasEffects = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
       for (i = 0; i < 4; i++) {
         if (def->effects[i].kind != 0 || def->useType == 3) {
-          found = 1;
+          hasEffects = 1;
           break;
         }
       }
     } else {
-      found = 1;
+      hasEffects = 1;
     }
-    if (found == 1) {
+    if (hasEffects == 1) {
       UiText_DrawCharacterAtOffsetFar(MsgEquipEffectHeading, window, 16, 0);
       row = 1;
     }
@@ -3042,24 +3416,27 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
       row++;
     }
   }
+  // Each of its effects.
   for (i = 0; i < 4; i++) {
     if (def->effects[i].kind == 0)
       continue;
     amount = def->effects[i].amount;
     switch (def->effects[i].kind) {
-    case 0:
+    case ITEM_EFFECT_NONE:
       break;
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 26:
+    case ITEM_EFFECT_ADD_HP:
+    case ITEM_EFFECT_ADD_HP_REGEN:
+    case ITEM_EFFECT_ADD_PP:
+    case ITEM_EFFECT_ADD_PP_REGEN:
+    case ITEM_EFFECT_ADD_AGILITY:
+    case ITEM_EFFECT_ADD_LUCK:
+    case 26: // Turns
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       break;
+    // Power (15 to 18) and Resist (19 to 22) of the four elements, after
+    // the element's icon.
     case 15:
     case 16:
     case 17:
@@ -3074,14 +3451,15 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
                                       window, 8, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       break;
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
+    // Rates, in tenths: shown as a multiplier from 0.0 to 1.9.
+    case ITEM_EFFECT_SCALE_HP:
+    case ITEM_EFFECT_SCALE_HP_REGEN:
+    case ITEM_EFFECT_SCALE_PP:
+    case ITEM_EFFECT_SCALE_PP_REGEN:
+    case ITEM_EFFECT_SCALE_ATTACK:
+    case ITEM_EFFECT_SCALE_DEFENSE:
+    case ITEM_EFFECT_SCALE_AGILITY:
+    case ITEM_EFFECT_SCALE_LUCK:
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
 #if EDITION_INTERNATIONAL
@@ -3108,37 +3486,38 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
       UiText_DrawCharacterAtOffsetFar(MsgEffectRateSuffix, window, 72, row * 8);
 #endif
       break;
-    case 23:
-    case 25:
-    case 27:
+    case 23: // "Critical Hits increase"
+    case 25: // "The curse can be removed"
+    case 27: // "Boosts monster encounters"
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       break;
     }
     row++;
   }
+  // Curses, bestowed Psynergy and how the item is used up.
   if (def->flags & ITEM_CURSED) {
     UiText_DrawCharacterAtOffsetFar(MsgItemCursed, window, 0, row * 8);
     row++;
   }
-  if (def->useType == 3) {
+  if (def->useType == 3) { // bestows Psynergy
     UiText_DrawCharacterAtOffsetFar(MsgBestowsPsynergy, window, 0, row * 8);
-    consumable = 1;
+    bestowsPsynergy = 1;
     row++;
   }
   if (def->useType != 4 && def->useType != 0) {
-    if (!consumable) {
+    if (!bestowsPsynergy) {
       UiText_DrawCharacterAtOffsetFar(MsgUsesHeading, window, 16, row * 8);
       row++;
     }
     switch (def->useType) {
     case 0:
       break;
-    case 1:
+    case 1: // used up
       UiText_DrawCharacterAtOffsetFar(MsgSingleUse, window, 0, row * 8);
       row++;
       break;
-    case 2: {
+    case 2: { // may break
       s32 m;
 
       if (item & INVENTORY_BROKEN) {
@@ -3160,6 +3539,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
     }
     }
   }
+  // How many there are in a stack.
   if (def->flags & ITEM_STACKABLE) {
     if (row != 0)
       row++;
@@ -3176,28 +3556,32 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
 #endif
     row++;
   }
-  found = 0;
+  // Nothing written yet: rare, important, or nothing known.
+  hasEffects = 0;
   if (row == 0) {
-    if (def->flags & 4) {
+    if (def->flags & 4) { // rare
       UiText_DrawCharacterAtOffsetFar(MsgRareItem, window, 0, 0);
-      found = 1;
+      hasEffects = 1;
     }
-    if (!found) {
+    if (!hasEffects) {
       if (def->flags & ITEM_INDISPENSABLE) {
         UiText_DrawCharacterAtOffsetFar(MsgImportantItem, window, 0, 0);
-        found = 1;
+        hasEffects = 1;
       }
-      if (!found)
+      if (!hasEffects)
         UiText_DrawCharacterAtOffsetFar(MsgDetailsUnknown, window, 0, 0);
     }
   }
 }
 
+// Writes a signed stat change at (x, y) of window: the number, with a plus or
+// minus sign just before its first digit.
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
   s32 digits;
   s32 magnitude;
 
   UiText_DrawNumberInWindowFar(delta, 3, window, x, y);
+  // Count the digits of |delta| to place the sign.
   digits = 1;
   magnitude = delta;
   if (delta < 0) {
@@ -3222,6 +3606,7 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
   }
 }
 
+// Moves the item window to row 5 of the right-hand side.
 void ItemMenu_SetItemWin5(void) {
   UiWindow_SetBounds(
       (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
@@ -3229,6 +3614,7 @@ void ItemMenu_SetItemWin5(void) {
       13, 5, 17, 10);
 }
 
+// Moves the item window to row 3 of the right-hand side.
 void ItemMenu_SetItemWin3(void) {
   UiWindow_SetBounds(
       (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
@@ -3236,6 +3622,7 @@ void ItemMenu_SetItemWin3(void) {
       13, 3, 17, 10);
 }
 
+// Makes the message window, along the top right, 5 rows tall.
 void ItemMenu_SetMsgWin5(void) {
   UiWindow_SetBounds(
       (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
@@ -3243,6 +3630,7 @@ void ItemMenu_SetMsgWin5(void) {
       13, 0, 17, 5);
 }
 
+// Makes the message window 6 rows tall.
 void ItemMenu_SetMsgWin6(void) {
   UiWindow_SetBounds(
       (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
@@ -3250,6 +3638,7 @@ void ItemMenu_SetMsgWin6(void) {
       13, 0, 17, 6);
 }
 
+// Makes the message window 7 rows tall.
 void ItemMenu_SetMsgWin7(void) {
   UiWindow_SetBounds(
       (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
@@ -3257,6 +3646,7 @@ void ItemMenu_SetMsgWin7(void) {
       13, 0, 17, 7);
 }
 
+// Makes the message window 3 rows tall.
 void ItemMenu_SetMsgWin3(void) {
   UiWindow_SetBounds(
       (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
@@ -3264,6 +3654,7 @@ void ItemMenu_SetMsgWin3(void) {
       13, 0, 17, 3);
 }
 
+// The hand cursor and the "How many?" question of the quantity chooser.
 #if EDITION_INTERNATIONAL
 #define GIVE_CURSOR_X 128
 #define GIVE_ASK_X 32
@@ -3274,37 +3665,44 @@ void ItemMenu_SetMsgWin3(void) {
 #define GIVE_ASK_Y 32
 #endif
 
+// Asks how many of the selected item stack to give or drop: Left and Right
+// choose a number from 1 to range (shown as base + 1 up to base + range on a
+// dial of digit sprites), with the owner's remaining count and, when giving
+// (single 0), the receiver's new count beside their names. Returns the number
+// less one, or -1 when the player backs out.
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
   s32 quantity = base;
-  s32 slot;
+  s32 block;
   s32 changed;
-  s32 otherCount;
-  s32 count;
+  s32 receiverCount;
+  s32 ownerCount;
   struct InventoryMenuState *menu = gMenuWork;
   void *tiles = Runtime_AllocateBlock(14, 0x400);
   s32 window;
-  struct RenderOutput *object;
+  struct RenderOutput *rightDial;
 
   changed = 1;
-  otherCount = 0;
+  receiverCount = 0;
   window = (s32)menu->messageWindow;
   ItemMenu_SetMsgWin7();
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+  // How many each member holds now.
   if (single == 0)
-    otherCount = InventoryMenu_GetItemQuantity(
+    receiverCount = InventoryMenu_GetItemQuantity(
         menu->paneOwner[1], menu->selectedItems[0] & ITEM_ID_MASK);
-  count = InventoryMenu_GetItemQuantity(menu->paneOwner[0],
-                                        menu->selectedItems[0] & ITEM_ID_MASK);
-  slot = Resource_FindFreeEntry();
-  if (slot != 96) {
-    VramBlock_LoadCached(slot, 256, 0);
-    RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 48,
+  ownerCount = InventoryMenu_GetItemQuantity(
+      menu->paneOwner[0], menu->selectedItems[0] & ITEM_ID_MASK);
+  // Two dial sprites, left and right of the number.
+  block = Resource_FindFreeEntry();
+  if (block != 96) { // 96: no free VRAM block
+    VramCache_Load(block, 256, 0);
+    RenderOutput_CreateFar(block, 0x40004000, (struct RenderInput *)window, 48,
                            32);
-    object = RenderOutput_CreateFar(slot, 0x40004000,
-                                    (struct RenderInput *)window, 80, 32);
-    object->oam.index += 4;
+    rightDial = RenderOutput_CreateFar(block, 0x40004000,
+                                       (struct RenderInput *)window, 80, 32);
+    rightDial->oam.index += 4;
     UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
-    while (!GameFlag_TestFar(0x150)) {
+    while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
       if (changed) {
         changed = 0;
         quantity = (range + quantity) % range;
@@ -3316,21 +3714,22 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
         Shop_FillSelectorFar(range + base, 0, tiles);
         Shop_FillSelectorFar(base + quantity + 1, 10, tiles);
         Shop_FillSelectorFar(base, 2, tiles);
-        VramBlock_LoadCached(slot, 256, tiles);
+        VramCache_Load(block, 256, tiles);
         UiText_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
         UiText_DrawCharacterAtOffsetFar(
             (menu->selectedItems[0] & ITEM_ID_MASK) + MsgItemName, window, 16,
             8);
-        UiText_DrawNumberInWindowFar(count - quantity - 1, 2, window, 16, 24);
+        UiText_DrawNumberInWindowFar(ownerCount - quantity - 1, 2, window, 16,
+                                     24);
 #if EDITION_INTERNATIONAL
         if (single == 0)
-          UiText_DrawNumberInWindowFar(otherCount + quantity + 1, 2, window, 80,
-                                       24);
+          UiText_DrawNumberInWindowFar(receiverCount + quantity + 1, 2, window,
+                                       80, 24);
 #else
         UiText_DrawCharacterAtOffsetFar(MsgItemCounter, window, 32, 24);
         if (single == 0) {
-          UiText_DrawNumberInWindowFar(otherCount + quantity + 1, 2, window, 80,
-                                       24);
+          UiText_DrawNumberInWindowFar(receiverCount + quantity + 1, 2, window,
+                                       80, 24);
           UiText_DrawCharacterAtOffsetFar(MsgItemCounter, window, 96, 24);
         }
 #endif
@@ -3340,25 +3739,26 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
           UiText_DrawStringAtOffsetFar(UnitGetFar(menu->paneOwner[1])->name,
                                        window, 80, 16);
       }
-      if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(112);
+      // A confirms, B backs out, Left and Right change the number.
+      if (gKeysPressed & KEY_A) {
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         quantity = -1;
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         break;
       }
       UiMenu_PositionCursor(GIVE_CURSOR_X, 40);
       if (gKeysRepeat & KEY_LEFT) {
         quantity--;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
       if (gKeysRepeat & KEY_RIGHT) {
         quantity++;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
@@ -3366,18 +3766,20 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
   RenderOutput_ClearListFar((void *)window);
   Runtime_ReleaseHeapBlock(14);
-  menu->selectedItemIcon->active = 13;
-  if (GameFlag_TestFar(0x150))
+  menu->selectedItemIcon->active = ICON_HIDDEN;
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     quantity = -1;
   return quantity;
 }
 
+// Shows the selected item at the top of the message window: its icon, its
+// owner's name and its name.
 void ItemMenu_DrawItemHead(void) {
   struct InventoryMenuState *menu = gMenuWork;
 
   Resource_LoadByModeIntoSlotFar(2, menu->selectedItems[0],
                                  (u8)menu->selectedItemIcon->index, 0);
-  menu->selectedItemIcon->active = 1;
+  menu->selectedItemIcon->active = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
   UiIcon_PrepareObject(menu->selectedItemIcon);
@@ -3388,49 +3790,51 @@ void ItemMenu_DrawItemHead(void) {
                                   (s32)menu->messageWindow, 16, 8);
 }
 
-s32 ItemMenu_ConfirmDrop(s32 a0) {
-  s32 win;
-  s32 slot;
-  s32 text;
-  s32 label;
+// Asks whether to drop item (an inventory entry): its name, the question, and
+// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
+s32 ItemMenu_ConfirmDrop(s32 item) {
+  s32 window;
+  s32 itemId;
+  s32 question;
+  s32 answer;
   s32 rows = 2;
   s32 selection = 1;
   s32 changed = 1;
 
-  win = UiWindow_CreateFar(13, 3, 17, 10, 2);
-  slot = a0 & ITEM_ID_MASK;
-  Item_GetDirectFar(slot);
-  UiText_DrawCharacterAtOffsetFar(slot + MsgItemName, win, 24, 0);
-  text = MsgConfirmDrop;
+  window = UiWindow_CreateFar(13, 3, 17, 10, 2);
+  itemId = item & ITEM_ID_MASK;
+  Item_GetDirectFar(itemId);
+  UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 24, 0);
+  question = MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(text, win, 0, 16);
+  UiText_DrawCharacterAtOffsetFar(question, window, 0, 16);
 #else
-  UiText_DrawCharacterAtOffsetFar(text, win, 8, 16);
+  UiText_DrawCharacterAtOffsetFar(question, window, 8, 16);
 #endif
-  text++;
+  question++;
 #if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(text, win, 0, 24);
+  UiText_DrawCharacterAtOffsetFar(question, window, 0, 24);
 #else
-  UiText_DrawCharacterAtOffsetFar(text, win, 8, 24);
+  UiText_DrawCharacterAtOffsetFar(question, window, 8, 24);
 #endif
-  label = MsgYes;
-  UiText_DrawCharacterAtOffsetFar(label, win, 24, 40);
-  label++;
-  UiText_DrawCharacterAtOffsetFar(label, win, 24, 56);
+  answer = MsgYes;
+  UiText_DrawCharacterAtOffsetFar(answer, window, 24, 40);
+  answer++;
+  UiText_DrawCharacterAtOffsetFar(answer, window, 24, 56);
   UiMenu_SlideCursor(104, 86);
   for (;;) {
-    if (GameFlag_TestFar(0x150))
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
       break;
     if (changed) {
       changed = 0;
       selection = (selection + rows) % rows;
     }
-    if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(112);
+    if (gKeysPressed & KEY_A) {
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       selection = 1;
       break;
     }
@@ -3438,69 +3842,74 @@ s32 ItemMenu_ConfirmDrop(s32 a0) {
     if (gKeysRepeat & KEY_UP) {
       selection--;
       changed = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selection++;
       changed = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     }
     WaitFrames(1);
   }
-  if (GameFlag_TestFar(0x150)) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     selection = 1;
   }
-  UiWork_FinalizeFar((void *)win, 1);
+  UiWork_FinalizeFar((void *)window, 1);
   return selection;
 }
 
+// After giving or trading the selected item to the member in pane 1, offers to
+// equip it there, showing the stats it would give. Returns 0 when it is
+// equipped; 1 when the player says No, backs out, or the member cannot equip
+// it, and the member is left as before.
 s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
   s32 changed = 1;
   struct InventoryMenuState *menu = gMenuWork;
-  struct BattleUnit *state = UnitGetFar(menu->paneOwner[1]);
+  struct BattleUnit *unit = UnitGetFar(menu->paneOwner[1]);
   struct BattleUnit *saved;
-  s32 win;
-  s32 item;
+  s32 window;
+  s32 slot;
   s32 owner;
 
-  item = menu->selectedSlots[1];
+  slot = menu->selectedSlots[1];
   owner = menu->paneOwner[1];
-  ItemMenu_DrawEquipPreview(owner, item, 0, owner);
+  ItemMenu_DrawEquipPreview(owner, slot, 0, owner);
   saved = MemAlloc(BATTLE_UNIT_SIZE);
-  Iwram_CopyWords(saved, state, BATTLE_UNIT_SIZE);
-  win = (s32)menu->messageWindow;
+  Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
+  window = (s32)menu->messageWindow;
+  // Equip it now; a result of -1 or -2 means it cannot be equipped.
   if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
             2) <= 1) {
     selection = 1;
   } else {
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(MsgYes, win, 24, 24);
-    UiText_DrawCharacterAtOffsetFar(MsgYes + 1, win, 72, 24);
-    UiWindow_ClearInteriorTilesFar((void *)win, 16, 16, 96, 24);
-    UiText_DrawCharacterAtOffsetFar(MsgEquipThisItem, win, 0, 16);
+    UiText_DrawCharacterAtOffsetFar(MsgYes, window, 24, 24);
+    UiText_DrawCharacterAtOffsetFar(MsgYes + 1, window, 72, 24);
+    UiWindow_ClearInteriorTilesFar((void *)window, 16, 16, 96, 24);
+    UiText_DrawCharacterAtOffsetFar(MsgEquipThisItem, window, 0, 16);
     UiMenu_SlideCursor(110, 32);
 #else
-    UiText_DrawCharacterAtOffsetFar(MsgYes, win, 96, 0);
-    UiText_DrawCharacterAtOffsetFar(MsgYes + 1, win, 96, 16);
-    UiWindow_ClearInteriorTilesFar((void *)win, 16, 16, 96, 24);
-    UiText_DrawCharacterAtOffsetFar(MsgEquipThisItem, win, 8, 16);
+    UiText_DrawCharacterAtOffsetFar(MsgYes, window, 96, 0);
+    UiText_DrawCharacterAtOffsetFar(MsgYes + 1, window, 96, 16);
+    UiWindow_ClearInteriorTilesFar((void *)window, 16, 16, 96, 24);
+    UiText_DrawCharacterAtOffsetFar(MsgEquipThisItem, window, 8, 16);
     UiMenu_SlideCursor(184, 5);
 #endif
     for (;;) {
-      if (GameFlag_TestFar(0x150))
+      if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
         break;
       if (changed) {
         changed = 0;
         selection = (selection + rows) % rows;
       }
-      if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(175);
+      if (gKeysPressed & KEY_A) {
+        AudioCommand_PlayFar(175); // the Equip sound
         break;
       }
-      if (gKeyState & KEY_B) {
-        AudioCommand_PlayFar(113);
+      if (gKeysPressed & KEY_B) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         selection = 1;
         break;
       }
@@ -3513,7 +3922,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection--;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
 #if EDITION_INTERNATIONAL
       if (gKeysRepeat & KEY_RIGHT) {
@@ -3522,74 +3931,83 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection++;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
   }
-  if (GameFlag_TestFar(0x150))
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     selection = 1;
+  // No: put the member back as they were.
   if (selection == 1)
-    Iwram_CopyWords(state, saved, BATTLE_UNIT_SIZE);
+    Iwram_CopyWords(unit, saved, BATTLE_UNIT_SIZE);
   MemFree(saved);
   UnitCalcFar(menu->paneOwner[1]);
-  Owner_RefreshClassActionsFar(menu->paneOwner[1]);
+  Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   return selection;
 }
 
+// Loads the stat arrows (up and down) into two free VRAM blocks, kept in the
+// menu work's resource slots.
 void Resource_LoadPairedBlocks(void) {
-  struct InventoryMenuState *state = gMenuWork;
-  s32 value = Resource_FindFreeEntry();
+  struct InventoryMenuState *menu = gMenuWork;
+  s32 block = Resource_FindFreeEntry();
 
-  state->resourceSlots[0] = value;
-  VramBlock_LoadCached(value, 128, gMenu_ArrowTiles);
-  value = Resource_FindFreeEntry();
-  state->resourceSlots[1] = value;
-  VramBlock_LoadCached(value, 128, gMenu_SmallDownArrowTiles);
+  menu->resourceSlots[0] = block;
+  VramCache_Load(block, 128, gMenu_ArrowTiles);
+  block = Resource_FindFreeEntry();
+  menu->resourceSlots[1] = block;
+  VramCache_Load(block, 128, gMenu_SmallDownArrowTiles);
 }
 
+// Fills result with the item list of the member in pane index: their unit,
+// how many items they hold, and the page and row of the item chosen last for
+// them (kept within the list), five items to a page. Returns 1.
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
-  s32 encoded;
+  s32 unit;
   struct InventoryMenuState *menu = gMenuWork;
-  s32 limit;
-  s32 remainder;
-  s32 quotient;
-  s32 groups;
-  s32 value;
+  s32 itemCount;
+  s32 row;
+  s32 page;
+  s32 pageCount;
+  s32 selected;
 
-  limit = ItemMenu_Count(menu->paneOwner[index]);
-  encoded = (s32)UnitGetFar(menu->paneOwner[index]);
-  value = menu->selectedIndexByOwner[menu->paneOwner[index]];
-  if ((value + 1) > limit) {
-    value = limit - 1;
+  itemCount = ItemMenu_Count(menu->paneOwner[index]);
+  unit = (s32)UnitGetFar(menu->paneOwner[index]);
+  selected = menu->selectedIndexByOwner[menu->paneOwner[index]];
+  if ((selected + 1) > itemCount) {
+    selected = itemCount - 1;
   }
-  quotient = value / 5;
-  remainder = value % 5;
-  groups = limit / 5;
-  if (limit % 5 != 0) {
-    groups++;
+  page = selected / LIST_PAGE_SIZE;
+  row = selected % LIST_PAGE_SIZE;
+  pageCount = itemCount / LIST_PAGE_SIZE;
+  if (itemCount % LIST_PAGE_SIZE != 0) {
+    pageCount++;
   }
-  result->ownerState = encoded;
-  result->page = quotient;
-  result->pageCount = groups;
-  result->row = remainder;
-  result->entryCount = limit;
-  result->selectedIndex = value;
+  result->ownerState = unit;
+  result->page = page;
+  result->pageCount = pageCount;
+  result->row = row;
+  result->entryCount = itemCount;
+  result->selectedIndex = selected;
   return 1;
 }
 
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
+// Updates the item list for the row under the cursor: puts the selected item's
+// plain name in the info window and highlights its row of the five. window and
+// work are not used.
+s32 ItemMenu_DrawItemDetailPage(s32 window, void *work,
                                 struct MenuResult *state) {
   struct InventoryMenuState *menu;
   s32 page;
-  s32 combined;
+  s32 index;
   s32 row;
 
   page = state->page;
   menu = gMenuWork;
-  combined = page * 5;
-  combined += state->row;
-  state->selectedIndex = combined;
+  index = page * LIST_PAGE_SIZE;
+  index += state->row;
+  state->selectedIndex = index;
 
 #if EDITION_INTERNATIONAL
   RenderOutput_RedrawSavedRectFar(menu->infoWindow);
@@ -3598,13 +4016,13 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
 #endif
   WaitFrames(1);
 
-  combined = state->selectedIndex;
-  if (menu->items[combined] != 0) {
-    s32 masked = (menu->items[combined] & ITEM_ID_MASK) + MsgItemPlainName;
+  index = state->selectedIndex;
+  if (menu->items[index] != 0) {
+    s32 name = (menu->items[index] & ITEM_ID_MASK) + MsgItemPlainName;
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->infoWindow, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(name, (s32)menu->infoWindow, 0, 0);
 #else
-    UiText_DrawResourceFar(masked, (s32)menu->infoWindow, 0, 0);
+    UiText_DrawResourceFar(name, (s32)menu->infoWindow, 0, 0);
 #endif
   }
 
@@ -3612,18 +4030,19 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
   do {
     if (row == state->row) {
       Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                14);
+                                14); // highlighted
     } else {
       Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                15);
+                                15); // normal
     }
     row++;
-  } while (row <= 4);
+  } while (row < LIST_PAGE_SIZE);
 
   WaitFrames(1);
   return 1;
 }
 
+// The item list's icon column and name column.
 #if EDITION_INTERNATIONAL
 #define PAGE_X 116
 #define ENTRY_X 24
@@ -3632,6 +4051,8 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
 #define ENTRY_X 32
 #endif
 
+// Draws one page of the item list into window: up to five item names with
+// their icons, and the page numbers when there is more than one page.
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
                           const struct MenuResult *state) {
   struct InventoryMenuState *menu = gMenuWork;
@@ -3639,7 +4060,7 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
   u32 firstEntry;
   u32 visibleCount;
   u8 row;
-  const u16 *itemId;
+  const u16 *entry;
 
   (void)unused;
 
@@ -3647,75 +4068,84 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
   UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   page = state->page;
-  firstEntry = page * 5;
+  firstEntry = page * LIST_PAGE_SIZE;
   visibleCount = (u8)(state->entryCount - firstEntry);
-  if (visibleCount > 5) {
-    visibleCount = 5;
+  if (visibleCount > LIST_PAGE_SIZE) {
+    visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 34);
-  Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
+  Menu_DrawPageIndicator(window, state->entryCount, LIST_PAGE_SIZE, state->page,
+                         15);
 
   row = 0;
   if (visibleCount > row) {
-    itemId = &menu->items[firstEntry];
+    entry = &menu->items[firstEntry];
     do {
-      UiText_DrawCharacterAtOffsetFar((itemId[0] & ITEM_ID_MASK) + MsgItemName,
+      UiText_DrawCharacterAtOffsetFar((entry[0] & ITEM_ID_MASK) + MsgItemName,
                                       (s32)menu->itemWindow, ENTRY_X,
                                       row * 16 + 8);
       row++;
-      itemId++;
+      entry++;
     } while (visibleCount > row);
   }
 
   return 1;
 }
 
-s32 InventoryMenu_ItemNamePageReturnTrue(void) { return 1; }
+// Return 1, and do nothing; nothing calls them.
+UNUSED s32 InventoryMenu_ItemNamePageReturnTrue(void) { return 1; }
 
-void InventoryMenu_ItemNamePageNoOp(void) {}
+UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}
 
+// The item list of the member in pane (0: the owner, 1: the receiver of a
+// trade), five items a page. The cursor's item is named in the info window and
+// previewed in the status panel, its icon animates, and the party members who
+// can equip it move. Up and Down move the cursor, Left and Right turn pages,
+// and in pane 0 L and R switch to the previous or next member who has items.
+// Returns the chosen inventory entry, or -1 when the player backs out.
 s32 ItemMenu_RunList(s32 pane) {
   struct InventoryMenuState *menu;
   s32 window;
   s32 changed;
-  s32 nav;
-  s32 tab;
+  s32 moved;
+  s32 member;
   u8 i;
   s32 result;
   s32 redraw;
   s32 done;
   struct BattleUnit *owner;
-  s32 prev;
+  s32 previous;
   struct RenderOutput *icon;
   s32 work[5];
   struct MenuResult state;
 
   menu = gMenuWork;
   result = 0;
-  prev = 0;
+  previous = 0;
   menu->equipPreview = result;
   UiWindow_UpdateOrCreate((s32 *)&menu->listWindow, 13, 3, 17, 14, 2);
   window = (s32)menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     owner = UnitGetFar(menu->paneOwner[pane]);
     menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
-    menu->selectedItemIcon->active = 13;
+    menu->selectedItemIcon->active = ICON_HIDDEN;
     ItemMenu_PageResult(&state, pane);
     UiMenu_PositionCursor(98, state.selectedIndex * 16 + 36);
     changed = 1;
     redraw = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    // One member's list, until an item is chosen or the member changes.
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       UiMenu_PositionCursor(98, state.row * 16 + 36);
 
       if (changed != 0) {
         changed = 0;
-        if (owner->inventory[prev] != 0) {
-          icon = menu->entryIcons[prev];
+        if (owner->inventory[previous] != 0) {
+          icon = menu->entryIcons[previous];
           UiIcon_PrepareObject(icon);
         }
         if (redraw != 0) {
@@ -3733,7 +4163,7 @@ s32 ItemMenu_RunList(s32 pane) {
                                   menu->paneOwner[pane]);
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->active = 9;
+          icon->active = 9; // animate the selected icon
           icon->animStep = 0;
           icon->sentinel = 250;
         }
@@ -3742,6 +4172,7 @@ s32 ItemMenu_RunList(s32 pane) {
         }
       }
 
+      // Every 32 frames, the members who can equip the item move.
       if ((gFrameCount & 31) == 0) {
         for (i = 0; i < menu->partyCount; i++) {
           if (Item_CanOwnerEquip(menu->ownerIds[i],
@@ -3753,58 +4184,59 @@ s32 ItemMenu_RunList(s32 pane) {
       }
 
       WaitFrames(1);
-      prev = state.selectedIndex;
-      nav = Menu_HandlePageInput(0, state.entryCount, LIST_PAGE_SIZE,
-                                 &state.row, &state.page);
-      if (nav == 1) {
+      previous = state.selectedIndex;
+      moved = Menu_HandlePageInput(0, state.entryCount, LIST_PAGE_SIZE,
+                                   &state.row, &state.page);
+      if (moved == 1) {
         redraw = 1;
         changed = 1;
       }
-      if (nav == 0) {
+      if (moved == 0) {
         changed = 1;
       }
-      if (nav == -1) {
+      if (moved == -1) {
         changed = 0;
       }
 
-      if ((gKeyState & KEY_A) != 0 && menu->items[state.selectedIndex] != 0) {
-        AudioCommand_PlayFar(173);
+      if ((gKeysPressed & KEY_A) != 0 && menu->items[state.selectedIndex] != 0) {
+        AudioCommand_PlayFar(173); // the item choice sound
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
-      if ((gKeyState & KEY_B) != 0) {
-        AudioCommand_PlayFar(113);
+      if ((gKeysPressed & KEY_B) != 0) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
+      // L and R: the previous or next member who has items (pane 0 only).
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (pane == 1) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
           WaitFrames(1);
         } else {
-          AudioCommand_PlayFar(111);
+          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
           menu->selectedIndexByOwner[menu->paneOwner[pane]] =
               state.selectedIndex;
-          tab = menu->paneIndex[pane];
+          member = menu->paneIndex[pane];
           do {
             if ((gKeysRepeat & KEY_R) != 0) {
-              tab++;
+              member++;
             } else {
-              tab--;
+              member--;
             }
-            tab = (tab + menu->partyCount) % menu->partyCount;
-            menu->selectedOwner = menu->ownerIds[tab];
-            menu->paneOwner[pane] = menu->ownerIds[tab];
-            menu->paneIndex[pane] = tab;
+            member = (member + menu->partyCount) % menu->partyCount;
+            menu->selectedOwner = menu->ownerIds[member];
+            menu->paneOwner[pane] = menu->ownerIds[member];
+            menu->paneIndex[pane] = member;
             menu->itemCount = ItemMenu_Collect(
                 UnitGetFar(menu->paneOwner[pane]), menu->items, 0);
           } while (menu->itemCount == 0);
           for (i = 0; i <= 3; i++) {
             menu->ownerY[i] = 30;
           }
-          menu->ownerY[tab] = 26;
+          menu->ownerY[member] = 26;
           break;
         }
       }
@@ -3816,7 +4248,7 @@ s32 ItemMenu_RunList(s32 pane) {
   menu->selectedSlots[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->paneOwner[pane]] = state.selectedIndex;
   menu->selectedItems[pane] = result;
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   WaitFrames(1);
@@ -3830,15 +4262,20 @@ s32 ItemMenu_RunList(s32 pane) {
 #define PROMPT_TILES_SIZE 0x2000
 #endif
 
+// The Psynergy menu an event opens (window command 1): the field menu's
+// Psynergy screen over the field, which stops meanwhile. When the player picks
+// a Psynergy to use on the field, it is recorded in the event work's
+// psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
+// player backs out.
 s32 Menu_OpenConfirmPrompt(void) {
 #if defined(PROMPT_SAVES_TILES)
   void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
   struct PsynergyMenuState *state =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
-  s32 high;
+  s32 owner;
   s32 unused;
-  s32 low;
+  s32 psynergy;
   s32 result;
 
   ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 1;
@@ -3856,21 +4293,23 @@ s32 Menu_OpenConfirmPrompt(void) {
   Iwram_FillWords(PROMPT_TILES, PROMPT_TILES_SIZE, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
+  // Let the player choose.
   Menu_CancelSoundReset();
-  result = Menu_ResolveSelectedAction(&high, &unused, &low);
+  result = Menu_ResolveSelectedAction(&owner, &unused, &psynergy);
   Menu_EnsureCancelSound();
   if (result == 1) {
     struct EventWork *target = WORK_SLOT(HEAP_SLOT_EVENT);
-    u16 flags;
+    u16 request;
     BattleActGet(OWNER_ACTION_ID_MASK & state->paneAction[0]);
-    flags = low | (high << 10);
-    target->psynergyRequest = flags;
+    request = psynergy | (owner << 10);
+    target->psynergyRequest = request;
   }
+  // Close the menu and give the screen back to the field.
   RenderOutput_ClearListFar((void *)state->statusWindow);
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 1;
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  Runtime_ReleaseHeapBlock(0x37);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 0;
 #if defined(PROMPT_SAVES_TILES)
   UiWindow_MarkVisibleTileAttributesFar();
@@ -3888,6 +4327,24 @@ s32 Menu_OpenConfirmPrompt(void) {
   return result;
 }
 
+// The steps of the Psynergy menu (Menu_ResolveSelectedAction).
+enum PsynergyMenuStep {
+  PSYNERGY_STEP_OWNER,
+  PSYNERGY_STEP_LIST,
+  PSYNERGY_STEP_CLASSIFY,
+  PSYNERGY_STEP_TARGET,
+  PSYNERGY_STEP_APPLY,
+};
+
+// The target id meaning the whole party.
+#define TARGET_WHOLE_PARTY 9
+
+// Runs the Psynergy menu: choose a party member and one of their Psynergy,
+// then use it on a member (or the whole party), or, in the shortcut modes, set
+// it as the L or R shortcut. Returns 1 with the owner and Psynergy in the out
+// parameters when the chosen Psynergy works on the field, to be used once the
+// menu closes; -1 when the player backs out or presses Start; otherwise the
+// result of the last use.
 s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   struct PsynergyMenuState *work;
   s32 result;
@@ -3895,18 +4352,19 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   s32 done;
   s32 selection;
   s32 classification;
-  s32 raw;
-  s32 selfFlag;
+  s32 psynergy;
+  s32 chosenTarget;
   struct BattleAct *action;
 
-  state = 0;
+  state = PSYNERGY_STEP_OWNER;
   done = 0;
   work = gMenuWork;
   result = 0;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
-    case 0: {
+    // Choose whose Psynergy to look at.
+    case PSYNERGY_STEP_OWNER: {
       s32 cancelled;
       s32 chosen;
 
@@ -3927,14 +4385,16 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         result = cancelled;
       }
       RenderOutput_RedrawSavedRectFar(work->infoWindow);
-      state = 1;
+      state = PSYNERGY_STEP_LIST;
       break;
     }
 
-    case 1:
+    // Choose one of their Psynergy; in the shortcut modes, set it as the L or
+    // R shortcut and start again.
+    case PSYNERGY_STEP_LIST:
       WaitFrames(1);
       UnitGetFar(work->ownerIds[0]);
-      state = 0;
+      state = PSYNERGY_STEP_OWNER;
       if (work->psynergyCount != 0) {
         {
           struct PsynergyMenuState *savedWork = work;
@@ -3951,22 +4411,23 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
             work = savedWork;
         }
         switch (work->mode) {
-        case 0:
+        case 0: // use
           ItemMenu_DrawMsg(0, MsgPsynergyChooseAbility);
           break;
-        case 1:
+        case 1: // set the L shortcut
           ItemMenu_DrawMsg(0, MsgPsynergyChooseForL);
           break;
-        case 2:
+        case 2: // set the R shortcut
           ItemMenu_DrawMsg(0, MsgPsynergyChooseForR);
           break;
         }
         ItemMenu_PosCategory();
-        Menu_DrawOwnerStatusPanel(work->statusWindow, work->ownerIds[0], 0, 0);
+        Menu_DrawOwnerStatusPanel(work->statusWindow, work->ownerIds[0], 0,
+                                  STATUS_PANEL_EXPERIENCE);
         selection = PsynergyMenu_RunList(0);
-        state = 0;
+        state = PSYNERGY_STEP_OWNER;
         if (selection != -1) {
-          state = 2;
+          state = PSYNERGY_STEP_CLASSIFY;
           if (work->mode != 0) {
             if (work->mode == 1) {
               PsynergyMenu_SetShortcut(work->ownerIds[0], selection, 0);
@@ -3983,31 +4444,34 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
               RenderOutput_RedrawSavedRectFar(work->infoWindow);
 #endif
             }
-            state = 0;
+            state = PSYNERGY_STEP_OWNER;
           }
         }
       }
       break;
 
-    case 3:
+    // Choose the member to use it on.
+    case PSYNERGY_STEP_TARGET:
       ItemMenu_DrawMsg(0, MsgPsynergyChooseTarget);
-      selfFlag = PsynergyMenu_SelectTarget(0);
-      state = 4;
-      if (selfFlag == -1) {
+      chosenTarget = PsynergyMenu_SelectTarget(0);
+      state = PSYNERGY_STEP_APPLY;
+      if (chosenTarget == -1) {
         work->flags |= 1;
-        state = 1;
+        state = PSYNERGY_STEP_LIST;
       }
       break;
 
-    case 2:
+    // How is it used? On one member, on the whole party, or on the field
+    // once the menu closes.
+    case PSYNERGY_STEP_CLASSIFY:
       classification = PsynergyMenu_ClassifySelectedPsynergy();
       if (classification == 1) {
-        state = 3;
+        state = PSYNERGY_STEP_TARGET;
         break;
       }
       if (classification == 2) {
-        work->ownerIds[1] = 9;
-        state = 4;
+        work->ownerIds[1] = TARGET_WHOLE_PARTY;
+        state = PSYNERGY_STEP_APPLY;
         break;
       }
       done = 1;
@@ -4016,28 +4480,31 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       *outAction = work->paneAction[0] & OWNER_ACTION_ID_MASK;
       break;
 
-    case 4:
-      selfFlag = 0;
-      raw = work->paneAction[0];
-      result = BattleEffect_ApplyToTargets(raw, work->ownerIds[0],
+    // Use it: pay its PP, show the result and go back to the list, or to the
+    // target when it failed on one member.
+    case PSYNERGY_STEP_APPLY:
+      chosenTarget = 0;
+      psynergy = work->paneAction[0];
+      result = BattleEffect_ApplyToTargets(psynergy, work->ownerIds[0],
                                            work->ownerIds[1], 0);
-      if (work->ownerIds[1] == 9) {
+      if (work->ownerIds[1] == TARGET_WHOLE_PARTY) {
         work->ownerIds[1] = work->ownerIds[0];
-        selfFlag = 9;
+        chosenTarget = TARGET_WHOLE_PARTY;
       }
       if (result != -1) {
         action = BattleActGet(work->paneAction[0] & OWNER_ACTION_ID_MASK);
-        UnitPpAddFar(work->ownerIds[0], -action->ppCost);
+        Unit_AddPpFar(work->ownerIds[0], -action->ppCost);
       }
       UnitCalcFar(work->ownerIds[0]);
       if (result != -1) {
-        Menu_DrawOwnerStatusPanel(work->statusWindow, work->ownerIds[1], 0, 0);
+        Menu_DrawOwnerStatusPanel(work->statusWindow, work->ownerIds[1], 0,
+                                  STATUS_PANEL_EXPERIENCE);
         Ability_PlayUseAnimation(work->paneAction[0] & OWNER_ACTION_ID_MASK);
         RenderOutput_ClearListFar((void *)work->infoWindow);
         InventoryMenu_ShowModalMessage(work->useResult + MsgItemUseResult, 0,
                                        -1);
       } else {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar((void *)work->infoWindow);
         InventoryMenu_ShowModalMessage(work->useResult + MsgItemUseResult,
                                        result, result);
@@ -4045,14 +4512,14 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       if (result != -1) {
         result = 1;
         work->flags |= 1;
-        state = 1;
+        state = PSYNERGY_STEP_LIST;
       } else {
         work->skipSlide = 1;
-        if (selfFlag == 9) {
+        if (chosenTarget == TARGET_WHOLE_PARTY) {
           work->flags |= 1;
-          state = 1;
+          state = PSYNERGY_STEP_LIST;
         } else {
-          state = 3;
+          state = PSYNERGY_STEP_TARGET;
         }
       }
       break;
@@ -4063,12 +4530,15 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
     }
   }
 
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   return result;
 }
 
+// Says how the selected Psynergy is used from the menu: 0 on the field once the
+// menu closes (its effect has a field event), 2 on the whole party (range
+// 0xff), 1 on one chosen member when its target mode is 2, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct BattleAct *psynergy;
   s32 diff;
@@ -4083,6 +4553,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   ret = 2;
   if (psynergy->range != 0xff) {
     u8 kind = psynergy->targetMode;
+    // 1 when kind is 2, else 0.
     diff = kind ^ 2;
     ret = (0 - diff) | diff;
     ret = (u32)ret >> 0x1f;
@@ -4091,6 +4562,9 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   return ret;
 }
 
+// Lets the player choose a party member in pane partySlot (0 or 1), starting
+// from the one chosen last, with each member's Psynergy shown as the cursor
+// passes. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   /* FAKEMATCH: retain the original scalar tab/icon address lanes. Direct
    * indexed owner fields change the 244-byte native object to 246 bytes and
@@ -4114,9 +4588,9 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   result = 0;
   icon = *(struct RenderOutput **)((u8 *)menu + iconOffset);
-  icon->active = 1;
+  icon->active = ICON_SHOWN;
   icon->animStep = result;
-  menu->cursorIcon->active = 13;
+  menu->cursorIcon->active = ICON_HIDDEN;
   counts = (u8 *)menu + ((u8 *)menu->tabCounts - (u8 *)menu->tabIndex);
   tab = *(s8 *)((u8 *)menu + tabOffset);
   byteVal = menu->ownerCount;
@@ -4146,24 +4620,29 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   return result;
 }
 
+// The party member row of the Psynergy menu. Left and Right move between
+// members, showing each one's Psynergy, status and shortcuts; A chooses a
+// member who has Psynergy to use, L or R one who has field Psynergy to set as
+// that shortcut (menu mode 1 or 2), and B backs out. Returns the chosen
+// member's id, or -1.
 s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuState *menu;
   s32 selection;
   s32 count;
-  s32 pending;
+  s32 redraw;
   s32 result;
   struct BattleUnit *owner;
   s32 window;
   s32 shown;
   s32 i;
   u16 *actions;
-  s32 actionCount;
-  s8 found;
+  s32 shortcutCount;
+  s8 fieldCount;
 
   menu = gMenuWork;
   selection = menu->tabIndex[0];
   count = menu->tabCounts[0];
-  pending = 1;
+  redraw = 1;
   result = 0;
   shown = 0;
   menu->mode = result;
@@ -4174,22 +4653,23 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
   if (UiWindow_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = RenderOutput_CreateFromResourceFar(
         2, 0, (struct RenderInput *)menu->shortcutWindow, 0, result);
-    menu->cursorIcon->active = 13;
+    menu->cursorIcon->active = ICON_HIDDEN;
   }
-  while (!GameFlag_TestFar(0x150)) {
-    if (pending) {
-      pending = 0;
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+    if (redraw) {
+      redraw = 0;
       selection = (count + selection) % count;
       window = menu->statusWindow;
       owner = UnitGetFar(ownerIds[selection]);
       PsynergyMenu_RefreshOwnerPsynergy(ownerIds[selection]);
-      Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0, 0);
+      Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0,
+                                STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
       PsynergyMenu_CallIconRoutineWithValue((s32)menu, ownerIds[selection]);
       for (i = 3; i >= 0; i--)
-        menu->rowPositions[i] = 0x1e;
-      menu->rowPositions[selection] = 0x1a;
-      if (!GameFlag_TestFar(0x151) && !shown) {
+        menu->rowPositions[i] = 30;
+      menu->rowPositions[selection] = 26; // raise the chosen member
+      if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
         RenderOutput_ClearListFar((void *)menu->infoWindow);
 #if EDITION_INTERNATIONAL
         RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
@@ -4197,52 +4677,53 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
         UiText_DrawWorkValueWithLabel((s32)menu->infoWindow);
         shown = 1;
       } else {
-        GameFlag_ClearBitFar(0x151);
+        GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
       }
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (menu->psynergyCount) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       }
-      AudioCommand_PlayFar(114);
+      AudioCommand_PlayFar(SOUND_MENU_ERROR);
     }
-    if ((gKeyState & KEY_L) || (gKeyState & KEY_R)) {
+    // L or R: set that shortcut, if the member has field Psynergy for it.
+    if ((gKeysPressed & KEY_L) || (gKeysPressed & KEY_R)) {
       result = ownerIds[selection];
-      if (gKeyState & KEY_L)
+      if (gKeysPressed & KEY_L)
         menu->mode = 1;
       else
         menu->mode = 2;
-      actions = MemAlloc(64);
-      found =
+      actions = MemAlloc(32 * sizeof(u16));
+      fieldCount =
           PsynergyMenu_CollectActions((struct BattleUnit *)owner, actions, 1);
       MemFree(actions);
-      actionCount = found;
-      if (actionCount == 0) {
-        menu->mode = actionCount;
-        AudioCommand_PlayFar(114);
+      shortcutCount = fieldCount;
+      if (shortcutCount == 0) {
+        menu->mode = shortcutCount;
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       } else {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         break;
       }
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
-      pending = 1;
+      redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection++;
-      pending = 1;
+      redraw = 1;
     }
   }
   menu->tabIndex[0] = selection;
@@ -4251,6 +4732,8 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
   return result;
 }
 
+// Shows member ownerId's Psynergy icons in the Psynergy window, eight to a
+// row, or "no Psynergy" when they have none.
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   u16 *psynergies;
   struct PsynergyMenuState *menu;
@@ -4261,24 +4744,28 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   psynergies = menu->psynergies;
   menu->psynergyCount = PsynergyMenu_CollectActions(owner, psynergies, 2);
   RenderOutput_RedrawSavedRectFar((void *)menu->psynergyWindow);
-  PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
+  PsynergyMenu_RefreshOwnerEntries(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     UiText_DrawCharacterAtOffsetFar(MsgPsynergyMenuEmpty,
-                                    (s32)menu->psynergyWindow, 0, 0x18);
+                                    (s32)menu->psynergyWindow, 0, 24);
   }
 }
 
-s32 PsynergyMenu_ReturnTrue(void) { return 1; }
+// Return 1, and do nothing; nothing calls them.
+UNUSED s32 PsynergyMenu_ReturnTrue(void) { return 1; }
 
-void PsynergyMenu_NoOp(void) {}
+UNUSED void PsynergyMenu_NoOp(void) {}
 
+// Chooses the party member to use the selected Psynergy on. In mode 0 each
+// member's status shows as the cursor passes, with the Psynergy's description
+// once. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectTarget(s32 mode) {
 
   struct PsynergyMenuState *menu;
   s32 selection;
   s32 count;
-  s32 pending;
+  s32 redraw;
   s32 result;
   s32 shown;
   struct RenderOutput *marker;
@@ -4286,14 +4773,14 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
   menu = gMenuWork;
   selection = menu->tabIndex[1];
   count = menu->ownerCount;
-  pending = 1;
+  redraw = 1;
   result = 0;
   shown = 0;
   UnitGetFar(menu->ownerTable[menu->tabIndex[0]]);
   UiMenu_SlideCursor(selection * 24 - 10, 16);
-  while (!GameFlag_TestFar(0x150)) {
-    if (pending) {
-      pending = 0;
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+    if (redraw) {
+      redraw = 0;
       selection = (selection + count) % count;
       UnitGetFar(menu->ownerTable[selection]);
       marker = menu->paneIcon[1];
@@ -4303,10 +4790,11 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
           2;
       if (mode == 0) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow,
-                                  menu->ownerTable[selection], 0, 0);
+                                  menu->ownerTable[selection], 0,
+                                  STATUS_PANEL_EXPERIENCE);
         PsynergyMenu_CallIconRoutineWithValue((s32)menu,
                                               menu->ownerTable[selection]);
-        if (!GameFlag_TestFar(0x151) && !shown) {
+        if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
 #if EDITION_INTERNATIONAL
           RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
           UiText_DrawCharacterAtOffsetFar(
@@ -4321,37 +4809,37 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
 #endif
           shown = 1;
         } else {
-          GameFlag_ClearBitFar(0x151);
+          GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
         }
       }
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(112);
+    if (gKeysPressed & KEY_A) {
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = menu->ownerTable[selection];
       break;
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
-      pending = 1;
+      redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection++;
-      pending = 1;
+      redraw = 1;
     }
   }
   marker = menu->paneIcon[1];
   menu->tabIndex[1] = selection;
   UiIcon_PrepareObject(marker);
-  marker->active = 13;
+  marker->active = ICON_HIDDEN;
   WaitFrames(1);
   menu->tabIndex[1] = selection;
   menu->selectedOwner = menu->ownerTable[selection];
@@ -4359,9 +4847,15 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
   return result;
 }
 
+// A Psynergy shortcut: its owner above bit 10, the Psynergy's id below.
+#define SHORTCUT_OWNER_SHIFT 10
+#define SHORTCUT_PSYNERGY_MASK 0x3ff
+
+// Sets the L (shortcut 0) or R (shortcut 1) Psynergy shortcut: owner << 10 |
+// the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut) {
   s32 id = psynergy & OWNER_ACTION_ID_MASK;
-  s32 code = (owner << 10) | id;
+  s32 code = (owner << SHORTCUT_OWNER_SHIFT) | id;
 
   if (shortcut == 0) {
     gGameState.firstShortcut = code;
@@ -4371,6 +4865,10 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut) {
   return 1;
 }
 
+// Writes the L and R Psynergy shortcuts into window: each one's Psynergy and
+// owner, or that it is empty, under a heading that says how to change them.
+// A name too wide for the line hides the owner (international) or drops the
+// colon after "L" and "R" (Japanese). Returns 1.
 #if EDITION_INTERNATIONAL
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
@@ -4385,37 +4883,41 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     UiText_DrawCharacterAtOffsetFar(MsgShortcutLabel, window, 0, -8);
 
-  UiText_GetResourceDimensionsFar((gGameState.firstShortcut & 0x3ff) +
-                                      MsgAbilityName,
-                                  &left, &top, &width, &height);
+  UiText_GetResourceDimensionsFar(
+      (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
   if (gGameState.firstShortcut != 0) {
-    UiWork_PushValueSlotFar(gGameState.firstShortcut & 0x3ff, 4);
+    UiWork_PushValueSlotFar(gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK,
+                            4);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.firstShortcut >> 10),
-                                   window, 80, 0);
+      UiText_DrawStringAtOffsetFar(
+          UnitGetFar(gGameState.firstShortcut >> SHORTCUT_OWNER_SHIFT), window,
+          80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 0, 0);
   }
 
-  UiText_GetResourceDimensionsFar((gGameState.secondShortcut & 0x3ff) +
-                                      MsgAbilityName,
-                                  &left, &top, &width, &height);
+  UiText_GetResourceDimensionsFar(
+      (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
   if (gGameState.secondShortcut != 0) {
-    UiWork_PushValueSlotFar(gGameState.secondShortcut & 0x3ff, 4);
+    UiWork_PushValueSlotFar(gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK,
+                            4);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.secondShortcut >> 10),
-                                   window, 80, 8);
-    UiWork_SetParamNibbleFar(15);
+      UiText_DrawStringAtOffsetFar(
+          UnitGetFar(gGameState.secondShortcut >> SHORTCUT_OWNER_SHIFT), window,
+          80, 8);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 0, 8);
   }
@@ -4435,9 +4937,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     UiText_DrawCharacterAtOffsetFar(MsgShortcutLabel, window, 0, -8);
 
-  UiText_GetResourceDimensionsFar((gGameState.firstShortcut & 0x3ff) +
-                                      MsgAbilityName,
-                                  &left, &top, &width, &height);
+  UiText_GetResourceDimensionsFar(
+      (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
   else
@@ -4450,19 +4952,22 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   if (gGameState.firstShortcut != 0) {
     if (wide)
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.firstShortcut & 0x3ff) + MsgAbilityName, window, 8, 0);
+          (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          window, 8, 0);
     else
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.firstShortcut & 0x3ff) + MsgAbilityName, window, 16, 0);
-    UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.firstShortcut >> 10),
-                                 window, 80, 0);
+          (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          window, 16, 0);
+    UiText_DrawStringAtOffsetFar(
+        UnitGetFar(gGameState.firstShortcut >> SHORTCUT_OWNER_SHIFT), window,
+        80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 24, 0);
   }
 
-  UiText_GetResourceDimensionsFar((gGameState.secondShortcut & 0x3ff) +
-                                      MsgAbilityName,
-                                  &left, &top, &width, &height);
+  UiText_GetResourceDimensionsFar(
+      (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
   else
@@ -4475,13 +4980,16 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   if (gGameState.secondShortcut != 0) {
     if (wide)
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.secondShortcut & 0x3ff) + MsgAbilityName, window, 8, 8);
+          (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          window, 8, 8);
     else
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.secondShortcut & 0x3ff) + MsgAbilityName, window, 16, 8);
-    UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.secondShortcut >> 10),
-                                 window, 80, 8);
-    UiWork_SetParamNibbleFar(15);
+          (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          window, 16, 8);
+    UiText_DrawStringAtOffsetFar(
+        UnitGetFar(gGameState.secondShortcut >> SHORTCUT_OWNER_SHIFT), window,
+        80, 8);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 24, 8);
   }
@@ -4489,6 +4997,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 }
 #endif
 
+// Sets up a Psynergy grid screen: the cursor window with the party's figures,
+// a 30 by 15 window below with a hidden grid cursor and a portrait, and 16
+// Psynergy icon sprites in two rows of eight from (96, 8), on an 8 by 2 grid.
 void PsynergyMenu_CreateEntryGrid(void) {
   s32 window;
   struct PsynergyMenuState *menu;
@@ -4511,7 +5022,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
 
   cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
       (struct RenderInput *)window, 0, 4);
-  cursor->active = 13;
+  cursor->active = ICON_HIDDEN;
   menu->entryGridCursor = cursor;
   SideObject_CreateFar(0, 0, 0, window, 0, 0);
 
@@ -4538,6 +5049,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   } while (index <= 15);
 }
 
+// Releases the party figures and closes the Psynergy grid screen's windows.
 void PsynergyMenu_CloseWindows(void) {
   struct PsynergyMenuState *menu;
 
@@ -4548,6 +5060,8 @@ void PsynergyMenu_CloseWindows(void) {
   UiWork_FinalizeFar((void *)menu->messageWindow, 1);
 }
 
+// Loads each listed Psynergy's icon into its icon sprite (32 entries) and hides
+// the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   s32 remaining;
   struct RenderOutput **icons;
@@ -4568,6 +5082,10 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   Menu_HideEmptyEntryIcons(psynergies);
 }
 
+// Lists owner's Psynergy into actions (32 entries, cleared first) and returns
+// how many there are. mode 1 lists only the Psynergy that work on the field
+// (those that can be shortcuts); mode 2 those with a field effect or usable
+// in the field; any other mode those first, then the rest.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
                                 s32 mode) {
   /* FAKEMATCH: the doubled zero store through the byte-offset cursor makes
@@ -4577,12 +5095,12 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
    * pre-decrement do-while differs 31 to 33; actions[n] = 0 from 31 down
    * differs 43. */
   s32 n;
-  s32 passes;
+  s32 passCount;
   s32 count;
   s32 i;
-  s32 j;
+  s32 pass;
 
-  passes = (mode != 2) ? 4 : 3;
+  passCount = (mode != 2) ? 4 : 3;
   for (n = 62; n >= 0; n -= 2) {
     u16 *q = (u16 *)((u8 *)actions + n);
     *q = 0;
@@ -4590,6 +5108,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
   }
   count = 0;
 
+  // type0c is the Psynergy's field effect. Passes 1 and 2 add nothing.
   if (mode == 1) {
     for (i = 0; i < 32; i++) {
       if (owner->actionSlots[i].encodedAction != 0) {
@@ -4602,20 +5121,21 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
       }
     }
   } else {
-    for (j = 0; j < passes; j++) {
+    for (pass = 0; pass < passCount; pass++) {
       for (i = 0; i < 32; i++) {
         if (owner->actionSlots[i].encodedAction != 0) {
           struct BattleAct *ability = BattleActGet(
               owner->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK);
 
-          if (j == 0 &&
-              (ability->type0c != 0 || (ability->targetFlag & 0x40) != 0)) {
+          if (pass == 0 &&
+              (ability->type0c != 0 ||
+               (ability->flags & ACTION_USABLE_IN_FIELD) != 0)) {
             actions[count] = owner->actionSlots[i].encodedAction;
             count++;
-          } else if (j == 1) {
-          } else if (j == 2) {
-          } else if (j == 3 && ability->type0c == 0 &&
-                     (ability->targetFlag & 0x40) == 0) {
+          } else if (pass == 1) {
+          } else if (pass == 2) {
+          } else if (pass == 3 && ability->type0c == 0 &&
+                     (ability->flags & ACTION_USABLE_IN_FIELD) == 0) {
             actions[count] = owner->actionSlots[i].encodedAction;
             count++;
           }
@@ -4627,8 +5147,11 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
   return count;
 }
 
+// Fills result with the Psynergy list of the member in pane index: their unit,
+// how many Psynergy are listed, and the page and row of the one chosen last for
+// them (kept within the list), five to a page. Returns 1.
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
-  s32 ownerState;
+  s32 unit;
   struct PsynergyMenuState *menu = gMenuWork;
   s32 entryCount;
   s32 row;
@@ -4637,20 +5160,20 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 selectedIndex;
   s32 owner;
 
-  ownerState = (s32)UnitGetFar(menu->ownerIds[index]);
+  unit = (s32)UnitGetFar(menu->ownerIds[index]);
   entryCount = menu->psynergyCount;
   owner = menu->ownerIds[index];
   selectedIndex = menu->selectedIndexByOwner[owner];
   if ((selectedIndex + 1) > entryCount) {
     selectedIndex = entryCount - 1;
   }
-  page = selectedIndex / 5;
-  row = selectedIndex % 5;
-  pageCount = entryCount / 5;
-  if (entryCount % 5 != 0) {
+  page = selectedIndex / LIST_PAGE_SIZE;
+  row = selectedIndex % LIST_PAGE_SIZE;
+  pageCount = entryCount / LIST_PAGE_SIZE;
+  if (entryCount % LIST_PAGE_SIZE != 0) {
     pageCount++;
   }
-  result->ownerState = ownerState;
+  result->ownerState = unit;
   result->page = page;
   result->pageCount = pageCount;
   result->row = row;
@@ -4659,6 +5182,11 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
   return 1;
 }
 
+// PsynergyMenuState.flags: the Psynergy list shows the shortcut help (Select
+// held).
+#define PSYNERGY_MENU_SHORTCUT_HELP 2
+
+// The highlight over the Psynergy list's rows.
 #if EDITION_INTERNATIONAL
 #define DETAIL_ROW_X 0
 #define DETAIL_ROW_WIDTH 15
@@ -4667,18 +5195,21 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
 #define DETAIL_ROW_WIDTH 14
 #endif
 
+// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
+// description in the info window, unless a kept message is there, and
+// highlights its row of the five. window and work are not used.
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
                                 struct MenuResult *state) {
   struct PsynergyMenuState *menu;
-  s32 combined;
+  s32 index;
   s32 row;
 
   menu = gMenuWork;
-  combined = state->page * 5;
-  combined += state->row;
-  state->selectedIndex = combined;
+  index = state->page * LIST_PAGE_SIZE;
+  index += state->row;
+  state->selectedIndex = index;
 
-  if (GameFlag_TestFar(0x151) == 0) {
+  if (GameFlag_TestFar(FLAG_MENU_INFO_KEPT) == 0) {
 #if EDITION_INTERNATIONAL
     RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #else
@@ -4686,35 +5217,47 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 #endif
     WaitFrames(1);
 
-    combined = state->selectedIndex;
-    if (menu->psynergies[combined] != 0) {
-      s32 masked = (menu->psynergies[combined] & 0x1ff) + MsgAbilityDescription;
+    index = state->selectedIndex;
+    if (menu->psynergies[index] != 0) {
+      s32 description =
+          (menu->psynergies[index] & 0x1ff) + MsgAbilityDescription;
 #if EDITION_INTERNATIONAL
-      UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->infoWindow, 0, 0);
+      UiText_DrawCharacterAtOffsetFar(description, (s32)menu->infoWindow, 0, 0);
 #else
-      UiText_DrawResourceFar(masked, (s32)menu->infoWindow, 0, 0);
+      UiText_DrawResourceFar(description, (s32)menu->infoWindow, 0, 0);
 #endif
     }
   } else {
+    // BUG: clears scene flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
+    // message keeps the descriptions away until another screen clears it.
+#ifdef BUGFIX
+    GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
+#else
     GameFlag_ClearBitFar(0x2ff);
+#endif
   }
 
   row = 0;
   do {
     if (row == state->row) {
       Render_SetTilemapFlagRect((void *)menu->psynergyWindow, DETAIL_ROW_X,
-                                row * 2 + 1, DETAIL_ROW_WIDTH, 1, 14);
+                                row * 2 + 1, DETAIL_ROW_WIDTH, 1,
+                                14); // highlighted
     } else {
       Render_SetTilemapFlagRect((void *)menu->psynergyWindow, DETAIL_ROW_X,
-                                row * 2 + 1, DETAIL_ROW_WIDTH, 1, 15);
+                                row * 2 + 1, DETAIL_ROW_WIDTH, 1, 15); // normal
     }
     row++;
-  } while (row <= 4);
+  } while (row < LIST_PAGE_SIZE);
 
   WaitFrames(1);
   return 1;
 }
 
+// Draws one page of the Psynergy list into window: up to five names with their
+// icons and PP costs, a Psynergy the member cannot afford in the no-HP colour
+// and one restricted here in the low-HP colour, the page numbers, and the help
+// line (how to set a shortcut while Select is held, else how to change member).
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
                                 const struct MenuResult *state) {
   u32 firstEntry;
@@ -4730,29 +5273,30 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   RenderOutput_RedrawSavedRectFar((void *)window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-  if (2 & menu->flags) {
+  if (PSYNERGY_MENU_SHORTCUT_HELP & menu->flags) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutHelp, window, 0, 88);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window, HELP_TEXT_X,
                                     88);
   }
 
-  firstEntry = state->page * 5;
+  firstEntry = state->page * LIST_PAGE_SIZE;
   visibleCount = (u8)(state->entryCount - firstEntry);
-  if (visibleCount > 5) {
-    visibleCount = 5;
+  if (visibleCount > LIST_PAGE_SIZE) {
+    visibleCount = LIST_PAGE_SIZE;
   }
 
 #if EDITION_INTERNATIONAL
-  Menu_SetPageIcons(5, firstEntry, window, 0x70, 0x22);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, 112, 34);
 #else
-  Menu_SetPageIcons(5, firstEntry, window, 0x78, 0x22);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, 120, 34);
 #endif
-  Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
+  Menu_DrawPageIndicator(window, state->entryCount, LIST_PAGE_SIZE, state->page,
+                         15);
 #if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, 0x60, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, 96, 0);
 #else
-  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, 0x48, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, 72, 0);
 #endif
 
   row = 0;
@@ -4763,12 +5307,12 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
       ability = BattleActGet(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
-        UiWork_SetParamNibbleFar(2);
+        UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
       } else if (PsynergyMenu_IsActionRestricted(
                      OWNER_ACTION_ID_MASK & menu->psynergies[cursor]) != 0) {
-        UiWork_SetParamNibbleFar(4);
+        UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
       } else {
-        UiWork_SetParamNibbleFar(15);
+        UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
       }
 
       UiText_DrawCharacterAtOffsetFar(
@@ -4780,7 +5324,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 #endif
       UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);
-      UiWork_SetParamNibbleFar(15);
+      UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 
       row++;
       cursor++;
@@ -4790,35 +5334,42 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   return 1;
 }
 
+// The Psynergy list of the member in pane, five a page. The cursor's Psynergy
+// is described in the info window and its icon animates; L and R switch to the
+// previous or next member who has Psynergy to list. In the use mode (menu mode
+// 0), A chooses a Psynergy the member can use and afford; holding Select shows
+// the shortcut help, and L or R with Select set the Psynergy as that shortcut.
+// In the shortcut modes (1 and 2) only field Psynergy are listed and A chooses
+// one. Returns the chosen Psynergy, or -1 when the player backs out.
 s32 PsynergyMenu_RunList(s32 pane) {
   struct PsynergyMenuState *menu;
   struct BattleAct *ability;
   struct RenderOutput *icon;
   s32 window;
   s32 changed;
-  s32 nav;
-  s8 mode;
-  s32 tab;
+  s32 moved;
+  s8 listMode;
+  s32 member;
   u8 i;
   s32 result;
   s32 redraw;
   s32 done;
   struct BattleUnit *owner;
-  s32 prev;
-  s32 prompt;
+  s32 previous;
+  s32 shortcutHelp;
   s32 work[5];
   struct MenuResult state;
 
   menu = gMenuWork;
   result = 0;
-  prev = 0;
-  prompt = 0;
-  menu->paneIcon[pane]->active = 13;
+  previous = 0;
+  shortcutHelp = 0;
+  menu->paneIcon[pane]->active = ICON_HIDDEN;
   UiWindow_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     owner = UnitGetFar(menu->ownerIds[pane]);
     if (menu->mode != 0) {
       menu->psynergyCount =
@@ -4831,9 +5382,9 @@ s32 PsynergyMenu_RunList(s32 pane) {
     PsynergyMenu_BuildPageResult(&state, pane);
     redraw = 1;
     changed = 1;
-    menu->paneIcon[pane]->active = 1;
+    menu->paneIcon[pane]->active = ICON_SHOWN;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
 #if EDITION_INTERNATIONAL
       UiMenu_PositionCursor(88, state.row * 16 + 36);
 #else
@@ -4842,8 +5393,8 @@ s32 PsynergyMenu_RunList(s32 pane) {
 
       if (changed != 0) {
         changed = 0;
-        if (menu->psynergies[prev] != 0) {
-          icon = menu->entryIcons[prev];
+        if (menu->psynergies[previous] != 0) {
+          icon = menu->entryIcons[previous];
           UiIcon_PrepareObject(icon);
         }
         if (redraw != 0) {
@@ -4853,10 +5404,10 @@ s32 PsynergyMenu_RunList(s32 pane) {
         }
         PsynergyMenu_DrawDetailPage(window, work, &state);
         menu->paneAction[pane] = menu->psynergies[state.selectedIndex];
-        menu->cursorIcon->active = 13;
+        menu->cursorIcon->active = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->active = 9;
+          icon->active = 9; // animate the selected icon
           icon->animStep = 0;
           icon->sentinel = 250;
         }
@@ -4866,51 +5417,54 @@ s32 PsynergyMenu_RunList(s32 pane) {
       }
 
       WaitFrames(1);
-      prev = state.selectedIndex;
+      previous = state.selectedIndex;
 
       if ((gKeysHeld & KEY_SELECT) == 0) {
-        nav = Menu_HandlePageInput(0, state.entryCount, LIST_PAGE_SIZE,
-                                   &state.row, &state.page);
+        moved = Menu_HandlePageInput(0, state.entryCount, LIST_PAGE_SIZE,
+                                     &state.row, &state.page);
       } else {
-        nav = -1;
+        moved = -1;
       }
-      if (nav == 1) {
+      if (moved == 1) {
         redraw = 1;
         changed = 1;
       }
-      if (nav == 0) {
+      if (moved == 0) {
         changed = 1;
       }
-      if (nav == -1) {
+      if (moved == -1) {
         changed = 0;
       }
 
+      // Select shows the shortcut help while held, for field Psynergy.
       if (menu->mode == 0) {
-        if ((gKeyState & KEY_SELECT) != 0 && prompt == 0) {
+        if ((gKeysPressed & KEY_SELECT) != 0 && shortcutHelp == 0) {
           ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->type0c == 0) {
-            AudioCommand_PlayFar(114);
+            AudioCommand_PlayFar(SOUND_MENU_ERROR);
           } else {
-            AudioCommand_PlayFar(174);
-            prompt = 1;
-            menu->flags |= 2;
+            AudioCommand_PlayFar(174); // the Use sound
+            shortcutHelp = 1;
+            menu->flags |= PSYNERGY_MENU_SHORTCUT_HELP;
             UiWindow_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
             UiText_DrawCharacterAtOffsetFar(MsgShortcutHelp, window, 0, 88);
           }
         }
-        if ((gKeysHeld & KEY_SELECT) == 0 && prompt == 1) {
-          prompt = 0;
-          menu->flags &= 0xfffd;
+        if ((gKeysHeld & KEY_SELECT) == 0 && shortcutHelp == 1) {
+          shortcutHelp = 0;
+          menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
           UiWindow_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
           UiText_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window,
                                           HELP_TEXT_X, 88);
         }
       }
 
-      if ((gKeyState & KEY_A) != 0) {
+      // A: set the shortcut (modes 1 and 2), or use the Psynergy if allowed
+      // and affordable.
+      if ((gKeysPressed & KEY_A) != 0) {
         if (menu->mode != 0) {
-          AudioCommand_PlayFar(130);
+          AudioCommand_PlayFar(130); // the shortcut sound
           result = menu->psynergies[state.selectedIndex];
           done = 1;
           break;
@@ -4918,15 +5472,15 @@ s32 PsynergyMenu_RunList(s32 pane) {
         if (menu->psynergies[state.selectedIndex] != 0) {
           if (PsynergyMenu_IsActionRestricted(
                   menu->psynergies[state.selectedIndex]) != 0) {
-            AudioCommand_PlayFar(114);
+            AudioCommand_PlayFar(SOUND_MENU_ERROR);
             continue;
           }
           ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
-            AudioCommand_PlayFar(114);
+            AudioCommand_PlayFar(SOUND_MENU_ERROR);
           } else {
-            AudioCommand_PlayFar(173);
+            AudioCommand_PlayFar(173); // the choice sound
             result = menu->psynergies[state.selectedIndex];
             done = 1;
             break;
@@ -4934,49 +5488,52 @@ s32 PsynergyMenu_RunList(s32 pane) {
         }
       }
 
-      if ((gKeyState & KEY_B) != 0) {
-        AudioCommand_PlayFar(113);
+      if ((gKeysPressed & KEY_B) != 0) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
 
+      // L and R: the previous or next member with Psynergy to list.
       if (((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) &&
           (gKeysHeld & KEY_SELECT) == 0) {
-        mode = menu->mode != 0 ? 1 : 2;
-        AudioCommand_PlayFar(111);
+        listMode = menu->mode != 0 ? 1 : 2;
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         menu->selectedIndexByOwner[menu->ownerIds[pane]] = state.selectedIndex;
-        tab = menu->tabIndex[pane];
+        member = menu->tabIndex[pane];
         do {
           if ((gKeysRepeat & KEY_R) != 0) {
-            tab++;
+            member++;
           } else {
-            tab--;
+            member--;
           }
-          tab = (tab + menu->ownerCount) % menu->ownerCount;
-          menu->selectedOwner = menu->ownerTable[tab];
-          menu->ownerIds[0] = menu->ownerTable[tab];
+          member = (member + menu->ownerCount) % menu->ownerCount;
+          menu->selectedOwner = menu->ownerTable[member];
+          menu->ownerIds[0] = menu->ownerTable[member];
           menu->psynergyCount = PsynergyMenu_CollectActions(
-              UnitGetFar(menu->ownerIds[0]), menu->psynergies, mode);
+              UnitGetFar(menu->ownerIds[0]), menu->psynergies, listMode);
         } while (menu->psynergyCount == 0);
-        menu->tabIndex[pane] = tab;
+        menu->tabIndex[pane] = member;
         for (i = 0; i < 4; i++) {
           menu->rowPositions[i] = 30;
         }
-        menu->rowPositions[tab] = 26;
-        Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerTable[tab], 0,
-                                  0);
-        PsynergyMenu_CallIconRoutineWithValue((s32)menu, menu->ownerTable[tab]);
+        menu->rowPositions[member] = 26;
+        Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerTable[member],
+                                  0, STATUS_PANEL_EXPERIENCE);
+        PsynergyMenu_CallIconRoutineWithValue((s32)menu,
+                                              menu->ownerTable[member]);
         break;
       }
 
-      if ((gKeyState & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
+      // Select + L or R: make the field Psynergy that shortcut.
+      if ((gKeysPressed & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
         ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
         } else {
-          AudioCommand_PlayFar(130);
+          AudioCommand_PlayFar(130); // the shortcut sound
           if (PsynergyMenu_SetShortcut(menu->ownerIds[pane],
                                        menu->psynergies[state.selectedIndex],
                                        0) != 0) {
@@ -4988,16 +5545,16 @@ s32 PsynergyMenu_RunList(s32 pane) {
         }
       }
 
-      if ((gKeyState & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
+      if ((gKeysPressed & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
         ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
         } else {
           if (PsynergyMenu_SetShortcut(menu->ownerIds[pane],
                                        menu->psynergies[state.selectedIndex],
                                        1) != 0) {
-            AudioCommand_PlayFar(130);
+            AudioCommand_PlayFar(130); // the shortcut sound
             result = menu->psynergies[state.selectedIndex];
             menu->mode = 2;
             done = 1;
@@ -5008,34 +5565,45 @@ s32 PsynergyMenu_RunList(s32 pane) {
     }
   }
 
-  menu->flags &= 0xfffd;
+  menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
   UiIcon_PrepareObject(menu->entryGridCursor);
   menu->paneRow[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->ownerIds[pane]] = state.selectedIndex;
   menu->paneAction[pane] = result;
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   WaitFrames(1);
   return result;
 }
 
+// Returns 1 when Psynergy no (an action slot entry) cannot be used from the
+// menu: it has no field effect and is not usable both in the field and in
+// battle.
 s32 PsynergyMenu_IsActionRestricted(s32 no) {
-  struct BattleAct *action = BattleActGet((u32)(no << 18) >> 18);
+  struct BattleAct *action =
+      BattleActGet((u32)(no << 18) >> 18) /* & OWNER_ACTION_ID_MASK */;
 
-  if (action->type0c != 0 || (action->targetFlag & 0xc0) == 0xc0)
+  if (action->type0c != 0 ||
+      (action->flags &
+       (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==
+          (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE))
     return 0;
   return 1;
 }
 
+// How many party figure rows Menu_OpenCharacterSelector resets.
 #if EDITION_INTERNATIONAL
 #define ROW_CNT 8
 #else
 #define ROW_CNT 4
 #endif
 
+// Lets the player choose one party member, over the field (the Colosso scenes
+// use it). Returns the chosen member's id, or -1 when the player backs out.
 s32 Menu_OpenCharacterSelector(void) {
-  struct CharacterMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
+  struct CharacterMenuState *state =
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
   s32 result;
   s32 index;
 
@@ -5049,7 +5617,7 @@ s32 Menu_OpenCharacterSelector(void) {
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < ROW_CNT; index++)
     state->ownerY[index] = 30;
-  state->page = 3;
+  state->page = 3; // the member chooser
 
   result = CharacterSelector_Run();
 
@@ -5057,10 +5625,11 @@ s32 Menu_OpenCharacterSelector(void) {
   ItemMenu_Close();
   gMenuCtrlWork->suspended = 0;
   WaitFrames(1);
-  Runtime_ReleaseHeapBlock(55);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   return result;
 }
 
+// The member chooser's loop. Returns the chosen member's id, or -1.
 s32 CharacterSelector_Run(void) {
   struct CharacterMenuState *work = gMenuWork;
   s32 result = 0;
@@ -5080,14 +5649,20 @@ s32 CharacterSelector_Run(void) {
   return result;
 }
 
+// The window tiles from 0x06004000 the Status menu saves and restores.
 #if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000
 #else
 #define SAVED_TILE_BYTES 0x800
 #endif
 
+// The Status menu an event opens (window command 4) over the field: saves the
+// first two background palettes and the window tiles it draws over, sets up
+// the party row and, when the party has Djinn, the four Djinn sprites, runs
+// the status pages, then puts everything back. Returns their result.
 s32 ActionMenu_Open(void) {
-  struct CharacterMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
+  struct CharacterMenuState *state =
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
   void *palette = Runtime_BumpAllocateAlternatePool(64);
   void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
   s32 result;
@@ -5106,6 +5681,8 @@ s32 ActionMenu_Open(void) {
   Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
 #endif
   Palette_LightenBankHighlight(14);
+  // The first sprite palette into background palettes 0 and 1, each with a
+  // colour of palette 15 as its colour 14.
   Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
@@ -5122,14 +5699,16 @@ s32 ActionMenu_Open(void) {
     FourObjectMotion_InitializeTopRow(state->selectorWindow, 0);
   for (index = 0; index < 4; index++) {
     state->rowX[index] = 130 + index * 32;
-    state->rowY[index] = 0x80;
+    state->rowY[index] = 128;
   }
   Link_DrawShiftedTilePairFar(0x06002500);
+  // Run the pages.
   Menu_CancelSoundReset();
   state->page = 0;
 
   result = Menu_RunActionFlow();
 
+  // Close, and put the palettes and tiles back.
   Menu_EnsureCancelSound();
   RenderOutput_ClearListFar(state->statusWindow);
   FourObjectMotion_ClearSlotsAndSchedule();
@@ -5148,7 +5727,7 @@ s32 ActionMenu_Open(void) {
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 1;
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  Runtime_ReleaseHeapBlock(55);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 0;
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
@@ -5156,6 +5735,10 @@ s32 ActionMenu_Open(void) {
   return result;
 }
 
+// The Status menu's pages: choose a party member, then their status page, A
+// for their Psynergy page and A again for their equipment page; B steps back.
+// Returns the last page's result, or -1 when the player backs out or presses
+// Start.
 s32 Menu_RunActionFlow(void) {
   struct CharacterMenuState *state = gMenuWork;
   s32 step = 0;
@@ -5163,9 +5746,9 @@ s32 Menu_RunActionFlow(void) {
   s32 result = 0;
   u32 changed;
 
-  while (!finished && !GameFlag_TestFar(0x150)) {
+  while (!finished && !GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
-    case 0:
+    case 0: // choose a member
       state->selectedSlots[0] = finished;
       if (CharacterMenu_SelectOwner(0) == -1) {
         result = -1;
@@ -5173,21 +5756,22 @@ s32 Menu_RunActionFlow(void) {
       }
       step = 1;
       break;
-    case 1:
-      state->ownerCursors[0]->active = 13;
+    case 1: // their status
+      state->ownerCursors[0]->active = ICON_HIDDEN;
       result = CharacterMenu_SelectCommand();
       step = result == -1 ? 0 : 2;
       break;
-    case 2:
-      state->ownerCursors[0]->active = 13;
+    case 2: // their Psynergy
+      state->ownerCursors[0]->active = ICON_HIDDEN;
       result = PsynergyMenu_SelectAction();
       step = 0;
       if (result != -1)
         step = 3;
       break;
-    case 3:
-      state->ownerCursors[0]->active = 13;
+    case 3: // their equipment; back to the member after it
+      state->ownerCursors[0]->active = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
+      // step 1 for -1, step 0 otherwise.
       changed = ~result;
       step = (-changed | changed) >> 31;
       break;
@@ -5197,12 +5781,16 @@ s32 Menu_RunActionFlow(void) {
     }
   }
 
-  if (GameFlag_TestFar(0x150))
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     result = -1;
 
   return result;
 }
 
+// Lets the player choose a party member in slot, from the one chosen last: the
+// member chooser when the menu is on page 3, else the Status menu's party row.
+// Game flag 0x172 adds a divider to the party window. Returns the chooser's
+// result.
 s32 CharacterMenu_SelectOwner(s32 slot) {
   struct CharacterMenuState *menu;
   struct RenderOutput *cursor;
@@ -5213,7 +5801,7 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
   index = menu->ownerIndex[slot];
   result = 0;
   cursor = menu->ownerCursors[slot];
-  cursor->active = 1;
+  cursor->active = ICON_SHOWN;
   cursor->animStep = 0;
   RenderOutput_RedrawSavedRectFar(menu->ownerWindow);
   if (GameFlag_TestFar(0x172))
@@ -5232,19 +5820,21 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
   return result;
 }
 
+// Shows every Djinn the party has found, a column of seven for each element,
+// until A, B or Select, then puts the Djinn menu back.
 s32 DjinnMenu_ShowCurrentList(void) {
   struct DjinnMenuWork *menu;
   s32 window;
-  s32 row;
-  s32 col;
+  s32 element;
+  s32 djinn;
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  AudioCommand_PlayFar(112);
+  AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
   RenderOutput_RedrawSavedRectFar(menu->helpWindow);
   UiText_DrawCharacterAtOffsetFar(MsgReturnHelp, menu->helpWindow, 0, 16);
-  menu->cursor->active = 13;
-  menu->secondCursor->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
+  menu->secondCursor->active = ICON_HIDDEN;
   WaitFrames(1);
   window = menu->window;
   {
@@ -5259,24 +5849,25 @@ s32 DjinnMenu_ShowCurrentList(void) {
   RenderOutput_RedrawSavedRectFar(window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
   UiText_DrawResourceFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  for (row = 0; row < 4; row++) {
-    for (col = 0; col < 7; col++) {
-      s32 id = row * 20 + col;
+  for (element = 0; element < 4; element++) {
+    for (djinn = 0; djinn < 7; djinn++) {
+      s32 id = element * 20 + djinn;
 
+      // Game flags 48 on: one per Djinn found, 20 to an element.
       if (GameFlag_TestFar(48 + id)) {
-        UiWindow_SetTilemapEntryFar(window, 0x1001 + row, row * 7 + 1, col + 3,
-                                    0);
+        UiWindow_SetTilemapEntryFar(window, 0x1001 + element, element * 7 + 1,
+                                    djinn + 3, 0);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnName + id, window,
-                                        row * 56 + 16, col * 8 + 24);
+                                        element * 56 + 16, djinn * 8 + 24);
       }
     }
   }
   (*(struct UiWork **)&gWindowWork)->dirty = 1;
   for (;;) {
-    if (GameFlag_TestFar(0x150))
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
       break;
     WaitFrames(1);
-    if (gKeyState & (KEY_A | KEY_B | KEY_SELECT))
+    if (gKeysPressed & (KEY_A | KEY_B | KEY_SELECT))
       break;
   }
   RenderOutput_RedrawSavedRectFar(menu->window);
@@ -5289,15 +5880,19 @@ s32 DjinnMenu_ShowCurrentList(void) {
       menu->slotY[i] = 128;
     }
   }
-  menu->cursor->active = 1;
-  menu->secondCursor->active = 1;
-  AudioCommand_PlayFar(113);
-  /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) after this
-   * void call. */
+  menu->cursor->active = ICON_SHOWN;
+  menu->secondCursor->active = ICON_SHOWN;
+  AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+  // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
+  // this void call.
 }
 
 struct InventoryMenuState;
 
+// The Status menu's party row: Left and Right choose a member, showing their
+// status; L and R move the member one place along the party order; Select
+// lists the Djinn found (once the first is found, game flag 48); A chooses the
+// member and B backs out. Returns 1 or -1.
 s32 CharacterSelector_RunRearrange(void) {
   struct CharacterMenuState *work;
   s32 cursor;
@@ -5316,23 +5911,26 @@ s32 CharacterSelector_RunRearrange(void) {
   UnitGetFar(work->ownerIds[cursor]);
   for (i = 0; i < 4; i++) {
     work->rowX[i] = 130 + i * 32;
-    work->rowY[i] = 0x80;
+    work->rowY[i] = 128;
   }
+  // The highlight palette, and the first sprite palette into background
+  // palettes 0 and 1.
   Palette_LightenBankHighlight(14);
   Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
-  while (!GameFlag_TestFar(0x150)) {
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
+      // The help lines, and the member's status and figure.
       RenderOutput_RedrawSavedRectFar((s32)work->selectorWindow);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp,
                                       (s32)work->selectorWindow, 0, 0);
       if (GameFlag_TestFar(48))
         UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp,
                                         (s32)work->selectorWindow, 0, 16);
-      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3,
+      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, // "A: Details"
                                       (s32)work->selectorWindow, 0, 8);
       cursor = (cursor + count) % count;
       UnitGetFar(work->ownerIds[cursor]);
@@ -5345,19 +5943,20 @@ s32 CharacterSelector_RunRearrange(void) {
     }
     UiMenu_PositionCursor(cursor * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(0x70);
+    if (gKeysPressed & KEY_A) {
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(0x71);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
+    // L and R move the member along the party order.
     if (gKeysRepeat & KEY_R) {
       if (CharacterSelector_MoveEntry(cursor, 1)) {
-        AudioCommand_PlayFar(0x70);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         cursor++;
         Menu_ReleaseEntryObjects();
         PsynergyMenu_InitializeEntryObjects(work->ownerWindow, 2, 2, 8, 0);
@@ -5365,12 +5964,12 @@ s32 CharacterSelector_RunRearrange(void) {
           work->ownerY[i] = 30;
         work->ownerY[cursor] = 26;
       } else {
-        AudioCommand_PlayFar(0x72);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       }
       WaitFrames(1);
     } else if (gKeysRepeat & KEY_L) {
       if (CharacterSelector_MoveEntry(cursor, 0)) {
-        AudioCommand_PlayFar(0x70);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         cursor--;
         Menu_ReleaseEntryObjects();
         PsynergyMenu_InitializeEntryObjects(work->ownerWindow, 2, 2, 8, 0);
@@ -5378,22 +5977,22 @@ s32 CharacterSelector_RunRearrange(void) {
           work->ownerY[i] = 30;
         work->ownerY[cursor] = 26;
       } else {
-        AudioCommand_PlayFar(0x72);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       }
       WaitFrames(1);
-    } else if ((gKeyState & KEY_SELECT) && GameFlag_TestFar(48)) {
+    } else if ((gKeysPressed & KEY_SELECT) && GameFlag_TestFar(48)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(0x6f);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           cursor--;
           redraw = 1;
         }
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(0x6f);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           redraw = 1;
           cursor++;
@@ -5407,12 +6006,15 @@ s32 CharacterSelector_RunRearrange(void) {
   return result;
 }
 
+// The member chooser (menu page 3): Left and Right choose a party member,
+// showing their status and Psynergy icons; A chooses and B backs out. Returns
+// 1 or -1.
 s32 PsynergyMenu_SelectOwner(void) {
   struct PsynergyMenuState *menu = gMenuWork;
   s32 selection = menu->tabIndex[0];
   s32 count = menu->tabCounts[0];
-  s32 pending = 1;
-  s32 frame = menu->flags;
+  s32 redraw = 1;
+  s32 page = menu->flags;
   s32 result;
   s32 i;
 
@@ -5423,12 +6025,12 @@ s32 PsynergyMenu_SelectOwner(void) {
   UiText_DrawCharacterAtOffsetFar(MsgChooseCharacter + 1, menu->messageWindow,
                                   0, 16);
   for (;;) {
-    if (pending) {
-      pending = 0;
+    if (redraw) {
+      redraw = 0;
       selection = (selection + count) % count;
       UnitGetFar(menu->ownerTable[selection]);
-      frame = (frame + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->ownerTable[selection], frame);
+      page = (page + 3) % 3;
+      Menu_CreateWindowAndEntryObjects(menu->ownerTable[selection], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerTable[selection]);
       for (i = 0; i < MENU_ROW_COUNT; i++)
         menu->rowPositions[i] = 30;
@@ -5441,29 +6043,29 @@ s32 PsynergyMenu_SelectOwner(void) {
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(112);
+    if (gKeysPressed & KEY_A) {
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+    if (gKeysPressed & KEY_B) {
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     {
-      if (gKeysRepeat & 32) {
-        AudioCommand_PlayFar(111);
+      if (gKeysRepeat & KEY_LEFT) {
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           selection--;
-          pending = 1;
+          redraw = 1;
         }
       }
-      if (gKeysRepeat & 16) {
-        AudioCommand_PlayFar(111);
+      if (gKeysRepeat & KEY_RIGHT) {
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           selection++;
-          pending = 1;
+          redraw = 1;
         }
       }
     }
@@ -5474,16 +6076,18 @@ s32 PsynergyMenu_SelectOwner(void) {
   return result;
 }
 
+// Moves the party member at selectedIndex one place later (direction 1) or
+// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
 s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
-  struct CharacterMenuState *state = gMenuWork;
+  struct CharacterMenuState *menu = gMenuWork;
   u32 reordered[14];
   s32 index;
 
-  if (state->partyCount <= 1) {
+  if (menu->partyCount <= 1) {
     return 0;
   }
   if (direction == 1) {
-    if (selectedIndex == state->partyCount - 1) {
+    if (selectedIndex == menu->partyCount - 1) {
       return 0;
     }
   } else {
@@ -5501,8 +6105,8 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
       clear--;
     } while ((s32)clear >= (s32)reordered);
   }
-  for (index = 0; index < state->partyCount; index++) {
-    reordered[index] = state->ownerIds[index];
+  for (index = 0; index < menu->partyCount; index++) {
+    reordered[index] = menu->ownerIds[index];
   }
 
   if (direction == 1) {
@@ -5515,16 +6119,20 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
     reordered[selectedIndex - 1] = index;
   }
 
-  for (index = 0; index < state->partyCount; index++) {
-    Party_RemoveActiveOwnerFar(state->ownerIds[index]);
+  // Rebuild the party in the new order.
+  for (index = 0; index < menu->partyCount; index++) {
+    Party_RemoveActiveOwnerFar(menu->ownerIds[index]);
   }
-  for (index = 0; index < state->partyCount; index++) {
+  for (index = 0; index < menu->partyCount; index++) {
     Party_AddActiveOwnerFar(reordered[index]);
   }
-  state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
+  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
   return 1;
 }
 
+// Sets up the Status menu's first screen: the cursor window with the party's
+// figures, no other windows yet, and an 8 by 2 cursor grid. The parameters are
+// not used.
 void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
                                        s32 unused3) {
   struct CharacterMenuState *state;
@@ -5541,6 +6149,9 @@ void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
   state->rowCount = 2;
 }
 
+// Shows member resource's status in the status window (0, 5, 30 by 15),
+// opening it first with the member's portrait, the item icons on the chooser
+// page, and the eight stat sprites; then draws the status and ailments.
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
@@ -5551,8 +6162,8 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   created = 0;
   handle = (s32)state->statusWindow;
   if (handle == 0) {
-    created = UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 0x1E,
-                                      0xF, 2);
+    created =
+        UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 30, 15, 2);
     handle = (s32)state->statusWindow;
   }
   if (created != 0) {
@@ -5569,6 +6180,13 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 0);
 }
 
+// The member's status page. The left pane lists their ailments (or the stat
+// help when they have none) and the right pane the status entries (name and
+// level, experience, HP, PP, Djinn when the party has any, elemental levels,
+// Power and Resist); the cursor's entry is highlighted and explained in the
+// help window. Up and Down move in a pane, Left and Right switch panes, L and
+// R switch to the previous or next member; A goes on to the Psynergy page and
+// B backs out. Returns 1 or -1.
 s32 CharacterMenu_SelectCommand(void) {
   struct CharacterMenuState *menu;
   s32 pane;
@@ -5579,8 +6197,8 @@ s32 CharacterMenu_SelectCommand(void) {
   s32 done;
   s32 hasDjinn;
   s32 redraw;
-  s32 tab;
-  s32 total;
+  s32 member;
+  s32 djinnTotal;
   s32 i;
   u8 entries[8];
 
@@ -5588,9 +6206,9 @@ s32 CharacterMenu_SelectCommand(void) {
   pane = 0;
   result = 0;
   selected = 0;
-  total = Party_SumDjinnCountsFar(-1);
+  djinnTotal = Party_SumDjinnCountsFar(-1);
   hasDjinn = 0;
-  if (total != 0)
+  if (djinnTotal != 0)
     hasDjinn = 1;
   UiWindow_UpdateOrCreate((s32 *)&menu->helpWindow, 0, 0, 30, 5, 2);
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
@@ -5599,7 +6217,8 @@ s32 CharacterMenu_SelectCommand(void) {
   done = 0;
   UiMenu_SlideCursor(-10, 88);
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  // One member's page at a time; L and R start the next.
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     UnitGetFar(menu->selectedIds[0]);
     CharacterMenu_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
                                      1);
@@ -5611,7 +6230,7 @@ s32 CharacterMenu_SelectCommand(void) {
       hasAilments = 1;
     redraw = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         s32 limit;
 
@@ -5645,7 +6264,7 @@ s32 CharacterMenu_SelectCommand(void) {
           StatusMenu_ShowOwnerProgressMessage(menu->helpWindow, selected,
                                               hasDjinn);
       }
-      menu->ownerCursors[0]->active = 1;
+      menu->ownerCursors[0]->active = ICON_SHOWN;
       if (pane == 0)
         UiMenu_PositionCursor(-10, selected * 16 + 88);
       else if (selected <= 3)
@@ -5655,50 +6274,51 @@ s32 CharacterMenu_SelectCommand(void) {
       WaitFrames(1);
       if (gKeysRepeat & KEYS_DPAD)
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
-      if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(112);
+      if (gKeysPressed & KEY_A) {
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         done = 1;
         result = 1;
         break;
       }
-      if (gKeyState & KEY_B) {
-        AudioCommand_PlayFar(113);
+      if (gKeysPressed & KEY_B) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         done = 1;
         result = -1;
         break;
       }
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         selected--;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         selected++;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         pane++;
       }
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         pane--;
       }
+      // L and R: the previous or next member.
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        AudioCommand_PlayFar(111);
-        tab = menu->ownerIndex[0];
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        member = menu->ownerIndex[0];
         if (gKeysRepeat & KEY_R)
-          tab++;
+          member++;
         else
-          tab--;
-        tab = (tab + menu->partyCount) % menu->partyCount;
-        menu->selectedOwner = menu->ownerIds[tab];
-        menu->selectedIds[0] = menu->ownerIds[tab];
-        menu->ownerIndex[0] = tab;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[tab]);
+          member--;
+        member = (member + menu->partyCount) % menu->partyCount;
+        menu->selectedOwner = menu->ownerIds[member];
+        menu->selectedIds[0] = menu->ownerIds[member];
+        menu->ownerIndex[0] = member;
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[member]);
         break;
       }
     }
@@ -5713,15 +6333,19 @@ s32 CharacterMenu_SelectCommand(void) {
   return result;
 }
 
+// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
+// status page: in pane 0 the selected ailment row, as wide as its label
+// (gCharacterMenu_CursorWidths); in pane 1 one of the first four status rows
+// or of the rows below.
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert) {
-  struct CharacterMenuState *state = gMenuWork;
+  struct CharacterMenuState *menu = gMenuWork;
   u32 different;
   s32 count;
   s32 index;
   s32 x;
   s32 y;
-  s32 last;
+  s32 palette;
   u8 width;
 
   if (mode == 0) {
@@ -5750,11 +6374,15 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     width = 20;
   }
 
+  // Palette 14 (highlighted) when invert is 0, 15 when it is 1.
   different = 1 ^ invert;
-  last = 15 - (((0u - different) | different) >> 31);
-  Render_SetTilemapFlagRect(state->statusWindow, x, y, width, 1, last);
+  palette = 15 - (((0u - different) | different) >> 31);
+  Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
+// Writes the advice for the selected ailment (two lines, e.g. how to revive a
+// member who is down) into window target, or that the member is well when
+// they have no ailment.
 void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
                                        const u8 *entries) {
   s32 count = 0;
@@ -5776,12 +6404,17 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     UiText_DrawResourceFar(MsgStatusNormal, target, 0, 0);
 }
 
+// The longest status help text, in characters.
 #if EDITION_INTERNATIONAL
 #define PROGRESS_TEXT_MAX 0x80
 #else
 #define PROGRESS_TEXT_MAX 0x40
 #endif
 
+// Writes the help text of status entry messageVariant into destination: the
+// entries skip Djinn when the party has none (preserveVariant 0); the
+// experience entry says how many points the next level needs, or, at level 99,
+// gives the plain experience text.
 void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
                                          s32 messageVariant,
                                          s32 preserveVariant) {
@@ -5795,15 +6428,15 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     struct BattleUnit *owner = UnitGetFar(menu->selectedIds[0]);
 
     if (owner->level == 99) {
-      messageVariant = 8;
+      messageVariant = 8; // "These are your experience points."
     } else {
 #if EDITION_INTERNATIONAL
       u64 remaining =
-          Owner_GetLevelThresholdFar(menu->selectedIds[0], owner->level + 1) -
+          Unit_GetExperienceForLevelFar(menu->selectedIds[0], owner->level + 1) -
           owner->experience;
 #else
       u32 remaining =
-          Owner_GetLevelThresholdFar(menu->selectedIds[0], owner->level + 1) -
+          Unit_GetExperienceForLevelFar(menu->selectedIds[0], owner->level + 1) -
           owner->experience;
 #endif
       UiWork_PushValueSlotFar(remaining, 5);
@@ -5817,13 +6450,17 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
   MemFree(buffer);
 }
 
-void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
+// Draws member ownerId's status page into window: the top rows (ItemMenu_
+// DrawOwnerStatus), the ailment list or "Normal", and except on the chooser
+// page the Djinn counts by element and, in mode 1, the elemental levels,
+// Power and Resist. mode's 0x100 keeps what is drawn instead of clearing it.
+void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
                                       s32 mode) {
-  struct CharacterMenuState *state = gMenuWork;
-  struct BattleUnit *status;
-  s32 row;
+  struct CharacterMenuState *menu = gMenuWork;
+  struct BattleUnit *unit;
+  s32 djinnRow;
   s32 hasDjinn;
-  s32 keep;
+  s32 keepDrawn;
   s32 i;
   u8 ailments[8];
 
@@ -5831,18 +6468,19 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
     hasDjinn = 1;
   else
     hasDjinn = 0;
-  status = UnitGetFar(unit);
+  unit = UnitGetFar(ownerId);
   if ((mode & 0xff) == 1)
-    row = 7;
+    djinnRow = 7;
   else
-    row = 10;
-  state->statusCursor->active = 1;
-  ItemMenu_DrawOwnerStatus((s32)window, unit, mode);
-  CharacterMenu_BuildAvailability(ailments, 1, unit);
+    djinnRow = 10;
+  menu->statusCursor->active = ICON_SHOWN;
+  ItemMenu_DrawOwnerStatus((s32)window, ownerId, mode);
+  CharacterMenu_BuildAvailability(ailments, 1, ownerId);
   CharacterMenu_UpdateSelectionIcons(ailments);
-  keep = mode & 0x100;
-  if (keep == 0)
+  keepDrawn = mode & 0x100;
+  if (keepDrawn == 0)
     UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
+  // The ailments, one a row, or "Normal".
   i = 0;
   if (ailments[CHARACTER_DOWN] != 0) {
     UiText_DrawCharacterAtOffsetFar(MsgDownLabel, window, 16, 40);
@@ -5868,55 +6506,60 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
     UiText_DrawCharacterAtOffsetFar(MsgNormalLabel, window, 0, 40);
   CharacterMenu_UpdateSelectionIcons(ailments);
   ItemMenu_ApplyFlags(ailments);
-  if (state->page == 3)
+  if (menu->page == 3)
     return;
-  if (keep == 0) {
+  if (keepDrawn == 0) {
     WaitFrames(1);
     UiWindow_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
-  UiWork_SetParamNibbleFar(15);
+  // The four element icons, then the Djinn counts and, in mode 1, the
+  // elemental levels, Power and Resist.
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
-    UiWindow_SetTilemapEntryFar(window, 1, 15, row, 4);
-    UiWindow_SetTilemapEntryFar(window, 2, 19, row, 4);
-    UiWindow_SetTilemapEntryFar(window, 3, 23, row, 4);
-    UiWindow_SetTilemapEntryFar(window, 4, 27, row, 4);
+    UiWindow_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 3, 23, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 4, 27, djinnRow, 4);
   }
   if (hasDjinn)
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnLabel, window, 64, row * 8 + 8);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnLabel, window, 64,
+                                    djinnRow * 8 + 8);
   if (mode == 1) {
     if (!hasDjinn)
-      row--;
+      djinnRow--;
 #if EDITION_INTERNATIONAL
-    UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, row * 8 + 16);
+    UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
 #else
-    UiText_DrawStringInWindowFar(gMenu_LvString, window, 64, row * 8 + 16);
+    UiText_DrawStringInWindowFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
 #endif
-    UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64, row * 8 + 24);
+    UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64,
+                                    djinnRow * 8 + 24);
     UiText_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64,
-                                    row * 8 + 32);
+                                    djinnRow * 8 + 32);
   }
   for (i = 0; i <= 3; i++) {
     if (hasDjinn)
-      UiText_DrawNumberInWindowFar(status->djinnOwnedCounts[i], 1, window,
-                                   i * 32 + 120, row * 8 + 8);
+      UiText_DrawNumberInWindowFar(unit->djinnOwnedCounts[i], 1, window,
+                                   i * 32 + 120, djinnRow * 8 + 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
-        UiText_DrawNumberInWindowFar(status->djinnActiveCounts[i], 1, window,
-                                     i * 32 + 104, row * 8 + 8);
+        UiText_DrawNumberInWindowFar(unit->djinnActiveCounts[i], 1, window,
+                                     i * 32 + 104, djinnRow * 8 + 8);
         UiText_DrawStringInWindowFar(gMenu_SlashString, window, i * 32 + 112,
-                                     row * 8 + 8);
+                                     djinnRow * 8 + 8);
       }
-      UiText_DrawNumberInWindowFar(Owner_GetResistanceValueFar(unit, i), 2,
-                                   window, i * 32 + 112, row * 8 + 16);
-      UiText_DrawNumberInWindowFar(status->element[i].power, 3, window,
-                                   i * 32 + 104, row * 8 + 24);
-      UiText_DrawNumberInWindowFar(status->element[i].res, 3, window,
-                                   i * 32 + 104, row * 8 + 32);
+      UiText_DrawNumberInWindowFar(Unit_GetElementLevelFar(ownerId, i), 2,
+                                   window, i * 32 + 112, djinnRow * 8 + 16);
+      UiText_DrawNumberInWindowFar(unit->element[i].power, 3, window,
+                                   i * 32 + 104, djinnRow * 8 + 24);
+      UiText_DrawNumberInWindowFar(unit->element[i].resistance, 3, window,
+                                   i * 32 + 104, djinnRow * 8 + 32);
     }
   }
 }
 
 #if EDITION_INTERNATIONAL
+// Spins for 256 loop passes (international editions only).
 void Runtime_RunBusyWaitDelay(void) {
   s32 count = 0xff;
 
@@ -5928,6 +6571,7 @@ spin:
 
 #endif
 
+// The stat column of the status page's top rows.
 #if EDITION_INTERNATIONAL
 #define STAT_DIGITS 3
 #define STAT_X 200
@@ -5936,13 +6580,16 @@ spin:
 #define STAT_X 192
 #endif
 
+// Draws the top rows of member owner's status page into window: name, class,
+// level, experience, HP and PP on the left, Attack, Defense, Agility and Luck
+// on the right. flags' 0x100 keeps what is drawn instead of clearing it.
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   struct InventoryMenuState *menu;
   struct BattleUnit *unit;
 
   menu = gMenuWork;
   unit = UnitGetFar(owner);
-  menu->cursor->active = 1;
+  menu->cursor->active = ICON_SHOWN;
   flags &= 0x100;
   if (flags == 0) {
     UiWindow_ClearInteriorTilesFar(window, 0, 0, 128, 40);
@@ -5955,7 +6602,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
 #else
   UiText_DrawStringInWindowFar(gMenu_LvString, window, 104, 0);
 #endif
-  UiWork_SetParamNibbleFar(15);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
 #if EDITION_INTERNATIONAL
   UiText_DrawStringAtOffsetFar(gMenu_HpString, window, 40, 16);
@@ -5979,6 +6626,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
     WaitFrames(1);
     UiWindow_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
+  // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
+  // before "Exp".
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 23, window, 152, 0);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 22, window, 152, 8);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 21, window, 152, 16);
@@ -5989,36 +6638,39 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   UiText_DrawNumberInWindowFar(unit->luck, STAT_DIGITS, window, STAT_X, 24);
 }
 
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
-  struct BattleUnit *state;
+// Fills ailments[0..4] (CharacterAilment) with member id's ailments: down
+// (only when requested is 1), poison or venom, curse and haunt. Returns how
+// many they have.
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 id) {
+  struct BattleUnit *unit;
   s32 i;
   s32 count;
-  s32 mode;
+  s32 poison;
 
-  state = UnitGetFar(id);
+  unit = UnitGetFar(id);
   for (i = 4; i >= 0; i--)
-    output[i] = 0;
+    ailments[i] = 0;
 
   count = 0;
-  if (state->hp == 0 && requested == 1) {
-    output[CHARACTER_DOWN] = requested;
+  if (unit->hp == 0 && requested == 1) {
+    ailments[CHARACTER_DOWN] = requested;
     count = 1;
   }
 
-  mode = state->poison;
-  if (mode != 0) {
-    if (mode == 1)
-      output[CHARACTER_POISON] = mode;
+  poison = unit->poison;
+  if (poison != 0) {
+    if (poison == 1) // poison; any other value is venom
+      ailments[CHARACTER_POISON] = poison;
     else
-      output[CHARACTER_VENOM] = 1;
+      ailments[CHARACTER_VENOM] = 1;
     count++;
   }
-  if (state->restraint != 0) {
-    output[CHARACTER_CURSE] = 1;
+  if (unit->restraint != 0) {
+    ailments[CHARACTER_CURSE] = 1;
     count++;
   }
-  if (state->haunt != 0) {
-    output[CHARACTER_HAUNT] = 1;
+  if (unit->haunt != 0) {
+    ailments[CHARACTER_HAUNT] = 1;
     count++;
   }
   return count;
@@ -6030,36 +6682,39 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
 #define GROUP_LEN 6
 #endif
 
+// Fills result with the item list of the member in pane index for the
+// equipment pages: their unit, the menu's item count, and the page and row of
+// the item chosen last for them, GROUP_LEN items to a page. Returns 1.
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
-  s32 encoded;
+  s32 unit;
   struct InventoryMenuState *menu = gMenuWork;
-  s32 limit;
-  s32 remainder;
-  s32 quotient;
-  s32 groups;
-  s32 value;
+  s32 itemCount;
+  s32 row;
+  s32 page;
+  s32 pageCount;
+  s32 selected;
 
-  encoded = (s32)UnitGetFar(menu->paneOwner[index]);
-  limit = menu->itemCount;
-  value = menu->selectedIndexByOwner[menu->paneOwner[index]];
-  if ((value + 1) > limit) {
-    value = limit - 1;
+  unit = (s32)UnitGetFar(menu->paneOwner[index]);
+  itemCount = menu->itemCount;
+  selected = menu->selectedIndexByOwner[menu->paneOwner[index]];
+  if ((selected + 1) > itemCount) {
+    selected = itemCount - 1;
   }
-  if (limit == 0) {
-    value = 0;
+  if (itemCount == 0) {
+    selected = 0;
   }
-  quotient = value / GROUP_LEN;
-  remainder = value % GROUP_LEN;
-  groups = limit / GROUP_LEN;
-  if (limit % GROUP_LEN != 0) {
-    groups++;
+  page = selected / GROUP_LEN;
+  row = selected % GROUP_LEN;
+  pageCount = itemCount / GROUP_LEN;
+  if (itemCount % GROUP_LEN != 0) {
+    pageCount++;
   }
-  result->ownerState = encoded;
-  result->page = quotient;
-  result->pageCount = groups;
-  result->row = remainder;
-  result->entryCount = limit;
-  result->selectedIndex = value;
+  result->ownerState = unit;
+  result->page = page;
+  result->pageCount = pageCount;
+  result->row = row;
+  result->entryCount = itemCount;
+  result->selectedIndex = selected;
   return 1;
 }
 
@@ -6067,6 +6722,9 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 extern const struct TileMask gMenu_PatternRowMasks[];
 
+// Builds twelve 8x8 tiles in the window tile area: two sets of six, each a
+// fill of colour 4 with the rows of gMenu_PatternRowMasks XORed in, the first
+// set growing row by row and the second skipping its top row.
 void Menu_BuildPatternTiles(void) {
 #if EDITION_INTERNATIONAL
   u32 *vram = (u32 *)0x06005000;
@@ -6083,24 +6741,26 @@ void Menu_BuildPatternTiles(void) {
 
       Iwram_FillWords(tile, 64, 0x44444444);
       for (x = 1; x <= 7; x++) {
-        s32 mi = n;
+        s32 mask = n;
 
         if (set == 1 && x <= 1) {
           continue;
         }
         if (set == 0 && n > x - 2) {
-          mi = x - 2;
-          if (mi < 0) {
-            mi = 0;
+          mask = x - 2;
+          if (mask < 0) {
+            mask = 0;
           }
         }
-        tile[x] = XorWord(tile[x], gMenu_PatternRowMasks[mi].word0);
-        tile[x + 8] = XorWord(tile[x + 8], gMenu_PatternRowMasks[mi].word1);
+        tile[x] = XorWord(tile[x], gMenu_PatternRowMasks[mask].word0);
+        tile[x + 8] = XorWord(tile[x + 8], gMenu_PatternRowMasks[mask].word1);
       }
     }
   }
 }
 
+// Draws a Psynergy's range icon at (x, y) of window: three tiles from the
+// range icon tiles, the left one mirrored.
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
   s32 n;
   s32 tile;
@@ -6109,11 +6769,14 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 
   n = range * 2;
   tile = n + RANGE_ICON_TILE + 1;
-  UiWindow_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0);
+  UiWindow_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0); // flipped
   UiWindow_SetTilemapEntryFar(window, n + RANGE_ICON_TILE, x + 1, y, 0);
   UiWindow_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
 
+// Updates the Psynergy page for the row under the cursor: the Psynergy's
+// description in the info window, where it can be used (in the field, in
+// battle, or anywhere), and the row highlights with the range icons.
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state) {
   struct PsynergyMenuState *menu;
@@ -6146,10 +6809,11 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #if EDITION_INTERNATIONAL
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
-    if (ability->type0c != 0 || (ability->targetFlag & 0x40) != 0) {
+    if (ability->type0c != 0 ||
+        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       row = 2;
     }
-    if ((ability->targetFlag & 0x80) != 0) {
+    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
       row |= 1;
     }
     if (row == 3) {
@@ -6162,11 +6826,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #else
     UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
     row = 0;
-    if (ability->type0c != 0 || (ability->targetFlag & 0x40) != 0) {
+    if (ability->type0c != 0 ||
+        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInField, window, 0, 72);
       row = 1;
     }
-    if ((ability->targetFlag & 0x80) != 0) {
+    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInBattle, window, 0,
                                       row * 8 + 72);
       row++;
@@ -6180,8 +6845,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     if (row == state->row) {
       ability =
           BattleActGet(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
-      if (ability->damageClass != 4) {
-        UiWindow_SetTilemapEntryFar(window, ability->damageClass + 1, 24,
+      if (ability->element != 4) {
+        UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 0);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
                                   14);
@@ -6194,8 +6859,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     } else {
       ability =
           BattleActGet(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
-      if (ability->damageClass != 4) {
-        UiWindow_SetTilemapEntryFar(window, ability->damageClass + 1, 24,
+      if (ability->element != 4) {
+        UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 4);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
                                   15);
@@ -6322,7 +6987,7 @@ s32 PsynergyMenu_SelectAction(void) {
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2,
                                   menu->statusWindow, 0, -24);
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -6334,7 +6999,7 @@ s32 PsynergyMenu_SelectAction(void) {
     redraw = 1;
     first = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         redraw = 0;
         if (first != 0) {
@@ -6347,7 +7012,7 @@ s32 PsynergyMenu_SelectAction(void) {
       WaitFrames(1);
       nav = Menu_HandlePageInput(0, state.entryCount, PAGE_ROWS, &state.row,
                                  &state.page);
-      menu->paneIcon[0]->active = 1;
+      menu->paneIcon[0]->active = ICON_SHOWN;
 #if EDITION_INTERNATIONAL
       UiMenu_PositionCursor(55, state.row * 16 + 60);
 #else
@@ -6361,21 +7026,21 @@ s32 PsynergyMenu_SelectAction(void) {
         redraw = 1;
       if (nav == -1)
         redraw = 0;
-      if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(112);
+      if (gKeysPressed & KEY_A) {
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = 1;
         done = 1;
         break;
       }
-      if (gKeyState & KEY_B) {
-        AudioCommand_PlayFar(113);
+      if (gKeysPressed & KEY_B) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         done = 1;
         Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         tab = menu->tabIndex[0];
         menu->selectedIndexByOwner[menu->ownerTable[tab]] = state.selectedIndex;
         if (gKeysRepeat & KEY_R)
@@ -6604,7 +7269,7 @@ s32 ItemMenu_SelectItem(void) {
   Menu_SpawnIconEntries(menu, (s32)menu->messageWindow);
 
   done = 0;
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     owner = UnitGetFar(menu->paneOwner[0]);
@@ -6620,7 +7285,7 @@ s32 ItemMenu_SelectItem(void) {
     redraw = 1;
     first = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         RenderOutput_ClearListFar(menu->infoWindow);
         redraw = 0;
@@ -6630,7 +7295,7 @@ s32 ItemMenu_SelectItem(void) {
         }
         ItemMenu_DrawEquipPage((s32)menu->statusWindow, 0, &state);
       }
-      menu->paneIcons[0]->active = 1;
+      menu->paneIcons[0]->active = ICON_SHOWN;
       UiMenu_PositionCursor(96, state.row * 16 + 52);
       WaitFrames(1);
 
@@ -6645,13 +7310,13 @@ s32 ItemMenu_SelectItem(void) {
       if (nav == -1)
         redraw = 0;
 
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         AudioCommand_PlayFar(0x70);
         result = 1;
         done = 1;
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         AudioCommand_PlayFar(0x71);
         result = -1;
         done = 1;
@@ -7078,14 +7743,14 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     }
 
     amount = effect->power;
-    switch (effect->targetFlag & 0xf) {
+    switch (effect->flags & 0xf) {
     case BATTLE_DAMAGE_HP_HEAL:
       if (fixedScale == 0) {
-        if (effect->damageClass != 4) {
+        if (effect->element != 4) {
           s32 statOffset;
 
           source = UnitGetFar(sourceId);
-          statOffset = effect->damageClass;
+          statOffset = effect->element;
           scale = source->element[statOffset].power;
         } else
           scale = 100;
@@ -7308,7 +7973,7 @@ void Ability_PlayUseAnimation(s32 action) {
   struct BattleAct *ability;
 
   ability = BattleActGet(action);
-  animationType = 0xf & ability->targetFlag;
+  animationType = 0xf & ability->flags;
   switch (animationType) {
   case 1:
     Audio_PlayCueReturnOne(0x7e);
@@ -7489,7 +8154,7 @@ s32 DjinnMenu_RunScreen(void) {
   ret = 0;
   menu = gMenuWork;
   cursor = menu->cursor;
-  cursor->active = 13;
+  cursor->active = ICON_HIDDEN;
   cursor->animStep = 0;
   Menu_OpenBackdropScreen();
   WaitFrames(1);
@@ -7597,16 +8262,16 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 13:
-      AudioCommand_PlayFar(126);
+      AudioCommand_PlayFar(SOUND_RECOVERY);
       result = Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownOwner[1]);
       UnitCalcFar(menu->shownOwner[0]);
       UnitCalcFar(menu->shownOwner[1]);
-      menu->cursor->active = 13;
+      menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
       Menu_ComputeEntryValues(menu->backdrop);
       DjinnMenu_ReselectPairEntry(menu, i);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       state = 0;
       break;
     case 6:
@@ -7620,12 +8285,12 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
                           menu->pairIndex[0]);
-      result = Trade_AddOfferFar(menu->shownOwner[0], menu->pairElement[0],
+      result = DjinnRecovery_AddStandbyFar(menu->shownOwner[0], menu->pairElement[0],
                                  menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
-      menu->cursor->active = 13;
+      menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       state = 2;
       break;
     case 9:
@@ -7636,7 +8301,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 14:
-      AudioCommand_PlayFar(126);
+      AudioCommand_PlayFar(SOUND_RECOVERY);
       Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0], menu->shownOwner[1]);
       result = Djinn_TransferFar(menu->shownOwner[1], menu->pairElement[1],
@@ -7645,7 +8310,7 @@ s32 DjinnMenu_RunScreen(void) {
       UnitCalcFar(menu->shownOwner[1]);
       Menu_ComputeEntryValues(menu->backdrop);
       DjinnMenu_ReselectPairEntry(menu, i);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       state = 2;
       break;
     case 4:
@@ -7668,12 +8333,12 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(139);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0]);
-      result = Trade_RemoveOfferFar(menu->shownOwner[0], menu->pairElement[0],
+      result = DjinnRecovery_RemoveFar(menu->shownOwner[0], menu->pairElement[0],
                                     menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
-      menu->cursor->active = 13;
+      menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
-      menu->cursor->active = 1;
+      menu->cursor->active = ICON_SHOWN;
       state = 2;
       break;
     default:
@@ -7763,7 +8428,7 @@ s32 Menu_OpenBackdropScreen(void) {
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
-  Dma_Set(Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
           0x80000010, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
@@ -7878,7 +8543,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
         if ((ENTRY & DJINN_ENTRY_IS_SET) == 0)
           UiWork_SetParamNibbleFar(2);
         usable = 0;
-        if (Trade_CanOfferDjinnFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
+        if (Djinn_IsReadyFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
                                    (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
                                    ENTRY & DJINN_ENTRY_INDEX) ||
             Djinn_IsActiveFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
@@ -7897,7 +8562,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                 (ENTRY & DJINN_ENTRY_INDEX),
             menu->listWindow, row * 56 + 16, line * 8 + 16);
         line++;
-        UiWork_SetParamNibbleFar(15);
+        UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
       }
     }
   }
@@ -8013,30 +8678,30 @@ s32 DjinnMenu_ShowHelp(void) {
       if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         break;
       }
       if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
         selection--;
         selection = Menu_GetModuloOfSum(selection, 7);
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         break;
-      } else if (gKeyState & KEY_START) {
-        AudioCommand_PlayFar(113);
+      } else if (gKeysPressed & KEY_START) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -2;
         break;
-      } else if (gKeyState & (KEY_B | KEY_SELECT)) {
-        AudioCommand_PlayFar(113);
+      } else if (gKeysPressed & (KEY_B | KEY_SELECT)) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         break;
-      } else if (gKeyState & KEY_A) {
+      } else if (gKeysPressed & KEY_A) {
         if (UiWork_IsCompleteFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
-          AudioCommand_PlayFar(112);
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
           break;
         }
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
     }
     if (work->glyphResource != 99) {
@@ -8169,7 +8834,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
   }
   RenderOutput_RedrawSavedRectFar(state->helpWindow);
-  state->cursor->active = 1;
+  state->cursor->active = ICON_SHOWN;
   for (;;) {
     if (redraw != 0) {
       refresh = redraw;
@@ -8229,11 +8894,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             UiText_DrawCharacterAtOffsetFar(MsgDjinnAllStandby,
                                             state->helpWindow, 0, 0);
           }
-          if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+          if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                      DJINN_NUMBER(djinn)) ||
               Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn))) {
-            if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+            if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                        DJINN_NUMBER(djinn)))
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
             else
@@ -8250,11 +8915,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         } else {
           UiText_DrawCharacterAtOffsetFar(MsgDjinnChoose, state->helpWindow, 0,
                                           0);
-          if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+          if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                      DJINN_NUMBER(djinn)) ||
               Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn))) {
-            if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+            if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                        DJINN_NUMBER(djinn))) {
               UiText_DrawCharacterAtOffsetFar(MsgDjinnChoose + 3,
                                               state->helpWindow, 0, 16);
@@ -8275,11 +8940,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             FourObjectMotion_SetSlotPhase(mode, 0);
         }
       } else {
-        if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+        if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                    DJINN_NUMBER(djinn)) ||
             Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn))) {
-          if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+          if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                      DJINN_NUMBER(djinn)))
             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
           else
@@ -8324,7 +8989,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       setAll = 0;
     }
     repeat = gKeysRepeat;
-    pressed = gKeyState;
+    pressed = gKeysPressed;
     step = lists->tutorialStep;
     if (step != 0) {
       pressed = 0;
@@ -8332,7 +8997,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       repeat = 0;
       switch (step) {
       case 28:
-        while (!(gKeyState & KEY_A)) {
+        while (!(gKeysPressed & KEY_A)) {
           UiMenu_PositionCursor(150, 26);
           WaitFrames(1);
         }
@@ -8359,7 +9024,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           BattlePlacement_UpdateTimedEntriesFar();
           BattlePlacement_UpdateTimedEntriesFar();
           Djinn_DeactivateFar(0, 0, 0);
-          Trade_AddOfferFar(0, 0, 0);
+          DjinnRecovery_AddStandbyFar(0, 0, 0);
           UnitCalcFar(0);
           repeat = 2;
           pressed = 2;
@@ -8434,7 +9099,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           UiMenu_SlideCursor(2, 146);
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
-          while (!(gKeyState & KEY_A)) {
+          while (!(gKeysPressed & KEY_A)) {
             UiMenu_PositionCursor(2, 146);
             WaitFrames(1);
           }
@@ -8444,7 +9109,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           work = UiText_OpenMessageWindowFar(MsgDjinnTutorialUnleash, 9, 9, 1);
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
-          while (!(gKeyState & KEY_A)) {
+          while (!(gKeysPressed & KEY_A)) {
             UiMenu_PositionCursor(2, 146);
             WaitFrames(1);
           }
@@ -8455,7 +9120,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               UiText_OpenMessageWindowFar(MsgDjinnTutorialDemonstrate, 9, 9, 1);
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
-          while (!(gKeyState & KEY_A)) {
+          while (!(gKeysPressed & KEY_A)) {
             UiMenu_PositionCursor(2, 146);
             WaitFrames(1);
           }
@@ -8495,11 +9160,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
     if (mode == 0 && (pressed & 0x100)) {
       if (selection == -1) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         continue;
       }
       i = 0;
-      if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+      if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                  DJINN_NUMBER(djinn)) ||
           Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn)))
@@ -8507,7 +9172,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       groupMode = 1;
       gKeysPressedLatch = 0;
       if (i == 0) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(state->listWindow);
         UiWindow_ClearInteriorTilesFar(state->listWindow, 0, 80, 216, 104);
         UiText_DrawResourceFar(MsgDjinnNowRecovering, state->listWindow, 0, 96);
@@ -8518,13 +9183,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         AudioCommand_PlayFar(175);
         Djinn_DeactivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn));
-        Trade_AddOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+        DjinnRecovery_AddStandbyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                           DJINN_NUMBER(djinn));
       } else {
         AudioCommand_PlayFar(139);
         Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                           DJINN_NUMBER(djinn));
-        Trade_RemoveOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+        DjinnRecovery_RemoveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                              DJINN_NUMBER(djinn));
       }
       UnitCalcFar(DJINN_OWNER(djinn));
@@ -8533,25 +9198,25 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
     if (mode == 0 && (pressed & 0x200)) {
       result = 7;
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
     if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
       i = 1;
       if (!(buf[x] & 1)) {
         if (selection == -1) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
           continue;
         }
         i = 0;
-        if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+        if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                    DJINN_NUMBER(djinn)) ||
             Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn)))
           i = 1;
       }
       if (i == 0) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(state->listWindow);
         UiWindow_ClearInteriorTilesFar(state->listWindow, 0, 80, 216, 104);
         UiText_DrawResourceFar(MsgDjinnNowRecovering, state->listWindow, 0, 96);
@@ -8573,16 +9238,16 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       } else {
         result = 1;
       }
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
     if (pressed & 8) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -2;
       break;
     }
     if (pressed & 2) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -8598,7 +9263,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             u32 entry = lists->list.ids[i][j];
             s32 usable;
             usable = 0;
-            if (Trade_CanOfferDjinnFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
+            if (Djinn_IsReadyFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                        DJINN_NUMBER(entry)) ||
                 Djinn_IsActiveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                   DJINN_NUMBER(entry)))
@@ -8608,14 +9273,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                 if (!(entry & 0x8000)) {
                   Djinn_ActivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                     DJINN_NUMBER(entry));
-                  Trade_RemoveOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
+                  DjinnRecovery_RemoveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                        DJINN_NUMBER(entry));
                   UnitCalcFar(DJINN_OWNER(entry));
                 }
               } else if (entry & 0x8000) {
                 Djinn_DeactivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                     DJINN_NUMBER(entry));
-                Trade_AddOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
+                DjinnRecovery_AddStandbyFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                   DJINN_NUMBER(entry));
                 UnitCalcFar(DJINN_OWNER(entry));
               }
@@ -8628,12 +9293,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         result = 10;
         Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2,
                                 CURSOR_WIDTH, 1, 15);
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         break;
       }
     }
     if (repeat & 0x40) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (buf[x] & 4)
         continue;
       Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2, CURSOR_WIDTH,
@@ -8658,7 +9323,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & 0x80) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (buf[x] & 4)
         continue;
       Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2, CURSOR_WIDTH,
@@ -8679,7 +9344,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & 0x20) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (!(buf[x] & 4))
         Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2,
                                 CURSOR_WIDTH, 1, 15);
@@ -8702,7 +9367,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & 0x10) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (!(buf[x] & 4))
         Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2,
                                 CURSOR_WIDTH, 1, 15);
@@ -9037,7 +9702,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give,
       else if (actions[first] & 0x4000)
         UiWork_SetParamNibbleFar(2);
       else
-        UiWork_SetParamNibbleFar(15);
+        UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
       UiText_DrawCharacterAtOffsetFar(
           MsgAbilityName + (actions[first] & OWNER_ACTION_ID_MASK), window,
           x * 8 + 16, (y + line * 2) * 8 + 8);
@@ -9045,7 +9710,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give,
                                    window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
-    UiWork_SetParamNibbleFar(15);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
     UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, x * 8 + PREVIEW_PP_X,
                                     y * 8);
     if (mode != 3) {
@@ -9067,7 +9732,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give,
       if (lines == 0)
         UiText_DrawCharacterAtOffsetFar(MsgPsynergyUnchanged, window, x * 8,
                                         y * 8 + 88);
-      UiWork_SetParamNibbleFar(15);
+      UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
       UiWindow_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
     ((struct UiWork *)gWindowWork[0])->dirty = 1;
@@ -9310,7 +9975,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   frame = 0;
   cursor[0] = 0;
   page = 2;
-  state->cursor->active = 13;
+  state->cursor->active = ICON_HIDDEN;
   cursor[1] = 0;
 
   for (j = 3; j >= 0; j--) {
@@ -9467,7 +10132,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow,
                               ((state->pairEntries[0] & 0xe0) >> 5) + 0x5001, 5,
                               row, zero = 0);
-  UiWork_SetParamNibbleFar(15);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 
   if (mode == 0) {
     if ((state->pairEntries[1] & 0x8000) == 0) {
@@ -9480,7 +10145,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow,
                                 ((state->pairEntries[1] & 0xe0) >> 5) + 0x5001,
                                 5, 2, mode);
-    UiWork_SetParamNibbleFar(15);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((state->pairEntries[0] & 0x8000) != 0) {
       UiWork_SetParamNibbleFar(2);
@@ -9492,7 +10157,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow,
                                 ((state->pairEntries[0] & 0xe0) >> 5) + 0x5001,
                                 5, 2, zero);
-    UiWork_SetParamNibbleFar(15);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
     UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow, 0xf296, 7,
                                 1, zero);
   }
@@ -9503,7 +10168,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
     render = (struct UiRenderWork *)gWindowWork[0];
     scene = state->backdrop;
-    inputEdge = gKeyState;
+    inputEdge = gKeysPressed;
     inputHeld = gKeysRepeat;
 
     if (scene->tutorialStep != 0) {
@@ -9541,7 +10206,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
            * statement macro 8, a cursor-store statement macro 12 at each of the
            * two plain stores, so no layer. */
           do {
-            state->cursor->active = 1;
+            state->cursor->active = ICON_SHOWN;
           } while (0);
           UiMenu_SlideCursor(2, 96);
           gGameState.messageSpeed = 1;
@@ -9563,7 +10228,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
            * render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22.
            */
           do {
-            state->cursor->active = 13;
+            state->cursor->active = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -9581,7 +10246,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
            * statement macro 8, a cursor-store statement macro 12 at each of the
            * two plain stores, so no layer. */
           do {
-            state->cursor->active = 1;
+            state->cursor->active = ICON_SHOWN;
           } while (0);
           UiMenu_SlideCursor(106, 56);
           gGameState.messageSpeed = 1;
@@ -9604,7 +10269,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
            * render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22.
            */
           do {
-            state->cursor->active = 13;
+            state->cursor->active = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -9756,36 +10421,36 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         result = 1;
         break;
       }
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if ((inputEdge & 8) != 0) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -2;
       break;
     } else if ((inputEdge & 2) != 0) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     } else if ((inputEdge & 0x100) != 0) {
       if (mode <= 1) {
         page = ((page + 1) % 3);
         dirty = 2;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
     } else if ((inputHeld & 32) != 0) {
       if (page <= 1) {
         cursor[page]--;
         cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
-        AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        Input_ResetKeyRepeat();
         dirty = 1;
       }
     } else if ((inputHeld & 16) != 0) {
       if (page <= 1) {
-        AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        Input_ResetKeyRepeat();
         cursor[page]++;
         dirty = 1;
         cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
@@ -9842,7 +10507,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   pending = 1;
   result = 0;
   frame = 0;
-  menu->cursor->active = 13;
+  menu->cursor->active = ICON_HIDDEN;
   cursor[1] = cursor[0] = result;
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
@@ -9876,7 +10541,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   side = 0;
   while (1) {
     render = (struct UiRenderWork *)gWindowWork[0];
-    keys = gKeyState;
+    keys = gKeysPressed;
     repeat = gKeysRepeat;
     if (pending) {
       render->menuBusy = 1;
@@ -9922,25 +10587,25 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
         Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
     }
     if (keys & KEY_START) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -2;
       break;
     }
     if (keys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeat & KEY_LEFT) {
       cursor[side]--;
       cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
-      AudioCommand_PlayFar(111);
-      Runtime_SetMainState19();
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      Input_ResetKeyRepeat();
       pending = 1;
     } else if (repeat & KEY_RIGHT) {
       cursor[side]++;
-      AudioCommand_PlayFar(111);
-      Runtime_SetMainState19();
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      Input_ResetKeyRepeat();
       pending = 1;
       cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
     }
@@ -10054,12 +10719,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   firstSlot = Resource_FindFreeEntry();
   activeState->resourceSlots[0] = firstSlot;
   if (firstSlot != -1) {
-    VramBlock_LoadCached(firstSlot, 0x80, gMenu_PairSpriteATiles);
+    VramCache_Load(firstSlot, 0x80, gMenu_PairSpriteATiles);
   }
   secondSlot = Resource_FindFreeEntry();
   activeState->resourceSlots[1] = secondSlot;
   if (secondSlot != -1) {
-    VramBlock_LoadCached(secondSlot, 0x80, gMenu_PairSpriteBTiles);
+    VramCache_Load(secondSlot, 0x80, gMenu_PairSpriteBTiles);
   }
 }
 
@@ -10080,7 +10745,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   allocation = (s32)Runtime_AllocateBlock(0x11, 0x608);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
-  buffer = Resource_GetBuffer(slot, allocation + 0x400);
+  buffer = VramCache_Reload(slot, allocation + 0x400);
   Runtime_ReleaseHeapBlock(0x11);
   return buffer;
 }
@@ -10120,7 +10785,7 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = 1;
+  object->active = ICON_SHOWN;
   return 1;
 }
 
@@ -10151,6 +10816,6 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = 1;
+  object->active = ICON_SHOWN;
   return 1;
 }

@@ -448,7 +448,7 @@ UnitCalc:
 	adds r0, #255
 	adds r3, r7, r0
 	ldrb r0, [r3]
-	bl Owner_GetRecordStride84
+	bl Class_GetDefinition
 	adds r5, r0, #0
 	ldrb r2, [r5, #8]
 	ldr r3, [r6]

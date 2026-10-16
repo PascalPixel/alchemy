@@ -54,7 +54,7 @@ Func_080e8db0:
 	movs r1, #64
 	adds r2, r7, #0
 	str r0, [sp, #36]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #208
 	ldr r2, [sp, #52]
 	movs r1, #128

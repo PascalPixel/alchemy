@@ -16,7 +16,7 @@ Func_081a1830:
 	lsls r1, r1, #2
 	adds r0, r5, #0
 	movs r2, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, .L_081a18e0
 	ldr r2, .L_081a18e4
 	adds r4, r0, #0

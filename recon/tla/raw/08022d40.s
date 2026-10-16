@@ -47,7 +47,7 @@ ResourceObject_Create:
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	mov r12, r0
 	cmp r0, #0
 	bne .L_08022da0

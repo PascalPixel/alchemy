@@ -4,8 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-extern s32 gValeStorm_ShakeDone;
-extern s32 gValeStorm_ShakeShift;
 u8 *ValeStorm_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *ValeStorm_GetExits(void);

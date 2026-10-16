@@ -4,7 +4,7 @@ extern u16 gData_020068a2;
 void *MemAlloc(s32 size);
 void MemFree(void *buffer);
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02000d18(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
@@ -29,7 +29,7 @@ fill:
    * overlay 67c's Func_02003278 does; without the barrier the size's first half
    * comes first. */
   __asm__("");
-  VramBlock_LoadCached(gData_020068a2, 0x100, buffer);
+  VramCache_Load(gData_020068a2, 0x100, buffer);
   MemFree(buffer);
   Scheduler_AddOrUpdateCallback(Func_02000d18, 0x480);
 }

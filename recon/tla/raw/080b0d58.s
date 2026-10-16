@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Trade_RemoveOffer
+	.global DjinnRecovery_Remove
 	.thumb_func
-Trade_RemoveOffer:
+DjinnRecovery_Remove:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -18,7 +18,7 @@ Trade_RemoveOffer:
 	movs r3, #1
 .L_080b0d72:
 	adds r0, r3, #0
-	bl Trade_GetOfferState
+	bl Djinn_GetRecoveryTable
 	movs r1, #148
 	adds r3, r0, #0
 	lsls r1, r1, #1

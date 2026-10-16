@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-extern const u16 gBattleCueTable[35];
+extern const u16 gEncounter_BattleMusic[35];
 
 #endif

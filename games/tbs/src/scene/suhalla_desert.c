@@ -176,7 +176,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0) {
     FieldGameFlag_SetByte(0x218, p10);
     FieldGameFlag_SetByte(0x210, 180);
     Engine_EventEnd();
-    *(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
+    gEventWork->encounterEnemyGroup = 0; // drop any battle this step rolled
   }
 }
 
@@ -254,17 +254,17 @@ static void SuhallaDesert_RestoreActorScaleAndBlend(s32 a0) {
       Engine_EventWait(1);
       Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
       Engine_ActorSetAnimation(13, 1);
-      Engine_ActorFaceDirection(0, 0x4000, 0);
+      Engine_ActorFaceDirection(0, FACING_SOUTH, 0);
       Engine_EventSetMessage(MsgSuhallaSandstorm);
-      Actor_ShowEmote(13, 0x106, 60);
+      Actor_ShowEmote(13, EMOTE_IN_FRONT | 6, 60);
       Engine_EventShowMessage(13, 0);
-      Actor_ShowEmote(13, 0x102, 60);
+      Actor_ShowEmote(13, EMOTE_IN_FRONT | 2, 60);
       Engine_EventShowMessage(13, 0);
-      Actor_FaceDirection(13, 0x2000, 0);
-      Actor_ShowEmote(13, 0x101, 60);
+      Actor_FaceDirection(13, FACING_SOUTHEAST, 0);
+      Actor_ShowEmote(13, EMOTE_IN_FRONT | 1, 60);
       Engine_EventShowMessage(13, 0);
       Engine_EventWait(10);
-      Actor_FaceDirection(13, 0xc000, 30);
+      Actor_FaceDirection(13, FACING_NORTH, 30);
       Engine_ActorRunRepeatedMotion(13, 2);
       Engine_EventShowMessage(13, 0);
       Engine_ActorSetAnimationAndWait(13, 3);
@@ -317,29 +317,29 @@ static void EV09_TOUCH(void) {
         }
         Actor_FaceActor(ACTOR_ID, 0xc000, 0);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 0x4e8);
-        Actor_FaceDirection(ACTOR_ID, 0x4000, 0);
+        Actor_FaceDirection(ACTOR_ID, FACING_SOUTH, 0);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1bc, 0x4d8);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 40);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 40);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
         Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
         Event_ShowMessage(ACTOR_ID, 0);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
-        Actor_ShowEmote(ACTOR_ID, 0x105, 60);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+        Actor_ShowEmote(ACTOR_ID, EMOTE_IN_FRONT | 5, 60);
         Event_ShowMessage(ACTOR_ID, 0);
         Engine_EventWait(30);
         Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
         Event_ShowMessage(ACTOR_ID, 0);
-        Actor_FaceDirection(ACTOR_ID, 0xc000, 30);
+        Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 30);
         Event_AskYesNo(ACTOR_ID, 0);
         Engine_EventWait(30);
-        Actor_ShowEmote(ACTOR_ID, 0x106, 60);
+        Actor_ShowEmote(ACTOR_ID, EMOTE_IN_FRONT | 6, 60);
         Event_ShowMessage(ACTOR_ID, 0);
         Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
         Event_ShowMessage(ACTOR_ID, 0);
         Actor_SetSpeed(ACTOR_ID, 0xb333, 0x5999);
         Actor_WalkToAndWait(ACTOR_ID, 0x1b8, 0x4e8);
         Event_ShowMessage(ACTOR_ID, 0);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Engine_ActorSetAnimation(ACTOR_ID, 2);
         record = Actor_Get(ACTOR_PARTY_LEADER);
         if (record != 0) {
@@ -517,7 +517,7 @@ static s32 FieldScene_RunScene3c0SequenceA(void) {
   if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
     Object_GetById(14)->priorityFlags = 2;
     Object_GetById(14)->motionFlags = 0;
-    Actor_SetPosition(14, 0xf80000, 0x2c80000);
+    Actor_SetPosition(14, PIXELS(248), PIXELS(712));
     Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
     MapObject_SetPosition(100, -1, -1);
     BattleFx_EmitRandomParticle();

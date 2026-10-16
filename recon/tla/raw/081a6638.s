@@ -89,26 +89,26 @@ Func_081a6638:
 	bge .L_081a66c6
 	movs r0, #0
 	movs r1, #0
-	bl Graphics_TransformSmallPalette
+	bl PaletteFade_SetCurrent
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	ldr r3, .L_081a6718
 	movs r2, #128
 	lsls r2, r2, #19
 	movs r0, #40
 	strh r3, [r2]
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	movs r0, #150
 	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a671c
 	movs r0, #2
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #40
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	movs r0, #60
 	bl Title_WaitFramesOrPress
 	cmp r0, #0

@@ -25,7 +25,7 @@ s32	 GameFlag_Test(s32 flag);
 void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *screen);
 s32	 AffineMatrix_BuildForEffect(void *matrix);
-s32	 VramBlock_LoadCached(s32 slot, s32 size, void *source);
+s32	 VramCache_Load(s32 slot, s32 size, void *source);
 void Func_0803e488(struct SelectionScreen *state, s32 index);
 
 void MenuSelection_DrawFrame(void)
@@ -170,7 +170,7 @@ void MenuSelection_DrawFrame(void)
         {
             void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
 
-            cursorEntry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+            cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
         }
         if (cursor->targetX != cursor->x) {
             tmp = (cursor->targetX - cursor->x) >> 1;

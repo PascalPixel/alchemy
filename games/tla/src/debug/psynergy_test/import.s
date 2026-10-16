@@ -18,10 +18,10 @@ Math_Sine:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -122,14 +122,14 @@ UnitCalc:
 	.thumb_func
 Inventory_AddItem:
 	overlay_veneer Inventory_AddItemFar
-	.global Owner_AdjustFirstValue
+	.global Unit_AddHp
 	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitPpAdd
+Unit_AddHp:
+	overlay_veneer Unit_AddHpFar
+	.global Unit_AddPp
 	.thumb_func
-UnitPpAdd:
-	overlay_veneer UnitPpAddFar
+Unit_AddPp:
+	overlay_veneer Unit_AddPpFar
 	.global Djinn_AddToOwner
 	.thumb_func
 Djinn_AddToOwner:
@@ -138,10 +138,10 @@ Djinn_AddToOwner:
 	.thumb_func
 Djinn_Activate:
 	overlay_veneer Djinn_ActivateFar
-	.global Party_AdvanceOwnerCountToTarget
+	.global Unit_LevelUpTo
 	.thumb_func
-Party_AdvanceOwnerCountToTarget:
-	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+Unit_LevelUpTo:
+	overlay_veneer Unit_LevelUpToFar
 	.global Item_AdjustCounter
 	.thumb_func
 Item_AdjustCounter:

@@ -42,10 +42,10 @@ MemFree:
 	.thumb_func
 Func_0200468c:
 	overlay_veneer Resource_DecodeType01Far
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -53,7 +53,7 @@ Resource_FindFreeEntry:
 	.global Func_020046a4
 	.thumb_func
 Func_020046a4:
-	overlay_veneer Bg0_ClearTilemapFar
+	overlay_veneer DebugText_ClearFar
 	.global Func_020046ac
 	.thumb_func
 Func_020046ac:
@@ -262,14 +262,14 @@ PartyInventory_Remove:
 	.thumb_func
 Func_020047a4:
 	overlay_veneer Inventory_EquipFar
-	.global Owner_AdjustFirstValue
+	.global Unit_AddHp
 	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitPpAdd
+Unit_AddHp:
+	overlay_veneer Unit_AddHpFar
+	.global Unit_AddPp
 	.thumb_func
-UnitPpAdd:
-	overlay_veneer UnitPpAddFar
+Unit_AddPp:
+	overlay_veneer Unit_AddPpFar
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:

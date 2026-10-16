@@ -290,7 +290,7 @@ Func_080fcbd8:
 	ldrb r1, [r0, #9]
 	adds r0, r3, #0
 	negs r1, r1
-	bl UnitPpAddFar
+	bl Unit_AddPpFar
 .L_080fce20:
 	ldrb r0, [r5]
 	bl UnitCalcFar

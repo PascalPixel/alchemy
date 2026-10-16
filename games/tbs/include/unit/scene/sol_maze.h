@@ -4,14 +4,16 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-u8 *SceneData_GetActorTable(void);
-u8 *SceneData_GetEffectTable(void);
-extern struct SceneEntrance gSolMaze_SceneTable0[];
-extern u32 gSolMaze_SceneTable1[];
-extern struct ScenePlacement gSolMaze_SceneTable2[];
-extern struct SceneEvent gSolMaze_SceneTable3[];
+struct SceneRegion;
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+extern struct SceneEntrance gSolMazeEntrances[];
+extern u32 gSolMazeExits[];
+extern struct ScenePlacement gSolMazePlacements[];
+extern struct SceneEvent gSolMazeEvents[];
 
 #endif

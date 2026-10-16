@@ -27,7 +27,7 @@ void *Resource_GetTableEntry(s32 index) {
   return Resource_DirectoryTable[index];
 }
 
-void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byteLength) {
+void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   s32 entryCount;
   s32 entryIndex;
 

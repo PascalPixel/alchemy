@@ -425,7 +425,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   Engine_EventSetMessage(MsgTolbiStepRightEnjoy);
   Engine_EventShowMessage(8, 0);
   Event_RequestDestination(508, 0);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiSpring1, 12);
+  Event_SetNextDestination((s32)&SceneId_TolbiSpring1, 12);
 }
 
 static void EV09_TALK(void) {
@@ -452,7 +452,7 @@ static void EV09_TALK(void) {
     Engine_ActorFaceDirection(0, 0x8000, 0);
     Engine_EventWait(20);
     Event_RequestDestination(0x1fd, 0);
-    Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiSpring1, 13);
+    Event_SetNextDestination((s32)&SceneId_TolbiSpring1, 13);
   } else {
     gEventWork->message++;
     Engine_EventShowMessage(9, 0);
@@ -549,12 +549,12 @@ prompt:
   Task_Wait(5);
   Event_PlayCue(116);
   for (;;) {
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       Event_PlayCue(112);
       result = 0;
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       Event_PlayCue(113);
       result = -1;
       break;
@@ -622,12 +622,12 @@ prompt:
     Task_Wait(5);
     Event_PlayCue(116);
     for (;;) {
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         Event_PlayCue(112);
         result = 0;
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         Event_PlayCue(113);
         result = -1;
         break;

@@ -54,9 +54,9 @@ Sound_LoadPresetParameters:
 	.thumb_func
 Func_0200192c:
 	overlay_veneer Func_08000380
-	.global SerialRuntime_BeginTransferB
+	.global SerialRuntime_BeginReceive
 	.thumb_func
-SerialRuntime_BeginTransferB:
+SerialRuntime_BeginReceive:
 	overlay_veneer Party_CheckFar
 	.global Func_0200193c
 	.thumb_func
@@ -65,7 +65,7 @@ Func_0200193c:
 	.global Func_02001944
 	.thumb_func
 Func_02001944:
-	overlay_veneer Scheduler_SetCallbackMaskFar
+	overlay_veneer Scheduler_SetTaskFlagsFar
 	.global UnitGet
 	.thumb_func
 UnitGet:
@@ -198,10 +198,10 @@ Func_020019e4:
 	.thumb_func
 Func_020019ec:
 	overlay_veneer Func_080382e0
-	.global Trade_GetOfferState
+	.global Djinn_GetRecoveryTable
 	.thumb_func
-Trade_GetOfferState:
-	overlay_veneer Trade_GetOfferStateFar
+Djinn_GetRecoveryTable:
+	overlay_veneer Djinn_GetRecoveryTableFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

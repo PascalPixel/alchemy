@@ -682,7 +682,7 @@ s32 ValeKraden_RestoreEntryState(void) {
   }
   if (Engine_GameFlagIsSet(0x834) != 0) {
     Effect_SoundAndFlash();
-    BattleFx_StartTwelveFrameBlend();
+    FieldFx_StartLightning();
     Engine_EventBegin();
     Engine_ActorSetPosition(12, 0, 0);
     Engine_ActorSetPosition(13, 0, 0);

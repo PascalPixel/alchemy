@@ -52,7 +52,7 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 handle, s32 size, void *source);
+void VramCache_Load(s32 handle, s32 size, void *source);
 struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
 void Func_02001950(s32 show, s32 first, u32 count);
 void Func_02002394(void);
@@ -85,7 +85,7 @@ static __inline__ void *Mem_Alloc(s32 size)
 static __inline__ void Vram_Load(s32 handle, s32 size, void *source)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    VramBlock_LoadCached(handle, size, source);
+    VramCache_Load(handle, size, source);
 }
 
 static __inline__ void Vector_AddPolar(s32 radius, s32 angle, s32 *position)

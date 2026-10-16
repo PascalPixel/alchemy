@@ -73,7 +73,7 @@
 	.set import.Engine_ItemShowFound, 1
 	.set import.BattleFx_StartFadeOverlay, 1
 	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_SetQueuedSoundAndPlay, 1
 	.set import.BattleFx_PlayQueuedSound, 1
 	.set import.Engine_ShopOpen, 1

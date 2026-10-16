@@ -89,9 +89,9 @@ void DisplayBlend_StartScript(u16 *script) {
 }
 
 void DisplayBlend_EnableRunScript(void) {
-  Scheduler_EnableCallbacks((u32)DisplayBlend_RunScript);
+  Scheduler_SuspendTasks((u32)DisplayBlend_RunScript);
 }
 
 void DisplayBlend_DisableRunScript(void) {
-  Scheduler_DisableCallbacks((u32)DisplayBlend_RunScript);
+  Scheduler_ResumeTasks((u32)DisplayBlend_RunScript);
 }

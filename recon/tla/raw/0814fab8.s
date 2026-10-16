@@ -654,7 +654,7 @@ Func_0814fab8:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #24]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, [r5, #8]
 	ldr r4, [sp, #36]
 	str r3, [r4]

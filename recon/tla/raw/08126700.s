@@ -49,7 +49,7 @@ Func_08126700:
 	lsls r2, r6, #1
 	adds r1, r0, #0
 	adds r0, r6, #0
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	bl Render_ResetTransformState
 	mov r0, r10
 	bl SceneTransform_ApplyPosition
@@ -78,7 +78,7 @@ Func_08126700:
 	bl Render_ResetTransformState
 	mov r0, r8
 	mov r1, r10
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	add r6, sp, #16
 	adds r1, r6, #0
 	mov r0, r9
@@ -107,7 +107,7 @@ Func_08126700:
 	adds r1, r0, #0
 	adds r2, r5, #0
 	adds r0, r6, #0
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -15,7 +15,7 @@ struct EnemyRecord {
     u16 experience;
 };
 
-struct EnemyRecord *Owner_GetRecordFar(s32);
+struct EnemyRecord *Enemy_GetDefinitionFar(s32);
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);

@@ -50,7 +50,7 @@
 	.set import.Object_SetActionById, 1
 	.set import.Engine_ActorSetAnimationAndWait, 1
 	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.BattleFx_RunRisingObjectSequence, 1
+	.set import.Actor_JumpDownLedge, 1
 	.set import.Engine_ActorFaceActor, 1
 	.set import.Engine_ActorFaceEachOther, 1
 	.set import.Engine_ActorSetChildValue, 1

@@ -3,12 +3,12 @@
 
 #include "types.h"
 
-s32 Runtime_BlankDisplayLoadValueAndRun(void);
+s32 ReelGame_Start(void);
 s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count);
-void BattlePres_ProcessPendingTileTransfer(void);
+void ReelGame_TransferCanvas(void);
 void Palette_DarkenSceneStep(void);
 void Palette_StepTowardResource(s32 resource);
-void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+void ReelGame_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 extern const u16 gReelGame_SparkCellOffsets[];
 extern const u8 gReelGame_SymbolPrizes[];
 extern const u8 gReelGame_FrameSpriteX[];

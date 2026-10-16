@@ -245,7 +245,7 @@ Func_081197f0:
 	bl Func_08118eb0
 	bl Func_08118f6c
 	movs r0, #0
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	ldrh r3, [r0]
 	cmp r3, #0
 	beq .L_08119a18
@@ -305,7 +305,7 @@ Func_081197f0:
 	strh r5, [r3]
 	bl Func_081281ec
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	mov r1, r9
 	str r0, [r1, #84]
 	adds r1, #69
@@ -399,7 +399,7 @@ Func_081197f0:
 	bl Func_0811d7e4
 	bl Func_08118f6c
 	movs r0, #0
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	ldrh r3, [r0]
 	cmp r3, #0
 	beq .L_08119b5e
@@ -454,7 +454,7 @@ Func_081197f0:
 .L_08119bba:
 	str r0, [sp, #28]
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	mov r3, r9
 	str r0, [r3, #84]
 	ldr r5, [sp, #20]
@@ -887,8 +887,8 @@ Func_081197f0:
 	bl Audio_PlayCue
 .L_08119f34:
 	movs r0, #30
-	bl Blend_SetDarkenTarget16
-	bl Blend_WaitForTransition
+	bl Fade_ToBlack
+	bl Fade_Wait
 	movs r3, #171
 	lsls r3, r3, #3
 	add r3, r9
@@ -900,7 +900,7 @@ Func_081197f0:
 .L_08119f4c:
 	bl BattlePres_ClearLinkPayload
 	movs r0, #0
-	bl Scheduler_EnableCallbacks
+	bl Scheduler_SuspendTasks
 	ldr r3, .L_08119f70
 	movs r2, #128
 	lsls r2, r2, #19
@@ -952,16 +952,16 @@ Func_081197f0:
 .L_08119fc0:
 	movs r0, #30
 	movs r7, #1
-	bl Blend_SetDarkenTarget16
+	bl Fade_ToBlack
 	negs r7, r7
-	bl Blend_WaitForTransition
+	bl Fade_Wait
 	b .L_08119fea
 .L_08119fd0:
 	movs r0, #78
 	bl Audio_PlayCue
 	movs r0, #30
-	bl Blend_SetDarkenTarget16
-	bl Blend_WaitForTransition
+	bl Fade_ToBlack
+	bl Fade_Wait
 	ldr r5, [sp, #40]
 	movs r7, #186
 	lsls r7, r7, #2

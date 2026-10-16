@@ -26,7 +26,7 @@
 /* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant
  * (build-checked): read through gWorkSlot, effect.c
  * (BattleFx_SetTransitionFlagAndDisplay, BattleFx_RunSpiderWeb) and palette.c
- * (Title_PlaceIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
+ * (Title_UpdateIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
  * tbs-en. */
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e60, gWorkSlot)
 #else
@@ -35,7 +35,7 @@
 /* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant
  * (build-checked): read through gWorkSlot, effect.c
  * (BattleFx_SetTransitionFlagAndDisplay, BattleFx_RunSpiderWeb) and palette.c
- * (Title_PlaceIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
+ * (Title_UpdateIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
  * tbs-en. */
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e50, gWorkSlot)
 #endif

@@ -182,7 +182,7 @@ Func_080fc2e0:
 	add r5, r9
 	bl MemFree
 	ldrb r0, [r5]
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	ldrb r0, [r5]
 	bl UnitCalcFar
 	mov r0, r8

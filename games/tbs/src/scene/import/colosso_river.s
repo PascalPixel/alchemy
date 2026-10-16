@@ -14,7 +14,7 @@
 	.set import.Runtime_BumpFree, 1
 	.set import.Resource_DecodeType01, 1
 	.set import.Resource_ResetEntry, 1
-	.set import.Resource_ActivateEntry, 1
+	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
 	.set import.AffineMatrix_BuildForEffect, 1
@@ -50,7 +50,7 @@
 	.set import.GetPartyMemberCount, 1
 	.set import.Party_AddActiveOwner, 1
 	.set import.Party_RemoveActiveOwner, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventWait, 1
 	.set import.Engine_EventBegin, 1
 	.set import.Engine_EventEnd, 1
@@ -83,7 +83,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
 	.set import.Engine_LeaderCheckAhead, 1
 	.set import.Engine_EventOpenScreen, 1

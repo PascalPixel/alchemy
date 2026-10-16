@@ -43,28 +43,28 @@ u32 BattleEv_DispatchQueued(void) {
     u8 opcode = queue->opcodes[i];
     if (opcode <= 15)
       switch (opcode) {
-      case BATTLE_EVENT_SCR:
+      case BATTLE_EVENT_DJINN_BONUS:
         Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]);
         break;
-      case BATTLE_EVENT_OBJ_EFFECT:
+      case BATTLE_EVENT_REMOVE_UNIT:
         BattleActor_DestroyTemporaryObject(queue->operands[i]);
         break;
-      case BATTLE_EVENT_UNIT:
+      case BATTLE_EVENT_UNIT_NAME:
         UiText_DrawQuantity(queue->operands[i], 1);
         break;
-      case BATTLE_EVENT_NUM:
+      case BATTLE_EVENT_NUMBER:
         UiText_DrawQuantity(queue->operands[i], 5);
         break;
-      case BATTLE_EVENT_ITEM:
+      case BATTLE_EVENT_ITEM_NAME:
         UiText_DrawQuantity(queue->operands[i] & 0x1ff, 2);
         break;
-      case BATTLE_EVENT_ACT:
+      case BATTLE_EVENT_ABILITY_NAME:
         UiText_DrawQuantity(queue->operands[i] & 0x3fff, 4);
         break;
       case BATTLE_EVENT_MARK:
         ((struct BattleDisplayFlags *)Ram_HeapSlots->unk84[4])->marked = 1;
         break;
-      case BATTLE_EVENT_CLEAR:
+      case BATTLE_EVENT_CLEAR_ARGUMENTS:
         UiWork_ClearValueNameTablesFar();
         break;
       case BATTLE_EVENT_MESSAGE:
@@ -73,25 +73,25 @@ u32 BattleEv_DispatchQueued(void) {
         BattlePresentation_WaitForAdvance();
         UiWork_ClearValueNameTablesFar();
         break;
-      case BATTLE_EVENT_MESSAGE_ADD:
+      case BATTLE_EVENT_MESSAGE_NO_WAIT:
         if ((s32)queue->operands[i] >= 0)
           UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
         UiWork_ClearValueNameTablesFar();
         break;
-      case BATTLE_EVENT_OBJ_BEGIN:
+      case BATTLE_EVENT_HIT:
         if (runtime->pendingCue > 0)
           Audio_PlayCue(runtime->pendingCue);
         BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
         break;
-      case BATTLE_EVENT_OBJ_RESET:
+      case BATTLE_EVENT_DEFEAT:
         Func_0812824c(queue->operands[i], runtime->flags);
         BattleActor_ResetRuntimeFields(queue->operands[i]);
         BattleMotion_InitializeActorRecords(queue->operands[i]);
         break;
-      case BATTLE_EVENT_REDRAW:
+      case BATTLE_EVENT_DRAW_STATUS:
         PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
         break;
-      case BATTLE_EVENT_OBJ_END:
+      case BATTLE_EVENT_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(queue->operands[i],
                                     BattleObjGet(queue->operands[i]));
         BattlePres_SetActorModeAndAction(queue->operands[i]);

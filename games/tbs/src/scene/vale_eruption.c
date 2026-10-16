@@ -61,7 +61,7 @@ static void RunEventScript01(void) {
   Actor_WalkToAndWait(12, 0x100, 0x1f4);
   Actor_FaceDirection(12, 0xa000, 0);
   BattleFx_StartBufferBlend(0x10003, 0x10006);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Engine_TaskWait(60);
   Camera_MoveTo(0x1000000, -1, 0x2640000, 0);
   Engine_CameraWaitForMove();
@@ -74,14 +74,14 @@ static void RunEventScript01(void) {
   Camera_MoveTo(0x1000000, -1, 0x1f40000, 1);
   Engine_EventWait(20);
   Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_EventWait(30);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_CameraWaitForMove();
   Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Event_PlayCue(145);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
@@ -117,7 +117,7 @@ static void RunEventScript01(void) {
   Event_ShowMessage(10, 0);
   Engine_EventWait(60);
   Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_EventWait(60);
   Engine_ActorFaceEachOther(8, 9, 0);
@@ -337,7 +337,7 @@ static void RunEventScript01(void) {
   Actor_ShowEmote(12, 0x102, 0);
   Engine_EventWait(40);
   Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
-  BattleFx_SetBlock30Values12Zero();
+  FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_EventWait(30);
   work = gEventWork;

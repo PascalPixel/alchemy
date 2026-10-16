@@ -38,6 +38,7 @@
 #include "game_state.h"
 #include "uiwindow.h"
 #include "text/msg_ids.h"
+#include "sound_ids.h"
 #include "frame.h"
 #include "map_scroll.h"
 
@@ -291,7 +292,7 @@ s32 SaveMenu_Run(void) {
   if (gGameState.entrance == 2) {
   L_ask:
     UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
-    v7 = Object_CallSpawnRoutineAtOrigin(1);
+    v7 = Menu_AskYesNo(1);
     UiWork_FinalizePendingCore();
     if (v7 == 0) {
       UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
@@ -313,8 +314,8 @@ menu_top:;
   v6 = SaveState_ScanRecordFlags();
   if (v6 < 0) {
     if (gDebugMode != 0) {
-      gGameState.savedOptions = 1;
-      gOptionMirror = 1;
+      gGameState.idleSleepEnabled = 1;
+      gIdleSleepEnabled = 1;
       UiText_ShowCenteredMessage(MsgNoBackupMemory, 1, 8);
     }
   }
@@ -356,7 +357,7 @@ menu_top:;
         break;
       }
     }
-    Party_SetFlag32AndRefreshMembers();
+    Party_BeginChildhood();
     gGameState.scene = (s32)&SceneId_ValeBabi;
     gGameState.entrance = 20;
     goto leave;
@@ -488,8 +489,8 @@ menu_top:;
         greeting[3] = 0x30;
       }
       for (;;) {
-        if ((gKeyState & KEY_B) != 0) {
-          Engine_AudioPlayCue(113);
+        if ((gKeysPressed & KEY_B) != 0) {
+          Engine_AudioPlayCue(SOUND_MENU_CANCEL);
           break;
         }
         if ((v5 & gLinkStatus) == v5) {
@@ -536,7 +537,7 @@ menu_top:;
 
       UiText_DrawResource(MsgClearSendingData, v6, 0, 4);
       Engine_TaskWait(10);
-      SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
+      SerialRuntime_BeginSend((s32)gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
       v5 = 0;
       v1 = 3;
@@ -561,7 +562,7 @@ menu_top:;
         v5 = 1;
         do {
           Engine_TaskWait(1);
-        } while ((gKeyState & v5) == 0);
+        } while ((gKeysPressed & v5) == 0);
       }
       Engine_TaskWait(10);
       SerialRuntime_RemoveIrqHandlers();
@@ -632,19 +633,19 @@ menu_top:;
       RenderOutput_PrepareForRedraw(pageWindow);
       for (;;) {
         Link_DrawShiftedTilePair(0x6002500);
-        if ((gKeyState & KEY_B) != 0) {
-          Engine_AudioPlayCue(113);
+        if ((gKeysPressed & KEY_B) != 0) {
+          Engine_AudioPlayCue(SOUND_MENU_CANCEL);
           RenderOutput_PrepareForRedraw(pageWindow);
           UiWork_Finalize(pageWindow, 2);
           UiWork_Finalize(helpWindow, 2);
           UiWork_Finalize(headingWindow, 2);
           goto page_select;
         }
-        if ((gKeyState & KEY_A) != 0) {
+        if ((gKeysPressed & KEY_A) != 0) {
           page = (page + 1);
           v7 = 1;
           if (page == pageCount) {
-            Engine_AudioPlayCue(112);
+            Engine_AudioPlayCue(SOUND_MENU_CONFIRM);
             RenderOutput_PrepareForRedraw(pageWindow);
             UiWork_Finalize(pageWindow, 2);
             UiWork_Finalize(helpWindow, 2);
@@ -652,14 +653,14 @@ menu_top:;
             Engine_TaskWait(1);
             goto menu_top;
           }
-          Engine_AudioPlayCue(111);
+          Engine_AudioPlayCue(SOUND_MENU_CURSOR_MOVE);
         } else {
-          if ((gKeyState & KEY_LEFT) != 0 && pageCount > 1) {
-            Engine_AudioPlayCue(111);
+          if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
+            Engine_AudioPlayCue(SOUND_MENU_CURSOR_MOVE);
             rec5 = page + pageCount;
             rec5--;
-          } else if ((gKeyState & KEY_RIGHT) != 0 && pageCount > 1) {
-            Engine_AudioPlayCue(111);
+          } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
+            Engine_AudioPlayCue(SOUND_MENU_CURSOR_MOVE);
             rec5 = page + pageCount;
             rec5++;
           } else {

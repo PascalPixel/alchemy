@@ -92,7 +92,7 @@ void UiGlyph_ResetWorkState(void)
     work->rows[1].state = 0;
     table = gData_080346f8;
     work->slot = Resource_FindFreeEntry();
-    work->tile = VramBlock_LoadCached(work->slot, 256, table);
+    work->tile = VramCache_Load(work->slot, 256, table);
     work->field2e2 = 0;
     work->field2fa = 0;
     work->field316 = 0;

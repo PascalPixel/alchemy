@@ -51,7 +51,7 @@ void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 entry, s32 size, void *data);
+s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_02004384(void *resource, void *destination);
 void Func_02004604(struct RockSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
@@ -61,7 +61,7 @@ void Func_02004614(struct Rock *rock, s32 a, s32 b);
 static __inline__ s32 VramLoad(s32 entry, s32 size, void *data)
 {
     /* FAKEMATCH: as in the scene layer, the inline parameters keep the size its own constant; called directly, the rock offset reuses it across the call. */
-    return VramBlock_LoadCached(entry, size, data);
+    return VramCache_Load(entry, size, data);
 }
 
 void Func_02004114(void)

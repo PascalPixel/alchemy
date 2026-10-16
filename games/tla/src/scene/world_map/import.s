@@ -50,10 +50,10 @@ Func_02004aa8:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -61,7 +61,7 @@ Resource_FindFreeEntry:
 	.global Func_02004ac8
 	.thumb_func
 Func_02004ac8:
-	overlay_veneer Bg0_ClearTilemapFar
+	overlay_veneer DebugText_ClearFar
 	.global Func_02004ad0
 	.thumb_func
 Func_02004ad0:
@@ -266,10 +266,10 @@ Func_02004bb8:
 	.thumb_func
 Menu_AnimateSelectionToEntry:
 	overlay_veneer Menu_AnimateSelectionToEntryFar
-	.global UnitPpAdd
+	.global Unit_AddPp
 	.thumb_func
-UnitPpAdd:
-	overlay_veneer UnitPpAddFar
+Unit_AddPp:
+	overlay_veneer Unit_AddPpFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:
@@ -286,10 +286,10 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Djinn_AddToOwner:
 	overlay_veneer Djinn_AddToOwnerFar
-	.global Trade_AddOffer
+	.global DjinnRecovery_AddStandby
 	.thumb_func
-Trade_AddOffer:
-	overlay_veneer Trade_AddOfferFar
+DjinnRecovery_AddStandby:
+	overlay_veneer DjinnRecovery_AddStandbyFar
 	.global Func_02004bf8
 	.thumb_func
 Func_02004bf8:

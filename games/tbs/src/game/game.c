@@ -42,7 +42,10 @@
 #include "battle_party.h"
 #include "field_event.h"
 #include "unit/game/starting_equipment.h"
+#include "flag_ids.h"
+#include "character_ids.h"
 
+// The running totals UnitCalc builds a unit's stats in.
 struct StatWork {
   s32 hp;
   s32 pp;
@@ -64,18 +67,23 @@ struct StatWork {
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-void Owner_RefreshAndResetZero(void) {
+// Starts a new game: clears the game state and restarts at the opening.
+void Game_Restart(void) {
   GameState_InitDefaults();
   Game_ResetForNewGameFar(0);
 }
 
-void *Trade_GetOfferState(s32 arg0) {
+// Returns the trade offer record: for 0 the one kept in the game state, for
+// anything else battle unit 0x83's.
+void *Djinn_GetRecoveryTable(s32 arg0) {
   if (arg0 != 0) {
     return UnitGet(0x83);
   }
   return &gGameState.unk008[4];
 }
 
+// Returns the average level of the party members, rounded down (0 with no
+// members).
 u32 Party_GetAverageLevel(void) {
   s32 count;
   s32 total;
@@ -93,6 +101,9 @@ u32 Party_GetAverageLevel(void) {
   return total;
 }
 
+// Returns the unit record of `owner`: 0 to 7 are the playable characters in
+// the game state, 0x80 to 0x85 the enemies of the current battle. Anything
+// else, or an enemy outside a battle, is NULL.
 struct BattleUnit *UnitGet(u32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
@@ -125,7 +136,9 @@ struct BattleUnit *UnitGet(u32 owner) {
   return NULL;
 }
 
-const u8 *Owner_GetRecord(s32 selector) {
+// Returns the definition of enemy `selector - 8`; an id outside the 250
+// enemies gives the first.
+const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
   recordIndex = selector - 8;
@@ -135,6 +148,8 @@ const u8 *Owner_GetRecord(s32 selector) {
   return (const u8 *)&gEnemy_Definitions[recordIndex];
 }
 
+// Copies `count` bytes from `first` to `second` when `direction` is set, and
+// from `second` to `first` otherwise.
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                   s32 direction) {
   s32 index;
@@ -156,6 +171,9 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
   }
 }
 
+// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
+// and battle stat levels, and clamps each to its range. A change of maximum
+// HP or PP keeps the unit's current HP and PP at the same fraction of it.
 void UnitCalc(s32 owner) {
   struct StatWork *work;
   struct BattleUnit *st;
@@ -202,8 +220,8 @@ void UnitCalc(s32 owner) {
     st->restraint |= 1;
   if (st->ready)
     work->turns++;
-  st->unk142[0] = 0;
-  st->unk142[1] = 0;
+  st->equipBonus[0] = 0;
+  st->equipBonus[1] = 0;
 
   if (st->classIndex) {
     for (i = 0; i < 15; i++) {
@@ -245,40 +263,40 @@ void UnitCalc(s32 owner) {
         case ITEM_EFFECT_ADD_LUCK:
           work->luck += work->amount;
           break;
-        case 15:
+        case ITEM_EFFECT_ADD_VENUS_POWER:
           work->element[0][0] += work->amount;
           break;
-        case 16:
+        case ITEM_EFFECT_ADD_MERCURY_POWER:
           work->element[1][0] += work->amount;
           break;
-        case 17:
+        case ITEM_EFFECT_ADD_MARS_POWER:
           work->element[2][0] += work->amount;
           break;
-        case 18:
+        case ITEM_EFFECT_ADD_JUPITER_POWER:
           work->element[3][0] += work->amount;
           break;
-        case 19:
+        case ITEM_EFFECT_ADD_VENUS_RESIST:
           work->element[0][1] += work->amount;
           break;
-        case 20:
+        case ITEM_EFFECT_ADD_MERCURY_RESIST:
           work->element[1][1] += work->amount;
           break;
-        case 21:
+        case ITEM_EFFECT_ADD_MARS_RESIST:
           work->element[2][1] += work->amount;
           break;
-        case 22:
+        case ITEM_EFFECT_ADD_JUPITER_RESIST:
           work->element[3][1] += work->amount;
           break;
-        case 23:
-          st->unk142[0] += work->amount;
+        case ITEM_EFFECT_ADD_UNLEASH_CHANCE:
+          st->equipBonus[0] += work->amount;
           break;
-        case 24:
-          st->unk142[1] += work->amount;
+        case ITEM_EFFECT_24:
+          st->equipBonus[1] += work->amount;
           break;
-        case 25:
+        case ITEM_EFFECT_25:
           st->restraint |= 8;
           break;
-        case 26:
+        case ITEM_EFFECT_ADD_TURNS:
           work->turns += work->amount;
           break;
         }
@@ -305,7 +323,7 @@ void UnitCalc(s32 owner) {
     }
 
     {
-      struct ClassDefinition *class = Owner_GetRecordStride84(st->classIndex);
+      struct ClassDefinition *class = Class_GetDefinition(st->classIndex);
 
       work->hp = work->hp * class->hp / 10;
       work->pp = work->pp * class->pp / 10;
@@ -355,33 +373,34 @@ void UnitCalc(s32 owner) {
     }
   }
 
-  work->atk = work->atk * (st->atkLv + 8) / 8;
-  work->def = work->def * (st->defLv + 8) / 8;
-  work->agi = work->agi * (st->agiLv + 8) / 8;
+  work->atk = work->atk * (st->attackStage + 8) / 8;
+  work->def = work->def * (st->defenseStage + 8) / 8;
+  work->agi = work->agi * (st->agilityStage + 8) / 8;
   for (i = 0; i < 4; i++)
     work->element[i][0] +=
         (st->elementLevels[i] * st->elementLevels[i] + st->elementLevels[i]) *
         5;
   for (i = 0; i < 4; i++)
-    work->element[i][1] += st->resLv * 20;
+    work->element[i][1] += st->resistanceStage * 20;
 
   if (st->classIndex) {
     flag = 0;
+    // Faster PP recovery once the character's own element's lighthouse is lit
     switch (st->classId) {
-    case 0:
-      flag = GameFlag_Test(0x110);
+    case ISAAC:
+      flag = GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT);
       break;
-    case 1:
-      flag = GameFlag_Test(0x112);
+    case GARET:
+      flag = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
-    case 2:
-      flag = GameFlag_Test(0x113);
+    case IVAN:
+      flag = GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT);
       break;
-    case 3:
-      flag = GameFlag_Test(0x111);
+    case MIA:
+      flag = GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT);
       break;
-    case 5:
-      flag = GameFlag_Test(0x112);
+    case JENNA:
+      flag = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     }
     if (flag)
@@ -436,7 +455,7 @@ void UnitCalc(s32 owner) {
   st->ppRegen = work->ppRegen;
   for (i = 0; i < 4; i++) {
     st->element[i].power = work->element[i][0];
-    st->element[i].res = work->element[i][1];
+    st->element[i].resistance = work->element[i][1];
   }
 
   cap = 9999;
@@ -480,6 +499,8 @@ void UnitCalc(s32 owner) {
   MemFree(work);
 }
 
+// Sets flag 0x167 when any party member has an item with equipment effect 27
+// equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 count;
   s32 n;
@@ -502,7 +523,7 @@ void GameFlag_RefreshLureCap(void) {
 
           kind = effect->kind;
           effect++;
-          if (kind == 27) {
+          if (kind == ITEM_EFFECT_27) {
             GameFlag_SetBit(0x167);
           }
         }
@@ -511,6 +532,9 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
+// Packs the time of day in the build stamp (hhmmss) into a halfword: bit 15
+// set, then hours, minutes and seconds in 4, 6 and 6 bits. Debug builds also
+// set every bit above. A new game stores it as the save's start stamp.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
   s32 hourTens;
@@ -553,12 +577,16 @@ u32 Runtime_GetBuildStampTime(void) {
   return (u16)result;
 }
 
+// The end of the scene state that a new game sets up.
 struct SceneStateTail {
   u8 unk000[0x100];
   u32 playTime;
   u8 unk104;
 };
 
+// Clears the game state, scene state, flags and save stamp and sets a new
+// game's defaults: Isaac alone in the party, the standard button layout,
+// the message speed, the play time clock and the slot machine prize odds.
 void GameState_InitDefaults(void) {
   volatile s32 zero;
 
@@ -572,7 +600,7 @@ void GameState_InitDefaults(void) {
   ((struct SceneStateTail *)gSceneState)->unk104 = 0xff;
   zero = 0;
   START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
-  Owner_InitRecords();
+  Party_InitCharacters();
   gGameState.aKeys = KEY_A;
   gGameState.bKeys = KEY_B;
   gGameState.selectKeys = KEY_SELECT;
@@ -592,11 +620,11 @@ void GameState_InitDefaults(void) {
   gGameState.paletteGlow[1] = 8;
   gGameState.buildStamp = 0;
   gGameState.startStamp = Runtime_GetBuildStampTime();
-  gLoadedStateWord = 0;
+  gPlayTimeFrames = 0;
   gGameState.playTime = 0;
-  gOptionMirror = 0;
-  gGameState.savedOptions = gOptionMirror;
-  gPostLoadCounter = 0;
+  gIdleSleepEnabled = 0;
+  gGameState.idleSleepEnabled = gIdleSleepEnabled;
+  gIdleFrames = 0;
   gSaveSlot = -1;
   gGameState.prizeWeights[0] = 4;
   gGameState.prizeWeights[1] = 4;
@@ -615,24 +643,29 @@ void GameState_InitDefaults(void) {
   gGameState.prizeWeights[14] = 64;
 }
 
-void Party_SetFlag32AndRefreshMembers(void) {
-  GameFlag_SetBit(0x20);
-  Owner_RefreshDerivedData(0);
-  Owner_RefreshDerivedData(1);
-  Owner_RefreshDerivedData(5);
-  UnitCalc(0);
-  UnitCalc(1);
-  UnitCalc(5);
+// Sets flag 0x20 and recomputes characters 0, 1 and 5 (Isaac, Garet and
+// Jenna).
+void Party_BeginChildhood(void) {
+  GameFlag_SetBit(FLAG_CHILDHOOD);
+  Unit_UpdateClass(ISAAC);
+  Unit_UpdateClass(GARET);
+  Unit_UpdateClass(JENNA);
+  UnitCalc(ISAAC);
+  UnitCalc(GARET);
+  UnitCalc(JENNA);
 }
 
-void Party_ApplyStatePreset(void) {
+// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
+// Garet healed with item 15 in their inventories replaced by item 16 and
+// equipped, three Psynergy given, and 300 coins.
+void Party_EndChildhood(void) {
   s32 id;
 
-  GameFlag_ClearBit(32);
+  GameFlag_ClearBit(FLAG_CHILDHOOD);
   GameFlag_ClearBit(33);
   GameFlag_SetBit(0x901);
-  Owner_RefreshDerivedData(5);
-  UnitCalc(5);
+  Unit_UpdateClass(JENNA);
+  UnitCalc(JENNA);
   GameFlag_ClearBit(0x11b);
   GameFlag_SetBit(282);
 
@@ -652,19 +685,21 @@ void Party_ApplyStatePreset(void) {
       }
     }
 
-    Owner_RefreshDerivedData(id);
+    Unit_UpdateClass(id);
     UnitCalc(id);
   }
 
-  OwnerAction_Add(0, 140);
-  OwnerAction_Add(0, 149);
-  OwnerAction_Add(1, 140);
-  OwnerAction_Add(2, 141);
+  Unit_LearnPsynergy(0, 140);
+  Unit_LearnPsynergy(0, 149);
+  Unit_LearnPsynergy(1, 140);
+  Unit_LearnPsynergy(2, 141);
 
   gGameState.coins += 300;
 }
 
-void Owner_RefreshActiveRatios(s32 arg0) {
+// Restores every party member's HP and PP; with `arg0` 1 it also cures
+// poison and haunting.
+void Party_RestoreHpPp(s32 arg0) {
   s32 count;
   s32 n;
   struct BattleUnit *obj;
@@ -684,7 +719,9 @@ void Owner_RefreshActiveRatios(s32 arg0) {
   }
 }
 
-void Owner_RefreshRatiosOnFlag(void) {
+// Restores the PP of each party member whose element group has one of its
+// flags set (0x110 or 0x112 for group 0, 0x111 or 0x113 for the others).
+void Party_RestorePpOfLitElements(void) {
   s32 count;
   s32 n;
   u8 ownerId;
@@ -698,11 +735,13 @@ void Owner_RefreshRatiosOnFlag(void) {
     group = gCharacter_ElementGroupTable[ownerId];
     doRefresh = 0;
     if (group == 0) {
-      if (GameFlag_Test(0x110) || GameFlag_Test(0x112)) {
+      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT) ||
+          GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT)) {
         doRefresh = 1;
       }
     } else {
-      if (GameFlag_Test(0x111) || GameFlag_Test(0x113)) {
+      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
+          GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
         doRefresh = 1;
       }
     }
@@ -717,8 +756,10 @@ void Owner_RefreshRatiosOnFlag(void) {
   }
 }
 
+// An empty routine.
 void Owner_RatioNoOp(void) {}
 
+// Recomputes the HP and PP gauges of `owner_id` from its current values.
 void UnitRatio(s32 owner_id) {
   struct BattleUnit *owner;
 
@@ -726,46 +767,42 @@ void UnitRatio(s32 owner_id) {
   Unit_UpdateGauges(owner);
 }
 
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input) {
-  s32 value;
+// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
+// gauges.
+void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
+  s32 clamped;
 
-  if (input > state->maxHp) {
-    value = state->maxHp;
+  if (hp > unit->maxHp) {
+    clamped = unit->maxHp;
   } else {
-    value = 0;
-    if (input >= 0) {
-      value = input;
+    clamped = 0;
+    if (hp >= 0) {
+      clamped = hp;
     }
   }
-  state->hp = value;
-  Unit_UpdateGauges(state);
-}
-
-//--------------------------------------------------------------------------
-// ratios_second_input.c
-// キャラクタ：PP の設定とゲージの計算
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// PP を 0 から最大 PP の間で設定し、HP と PP のゲージを計算し直す
-// ゲージは 0x4000 で満タン。残っていれば最低 1 にする
-// unit : ユニット
-// pp   : 新しい PP
-//--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp) {
-  s32 cur;
-
-  if (pp > unit->maxPp) {
-    cur = unit->maxPp;
-  } else {
-    cur = 0;
-    if (pp >= 0)
-      cur = pp;
-  }
-  unit->pp = cur;
+  unit->hp = clamped;
   Unit_UpdateGauges(unit);
 }
 
-s32 Owner_AdjustFirstValue(s32 owner, s32 delta) {
+// Sets the unit's PP, clamped to 0..maxPp, and recomputes its HP and PP
+// gauges.
+void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
+  s32 clamped;
+
+  if (pp > unit->maxPp) {
+    clamped = unit->maxPp;
+  } else {
+    clamped = 0;
+    if (pp >= 0)
+      clamped = pp;
+  }
+  unit->pp = clamped;
+  Unit_UpdateGauges(unit);
+}
+
+// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
+// gauges and returns the new HP.
+s32 Unit_AddHp(s32 owner, s32 delta) {
   struct BattleUnit *state = UnitGet(owner);
   s32 cur = state->hp;
   s32 max = state->maxHp;
@@ -784,7 +821,9 @@ s32 Owner_AdjustFirstValue(s32 owner, s32 delta) {
   return state->hp;
 }
 
-s16 UnitPpAdd(s32 owner, s32 delta) {
+// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
+// gauges and returns the new PP.
+s16 Unit_AddPp(s32 owner, s32 delta) {
   struct BattleUnit *state = UnitGet(owner);
   s32 cur = state->pp;
   s32 max = state->maxPp;
@@ -803,23 +842,14 @@ s16 UnitPpAdd(s32 owner, s32 delta) {
   return state->pp;
 }
 
-//--------------------------------------------------------------------------
-// definition.c
-// アイテム：定義データの参照と装備できるかの判定
-//--------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------
-// アイテムの定義データを返す
-// item : アイテム番号（持ち物の値なら上位の装備・個数ビットを無視する）
-//--------------------------------------------------------------------------
+// Returns item `item`'s definition; an inventory entry may be passed, its
+// equipped and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
   return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 
-//--------------------------------------------------------------------------
-// キャラクターがアイテムを装備できるか
-// equipMask の classId 番目のビットで決まり、classId が 8 以上なら 0
-//--------------------------------------------------------------------------
+// Returns whether the character can equip `item`: bit classId of the item's
+// equipMask. Units past the eight characters cannot.
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
   struct BattleUnit *st = UnitGet(unit);
   struct ItemDefinition *def = Item_GetDirect(item);
@@ -831,9 +861,8 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
   return (mask >> st->classId) & 1;
 }
 
-//--------------------------------------------------------------------------
-// 装備品でなければ 1、装備品ならキャラクターが装備できるかを返す
-//--------------------------------------------------------------------------
+// Returns 1 for an item that is not equipment, and for equipment whether the
+// character can equip it.
 s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == 0) {
     return 1;
@@ -841,6 +870,8 @@ s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   return Item_CanOwnerEquipDirect(unit, item);
 }
 
+// Returns what kind of thing an item is: 1 a weapon, 2 armor (types 2 to 5
+// and 9), 0 anything else.
 s32 Item_GetEquipmentGroup(s32 item_id) {
   s32 group;
   struct ItemDefinition *item;
@@ -862,6 +893,8 @@ s32 Item_GetEquipmentGroup(s32 item_id) {
   return group;
 }
 
+// Returns how many of the item in `slot` the unit carries (0 for an empty
+// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 item_id;
 
@@ -876,6 +909,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   return owner;
 }
 
+// Returns how many inventory slots the unit has filled.
 s32 Inventory_Count(s32 owner) {
   struct BattleUnit *inv = UnitGet(owner);
   s32 count = 0;
@@ -890,6 +924,8 @@ s32 Inventory_Count(s32 owner) {
   return count;
 }
 
+// Returns 1 when the selected character or any party member has a free
+// inventory slot.
 s32 PartyInventory_HasSpace(void) {
   s16 owners[10];
   s32 ownerCount;
@@ -911,6 +947,7 @@ s32 PartyInventory_HasSpace(void) {
   return 0;
 }
 
+// Returns the number of free inventory slots across the party.
 s32 PartyInventory_CountFreeSlots(void) {
   s16 owners[10];
   s32 ownerCount = Party_ListActiveOwners(owners);
@@ -928,6 +965,9 @@ s32 PartyInventory_CountFreeSlots(void) {
   return cnt;
 }
 
+// Gives a unit one of `item_id`: a stackable item joins a stack it already
+// has (up to 30), anything else takes the first free slot. Returns the slot,
+// or -1 when there was no room.
 s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
   struct BattleUnit *inv = UnitGet(owner_id);
   struct ItemDefinition *item = Item_GetDirect(item_id);
@@ -970,6 +1010,8 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
   return -1;
 }
 
+// Gives the item to the first party member with room. Returns who took it,
+// or -1.
 s32 PartyInventory_Add(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
@@ -991,6 +1033,7 @@ s32 PartyInventory_Add(s32 itemId) {
   return -1;
 }
 
+// Returns the first slot holding `item_id`, or -1.
 s32 Inventory_Find(s32 owner, s32 item_id) {
   struct BattleUnit *inv = UnitGet(owner);
   s32 slot = 0;
@@ -1005,6 +1048,7 @@ s32 Inventory_Find(s32 owner, s32 item_id) {
   return -1;
 }
 
+// Returns who carries `itemId`, asking the selected character first, or -1.
 s32 PartyInventory_FindOwner(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
@@ -1028,6 +1072,9 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   return -1;
 }
 
+// Equips the item in `slot`, unequipping the item of the same type (rings,
+// type 6, may be worn together). Returns 0, -1 when the unit cannot equip
+// it, or -2 when the item it would replace is cursed on.
 s32 Inventory_Equip(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   u32 item_id = inv->inventory[slot];
@@ -1059,11 +1106,12 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   }
 
   inv->inventory[slot] |= INVENTORY_EQUIPPED;
-  Owner_RefreshClassActions(owner);
+  Unit_RefreshPsynergy(owner);
   UnitCalc(owner);
   return 0;
 }
 
+// Returns the slot of the equipped item of `type`, or -1.
 s32 Inventory_FindEquipped(s32 owner, s32 type) {
   struct BattleUnit *base = UnitGet(owner);
   s32 index;
@@ -1081,6 +1129,7 @@ s32 Inventory_FindEquipped(s32 owner, s32 type) {
   return index;
 }
 
+// Returns the definition of the equipped item of `type`, or NULL.
 struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *inv,
                                                        s32 type) {
   s32 slot;
@@ -1097,6 +1146,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *inv,
   return 0;
 }
 
+// Returns the id of the equipped item of `type`, or 0.
 s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type) {
   s32 slot;
 
@@ -1112,6 +1162,9 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type) {
   return 0;
 }
 
+// Takes one item out of `slot`: a stack shrinks by one (returns 1), a last
+// item empties the slot and the inventory closes up (returns 2). Returns -1
+// for an empty slot. The unit's stats are recomputed either way.
 s32 Inventory_Remove(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   u16 item = inv->inventory[slot];
@@ -1142,6 +1195,8 @@ s32 Inventory_Remove(s32 owner, s32 slot) {
   return result;
 }
 
+// Removes one item as Inventory_Remove does, and puts a rare item back into
+// circulation (its counter goes up by one) for the shops to sell.
 s32 Inventory_Discard(s32 owner, s32 slot) {
   s32 item = UnitGet(owner)->inventory[slot];
   s32 removed_slot = Inventory_Remove(owner, slot);
@@ -1153,6 +1208,8 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
   return removed_slot;
 }
 
+// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
+// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   s32 item_id = inv->inventory[slot] & ITEM_ID_MASK;
@@ -1171,6 +1228,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   return 0;
 }
 
+// Removes one `item_id` from whoever in the party carries it.
 s32 PartyInventory_Remove(s32 item_id) {
   s32 owner = PartyInventory_FindOwner(item_id);
 
@@ -1180,6 +1238,7 @@ s32 PartyInventory_Remove(s32 item_id) {
   return 0;
 }
 
+// Discards one `item_id` from whoever in the party carries it.
 s32 PartyInventory_Discard(s32 item_id) {
   s32 owner = PartyInventory_FindOwner(item_id);
 
@@ -1189,6 +1248,7 @@ s32 PartyInventory_Discard(s32 item_id) {
   return 0;
 }
 
+// Marks the item in `slot` broken. Returns -1 for an empty slot.
 s32 Inventory_Break(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   if (inv->inventory[slot] == 0) {
@@ -1198,6 +1258,7 @@ s32 Inventory_Break(s32 owner, s32 slot) {
   return 0;
 }
 
+// Repairs the item in `slot`. Returns -1 for an empty slot.
 s32 Inventory_Repair(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   if (inv->inventory[slot] == 0) {
@@ -1207,10 +1268,13 @@ s32 Inventory_Repair(s32 owner, s32 slot) {
   return 0;
 }
 
+// Returns how the action an item performs when used picks its targets.
 u8 Item_GetTargetMode(s32 itemId) {
   return BattleAction_GetDirect(Item_GetDirect(itemId)->actionId)->targetMode;
 }
 
+// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
+// returns the new count.
 s32 ItemCounter_Adjust(s32 index, s32 delta) {
   s32 counter_slot = index;
   u8 *data = gItemCounters;
@@ -1234,6 +1298,8 @@ s32 ItemCounter_Adjust(s32 index, s32 delta) {
   return index;
 }
 
+// Adds `delta` to the counter of a rare item; ordinary items have none.
+// Returns the new count, or 0.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 itemIdMask = ITEM_ID_MASK;
   u8 counter;
@@ -1246,6 +1312,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   return result;
 }
 
+// Returns how many of `item_id` the unit carries.
 s32 Inventory_CountItem(s32 owner, s32 item_id) {
   struct BattleUnit *base = UnitGet(owner);
   s32 count = 0;
@@ -1267,6 +1334,7 @@ s32 Inventory_CountItem(s32 owner, s32 item_id) {
   return count;
 }
 
+// Returns how many of `itemId` the party carries.
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];
   s32 itemCount = 0;
@@ -1284,6 +1352,8 @@ s32 PartyInventory_CountItem(s32 itemId) {
   return itemCount;
 }
 
+// Returns the definition of action `actionId` (its low 14 bits); an id
+// outside the table gives the first.
 struct BattleAct *BattleAction_GetDirect(s32 actionId) {
   u32 entryIndex;
 
@@ -1294,7 +1364,8 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId) {
   return &gBattleAction_DefinitionTable[entryIndex];
 }
 
-s32 Equipment_HasValue(s32 owner, s32 value) {
+// Returns 1 when action `value` is in the unit's action list.
+s32 Unit_KnowsAction(s32 owner, s32 value) {
   struct BattleUnit *unit = UnitGet(owner);
   struct OwnerActionSlot *entry;
   s32 mask = 0x3fff;
@@ -1314,9 +1385,14 @@ s32 Equipment_HasValue(s32 owner, s32 value) {
   return 0;
 }
 
+// Marks on an action list entry: learned from the class, or granted by an
+// equipped item. Plain entries were taught for good.
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
-s32 Owner_RefreshClassActions(s32 owner) {
+// Rebuilds a character's Psynergy list: drops the actions its class and items
+// gave, closes up the list, adds every class action learned by its level and
+// the action of each equipped item that grants one, and closes it up again.
+s32 Unit_RefreshPsynergy(s32 owner) {
   struct BattleUnit *st;
   u16 *ability;
   struct ClassDefinition *cls;
@@ -1328,7 +1404,7 @@ s32 Owner_RefreshClassActions(s32 owner) {
 
   st = UnitGet(owner);
   ability = (u16 *)st->actionSlots;
-  cls = Owner_GetRecordStride84(st->classIndex);
+  cls = Class_GetDefinition(st->classIndex);
   if (st->classIndex == 0)
     return 0;
   mask = 0x8000;
@@ -1413,6 +1489,7 @@ s32 Owner_RefreshClassActions(s32 owner) {
   return 0;
 }
 
+// Scratch for Owner_LevelUp.
 struct LevelUpWork {
   s32 classIndex;
   s32 level;
@@ -1420,7 +1497,10 @@ struct LevelUpWork {
   u8 unk0c[0x20];
 };
 
-s32 OwnerAction_Add(s32 stateIndex, s32 value) {
+// Teaches a character action `value` for good (or makes a class action
+// permanent), then rebuilds its list. Returns the action's place in the list,
+// or -1 when the list is full.
+s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct BattleUnit *state = UnitGet(stateIndex);
   s32 key = value & OWNER_ACTION_ID_MASK;
   s32 found = -1;
@@ -1458,7 +1538,7 @@ s32 OwnerAction_Add(s32 stateIndex, s32 value) {
     }
   }
 
-  Owner_RefreshClassActions(stateIndex);
+  Unit_RefreshPsynergy(stateIndex);
   for (index = 0; index <= 31; index++) {
     if (state->actionSlots[index].encodedAction == key) {
       break;
@@ -1468,10 +1548,14 @@ s32 OwnerAction_Add(s32 stateIndex, s32 value) {
 }
 
 struct LevelUpResult *
-OwnerAction_CheckLevelThreshold(s32 owner, struct LevelUpResult *value) {
-  return Owner_GetValueIfLevelThresholdReached(owner, value);
+// Levels the character up once if it has the experience. Returns `value`
+// filled with the gains, or NULL.
+Unit_CheckLevelUp(s32 owner, struct LevelUpResult *value) {
+  return Unit_TryLevelUp(owner, value);
 }
 
+// Returns character `index`'s definition: growth curves, starting level and
+// equipment.
 struct CharacterDefinition *Character_GetDefinition(s32 index) {
   struct CharacterDefinition *base;
 
@@ -1479,7 +1563,10 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
   return &base[index];
 }
 
-void Owner_InitRecords(void) {
+// Sets up all eight characters for a new game: names from the message table,
+// starting equipment equipped, class and elements worked out, and levels
+// raised to their starting level.
+void Party_InitCharacters(void) {
   struct BattleUnit *state;
   struct CharacterDefinition *tmpl;
   u16 nameBuf[16];
@@ -1521,10 +1608,10 @@ void Owner_InitRecords(void) {
           Inventory_Equip(*remote, slot);
         }
 
-        Owner_RefreshDerivedData(*remote);
+        Unit_UpdateClass(*remote);
         state->ppGauge = 0x4000;
         state->hpGauge = 0x4000;
-        Party_AdvanceOwnerCountToTarget(*remote, tmpl->startingLevel);
+        Unit_LevelUpTo(*remote, tmpl->startingLevel);
         UnitCalc(*remote);
       }
       remote++;
@@ -1532,9 +1619,12 @@ void Owner_InitRecords(void) {
   }
 }
 
+// An empty routine.
 void Owner_LevelNoOp(void) {}
 
-u32 Owner_GetLevelThreshold(s32 owner, s32 level) {
+// Returns the experience a character needs for `level` (0 for level 0 and
+// below); -1 for an enemy or a level above 99.
+u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
   struct BattleUnit *state = UnitGet(owner);
 
   if (state->classIndex != 0) {
@@ -1548,6 +1638,10 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level) {
   return -1;
 }
 
+// Raises a character one level (up to 99), adding to each base stat the
+// growth between the two points of its growth curve around the new level
+// (one point every 20 levels), a twentieth of it per level with a random
+// part. The gains go to `res`, which is returned.
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
   struct BattleUnit *st;
   struct LevelUpWork *work;
@@ -1572,7 +1666,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
   if (level < 99) {
     st->level++;
     res->level = level + 1;
-    threshold = Owner_GetLevelThreshold(owner, st->level);
+    threshold = Unit_GetExperienceForLevel(owner, st->level);
     if (threshold != -1 && st->experience < threshold)
       st->experience = threshold;
     work->growth = Character_GetDefinition(owner);
@@ -1610,7 +1704,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
     st->baseActionCount = 1;
     st->baseHpRegen = 0;
     st->basePpRegen = 0;
-    Owner_RefreshClassActions(owner);
+    Unit_RefreshPsynergy(owner);
     UnitCalc(owner);
   }
   MemFree(work);
@@ -1618,29 +1712,24 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
 }
 
 struct LevelUpResult *
-Owner_GetValueIfLevelThresholdReached(s32 owner_id,
-                                      struct LevelUpResult *value) {
+// Levels the character up once if its experience reaches the next level.
+// Returns `value` filled with the gains, or NULL.
+Unit_TryLevelUp(s32 owner_id, struct LevelUpResult *value) {
   struct BattleUnit *owner;
 
   owner = UnitGet(owner_id);
   if ((owner->experience >=
-       Owner_GetLevelThreshold(owner_id, owner->level + 1)) &&
+       Unit_GetExperienceForLevel(owner_id, owner->level + 1)) &&
       (Owner_LevelUp(owner_id, value) != NULL)) {
     return value;
   }
   return 0;
 }
 
-//--------------------------------------------------------------------------
-// advance_owner_count_to_target.c
-// パーティ：キャラクターを指定のレベルまで上げる
-//--------------------------------------------------------------------------
-// 目標のレベルになるまで 1 つずつレベルアップさせ、能力を計算しなおす
-// unit : キャラクター番号
-// lv   : 目標のレベル
-//--------------------------------------------------------------------------
-void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv) {
-  u8 res[16]; // struct LevelUpResult の受け取り（使わない）
+// Levels character `unit` up one level at a time until it reaches `lv`, then
+// recomputes its stats.
+void Unit_LevelUpTo(s32 unit, s32 lv) {
+  u8 res[16]; // the gains of each level, which are not used
   s32 cur = UnitGet(unit)->level;
 
   while (cur < lv) {
@@ -1650,39 +1739,47 @@ void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv) {
   UnitCalc(unit);
 }
 
+// The game flags: 4096 bits in gGameFlagBytes. A flag number's low three bits
+// pick the bit and the next nine the byte; byte and nibble flags use the same
+// numbering.
+
+// Returns 1 when `flag` is set.
 s32 GameFlag_Test(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
   s32 flagValue;
 
   flagMask = 1 << (7 & flag);
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   flagBytes = gGameFlagBytes;
   flagValue = flagBytes[flag] & flagMask;
   return (u32)((0 - flagValue) | flagValue) >> 0x1F;
 }
 
+// Sets `flag`. Returns its byte number.
 s32 GameFlag_SetBit(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
 
   flagMask = 1 << (7 & flag);
   flagBytes = gGameFlagBytes;
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   flagBytes[flag] |= flagMask;
   return flag;
 }
 
+// Clears `flag`.
 void GameFlag_ClearBit(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
 
   flagMask = ~(1 << (7 & flag));
   flagBytes = gGameFlagBytes;
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   flagBytes[flag] &= flagMask;
 }
 
+// Flips `flag` and returns its new value.
 u32 GameFlag_Toggle(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -1690,12 +1787,13 @@ u32 GameFlag_Toggle(s32 flag) {
 
   flagMask = 1 << (7 & flag);
   flagBytes = gGameFlagBytes;
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   flagBytes[flag] ^= flagMask;
   flagValue = flagBytes[flag] & flagMask;
   return (u32)((0 - flagValue) | flagValue) >> 31;
 }
 
+// Returns the whole byte `flag` is in.
 s32 GameFlag_GetByte(s32 flag) {
   u32 byteIndex;
 
@@ -1704,34 +1802,38 @@ s32 GameFlag_GetByte(s32 flag) {
   return gGameFlagBytes[flag];
 }
 
+// Sets the whole byte `flag` is in.
 void GameFlag_SetByte(s32 flag, s32 value) {
   u32 shifted = flag << 20;
   flag = shifted >> 23;
   gGameFlagBytes[flag] = value;
 }
 
+// Adds 1 to the byte `flag` is in, stopping at 255, and returns it.
 u8 GameFlag_IncrementByte(s32 flag) {
   u8 *flagBytes;
 
   flagBytes = gGameFlagBytes;
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   if (flagBytes[flag] <= 0xFE) {
     flagBytes[flag]++;
   }
   return flagBytes[flag];
 }
 
+// Takes 1 from the byte `flag` is in, stopping at 0, and returns it.
 u8 GameFlag_DecrementByte(s32 flag) {
   u8 *flagBytes;
 
   flagBytes = gGameFlagBytes;
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   if (flagBytes[flag] != 0) {
     flagBytes[flag] += 0xFF;
   }
   return flagBytes[flag];
 }
 
+// Returns the four bits `flag` is in (bit 2 of the number picks the half).
 s32 GameFlag_GetNibble(u32 flag) {
   u32 shifted = flag << 20;
   u32 shift;
@@ -1746,16 +1848,19 @@ s32 GameFlag_GetNibble(u32 flag) {
   return result >> shift;
 }
 
+// Sets the four bits `flag` is in.
 void GameFlag_SetNibble(s32 flag, s32 value) {
   s32 fieldMask = 0xF;
   s32 shift = 4 & flag;
   s32 mask = fieldMask << shift;
   u8 *bytes = gGameFlagBytes;
 
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = GAME_FLAG_BYTE(flag);
   bytes[flag] = (bytes[flag] & ~mask) | ((value & fieldMask) << shift);
 }
 
+// The letter that tells apart enemies of one kind: digits from 1 abroad, the
+// alphabet in Japan.
 #if EDITION_INTERNATIONAL
 #define ENEMY_SUFFIX_FIRST '1'
 #define ENEMY_SUFFIX_LAST 8
@@ -1764,6 +1869,9 @@ void GameFlag_SetNibble(s32 flag, s32 value) {
 #define ENEMY_SUFFIX_LAST 25
 #endif
 
+// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
+// name with its suffix letter, the items it carries, rewards and elements.
+// Enemies 158 to 171 fight on side 2. Returns 0 for an id out of range.
 s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
@@ -1822,7 +1930,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   unit->rewards = enemy->rewards;
   unit->classIndex = 0;
   unit->classId = enemyId;
-  Owner_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
+  Unit_CalcBaseElements(unitId, (s16 (*)[2])unit->baseElement);
   UnitCalc(unitId);
   unit->side = 1;
   switch (unit->classId) {
@@ -1846,6 +1954,10 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   return 1;
 }
 
+// The party: flags 0 to 7 say who is in it, and gGameState.activeOwners
+// lists them in order.
+
+// Returns the number of party members.
 s32 Party_CountActiveOwners(void) {
   s32 owner;
   s32 count;
@@ -1860,6 +1972,7 @@ s32 Party_CountActiveOwners(void) {
   return count;
 }
 
+// Adds character `value` to the end of the party. Returns the party size.
 s32 Party_AddActiveOwner(s32 value) {
   s32 count = Party_CountActiveOwners();
   s32 index;
@@ -1875,6 +1988,7 @@ s32 Party_AddActiveOwner(s32 value) {
   return count + 1;
 }
 
+// Takes character `value` out of the party. Returns the party size.
 s32 Party_RemoveActiveOwner(s32 value) {
   s32 count = Party_CountActiveOwners();
   s32 i;
@@ -1890,6 +2004,8 @@ s32 Party_RemoveActiveOwner(s32 value) {
   return Party_CountActiveOwners();
 }
 
+// Writes the party members to `owners`, ending with 0xff, and returns how
+// many there are.
 s32 Party_ListActiveOwners(s16 *owners) {
   s32 count = 0;
 
@@ -1909,6 +2025,8 @@ s32 Party_ListActiveOwners(s16 *owners) {
   return count;
 }
 
+// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
+// the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct GameState *work;
@@ -1940,7 +2058,8 @@ struct ElementLevelBonus {
 
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
-// gGameState の field に amount を足し、0 から max までにおさめて返す
+// Each adds `amount` to a game state counter, kept between 0 and `max`, and
+// returns the new value.
 #define DEFINE_PARTY_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
@@ -1956,18 +2075,20 @@ extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
     return value;                                                              \
   }
 
-DEFINE_PARTY_ADJUST(Party_AdjustSixDigitCounterB, shopCredit, 0xf423f)
-DEFINE_PARTY_ADJUST(Party_AdjustCounterCappedAt28, shopGifts, 28)
+DEFINE_PARTY_ADJUST(Party_AdjustShopCredit, shopCredit, 0xf423f)
+DEFINE_PARTY_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
-s32 Trade_ListFlaggedEntries(u8 *output) {
+// Writes the summons whose bit is set in the first word of the party's Djinn
+// table to `output`, in menu order, ending with 32. Returns how many.
+s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 15;
   s32 count = 0;
 
   do {
     u8 value = *source++;
-    if ((((struct TradeFlags *)Trade_GetOfferState(0))->flags & (1 << value)) !=
-        0) {
+    if ((((struct TradeFlags *)Djinn_GetRecoveryTable(0))->flags &
+         (1 << value)) != 0) {
       *output++ = value;
       count++;
     }
@@ -1976,24 +2097,30 @@ s32 Trade_ListFlaggedEntries(u8 *output) {
   return count;
 }
 
+// Returns summon `summonId`'s definition, or NULL past the sixteenth.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   if (summonId > 15)
     return NULL;
   return &gSummon_DefinitionTable[summonId];
 }
 
-s32 Owner_LookupFourColumnTable(s32 row, s32 column) {
+// Returns the class series for a character's strongest element `row` and
+// second strongest `column`.
+s32 Class_GetSeries(s32 row, s32 column) {
   return gOwner_FourColumnValues[(row * 4) + column];
 }
 
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
+// Writes ten times each element level to `output`: an enemy's from its
+// element preset, a character's from the Djinn set on it (`source` is its
+// Djinn bits) plus its own element bonus.
+s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
 
   if (record > 7) {
     u32 index;
 
-    index = ((const struct EnemyDefinition *)Owner_GetRecord(record))
+    index = ((const struct EnemyDefinition *)Enemy_GetDefinition(record))
                 ->elementPreset;
     if (index > 43)
       index = 0;
@@ -2023,21 +2150,23 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
   return 0;
 }
 
-s32 Owner_GetResistanceValue(s32 owner, s32 index) {
+// Returns a unit's level in element `index` (0 to 3).
+s32 Unit_GetElementLevel(s32 owner, s32 index) {
   struct BattleUnit *state = UnitGet(owner);
   s32 values[4];
   s32 result = 0;
 
   if (index <= 3) {
-    Owner_GetDigitValues(state->classId, (u8 *)state->djinnAvailable, values);
+    Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
     result = values[index] / 10;
   }
   return result;
 }
 
-s32 Owner_GetDefaultElement(struct BattleUnit *state) {
+// Returns the element an enemy attacks with, from its element preset.
+s32 Enemy_GetAttackElement(struct BattleUnit *state) {
   const struct EnemyDefinition *record =
-      (const struct EnemyDefinition *)Owner_GetRecord(state->classId);
+      (const struct EnemyDefinition *)Enemy_GetDefinition(state->classId);
   u8 value = record->elementPreset;
 
   if (value > 43)
@@ -2045,15 +2174,18 @@ s32 Owner_GetDefaultElement(struct BattleUnit *state) {
   return gEnemy_ElementPresetTable[value].first;
 }
 
-u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
+// Writes a unit's base power and resistance in each element: an enemy's come
+// from its preset, a character's from its element levels.
+u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
   struct BattleUnit *state = UnitGet(owner);
   u32 index;
   s32 values[4];
   s32 i;
 
   if (state->classIndex == 0) {
-    index = ((const struct EnemyDefinition *)Owner_GetRecord(state->classId))
-                ->elementPreset;
+    index =
+        ((const struct EnemyDefinition *)Enemy_GetDefinition(state->classId))
+            ->elementPreset;
     if (index > 43)
       index = 0;
 
@@ -2066,7 +2198,7 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
     }
   }
 
-  Owner_GetDigitValues(state->classId, (u8 *)state->djinnAvailable, values);
+  Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
   for (i = 0; i < 4; i++) {
     s32 value;
     s32 ones;
@@ -2084,10 +2216,14 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
     destination[i][0] = gElement_PowerResistByLevel[tens].power + ones;
     destination[i][1] = gElement_PowerResistByLevel[tens].res + ones;
   }
-  // 戻り値なし（r0 には表のアドレスが残る）
+  // No return value here: r0 is left holding the table address
 }
 
-s32 Owner_DetermineClass(s32 character, const u8 *djinn) {
+// Returns the class a character has with `djinn` set: the series is chosen by
+// its two strongest elements, and the class is the last of the series whose
+// element requirements it meets. Isaac and Garet as children and Jenna have
+// fixed classes.
+s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 levels[4];
   s32 primary;
   s32 best;
@@ -2099,14 +2235,14 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn) {
   result = -1;
   if (character > 7)
     return 0;
-  Owner_GetDigitValues(character, djinn, levels);
-  if (GameFlag_Test(32)) {
-    if (character == 0)
+  Unit_GetElementLevels(character, djinn, levels);
+  if (GameFlag_Test(FLAG_CHILDHOOD)) {
+    if (character == ISAAC)
       return 200;
-    if (character == 1)
+    if (character == GARET)
       return 201;
   }
-  if (character == 5)
+  if (character == JENNA)
     return 202;
   if (result != -1)
     return result;
@@ -2126,7 +2262,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn) {
       j = i;
     }
   }
-  series = Owner_LookupFourColumnTable(primary, levels[j] > 9 ? j : primary);
+  series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
   for (i = 202; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
@@ -2144,20 +2280,25 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn) {
   return result;
 }
 
-struct ClassDefinition *Owner_GetRecordStride84(s32 arg0) {
+// Returns class `arg0`'s definition.
+struct ClassDefinition *Class_GetDefinition(s32 arg0) {
   return &gClass_DefinitionTable[arg0];
 }
 
-void Owner_RefreshDerivedData(s32 ownerId) {
+// Works out a character's class again after its Djinn change, then its
+// Psynergy list and its base elements.
+void Unit_UpdateClass(s32 ownerId) {
   struct BattleUnit *owner = UnitGet(ownerId);
 
   owner->classIndex =
-      Owner_DetermineClass(owner->classId, (u8 *)owner->djinnAvailable);
-  Owner_RefreshClassActions(ownerId);
-  Owner_CalculateBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
+      Class_Determine(owner->classId, (u8 *)owner->djinnAvailable);
+  Unit_RefreshPsynergy(ownerId);
+  Unit_CalcBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
 }
 
-s32 Curve_LookupScaledValue(s32 input, s32 halve) {
+// Returns the multiplier (256 = 1x) for an element difference `input`, read
+// from a five-point line; with `halve` the effect of the difference is half.
+s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 min;
   s32 max;
   s32 n;
@@ -2195,13 +2336,8 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve) {
   return value + 0x100;
 }
 
-//--------------------------------------------------------------------------
-// random16.c
-// バトル：乱数と、ダメージ・回復量の計算
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す
-//--------------------------------------------------------------------------
+// The battle's random number generator, the same linear congruential one as
+// Random16 with its own seed. Returns bits 8 to 23 of the new seed.
 s32 BattleRandom(void) {
   s32 seed;
 
@@ -2210,21 +2346,17 @@ s32 BattleRandom(void) {
   return (u32)(seed << 8) >> 16;
 }
 
-//--------------------------------------------------------------------------
-// 0 から 99 までの乱数
-//--------------------------------------------------------------------------
+// Returns a battle random number from 0 to 99.
 u32 BattleRandomPercent(void) { return ((u32)BattleRandom() * 100) >> 16; }
 
-//--------------------------------------------------------------------------
-// こうげきのダメージ（BattleAtkCalc）
-// (atk - def + add * 2) / 2 に、属性の差による倍率をかける
-// 倍率は 256 で 1 倍。差の効きは BattlePowerCalc の半分（128 から 384）
-// atk   : こうげき
-// def   : ぼうぎょ（atk - def が負なら 0 にする）
-// add   : わざの威力
-// bonus : 属性の差（力 - たいせい）
-//--------------------------------------------------------------------------
-s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
+// The damage of an attack: (atk - def + add * 2) / 2 times the multiplier
+// for the element difference, whose effect here is half Psynergy's (128 to
+// 384 of 256).
+//   atk   : the attacker's attack
+//   def   : the target's defense (a negative atk - def counts as 0)
+//   add   : the action's power
+//   bonus : the element difference (power less resistance)
+s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   s32 dmg;
   s32 val;
 
@@ -2232,7 +2364,7 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
   dmg = bonus;
   if (atk < 0)
     atk = 0;
-  val = Curve_LookupScaledValue(dmg, 1) * (atk + (add * 2));
+  val = Battle_GetElementMultiplier(dmg, 1) * (atk + (add * 2));
   if (val < 0)
     val += 0x1ff;
   dmg = val >> 9;
@@ -2241,35 +2373,26 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
   return dmg;
 }
 
-//--------------------------------------------------------------------------
-// エナジーの威力（BattlePowerCalc）
-// power に属性の差による倍率（256 で 1 倍、0 から 512）と rate をかける
-// power   : 威力
-// bonus : 属性の差（力 - たいせい）
-// rate  : 倍率（256 で 1 倍）
-//--------------------------------------------------------------------------
-s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate) {
+// The power of Psynergy: `power` times the multiplier for the element
+// difference (0 to 512 of 256) and `rate` (256 is 1x).
+//   bonus : the element difference (power less resistance)
+s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
   s32 val;
 
-  val = Curve_LookupScaledValue(bonus, 0) * power * rate;
+  val = Battle_GetElementMultiplier(bonus, 0) * power * rate;
   if (val < 0)
     val = val + 0xffff;
   return val >> 16;
 }
 
-//--------------------------------------------------------------------------
-// かいふくの量（BattleRecoveryCalc）
-// 属性の力が 100 をこえた分の 2 倍で倍率（256 で 1 倍）を引き、
-// power と rate にかける
-// power  : 威力
-// element  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
-// rate : 倍率（256 で 1 倍）
-//--------------------------------------------------------------------------
-s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate) {
+// The amount healed: `power` and `rate` (256 is 1x) times the multiplier for
+// twice the healer's element power above 100.
+//   element : the healer's power in the element (100 is 1x)
+s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
   s32 val;
   u32 prod;
 
-  prod = Curve_LookupScaledValue(element * 2 - 200, 0) * power;
+  prod = Battle_GetElementMultiplier(element * 2 - 200, 0) * power;
   prod = rate * prod;
   val = prod;
   if (val < 0)
@@ -2277,24 +2400,23 @@ s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate) {
   return val >> 16;
 }
 
-//--------------------------------------------------------------------------
-// ユニットの攻撃の属性を返す（4 は属性なし）
-// 敵は種類ごとの属性、味方は装備した武器の属性
-// id : ユニット番号
-//--------------------------------------------------------------------------
+// Returns the element unit `id` attacks with (4 for none): an enemy's comes
+// from its kind, a character's from its equipped weapon.
 s32 Item_GetEquippedElement(s32 id) {
   struct ItemDefinition *item;
   struct BattleUnit *unit;
 
   unit = UnitGet(id);
   if (unit->classIndex == 0)
-    return Owner_GetDefaultElement(unit);
-  item = Inventory_GetEquippedDefinition(unit, 1); // 1 : 武器
+    return Enemy_GetAttackElement(unit);
+  item = Inventory_GetEquippedDefinition(unit, 1); // 1: weapon
   if (item != NULL)
     return item->element;
   return 4;
 }
 
+// Returns the unleash chance, in percent, that a unit's equipment adds
+// (equipment effect 23).
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner) {
   s32 sum;
   s32 i;
@@ -2303,10 +2425,10 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner) {
 
   sum = 0;
   for (i = 0; i < 15; i++) {
-    if (owner->inventory[i] & 0x200) {
+    if (owner->inventory[i] & INVENTORY_EQUIPPED) {
       item = Item_GetDirect(owner->inventory[i]);
       for (j = 0; j < 4; j++) {
-        if (item->effects[j].kind == 23)
+        if (item->effects[j].kind == ITEM_EFFECT_ADD_UNLEASH_CHANCE)
           sum += item->effects[j].amount;
       }
     }
@@ -2316,6 +2438,8 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner) {
   return sum;
 }
 
+// Rolls whether a character's weapon unleashes. Returns the unleash action,
+// or 1 for a plain attack.
 s32 RollWeaponUnleash(struct BattleUnit *owner) {
   struct ItemDefinition *item;
   s32 rate;
@@ -2327,18 +2451,20 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   if (item == NULL) {
     return 1;
   }
-  if (item->descriptionMessage == 0) {
+  if (item->unleashAction == 0) {
     return 1;
   }
-  rate = ((Equipment_GetUnleashRateBonus(owner) + (item->secondaryFlags * 5))
+  rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
           << 0x10) /
          100;
   if (rate > (BattleRandom() & 0xFFFF)) {
-    return item->descriptionMessage;
+    return item->unleashAction;
   }
   return 1;
 }
 
+// Returns the base chance, in percent, of effect `effect_id`. A negative
+// value is a fixed chance that elements and luck do not change.
 s32 BattleFx_GetBaseSuccessRate(s32 effect_id) {
   s32 battle_result;
   u32 entry_index;
@@ -2391,19 +2517,21 @@ s32 BattleFx_GetBaseSuccessRate(s32 effect_id) {
   return 0 - battle_result;
 }
 
+// Returns 1 when the unit is weak to effect `effectId`: one of three listed
+// for its enemy kind or class.
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   const u8 *entries;
   s32 i;
 
   if (target->classIndex == 0) {
-    entries = Owner_GetRecord(target->classId) + 0x48;
+    entries = Enemy_GetDefinition(target->classId) + 0x48;
     for (i = 0; i < 3; i++) {
       if (*entries == effectId)
         return 1;
       entries++;
     }
   } else {
-    entries = Owner_GetRecordStride84(target->classIndex)->unk50;
+    entries = Class_GetDefinition(target->classIndex)->unk50;
     for (i = 0; i < 3; i++) {
       if (*entries++ == effectId)
         return 1;
@@ -2412,13 +2540,19 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   return 0;
 }
 
-s32 BattleEffectRevCheck(s32 effect_id) {
+// Returns 1 for the revive effects, which only work on a downed unit.
+s32 Battle_IsReviveEffect(s32 effect_id) {
   if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39)) {
     return 1;
   }
   return 0;
 }
 
+// Rolls whether effect `effectId` takes hold on `target`: it fails at once
+// when there is nothing for it to do. The chance is the base rate, plus three
+// times the caster's lead over the target in the element, less half the
+// target's luck, plus 25 against a weakness, times `successScale` percent.
+// Some effects get three tries.
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
   /* FAKEMATCH: three status reads (psySeal after the effect 4 test, confusion
@@ -2439,7 +2573,7 @@ s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
   u8 *stun;
   u8 *sleep;
 
-  if (BattleEffectRevCheck(effectId) != 0 && unit->hp != 0) {
+  if (Battle_IsReviveEffect(effectId) != 0 && unit->hp != 0) {
     return 0;
   }
 
@@ -2484,8 +2618,8 @@ action4_done:
 
   score = BattleFx_GetBaseSuccessRate(effectId);
   if (score > 0) {
-    s32 difference = Owner_GetResistanceValue(caster, resistanceCategory) -
-                     Owner_GetResistanceValue(target, resistanceCategory) -
+    s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
+                     Unit_GetElementLevel(target, resistanceCategory) -
                      (unit->luck >> 1);
     score += difference * 3;
     if (BattleTarget_IsWeakToEffect(unit, effectId) != 0) {
@@ -2507,6 +2641,8 @@ action4_done:
   return 0;
 }
 
+// Returns the definition of Djinn `index` (0 to 19) of element `group` (0 to
+// 3); anything out of range gives the first.
 const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
@@ -2517,6 +2653,9 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   return (const u16 *)((u8 *)gDjinn_DefinitionTable + entry * 0xC);
 }
 
+// Gives a newly found Djinn to the party member holding the fewest Djinn who
+// has room in that element, puts it on standby and sets its found flag.
+// Returns who got it, -1 if it was found before or -2 when nobody has room.
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state) {
   void *entry = state + index * 20 + 48;
   s32 bestNo = 0;
@@ -2548,11 +2687,13 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state) {
     return -2;
 
   Djinn_AddToOwner(bestNo, index, (s32)state);
-  Trade_AddOffer(bestNo, index, (u32)state);
+  DjinnRecovery_AddStandby(bestNo, index, (u32)state);
   GameFlag_SetBit((u32)entry);
   return bestNo;
 }
 
+// Gives Djinn `bit` of element `index` to a unit. Returns -1 when the unit
+// holds ten of the element or has it already.
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit) {
   struct BattleUnit *state = UnitGet(owner);
 
@@ -2565,7 +2706,9 @@ s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit) {
   return 0;
 }
 
-s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit) {
+// Returns 1 when the unit holds the Djinn and it is neither set nor waiting
+// on the standby and recovery list.
+s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
   struct BattleUnit *state = UnitGet(owner);
   struct DjinnRecoveryList *table;
   s32 i;
@@ -2582,7 +2725,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit) {
   if ((state->djinnActive[index] & (1 << bit)) != 0)
     return 0;
 
-  table = &((struct DjinnRecoveryTable *)Trade_GetOfferState(
+  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
                 (owner < 0 || owner > 7)))
                ->list;
   for (i = 0; i < table->count; i++) {
@@ -2595,15 +2738,18 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit) {
   return 0;
 }
 
+// Returns 1 when the Djinn is set on the unit.
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit) {
   s32 value = UnitGet(owner)->djinnActive[index] & (1 << bit);
 
   return (u32)(-value | value) >> 31;
 }
 
+// Sets a ready Djinn on the unit and works out its class again. Returns 1
+// when it was set.
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
   struct BattleUnit *state = UnitGet(owner);
-  s32 result = Trade_CanOfferDjinn(owner, index, bit);
+  s32 result = Djinn_IsReady(owner, index, bit);
 
   if (result != 0) {
     if (state->djinnAvailable[index] & (1 << bit)) {
@@ -2612,11 +2758,13 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
       return 0;
     }
     state->djinnActiveCounts[index]++;
-    Owner_RefreshDerivedData(owner);
+    Unit_UpdateClass(owner);
   }
   return result;
 }
 
+// Takes a set Djinn off the unit and works out its class again. Returns 1
+// when it was set.
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit) {
   struct BattleUnit *state = UnitGet(owner);
   u32 present = Djinn_IsActive(owner, index, bit);
@@ -2624,17 +2772,19 @@ u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit) {
   if (present != 0) {
     state->djinnActiveCounts[index]--;
     state->djinnActive[index] &= ~(1 << bit);
-    Owner_RefreshDerivedData(owner);
+    Unit_UpdateClass(owner);
   }
   return present;
 }
 
-s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit) {
+// Takes the Djinn off its side's standby and recovery list. Returns 1 when
+// it was there.
+s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
   struct DjinnRecoveryList *table;
   s32 found = 0;
   s32 i;
 
-  table = &((struct DjinnRecoveryTable *)Trade_GetOfferState(
+  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
                 (owner < 0 || owner > 7)))
                ->list;
   for (i = 0; i < table->count; i++) {
@@ -2650,12 +2800,15 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit) {
   return found;
 }
 
-u32 *Trade_AddOffer(u32 kind, u32 first, u32 second) {
+// Puts Djinn `second` of element `first`, held by unit `kind`, at the end of
+// its side's list on standby (turns -1). Returns the list.
+u32 *DjinnRecovery_AddStandby(u32 kind, u32 first, u32 second) {
   struct DjinnRecoveryList *table;
   s32 count;
 
-  Trade_RemoveOffer(kind, first, second);
-  table = &((struct DjinnRecoveryTable *)Trade_GetOfferState(kind > 7))->list;
+  DjinnRecovery_Remove(kind, first, second);
+  table =
+      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(kind > 7))->list;
   count = table->count;
   table->entries[count].element = first;
   table->entries[count].index = second;
@@ -2665,6 +2818,8 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second) {
   return (u32 *)&table->count;
 }
 
+// Moves a Djinn from one unit to another, keeping it set or on standby.
+// Returns -1 when the source lacks it or the target has no room.
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
   struct BattleUnit *state = UnitGet(source);
   u32 present;
@@ -2679,8 +2834,8 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
       if (present != 0) {
         Djinn_Activate(target, index, bit);
       } else {
-        Trade_RemoveOffer(source, index, bit);
-        Trade_AddOffer(target, index, bit);
+        DjinnRecovery_Remove(source, index, bit);
+        DjinnRecovery_AddStandby(target, index, bit);
       }
       return 0;
     }
@@ -2688,9 +2843,11 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
   return -1;
 }
 
-s32 Trade_CountPendingOffers(u8 *counts) {
+// Counts the party's Djinn on standby, by element into `counts` when it is
+// given. Returns the total.
+s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 found = 0;
-  struct DjinnRecoveryTable *base = Trade_GetOfferState(0);
+  struct DjinnRecoveryTable *base = Djinn_GetRecoveryTable(0);
   struct DjinnRecoveryEntry *entry = base->list.entries;
   s32 index;
 
@@ -2720,10 +2877,13 @@ s32 Trade_CountPendingOffers(u8 *counts) {
   return found;
 }
 
+// Returns the first halfword of a Djinn's definition.
 s32 Djinn_GetDefinitionHeader(u32 group, u32 index) {
   return *Djinn_GetDefinition(group, index);
 }
 
+// Returns how many Djinn of element `index` the party holds, or of all
+// elements for -1.
 s32 Party_SumDjinnCounts(s32 index) {
   u16 owners[16];
   s32 result = 0;
@@ -2750,6 +2910,7 @@ s32 Party_SumDjinnCounts(s32 index) {
   return result;
 }
 
+// Gives a unit item `target` and equips it.
 void Inventory_AddAndEquip(s32 owner, s32 target) {
   struct BattleUnit *state = UnitGet(owner);
   u16 *entry;
@@ -2765,8 +2926,14 @@ void Inventory_AddAndEquip(s32 owner, s32 target) {
   } while (index < INVENTORY_SLOTS);
 }
 
+// The party's equipment, put aside while the Colosso takes it away; the
+// sentinel marks the snapshot as taken.
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
+// Saves the first four characters' inventories, shortcuts and party order,
+// then strips everything but rings (type 6), gives Isaac item 16 to wear,
+// sets flag 0x952 and restores everyone. Nothing happens when a snapshot is
+// already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
   u16 *save;
   struct BattleUnit *unit;
@@ -2798,7 +2965,7 @@ void InventorySnapshot_Save(void) {
       }
       for (; n < 15; n++)
         inventory[n] = 0;
-      Owner_RefreshDerivedData(owner);
+      Unit_UpdateClass(owner);
       UnitCalc(owner);
     }
     *save++ = first;
@@ -2809,9 +2976,11 @@ void InventorySnapshot_Save(void) {
     Inventory_AddAndEquip(0, 16);
     GameFlag_SetBit(0x952);
   }
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
 }
 
+// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
+// put aside.
 void InventorySnapshot_Restore(void) {
   s32 owner;
   u16 *source = gInventorySnapshot;
@@ -2826,7 +2995,7 @@ void InventorySnapshot_Restore(void) {
         *inventory++ = *source++;
         remaining--;
       } while (remaining >= 0);
-      Owner_RefreshDerivedData(owner);
+      Unit_UpdateClass(owner);
       UnitCalc(owner);
       owner++;
     } while (owner <= 3);

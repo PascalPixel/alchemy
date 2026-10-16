@@ -94,7 +94,7 @@ void Func_020017bc(void)
     *work = Resource_FindFreeEntry();
     /* FAKEMATCH: the native stores the entry before it starts the size (differ 2 without the barrier). */
     __asm__("" : "+m"(*(u8 *)work));
-    VramBlock_LoadCached(*work, 0x200, 0);
+    VramCache_Load(*work, 0x200, 0);
     priority = 0x480;
     /* FAKEMATCH: the native builds the priority before loading the callback. */
     __asm__ volatile("" : "+r"(priority));

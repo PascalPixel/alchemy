@@ -17,14 +17,14 @@ Scheduler_AddOrUpdateCallbackFar:
 	.thumb_func
 Func_080000d8:
 	overlay_veneer Scheduler_RemoveCallback
-	.global Scheduler_EnableCallbacksFar
+	.global Scheduler_SuspendTasksFar
 	.thumb_func
-Scheduler_EnableCallbacksFar:
-	overlay_veneer Scheduler_EnableCallbacks
-	.global Scheduler_DisableCallbacksFar
+Scheduler_SuspendTasksFar:
+	overlay_veneer Scheduler_SuspendTasks
+	.global Scheduler_ResumeTasksFar
 	.thumb_func
-Scheduler_DisableCallbacksFar:
-	overlay_veneer Scheduler_DisableCallbacks
+Scheduler_ResumeTasksFar:
+	overlay_veneer Scheduler_ResumeTasks
 	.global Scheduler_RunCallbacksByKeyFar
 	.thumb_func
 Scheduler_RunCallbacksByKeyFar:
@@ -97,18 +97,18 @@ Runtime_BumpAllocateAlternatePoolFar:
 	.thumb_func
 Sys_FreeFar:
 	overlay_veneer MemFree
-	.global Runtime_WriteDebugTextTilesFar
+	.global DebugText_PrintFar
 	.thumb_func
-Runtime_WriteDebugTextTilesFar:
-	overlay_veneer Runtime_WriteDebugTextTiles
-	.global Text_DrawHexRightAlignedFar
+DebugText_PrintFar:
+	overlay_veneer DebugText_Print
+	.global DebugText_PrintHexFar
 	.thumb_func
-Text_DrawHexRightAlignedFar:
-	overlay_veneer Text_DrawHexRightAligned
-	.global Text_DrawSignedDecimalRightAlignedFar
+DebugText_PrintHexFar:
+	overlay_veneer DebugText_PrintHex
+	.global DebugText_PrintDecimalFar
 	.thumb_func
-Text_DrawSignedDecimalRightAlignedFar:
-	overlay_veneer Text_DrawSignedDecimalRightAligned
+DebugText_PrintDecimalFar:
+	overlay_veneer DebugText_PrintDecimal
 	.global Func_08000198
 	.thumb_func
 Func_08000198:
@@ -121,29 +121,29 @@ Resource_DecodeByteLzInRamFar:
 	.thumb_func
 Resource_DecodeType01Far:
 	overlay_veneer Resource_DecodeType01
-	.global Resource_InitializeTableFar
+	.global VramCache_ResetFar
 	.thumb_func
-Resource_InitializeTableFar:
-	overlay_veneer Resource_InitializeTable
+VramCache_ResetFar:
+	overlay_veneer VramCache_Reset
 	.global Resource_ResetEntryFar
 	.thumb_func
 Resource_ResetEntryFar:
 	overlay_veneer Resource_ResetEntry
-	.global Resource_ActivateEntryFar
+	.global VramCache_ReleaseVramFar
 	.thumb_func
-Resource_ActivateEntryFar:
-	overlay_veneer Resource_ActivateEntry
-	.global VramBlock_LoadCachedFar
+VramCache_ReleaseVramFar:
+	overlay_veneer VramCache_ReleaseVram
+	.global VramCache_LoadFar
 	.thumb_func
-VramBlock_LoadCachedFar:
-	overlay_veneer VramBlock_LoadCached
+VramCache_LoadFar:
+	overlay_veneer VramCache_Load
 	.global Resource_FindFreeEntryFar
 	.thumb_func
 Resource_FindFreeEntryFar:
 	overlay_veneer Resource_FindFreeEntry
-	.global Bg0_ClearTilemapFar
+	.global DebugText_ClearFar
 	.thumb_func
-Bg0_ClearTilemapFar:
+DebugText_ClearFar:
 	overlay_veneer Func_08014b70
 	.global AffineMatrix_BuildForEffectFar
 	.thumb_func
@@ -157,10 +157,10 @@ Runtime_PushSlotEntryFar:
 	.thumb_func
 Ui_LoadWindowGraphicsFar:
 	overlay_veneer Ui_LoadWindowGraphics
-	.global PaletteDma_LoadBlockFar
+	.global Palette_LoadBasicObjColorsFar
 	.thumb_func
-PaletteDma_LoadBlockFar:
-	overlay_veneer PaletteDma_LoadBlock
+Palette_LoadBasicObjColorsFar:
+	overlay_veneer Palette_LoadBasicObjColors
 	.global Render_ResetTransformStateFar
 	.thumb_func
 Render_ResetTransformStateFar:
@@ -169,14 +169,14 @@ Render_ResetTransformStateFar:
 	.thumb_func
 SceneTransform_ResetMatrixFar:
 	overlay_veneer SceneTransform_ResetMatrix
-	.global Graphics_SaveTransferWorkOnceFar
+	.global Transform_PushFar
 	.thumb_func
-Graphics_SaveTransferWorkOnceFar:
-	overlay_veneer Graphics_SaveTransferWorkOnce
-	.global Graphics_RestoreTransferWorkFar
+Transform_PushFar:
+	overlay_veneer Transform_Push
+	.global Transform_PopFar
 	.thumb_func
-Graphics_RestoreTransferWorkFar:
-	overlay_veneer Graphics_RestoreTransferWork
+Transform_PopFar:
+	overlay_veneer Transform_Pop
 	.global SceneTransform_ApplyRotationFar
 	.thumb_func
 SceneTransform_ApplyRotationFar:
@@ -209,22 +209,22 @@ SceneTransform_ApplyRotationTranslationFar:
 	.thumb_func
 SceneTransform_ApplyScaledRotationFar:
 	overlay_veneer SceneTransform_ApplyScaledRotation
-	.global Graphics_PrepareTransferInIwramWorkFar
+	.global Transform_SetLookAtFar
 	.thumb_func
-Graphics_PrepareTransferInIwramWorkFar:
-	overlay_veneer Graphics_PrepareTransferInIwramWork
+Transform_SetLookAtFar:
+	overlay_veneer Transform_SetLookAt
 	.global Render_ProjectPointFar
 	.thumb_func
 Render_ProjectPointFar:
 	overlay_veneer Render_ProjectPoint
-	.global Camera_SetAngleParametersFar
+	.global Projection_SetFieldOfViewFar
 	.thumb_func
-Camera_SetAngleParametersFar:
-	overlay_veneer Camera_SetAngleParameters
-	.global Camera_StoreSceneParametersFar
+Projection_SetFieldOfViewFar:
+	overlay_veneer Projection_SetFieldOfView
+	.global Projection_SetFar
 	.thumb_func
-Camera_StoreSceneParametersFar:
-	overlay_veneer Camera_StoreSceneParameters
+Projection_SetFar:
+	overlay_veneer Projection_Set
 	.global Func_08000280
 	.thumb_func
 Func_08000280:
@@ -245,30 +245,30 @@ Resource_ReservedNoOpFar:
 	.thumb_func
 Resource_LoadCodeFar:
 	overlay_veneer Resource_LoadCode
-	.global Blend_SetDarkenTarget16Far
+	.global Fade_ToBlackFar
 	.thumb_func
-Blend_SetDarkenTarget16Far:
-	overlay_veneer Blend_SetDarkenTarget16
-	.global Blend_SetDarkenTarget0Far
+Fade_ToBlackFar:
+	overlay_veneer Fade_ToBlack
+	.global Fade_FromBlackFar
 	.thumb_func
-Blend_SetDarkenTarget0Far:
-	overlay_veneer Blend_SetDarkenTarget0
-	.global Blend_SetBrightenTarget16Far
+Fade_FromBlackFar:
+	overlay_veneer Fade_FromBlack
+	.global Fade_ToWhiteFar
 	.thumb_func
-Blend_SetBrightenTarget16Far:
-	overlay_veneer Blend_SetBrightenTarget16
-	.global Blend_SetBrightenTarget0Far
+Fade_ToWhiteFar:
+	overlay_veneer Fade_ToWhite
+	.global Fade_FromWhiteFar
 	.thumb_func
-Blend_SetBrightenTarget0Far:
-	overlay_veneer Blend_SetBrightenTarget0
-	.global Blend_ConfigureTransitionFar
+Fade_FromWhiteFar:
+	overlay_veneer Fade_FromWhite
+	.global Fade_StartFar
 	.thumb_func
-Blend_ConfigureTransitionFar:
-	overlay_veneer Blend_ConfigureTransition
-	.global Blend_WaitForTransitionFar
+Fade_StartFar:
+	overlay_veneer Fade_Start
+	.global Fade_WaitFar
 	.thumb_func
-Blend_WaitForTransitionFar:
-	overlay_veneer Blend_WaitForTransition
+Fade_WaitFar:
+	overlay_veneer Fade_Wait
 	.global RuntimeDispatch_ReservedNoOpAFar
 	.thumb_func
 RuntimeDispatch_ReservedNoOpAFar:
@@ -333,14 +333,14 @@ QueueIoWriteDelay10Far:
 	.thumb_func
 QueueIoWriteDelay11Far:
 	overlay_veneer QueueIoWriteDelay11
-	.global Runtime_SetMainState19Far
+	.global Input_ResetKeyRepeatFar
 	.thumb_func
-Runtime_SetMainState19Far:
-	overlay_veneer Runtime_SetMainState19
-	.global Graphics_PrepareTransferAndRunFar
+Input_ResetKeyRepeatFar:
+	overlay_veneer Input_ResetKeyRepeat
+	.global Transform_ApplyLookAtFar
 	.thumb_func
-Graphics_PrepareTransferAndRunFar:
-	overlay_veneer Graphics_PrepareTransferAndRun
+Transform_ApplyLookAtFar:
+	overlay_veneer Transform_ApplyLookAt
 	.global SerialRuntime_WaitForStatusMaskFar
 	.thumb_func
 SerialRuntime_WaitForStatusMaskFar:
@@ -356,19 +356,19 @@ Sound_LoadPresetParametersFar:
 	.global Func_08000380
 	.thumb_func
 Func_08000380:
-	overlay_veneer SerialRuntime_BeginTransferA
+	overlay_veneer SerialRuntime_BeginSend
 	.global Party_CheckFar
 	.thumb_func
 Party_CheckFar:
-	overlay_veneer SerialRuntime_BeginTransferB
+	overlay_veneer SerialRuntime_BeginReceive
 	.global Func_08000390
 	.thumb_func
 Func_08000390:
-	overlay_veneer SerialRuntime_WaitForTransferA
-	.global SerialRuntime_WaitForTransferBFar
+	overlay_veneer SerialRuntime_WaitForSend
+	.global SerialRuntime_WaitForReceiveFar
 	.thumb_func
-SerialRuntime_WaitForTransferBFar:
-	overlay_veneer SerialRuntime_WaitForTransferB
+SerialRuntime_WaitForReceiveFar:
+	overlay_veneer SerialRuntime_WaitForReceive
 	.global SerialRuntime_WaitForTransfersFar
 	.thumb_func
 SerialRuntime_WaitForTransfersFar:
@@ -381,10 +381,10 @@ SerialRuntime_GetActiveTransfersFar:
 	.thumb_func
 SerialRuntime_StepBlockTransferFar:
 	overlay_veneer Func_08016990
-	.global Scheduler_SetCallbackMaskFar
+	.global Scheduler_SetTaskFlagsFar
 	.thumb_func
-Scheduler_SetCallbackMaskFar:
-	overlay_veneer Scheduler_SetCallbackMask
+Scheduler_SetTaskFlagsFar:
+	overlay_veneer Scheduler_SetTaskFlags
 	.global UnitGetFar
 	.thumb_func
 UnitGetFar:

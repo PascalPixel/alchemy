@@ -60,7 +60,7 @@ extern char MsgMonstersAttackLess;
 
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
-void VramBlock_LoadCached(s32 slot, s32 size, const u8 *tiles);
+void VramCache_Load(s32 slot, s32 size, const u8 *tiles);
 s32 GameFlag_Test(s32 flag);
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 void Audio_PlayCue(s32 cue);
@@ -107,7 +107,7 @@ void BattleFx_RunEffect16(void) {
     work->arcTileSlot = slot;
     id = slot << 16;
     tiles = gData_080ed90c;
-    VramBlock_LoadCached(id >> 16, 0x100, tiles);
+    VramCache_Load(id >> 16, 0x100, tiles);
     gPartyState.avoidDistance = 0x09600000;
     gPartyState.avoidByItem = GameFlag_Test(0x145);
     Animation_ApplyChildValuesFar(object, 0);

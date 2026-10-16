@@ -32,7 +32,7 @@ struct OwnerStart *Character_GetDefinition(s32 index);
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void UnitCalc(s32 owner);
 
-void Owner_InitRecords(void)
+void Party_InitCharacters(void)
 {
     struct OwnerInventoryState *state;
     struct OwnerStart *start;
@@ -80,11 +80,11 @@ void Owner_InitRecords(void)
                     Inventory_Equip(*remote, slot);
                 }
 
-                Owner_RefreshDerivedData(*remote);
+                Unit_UpdateClass(*remote);
                 ((struct OwnerName *)state)->ppRatio = 0x4000;
                 ((struct OwnerName *)state)->hpRatio = 0x4000;
-                Party_AdvanceOwnerCountToTarget(*remote, start->level);
-                Owner_RefreshDerivedData(*remote);
+                Unit_LevelUpTo(*remote, start->level);
+                Unit_UpdateClass(*remote);
                 UnitCalc(*remote);
             }
             remote++;

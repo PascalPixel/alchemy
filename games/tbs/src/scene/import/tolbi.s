@@ -44,6 +44,6 @@
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_MapObjectSetPosition, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

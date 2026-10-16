@@ -38,22 +38,57 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "sound_ids.h"
 
-// 前方宣言
-static void LamakanDesert_SetSandPhase(u16 value);
+// Lamakan Desert, four maps of sand between Altin and the world map east.
+//
+// Walking fills a heat gauge (gGameState.hazardSteps of hazardLimit),
+// drawn as a bar at the top of the screen; each quarter it fills makes a
+// party member complain, and a full gauge leaves the leader collapsed at the
+// nearest recovery point. Reveal uncovers the hidden pits, the shimmering
+// heat haze hides them again, and a pit drags the leader into a battle.
+
+static void HeatGauge_SetHeld(u16 held);
+
+enum {
+  FLAG_HAZARDS_PAUSED = 0x200, // a collapse, a pit or the monster is under way
+  FLAG_SECRETS_REVEALED = 0x201, // Reveal shows the pits
+  FLAG_HEAT_QUARTER = 0x300,     // the gauge has passed a quarter
+  FLAG_HEAT_HALF = 0x301,
+  FLAG_HEAT_THREE_QUARTERS = 0x302,
+  // Who has complained since the gauge last passed a mark: one per member,
+  // in the order of their actors.
+  FLAG_GARET_COMPLAINED = 0x303,
+  FLAG_IVAN_COMPLAINED = 0x304,
+  FLAG_MIA_COMPLAINED = 0x305,
+  FLAG_SAND_MONSTER_BEATEN = 0x90a
+};
+
+enum {
+  SAND_MONSTER = 8, // sprite 0xc3; talking to it starts a battle
+  FIRST_PIT = 9,    // 9 to 12: the pits Reveal shows (sprite 0xc1)
+  LAST_PIT = 12,
+  SMOG = 13 // the Jupiter Djinni
+};
+
+// The sand monster's fight and the pits' battles come from encounter zone 53.
+enum { LAMAKAN_ENCOUNTERS = 53 };
 
 #define NULL ((void *)0)
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared scene code, included where the ROM places it.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-static void EV13_TALK(void) { BattleFx_RunPageEffectForSlot(13, 3, 3); }
+// Smog, Jupiter Djinni 3, joins the party.
+static void TalkToSmog(void) { Djinn_JoinParty(SMOG, 3, 3); }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared scene code, included where the ROM places it.
 #include "common/object_waitdown.h"
 
-static s32 LamakanDesert_EmitSandEffect(struct FieldActor *actor) {
+// The update a leader dragged into a pit runs: sand sounds every 8 frames
+// and a spray of sand every 16.
+static s32 Leader_SpraySand(struct FieldActor *actor) {
   struct EffectOptions params;
   s32 phase;
 
@@ -72,6 +107,7 @@ static s32 LamakanDesert_EmitSandEffect(struct FieldActor *actor) {
   return 0;
 }
 
+// Where the party can enter each of the four maps.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 v = gGameState.scene;
 
@@ -90,14 +126,17 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLamakanDesertEntrancesOther;
 }
 
+// The desert has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gLamakanDesert_Exits; }
+const u32 *Scene_GetExits(void) { return gLamakanDesertExits; }
 
+// The pits and the monster of each map. Arriving at the third map's
+// entrance 5, the way back from the monster's battle, marks it beaten.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     if (gGameState.entrance == 5) {
-      Engine_GameFlagSet(0x90a);
+      Engine_GameFlagSet(FLAG_SAND_MONSTER_BEATEN);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TBS_EDITION_IT)
       Engine_GameFlagSet(0x87a);
@@ -116,7 +155,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gLamakanDesertPlacementsOther;
 }
 
-static void EV09_TOUCH(void) {
+// Trigger 9: back out to the world map.
+static void LeaveForTheWorldMap(void) {
+  // Flags 0x8b2 and 0x8b3 are set together the first time; what reads them
+  // is not known.
   Engine_EventBegin();
   if (GameFlag_IsSet(0x8b2) == 0) {
     if (GameFlag_IsSet(0x8b3) == 0) {
@@ -124,18 +166,23 @@ static void EV09_TOUCH(void) {
       GameFlag_Set(0x8b2);
     }
   }
-  Event_PlayCue(123);
+  Event_PlayCue(SOUND_MAP_EXIT);
   Engine_EventRequestExit(3);
   Engine_EventEnd();
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gLamakanDesert_Events; }
+// The desert's triggers, the same on every map.
+const struct SceneEvent *Scene_GetEvents(void) { return gLamakanDesertEvents; }
 
-static s32 LamakanDesert_ApplyEntryState(void) {
-  // 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
+// Reveal's end (phase 4), and every entry: the pits and Smog vanish under
+// the sand again (cells 70, 68 or 69, 99 over the saved patches), the chests
+// hide and the heat haze shimmers.
+static s32 Reveal_HideSecrets(void) {
+  // Declared s32 but returns no value: the native ends pop {r1}; bx r1
+  // without setting r0.
   s32 v5;
 
-  Engine_GameFlagClear(0x201);
+  Engine_GameFlagClear(FLAG_SECRETS_REVEALED);
   if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
     Map_CopyCells(70, 68, 4, 2, 22, 7);
     Map_CopyCells(70, 68, 4, 2, 8, 10);
@@ -177,12 +224,12 @@ static s32 LamakanDesert_ApplyEntryState(void) {
     Map_CopyCells(9, 120, 3, 1, 44, 5);
     Map_CopyCellAttributes(9, 0, 3, 3, 9, 6);
   }
-  Engine_ActorSetPosition(8, 0, 0);
+  Engine_ActorSetPosition(SAND_MONSTER, 0, 0);
   Engine_ActorSetPosition(9, 0, 0);
   Engine_ActorSetPosition(10, 0, 0);
   Engine_ActorSetPosition(11, 0, 0);
   Engine_ActorSetPosition(12, 0, 0);
-  Engine_ActorSetPosition(13, 0, 0);
+  Engine_ActorSetPosition(SMOG, 0, 0);
   v5 = 100;
   do {
     Engine_MapObjectSetPosition(v5, 0, 0);
@@ -194,11 +241,13 @@ static s32 LamakanDesert_ApplyEntryState(void) {
   }
 }
 
-static s32 LamakanDesert_ConfigureAreaLayout(void) {
+// Reveal (phase 5): the saved patches of sand come back, the pits and the
+// monster stand where they are, the chests show and the haze stops.
+static s32 Reveal_ShowSecrets(void) {
   s32 i;
 
-  Engine_GameFlagClear(0x200);
-  Engine_GameFlagSet(0x201);
+  Engine_GameFlagClear(FLAG_HAZARDS_PAUSED);
+  Engine_GameFlagSet(FLAG_SECRETS_REVEALED);
   if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
     Map_CopyCells(64, 126, 4, 2, 22, 7);
     Map_CopyCells(68, 126, 4, 2, 8, 10);
@@ -207,7 +256,7 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
     Map_CopyCells(76, 126, 4, 2, 16, 42);
     Map_CopyCells(80, 126, 4, 2, 36, 44);
     Map_CopyCells(84, 126, 4, 2, 14, 55);
-    Actor_SetPosition(9, 0x1900000, 0x16c0000);
+    Actor_SetPosition(9, PIXELS(400), PIXELS(364));
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
     Map_CopyCells(64, 126, 4, 2, 42, 5);
     Map_CopyCells(68, 126, 4, 2, 20, 11);
@@ -227,11 +276,11 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
     Map_CopyCells(108, 126, 4, 2, 6, 46);
     Map_CopyCells(112, 126, 4, 2, 27, 55);
     Map_CopyCells(116, 126, 4, 2, 43, 56);
-    Actor_SetPosition(9, 0x1600000, 0xcc0000);
-    Actor_SetPosition(10, 0x2e00000, 0x18c0000);
-    Actor_SetPosition(11, 0x900000, 0x17c0000);
-    Actor_SetPosition(12, 0x2400000, 0x2cc0000);
-    Actor_SetPosition(13, 0x2880000, 0x1980000);
+    Actor_SetPosition(9, PIXELS(352), PIXELS(204));
+    Actor_SetPosition(10, PIXELS(736), PIXELS(396));
+    Actor_SetPosition(11, PIXELS(144), PIXELS(380));
+    Actor_SetPosition(12, PIXELS(576), PIXELS(716));
+    Actor_SetPosition(SMOG, PIXELS(648), PIXELS(408));
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     Map_CopyCells(64, 124, 4, 4, 8, 14);
     Map_CopyCells(68, 124, 4, 4, 6, 18);
@@ -241,10 +290,10 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
     Map_CopyCells(5, 121, 5, 7, 43, 32);
     Map_CopyCells(0, 120, 3, 1, 9, 5);
     Map_CopyCells(3, 120, 3, 1, 44, 5);
-    Actor_SetPosition(8, 0xa80000, 0x5c0000);
-    Actor_SetPosition(9, 0x800000, 0x13c0000);
+    Actor_SetPosition(SAND_MONSTER, PIXELS(168), PIXELS(92));
+    Actor_SetPosition(9, PIXELS(128), PIXELS(316));
     Map_CopyCellAttributes(6, 0, 3, 3, 9, 6);
-    if (Engine_GameFlagIsSet(0x90a) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_SAND_MONSTER_BEATEN) == 0) {
       Map_CopyCells(0, 119, 3, 1, 9, 5);
     }
   }
@@ -257,80 +306,89 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
   }
 }
 
-static void EV08_TALK(void) {
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_LamakanDesert3, 5);
+// Talking to the sand monster: its battle, returning to the third map's
+// entrance 5.
+static void FightSandMonster(void) {
+  Engine_ActorRunRepeatedMotion(SAND_MONSTER, 2);
+  Event_SetNextDestination((s32)&SceneId_LamakanDesert3, 5);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(53, 5);
+  BattleFx_SetWeightedResult(LAMAKAN_ENCOUNTERS, 5);
 }
 
-static void LamakanDesert_ShowRandomPartyLine(s32 a0) {
-  s32 i;
-  s32 p8;
-  s32 record;
-  s32 value;
-  s32 v5;
-  s32 v6;
+// Raised trigger 1, 2 or 3 as the heat gauge passes a quarter, a half and
+// three quarters: Garet, Ivan or Mia, picked at random (three tries for
+// one who has not spoken yet), complains about the heat.
+static void ComplainAboutHeat(s32 mark) {
+  s32 tries;
+  s32 quarter;
+  s32 alreadySpoke;
+  s32 random;
+  s32 flag;
+  s32 member;
 
-  p8 = a0;
-  for (i = 0; i <= 2; i++) {
-    value = Engine_RandomNext();
-    v6 = (u32)((value << 1) + value) >> 16;
-    v5 = v6 + 0x303;
-    record = Engine_GameFlagIsSet(v5);
-    if (record == 0) {
-      Engine_GameFlagSet(v5);
+  quarter = mark;
+  for (tries = 0; tries <= 2; tries++) {
+    random = Engine_RandomNext();
+    member = (u32)((random << 1) + random) >> 16; // 0 to 2
+    flag = member + FLAG_GARET_COMPLAINED;
+    alreadySpoke = Engine_GameFlagIsSet(flag);
+    if (alreadySpoke == 0) {
+      Engine_GameFlagSet(flag);
       break;
     }
   }
   Engine_EventBegin();
-  Engine_EventSetMessage((((p8 << 1) + p8) + v6) +
+  // Three lines a mark, one for each member. They follow the Altin Mine
+  // sign three messages after Fuchin Temple's, and have no name of their own.
+  Engine_EventSetMessage((((quarter << 1) + quarter) + member) +
                          MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
-  Engine_EventShowMessage((v6 + 1), 0);
+  Engine_EventShowMessage((member + 1), 0);
   Engine_EventEnd();
 }
 
-static void LamakanDesert_RaiseQuarterTriggers(void) {
+// Every frame: raises triggers 1 to 3 as the gauge passes each quarter,
+// and clears each mark and the complaints when the gauge drops back below
+// it. Nothing is raised while Reveal is showing the pits.
+static void HeatGauge_RaiseQuarterTriggers(void) {
   struct EventWork *work = gEventWork;
-  u8 *state = (u8 *)&gGameState;
-  s32 percent = *(s16 *)(state + 0x232) * 100 / *(s16 *)(state + 0x22c);
+  s32 percent = gGameState.hazardSteps * 100 / gGameState.hazardLimit;
 
-  if (GameFlag_IsSet(0x201) != 0)
+  if (GameFlag_IsSet(FLAG_SECRETS_REVEALED) != 0)
     return;
-  if (GameFlag_IsSet(0x302) != 0 && percent <= 74) {
-    GameFlag_Clear(0x302);
-    GameFlag_Clear(0x303);
-    GameFlag_Clear(0x304);
-    GameFlag_Clear(0x305);
+  if (GameFlag_IsSet(FLAG_HEAT_THREE_QUARTERS) != 0 && percent <= 74) {
+    GameFlag_Clear(FLAG_HEAT_THREE_QUARTERS);
+    GameFlag_Clear(FLAG_GARET_COMPLAINED);
+    GameFlag_Clear(FLAG_IVAN_COMPLAINED);
+    GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (GameFlag_IsSet(0x301) != 0 && percent <= 49) {
-    GameFlag_Clear(0x301);
-    GameFlag_Clear(0x303);
-    GameFlag_Clear(0x304);
-    GameFlag_Clear(0x305);
+  if (GameFlag_IsSet(FLAG_HEAT_HALF) != 0 && percent <= 49) {
+    GameFlag_Clear(FLAG_HEAT_HALF);
+    GameFlag_Clear(FLAG_GARET_COMPLAINED);
+    GameFlag_Clear(FLAG_IVAN_COMPLAINED);
+    GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (GameFlag_IsSet(0x300) != 0 && percent <= 24) {
-    GameFlag_Clear(0x300);
-    GameFlag_Clear(0x303);
-    GameFlag_Clear(0x304);
-    GameFlag_Clear(0x305);
+  if (GameFlag_IsSet(FLAG_HEAT_QUARTER) != 0 && percent <= 24) {
+    GameFlag_Clear(FLAG_HEAT_QUARTER);
+    GameFlag_Clear(FLAG_GARET_COMPLAINED);
+    GameFlag_Clear(FLAG_IVAN_COMPLAINED);
+    GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (GameFlag_IsSet(0x300) == 0 && percent > 24) {
-    GameFlag_Set(0x300);
+  if (GameFlag_IsSet(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
+    GameFlag_Set(FLAG_HEAT_QUARTER);
     work->raisedTrigger = 1;
   }
-  if (GameFlag_IsSet(0x301) == 0 && percent > 49) {
-    GameFlag_Set(0x301);
+  if (GameFlag_IsSet(FLAG_HEAT_HALF) == 0 && percent > 49) {
+    GameFlag_Set(FLAG_HEAT_HALF);
     work->raisedTrigger = 2;
   }
-  if (GameFlag_IsSet(0x302) == 0 && percent > 74) {
-    GameFlag_Set(0x302);
+  if (GameFlag_IsSet(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
+    GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
     work->raisedTrigger = 3;
   }
 }
 
-static s32 LamakanDesert_CalculatePlanarDistance(s32 *position_a,
-                                                 s32 *position_b) {
+// The distance in whole pixels between two x, z positions.
+static s32 DistanceInPixels(s32 *position_a, s32 *position_b) {
   s32 dx = (*position_b++ - *position_a++) >> 16;
   s32 dz = (*position_b - position_a[1]) >> 16;
   s32 dz_squared = dz * dz;
@@ -339,12 +397,16 @@ static s32 LamakanDesert_CalculatePlanarDistance(s32 *position_a,
   return Iwram_Sqrt(dx_squared + dz_squared);
 }
 
+// A recovery point: where a collapsed leader comes to.
 struct SafePoint {
   s32 x;
   s32 z;
 };
 
-static void EV20_TOUCH(void) {
+// Trigger 20, raised when the heat gauge fills: the leader drops at the
+// nearest recovery point of the map, lies collapsed while the gauge drains
+// 5 steps a frame, then gets up.
+static void CollapseFromHeat(void) {
   u8 *work;
   s32 frames;
   s32 best;
@@ -379,25 +441,25 @@ static void EV20_TOUCH(void) {
   work = (u8 *)gEventWork;
   frames = 60;
   best = 0xf00000;
-  GameFlag_Set(0x200);
-  LamakanDesert_SetSandPhase(1);
+  GameFlag_Set(FLAG_HAZARDS_PAUSED);
+  HeatGauge_SetHeld(1);
   if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
     count = 3;
-    points = gLamakanDesert_SafePoints1;
+    points = gLamakanDesertRecoveryPoints1;
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
     count = 5;
-    points = gLamakanDesert_SafePoints2;
+    points = gLamakanDesertRecoveryPoints2;
   } else {
     count = 2;
-    points = gLamakanDesert_SafePointsOther;
+    points = gLamakanDesertRecoveryPointsOther;
   }
   left = count;
   point = points;
   if (count != 0) {
     offset = 0;
     do {
-      distance = LamakanDesert_CalculatePlanarDistance(
-          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
+      distance = DistanceInPixels(&Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
+                                  (s32 *)point);
       if (distance <= best) {
         best = distance;
         nearest = left - count;
@@ -433,7 +495,7 @@ static void EV20_TOUCH(void) {
                      EFFECT_SCALE_TO_TARGET,
                  &options);
   }
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
   hold = (u16 *)(work + 0xcba);
   progress = &gGameState.hazardSteps;
@@ -472,10 +534,12 @@ static void EV20_TOUCH(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
   Event_Wait(10);
   *(u16 *)(work + 0xcba) = frames;
-  LamakanDesert_SetSandPhase(0);
+  HeatGauge_SetHeld(0);
 }
 
-static void LamakanDesert_UpdateTravelDust(void) {
+// Walking on sand (triggers 21 and 100 to 107): each moving frame adds a
+// step of heat and kicks up dust, faster on the run.
+static void HeatGauge_CountStep(void) {
   struct FieldActor *actor;
   struct EventWork *event;
   struct EffectOptions params;
@@ -512,7 +576,7 @@ static void LamakanDesert_UpdateTravelDust(void) {
     if (phase != 0) {
       return;
     }
-    // フレームカウンタをもう一度読んで捨てる (ROM の読み出しそのまま)
+    // Reads the frame counter again and drops the value, as the native does.
     gFrameCount;
     params.startScaleX = 0xcccc;
     params.startScaleY = 0xcccc;
@@ -523,7 +587,9 @@ static void LamakanDesert_UpdateTravelDust(void) {
   }
 }
 
-static void EV22_TOUCH(void) {
+// Trigger 22, stepping near a hidden pit: the leader looks at the nearest
+// pit, is pulled backwards into it and a battle begins.
+static void FallIntoPit(void) {
   struct FieldActor *target;
   struct FieldActor *actor;
   struct FieldActor *record;
@@ -535,14 +601,14 @@ static void EV22_TOUCH(void) {
 
   target = Actor_Get(gGameState.selectedActor);
   best = 9;
-  GameFlag_Set(0x200);
+  GameFlag_Set(FLAG_HAZARDS_PAUSED);
   min = 0x100000;
-  for (id = 9; id <= 12; id++) {
-    u8 *other = Actor_Get(id);
+  for (id = FIRST_PIT; id <= LAST_PIT; id++) {
+    struct FieldActor *other = Actor_Get(id);
 
     if (other != 0) {
-      dx = (target->x.fixed - *(s32 *)(other + 8)) / 0x10000;
-      dz = (target->z.fixed - *(s32 *)(other + 16)) / 0x10000;
+      dx = (target->x.fixed - other->x.fixed) / 0x10000;
+      dz = (target->z.fixed - other->z.fixed) / 0x10000;
       {
         s32 ax = dx;
 
@@ -559,37 +625,40 @@ static void EV22_TOUCH(void) {
       }
     }
   }
-  Engine_ActorSetAnimation(0, 1);
-  Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorFaceActor(0, best, 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, best, 0);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(0, 0x102);
-  Engine_ActorStartRepeatedMotion(0, 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(60);
-  Actor_SetAttachedEffect(0, 0x101);
-  actor = Actor_Get(0);
-  record = Object_GetById(0);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  record = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + 0x8000) & -0x1000;
-  Engine_ActorSetAnimation(0, 5);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 5);
   Object_SetActionById(0, 24);
-  Actor_SetSpeed(0, 0x1999, 0xccc);
-  record = Object_GetById(0);
-  *(s32 *)((u8 *)record + 108) = (s32)LamakanDesert_EmitSandEffect;
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+  record = Object_GetById(ACTOR_PARTY_LEADER);
+  record->update = (void (*)(union FieldObject *))Leader_SpraySand;
   record = Actor_Get(best);
   if (record != 0) {
-    Engine_ActorSetDestination(0, record->x.part.pixel, record->z.part.pixel);
+    Engine_ActorSetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
+                               record->z.part.pixel);
   }
   Engine_EventWait(60);
-  Actor_ShowEmote(best, 0x104, 0);
+  Actor_ShowEmote(best, EMOTE_IN_FRONT | 4, 0);
   Engine_EventWait(60);
-  Actor_SetAttachedEffect(0, 0x100);
-  Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
-  record = Object_GetById(0);
-  *(s32 *)((u8 *)record + 108) = 0;
-  BattleFx_SetWeightedResult(53, 4);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  record = Object_GetById(ACTOR_PARTY_LEADER);
+  record->update = NULL;
+  BattleFx_SetWeightedResult(LAMAKAN_ENCOUNTERS, 4);
 }
 
-static void EV30_TOUCH(void) {
+// Trigger 30, on a slope of sand: the sand carries the leader south 1.5
+// pixels a frame, and at a ledge the leader hops down 8 pixels.
+static void SlideDownDune(void) {
   struct FieldActor *center;
   s32 id;
   struct FieldActor *actor;
@@ -599,7 +668,7 @@ static void EV30_TOUCH(void) {
   s32 phase;
   s32 x;
 
-  LamakanDesert_UpdateTravelDust();
+  HeatGauge_CountStep();
   {
     struct EventWork *event = gEventWork;
 
@@ -658,7 +727,9 @@ static void EV30_TOUCH(void) {
   actor->z.fixed += 0x18000;
 }
 
-static void EV40_TOUCH(void) {
+// Trigger 40 on the third map, until the monster is beaten: the leader
+// stops and backs away as the monster rises out of the sand.
+static void MeetSandMonster(void) {
   s32 rec8;
   struct FieldActor *record;
   s32 rect[3];
@@ -667,12 +738,12 @@ static void EV40_TOUCH(void) {
   u8 *p5;
 
   p5 = (u8 *)gEventWork;
-  LamakanDesert_UpdateTravelDust();
-  if (GameFlag_IsSet(0x90a) == 0) {
-    rec8 = GameFlag_IsSet(0x200);
+  HeatGauge_CountStep();
+  if (GameFlag_IsSet(FLAG_SAND_MONSTER_BEATEN) == 0) {
+    rec8 = GameFlag_IsSet(FLAG_HAZARDS_PAUSED);
     if (rec8 == 0) {
-      GameFlag_Set(0x200);
-      LamakanDesert_SetSandPhase(1);
+      GameFlag_Set(FLAG_HAZARDS_PAUSED);
+      HeatGauge_SetHeld(1);
       shownAddr = (u16 *)(p5 + 0xcba);
       shown = 0x258;
       *shownAddr = shown;
@@ -684,13 +755,13 @@ static void EV40_TOUCH(void) {
       record->targetX = -0x80000000;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       record->targetZ = -0x80000000;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-      Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Actor_FaceActor(ACTOR_PARTY_LEADER, SAND_MONSTER, 0);
       Engine_EventWait(40);
       Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
       Engine_EventWait(40);
-      Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       rect[0] = rec8;
       rect[1] = rec8;
       rect[2] = rec8;
@@ -698,26 +769,29 @@ static void EV40_TOUCH(void) {
       FieldVector_AddPolarOffset(-0x100000, record->facing,
                                  (struct FieldPosition *)rect);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000,
                                  rect[2] / 0x10000);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
       Engine_EventWait(2);
-      Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+      Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
       Engine_EventWait(30);
       Event_PlayCue(148);
-      Engine_ActorRunRepeatedMotion(8, 2);
+      Engine_ActorRunRepeatedMotion(SAND_MONSTER, 2);
       Engine_EventWait(20);
-      Actor_SetSpeed(8, 0x28000, 0x14000);
-      Actor_WalkToAndWait(8, 168, 104);
-      Actor_SetSpeed(8, 0x8000, 0x4000);
-      Actor_WalkToAndWait(8, 168, 92);
+      Actor_SetSpeed(SAND_MONSTER, 0x28000, 0x14000);
+      Actor_WalkToAndWait(SAND_MONSTER, 168, 104);
+      Actor_SetSpeed(SAND_MONSTER, 0x8000, 0x4000);
+      Actor_WalkToAndWait(SAND_MONSTER, 168, 92);
       *shownAddr = shown;
-      LamakanDesert_SetSandPhase(0);
+      HeatGauge_SetHeld(0);
     }
   }
 }
 
+// Entering the desert: the heat gauge (600 steps) starts on the first three
+// maps, the patches Reveal uncovers are saved to the spare cells at 64, 126
+// or 64, 124, and the secrets are hidden.
 s32 LamakanDesert_EnterArea(s32 a0, s32 a1) {
   s32 v5;
 
@@ -727,8 +801,8 @@ s32 LamakanDesert_EnterArea(s32 a0, s32 a1) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert4) {
   } else {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    LamakanDesert_ClaimSandEffectVram();
-    FieldScheduler_AddCallback((s32)LamakanDesert_RaiseQuarterTriggers, 0xc80);
+    HeatGauge_Start();
+    FieldScheduler_AddCallback((s32)HeatGauge_RaiseQuarterTriggers, 0xc80);
     if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
       Map_CopyCells(22, 7, 4, 2, 64, 126);
       Map_CopyCells(8, 10, 4, 2, 68, 126);
@@ -758,19 +832,23 @@ s32 LamakanDesert_EnterArea(s32 a0, s32 a1) {
       Map_CopyCells(6, 18, 4, 4, 68, v5);
       Map_CopyCells(10, 21, 4, 4, 72, v5);
     }
-    LamakanDesert_ApplyEntryState();
+    Reveal_HideSecrets();
   }
   return 0;
 }
 
-static void LamakanDesert_ResetActorEightPosition(void) {
-  Actor_SetSpeed(8, 0x8000, 0x4000);
-  Engine_ActorSetAnimation(8, 1);
-  Actor_WalkToAndWait(8, 168, 96);
-  Engine_ActorSetAnimation(8, 2);
+// The monster sinks back to its spot; nothing calls this.
+static UNUSED void SandMonster_Return(void) {
+  Actor_SetSpeed(SAND_MONSTER, 0x8000, 0x4000);
+  Engine_ActorSetAnimation(SAND_MONSTER, 1);
+  Actor_WalkToAndWait(SAND_MONSTER, 168, 96);
+  Engine_ActorSetAnimation(SAND_MONSTER, 2);
 }
 
-static void LamakanDesert_RunSandstorm(void) {
+// Every frame: draws the heat gauge. It sits 8 pixels lower while held,
+// slides away while flag 0x104 is set, its bar shrinks as the heat grows,
+// and its colors turn redder (flickering greener past 60 of 120).
+static void HeatGauge_Draw(void) {
   u8 *buffer;
   s32 tile;
   s16 *colors;
@@ -795,20 +873,20 @@ static void LamakanDesert_RunSandstorm(void) {
 
   tile = gVramBlockCache[(*(s16 *)&gLamakanDesert_SandVramSlot)].offset >> 5;
   if ((*(s16 *)&gLamakanDesert_SandPhase) != 0) {
-    gLamakanDesert_SandCounter = 2;
+    gHeatGaugeSlide = 2;
   } else if (Engine_GameFlagIsSet(0x104) != 0) {
-    if (gLamakanDesert_SandCounter > 0) {
-      gLamakanDesert_SandCounter--;
+    if (gHeatGaugeSlide > 0) {
+      gHeatGaugeSlide--;
     }
-  } else if (gLamakanDesert_SandCounter <= 1) {
-    if (++gLamakanDesert_SandCounter == 1) {
+  } else if (gHeatGaugeSlide <= 1) {
+    if (++gHeatGaugeSlide == 1) {
       Dma_Set(gLamakanDesert_SandPalette, (void *)0x050003c0, 0x80000010,
               REG_DMA3);
     }
   }
-  counter = gLamakanDesert_SandCounter;
+  counter = gHeatGaugeSlide;
   if (counter == 0) {
-    Resource_ActivateEntry((*(s16 *)&gLamakanDesert_SandVramSlot));
+    VramCache_ReleaseVram((*(s16 *)&gLamakanDesert_SandVramSlot));
     return;
   }
   display = *Ram_DisplayWork;
@@ -833,7 +911,7 @@ static void LamakanDesert_RunSandstorm(void) {
     red = value & 31;
     green = (value >> 5) & 31;
     blue = ((value >> 10) & 31) - 20;
-    level = gLamakanDesert_SandLevel;
+    level = gHeatGaugeLevel;
     red += level / 3;
     blue = blue - level / 6 + 20;
     if (level > 60 && (gFrameCount & 1)) {
@@ -856,24 +934,23 @@ static void LamakanDesert_RunSandstorm(void) {
   QueueIoWriteDelay3((u32)palette++, *word++);
   QueueIoWriteDelay3((u32)palette++, *word++);
 
-  gLamakanDesert_SandLevel =
-      gGameState.hazardSteps * 120 / gGameState.hazardLimit;
-  if (gLamakanDesert_SandLevel > 118) {
-    gLamakanDesert_SandFlash = 119;
+  gHeatGaugeLevel = gGameState.hazardSteps * 120 / gGameState.hazardLimit;
+  if (gHeatGaugeLevel > 118) {
+    gHeatGaugeFlash = 119;
   }
-  if (gLamakanDesert_SandFlash != 0) {
-    gLamakanDesert_SandLevel = gLamakanDesert_SandFlash;
-    gLamakanDesert_SandFlash -= 8;
-    if (gLamakanDesert_SandFlash <= 0) {
-      gLamakanDesert_SandFlash = 0;
+  if (gHeatGaugeFlash != 0) {
+    gHeatGaugeLevel = gHeatGaugeFlash;
+    gHeatGaugeFlash -= 8;
+    if (gHeatGaugeFlash <= 0) {
+      gHeatGaugeFlash = 0;
     }
   }
 
   Dma_Set(gLamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
-  if (gLamakanDesert_SandFlash <= 118) {
+  if (gHeatGaugeFlash <= 118) {
     column = (u32 *)(buffer + 80);
     fill = 0xeeeeeeee;
-    for (i = 12; i < 128 - gLamakanDesert_SandLevel; i++) {
+    for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
       column[8] = fill;
       *column++ = fill;
       if ((i & 7) == 7) {
@@ -898,7 +975,7 @@ static void LamakanDesert_RunSandstorm(void) {
   attributes = 0x80008000;
   sprite = gLamakanDesert_SandWork;
   for (i = 0, offset = 0, x = 8; i < 5; i++) {
-    u32 y = (gLamakanDesert_SandCounter * 8 - 16) & 0x1ff;
+    u32 y = (gHeatGaugeSlide * 8 - 16) & 0x1ff;
 
     if (i == 4) {
       attributes = 0x40000000;
@@ -919,7 +996,8 @@ struct Half {
   u16 v;
 };
 
-void LamakanDesert_ClaimSandEffectVram(void) {
+// Loads the gauge's tiles, claims VRAM for them and starts drawing it.
+void HeatGauge_Start(void) {
   s32 slot;
   u16 *slotp;
   struct Half zero;
@@ -931,14 +1009,13 @@ void LamakanDesert_ClaimSandEffectVram(void) {
   *slotp = slot;
   Engine_VramLoad((s16)slot, 0x480, 0);
   zero.v = 0;
-  gLamakanDesert_SandCounter = zero.v;
+  gHeatGaugeSlide = zero.v;
   gLamakanDesert_SandPhase = zero.v;
-  FieldScheduler_AddCallback(LamakanDesert_RunSandstorm, 0xc76);
+  FieldScheduler_AddCallback(HeatGauge_Draw, 0xc76);
 }
 
-static void LamakanDesert_SetSandPhase(u16 value) {
-  gLamakanDesert_SandPhase = value;
-}
+// While held (1), the gauge stays on screen.
+static void HeatGauge_SetHeld(u16 value) { gLamakanDesert_SandPhase = value; }
 
 const s32 gEffectScript0[] = {
     SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
@@ -956,13 +1033,14 @@ const s32 gEffectScript2[] = {
 };
 
 // clang-format off
-const s32 gLamakanDesert_SafePoints1[] = {
+// Each map's recovery points, as x, z pairs.
+const s32 gLamakanDesertRecoveryPoints1[] = {
     PIXELS(384), PIXELS(128),
     PIXELS(288), PIXELS(688),
     PIXELS(608), PIXELS(720),
 };
 
-const s32 gLamakanDesert_SafePoints2[] = {
+const s32 gLamakanDesertRecoveryPoints2[] = {
     PIXELS(704), PIXELS(96),
     PIXELS(448), PIXELS(464),
     PIXELS(832), PIXELS(592),
@@ -970,7 +1048,7 @@ const s32 gLamakanDesert_SafePoints2[] = {
     PIXELS(464), PIXELS(896),
 };
 
-const s32 gLamakanDesert_SafePointsOther[] = {
+const s32 gLamakanDesertRecoveryPointsOther[] = {
     PIXELS(192), PIXELS(224),
     PIXELS(192), PIXELS(352),
 };
@@ -1020,7 +1098,7 @@ struct SceneEntrance gLamakanDesertEntrances4[] = {
     { SCENE_TABLE_END },
 };
 
-u32 gLamakanDesert_Exits[] = {
+u32 gLamakanDesertExits[] = {
     SCENE_EXITS(89),
     SCENE_EXIT(1, 2, 18),
     SCENE_EXIT(2, 90, 1),
@@ -1045,7 +1123,7 @@ struct ScenePlacement gLamakanDesertPlacementsOther[] = {
 };
 
 struct ScenePlacement gLamakanDesertPlacements1[] = {
-    { 0xc3, 0x90a, ACTOR_STAND,
+    { 0xc3, FLAG_SAND_MONSTER_BEATEN, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(364), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1053,7 +1131,7 @@ struct ScenePlacement gLamakanDesertPlacements1[] = {
 };
 
 struct ScenePlacement gLamakanDesertPlacements2[] = {
-    { 0xc3, 0x90a, ACTOR_STAND,
+    { 0xc3, FLAG_SAND_MONSTER_BEATEN, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(352), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1069,14 +1147,14 @@ struct ScenePlacement gLamakanDesertPlacements2[] = {
 };
 
 struct ScenePlacement gLamakanDesertPlacements3[] = {
-    { 0xc3, 0x90a, ACTOR_STAND,
+    { 0xc3, FLAG_SAND_MONSTER_BEATEN, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(316), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gLamakanDesert_Events[] = {
+struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1085,14 +1163,14 @@ struct SceneEvent gLamakanDesert_Events[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
-    { EVENT_TOUCH, 20, 0x200, EVENT_SCRIPT(EV20_TOUCH) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 22, 0x200, EVENT_SCRIPT(EV22_TOUCH) },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TOUCH) },
-    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
-    { EVENT_TALK, 8, 0x90a, EVENT_SCRIPT(EV08_TALK) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveForTheWorldMap) },
+    { EVENT_TOUCH, 20, FLAG_HAZARDS_PAUSED, EVENT_SCRIPT(CollapseFromHeat) },
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 22, FLAG_HAZARDS_PAUSED, EVENT_SCRIPT(FallIntoPit) },
+    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SlideDownDune) },
+    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetSandMonster) },
+    { EVENT_TALK, 8, FLAG_SAND_MONSTER_BEATEN, EVENT_SCRIPT(FightSandMonster) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
     { SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(0x24) },
     { SEARCH(SEARCH_UNNAMED), 101, 0x350, FIND_PSYNERGY_STONE },
     { SEARCH(SEARCH_CHEST), 102, 0xf7c, FIND_ITEM(0xc4) },
@@ -1100,25 +1178,27 @@ struct SceneEvent gLamakanDesert_Events[] = {
     { SEARCH(SEARCH_CHEST), 105, 0xf7d, FIND_COINS(777) },
     { SEARCH(SEARCH_CHEST), 106, 0xf7e, FIND_ITEM(0xb7) },
     { SEARCH(SEARCH_CHEST), 107, 0xf7f, FIND_ITEM(0xc3) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_ConfigureAreaLayout) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_ApplyEntryState) },
-    { EVENT_RAISED, 1, 0x201, EVENT_SCRIPT(LamakanDesert_ShowRandomPartyLine) },
-    { EVENT_RAISED, 2, 0x201, EVENT_SCRIPT(LamakanDesert_ShowRandomPartyLine) },
-    { EVENT_RAISED, 3, 0x201, EVENT_SCRIPT(LamakanDesert_ShowRandomPartyLine) },
-    { EVENT_TOUCH, 100, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 101, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 102, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 103, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 104, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 105, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 106, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
-    { EVENT_TOUCH, 107, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
+    { EVENT_RAISED, 1, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
+    { EVENT_RAISED, 2, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
+    { EVENT_RAISED, 3, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
+    { EVENT_TOUCH, 100, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 101, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 102, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 103, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 104, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 105, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 106, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { EVENT_TOUCH, 107, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
 
-s16 gLamakanDesert_SandLevel = 0;
+// The gauge: how full it is (0 to 120), how far it has slid onto the
+// screen, and a flash as it fills.
+s16 gHeatGaugeLevel = 0;
 
-s16 gLamakanDesert_SandCounter = 0;
+s16 gHeatGaugeSlide = 0;
 
-s16 gLamakanDesert_SandFlash = 0;
+s16 gHeatGaugeFlash = 0;

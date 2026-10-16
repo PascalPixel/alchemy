@@ -148,7 +148,7 @@ Func_081a6154:
 	bge .L_081a624e
 	cmp r6, #0
 	bne .L_081a6274
-	bl TitlePalette_InitializeBuffers
+	bl PaletteFade_Init
 	b .L_081a6274
 .L_081a6264:
 	.4byte 0x00001e05
@@ -161,11 +161,11 @@ Func_081a6154:
 .L_081a6274:
 	movs r0, #2
 	movs r1, #0
-	bl Graphics_TransformSmallPalette
+	bl PaletteFade_SetCurrent
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	ldr r3, .L_081a629c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -173,14 +173,14 @@ Func_081a6154:
 	cmp r6, #0
 	bne .L_081a62a0
 	movs r0, #1
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	b .L_081a62a6
 	.2byte 0x0000
 .L_081a629c:
 	.4byte 0x00000600
 .L_081a62a0:
 	movs r0, #10
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 .L_081a62a6:
 	cmp r6, #0
 	beq .L_081a62ac
@@ -355,9 +355,9 @@ Func_081a6154:
 .L_081a63fa:
 	movs r0, #2
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #60
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	mov r0, r11
 	movs r3, #60
 	mov r4, r8
@@ -504,9 +504,9 @@ Func_081a6154:
 	beq .L_081a6562
 	movs r0, #2
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #60
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	mov r3, r8
 	mov r0, r10
 	mov r2, r11
@@ -608,14 +608,14 @@ Func_081a6154:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #1
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	movs r0, #2
 	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a6624
-	bl Blend_WaitForTransition
+	bl Fade_Wait
 	b .L_081a6562
 .L_081a6624:
 	movs r0, #1

@@ -230,7 +230,7 @@ Func_080ff370:
 .L_080ff540:
 	ldr r1, [sp, #16]
 	ldr r0, [sp, #28]
-	bl Owner_GetResistanceValueFar
+	bl Unit_GetElementLevelFar
 	adds r2, r6, #0
 	adds r2, #16
 	mov r3, r10

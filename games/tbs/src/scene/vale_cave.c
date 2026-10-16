@@ -41,7 +41,7 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-static void EV08_SCRIPT(void) { BattleFx_RunPageEffectForSlot(8, 3, 4); }
+static void EV08_SCRIPT(void) { Djinn_JoinParty(8, 3, 4); }
 
 static void SceneActor_WaitActorDescent(struct FieldActor *actor) {
   s32 frames = 60;

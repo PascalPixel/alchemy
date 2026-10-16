@@ -55,7 +55,7 @@ Func_08127588:
 	str r4, [sp, #0]
 	adds r0, r5, #0
 	adds r0, #8
-	bl Owner_GetRecordFar
+	bl Enemy_GetDefinitionFar
 	adds r6, r0, #0
 	ldr r4, [sp, #0]
 	cmp r6, #0

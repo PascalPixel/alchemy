@@ -62,7 +62,7 @@ void Func_080d690c(void) {
   words = Runtime_AllocateBlock(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f3798, words);
   work->entry = Resource_FindFreeEntry();
-  work->tileBase = VramBlock_LoadCached(work->entry, 0x300, words);
+  work->tileBase = VramCache_Load(work->entry, 0x300, words);
   Runtime_ReleaseHeapBlock(56);
   for (i = 0; i < 64; i++) {
     s32 x;

@@ -140,7 +140,7 @@ Func_080b1088:
 	.4byte 0x00000000
 .L_080b1188:
 	mov r0, r10
-	bl Owner_RefreshDerivedData
+	bl Unit_UpdateClass
 	mov r0, r10
 	bl UnitCalc
 	movs r2, #1

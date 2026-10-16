@@ -491,7 +491,7 @@ BattleEvent_Playback:
 	str r2, [r1, #8]
 	mov r1, r10
 	ldr r0, [r6]
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_08123128
 	mov r4, r9
 	ands r0, r3

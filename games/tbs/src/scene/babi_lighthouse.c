@@ -225,7 +225,7 @@ static void EV11_TOUCH(void) {
       }
     }
   }
-  FieldEffect_UpdateGridPlacement();
+  Field_ClimbDown();
 }
 
 static void ResetSceneParametersAndFinishSetup(void) {
@@ -977,10 +977,10 @@ static void EV51_SCRIPT(void) {
 
   if (gGameState.movementMode == 1 || ahead == 0) {
     if (m == 0xc000) {
-      r = battle_owner_69();
+      r = Field_ClimbUp();
     }
     if (m == 0x4000) {
-      r = FieldEffect_UpdateGridPlacement();
+      r = Field_ClimbDown();
     }
   }
   if (r != 0) {

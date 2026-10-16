@@ -3,7 +3,7 @@
 #include "vram_tab.h"
 
 // Frees every VRAM block and every cache entry.
-void Resource_InitializeTable(void) {
+void VramCache_Reset(void) {
   u32 count;
   /* FAKEMATCH: ⚓️ loads the block owners' address between the first two
    * instructions of the split limit 511; plainly the shift comes first (differ
@@ -60,10 +60,10 @@ s32 Resource_FindFreeEntry(void) {
   return ret;
 }
 
-s32 Resource_LoadIntoFreeSlot(s32 size) {
+s32 VramCache_AllocEntry(s32 size) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
-  VramBlock_LoadCached(slot, size, 0);
+  VramCache_Load(slot, size, 0);
   return slot;
 }

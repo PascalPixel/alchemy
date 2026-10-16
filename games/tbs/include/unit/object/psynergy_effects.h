@@ -7,7 +7,7 @@
 
 struct ScenePlacement;
 
-// 光の粒の 1 コマ: 高さの差とタイル (fxdata.c)
+// One frame of a sparkle: its height offset and tile (fxdata.c).
 struct SparkleFrame {
   s16 dy;
   u16 tile;
@@ -15,42 +15,42 @@ struct SparkleFrame {
 
 extern const struct SparkleFrame gFieldFx_SparkleFrames[32];
 
-void Battle_UpdateModeFromShoulderButtons(void);
+void Event_UpdateDebugSkip(void);
 void Battle_WaitMode0(s32 frames);
-void Battle_InitializeRenderObject(void);
+void Leader_StopMoving(void);
 void Battle_Reset(void);
 void BattleFx_FinishAction(void);
 void Event_NoOpHookA(void);
 void Event_NoOpHook(void);
 void Event_RunObjectHookAndWait(struct ScenePlacement *table);
 void Event_CallWithLastActiveObjectId(struct ScenePlacement *table);
-void Event_SetSceneEvents(s32 value);
-void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value);
+void Event_SetSceneEvents(s32 events);
+void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce);
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second);
-s32 Event_ValidatePackedId(u32 packed_id);
+s32 Event_ValidatePackedId(u32 shortcut);
 void Event_ClearInvalidPackedValues(void);
-void Party_RemoveOwnerRestored(s32 owner);
-s32 Party_CheckMemberValueTotal(s32 id);
+void Party_RemoveOwnerRestored(s32 unit);
+s32 Party_CheckItemLimit(s32 item);
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
-s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner);
+s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit);
 void Inventory_NoOpCallback(void);
 void Inventory_ReservedNoOp(void);
-void Object_WaitUntilChildValueDiffers(s32 objectId, s32 value);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom);
-s32 Object_CallSpawnRoutineAtOrigin(s32 value);
-void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability);
+void Actor_WaitForAnimationEnd(s32 actor, s32 animation);
+s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 forceBottom);
+s32 Menu_AskYesNo(s32 atBottom);
+void Party_LearnAbility(s32 unit, s32 ability);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Event_SetDestination(s32 first, s32 second);
-void Event_SetSavedDestination(u16 first, u16 second);
-void Event_SetExitRequest(u16 value);
-void BattleFx_SetWeightedResult(s32 zone_no, s32 slot_no);
+void Event_SetDestination(s32 scene, s32 entrance);
+void Event_SetSavedDestination(u16 scene, u16 entrance);
+void Event_SetExitRequest(u16 request);
+void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo);
 void BattleFx_SetPhaseRequest(s32 flag, s32 no);
-void Party_SetFields1ceAnd1d0(s32 first, s32 second);
-void Event_SetDefeatDestination(s32 first, s32 second);
-void Event_RequestDestination(u16 first, u16 second);
-void BattleFx_SetQueuedSoundAndPlay(s32 sound_id);
+void Event_SetNextDestination(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
+void Event_RequestDestination(u16 scene, u16 entrance);
+void BattleFx_SetQueuedSoundAndPlay(s32 soundId);
 void BattleFx_PlayQueuedSound(void);
 
 struct DispatchObject;
@@ -58,52 +58,52 @@ struct FacingObject;
 struct FieldActor;
 struct ObjectRuntime;
 
-struct FieldActor *Object_GetById(s32 objectId);
+struct FieldActor *Object_GetById(s32 actor);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action);
 void ObjectMotion_EnableActionAndResetMotion(u32 objectId);
-void Object_LinkObjectAndSetCallback(u32 objectId, u32 linked_object_id);
+void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId);
 void Object_RefreshSelectorById(u32 objectId);
 void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action);
 void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z);
 void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 x_offset,
-                                               s32 z_offset);
-void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset,
-                                         s32 z_offset);
-void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 x_offset,
-                                            s32 z_offset);
-void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset);
+void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
+                                               s32 zOffset);
+void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
+                                         s32 zOffset);
+void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
+                                            s32 zOffset);
+void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
+                                    s32 action);
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
-void Object_SetModeById(u32 objectId, s32 action);
-void Object_SetActionById(u32 objectId, s32 action);
+void Object_SetModeById(u32 objectId, s32 animation);
+void Object_SetActionById(u32 objectId, s32 steps);
 void ObjectMotion_WaitForAnimationChange(u32 objectId);
-void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action);
+void Motion_SetModeAndWaitAnimation(u32 objectId, s32 animation);
 void ObjectMotion_NoOp(void);
-void ObjectMotion_Launch(u32 objectId, s32 speed, s32 event_id);
-void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
+void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames);
+void ObjectMotion_SetVariantCallback(u32 objectId, s32 count);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 count);
 void BattleFx_UpdateParticleLinearMotion(struct FieldActor *particle);
-void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 optional);
-void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame,
-                                      s32 optional_action);
-void ObjectMotion_SetAngleToward(s32 firstId, s32 second_id, s32 wait);
-void Object_LinkPair(s32 firstId, s32 second_id, s32 wait);
+void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param);
+void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param);
+void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
+void Object_LinkPair(s32 firstId, s32 secondId, s32 wait);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first,
                                           struct FacingObject *raw_second);
 void ObjectTable_DestroyById(s32 index);
 void ObjectTable_DestroyNoOp(void);
-void ObjectGroup_ConfigureChildValue(s32 objectId, s32 value);
+void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param);
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object);
-void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 value);
+void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param);
 void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
-                                 const void *callback);
+                                 const void *script);
 s32 ObjectMotion_StepAngle(struct ObjectRuntime *object);
 void Object_ResetTargetAndSetMode1(u32 objectId);
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait);
@@ -113,72 +113,72 @@ void ObjectVisual_ReservedNoOp(void);
 
 struct UiWindow;
 
-void Event_SetMessageId(s32 value);
-s32 ObjectTable_ReadActiveValue(s32 key);
-s32 ObjectTable_FindActiveByValue(s32 value);
-struct UiWindow *UiText_OpenMessageAtObject(s32 arg, s32 unused);
-void BattleEv_RunWait(s32 action, s32 flag);
-void BattlePres_RunActionThenWaitIfModeZero(s32 first, s32 second, s32 value);
-s32 BattleEventRuntime_ProcessAction(s32 objectId, s32 actionId);
+void Event_SetMessageId(s32 message);
+s32 ObjectTable_ReadActiveValue(s32 actor);
+s32 ObjectTable_FindActiveByValue(s32 sprite);
+struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused);
+void BattleEv_RunWait(s32 actor, s32 flags);
+void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait);
+s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags);
 void BattleEventRuntime_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);
 void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y);
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
-void ObjectTable_RunIfActive(s32 id);
-void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 first_x, s32 first_y,
-                                      s32 first_arg, s32 first_extra,
-                                      s32 second, s32 second_x, s32 second_y,
-                                      s32 second_arg, s32 second_extra);
-void Ui_SetRenderResultFromObject(s32 arg0);
+void ObjectTable_RunIfActive(s32 actor);
+void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
+                                      s32 firstPortraitX, s32 firstPortraitY,
+                                      s32 second, s32 secondX, s32 secondY,
+                                      s32 secondPortraitX, s32 secondPortraitY);
+void Ui_SetRenderResultFromObject(s32 actor);
 
-void Object_AttachWorkTargetToObject(s32 id, s32 flag);
-void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second);
-void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z,
-                      s32 use_setter);
-void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1);
+void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition);
+void ObjectTable_AllocateAndSetObjectSpeed(s32 speedLimit, s32 acceleration);
+void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
+                      s32 glide);
+void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide);
 void BattleFx_CommitObjectPositionAndWait(void);
 struct FieldActor *Battle_GetWorkObject1e0(void);
 void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
-                                 s32 keep_current_position);
+                                 s32 keepCurrentPosition);
 void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
 s32 BattleFx_StepRatioTransition(void);
 void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames);
 void Event_WaitForZoomTransition(void);
 s32 BattleFx_CopyLinkedObjectPosition(void *self);
-void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait);
-void BattleFx_ConfigureLinkedObject(s32 id, s32 flags);
+void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait);
+void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags);
 s32 Object_ClearChildAndCollisionFlags(void *obj);
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object);
 s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object);
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind);
+void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action);
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
-                                                     s32 id);
+                                                     s32 sprite);
 s32 Field_TryJumpForward(void);
-s32 FieldEffect_UpdateGridPlacement(void);
-s32 battle_owner_69(void);
+s32 Field_ClimbDown(void);
+s32 Field_ClimbUp(void);
 s32 Object_GetScreenPosition(s32 objectId, s32 *position);
 void ObjectEffect_ReservedNoOp941DC(void);
-s32 Scene_FadeColorFromWhite(s32 unused);
-void ObjectEffect_PrepareContextEffect(s32 value);
+s32 Field_StartEncounterTransition(s32 unused);
+void ObjectEffect_PrepareContextEffect(s32 animation);
 void ObjectEffect_BeginContextEffect26(void);
 void ObjectEffect_BeginContextEffect25(void);
-void ObjectEffect_EndContextEffect(s32 arg0);
+void ObjectEffect_EndContextEffect(s32 animation);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 
 void DisplayScroll_ArmHBlankDma(void);
 void DisplayScroll_BuildAndSwapHBlankPage(void);
 void DisplayScroll_DisarmHBlankDma(void);
 void FieldFx_UpdateGroundParticles(void);
-void BattleFx_UpdateStormFlash(void);
+void FieldFx_UpdateLightning(void);
 void FieldFx_StartGroundParticles(void);
 void FieldMotes_Update(void);
 void FieldMotes_Start(void);
 void FieldEffect_UpdateSparkles(void);
 void FieldEffect_InitSparkles(void);
-void BattleFx_StartTwelveFrameBlend(void);
-void BattleFx_SetBlock30ValuesMaxZero(void);
-void BattleFx_SetBlock30Values12Zero(void);
-void BattleFx_SetBlock30Values128One(void);
+void FieldFx_StartLightning(void);
+void FieldFx_StopLightning(void);
+void FieldFx_LastLightning(void);
+void FieldFx_ResumeLightning(void);
 void BattleFx_StartBufferBlend(s32 from, s32 to);
 
 struct DescendingOrbitObject;
@@ -186,8 +186,8 @@ struct EffectSlot;
 struct MotionObject;
 
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
-void EventActor_RunHopAndLeapSequence(s32 id);
-void BattleFx_RunPageEffectForSlot(s32 slot, s32 element, void *djinn);
+void Djinn_RunBattleStartHop(s32 id);
+void Djinn_JoinParty(s32 slot, s32 element, void *djinn);
 void FieldObject_PlaceSceneActors(void);
 /* Djinn_ResolvePendingEvent is called from object.c with no prototype in scope:
  * Field_RunScene calls it, and object.c comes before this unit in ROM order, so
@@ -197,11 +197,11 @@ void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor);
-void BattleFx_FinishHeavyImpact(s32 djinni_id);
+void Djinn_RunJupiterJoinEffect(s32 djinniId);
 void BattleFx_SetObjectAlternatingWords(u8 *object);
 void BattleFx_AdvanceAngleWithRamp(void *obj);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
-void BattleEffect_RunPhasedRadialParticleSequence(s32 arg);
+void Djinn_RunMarsJoinEffect(s32 arg);
 void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
 void BattleFx_RunVenusDjinnCapture(s32 arg);
@@ -232,7 +232,7 @@ void BattleFx_FlickerObjectAndTick(s32 obj);
 void BattleFx_CycleObjectValueByCounter(s32 obj);
 void BattleFx_UpdateAllEffectSlots(void);
 void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode);
-void BattleFx_SetupObjectPair(s32 user_id, s32 targetId);
+void BattleFx_SetupObjectPair(s32 userId, s32 targetId);
 void EffectRuntime_StopCurrentObject(void);
 void BattleEffect_CleanupSceneObjects(void);
 void EventObject_Initialize(void);
@@ -257,7 +257,7 @@ s32 Fixed_Remainder(s32 value, s32 divisor);
 void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj);
 void Ui_FillBank15PaletteGrey(void);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
-s32 BattleFx_GetCycledTableWord(u32 unused);
+s32 Input_GetDpadAngle(u32 unused);
 void BattleFx_UpdateItemBreakFragment(struct FieldActor *src);
 void BattleFx_SteerPushedTarget(s32 targetId);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot);
@@ -290,10 +290,10 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj);
 void BattleFx_RunSparkEmitter(struct SparkObject *obj);
 void BattleFx_CallEffect03AndStop(s32 unused);
 void RunBattleEffect03(void);
-void CheckObjectMapTile(void);
-void MapEvent_RunTileTriggerSequence(void);
-void BattleFx_ScheduleCloakedMapCheck(void);
-void BattleFx_RunFlashingCallbackSequence(void);
+void FieldFx_CheckCloakTile(void);
+void FieldFx_EndCloak(void);
+void FieldFx_ResumeCloakCheck(void);
+void FieldFx_StartCloak(void);
 void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj);
 void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj);
 void BattleFx_CallEffect05(s32 unused);

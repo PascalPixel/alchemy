@@ -130,7 +130,7 @@ Func_02000878:
 	bne .L_0200897c
 .L_0200898a:
 	ldr r0, [sp, #4]
-	bl Owner_RefreshClassActions
+	bl Unit_RefreshPsynergy
 	ldr r0, [sp, #4]
 	bl UnitCalc
 	adds r0, r6, #0

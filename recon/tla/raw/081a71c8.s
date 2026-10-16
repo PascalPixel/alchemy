@@ -11,7 +11,7 @@ Func_081a71c8:
 	adds r6, #3
 	strb r3, [r6]
 	bl Func_08014b70
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	movs r0, #1
 	bl WaitFrames
 	bl Scheduler_ResetTaskTable
@@ -46,9 +46,9 @@ Func_081a71c8:
 .L_081a722c:
 	movs r0, #0
 	movs r1, #0
-	bl Graphics_TransformLargePalette
+	bl PaletteFade_SetTarget
 	movs r0, #10
-	bl Graphics_UpdatePaletteInterpolation
+	bl PaletteFade_Start
 	movs r0, #10
 	bl WaitFrames
 	cmp r5, #0
@@ -77,7 +77,7 @@ Func_081a71c8:
 	strh r3, [r2]
 	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
-	bl TitlePalette_InitializeBuffers
+	bl PaletteFade_Init
 	ldr r2, .L_081a728c
 	ldrb r3, [r6]
 	movs r0, #1

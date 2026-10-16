@@ -70,7 +70,7 @@ const struct SceneRegion *Scene_GetRegions(void) {
 
 u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
-static void EV09_TALK_2(void) { BattleFx_RunPageEffectForSlot(9, 3, 0); }
+static void EV09_TALK_2(void) { Djinn_JoinParty(9, 3, 0); }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;

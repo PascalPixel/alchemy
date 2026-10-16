@@ -78,10 +78,10 @@ Input_UpdateKeyRepeatAndDirection:
 Func_08013de4:
 	.incbin "baserom.gba", 0x00013e10, 0x0000008c
 	.section .rom.000141a0, "ax"
-	.global ResourceTable_AllocateBlocks
-	.type ResourceTable_AllocateBlocks, %function
+	.global VramCache_AllocateBlocks
+	.type VramCache_AllocateBlocks, %function
 	.thumb_func
-ResourceTable_AllocateBlocks:
+VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x000141a0, 0x00000080
 	.section .rom.00014422, "ax"
 	.incbin "baserom.gba", 0x00014422, 0x00000002
@@ -92,10 +92,10 @@ ResourceTable_AllocateBlocks:
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b9c, 0x0000003c
 	.section .rom.0001553c, "ax"
-	.global Graphics_PrepareTransfer
-	.type Graphics_PrepareTransfer, %function
+	.global Transform_BuildLookAt
+	.type Transform_BuildLookAt, %function
 	.thumb_func
-Graphics_PrepareTransfer:
+Transform_BuildLookAt:
 	.incbin "baserom.gba", 0x0001553c, 0x000001d8
 	.section .rom.000157a4, "ax"
 	.global Render_ProjectPoint
@@ -1318,16 +1318,16 @@ Owner_LevelUp:
 Func_080afbec:
 	.incbin "baserom.gba", 0x000bcbec, 0x000001d0
 	.section .rom.000bd084, "ax"
-	.global Owner_CalculateBaseElements
-	.type Owner_CalculateBaseElements, %function
+	.global Unit_CalcBaseElements
+	.type Unit_CalcBaseElements, %function
 	.thumb_func
-Owner_CalculateBaseElements:
+Unit_CalcBaseElements:
 	.incbin "baserom.gba", 0x000bd084, 0x000000c0
 	.section .rom.000bd144, "ax"
-	.global Owner_DetermineClass
-	.type Owner_DetermineClass, %function
+	.global Class_Determine
+	.type Class_Determine, %function
 	.thumb_func
-Owner_DetermineClass:
+Class_Determine:
 	.incbin "baserom.gba", 0x000bd144, 0x00000144
 	.section .rom.000bd75c, "ax"
 	.global Func_080b075c
@@ -1337,10 +1337,10 @@ Owner_DetermineClass:
 Func_080b075c:
 	.incbin "baserom.gba", 0x000bd75c, 0x00000338
 	.section .rom.000bdd58, "ax"
-	.global Trade_RemoveOffer
-	.type Trade_RemoveOffer, %function
+	.global DjinnRecovery_Remove
+	.type DjinnRecovery_Remove, %function
 	.thumb_func
-Trade_RemoveOffer:
+DjinnRecovery_Remove:
 	.incbin "baserom.gba", 0x000bdd58, 0x000000ac
 	.section .rom.000bdf5a, "ax"
 	.incbin "baserom.gba", 0x000bdf5a, 0x00000002
@@ -4396,16 +4396,16 @@ Func_081a76f8:
 Data_081a786c:
 	.incbin "baserom.gba", 0x001a788c, 0x00000004
 	.section .rom.001a78e0, "ax"
-	.global TitlePalette_UpdateFade
-	.type TitlePalette_UpdateFade, %function
+	.global PaletteFade_Update
+	.type PaletteFade_Update, %function
 	.thumb_func
-TitlePalette_UpdateFade:
+PaletteFade_Update:
 	.incbin "baserom.gba", 0x001a78e0, 0x00000168
 	.section .rom.001a7a48, "ax"
-	.global Graphics_TransformPaletteBuffer
-	.type Graphics_TransformPaletteBuffer, %function
+	.global Palette_Transform
+	.type Palette_Transform, %function
 	.thumb_func
-Graphics_TransformPaletteBuffer:
+Palette_Transform:
 	.incbin "baserom.gba", 0x001a7a48, 0x00000724
 	.section .rom.001ac15c, "ax"
 	.global LuckyDice_Run

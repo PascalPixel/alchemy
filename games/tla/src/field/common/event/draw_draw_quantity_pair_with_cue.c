@@ -8,7 +8,7 @@
 #include "scene.h"
 #include "text/msg_ids.h"
 
-void OwnerAction_AddFar(void);
+void Unit_LearnPsynergyFar(void);
 #if GAME_TLA
 void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);
@@ -22,7 +22,7 @@ void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 //--------------------------------------------------------------------------
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability) {
   // 引数なしの宣言だが、r0・r1 の unit・ability がそのまま渡る
-  OwnerAction_AddFar();
+  Unit_LearnPsynergyFar();
 #if GAME_TLA
   Audio_PlayCue(83);
   UiText_DrawQuantity(unit, 1);

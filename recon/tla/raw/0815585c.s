@@ -480,7 +480,7 @@ Func_0815585c:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	mov r3, r9
 	subs r3, #6
 	cmp r3, #39
@@ -558,7 +558,7 @@ Func_0815585c:
 	beq .L_08155c9e
 	b .L_08155dd4
 .L_08155c9e:
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	movs r3, #3
 	mov r1, r8
 	ands r3, r1
@@ -600,7 +600,7 @@ Func_0815585c:
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	ldr r2, [r5, #8]
 	cmp r2, #249
 	bgt .L_08155d04

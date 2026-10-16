@@ -318,7 +318,7 @@ static void EV40_TOUCH(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gEventWork->transitionFrames = 64;
   Battle_SetStart(3);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_TretInteriors, 19);
+  Event_SetNextDestination((s32)&SceneId_TretInteriors, 19);
   BattleFx_SetWeightedResult(36, 0);
   Engine_EventEnd();
 }

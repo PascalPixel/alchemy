@@ -52,7 +52,7 @@ static inline void FieldMap_SetViewBounds(s32 minX, s32 minY, s32 maxX,
 
 static inline void FieldBattleFx_RunRisingObjectSequence(s32 actor, s32 mode,
                                                          s32 action) {
-  BattleFx_RunRisingObjectSequence(actor, mode, action);
+  Actor_JumpDownLedge(actor, mode, action);
 }
 
 static inline s32
@@ -73,8 +73,8 @@ static inline s32 FieldParty_ListActiveOwners(s16 *owners) {
   return Party_ListActiveOwners(owners);
 }
 
-static inline s32 FieldOwner_AdjustFirstValue(s32 owner, s32 delta) {
-  return Owner_AdjustFirstValue(owner, delta);
+static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
+  return Unit_AddHp(owner, delta);
 }
 
 // 型 01

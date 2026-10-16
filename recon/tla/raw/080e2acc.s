@@ -66,7 +66,7 @@ Func_080e2acc:
 	mov r1, r8
 	adds r2, r5, #0
 	adds r6, r0, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r2, #216
 	mov r11, r0
 	movs r0, #216

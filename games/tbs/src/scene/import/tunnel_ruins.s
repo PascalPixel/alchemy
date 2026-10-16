@@ -40,7 +40,7 @@
 	.set import.Engine_ActorSetPosition, 1
 	.set import.Engine_ActorSetAnimation, 1
 	.set import.ObjectMotion_WaitForAnimationChange, 1
-	.set import.BattleFx_RunRisingObjectSequence, 1
+	.set import.Actor_JumpDownLedge, 1
 	.set import.Engine_ActorSetChildValue, 1
 	.set import.ObjectGroup_SetChildValue, 1
 	.set import.Engine_ActorSetSpritePriority, 1

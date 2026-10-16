@@ -149,7 +149,7 @@ BattleFx_StartRandomParticleEmitter:
 	movs r1, #128
 	adds r2, r5, #0
 	ldrb r0, [r6, #16]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, .L_080cf2e0
 	ldrh r2, [r6, #8]
 	ands r0, r3

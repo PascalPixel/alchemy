@@ -47,8 +47,8 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.FieldEffect_UpdateGridPlacement, 1
-	.set import.battle_owner_69, 1
+	.set import.Field_ClimbDown, 1
+	.set import.Field_ClimbUp, 1
 	.set import.BattleFx_StartFadeOverlay, 1
 	.set import.BattleFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1

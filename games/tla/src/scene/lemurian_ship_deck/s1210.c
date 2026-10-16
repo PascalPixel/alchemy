@@ -13,7 +13,7 @@ struct ObjectRuntime *Func_02001f0c(s32 type, s32 x, s32 y, s32 z);
 void Func_02001f4c(s32 a);
 u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-s32 VramBlock_LoadCached(s32 block, s32 count, u8 *source);
+s32 VramCache_Load(s32 block, s32 count, u8 *source);
 
 struct ObjectRuntime *Func_02001210(void) {
   struct ObjectRuntime *object =
@@ -33,7 +33,7 @@ struct ObjectRuntime *Func_02001210(void) {
   sprite->unk1b[0] = 0;
   buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
   Func_02001f4c(242);
-  VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
+  VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
   Runtime_ReleaseHeapBlock(68);
   return object;
 }

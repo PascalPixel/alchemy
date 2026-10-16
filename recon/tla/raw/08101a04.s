@@ -20,7 +20,7 @@ Func_08101a04:
 	mov r0, r8
 	adds r1, r7, #0
 	adds r2, r6, #0
-	bl Trade_CanOfferDjinnFar
+	bl Djinn_IsReadyFar
 	cmp r0, #0
 	bne .L_08101a3c
 	mov r0, r8

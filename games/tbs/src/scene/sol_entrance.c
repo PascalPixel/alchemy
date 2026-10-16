@@ -114,7 +114,7 @@ static void EV02_TOUCH(void) {
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   Engine_EventWait(10);
   Engine_EventCloseScreen();
@@ -168,7 +168,7 @@ static void EV1044_SCRIPT(void) {
       Engine_MapRedraw();
       Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
       Engine_EventWait(20);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
       Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
       Engine_EventWait(20);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
@@ -230,13 +230,13 @@ static void EV1045_SCRIPT(void) {
     Engine_MapRedraw();
     Work_SetValuesIfNonNegative(65536, 65536, 65536);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
     Work_SetValuesIfNonNegative(131072, 131072, 65536);
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 40);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 20);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 40);
     Work_SetValuesIfNonNegative(-1, -1, 58982);
@@ -477,7 +477,7 @@ static void SolEntrance_ApplyEntryState(void) {
     Map_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
   if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    Actor_SetPosition(8, 0x780000, 0xe80000);
+    Actor_SetPosition(8, PIXELS(120), PIXELS(232));
     Map_CopyCellAttributes(2, 10, 1, 1, 6, 14);
     Map_CopyCellAttributes(2, 10, 1, 1, 7, 14);
     Map_CopyCellAttributes(2, 10, 1, 1, 8, 14);
@@ -534,13 +534,13 @@ static void FieldScene_RunSceneEntryHook(void) {
     if (Engine_GameFlagIsSet(0x804) == 0)
       Scene_KradenSuspectsHiddenPassage();
     if (Engine_GameFlagIsSet(0x303) != 0)
-      Actor_SetPosition(9, 0x5d80000, 0x880000);
+      Actor_SetPosition(9, PIXELS(1496), PIXELS(136));
     else if (GameFlag_IsSet(0x302) != 0)
-      Actor_SetPosition(9, 0x5f80000, 0x880000);
+      Actor_SetPosition(9, PIXELS(1528), PIXELS(136));
     if (Engine_GameFlagIsSet(0x301) != 0)
-      Actor_SetPosition(10, 0x7180000, 0x880000);
+      Actor_SetPosition(10, PIXELS(1816), PIXELS(136));
     else if (Engine_GameFlagIsSet(0x300) != 0)
-      Actor_SetPosition(10, 0x7380000, 0x880000);
+      Actor_SetPosition(10, PIXELS(1848), PIXELS(136));
     break;
 
   case 14:
@@ -592,7 +592,7 @@ static void Scene_EnterSolSanctum(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 0x9999, 0x4ccc);
   Actor_SetSpeed(JENNA, 0x9999, 0x4ccc);
   Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   Engine_ActorSetAnimation(JENNA, 2);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
   Actor_SetDestinationOffset(GARET, -16, 0);
@@ -608,15 +608,15 @@ static void Scene_EnterSolSanctum(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x5000, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorJump(ACTOR_KRADEN, 4, 20);
   Engine_EventSetMessage(MsgSolKradenFirstTimeAtSol);
   Event_AskYesNo(0x4008, 0);
   Engine_EventWait(20);
   Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   record = Object_GetById(0);
   if (record != 0) {
     Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
@@ -637,7 +637,7 @@ static void Scene_EnterSolSanctum(void) {
   Actor_SetPosition(JENNA, 0, 0);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_ActorSetAnimation(JENNA, 1);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
@@ -666,7 +666,7 @@ static void Scene_KradenSuspectsHiddenPassage(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 0x9999, 0x4ccc);
   Actor_SetSpeed(JENNA, 0x9999, 0x4ccc);
   Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   Engine_ActorSetAnimation(JENNA, 2);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
   Actor_SetDestinationOffset(GARET, -16, 0);
@@ -730,10 +730,10 @@ static void Scene_KradenSuspectsHiddenPassage(void) {
 
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
-  Actor_ShowEmote(GARET, 0x101, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
   Engine_EventSetMessage(MsgSolWrongKraden);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Actor_ShowEmote(ACTOR_KRADEN, 0x102, 60);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -759,7 +759,7 @@ static void Scene_KradenSuspectsHiddenPassage(void) {
   Event_ShowMessageAndWait(JENNA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(8, 1);
@@ -788,10 +788,10 @@ static void Scene_KradenSuspectsHiddenPassage(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 60);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
     Engine_ActorRunRepeatedMotion(1, 1);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(1, 3);
+    Engine_ActorSetAnimationAndWait(1, ANIM_NOD);
     Engine_EventWait(10);
     Actor_FaceDirection(GARET, FACING_EAST, 0);
     Actor_FaceDirection(JENNA, FACING_WEST, 30);
@@ -811,11 +811,11 @@ static void Scene_KradenSuspectsHiddenPassage(void) {
   Engine_ActorWaitForMove(8);
   Engine_ActorSetAnimation(8, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(JENNA, 3);
-  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(1, 2);
+  Engine_ActorSetAnimation(1, ANIM_WALK);
 
   record = (u8 *)Object_GetById(0);
   if (record != 0)
@@ -834,7 +834,7 @@ static void Scene_KradenSuspectsHiddenPassage(void) {
   Actor_SetPosition(JENNA, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_ActorSetAnimation(5, 1);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -859,7 +859,7 @@ static void Scene_RunTransitionCue(void) {
   Engine_ActorWaitForMove(8);
   Engine_ActorSetAnimation(8, 1);
   Engine_EventWait(6);
-  Actor_FaceDirection(8, 0xb000, 0);
+  Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Camera_SetSpeed(0x26666, 0x4ccc);
   Camera_MoveTo(0x6880000, -1, 0x20c0000, 1);
@@ -877,9 +877,9 @@ static void Scene_RunTransitionCue(void) {
   Actor_FaceDirection(8, FACING_EAST, 30);
   Engine_EventSetMessage(MsgSolMoreStatuesOutOfReach);
   Event_ShowMessageAndWait(0x4008, 0, 10);
-  Actor_ShowEmote(8, 0x100, 40);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT, 40);
   Engine_ActorRunRepeatedMotion(8, 1);
-  Actor_FaceDirection(8, 0x5000, 20);
+  Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(0x4008, 0, 10);
   Engine_ActorSetAnimation(8, 2);
   record = Object_GetById(0);
@@ -902,78 +902,78 @@ static void Scene_RunActorFormation(s32 a0) {
   if (GameFlag_IsSet(0x311) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
     if (a0 != 0) {
-      Actor_SetPosition(9, 0x6380000, 0x2080000);
+      Actor_SetPosition(9, PIXELS(1592), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(0x310) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
       if (a0 != 0) {
-        Actor_SetPosition(9, 0x6580000, 0x2080000);
+        Actor_SetPosition(9, PIXELS(1624), PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(0x313) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
     if (a0 != 0) {
-      Actor_SetPosition(10, 0x6780000, 0x2080000);
+      Actor_SetPosition(10, PIXELS(1656), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(0x312) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
       if (a0 != 0) {
-        Actor_SetPosition(10, 0x6980000, 0x2080000);
+        Actor_SetPosition(10, PIXELS(1688), PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(0x315) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
     if (a0 != 0) {
-      Actor_SetPosition(11, 0x6b80000, 0x2080000);
+      Actor_SetPosition(11, PIXELS(1720), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(0x314) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
       if (a0 != 0) {
-        Actor_SetPosition(11, 0x6d80000, 0x2080000);
+        Actor_SetPosition(11, PIXELS(1752), PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(0x317) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
     if (a0 != 0) {
-      Actor_SetPosition(12, 0x6f80000, 0x2080000);
+      Actor_SetPosition(12, PIXELS(1784), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(0x316) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
       if (a0 != 0) {
-        Actor_SetPosition(12, 0x7180000, 0x2080000);
+        Actor_SetPosition(12, PIXELS(1816), PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(0x319) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
     if (a0 != 0) {
-      Actor_SetPosition(13, 0x7380000, 0x2080000);
+      Actor_SetPosition(13, PIXELS(1848), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(0x318) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
       if (a0 != 0) {
-        Actor_SetPosition(13, 0x7580000, 0x2080000);
+        Actor_SetPosition(13, PIXELS(1880), PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(0x31b) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
     if (a0 != 0) {
-      Actor_SetPosition(14, 0x7780000, 0x2080000);
+      Actor_SetPosition(14, PIXELS(1912), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(0x31a) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
       if (a0 != 0) {
-        Actor_SetPosition(14, 0x7980000, 0x2080000);
+        Actor_SetPosition(14, PIXELS(1944), PIXELS(520));
       }
     }
   }

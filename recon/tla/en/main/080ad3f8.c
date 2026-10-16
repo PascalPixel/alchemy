@@ -250,7 +250,7 @@ void UnitCalc(s32 owner)
         }
 
         {
-            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->classId);
+            struct ClassRecord *class = (struct ClassRecord *)Class_GetDefinition(st->classId);
 
             work->hp = __divsi3(work->hp * class->hp, 10);
             work->pp = __divsi3(work->pp * class->pp, 10);

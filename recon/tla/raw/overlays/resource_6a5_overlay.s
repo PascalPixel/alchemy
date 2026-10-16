@@ -634,7 +634,7 @@ Func_0200065c:
 	adds r2, r3, r2
 	movs r1, #128
 	str r2, [sp, #0]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 .L_020087f4:
@@ -2216,7 +2216,7 @@ Func_02001388:
 	movs r1, #10
 	movs r0, #4
 	negs r1, r1
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 .L_020096ae:
 	movs r2, #166
 	lsls r2, r2, #1
@@ -2624,7 +2624,7 @@ Func_020016e8:
 	movs r1, #10
 	movs r0, #4
 	negs r1, r1
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 .L_02009a82:
 	movs r2, #166
 	lsls r2, r2, #1
@@ -8028,7 +8028,7 @@ Func_02004ec8:
 	adds r2, r5, #0
 	lsls r1, r1, #1
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r5, #0
 	bl MemFree
 	movs r1, #144

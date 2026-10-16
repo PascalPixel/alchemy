@@ -59,14 +59,14 @@ gVramBlockCache:
 	.global gDecodeFillByte
 gDecodeFillByte:
 	.space 0x00000004
-	.global gKeyState
-gKeyState:
+	.global gKeysPressed
+gKeysPressed:
 	.space 0x00000004
 	.global gBlendDuration
 gBlendDuration:
 	.space 0x00000004
-	.global gLoadedStateWord
-gLoadedStateWord:
+	.global gPlayTimeFrames
+gPlayTimeFrames:
 	.space 0x00000004
 	.global gSleepDisabled
 gSleepDisabled:
@@ -129,8 +129,8 @@ gKeysDirection:
 	.else
 	.space 0x00000004
 	.endif
-	.global gOptionMirror
-gOptionMirror:
+	.global gIdleSleepEnabled
+gIdleSleepEnabled:
 	.space 0x00000004
 	.global gKeysHeldAtVBlank
 gKeysHeldAtVBlank:
@@ -144,8 +144,8 @@ gIwram_Data2:
 	.global gDebugPaused
 gDebugPaused:
 	.space 0x00000004
-	.global gPostLoadCounter
-gPostLoadCounter:
+	.global gIdleFrames
+gIdleFrames:
 	.space 0x00000004
 	.global gVBlankDone
 gVBlankDone:
@@ -153,8 +153,8 @@ gVBlankDone:
 	.global gTransformStackTop
 gTransformStackTop:
 	.space 0x00000008
-	.global gSchedulerTaskCount
-gSchedulerTaskCount:
+	.global gSchedulerReady
+gSchedulerReady:
 	.ifdef TBS_EDITION_DE
 	.space 0x00000004
 	.else

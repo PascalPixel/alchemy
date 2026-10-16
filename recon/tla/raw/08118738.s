@@ -31,7 +31,7 @@ DebugParty_LoadPreset:
 	movs r0, #7
 	bl Party_RemoveActiveOwnerFar
 	movs r0, #0
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	movs r2, #148
 	ldr r3, [sp, #16]
 	lsls r2, r2, #1
@@ -71,7 +71,7 @@ DebugParty_LoadPreset:
 	mov r0, r8
 	adds r3, r5, r1
 	ldrb r1, [r3, #1]
-	bl Party_AdvanceOwnerCountToTargetFar
+	bl Unit_LevelUpToFar
 	mov r0, r8
 	bl UnitGet
 	movs r5, #140
@@ -117,7 +117,7 @@ DebugParty_LoadPreset:
 	beq .L_08118834
 	adds r1, r3, #0
 	mov r0, r8
-	bl OwnerAction_AddFar
+	bl Unit_LearnPsynergyFar
 	b .L_08118834
 .L_0811882c:
 	.4byte 0x00000000
@@ -212,7 +212,7 @@ DebugParty_LoadPreset:
 	cmp r7, #0
 	bge .L_081188c6
 	mov r0, r8
-	bl Owner_RefreshDerivedDataFar
+	bl Unit_UpdateClassFar
 .L_081188ea:
 	ldr r1, [sp, #12]
 	adds r1, #1

@@ -8,9 +8,9 @@
 struct RenderInput;
 struct RenderOutput;
 
-struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags,
-                                         struct RenderInput *input, s32 offsetX,
-                                         s32 offsetY);
+struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
+                                         struct RenderInput *window,
+                                         s32 offsetX, s32 offsetY);
 struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
                                                      struct RenderInput *input,
                                                      s32 x, s32 y);
@@ -23,12 +23,12 @@ struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
 struct RenderOutput *RenderOutput_CreateFromTable(s32 table_entry,
                                                   struct RenderInput *input,
                                                   s32 x, s32 y);
-struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side,
-                                      s32 arg3, s32 arg4, s32 arg5);
-void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value);
+struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
+                                      s32 window, s32 x, s32 y);
+void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused);
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode);
-void RenderOutput_SetInvertedSentinel(void *arg0, s32 arg1);
-void UiWindow_FillFromScene(void *dst);
+void RenderOutput_SetInvertedSentinel(void *output, s32 priority);
+void UiWindow_FillFromScene(void *spans);
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
                                   u32 height, s32 value);
 
@@ -36,11 +36,11 @@ void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags);
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
-                                s32 value);
+                                s32 length);
 void PartyStatusDraw(s32 flags);
 void UiWork_FinalizeAndReleaseBlock16(void);
 void UiWindow_SetTileAttributeBitRect(const struct RenderInput *window, s32 x,
-                                      s32 y, s32 width, s32 height, u32 field);
+                                      s32 y, s32 width, s32 height, u32 set);
 
 struct SaveSummary;
 struct UiWindow;
@@ -57,23 +57,22 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void);
 s32 SaveState_CopySlotPair(void);
 s32 SaveState_DeleteSelectedSlot(void);
 void PaletteGlow_UpdateSine(void);
-void Scheduler_ScheduleCallbackAAfterFrames(void);
-void Scheduler_ScheduleCallbackA(void);
+void PaletteGlow_Start(void);
+void PaletteGlow_Stop(void);
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height);
-void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
-                                 struct SaveSummary *descriptor);
-void Menu_ClearFirstObjectRowAndScheduleUpdate(void);
-void Menu_UpdateFirstObjectRowPositions(void);
-void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y);
-void Menu_ClearSecondObjectRowAndScheduleUpdate(void);
-void Menu_UpdateSecondObjectRowPositions(void);
-void UiText_DrawFourNumbersInRow(struct RenderInput *win,
-                                 struct SaveSummary *row);
-void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec);
-s32 SaveMenu_SelectSlot(s32 slot, s32 mode);
+void SaveMenu_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
+                               struct SaveSummary *descriptor);
+void SaveMenu_HidePartySprites(void);
+void SaveMenu_PlacePartySprites(void);
+void SaveMenu_ShowDjinnSprites(struct RenderInput *origin, s32 x, s32 y);
+void SaveMenu_HideDjinnSprites(void);
+void SaveMenu_PlaceDjinnSprites(void);
+void SaveMenu_DrawDjinnCounts(struct RenderInput *win, struct SaveSummary *row);
+void SaveMenu_DrawFileSummary(s32 win, struct SaveSummary *rec);
+s32 SaveMenu_SelectSlot(s32 file, s32 mode);
 s32 Save_WriteSelectedSlot(void);
-s32 SaveState_LoadRecordIntoWork(s32 arg);
+s32 SaveState_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 s32 Resource_ReturnTrue(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
@@ -81,25 +80,26 @@ s32 NameEntry_CountLetters(const u8 *name);
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
                                 const void *source);
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
-                                   s32 y, s32 width, s32 height, u32 field);
-void Resource_CopyFixedBlockB(s32 arg0);
-void Resource_CopyFixedBlockA(s32 arg0);
+                                   s32 y, s32 width, s32 height, u32 palette);
+void Resource_CopyFixedBlockB(s32 slot);
+void Resource_CopyFixedBlockA(s32 slot);
 s32 UiText_SetRenderString(const u8 *str);
-void UiText_DrawPaddedLabel(s32 output, u8 *input);
-s32 NameEntry_EditOwnerName(s32 entry);
+void UiText_DrawPaddedLabel(s32 window, u8 *name);
+s32 NameEntry_EditOwnerName(s32 member);
 s32 PartyTalkMenu_Choose(s32 unused);
-void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn);
+void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
-void RenderResource_LoadPair(s32 group_index, s32 resource_index);
-struct RenderOutput *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
+void RenderResource_LoadPair(s32 picture, s32 slot);
+struct RenderOutput *RenderResource_CreatePair(s32 picture,
+                                               struct RenderInput *window,
+                                               s32 x, s32 y);
 void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj);
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
-struct RenderOutput *RenderResource_CreateFrame(s32 arg0, s32 arg1,
-                                                struct RenderInput *arg2,
-                                                s32 arg3, s32 arg4);
+void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap);
+struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
+                                                struct RenderInput *window,
+                                                s32 x, s32 y);
 void Ui_ApplyTableScaleToObject(struct RenderOutput *obj);
 
 struct BattleActionRecord;

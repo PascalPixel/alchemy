@@ -138,7 +138,7 @@ void Func_08146a6c(struct BattleEffectArgument *effect) {
         // ten points (the velocity fields of the map buffer's steps), then
         // join each point to the next with a row of dots.
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
         pos.x >>= 1;
         if (pos.x >= -8 && pos.x <= 127) {

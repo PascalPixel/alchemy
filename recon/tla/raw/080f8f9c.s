@@ -128,7 +128,7 @@ Func_080f8f9c:
 	ble .L_080f908e
 	str r1, [r6]
 .L_080f908e:
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	movs r0, #1
 	b .L_080f90f6
 .L_080f9096:

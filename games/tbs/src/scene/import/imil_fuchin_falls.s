@@ -54,6 +54,6 @@
 	.set import.BattleFx_StartFadeOverlay, 1
 	.set import.Battle_ResetEffectCounter, 1
 	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

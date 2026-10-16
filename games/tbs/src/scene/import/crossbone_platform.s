@@ -37,7 +37,7 @@
 	.set import.Engine_ActorSetPosition, 1
 	.set import.Engine_ActorSetAnimation, 1
 	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.BattleFx_RunRisingObjectSequence, 1
+	.set import.Actor_JumpDownLedge, 1
 	.set import.Engine_ActorFaceDirection, 1
 	.set import.Engine_ActorSetSpritePriority, 1
 	.set import.Engine_ActorSetAttachedEffect, 1
@@ -45,11 +45,11 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_CameraMoveToActor, 1
 	.set import.Engine_LeaderCheckAhead, 1
-	.set import.FieldEffect_UpdateGridPlacement, 1
-	.set import.battle_owner_69, 1
+	.set import.Field_ClimbDown, 1
+	.set import.Field_ClimbUp, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_MapObjectSetPosition, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

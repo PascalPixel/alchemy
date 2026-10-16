@@ -24,22 +24,22 @@ u8 *TestRooms_GetExits(void) { return (u8 *)gTestRooms_Exits; }
 u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
 
 static void EV08_TALK(void) {
-  BattleFx_RunPageEffectForSlot(8, 0, 0);
+  Djinn_JoinParty(8, 0, 0);
   Engine_GameFlagClear(0x30);
 }
 
 static void EV09_TALK(void) {
-  BattleFx_RunPageEffectForSlot(9, 1, 0);
+  Djinn_JoinParty(9, 1, 0);
   Engine_GameFlagClear(0x44);
 }
 
 static void EV10_TALK(void) {
-  BattleFx_RunPageEffectForSlot(0xA, 2, 0);
+  Djinn_JoinParty(0xA, 2, 0);
   Engine_GameFlagClear(0x58);
 }
 
 static void EV11_TALK(void) {
-  BattleFx_RunPageEffectForSlot(0xB, 3, 0);
+  Djinn_JoinParty(0xB, 3, 0);
   Engine_GameFlagClear(0x6C);
 }
 

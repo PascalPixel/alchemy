@@ -341,7 +341,7 @@ SummonFx_RunCanvasEffect:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #24]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, [r6, #8]
 	add r5, sp, #72
 	str r3, [r5]
@@ -353,7 +353,7 @@ SummonFx_RunCanvasEffect:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #24]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPosition
 	movs r3, #0

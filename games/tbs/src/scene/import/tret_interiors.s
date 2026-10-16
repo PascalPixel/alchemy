@@ -53,7 +53,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Event_SetDestination, 1
 	.set import.BattleFx_SetWeightedResult, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Engine_LeaderCheckAhead, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1

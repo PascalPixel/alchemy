@@ -608,7 +608,7 @@ static void EV50_TOUCH(void) {
    * two instructions fewer. */
   BattleFx_SetWeightedResult(72, base - rec8 + 1);
   Battle_SetStart(3);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_ColossoWall, 4);
+  Event_SetNextDestination((s32)&SceneId_ColossoWall, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoWall, 5);
   Engine_GameFlagSet(0x11a);
 }
@@ -619,7 +619,7 @@ static void FieldScene_RunPairedEntranceWalk(s32 a0) {
 
   Engine_ActorDestroy(40);
   Engine_ActorDestroy(41);
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_EventBegin();
   Actor_SetPosition(8, 0x580000, 0x1000000);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x780000, 0x1000000);
@@ -752,7 +752,7 @@ s32 ColossoWall_ApplyEntryState(void) {
       actor->acceleration = 0x3333;
     }
     FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
-    Scheduler_SetCallbackMask((u32)FieldScene_RunSupplementalSequenceOne, 1);
+    Scheduler_SetTaskFlags((u32)FieldScene_RunSupplementalSequenceOne, 1);
   }
   Engine_ActorSetAnimation(8, 9);
   gGameState.movementMode = 0;
@@ -1034,7 +1034,7 @@ static void EV38_TALK(s32 speaker) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
-    battle_owner_69();
+    Field_ClimbUp();
     Camera_SetSpeed(0x4000, 0x800);
     Camera_MoveTo(0x2180000, -1, 0xa00000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1043,7 +1043,7 @@ static void EV38_TALK(s32 speaker) {
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x400000,
                              actor->z.fixed);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    battle_owner_69();
+    Field_ClimbUp();
     Camera_MoveTo(-1, -1, -1, 0);
     Event_ShowMessage(speaker, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);

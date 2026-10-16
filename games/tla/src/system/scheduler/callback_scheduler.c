@@ -9,7 +9,7 @@ void Scheduler_ResetTaskTable(void) {
   s32 remaining;
   u32 zero;
 
-  gSchedulerTaskCount = 0;
+  gSchedulerReady = 0;
   task = gSchedulerTaskTable;
   gSchedulerStatus = 0;
   zero = 0;
@@ -21,7 +21,7 @@ void Scheduler_ResetTaskTable(void) {
     task++;
     remaining--;
   } while (remaining >= 0);
-  gSchedulerTaskCount = 1;
+  gSchedulerReady = 1;
 }
 
 void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count) {
@@ -162,7 +162,7 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   return result;
 }
 
-s32 Scheduler_EnableCallbacks(SchedulerCallback callback) {
+s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -178,7 +178,7 @@ s32 Scheduler_EnableCallbacks(SchedulerCallback callback) {
     }
     TASK_STATE_HIGH(task) |= 1;
     /* FAKEMATCH: the result copy follows the state byte store, as in
-     * Scheduler_EnableUnmaskedOverlayCallbacks. */
+     * Scheduler_SuspendOverlayTasks. */
     __asm__ volatile("");
     result = i;
   }
@@ -186,7 +186,7 @@ s32 Scheduler_EnableCallbacks(SchedulerCallback callback) {
   return result;
 }
 
-s32 Scheduler_EnableUnmaskedOverlayCallbacks(void) {
+s32 Scheduler_SuspendOverlayTasks(void) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -210,10 +210,10 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void) {
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerTaskCount;
+extern u8 gSchedulerReady;
 extern struct SchedulerTask gSchedulerTaskTable[24];
 
-s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask) {
+s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;

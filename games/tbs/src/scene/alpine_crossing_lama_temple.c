@@ -1,3 +1,11 @@
+// Two scenes share this overlay:
+//
+// - Alpine Crossing, the stretch of the Silk Road where a rockslide traps
+//   Hsu. Feizhi, Master Hama and the party meet there, and the party frees
+//   Hsu with Lift.
+// - Lama Temple, Master Hama's temple, with its monks, a wall that only
+//   Reveal sees through, and Hama's farewell once Hsu is safe.
+
 #include "game_state.h"
 #include "unit/scene/alpine_crossing_lama_temple.h"
 #include "unit/object/object.h"
@@ -19,245 +27,356 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "flag_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "field_effect.h"
 
-static __inline__ void Scene_AdvanceStep(s32 amount) {
-  gEventWork->message += amount;
-}
+#define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossingLamaTemple1)
+#define SCENE_LAMA_TEMPLE ((s32)&SceneId_AlpineCrossingLamaTemple2)
 
-static s32 EventScript_PrepareActorRenderFlags(union FieldObject *object) {
+// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
+// slots for Hama's farewell; the others count from ACTOR_FIRST_PLACED.
+enum LamaTempleActor {
+  ACTOR_TEMPLE_HAMA = ACTOR_FIRST_PLACED,
+  ACTOR_GREETING_MONK,
+  ACTOR_EASTWARD_MONK,
+  ACTOR_MEDITATING_MONK,
+  ACTOR_ANXIOUS_MONK,
+  ACTOR_CHI_MONK,
+  ACTOR_FALSE_WALL,
+  ACTOR_TRAVELING_HEALER
+};
+
+// Alpine Crossing's actors.
+enum AlpineCrossingActor {
+  ACTOR_HAMA = ACTOR_FIRST_PLACED,
+  ACTOR_HSU,
+  ACTOR_FEIZHI,
+  ACTOR_BOULDER,
+  ACTOR_FIRST_WORKER,
+  ACTOR_SECOND_WORKER,
+  ACTOR_PUDDLE,
+  ACTOR_SPROUT
+};
+
+enum LamaTempleEntrance {
+  TEMPLE_ENTRANCE_FROM_HAMAS_ROOM = 2,
+  TEMPLE_ENTRANCE_FAREWELL = 3
+};
+
+enum AlpineCrossingEntrance {
+  CROSSING_ENTRANCE_FROM_LAMA_TEMPLE = 2,
+  CROSSING_ENTRANCE_4 = 4,
+  CROSSING_ENTRANCE_5 = 5
+};
+
+enum {
+  // Feizhi has found the road blocked and run ahead to look for Hsu.
+  FLAG_FEIZHI_SAW_ROCKSLIDE = 0x8b0,
+  // Hama has reached Hsu and spoken with him and Feizhi.
+  FLAG_HAMA_REACHED_HSU = 0x8b1,
+  // Set with FLAG_HSU_RESCUED when the party arrives from Lama Temple after
+  // Xian has heard of the accident; nothing in this scene reads it.
+  FLAG_HSU_RESCUED_WITHOUT_PARTY = 0x8b3
+};
+
+// Alpine Crossing's Psynergy puzzles, kept while the party stays.
+enum {
+  FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
+  FLAG_SPROUT_GROWN = FLAG_SCENE_TEMP_01
+};
+
+enum { FLAG_HAMAS_STONE = 0x350, FLAG_CHEST_WATER_OF_LIFE = 0xf7a };
+enum { FLAG_CROSSING_CHEST = 0xf71 };
+
+enum {
+  ANIM_HAMA_PULL = 5,
+  ANIM_FEIZHI_PULL = 6,
+  ANIM_HSU_STRUGGLE = 5,
+  ANIM_MONK_MEDITATE = 5,
+  ANIM_FROZEN = 5,
+  ANIM_GROWN = 4
+};
+
+// Map triggers that the events below refer to.
+enum {
+  TRIGGER_TEMPLE_DOOR = 2,
+  TRIGGER_TEMPLE_WALL_WRITING = 5,
+  TRIGGER_SIGNPOST = 7,
+  TRIGGER_CHEST = 100,
+  TRIGGER_FEIZHI_ARRIVAL = 10,
+  TRIGGER_STONE = 110
+};
+
+// The door of Hama's room, three cells wide and two high: each step copies
+// the next door picture onto it for five frames.
+enum { DOOR_X = 67, DOOR_Y = 6 };
+
+// The door sound plays as the door cells slide; the heave plays with each
+// tug on Hsu; the music is the one Lama Temple starts on entry.
+enum { SE_SLIDING_DOOR = 188, SE_HEAVE = 125, MUS_LAMA_TEMPLE = 169 };
+
+// A search made while facing the given way.
+#define SEARCH_FACING(facing) (EVENT_SEARCH | EVENT_TOUCH_FACING | (facing))
+
+// The map object that draws the passage behind the false wall.
+enum { MAP_OBJECT_PASSAGE = 100 };
+
+// Draws the actor behind the background, on sprite priority 3 with automatic
+// priority off. The first worker from Xian runs it from his placement.
+static s32 Actor_DrawBehindScenery(union FieldObject *object) {
   object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->actor.sprite->priority = 3;
   object->actor.sprite->secondPriority = 3;
   return 0;
 }
 
-static s32 OverlayObject_SetFacingTowardObject10(void *self) {
-  struct FieldActor *actor = self;
-  struct FieldActor *obj;
+// Update callback that turns the party leader toward Feizhi while she runs
+// past.
+static s32 Leader_FaceFeizhi(void *self) {
+  struct FieldActor *leader = self;
+  struct FieldActor *feizhi;
 
-  obj = Object_GetById(0xA);
-  actor->facing =
-      ArcTan2(obj->z.fixed - actor->z.fixed, obj->x.fixed - actor->x.fixed);
+  feizhi = Object_GetById(ACTOR_FEIZHI);
+  leader->facing = ArcTan2(feizhi->z.fixed - leader->z.fixed,
+                           feizhi->x.fixed - leader->x.fixed);
   return 0;
 }
 
+// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
-    return gAlpineCrossingLamaTemple_TempleEntrances;
+  if (gGameState.scene == SCENE_ALPINE_CROSSING) {
+    return gAlpineCrossing_Entrances;
   }
-  return gAlpineCrossingLamaTemple_Entrances;
+  return gLamaTemple_Entrances;
 }
 
+// Neither scene has regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
+// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
+// Returns the actor placements of the scene being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
-    return gAlpineCrossingLamaTemple_TemplePlacements;
+  if (gGameState.scene == SCENE_ALPINE_CROSSING) {
+    return gAlpineCrossing_Placements;
   }
-  return gAlpineCrossingLamaTemple_Placements;
+  return gLamaTemple_Placements;
 }
 
-static void SceneDialogue_RunMessage1958Step(void) {
-
-  struct EventWork *work;
+// The eastward monk asks whether the party came from the east, across
+// Lamakan Desert, and otherwise whether it stopped in Xian.
+static void LamaTemple_TalkToEastwardMonk(void) {
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
-  Engine_EventOpenMessage(10, 0);
+  Engine_EventOpenMessage(ACTOR_EASTWARD_MONK, 0);
 
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     Engine_EventWait(20);
-    Engine_EventShowMessage(10, 0);
+    Engine_EventShowMessage(ACTOR_EASTWARD_MONK, 0);
   } else {
-    work = gEventWork;
-    work->message += 1;
-    Engine_EventAskYesNo(10, 0);
+    Event_SkipMessages(1);
+    Engine_EventAskYesNo(ACTOR_EASTWARD_MONK, 0);
   }
 
   Engine_EventEnd();
 }
 
-static void EV11_TALK(void) {
+// The meditating monk explains meditation.
+static void LamaTemple_TalkToMeditatingMonk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDoKnowMeditation);
-  Engine_EventAskYesNo(11, 0);
+  Engine_EventAskYesNo(ACTOR_MEDITATING_MONK, 0);
   Engine_EventEnd();
 }
 
-static void EV13_TALK(void) {
+// The monk who praises Master Hama as the greatest master of Chi.
+static void LamaTemple_TalkToChiMonk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDidKnowMasterHamaGreatest);
-  Engine_EventAskYesNo(13, 0);
+  Engine_EventAskYesNo(ACTOR_CHI_MONK, 0);
   Engine_EventEnd();
 }
 
-static void EV02_TOUCH(void) {
-  Event_PlayCue(188);
-  Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
-  Object_GetById(0)->motionFlags = 0;
+// Walking north into the door of Hama's room slides it open and walks the
+// party leader through, into the room.
+static void LamaTemple_EnterHamasRoom(void) {
+  Event_PlayCue(SE_SLIDING_DOOR);
+  Map_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Engine_EventWait(16);
   Engine_EventRequestExit(2);
 }
 
-static void FieldScene_RunScene3a2SequenceA(void) {
-  void Event_ShowMessageAndWait();
-
+// Hama's farewell, once the party has freed Hsu: she thanks the Adepts,
+// Garet and Mia squabble over whose idea helping was, and Hama goes back to
+// her room. Ivan wonders aloud about what Hama told him, and the others walk
+// out ahead of the party leader. Mia's question is a yes or no choice.
+static void LamaTemple_RunHamasFarewell(void) {
   Engine_EventBegin();
-  Actor_SetPosition(8, 0x880000, 0xa80000);
-  Actor_FaceDirection(8, 0x5000, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x900000, 0xc80000);
-  Actor_SetPosition(GARET, 0xa00000, 0xc00000);
-  Actor_SetPosition(IVAN, 0x800000, 0xc80000);
-  Actor_SetPosition(MIA, 0x700000, 0xc00000);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-  Actor_FaceDirection(GARET, 0xa000, 0);
-  Actor_FaceDirection(IVAN, 0xc000, 0);
-  Actor_FaceDirection(MIA, 0xe000, 0);
+  Actor_SetPosition(ACTOR_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(144), PIXELS(200));
+  Actor_SetPosition(GARET, PIXELS(160), PIXELS(192));
+  Actor_SetPosition(IVAN, PIXELS(128), PIXELS(200));
+  Actor_SetPosition(MIA, PIXELS(112), PIXELS(192));
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(8, 3);
+
+  // "Adepts, let me thank you again."
+  Engine_ActorSetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgMountainAdeptsLetMeThankAgain);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Actor_FaceDirection(8, 0x5000, 20);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_ShowEmote(IVAN, 0x102, 60);
   Engine_EventWait(120);
+
+  // Garet claims that helping was his idea and asks the leader to agree.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(GARET, 0x6000, 20);
+  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Actor_FaceDirection(MIA, 0, 20);
+    Actor_FaceDirection(MIA, FACING_EAST, 20);
     Actor_ShowEmote(MIA, 0x101, 60);
     Event_ShowMessageAndWait(MIA, 0, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-    Actor_FaceDirection(IVAN, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
     Engine_ActorStartRepeatedMotion(GARET, 2);
     Actor_SetAttachedEffect(GARET, 0x102);
     Engine_EventWait(60);
-    Actor_FaceDirection(GARET, 0x8000, 20);
+    Actor_FaceDirection(GARET, FACING_WEST, 20);
     Event_ShowMessageAndWait(GARET, 0, 20);
-    gEventWork->message += 2;
+    Event_SkipMessages(2);
   } else {
-    gEventWork->message += 2;
+    Event_SkipMessages(2);
     Engine_EventWait(20);
-    Actor_FaceDirection(MIA, 0, 20);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
+    Actor_FaceDirection(MIA, FACING_EAST, 20);
+    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(MIA, 0, 20);
     Actor_ShowEmote(GARET, 0x102, 60);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-    Actor_FaceDirection(IVAN, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
     Event_ShowMessageAndWait(GARET, 0, 20);
   }
-  Engine_ActorRunRepeatedMotion(8, 2);
+
+  // Hama wishes them well and goes back into her room.
+  Engine_ActorRunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-  Actor_FaceDirection(GARET, 0xa000, 0);
-  Actor_FaceDirection(IVAN, 0xc000, 0);
-  Actor_FaceDirection(MIA, 0xe000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(8, 0x3000, 20);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH - FACING_STEP, 20);
+  Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_NOD);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Event_ShowMessageAndWait(ACTOR_TEMPLE_HAMA, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_FaceDirection(8, 0xc000, 30);
-  Event_PlayCue(188);
-  Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(8, 136, 136);
-  Actor_SetPosition(8, 0, 0);
-  Event_PlayCue(188);
-  Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCellsBack, 67, 6);
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_NORTH, 30);
+  Event_PlayCue(SE_SLIDING_DOOR);
+  Map_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
+  Actor_SetSpeed(ACTOR_TEMPLE_HAMA, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(ACTOR_TEMPLE_HAMA, 136, 136);
+  Actor_SetPosition(ACTOR_TEMPLE_HAMA, 0, 0);
+  Event_PlayCue(SE_SLIDING_DOOR);
+  Map_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   Engine_EventWait(60);
   BattleFx_PlayQueuedSound();
+
+  // Garet asks whether the leader means to leave Hama's words unasked.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(GARET, 0x6000, 20);
+  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(MIA, 0x2000, 20);
+  Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Event_AskYesNo(GARET, 0);
   Engine_EventWait(20);
+
+  // Ivan decides that Hama will tell him when their mission is done.
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(IVAN, 0xb000, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_ShowEmote(GARET, 0x102, 60);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(IVAN, 0xe000, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
+  Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
   Actor_ShowEmote(MIA, 0x102, 60);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(IVAN, 0xa000, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -266,17 +385,19 @@ static void FieldScene_RunScene3a2SequenceA(void) {
   Engine_EventWait(20);
   Actor_SetSpeed(IVAN, 0x8000, 0x4000);
   Actor_WalkToAndWait(IVAN, 128, 184);
-  Actor_FaceDirection(IVAN, 0x4000, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-  Actor_FaceDirection(GARET, 0xa000, 0);
-  Actor_FaceDirection(MIA, 0xe000, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Actor_FaceDirection(IVAN, FACING_SOUTH, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
+
+  // Garet, Ivan and Mia walk to the leader and rejoin the party.
   Actor_SetSpeed(GARET, 0x8000, 0x4000);
   Actor_SetSpeed(MIA, 0x8000, 0x4000);
   Actor_WalkTo(GARET, 144, 200);
@@ -291,486 +412,547 @@ static void FieldScene_RunScene3a2SequenceA(void) {
   Engine_EventEnd();
 }
 
-static void EV05_SEARCH(void) {
+// Searching the temple wall reads its writing, the hint toward Reveal.
+static void LamaTemple_ReadWallWriting(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgMountainHeWhoHasPowerSee, 1);
   Engine_EventEnd();
 }
 
-static void ConfigureAndPlaceActorFourteen(void) {
+// Puts the false wall back when Reveal's light ends (and on entry): the
+// wall's cell blocks the way again, the passage's map object is hidden and
+// the wall actor stands in front of it.
+static void LamaTemple_ShowFalseWall(void) {
 
   Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
-  Engine_MapObjectSetPosition(100, 0, 0);
-  Actor_SetPosition(14, 0x01580000, 0x00980000);
+  Engine_MapObjectSetPosition(MAP_OBJECT_PASSAGE, 0, 0);
+  Actor_SetPosition(ACTOR_FALSE_WALL, PIXELS(344), PIXELS(152));
 }
 
-static void AlpineCrossingLamaTemple_ClearActorPlacement(void) {
+// Reveal shows the passage behind the false wall: the cell's original
+// attributes (saved at (21, 73) on entry) come back, the passage's map object
+// returns to its place and the wall actor is put away.
+static void LamaTemple_RevealPassage(void) {
   Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
-  MapObject_SetPosition(100, -1, -1);
-  Actor_SetPosition(14, 0, 0);
+  MapObject_SetPosition(MAP_OBJECT_PASSAGE, -1, -1);
+  Actor_SetPosition(ACTOR_FALSE_WALL, 0, 0);
 }
 
-static void EV15_TALK(void) {
+// The traveling healer offers the sanctum's services when spoken to across
+// his counter, from the south; from any other side he only greets the party.
+static void LamaTemple_TalkToHealer(void) {
 
-  u32 heading = Object_GetById(0)->facing;
+  u32 heading = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
   Engine_EventBegin();
-  if (heading - 0xA001 <= 0x3FFE) {
-    Engine_SanctumOpen(15);
+  if (FACING_IS_NORTH(heading)) {
+    Engine_SanctumOpen(ACTOR_TRAVELING_HEALER);
   } else {
     Engine_EventSetMessage(MsgMountainAmTravelingAroundWorldSpread);
-    Engine_EventShowMessage(15, 0);
+    Engine_EventShowMessage(ACTOR_TRAVELING_HEALER, 0);
   }
   Engine_EventEnd();
 }
 
-static void EV10_TOUCH(void) {
-  struct FieldActor *record;
-  s32 none;
+// When the party steps onto the road by the rockslide, once Feizhi has set
+// out after Hsu, she runs up behind it: she finds the boulders blocking the
+// Silk Road, cries out for Hsu and runs ahead along the path to look for
+// him, the party leader following part of the way.
+static void AlpineCrossing_FeizhiArrives(void) {
+  struct FieldActor *leader;
 
-  if (GameFlag_IsSet(0x89a) == 0) {
-  } else {
+  if (GameFlag_IsSet(FLAG_FEIZHI_WENT_TO_HSU)) {
     Engine_EventBegin();
-    Actor_SetPosition(10, 0x2180000, 0xd80000);
+    Actor_SetPosition(ACTOR_FEIZHI, PIXELS(536), PIXELS(216));
     Engine_EventSetMessage(MsgMountainYahhSilkRoadBouldersBlock);
-    Event_ShowMessageAndWait(10, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(20);
-    record = Object_GetById(0);
-    record->update =
-        (void (*)(union FieldObject *))OverlayObject_SetFacingTowardObject10;
-    record = Object_GetById(0);
-    if ((record->z.fixed >> 20) == 13) {
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
-    }
-    Actor_SetSpeed(10, 0x20000, 0x10000);
-    Engine_ActorSetSpritePriority(10, 2);
-    Actor_WalkToAndWait(10, 0x198, 216);
-    {
-      struct FieldActor *record = Object_GetById(10);
 
-      record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
+    // The leader turns to follow Feizhi as she runs past; one standing in
+    // her row steps aside first.
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    leader->update = (void (*)(union FieldObject *))Leader_FaceFeizhi;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if ((leader->z.fixed >> 20) == 13) {
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
     }
+    Actor_SetSpeed(ACTOR_FEIZHI, 0x20000, 0x10000);
+    Engine_ActorSetSpritePriority(ACTOR_FEIZHI, 2);
+    Actor_WalkToAndWait(ACTOR_FEIZHI, 408, 216);
+    Object_GetById(ACTOR_FEIZHI)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     Engine_EventWait(10);
-    Actor_FaceDirection(10, 0x8000, 20);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorStartRepeatedMotion(10, 2);
-    Actor_SetAttachedEffect(10, 0x102);
+    Actor_FaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
+    Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+    Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI, 2);
+    Actor_SetAttachedEffect(ACTOR_FEIZHI, 0x102);
     Engine_EventWait(60);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorEnableActionCallback(10, gAlpineCrossingLamaTemple_HsuAction);
-    Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
-    GameFlag_Set(0x8b0);
-    Object_RefreshSelectorById(10);
+    Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+
+    // Feizhi runs down the path with the camera; the leader follows her
+    // until the camera arrives.
+    Engine_ActorEnableActionCallback(ACTOR_FEIZHI, gAlpineCrossing_FeizhiPath);
+    Camera_MoveTo(PIXELS(296), -1, PIXELS(344), 1);
+    GameFlag_Set(FLAG_FEIZHI_SAW_ROCKSLIDE);
+    Object_RefreshSelectorById(ACTOR_FEIZHI);
     Engine_CameraWaitForMove();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                     gAlpineCrossingLamaTemple_LeaderAction);
-    Object_RefreshSelectorById(0);
+                                     gAlpineCrossing_LeaderPath);
+    Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
     Engine_EventWait(10);
-    none = 0;
-    record = Object_GetById(0);
-    record->update = (void (*)(union FieldObject *))none;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    leader->update = NULL;
     Engine_EventWait(30);
-    Engine_ActorRunRepeatedMotion(10, 2);
+
+    // She cannot hear Hsu's voice.
+    Engine_ActorRunRepeatedMotion(ACTOR_FEIZHI, 2);
     Engine_EventWait(20);
-    Actor_FaceDirection(10, 0x5000, 120);
-    Actor_ShowEmote(10, 0x105, 60);
+    Actor_FaceDirection(ACTOR_FEIZHI, FACING_SOUTH + FACING_STEP, 120);
+    Actor_ShowEmote(ACTOR_FEIZHI, 0x105, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
-    Engine_ActorSetAnimationAndWait(10, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(10, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
     Engine_EventEnd();
   }
 }
 
-static void Scene_RunActorCue(void) {
+// Feizhi, before Xian hears of the accident, asks whether she should return
+// to Xian; either way she decides to keep looking for Hsu.
+static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
-  Actor_ShowEmote(10, 0x105, 60);
-  Event_OpenMessage(10, 0);
+  Actor_ShowEmote(ACTOR_FEIZHI, 0x105, 60);
+  Event_OpenMessage(ACTOR_FEIZHI, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
-    Scene_AdvanceStep(1);
+    Event_SkipMessages(1);
   }
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(10, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(10, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
   Engine_EventEnd();
 }
 
-static void Scene_RunActorExchange(void) {
+// Master Hama, kneeling by Hsu, asks if he is hurt; he is unhurt but cannot
+// move, and none of them knows how to free him.
+static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-  Engine_CameraMoveToActor(9, 1);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+  Engine_CameraMoveToActor(ACTOR_HSU, 1);
   Engine_CameraWaitForMove();
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgMountainHsuOkay);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorRunRepeatedMotion(9, 1);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_HSU, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(9, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Event_ShowMessageAndWait(ACTOR_HSU, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Actor_FaceDirection(10, 0xd000, 20);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Engine_EventWait(60);
-  Actor_ShowEmote(8, 0x102, 60);
-  Engine_ActorSetAnimationAndWait(8, 4);
+  Actor_ShowEmote(ACTOR_HAMA, 0x102, 60);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorStartRepeatedMotion(10, 2);
-  Actor_SetAttachedEffect(10, 0x102);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI, 2);
+  Actor_SetAttachedEffect(ACTOR_FEIZHI, 0x102);
   Engine_EventWait(60);
-  Actor_FaceDirection(10, 0xb000, 20);
-  Engine_ActorSetAnimation(9, 5);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_STRUGGLE);
   Engine_EventEnd();
-  GameFlag_Set(0x8b1);
+  GameFlag_Set(FLAG_HAMA_REACHED_HSU);
 }
 
-static void EV11_PSYNERGY(void) {
-
-  s32 mask;
+// Lift on the boulder: it floats, and Hama and Feizhi pull Hsu free in two
+// heaves of two tugs each, asking the leader in between to hold on. Hsu is
+// free; they will ask Master Feh to tend him and clear the road, and the
+// scene fades out to Hama's farewell at Lama Temple.
+static void AlpineCrossing_LiftBoulder(void) {
 
   Engine_EventBegin();
-  Actor_SetAttachedEffect(8, 0x102);
-  Engine_ActorStartRepeatedMotion(8, 2);
+  Actor_SetAttachedEffect(ACTOR_HAMA, 0x102);
+  Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 2);
   Engine_EventWait(60);
   Engine_EventSetMessage(MsgMountainIsaacDidLiftBoulder);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Actor_SetAttachedEffect(10, 0x102);
-  Engine_ActorJump(10, 4, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Actor_SetAttachedEffect(ACTOR_FEIZHI, 0x102);
+  Engine_ActorJump(ACTOR_FEIZHI, 4, 0);
   Engine_EventWait(60);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Actor_FaceDirection(10, 0xd000, 20);
-  Engine_ActorSetAnimationAndWait(10, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_WalkTo(8, 178, 0x114);
-  Actor_WalkToAndWait(10, 172, 0x11c);
-  Engine_ActorWaitForMove(8);
-  Actor_FaceDirection(8, 0x5000, 0);
-  Actor_FaceDirection(10, 0xb000, 0);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Engine_EventWait(20);
-  mask = 254;
-  Event_ShowMessageAndWait(8, 0, 20);
-  Object_GetById(8)->steeringFlags &= mask;
-  Object_GetById(10)->steeringFlags &= mask;
-  Actor_SetSpeed(8, 0x3333, 0x1999);
-  Actor_SetSpeed(10, 0x3333, 0x1999);
-  Engine_ActorSetAnimation(8, 5);
-  Engine_ActorSetAnimation(10, 6);
-  Engine_EventWait(20);
-  Event_PlayCue(125);
-  Actor_SetDestinationOffset(8, 2, 0);
-  Actor_SetDestinationOffset(9, 2, 0);
-  Actor_SetDestinationOffset(10, 2, 0);
-  Engine_ActorWaitForMove(10);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimation(8, 5);
-  Engine_ActorSetAnimation(10, 6);
-  Engine_EventWait(20);
-  Event_PlayCue(125);
-  Actor_SetDestinationOffset(8, 4, 0);
-  Actor_SetDestinationOffset(9, 4, 0);
-  Actor_SetDestinationOffset(10, 4, 0);
-  Engine_ActorWaitForMove(10);
-  Engine_ActorStop(9);
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorSetAnimation(10, 1);
-  Engine_EventWait(50);
-  Engine_ActorJump(10, 2, 0);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_EventWait(20);
-  Event_AskYesNo(8, 0);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimation(8, 5);
-  Engine_ActorSetAnimation(10, 6);
-  Engine_EventWait(20);
-  Event_PlayCue(125);
-  Actor_SetDestinationOffset(8, 2, 0);
-  Actor_SetDestinationOffset(9, 2, 0);
-  Actor_SetDestinationOffset(10, 2, 0);
-  Engine_ActorWaitForMove(10);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimation(8, 5);
-  Engine_ActorSetAnimation(10, 6);
-  Engine_EventWait(20);
-  Event_PlayCue(125);
-  Actor_SetDestinationOffset(8, 4, 0);
-  Actor_SetDestinationOffset(9, 4, 0);
-  Actor_SetDestinationOffset(10, 4, 0);
-  Engine_ActorWaitForMove(10);
-  Engine_EventWait(40);
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorSetAnimation(10, 1);
-  Engine_ActorJump(10, 2, 0);
-  Engine_EventWait(20);
-  Actor_FaceDirection(10, 0xd000, 20);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 30);
-  Event_ShowMessageAndWait(8, 0, 20);
-  {
-    struct FieldActor *record = Object_GetById(10);
 
-    record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
-  }
-  Actor_SetSpeed(10, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(10, 168, 0x128);
-  Actor_FaceDirection(10, 0xd000, 20);
-  Engine_ActorSetAnimation(10, 5);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  // Hama and Feizhi take hold of Hsu.
+  Actor_WalkTo(ACTOR_HAMA, 178, 276);
+  Actor_WalkToAndWait(ACTOR_FEIZHI, 172, 284);
+  Engine_ActorWaitForMove(ACTOR_HAMA);
+  Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(10, 3);
+  Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Object_GetById(ACTOR_HAMA)->steeringFlags &= (u8)~ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_FEIZHI)->steeringFlags &= (u8)~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(ACTOR_HAMA, 0x3333, 0x1999);
+  Actor_SetSpeed(ACTOR_FEIZHI, 0x3333, 0x1999);
+
+  // The first heave: two tugs draw Hsu halfway out.
+  Engine_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Event_PlayCue(SE_HEAVE);
+  Actor_SetDestinationOffset(ACTOR_HAMA, 2, 0);
+  Actor_SetDestinationOffset(ACTOR_HSU, 2, 0);
+  Actor_SetDestinationOffset(ACTOR_FEIZHI, 2, 0);
+  Engine_ActorWaitForMove(ACTOR_FEIZHI);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Engine_EventWait(20);
+  Event_PlayCue(SE_HEAVE);
+  Actor_SetDestinationOffset(ACTOR_HAMA, 4, 0);
+  Actor_SetDestinationOffset(ACTOR_HSU, 4, 0);
+  Actor_SetDestinationOffset(ACTOR_FEIZHI, 4, 0);
+  Engine_ActorWaitForMove(ACTOR_FEIZHI);
+  Engine_ActorStop(ACTOR_HSU);
+  Engine_ActorSetAnimation(ACTOR_HAMA, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_STAND);
+  Engine_EventWait(50);
+  Engine_ActorJump(ACTOR_FEIZHI, 2, 0);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+
+  // Hama asks the leader to hold the boulder a moment longer.
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_EventWait(20);
+  Event_AskYesNo(ACTOR_HAMA, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+
+  // The second heave pulls Hsu free.
+  Engine_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Engine_EventWait(20);
+  Event_PlayCue(SE_HEAVE);
+  Actor_SetDestinationOffset(ACTOR_HAMA, 2, 0);
+  Actor_SetDestinationOffset(ACTOR_HSU, 2, 0);
+  Actor_SetDestinationOffset(ACTOR_FEIZHI, 2, 0);
+  Engine_ActorWaitForMove(ACTOR_FEIZHI);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Engine_EventWait(20);
+  Event_PlayCue(SE_HEAVE);
+  Actor_SetDestinationOffset(ACTOR_HAMA, 4, 0);
+  Actor_SetDestinationOffset(ACTOR_HSU, 4, 0);
+  Actor_SetDestinationOffset(ACTOR_FEIZHI, 4, 0);
+  Engine_ActorWaitForMove(ACTOR_FEIZHI);
+  Engine_EventWait(40);
+  Engine_ActorSetAnimation(ACTOR_HAMA, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, ANIM_STAND);
+  Engine_ActorJump(ACTOR_FEIZHI, 2, 0);
+  Engine_EventWait(20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 30);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+
+  // Feizhi steps back; they agree to send for Master Feh.
+  Object_GetById(ACTOR_FEIZHI)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_SetSpeed(ACTOR_FEIZHI, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(ACTOR_FEIZHI, 168, 296);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorSetAnimation(ACTOR_FEIZHI, 5);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventEnd();
-  GameFlag_Set(0x8b2);
+  GameFlag_Set(FLAG_HSU_RESCUED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventRequestExit(6);
 }
 
-static void EV07_SEARCH(void) {
+// Searching the signpost: "North: Altin Mine. West: Lama Temple."
+static void AlpineCrossing_ReadSignpost(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgMountainNorthAltinMineWestLama, 1);
   Engine_EventEnd();
 }
 
-static void FieldScene_RunPairedLayoutStepsThenSetOne(void) {
-  {
-    s32 fifth = 1;
-    s32 sixth = 2;
-
-    Map_CopyCellsTo(5, 28, 5, 13, fifth, sixth);
-  }
-  {
-    s32 fifth = 5;
-    s32 sixth = 13;
-
-    Map_CopyCellAttributes(5, 28, 1, 2, fifth, sixth);
-  }
+// Reveal shows the path hidden at (5, 13): the revealed cells, kept at
+// (5, 28), are copied there with their attributes.
+static void AlpineCrossing_RevealPath(void) {
+  Map_CopyCellsTo(5, 28, 5, 13, 1, 2);
+  Map_CopyCellAttributes(5, 28, 1, 2, 5, 13);
   Engine_EventWait(1);
 }
 
-static void SceneState_RunRect6x28Step(void) {
-  {
-    s32 fifth = 1;
-    s32 sixth = 2;
-
-    Map_CopyCellsTo(6, 28, 5, 13, fifth, sixth);
-  }
-  {
-    s32 fifth = 5;
-    s32 sixth = 13;
-
-    Map_CopyCellAttributes(6, 28, 1, 2, fifth, sixth);
-  }
+// When Reveal's light ends, the plain cells kept at (6, 28) cover the path
+// again.
+static void AlpineCrossing_HidePath(void) {
+  Map_CopyCellsTo(6, 28, 5, 13, 1, 2);
+  Map_CopyCellAttributes(6, 28, 1, 2, 5, 13);
   Engine_EventWait(1);
 }
 
-static s32
-SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor) {
-  if (Object_GetById(0)->y.fixed > actor->y.fixed) {
-    actor->priorityFlags |= 2;
+// Update callback of the frozen pillar: it draws under the party leader
+// while the leader stands higher than its top, so the leader can climb onto
+// it, and over the leader otherwise.
+static s32 Pillar_SortAgainstLeader(struct FieldActor *pillar) {
+  if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
+    pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
-    actor->priorityFlags &= 0xFD;
+    pillar->priorityFlags &= (u8)~ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 
-static void EV14_SCRIPT(void) {
-  struct FieldActor *current = Object_GetById(0);
-  struct FieldActor *other = Object_GetById(14);
+// As Frost reaches the puddle, a leader standing north of it sees the pillar
+// rise in front of the background.
+static void AlpineCrossing_PrepareFrost(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldActor *puddle = Object_GetById(ACTOR_PUDDLE);
 
-  if (current->z.fixed <= other->z.fixed) {
-    Engine_ActorSetSpritePriority(14, 1);
+  if (leader->z.fixed <= puddle->z.fixed) {
+    Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 1);
   }
 }
 
-static void EV14_PSYNERGY(void) {
+// Frost freezes the puddle into a pillar the party can climb: it stops
+// blocking movement and moving, sorts itself against the leader each frame,
+// and the cells beside it (and their copy at (20, 18)) become walkable.
+// Also run on entry while the pillar is already frozen.
+static void AlpineCrossing_FreezePuddle(void) {
   Engine_EventBegin();
 
-  Object_GetById(14)->priorityFlags &= 0xfd;
-  Object_GetById(14)->collisionFlags &= 0xfd;
-  Object_GetById(14)->motionFlags = 0;
-  Object_GetById(14)->update = (void (*)(
-      union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
+  Object_GetById(ACTOR_PUDDLE)->priorityFlags &= (u8)~ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(ACTOR_PUDDLE)->collisionFlags &= 0xfd;
+  Object_GetById(ACTOR_PUDDLE)->motionFlags = 0;
+  Object_GetById(ACTOR_PUDDLE)->update =
+      (void (*)(union FieldObject *))Pillar_SortAgainstLeader;
 
   Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
   Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
 
   Engine_TaskWait(1);
-  Engine_GameFlagSet(512);
-  Engine_ActorSetSpritePriority(14, 2);
+  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+  Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 2);
   Engine_EventEnd();
 }
 
-static void EV15_PSYNERGY(void) {
+// Growth grows the sprout into a vine the party can climb: the two cells
+// above it take the climbable attributes kept at (14, 6). Also run on entry
+// while the vine is already grown.
+static void AlpineCrossing_GrowSprout(void) {
   Engine_EventBegin();
-  {
-
-    Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
-  }
-  Object_GetById(15)->collisionFlags = 254;
-  Engine_GameFlagSet(0x201);
+  Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
+  Object_GetById(ACTOR_SPROUT)->collisionFlags = 254;
+  Engine_GameFlagSet(FLAG_SPROUT_GROWN);
   Engine_EventEnd();
 }
 
+// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
-    return gAlpineCrossingLamaTemple_TempleEvents;
+  if (gGameState.scene == SCENE_ALPINE_CROSSING) {
+    return gAlpineCrossing_Events;
   }
-  return gAlpineCrossingLamaTemple_Events;
+  return gLamaTemple_Events;
 }
 
-s32 AlpineCrossingLamaTemple_ApplyEntryState(void) {
+// Sets up whichever scene is being entered and runs its arrival events.
+// Returns 0.
+s32 Scene_Initialize(void) {
   s32 entrance;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple2) {
-    BattleFx_SetQueuedSoundAndPlay(169);
-    Engine_ActorSetAnimation(11, 5);
-    Engine_ActorSetAnimation(12, 5);
-    Engine_ActorSetAnimation(14, 2);
+  if (gGameState.scene == SCENE_LAMA_TEMPLE) {
+    // Lama Temple: two monks meditate and the false wall stands; the wall's
+    // own cell attributes are saved at (21, 73) for Reveal to restore.
+    BattleFx_SetQueuedSoundAndPlay(MUS_LAMA_TEMPLE);
+    Engine_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
+    Engine_ActorSetAnimation(ACTOR_ANXIOUS_MONK, ANIM_MONK_MEDITATE);
+    Engine_ActorSetAnimation(ACTOR_FALSE_WALL, 2);
     Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
-    ConfigureAndPlaceActorFourteen();
-    if (Engine_GameFlagIsSet(0x8b2)) {
-      Actor_SetPosition(13, 0x880000, 0x1000000);
-      Engine_ActorFaceDirection(13, 0, 0);
+    LamaTemple_ShowFalseWall();
+    if (Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
+      Actor_SetPosition(ACTOR_CHI_MONK, PIXELS(136), PIXELS(256));
+      Engine_ActorFaceDirection(ACTOR_CHI_MONK, FACING_EAST, 0);
     }
     entrance = gGameState.entrance;
-    if (entrance == 2) {
-      Engine_GameFlagClear(0x12f);
-    } else if (entrance == 3 && !Engine_GameFlagIsSet(0x109)) {
-      FieldScene_RunScene3a2SequenceA();
+    if (entrance == TEMPLE_ENTRANCE_FROM_HAMAS_ROOM) {
+      Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    } else if (entrance == TEMPLE_ENTRANCE_FAREWELL &&
+               !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      LamaTemple_RunHamasFarewell();
     }
-  } else if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
-    Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-    Object_GetById(14)->priorityFlags |= 2;
-    if (Engine_GameFlagIsSet(0x200)) {
-      Engine_ActorSetAnimation(14, 5);
-      EV14_PSYNERGY();
+  } else if (gGameState.scene == SCENE_ALPINE_CROSSING) {
+    // Alpine Crossing: restore the Psynergy puzzles already solved.
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE), 0);
+    Object_GetById(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
+      Engine_ActorSetAnimation(ACTOR_PUDDLE, ANIM_FROZEN);
+      AlpineCrossing_FreezePuddle();
     }
-    if (Engine_GameFlagIsSet(0x201)) {
-      Engine_ActorSetAnimation(15, 4);
-      EV15_PSYNERGY();
+    if (Engine_GameFlagIsSet(FLAG_SPROUT_GROWN)) {
+      Engine_ActorSetAnimation(ACTOR_SPROUT, ANIM_GROWN);
+      AlpineCrossing_GrowSprout();
     }
-    if (gGameState.entrance == 4 || gGameState.entrance == 5) {
-      Engine_GameFlagClear(0x12f);
+    if (gGameState.entrance == CROSSING_ENTRANCE_4 ||
+        gGameState.entrance == CROSSING_ENTRANCE_5) {
+      Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     }
-    if (!Engine_GameFlagIsSet(0x89a) && !Engine_GameFlagIsSet(0x895) &&
-        !Engine_GameFlagIsSet(0x8b2)) {
-      Engine_ActorSetPosition(10, 0, 0);
+
+    // Feizhi is here only once she has set out after Hsu.
+    if (!Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU) &&
+        !Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
+        !Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
+      Engine_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
     }
-    if (!GameFlag_IsSet(0x8b2) && Engine_GameFlagIsSet(0x895) &&
-        gGameState.entrance == 2) {
-      Engine_ActorSetPosition(11, 0, 0);
-      Engine_GameFlagSet(0x8b2);
-      Engine_GameFlagSet(0x8b3);
-      Engine_ActorSetPosition(10, 0, 0);
+
+    // Arriving from Lama Temple after Xian has heard of the accident: Hsu is
+    // already free and the boulder gone.
+    if (!GameFlag_IsSet(FLAG_HSU_RESCUED) &&
+        Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
+        gGameState.entrance == CROSSING_ENTRANCE_FROM_LAMA_TEMPLE) {
+      Engine_ActorSetPosition(ACTOR_BOULDER, 0, 0);
+      Engine_GameFlagSet(FLAG_HSU_RESCUED);
+      Engine_GameFlagSet(FLAG_HSU_RESCUED_WITHOUT_PARTY);
+      Engine_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
     }
-    if (GameFlag_IsSet(0x8b2)) {
+
+    // Once Hsu is free, the cleared rocks open the road.
+    if (GameFlag_IsSet(FLAG_HSU_RESCUED)) {
       Map_CopyCellsTo(54, 21, 53, 21, 1, 2);
       Map_CopyCellAttributes(18, 20, 1, 3, 17, 21);
       Map_CopyCellsTo(44, 18, 43, 17, 1, 1);
       Map_CopyCellAttributes(8, 17, 1, 1, 7, 17);
     }
-    if (Engine_GameFlagIsSet(0x895) && !Engine_GameFlagIsSet(0x8b2)) {
-      Engine_ActorSetPosition(12, 0, 0);
-      Engine_ActorSetPosition(13, 0, 0);
-      Actor_SetPosition(8, 0xc00000, 0x1080000);
-      Actor_SetPosition(9, 0xa40000, 0x1180000);
-      Actor_SetPosition(10, 0xb80000, 0x1300000);
-      Actor_FaceDirection(8, 0x5000, 0);
-      Actor_FaceDirection(10, 0xb000, 0);
-      Engine_ActorEnableActionCallback(
-          9, gAlpineCrossingLamaTemple_ActorNineAction);
-      Object_GetById(9)->scaleX = -0x10000;
+
+    // While Hsu is trapped, Hama and Feizhi stand by him, and the workers
+    // from Xian have not come yet.
+    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
+        !Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
+      Engine_ActorSetPosition(ACTOR_FIRST_WORKER, 0, 0);
+      Engine_ActorSetPosition(ACTOR_SECOND_WORKER, 0, 0);
+      Actor_SetPosition(ACTOR_HAMA, PIXELS(192), PIXELS(264));
+      Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
+      Actor_SetPosition(ACTOR_FEIZHI, PIXELS(184), PIXELS(304));
+      Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 0);
+      Engine_ActorEnableActionCallback(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
+      Object_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
-    if (!GameFlag_IsSet(0x8b2)) {
-      Actor_SetPosition(9, 0xa40000, 0x1180000);
-      Engine_ActorEnableActionCallback(
-          9, gAlpineCrossingLamaTemple_ActorNineAction);
-      Object_GetById(9)->scaleX = -0x10000;
+    if (!GameFlag_IsSet(FLAG_HSU_RESCUED)) {
+      Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
+      Engine_ActorEnableActionCallback(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
+      Object_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
-    if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) &&
-        !Engine_GameFlagIsSet(0x109) && !Engine_GameFlagIsSet(0x8b2)) {
-      Scene_RunActorExchange();
+    if (gGameState.entrance == CROSSING_ENTRANCE_5 &&
+        !Engine_GameFlagIsSet(FLAG_HAMA_REACHED_HSU) &&
+        !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
+        !Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
+      AlpineCrossing_HamaReachesHsu();
     }
   }
   return 0;
 }
 
-s32 gAlpineCrossingLamaTemple_TemplePlacement1[] = {
-    SC_CALL(EventScript_PrepareActorRenderFlags),
+// The first worker's placement script: draw him behind the background.
+s32 gAlpineCrossing_WorkerPlacementScript[] = {
+    SC_CALL(Actor_DrawBehindScenery),
     SC_END,
 };
 
-s32 gAlpineCrossingLamaTemple_HsuAction[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(392), 0, PIXELS(232)),
-    SC_SYNC,   SC_MOVE(PIXELS(376), 0, PIXELS(232)),
-    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(264)),
-    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(312)),
-    SC_SYNC,   SC_MOVE(PIXELS(312), 0, PIXELS(344)),
-    SC_SYNC,   SC_MOVE(PIXELS(296), 0, PIXELS(344)),
-    SC_SYNC,   SC_ARG(1),
+// Feizhi's run down the path toward Hsu, walking, then standing.
+s32 gAlpineCrossing_FeizhiPath[] = {
+    SC_ARG(ANIM_WALK),
+    SC_MOVE(PIXELS(392), 0, PIXELS(232)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(376), 0, PIXELS(232)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(344), 0, PIXELS(264)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(344), 0, PIXELS(312)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(312), 0, PIXELS(344)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(296), 0, PIXELS(344)),
+    SC_SYNC,
+    SC_ARG(ANIM_STAND),
     SC_END,
 };
 
-s32 gAlpineCrossingLamaTemple_LeaderAction[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(392), 0, PIXELS(232)),
-    SC_SYNC,   SC_MOVE(PIXELS(376), 0, PIXELS(232)),
-    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(264)),
-    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(312)),
-    SC_SYNC,   SC_MOVE(PIXELS(328), 0, PIXELS(328)),
-    SC_SYNC,   SC_ARG(1),
+// The party leader follows Feizhi most of the way.
+s32 gAlpineCrossing_LeaderPath[] = {
+    SC_ARG(ANIM_WALK),
+    SC_MOVE(PIXELS(392), 0, PIXELS(232)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(376), 0, PIXELS(232)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(344), 0, PIXELS(264)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(344), 0, PIXELS(312)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(328), 0, PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(ANIM_STAND),
     SC_END,
 };
 
-s32 gAlpineCrossingLamaTemple_ActorNineAction[] = {
-    SC_ARG(1),    SC_ARG(5),
-    SC_WAIT(240), SC_ARG(1),
-    SC_ARG(5),    SC_WAIT(60),
-    SC_ARG(1),    SC_ARG(5),
-    SC_WAIT(300), SC_LOOP(SC_FOREVER, SC_TOP),
+// Hsu, pinned under the boulder, struggles now and then.
+s32 gAlpineCrossing_HsuStruggle[] = {
+    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIM_HSU_STRUGGLE),
+    SC_WAIT(240),
+    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIM_HSU_STRUGGLE),
+    SC_WAIT(60),
+    SC_ARG(ANIM_STAND),
+    SC_ARG(ANIM_HSU_STRUGGLE),
+    SC_WAIT(300),
+    SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,
 };
 
-u16 gAlpineCrossingLamaTemple_BoulderCells[] = {
+// The door of Hama's room sliding open, and shut again.
+u16 gLamaTemple_DoorOpenCells[] = {
     MAP_CELL_STEP(66, 46, 3, 2, 5),
     MAP_CELL_STEP(63, 46, 3, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-u16 gAlpineCrossingLamaTemple_BoulderCellsBack[] = {
+u16 gLamaTemple_DoorCloseCells[] = {
     MAP_CELL_STEP(66, 46, 3, 2, 5),
     MAP_CELL_STEP(69, 46, 3, 2, 5),
     MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gAlpineCrossingLamaTemple_Entrances[] = {
+struct SceneEntrance gLamaTemple_Entrances[] = {
     {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 136, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -779,7 +961,7 @@ struct SceneEntrance gAlpineCrossingLamaTemple_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAlpineCrossingLamaTemple_TempleEntrances[] = {
+struct SceneEntrance gAlpineCrossing_Entrances[] = {
     {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, 16, 32, 520, 416, 0},
     {2, CONDITION_ALWAYS, 384, 0, 72, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
@@ -797,7 +979,7 @@ u32 gAlpineCrossingLamaTemple_Exits[] = {
 };
 
 // clang-format off
-struct ScenePlacement gAlpineCrossingLamaTemple_Placements[] = {
+struct ScenePlacement gLamaTemple_Placements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -823,18 +1005,18 @@ struct ScenePlacement gAlpineCrossingLamaTemple_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gAlpineCrossingLamaTemple_TemplePlacements[] = {
+struct ScenePlacement gAlpineCrossing_Placements[] = {
     { 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x29, CONDITION_ALWAYS, (s32)gAlpineCrossingLamaTemple_ActorNineAction,
+    { 0x29, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x27, 0x8b2, ACTOR_STAND,
+    { 0x27, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x127, 0x8b2, ACTOR_STAND,
+    { 0x127, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x82, IF_FLAG_SET(0x895), (s32)gAlpineCrossingLamaTemple_TemplePlacement1,
+    { 0x82, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerPlacementScript,
         PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x83, IF_FLAG_SET(0x895), ACTOR_STAND,
+    { 0x83, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -843,69 +1025,70 @@ struct ScenePlacement gAlpineCrossingLamaTemple_TemplePlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gAlpineCrossingLamaTemple_Events[] = {
+struct SceneEvent gLamaTemple_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-    { EVENT_TALK, 9, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
-    { EVENT_TALK, 10, 0x8b2, EVENT_SCRIPT(SceneDialogue_RunMessage1958Step) },
-    { EVENT_TALK, 11, 0x8b2, EVENT_SCRIPT(EV11_TALK) },
-    { EVENT_TALK, 12, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI) },
-    { EVENT_TALK, 13, 0x8b2, EVENT_SCRIPT(EV13_TALK) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleItIsVeryDangerousToCross) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilDesertIsHotterThan) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIBelieveItIsPossibleTo) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWillBeMostThankfulOnce) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWhenYourTemperatureReachesItsMaximum) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleTheySeemToBeAnxiousThey) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleTheySayAPersonCanOvercome) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleIAmHungry) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleISenseImpureThoughtsFromThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleChiIsButAFragmentOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleICannotCrossTheDesertIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilInTheDesertDistorts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowNiceItWouldBeIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleMasterHamaWillBeVerySad) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWithRevealYouWillFindOases) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleForSomeReasonThesePeopleGive) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossingLamaTemple_ClearActorPlacement) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorFourteen) },
-    { SEARCH(SEARCH_UNNAMED), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SEARCH) },
-    { 0xc403, 110, 0x350, FIND_PSYNERGY_STONE },
-    { 0xe403, 110, 0x350, FIND_PSYNERGY_STONE },
-    { 0xa403, 110, 0x350, FIND_PSYNERGY_STONE },
-    { 0x8403, 110, 0x350, FIND_PSYNERGY_STONE },
-    { SEARCH(SEARCH_CHEST), 100, 0xf7a, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), TRIGGER_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_EnterHamasRoom) },
+    { EVENT_TALK, ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
+    { EVENT_TALK, ACTOR_EASTWARD_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToEastwardMonk) },
+    { EVENT_TALK, ACTOR_MEDITATING_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToMeditatingMonk) },
+    { EVENT_TALK, ACTOR_ANXIOUS_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI) },
+    { EVENT_TALK, ACTOR_CHI_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToChiMonk) },
+    { EVENT_TALK, ACTOR_GREETING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleItIsVeryDangerousToCross) },
+    { EVENT_TALK, ACTOR_EASTWARD_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilDesertIsHotterThan) },
+    { EVENT_TALK, ACTOR_MEDITATING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIBelieveItIsPossibleTo) },
+    { EVENT_TALK, ACTOR_ANXIOUS_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWillBeMostThankfulOnce) },
+    { EVENT_TALK, ACTOR_CHI_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWhenYourTemperatureReachesItsMaximum) },
+    { EVENT_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_TalkToHealer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleTheySeemToBeAnxiousThey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EASTWARD_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleTheySayAPersonCanOvercome) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEDITATING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleIAmHungry) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANXIOUS_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleISenseImpureThoughtsFromThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHI_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleChiIsButAFragmentOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleICannotCrossTheDesertIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EASTWARD_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilInTheDesertDistorts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEDITATING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowNiceItWouldBeIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANXIOUS_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleMasterHamaWillBeVerySad) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHI_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWithRevealYouWillFindOases) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleForSomeReasonThesePeopleGive) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_RevealPassage) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ShowFalseWall) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_TEMPLE_WALL_WRITING, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ReadWallWriting) },
+    { SEARCH_FACING(FACING_NORTH), TRIGGER_STONE, FLAG_HAMAS_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH_FACING(FACING_NORTHEAST), TRIGGER_STONE, FLAG_HAMAS_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH_FACING(FACING_NORTHWEST), TRIGGER_STONE, FLAG_HAMAS_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH_FACING(FACING_WEST), TRIGGER_STONE, FLAG_HAMAS_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_CHEST_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gAlpineCrossingLamaTemple_TempleEvents[] = {
+struct SceneEvent gAlpineCrossing_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 5 },
-    { EVENT_TOUCH, 10, 0x8b0, EVENT_SCRIPT(EV10_TOUCH) },
-    { EVENT_TALK, 10, 0x895, EVENT_SCRIPT(Scene_RunActorCue) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAmTrappedBetweenTheseTwo) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleBeStrongHsuWeWillHelp) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeMovedTheRocksNowPeople) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleManyPeopleFromXianHelpedMove) },
-    { PSYNERGY_ON_ACTOR(0x8f), 11, 0x8b2, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgAlpineCrossingLamaTempleHsuIsInDangerICan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowShouldWeMoveTheBoulders) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWantToScreamButFeizhi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHsuTiresHeLooksExhaustedI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeClearedTheWayButWhat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAlmostHurtMyBackIt) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPairedLayoutStepsThenSetOne) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunRect6x28Step) },
-    { 0x10001815, 14, 0x200, EVENT_SCRIPT(EV14_SCRIPT) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x200, EVENT_SCRIPT(EV14_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0xc), 15, 0x201, EVENT_SCRIPT(EV15_PSYNERGY) },
-    { SEARCH(SEARCH_UNNAMED), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_SEARCH) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf71, FIND_ITEM(0xbf) },
+    { EVENT_TOUCH, TRIGGER_FEIZHI_ARRIVAL, FLAG_FEIZHI_SAW_ROCKSLIDE, EVENT_SCRIPT(AlpineCrossing_FeizhiArrives) },
+    { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(AlpineCrossing_TalkToFeizhi) },
+    { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },
+    { EVENT_TALK, ACTOR_HSU, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAmTrappedBetweenTheseTwo) },
+    { EVENT_TALK, ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleBeStrongHsuWeWillHelp) },
+    { EVENT_TALK, ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeMovedTheRocksNowPeople) },
+    { EVENT_TALK, ACTOR_SECOND_WORKER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleManyPeopleFromXianHelpedMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_HSU_RESCUED, EVENT_SCRIPT(AlpineCrossing_LiftBoulder) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgAlpineCrossingLamaTempleHsuIsInDangerICan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowShouldWeMoveTheBoulders) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HSU, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWantToScreamButFeizhi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHsuTiresHeLooksExhaustedI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeClearedTheWayButWhat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WORKER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAlmostHurtMyBackIt) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_RevealPath) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_HidePath) },
+    // Frost's first phase, as it reaches the puddle
+    { 0x10000000 | PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT_SCRIPT(AlpineCrossing_GrowSprout) },
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_SIGNPOST, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_ReadSignpost) },
+    { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_CROSSING_CHEST, FIND_ITEM(ITEM_POWER_BREAD) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

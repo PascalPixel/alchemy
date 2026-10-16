@@ -13,7 +13,7 @@ void WaitFrames(s32 frames);
 #endif
 void System_WaitForFrameInterrupt(void);
 #if GAME_TLA
-void Graphics_ResetFrameState(void);
+void Render_ResetFrame(void);
 #endif
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
@@ -75,7 +75,7 @@ s32 Map_EnableUpdateCallbackFar(void);
 #endif
 s32 RunFlashEraseVerifier(u8 *, u8 *);
 #if GAME_TLA
-void Runtime_WriteDebugTextTiles(const u8 *src);
+void DebugText_Print(const u8 *src);
 #endif
 #ifndef OWN_StartFlashTimer
 void StartFlashTimer(u8 index);
@@ -194,7 +194,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 void Resource_LoadCode(u32 index, void *destination);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 void ResourceMetadata_ClearRecord(void *destination);
-void Text_FormatHexToWork(u32);
+void NumberText_FormatHex(u32);
 #endif
 
 #endif

@@ -122,7 +122,7 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
       // The puffs rise from 40 pixels above the target.
       memberObject = GetBattleObjectSlotFar(effect->actors[member])->object;
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       record[0] = memberObject->x;
       record[1] = 160 << 13;
       record[2] = memberObject->z;

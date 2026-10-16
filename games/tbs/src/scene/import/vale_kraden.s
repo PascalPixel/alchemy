@@ -43,7 +43,7 @@
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
 	.set import.Effect_SoundAndFlash, 1
-	.set import.BattleFx_StartTwelveFrameBlend, 1
+	.set import.FieldFx_StartLightning, 1
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1

@@ -1135,14 +1135,14 @@ static void EV90_TOUCH(void) {
   x = (leader->x.fixed - 0x15d00000) / 2 + 0x15d00000;
   z = (leader->z.fixed - 0x5300000) / 2 + 0x5300000;
   if (!GameFlag_IsSet(FLAG_DJINNI_MET)) {
-    Owner_RefreshActiveRatios(1);
+    Party_RestoreHpPp(1);
     GameFlag_Set(FLAG_DJINNI_MET);
     Event_Begin();
     leader = Actor_Get(0);
     if (leader != 0)
       Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
     Djinn_AddToOwner(0, 0, 0);
-    Trade_AddOffer(0, 0, 0);
+    DjinnRecovery_AddStandby(0, 0, 0);
     Battle_SetObjectFlag5bWhenMode3();
     Actor_FaceActor(0, DJINNI, 0);
     Event_Wait(10);
@@ -1318,7 +1318,7 @@ static void EV90_TOUCH(void) {
   Actor_Jump(DJINNI, 2, 20);
   Event_ShowMessage(DJINNI, 0);
   Battle_ClearObjectFlag5bWhenMode3();
-  BattleFx_RunPageEffectForSlot(DJINNI, 0, 0);
+  Djinn_JoinParty(DJINNI, 0, 0);
   Event_PlayCue(42);
   Event_End();
   GameFlag_Clear(FLAG_DJINNI_MET);
@@ -2075,7 +2075,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0) {
     GameFlag_Set(0x2f0);
     FieldGameFlag_SetByte(0x2f8, 180);
     Engine_EventEnd();
-    ((struct EventRuntime *)gEventWork)->value17c = rec2;
+    gEventWork->encounterEnemyGroup = 0; // drop any battle this step rolled
   }
 }
 

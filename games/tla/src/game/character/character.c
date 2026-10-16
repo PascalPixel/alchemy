@@ -10,7 +10,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-struct TradeOfferState *Trade_GetOfferState(s32 which) {
+struct TradeOfferState *Djinn_GetRecoveryTable(s32 which) {
   if (which != 0) {
     return UnitGet(0x83);
   }
@@ -34,7 +34,7 @@ u32 Party_GetAverageLevel(void) {
   return total;
 }
 
-const u8 *Owner_GetRecord(s32 selector) {
+const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
   recordIndex = selector - 8;

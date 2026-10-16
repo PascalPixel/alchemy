@@ -7,10 +7,10 @@
 struct FieldActor;
 
 s32 TolbiShipInteriors_SelectEntrances(void);
-s32 SceneData_ReturnZero(void);
+s32 TolbiShipInteriors_GetRegions(void);
 s32 TolbiShipInteriors_GetExits(void);
-s32 TolbiShipInteriors_GetStepScript(void);
-u8 *SceneData_SelectTableBySceneIndexAndFlags(void);
+s32 TolbiShipInteriors_SelectPlacements(void);
+u8 *TolbiShipInteriors_SelectEvents(void);
 s32 TolbiShipInteriors_ApplyEntryState(void);
 extern s32 gTolbiShipInteriors_TurnSteps[];
 extern s32 gTolbiShipInteriors_ActionScriptA[];

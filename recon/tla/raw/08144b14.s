@@ -328,7 +328,7 @@ Func_08144b14:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #36]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, [r5, #8]
 	adds r0, r7, #0
 	str r3, [r7]
@@ -484,7 +484,7 @@ Func_08144b14:
 	ldr r0, [sp, #40]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r0, [sp, #48]
 	ldr r1, [sp, #28]
 	cmp r0, r1

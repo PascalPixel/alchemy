@@ -117,7 +117,7 @@ void Func_08144368(struct BattleEffectArgument *effect) {
     }
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     member = 0;
     if (effect->count != 0) {
       while (member != effect->count) {

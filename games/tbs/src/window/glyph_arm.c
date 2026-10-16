@@ -5,18 +5,42 @@
 #include "text_font.h"
 #include "edition.h"
 #include "graphics.h"
+#include "unit/window/window.h"
 
-static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
+// The text canvas renderer, compiled as ARM code and copied to RAM to run.
+//
+// A text window draws its text into a canvas of 4bpp tiles in VRAM
+// (UI_CANVAS_VRAM, mapped by UiWindow_MapTextCanvasTiles). The canvas tiles
+// run down columns: each column of tiles is as tall as the window's interior,
+// which is the window height less its two frame rows.
+
+// Sets one pixel of the text canvas to colour. stride is the window height in
+// tiles, x the pixel column, tileY the tile row and rowLine the pixel row
+// inside that tile, doubled (the byte offset of its first halfword). color
+// holds the colour index in all four nibbles; only the pixel's nibble is kept.
+static __inline__ void GlyphDot(u32 stride, u32 x, u32 tileY, u32 rowLine,
                                 u8 *vram, u32 color) {
   u16 *p;
   u32 mask;
 
-  p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tile_y) << 5) |
-              ((row_line | ((x & 7) >> 2)) << 1));
+  p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tileY) << 5) |
+              ((rowLine | ((x & 7) >> 2)) << 1));
   mask = 15 << ((x & 3) << 2);
   *p = (*p & ~mask) | (mask & color);
 }
 
+// Draws one character into a window's text canvas with its top-left corner at
+// pixel (x, y) of the window's interior, and returns how far the text
+// advances.
+//
+// With font set, the character comes from that small font: the 10-row, 1bpp
+// kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere. With
+// no font, it comes from the main font (gUiText_Glyphs, and in Japanese
+// gUiText_KanjiGlyphs for codes from 256), drawn in four passes: the first
+// three draw an outline in colour 5 (offset left, right and down when the
+// window has UI_WINDOW_OUTLINED_TEXT) and the last draws the glyph itself in
+// colour 1. The kana marks (codes 222 and 223) sit over the previous character
+// and advance by 0.
 s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
                         const u8 *font) {
   const u16 *rows;
@@ -89,7 +113,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
         else {
           rownext = row + 1;
           tileY = (y + row) >> 3;
-          vram = (u8 *)0x06002500;
+          vram = UI_CANVAS_VRAM;
           rowLine = ((y + row) & 7) << 1;
           do {
             if (bits & 1)
@@ -120,7 +144,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       if (y <= 31) {
         u8 *vram;
 
-        vram = (u8 *)0x06002500;
+        vram = UI_CANVAS_VRAM;
         while (1) {
           u32 tileY;
           u32 rowLine;
@@ -184,7 +208,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       color = 0x1111;
     else
       color = 0x5555;
-    if (window->flags & 64) {
+    if (window->flags & UI_WINDOW_OUTLINED_TEXT) {
       if (pass <= 1) {
         if (pass == 1)
           x += 2;
@@ -201,7 +225,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
     bits <<= 16;
     next = rows + 1;
     if (y <= 31) {
-      vram = (u8 *)0x06002500;
+      vram = UI_CANVAS_VRAM;
       while (1) {
         u32 tileY;
         u32 rowLine;
@@ -237,108 +261,118 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
 #endif
 }
 
+// Builds the hardware window's horizontal extent for each of the screen's
+// 160 scanlines from the window frames in the UI tilemap src (32 tiles a row,
+// 30 shown). Each scanline gets (left << 8) | right, the WINxH format, written
+// to the second halfword of its pair in dst. A tile row with no frame tile
+// gets 0. The rounded corner tiles trim the first or last scanline of a row by
+// one pixel on that side, so the window follows the frame's rounded corners.
 void Tile_BuildMetatiles(u16 *dst, u16 *src) {
   u32 row;
   u32 col;
-  s32 a;
-  s32 b;
-  s32 c;
-  s32 d;
-  s32 e;
-  s32 f;
+  s32 left;
+  s32 right;
+  s32 topLeft;
+  s32 bottomLeft;
+  s32 topRight;
+  s32 bottomRight;
   s32 found;
-  s32 v;
+  s32 span;
 
   for (row = 0; row < 20; row++) {
-    d = 0;
-    a = d;
-    c = d;
-    f = d;
-    b = f;
-    e = f;
-    found = f;
-    col = f;
+    bottomLeft = 0;
+    left = bottomLeft;
+    topLeft = bottomLeft;
+    bottomRight = bottomLeft;
+    right = bottomRight;
+    topRight = bottomRight;
+    found = bottomRight;
+    col = bottomRight;
     dst++;
     for (; col < 30; col++) {
-      u16 cmd = *src++;
+      u16 tile = *src++;
 
-      if (cmd == 0)
+      if (tile == 0)
         continue;
+      // The row's first frame tile sets its left edge, and its right edge one
+      // tile on until a right frame tile moves it.
       if (found == 0) {
-        switch (cmd) {
-        case 0xf010:
-          a = col * 8;
-          b = a + 8;
-          c = a + 1;
-          d = a;
-          e = d + 7;
-          f = b;
+        switch (tile) {
+        case 0xf010: // top-left corner
+          left = col * 8;
+          right = left + 8;
+          topLeft = left + 1;
+          bottomLeft = left;
+          topRight = bottomLeft + 7;
+          bottomRight = right;
           found++;
           break;
-        case 0xf013:
-          a = col * 8;
-          b = a + 8;
-          c = a;
-          d = a + 1;
-          e = b;
-          f = a + 7;
+        case 0xf013: // bottom-left corner
+          left = col * 8;
+          right = left + 8;
+          topLeft = left;
+          bottomLeft = left + 1;
+          topRight = right;
+          bottomRight = left + 7;
           found++;
           break;
         case 0xf007:
-        case 0xf016:
+        case 0xf016: // left side
 #if EDITION_INTERNATIONAL || GAME_TLA
         case 0xf01a:
 #endif
-          a = col * 8;
-          b = a + 8;
-          d = a;
-          c = d;
-          f = b;
-          e = f;
+          left = col * 8;
+          right = left + 8;
+          bottomLeft = left;
+          topLeft = bottomLeft;
+          bottomRight = right;
+          topRight = bottomRight;
           found++;
         }
       } else {
-        switch (cmd) {
-        case 0xf012:
-          b = col * 8 + 8;
-          e = col * 8 + 7;
-          f = b;
+        switch (tile) {
+        case 0xf012: // top-right corner
+          right = col * 8 + 8;
+          topRight = col * 8 + 7;
+          bottomRight = right;
           break;
-        case 0xf015:
-          b = col * 8 + 8;
-          e = b;
-          f = col * 8 + 7;
+        case 0xf015: // bottom-right corner
+          right = col * 8 + 8;
+          topRight = right;
+          bottomRight = col * 8 + 7;
           break;
         case 0xf007:
-        case 0xf017:
+        case 0xf017: // right side
 #if EDITION_INTERNATIONAL || GAME_TLA
         case 0xf01b:
 #endif
-          f = col * 8 + 8;
-          b = f;
-          e = f;
+          bottomRight = col * 8 + 8;
+          right = bottomRight;
+          topRight = bottomRight;
           break;
         }
       }
     }
-    v = e + (c << 8);
-    *dst++ = v;
-    v = b + (a << 8);
+    // The row's eight scanlines: its top line, six middle lines and its
+    // bottom line.
+    span = topRight + (topLeft << 8);
+    *dst++ = span;
+    span = right + (left << 8);
     dst++;
-    *dst++ = v;
+    *dst++ = span;
     dst++;
-    *dst++ = v;
+    *dst++ = span;
     dst++;
-    *dst++ = v;
+    *dst++ = span;
     dst++;
     src += 2;
-    *dst++ = v;
+    *dst++ = span;
     dst++;
-    *dst++ = v;
+    *dst++ = span;
     dst++;
-    *dst++ = v;
-    v = f + (d << 8);
+    *dst++ = span;
+    span = bottomRight + (bottomLeft << 8);
     dst++;
-    *dst++ = v;
+    *dst++ = span;
   }
 }

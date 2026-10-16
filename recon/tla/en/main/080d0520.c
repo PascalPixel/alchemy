@@ -18,8 +18,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
     value = mode & 0xff;
     switch (kind) {
     case 0:
-        Blend_SetDarkenTarget0(0);
-        Blend_SetDarkenTarget16(frames);
+        Fade_FromBlack(0);
+        Fade_ToBlack(frames);
         break;
     case 1:
         BattleFx_ApplyColorToTargetBuffer(0x8000, 0);

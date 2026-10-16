@@ -70,10 +70,10 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_StartTwelveFrameBlend, 1
-	.set import.BattleFx_SetBlock30ValuesMaxZero, 1
-	.set import.BattleFx_SetBlock30Values12Zero, 1
-	.set import.BattleFx_SetBlock30Values128One, 1
+	.set import.FieldFx_StartLightning, 1
+	.set import.FieldFx_StopLightning, 1
+	.set import.FieldFx_LastLightning, 1
+	.set import.FieldFx_ResumeLightning, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

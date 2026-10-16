@@ -12,7 +12,7 @@ struct TitleWork {
 
 extern char ResourceId_LogoOnBlack;
 
-void Blend_SetDarkenTarget16(s32 frames);
+void Fade_ToBlack(s32 frames);
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH: forwarding through the inline keeps the buffer address a
@@ -39,7 +39,7 @@ void Func_02000490(void) {
   s32 blank;
 
   id = (s32)&ResourceId_LogoOnBlack;
-  Blend_SetDarkenTarget16(0);
+  Fade_ToBlack(0);
   {
     /* FAKEMATCH: the control value is pinned to r3 as a halfword, and a
      * one-pass block keeps it ahead of the register's address: the native loads

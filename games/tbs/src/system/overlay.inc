@@ -64,8 +64,8 @@
 	import Resource_DecodeByteLz, Resource_DecodeByteLzFar
 	import Resource_DecodeType01, Resource_DecodeType01Far
 	import Resource_ResetEntry, Resource_ResetEntryFar
-	import Resource_ActivateEntry, Resource_ActivateEntryFar
-	import Engine_VramLoad, VramBlock_LoadCachedFar
+	import VramCache_ReleaseVram, VramCache_ReleaseVramFar
+	import Engine_VramLoad, VramCache_LoadFar
 	import Resource_FindFreeEntry, Resource_FindFreeEntryFar
 	import AffineMatrix_BuildForEffect, AffineMatrix_BuildForEffectFar
 	import Runtime_PushSlotEntry, Runtime_PushSlotEntryFar
@@ -73,19 +73,19 @@
 	import Engine_ResourceGetTableEntry, Resource_GetTableEntryFar
 	import Resource_GetTableEntry, Resource_GetTableEntryFar
 	import RuntimeDispatch_NoOpHook, RuntimeDispatch_NoOpHookFar
-	import Blend_SetDarkenTarget16, Blend_SetDarkenTarget16Far
-	import Engine_BlendSetDarkenTarget16, Blend_SetDarkenTarget16Far
-	import Blend_WaitForTransition, Blend_WaitForTransitionFar
+	import Fade_ToBlack, Fade_ToBlackFar
+	import Engine_BlendSetDarkenTarget16, Fade_ToBlackFar
+	import Fade_Wait, Fade_WaitFar
 	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
 	import SerialRuntime_PollAndTransfer, SerialRuntime_PollAndTransferFar
 	import QueueIoWriteDelay2, QueueIoWriteDelay2Far
 	import QueueIoWriteDelay3, QueueIoWriteDelay3Far
 	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
 	import Sound_LoadPresetParameters, Sound_LoadPresetParametersFar
-	import SerialRuntime_BeginTransferA, SerialRuntime_BeginTransferAFar
-	import SerialRuntime_BeginTransferB, SerialRuntime_BeginTransferBFar
+	import SerialRuntime_BeginSend, SerialRuntime_BeginSendFar
+	import SerialRuntime_BeginReceive, SerialRuntime_BeginReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
-	import Scheduler_SetCallbackMask, Scheduler_SetCallbackMaskFar
+	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
 @ farcall/field.h
 	import AnimationObjects_SelectAnimation, AnimationObjects_SelectAnimationFar
 	import Object_InitializeMode, AnimationObjects_SelectAnimationFar
@@ -195,7 +195,7 @@
 	import SaveState_CountRecordsExcludingFlagged, SaveState_CountRecordsExcludingFlaggedFar
 	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
 @ farcall/game.h
-	import Trade_GetOfferState, Trade_GetOfferStateFar
+	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	import UnitGet, UnitGetFar
 	import UnitCalc, UnitCalcFar
 	import Engine_DebugGetItem, Item_GetDirectFar
@@ -215,8 +215,8 @@
 	import GameFlag_ClearBit, GameFlag_ClearBitFar
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
-	import Owner_AdjustFirstValue, Owner_AdjustFirstValueFar
-	import UnitPpAdd, UnitPpAddFar
+	import Unit_AddHp, Unit_AddHpFar
+	import Unit_AddPp, Unit_AddPpFar
 	import Engine_OwnerRecalculateRatios, UnitRatioFar
 	import GetPartyMemberCount, Party_CountActiveOwnersFar
 	import Party_CountActiveOwners, Party_CountActiveOwnersFar
@@ -225,17 +225,17 @@
 	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
 	import Djinn_AddToOwner, Djinn_AddToOwnerFar
 	import Djinn_Activate, Djinn_ActivateFar
-	import Trade_AddOffer, Trade_AddOfferFar
+	import DjinnRecovery_AddStandby, DjinnRecovery_AddStandbyFar
 	import Djinn_Transfer, Djinn_TransferFar
-	import Party_AdvanceOwnerCountToTarget, Party_AdvanceOwnerCountToTargetFar
+	import Unit_LevelUpTo, Unit_LevelUpToFar
 	import Party_AdjustCoins, Party_AdjustCoinsFar
 	import Item_AdjustCounter, Item_AdjustCounterFar
 	import Inventory_Count, Inventory_CountFar
 	import PartyInventory_HasSpace, PartyInventory_HasSpaceFar
-	import Owner_RefreshActiveRatios, Owner_RefreshActiveRatiosFar
-	import Owner_RefreshRatiosOnFlag, Owner_RefreshRatiosOnFlagFar
-	import Party_SetFlag32AndRefreshMembers, Party_SetFlag32AndRefreshMembersFar
-	import Party_ApplyStatePreset, Party_ApplyStatePresetFar
+	import Party_RestoreHpPp, Party_RestoreHpPpFar
+	import Party_RestorePpOfLitElements, Party_RestorePpOfLitElementsFar
+	import Party_BeginChildhood, Party_BeginChildhoodFar
+	import Party_EndChildhood, Party_EndChildhoodFar
 	import Inventory_Discard, Inventory_DiscardFar
 	import Party_GetAverageLevel, Party_GetAverageLevelFar
 	import PartyInventory_CountItem, PartyInventory_CountItemFar
@@ -262,7 +262,7 @@
 	import Engine_PartyGiveItem, PartyInventory_GiveItemFar
 	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	import Engine_EventChooseYesNo, Inventory_PromptAndSetObjectModeFar
-	import UiText_DrawQuantityPairWithCue, UiText_DrawQuantityPairWithCueFar
+	import Party_LearnAbility, Party_LearnAbilityFar
 	import Object_GetById, Object_GetByIdFar
 	import Engine_ActorDestroy, ObjectTable_DestroyByIdFar
 	import Engine_ActorSetSpeed, ObjectMotion_SetSpeedParametersFar
@@ -290,7 +290,7 @@
 	import ObjectMotion_Launch, ObjectMotion_LaunchFar
 	import Engine_ActorStartRepeatedMotion, ObjectMotion_SetVariantCallbackFar
 	import Engine_ActorRunRepeatedMotion, Motion_SetVarCbAndRefreshFar
-	import BattleFx_RunRisingObjectSequence, BattleFx_RunRisingObjectSequenceFar
+	import Actor_JumpDownLedge, Actor_JumpDownLedgeFar
 	import Engine_ActorFaceActor, ObjectMotion_SetAngleTowardFar
 	import Engine_ActorFaceEachOther, Object_LinkPairFar
 	import Object_LinkPair, Object_LinkPairFar
@@ -327,21 +327,21 @@
 	import BattleFx_SetWeightedResult, BattleFx_SetWeightedResultFar
 	import Engine_BattleFxSetWeightedResult, BattleFx_SetWeightedResultFar
 	import BattleFx_SetPhaseRequest, BattleFx_SetPhaseRequestFar
-	import Engine_PartySetFields1ceAnd1d0, Party_SetFields1ceAnd1d0Far
-	import Party_SetFields1ceAnd1d0, Party_SetFields1ceAnd1d0Far
+	import Engine_EventSetNextDestination, Event_SetNextDestinationFar
+	import Event_SetNextDestination, Event_SetNextDestinationFar
 	import Event_SetDefeatDestination, Event_SetDefeatDestinationFar
 	import Event_RequestDestination, Event_RequestDestinationFar
 	import Engine_LeaderCheckAhead, Field_TryJumpForwardFar
 	import Field_TryJumpForward, Field_TryJumpForwardFar
-	import FieldEffect_UpdateGridPlacement, FieldEffect_UpdateGridPlacementFar
-	import battle_owner_69, battle_owner_69Far
-	import Battle_InitializeRenderObject, Battle_InitializeRenderObjectFar
+	import Field_ClimbDown, Field_ClimbDownFar
+	import Field_ClimbUp, Field_ClimbUpFar
+	import Leader_StopMoving, Leader_StopMovingFar
 	import Effect_SoundAndFlash, FieldFx_StartGroundParticlesFar
 	import FieldFx_StartGroundParticles, FieldFx_StartGroundParticlesFar
-	import BattleFx_StartTwelveFrameBlend, BattleFx_StartTwelveFrameBlendFar
-	import BattleFx_SetBlock30ValuesMaxZero, BattleFx_SetBlock30ValuesMaxZeroFar
-	import BattleFx_SetBlock30Values12Zero, BattleFx_SetBlock30Values12ZeroFar
-	import BattleFx_SetBlock30Values128One, BattleFx_SetBlock30Values128OneFar
+	import FieldFx_StartLightning, FieldFx_StartLightningFar
+	import FieldFx_StopLightning, FieldFx_StopLightningFar
+	import FieldFx_LastLightning, FieldFx_LastLightningFar
+	import FieldFx_ResumeLightning, FieldFx_ResumeLightningFar
 	import BattleFx_StartBufferBlend, BattleFx_StartBufferBlendFar
 	import FieldEffect_InitSparkles, FieldEffect_InitSparklesFar
 	import InitializeSceneRecordBuffer, FieldEffect_InitSparklesFar
@@ -383,10 +383,10 @@
 	import Ui_SetBank15PaletteAndClearRenderMode, Ui_SetBank15PaletteAndClearRenderModeFar
 	import Object_ReplaceResourceEntry, Object_ReplaceResourceEntryFar
 	import BattleParty_ApplyDrain, BattleParty_ApplyDrainFar
-	import Object_CallSpawnRoutineAtOrigin, Object_CallSpawnRoutineAtOriginFar
+	import Menu_AskYesNo, Menu_AskYesNoFar
 	import Audio_PlayCueFromEventWork, Audio_PlayCueFromEventWorkFar
-	import BattleFx_RunPageEffectForSlot, BattleFx_RunPageEffectForSlotFar
-	import Engine_BattleFxRunPageEffectForSlot, BattleFx_RunPageEffectForSlotFar
+	import Djinn_JoinParty, Djinn_JoinPartyFar
+	import Engine_BattleFxRunPageEffectForSlot, Djinn_JoinPartyFar
 	import BattleFx_HasReachedTarget, BattleFx_HasReachedTargetFar
 	import EffectSlot_SetObjectMode, EffectSlot_SetObjectModeFar
 	import EffectSlot_SetCallback, EffectSlot_SetCallbackFar

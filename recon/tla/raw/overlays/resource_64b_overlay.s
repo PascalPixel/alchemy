@@ -46,7 +46,7 @@ Func_0200050c:
 	adds r3, r3, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl UnitPpAdd
+	bl Unit_AddPp
 .L_0200856c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -2309,7 +2309,7 @@ Func_02001e34:
 	movs r1, #0
 	movs r2, #7
 	adds r0, r7, #0
-	bl Trade_AddOffer
+	bl DjinnRecovery_AddStandby
 	bl Func_02004da8
 	movs r1, #9
 	movs r2, #0
@@ -5665,7 +5665,7 @@ Func_02004744:
 	ldrsh r0, [r3, r2]
 	lsls r1, r1, #1
 	ldr r2, .L_0200c8b8
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 .L_0200c8ae:
 	pop {r5, r6, r7, pc}
 .L_0200c8b0:

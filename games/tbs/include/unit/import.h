@@ -24,7 +24,7 @@ void Engine_InventorySnapshotRestore(void);
 void Engine_MapSetWorkFlagBits9To11(u32 v);
 void Engine_OwnerRecalculateRatios(s32 owner_id);
 s32 Engine_PartyInventoryFindOwner(s32 item_id);
-void Engine_PartySetFields1ceAnd1d0(s32 first, s32 second);
+void Engine_EventSetNextDestination(s32 first, s32 second);
 void Engine_ResetSceneEffectCounter(void);
 s32 Engine_ShopConfirmAct(s32 unitId);
 void Engine_UiTextDrawQuantity(u32 value, u32 kind);

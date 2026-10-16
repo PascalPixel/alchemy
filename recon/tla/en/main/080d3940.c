@@ -13,7 +13,7 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 u8 *Runtime_AllocateHeapBlock(s32 block, s32 size);
 void Runtime_ReleaseHeapBlock(s32 block);
 void Func_08038248(s32 resource, u8 *buffer);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void ResourceMetadata_ClearRecordFar(void *record);
 
 struct ObjectSprite {
@@ -135,7 +135,7 @@ void Func_080d3b28(u32 id, s32 resource)
             buffer = Runtime_AllocateHeapBlock(68, 0x608) + 0x400;
             Dma_Fill32(0, buffer, 0x80);
             Func_08038248(resource, buffer);
-            tile = VramBlock_LoadCached(sprite->vramBlock, 0x80, buffer);
+            tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
             Runtime_ReleaseHeapBlock(68);
             object->unk5c[0] = kind;
             ResourceMetadata_ClearRecordFar(sprite->record);

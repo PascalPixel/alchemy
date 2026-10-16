@@ -14,7 +14,7 @@ s32 Party_AdjustCoins(s32 amount) {
   return value;
 }
 
-s32 Party_AdjustSixDigitCounterB(s32 amount) {
+s32 Party_AdjustShopCredit(s32 amount) {
   s32 value;
 
   value = gPartyState.counterB;
@@ -27,7 +27,7 @@ s32 Party_AdjustSixDigitCounterB(s32 amount) {
   return value;
 }
 
-s32 Party_AdjustCounterCappedAt28(s32 amount) {
+s32 Party_AdjustShopGifts(s32 amount) {
   s32 value;
 
   value = gPartyState.counterC;

@@ -293,7 +293,7 @@ Func_081661dc:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #24]
 	ldr r1, [sp, #12]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r2, [sp, #32]
 	cmp r2, #3
 	ble .L_081664d4

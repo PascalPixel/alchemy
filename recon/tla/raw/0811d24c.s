@@ -14,7 +14,7 @@ Func_0811d24c:
 	subs r3, r7, #4
 	ldr r0, [r3]
 	movs r1, #20
-	bl SerialRuntime_BeginTransferA
+	bl SerialRuntime_BeginSend
 	movs r3, #1
 	movs r5, #150
 	negs r3, r3
@@ -52,7 +52,7 @@ Func_0811d24c:
 	beq .L_0811d2ea
 	subs r3, #4
 	ldr r0, [r3]
-	bl SerialRuntime_BeginTransferA
+	bl SerialRuntime_BeginSend
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2

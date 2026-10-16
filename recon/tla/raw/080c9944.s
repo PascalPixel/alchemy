@@ -82,7 +82,7 @@ Game_ResetForNewGame:
 	ldrb r0, [r2]
 	ldrb r1, [r3]
 	bl Func_08038348
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	bl Scheduler_ResetTaskTable
 	bl Scheduler_ResetTaskTable
 	ldr r2, .L_080c9a1c
@@ -170,7 +170,7 @@ Game_ResetForNewGame:
 .L_080c9a94:
 	.4byte gRenderOamEnabled
 .L_080c9a98:
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	mov r1, r8
 	movs r0, #0
 	ldrsh r3, [r1, r0]

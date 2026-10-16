@@ -51,6 +51,6 @@
 	.set import.Engine_ItemShowFound, 1
 	.set import.RunSceneTransitionEffect, 1
 	.set import.Engine_PsynergyCancel, 1
-	.set import.BattleFx_RunPageEffectForSlot, 1
+	.set import.Djinn_JoinParty, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

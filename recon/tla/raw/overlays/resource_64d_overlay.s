@@ -2984,7 +2984,7 @@ Func_020023a4:
 	lsls r1, r1, #4
 	adds r2, r7, #0
 	mov r11, r0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r2, #128
 	lsls r2, r2, #4
 	mov r10, r0
@@ -3365,7 +3365,7 @@ Func_020026f4:
 	lsls r1, r1, #4
 	adds r2, r6, #0
 	adds r5, r0, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r1, #132
 	lsls r1, r1, #6
 	adds r1, #130

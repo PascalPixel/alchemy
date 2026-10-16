@@ -6,21 +6,21 @@
 #include "field_scene.h"
 
 u8 *Tolbi_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
+s32 Tolbi_GetRegions(void);
 u8 *Tolbi_GetExits(void);
 u8 *Tolbi_GetPlacements(void);
 u8 *Tolbi_SelectEvents(void);
-s32 Tolbi_ApplyEntryState(s32 a0);
-extern s32 gTolbiPlacement2[];
-extern s32 gTolbiActor16Action[];
-extern s32 gTolbiActor17Action[];
+s32 Tolbi_ApplyEntryState(s32 unused);
+extern s32 gTolbiMirroredActor[];
+extern s32 gTolbiOlderBrotherRun[];
+extern s32 gTolbiYoungerSiblingRun[];
 extern struct SceneEntrance gTolbiEntrances[];
 extern u32 gTolbiExits[];
 extern struct ScenePlacement gTolbiPlacements[];
-extern struct SceneEvent gTolbiEvents[];
-extern struct SceneEvent gTolbiEvents2[];
-extern struct SceneEvent gTolbiEvents3[];
-extern u16 gTolbiCellStepData[];
-extern struct MapCellAnim gTolbiCellSteps[];
+extern struct SceneEvent gTolbiEventsFestival[];
+extern struct SceneEvent gTolbiEventsFinalsDay[];
+extern struct SceneEvent gTolbiEventsAfterColosso[];
+extern u16 gTolbiDoorOpening[];
+extern struct MapCellAnim gTolbiDoors[];
 
 #endif

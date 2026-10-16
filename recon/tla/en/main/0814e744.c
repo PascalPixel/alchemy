@@ -96,7 +96,7 @@ void Func_0814e744(struct BattleEffectArgument *effect) {
     SHARDS[i].variant = -1;
 
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+  Transform_SetLookAt(camera, camera + 3);
 
   // Scatter each target's shards around the middle of its body.
   for (member = 0; member != effect->count; member++) {

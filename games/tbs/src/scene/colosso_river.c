@@ -434,7 +434,7 @@ static void EV50_TOUCH(void) {
    * -approach + 1 folds into movs #1, subs (differ 7 in tbs-en). */
   BattleFx_SetWeightedResult(72, base - approach + 1);
   Battle_SetStart(3);
-  Party_SetFields1ceAnd1d0((s32)&SceneId_ColossoRiver, 4);
+  Event_SetNextDestination((s32)&SceneId_ColossoRiver, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoRiver, 5);
   GameFlag_Set(0x11a);
 }
@@ -454,7 +454,7 @@ static void ColossoRiver_RunPostMatchScene(s32 a0) {
 
   Engine_ActorDestroy(24);
   Engine_ActorDestroy(25);
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_EventBegin();
   Actor_SetPosition(8, 0x5280000, 0xc00000);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5080000, 0xc00000);

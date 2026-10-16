@@ -22,7 +22,7 @@ s32 BattleHitCheck(s32 actor, s32 target, s32 range, s32 effect, s32 table);
 s32 BattleAtkCalc(s32 amount, s32 reduction, s32 adjustment, s32 selector);
 s32 BattlePowerCalc(s32 value, s32 selector, s32 multiplier);
 s32 BattleRecoveryCalc(s32 value, s32 selector, s32 multiplier);
-s16 UnitPpAddFar(s32 unit, s32 amount);
+s16 Unit_AddPpFar(s32 unit, s32 amount);
 s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
 #endif
 #if GAME_TLA

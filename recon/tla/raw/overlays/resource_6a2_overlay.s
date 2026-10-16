@@ -1832,7 +1832,7 @@ Func_0200130c:
 	adds r2, r5, #0
 	lsls r1, r1, #1
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r5, #0
 	bl MemFree
 	movs r1, #144

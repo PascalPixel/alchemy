@@ -11,7 +11,7 @@ extern const u8 gField_CachedTilesA[];
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 handle, s32 size, void *source);
+void VramCache_Load(s32 handle, s32 size, void *source);
 void Func_020055cc(const u8 *data, void *buffer);
 
 static __inline__ void *Mem_Alloc(s32 size) {
@@ -23,7 +23,7 @@ static __inline__ void *Mem_Alloc(s32 size) {
 static __inline__ void Vram_Load(s32 handle, s32 size, void *source) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  VramBlock_LoadCached(handle, size, source);
+  VramCache_Load(handle, size, source);
 }
 
 void Func_020038ac(void) {

@@ -19,7 +19,6 @@ struct AnimationMetadata {
   u8 boxX;
   u8 boxY;
   u8 frameCodec;
-  u8 reserved0b;
   void **frames;
   u8 **animation;
 };

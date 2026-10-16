@@ -21,7 +21,7 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventWait, 1
 	.set import.Engine_EventBegin, 1
 	.set import.Engine_EventEnd, 1
@@ -63,13 +63,13 @@
 	.set import.Battle_GetWorkObject1e0, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
-	.set import.Party_SetFields1ceAnd1d0, 1
+	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
 	.set import.FieldFx_StartGroundParticles, 1
-	.set import.BattleFx_StartTwelveFrameBlend, 1
-	.set import.BattleFx_SetBlock30ValuesMaxZero, 1
-	.set import.BattleFx_SetBlock30Values12Zero, 1
-	.set import.BattleFx_SetBlock30Values128One, 1
+	.set import.FieldFx_StartLightning, 1
+	.set import.FieldFx_StopLightning, 1
+	.set import.FieldFx_LastLightning, 1
+	.set import.FieldFx_ResumeLightning, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

@@ -12,7 +12,7 @@
 #include "battle_party.h"
 #include "battle_unit.h"
 
-struct BattleSummonState *Trade_GetOfferStateFar(s32 owner);
+struct BattleSummonState *Djinn_GetRecoveryTableFar(s32 owner);
 struct BattleUnit *UnitGet(s32 unitId);
 
 void Func_08118f6c(void) {
@@ -23,7 +23,7 @@ void Func_08118f6c(void) {
   u32 availableMask;
 
   partySize = BattleParty_PrepareActiveOwners(partyMembers);
-  availableMask = Trade_GetOfferStateFar(0)->availableMask & 0xffff0000;
+  availableMask = Djinn_GetRecoveryTableFar(0)->availableMask & 0xffff0000;
 
   element = 0;
   do {
@@ -67,5 +67,5 @@ void Func_08118f6c(void) {
     element++;
   } while (element <= 15);
 
-  Trade_GetOfferStateFar(0)->availableMask = availableMask;
+  Djinn_GetRecoveryTableFar(0)->availableMask = availableMask;
 }

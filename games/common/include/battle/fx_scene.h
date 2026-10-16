@@ -6,6 +6,7 @@
 #include "effect_slot.h"
 
 struct AnimationObject;
+union FieldObject;
 
 struct ArcEffectObject {
   u8 unk00[6];
@@ -16,7 +17,7 @@ struct ArcEffectObject {
   s16 phase;
   s16 step;
   struct FieldActor *linkedObject;
-  void *callback;
+  void (*callback)(union FieldObject *object);
 };
 
 struct BattleFxScene {
@@ -39,7 +40,7 @@ struct BattleFxScene {
   s8 childOption;
   s8 childMode;
   u8 unk36[2];
-  void *savedCallback;
+  void (*savedCallback)(union FieldObject *object);
   const s32 *savedScript;
   u8 unk40[4];
   u8 savedPalette;

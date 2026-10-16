@@ -9,6 +9,8 @@
 #include "farcall.h"
 #endif
 
+union FieldObject;
+
 struct MotionObject {
   u8 unk00[0x06];
   u16 angle;
@@ -39,7 +41,7 @@ struct MotionObject {
   u8 unk59;
   u8 autoFaceMotion;
   u8 unk5b[0x11];
-  void (*update)();
+  void (*update)(union FieldObject *object);
 };
 
 struct SpriteEntry {

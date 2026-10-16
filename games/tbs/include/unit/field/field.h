@@ -286,22 +286,27 @@ void Runtime_ScheduleCallbackAndReleaseBlock28(void);
 void Scheduler_ScheduleCallbackBAfterFrames(void);
 void PaletteQueue_StepCycles(void);
 
-s32 Curve_GetFirstSampleA(const s8 *samples);
-s32 Curve_LerpTwoSamples(const s8 *samples, s32 x);
-s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 y);
-s32 Curve_StepAtSummedPosition(const s8 *samples, s32 x, s32 y);
-s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 x, s32 y);
-s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 x, s32 y);
-s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 x, s32 y);
-s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 x, s32 y);
-s32 Curve_StepAtHalf(const s8 *samples, u32 x);
-s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 y);
-s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x);
-s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y);
-s32 Curve_LookupSampleByTable(const s8 *samples, u32 x, u32 y);
-s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 x, u32 y);
-s32 Curve_GetFirstSampleB(const s8 *samples);
-s32 Curve_GetFirstSampleC(const s8 *samples);
+s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 pixelX,
+                                   s32 pixelY);
+s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 pixelX,
+                                  s32 pixelY);
+s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 pixelX,
+                                       s32 pixelY);
+s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
+                                  s32 pixelY);
+s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
+                                      s32 pixelY);
+s32 Curve_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y);

@@ -1,5 +1,7 @@
 #include "unit/field/facing.h"
 #include "unit/field/object_script.h"
+#include "unit/field/operand.h"
+#include "unit/field/mapdata.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -3356,10 +3358,6 @@ enum ScriptOperandOperation {
   SCRIPT_OPERAND_COMPARE
 };
 
-typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-
-extern OperandFunc gScript_OperandHandlerTable[];
-
 // Defines the handler for a 32-bit work value: set it, add to it, or compare
 // it (into comparisonResult).
 #define DEFINE_OPERAND_WORD(name, field)                                       \
@@ -6289,21 +6287,31 @@ void PaletteQueue_StepCycles(void) {
   }
 }
 
+// A sample is in eight-pixel units. UB: signed samples may be negative, so
+// their left shift is undefined. Multiplication fits s32 for both s8 and u8.
+#ifdef UBFIX
+#define CURVE_HEIGHT_FIXED(sample) ((sample) * (1 << CURVE_VALUE_SHIFT))
+#else
+#define CURVE_HEIGHT_FIXED(sample) ((sample) << CURVE_VALUE_SHIFT)
+#endif
+
 // The terrain height functions (gMap_TerrainHeightFunctions): each takes a
 // cell's height samples after its kind byte and a pixel (x, y) within the
 // 16x16 cell, and returns the ground height there in 16.16 pixels. This one
 // is flat: the first sample everywhere.
-s32 Curve_GetFirstSampleA(const s8 *samples) {
-  return samples[0] << CURVE_VALUE_SHIFT;
+s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
 // A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
-s32 Curve_LerpTwoSamples(const s8 *samples, s32 x) {
+s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 x, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 start;
   s32 delta;
 
-  start = samples[0] << CURVE_VALUE_SHIFT;
-  delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * x;
+  start = CURVE_HEIGHT_FIXED(samples[0]);
+  delta = (CURVE_HEIGHT_FIXED(samples[1]) - start) * x;
   if (delta < 0) {
     delta += CURVE_FULL_STEPS - 1;
   }
@@ -6311,12 +6319,13 @@ s32 Curve_LerpTwoSamples(const s8 *samples, s32 x) {
 }
 
 // A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
-s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 y) {
+s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 y) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 base;
   s32 offset;
 
-  base = samples[0] << CURVE_VALUE_SHIFT;
-  offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * y;
+  base = CURVE_HEIGHT_FIXED(samples[0]);
+  offset = (CURVE_HEIGHT_FIXED(samples[1]) - base) * y;
   if (offset < 0) {
     offset += CURVE_FULL_STEPS - 1;
   }
@@ -6325,14 +6334,15 @@ s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 y) {
 
 // A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 // it and the higher of the two on it.
-s32 Curve_StepAtSummedPosition(const s8 *samples, s32 x, s32 y) {
+s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 first;
   s32 second;
   s32 maximum;
   u32 position;
 
-  first = samples[0] << CURVE_VALUE_SHIFT;
-  second = samples[1] << CURVE_VALUE_SHIFT;
+  first = CURVE_HEIGHT_FIXED(samples[0]);
+  second = CURVE_HEIGHT_FIXED(samples[1]);
   maximum = first;
   if (second > first) {
     maximum = second;
@@ -6349,15 +6359,16 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 x, s32 y) {
 
 // A step across the diagonal x = y: sample 0 where y < x, sample 1 where
 // y > x and the higher of the two on it.
-s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 x, s32 y) {
+s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 first;
   s32 second;
   s32 maximum;
   s32 difference;
   u32 position = x;
 
-  first = samples[0] << CURVE_VALUE_SHIFT;
-  second = samples[1] << CURVE_VALUE_SHIFT;
+  first = CURVE_HEIGHT_FIXED(samples[0]);
+  second = CURVE_HEIGHT_FIXED(samples[1]);
   maximum = first;
   if (second > first) {
     maximum = second;
@@ -6375,15 +6386,16 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 x, s32 y) {
 
 // A slope that bends on the diagonal x + y = 15: from sample 0 at the top
 // left corner to sample 1 on the diagonal to sample 2 at the bottom right.
-s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 x, s32 y) {
+s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 first;
   s32 middle;
   s32 last;
   s32 result;
 
-  first = *samples++ << CURVE_VALUE_SHIFT;
-  middle = *samples << CURVE_VALUE_SHIFT;
-  last = samples[1] << CURVE_VALUE_SHIFT;
+  first = CURVE_HEIGHT_FIXED(*samples++);
+  middle = CURVE_HEIGHT_FIXED(*samples);
+  last = CURVE_HEIGHT_FIXED(samples[1]);
   x += y;
   if (x == CURVE_FULL_STEPS - 1) {
     result = middle;
@@ -6398,19 +6410,20 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 x, s32 y) {
 
 // A slope that bends on the diagonal x = y: from sample 0 at the top right
 // corner to sample 1 on the diagonal to sample 2 at the bottom left.
-s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 x, s32 y) {
+s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 first;
   s32 second;
   s32 third;
   s32 difference;
   s32 delta;
 
-  first = *samples++ << CURVE_VALUE_SHIFT;
-  second = samples[0] << CURVE_VALUE_SHIFT;
+  first = CURVE_HEIGHT_FIXED(*samples++);
+  second = CURVE_HEIGHT_FIXED(samples[0]);
   third = samples[1];
   difference = y - x;
   x = difference + CURVE_FULL_STEPS - 1;
-  third <<= CURVE_VALUE_SHIFT;
+  third = CURVE_HEIGHT_FIXED(third);
 
   if (x == CURVE_FULL_STEPS - 1)
     return second;
@@ -6432,43 +6445,51 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 x, s32 y) {
 
 // A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
 // 1, sample 0 in the corners.
-s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 x, s32 y) {
+s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
+  const s8 *samples = (const s8 *)heightBytes;
   s32 start;
 
-  start = samples[0] << CURVE_VALUE_SHIFT;
-  return start + (((samples[1] << CURVE_VALUE_SHIFT) - start) *
+  start = CURVE_HEIGHT_FIXED(samples[0]);
+  return start + ((CURVE_HEIGHT_FIXED(samples[1]) - start) *
                   gCurve_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
 
 // A step along x: sample 0 for x < 8, sample 1 from x = 8.
-s32 Curve_StepAtHalf(const s8 *samples, u32 x) {
+s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  u32 x = pixelX;
   s32 value;
   if (x < CURVE_HALF_STEPS)
     value = samples[0];
   else
     value = samples[1];
-  return value << CURVE_VALUE_SHIFT;
+  return CURVE_HEIGHT_FIXED(value);
 }
 
 // A step along y: sample 0 for y < 8, sample 1 from y = 8.
-s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 y) {
+s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  u32 y = pixelY;
   s32 value;
   if (y < CURVE_HALF_STEPS)
     value = samples[0];
   else
     value = samples[1];
-  return value << CURVE_VALUE_SHIFT;
+  return CURVE_HEIGHT_FIXED(value);
 }
 
 // A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
 // x = 8, towards sample 2 at x = 16.
-s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x) {
+s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
+                                 s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  u32 x = pixelX;
   s32 a;
   s32 b;
   s32 delta;
 
-  a = *samples++ << CURVE_VALUE_SHIFT;
-  b = *samples++ << CURVE_VALUE_SHIFT;
+  a = CURVE_HEIGHT_FIXED(*samples++);
+  b = CURVE_HEIGHT_FIXED(*samples++);
   if (x < CURVE_HALF_STEPS) {
     delta = (b - a) * x;
     if (delta < 0) {
@@ -6480,7 +6501,7 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x) {
   {
     s32 pos;
 
-    a = *samples << CURVE_VALUE_SHIFT;
+    a = CURVE_HEIGHT_FIXED(*samples);
     pos = x;
     a -= b;
     pos -= CURVE_HALF_STEPS;
@@ -6492,16 +6513,19 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x) {
   }
 }
 
-// The same along y.
-s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y) {
+// An unsigned-sample slope along y that bends at the middle.
+s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
+                                  s32 pixelY) {
+  const u8 *samples = heightBytes;
+  u32 y = pixelY;
   s32 a;
   s32 b;
   s32 pos;
   s32 delta;
   s32 tail;
 
-  a = *samples++ << CURVE_VALUE_SHIFT;
-  b = *samples++ << CURVE_VALUE_SHIFT;
+  a = CURVE_HEIGHT_FIXED(*samples++);
+  b = CURVE_HEIGHT_FIXED(*samples++);
   if (y < CURVE_HALF_STEPS) {
     delta = (b - a) * y;
     if (delta < 0) {
@@ -6510,7 +6534,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y) {
     return a + (delta >> 3);
   }
 
-  a = *samples << CURVE_VALUE_SHIFT;
+  a = CURVE_HEIGHT_FIXED(*samples);
   pos = y;
   a -= b;
   pos -= CURVE_HALF_STEPS;
@@ -6522,29 +6546,36 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y) {
 }
 
 // The sample gCurve_SampleIndexTable picks for (x, y).
-s32 Curve_LookupSampleByTable(const s8 *samples, u32 x, u32 y) {
-  return samples[gCurve_SampleIndexTable[x + (y << 4)]] << CURVE_VALUE_SHIFT;
+s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  u32 x = pixelX;
+  u32 y = pixelY;
+  return CURVE_HEIGHT_FIXED(samples[gCurve_SampleIndexTable[x + (y << 4)]]);
 }
 
 // The same, with the table mirrored left to right.
-s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 x, u32 y) {
-  return samples[gCurve_SampleIndexTable[((y << 4) - x) + CURVE_FULL_STEPS - 1]]
-         << CURVE_VALUE_SHIFT;
+s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
+                                      s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  u32 x = pixelX;
+  u32 y = pixelY;
+  return CURVE_HEIGHT_FIXED(
+      samples[gCurve_SampleIndexTable[((y << 4) - x) + CURVE_FULL_STEPS - 1]]);
 }
 
 // Flat, as Curve_GetFirstSampleA.
-s32 Curve_GetFirstSampleB(const s8 *samples) {
-  return samples[0] << CURVE_VALUE_SHIFT;
+s32 Curve_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
 // Flat, as Curve_GetFirstSampleA.
-s32 Curve_GetFirstSampleC(const s8 *samples) {
-  return samples[0] << CURVE_VALUE_SHIFT;
+s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+  const s8 *samples = (const s8 *)heightBytes;
+  return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
-
-extern TerrainHeightFn gMap_TerrainHeightFunctions[16];
+#undef CURVE_HEIGHT_FIXED
 
 // Returns the ground height of a layer at (x, y) in 16.16 pixels: the
 // height function of the cell's terrain kind applied to its samples.
@@ -6561,8 +6592,17 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   }
   cells += x / 16 + (y / 16 << 7);
   attributes = Ram_MapCollision + cells->attributeB * 4;
+  // UB: sequence the kind-byte read before passing the remaining samples.
+#ifdef UBFIX
+  {
+    u32 kind = *attributes++ & 15;
+
+    return gMap_TerrainHeightFunctions[kind](attributes, x & 15, y & 15);
+  }
+#else
   return gMap_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15,
                                                          y & 15);
+#endif
 }
 
 // Returns the terrain kind (the low four bits of the first collision byte)
@@ -6653,8 +6693,17 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   if (cell->collisionCode == 0xff)
     return 2;
   attributes = Ram_MapCollision + cell->attributeB * 4;
+  // UB: sequence the kind-byte read before passing the remaining samples.
+#ifdef UBFIX
+  {
+    u32 kind = *attributes++ & 15;
+
+    height = gMap_TerrainHeightFunctions[kind](attributes, x & 15, z & 15);
+  }
+#else
   height = gMap_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15,
                                                            z & 15);
+#endif
   delta = height - object->terrainHeight;
   if (delta > 0x80000)
     return 1;

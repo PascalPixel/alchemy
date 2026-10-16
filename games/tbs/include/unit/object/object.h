@@ -52,8 +52,8 @@ void Battle_SelectTerrainBackdrop(s32 behavior);
  * would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult,
  * and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split
  * evidence for object|psynergy_effects. */
-void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
-void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
+void BattleFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
+void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void RunBattleEffect07(void);
 void RunBattleEffect11(void);
 

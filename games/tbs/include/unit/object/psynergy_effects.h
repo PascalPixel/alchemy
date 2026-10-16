@@ -6,6 +6,7 @@
 #include "unit/object/object.h"
 
 struct ScenePlacement;
+union FieldObject;
 
 // One frame of a sparkle: its height offset and tile (fxdata.c).
 struct SparkleFrame {
@@ -97,7 +98,7 @@ void ObjectMotion_NoOp(void);
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames);
 void ObjectMotion_SetVariantCallback(u32 objectId, s32 count);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 count);
-void BattleFx_UpdateParticleLinearMotion(struct FieldActor *particle);
+void BattleFx_UpdateParticleLinearMotion(union FieldObject *fieldObject);
 void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param);
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param);
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
@@ -155,7 +156,11 @@ s32 BattleFx_StepRatioTransition(void);
 #endif
 void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames);
 void Event_WaitForZoomTransition(void);
-s32 BattleFx_CopyLinkedObjectPosition(void *self);
+#ifdef UBFIX
+void BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject);
+#else
+s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject);
+#endif
 void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait);
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags);
 s32 Object_ClearChildAndCollisionFlags(void *obj);
@@ -196,7 +201,7 @@ struct DescendingOrbitObject;
 struct EffectSlot;
 struct MotionObject;
 
-void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
+void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
 void Djinn_RunBattleStartHop(s32 id);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldObject_PlaceSceneActors(void);
@@ -206,18 +211,18 @@ void FieldObject_PlaceSceneActors(void);
 void BattleFx_UpdateAllSlots(void);
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
+void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject);
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor);
 void Djinn_RunJupiterJoinEffect(s32 djinniId);
-void BattleFx_SetObjectAlternatingWords(u8 *object);
-void BattleFx_AdvanceAngleWithRamp(void *obj);
+void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject);
+void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 void Djinn_RunMarsJoinEffect(s32 arg);
-void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
+void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject);
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
 void BattleFx_RunVenusDjinnCapture(s32 arg);
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect);
-void BattleFx_HalveDistanceToTarget(struct FieldActor *object);
+void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject);
 void BattleFx_RunMercuryDjinnCapture(s32 id);
 
 struct EffectVector;
@@ -228,7 +233,7 @@ void BattleFx_DispatchRequestKind(void);
 void BattleFx_ClearChildValueOnMismatch(void);
 void FieldEvent_RunTypeHandler(void);
 s32 BattleFx_RunEventAction(void *event, s32 param, s32 target);
-void ObjectGroup_ApplyRandomChildValues(void *owner);
+void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
 s32 ResourceTable_CountFreeBlocks(void);
@@ -236,11 +241,11 @@ void *Object_ReplaceResourceEntry(void *src, void *alt);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value);
-void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
-void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
+void BattleFx_UpdateScaledArcObjectA(union FieldObject *fieldObject);
+void BattleFx_UpdateScaledArcObjectB(union FieldObject *fieldObject);
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked);
-void BattleFx_FlickerObjectAndTick(s32 obj);
-void BattleFx_CycleObjectValueByCounter(s32 obj);
+void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject);
+void BattleFx_CycleObjectValueByCounter(union FieldObject *fieldObject);
 void BattleFx_UpdateAllEffectSlots(void);
 void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode);
 void BattleFx_SetupObjectPair(s32 userId, s32 targetId);
@@ -255,7 +260,6 @@ struct ArcEffectObject;
 struct Effect05Object;
 struct OrbitEffect;
 struct SparkObject;
-union FieldObject;
 
 void RunSceneTransitionEffect(s32 x, s32 y);
 void BattleFx_FinishSceneAndReleaseHeapBlock(void);
@@ -265,11 +269,11 @@ void BattleFx_AdvanceHueCycle(void);
 void BattleFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b);
 s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high);
 s32 Fixed_Remainder(s32 value, s32 divisor);
-void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj);
+void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject);
 void Ui_FillBank15PaletteGrey(void);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
 s32 Input_GetDpadAngle(u32 unused);
-void BattleFx_UpdateItemBreakFragment(struct FieldActor *src);
+void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject);
 void BattleFx_SteerPushedTarget(s32 targetId);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot);
 void BattleFx_RunItemBreakSequence(void);
@@ -290,23 +294,23 @@ void BattleFx_UpdateRadialBurst(struct EffectSlot *slot);
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter);
 void BattleFx_CallEffect04(s32 unused);
 void RunBattleEffect04(void);
-void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle);
-void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle);
-void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle);
-void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle);
+void BattleFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject);
+void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject);
+void BattleFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject);
+void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject);
 void BattleFx_StartOrbitingParticles(s32 unused);
 void BattleFx_RunOrbitingParticles(void);
-void BattleFx_SwayParticle(struct SparkObject *obj);
-void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj);
-void BattleFx_RunSparkEmitter(struct SparkObject *obj);
+void BattleFx_SwayParticle(union FieldObject *fieldObject);
+void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject);
+void BattleFx_RunSparkEmitter(union FieldObject *fieldObject);
 void BattleFx_CallEffect03AndStop(s32 unused);
 void RunBattleEffect03(void);
 void FieldFx_CheckCloakTile(void);
 void FieldFx_EndCloak(void);
 void FieldFx_ResumeCloakCheck(void);
 void FieldFx_StartCloak(void);
-void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj);
-void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj);
+void BattleFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject);
+void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject);
 void BattleFx_CallEffect05(s32 unused);
 void RunBattleEffect05(void);
 void BattleFx_SpawnFallingParticles(void);
@@ -315,29 +319,31 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                   s32 angle);
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object);
 void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin);
-void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
-void BattleFx_CircleAnchor(struct OrbitEffect *effect);
-void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj);
+void BattleFx_WanderAroundAnchor(union FieldObject *fieldObject);
+void BattleFx_CircleAnchor(union FieldObject *fieldObject);
+void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject);
 void BattleFx_CallEffect14(s32 unused);
 void RunBattleEffect14(void);
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect);
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused);
 void BattleEffect_RunFallbackObjectTransition(void);
-void BattleEffect_SetRandomTableValueOnObject(void *obj);
+void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject);
 void BattleEffect_PauseObject(s32 id);
 void BattleFx_ResumeObject(s32 id);
 s32 BattleFx_FilterObjectIdByFlags(s32 id);
 void BattleFx_RunEffect13Hook(s32 unused);
 void RunBattleEffect13(void);
-void BattleFx_UpdateSpinAngle(struct FieldActor *obj);
-void BattleFx_UpdateDescendingObject(struct FieldActor *obj);
+void BattleFx_UpdateSpinAngle(union FieldObject *fieldObject);
+void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject);
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot);
 void BattleFx_RunEffect15(void);
-void BattleFx_UpdateDescendingParticlePositiveArc(struct FieldActor *particle);
-void BattleFx_UpdateDescendingParticleNegativeArc(struct FieldActor *particle);
+void BattleFx_UpdateDescendingParticlePositiveArc(
+    union FieldObject *fieldObject);
+void BattleFx_UpdateDescendingParticleNegativeArc(
+    union FieldObject *fieldObject);
 void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc);
 void BattleFx_UpdateEffect16State(void);
-void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj);
+void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject);
 void FieldEvent_ShowStatusMessage(void);
 void RunBattleEffect16(void);
 

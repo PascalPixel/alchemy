@@ -1119,7 +1119,8 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 count) {
 // Moves a dust puff of BattleFx_SpawnBurstParticle: it drifts with its x and
 // z velocity (kept in speed and acceleration), which drag slows by 1/18 and
 // 1/16 each frame, and rises 1/64 pixel a frame.
-void BattleFx_UpdateParticleLinearMotion(struct FieldActor *particle) {
+void BattleFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 velocityX;
   s32 x;
   s32 velocityZ;
@@ -2243,7 +2244,14 @@ void Event_WaitForZoomTransition(void) {
 // Per-frame update of a riding object: keeps it on the actor it rides (its
 // linked object), raised by the actor's sprite height (its metadata's boxX) and
 // 8 pixels. Its work holds the actor's id.
-s32 BattleFx_CopyLinkedObjectPosition(void *self) {
+// The hook consumer ignores the result. Plain void removes the native zero
+// result and changes its return register (three instructions in tbs-en).
+#ifdef UBFIX
+void BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+#else
+s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+#endif
+  void *self = (void *)fieldObject;
   struct FieldActor *obj = self;
   struct FieldActor *host;
 
@@ -2261,7 +2269,9 @@ s32 BattleFx_CopyLinkedObjectPosition(void *self) {
     obj->terrainHeight = host->terrainHeight;
     obj->z.fixed = host->z.fixed;
   }
+#ifndef UBFIX
   return 0;
+#endif
 }
 
 // The event command "actor show emote": shows an emote bubble (object 21)
@@ -2287,8 +2297,12 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->work = actor;
+#ifdef UBFIX
+      bubble->update = BattleFx_CopyLinkedObjectPosition;
+#else
       bubble->update =
           (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+#endif
       bubble->sprite->flags = 0;
       bubble->linkedObject = target;
 
@@ -2370,7 +2384,12 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
 
   effect->work = actor;
   effect->motionFlags = 0;
+#ifdef UBFIX
   effect->update = BattleFx_CopyLinkedObjectPosition;
+#else
+  effect->update =
+      (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+#endif
   visual = effect->sprite;
   visual->flags = 0;
   effect->linkedObject = object;
@@ -3645,7 +3664,8 @@ struct Object {
 
 // Per-frame update of an afterimage: closes half the distance to the object
 // it is linked to, on all three axes.
-void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
+void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
+  struct ObjectRuntime *obj = (struct ObjectRuntime *)fieldObject;
   struct ObjectRuntime *target = obj->linkedObject;
 
   obj->x += (target->x - obj->x) / 2;
@@ -3735,7 +3755,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->motionFlags = 0;
       copy->priorityFlags = 2;
       copy->steeringFlags |= 1;
-      copy->update = (void *)ObjectMotion_MoveHalfwayTowardTarget;
+      copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->priority = 0;
       Animation_ApplyChildValuesFar(copy, tint);
@@ -3947,7 +3967,8 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
 }
 
 // Per-frame update: spins an object 1/8 turn a frame.
-void BattleFx_AdvanceSpinAngle(struct MotionObject *object) {
+void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
+  struct MotionObject *object = (struct MotionObject *)fieldObject;
   object->angle += 0x2000;
 }
 
@@ -4106,7 +4127,7 @@ struct CaptureObject {
   u16 timer;
   u16 angle;
   struct FieldActor *linkedObject;
-  void *callback;
+  void (*callback)(union FieldObject *object);
 };
 
 // A spinning object: its angle, and at 0x64 the frames its spin has been
@@ -4120,7 +4141,8 @@ struct RampedSpinObject {
 
 // Per-frame update: makes an object pulse, switching its scale between the
 // two values of gBattleFx_PulseScales every 4 frames.
-void BattleFx_SetObjectAlternatingWords(u8 *object) {
+void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
+  u8 *object = (u8 *)fieldObject;
   u32 *table = gBattleFx_PulseScales;
   u32 index = ((u32)gFrameTick >> 2) & 1;
   u32 scale = index[table];
@@ -4130,7 +4152,8 @@ void BattleFx_SetObjectAlternatingWords(u8 *object) {
 
 // Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
 // 1/8.
-void BattleFx_AdvanceAngleWithRamp(void *obj) {
+void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
+  void *obj = (void *)fieldObject;
   struct RampedSpinObject *spin = obj;
   u32 step;
 
@@ -4145,7 +4168,8 @@ void BattleFx_AdvanceAngleWithRamp(void *obj) {
 // scale changes by step, releasing the object once the scale falls below
 // 0x3000.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
-  void name(void *obj) {                                                       \
+  void name(union FieldObject *fieldObject) {                                  \
+    void *obj = fieldObject;                                                   \
     s32 scale;                                                                 \
                                                                                \
     scale = ((struct MotionObject *)obj)->scaleX + step;                       \
@@ -4271,10 +4295,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
   AudioCommand_PlayFar(140);
-  djinni->update = (void *)BattleFx_AdvanceAngleWithRamp;
+  djinni->update = BattleFx_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
-  djinni->update = (void *)BattleFx_ShrinkObjectAndDestroySlow;
+  djinni->update = BattleFx_ShrinkObjectAndDestroySlow;
   ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
@@ -4323,7 +4347,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   }
 
   WaitFrames(60);
-  leader->update = (void *)BattleFx_SetObjectAlternatingWords;
+  leader->update = BattleFx_SetObjectAlternatingWords;
   WaitFrames(100);
 
   // Every spark still in use goes (state 5). This loop's cursor starts as
@@ -4362,7 +4386,9 @@ DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 // Per-frame update of a Venus Djinni's falling motes: each circles the
 // leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 // pixel a frame, and is released 20 pixels above the leader's feet.
-void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *mote) {
+void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
+  struct DescendingOrbitObject *mote =
+      (struct DescendingOrbitObject *)fieldObject;
   struct EffectVector position;
   struct DescendingOrbitObject *leader;
   s32 timer;
@@ -4464,12 +4490,12 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   AudioCommand_PlayFar(152);
   ObjectMotion_Launch(djinniId, 4, 15);
   WaitFrames(30);
-  djinni->callback = (void *)BattleFx_AdvanceSpinAngle;
+  djinni->callback = BattleFx_AdvanceSpinAngle;
   AudioCommand_PlayFar(153);
   ObjectMotion_Launch(djinniId, 8, 22);
   AudioCommand_PlayFar(140);
   Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
-  djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
+  djinni->callback = BattleFx_ShrinkObjectAndDestroyFast;
   ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 3);
   WaitFrames(90);
   ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
@@ -4532,7 +4558,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
       djinni->scaleX = scale;
       djinni->timer = 100;
       djinni->angle = (remaining << 16) / 24;
-      djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
+      djinni->callback = BattleFx_UpdateDescendingOrbitObject;
       djinni->mode = 0;
       ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 7);
       Animation_ApplyChildValuesFar(djinni, 11);
@@ -4630,7 +4656,8 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
 
 // Per-frame update of an afterimage: closes half the distance to the object
 // it is linked to.
-void BattleFx_HalveDistanceToTarget(struct FieldActor *object) {
+void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject) {
+  struct FieldActor *object = (struct FieldActor *)fieldObject;
   struct FieldActor *target = object->linkedObject;
 
   object->x.fixed += (target->x.fixed - object->x.fixed) / 2;
@@ -4707,7 +4734,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
       copy->motionFlags = 0;
       copy->priorityFlags = 2;
       copy->steeringFlags |= 1;
-      copy->update = (void *)BattleFx_HalveDistanceToTarget;
+      copy->update = BattleFx_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Animation_ApplyChildValuesFar(copy, 9);
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
@@ -5029,7 +5056,8 @@ s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
 
 // Per-frame update: sets every part of an object's sprite to param
 // frame % 6, which cycles its colours.
-void ObjectGroup_ApplyRandomChildValues(void *owner) {
+void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
+  void *owner = (void *)fieldObject;
   s32 kind;
   void *anim;
   s32 initialCount;
@@ -5169,7 +5197,8 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
 // (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
 // it follows, 9 pixels in front of it and up to 5 pixels further while
 // small.
-void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj) {
+void BattleFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *link;
   s32 v;
 
@@ -5190,7 +5219,8 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj) {
 
 // Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 // object and up to 5 pixels nearer while small.
-void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj) {
+void BattleFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *link;
   s32 v;
 
@@ -5288,7 +5318,8 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
 
 // Per-frame update: flashes an object between sprite param 7 and 0 every 2
 // frames and spawns the swelling arcs on it every 16.
-void BattleFx_FlickerObjectAndTick(s32 obj) {
+void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 7);
   } else {
@@ -5301,7 +5332,8 @@ void BattleFx_FlickerObjectAndTick(s32 obj) {
 
 // Per-frame update: cycles an object through sprite params 0 to 5, one step
 // every 2 frames, and spawns the swelling arcs on it every 16.
-void BattleFx_CycleObjectValueByCounter(s32 obj) {
+void BattleFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 1) != 0) {
     s32 col = (gFrameCount >> 1) % 6;
 
@@ -5378,7 +5410,7 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   work->angle = dir;
   if (target != NULL) {
     // Keep the target's motion and colours, to restore them later.
-    work->savedCallback = (void *)target->hook;
+    work->savedCallback = target->hook;
     work->savedScript = (const s32 *)target->script;
     {
       struct AnimationObject *anim =
@@ -5444,10 +5476,10 @@ void BattleEffect_CleanupSceneObjects(void) {
 
   if (runtime->resolvingAction == 0) {
     s32 waited = 0;
-    void (*firstActiveUpdate)(void) =
-        (void (*)(void))BattleFx_UpdateScaledArcObjectB;
-    void (*secondActiveUpdate)(void) =
-        (void (*)(void))BattleFx_UpdateScaledArcObjectA;
+    void (*firstActiveUpdate)(union FieldObject *) =
+        BattleFx_UpdateScaledArcObjectB;
+    void (*secondActiveUpdate)(union FieldObject *) =
+        BattleFx_UpdateScaledArcObjectA;
     s32 active;
 
     do {
@@ -5456,7 +5488,7 @@ void BattleEffect_CleanupSceneObjects(void) {
       active = 0;
       remaining = 0;
       while (remaining <= 63) {
-        void (*update)(void) = (void (*)(void))slot->hook;
+        void (*update)(union FieldObject *) = slot->hook;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
@@ -5511,7 +5543,7 @@ void EventObject_Initialize(void) {
   eventObject->velocityZ = 0;
   if (eventState->visible != 0) {
     AudioCommand_PlayFar(212);
-    eventObject->update = (void *)BattleFx_FlickerObjectAndTick;
+    eventObject->update = BattleFx_FlickerObjectAndTick;
   }
   if (eventState->active != 0) {
     ObjectGroup_SetActionForOthers(eventObject, 1, 0);
@@ -5527,7 +5559,7 @@ void EventObject_Initialize(void) {
   }
   if (GameFlag_TestFar(0x140) != 0) {
     if (eventState->visible != 0) {
-      eventObject->update = (void *)BattleFx_CycleObjectValueByCounter;
+      eventObject->update = BattleFx_CycleObjectValueByCounter;
     }
     ObjectDispatch_ApplyArgumentToChildrenFar(eventObject, 0x15);
   } else {
@@ -5854,7 +5886,8 @@ s32 Fixed_Remainder(s32 value, s32 divisor) {
 
 // Per-frame update: once the object has arrived (no destination left), runs
 // the script for untargeted objects.
-void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj) {
+void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
+  struct ObjectRuntime *obj = (struct ObjectRuntime *)fieldObject;
   s32 ty;
   s32 tx;
 
@@ -5938,7 +5971,8 @@ struct ItemBreakFragmentObject {
 // Per-frame update of a broken item's main fragment: turns it toward the
 // object it is linked to, at most 1/16 turn a frame, and sheds a particle
 // (object 0x11d) round it.
-void BattleFx_UpdateItemBreakFragment(struct FieldActor *src) {
+void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
+  struct FieldActor *src = (struct FieldActor *)fieldObject;
   struct FieldActor *target;
   struct EffectVector pos;
   struct ItemBreakFragmentObject *obj;
@@ -6710,8 +6744,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
   }
 
   Script_WaitForEventTimeoutFar(pair[0]);
-  target->update =
-      (void (*)(union FieldObject *))ObjectGroup_ApplyRandomChildValues;
+  target->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(130);
   target->motionFlags = 4;
 
@@ -6955,7 +6988,7 @@ struct SparkObject {
   u8 unk60[4];
   s16 phase; // phase of the sway (128 frames a cycle)
   u8 unk66[6];
-  void (*update)(struct SparkObject *);
+  void (*update)(union FieldObject *object);
 };
 
 // Psynergy effect 4: a shot appears in front of the caster, grows and flies
@@ -7110,7 +7143,8 @@ void RunBattleEffect04(void) {
 }
 
 // Per-frame update: flashes (animation 2) for 2 frames in every 8.
-void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle) {
+void BattleFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
     Animation_ApplyChildValuesFar(particle, 2);
@@ -7120,7 +7154,8 @@ void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle) {
 }
 
 // Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
-void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle) {
+void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 scale;
 
   if (particle != NULL) {
@@ -7136,7 +7171,8 @@ void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle) {
 // Per-frame update: spirals anticlockwise in on the target, at a radius of
 // twice the frames left in pixels, turning 0x800 a frame. work holds its
 // starting direction and timer the frames left; at 0 it shrinks away.
-void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle) {
+void BattleFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct EffectVector pos;
   s16 life;
   s32 cnt;
@@ -7155,14 +7191,14 @@ void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      particle->update =
-          (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleFade;
+      particle->update = BattleFx_UpdateOrbitingParticleFade;
     }
   }
 }
 
 // Per-frame update: as BattleFx_UpdateOrbitingParticleLeft, clockwise.
-void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle) {
+void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct EffectVector pos;
   s16 life;
   s32 cnt;
@@ -7181,8 +7217,7 @@ void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      particle->update =
-          (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleFade;
+      particle->update = BattleFx_UpdateOrbitingParticleFade;
     }
   }
 }
@@ -7234,11 +7269,9 @@ void BattleFx_RunOrbitingParticles(void) {
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
-        particle->update =
-            (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleLeft;
+        particle->update = BattleFx_UpdateOrbitingParticleLeft;
       else
-        particle->update =
-            (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleRight;
+        particle->update = BattleFx_UpdateOrbitingParticleRight;
 
       particle->facing = Random16();
       particle->timer = 60;
@@ -7281,8 +7314,7 @@ void BattleFx_RunOrbitingParticles(void) {
       ObjectDispatch_ApplyArgumentToChildrenFar(target, 2);
     }
 
-    target->update =
-        (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleMain;
+    target->update = BattleFx_UpdateOrbitingParticleMain;
     ev = BattleFx_FindMatchingEvent(0x50000005, 6, &ctx);
     if (ev != NULL) {
       BattleFx_RunEventAction(ev, gGameState.selectedActor, ctx);
@@ -7295,7 +7327,8 @@ void BattleFx_RunOrbitingParticles(void) {
 
 // Per-frame update: sways 4 pixels either side of anchorX, once every 128
 // frames.
-void BattleFx_SwayParticle(struct SparkObject *obj) {
+void BattleFx_SwayParticle(union FieldObject *fieldObject) {
+  struct SparkObject *obj = (struct SparkObject *)fieldObject;
   s16 *phase;
 
   phase = &obj->phase;
@@ -7307,7 +7340,8 @@ void BattleFx_SwayParticle(struct SparkObject *obj) {
 // Per-frame update: spirals in on a point 10 pixels above the effect's
 // position, at a radius of as many pixels as frames are left; released when
 // timer reaches 0.
-void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj) {
+void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct BattleFxScene *scene = gEffectWork;
   struct EffectVector pos;
   s16 life;
@@ -7335,7 +7369,8 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj) {
 // Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
 // above the effect's position, and every 3 frames sheds a spark that sways
 // as it slowly falls. With phase -1 it stays where it is.
-void BattleFx_RunSparkEmitter(struct SparkObject *obj) {
+void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
+  struct SparkObject *obj = (struct SparkObject *)fieldObject;
   struct BattleFxScene *scene;
   s16 *phase;
   struct SparkObject *spark;
@@ -7639,7 +7674,7 @@ struct Effect05Object {
   u8 reserved56[8];
   s16 phase;
   u8 reserved60[0xc];
-  void *callback; // per-frame update
+  void (*callback)(union FieldObject *object); // per-frame update
 };
 
 struct Effect05State {
@@ -7657,7 +7692,8 @@ struct Effect05State {
 
 // Per-frame update of a falling particle: on reaching altitude, it scatters
 // three small particles.
-void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
+void BattleFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
+  struct Effect05Object *obj = (struct Effect05Object *)fieldObject;
   s32 i;
   struct Effect05Object *p;
   s32 phase = 2;
@@ -7669,7 +7705,7 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_CommonParticleScript);
     p = NULL;
-    obj->callback = p;
+    obj->callback = NULL;
 
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
@@ -7695,7 +7731,8 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
 
 // Per-frame update: drifts from side to side as it slowly falls, and is
 // released on reaching the ground.
-void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj) {
+void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
+  struct ObjectRuntime *obj = (struct ObjectRuntime *)fieldObject;
   s32 drift;
 
   obj->y -= 0x4ccc;
@@ -7807,7 +7844,7 @@ void RunBattleEffect05(void) {
       mote = Object_Spawn(0xf0, pos.x, pos.y, pos.z);
       if (mote != 0) {
         mote->altitude = pos.y - (32 << 16);
-        mote->callback = (void *)BattleFx_SpawnRandomAngleTriplet;
+        mote->callback = BattleFx_SpawnRandomAngleTriplet;
         mote->flag = 2;
       }
       AudioCommand_PlayFar(132);
@@ -7828,7 +7865,7 @@ void RunBattleEffect05(void) {
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       mote = Object_Spawn(0x11c, pos.x, pos.y, pos.z);
       if (mote != 0) {
-        mote->callback = (void *)BattleFx_UpdateDriftingFallObject;
+        mote->callback = BattleFx_UpdateDriftingFallObject;
         mote->flag = 0;
         mote->sprite->mode = 2;
         ObjectDispatch_ApplyArgumentToChildrenFar(mote, 8);
@@ -8207,7 +8244,7 @@ struct OrbitEffect {
   u16 timer;                  // frames so far
   s16 pause;                  // frames left of a sharp turn
   struct OrbitEffect *anchor; // what it circles
-  void (*update)(struct OrbitEffect *);
+  void (*update)(union FieldObject *object);
 };
 
 // The shared effect-spawning source, at its place in the ROM.
@@ -8259,7 +8296,8 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
 // Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
 // now and then turning sharply; after 101 frames it hands over to the
 // common particle script.
-void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
+void BattleFx_WanderAroundAnchor(union FieldObject *fieldObject) {
+  struct OrbitEffect *effect = (struct OrbitEffect *)fieldObject;
   s32 len;
   s32 angle;
   s32 dx;
@@ -8286,7 +8324,8 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
 
 // Per-frame update: circles the anchor at 8 pixels; after 121 frames it
 // starts to wander (BattleFx_WanderAroundAnchor).
-void BattleFx_CircleAnchor(struct OrbitEffect *effect) {
+void BattleFx_CircleAnchor(union FieldObject *fieldObject) {
+  struct OrbitEffect *effect = (struct OrbitEffect *)fieldObject;
   struct OrbitEffect *anchor;
   s32 angle;
   s32 radius;
@@ -8313,7 +8352,8 @@ void BattleFx_CircleAnchor(struct OrbitEffect *effect) {
 
 // Per-frame update: shrinks the object; below half size, puts its position
 // back and removes the update.
-void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj) {
+void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
+  struct MotionObject *obj = (struct MotionObject *)fieldObject;
   s32 scale;
 
   scale = obj->scaleX - 0x80;
@@ -8550,7 +8590,8 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 
 // Per-frame update of a paused object: gives its sprite one of the table's
 // eight params at random.
-void BattleEffect_SetRandomTableValueOnObject(void *obj) {
+void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
+  void *obj = (void *)fieldObject;
   s8 *table = gBattleFx_RandomChildValues;
   s32 random = Random16();
   Animation_ApplyChildValuesFar(obj, table[(u32)(random * 8) >> 16]);
@@ -8572,8 +8613,7 @@ void BattleEffect_PauseObject(s32 id) {
         gGameState.pausedPose = entry->param;
       }
     }
-    obj->update =
-        (void (*)(union FieldObject *))BattleEffect_SetRandomTableValueOnObject;
+    obj->update = BattleEffect_SetRandomTableValueOnObject;
     obj->paused = 1;
     ObjectDispatch_ApplyValueToChildrenFar(obj, 0);
   }
@@ -8584,8 +8624,7 @@ void BattleEffect_PauseObject(s32 id) {
 void BattleFx_ResumeObject(s32 id) {
   struct FieldActor *obj = ObjectTable_Get(id);
   if (obj != 0) {
-    if (obj->update == (void (*)(union FieldObject *))
-                           BattleEffect_SetRandomTableValueOnObject) {
+    if (obj->update == BattleEffect_SetRandomTableValueOnObject) {
       struct GameState *state = &gGameState;
       obj->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
@@ -8716,7 +8755,8 @@ void RunBattleEffect13(void) {
 
 // Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 // (timer counts up) until timer * 0x50 reaches 0x1000.
-void BattleFx_UpdateSpinAngle(struct FieldActor *obj) {
+void BattleFx_UpdateSpinAngle(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 step;
 
   step = obj->timer * 0x50;
@@ -8727,7 +8767,8 @@ void BattleFx_UpdateSpinAngle(struct FieldActor *obj) {
 
 // Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
 // frame; released once its scale falls below 0x3000.
-void BattleFx_UpdateDescendingObject(struct FieldActor *obj) {
+void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 scale;
 
   obj->scaleY -= 0x280;
@@ -8803,8 +8844,7 @@ void BattleFx_RunEffect15(void) {
   WaitFrames(10);
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
   WaitFrames(30);
-  obj->update =
-      (void (*)(union FieldObject *))ObjectGroup_ApplyRandomChildValues;
+  obj->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(131);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 28);
   WaitFrames(40);
@@ -8813,14 +8853,14 @@ void BattleFx_RunEffect15(void) {
   AudioCommand_PlayFar(220);
   Animation_ApplyChildValuesFar(obj, 0);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
-  obj->update = (void (*)(union FieldObject *))BattleFx_UpdateSpinAngle;
+  obj->update = BattleFx_UpdateSpinAngle;
   obj->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   obj->motionFlags = 0;
-  obj->update = (void (*)(union FieldObject *))BattleFx_UpdateDescendingObject;
+  obj->update = BattleFx_UpdateDescendingObject;
   obj->targetX = ACTOR_NO_TARGET;
   pos.x = obj->x.fixed;
   pos.y = obj->y.fixed;
@@ -8861,7 +8901,9 @@ void BattleFx_RunEffect15(void) {
 // pixels a frame on the object it follows, 9 pixels in front of it and up
 // to 5 pixels further while small; released 10 pixels above the ground (4
 // on the clear screen).
-void BattleFx_UpdateDescendingParticlePositiveArc(struct FieldActor *particle) {
+void BattleFx_UpdateDescendingParticlePositiveArc(
+    union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct FieldActor *source;
   s32 y;
   s32 limit;
@@ -8890,7 +8932,9 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct FieldActor *particle) {
 
 // As BattleFx_UpdateDescendingParticlePositiveArc for the arc drawn upside
 // down, 16 pixels in front of the object and up to 5 pixels nearer.
-void BattleFx_UpdateDescendingParticleNegativeArc(struct FieldActor *particle) {
+void BattleFx_UpdateDescendingParticleNegativeArc(
+    union FieldObject *fieldObject) {
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct FieldActor *source;
   s32 y;
   s32 limit;
@@ -8985,9 +9029,9 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
     sprite->size = 2;
     sprite->frame->frame = zero;
   }
-  objects[0]->update = (void *)BattleFx_UpdateDescendingParticleNegativeArc;
+  objects[0]->update = BattleFx_UpdateDescendingParticleNegativeArc;
   ((struct DescendingArcSprite *)objects[0]->sprite)->attr.byte.variant = 0;
-  objects[1]->update = (void *)BattleFx_UpdateDescendingParticlePositiveArc;
+  objects[1]->update = BattleFx_UpdateDescendingParticlePositiveArc;
   ((struct DescendingArcSprite *)objects[1]->sprite)->attr.byte.variant =
       ((struct DescendingArcSprite *)leader->sprite)->attr.byte.variant;
 }
@@ -9024,7 +9068,8 @@ void BattleFx_UpdateEffect16State(void) {
 
 // The caster during the effect: sheds a pair of falling arcs every 5 frames
 // (7 on the world map), and spins in phase 1.
-void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj) {
+void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
+  struct ArcEffectObject *obj = (struct ArcEffectObject *)fieldObject;
   s16 phase;
   s32 cnt;
 

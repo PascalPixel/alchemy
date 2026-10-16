@@ -118,3 +118,97 @@ round	lane	source	old_name	new_name	evidence
 1	12	games/tbs/src/scene/west_lunpa_cave.c	EV03_SEARCH	WestLunpaCave_LowerGateFromSwitch	Switch-search callback lowers the gate; ci checked W7 collisions
 1	12	games/tbs/src/scene/west_lunpa_cave.c	EV04_SEARCH	WestLunpaCave_RaiseGateFromSwitch	Switch-search callback raises the gate; ci checked W7 collisions
 1	12	games/tbs/src/scene/west_lunpa_cave.c	EV10_TOUCH	WestLunpaCave_RunHammetBunzaReunion	Stages Hammet and Bunza reunion/departure; ci checked W7 collisions
+1	11	games/tbs/src/scene/fuchin_temple.c	StopXianActor	FuchinTemple_ClearScriptedActorSpriteFlags	SC_CALL command sets actor sprite flags0 and returns completed0
+1	11	games/tbs/src/scene/fuchin_temple.c	FaceXianActorToPlayer	Xian_FaceActorTowardLeader	Update computes atan2 from actor to party leader
+1	11	games/tbs/src/scene/fuchin_temple.c	EV08_TALK	FuchinTemple_AskWhetherBridgeReopened	MsgXianHowDidGetHereBridge asks if bridge is open again; persists response flag0x890
+1	11	games/tbs/src/scene/fuchin_temple.c	EV12_TALK_1	FuchinTemple_DiscussNyunpasEnlightenment	MsgXianIsntNobleHimTrySave / NowHeTrulyBeyondWorlds and nested yes/no
+1	11	games/tbs/src/scene/fuchin_temple.c	EV09_TALK_1	FuchinTemple_MoveMonkAsideAfterTrial	Monk says AlreadyHeardTest, jumps aside, opens collision cell and sets0x892
+1	11	games/tbs/src/scene/fuchin_temple.c	EV05_TOUCH	FuchinTemple_AskWhetherTrialWasCompleted	MsgXianYoungMasterDidCompleteTest, sets0x894, opens return collision cell
+1	11	games/tbs/src/scene/fuchin_temple.c	Scene_RunScene39eSequenceB	FuchinTemple_DiscussNyunpasTrial	Nyunpa talks about Fuchin grotto test, responds to Mind Read and emits eight particles on acceptance
+1	11	games/tbs/src/scene/fuchin_temple.c	EV1032_PSYNERGY	FuchinTemple_AskAboutReadingMinds	Mind Read registration and MsgXianEnjoyReadingMindsOthersDo
+1	11	games/tbs/src/scene/fuchin_temple.c	EV09_TALK	Xian_AskAboutWatchingFehsSchool	MsgXianMasterFehsSchoolCameWatch; simple yes/no
+1	11	games/tbs/src/scene/fuchin_temple.c	EV12_TALK	Xian_TalkToJumpingStudent	Pause until y reaches0, show jumping/Hsu/Lama Temple dialogue, resume jump script
+1	11	games/tbs/src/scene/fuchin_temple.c	EV15_TALK	Xian_AskWhetherToSeeMasterFeh	MsgXianMasterFehVeryBusyDo asks whether party still wishes to see him
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunForwardArcBurst	Xian_ToppleTrainingTreeInForwardArc	Rotates actor19 over angles8..4, moves via sin/cos, then emits three particles; dialogue calls target tree
+1	11	games/tbs/src/scene/fuchin_temple.c	FuchinTemple_SpinAway	Xian_ToppleTrainingTreeInReverseArc	Rotates actor19 over angles8..12, reverse sin/cos movement, three particles
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunDescentBurst	Xian_ToppleTrainingTreeNorth	Four negative-Z steps then four-particle burst; source Z coordinates are north/south axis
+1	11	games/tbs/src/scene/fuchin_temple.c	Scene_RunPrimarySequence	Xian_ToppleTrainingTreeSouth	Four positive-Z steps then positive-Z displacement and four particles
+1	11	games/tbs/src/scene/fuchin_temple.c	FuchinTemple_WalkByFacing	Xian_MoveStudentAroundTrainingTree	Actor15 chooses approach/facing by leader facing before restoring tree
+1	11	games/tbs/src/scene/fuchin_temple.c	FuchinTemple_RunMasterScene	Xian_ExplainChiDemonstrationRules	MsgXianCannotPushHands / WarriorsCannotUse / GreatWarriorTrain; resets training tree afterward
+1	11	games/tbs/src/scene/fuchin_temple.c	FuchinTemple_RunGatheringScene	Xian_RepeatChiDemonstrationSetup	Group sees fallen tree; actor15 restores tree; sets0x301
+1	11	games/tbs/src/scene/fuchin_temple.c	EV19_PSYNERGY	Xian_MoveTrainingTree	Event table ABILITY_MOVE target19; topples tree and explains demonstration rules
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_DispatchByFacing	Xian_PushTrainingTreeByHand	Walking-into triggers dispatch facing-dependent tree movement, then mode1 rules explanation
+1	11	games/tbs/src/scene/fuchin_temple.c	EV20_PSYNERGY	Xian_DemonstrateForceOnTrainingTree	Event table ABILITY_FORCE target20; topples tree; branches to Feh gathering based on leader position/progress
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunSecondEnsembleBeat	Xian_SummonObserversForChiDemonstration	MsgXianDidDoWarrior; student16 calls out actor17/18 through door; Chi discussion; flags89a/898/899
+1	11	games/tbs/src/scene/fuchin_temple.c	EV18_TALK	Xian_AskToSeeChi	MsgXianWarriorWillShowMeYour; accepts demonstration with flag898
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunEnsembleStoryBeat	Xian_DiscussChiAfterTreeFalls	MsgXianYaTreeFell; group discusses Chi; resets tree and sets89b
+1	11	games/tbs/src/scene/fuchin_temple.c	EV11_TALK	Xian_AskAboutDefeatingAltinsMonsters	MsgXianWaterMonstersFloodedAltinDid asks whether party defeated water monsters
+1	11	games/tbs/src/scene/fuchin_temple.c	EV03_TOUCH	Xian_EnterUnlockedRoom	Locked message until89a or895; opens door tiles, walks north, requests exit4
+1	11	games/tbs/src/scene/fuchin_temple.c	EV13_TALK	FuchinTemple_TalkToTravelingHealer	Northward leader opens Sanctum; otherwise MsgXianImTravelingAroundWorldSpread
+1	11	games/tbs/src/scene/fuchin_temple.c	EV08_PSYNERGY	FuchinTemple_ReadNyunpasWishForPeace	MsgXianIsaacAmCountingOnBring asks Isaac to bring world peace
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_SpawnRandomizedParticle	FuchinTemple_SpawnGrottoEntryParticle	Scheduler emits particles around leader during grotto entrance fade; chooses palette and falling velocity
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_ApplyOffset0Neg32	FuchinTemple_HopLeaderNorth	Calls common hop helper with offset0,-32
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_ApplyOffset0Pos32	FuchinTemple_HopLeaderSouth	Calls common hop helper with offset0,32
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_ApplyOffsetNeg32_0	FuchinTemple_HopLeaderWest	Calls common hop helper with offset-32,0
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunOpeningAuxiliarySequence	FuchinTemple_HopLeaderByOffset	Sets speed, destination offset, jump, airborne/landed animations and waits
+1	11	games/tbs/src/scene/fuchin_temple.c	EV03_TOUCH_1	FuchinTemple_EnterGrottoTrial	Temporarily schedules leader particles during screen fade and movement into exit3
+1	11	games/tbs/src/scene/fuchin_temple.c	EV01_SCRIPT	Xian_LeaveArea	Map-exit sound then exit request1; no unsupported destination-side claim
+1	11	games/tbs/src/scene/fuchin_temple.c	EV02_TOUCH	FuchinTemple_EnterNyunpasHall	Door animation, northward walk, exit2; destination entrance1 is Nyunpas meditation room
+1	11	games/tbs/src/scene/fuchin_temple.c	FuchinTemple_AskIfCurious	FuchinTemple_DiscussForceAfterTrial	Nyunpa praises completed test, reads curiosity, warns about hidden monsters; flag893
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunRoofEnsembleSequence	FuchinTemple_RunHamasRevealLesson	Starts MasterHama meditation dialogue; joins party, calls particle lesson and Party_LearnAbility(IVAN,ABILITY_REVEAL), then departure
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_SetFlag140AndFinishSequence	FuchinTemple_BeginMindReadDemonstration	Engine_PsynergyBegin141 is ABILITY_MIND_READ, sets target and starts first effect phase
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_FinishSequence	FuchinTemple_FinishMindReadDemonstration	Completes effect phase2 and lowers hands
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_SpawnEightShots	FuchinTemple_SpawnNyunpasParticles	Eight scheduled rising particles from actor8 in Nyunpa trial dialogue
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_SelectActorModeFromInputBit	FuchinTemple_AlternateLessonChildEffect	Uses frame bit1 to alternate child values10/9; does not read input
+1	11	games/tbs/src/scene/fuchin_temple.c	FieldScene_RunParticleRain	FuchinTemple_AnimateRevealLesson	Installs temporary child-effect callbacks on teacher and Ivan, emits64 particles, fades palette then cleans callbacks
+1	12	games/tbs/src/scene/mercury_entrance.c	EV21_TOUCH	MercuryEntrance_SpawnTimedRiseEffect	Touch event advances Mercury_TickSpawnTimer, which spawns kind24 with the rise script.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV31_TOUCH	MercuryEntrance_ReleaseRaisedPillar	Touch event clears the pillar state and releases its published target.
+1	12	games/tbs/src/scene/mercury_entrance.c	FieldScene_RunSingleStep	MercuryEntrance_TryPillarStep	Movement event delegates collision-checked pillar stepping to Mercury_RunActorMove.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV11_TOUCH	MercuryEntrance_RaiseTouchedPillar	Touch event calls MercuryEntrance_RaisePillar.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV01_SEARCH	MercuryEntrance_ReadHeartInscription	Search displays MsgMercuryWhoHonorsHeart centered.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV67_TOUCH	MercuryEntrance_RiseToSouthernLanding	Packed exit17 leads to scene53 entrance13 at (744,680), southernmost of the three destinations.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV68_TOUCH	MercuryEntrance_RiseToNorthernLanding	Packed exit18 leads to scene53 entrance10 at (760,184), northernmost destination.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV69_TOUCH	MercuryEntrance_RiseToMiddleLanding	Packed exit19 leads to scene53 entrance16 at (744,424), between the other two destinations.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV16_PSYNERGY	MercuryEntrance_ActivateWithPly	Event table selects ability0x5d (ABILITY_PLY); successful use at cell12,32 sets flag875.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV10_TOUCH	MercuryEntrance_ReturnToDoorway	Packed exit63 leads to scene53 entrance31, which runs the doorway scene.
+1	12	games/tbs/src/scene/mercury_entrance.c	EV41_TOUCH	MercuryEntrance_SelectDoorActorSidePath	Leader column7 selects actor8 path2, otherwise path3; both flank the doorway.
+1	12	games/tbs/src/scene/mercury_entrance.c	SceneAudio_PlayCue118AndReturnZero	MercuryEntrance_PlayPathSound	All three actor8 doorway paths invoke cue118 at arrival and continue.
+1	12	games/tbs/src/scene/mercury_entrance.c	SceneActor_FaceLeaderWhileGrounded	MercuryEntrance_UpdateDoorwayFacing	Installed on Ivan in the doorway scene; compares leader Z in eight-pixel units, not grounding.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV08_TALK	BabiLighthouse_StartDjinnBattle	BattleFx_SetPhaseRequest runs the Djinn hop, records pendingDjinnEvent and loads the enemy group for Djinn66
+1	13	games/tbs/src/scene/babi_lighthouse.c	FieldScene_RunSupplementalSequenceOne	BabiLighthouse_LandWithParticles	Drops the leader into the room, emits a ring of particles, then restores motion.
+1	13	games/tbs/src/scene/babi_lighthouse.c	FieldScene_RunScene3c5SequenceA	BabiLighthouse_FallToExit	Drops the leader from above and requests the supplied exit after landing.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV10_SCRIPT	BabiLighthouse_AdvancePairAndJump	Advances the staged actor pair before checking whether the leader must jump off.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV11_TOUCH	BabiLighthouse_ClimbDownOrAdvancePair	Uses the ledge block on the leader's side, or falls back to climbing down.
+1	13	games/tbs/src/scene/babi_lighthouse.c	ResetSceneParametersAndFinishSetup	BabiLighthouse_RiseAndCloseScreen	Raises the leader, then closes the screen before a room transition.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV25_TOUCH	BabiLighthouse_RiseToExit	Raises the leader and takes exit 11 without preparing an extra effect.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV26_TOUCH	BabiLighthouse_RisePastSingleEffect	Prepares one effect, raises the leader, then takes exit 12.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV27_TOUCH	BabiLighthouse_RisePastPairedEffects	Prepares two effects, raises the leader, then takes exit 13.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV28_TOUCH	BabiLighthouse_RiseToAlternateExit	Raises the leader and takes exit 15 without preparing an extra effect.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV20_SEARCH	BabiLighthouse_InspectLockedDoor	Stops the leader's animation and reports that the door seems locked.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV10_TOUCH	BabiLighthouse_DiscussPursuit	Stages the discussion about pursuing the kidnappers through the sealed door.
+1	13	games/tbs/src/scene/babi_lighthouse.c	FieldScene_RunActorEventSequence	BabiLighthouse_ExplainTruthDoor	Shows the door opening, then explains why those without Psynergy cannot enter.
+1	13	games/tbs/src/scene/babi_lighthouse.c	ActorPresentation_SetSceneCellByFlag985	BabiLighthouse_RefreshTruthDoorTiles	Selects the revealed switch tiles to match the truth door's open flag.
+1	13	games/tbs/src/scene/babi_lighthouse.c	SceneState_ApplyRectAt32x78	BabiLighthouse_HideTruthDoorSwitch	Restores the ordinary tiles when Reveal no longer exposes the door switch.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV22_TOUCH	BabiLighthouse_OpenTruthDoor	Opens both door halves and runs the first-opening conversation once.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV60_SEARCH	BabiLighthouse_InspectTruthDoorSwitch	Operates the hidden switch under Reveal; otherwise reads its inscription.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV12_SCRIPT	BabiLighthouse_EnableChildOption	Enables the effect scene's child option; its remaining meaning is unknown.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV12_PSYNERGY	BabiLighthouse_UpdateMovedBlock	Updates the moved block's height, flags and tile after it reaches column 20, row 12.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV50_SCRIPT	BabiLighthouse_AdvanceNearbyPair	Advances the staged pair only when the actor ahead is less than eight pixels away vertically.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV51_SCRIPT	BabiLighthouse_ClimbOrAdvancePair	Tries vertical climbing first, then advances the staged pair when appropriate.
+1	13	games/tbs/src/scene/babi_lighthouse.c	EV10_PSYNERGY	BabiLighthouse_OpenGrowthPassage	Copies the passage's collision tiles after Growth and remembers the change.
+1	13	games/tbs/src/scene/babi_lighthouse.c	SceneState_ApplyRectsAtActors8And9	BabiLighthouse_RefreshMovableBlockTiles	Restores both ledge regions, then places collision tiles under the two blocks.
+1	10	games/tbs/src/scene/xian.c	EV22_TALK	Xian_RecruitVillageDjinni	Recruit the village Djinni when the party reaches it.
+1	10	games/tbs/src/scene/xian.c	Actor_UpdatePresentationFlag	Xian_UpdateFrozenPuddleLayer	Select underfoot layering for the frozen puddle when the leader is raised.
+1	10	games/tbs/src/scene/xian.c	SceneEffect_AdvanceRotatingSprite	Xian_RotateTrainingTree	Rotate the log during the student's strike and Force animation.
+1	10	games/tbs/src/scene/xian.c	SceneEffect_SpawnPeriodicEffect	Xian_SpawnTrainingParticles	Emit particles beside the student every fourth frame.
+1	10	games/tbs/src/scene/xian.c	SceneActor_UpdateTracking	Xian_UpdateCarrierTracking	Track a nearby target only within the actor's current facing sector.
+1	10	games/tbs/src/scene/xian.c	EV09_TALK	Xian_AskAboutYoungWarriors	Ask the visitors whether they are young warriors.
+1	10	games/tbs/src/scene/xian.c	EV18_TALK	Xian_SpillCarriedWater	Have the water carrier spill her bucket and return to refill it.
+1	10	games/tbs/src/scene/xian.c	EV20_SCRIPT	Xian_UpdatePuddlePriority	Set puddle sprite priority when the leader approaches from the north.
+1	10	games/tbs/src/scene/xian.c	EV20_PSYNERGY	Xian_FreezeSpilledWater	Make the frozen puddle solid and keep its foreground visibility updated.
+1	10	games/tbs/src/scene/xian.c	EV14_TALK	Xian_WatchKungFuDemonstration	Play the kung fu demonstration once, then discuss the student's strength.
+1	10	games/tbs/src/scene/xian.c	EV17_TALK	Xian_AskAboutSchoolWarriors	Ask whether the visitors are warriors from the school.
+1	10	games/tbs/src/scene/xian.c	SceneEffect_DispatchStep	Xian_OpenDoorAndLeave	Animate the selected door before the party walks through it.
+1	10	games/tbs/src/scene/xian.c	EV21_PSYNERGY	Xian_StrikeTrainingTreeWithForce	Let Force strike the training tree and surprise the student.
+1	10	games/tbs/src/scene/xian.c	EV200_RAISED	Xian_MoveAsideForWaterCarrier	Move the party and carrier aside, then restart the carrier's route.
+1	10	games/tbs/src/scene/xian.c	Xian_WatchGateTrigger	Xian_WatchWaterCarrierPath	Checks whether the party blocks the water carrier route and raises the move-aside trigger after120 frames

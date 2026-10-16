@@ -1,3 +1,6 @@
+// Mercury Lighthouse's entrance: Mia's doorway scene, the Ply mechanism,
+// and the rising pillars used to cross the interior pools.
+
 #include "script.h"
 #include "game_state.h"
 #include "global_cells.h"
@@ -54,18 +57,22 @@ static void MercuryEntrance_RunDoorScene(void);
 #include "common/object_staged_actor.h"
 #include "common/mercury_sparks.h"
 
+// Plays the arrival sound used by all three doorway movement scripts.
 static s32
-SceneAudio_PlayCue118AndReturnZero(struct ScriptInterpreter *interpreter) {
+MercuryEntrance_PlayPathSound(struct ScriptInterpreter *interpreter) {
   Engine_AudioPlayCue(118);
   return 0;
 }
 
+// Faces the leader while their Z is below 184 pixels; farther south, Mia
+// faces back north.
 // UB: the field updater invokes a void hook. Plain void removes the zero
 // result and changes the native return register (three instructions in EN).
 #ifdef UBFIX
-static void SceneActor_FaceLeaderWhileGrounded(union FieldObject *fieldObject) {
+static void
+MercuryEntrance_UpdateDoorwayFacing(union FieldObject *fieldObject) {
 #else
-static s32 SceneActor_FaceLeaderWhileGrounded(union FieldObject *fieldObject) {
+static s32 MercuryEntrance_UpdateDoorwayFacing(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *object = (struct FieldActor *)fieldObject;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -84,25 +91,38 @@ static s32 SceneActor_FaceLeaderWhileGrounded(union FieldObject *fieldObject) {
 // Shared source is included here in ROM order.
 #include "common/mercury_palette_cycle.h"
 
-static void EV21_TOUCH(void) { Mercury_TickSpawnTimer(); }
+// Keeps rising effects appearing while the active pillar is touched.
+static void MercuryEntrance_SpawnTimedRiseEffect(void) {
+  Mercury_TickSpawnTimer();
+}
 
-static void EV31_TOUCH(void) {
+// Releases the raised pillar when the leader leaves its trigger.
+static void MercuryEntrance_ReleaseRaisedPillar(void) {
   SceneState_ClearCurrentRecordAndReleaseTarget();
 }
 
-static void FieldScene_RunSingleStep(void) { Mercury_RunActorMove(); }
+// Attempts one key-directed step, consuming a raised-pillar level if needed.
+static void MercuryEntrance_TryPillarStep(void) { Mercury_RunActorMove(); }
 
-static void EV11_TOUCH(void) { MercuryEntrance_RaisePillar(); }
+// Raises the touched pillar to its highest level before allowing another step.
+static void MercuryEntrance_RaiseTouchedPillar(void) {
+  MercuryEntrance_RaisePillar();
+}
 
+// Supplies the entrance positions and camera bounds.
 void *SceneData_GetSceneTableA(void) { return gMercuryEntrance_SceneTableA; }
 
+// This overlay supplies no auxiliary scene-data table.
 int SceneData_ReturnZero(void) { return 0; }
 
+// Supplies the packed exit destinations.
 void *SceneData_GetSceneTableB(void) { return gMercuryEntrance_SceneTableB; }
 
+// Supplies the actors and pillar interaction points.
 void *SceneData_GetSceneTableC(void) { return gMercuryEntrance_SceneTableC; }
 
-static void EV01_SEARCH(void) {
+// Reads the inscription asking who honors the heart of the goddess.
+static void MercuryEntrance_ReadHeartInscription(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
@@ -112,58 +132,76 @@ static void EV01_SEARCH(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_risedrop.h"
 
-static void EV67_TOUCH(void) { SceneActor_RunActorZeroHandledMotion(17); }
+// Rises out of the pool toward the southern landing.
+static void MercuryEntrance_RiseToSouthernLanding(void) {
+  SceneActor_RunActorZeroHandledMotion(17);
+}
 
-static void EV68_TOUCH(void) { SceneActor_RunActorZeroHandledMotion(18); }
+// Rises toward the northern landing near the top of the map.
+static void MercuryEntrance_RiseToNorthernLanding(void) {
+  SceneActor_RunActorZeroHandledMotion(18);
+}
 
-static void EV69_TOUCH(void) { SceneActor_RunActorZeroHandledMotion(19); }
+// Rises toward the middle landing between the other two routes.
+static void MercuryEntrance_RiseToMiddleLanding(void) {
+  SceneActor_RunActorZeroHandledMotion(19);
+}
 
+// Supplies touch, search, dialogue and Psynergy events.
 void *SceneData_GetSceneTableD(void) { return gMercuryEntrance_SceneTableD; }
 
-static void EV16_PSYNERGY(void) {
-  s32 a;
-  s32 b;
-  s32 zero;
-  s32 counter;
-  s32 x;
-  s32 y;
-  s32 t;
-  s32 record;
-  u8 *slot;
-  u8 slot16[40];
+// Ply at the central mechanism starts the light-and-spark sequence and enables
+// the pillar routes. Casting it from any other map cell has no effect.
+static void MercuryEntrance_ActivateWithPly(void) {
+  s32 leaderColumn;
+  s32 leaderRow;
+  s32 velocityZ;
+  s32 sparkIndex;
+  s32 sparkX;
+  s32 sparkZ;
+  s32 speedRoll;
+  s32 velocityY;
+  struct EffectOptions *effectData;
+  struct EffectOptions effectOptions;
 
-  a = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / 0x100000;
-  b = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / 0x100000;
-  if (a == 12 && b == 32) {
+  leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / 0x100000;
+  leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / 0x100000;
+  if (leaderColumn == 12 && leaderRow == 32) {
     Engine_EventBegin();
+    // Fade the scene before releasing fifteen sparks above the pool.
     ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(120);
     ColorBuffer_ApplyTarget(0x10005, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(40);
-    counter = 0;
-    slot = slot16;
-    zero = 0;
+    sparkIndex = 0;
+    effectData = &effectOptions;
+    velocityZ = 0;
     do {
-      *(s32 *)slot = 1;
+      effectData->priority = 1;
       {
-        u16 shown = 0x11e;
+        u16 effectType = 0x11e;
 
-        *(u16 *)(slot + 24) = shown;
+        effectData->type = effectType;
       }
-      *(s32 *)(slot + 28) = (s32)gMercuryEntrance_SparkBurstScript;
+      effectData->script = (const s32 *)gMercuryEntrance_SparkBurstScript;
       Engine_AudioPlayCue(246);
-      x = 208 - ((u32)(Random_Next() << 4) >> 16);
-      y = 560 - ((u32)(Random_Next() << 4) >> 16);
-      t = ((u32)(Engine_RandomNext() << 2) >> 16);
-      record = Math_Divide((((t << 4) - t) << 16) + 0x3c0000, 100);
-      Effect_Spawn(x << 16, 0, y << 16, 0, record, zero, 0x320001, slot);
+      sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
+      sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
+      speedRoll = ((u32)(Engine_RandomNext() << 2) >> 16);
+      velocityY =
+          Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
+      Effect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
+                   EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
+                       1,
+                   effectData);
       Engine_EventWait(4);
-      counter++;
-    } while ((u32)counter <= 14);
+      sparkIndex++;
+    } while ((u32)sparkIndex <= 14);
     Engine_AudioPlayCue(220);
     Engine_EventWait(60);
+    // Persist the activated state and replace the pool's map cells.
     GameFlag_Set(0x875);
     FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
     Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
@@ -175,29 +213,35 @@ static void EV16_PSYNERGY(void) {
   }
 }
 
-static void EV10_TOUCH(void) { Engine_EventRequestExit(63); }
+// Returns to the doorway where Mia's entrance scene resumes.
+static void MercuryEntrance_ReturnToDoorway(void) {
+  Engine_EventRequestExit(63);
+}
 
+// Resets the doorway actor's path to its central position.
 static void MercuryEntrance_InstallActorEightPath(void) {
   Engine_GameFlagClear(0x205);
   Actor_SetActionScript(8, gMercuryEntrance_Actor8Path1);
 }
 
-static void EV41_TOUCH(void) {
-  struct FieldActor *record;
-  s32 field8;
-  s32 quotient;
+// Moves the doorway actor aside according to the leader's approach column.
+static void MercuryEntrance_SelectDoorActorSidePath(void) {
+  struct FieldActor *leader;
+  s32 leaderX;
+  s32 leaderColumn;
 
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  field8 = record->x.fixed;
-  quotient = field8 / 0x100000;
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leaderX = leader->x.fixed;
+  leaderColumn = leaderX / 0x100000;
   Engine_GameFlagSet(0x205);
-  if (quotient == 7) {
+  if (leaderColumn == 7) {
     Actor_SetActionScript(8, gMercuryEntrance_Actor8Path2);
   } else {
     Actor_SetActionScript(8, gMercuryEntrance_Actor8Path3);
   }
 }
 
+// Starts the doorway encounter, preserving this entrance as its return point.
 static void MercuryEntrance_OpenEntrance(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(8, 2);
@@ -212,19 +256,21 @@ static void MercuryEntrance_OpenEntrance(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_arrive.h"
 
+// Restores the pillar routes and chooses the arrival scene for this entrance.
 s32 MercuryEntrance_ApplyEntryState(void) {
   struct EffectOptions options;
   s32 velocity[3];
   struct FieldActor *actor;
-  u32 i;
+  u32 sparkIndex;
   s32 angle;
-  s32 flag;
+  s32 arrivalSeen;
 
   Io_Write16(0x3f40, &REG_BLDCNT);
   {
     s32 alpha = 0x1010;
     REG_BLDALPHA = alpha;
   }
+  // Restore persistent lighting and the Retreat destination first.
   Mercury_SpawnLightObjects(21, (struct MercuryLights *)gSceneState);
   GameFlag_Set(0x111);
   gGameState.retreatEntrance = 11;
@@ -235,10 +281,12 @@ s32 MercuryEntrance_ApplyEntryState(void) {
   else
     Mercury_ClearPalette();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  // Each entrance restores its route or plays its one-time arrival.
   switch (gGameState.entrance) {
   case 1:
     if (!GameFlag_IsSet(0x872))
       Engine_EventRequestExit(20);
+    // Fall through: both doorway entrances mirror the same actors.
   case 2:
     Actor_Get(12)->scaleX = -0x10000;
     Actor_Get(13)->scaleX = -0x10000;
@@ -269,8 +317,8 @@ s32 MercuryEntrance_ApplyEntryState(void) {
     }
     if (gGameState.entrance != 6)
       break;
-    flag = GameFlag_IsSet(0x251);
-    if (flag != 0)
+    arrivalSeen = GameFlag_IsSet(0x251);
+    if (arrivalSeen != 0)
       break;
     GameFlag_Set(0x251);
     Engine_EventBegin();
@@ -279,18 +327,19 @@ s32 MercuryEntrance_ApplyEntryState(void) {
     Engine_TaskWait(1);
     Actor_Get(0)->y.fixed = 0x820000;
     Actor_Get(0)->gravity = 0x8000;
-    Actor_Get(0)->bounce = flag;
-    Actor_Get(0)->motionFlags = flag;
+    Actor_Get(0)->bounce = arrivalSeen;
+    Actor_Get(0)->motionFlags = arrivalSeen;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Actor_Get(0)->motionFlags = 3;
     Engine_AudioPlayCue(204);
     Engine_EventWait(24);
+    // Scatter seventeen effects around the leader before the landing.
     actor = Actor_Get(0);
     options.palette = 7;
-    for (i = 0; i <= 16; i++) {
-      angle = i << 12;
+    for (sparkIndex = 0; sparkIndex <= 16; sparkIndex++) {
+      angle = sparkIndex << 12;
       velocity[0] = Engine_MathCos(angle);
       velocity[1] = 0;
       velocity[2] = Engine_MathSin(angle);
@@ -325,6 +374,7 @@ s32 MercuryEntrance_ApplyEntryState(void) {
   case 19:
   case 20:
     Mercury_ArriveWithSparks();
+    // Fall through: all four arrivals play the same sound.
   case 17:
     BattleFx_SetQueuedSoundAndPlay(170);
     break;
@@ -355,18 +405,19 @@ s32 MercuryEntrance_ApplyEntryState(void) {
   return 0;
 }
 
+// Ivan paces in front of the doorway while Mia waits for the leader to enter.
 static void MercuryEntrance_CrossDoorway(void) {
-  s32 i;
+  s32 paceCycle;
   struct FieldActor *ivan;
-  struct FieldActor *actor;
+  struct FieldActor *mirroredActor;
 
   Engine_EventBegin();
-  actor = Object_GetById(12);
-  actor->scaleX = -0x10000;
-  actor = Object_GetById(13);
-  actor->scaleX = -0x10000;
-  actor = Object_GetById(14);
-  actor->scaleX = -0x10000;
+  mirroredActor = Object_GetById(12);
+  mirroredActor->scaleX = -0x10000;
+  mirroredActor = Object_GetById(13);
+  mirroredActor->scaleX = -0x10000;
+  mirroredActor = Object_GetById(14);
+  mirroredActor->scaleX = -0x10000;
   Actor_SetPosition(3, PIXELS(136), PIXELS(184));
   Actor_SetPosition(0, PIXELS(136), PIXELS(296));
   Actor_SetPosition(8, PIXELS(136), PIXELS(152));
@@ -380,7 +431,8 @@ static void MercuryEntrance_CrossDoorway(void) {
   Engine_ActorRunRepeatedMotion(3, 1);
   Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  for (i = 0; i < 2; i++) {
+  // Repeat the two-sided pacing exchange before the party moves forward.
+  for (paceCycle = 0; paceCycle < 2; paceCycle++) {
     Engine_ActorWalkTo(3, 152, 168);
     Engine_EventWait(10);
     Actor_SetActionScript(8, gMercuryEntrance_Actor8Path3);
@@ -412,13 +464,14 @@ static void MercuryEntrance_CrossDoorway(void) {
   }
   Engine_EventWait(20);
   Engine_ActorShowEmote(3, EMOTE_IN_FRONT | 2, 60);
-  actor = Object_GetById(3);
+  mirroredActor = Object_GetById(3);
 #ifdef UBFIX
-  actor->update = SceneActor_FaceLeaderWhileGrounded;
+  mirroredActor->update = MercuryEntrance_UpdateDoorwayFacing;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))SceneActor_FaceLeaderWhileGrounded;
+  mirroredActor->update =
+      (void (*)(union FieldObject *))MercuryEntrance_UpdateDoorwayFacing;
 #endif
+  // Follow the leader through the doorway and clear its collision cells.
   Engine_CameraMoveToActor(0, 1);
   Engine_EventWait(30);
   Actor_WalkToAndWait(0, 136, 0x108);
@@ -427,18 +480,19 @@ static void MercuryEntrance_CrossDoorway(void) {
   Engine_EventEnd();
 }
 
+// Mia acknowledges the party and enters the tower once, opening the doorway.
 static void MercuryEntrance_RunDoorScene(void) {
-  struct FieldActor *record;
+  struct FieldActor *mirroredActor;
 
   if (GameFlag_IsSet(0x250) == 0) {
     GameFlag_Set(0x250);
     Engine_EventBegin();
-    record = Actor_Get(12);
-    record->scaleX = -0x10000;
-    record = Object_GetById(13);
-    record->scaleX = -0x10000;
-    record = Actor_Get(14);
-    record->scaleX = -0x10000;
+    mirroredActor = Actor_Get(12);
+    mirroredActor->scaleX = -0x10000;
+    mirroredActor = Object_GetById(13);
+    mirroredActor->scaleX = -0x10000;
+    mirroredActor = Actor_Get(14);
+    mirroredActor->scaleX = -0x10000;
     Actor_SetPosition(MIA, PIXELS(136), PIXELS(144));
     Actor_FaceDirection(MIA, FACING_SOUTH, 10);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -462,17 +516,18 @@ static void MercuryEntrance_RunDoorScene(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lights.h"
 
-static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src) {
-  struct FieldActor *obj =
-      Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);
+// Spawns the short-lived rising effect at an actor's position.
+static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
+  struct FieldActor *effect = Engine_ObjectCreate(
+      24, source->x.fixed, source->y.fixed, source->z.fixed);
 
-  if (obj != 0) {
-    struct FieldSprite *sprite = obj->sprite;
+  if (effect != 0) {
+    struct FieldSprite *sprite = effect->sprite;
 
-    Engine_ObjectSetScript(obj, gMercuryEntrance_RiseScript);
-    obj->motionFlags = 0;
-    obj->terrainId = 1;
-    obj->priorityFlags = 2;
+    Engine_ObjectSetScript(effect, gMercuryEntrance_RiseScript);
+    effect->motionFlags = 0;
+    effect->terrainId = 1;
+    effect->priorityFlags = 2;
     if (sprite != 0) {
       AnimationObjects_SelectAnimation(sprite, 2);
       sprite->flags = 0;
@@ -567,7 +622,7 @@ s32 gMercuryEntrance_Actor8Path1[] = {
     SC_SET(SW_STEERING, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(152)),
-    SC_CALL(SceneAudio_PlayCue118AndReturnZero),
+    SC_CALL(MercuryEntrance_PlayPathSound),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -579,7 +634,7 @@ s32 gMercuryEntrance_Actor8Path2[] = {
     SC_SET(SW_STEERING, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(120), 0, PIXELS(152)),
-    SC_CALL(SceneAudio_PlayCue118AndReturnZero),
+    SC_CALL(MercuryEntrance_PlayPathSound),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -591,7 +646,7 @@ s32 gMercuryEntrance_Actor8Path3[] = {
     SC_SET(SW_STEERING, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(152), 0, PIXELS(152)),
-    SC_CALL(SceneAudio_PlayCue118AndReturnZero),
+    SC_CALL(MercuryEntrance_PlayPathSound),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -658,21 +713,21 @@ struct SceneEntrance gMercuryEntrance_SceneTableC[] = {
 };
 
 struct SceneEvent gMercuryEntrance_SceneTableD[] = {
-    { 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-    { EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV31_TOUCH) },
-    { 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-    { EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV21_TOUCH) },
-    { 0x202, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-    { EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV11_TOUCH) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+    { 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryEntrance_TryPillarStep) },
+    { EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryEntrance_ReleaseRaisedPillar) },
+    { 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryEntrance_TryPillarStep) },
+    { EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryEntrance_SpawnTimedRiseEffect) },
+    { 0x202, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryEntrance_TryPillarStep) },
+    { EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryEntrance_RaiseTouchedPillar) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_ReturnToDoorway) },
     { EVENT_TOUCH, 40, IF_FLAG_SET(0x205), EVENT_SCRIPT(MercuryEntrance_InstallActorEightPath) },
     { EVENT_TOUCH, 42, IF_FLAG_SET(0x205), EVENT_SCRIPT(MercuryEntrance_InstallActorEightPath) },
-    { EVENT_TOUCH, 41, 0x205, EVENT_SCRIPT(EV41_TOUCH) },
+    { EVENT_TOUCH, 41, 0x205, EVENT_SCRIPT(MercuryEntrance_SelectDoorActorSidePath) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 40, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT_SCRIPT(EV67_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT_SCRIPT(EV68_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT_SCRIPT(EV69_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_RiseToSouthernLanding) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_RiseToNorthernLanding) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_RiseToMiddleLanding) },
     { EVENT_EXIT, 51, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 53, CONDITION_ALWAYS, 3 },
@@ -693,8 +748,8 @@ struct SceneEvent gMercuryEntrance_SceneTableD[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, CONDITION_ALWAYS, MSGNO(MsgMercuryLetMePass) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
-    { SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_SEARCH) },
-    { PSYNERGY_ON_ACTOR(0x5d), 16, 0x875, EVENT_SCRIPT(EV16_PSYNERGY) },
+    { SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_ReadHeartInscription) },
+    { PSYNERGY_ON_ACTOR(ABILITY_PLY), 16, 0x875, EVENT_SCRIPT(MercuryEntrance_ActivateWithPly) },
     { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
     { SEARCH(SEARCH_CHEST), 100, 0xf65, FIND_ITEM(0x4c) },
     { SEARCH(SEARCH_CHEST), 101, 0xef0, 0x500000 },

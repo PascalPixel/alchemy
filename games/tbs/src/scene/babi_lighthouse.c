@@ -37,9 +37,10 @@
 
 // Forward declarations.
 static void BabiLighthouse_CloseTruthDoor(void);
-static void SceneState_ApplyRectsAtActors8And9(void);
+static void BabiLighthouse_RefreshMovableBlockTiles(void);
 
-static __inline__ s32 Entrance_Divide(s32 dividend, s32 divisor) {
+// Unused signed division helper; no scene callback or script references it.
+static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
@@ -50,18 +51,25 @@ static __inline__ s32 Entrance_Divide(s32 dividend, s32 divisor) {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-static void EV08_TALK(void) { BattleFx_SetPhaseRequest(8, 66); }
+// Starts the Djinn battle for actor 8; the engine maps Djinn 66 to its enemy
+// group.
+static void BabiLighthouse_StartDjinnBattle(void) {
+  BattleFx_SetPhaseRequest(8, 66);
+}
 
 // Shared source is included here in ROM order.
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 
-static void FieldScene_RunSupplementalSequenceOne(void) {
-  u32 i;
+// Drops the leader into the room, emits a ring of particles, then restores
+// motion.
+static void BabiLighthouse_LandWithParticles(void) {
+  u32 particle;
   struct FieldActor *leader;
   struct EffectOptions options;
-  s32 vec[3];
+  s32 velocity[3];
 
+  // Start above the room with movement disabled until the fall begins.
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
@@ -77,17 +85,18 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
   Object_GetById(0)->motionFlags = 3;
   Engine_EventWait(24);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
+  // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
   options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
-  for (i = 0; i < 17; i++) {
-    vec[0] = Engine_MathCos(i << 12);
-    vec[1] = 0;
-    vec[2] = Engine_MathSin(i << 12);
-    vec[0] += vec[0] / 2;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vec[0],
-                 vec[1], vec[2],
+  for (particle = 0; particle < 17; particle++) {
+    velocity[0] = Engine_MathCos(particle << 12);
+    velocity[1] = 0;
+    velocity[2] = Engine_MathSin(particle << 12);
+    velocity[0] += velocity[0] / 2;
+    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0],
+                 velocity[1], velocity[2],
                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                      EFFECT_USE_PALETTE | 1,
                  &options);
@@ -104,9 +113,11 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3c5SequenceA(s32 exit) {
+// Drops the leader from above and requests the supplied exit after landing.
+static void BabiLighthouse_FallToExit(s32 exit) {
   struct FieldActor *leader;
 
+  // Start above the room with movement disabled until the fall begins.
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
@@ -132,6 +143,7 @@ static void FieldScene_RunScene3c5SequenceA(s32 exit) {
   Engine_EventEnd();
 }
 
+// Selects the entrance table for the active lighthouse room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -147,6 +159,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gBabiLighthouseEntrancesOther;
 }
 
+// Provides the ledge exit regions only in the third lighthouse room.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_BabiLighthouse3) {
     return gBabiLighthouseRegions3;
@@ -154,8 +167,10 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
+// Provides the shared exit table, whose groups cover all lighthouse rooms.
 u8 *BabiLighthouse_GetExits(void) { return gBabiLighthouseExits; }
 
+// Selects the actor placements for the active lighthouse room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -171,21 +186,24 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gBabiLighthousePlacementsOther;
 }
 
+// Moves the leader off either movable ledge block, then refreshes collision
+// tiles.
 static void BabiLighthouse_JumpFromLedge(void) {
-  struct FieldActor *rec7;
+  struct FieldActor *leader;
 
-  rec7 = Object_GetById(0);
+  leader = Object_GetById(0);
   Engine_EventBegin();
-  if (((rec7->x.fixed >> 20) == 6 || (rec7->x.fixed >> 20) == 18) &&
-      (rec7->z.fixed >> 20) == 20) {
-    rec7->targetX = -0x80000000;
-    rec7->targetZ = -0x80000000;
+  if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
+      (leader->z.fixed >> 20) == 20) {
+    leader->targetX = ACTOR_NO_TARGET;
+    leader->targetZ = ACTOR_NO_TARGET;
     Actor_ShowEmote(0, 0x100, 20);
     Actor_SetSpeed(0, 0x20000, 0x10000);
     Engine_ActorJump(0, 4, 0);
     {
-      u16 dir = rec7->facing;
-      if ((u16)(dir + 0x4fff) <= 0x1fff || (u16)(dir - 0x3001) <= 0x1fff) {
+      u16 facing = leader->facing;
+      if ((u16)(facing + 0x4fff) <= 0x1fff ||
+          (u16)(facing - 0x3001) <= 0x1fff) {
         Engine_ActorSetDestinationOffset(0, 16, 0);
         Engine_ActorWaitForMove(0);
         Actor_FaceDirection(0, FACING_WEST, 20);
@@ -196,32 +214,35 @@ static void BabiLighthouse_JumpFromLedge(void) {
       }
     }
   }
-  SceneState_ApplyRectsAtActors8And9();
+  BabiLighthouse_RefreshMovableBlockTiles();
   Engine_EventEnd();
 }
 
-static void EV10_SCRIPT(void) {
+// Advances the staged actor pair before checking whether the leader must jump
+// off.
+static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
   BabiLighthouse_JumpFromLedge();
   Engine_EventEnd();
 }
 
-static void EV11_TOUCH(void) {
-  struct FieldActor *p = Object_GetById(9);
+// Uses the ledge block on the leader's side, or falls back to climbing down.
+static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
+  struct FieldActor *block = Object_GetById(9);
 
   if ((Object_GetById(0)->x.fixed >> 20) <= 12) {
-    p = Object_GetById(8);
-    if ((p->x.fixed >> 20) == 6) {
-      if ((p->z.fixed >> 20) == 20) {
-        EV10_SCRIPT();
+    block = Object_GetById(8);
+    if ((block->x.fixed >> 20) == 6) {
+      if ((block->z.fixed >> 20) == 20) {
+        BabiLighthouse_AdvancePairAndJump();
         return;
       }
     }
   } else {
-    if ((p->x.fixed >> 20) == 18) {
-      if ((p->z.fixed >> 20) == 20) {
-        EV10_SCRIPT();
+    if ((block->x.fixed >> 20) == 18) {
+      if ((block->z.fixed >> 20) == 20) {
+        BabiLighthouse_AdvancePairAndJump();
         return;
       }
     }
@@ -229,61 +250,80 @@ static void EV11_TOUCH(void) {
   Field_ClimbDown();
 }
 
-static void ResetSceneParametersAndFinishSetup(void) {
+// Raises the leader, then closes the screen before a room transition.
+static void BabiLighthouse_RiseAndCloseScreen(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }
 
-static void EV25_TOUCH(void) {
+// Raises the leader and takes exit 11 without preparing an extra effect.
+static void BabiLighthouse_RiseToExit(void) {
   Engine_EventBegin();
-  ResetSceneParametersAndFinishSetup();
+  BabiLighthouse_RiseAndCloseScreen();
   Engine_EventRequestExit(11);
   Engine_EventEnd();
 }
 
-static void EV26_TOUCH(void) {
+// Prepares one effect, raises the leader, then takes exit 12.
+static void BabiLighthouse_RisePastSingleEffect(void) {
   Engine_EventBegin();
   OverlayObject_PrepareObject(0x1d00000, 0, 0x1220000, 223);
-  ResetSceneParametersAndFinishSetup();
+  BabiLighthouse_RiseAndCloseScreen();
   Engine_EventRequestExit(12);
   Engine_EventEnd();
 }
 
-static void EV27_TOUCH(void) {
+// Prepares two effects, raises the leader, then takes exit 13.
+static void BabiLighthouse_RisePastPairedEffects(void) {
   Engine_EventBegin();
   OverlayObject_PrepareObject(0x8f0000, 0, 0x1220000, 223);
   OverlayObject_PrepareObject(0x790000, 0, 0x11e0000, 253);
-  ResetSceneParametersAndFinishSetup();
+  BabiLighthouse_RiseAndCloseScreen();
   Engine_EventRequestExit(13);
   Engine_EventEnd();
 }
 
-static void EV28_TOUCH(void) {
+// Raises the leader and takes exit 15 without preparing an extra effect.
+static void BabiLighthouse_RiseToAlternateExit(void) {
   Engine_EventBegin();
-  ResetSceneParametersAndFinishSetup();
+  BabiLighthouse_RiseAndCloseScreen();
   Engine_EventRequestExit(15);
   Engine_EventEnd();
 }
 
-static void EV20_SEARCH(void) {
+// Stops the leader's animation and reports that the door seems locked.
+static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
   Engine_EventEnd();
 }
 
-static void EV10_TOUCH(void) {
-  struct FieldActor *record;
+// Moves a companion back to the leader, then hides its separate scene actor.
+static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
+  struct FieldActor *leader;
 
+  Engine_ActorSetAnimation(actorId, 2);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
+  }
+  Engine_ActorWaitForMove(actorId);
+  Actor_SetPosition(actorId, 0, 0);
+}
+
+// Stages the discussion about pursuing the kidnappers through the sealed door.
+static void BabiLighthouse_DiscussPursuit(void) {
+  // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(0x988);
   GameFlag_Set(0x98a);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_EventWait(10);
   FieldMotion_LaunchFromFocusedObject(10, 16, 0, 0xc000);
@@ -310,6 +350,7 @@ static void EV10_TOUCH(void) {
   Engine_EventWait(20);
   Event_ShowMessage(14, 0);
   Engine_EventWait(10);
+  // The witnesses try the stone door and disagree about who passed through it.
   Engine_ActorStartRepeatedMotion(13, 2);
   Engine_ActorRunRepeatedMotion(12, 2);
   Engine_EventWait(40);
@@ -356,6 +397,7 @@ static void EV10_TOUCH(void) {
   Camera_MoveTo(0x1180000, -1, 0x1400000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
+  // The party learns where the kidnappers went and is asked to pursue them.
   Engine_ActorSetAnimationAndWait(10, 3);
   Engine_EventWait(30);
   Event_ShowMessage(10, 0);
@@ -482,7 +524,7 @@ static void EV10_TOUCH(void) {
   Engine_EventWait(35);
   Engine_ActorSetAnimationAndWait(14, 3);
   Engine_EventWait(30);
-  Actor_FaceDirection(14, 0xb000, 0);
+  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(40);
   Event_ShowMessage(14, 0);
   Engine_EventWait(10);
@@ -502,8 +544,8 @@ static void EV10_TOUCH(void) {
   Actor_WalkByAndWait(13, 32, 0);
   Actor_WalkBy(12, 0, 16);
   Actor_WalkByAndWait(13, 16, 0);
-  Actor_WalkTo(13, 0x158, 0x138);
-  Actor_WalkToAndWait(12, 0x158, 0x150);
+  Actor_WalkTo(13, 344, 312);
+  Actor_WalkToAndWait(12, 344, 336);
   Engine_ActorSetAnimation(13, 1);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(13, FACING_WEST, 0);
@@ -513,50 +555,34 @@ static void EV10_TOUCH(void) {
   Event_ShowMessage(14, 0);
   Engine_EventWait(10);
   Actor_SetSpeed(14, 0x10000, 0x8000);
-  Actor_WalkToAndWait(14, 0x148, 0x138);
+  Actor_WalkToAndWait(14, 328, 312);
   Actor_FaceDirection(14, FACING_WEST, 0);
   Engine_EventWait(30);
   Actor_SetSpeed(11, 0x10000, 0x8000);
-  Actor_WalkToAndWait(11, 0x148, 0x148);
+  Actor_WalkToAndWait(11, 328, 328);
   Actor_FaceDirection(11, FACING_WEST, 0);
   Engine_EventWait(20);
+  // Regroup the travelling party after the conversation.
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Actor_SetSpeed(IVAN, 0x13333, 0x9999);
   Actor_SetSpeed(MIA, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(GARET, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(IVAN, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorWaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(MIA, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorWaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
+  BabiLighthouse_RegroupPartyMember(GARET);
+  BabiLighthouse_RegroupPartyMember(IVAN);
+  BabiLighthouse_RegroupPartyMember(MIA);
   Engine_EventWait(10);
   Engine_EventEnd();
 }
 
-static void FieldScene_RunActorEventSequence(void) {
-  struct FieldActor *record;
-
+// Shows the door opening, then explains why those without Psynergy cannot
+// enter.
+static void BabiLighthouse_ExplainTruthDoor(void) {
+  // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(0x989);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
   Engine_EventSetMessage(MsgBabiTheDoor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Engine_EventWait(10);
   Motion_LaunchFromFocusedObject(1, 0, 16, 0);
@@ -569,7 +595,7 @@ static void FieldScene_RunActorEventSequence(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
   Engine_EventWait(10);
-  Actor_FaceDirection(10, 0xb000, 0);
+  Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(10, 0x100, 40);
   Event_ShowMessage(10, 0);
@@ -581,10 +607,10 @@ static void FieldScene_RunActorEventSequence(void) {
   Actor_ShowEmote(13, 0x100, 0);
   Actor_ShowEmote(14, 0x100, 40);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, 0xb000, 0);
-  Actor_FaceDirection(11, 0xb000, 0);
-  Actor_FaceDirection(12, 0xb000, 0);
-  Actor_FaceDirection(13, 0xb000, 0);
+  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(14, 2);
   Engine_EventWait(20);
@@ -646,6 +672,8 @@ static void FieldScene_RunActorEventSequence(void) {
   Engine_EventWait(30);
   Engine_CameraFollowActor(10, 1);
   Actor_WalkByAndWait(10, 0, -32);
+  // Demonstrate that the door closes again when someone without Psynergy
+  // enters.
   BabiLighthouse_CloseTruthDoor();
   GameFlag_Clear(0x301);
   Camera_MoveTo(-1, -1, -1, 0);
@@ -653,10 +681,10 @@ static void FieldScene_RunActorEventSequence(void) {
   Actor_ShowEmote(10, 0x102, 40);
   Event_ShowMessage(10, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, 0xb000, 0);
-  Actor_FaceDirection(11, 0xb000, 0);
-  Actor_FaceDirection(12, 0xb000, 0);
-  Actor_FaceDirection(13, 0xb000, 0);
+  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -687,7 +715,7 @@ static void FieldScene_RunActorEventSequence(void) {
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(MIA, 0x102, 40);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -698,12 +726,13 @@ static void FieldScene_RunActorEventSequence(void) {
   Actor_ShowEmote(14, 0x103, 50);
   Actor_FaceDirection(14, FACING_WEST, 0);
   Engine_EventWait(20);
+  // Explain the restriction and ask the onlookers to leave the pursuit to us.
   Event_OpenMessage(14, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(11, FACING_WEST, 0);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(13, FACING_WEST, 0);
-  Actor_FaceDirection(IVAN, 0x1000, 0);
+  Actor_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
@@ -732,6 +761,7 @@ static void FieldScene_RunActorEventSequence(void) {
   Engine_EventWait(20);
   Event_ShowMessage(14, 0);
   Engine_EventWait(10);
+  // The party learns where the kidnappers went and is asked to pursue them.
   Engine_ActorSetAnimationAndWait(10, 3);
   Engine_EventWait(30);
   Event_ShowMessage(10, 0);
@@ -740,7 +770,7 @@ static void FieldScene_RunActorEventSequence(void) {
   Engine_EventWait(20);
   Event_OpenMessage(14, 0);
   Engine_EventWait(40);
-  Actor_FaceDirection(10, 0x5000, 0);
+  Actor_FaceDirection(10, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(20);
   Actor_ShowEmote(10, 0x101, 60);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -777,11 +807,11 @@ static void FieldScene_RunActorEventSequence(void) {
   Engine_EventWait(30);
   Event_ShowMessage(14, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(10, 0x5000, 0);
+  Actor_FaceDirection(10, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(25);
   Engine_ActorRunRepeatedMotion(10, 2);
   Engine_EventWait(20);
-  Actor_WalkToAndWait(10, 0x138, 0x138);
+  Actor_WalkToAndWait(10, 312, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(10, FACING_WEST, 0);
   Engine_EventWait(25);
@@ -795,42 +825,26 @@ static void FieldScene_RunActorEventSequence(void) {
   Engine_ActorSetAnimation(MIA, 3);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   Engine_EventWait(30);
+  // Regroup the travelling party after the conversation.
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Actor_SetSpeed(IVAN, 0x13333, 0x9999);
   Actor_SetSpeed(MIA, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(GARET, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(IVAN, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorWaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorSetAnimation(MIA, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorWaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
+  BabiLighthouse_RegroupPartyMember(GARET);
+  BabiLighthouse_RegroupPartyMember(IVAN);
+  BabiLighthouse_RegroupPartyMember(MIA);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(10, 0xb000, 0);
-  Actor_FaceDirection(14, 0xb000, 0);
-  Actor_FaceDirection(11, 0xb000, 0);
-  Actor_FaceDirection(12, 0xb000, 0);
-  Actor_FaceDirection(13, 0xb000, 0);
+  Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
 
-static void ActorPresentation_SetSceneCellByFlag985(void) {
+// Selects the revealed switch tiles to match the truth door's open flag.
+static void BabiLighthouse_RefreshTruthDoorTiles(void) {
   if (Engine_GameFlagIsSet(0x985) == 0) {
     Map_CopyCellsLayered(36, 78, 1, 2, 17, 78);
   } else {
@@ -838,34 +852,37 @@ static void ActorPresentation_SetSceneCellByFlag985(void) {
   }
 }
 
-static void SceneState_ApplyRectAt32x78(void) {
+// Restores the ordinary tiles when Reveal no longer exposes the door switch.
+static void BabiLighthouse_HideTruthDoorSwitch(void) {
   Map_CopyCellsLayered(32, 78, 1, 2, 17, 78);
 }
 
-static void EV22_TOUCH(void) {
+// Opens both door halves and runs the first-opening conversation once.
+static void BabiLighthouse_OpenTruthDoor(void) {
   if (GameFlag_IsSet(0x985) == 0) {
     GameFlag_Set(0x985);
     Engine_AudioPlayCue(157);
     Engine_EventBegin();
-    Actor_SetDestination(8, 0x118, 240);
-    Actor_SetDestination(9, 0x148, 240);
+    Actor_SetDestination(8, 280, 240);
+    Actor_SetDestination(9, 328, 240);
     Engine_ActorWaitForMove(8);
     Engine_ActorWaitForMove(9);
     Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     Engine_EventEnd();
     if (GameFlag_IsSet(0x989) == 0) {
-      FieldScene_RunActorEventSequence();
+      BabiLighthouse_ExplainTruthDoor();
     }
   }
 }
 
+// Closes both door halves and toggles which doorway touch trigger is active.
 static void BabiLighthouse_CloseTruthDoor(void) {
   if (GameFlag_IsSet(0x985) != 0) {
     GameFlag_Clear(0x985);
     Engine_AudioPlayCue(157);
     Engine_EventBegin();
-    Actor_SetDestination(8, 0x128, 240);
-    Actor_SetDestination(9, 0x138, 240);
+    Actor_SetDestination(8, 296, 240);
+    Actor_SetDestination(9, 312, 240);
     Engine_ActorWaitForMove(8);
     Engine_ActorWaitForMove(9);
     Map_CopyCellAttributes(0, 14, 4, 1, 17, 14);
@@ -878,13 +895,14 @@ static void BabiLighthouse_CloseTruthDoor(void) {
   }
 }
 
-static void EV60_SEARCH(void) {
+// Operates the hidden switch under Reveal; otherwise reads its inscription.
+static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   u8 *work = (u8 *)gEventWork;
-  s16 *seeing;
+  s16 *revealActive;
 
   Engine_EventBegin();
-  seeing = (s16 *)(work + 0xcb8);
-  if (seeing[0] != 0) {
+  revealActive = (s16 *)(work + 0xcb8);
+  if (revealActive[0] != 0) {
     if (Engine_GameFlagIsSet(0x985) == 0) {
 
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -893,7 +911,7 @@ static void EV60_SEARCH(void) {
       Engine_EventWait(10);
       Map_CopyCellsLayered(34, 78, 1, 2, 17, 78);
       Engine_EventWait(10);
-      EV22_TOUCH();
+      BabiLighthouse_OpenTruthDoor();
     }
   } else {
     Engine_EventSetMessage(MsgBabiTruthDoorOpenThoseSeeing);
@@ -902,95 +920,108 @@ static void EV60_SEARCH(void) {
   Engine_EventEnd();
 }
 
+// Finds the staged actor one direction-table step ahead, including terrain
+// height.
 static struct StagedActor *
 BabiLighthouse_FindActorAhead(struct StagedActor *actor) {
-  s32 pos[3];
-  s32 *p = pos;
-  s32 step = gStagedActor_DirectionSteps[actor->directionAndKind >> 12];
+  s32 position[3];
+  s32 *target = position;
+  s32 directionStep =
+      gStagedActor_DirectionSteps[actor->directionAndKind >> 12];
 
   {
     s32 x = actor->x.value;
     s32 z = actor->z.value;
 
-    x += -0x10000 & step;
-    z += step << 16;
-    p[0] = x;
-    p[2] = z;
+    x += -0x10000 & directionStep;
+    z += directionStep << 16;
+    target[0] = x;
+    target[2] = z;
   }
-  p[1] = Map_GetTerrainHeight(actor->transitionMode, p[0], p[2]);
-  return StagedActor_FindAtTile(p, actor);
+  target[1] = Map_GetTerrainHeight(actor->transitionMode, target[0], target[2]);
+  return StagedActor_FindAtTile(target, actor);
 }
 
-static void EV12_SCRIPT(void) {
+// Enables the effect scene's child option; its remaining meaning is unknown.
+static void BabiLighthouse_EnableChildOption(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
-static void EV12_PSYNERGY(void) {
-  struct FieldActor *p = Object_GetById(12);
-  s32 a = p->x.fixed >> 20;
+// Updates the moved block's height, flags and tile after it reaches column 20,
+// row 12.
+static void BabiLighthouse_UpdateMovedBlock(void) {
+  struct FieldActor *block = Object_GetById(12);
+  s32 column = block->x.fixed >> 20;
 
-  if (a == 20) {
-    s32 b = p->z.fixed >> 20;
+  if (column == 20) {
+    s32 row = block->z.fixed >> 20;
 
-    if (b == 12) {
-      p->motionFlags = 2;
-      p->terrainHeight = 0x300000;
-      p->priorityFlags = 2;
+    if (row == 12) {
+      block->motionFlags = 2;
+      block->terrainHeight = 0x300000;
+      block->priorityFlags = 2;
       {
-        s32 k5 = a, k6 = b;
+        s32 targetColumn = column, targetRow = row;
 
-        Map_CopyCellAttributes(38, 12, 1, 1, k5, k6);
+        Map_CopyCellAttributes(38, 12, 1, 1, targetColumn, targetRow);
       }
     }
   }
 }
 
-static void EV50_SCRIPT(void) {
-  struct StagedActor *p =
+// Advances the staged pair only when the actor ahead is less than eight pixels
+// away vertically.
+// Trial: inverting the empty success arm changes two branch instructions
+// (three text bytes in tbs-en); retain the existing branch order.
+static void BabiLighthouse_AdvanceNearbyPair(void) {
+  struct StagedActor *leader =
       (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
-  struct StagedActor *q = BabiLighthouse_FindActorAhead(p);
-  s32 diff;
+  struct StagedActor *ahead = BabiLighthouse_FindActorAhead(leader);
+  s32 heightDifference;
 
-  if (q == 0) {
+  if (ahead == 0) {
     return;
   }
 
-  diff = q->y - p->y;
+  heightDifference = ahead->y - leader->y;
 
-  if (diff >= 0) {
+  if (heightDifference >= 0) {
 
-    if (diff < 0x80000) {
+    if (heightDifference < 0x80000) {
     } else {
       return;
     }
-  } else if (p->y - q->y >= 0x80000) {
+  } else if (leader->y - ahead->y >= 0x80000) {
     return;
   }
 
   StagedActor_AdvancePair();
 }
 
-static void EV51_SCRIPT(void) {
-  struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
-  struct StagedActor *ahead = BabiLighthouse_FindActorAhead(p);
-  s32 m = (p->directionAndKind + 0x2000) & 0xc000;
-  s32 r = -1;
+// Tries vertical climbing first, then advances the staged pair when
+// appropriate.
+static void BabiLighthouse_ClimbOrAdvancePair(void) {
+  struct StagedActor *leader = (struct StagedActor *)Object_GetById(0);
+  struct StagedActor *ahead = BabiLighthouse_FindActorAhead(leader);
+  s32 climbDirection = (leader->directionAndKind + 0x2000) & 0xc000;
+  s32 climbResult = -1;
 
   if (gGameState.movementMode == 1 || ahead == 0) {
-    if (m == 0xc000) {
-      r = Field_ClimbUp();
+    if (climbDirection == FACING_NORTH) {
+      climbResult = Field_ClimbUp();
     }
-    if (m == 0x4000) {
-      r = Field_ClimbDown();
+    if (climbDirection == FACING_SOUTH) {
+      climbResult = Field_ClimbDown();
     }
   }
-  if (r != 0) {
+  if (climbResult != 0) {
     if (gGameState.movementMode != 1) {
-      EV50_SCRIPT();
+      BabiLighthouse_AdvanceNearbyPair();
     }
   }
 }
 
+// Selects the event table for the active lighthouse room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -1006,40 +1037,39 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gBabiLighthouseEventsOther;
 }
 
-static void EV10_PSYNERGY(void) {
+// Copies the passage's collision tiles after Growth and remembers the change.
+static void BabiLighthouse_OpenGrowthPassage(void) {
 
   Map_CopyCellAttributes(82, 7, 1, 2, 18, 7);
   Engine_TaskWait(1);
-  Engine_GameFlagSet(768);
+  Engine_GameFlagSet(0x300);
 }
 
-static void SceneState_ApplyRectsAtActors8And9(void) {
-  struct FieldActor *p = Object_GetById(8);
+// Restores both ledge regions, then places collision tiles under the two
+// blocks.
+static void BabiLighthouse_RefreshMovableBlockTiles(void) {
+  struct FieldActor *leftBlock = Object_GetById(8);
 
   Engine_ActorSetSpritePriority(8, 1);
   Engine_ActorSetSpritePriority(9, 1);
+  Map_CopyCellAttributes(69, 19, 3, 3, 5, 19);
+  Map_CopyCellAttributes(69, 19, 3, 3, 17, 19);
   {
+    s32 column = leftBlock->x.fixed >> 20, row = leftBlock->z.fixed >> 20;
 
-    Map_CopyCellAttributes(69, 19, 3, 3, 5, 19);
+    Map_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
   {
+    struct FieldActor *rightBlock = Object_GetById(9);
+    s32 column = rightBlock->x.fixed >> 20, row = rightBlock->z.fixed >> 20;
 
-    Map_CopyCellAttributes(69, 19, 3, 3, 17, 19);
-  }
-  {
-    s32 k5 = p->x.fixed >> 20, k6 = p->z.fixed >> 20;
-
-    Map_CopyCellAttributes(3, 3, 1, 1, k5, k6);
-  }
-  {
-    struct FieldActor *q = Object_GetById(9);
-    s32 k5 = q->x.fixed >> 20, k6 = q->z.fixed >> 20;
-
-    Map_CopyCellAttributes(3, 3, 1, 1, k5, k6);
+    Map_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
 }
 
 #if TBS_PATCH_2
+// Updates both movable blocks' sprite priorities relative to the leader's
+// depth.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct FieldSprite *sprite;
   struct FieldActor *actor;
@@ -1084,11 +1114,12 @@ struct RowActor {
   u16 delay;
 };
 
+// Restores room-specific blocks, door state and arrival sequences on entry.
 s32 BabiLighthouse_SetupScene(void) {
   struct FieldActor *actor;
   struct RowActor *row;
   s32 scene;
-  s32 copy;
+  s32 sceneCopy;
   struct GameState *state;
   s32 x;
   s32 z;
@@ -1101,8 +1132,9 @@ s32 BabiLighthouse_SetupScene(void) {
   if (scene != (s32)&SceneId_BabiLighthouse4) {
     state->retreatEntrance = 1;
     state->retreatScene = (s32)&SceneId_BabiLighthouse3;
-    copy = state->scene;
+    sceneCopy = state->scene;
   }
+  // Restore the moved block's collision in the construction-area room.
   if (scene == (s32)&SceneId_BabiLighthouse4) {
     row = (struct RowActor *)Object_GetById(12);
     x = row->x.fixed >> 20;
@@ -1112,7 +1144,8 @@ s32 BabiLighthouse_SetupScene(void) {
         Map_CopyCellAttributes(38, 12, 1, 1, x, z);
       }
     }
-  } else if (copy == (s32)&SceneId_BabiLighthouse3) {
+  } else if (sceneCopy == (s32)&SceneId_BabiLighthouse3) {
+    // Set up the movable ledge blocks and the staggered actor animations.
     Actor_SetChildValue(8, 6);
     Actor_SetChildValue(9, 6);
 #if TBS_PATCH_2
@@ -1124,13 +1157,13 @@ s32 BabiLighthouse_SetupScene(void) {
     if (state->entrance == 5 && GameFlag_IsSet(0x109) == 0) {
       Actor_SetPosition(9, 0x1380000, 0x1480000);
     }
-    SceneState_ApplyRectsAtActors8And9();
+    BabiLighthouse_RefreshMovableBlockTiles();
     actor = Object_GetById(9);
     actor->y.fixed = Object_GetById(9)->terrainHeight;
     if (GameFlag_IsSet(0x300) != 0) {
       Engine_ActorSetAnimation(10, 4);
       Object_GetById(10)->collisionFlags = 0xfe;
-      EV10_PSYNERGY();
+      BabiLighthouse_OpenGrowthPassage();
     }
     row = (struct RowActor *)Object_GetById(11);
     row->collisionFlags = 0;
@@ -1165,10 +1198,12 @@ s32 BabiLighthouse_SetupScene(void) {
     ((u8 *)row->sprite)[38] = zero;
     row->sprite->rotation = 0x8000;
     Engine_ActorSetAnimation(14, 0);
-  } else if (copy == (s32)&SceneId_BabiLighthouse2) {
+  } else if (sceneCopy == (s32)&SceneId_BabiLighthouse2) {
+    // Match the arrival effect and fall to the entrance used in this room.
     switch (state->entrance) {
     case 10:
       GameFlag_Set(0x980);
+      // Fall through: both entrances restore the same remembered tile changes.
     case 11:
       if (GameFlag_IsSet(0x980) != 0) {
         Map_CopyCellsTo(120, 7, 109, 7, 1, 3);
@@ -1178,27 +1213,29 @@ s32 BabiLighthouse_SetupScene(void) {
     case 14:
       OverlayObject_PrepareObject(0x1b80000, 0, 0x1220000, 223);
       Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
-      FieldScene_RunScene3c5SequenceA(14);
+      BabiLighthouse_FallToExit(14);
       break;
     case 16:
       OverlayObject_PrepareObject(0x1c00000, 0, 0x1220000, 223);
       Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
-      FieldScene_RunScene3c5SequenceA(16);
+      BabiLighthouse_FallToExit(16);
       break;
     case 17:
       OverlayObject_PrepareObject(0xe80000, 0, 0x2520000, 223);
       Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
-      FieldScene_RunScene3c5SequenceA(17);
+      BabiLighthouse_FallToExit(17);
       break;
     case 12:
     case 13:
     case 15:
       if (GameFlag_IsSet(0x109) == 0) {
-        FieldScene_RunSupplementalSequenceOne();
+        BabiLighthouse_LandWithParticles();
       }
       break;
     }
   } else if (scene == (s32)&SceneId_BabiLighthouse1) {
+    // Restore the truth door and the onlookers' positions after each
+    // discussion.
     Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Object_GetById(9)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(8, 0x10000, 0x8000);
@@ -1223,11 +1260,11 @@ s32 BabiLighthouse_SetupScene(void) {
       Engine_EventWait(5);
     } else if (GameFlag_IsSet(0x989) != 0) {
       Actor_SetPosition(10, 0x1380000, 0x1380000);
-      Actor_FaceDirection(10, 0xb000, 0);
-      Actor_FaceDirection(11, 0xb000, 0);
-      Actor_FaceDirection(12, 0xb000, 0);
-      Actor_FaceDirection(13, 0xb000, 0);
-      Actor_FaceDirection(14, 0xb000, 0);
+      Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
       Engine_EventWait(5);
     }
     if (GameFlag_IsSet(0x985) != 0) {
@@ -1239,7 +1276,7 @@ s32 BabiLighthouse_SetupScene(void) {
     }
     if (gGameState.entrance == 3) {
       if (GameFlag_IsSet(0x109) == 0) {
-        FieldScene_RunSupplementalSequenceOne();
+        BabiLighthouse_LandWithParticles();
       }
     }
   } else {
@@ -1457,8 +1494,8 @@ struct SceneEvent gBabiLighthouseEvents3[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH)},
+    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_AdvancePairAndJump)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_ClimbDownOrAdvancePair)},
     {EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
     {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
     {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
@@ -1471,9 +1508,9 @@ struct SceneEvent gBabiLighthouseEvents3[] = {
         MSGNO(MsgBabiLighthouseWhatCouldTheyBePlanningFor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},
-    {PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(0xc), 10, 0x300, EVENT_SCRIPT(EV10_PSYNERGY)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x300, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
     {SCENE_EVENTS_END},
 };
 
@@ -1489,22 +1526,22 @@ struct SceneEvent gBabiLighthouseEvents2[] = {
     {0x31, 9, CONDITION_ALWAYS, 9},
     {0x21, 10, CONDITION_ALWAYS, 10},
     {EVENT_EXIT, 11, CONDITION_ALWAYS, 18},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
-    {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RiseToExit)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RisePastSingleEffect)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RisePastPairedEffects)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RiseToAlternateExit)},
+    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_StartDjinnBattle)},
+    {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectLockedDoor)},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gBabiLighthouseEvents1[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(EV10_TOUCH)},
+    {EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
     {EVENT_TOUCH, 20, IF_FLAG_SET(0x301), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 21, 0x301, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
-    {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TOUCH)},
+    {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_OpenTruthDoor)},
     {EVENT_TALK, 10, 0x989, MSGNO(MsgBabiLighthouseIAmCountingOnYouIsaac)},
     {EVENT_TALK, 11, 0x989, MSGNO(MsgBabiLighthouseWhenISawThemTheyHad)},
     {EVENT_TALK, 12, 0x989, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
@@ -1532,23 +1569,26 @@ struct SceneEvent gBabiLighthouseEvents1[] = {
         MSGNO(MsgBabiLighthouseThisIsABigWasteOf)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIDontWantToHinderActors)},
-    {SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SEARCH)},
+    {SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectTruthDoorSwitch)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(ActorPresentation_SetSceneCellByFlag985)},
+        EVENT_SCRIPT(BabiLighthouse_RefreshTruthDoorTiles)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneState_ApplyRectAt32x78)},
+        EVENT_SCRIPT(BabiLighthouse_HideTruthDoorSwitch)},
     {SCENE_EVENTS_END},
 };
 // clang-format on
 
 struct SceneEvent gBabiLighthouseEventsOther[] = {
-    {0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT)},
-    {0x202, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_SCRIPT)},
-    {PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV12_PSYNERGY)},
-    {0x10009315, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_SCRIPT)},
-    {PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV12_PSYNERGY)},
+    {0x202, 50, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_AdvanceNearbyPair)},
+    {0x202, 51, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_ClimbOrAdvancePair)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
+    {0x10009315, 12, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_EnableChildOption)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_TALK, 8, CONDITION_ALWAYS,

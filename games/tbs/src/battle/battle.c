@@ -9868,7 +9868,7 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     {
       s32 start = 0;
 
-      battle->background = (u32)&ResourceId_VenusAerieStormBackdrop;
+      battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
       presentation.effect.count =
           BattleParty_ListActorIds(2, presentation.effect.actors);
       presentation.effect.actors[presentation.effect.count] = 0xff;

@@ -62,7 +62,7 @@ struct EffectStep;
 struct FacingObject;
 struct FieldActor;
 struct FieldPosition;
-struct MercuryLights;
+struct MercuryLighthouseLights;
 struct MapActor;
 struct MapCell;
 struct MenuSprite;
@@ -316,7 +316,7 @@ extern struct MenuSprite gLamakanDesert_SandWork[];
 #ifndef OWN_Render_DecodeFrame
 extern u8 Render_DecodeFrame[];
 #endif
-extern u8 gSolStatue_SpriteRowsGfx[];
+extern u8 gSolSanctumStatue_SpriteRowsGfx[];
 extern u32 gStagedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 extern u8 TileMap_DrawRowsCodeSize[];

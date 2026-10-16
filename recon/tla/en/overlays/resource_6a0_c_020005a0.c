@@ -4,7 +4,7 @@
 // loop hoists the object's cells and the -1. Tried: the table read as s16 pairs
 // (49), a goto loop over explicit byte offsets (51, the first test merges with
 // the entry check), a while loop (43).
-#include "../../../../games/tla/src/scene/jupiter_room_7/jupiter_room_7.h"
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_7/jupiter_lighthouse_room_7.h"
 
 struct Cell {
   s16 x;

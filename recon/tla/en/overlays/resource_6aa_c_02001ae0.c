@@ -5,7 +5,7 @@
 // r10 and the event work r11. The slot loop in the native loads the first id
 // into r0 and reuses it as the call's argument. Measured: the direction as a
 // ternary (pool load of a halfword 0xffff) or a u16 local (negs).
-#include "../../../../games/tla/src/scene/mars_entrance/room.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 
 struct RideSlot {
   u16 id;

@@ -37,13 +37,13 @@ Func_020000c8:
 	strb r3, [r7]
 	movs r0, #30
 	bl FieldEvent_WaitFrames
-	bl VenusEntrance_StopSparks
+	bl VenusLighthouseEntrance_StopSparks
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200811c:
-	.4byte VenusEntrance_UpdateSparkTrail
+	.4byte VenusLighthouseEntrance_UpdateSparkTrail
 	.section .text.x02008128,"ax",%progbits
 	.global Func_02000128
 	.thumb_func
@@ -1584,7 +1584,7 @@ Func_02000510:
 .L_02009220:
 	.4byte 0x00013333
 .L_02009224:
-	.4byte VenusEntrance_UpdateSparkTrail
+	.4byte VenusLighthouseEntrance_UpdateSparkTrail
 .L_02009228:
 	adds r3, r7, #0
 	adds r3, #100
@@ -1782,7 +1782,7 @@ Func_02000510:
 	movs r1, #0
 	movs r0, #17
 	bl Func_0200290c
-	bl VenusEntrance_StopSparks
+	bl VenusLighthouseEntrance_StopSparks
 	movs r0, #20
 	bl FieldEvent_WaitFrames
 	movs r1, #4

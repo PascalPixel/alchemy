@@ -54,8 +54,8 @@ Resource_DirectoryTable:
 	resource PirateShipBackdrop, Battle_PirateShipBackdrop
 	resource CrossboneIsleCaveBackdrop, Battle_CrossboneIsleCaveBackdrop
 	resource ColossoBackdrop, Battle_ColossoBackdrop
-	resource VenusAerieStormBackdrop, Battle_VenusAerieStormBackdrop
-	resource VenusAerieBackdrop, Battle_VenusAerieBackdrop
+	resource VenusLighthouseAerieStormBackdrop, Battle_VenusLighthouseAerieStormBackdrop
+	resource VenusLighthouseAerieBackdrop, Battle_VenusLighthouseAerieBackdrop
 	resource VenusLighthouseBackdrop, Battle_VenusLighthouseBackdrop
 	resource SuhallaDesertBackdrop, Battle_SuhallaDesertBackdrop
 	resource AltmillerCaveBackdrop, Battle_AltmillerCaveBackdrop
@@ -63,17 +63,17 @@ Resource_DirectoryTable:
 	resource BabiLighthouseBackdrop, Battle_BabiLighthouseBackdrop
 	resource LamakanDesertBackdrop, Battle_LamakanDesertBackdrop
 	resource MogallForestBackdrop, Battle_MogallForestBackdrop
-	resource MercuryAerieBackdrop, Battle_MercuryAerieBackdrop
+	resource MercuryLighthouseAerieBackdrop, Battle_MercuryLighthouseAerieBackdrop
 	resource TolbiShipInteriorsBackdrop, Battle_TolbiShipInteriorsBackdrop
 	resource ImilFuchinFallsBackdrop, Battle_ImilFuchinFallsBackdrop
 	resource KolimaForestBackdrop, Battle_KolimaForestBackdrop
-	resource TretInteriorsBackdrop, Battle_TretInteriorsBackdrop
+	resource TretTreeInteriorsBackdrop, Battle_TretTreeInteriorsBackdrop
 	resource InteriorBackdrop, Battle_InteriorBackdrop
 	resource AltinPeakBackdrop, Battle_AltinPeakBackdrop
 	resource TolbiShipDeckBackdrop, Battle_TolbiShipDeckBackdrop
 	resource MercuryLighthouseBackdrop, Battle_MercuryLighthouseBackdrop
 	resource ValeStormBackdrop, Battle_ValeStormBackdrop
-	resource TretBranchBackdrop, Battle_TretBranchBackdrop
+	resource TretTreeBranchBackdrop, Battle_TretTreeBranchBackdrop
 	resource BeachBackdrop, Battle_BeachBackdrop
 	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
 	resource GrasslandBackdrop, Battle_GrasslandBackdrop

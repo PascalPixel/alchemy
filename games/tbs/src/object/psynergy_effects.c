@@ -575,7 +575,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 
   field->battle = Encounter_GetEnemyGroupAtSlot(zone, slot); // enemy group
   if (zone == AERIE && slot == 0)
-    gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
+    gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (field->mode == 3) {
     struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
 
@@ -5381,7 +5381,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
-  if (gGameState.map == (s32)&SceneId_MercuryEntrance)
+  if (gGameState.map == (s32)&SceneId_MercuryLighthouseEntrance)
     work->lit = 1;
   if (gGameState.map == (s32)&SceneId_MercuryLighthouse2)
     work->lit = 1;

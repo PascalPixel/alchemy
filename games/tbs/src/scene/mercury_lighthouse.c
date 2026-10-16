@@ -8,8 +8,8 @@
 #include "unit/scene/mercury_lighthouse.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "staged_actor.h"
-#include "unit/scene/common/mercury_lights.h"
-#include "unit/scene/common/mercury_pillar.h"
+#include "unit/scene/common/mercury_lighthouse_lights.h"
+#include "unit/scene/common/mercury_lighthouse_pillar.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
@@ -127,8 +127,8 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #endif
 
 // Shared source is included here in ROM order.
-#include "common/mercury_sparks.h"
-#include "common/mercury_palette_cycle.h"
+#include "common/mercury_lighthouse_sparks.h"
+#include "common/mercury_lighthouse_palette_cycle.h"
 
 // Select the entrance rows for the current lighthouse scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -173,7 +173,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 // Advance the timer that creates the moving actor's rising effect.
 static void MercuryLighthouse_TickEntranceSpawnTimer(void) {
-  Mercury_TickSpawnTimer();
+  MercuryLighthouse_TickSpawnTimer();
 }
 
 // Release the current moving-actor interaction and its target.
@@ -183,12 +183,12 @@ static void MercuryLighthouse_ClearSceneRecordAndTarget(void) {
 
 // Let the shared lighthouse controller move its selected actor.
 static void MercuryLighthouse_MoveEntranceActor(void) {
-  Mercury_RunActorMove();
+  MercuryLighthouse_RunActorMove();
 }
 
 // Raise the entrance pillar through the shared lighthouse controller.
 static void MercuryLighthouse_RaiseEntrancePillar(void) {
-  MercuryEntrance_RaisePillar();
+  MercuryLighthouseEntrance_RaisePillar();
 }
 
 // Explain that a strange force blocks the passage.
@@ -215,7 +215,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 // Shared source is included here in ROM order.
-#include "common/mercury_risedrop.h"
+#include "common/mercury_lighthouse_risedrop.h"
 
 // Step into the sparkling passage and take the touched exit.
 static void MercuryLighthouse_ExitWithSparks(void) {
@@ -1731,7 +1731,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
 }
 
 // Shared source is included here in ROM order.
-#include "common/mercury_arrive.h"
+#include "common/mercury_lighthouse_arrive.h"
 
 // Reveal the stair's map rows with particles along their edges.
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
@@ -1914,12 +1914,12 @@ s32 Scene_Initialize(void) {
     s32 alpha = 0x1010;
     REG_BLDALPHA = alpha;
   }
-  Mercury_SpawnLightObjects(21, (s32)gSceneState);
+  MercuryLighthouse_SpawnLightObjects(21, (s32)gSceneState);
   BattleFx_StartFadeOverlay(0);
   if (Engine_GameFlagIsSet(0x875))
-    FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
+    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette, 0xc80);
   else
-    Mercury_ClearPalette();
+    MercuryLighthouse_ClearPalette();
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouse1) {
     // Entrance pillars, the channel puzzle and Mia's rescue share this overlay.
     switch (gGameState.entrance) {
@@ -2073,7 +2073,7 @@ s32 Scene_Initialize(void) {
       break;
     case 3:
     case 13:
-      Mercury_ArriveWithSparks();
+      MercuryLighthouse_ArriveWithSparks();
     case 1:
     case 2:
     case 12:
@@ -2196,7 +2196,7 @@ s32 Scene_Initialize(void) {
                                  0xc80);
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         break;
-      Mercury_ArriveWithSparks();
+      MercuryLighthouse_ArriveWithSparks();
       BattleFx_SetQueuedSoundAndPlay(170);
       ColorBuffer_ApplySource(128 << 9, 0);
       Engine_ColorBufferApplyTarget(0x10003, 1);
@@ -2502,7 +2502,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 }
 
 // Shared source is included here in ROM order.
-#include "common/mercury_lights.h"
+#include "common/mercury_lighthouse_lights.h"
 
 // Create the rising effect at the source actor and set its sprite priority.
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
@@ -2530,7 +2530,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
 }
 
 // Shared source is included here in ROM order.
-#include "common/mercury_pillar.h"
+#include "common/mercury_lighthouse_pillar.h"
 
 s32 gEffectScript0[] = {
     SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
@@ -2584,22 +2584,22 @@ s32 gMercuryLighthouse_SparkScript[] = {
     SC_FREE,
 };
 
-s32 gMercury_RampScript[] = {
+s32 gMercuryLighthouse_RampScript[] = {
     SC_CALL(OverlayObject_RampWords24And28Over16Frames),
     SC_END,
 };
 
-s32 gMercury_ScaleCounterScript[] = {
+s32 gMercuryLighthouse_ScaleCounterScript[] = {
     SC_CALL(OverlayObject_AdvanceScaleCounter),
     SC_FREE,
 };
 
-s32 gMercury_PillarScript[] = {
-    SC_CALL(Mercury_FollowLeader),
+s32 gMercuryLighthouse_PillarScript[] = {
+    SC_CALL(MercuryLighthouse_FollowLeader),
     SC_END,
 };
 
-u16 gMercury_MoveAngles[] = {
+u16 gMercuryLighthouse_MoveAngles[] = {
     0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
     FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };

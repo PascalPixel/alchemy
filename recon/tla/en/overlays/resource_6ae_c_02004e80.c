@@ -10,7 +10,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct MarsAerieParty {
+struct MarsLighthouseAerieParty {
   u8 unk000[0x26a];
   s16 held;
 };
@@ -25,7 +25,7 @@ void Func_02004e80(s32 from, s32 to) {
 
   party->savedByte = 0;
   object = found;
-  ((struct MarsAerieParty *)party)->held = to;
+  ((struct MarsLighthouseAerieParty *)party)->held = to;
   target = Object_GetById(to);
   target->update = object->update;
   object->update = NULL;

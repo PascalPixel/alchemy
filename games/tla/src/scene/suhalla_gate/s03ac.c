@@ -1,7 +1,7 @@
 #include "local.h"
 
 extern char SceneId_SuhallaGate1;
-extern char SceneId_VenusEntrance;
+extern char SceneId_VenusLighthouseEntrance;
 extern u8 MsgWaahhhItS[];
 
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -47,7 +47,7 @@ void Func_020003ac(void) {
   Func_02000a08(8, 0, 10);
   ObjectMotion_SetPositionAndReset_(8, 456, 312);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
-  Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
+  Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gPartyState.battleRule24b = 2;
   Func_02000a40(9, 1);
   Func_02000990();

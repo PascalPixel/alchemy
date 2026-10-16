@@ -17,14 +17,14 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020026f4(void);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void FieldEvent_WaitFrames(s32 frames);
-void VenusEntrance_StopSparks(void);
-void VenusEntrance_UpdateSparkTrail(void);
+void VenusLighthouseEntrance_StopSparks(void);
+void VenusLighthouseEntrance_UpdateSparkTrail(void);
 
 void Func_020000c8(s32 actor) {
   struct ObjectRuntime *object = Object_GetById(actor);
 
   Func_020026f4();
-  object->update = VenusEntrance_UpdateSparkTrail;
+  object->update = VenusLighthouseEntrance_UpdateSparkTrail;
   object->priorityFlags = 0;
   {
     /* FAKEMATCH: the pin keeps this -96 out of a pseudo the second call would
@@ -37,5 +37,5 @@ void Func_020000c8(s32 actor) {
   object->update = 0;
   object->priorityFlags = 1;
   FieldEvent_WaitFrames(30);
-  VenusEntrance_StopSparks();
+  VenusLighthouseEntrance_StopSparks();
 }

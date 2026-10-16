@@ -7,7 +7,7 @@
 // with count-- then return), s16 with -1, (u16)-1, a for loop. agscc splits
 // SImode constants after reload, so the pool word suggests a constant that
 // never reached a low-register SImode set (HImode or a symbol).
-#include "../../../../games/tla/src/scene/mars_room_m/mars_room_m.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 s32 Func_020016e8(u16 *list) {
   s32 count;

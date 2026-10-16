@@ -7,5 +7,5 @@ Battle_AltinPeakBackdrop:
 	.ifeq GAME_TLA
 	.byte 0x54, 0x14	@ PACKER: left in the buffer by Battle_GomaCaveBackdrop+0x3b4a
 	.else
-	.byte 0x13, 0x24	@ PACKER: left in the buffer by Battle_TretInteriorsBackdrop+0x3b4a
+	.byte 0x13, 0x24	@ PACKER: left in the buffer by Battle_TretTreeInteriorsBackdrop+0x3b4a
 	.endif

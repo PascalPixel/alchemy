@@ -16211,7 +16211,7 @@ msgctxt "message"
 msgid "04050"
 msgstr "Beyond here the path is{line_break}overrun by monsters,{line_break}so proceed with caution.{end_wait}"
 
-msgctxt "MsgSolKradenFirstTimeAtSol"
+msgctxt "MsgSolSanctumKradenFirstTimeAtSol"
 msgid "04051"
 msgstr "This is the entrance to{line_break}Sol Sanctum. This is your{line_break}first time here, right?{end_now}"
 
@@ -16223,7 +16223,7 @@ msgctxt "message"
 msgid "04053"
 msgstr "I doubt that... Few ever{line_break}get the chance to see{line_break}this sanctum firsthand.{end_wait}"
 
-msgctxt "MsgSolWrongKraden"
+msgctxt "MsgSolSanctumWrongKraden"
 msgid "04054"
 msgstr "What's wrong, Kraden?{end_wait}"
 
@@ -16263,11 +16263,11 @@ msgctxt "message"
 msgid "04063"
 msgstr "I think he's serious!{line_break}Should we help him,{line_break}{actor_name:1}?{end_now}"
 
-msgctxt "MsgSolDangerousSplitStay"
+msgctxt "MsgSolSanctumDangerousSplitStay"
 msgid "04064"
 msgstr "But it's too dangerous{line_break}for us to split up.{line_break}We should stay together.{end_wait}"
 
-msgctxt "MsgSolCantSeriouslyWant"
+msgctxt "MsgSolSanctumCantSeriouslyWant"
 msgid "04065"
 msgstr "You can't seriously want{line_break}to turn back after we've{line_break}come this far.{end_wait}"
 
@@ -16275,7 +16275,7 @@ msgctxt "message"
 msgid "04066"
 msgstr "Let's help Kraden.{line_break}We should stick together,{line_break}after all.{end_wait}"
 
-msgctxt "MsgSolFound"
+msgctxt "MsgSolSanctumFound"
 msgid "04067"
 msgstr "This is it! We've found it!{end_wait}"
 
@@ -16327,15 +16327,15 @@ msgctxt "message"
 msgid "04079"
 msgstr "What do you think? Shall{line_break}we go a little farther?{end_now}"
 
-msgctxt "MsgSolThank"
+msgctxt "MsgSolSanctumThank"
 msgid "04080"
 msgstr "Thank you!{end_wait}"
 
-msgctxt "MsgSolGoBackVillage"
+msgctxt "MsgSolSanctumGoBackVillage"
 msgid "04081"
 msgstr "Then you can all go{line_break}back to the village{line_break}without me.{end_wait}"
 
-msgctxt "MsgSolPutWayDont"
+msgctxt "MsgSolSanctumPutWayDont"
 msgid "04082"
 msgstr "If you put it that way, we{line_break}don't have much choice.{end_wait}"
 
@@ -16351,7 +16351,7 @@ msgctxt "message"
 msgid "04085"
 msgstr "Good! It's decided.{line_break}Let's move ahead!{end_wait}"
 
-msgctxt "MsgSolWhRoom"
+msgctxt "MsgSolSanctumWhRoom"
 msgid "04086"
 msgstr "Wh{pause_20_skippable}-What is this room?{end_wait}"
 
@@ -16367,19 +16367,19 @@ msgctxt "message"
 msgid "04089"
 msgstr "These rooms must be{line_break}connected somehow, don't{line_break}you think?{end_now}"
 
-msgctxt "MsgSolLunaSolRooms"
+msgctxt "MsgSolSanctumLunaSolRooms"
 msgid "04090"
 msgstr "Luna and Sol.{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{line_break}These rooms must hide{line_break}some secret.{page_break}What could it be?{end_wait}"
 
-msgctxt "MsgSolRoomLunaOne"
+msgctxt "MsgSolSanctumRoomLunaOne"
 msgid "04091"
 msgstr "But a room for Luna and{line_break}one for Sol? It can't{line_break}be mere coincidence.{end_wait}"
 
-msgctxt "MsgSolMeanLookFarther"
+msgctxt "MsgSolSanctumMeanLookFarther"
 msgid "04092"
 msgstr "What does it all mean?{line_break}{actor_name:1}, would you look{line_break}farther up the passage?{end_now}"
 
-msgctxt "MsgSolKradenLetMeKnowWhat"
+msgctxt "MsgSolSanctumKradenLetMeKnowWhat"
 msgid "04093"
 msgstr "Let me know what{line_break}you find.{end_wait}"
 
@@ -16387,15 +16387,15 @@ msgctxt "message"
 msgid "04094"
 msgstr "Then just wait there.{end_wait}"
 
-msgctxt "MsgSolKradenJustWaitOverThere"
+msgctxt "MsgSolSanctumKradenJustWaitOverThere"
 msgid "04095"
 msgstr "Just wait over there.{end_wait}"
 
-msgctxt "MsgSolWayLeadsOutSanctum"
+msgctxt "MsgSolSanctumWayLeadsOutSanctum"
 msgid "04096"
 msgstr "That way leads out{line_break}of the sanctum. It{line_break}should be in these rooms.{end_wait}"
 
-msgctxt "MsgSolWhatsHappening"
+msgctxt "MsgSolSanctumWhatsHappening"
 msgid "04097"
 msgstr "{text_effect:4}Wha{pause_20_skippable}-What's...{line_break}What's happening?{end_wait}"
 
@@ -16407,7 +16407,7 @@ msgctxt "message"
 msgid "04099"
 msgstr "{actor_name:1}! Stop!!!{line_break}You're about to make{line_break}a big mistake!{end_wait}"
 
-msgctxt "MsgSolWait"
+msgctxt "MsgSolSanctumWait"
 msgid "04100"
 msgstr "Wait, {actor_name:1}!{end_wait}"
 
@@ -16455,15 +16455,15 @@ msgctxt "message"
 msgid "04111"
 msgstr "Should I tell you more?{end_now}"
 
-msgctxt "MsgSolHonestlyDoubtUnderstand"
+msgctxt "MsgSolSanctumHonestlyDoubtUnderstand"
 msgid "04112"
 msgstr "Hmm... Honestly, I doubt{line_break}you could understand it{line_break}if I explained now.{end_wait}"
 
-msgctxt "MsgSolHmphWellTold"
+msgctxt "MsgSolSanctumHmphWellTold"
 msgid "04113"
 msgstr "Hmph.{pause_20_skippable} Well, even if I told{line_break}you now, you probably{line_break}wouldn't understand.{end_wait}"
 
-msgctxt "MsgSolTryFindSolution"
+msgctxt "MsgSolSanctumTryFindSolution"
 msgid "04114"
 msgstr "We must try to find{line_break}a solution to this mystery.{end_wait}"
 
@@ -16487,7 +16487,7 @@ msgctxt "message"
 msgid "04119"
 msgstr "{actor_name:1}{pause_20_skippable}, let's see if{line_break}we can't figure this{line_break}out ourselves.{end_wait}"
 
-msgctxt "MsgSolWhatsHappeningAtTheTrap"
+msgctxt "MsgSolSanctumWhatsHappeningAtTheTrap"
 msgid "04120"
 msgstr "{text_effect:4}Wha{pause_20_skippable}-What's...{line_break}What's happening?{end_wait}"
 
@@ -16495,7 +16495,7 @@ msgctxt "message"
 msgid "04121"
 msgstr "{actor_name:1}{pause_20_skippable} must have{line_break}found something!{end_wait}"
 
-msgctxt "MsgSolKradenYouFoundIt"
+msgctxt "MsgSolSanctumKradenYouFoundIt"
 msgid "04122"
 msgstr "You found it, {actor_name:1}!{end_wait}"
 
@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "I'll observe from the Luna{line_break}room, where it's safe.{line_break}You handle the rest!{end_wait}"
 
-msgctxt "MsgSolYouFoundIt"
+msgctxt "MsgSolSanctumYouFoundIt"
 msgid "04133"
 msgstr "You found it, {actor_name:1}.{end_wait}"
 
@@ -16547,7 +16547,7 @@ msgctxt "message"
 msgid "04134"
 msgstr "Keep doing that until{line_break}the light bathes all the{line_break}remaining quarters.{end_wait}"
 
-msgctxt "MsgSolThePictureOfLunaChanged"
+msgctxt "MsgSolSanctumThePictureOfLunaChanged"
 msgid "04135"
 msgstr "Look, {actor_name:1}!{pause_20_skippable} The picture of{line_break}Luna changed to Sol!{end_wait}"
 
@@ -16563,7 +16563,7 @@ msgctxt "message"
 msgid "04138"
 msgstr "Somewhere, something{line_break}else must have changed.{line_break}We must find it.{end_wait}"
 
-msgctxt "MsgSolLookSymbolFloor"
+msgctxt "MsgSolSanctumLookSymbolFloor"
 msgid "04139"
 msgstr "Look!{pause_20_skippable} The symbol on the{line_break}floor! It changed{line_break}from Sol to Luna!{end_wait}"
 
@@ -16575,7 +16575,7 @@ msgctxt "message"
 msgid "04141"
 msgstr "If we go this way, we'll{line_break}leave the sanctum.{end_wait}"
 
-msgctxt "MsgSolHa"
+msgctxt "MsgSolSanctumHa"
 msgid "04142"
 msgstr "Ah ha! This has to be it.{end_wait}"
 
@@ -16587,11 +16587,11 @@ msgctxt "message"
 msgid "04144"
 msgstr "Wait for me, {actor_name:1}...{line_break}I'm on my way!{end_wait}"
 
-msgctxt "MsgSolMinotaurReliefOneEye"
+msgctxt "MsgSolSanctumMinotaurReliefOneEye"
 msgid "04145"
 msgstr "It's a relief{line_break}of a minotaur.{page_break}The right eye is sparkling,{line_break}but there's a hole where{line_break}the left eye should be.{end_wait}"
 
-msgctxt "MsgSolSetSmallGem"
+msgctxt "MsgSolSanctumSetSmallGem"
 msgid "04146"
 msgstr "{protagonist_name} set the small{line_break}gem into the empty socket.{end_wait}"
 
@@ -16599,7 +16599,7 @@ msgctxt "message"
 msgid "04147"
 msgstr "You hear the sound of{line_break}shifting stone.{end_wait}"
 
-msgctxt "MsgSolMinotaurReliefBothEyes"
+msgctxt "MsgSolSanctumMinotaurReliefBothEyes"
 msgid "04148"
 msgstr "It's the minotaur relief,{line_break}with both eyes sparkling{line_break}brightly.{end_wait}"
 
@@ -16615,7 +16615,7 @@ msgctxt "MsgSanctumPsynergyIsAPowerThatShould"
 msgid "04151"
 msgstr "Psynergy is a power that{line_break}should only be used for{line_break}good... Never for evil!{end_wait}"
 
-msgctxt "MsgSolSomethingClicked"
+msgctxt "MsgSolSanctumSomethingClicked"
 msgid "04152"
 msgstr "Something clicked!{end_wait}"
 
@@ -16623,7 +16623,7 @@ msgctxt "message"
 msgid "04153"
 msgstr "It looks like we've{line_break}found the hidden passage.{page_break}Things will be more{line_break}dangerous from here on,{line_break}so watch your step.{end_wait}"
 
-msgctxt "MsgSolMoreStatuesOutOfReach"
+msgctxt "MsgSolSanctumMoreStatuesOutOfReach"
 msgid "04154"
 msgstr "More statues...{pause_20_skippable} Hmm...{pause_20_skippable}{line_break}It doesn't look like we{line_break}can reach them from here.{end_wait}"
 
@@ -16631,7 +16631,7 @@ msgctxt "message"
 msgid "04155"
 msgstr "Perhaps Psynergy{line_break}is the key...{page_break}{protagonist_name}{pause_20_skippable}, try to use{line_break}your Psynergy!{end_wait}"
 
-msgctxt "MsgSolKradenWhereAreWe"
+msgctxt "MsgSolSanctumKradenWhereAreWe"
 msgid "04156"
 msgstr "Wha{pause_20_skippable}-Where are we?{end_wait}"
 
@@ -16679,7 +16679,7 @@ msgctxt "message"
 msgid "04167"
 msgstr "No, {protagonist_name}...{line_break}{actor_name:2} is quite correct.{end_wait}"
 
-msgctxt "MsgSolKradenTheElementsAreThe"
+msgctxt "MsgSolSanctumKradenTheElementsAreThe"
 msgid "04168"
 msgstr "As I have told you many{line_break}times, the elements are{line_break}the source of all matter.{end_wait}"
 
@@ -16735,7 +16735,7 @@ msgctxt "message"
 msgid "04181"
 msgstr "Then this must be a lot{line_break}for you to take in.{end_wait}"
 
-msgctxt "MsgSolKradenTheWisdomStone"
+msgctxt "MsgSolSanctumKradenTheWisdomStone"
 msgid "04182"
 msgstr "The Wisdom Stone...{line_break}the Stone of{line_break}Sages.{end_wait}"
 
@@ -16755,7 +16755,7 @@ msgctxt "message"
 msgid "04186"
 msgstr "You still do not{line_break}understand?{page_break}Alchemy exists{pause_20_skippable} because{line_break}of the Elemental Stars.{end_wait}"
 
-msgctxt "MsgSolTheStarsHaveEnormousPower"
+msgctxt "MsgSolSanctumTheStarsHaveEnormousPower"
 msgid "04187"
 msgstr "I don't really get how it{line_break}works, but{pause_20_skippable}{pause_20_skippable} they have{line_break}enormous power,{pause_20_skippable} right?{end_wait}"
 
@@ -16807,11 +16807,11 @@ msgctxt "message"
 msgid "04199"
 msgstr "He'd be glad to get{line_break}the stones for you,{line_break}right, {protagonist_name}?{end_now}"
 
-msgctxt "MsgSolJennaWontYouPlease"
+msgctxt "MsgSolSanctumJennaWontYouPlease"
 msgid "04200"
 msgstr "Don't make me ask you again!{pause_20_skippable}{line_break}Won't you please do it?{end_now}"
 
-msgctxt "MsgSolJennaThankYou"
+msgctxt "MsgSolSanctumJennaThankYou"
 msgid "04201"
 msgstr "Thank you!{end_wait}"
 
@@ -16827,7 +16827,7 @@ msgctxt "message"
 msgid "04204"
 msgstr "You can't carry any more.{line_break}Organize your items.{end_wait}"
 
-msgctxt "MsgSolTheBagsAreFromKradens"
+msgctxt "MsgSolSanctumTheBagsAreFromKradens"
 msgid "04205"
 msgstr "You brought those from{line_break}your cottage, right,{line_break}Kraden?{end_wait}"
 
@@ -16847,7 +16847,7 @@ msgctxt "message"
 msgid "04209"
 msgstr "Now, go fetch the{line_break}Elemental Stars and put{line_break}them in those bags.{end_wait}"
 
-msgctxt "MsgSolNoStarsOutThere"
+msgctxt "MsgSolSanctumNoStarsOutThere"
 msgid "04210"
 msgstr "There aren't any Elemental{line_break}Stars out there!{end_wait}"
 
@@ -16859,39 +16859,39 @@ msgctxt "message"
 msgid "04212"
 msgstr "Good, good!{line_break}Now, go fetch the others!{end_wait}"
 
-msgctxt "MsgSolVenusStarBagged"
+msgctxt "MsgSolSanctumVenusStarBagged"
 msgid "04213"
 msgstr "{argument_actor_name:1} put the{line_break}Venus Star in a{line_break}Mythril Bag.{end_wait}"
 
-msgctxt "MsgSolPutMercuryStar"
+msgctxt "MsgSolSanctumPutMercuryStar"
 msgid "04214"
 msgstr "{argument_actor_name:1} put the{line_break}Mercury Star in a{line_break}Mythril Bag.{end_wait}"
 
-msgctxt "MsgSolJupiterStarBagged"
+msgctxt "MsgSolSanctumJupiterStarBagged"
 msgid "04215"
 msgstr "{argument_actor_name:1} put the{line_break}Jupiter Star in a{line_break}Mythril Bag.{end_wait}"
 
-msgctxt "MsgSolMarsStarBagged"
+msgctxt "MsgSolSanctumMarsStarBagged"
 msgid "04216"
 msgstr "{argument_actor_name:1} put the{line_break}Mars Star in a{line_break}Mythril Bag.{end_wait}"
 
-msgctxt "MsgSolKradenBringTheStarsHere"
+msgctxt "MsgSolSanctumKradenBringTheStarsHere"
 msgid "04217"
 msgstr "Now, put the Elemental{line_break}Stars in those bags and{line_break}bring them here.{end_wait}"
 
-msgctxt "MsgSolJennaBeCareful"
+msgctxt "MsgSolSanctumJennaBeCareful"
 msgid "04218"
 msgstr "Be careful, both of you.{end_wait}"
 
-msgctxt "MsgSolKradenFetchTheOthers"
+msgctxt "MsgSolSanctumKradenFetchTheOthers"
 msgid "04219"
 msgstr "Good, good.{line_break}Now go fetch the others!{end_wait}"
 
-msgctxt "MsgSolJennaKradenIsGiddy"
+msgctxt "MsgSolSanctumJennaKradenIsGiddy"
 msgid "04220"
 msgstr "Kraden, you're as{line_break}giddy as a schoolgirl.{end_wait}"
 
-msgctxt "MsgSolLooksLikeTheyveSpottedUs"
+msgctxt "MsgSolSanctumLooksLikeTheyveSpottedUs"
 msgid "04221"
 msgstr "It looks like they've{line_break}spotted us.{end_wait}"
 
@@ -16955,7 +16955,7 @@ msgctxt "message"
 msgid "04236"
 msgstr "Very good, {actor_name:1}!{pause_20_skippable}{line_break}You must not give them{line_break}the Elemental Stars!{end_wait}"
 
-msgctxt "MsgSolWhyDenyDont"
+msgctxt "MsgSolSanctumWhyDenyDont"
 msgid "04237"
 msgstr "Why would you deny us?{line_break}Don't you want your{line_break}friends to be safe?{end_wait}"
 
@@ -17011,7 +17011,7 @@ msgctxt "message"
 msgid "04250"
 msgstr "We searched for weeks,{line_break}but we still couldn't{line_break}find him.{end_wait}"
 
-msgctxt "MsgSolMenardiDontYouWantThem"
+msgctxt "MsgSolSanctumMenardiDontYouWantThem"
 msgid "04251"
 msgstr "What's wrong, {actor_name:5}...{pause_20_skippable}{line_break}Don't you want them{line_break}to feel safe?{end_wait}"
 
@@ -17095,7 +17095,7 @@ msgctxt "message"
 msgid "04271"
 msgstr "We don't have any choice.{line_break}Should we give them{line_break}the Elemental Stars?{end_now}"
 
-msgctxt "MsgSolGuessTakeElemental"
+msgctxt "MsgSolSanctumGuessTakeElemental"
 msgid "04272"
 msgstr "I guess I should take{line_break}the Elemental Stars{line_break}to them.{end_wait}"
 
@@ -17103,7 +17103,7 @@ msgctxt "message"
 msgid "04273"
 msgstr "{actor_name:1} handed over{line_break}the Elemental Stars.{end_wait}"
 
-msgctxt "MsgSolDontHandOver"
+msgctxt "MsgSolSanctumDontHandOver"
 msgid "04274"
 msgstr "If you don't hand{line_break}them over, they won't{line_break}let {actor_name:6} go!{end_wait}"
 
@@ -17111,15 +17111,15 @@ msgctxt "message"
 msgid "04275"
 msgstr "{actor_name:2} took the{line_break}Elemental Stars.{end_wait}"
 
-msgctxt "MsgSolRightTake"
+msgctxt "MsgSolSanctumRightTake"
 msgid "04276"
 msgstr "All right, I'll take{line_break}them.{end_wait}"
 
-msgctxt "MsgSolWontLetGo"
+msgctxt "MsgSolSanctumWontLetGo"
 msgid "04277"
 msgstr "They won't let {actor_name:6}{line_break}go if we don't{line_break}hand them over!{end_wait}"
 
-msgctxt "MsgSolPermitRelieveElemental"
+msgctxt "MsgSolSanctumPermitRelieveElemental"
 msgid "04278"
 msgstr "Will you permit me to{line_break}relieve you of those{line_break}Elemental Stars?{end_wait}"
 
@@ -17171,11 +17171,11 @@ msgctxt "message"
 msgid "04290"
 msgstr "Stop grumbling and bring{line_break}us the last Star!{end_now}"
 
-msgctxt "MsgSolDontWantAnything"
+msgctxt "MsgSolSanctumDontWantAnything"
 msgid "04291"
 msgstr "You don't want anything{line_break}to happen to your{line_break}friends, do you?{end_now}"
 
-msgctxt "MsgSolThankCooperation"
+msgctxt "MsgSolSanctumThankCooperation"
 msgid "04292"
 msgstr "Thank you for your{line_break}cooperation.{end_wait}"
 
@@ -17183,35 +17183,35 @@ msgctxt "message"
 msgid "04293"
 msgstr "We'll be waiting for{line_break}the rest.{end_wait}"
 
-msgctxt "MsgSolDoubtHowFeel"
+msgctxt "MsgSolSanctumDoubtHowFeel"
 msgid "04294"
 msgstr "I doubt that's how you{line_break}really feel. I'll ask you{line_break}once again.{page_break}You don't want anything{line_break}to happen to your{line_break}friends, do you?{end_now}"
 
-msgctxt "MsgSolMenardiBringTheFinalGem"
+msgctxt "MsgSolSanctumMenardiBringTheFinalGem"
 msgid "04295"
 msgstr "What are you doing?{line_break}Bring us the final gem!{end_wait}"
 
-msgctxt "MsgSolFelixSilence"
+msgctxt "MsgSolSanctumFelixSilence"
 msgid "04296"
 msgstr "...{end_wait}"
 
-msgctxt "MsgSolJennaMyBrotherIsAlive"
+msgctxt "MsgSolSanctumJennaMyBrotherIsAlive"
 msgid "04297"
 msgstr "My brother is alive...{line_break}but...why didn't he tell me{line_break}sooner?{end_wait}"
 
-msgctxt "MsgSolSaturosBringTheFinalStar"
+msgctxt "MsgSolSanctumSaturosBringTheFinalStar"
 msgid "04298"
 msgstr "If you want to save them,{line_break}you'll bring us the{line_break}final Elemental Star.{end_wait}"
 
-msgctxt "MsgSolKradenIAmResponsible"
+msgctxt "MsgSolSanctumKradenIAmResponsible"
 msgid "04299"
 msgstr "I am sorry, everyone...{line_break}I am responsible for{line_break}all of this.{end_wait}"
 
-msgctxt "MsgSolAlexOnlyOneLeft"
+msgctxt "MsgSolSanctumAlexOnlyOneLeft"
 msgid "04300"
 msgstr "There is only one left.{line_break}You're almost done.{end_wait}"
 
-msgctxt "MsgSolJennaWhatHappened"
+msgctxt "MsgSolSanctumJennaWhatHappened"
 msgid "04301"
 msgstr "What's the matter?{pause_20_skippable}{line_break}What happened?{end_wait}"
 
@@ -17247,15 +17247,15 @@ msgctxt "message"
 msgid "04309"
 msgstr "That rock...{pause_20_skippable} It's floating...{pause_20_skippable}{pause_20_skippable}{line_break}Do you know what{line_break}it is, {actor_name:1}?{end_now}"
 
-msgctxt "MsgSolIKnowItsARock"
+msgctxt "MsgSolSanctumIKnowItsARock"
 msgid "04310"
 msgstr "Yeah, I know it's{line_break}a rock, stupid!{end_wait}"
 
-msgctxt "MsgSolSomeoneIsLiftingIt"
+msgctxt "MsgSolSanctumSomeoneIsLiftingIt"
 msgid "04311"
 msgstr "Me neither. It looks{line_break}like someone is using{line_break}Psynergy to lift it...{end_wait}"
 
-msgctxt "MsgSolKradenCouldThatBeThe"
+msgctxt "MsgSolSanctumKradenCouldThatBeThe"
 msgid "04312"
 msgstr "Could that be{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}.{line_break}the Wise One?!?{end_wait}"
 
@@ -17383,7 +17383,7 @@ msgctxt "message"
 msgid "04343"
 msgstr "It's a pity that we have{line_break}to leave it, but perhaps{line_break}we'll be seeing it soon...{end_wait}"
 
-msgctxt "MsgSolWellTurnedBadly"
+msgctxt "MsgSolSanctumWellTurnedBadly"
 msgid "04344"
 msgstr "Well, this turned out{line_break}badly, wouldn't you say?{end_now}"
 
@@ -17395,7 +17395,7 @@ msgctxt "message"
 msgid "04346"
 msgstr "How can you be so calm{line_break}at a time like this?{end_wait}"
 
-msgctxt "MsgSolFriendsGone"
+msgctxt "MsgSolSanctumFriendsGone"
 msgid "04347"
 msgstr "{actor_name:6} and Kraden are gone!{end_wait}"
 
@@ -17403,15 +17403,15 @@ msgctxt "message"
 msgid "04348"
 msgstr "You don't think they'll{line_break}hurt {actor_name:6} and{line_break}Kraden, do you?{end_now}"
 
-msgctxt "MsgSolThanksALot"
+msgctxt "MsgSolSanctumThanksALot"
 msgid "04349"
 msgstr "Thanks a lot...{line_break}But seriously, {actor_name:6} and{line_break}Kraden should be fine.{page_break}{actor_name:5} is with them...{end_wait}"
 
-msgctxt "MsgSolTheyllBeSafe"
+msgctxt "MsgSolSanctumTheyllBeSafe"
 msgid "04350"
 msgstr "Yeah{pause_20_skippable}, they'll be safe.{line_break}{actor_name:5} is there...{end_wait}"
 
-msgctxt "MsgSolThisIsTerrible"
+msgctxt "MsgSolSanctumThisIsTerrible"
 msgid "04351"
 msgstr "This really is{line_break}terrible...{end_wait}"
 
@@ -17427,11 +17427,11 @@ msgctxt "message"
 msgid "04354"
 msgstr "Let's get out of here...{end_wait}"
 
-msgctxt "MsgSolQuitActingTough"
+msgctxt "MsgSolSanctumQuitActingTough"
 msgid "04355"
 msgstr "Quit acting so tough!{line_break}Let's get out of here!{end_wait}"
 
-msgctxt "MsgSolOverHere"
+msgctxt "MsgSolSanctumOverHere"
 msgid "04356"
 msgstr "Hey, {actor_name:1}...{pause_20_skippable}{line_break}{actor_name:1}, I'm over here.{pause_20_skippable}{line_break}Come on, we've gotta go.{end_wait}"
 
@@ -17463,11 +17463,11 @@ msgctxt "message"
 msgid "04363"
 msgstr "Take out{pause_20_skippable} the{line_break}Elemental Star...{end_now}"
 
-msgctxt "MsgSolCannotResist"
+msgctxt "MsgSolSanctumCannotResist"
 msgid "04364"
 msgstr "{actor_name:1} cannot resist.{end_wait}"
 
-msgctxt "MsgSolReturnStarToBag"
+msgctxt "MsgSolSanctumReturnStarToBag"
 msgid "04365"
 msgstr "Return it to its bag.{end_wait}"
 
@@ -17515,7 +17515,7 @@ msgctxt "message"
 msgid "04376"
 msgstr "Ah.{pause_20_skippable} I see.{line_break}I will help you...{end_wait}"
 
-msgctxt "MsgSolFloatingEyeThing"
+msgctxt "MsgSolSanctumFloatingEyeThing"
 msgid "04377"
 msgstr "Did that floating eye{pause_20_skippable}{line_break}thing save us?{end_now}"
 
@@ -17523,11 +17523,11 @@ msgctxt "message"
 msgid "04378"
 msgstr "Yeah, right!{line_break}Let's get out of here...{end_wait}"
 
-msgctxt "MsgSolGotFourMythrilBags"
+msgctxt "MsgSolSanctumGotFourMythrilBags"
 msgid "04379"
 msgstr "{protagonist_name} got four{line_break}Mythril Bags.{end_wait}"
 
-msgctxt "MsgSolTooManyItems"
+msgctxt "MsgSolSanctumTooManyItems"
 msgid "04380"
 msgstr "You have too many{line_break}items. Will you drop{line_break}something?{end_wait}"
 

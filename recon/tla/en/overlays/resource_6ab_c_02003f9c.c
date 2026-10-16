@@ -3,7 +3,7 @@
 // [r6, #10]) and sign-extends it on every pass (lsls, asrs); here the extended
 // count is kept in ip, which moves the route to r7 and the index to r6. A
 // signed field and an unsigned field with a signed compare give the same code.
-#include "../../../../games/tla/src/scene/mars_star/mars_star.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
 struct MarsStarStop {
   s16 column;

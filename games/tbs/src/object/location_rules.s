@@ -10,80 +10,80 @@
 	.balign 4
 	.global gBattle_LocationRules
 gBattle_LocationRules:
-	location SolCorridor, -1, 0x814, 1, 1
-	location SolEntrance1, 1, 0x814, 0, 2
-	location SolEntrance1, 2, 0x814, 0, 2
-	location SolEntrance1, 3, 0x814, 1, 3
-	location SolEntrance1, 6, 0x814, 1, 3
-	location SolEntrance1, 7, 0x814, 1, 3
-	location SolMaze, -1, 0x814, 1, 4
-	location SolEntrance1, 10, 0x814, 1, 5
-	location SolLunaRooms, -1, 0x814, 0, 6
-	location GomaPond, -1, -1, 1, 9
-	location GomaPillar, -1, -1, 1, 10
-	location GomaWaterway1, -1, -1, 1, 11
+	location SolSanctumCorridor, -1, 0x814, 1, 1
+	location SolSanctumEntrance1, 1, 0x814, 0, 2
+	location SolSanctumEntrance1, 2, 0x814, 0, 2
+	location SolSanctumEntrance1, 3, 0x814, 1, 3
+	location SolSanctumEntrance1, 6, 0x814, 1, 3
+	location SolSanctumEntrance1, 7, 0x814, 1, 3
+	location SolSanctumMaze, -1, 0x814, 1, 4
+	location SolSanctumEntrance1, 10, 0x814, 1, 5
+	location SolSanctumLunaSolRooms, -1, 0x814, 0, 6
+	location GomaCavePond, -1, -1, 1, 9
+	location GomaCavePillar, -1, -1, 1, 10
+	location GomaCaveWaterway1, -1, -1, 1, 11
 	location Kolima2, -1, -1, 1, 15
 	location KolimaForestBridge, -1, -1, 1, 16
 	location KolimaForestClearing, -1, -1, 1, 17
 	location KolimaForestRiver, -1, -1, 0, 18
 	location KolimaForestTree, -1, -1, 1, 19
-	location TretBranch, 1, -1, 1, 20
-	location TretBranch, 2, -1, 1, 20
-	location TretBranch, 3, -1, 1, 20
-	location TretBranch, -1, -1, 1, 23
-	location TretInteriors, 1, -1, 1, 21
-	location TretInteriors, 11, -1, 1, 21
-	location TretInteriors, 16, -1, 1, 21
-	location TretInteriors, 21, -1, 1, 21
-	location TretInteriors, 22, -1, 1, 21
-	location TretInteriors, 23, -1, 1, 21
-	location TretInteriors, 24, -1, 1, 21
-	location TretInteriors, 25, -1, 1, 21
-	location TretInteriors, 26, -1, 1, 21
-	location TretInteriors, 27, -1, 1, 21
-	location TretInteriors, 28, -1, 1, 21
-	location TretInteriors, 29, -1, 1, 21
-	location TretInteriors, 2, -1, 0, 22
-	location TretInteriors, 3, -1, 0, 22
-	location TretInteriors, 4, -1, 0, 22
-	location TretInteriors, 5, -1, 0, 22
-	location TretInteriors, 12, -1, 0, 22
-	location TretInteriors, 13, -1, 0, 22
-	location TretInteriors, 31, -1, 0, 22
-	location TretInteriors, 32, -1, 0, 22
-	location TretInteriors, 6, -1, 0, 24
-	location TretInteriors, 7, -1, 0, 24
-	location TretInteriors, 8, -1, 0, 24
-	location TretInteriors, 9, -1, 0, 24
-	location TretInteriors, 14, -1, 0, 24
-	location TretInteriors, 51, -1, 0, 24
-	location TretInteriors, 52, -1, 0, 24
-	location TretInteriors, 53, -1, 0, 24
-	location TretInteriors, 54, -1, 0, 24
-	location TretInteriors, 55, -1, 0, 24
-	location TretInteriors, 56, -1, 0, 24
-	location TretInteriors, 57, -1, 0, 24
-	location TretInteriors, 58, -1, 0, 24
-	location TretInteriors, 59, -1, 0, 24
+	location TretTreeBranch, 1, -1, 1, 20
+	location TretTreeBranch, 2, -1, 1, 20
+	location TretTreeBranch, 3, -1, 1, 20
+	location TretTreeBranch, -1, -1, 1, 23
+	location TretTreeInteriors, 1, -1, 1, 21
+	location TretTreeInteriors, 11, -1, 1, 21
+	location TretTreeInteriors, 16, -1, 1, 21
+	location TretTreeInteriors, 21, -1, 1, 21
+	location TretTreeInteriors, 22, -1, 1, 21
+	location TretTreeInteriors, 23, -1, 1, 21
+	location TretTreeInteriors, 24, -1, 1, 21
+	location TretTreeInteriors, 25, -1, 1, 21
+	location TretTreeInteriors, 26, -1, 1, 21
+	location TretTreeInteriors, 27, -1, 1, 21
+	location TretTreeInteriors, 28, -1, 1, 21
+	location TretTreeInteriors, 29, -1, 1, 21
+	location TretTreeInteriors, 2, -1, 0, 22
+	location TretTreeInteriors, 3, -1, 0, 22
+	location TretTreeInteriors, 4, -1, 0, 22
+	location TretTreeInteriors, 5, -1, 0, 22
+	location TretTreeInteriors, 12, -1, 0, 22
+	location TretTreeInteriors, 13, -1, 0, 22
+	location TretTreeInteriors, 31, -1, 0, 22
+	location TretTreeInteriors, 32, -1, 0, 22
+	location TretTreeInteriors, 6, -1, 0, 24
+	location TretTreeInteriors, 7, -1, 0, 24
+	location TretTreeInteriors, 8, -1, 0, 24
+	location TretTreeInteriors, 9, -1, 0, 24
+	location TretTreeInteriors, 14, -1, 0, 24
+	location TretTreeInteriors, 51, -1, 0, 24
+	location TretTreeInteriors, 52, -1, 0, 24
+	location TretTreeInteriors, 53, -1, 0, 24
+	location TretTreeInteriors, 54, -1, 0, 24
+	location TretTreeInteriors, 55, -1, 0, 24
+	location TretTreeInteriors, 56, -1, 0, 24
+	location TretTreeInteriors, 57, -1, 0, 24
+	location TretTreeInteriors, 58, -1, 0, 24
+	location TretTreeInteriors, 59, -1, 0, 24
 	location BilibinCave2, 5, -1, 1, 27
 	location BilibinCave2, 6, -1, 1, 27
 	location BilibinCave2, -1, -1, 1, 25
 	location BilibinCave1, 5, -1, 1, 28
 	location BilibinCave1, -1, -1, 0, 26
-	location MercuryEntrance, 7, -1, 1, 31
-	location MercuryEntrance, 8, -1, 1, 31
-	location MercuryEntrance, 9, -1, 1, 31
-	location MercuryEntrance, 10, -1, 1, 31
-	location MercuryEntrance, 11, -1, 1, 31
-	location MercuryEntrance, 12, -1, 1, 31
+	location MercuryLighthouseEntrance, 7, -1, 1, 31
+	location MercuryLighthouseEntrance, 8, -1, 1, 31
+	location MercuryLighthouseEntrance, 9, -1, 1, 31
+	location MercuryLighthouseEntrance, 10, -1, 1, 31
+	location MercuryLighthouseEntrance, 11, -1, 1, 31
+	location MercuryLighthouseEntrance, 12, -1, 1, 31
 	location MercuryLighthouse1, 1, -1, 0, 31
 	location MercuryLighthouse1, 2, -1, 0, 31
 	location MercuryLighthouse1, 3, -1, 0, 31
-	location MercuryEntrance, 19, -1, 1, 31
-	location MercuryEntrance, 20, -1, 1, 31
-	location MercuryEntrance, 16, -1, 1, 31
-	location MercuryEntrance, 17, -1, 1, 31
-	location MercuryEntrance, 18, -1, 1, 31
+	location MercuryLighthouseEntrance, 19, -1, 1, 31
+	location MercuryLighthouseEntrance, 20, -1, 1, 31
+	location MercuryLighthouseEntrance, 16, -1, 1, 31
+	location MercuryLighthouseEntrance, 17, -1, 1, 31
+	location MercuryLighthouseEntrance, 18, -1, 1, 31
 	location MercuryLighthouse1, 5, -1, 1, 32
 	location MercuryLighthouse1, 6, -1, 1, 32
 	location MercuryLighthouse2, 3, -1, 0, 32

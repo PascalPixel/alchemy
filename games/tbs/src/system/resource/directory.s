@@ -79,11 +79,11 @@ Resource_DirectoryTable:
 	group Title, GoldenSunLogo
 	group Field, WorldMapPicture
 	group Title, IntroTilesB
-	group Battle, SuhallaGateBackdrop, PirateShipBackdrop, CrossboneIsleCaveBackdrop, ColossoBackdrop, VenusAerieStormBackdrop
-	group Battle, VenusAerieBackdrop, VenusLighthouseBackdrop, SuhallaDesertBackdrop, AltmillerCaveBackdrop, TunnelRuinsBackdrop
-	group Battle, BabiLighthouseBackdrop, LamakanDesertBackdrop, MogallForestBackdrop, MercuryAerieBackdrop, TolbiShipInteriorsBackdrop
-	group Battle, ImilFuchinFallsBackdrop, KolimaForestBackdrop, TretInteriorsBackdrop, GomaCaveBackdrop, InteriorBackdrop
-	group Battle, AltinPeakBackdrop, TolbiShipDeckBackdrop, MercuryLighthouseBackdrop, ValeStormBackdrop, TretBranchBackdrop
+	group Battle, SuhallaGateBackdrop, PirateShipBackdrop, CrossboneIsleCaveBackdrop, ColossoBackdrop, VenusLighthouseAerieStormBackdrop
+	group Battle, VenusLighthouseAerieBackdrop, VenusLighthouseBackdrop, SuhallaDesertBackdrop, AltmillerCaveBackdrop, TunnelRuinsBackdrop
+	group Battle, BabiLighthouseBackdrop, LamakanDesertBackdrop, MogallForestBackdrop, MercuryLighthouseAerieBackdrop, TolbiShipInteriorsBackdrop
+	group Battle, ImilFuchinFallsBackdrop, KolimaForestBackdrop, TretTreeInteriorsBackdrop, GomaCaveBackdrop, InteriorBackdrop
+	group Battle, AltinPeakBackdrop, TolbiShipDeckBackdrop, MercuryLighthouseBackdrop, ValeStormBackdrop, TretTreeBranchBackdrop
 	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SolSanctumBackdrop, ForestBackdrop
 	group Battle, VioletSkyBackdrop, DesertBackdrop, DuskCloudsBackdrop, AerialViewBackdrop
 	resource SlotsFramePicture, Slots_FramePicture

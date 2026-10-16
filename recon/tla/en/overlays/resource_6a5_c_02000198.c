@@ -1,5 +1,5 @@
-// Near miss, differ 16 of 204: the twin of ☀️'s VenusAerie_RunTransitionStep
-// (scene/venus_aerie.c), with object 36, type 672, no rise counters in cases 25
+// Near miss, differ 16 of 204: the twin of ☀️'s VenusLighthouseAerie_RunTransitionStep
+// (scene/venus_lighthouse_aerie.c), with object 36, type 672, no rise counters in cases 25
 // and 26 and no gated rise step at the end, its imported calls through inlines
 // as ☀️'s scene layer has them (direct: differ 75). The volatile reads of the
 // centre's y in cases 25 and 26 stop GCSE from reusing the compared y in the

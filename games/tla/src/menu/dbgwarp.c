@@ -14,7 +14,7 @@ extern char SceneId_Ov668Room1;
 extern char SceneId_Ov682Room1;
 void PartyInventory_AddFar(s32 item);
 
-extern char SceneId_Shaman4;
+extern char SceneId_ShamanVillage4;
 
 extern char SceneId_Ov6a8Room2;
 
@@ -85,7 +85,7 @@ void Func_08040f58(void) {
   GameFlag_SetBit(0x94c);
   GameFlag_SetBit(0x9e1);
   GameFlag_SetBit(0x94f);
-  Event_SetDestinationFar((s32)&SceneId_Shaman4, 30);
+  Event_SetDestinationFar((s32)&SceneId_ShamanVillage4, 30);
 }
 
 void Func_08040f90(void) {

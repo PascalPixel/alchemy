@@ -14,7 +14,7 @@
 // set before a one-pass boundary after the x shift, and a one-pass boundary
 // after the WINOUT store. Those three devices need FAKEMATCH tags with these
 // reasons when the function is adopted.
-#include "../../../../games/tla/src/scene/jupiter_room_3/local.h"
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 
 struct PushEvent {

@@ -3,8 +3,8 @@
 	.include "games/common/src/graphics/backdrop/pirate_ship.s"
 	.include "games/common/src/graphics/backdrop/crossbone_isle_cave.s"
 	.include "games/common/src/graphics/backdrop/colosso.s"
-	.include "games/common/src/graphics/backdrop/venus_aerie_storm.s"
-	.include "games/common/src/graphics/backdrop/venus_aerie.s"
+	.include "games/common/src/graphics/backdrop/venus_lighthouse_aerie_storm.s"
+	.include "games/common/src/graphics/backdrop/venus_lighthouse_aerie.s"
 	.include "games/common/src/graphics/backdrop/venus_lighthouse.s"
 	.include "games/common/src/graphics/backdrop/suhalla_desert.s"
 	.include "games/common/src/graphics/backdrop/altmiller_cave.s"
@@ -12,11 +12,11 @@
 	.include "games/common/src/graphics/backdrop/babi_lighthouse.s"
 	.include "games/common/src/graphics/backdrop/lamakan_desert.s"
 	.include "games/common/src/graphics/backdrop/mogall_forest.s"
-	.include "games/common/src/graphics/backdrop/mercury_aerie.s"
+	.include "games/common/src/graphics/backdrop/mercury_lighthouse_aerie.s"
 	.include "games/common/src/graphics/backdrop/tolbi_ship_interiors.s"
 	.include "games/common/src/graphics/backdrop/imil_fuchin_falls.s"
 	.include "games/common/src/graphics/backdrop/kolima_forest.s"
-	.include "games/common/src/graphics/backdrop/tret_interiors.s"
+	.include "games/common/src/graphics/backdrop/tret_tree_interiors.s"
 	.global Battle_GomaCaveBackdrop
 Battle_GomaCaveBackdrop:
 	.incbin "games/tbs/src/graphics/backdrop/goma_cave.gbapal"
@@ -27,7 +27,7 @@ Battle_GomaCaveBackdrop:
 	.include "games/common/src/graphics/backdrop/mercury_lighthouse.s"
 	.balign 4, 0
 	.include "games/common/src/graphics/backdrop/vale_storm.s"
-	.include "games/common/src/graphics/backdrop/tret_branch.s"
+	.include "games/common/src/graphics/backdrop/tret_tree_branch.s"
 	.include "games/common/src/graphics/backdrop/beach.s"
 	.include "games/common/src/graphics/backdrop/snowfield.s"
 	.include "games/common/src/graphics/backdrop/grassland.s"

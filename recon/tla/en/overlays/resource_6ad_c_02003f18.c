@@ -1,7 +1,7 @@
 // First drafts of overlay 6ad (the same pair is in overlays 6aa and 69e):
 // Func_02003f18 and Func_02003fc8; the registers of the loop and of the two
 // flag bytes differ.
-#include "../../../../games/tla/src/scene/mars_room_f/room.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 
 struct WarpEntry {
   s16 x;

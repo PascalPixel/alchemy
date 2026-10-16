@@ -3,7 +3,7 @@
 // copying it for the first mask; the draft copies first. Every placement of an
 // empty asm or one-pass block around split x and z statements leaves the
 // same 2.
-#include "../../../../games/tla/src/scene/mars_room_f/room.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 
 struct WarpEntry {
   s16 x;

@@ -8,7 +8,7 @@
 #include "../../../../games/tla/src/scene/suhalla_gate/local.h"
 
 extern char SceneId_SuhallaGate2;
-extern char SceneId_VenusEntrance;
+extern char SceneId_VenusLighthouseEntrance;
 extern u8 MsgHaThatWas[];
 
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
@@ -55,7 +55,7 @@ void Func_02000494(void) {
   Object_SetModeById_(14, 3);
   Motion_SetModeAndWaitAnimation_(15, 3);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate2, 99);
-  Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
+  Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gPartyState.battleRule24b = 2;
   Func_02000a40(9, 2);
   Func_02000990();

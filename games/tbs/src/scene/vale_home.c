@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "flags.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "vram_tab.h"
@@ -1413,12 +1414,12 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(0x800);
   Engine_GameFlagSet(0x801);
   Engine_GameFlagSet(0x823);
-  Engine_GameFlagSet(0x802);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_ENTERED);
   Engine_GameFlagSet(0xf01);
-  Engine_GameFlagSet(0x81a);
-  Engine_GameFlagSet(0x804);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED);
+  Engine_GameFlagSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   Engine_GameFlagSet(0xf02);
-  Engine_GameFlagSet(0x821);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED);
   Engine_GameFlagSet(0x825);
   Engine_GameFlagSet(0x809);
   Engine_GameFlagSet(0x80a);

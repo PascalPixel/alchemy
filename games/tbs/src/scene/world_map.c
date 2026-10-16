@@ -461,10 +461,10 @@ s32 WorldMap_Initialize(void) {
   }
   if (*entrance == 90) {
     WorldMap_PlayLighthouseTransition(0);
-    Event_SetDestination((s32)&SceneId_MercuryAerie1, 1);
+    Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie1, 1);
   } else if (*entrance == 91) {
     WorldMap_PlayLighthouseTransition(1);
-    Event_SetDestination((s32)&SceneId_VenusAerie, 93);
+    Event_SetDestination((s32)&SceneId_VenusLighthouseAerie, 93);
   } else if (*entrance == 78) {
     Engine_EventBegin();
     PartyInventory_Discard(242);

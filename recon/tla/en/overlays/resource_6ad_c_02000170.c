@@ -3,7 +3,7 @@
 // twice, the position argument). Also tried: the position argument copied
 // through an asm-pinned pointer (6), permuter 4 minutes (6). (Func_02000280,
 // Func_020002b8 and Func_020002ec are C in s01f4.c.)
-#include "../../../../games/tla/src/scene/mars_room_f/room.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;

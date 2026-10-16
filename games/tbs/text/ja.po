@@ -17783,7 +17783,7 @@ msgctxt "message"
 msgid "04443"
 msgstr "ここからの 山道には{line_break}マモノが すんでいるから{line_break}ちゅういして すすむのじゃ。{end_wait}"
 
-msgctxt "MsgSolKradenFirstTimeAtSol"
+msgctxt "MsgSolSanctumKradenFirstTimeAtSol"
 msgid "04444"
 msgstr "ソル神殿の 入り口じゃ{line_break}みんな はじめてじゃろ?{end_now}"
 
@@ -17795,7 +17795,7 @@ msgctxt "message"
 msgid "04446"
 msgstr "おや そうじゃったか・・・{line_break}めったに見られない神殿じゃ{line_break}まあ なんど見てもよかろう。{end_wait}"
 
-msgctxt "MsgSolWrongKraden"
+msgctxt "MsgSolSanctumWrongKraden"
 msgid "04447"
 msgstr "スクレータ どうしたんです?{end_wait}"
 
@@ -17835,11 +17835,11 @@ msgctxt "message"
 msgid "04456"
 msgstr "スクレータ ほんきだ・・・{line_break}手伝ってやっか {actor_name:1}?{end_now}"
 
-msgctxt "MsgSolDangerousSplitStay"
+msgctxt "MsgSolSanctumDangerousSplitStay"
 msgid "04457"
 msgstr "でも バラバラはキケンだから{line_break}みんな いっしょにやろうぜ。{end_wait}"
 
-msgctxt "MsgSolCantSeriouslyWant"
+msgctxt "MsgSolSanctumCantSeriouslyWant"
 msgid "04458"
 msgstr "イヤだって いったって・・・{line_break}スクレータを とめられる?{end_wait}"
 
@@ -17847,7 +17847,7 @@ msgctxt "message"
 msgid "04459"
 msgstr "スクレータを手伝おうぜ{line_break}でも バラバラはキケンだから{line_break}みんな いっしょにやろうぜ。{end_wait}"
 
-msgctxt "MsgSolFound"
+msgctxt "MsgSolSanctumFound"
 msgid "04460"
 msgstr "あった これじゃ!{end_wait}"
 
@@ -17899,15 +17899,15 @@ msgctxt "message"
 msgid "04472"
 msgstr "どうじゃろう? もうすこしだけ{line_break}中を見てから もどるのは?{end_now}"
 
-msgctxt "MsgSolThank"
+msgctxt "MsgSolSanctumThank"
 msgid "04473"
 msgstr "そりゃあ ありがたい!{end_wait}"
 
-msgctxt "MsgSolGoBackVillage"
+msgctxt "MsgSolSanctumGoBackVillage"
 msgid "04474"
 msgstr "だったら お前たちだけで{line_break}先に かえったらええわい。{end_wait}"
 
-msgctxt "MsgSolPutWayDont"
+msgctxt "MsgSolSanctumPutWayDont"
 msgid "04475"
 msgstr "ここまで いうんじゃ{line_break}しかたないわよねぇ・・・。{end_wait}"
 
@@ -17923,7 +17923,7 @@ msgctxt "message"
 msgid "04478"
 msgstr "よし きまりじゃ{line_break}先をいそごうぞ!{end_wait}"
 
-msgctxt "MsgSolWhRoom"
+msgctxt "MsgSolSanctumWhRoom"
 msgid "04479"
 msgstr "こ {pause_20_skippable}このへやは なんじゃ?{end_wait}"
 
@@ -17939,19 +17939,19 @@ msgctxt "message"
 msgid "04482"
 msgstr "ソルの えがかれたへやと このへやは{line_break}たがいに ついに なっているのでは?{end_now}"
 
-msgctxt "MsgSolLunaSolRooms"
+msgctxt "MsgSolSanctumLunaSolRooms"
 msgid "04483"
 msgstr "ソルとルナのへやには{line_break}なにか ひみつがある・・・{pause_20_skippable}{pause_20_skippable}{line_break}それはいったい なんじゃ?{end_wait}"
 
-msgctxt "MsgSolRoomLunaOne"
+msgctxt "MsgSolSanctumRoomLunaOne"
 msgid "04484"
 msgstr "それにしては ソルとルナの{line_break}ふたつのへやがあるのは・・・{line_break}できすぎているようじゃぞ。{end_wait}"
 
-msgctxt "MsgSolMeanLookFarther"
+msgctxt "MsgSolSanctumMeanLookFarther"
 msgid "04485"
 msgstr "ダメじゃ ちっともわからん{pause_20_skippable}{line_break}{actor_name:1}よ わるいが・・・{line_break}先を見てきてくれんか?{end_now}"
 
-msgctxt "MsgSolKradenLetMeKnowWhat"
+msgctxt "MsgSolSanctumKradenLetMeKnowWhat"
 msgid "04486"
 msgstr "それじゃ たのんだぞ。{end_wait}"
 
@@ -17959,15 +17959,15 @@ msgctxt "message"
 msgid "04487"
 msgstr "だったら そのへんで{line_break}まっていておくれ。{end_wait}"
 
-msgctxt "MsgSolKradenJustWaitOverThere"
+msgctxt "MsgSolSanctumKradenJustWaitOverThere"
 msgid "04488"
 msgstr "そのへんで{line_break}まっていておくれ。{end_wait}"
 
-msgctxt "MsgSolWayLeadsOutSanctum"
+msgctxt "MsgSolSanctumWayLeadsOutSanctum"
 msgid "04489"
 msgstr "そっちに 行ったら・・・{line_break}もどってしまうじゃろう?{pause_20_skippable}{line_break}はんたいの 方じゃよ。{end_wait}"
 
-msgctxt "MsgSolWhatsHappening"
+msgctxt "MsgSolSanctumWhatsHappening"
 msgid "04490"
 msgstr "{text_effect:4}な{pause_20_skippable} なんじゃ・・・{line_break}なにが おきたんじゃ?{end_wait}"
 
@@ -17979,7 +17979,7 @@ msgctxt "message"
 msgid "04492"
 msgstr "いかんぞ {actor_name:1}・・・{line_break}いま お前は まちがいを{line_break}おかそうと しているのじゃ!{end_wait}"
 
-msgctxt "MsgSolWait"
+msgctxt "MsgSolSanctumWait"
 msgid "04493"
 msgstr "まつのじゃ {actor_name:1}!{end_wait}"
 
@@ -18027,15 +18027,15 @@ msgctxt "message"
 msgid "04504"
 msgstr "知りたいかの?{end_now}"
 
-msgctxt "MsgSolHonestlyDoubtUnderstand"
+msgctxt "MsgSolSanctumHonestlyDoubtUnderstand"
 msgid "04505"
 msgstr "ふむ ざんねんじゃが{line_break}いま はなしたとしても{line_break}りかいは むずかしかろう。{end_wait}"
 
-msgctxt "MsgSolHmphWellTold"
+msgctxt "MsgSolSanctumHmphWellTold"
 msgid "04506"
 msgstr "ふむ{pause_20_skippable} いま はなしたとしても{line_break}りかいは むずかしかろう。{end_wait}"
 
-msgctxt "MsgSolTryFindSolution"
+msgctxt "MsgSolSanctumTryFindSolution"
 msgid "04507"
 msgstr "ここには ほかにも なにか{line_break}ナゾが かくされているはず{pause_20_skippable}{line_break}それを とかなければならぬ。{end_wait}"
 
@@ -18059,7 +18059,7 @@ msgctxt "message"
 msgid "04512"
 msgstr "{actor_name:1}{pause_20_skippable} スクレータのいう{line_break}かくされたナゾというのを{line_break}まず さがしましょう。{end_wait}"
 
-msgctxt "MsgSolWhatsHappeningAtTheTrap"
+msgctxt "MsgSolSanctumWhatsHappeningAtTheTrap"
 msgid "04513"
 msgstr "{text_effect:4}な{pause_20_skippable} なんじゃ・・・{line_break}なにが おきたんじゃ?{end_wait}"
 
@@ -18067,7 +18067,7 @@ msgctxt "message"
 msgid "04514"
 msgstr "{actor_name:1}{pause_20_skippable} なにかを{line_break}発見したんじゃな!{end_wait}"
 
-msgctxt "MsgSolKradenYouFoundIt"
+msgctxt "MsgSolSanctumKradenYouFoundIt"
 msgid "04515"
 msgstr "見つけたか {actor_name:1}!{end_wait}"
 
@@ -18111,7 +18111,7 @@ msgctxt "message"
 msgid "04525"
 msgstr "ワシは ねんのためじゃ・・・{line_break}ルナのへやをかんししていよう{line_break}では あとも たのんだぞ!{end_wait}"
 
-msgctxt "MsgSolYouFoundIt"
+msgctxt "MsgSolSanctumYouFoundIt"
 msgid "04526"
 msgstr "見つけたのじゃな {actor_name:1}。{end_wait}"
 
@@ -18119,7 +18119,7 @@ msgctxt "message"
 msgid "04527"
 msgstr "そのちょうしで 光を{line_break}のこるすべてに そそぐのじゃ。{end_wait}"
 
-msgctxt "MsgSolThePictureOfLunaChanged"
+msgctxt "MsgSolSanctumThePictureOfLunaChanged"
 msgid "04528"
 msgstr "見よ {actor_name:1}{pause_20_skippable} ルナのえが{line_break}ソルのえへと かわった!{end_wait}"
 
@@ -18135,7 +18135,7 @@ msgctxt "message"
 msgid "04531"
 msgstr "どこか ほかにも{line_break}かわったものが あるはずじゃ{line_break}それを さがさねばならぬのだ。{end_wait}"
 
-msgctxt "MsgSolLookSymbolFloor"
+msgctxt "MsgSolSanctumLookSymbolFloor"
 msgid "04532"
 msgstr "おお{pause_20_skippable} ソルのへやのゆかが{line_break}ルナのえにかわっている!{end_wait}"
 
@@ -18147,7 +18147,7 @@ msgctxt "message"
 msgid "04534"
 msgstr "ここを行くと 神殿から{line_break}出てしまうことになるぞ。{end_wait}"
 
-msgctxt "MsgSolHa"
+msgctxt "MsgSolSanctumHa"
 msgid "04535"
 msgstr "きっと これこそが・・・{line_break}もとめていたばしょじゃよ。{end_wait}"
 
@@ -18159,11 +18159,11 @@ msgctxt "message"
 msgid "04537"
 msgstr "{actor_name:1}よ まっとれ・・・{pause_20_skippable}{line_break}ワシも すぐに 行く!{end_wait}"
 
-msgctxt "MsgSolMinotaurReliefOneEye"
+msgctxt "MsgSolSanctumMinotaurReliefOneEye"
 msgid "04538"
 msgstr "みぎ目が かがやき{line_break}ひだり目に ちいさなくぼみのある{line_break}ミノタウロスのレリーフがある。{end_wait}"
 
-msgctxt "MsgSolSetSmallGem"
+msgctxt "MsgSolSanctumSetSmallGem"
 msgid "04539"
 msgstr "{protagonist_name}たちは ちいさなほうせきを{line_break}レリーフのひだり目に はめこんだ。{end_wait}"
 
@@ -18171,7 +18171,7 @@ msgctxt "message"
 msgid "04540"
 msgstr "どこかで なにかが{line_break}ひらく おとがした。{end_wait}"
 
-msgctxt "MsgSolMinotaurReliefBothEyes"
+msgctxt "MsgSolSanctumMinotaurReliefBothEyes"
 msgid "04541"
 msgstr "りょう目が かがやく{line_break}ミノタウロスのレリーフがある。{end_wait}"
 
@@ -18187,7 +18187,7 @@ msgctxt "MsgSanctumPsynergyIsAPowerThatShould"
 msgid "04544"
 msgstr "エナジーの力は へいわのために{line_break}使われるべきもの・・・けっして{line_break}あくよう させてはならない!{end_wait}"
 
-msgctxt "MsgSolSomethingClicked"
+msgctxt "MsgSolSanctumSomethingClicked"
 msgid "04545"
 msgstr "なにかがはずれる おとがした。{end_wait}"
 
@@ -18195,7 +18195,7 @@ msgctxt "message"
 msgid "04546"
 msgstr "かくしつうろは {line_break}発見できたようじゃな{page_break}これからが たいへんじゃ{line_break}気をつけて 行動するんじゃぞ。{end_wait}"
 
-msgctxt "MsgSolMoreStatuesOutOfReach"
+msgctxt "MsgSolSanctumMoreStatuesOutOfReach"
 msgid "04547"
 msgstr "いくつもの 像がある・・・{pause_20_skippable}{pause_20_skippable}{line_break}ウーム{pause_20_skippable} じゃが このままでは{line_break}動かせそうに ないのう。{end_wait}"
 
@@ -18203,7 +18203,7 @@ msgctxt "message"
 msgid "04548"
 msgstr "ここは エナジーの力が{line_break}カギじゃなかろうか?{page_break}{protagonist_name}よ{pause_20_skippable} お前のもつ{line_break}エナジーを ためしてみるんじゃ!{end_wait}"
 
-msgctxt "MsgSolKradenWhereAreWe"
+msgctxt "MsgSolSanctumKradenWhereAreWe"
 msgid "04549"
 msgstr "こ {pause_20_skippable}これは なんじゃ?{end_wait}"
 
@@ -18251,7 +18251,7 @@ msgctxt "message"
 msgid "04560"
 msgstr "いいや {protagonist_name}・・・{line_break}{actor_name:2}たちの{line_break}いうとおりなのじゃ。{end_wait}"
 
-msgctxt "MsgSolKradenTheElementsAreThe"
+msgctxt "MsgSolSanctumKradenTheElementsAreThe"
 msgid "04561"
 msgstr "ワシが お前たちに・・・{line_break}なんども はなしたとおり{line_break}すべてのモトはエレメンタル。{end_wait}"
 
@@ -18307,7 +18307,7 @@ msgctxt "message"
 msgid "04574"
 msgstr "そうだよな {pause_20_skippable}なんのことか{line_break}チンプンカンプンだよな。{end_wait}"
 
-msgctxt "MsgSolKradenTheWisdomStone"
+msgctxt "MsgSolSanctumKradenTheWisdomStone"
 msgid "04575"
 msgstr "ウィズダムストーン・・・{line_break}けん者の石じゃよ!{end_wait}"
 
@@ -18327,7 +18327,7 @@ msgctxt "message"
 msgid "04579"
 msgstr "わかりが わるいのう {pause_20_skippable}つまり{line_break}錬金じゅつがあるのも・・・{line_break}この石の ためなのじゃよ。{end_wait}"
 
-msgctxt "MsgSolTheStarsHaveEnormousPower"
+msgctxt "MsgSolSanctumTheStarsHaveEnormousPower"
 msgid "04580"
 msgstr "まだ よくわからないけれど・・・{line_break}スゴイ力が手に入る石なのね?{end_wait}"
 
@@ -18379,11 +18379,11 @@ msgctxt "message"
 msgid "04592"
 msgstr "やるわよね {protagonist_name}?{end_now}"
 
-msgctxt "MsgSolJennaWontYouPlease"
+msgctxt "MsgSolSanctumJennaWontYouPlease"
 msgid "04593"
 msgstr "まあ ことわるなんて・・・{pause_20_skippable}{line_break}あなたたち 男だったら{line_break}やって おあげなさいな?{end_now}"
 
-msgctxt "MsgSolJennaThankYou"
+msgctxt "MsgSolSanctumJennaThankYou"
 msgid "04594"
 msgstr "よかったですね。{end_wait}"
 
@@ -18399,7 +18399,7 @@ msgctxt "message"
 msgid "04597"
 msgstr "アイテムが いっぱいです{line_break}アイテムを せいりしてください。{end_wait}"
 
-msgctxt "MsgSolTheBagsAreFromKradens"
+msgctxt "MsgSolSanctumTheBagsAreFromKradens"
 msgid "04598"
 msgstr "それ スクレータが いえから{line_break}もってきたふくろですわね?{end_wait}"
 
@@ -18419,7 +18419,7 @@ msgctxt "message"
 msgid "04602"
 msgstr "さあ エレメンタルスターを{line_break}そのふくろに 入れてきておくれ。{end_wait}"
 
-msgctxt "MsgSolNoStarsOutThere"
+msgctxt "MsgSolSanctumNoStarsOutThere"
 msgid "04603"
 msgstr "エレメンタルスターは{line_break}そっちには ないぞ!{end_wait}"
 
@@ -18431,39 +18431,39 @@ msgctxt "message"
 msgid "04605"
 msgstr "ようし そのちょうしで{line_break}のこりも たのむぞ!{end_wait}"
 
-msgctxt "MsgSolVenusStarBagged"
+msgctxt "MsgSolSanctumVenusStarBagged"
 msgid "04606"
 msgstr "{argument_actor_name:234}ミスリルのふくろに{line_break}ヴィーナススターを入れた。{end_wait}"
 
-msgctxt "MsgSolPutMercuryStar"
+msgctxt "MsgSolSanctumPutMercuryStar"
 msgid "04607"
 msgstr "{argument_actor_name:234}ミスリルのふくろに{line_break}マーキュリースターを入れた。{end_wait}"
 
-msgctxt "MsgSolJupiterStarBagged"
+msgctxt "MsgSolSanctumJupiterStarBagged"
 msgid "04608"
 msgstr "{argument_actor_name:234}ミスリルのふくろに{line_break}ジュピタースターを入れた。{end_wait}"
 
-msgctxt "MsgSolMarsStarBagged"
+msgctxt "MsgSolSanctumMarsStarBagged"
 msgid "04609"
 msgstr "{argument_actor_name:234}ミスリルのふくろに{line_break}マーズスターを入れた。{end_wait}"
 
-msgctxt "MsgSolKradenBringTheStarsHere"
+msgctxt "MsgSolSanctumKradenBringTheStarsHere"
 msgid "04610"
 msgstr "さあ エレメンタルスターを{line_break}そのふくろに 入れてきておくれ。{end_wait}"
 
-msgctxt "MsgSolJennaBeCareful"
+msgctxt "MsgSolSanctumJennaBeCareful"
 msgid "04611"
 msgstr "気をつけてね ふたりとも。{end_wait}"
 
-msgctxt "MsgSolKradenFetchTheOthers"
+msgctxt "MsgSolSanctumKradenFetchTheOthers"
 msgid "04612"
 msgstr "ようし そのちょうしで{line_break}のこりも たのむぞ!{end_wait}"
 
-msgctxt "MsgSolJennaKradenIsGiddy"
+msgctxt "MsgSolSanctumJennaKradenIsGiddy"
 msgid "04613"
 msgstr "スクレータったら 子どもみたいに{line_break}はしゃいでるのよ クスッ。{end_wait}"
 
-msgctxt "MsgSolLooksLikeTheyveSpottedUs"
+msgctxt "MsgSolSanctumLooksLikeTheyveSpottedUs"
 msgid "04614"
 msgstr "気づかれてしまったようだな。{end_wait}"
 
@@ -18527,7 +18527,7 @@ msgctxt "message"
 msgid "04629"
 msgstr "それでよいのだ {actor_name:1}よ{pause_20_skippable}{line_break}そのエレメンタルスターだけは{line_break}わたしてはならん!{end_wait}"
 
-msgctxt "MsgSolWhyDenyDont"
+msgctxt "MsgSolSanctumWhyDenyDont"
 msgid "04630"
 msgstr "なぜ わたすことをこばむのだ{line_break}たすかりたくは ないのか?{end_wait}"
 
@@ -18583,7 +18583,7 @@ msgctxt "message"
 msgid "04643"
 msgstr "でも あのあと みんなでさがして{line_break}見つからなかったじゃないか?{end_wait}"
 
-msgctxt "MsgSolMenardiDontYouWantThem"
+msgctxt "MsgSolSanctumMenardiDontYouWantThem"
 msgid "04644"
 msgstr "どうした {actor_name:5}・・・{pause_20_skippable}ヤツらを{line_break}たすけられずとも よいのか?{end_wait}"
 
@@ -18667,7 +18667,7 @@ msgctxt "message"
 msgid "04664"
 msgstr "エレメンタルスター・・・{line_break}わたすしか ないよな?{end_now}"
 
-msgctxt "MsgSolGuessTakeElemental"
+msgctxt "MsgSolSanctumGuessTakeElemental"
 msgid "04665"
 msgstr "それじゃ オレがもっていくから{line_break}エレメンタルスターをもらうよ。{end_wait}"
 
@@ -18675,7 +18675,7 @@ msgctxt "message"
 msgid "04666"
 msgstr "{actor_name:1}は{line_break}エレメンタルスターをわたした。{end_wait}"
 
-msgctxt "MsgSolDontHandOver"
+msgctxt "MsgSolSanctumDontHandOver"
 msgid "04667"
 msgstr "それを わたさなきゃ{line_break}{actor_name:6}たちが たすからない!{end_wait}"
 
@@ -18683,15 +18683,15 @@ msgctxt "message"
 msgid "04668"
 msgstr "{actor_name:1}は{line_break}エレメンタルスターをとられた。{end_wait}"
 
-msgctxt "MsgSolRightTake"
+msgctxt "MsgSolSanctumRightTake"
 msgid "04669"
 msgstr "それじゃ オレがもっていくよ。{end_wait}"
 
-msgctxt "MsgSolWontLetGo"
+msgctxt "MsgSolSanctumWontLetGo"
 msgid "04670"
 msgstr "これを わたさなきゃ{line_break}{actor_name:6}たちが たすからない!{end_wait}"
 
-msgctxt "MsgSolPermitRelieveElemental"
+msgctxt "MsgSolSanctumPermitRelieveElemental"
 msgid "04671"
 msgstr "エレメンタルスターを{line_break}いただきましょうか?{end_wait}"
 
@@ -18743,11 +18743,11 @@ msgctxt "message"
 msgid "04683"
 msgstr "グズグズいわずに{line_break}のこりをとってくるのだ!{end_now}"
 
-msgctxt "MsgSolDontWantAnything"
+msgctxt "MsgSolSanctumDontWantAnything"
 msgid "04684"
 msgstr "なかまを たすけたくないのですか?{end_now}"
 
-msgctxt "MsgSolThankCooperation"
+msgctxt "MsgSolSanctumThankCooperation"
 msgid "04685"
 msgstr "ものわかりがよくて{line_break}あんしんしました。{end_wait}"
 
@@ -18755,35 +18755,35 @@ msgctxt "message"
 msgid "04686"
 msgstr "それでは のこりを{line_break}よろしくおねがいします。{end_wait}"
 
-msgctxt "MsgSolDoubtHowFeel"
+msgctxt "MsgSolSanctumDoubtHowFeel"
 msgid "04687"
 msgstr "ほんしんとは おもえませんね{line_break}もういちど ききましょう{line_break}なかまを たすけたくないのですか?{end_now}"
 
-msgctxt "MsgSolMenardiBringTheFinalGem"
+msgctxt "MsgSolSanctumMenardiBringTheFinalGem"
 msgid "04688"
 msgstr "なにを している?{line_break}サッサと のこりを{line_break}とってくるのだ!{end_wait}"
 
-msgctxt "MsgSolFelixSilence"
+msgctxt "MsgSolSanctumFelixSilence"
 msgid "04689"
 msgstr "・・・。{end_wait}"
 
-msgctxt "MsgSolJennaMyBrotherIsAlive"
+msgctxt "MsgSolSanctumJennaMyBrotherIsAlive"
 msgid "04690"
 msgstr "兄さんが いきていたわ・・・{line_break}でも まさか こんなかたちで{line_break}さいかい するなんて・・・。{end_wait}"
 
-msgctxt "MsgSolSaturosBringTheFinalStar"
+msgctxt "MsgSolSanctumSaturosBringTheFinalStar"
 msgid "04691"
 msgstr "このモノたちを たすけたくば{line_break}のこりのエレメンタルスターを{line_break}手に入れるしか あるまい。{end_wait}"
 
-msgctxt "MsgSolKradenIAmResponsible"
+msgctxt "MsgSolSanctumKradenIAmResponsible"
 msgid "04692"
 msgstr "みんな ホントにスマンぞ・・・{line_break}こんなことに なったのも{line_break}すべて ワシのせきにんじゃ。{end_wait}"
 
-msgctxt "MsgSolAlexOnlyOneLeft"
+msgctxt "MsgSolSanctumAlexOnlyOneLeft"
 msgid "04693"
 msgstr "のこりは あとひとつ・・・{line_break}もうひとがんばりですよ。{end_wait}"
 
-msgctxt "MsgSolJennaWhatHappened"
+msgctxt "MsgSolSanctumJennaWhatHappened"
 msgid "04694"
 msgstr "どうした?{pause_20_skippable} なにがおきた!{end_wait}"
 
@@ -18819,15 +18819,15 @@ msgctxt "message"
 msgid "04702"
 msgstr "岩が・・・{pause_20_skippable}ういてる・・・{pause_20_skippable}{pause_20_skippable}{line_break}なんだろう? あれは・・・{line_break}わかるかい {actor_name:1}?{end_now}"
 
-msgctxt "MsgSolIKnowItsARock"
+msgctxt "MsgSolSanctumIKnowItsARock"
 msgid "04703"
 msgstr "岩だってことは オレも{line_break}あれを見れば わかるさ・・・。{end_wait}"
 
-msgctxt "MsgSolSomeoneIsLiftingIt"
+msgctxt "MsgSolSanctumSomeoneIsLiftingIt"
 msgid "04704"
 msgstr "そうだよな 岩がうかぶなんて{line_break}まるでエナジーを使って{line_break}うかせてるみたいだけど・・・。{end_wait}"
 
-msgctxt "MsgSolKradenCouldThatBeThe"
+msgctxt "MsgSolSanctumKradenCouldThatBeThe"
 msgid "04705"
 msgstr "あれは{pause_20_skippable} まさか{pause_20_skippable}{pause_20_skippable} まさか・・・{pause_20_skippable}{line_break}ワイズマンではないか!?{end_wait}"
 
@@ -18955,7 +18955,7 @@ msgctxt "message"
 msgid "04736"
 msgstr "おしいですが きょうは{line_break}あきらめましょう・・・。{end_wait}"
 
-msgctxt "MsgSolWellTurnedBadly"
+msgctxt "MsgSolSanctumWellTurnedBadly"
 msgid "04737"
 msgstr "ひどいことに なったな?{end_now}"
 
@@ -18967,7 +18967,7 @@ msgctxt "message"
 msgid "04739"
 msgstr "こんな目にあったのに・・・{line_break}まだ つよがりいってらあ!{end_wait}"
 
-msgctxt "MsgSolFriendsGone"
+msgctxt "MsgSolSanctumFriendsGone"
 msgid "04740"
 msgstr "{actor_name:6}たちが いない!{end_wait}"
 
@@ -18975,15 +18975,15 @@ msgctxt "message"
 msgid "04741"
 msgstr "まさか {actor_name:6}たち・・・?{end_now}"
 
-msgctxt "MsgSolThanksALot"
+msgctxt "MsgSolSanctumThanksALot"
 msgid "04742"
 msgstr "{actor_name:6}たちは ぶじだよ{pause_20_skippable}{line_break}{actor_name:5}が いっしょなんだ・・・。{end_wait}"
 
-msgctxt "MsgSolTheyllBeSafe"
+msgctxt "MsgSolSanctumTheyllBeSafe"
 msgid "04743"
 msgstr "そうだな{pause_20_skippable} きっと ぶじだよ{line_break}{actor_name:5}が いっしょなんだ・・・。{end_wait}"
 
-msgctxt "MsgSolThisIsTerrible"
+msgctxt "MsgSolSanctumThisIsTerrible"
 msgid "04744"
 msgstr "こりゃ ひどいなあ・・・。{end_wait}"
 
@@ -18999,11 +18999,11 @@ msgctxt "message"
 msgid "04747"
 msgstr "ここから にげようぜ!{end_wait}"
 
-msgctxt "MsgSolQuitActingTough"
+msgctxt "MsgSolSanctumQuitActingTough"
 msgid "04748"
 msgstr "つよがり いっている前に{line_break}ここから にげようぜ!{end_wait}"
 
-msgctxt "MsgSolOverHere"
+msgctxt "MsgSolSanctumOverHere"
 msgid "04749"
 msgstr "どうしたんだ {actor_name:1}{pause_20_skippable}{line_break}行かないとあぶないぞ!{end_wait}"
 
@@ -19035,11 +19035,11 @@ msgctxt "message"
 msgid "04756"
 msgstr "エレメンタルスター{pause_20_skippable}{line_break}出してみよ・・・。{end_now}"
 
-msgctxt "MsgSolCannotResist"
+msgctxt "MsgSolSanctumCannotResist"
 msgid "04757"
 msgstr "{actor_name:1}は さからえない。{end_wait}"
 
-msgctxt "MsgSolReturnStarToBag"
+msgctxt "MsgSolSanctumReturnStarToBag"
 msgid "04758"
 msgstr "しまうがいい・・・。{end_wait}"
 
@@ -19087,7 +19087,7 @@ msgctxt "message"
 msgid "04769"
 msgstr "わかった{pause_20_skippable} 手伝おう・・・。{end_wait}"
 
-msgctxt "MsgSolFloatingEyeThing"
+msgctxt "MsgSolSanctumFloatingEyeThing"
 msgid "04770"
 msgstr "あの石{pause_20_skippable} オレたちを{line_break}たすけてくれたのか?{end_now}"
 
@@ -19095,11 +19095,11 @@ msgctxt "message"
 msgid "04771"
 msgstr "とにかく にげだそう!{end_wait}"
 
-msgctxt "MsgSolGotFourMythrilBags"
+msgctxt "MsgSolSanctumGotFourMythrilBags"
 msgid "04772"
 msgstr "{protagonist_name}たちは{line_break}ミスリルのふくろを4つ手に入れた。{end_wait}"
 
-msgctxt "MsgSolTooManyItems"
+msgctxt "MsgSolSanctumTooManyItems"
 msgid "04773"
 msgstr "もちものがいっぱいのようだ{line_break}なにか すてますか?{end_wait}"
 

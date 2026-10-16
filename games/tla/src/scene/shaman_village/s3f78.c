@@ -30,15 +30,15 @@ void Func_02003f78(void) {
 s32 Func_02003ff8(void) {
   s32 scene = gPartyState.scene;
 
-  if (scene == (s32)&SceneId_Shaman1)
+  if (scene == (s32)&SceneId_ShamanVillage1)
     Func_02004060();
-  else if (scene == (s32)&SceneId_Shaman3)
+  else if (scene == (s32)&SceneId_ShamanVillage3)
     Func_020041b8();
-  else if (scene == (s32)&SceneId_Shaman2)
+  else if (scene == (s32)&SceneId_ShamanVillage2)
     Func_020043f8();
-  else if (scene == (s32)&SceneId_Shaman4)
+  else if (scene == (s32)&SceneId_ShamanVillage4)
     Func_02004534();
-  else if (scene == (s32)&SceneId_Shaman6)
+  else if (scene == (s32)&SceneId_ShamanVillage6)
     Func_020046ec();
   return 0;
 }

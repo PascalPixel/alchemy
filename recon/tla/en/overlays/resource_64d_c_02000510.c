@@ -3,7 +3,7 @@
 
 void Func_020023a4();
 void Func_020026f4();
-void VenusEntrance_StopSparks();
+void VenusLighthouseEntrance_StopSparks();
 void Func_02002854();
 void Func_020028ac();
 void Func_020028b4();
@@ -45,7 +45,7 @@ void Func_02002a54();
 void Func_02002a5c();
 void Engine_AudioPlayCue();
 extern u8 MsgThereTheyAre[];
-void VenusEntrance_UpdateSparkTrail(void);
+void VenusLighthouseEntrance_UpdateSparkTrail(void);
 
 static __inline__ void Call1(void (*f)(), s32 a0) { f(a0); }
 
@@ -432,7 +432,7 @@ void Scene_RunSoldierInterception(void) {
   Call3(Func_020028d4, 17, 0x1cccc, 0xe666);
   v5 = 0;
   rec = Func_020028cc(20);
-  callback = (s32)VenusEntrance_UpdateSparkTrail;
+  callback = (s32)VenusLighthouseEntrance_UpdateSparkTrail;
   /* FAKEMATCH: the barrier loads the spark callback right after the actor
    * lookup, where the native loads it; without it the load follows the timer
    * address (differ 2). */
@@ -555,7 +555,7 @@ void Scene_RunSoldierInterception(void) {
   Func_0200290c(19, 0, 0);
   Func_0200290c(18, 0, 0);
   Func_0200290c(17, 0, 0);
-  VenusEntrance_StopSparks();
+  VenusLighthouseEntrance_StopSparks();
   Func_020028ac(20);
   Func_0200291c(9, 4);
   Func_020028ac(10);

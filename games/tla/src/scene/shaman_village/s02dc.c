@@ -16,20 +16,20 @@ extern u32 gData_02005a40[];
 void *Func_020002dc(void) {
   s32 scene = gPartyState.scene;
 
-  if (scene == (s32)&SceneId_Shaman1)
+  if (scene == (s32)&SceneId_ShamanVillage1)
     return gData_02005428;
-  if (scene == (s32)&SceneId_Shaman3)
+  if (scene == (s32)&SceneId_ShamanVillage3)
     return gData_02005590;
-  if (scene == (s32)&SceneId_Shaman2) {
+  if (scene == (s32)&SceneId_ShamanVillage2) {
     if (GameFlag_Test(0x9fe))
       gData_020056b0.field16 = 1;
     return &gData_020056b0;
   }
-  if (scene == (s32)&SceneId_Shaman4)
+  if (scene == (s32)&SceneId_ShamanVillage4)
     return gData_02005860;
-  if (scene == (s32)&SceneId_Shaman5)
+  if (scene == (s32)&SceneId_ShamanVillage5)
     return gData_02005998;
-  if (scene == (s32)&SceneId_Shaman6)
+  if (scene == (s32)&SceneId_ShamanVillage6)
     return gData_02005a40;
   return gData_02005410;
 }

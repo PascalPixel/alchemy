@@ -6,19 +6,20 @@
 
 struct SceneEvent;
 struct ScenePlacement;
+struct ActorWheel;
 
-u8 *AltmillerCave_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *AltmillerCave_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 AltmillerCave_ApplyEntryState(void);
+struct SceneEntrance *AltmillerCave_GetEntrances(void);
+struct SceneRegion *AltmillerCave_GetRegions(void);
+u32 *AltmillerCave_GetExits(void);
+const struct ScenePlacement *AltmillerCave_GetPlacements(void);
+const struct SceneEvent *AltmillerCave_GetEvents(void);
+s32 AltmillerCave_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
-extern u16 *gAltmillerCave_ClearTarget;
-extern struct SceneEntrance gAltmillerCave_SceneTableA[];
-extern u32 gAltmillerCave_SceneTableB[];
+extern struct ActorWheel *gAltmillerCaveWheel;
+extern struct SceneEntrance gAltmillerCave_Entrances[];
+extern u32 gAltmillerCave_Exits[];
 extern struct ScenePlacement gAltmillerCavePlacementsOther[];
 extern struct ScenePlacement gAltmillerCavePlacements2[];
 extern struct ScenePlacement gAltmillerCavePlacements4[];

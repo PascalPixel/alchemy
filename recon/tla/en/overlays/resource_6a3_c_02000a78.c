@@ -8,7 +8,7 @@
 // pinned to r3, the frame pinned to r2, or both (2 to 6). In sched2 the load
 // and 728 tie on priority and on dependants, and the load wins by its earlier
 // place.
-#include "../../../../games/tla/src/scene/jupiter_room_m/jupiter_room_m.h"
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
 #include "field_sprite.h"
 #include "frame.h"
 

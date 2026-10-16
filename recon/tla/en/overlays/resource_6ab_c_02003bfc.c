@@ -5,7 +5,7 @@
 // first and ORed after (2), the mask as a local (6), s16 locals for the masked
 // cells (2), five minutes of alchemy permute (2). Its copy group is led by
 // 698's Func_0200146c in another lane.
-#include "../../../../games/tla/src/scene/mars_star/mars_star.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
 struct MarsStarCell {
   u8 unk00[6];

@@ -8,8 +8,8 @@ extern char ResourceId_SuhallaGateBackdrop;
 extern char ResourceId_PirateShipBackdrop;
 extern char ResourceId_CrossboneIsleCaveBackdrop;
 extern char ResourceId_ColossoBackdrop;
-extern char ResourceId_VenusAerieStormBackdrop;
-extern char ResourceId_VenusAerieBackdrop;
+extern char ResourceId_VenusLighthouseAerieStormBackdrop;
+extern char ResourceId_VenusLighthouseAerieBackdrop;
 extern char ResourceId_VenusLighthouseBackdrop;
 extern char ResourceId_SuhallaDesertBackdrop;
 extern char ResourceId_AltmillerCaveBackdrop;
@@ -17,17 +17,17 @@ extern char ResourceId_TunnelRuinsBackdrop;
 extern char ResourceId_BabiLighthouseBackdrop;
 extern char ResourceId_LamakanDesertBackdrop;
 extern char ResourceId_MogallForestBackdrop;
-extern char ResourceId_MercuryAerieBackdrop;
+extern char ResourceId_MercuryLighthouseAerieBackdrop;
 extern char ResourceId_TolbiShipInteriorsBackdrop;
 extern char ResourceId_ImilFuchinFallsBackdrop;
 extern char ResourceId_KolimaForestBackdrop;
-extern char ResourceId_TretInteriorsBackdrop;
+extern char ResourceId_TretTreeInteriorsBackdrop;
 extern char ResourceId_InteriorBackdrop;
 extern char ResourceId_AltinPeakBackdrop;
 extern char ResourceId_TolbiShipDeckBackdrop;
 extern char ResourceId_MercuryLighthouseBackdrop;
 extern char ResourceId_ValeStormBackdrop;
-extern char ResourceId_TretBranchBackdrop;
+extern char ResourceId_TretTreeBranchBackdrop;
 extern char ResourceId_BeachBackdrop;
 extern char ResourceId_SnowfieldBackdrop;
 extern char ResourceId_GrasslandBackdrop;
@@ -46,11 +46,11 @@ const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_InteriorBackdrop,
     (u32)&ResourceId_ForestBackdrop,
     (u32)&ResourceId_KolimaForestBackdrop,
-    (u32)&ResourceId_TretInteriorsBackdrop,
-    (u32)&ResourceId_TretBranchBackdrop,
+    (u32)&ResourceId_TretTreeInteriorsBackdrop,
+    (u32)&ResourceId_TretTreeBranchBackdrop,
     (u32)&ResourceId_SnowfieldBackdrop,
     (u32)&ResourceId_MercuryLighthouseBackdrop,
-    (u32)&ResourceId_MercuryAerieBackdrop,
+    (u32)&ResourceId_MercuryLighthouseAerieBackdrop,
     (u32)&ResourceId_ImilFuchinFallsBackdrop,
     (u32)&ResourceId_MogallForestBackdrop,
     (u32)&ResourceId_AltinPeakBackdrop,
@@ -67,8 +67,8 @@ const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_TunnelRuinsBackdrop,
     (u32)&ResourceId_BabiLighthouseBackdrop,
     (u32)&ResourceId_VenusLighthouseBackdrop,
-    (u32)&ResourceId_VenusAerieBackdrop,
-    (u32)&ResourceId_VenusAerieStormBackdrop,
+    (u32)&ResourceId_VenusLighthouseAerieBackdrop,
+    (u32)&ResourceId_VenusLighthouseAerieStormBackdrop,
     (u32)&ResourceId_DuskCloudsBackdrop,
     (u32)&ResourceId_VioletSkyBackdrop,
     0
@@ -81,7 +81,7 @@ const u32 gDisplayScroll_SlideResources[25] = {
     (u32)&ResourceId_SolSanctumBackdrop,
     (u32)&ResourceId_InteriorBackdrop,
     (u32)&ResourceId_KolimaForestBackdrop,
-    (u32)&ResourceId_TretBranchBackdrop,
+    (u32)&ResourceId_TretTreeBranchBackdrop,
     (u32)&ResourceId_SnowfieldBackdrop,
     (u32)&ResourceId_MercuryLighthouseBackdrop,
     (u32)&ResourceId_ImilFuchinFallsBackdrop,
@@ -96,7 +96,7 @@ const u32 gDisplayScroll_SlideResources[25] = {
     (u32)&ResourceId_TunnelRuinsBackdrop,
     (u32)&ResourceId_BabiLighthouseBackdrop,
     (u32)&ResourceId_VenusLighthouseBackdrop,
-    (u32)&ResourceId_VenusAerieBackdrop,
+    (u32)&ResourceId_VenusLighthouseAerieBackdrop,
     (u32)&ResourceId_DuskCloudsBackdrop,
     0
 };

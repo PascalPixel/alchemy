@@ -11,17 +11,17 @@ extern u32 gData_020062d4[];
 void *Func_02000c80(void) {
   s32 scene = gPartyState.scene;
 
-  if (scene == (s32)&SceneId_Shaman1)
+  if (scene == (s32)&SceneId_ShamanVillage1)
     return gData_02005aac;
-  if (scene == (s32)&SceneId_Shaman3)
+  if (scene == (s32)&SceneId_ShamanVillage3)
     return gData_02005bc0;
-  if (scene == (s32)&SceneId_Shaman2)
+  if (scene == (s32)&SceneId_ShamanVillage2)
     return gData_02005ca4;
-  if (scene == (s32)&SceneId_Shaman4)
+  if (scene == (s32)&SceneId_ShamanVillage4)
     return gData_02005f98;
-  if (scene == (s32)&SceneId_Shaman5)
+  if (scene == (s32)&SceneId_ShamanVillage5)
     return gData_020061f0;
-  if (scene == (s32)&SceneId_Shaman6)
+  if (scene == (s32)&SceneId_ShamanVillage6)
     return gData_020062d4;
   return gData_02005aa0;
 }

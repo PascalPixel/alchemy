@@ -6,7 +6,7 @@
 // copy. The byte zero is a pool word in r10 in both. An inline position helper
 // changes nothing; six minutes of alchemy permute reached differ 8 (a one-pass
 // block from the angle store to the scale stores) at the cost of six registers.
-#include "../../../../games/tla/src/scene/mars_room_m/mars_room_m.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Func_02002ae8(void);
@@ -14,7 +14,7 @@ void Func_02002ae8(void);
 void Func_02002e6c(struct ObjectRuntime *self) {
   struct ObjectRuntime *object = Object_GetById(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
-  struct MarsRoomMAnimation *animation = object->animation;
+  struct MarsLighthouseRoomMAnimation *animation = object->animation;
   s32 position[3];
 
   position[0] = self->x;

@@ -1,7 +1,7 @@
 // Near miss: differ 6 of 40: the native reloads x for the saved copy before
 // it doubles the sine, and stores it before the saved z; the draft reloads
 // and stores it after. The twin of ☀️'s SceneEffect_UpdateOrbitAroundActor.
-#include "../../../../games/tla/src/scene/mars_aerie/mars_aerie.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_aerie/mars_lighthouse_aerie.h"
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);

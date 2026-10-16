@@ -61,11 +61,11 @@ gScene_InteractionRuleTable:
 	group_cue 3, -1, 0x901, 0
 	group_cue 3, -1, 0x900, 23
 	group_cue 3, -1, -1, 19
-	scene_cue SolStar, -1, -1, 22
-	scene_cue SolEruption, -1, -1, 63
+	scene_cue SolSanctumElementalStarRoom, -1, -1, 22
+	scene_cue SolSanctumEruption, -1, -1, 63
 	group_cue 4, -1, 0x9f0, 2
 	group_cue 4, -1, 0x814, 63
-	scene_cue SolEntrance2, -1, -1, 20
+	scene_cue SolSanctumEntrance2, -1, -1, 20
 	group_cue 4, -1, -1, 20
 	scene_cue VaultJail, 2, -1, 1
 	group_cue 5, -1, -1, 0
@@ -91,7 +91,7 @@ gScene_InteractionRuleTable:
 	group_cue 17, -1, 0x881, 26
 	group_cue 17, -1, -1, 2
 	group_cue 18, -1, -1, 24
-	scene_cue MercuryAerie1, -1, -1, 22
+	scene_cue MercuryLighthouseAerie1, -1, -1, 22
 	group_cue 19, -1, 0x881, 22
 	group_cue 19, -1, -1, 27
 	scene_cue FuchinTemple2, 3, -1, 60
@@ -156,9 +156,9 @@ gScene_InteractionRuleTable:
 	group_cue 55, -1, 0x9a7, 1
 	group_cue 55, -1, -1, 2
 	group_cue 56, -1, -1, 27
-	scene_cue VenusAerie, -1, 0x351, 22
-	scene_cue VenusAerie, -1, 0x350, 30
-	scene_cue VenusAerie, -1, -1, 19
+	scene_cue VenusLighthouseAerie, -1, 0x351, 22
+	scene_cue VenusLighthouseAerie, -1, 0x350, 30
+	scene_cue VenusLighthouseAerie, -1, -1, 19
 	group_cue 57, -1, -1, 43
 	group_cue 58, -1, -1, 22
 	group_cue 59, -1, -1, 9
@@ -183,9 +183,9 @@ gScene_AreaNameRules:
 	scene_name Sanctum, -1, 8
 	scene_name ValeBabi, 19, 9
 	group_name 3, -1, 10
-	scene_name SolEntrance2, -1, 11
-	scene_name SolStar, -1, 12
-	scene_name SolEruption, -1, 12
+	scene_name SolSanctumEntrance2, -1, 11
+	scene_name SolSanctumElementalStarRoom, -1, 12
+	scene_name SolSanctumEruption, -1, 12
 	group_name 4, -1, 13
 	scene_name LunpaSuhalla, 7, 14
 	scene_name LunpaSuhalla, 11, 14
@@ -208,7 +208,7 @@ gScene_AreaNameRules:
 	scene_name Imil2, 7, 30
 	group_name 17, -1, 31
 	group_name 18, -1, 32
-	scene_name MercuryAerie1, -1, 33
+	scene_name MercuryLighthouseAerie1, -1, 33
 	group_name 19, -1, 34
 	scene_name FuchinTemple2, 2, 35
 	scene_name FuchinTemple2, 3, 36
@@ -280,7 +280,7 @@ gScene_AreaNameRules:
 	group_name 55, -1, 90
 	scene_name VenusLighthouse2, -1, 91
 	group_name 56, -1, 92
-	scene_name VenusAerie, -1, 93
+	scene_name VenusLighthouseAerie, -1, 93
 	group_name 57, -1, 94
 	group_name 58, -1, 95
 	group_name 59, -1, 96
@@ -326,16 +326,16 @@ gParty_PairResolveRules:
 	.global gBattle_BackdropScenes
 gBattle_BackdropScenes:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeHome, ValeKraden
-	backdrop SolSanctumBackdrop, SolCorridor, SolEntrance1, SolMaze, SolLunaRooms, AltinPeak10, CrossbonePillar1
+	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumEntrance1, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeak10, CrossboneIslePillarRooms1
 	backdrop InteriorBackdrop, VaultInteriors
-	backdrop GomaCaveBackdrop, GomaEntrance
-	backdrop GomaCaveBackdrop, GomaPond, GomaPillar, GomaWaterway1, Kolima2
+	backdrop GomaCaveBackdrop, GomaCaveEntrance
+	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveWaterway1, Kolima2
 	backdrop KolimaForestBackdrop, KolimaForestBridge, KolimaForestClearing, KolimaForestRiver, KolimaForestBend, KolimaForestTree
-	backdrop TretBranchBackdrop, TretBranch
-	backdrop TretInteriorsBackdrop, TretInteriors
+	backdrop TretTreeBranchBackdrop, TretTreeBranch
+	backdrop TretTreeInteriorsBackdrop, TretTreeInteriors
 	backdrop GomaCaveBackdrop, BilibinCave3, BilibinCave2, BilibinCave1
-	backdrop MercuryLighthouseBackdrop, MercuryEntrance, MercuryLighthouse1, MercuryLighthouse2, MercuryLighthouse3, MercuryLighthouse4
-	backdrop MercuryAerieBackdrop, MercuryAerie1
+	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouse1, MercuryLighthouse2, MercuryLighthouse3, MercuryLighthouse4
+	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie1
 	backdrop ImilFuchinFallsBackdrop, ImilFuchinFalls2, ImilFuchinFalls3, ImilFuchinFalls4, ImilFuchinFalls5, ImilFuchinFalls6, ImilFuchinFalls7, CrossboneIsle3
 	backdrop MogallForestBackdrop, MogallForest1, MogallForest2, MogallForest3
 	backdrop AltinPeakBackdrop, AltinPeak1, AltinPeak2, AltinPeak3, AltinPeak4, AltinPeak5, AltinPeak6, AltinPeak7, AltinPeak8, AltinPeak9, AltinPeak11
@@ -350,10 +350,10 @@ gBattle_BackdropScenes:
 	backdrop PirateShipBackdrop, CrossboneIsle5
 	backdrop SuhallaGateBackdrop, SuhallaGate1, SuhallaGate2
 	backdrop GomaCaveBackdrop, SuhallaGate3
-	backdrop BabiLighthouseBackdrop, BabiLighthouse3, BabiLighthouse2, BabiLighthouse1, CrossbonePlatform3
+	backdrop BabiLighthouseBackdrop, BabiLighthouse3, BabiLighthouse2, BabiLighthouse1, CrossboneIslePlatformRooms3
 	backdrop TunnelRuinsBackdrop, TunnelRuins1, TunnelRuins2
 	backdrop InteriorBackdrop, Lalivero, LaliveroInteriors1, LaliveroInteriors2
 	backdrop VenusLighthouseBackdrop, VenusLighthouse2, VenusLighthouse3, VenusLighthouse4, VenusLighthouse5, VenusLighthouse6
-	backdrop VenusAerieBackdrop, VenusAerie
+	backdrop VenusLighthouseAerieBackdrop, VenusLighthouseAerie
 	backdrop GomaCaveBackdrop
 	.4byte 0	@ end

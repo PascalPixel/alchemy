@@ -11,19 +11,19 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct JupiterRoom8Puzzle {
+struct JupiterLighthouseRoom8Puzzle {
   s16 unk00;
   s16 flag;
 };
 
-struct JupiterRoom8EventWork {
+struct JupiterLighthouseRoom8EventWork {
   u8 unk000[0x1ac];
   s32 screenEffect;
   u8 unk1b0[0x1c];
   struct ObjectRuntime *marker;
 };
 
-extern struct JupiterRoom8Puzzle gData_02002bf8;
+extern struct JupiterLighthouseRoom8Puzzle gData_02002bf8;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_GetByte(s32 flag);
@@ -33,7 +33,7 @@ void Func_02001dc8(void);
 
 void Func_02002010(s32 x, s32 z, s32 effect) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-  struct JupiterRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
   s32 dx = GameFlag_GetByte(gData_02002bf8.flag);
   s32 dz = GameFlag_GetByte(gData_02002bf8.flag + 8);
 
@@ -49,7 +49,7 @@ void Func_02002010(s32 x, s32 z, s32 effect) {
     marker->z = leader->z;
     Func_02002188();
     Func_02001dc8();
-    ((struct JupiterRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
         effect;
   }
 }

@@ -3,7 +3,7 @@
 // modulo arguments and the call) and keeps the offset in r6; the draft copies
 // sp once before the loop into r6. Indexing the array directly gives the same
 // code as a pointer set inside the loop.
-#include "../../../../games/tla/src/scene/jupiter_room_6/jupiter_room_6.h"
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

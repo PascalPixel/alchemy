@@ -668,34 +668,34 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 379	text	games/tbs/src/scene/entry/vale_eruption
 379	text	games/tbs/src/scene/vale_eruption
 379	text	games/tbs/src/scene/import/vale_eruption
-37a	text	games/tbs/src/scene/entry/sol_luna_rooms
-37a	text	games/tbs/src/scene/sol_luna_rooms
-37a	text	games/tbs/src/scene/import/sol_luna_rooms
+37a	text	games/tbs/src/scene/entry/sol_sanctum_luna_sol_rooms
+37a	text	games/tbs/src/scene/sol_sanctum_luna_sol_rooms
+37a	text	games/tbs/src/scene/import/sol_sanctum_luna_sol_rooms
 37a	bss	resource_37a_overlay	.bss
-37b	text	games/tbs/src/scene/entry/sol_statue
-37b	text	games/tbs/src/scene/sol_statue
-37b	text	games/tbs/src/scene/import/sol_statue
-37b	text	games/tbs/src/graphics/sol_statue/rows
-37b	bss	games/tbs/src/scene/sol_statue	.bss COMMON
-37c	text	games/tbs/src/scene/entry/sol_psynergy_stone
-37c	text	games/tbs/src/scene/sol_psynergy_stone
-37c	text	games/tbs/src/scene/import/sol_psynergy_stone
-37d	text	games/tbs/src/scene/entry/sol_maze
-37d	text	games/tbs/src/scene/sol_maze
-37d	text	games/tbs/src/scene/import/sol_maze
-37e	text	games/tbs/src/scene/entry/sol_corridor
-37e	text	games/tbs/src/scene/sol_corridor
-37e	text	games/tbs/src/scene/import/sol_corridor
-37f	text	games/tbs/src/scene/entry/sol_entrance
-37f	text	games/tbs/src/scene/sol_entrance
-37f	text	games/tbs/src/scene/import/sol_entrance
-37f	bss	games/tbs/src/scene/sol_entrance	.bss
-380	text	games/tbs/src/scene/entry/sol_star
-380	text	games/tbs/src/scene/sol_star
-380	text	games/tbs/src/scene/import/sol_star
-381	text	games/tbs/src/scene/entry/sol_eruption
-381	text	games/tbs/src/scene/sol_eruption
-381	text	games/tbs/src/scene/import/sol_eruption
+37b	text	games/tbs/src/scene/entry/sol_sanctum_statue
+37b	text	games/tbs/src/scene/sol_sanctum_statue
+37b	text	games/tbs/src/scene/import/sol_sanctum_statue
+37b	text	games/tbs/src/graphics/sol_sanctum_statue/rows
+37b	bss	games/tbs/src/scene/sol_sanctum_statue	.bss COMMON
+37c	text	games/tbs/src/scene/entry/sol_sanctum_psynergy_stone
+37c	text	games/tbs/src/scene/sol_sanctum_psynergy_stone
+37c	text	games/tbs/src/scene/import/sol_sanctum_psynergy_stone
+37d	text	games/tbs/src/scene/entry/sol_sanctum_maze
+37d	text	games/tbs/src/scene/sol_sanctum_maze
+37d	text	games/tbs/src/scene/import/sol_sanctum_maze
+37e	text	games/tbs/src/scene/entry/sol_sanctum_corridor
+37e	text	games/tbs/src/scene/sol_sanctum_corridor
+37e	text	games/tbs/src/scene/import/sol_sanctum_corridor
+37f	text	games/tbs/src/scene/entry/sol_sanctum_entrance
+37f	text	games/tbs/src/scene/sol_sanctum_entrance
+37f	text	games/tbs/src/scene/import/sol_sanctum_entrance
+37f	bss	games/tbs/src/scene/sol_sanctum_entrance	.bss
+380	text	games/tbs/src/scene/entry/sol_sanctum_elemental_star_room
+380	text	games/tbs/src/scene/sol_sanctum_elemental_star_room
+380	text	games/tbs/src/scene/import/sol_sanctum_elemental_star_room
+381	text	games/tbs/src/scene/entry/sol_sanctum_eruption
+381	text	games/tbs/src/scene/sol_sanctum_eruption
+381	text	games/tbs/src/scene/import/sol_sanctum_eruption
 381	bss	resource_381_overlay	.bss
 382	text	games/tbs/src/scene/entry/vault
 382	text	games/tbs/src/scene/vault
@@ -715,20 +715,20 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 386	text	games/tbs/src/scene/entry/vault_interiors_revisit
 386	text	games/tbs/src/scene/vault_interiors_revisit
 386	text	games/tbs/src/scene/import/vault_interiors_revisit
-387	text	games/tbs/src/scene/entry/goma_entrance
-387	text	games/tbs/src/scene/goma_entrance
-387	text	games/tbs/src/scene/import/goma_entrance
-388	text	games/tbs/src/scene/entry/goma_pond
-388	text	games/tbs/src/scene/goma_pond
-388	text	games/tbs/src/scene/import/goma_pond
-389	text	games/tbs/src/scene/entry/goma_pillar
-389	text	games/tbs/src/scene/goma_pillar
-389	text	games/tbs/src/scene/import/goma_pillar
+387	text	games/tbs/src/scene/entry/goma_cave_entrance
+387	text	games/tbs/src/scene/goma_cave_entrance
+387	text	games/tbs/src/scene/import/goma_cave_entrance
+388	text	games/tbs/src/scene/entry/goma_cave_pond
+388	text	games/tbs/src/scene/goma_cave_pond
+388	text	games/tbs/src/scene/import/goma_cave_pond
+389	text	games/tbs/src/scene/entry/goma_cave_pillar
+389	text	games/tbs/src/scene/goma_cave_pillar
+389	text	games/tbs/src/scene/import/goma_cave_pillar
 389	text	libgcc.a:_call_via_rX
 389	bss	*	.bss COMMON
-38a	text	games/tbs/src/scene/entry/goma_waterway
-38a	text	games/tbs/src/scene/goma_waterway
-38a	text	games/tbs/src/scene/import/goma_waterway
+38a	text	games/tbs/src/scene/entry/goma_cave_waterway
+38a	text	games/tbs/src/scene/goma_cave_waterway
+38a	text	games/tbs/src/scene/import/goma_cave_waterway
 38b	text	games/tbs/src/scene/entry/bilibin
 38b	text	games/tbs/src/scene/bilibin
 38b	text	games/tbs/src/scene/import/bilibin
@@ -773,14 +773,14 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 395	text	games/tbs/src/scene/import/kolima_forest_tree
 395	bss	games/tbs/src/scene/kolima_forest_tree	.bss
 395	bss	resource_395_overlay	.bss
-396	text	games/tbs/src/scene/entry/tret_interiors
-396	text	games/tbs/src/scene/tret_interiors
-396	text	games/tbs/src/scene/import/tret_interiors
-396	bss	games/tbs/src/scene/tret_interiors	.bss
-397	text	games/tbs/src/scene/entry/tret_branch
-397	text	games/tbs/src/scene/tret_branch
-397	text	games/tbs/src/scene/import/tret_branch
-397	bss	games/tbs/src/scene/tret_branch	.bss
+396	text	games/tbs/src/scene/entry/tret_tree_interiors
+396	text	games/tbs/src/scene/tret_tree_interiors
+396	text	games/tbs/src/scene/import/tret_tree_interiors
+396	bss	games/tbs/src/scene/tret_tree_interiors	.bss
+397	text	games/tbs/src/scene/entry/tret_tree_branch
+397	text	games/tbs/src/scene/tret_tree_branch
+397	text	games/tbs/src/scene/import/tret_tree_branch
+397	bss	games/tbs/src/scene/tret_tree_branch	.bss
 398	text	games/tbs/src/scene/entry/bilibin_cave
 398	text	games/tbs/src/scene/bilibin_cave
 398	text	games/tbs/src/scene/import/bilibin_cave
@@ -792,17 +792,17 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 39a	text	games/tbs/src/scene/imil_fuchin_falls
 39a	text	games/tbs/src/scene/import/imil_fuchin_falls
 39a	bss	games/tbs/src/scene/imil_fuchin_falls	.bss COMMON
-39b	text	games/tbs/src/scene/entry/mercury_entrance
-39b	text	games/tbs/src/scene/mercury_entrance
-39b	text	games/tbs/src/scene/import/mercury_entrance
+39b	text	games/tbs/src/scene/entry/mercury_lighthouse_entrance
+39b	text	games/tbs/src/scene/mercury_lighthouse_entrance
+39b	text	games/tbs/src/scene/import/mercury_lighthouse_entrance
 39b	text	libgcc.a:_call_via_rX
 39c	text	games/tbs/src/scene/entry/mercury_lighthouse
 39c	text	games/tbs/src/scene/mercury_lighthouse
 39c	text	games/tbs/src/scene/import/mercury_lighthouse
 39c	text	libgcc.a:_call_via_rX
-39d	text	games/tbs/src/scene/entry/mercury_aerie
-39d	text	games/tbs/src/scene/mercury_aerie
-39d	text	games/tbs/src/scene/import/mercury_aerie
+39d	text	games/tbs/src/scene/entry/mercury_lighthouse_aerie
+39d	text	games/tbs/src/scene/mercury_lighthouse_aerie
+39d	text	games/tbs/src/scene/import/mercury_lighthouse_aerie
 39d	text	libgcc.a:_call_via_rX
 39e	text	games/tbs/src/scene/entry/fuchin_temple
 39e	text	games/tbs/src/scene/fuchin_temple
@@ -886,14 +886,14 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b2	text	games/tbs/src/scene/crossbone_isle
 3b2	text	games/tbs/src/scene/import/crossbone_isle
 3b2	text	libgcc.a:_call_via_rX
-3b3	text	games/tbs/src/scene/entry/crossbone_pillar
-3b3	text	games/tbs/src/scene/crossbone_pillar
-3b3	text	games/tbs/src/scene/import/crossbone_pillar
+3b3	text	games/tbs/src/scene/entry/crossbone_isle_pillar_rooms
+3b3	text	games/tbs/src/scene/crossbone_isle_pillar_rooms
+3b3	text	games/tbs/src/scene/import/crossbone_isle_pillar_rooms
 3b3	text	libgcc.a:_call_via_rX
-3b3	bss	games/tbs/src/scene/crossbone_pillar	.bss
-3b4	text	games/tbs/src/scene/entry/crossbone_platform
-3b4	text	games/tbs/src/scene/crossbone_platform
-3b4	text	games/tbs/src/scene/import/crossbone_platform
+3b3	bss	games/tbs/src/scene/crossbone_isle_pillar_rooms	.bss
+3b4	text	games/tbs/src/scene/entry/crossbone_isle_platform_rooms
+3b4	text	games/tbs/src/scene/crossbone_isle_platform_rooms
+3b4	text	games/tbs/src/scene/import/crossbone_isle_platform_rooms
 3b4	text	libgcc.a:_call_via_rX
 3b5	text	games/tbs/src/scene/entry/tolbi
 3b5	text	games/tbs/src/scene/tolbi
@@ -981,11 +981,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3c8	text	games/tbs/src/scene/venus_lighthouse
 3c8	text	games/tbs/src/scene/import/venus_lighthouse
 3c8	text	libgcc.a:_call_via_rX
-3c9	text	games/tbs/src/scene/entry/venus_aerie
-3c9	text	games/tbs/src/scene/venus_aerie
-3c9	text	games/tbs/src/scene/import/venus_aerie
+3c9	text	games/tbs/src/scene/entry/venus_lighthouse_aerie
+3c9	text	games/tbs/src/scene/venus_lighthouse_aerie
+3c9	text	games/tbs/src/scene/import/venus_lighthouse_aerie
 3c9	text	libgcc.a:_call_via_rX
-3c9	bss	games/tbs/src/scene/venus_aerie	.bss
+3c9	bss	games/tbs/src/scene/venus_lighthouse_aerie	.bss
 3ca	text	games/tbs/src/scene/entry/lemurian_ship
 3ca	text	games/tbs/src/scene/lemurian_ship
 3ca	text	games/tbs/src/scene/import/lemurian_ship

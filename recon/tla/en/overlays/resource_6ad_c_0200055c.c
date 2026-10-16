@@ -6,7 +6,7 @@
 // tried: the limit in an asm-pinned variable keeps 0x7fff and bhi but builds it
 // in r3, not r1 (differ 54), pinned to r1 (46); for, while and do-while loops
 // (78, 79).
-#include "../../../../games/tla/src/scene/mars_room_f/room.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 #include "iwram_call.h"
 
 extern const u32 gData_02005b68[];

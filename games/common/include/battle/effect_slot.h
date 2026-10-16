@@ -32,7 +32,8 @@ struct EffectSlot {
   s16 orbitAngle;
   s8 state;
   s8 stopAtTarget;
-  s8 flag42;
+  s8 limitTurnStep; // Clamp steering to maxTurnStep; zero faces the target
+                    // directly.
   s8 updateMotion;
   s8 render;
   s8 active;
@@ -46,7 +47,7 @@ LAYOUT_OFFSET_GUARD(EffectSlot_OrbitRadius, struct EffectSlot, orbitRadius,
 LAYOUT_OFFSET_GUARD(EffectSlot_State, struct EffectSlot, state, 0x40);
 
 #if GAME_TLA
-u32 BattleFx_HasReachedTarget(struct EffectSlot *);
+u32 EffectSlot_HasPendingTarget(struct EffectSlot *);
 void EffectSlot_SetPosition(struct EffectSlot *, s32, s32);
 void EffectSlot_SetObjectMode(struct EffectSlot *, s32);
 void EffectSlot_SetCallback(struct EffectSlot *, EffectCallback);

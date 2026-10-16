@@ -38,7 +38,7 @@ s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit);
 void Inventory_NoOpCallback(void);
 void Inventory_ReservedNoOp(void);
 void Actor_WaitForAnimationEnd(s32 actor, s32 animation);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 forceBottom);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom);
 s32 Menu_AskYesNo(s32 atBottom);
 void Party_LearnAbility(s32 unit, s32 ability);
 void Event_StartScreenTransition(void);
@@ -138,7 +138,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 firstPortraitX, s32 firstPortraitY,
                                       s32 second, s32 secondX, s32 secondY,
                                       s32 secondPortraitX, s32 secondPortraitY);
-void Ui_SetRenderResultFromObject(s32 actor);
+void Ui_SetMessageVoiceFromActor(s32 actor);
 
 void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition);
 void ObjectTable_AllocateAndSetObjectSpeed(s32 speedLimit, s32 acceleration);
@@ -146,7 +146,7 @@ void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
                       s32 glide);
 void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide);
 void BattleFx_CommitObjectPositionAndWait(void);
-struct FieldActor *Battle_GetWorkObject1e0(void);
+struct FieldActor *Camera_GetEventObject(void);
 void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
                                  s32 keepCurrentPosition);
 void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
@@ -351,7 +351,7 @@ void RunBattleEffect16(void);
 void EffectSlot_Update(struct EffectSlot *effect);
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-u32 BattleFx_HasReachedTarget(struct EffectSlot *effect);
+u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect);
 void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z);
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode);
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback);

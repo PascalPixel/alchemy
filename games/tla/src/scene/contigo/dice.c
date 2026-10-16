@@ -14,7 +14,7 @@ extern u8 gSceneState[];
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 mode);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 mode);
 void Field_SetDestination(s32 scene, s32 entrance);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Func_0200403c(s32 value, s32 digits);
@@ -40,7 +40,7 @@ void Func_02001abc(void) {
   Func_0200412c((s32)MsgContigo01);
   Func_0200403c(price, 5);
   UiText_OpenMessageAtObject(14, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     /* FAKEMATCH: the native loads the scene state's address into r3 before the
      * coins; stored plainly the two registers swap (6 differ), and with the
      * coins in a temporary the two loads come in the other order (2 differ);
@@ -75,7 +75,7 @@ void Func_02001b84(void) {
   }
   Func_0200412c((s32)MsgContigo23);
   UiText_OpenMessageAtObject(8, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     /* FAKEMATCH: the native loads the scene state's address into r3 before the
      * coins; stored plainly the two registers swap (6 differ), and with the
      * coins in a temporary the two loads come in the other order (2 differ);

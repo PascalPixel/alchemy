@@ -38,7 +38,7 @@ void Func_02000524(void) {
     message = (s32)MsgAhSoYou;
     Func_02000a18(message);
     YallamInteriors_MessageOpen(14, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
       YallamInteriors_Wait(10);
       Func_02000a18(message + 1);
     } else {
@@ -56,7 +56,7 @@ void Func_02000524(void) {
     message = (s32)MsgYouWantMe;
     Func_02000a18(message);
     YallamInteriors_MessageOpen(14, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
       Func_02000a18(message + 1);
       YallamInteriors_MessagePut(14, 0);
       Call2((void (*)())Func_02000a60, 14, 0xc000);

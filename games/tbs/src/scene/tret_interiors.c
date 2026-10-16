@@ -9,7 +9,6 @@
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 
-#define NULL ((void *)0)
 #include "field_obj.h"
 #include "types.h"
 #include "field_event.h"
@@ -35,6 +34,7 @@
 #include "heap_state.h"
 #include "field_effect.h"
 #include "flags.h"
+#include "map_scroll.h"
 
 #define TRET_FACE_ACTOR 8
 #define TRET_SECOND_ACTOR 9
@@ -119,7 +119,7 @@ static void TretInteriors_TouchCollapsingFloor(s32 floorFlag, s32 sourceColumn,
   Engine_EventWait(30);
   Camera_MoveTo(-1, -1, -1, 0);
   actor->motionFlags = ACTOR_FALLS;
-  actor->terrainHeight = -0xa00000;
+  actor->terrainHeight = -PIXELS(160);
   actor->gravity = 0x8000;
   Engine_AudioPlayCue(204);
   Engine_EventWait(3);
@@ -288,10 +288,10 @@ static void TretInteriors_StartTretBattle(void) {
   Object_SetActionCallbackAndRefreshById(IVAN,
                                          (s32)gTretInteriors_TableActions2);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-  Actor_FaceDirection(GARET, 0xc000, 0);
-  Actor_FaceDirection(MIA, 0xc000, 0);
-  Actor_FaceDirection(IVAN, 0xc000, 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 40);
   Engine_ActorSetAnimation(TRET_FACE_ACTOR, 11);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(TRET_FACE_ACTOR, 8);
@@ -350,17 +350,17 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Actor_SetSpeed(GARET, 0xcccc, 0x6666);
   Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
   Actor_SetSpeed(MIA, 0xcccc, 0x6666);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0xa60000, 0x500000);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(166), PIXELS(80));
   partyActor = Actor_Get(ACTOR_PARTY_LEADER);
   partyActor->facing = FACING_NORTH;
-  Actor_SetPosition(GARET, 0x940000, 0x5a0000);
+  Actor_SetPosition(GARET, PIXELS(148), PIXELS(90));
   partyActor = Actor_Get(GARET);
   partyActor->facing = FACING_NORTH;
-  Actor_SetPosition(IVAN, 0xb60000, 0x5a0000);
+  Actor_SetPosition(IVAN, PIXELS(182), PIXELS(90));
   partyActor = Object_GetById(IVAN);
   partyActor->facing = FACING_NORTH;
   if (hasMia != 0) {
-    Actor_SetPosition(MIA, 0xa60000, 0x680000);
+    Actor_SetPosition(MIA, PIXELS(166), PIXELS(104));
     partyActor = Object_GetById(MIA);
     partyActor->facing = FACING_NORTH;
   }
@@ -372,7 +372,7 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
   Camera_SetSpeed(0x13333, 0x2666);
-  Camera_MoveTo(0xa80000, -1, 0x980000, 1);
+  Camera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
   // Open the passage beside Tret before continuing the conversation.
@@ -394,7 +394,7 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  Camera_MoveTo(0xa80000, -1, 0x5a0000, 1);
+  Camera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   TretInteriors_PlayGesture(1);
@@ -424,12 +424,12 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Actor_SetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_FaceDirection(GARET, 0xe000, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
+  Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Event_ShowMessageAndWait(0x8001, 0, 10);
   Engine_ActorSetAnimationAndWait(IVAN, 4);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-  Actor_FaceDirection(IVAN, 0xa000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Event_ShowMessageAndWait(0x8002, 0, 20);
   TretInteriors_PlayGesture(0);
   Engine_EventWait(40);
@@ -443,8 +443,8 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 40);
   TretInteriors_PlayGesture(4);
   Event_OpenMessage(0x8009, 0);
-  Actor_FaceDirection(GARET, 0xe000, 0);
-  Actor_FaceDirection(IVAN, 0xa000, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     Actor_ShowEmote(GARET, 0x103, 20);
     Engine_ActorSetAnimation(GARET, 4);
@@ -476,10 +476,10 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   sSparkFrame = 0;
   {
     struct FieldPosition *origin = &sSparkOrigin;
-    origin->x = 0xa80000;
-    origin->y = 0x200000;
+    origin->x = PIXELS(168);
+    origin->y = PIXELS(32);
     sparkTask = TretInteriors_SpawnSwirlSparks;
-    origin->z = 0x340000;
+    origin->z = PIXELS(52);
   }
   Task_AddCallback(sparkTask, 0xc80);
   Engine_EventWait(220);
@@ -499,9 +499,9 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Event_ShowMessage(0x8001, 0);
   Actor_ShowEmote(IVAN, 0x102, 10);
   Event_ShowMessage(0x8002, 0);
-  Actor_FaceDirection(GARET, 0xe000, 0);
-  Actor_FaceDirection(IVAN, 0xa000, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(0x8001, 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
@@ -555,8 +555,9 @@ static void TretInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
 s32 TretInteriors_EnterRoom(void) {
   struct FieldActor *tret;
   struct FieldActor *actor;
-  u8 *mapWork;
-  s32 *scrollWords;
+  struct MapScrollWork *mapWork;
+  struct MapLayerScroll *layer;
+  struct FieldWork *fieldWork;
   s32 entrance;
   s32 selectedActorId;
 
@@ -565,12 +566,12 @@ s32 TretInteriors_EnterRoom(void) {
   sLastFloorEntrance = (s16 *)gSceneState;
   TretPalette_SaveSceneColors();
   tret->motionFlags = 0;
-  tret->y.fixed = -0xa0000;
+  tret->y.fixed = -PIXELS(10);
   {
     struct FieldActor *secondTretActor = Object_GetById(TRET_SECOND_ACTOR);
 
     secondTretActor->motionFlags = 0;
-    secondTretActor->y.fixed = -0xa0000;
+    secondTretActor->y.fixed = -PIXELS(10);
   }
   Engine_ActorSetChildValue(TRET_SECOND_ACTOR, 15);
   TretInteriors_PlayGesture(0);
@@ -583,22 +584,24 @@ s32 TretInteriors_EnterRoom(void) {
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION))
     TretInteriors_ApplyFlaggedMapPatches();
   mapWork = WORK_SLOT(8);
-  scrollWords = (s32 *)(mapWork + 260);
-  scrollWords[2] += Iwram_MulQ16(*(s32 *)(mapWork + 236) + 0xa00000, 0x1999);
-  scrollWords[3] += Iwram_MulQ16(*(s32 *)(mapWork + 240) + 0x880000, 0x1999);
-  scrollWords[4] = 0xe666;
-  scrollWords[5] = 0xe666;
+  // Match the first layer's parallax offset and scale to the room bounds.
+  layer = &mapWork->layers[0];
+  layer->offsetX += Iwram_MulQ16(mapWork->minX + PIXELS(160), 0x1999);
+  layer->offsetY += Iwram_MulQ16(mapWork->minY + PIXELS(136), 0x1999);
+  layer->scaleX = 0xe666;
+  layer->scaleY = 0xe666;
   Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_0D);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_0F);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_13);
   Engine_TaskWait(1);
   TretInteriors_ApplyPostBattleState(0);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition = 0x202;
+  fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
+  fieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   entrance = gGameState.entrance;
   selectedActorId = gGameState.selectedActor;
   actor = Object_GetById(selectedActorId);
-  // Upper landings continue a fall; the other entries resume their scene.
+  // Transit entrances continue the fall; other entries resume their scene.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Engine_EventOpenScreen();
     Engine_ActorSetAnimation(selectedActorId, 27);
@@ -606,8 +609,8 @@ s32 TretInteriors_EnterRoom(void) {
     Actor_SetAttachedEffect(selectedActorId, 0x101);
     Camera_MoveTo(-1, -1, -1, 0);
     actor->motionFlags = ACTOR_FALLS;
-    actor->y.fixed = 0x640000;
-    actor->terrainHeight = -0xa00000;
+    actor->y.fixed = PIXELS(100);
+    actor->terrainHeight = -PIXELS(160);
     actor->gravity = 0x8000;
     Engine_AudioPlayCue(204);
     Event_SetDestination((s32)&SceneId_TretInteriors, entrance - 10);
@@ -626,13 +629,14 @@ s32 TretInteriors_EnterRoom(void) {
   return 0;
 }
 
-// Save the scene colors used as the base for Tret's tint animation.
+// Save background palettes 0 to 13 as the base for Tret's scene tint.
 static void TretPalette_SaveSceneColors(void) {
-  Dma_Set((const void *)0x05000000, *(void **)&gPaletteBufferWork, 0x84000070,
-          REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
+          DMA_ENABLE32 | DMA_32BIT | 112, REG_DMA3);
 }
 
-// Apply bounded tint steps to the scene colors every thirty-two frames.
+// Tint background colours 16 to 78 every thirty-two frames, leaving
+// palette 4's last colour alone. Each later palette receives a weaker tint.
 static void TretPalette_UpdateSceneTint(void) {
   u16 *sourceColors;
   u16 *destinationColors;
@@ -644,11 +648,13 @@ static void TretPalette_UpdateSceneTint(void) {
   s32 green;
   s32 blue;
   u32 color;
-  u8 *eventBytes;
+  struct FieldWork *fieldWork;
+  struct BattleEffectBuffers *paletteWork;
 
-  eventBytes = WORK_SLOT(HEAP_SLOT_EVENT);
-  sourceColors = WORK_SLOT(32);
-  if (*(s16 *)(eventBytes + 0x17e) != 0)
+  fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
+  paletteWork = WORK_SLOT(32);
+  sourceColors = paletteWork->palette;
+  if (fieldWork->command != 0)
     return;
   if ((gFrameCount & 31) != 0)
     return;
@@ -806,7 +812,7 @@ static void TretInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
 static void TretInteriors_SpawnSwirlSparks(void) {
   struct FieldActor *spark;
   u32 frame;
-  s32 previousResourceEntry;
+  void *previousResourceEntry;
   s32 wave;
   u32 sparkIndex;
   s32 *counter;
@@ -826,6 +832,8 @@ static void TretInteriors_SpawnSwirlSparks(void) {
   case 30:
   case 40:
     Engine_AudioPlayCue(220);
+    // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
+    // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
       spark = Engine_ObjectCreate(0x11d, sSparkOrigin.x, sSparkOrigin.y,
                                   sSparkOrigin.z);
@@ -897,7 +905,7 @@ static void TretInteriors_RunLandingDustScene(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = 0x820000;
+  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
   Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
   Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -911,7 +919,7 @@ static void TretInteriors_RunLandingDustScene(void) {
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
   particleOptions->palette = 7;
-  particleOptions->update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+  particleOptions->update = Effect_AdvanceMotion;
   particleOptions->startScaleX = 0xcccc;
   particleOptions->startScaleY = 0xcccc;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -1025,7 +1033,7 @@ s32 gTretInteriors_ActionTable1[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, PIXELS(80)),
     SC_WAIT(4),
-    SC_ADD(SW_Y, PIXELS(-78)),
+    SC_ADD(SW_Y, -PIXELS(78)),
     SC_ADD(SW_SCALE_X, -0x1000),
     SC_ADD(SW_SCALE_Y, -0x1000),
     SC_WAIT(4),
@@ -1148,15 +1156,15 @@ struct SceneEntrance gTretInteriorsEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-s16 gTretInteriorsRegions[] = {
-    420, 28, 68, 428, 36, 76, -1, 10,
-    228, 28, 338, 236, 36, 346, -1, 12,
+struct SceneRegion gTretInteriorsRegions[] = {
+    { 420, 28, 68, 428, 36, 76, -1, 10 },
+    { 228, 28, 338, 236, 36, 346, -1, 12 },
 #if !TBS_PATCH_3
-    163, 28, 148, 171, 36, 156, -1, 14,
+    { 163, 28, 148, 171, 36, 156, -1, 14 },
 #else
-    159, 24, 144, 175, 40, 160, -1, 14,
+    { 159, 24, 144, 175, 40, 160, -1, 14 },
 #endif
-    -1, 0, 0, 0, 0, 0, 0, 0,
+    { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
 u32 gTretInteriorsExits[] = {

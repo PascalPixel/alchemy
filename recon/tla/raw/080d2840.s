@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Inventory_PromptAndSetObjectMode
+	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
+Event_AskYesNoWithActorAnimation:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -19,7 +19,7 @@ Inventory_PromptAndSetObjectMode:
 	adds r3, r6, r0
 	ldr r0, [r3]
 	mov r10, r1
-	bl BattleAction_FindDescriptor
+	bl Scene_FindActorPlacement
 	movs r3, #0
 	ldrsh r2, [r0, r3]
 	movs r0, #242

@@ -159,7 +159,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->acceleration = 0x50000;
     effect->maxSpeed = 0x50000;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     effect->state++;
 
     ((struct AnimationObject *)effect->object)->part[0].priority =
@@ -173,10 +173,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
       ((struct AnimationObject *)effect->object)->part[0].priority = 0;
       effect->flags = 4;
     }
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(effect) == 0) {
+    if (EffectSlot_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
       ((struct AnimationObject *)effect->object)->part[0].priority = 0;
@@ -200,10 +200,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     if ((gFrameTick & 1) != 0)
       Audio_PlayCue(145);
   } else if (state == 4) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 5) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       BattleFx_ClearOwnedSlot(effect);
   }
 }

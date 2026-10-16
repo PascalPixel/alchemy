@@ -189,7 +189,7 @@ BattleFx_StartRandomParticleEmitter:
 .L_080cf2f4:
 	.4byte 0xfffffc00
 .L_080cf2f8:
-	.4byte BattleFx_EmitRandomParticleFromEmitter
+	.4byte Marker_MoveLeaderAwayFromEmitter
 .L_080cf2fc:
 	adds r1, #1
 	adds r0, #128

@@ -23,7 +23,7 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Func_02002b88(s32 id, s32 a, s32 b);
@@ -388,7 +388,7 @@ void Func_02000f80(void) {
   Battle_WaitMode0(20);
   Emote(33, 262, 30);
   UiText_OpenMessageAtObject(33, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_02002be0(33, 0, 10);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
@@ -482,7 +482,7 @@ void Func_020014fc(void) {
   Battle_WaitMode0(10);
   UiText_OpenMessageAtObject(25, 0);
   ArmCallbackAndRefresh(4, 0xb000);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Battle_WaitMode0(25);
     ArmCallback(32, 0xb000, 0);
     Func_02002be0(25, 0, 10);
@@ -508,7 +508,7 @@ void Func_020014fc(void) {
     Battle_WaitMode0(20);
     UiText_OpenMessageAtObject(32, 0);
     ArmCallback(4, 0, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Battle_WaitMode0(20);
       Motion_SetModeAndWaitAnimation(32, 3);
       Func_02002be8(32, 0);
@@ -640,7 +640,7 @@ void Func_020019d8(void) {
   ObjectMotion_SetAngleToward(6, 4, 0);
   ObjectMotion_ArmCallback(34, 0x4000, 0);
   Battle_WaitMode0(20);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     ArmCallback(32, 0xc000, 0);
     ArmCallback(5, 0xc000, 0);
     ArmCallback(7, 0xc000, 0);
@@ -781,7 +781,7 @@ void Func_020019d8(void) {
   ObjectMotion_SetAngleToward(33, 4, 0);
   Battle_WaitMode0(20);
   UiText_OpenMessageAtObject(33, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     Func_02002be8(33, 0);
     Emote(4, 0x102, 30);
     Battle_WaitMode0(40);
@@ -903,7 +903,7 @@ void Func_020019d8(void) {
   Battle_WaitMode0(20);
   Battle_WaitMode0(20);
   UiText_OpenMessageAtObject(33, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Emote(33, 0x108, 30);
     Func_02002be0(33, 0, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;

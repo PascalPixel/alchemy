@@ -2676,7 +2676,7 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
   s32 state;
-  s32 reachedTarget;
+  s32 targetPending;
 
   statePointer = &effect->state;
   state = *statePointer;
@@ -2692,14 +2692,14 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->maxSpeed = 0x20000;
     effect->acceleration = 0x6666;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     *statePointer = *statePointer + 1;
   } else if (state == 1) {
-    reachedTarget = BattleFx_HasReachedTargetFar(effect);
-    if (reachedTarget == 0)
-      *statePointer = reachedTarget;
+    targetPending = EffectSlot_HasPendingTargetFar(effect);
+    if (targetPending == 0)
+      *statePointer = targetPending;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTargetFar(effect) == 0)
+    if (EffectSlot_HasPendingTargetFar(effect) == 0)
       BattleFx_ClearOwnedSlotFar(effect);
   }
 }

@@ -13,7 +13,7 @@ void Func_02000954(void) {
      * flags are loaded before the actor: one reordered pair with the header's
      * void prototype). */
     ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(32, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
       Func_02000814();
     } else {
       Func_02000d60(message - 1);

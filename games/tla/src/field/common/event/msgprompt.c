@@ -7,7 +7,7 @@
 void *UiText_OpenMessageAtObject(s32 object, s32 message);
 void WaitFrames(s32 frames);
 s32 ObjectTable_ReadActiveValue(s32 key);
-void *BattleAction_FindDescriptor(s32 id);
+void *Scene_FindActorPlacement(s32 id);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 id);
 s32 UiWork_IsIdleFar(s32 window);
 void UiWork_FinalizePendingCoreFar(void);
@@ -31,7 +31,7 @@ void Func_080d3fb0(s32 object, s32 message) {
   id = ObjectTable_ReadActiveValue(object);
   if (object <= 7) {
     masked = object & 0x0fff;
-    if (BattleAction_FindDescriptor(masked) == 0)
+    if (Scene_FindActorPlacement(masked) == 0)
       id = masked;
   }
   UiWork_FinalizeEntityMatchingLocalizedIdFar(id);
@@ -65,7 +65,7 @@ void EventRuntime_ShowMessageAndWait(s32 object, s32 message) {
 
 void *UiText_OpenMessageAtObject(s32 object, s32 message);
 s32 EventRuntime_GetControlledOwner(void);
-s32 Inventory_PromptAndSetObjectMode(s32 owner, s32 mode);
+s32 Event_AskYesNoWithActorAnimation(s32 owner, s32 mode);
 void Func_080d3fb0(s32 object, s32 message);
 
 s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message) {
@@ -73,7 +73,7 @@ s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message) {
 
   UiText_OpenMessageAtObject(object, message);
   result =
-      Inventory_PromptAndSetObjectMode(EventRuntime_GetControlledOwner(), 0);
+      Event_AskYesNoWithActorAnimation(EventRuntime_GetControlledOwner(), 0);
   if (result == 0) {
     Func_080d3fb0(object, message);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;

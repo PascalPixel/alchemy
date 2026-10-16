@@ -15,7 +15,7 @@
 #include "system.h"
 
 void GameFlag_SetBit(s32 flag);
-s16 *BattleAction_FindDescriptor(s32 action);
+s16 *Scene_FindActorPlacement(s32 action);
 void Func_080d7788(s32 actor, s32 element, s32 index);
 
 struct MapActor {
@@ -56,7 +56,7 @@ void Func_080d793c(s32 capture) {
 
         for (actor = 8; actor <= 79; actor++) {
           struct MapActor *found =
-              (struct MapActor *)BattleAction_FindDescriptor(actor);
+              (struct MapActor *)Scene_FindActorPlacement(actor);
           if (found != 0 && found->event - 48 == flag - 300) {
             WaitFrames(40);
             Func_080d7788(actor, element, index);

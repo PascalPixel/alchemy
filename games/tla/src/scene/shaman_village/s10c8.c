@@ -32,7 +32,7 @@ void Func_0200113c(void) {
   } else {
     Func_0200498c((s32)MsgShamanMoapaAsksVictorsNames);
     UiText_OpenMessageAtObject(11, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 1) {
       Func_020049a4(11, 0);
     } else {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
@@ -80,7 +80,7 @@ void Func_0200122c(void) {
     else
       Func_0200498c((s32)MsgShamanFortuneOfferBeforeTrial);
     UiText_OpenMessageAtObject(17, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 1) {
       Func_020049a4(17, 0);
     } else {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
@@ -191,7 +191,7 @@ void Func_02001644(void) {
   UiText_OpenMessageAtObject(15, 0);
   Object_SetModeById(gPartyState.currentOwner, 1);
   ShamanVillage_ObjArm(gPartyState.currentOwner, 0xe000, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Func_020049a4(15, 0);
     Func_020049e4(0x4cccc, 0x9999);
     ShamanVillage_CamMove(0xa80000, -1, 0x1700000, 1);
@@ -222,13 +222,13 @@ void Func_02001764(void) {
   ShamanVillage_ObjTurn(15, 0x8000);
   Func_0200498c((s32)MsgShamanChallengeTrialRoadPrompt);
   ShamanVillage_MessageOpen(0x200f, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 1) {
     ShamanVillage_MessagePut(0x200f, 0);
     Func_0200289c();
   } else {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     ShamanVillage_MessageOpen(0x200f, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
       Engine_AudioPlayCue(76);
       ShamanVillage_MessagePut(0x200f, 0);
       GameFlag_SetBit(0x200);

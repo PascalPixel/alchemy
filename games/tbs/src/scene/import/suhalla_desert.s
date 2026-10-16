@@ -47,7 +47,7 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_MapObjectSetPosition, 1
-	.set import.BattleFx_EmitRandomParticle, 1
+	.set import.Marker_MoveLeaderAway, 1
 	.set import.QueueSceneSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

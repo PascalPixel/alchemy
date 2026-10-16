@@ -80,7 +80,7 @@ void Func_02000390(s32 actor) {
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
       Engine_EventSetMessage(msg);
       UiText_OpenMessageAtObject(actor, 0);
-      if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
         Battle_WaitMode0(10);
         Engine_EventSetMessage(msg + 1);
       } else {
@@ -99,7 +99,7 @@ void Func_02000390(s32 actor) {
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
     Engine_EventSetMessage(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
       Battle_WaitMode0(10);
       Engine_EventSetMessage(msg + 1);
     } else {
@@ -188,7 +188,7 @@ void Func_02000614(void) {
   msg = (s32)MsgDailaInteriorsGoingToMadra;
   Engine_EventSetMessage(msg);
   UiText_OpenMessageAtObject(12, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
     Battle_WaitMode0(10);
     Engine_EventSetMessage(msg + 1);
   } else {
@@ -207,7 +207,7 @@ void Func_0200066c(void) {
   msg = (s32)MsgDailaInteriorsLookingForBoat;
   Engine_EventSetMessage(msg);
   UiText_OpenMessageAtObject(14, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
     Battle_WaitMode0(10);
     Engine_EventSetMessage(msg + 1);
   } else {

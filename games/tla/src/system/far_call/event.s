@@ -53,10 +53,10 @@ PartyInventory_GiveItemFar:
 	.thumb_func
 Inventory_TryAddAndReturnOwnerFar:
 	overlay_veneer Inventory_TryAddAndReturnOwner
-	.global Inventory_PromptAndSetObjectModeFar
+	.global Event_AskYesNoWithActorAnimationFar
 	.thumb_func
-Inventory_PromptAndSetObjectModeFar:
-	overlay_veneer Inventory_PromptAndSetObjectMode
+Event_AskYesNoWithActorAnimationFar:
+	overlay_veneer Event_AskYesNoWithActorAnimation
 	.global Func_080c8078
 	.thumb_func
 Func_080c8078:

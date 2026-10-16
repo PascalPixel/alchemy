@@ -51,7 +51,7 @@ void Func_02004044(void);
 void GameFlag_SetBit(s32 flag);
 void Func_02004164(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h,
                    s32 i, s32 j, s32 k);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 mode);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);

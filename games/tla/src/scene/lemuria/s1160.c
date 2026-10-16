@@ -26,7 +26,7 @@ void Func_02001cc4();
 void Func_02001d04();
 void Func_02001d0c();
 void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_CamBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
@@ -203,7 +203,7 @@ void Func_02001160(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xc000, 0);
   Call1((void (*)())Battle_WaitMode0, 20);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
-  result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())Battle_WaitMode0, 30);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);

@@ -2,7 +2,7 @@
 // callback, which wavefx.c removes. The delay, the wave lines and the
 // colour match but for one pair (this builds the page field's offset
 // before the phase's store, the native after it); from the two
-// BattleAction_FindDescriptor lookups on, the registers differ: this
+// Scene_FindActorPlacement lookups on, the registers differ: this
 // builds &from in sl first and copies it back (one instruction more, 291
 // against 290), and the orientation tests take r1 and r2 where the native
 // takes r0 and r1. Belongs between Func_080dcadc and hue.c's
@@ -58,7 +58,7 @@ void BattleFx_ApplyColorToTargetBuffer(u32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void BattleFx_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
-struct WaveFxDescriptor *BattleAction_FindDescriptor(s32 id);
+struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s16 ArcTan2(s32 y, s32 x);
@@ -102,13 +102,13 @@ void Func_080dcb44(void) {
     source = Object_GetById(work->sourceId);
     target = Object_GetById(work->targetId);
     if (source != NULL && target != NULL) {
-      descriptor = BattleAction_FindDescriptor(work->sourceId);
+      descriptor = Scene_FindActorPlacement(work->sourceId);
       from.x = source->x;
       metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
       from.y = source->y + (metadata->boxX << 16) - 0x20000;
       from.z = source->z;
       sprite = target->animation;
-      descriptor = BattleAction_FindDescriptor(work->targetId);
+      descriptor = Scene_FindActorPlacement(work->targetId);
       to.x = target->x;
       metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
       to.y = target->y + (metadata->boxX << 16) - 0x20000;

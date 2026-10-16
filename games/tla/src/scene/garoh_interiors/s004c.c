@@ -70,7 +70,7 @@ void Func_0200018c(s32 actor) {
 
       Func_02000844(message);
       UiText_OpenMessageAtObject(actor, 0);
-      if (Inventory_PromptAndSetObjectMode(Func_0200088c(), 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(Func_0200088c(), 0) == 0) {
         Battle_WaitMode0(10);
         Func_02000844(message + 1);
       } else {

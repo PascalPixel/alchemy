@@ -271,7 +271,7 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  Battle_GetWorkObject1e0()->motionFlags = 0;
+  Camera_GetEventObject()->motionFlags = 0;
   Camera_MoveTo(0xa40000, 0x400000, 0x1410000, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);

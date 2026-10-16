@@ -29,7 +29,7 @@ void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -129,7 +129,7 @@ void Func_020002cc(void) {
   Value3(Func_0200204c, 5, 0x108, 20);
   Call2((void (*)())Func_02002034, 5, 0);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
-  if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
       0) {
     Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
     Value3(Func_0200204c, 9, 0x109, 20);

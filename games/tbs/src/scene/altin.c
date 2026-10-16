@@ -258,7 +258,7 @@ static void Village_TalkToThirstyVillager(void) {
     if (GameFlag_IsSet(FLAG_WATER_BEAST_LEFT) == 0) {
       beast = Object_GetById(ACTOR_WATER_BEAST);
 
-      Battle_GetWorkObject1e0()->motionFlags = 0;
+      Camera_GetEventObject()->motionFlags = 0;
       Camera_SetSpeed(0x10000, 0x2000);
       Camera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // 0x4000 is south as a facing, but this call takes an actor number.

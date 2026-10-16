@@ -23,7 +23,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
 
-void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter) {
+void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
   u32 randomAngle;

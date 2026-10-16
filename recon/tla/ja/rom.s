@@ -1708,10 +1708,10 @@ PartyInventory_GiveItemFar:
 Inventory_TryAddAndReturnOwnerFar:
 	.incbin "baserom.gba", 0x000c8068, 0x00000008
 	.section .rom.000c8070, "ax"
-	.global Inventory_PromptAndSetObjectModeFar
-	.type Inventory_PromptAndSetObjectModeFar, %function
+	.global Event_AskYesNoWithActorAnimationFar
+	.type Event_AskYesNoWithActorAnimationFar, %function
 	.thumb_func
-Inventory_PromptAndSetObjectModeFar:
+Event_AskYesNoWithActorAnimationFar:
 	.incbin "baserom.gba", 0x000c8070, 0x00000008
 	.section .rom.000c8078, "ax"
 	.global Func_080c8078
@@ -2486,10 +2486,10 @@ Func_080cc7c4:
 	.balign 4
 	.incbin "baserom.gba", 0x000cc9f4, 0x000002bc
 	.section .rom.000cccb0, "ax"
-	.global BattleAction_FindDescriptor
-	.type BattleAction_FindDescriptor, %function
+	.global Scene_FindActorPlacement
+	.type Scene_FindActorPlacement, %function
 	.thumb_func
-BattleAction_FindDescriptor:
+Scene_FindActorPlacement:
 	.incbin "baserom.gba", 0x000cccb0, 0x00000090
 	.section .rom.000ccd6e, "ax"
 	.incbin "baserom.gba", 0x000ccd6e, 0x00000002
@@ -2687,10 +2687,10 @@ Func_080d20fc:
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000d25ec, 0x000001e0
 	.section .rom.000d2820, "ax"
-	.global Inventory_PromptAndSetObjectMode
-	.type Inventory_PromptAndSetObjectMode, %function
+	.global Event_AskYesNoWithActorAnimation
+	.type Event_AskYesNoWithActorAnimation, %function
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
+Event_AskYesNoWithActorAnimation:
 	.incbin "baserom.gba", 0x000d2820, 0x0000011c
 	.section .rom.000d294c, "ax"
 	.balign 4

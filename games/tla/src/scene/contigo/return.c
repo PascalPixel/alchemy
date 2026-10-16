@@ -141,7 +141,7 @@ void Func_02002e18(void) {
     Contigo_MessageOpen(9, 0);
     Contigo_Jump(2, 257, 0);
     Contigo_ObjTurn(2, 0xa000, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
       Contigo_ObjFace(2, 0xe000);
       Contigo_ObjMode(2, 3);
       Contigo_MessagePut(0x1002, 0);
@@ -157,7 +157,7 @@ void Func_02002e18(void) {
     Contigo_MessageOpen(9, 0);
     Contigo_Jump(0, 257, 0);
     Contigo_ObjTurn(0, 0xa000, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
       Contigo_ObjFace(0, 0xe000);
       Contigo_ObjMode(0, 3);
       Contigo_MessagePut(0x1000, 0);

@@ -11,7 +11,7 @@ void Func_02000580(s32 actor) {
 
   Func_0200524c(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02005384(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_0200524c(msg + 1);
   } else {
@@ -26,7 +26,7 @@ void Func_020005cc(s32 actor) {
 
   Func_0200524c(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02005384(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_0200524c(msg + 1);
   } else {
@@ -41,7 +41,7 @@ void Func_02000618(s32 actor) {
 
   Func_0200524c(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02005384(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02005384(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_0200524c(msg + 1);
   } else {

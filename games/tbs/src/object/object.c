@@ -2049,10 +2049,10 @@ s32 Field_RunScene(s32 entrance) {
           s32 object;
 
           UiTimedNotice_CloseIfActiveFar();
-          object = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
+          object = Field_FindNearbyTalkTarget(gGameState.selectedActor);
           mode = 0;
           if (object != -1) {
-            mode = BattleFx_FindDescriptorWithOverride(object) != 0;
+            mode = Scene_FindActorTalkEvent(object) != 0;
           }
           if (mode != 0) {
             work->descriptor = object | 0x1000;
@@ -2453,7 +2453,7 @@ redraw:
 // Returns the placement of actor id in the scene's placement tables, or NULL:
 // for a party character (0 to 7) the row with its sprite, and for a placed
 // actor (8 on) the row it was created from, counting the placed rows in order.
-struct ScenePlacement *BattleAction_FindDescriptor(s32 id) {
+struct ScenePlacement *Scene_FindActorPlacement(s32 id) {
   struct ScenePlacement *placement;
   s32 tableIndex;
   s32 placedActor = ACTOR_FIRST_PLACED;
@@ -2596,7 +2596,7 @@ void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 // Returns the talk event of actor id: for the actor the party has stopped, its
 // kind 7 event if it has one.
-s32 BattleFx_FindDescriptorWithOverride(s32 id) {
+s32 Scene_FindActorTalkEvent(s32 id) {
   struct EffectDescriptor *talkEvent = Scene_FindEvent(EVENT_TALK, id);
   s32 pausedActor = gGameState.pausedObject;
 
@@ -2616,7 +2616,7 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id) {
 // that is a function gives a random line from MsgPonderEllipsis ("...")
 // instead. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_TalkToActor(s32 id) {
-  struct ScenePlacement *placement = BattleAction_FindDescriptor(id);
+  struct ScenePlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
   struct ObjectRuntime *actor = (struct ObjectRuntime *)Object_GetById(id);
   struct EffectDescriptor *event;
@@ -3032,7 +3032,7 @@ s32 BattleFx_MapKeyThroughTable(s32 kind) {
 // 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
 // 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
 // with flag 4 count as 10/13 as far.
-s32 BattleEffect_SelectNearbyObject(s32 id) {
+s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
   s32 nearestActor;
@@ -3103,7 +3103,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id) {
 // given kind can reach, or -1. The direction is rounded to a quarter turn and
 // the distance measured on the ground; kind sets the range, the height
 // allowed and the width of the cone.
-s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 kind) {
+s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
   s32 nearestActor;
@@ -3292,7 +3292,7 @@ s32 Field_FindItemEvent(s32 item) {
   const struct SceneEvent *event = work->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
-  s32 actorAhead = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
+  s32 actorAhead = Field_FindNearbyTalkTarget(gGameState.selectedActor);
   s32 tileAhead;
 
   item &= 0x1ff;
@@ -3392,7 +3392,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
     if ((s32)event->value < 0x10000) {
       s32 nearbyActor =
-          BattleEffect_SelectNearbyObject(gGameState.selectedActor);
+          Field_FindNearbyTalkTarget(gGameState.selectedActor);
       Battle_Reset();
       Event_SetMessageId(event->value);
       BattleEv_RunWait(nearbyActor, 0);
@@ -3471,7 +3471,7 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
   s32 actorAhead =
-      BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, group);
+      Field_FindNearbyPsynergyTarget(gGameState.selectedActor, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -3624,7 +3624,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor,
+    target = Field_FindNearbyPsynergyTarget(gGameState.selectedActor,
                                                    abilityGroup);
     if (after && (after->trigger & 0x400)) // the event plays the effect
     {
@@ -3904,7 +3904,7 @@ void Marker_Hide(s32 id) {
 
 // Moves the actor of marker id to (x, z) on the ground; -1 keeps the centre
 // of its cell on that axis.
-void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 z) {
+void Marker_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 terrainHeight;
   s32 objectX;
@@ -3975,7 +3975,7 @@ LAYOUT_OFFSET_GUARD(EffectObj_UpdateHook, struct EffectObj, updateHook, 0x6c);
 // Keeps the party leader off the markers: a leader within 16 pixels of a
 // marker cell's centre is moved 20 pixels from that centre, in the direction
 // it stood, and loses its move target.
-void BattleFx_EmitRandomParticle(void) {
+void Marker_MoveLeaderAway(void) {
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
   struct MarkerSlot *marker = ((struct FieldWork *)gEventWork)->markers;
   s32 markerIndex = 0;
@@ -4875,7 +4875,7 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
 }
 
 // Suspends the window transition's two callbacks.
-void BattleFx_EnableTwoCallbacks(void) {
+void DisplayTransition_SuspendCallbacks(void) {
   Scheduler_SuspendTasks(&DisplayTransition_UpdateScanlineTable);
   Scheduler_SuspendTasks(&BattleFx_StartWindowHBlankDma);
 }
@@ -5638,7 +5638,7 @@ void BattleEffect_InitializeBuffers(void) {
 }
 
 // Stops the colour buffer and frees it.
-void Runtime_ScheduleCallbackAndReleaseBlock32B(void) {
+void BattlePalette_StopBlendAndReleaseBuffer(void) {
   Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_PALBUF);
 }
@@ -5816,12 +5816,12 @@ void BattleFx_StartFadeOverlay(void *object) {
 }
 
 // Suspends the fade overlay.
-void Object_EnableEffectSpawnCallback(void) {
+void FadeOverlay_Suspend(void) {
   Scheduler_SuspendTasks(FadeOverlay_DrawMarks);
 }
 
 // Resumes the fade overlay.
-void Object_DisableEffectSpawnCallback(void) {
+void FadeOverlay_Resume(void) {
   Scheduler_ResumeTasks(FadeOverlay_DrawMarks);
 }
 

@@ -38,12 +38,12 @@ top:
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
     effect->maxSpeed = 4 << 16;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     *st = *st + 1;
     return;
   }
   if (state == 1) {
-    if (BattleFx_HasReachedTarget(effect) != 0)
+    if (EffectSlot_HasPendingTarget(effect) != 0)
       return;
     *st = *st + 1;
     goto top;
@@ -57,10 +57,10 @@ top:
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
-    effect->flag42 = 1;
+    effect->limitTurnStep = 1;
     *st = *st + 1;
     return;
   }
-  if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
+  if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
     BattleFx_ClearOwnedSlot(effect);
 }

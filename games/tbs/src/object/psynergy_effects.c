@@ -450,9 +450,9 @@ void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
 // read, asks yes or no below it, or above it when the message windows reach
 // past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 // and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 forceBottom) {
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  s32 sprite = BattleAction_FindDescriptor(work->speaker)->sprite;
+  s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
   struct UiWindow *window = (struct UiWindow *)work->messageWindow;
   struct UiWindow *side = (struct UiWindow *)work->sideWindow;
   s32 useBottom = 1;
@@ -1781,7 +1781,7 @@ void BattleEv_RunWait(s32 actor, s32 flags) {
   if (actor <= 7) {
     member = actor & 0x0fff;
 
-    if (BattleAction_FindDescriptor(member) == 0) {
+    if (Scene_FindActorPlacement(member) == 0) {
       sprite = member;
     }
   }
@@ -1818,7 +1818,7 @@ s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags) {
 
   UiText_OpenMessageAtObject(actor, flags);
   save = &gGameState;
-  answer = Inventory_PromptAndSetObjectMode(save->selectedActor, 0);
+  answer = Event_AskYesNoWithActorAnimation(save->selectedActor, 0);
   if (answer == 0) {
     BattleEv_RunWait(actor, flags);
     runtime = (struct FieldWork *)gEventWork;
@@ -1967,7 +1967,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
 // Sets the voice of the messages that follow to that of actor's sprite, at
 // the rate the message speed option picks (gUi_RenderResultValues). With
 // 0x80000000 the messages are silent.
-void Ui_SetRenderResultFromObject(s32 actor) {
+void Ui_SetMessageVoiceFromActor(s32 actor) {
   struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
   u8 rate;
   s32 voice;
@@ -2109,7 +2109,7 @@ void BattleFx_CommitObjectPositionAndWait(void) {
 }
 
 // The event command "get view centre": returns the camera object.
-struct FieldActor *Battle_GetWorkObject1e0(void) {
+struct FieldActor *Camera_GetEventObject(void) {
   return ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->viewCenter;
 }
 
@@ -2260,7 +2260,7 @@ s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
     obj->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)BattleAction_FindDescriptor(*(s16 *)&obj->work)->sprite)
+             (s16)Scene_FindActorPlacement(*(s16 *)&obj->work)->sprite)
              ->boxX
          << 16) +
         (8 << 16);
@@ -3857,7 +3857,7 @@ void FieldObject_PlaceSceneActors(void) {
     event &= 0x7ff;
     if (event - DJINNI_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
-        struct ScenePlacement *desc = BattleAction_FindDescriptor(id);
+        struct ScenePlacement *desc = Scene_FindActorPlacement(id);
         struct ObjectRuntime *obj;
 
         if (desc == NULL || desc->condition - FLAG_DJINNI_0 != event - DJINNI_0)
@@ -3921,7 +3921,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
         s32 actor;
 
         for (actor = 8; actor <= 65; actor++) {
-          struct ScenePlacement *found = BattleAction_FindDescriptor(actor);
+          struct ScenePlacement *found = Scene_FindActorPlacement(actor);
           if (found != 0 &&
               found->condition - FLAG_DJINNI_0 == flag - DJINNI_0) {
             WaitFrames(40);
@@ -4225,7 +4225,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->acceleration = 0x50000;
     effect->maxSpeed = 0x50000;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     effect->state++;
 
     ((struct AnimationObject *)effect->object)->part[0].priority =
@@ -4239,10 +4239,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
       ((struct AnimationObject *)effect->object)->part[0].priority = 0;
       effect->flags = 4;
     }
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(effect) == 0) {
+    if (EffectSlot_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
       ((struct AnimationObject *)effect->object)->part[0].priority = 0;
@@ -4266,10 +4266,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     if ((gFrameTick & 1) != 0)
       AudioCommand_PlayFar(145);
   } else if (state == 4) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 5) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       BattleFx_ClearOwnedSlot(effect);
   }
 }
@@ -4459,16 +4459,16 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->acceleration = 0x10000;
     effect->maxSpeed = 0x50000;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     effect->state++;
 
     if ((gFrameTick & 1) != 0)
       AudioCommand_PlayFar(0x90);
   } else if (state == 1) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       BattleFx_ClearOwnedSlot(effect);
   }
 }
@@ -4638,11 +4638,11 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     effect->maxSpeed = Random16() * 3 + 0x30000;
     effect->scaleX = 0x10000;
     effect->scaleY = 0x10000;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     effect->stopAtTarget = 1;
     (*statePointer)++;
   } else if ((u8)(effect->state - 1) <= 1) {
-    if (BattleFx_HasReachedTarget(effect) == 0) {
+    if (EffectSlot_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
       Vector_AddPolarOffset(0xc0000, Random16(), &position);
@@ -4901,9 +4901,9 @@ void BattleFx_Run(void) {
     }
 
     nearestTargetId =
-        BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, kind);
+        Field_FindNearbyPsynergyTarget(gGameState.selectedActor, kind);
     nearestTargetId = BattleFx_FilterObjectIdByFlags(nearestTargetId);
-    if (BattleFx_FindDescriptorWithOverride(nearestTargetId) != 0) {
+    if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
       BattleFx_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
       BattleFx_MarkChildAndRunFallbackTransition(nearestTargetId);
       BattleEffect_PauseObject(nearestTargetId);
@@ -5389,9 +5389,9 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->active = 1;
   work->messageMode = 1;
   // Keep the map's shake and its decay, to restore after the effect.
-  work->savedX = map->shakeX;
-  work->savedY = map->shakeY;
-  work->savedZ = map->shakeDecay;
+  work->savedShakeX = map->shakeX;
+  work->savedShakeY = map->shakeY;
+  work->savedShakeDecay = map->shakeDecay;
   if (gGameState.map == (s32)&SceneId_MercuryEntrance)
     work->lit = 1;
   if (gGameState.map == (s32)&SceneId_MercuryLighthouse2)
@@ -5522,9 +5522,9 @@ void BattleEffect_CleanupSceneObjects(void) {
     runtime->castStarted = 0;
     Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
     Resource_ResetEntry((s16)scene->tileSlot);
-    map->shakeX = scene->savedX;
-    map->shakeY = scene->savedY;
-    map->shakeDecay = scene->savedZ;
+    map->shakeX = scene->savedShakeX;
+    map->shakeY = scene->savedShakeY;
+    map->shakeDecay = scene->savedShakeDecay;
     if (scene->animation != 8)
       runtime->effectTimerRunning = 1;
     BattleFx_PlayQueuedSound();
@@ -5793,12 +5793,12 @@ void BattleFx_UpdateWaveScene(void) {
       // From 2 pixels below each one's sprite height (its metadata's boxX).
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)BattleAction_FindDescriptor(work->sourceId)->sprite);
+          (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
       from.y = caster->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)BattleAction_FindDescriptor(work->targetId)->sprite);
+          (s16)Scene_FindActorPlacement(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
       particle = Object_CreateFar(281, to.x, to.y, to.z);
@@ -6258,13 +6258,13 @@ next_state:
     slot->targetZ = position.z;
     slot->acceleration = 4 << 16;
     slot->maxSpeed = 4 << 16;
-    slot->flag42 = state;
+    slot->limitTurnStep = state;
     (*statePtr)++;
     return;
   }
 
   if (state == 1) {
-    if (BattleFx_HasReachedTarget(slot) == 0) {
+    if (EffectSlot_HasPendingTarget(slot) == 0) {
       (*statePtr)++;
       goto next_state;
     }
@@ -6275,12 +6275,12 @@ next_state:
     slot->targetX = slot->originX;
     slot->targetZ = slot->originZ;
     slot->maxTurnStep = 0x400;
-    slot->flag42 = 1;
+    slot->limitTurnStep = 1;
     (*statePtr)++;
     return;
   }
 
-  if (state == 3 && BattleFx_HasReachedTarget(slot) == 0)
+  if (state == 3 && EffectSlot_HasPendingTarget(slot) == 0)
     BattleFx_ClearOwnedSlot(slot);
 }
 
@@ -6924,14 +6924,14 @@ again:
     slot->targetZ = pos.z;
     slot->acceleration = 3 << 16;
     slot->maxSpeed = 3 << 16;
-    slot->flag42 = 0;
+    slot->limitTurnStep = 0;
     slot->state++;
     return;
   }
 
   if (state == 1) {
     // On arrival, go straight on.
-    if (BattleFx_HasReachedTarget(slot) == 0) {
+    if (EffectSlot_HasPendingTarget(slot) == 0) {
       slot->state++;
       goto again;
     }
@@ -6952,12 +6952,12 @@ again:
     slot->targetX = pos.x;
     slot->targetZ = pos.z;
     slot->maxTurnStep = 0x800;
-    slot->flag42 = 1;
+    slot->limitTurnStep = 1;
     slot->state++;
     return;
   }
 
-  if (state == 3 && BattleFx_HasReachedTarget(slot) == 0)
+  if (state == 3 && EffectSlot_HasPendingTarget(slot) == 0)
     BattleFx_ClearOwnedSlot(slot);
 }
 
@@ -8509,12 +8509,12 @@ top:
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
     effect->maxSpeed = 4 << 16;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     *statePointer = *statePointer + 1;
     return;
   }
   if (state == 1) {
-    if (BattleFx_HasReachedTarget(effect) != 0)
+    if (EffectSlot_HasPendingTarget(effect) != 0)
       return;
     *statePointer = *statePointer + 1;
     goto top;
@@ -8528,11 +8528,11 @@ top:
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
-    effect->flag42 = 1;
+    effect->limitTurnStep = 1;
     *statePointer = *statePointer + 1;
     return;
   }
-  if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
+  if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
     BattleFx_ClearOwnedSlot(effect);
 }
 
@@ -8850,16 +8850,16 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
     slot->targetZ = pos.z;
     slot->acceleration = 5 << 16;
     slot->maxSpeed = 5 << 16;
-    slot->flag42 = state;
+    slot->limitTurnStep = state;
     slot->state++;
 
     if ((gFrameCount & 2) != 0)
       AudioCommand_PlayFar(246);
   } else if (state == 1) {
-    if (BattleFx_HasReachedTarget(slot) == 0)
+    if (EffectSlot_HasPendingTarget(slot) == 0)
       slot->state--;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(slot) == 0)
+    if (EffectSlot_HasPendingTarget(slot) == 0)
       BattleFx_ClearOwnedSlot(slot);
   }
 }
@@ -9246,7 +9246,7 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object) {
 }
 
 // Moves an effect slot toward its target, turning at most maxTurnStep a
-// frame when flag42 is set and speeding up by acceleration to maxSpeed. A
+// frame when limitTurnStep is set and speeding up by acceleration to maxSpeed. A
 // slot that stops at its target lands on it once within 8 pixels.
 void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   s32 deltaX;
@@ -9277,7 +9277,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
     }
   }
   angle = ArcTan2(deltaZ, deltaX);
-  if (effect->flag42 != 0) {
+  if (effect->limitTurnStep != 0) {
     heading = effect->heading;
     turn = angle - heading;
     if ((turn >= 0 ? turn : -turn) >= effect->maxTurnStep) {
@@ -9303,13 +9303,14 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
 
 // Returns nonzero while an effect slot that stops at its target still has
 // one (it has not arrived), 0 once it has arrived or when it never stops.
-u32 BattleFx_HasReachedTarget(struct EffectSlot *effect) {
+// A plain != changes the English instructions at the same extent.
+u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
   u32 targetX;
 
   if (effect->stopAtTarget == 0) {
     return 0;
   }
-  targetX = effect->targetX ^ 0x80000000;
+  targetX = effect->targetX ^ (u32)EFFECT_NO_TARGET;
   return ((0u - targetX) | targetX) >> 31;
 }
 
@@ -9364,7 +9365,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   // guarding this store alone would not establish allocation-failure recovery.
   ((s8 *)effect->object)[38] = 0;
   effect->stopAtTarget = 1;
-  effect->flag42 = 1;
+  effect->limitTurnStep = 1;
   effect->updateMotion = 1;
   effect->render = 1;
   effect->active = 1;

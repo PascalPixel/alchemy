@@ -60,7 +60,7 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.BattleFx_CommitObjectPositionAndWait, 1
-	.set import.Battle_GetWorkObject1e0, 1
+	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
 	.set import.Event_SetNextDestination, 1

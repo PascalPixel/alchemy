@@ -16,7 +16,7 @@ void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_020014b8(void);
 void Func_020014c0(void);
 void Func_02001538(s32 message);
@@ -32,7 +32,7 @@ void Func_0200006c(s32 actor) {
 
   Func_02001538(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02001538(msg + 1);
   } else {
@@ -49,7 +49,7 @@ void Func_020000b8(s32 actor) {
   Func_020015b8(0);
   Func_02001538(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     Battle_WaitMode0(20);
     Object_LinkObjectAndSetCallback(actor, gPartyState.currentOwner);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 760, 320);
@@ -69,7 +69,7 @@ void Func_02000150(s32 actor) {
 
   Func_02001538(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020015e0(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02001538(msg + 1);
   } else {
@@ -171,7 +171,7 @@ void Func_02000370(void) {
   Motion_SetVarCbAndRefresh(9, 2);
   Battle_WaitMode0(10);
   UiText_OpenMessageAtObject(9, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Battle_WaitMode0(20);
     Func_02001548(9, 0, 10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;

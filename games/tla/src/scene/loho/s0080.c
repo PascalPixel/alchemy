@@ -10,7 +10,7 @@ extern const u8 gData_02001a80[];
 
 void Battle_WaitMode0(s32 frames);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 void Func_020012b0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
@@ -45,7 +45,7 @@ void Func_0200012c(s32 actor) {
 
   Func_02001380(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02001420(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02001420(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02001380(msg + 1);
   } else {

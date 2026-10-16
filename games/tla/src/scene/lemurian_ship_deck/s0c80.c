@@ -18,7 +18,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02001f5c(void);
 void Func_02001f64(void);
 void Func_02001fc4(s32 id, s32 x, s32 z);
@@ -99,7 +99,7 @@ void Func_02000ce0(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
         0);
   answer =
-      Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
+      Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
   owner = gPartyState.currentOwner;
   if (answer == 0) {
     ObjectMotion_WaitForAnimationChange(owner);

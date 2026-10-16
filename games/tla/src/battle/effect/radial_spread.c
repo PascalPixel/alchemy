@@ -20,7 +20,7 @@ void Audio_PlayCue(s32 cue);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
 
 // Places a spark at random around the current owner and sends it 120 pixels
-// along angle 0xc000. Each time BattleFx_HasReachedTarget returns 0, state 1
+// along angle 0xc000. Each time EffectSlot_HasPendingTarget returns 0, state 1
 // starts it over and state 2 clears its slot.
 void Func_080d81ec(struct EffectSlot *effect) {
   struct EffectVector position;
@@ -67,16 +67,16 @@ void Func_080d81ec(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->acceleration = 0x10000;
     effect->maxSpeed = 0x50000;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     effect->state++;
 
     if ((gFrameTick & 1) != 0)
       Audio_PlayCue(0x90);
   } else if (state == 1) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(effect) == 0)
+    if (EffectSlot_HasPendingTarget(effect) == 0)
       BattleFx_ClearOwnedSlot(effect);
   }
 }

@@ -1185,7 +1185,7 @@ Func_02000cac:
 	bl ObjectMotion_ArmCallback
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008ee2
 	movs r1, #3
@@ -3116,7 +3116,7 @@ Func_02001ed0:
 	bl Battle_WaitMode0
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_ja_0200a3ea
 	movs r1, #129
@@ -3399,7 +3399,7 @@ Func_02001ed0:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_ja_0200a6b6
 	movs r1, #4
@@ -4486,7 +4486,7 @@ Func_02001ed0:
 	bl Battle_WaitMode0
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200a3ea
 	movs r1, #129
@@ -4769,7 +4769,7 @@ Func_02001ed0:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200a6b6
 	movs r1, #4

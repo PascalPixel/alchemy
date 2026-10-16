@@ -62,16 +62,16 @@ void Func_080e0cec(struct EffectSlot *slot) {
     slot->targetZ = pos.z;
     slot->acceleration = 5 << 16;
     slot->maxSpeed = 5 << 16;
-    slot->flag42 = state;
+    slot->limitTurnStep = state;
     slot->state++;
 
     if ((gFrameCount & 2) != 0)
       Audio_PlayCue(246);
   } else if (state == 1) {
-    if (BattleFx_HasReachedTarget(slot) == 0)
+    if (EffectSlot_HasPendingTarget(slot) == 0)
       slot->state--;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(slot) == 0)
+    if (EffectSlot_HasPendingTarget(slot) == 0)
       BattleFx_ClearOwnedSlot(slot);
   }
 }

@@ -149,10 +149,10 @@ Scene_ResolveInteractionResultFar:
 	.thumb_func
 Func_080c8580:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_HasReachedTarget
+	overlay_veneer EffectSlot_HasPendingTarget
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_HasReachedTarget
+	overlay_veneer EffectSlot_HasPendingTarget
 .else
 	overlay_veneer Func_080d7788
 .endif

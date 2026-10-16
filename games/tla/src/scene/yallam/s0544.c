@@ -5,7 +5,7 @@ void Func_02000544(void) {
   Func_02002590(0);
   Func_02002520(MsgDoYouWant);
   UiText_OpenMessageAtObject(8, 0);
-  if (Inventory_PromptAndSetObjectMode(0, 0) == 0)
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0)
     Func_02001944();
   else
     Func_02002538(8, 0);

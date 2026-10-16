@@ -12,7 +12,7 @@ Func_080ccec8:
 	push {r7}
 	sub sp, #36
 	mov r11, r0
-	bl BattleAction_FindDescriptor
+	bl Scene_FindActorPlacement
 	movs r1, #1
 	negs r1, r1
 	movs r3, #128
@@ -325,7 +325,7 @@ Func_080ccec8:
 .L_080cd16c:
 	.4byte 0x000015b5
 .L_080cd170:
-	.4byte BattleFx_EmitRandomParticleFromEmitter
+	.4byte Marker_MoveLeaderAwayFromEmitter
 .L_080cd174:
 	.4byte 0x00000e17
 .L_080cd178:
@@ -718,7 +718,7 @@ Func_080ccec8:
 .L_080cd4a8:
 	.4byte 0x00000e1c
 .L_080cd4ac:
-	.4byte BattleFx_EmitRandomParticleFromEmitter
+	.4byte Marker_MoveLeaderAwayFromEmitter
 .L_080cd4b0:
 	.4byte 0x00000e10
 .L_080cd4b4:

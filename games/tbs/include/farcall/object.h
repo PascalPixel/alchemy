@@ -20,7 +20,7 @@ FAR_CALL(Party_RemoveOwnerRestoredFar, Party_RemoveOwnerRestored, void,
 FAR_CALL(PartyInventory_GiveItemFar, PartyInventory_GiveItem, s32,
          (s32 item, s32 unused))
 FAR_SLOT(Inventory_TryAddAndReturnOwner)
-FAR_CALL(Inventory_PromptAndSetObjectModeFar, Inventory_PromptAndSetObjectMode,
+FAR_CALL(Event_AskYesNoWithActorAnimationFar, Event_AskYesNoWithActorAnimation,
          s32, (s32 actor, s32 force_bottom))
 FAR_CALL(Party_LearnAbilityFar, Party_LearnAbility, void,
          (s32 unit, s32 ability))
@@ -107,7 +107,7 @@ FAR_CALL(Battle_ShowPairedUnitWorkAndWaitFar, Battle_ShowPairedUnitWorkAndWait,
          (s32 first, s32 first_x, s32 first_y, s32 first_arg, s32 first_extra,
           s32 second, s32 second_x, s32 second_y, s32 second_arg,
           s32 second_extra))
-FAR_CALL(Ui_SetRenderResultFromObjectFar, Ui_SetRenderResultFromObject, void,
+FAR_CALL(Ui_SetMessageVoiceFromActorFar, Ui_SetMessageVoiceFromActor, void,
          (s32 arg0))
 FAR_CALL(ObjectMotion_SetActionVariantFar, ObjectMotion_SetActionVariant, void,
          (s32 objectId, s32 priority))
@@ -127,7 +127,7 @@ FAR_CALL(BattleFx_CommitObjectPositionAndWaitFar,
          BattleFx_CommitObjectPositionAndWait, void, (void))
 FAR_CALL(Object_PlaceCurrentWithinCameraBoundsFar,
          Object_PlaceCurrentWithinCameraBounds, void, (s32 arg0, s32 arg1))
-FAR_CALL(Battle_GetWorkObject1e0Far, Battle_GetWorkObject1e0,
+FAR_CALL(Camera_GetEventObjectFar, Camera_GetEventObject,
          struct FieldActor *, (void))
 FAR_CALL(Map_SetViewBoundsFar, Map_SetViewBounds, void,
          (s32 minX, s32 minY, s32 maxX, s32 maxY))
@@ -181,7 +181,7 @@ FAR_CALL(BattleFx_ApplyColorToSourceBufferFar,
 FAR_SLOT(BattleFx_InterpolateBuffers)
 FAR_CALL(BattleFx_StartBufferInterpolationFar,
          BattleFx_StartBufferInterpolation, void, (s32 frames))
-FAR_SLOT(Runtime_ScheduleCallbackAndReleaseBlock32B)
+FAR_SLOT(BattlePalette_StopBlendAndReleaseBuffer)
 FAR_SLOT(BattleFx_SetPrimaryBufferValue)
 FAR_CALL(Event_StartScreenTransitionFar, Event_StartScreenTransition, void,
          (void))
@@ -206,10 +206,10 @@ FAR_SLOT(Marker_GetActor)
 FAR_SLOT(Marker_OpenChest)
 FAR_SLOT(Marker_CloseChest)
 FAR_SLOT(Marker_ShowOpened)
-FAR_CALL(EffectRuntime_SetCurrentPositionFar, EffectRuntime_SetCurrentPosition,
+FAR_CALL(Marker_SetActorPositionFar, Marker_SetActorPosition,
          void, (s32 id, s32 x, s32 y))
 FAR_SLOT(Marker_Hide)
-FAR_CALL(BattleFx_EmitRandomParticleFar, BattleFx_EmitRandomParticle, void,
+FAR_CALL(Marker_MoveLeaderAwayFar, Marker_MoveLeaderAway, void,
          (void))
 FAR_CALL(Battle_SetObjectFlag5bWhenMode3Far, Battle_SetObjectFlag5bWhenMode3,
          void, (void))
@@ -221,8 +221,8 @@ FAR_SLOT(ObjectTable_DestroyAtIndex)
 FAR_CALL(ObjectTable_GetFar, ObjectTable_Get, void *, (u32 index))
 FAR_CALL(BattleFx_StartFadeOverlayFar, BattleFx_StartFadeOverlay, void,
          (void *object))
-FAR_SLOT(Object_EnableEffectSpawnCallback)
-FAR_SLOT(Object_DisableEffectSpawnCallback)
+FAR_SLOT(FadeOverlay_Suspend)
+FAR_SLOT(FadeOverlay_Resume)
 FAR_CALL(Field_DispatchTypeHandlerFar, Field_DispatchTypeHandler, void,
          (s32 kind))
 FAR_CALL(BattleFx_LoadActionEffectResourcesFar,
@@ -266,7 +266,7 @@ FAR_CALL(Djinn_JoinPartyFar, Djinn_JoinParty, void,
          (s32 slot, s32 element, s32 djinn))
 FAR_CALL(EffectSlot_UpdateFar, EffectSlot_Update, void,
          (struct EffectSlot * effect))
-FAR_CALL(BattleFx_HasReachedTargetFar, BattleFx_HasReachedTarget, u32,
+FAR_CALL(EffectSlot_HasPendingTargetFar, EffectSlot_HasPendingTarget, u32,
          (struct EffectSlot * effect))
 FAR_CALL(EffectSlot_SetPositionFar, EffectSlot_SetPosition, void,
          (struct EffectSlot * effect, s32 x, s32 z))

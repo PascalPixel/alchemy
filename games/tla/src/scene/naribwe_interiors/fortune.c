@@ -19,10 +19,10 @@ void Func_02000304(void) {
   message = MsgIAmA;
   Func_02001138((s32)message);
   UiText_OpenMessageAtObject(10, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02001188(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) == 0) {
     Func_02001138((s32)(message + 2));
     UiText_OpenMessageAtObject(10, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02001188(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) == 0) {
       if ((u32)gPartyState.coins > 19) {
         Func_02000390();
         Func_020010e8();

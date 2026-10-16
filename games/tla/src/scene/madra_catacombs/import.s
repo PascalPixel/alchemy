@@ -182,10 +182,10 @@ Func_0200118c:
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif

@@ -675,7 +675,7 @@ static void EV20_TOUCH(void) {
 static void ValeHome_RunScriptScene(void) {
   u8 *rec7;
 
-  rec7 = Battle_GetWorkObject1e0();
+  rec7 = Camera_GetEventObject();
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
@@ -1050,7 +1050,7 @@ static void Scene_RunExtendedActorSequence(void) {
   Engine_EventWait(10);
   Camera_SetSpeed(0x26666, 0x4ccc);
   v6 = 0;
-  Battle_GetWorkObject1e0()->motionFlags = v6;
+  Camera_GetEventObject()->motionFlags = v6;
   Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
   Engine_EventWait(10);
   Actor_SetActionScript(12, gValeHome_Actor12Actions);

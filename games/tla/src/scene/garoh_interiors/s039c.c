@@ -14,10 +14,10 @@ void Func_02000318(s32 actor) {
   message = (s32)MsgGarohInteriors01;
   Func_02000844(message);
   Message_Open(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Func_02000844(message + 2);
     Message_Open(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
       Func_0200085c(actor, 0);
     } else {
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
@@ -78,7 +78,7 @@ void Func_0200049c(void) {
 
   Func_02000844(message);
   UiText_OpenMessageAtObject(11, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_0200088c(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_0200088c(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02000844(message + 1);
   } else {

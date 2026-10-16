@@ -46,10 +46,10 @@ Func_02003130:
 	.thumb_func
 Func_02003138:
 	overlay_veneer EventRuntime_EndFar
-	.global Inventory_PromptAndSetObjectMode
+	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
+Event_AskYesNoWithActorAnimation:
+	overlay_veneer Event_AskYesNoWithActorAnimationFar
 	.global Func_02003148
 	.thumb_func
 Func_02003148:
@@ -170,10 +170,10 @@ Party_SetFields1eeAnd1f0:
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif

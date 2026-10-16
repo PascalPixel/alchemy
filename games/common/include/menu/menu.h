@@ -129,7 +129,7 @@ void Event_DelayEffectFramesFar(void);
 void Event_FinishScreenTransitionFar(void);
 void Func_080c8368(s32, s32);
 void BattleFx_ApplyColorToSourceBufferFar(s32);
-void Runtime_ScheduleCallbackAndReleaseBlock32BFar(void);
+void BattlePalette_StopBlendAndReleaseBufferFar(void);
 void BattleFx_SetPrimaryBufferValueFar(void);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_DrawEquippedItemNames(s32 window, u8 *items);

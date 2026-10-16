@@ -48,9 +48,9 @@ struct BattleFxScene {
   u16 tileSlot;
   u16 unk48;
   u16 freeBlocks;
-  s32 savedX;
-  s32 savedY;
-  s32 savedZ;
+  s32 savedShakeX;
+  s32 savedShakeY;
+  s32 savedShakeDecay;
   struct EffectSlot slots[24];
   u8 unk718[2];
   s16 arcTileSlot;
@@ -66,7 +66,8 @@ LAYOUT_OFFSET_GUARD(BattleFxScene_SavedCallback, struct BattleFxScene,
                     savedCallback, 0x38);
 LAYOUT_OFFSET_GUARD(BattleFxScene_TileSlot, struct BattleFxScene, tileSlot,
                     0x46);
-LAYOUT_OFFSET_GUARD(BattleFxScene_SavedX, struct BattleFxScene, savedX, 0x4c);
+LAYOUT_OFFSET_GUARD(BattleFxScene_SavedShakeX, struct BattleFxScene,
+                    savedShakeX, 0x4c);
 LAYOUT_OFFSET_GUARD(BattleFxScene_Slots, struct BattleFxScene, slots, 0x58);
 LAYOUT_OFFSET_GUARD(BattleFxScene_ArcTileSlot, struct BattleFxScene,
                     arcTileSlot, 0x71a);

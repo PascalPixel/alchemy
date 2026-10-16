@@ -3,7 +3,7 @@
 #include "scene.h"
 #include "system.h"
 void EffectSlot_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
-s32 BattleFx_HasReachedTargetFar(struct Effect_080b2f4c *);
+s32 EffectSlot_HasPendingTargetFar(struct Effect_080b2f4c *);
 void BattleFx_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 
 struct Position {
@@ -52,11 +52,11 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
     effect->flag = state;
     *statePointer = (u8)*statePointer + 1;
   } else if (state == 1) {
-    result = BattleFx_HasReachedTargetFar(effect);
+    result = EffectSlot_HasPendingTargetFar(effect);
     if (result == 0)
       *statePointer = result;
   } else if (state == 2) {
-    if (BattleFx_HasReachedTargetFar(effect) == 0)
+    if (EffectSlot_HasPendingTargetFar(effect) == 0)
       BattleFx_ClearOwnedSlotFar(effect);
   }
 }

@@ -14,7 +14,7 @@ void Func_02000634();
 void Func_0200063c();
 void Func_02000644();
 void Func_0200064c();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 struct ObjectRuntime *Object_GetById();
 void UiText_OpenMessageAtObject();
 
@@ -27,7 +27,7 @@ void Func_020000f4(void) {
   Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors03);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
   result0 = Value0((s32 (*)())Func_02000634);
-  result1 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result0, 0);
+  result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
     goto L_0200812c;
   Call1((void (*)())Battle_WaitMode0, 10);
@@ -92,7 +92,7 @@ void Func_020001fc(s32 actor) {
     Call1((void (*)())Func_0200062c, 0);
     Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors17);
     Value2((s32 (*)())UiText_OpenMessageAtObject, actor, 0);
-    if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode,
+    if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
                Value0((s32 (*)())Func_02000634), 0) == 0) {
       Call1((void (*)())Battle_WaitMode0, 10);
       Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors17 + 1);

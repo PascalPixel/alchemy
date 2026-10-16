@@ -47,7 +47,7 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Battle_GetWorkObject1e0, 1
+	.set import.Camera_GetEventObject, 1
 	.set import.Engine_MapObjectSetPosition, 1
 	.set import.BattleFx_StartFadeOverlay, 1
 	.set import.BattleFx_PlayQueuedSound, 1

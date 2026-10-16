@@ -38,7 +38,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
     }
   }
   angle = ArcTan2(dz, dx);
-  if (effect->flag42 != 0) {
+  if (effect->limitTurnStep != 0) {
     heading = effect->heading;
     turn = angle - heading;
     if ((turn >= 0 ? turn : -turn) >= effect->maxTurnStep) {

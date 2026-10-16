@@ -15,7 +15,7 @@ void Func_020028dc();
 void Func_020028fc();
 void Func_0200291c();
 void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void ObjectMotion_ArmCallback();
 void ObjectMotion_SetAngleToward();
 struct ObjectRuntime *Object_GetById();
@@ -25,7 +25,7 @@ void Battle_WaitMode0();
 void Func_020028ac();
 void Func_020028c4();
 void Func_0200291c();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void UiText_OpenMessageAtObject();
 
 void Func_02000154(s32 arg0) {
@@ -35,7 +35,7 @@ void Func_02000154(s32 arg0) {
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors13);
   Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
   result0 = Value0((s32 (*)())Func_0200291c);
-  result1 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result0, 0);
+  result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
     goto L_02008184;
   Value1((s32 (*)())Battle_WaitMode0, 10);
@@ -56,7 +56,7 @@ void Func_020001a0(s32 arg0) {
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors18);
   Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
   result0 = Value0((s32 (*)())Func_0200291c);
-  result1 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result0, 0);
+  result1 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result0, 0);
   if (result1 != 0)
     goto L_020081d0;
   Value1((s32 (*)())Battle_WaitMode0, 10);
@@ -86,7 +86,7 @@ void Func_020001ec(s32 arg0, s32 arg1) {
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors19);
   Value2((s32 (*)())UiText_OpenMessageAtObject, arg1, 0);
   result2 = Value0((s32 (*)())Func_0200291c);
-  result3 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result2, 0);
+  result3 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result2, 0);
   if (result3 != 0)
     goto L_0200824e;
   Value1((s32 (*)())Battle_WaitMode0, 10);

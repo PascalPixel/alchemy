@@ -27,7 +27,7 @@ void Func_020019e4();
 void Func_020019f4();
 void Func_020019fc();
 void Func_02001a0c();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_CamBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
@@ -90,7 +90,7 @@ void Func_02000838(void) {
   Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
   Call1((void (*)())Battle_WaitMode0, 10);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
-  result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())Battle_WaitMode0, 30);
     Call2((void (*)())ObjectMotion_SetVariantCallback, 10, 3);
@@ -351,7 +351,7 @@ void Func_02000838(void) {
   Call1((void (*)())Battle_WaitMode0, 10);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
   if ((s8)gPartyState.counter274 <= 4) {
-    result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+    result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
     if (result == 0) {
       Call1((void (*)())Battle_WaitMode0, 25);
       Call3((void (*)())ObjectMotion_ArmCallback, 11, 0x5000, 0);
@@ -382,7 +382,7 @@ void Func_02000838(void) {
       n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count = n + 2;
     }
-    result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+    result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
     if (result == 0) {
       Call1((void (*)())Battle_WaitMode0, 25);
       Call3((void (*)())ObjectMotion_ArmCallback, 11, 0x5000, 0);

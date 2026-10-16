@@ -54,10 +54,10 @@ Func_020009b8:
 	.thumb_func
 PartyInventory_GiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
-	.global Inventory_PromptAndSetObjectMode
+	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
+Event_AskYesNoWithActorAnimation:
+	overlay_veneer Event_AskYesNoWithActorAnimationFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

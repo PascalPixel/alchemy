@@ -81,7 +81,7 @@ LAYOUT_SIZE_GUARD(DisplayTransitionState_Size, struct DisplayTransitionState,
 
 #if GAME_TLA
 void DisplayTransition_InitializeBattleEffectState(s32 mode);
-void BattleFx_EnableTwoCallbacks(void);
+void DisplayTransition_SuspendCallbacks(void);
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void);
 void DisplayTransition_Start(s32 mode, s32 frames);
 void DisplayTransition_Finish(s32 mode, s32 frames);

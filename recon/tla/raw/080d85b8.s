@@ -94,7 +94,7 @@ Func_080d85b8:
 	cmp r3, r2
 	bhi .L_080d86ea
 	adds r0, r7, #0
-	bl BattleFx_HasReachedTarget
+	bl EffectSlot_HasPendingTarget
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080d86f6

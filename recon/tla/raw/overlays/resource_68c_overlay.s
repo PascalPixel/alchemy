@@ -196,7 +196,7 @@ Func_02000a5c:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008c64
 	movs r0, #30
@@ -297,7 +297,7 @@ Func_02000a5c:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008d58
 	movs r0, #30

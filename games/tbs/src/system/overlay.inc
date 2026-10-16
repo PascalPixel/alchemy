@@ -261,7 +261,7 @@
 	import Party_RemoveOwnerRestored, Party_RemoveOwnerRestoredFar
 	import Engine_PartyGiveItem, PartyInventory_GiveItemFar
 	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
-	import Engine_EventChooseYesNo, Inventory_PromptAndSetObjectModeFar
+	import Engine_EventChooseYesNo, Event_AskYesNoWithActorAnimationFar
 	import Party_LearnAbility, Party_LearnAbilityFar
 	import Object_GetById, Object_GetByIdFar
 	import Engine_ActorDestroy, ObjectTable_DestroyByIdFar
@@ -307,7 +307,7 @@
 	import Engine_EventAskYesNo, BattleEventRuntime_ProcessActionFar
 	import Engine_ActorFaceDirection, ObjectMotion_ArmCallbackFar
 	import Engine_EventShowTwoMessagesAndWait, Battle_ShowPairedUnitWorkAndWaitFar
-	import Ui_SetRenderResultFromObject, Ui_SetRenderResultFromObjectFar
+	import Ui_SetMessageVoiceFromActor, Ui_SetMessageVoiceFromActorFar
 	import Engine_ActorSetSpritePriority, ObjectMotion_SetActionVariantFar
 	import Engine_ActorShowEmote, BattleFx_SpawnLinkedFar
 	import Engine_ActorSetAttachedEffect, BattleFx_ConfigureLinkedObjectFar
@@ -319,8 +319,8 @@
 	import Engine_CameraWaitForMove, BattleFx_CommitObjectPositionAndWaitFar
 	import Engine_CameraMoveToActor, Object_PlaceCurrentWithinCameraBoundsFar
 	import Object_PlaceCurrentWithinCameraBounds, Object_PlaceCurrentWithinCameraBoundsFar
-	import Battle_GetWorkObject1e0, Battle_GetWorkObject1e0Far
-	import Engine_EventGetViewCenter, Battle_GetWorkObject1e0Far
+	import Camera_GetEventObject, Camera_GetEventObjectFar
+	import Engine_EventGetViewCenter, Camera_GetEventObjectFar
 	import Map_SetViewBounds, Map_SetViewBoundsFar
 	import Event_SetDestination, Event_SetDestinationFar
 	import Engine_EventRequestExit, Event_SetExitRequestFar
@@ -359,8 +359,8 @@
 	import Engine_BattleFxPlayCueAndStartEmitterOnTarget, BattleFx_PlayCueAndStartEmitterOnTargetFar
 	import Engine_RunRisingObjectSequence, EffectRuntime_RunRisingObjectSequenceFar
 	import Engine_ItemShowFound, BattleFx_StartEffectObject22Far
-	import Engine_MapObjectSetPosition, EffectRuntime_SetCurrentPositionFar
-	import BattleFx_EmitRandomParticle, BattleFx_EmitRandomParticleFar
+	import Engine_MapObjectSetPosition, Marker_SetActorPositionFar
+	import Marker_MoveLeaderAway, Marker_MoveLeaderAwayFar
 	import Battle_SetObjectFlag5bWhenMode3, Battle_SetObjectFlag5bWhenMode3Far
 	import Battle_ClearObjectFlag5bWhenMode3, Battle_ClearObjectFlag5bWhenMode3Far
 	import Engine_ActorLookup, ObjectTable_GetFar
@@ -387,7 +387,7 @@
 	import Audio_PlayCueFromEventWork, Audio_PlayCueFromEventWorkFar
 	import Djinn_JoinParty, Djinn_JoinPartyFar
 	import Engine_BattleFxRunPageEffectForSlot, Djinn_JoinPartyFar
-	import BattleFx_HasReachedTarget, BattleFx_HasReachedTargetFar
+	import EffectSlot_HasPendingTarget, EffectSlot_HasPendingTargetFar
 	import EffectSlot_SetObjectMode, EffectSlot_SetObjectModeFar
 	import EffectSlot_SetCallback, EffectSlot_SetCallbackFar
 	import EffectSlot_Initialize, EffectSlot_InitializeFar

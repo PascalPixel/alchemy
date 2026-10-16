@@ -47,7 +47,7 @@ void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
 void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode);
 void Func_020002f8(void);

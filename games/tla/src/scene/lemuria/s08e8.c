@@ -24,7 +24,7 @@ void ObjectMotion_SetAngleToward();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 void Motion_SetModeAndWaitAnimation();
 void Func_02001bcc(void);
 void Func_02001bd4(void);
@@ -70,7 +70,7 @@ void Func_02000934(void) {
   Call1((void (*)())Object_RefreshSelectorById, 30);
   Call1(Battle_WaitMode0, 5);
   Value2(UiText_OpenMessageAtObject, 30, 0);
-  if (Value2(Inventory_PromptAndSetObjectMode, 4, 0)) {
+  if (Value2(Event_AskYesNoWithActorAnimation, 4, 0)) {
     Call1(Battle_WaitMode0, 30);
     Call3(Func_02001c7c, 30, 0, 0);
   } else {

@@ -23,7 +23,7 @@ void Func_02003218();
 void Func_02003240();
 void Func_02003260();
 void Func_020032a0();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_CamBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
@@ -68,7 +68,7 @@ void Func_02003240();
 void Func_02003248();
 void Func_020032a0();
 void Func_020032a8();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_CamBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
@@ -263,7 +263,7 @@ void Func_020004f4(void) {
   Call1((void (*)())Battle_WaitMode0, 10);
   Value3((s32 (*)())Func_020031f8, 25, 0x109, 50);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 0x1019, 0);
-  result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x8000, 0);
@@ -408,7 +408,7 @@ void Func_02000c5c(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 8, 3);
   Call1((void (*)())Battle_WaitMode0, 10);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 8, 0);
-  result6 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result6 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result6 != 0)
     goto L_0200900c;
   Call1((void (*)())Battle_WaitMode0, 30);
@@ -1167,7 +1167,7 @@ L_0200903c:
   Value2((s32 (*)())Motion_SetVarCbAndRefresh, 25, 2);
   Call1((void (*)())Battle_WaitMode0, 10);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 25, 0);
-  result18 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result18 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result18 != 0)
     goto L_0200ab7a;
   Call1((void (*)())Battle_WaitMode0, 30);
@@ -1289,7 +1289,7 @@ L_0200abc0:
   Call1((void (*)())Battle_WaitMode0, 10);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 6, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xe000, 0);
-  result19 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result19 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result19 != 0)
     goto L_0200afbe;
   Call1((void (*)())Battle_WaitMode0, 30);

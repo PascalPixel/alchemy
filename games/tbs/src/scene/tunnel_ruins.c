@@ -829,7 +829,7 @@ static void FieldScene_RunMiddleSequence(void) {
       Actor_Get(found + 12)->motionFlags = 0;
       Object_GetById(found + 12)->timer = 0;
       Engine_CameraSetSpeed(0x30000, 0x6000);
-      Battle_GetWorkObject1e0()->motionFlags = 0;
+      Camera_GetEventObject()->motionFlags = 0;
       Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
       Engine_CameraWaitForMove();
       SceneActor_LandOnHighestPlatform(found + 12);

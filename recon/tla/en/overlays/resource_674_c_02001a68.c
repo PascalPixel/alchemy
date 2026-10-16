@@ -12,7 +12,7 @@ void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 accel);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 extern const u8 gData_020045a4[];
 extern const u8 gData_020045f0[];
 
@@ -37,7 +37,7 @@ void Func_02001a68(void) {
 
   ((void (*)())Func_02003fc4)();
 
-  result = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+  result = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
   if (result == 0) {
     ((void (*)())Func_02003fbc)();
 

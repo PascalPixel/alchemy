@@ -398,7 +398,7 @@ extern u16 gEncounter_EnemyGroupTable[];
 extern struct WorldMapWork gWorldMapWork;
 extern const struct SceneCueRule gScene_CueRuleTable[];
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-s16 *BattleAction_FindDescriptor(s16 action);
+s16 *Scene_FindActorPlacement(s16 action);
 s32 BattleActor_RemoveFromLists(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);

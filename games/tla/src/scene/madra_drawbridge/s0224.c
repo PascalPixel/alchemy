@@ -11,7 +11,7 @@ void Func_02000318(s32 actor, s32 a);
 void Func_02000338(void);
 void Func_02000340(s32 skip);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
 void GameFlag_SetBit(s32 flag);

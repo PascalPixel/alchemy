@@ -132,7 +132,7 @@ s32 Func_0200145c(void) {
     ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
     Func_02001a64((s32)MsgNotBadWould + msg);
     UiText_OpenMessageAtObject(8, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       if (wins > 90)
         wins = 90;
       Flag_SetByte(0x3f8, wins);

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -28,7 +29,7 @@ extern s32 gTretInteriors_ActionTable1[];
 extern s32 gTretInteriors_ActionTable2[];
 extern u32 gTretInteriors_TintSteps[];
 extern struct SceneEntrance gTretInteriorsEntrances[];
-extern s16 gTretInteriorsRegions[];
+extern struct SceneRegion gTretInteriorsRegions[];
 extern u32 gTretInteriorsExits[];
 extern struct ScenePlacement gTretInteriorsPlacements[];
 extern struct SceneEvent gTretInteriorsEvents[];

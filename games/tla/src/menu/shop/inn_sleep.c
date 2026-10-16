@@ -71,7 +71,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-  Runtime_ScheduleCallbackAndReleaseBlock32BFar();
+  BattlePalette_StopBlendAndReleaseBufferFar();
 #else
   Event_StartScreenTransitionFar();
 #endif

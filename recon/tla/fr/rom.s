@@ -1870,10 +1870,10 @@ Func_080cc7c4:
 	.balign 4
 	.incbin "baserom.gba", 0x000d19fc, 0x000002bc
 	.section .rom.000d1cb8, "ax"
-	.global BattleAction_FindDescriptor
-	.type BattleAction_FindDescriptor, %function
+	.global Scene_FindActorPlacement
+	.type Scene_FindActorPlacement, %function
 	.thumb_func
-BattleAction_FindDescriptor:
+Scene_FindActorPlacement:
 	.incbin "baserom.gba", 0x000d1cb8, 0x00000090
 	.section .rom.000d1d76, "ax"
 	.incbin "baserom.gba", 0x000d1d76, 0x00000002
@@ -2075,10 +2075,10 @@ Func_080d20fc:
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000d760c, 0x000001d4
 	.section .rom.000d7834, "ax"
-	.global Inventory_PromptAndSetObjectMode
-	.type Inventory_PromptAndSetObjectMode, %function
+	.global Event_AskYesNoWithActorAnimation
+	.type Event_AskYesNoWithActorAnimation, %function
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
+Event_AskYesNoWithActorAnimation:
 	.incbin "baserom.gba", 0x000d7834, 0x0000011c
 	.section .rom.000d7960, "ax"
 	.balign 4

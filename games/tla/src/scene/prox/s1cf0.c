@@ -27,7 +27,7 @@ s32 ObjectMotion_ArmCallback();
 s32 Func_0200454c();
 s32 Func_02004564();
 s32 Func_0200452c();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_SetPositionAndReset();
 s32 Func_02004584();
@@ -141,7 +141,7 @@ void Func_02001cf0(void) {
   Prox_Jump(0, 0x108, 0);
   Prox_MessageOpen(0x4000, 0);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
-  t83 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
+  t83 = Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
   if (t83 == 0) {
     Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
     Call2(Func_02004534, 0x1a, 0);
@@ -207,7 +207,7 @@ void Func_02001cf0(void) {
   Call2(Func_0200454c, 0, 0);
   Prox_MessageOpen(0x4000, 0);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
-  t144 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
+  t144 = Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
   if (t144 == 0) {
     Call2(Func_0200456c, 0x26666, 0x4ccc);
     Call4(Motion_CamBounds, 0xb80000, -1, 0x2000000, 1);

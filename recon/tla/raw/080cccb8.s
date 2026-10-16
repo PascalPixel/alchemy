@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleAction_FindDescriptor
+	.global Scene_FindActorPlacement
 	.thumb_func
-BattleAction_FindDescriptor:
+Scene_FindActorPlacement:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

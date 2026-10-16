@@ -40,7 +40,7 @@ void ObjectMotion_OffsetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 s32 PartyInventory_FindOwner(s32 item);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
 static inline s32 FlagCheck(s32 flag) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */

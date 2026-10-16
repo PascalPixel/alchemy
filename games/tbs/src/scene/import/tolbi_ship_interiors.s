@@ -55,14 +55,14 @@
 	.set import.Engine_EventShowMessageAndWait, 1
 	.set import.Engine_EventAskYesNo, 1
 	.set import.Engine_ActorFaceDirection, 1
-	.set import.Ui_SetRenderResultFromObject, 1
+	.set import.Ui_SetMessageVoiceFromActor, 1
 	.set import.Engine_ActorSetSpritePriority, 1
 	.set import.Engine_ActorShowEmote, 1
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Battle_GetWorkObject1e0, 1
+	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.BattleFx_SetWeightedResult, 1
 	.set import.Event_SetNextDestination, 1

@@ -27,7 +27,7 @@ void Func_02000fc4(void) {
       Func_0200487c(price, 5);
       Func_0200487c(price, 5);
       UiText_OpenMessageAtObject(12, 0);
-      if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
         if ((u32)gPartyState.coins < price) {
           Object_SetModeById(13, 6);
           Battle_WaitMode0(20);

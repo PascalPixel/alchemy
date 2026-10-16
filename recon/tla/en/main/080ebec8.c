@@ -32,7 +32,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   effect->originZ = z;
   ((s8 *)effect->object)[26] = 0;
   effect->stopAtTarget = 1;
-  effect->flag42 = 1;
+  effect->limitTurnStep = 1;
   effect->updateMotion = 1;
   effect->render = 1;
   effect->active = 1;

@@ -68,7 +68,7 @@ Func_020006f4:
 	bl Func_02003fc4
 	ldr r0, [r7]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	mov r9, r0
 	cmp r0, #0
 	beq .L_02008794
@@ -517,7 +517,7 @@ Func_020006f4:
 	bl Func_02003fc4
 	ldr r0, [r6]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	beq .L_02008bba
 	b .L_02008d04
@@ -1798,7 +1798,7 @@ Func_020014e0:
 	bl Func_02003fc4
 	ldr r0, [r6]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	mov r10, r0
 	cmp r0, #0
 	bne .L_ja_02009688
@@ -2089,7 +2089,7 @@ Func_020014e0:
 	bl Func_02003fc4
 	ldr r0, [r6]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_ja_02009834
 .L_ja_0200982c:
@@ -2175,7 +2175,7 @@ Func_020014e0:
 	bl Func_02003fc4
 	ldr r0, [r7]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	beq .L_ja_020098ee
 	b .L_ja_02009a18
@@ -2415,7 +2415,7 @@ Func_020014e0:
 	bl Func_02003fc4
 	ldr r0, [r6]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	mov r10, r0
 	cmp r0, #0
 	bne .L_02009688
@@ -2706,7 +2706,7 @@ Func_020014e0:
 	bl Func_02003fc4
 	ldr r0, [r6]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02009834
 .L_0200982c:
@@ -2792,7 +2792,7 @@ Func_020014e0:
 	bl Func_02003fc4
 	ldr r0, [r7]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	beq .L_020098ee
 	b .L_02009a18
@@ -2992,7 +2992,7 @@ Func_02001a68:
 	bl Func_02003fc4
 	ldr r0, [r5]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	adds r7, r0, #0
 	cmp r7, #0
 	bne .L_02009bae

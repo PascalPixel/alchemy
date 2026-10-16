@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 71 (The Broken Seal's BattleAction_FindDescriptor,
+// Near miss, differ 2 of 71 (The Broken Seal's Scene_FindActorPlacement,
 // ported as is): the native loads the event work (ldr r7, [r3, #108]) before
 // it starts the -1 and 0 the loops keep in lr and ip; this draft loads it
 // after them. The work in a local, declared first, or the table pointer
@@ -23,7 +23,7 @@ struct ActionDescriptorTables {
   struct ActionDescriptor *tables[4];
 };
 
-struct ActionDescriptor *BattleAction_FindDescriptor(s32 id) {
+struct ActionDescriptor *Scene_FindActorPlacement(s32 id) {
   struct ActionDescriptor *entry;
   s32 i;
   s32 group = 8;

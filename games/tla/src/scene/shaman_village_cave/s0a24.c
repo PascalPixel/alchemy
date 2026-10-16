@@ -19,7 +19,7 @@ void Func_02001160();
 void Func_020011e0();
 void GameFlag_ClearBit();
 void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_CamBounds();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
@@ -110,7 +110,7 @@ void Func_02000a24(void) {
 
     UiText_OpenMessageAtObject(19, flags);
   }
-  while (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 0, 0) != 0) {
+  while (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 0, 0) != 0) {
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see
      * SHAMAN_VILLAGE_CAVE_EMOTE. */
     SHAMAN_VILLAGE_CAVE_EMOTE(19, 258, 30)

@@ -15,7 +15,7 @@ void Func_02005724();
 void Func_02005734();
 void Func_020057dc();
 void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_CamBounds();
 void Motion_SetModeAndWaitAnimation();
 void ObjectMotion_Launch();
@@ -204,7 +204,7 @@ void Func_020029ac(void) {
 
     UiText_OpenMessageAtObject(0x8000, flags);
   }
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode,
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
              gPartyState.currentOwner, 0) == 0) {
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
     Call2((void (*)())Func_020056f4, 0x8005, 0);

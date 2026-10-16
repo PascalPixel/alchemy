@@ -33,7 +33,7 @@ void Func_020000d8(void) {
     msg = (s32)&MsgNaribwe02;
     Func_02000584(msg);
     UiText_OpenMessageAtObject(14, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
       GameFlag_SetBit_(0x85d);
     } else {
@@ -53,7 +53,7 @@ void Func_02000140(void) {
     msg = (s32)&MsgNaribwe07;
     Func_02000584(msg);
     UiText_OpenMessageAtObject(18, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
       GameFlag_SetBit(0x85d);
     } else {
@@ -71,7 +71,7 @@ void Func_020001a8(void) {
 
   Func_02000584(msg);
   UiText_OpenMessageAtObject(19, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02000584(msg + 1);
   } else {

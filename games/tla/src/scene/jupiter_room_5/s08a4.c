@@ -29,7 +29,7 @@ void ObjectDispatch_SetSingleChildFlags(void *object, s32 flags);
 void Object_SetPartAttribute(void *object, s32 value);
 void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
 s32 UiText_OpenMessageAtObject(s32 actor, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
@@ -69,7 +69,7 @@ void Func_020008a4(void) {
   Battle_WaitMode0(40);
   Motion_CamBounds(0x440000, -1, 0xf00000, 1);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 22, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Motion_SetModeAndWaitAnimation(22, 4);
     Func_02002938(22, 0, 5);
     EVENT_WORK->message++;

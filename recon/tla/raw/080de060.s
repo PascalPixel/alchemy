@@ -54,7 +54,7 @@ Func_080de060:
 	cmp r6, #1
 	bne .L_080de0d6
 	adds r0, r7, #0
-	bl BattleFx_HasReachedTarget
+	bl EffectSlot_HasPendingTarget
 	cmp r0, #0
 	bne .L_080de14a
 	mov r2, r8
@@ -112,7 +112,7 @@ Func_080de060:
 	cmp r6, #3
 	bne .L_080de14a
 	adds r0, r7, #0
-	bl BattleFx_HasReachedTarget
+	bl EffectSlot_HasPendingTarget
 	cmp r0, #0
 	bne .L_080de14a
 	adds r0, r7, #0

@@ -51,7 +51,7 @@ s32 Motion_SetModeAndWaitAnimation();
 s32 Func_02002b04();
 s32 ObjectMotion_ArmCallback();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 ObjectMotion_SetVariantCallback();
 s32 Func_02002b24();
 s32 Motion_SetVarCbAndRefresh();
@@ -139,7 +139,7 @@ void Func_02000e30(void) {
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x101, 0x1e)
   Champa_MessageOpen(0x2019, 0);
-  t42 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t42 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t42 == 0) {
     Call1(Battle_WaitMode0, 0xf);
     Call2(Func_02002af4, 0x2019, 0);
@@ -181,7 +181,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 0x1c, 0);
-  t67 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t67 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t67 == 0) {
     Call1(Battle_WaitMode0, 0x14);
     Call2(Motion_SetModeAndWaitAnimation, 6, 3);
@@ -874,7 +874,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(6, 0x107, 0x1e)
   Call11(Func_02000d4c, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
   Call2(Func_02002b04, 4, 0x6000);
-  t613 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t613 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t613 == 0) {
     Call2(Func_02000e04, 5, 6);
     Call1(Battle_WaitMode0, 0xf);

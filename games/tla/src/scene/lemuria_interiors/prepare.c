@@ -18,7 +18,7 @@ void Func_020028e4();
 void Func_020028fc();
 void Func_02002904();
 void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
 void ObjectMotion_ArmCallback();
@@ -255,7 +255,7 @@ void Func_0200031c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0, 0);
   Value1((s32 (*)())Battle_WaitMode0, 20);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 0x200c, 0);
-  result2 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result2 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result2 != 0)
     goto L_020089be;
   Value1((s32 (*)())Battle_WaitMode0, 20);

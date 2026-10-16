@@ -1849,18 +1849,18 @@ static void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj) {
     obj->targetZ = position[2];
     obj->acceleration = 0x50000;
     obj->maxSpeed = 0x50000;
-    obj->flag42 = state;
+    obj->limitTurnStep = state;
     (*p)++;
     if ((gFrameTick & 3) == 0)
       Engine_AudioPlayCue(0x86);
   } else if (state == 1) {
-    if (BattleFx_HasReachedTarget(obj) == 0) {
+    if (EffectSlot_HasPendingTarget(obj) == 0) {
       s32 value = *p;
       value--;
       *p = value;
     }
   } else if (state == 2) {
-    if (BattleFx_HasReachedTarget(obj) == 0)
+    if (EffectSlot_HasPendingTarget(obj) == 0)
       BattleFx_ClearOwnedSlot(obj);
   }
 }

@@ -1855,10 +1855,10 @@ PartyInventory_GiveItemFar:
 Inventory_TryAddAndReturnOwnerFar:
 	.incbin "baserom.gba", 0x000c8068, 0x00000008
 	.section .rom.000c8070, "ax"
-	.global Inventory_PromptAndSetObjectModeFar
-	.type Inventory_PromptAndSetObjectModeFar, %function
+	.global Event_AskYesNoWithActorAnimationFar
+	.type Event_AskYesNoWithActorAnimationFar, %function
 	.thumb_func
-Inventory_PromptAndSetObjectModeFar:
+Event_AskYesNoWithActorAnimationFar:
 	.incbin "baserom.gba", 0x000c8070, 0x00000008
 	.section .rom.000c8078, "ax"
 	.global Func_080c8078
@@ -2149,10 +2149,10 @@ ObjectTable_RunIfActiveFar:
 Battle_ShowPairedUnitWorkAndWaitFar:
 	.incbin "baserom.gba", 0x000c81f0, 0x00000008
 	.section .rom.000c81f8, "ax"
-	.global Ui_SetRenderResultFromObjectFar
-	.type Ui_SetRenderResultFromObjectFar, %function
+	.global Ui_SetMessageVoiceFromActorFar
+	.type Ui_SetMessageVoiceFromActorFar, %function
 	.thumb_func
-Ui_SetRenderResultFromObjectFar:
+Ui_SetMessageVoiceFromActorFar:
 	.incbin "baserom.gba", 0x000c81f8, 0x00000008
 	.section .rom.000c8200, "ax"
 	.global ObjectMotion_SetActionVariantFar
@@ -2487,10 +2487,10 @@ Func_080c8518:
 EffectSlot_UpdateFar:
 	.incbin "baserom.gba", 0x000c8598, 0x00000008
 	.section .rom.000c85a0, "ax"
-	.global BattleFx_HasReachedTargetFar
-	.type BattleFx_HasReachedTargetFar, %function
+	.global EffectSlot_HasPendingTargetFar
+	.type EffectSlot_HasPendingTargetFar, %function
 	.thumb_func
-BattleFx_HasReachedTargetFar:
+EffectSlot_HasPendingTargetFar:
 	.incbin "baserom.gba", 0x000c85a0, 0x00000008
 	.section .rom.000c85a8, "ax"
 	.global EffectSlot_SetPositionFar
@@ -2758,10 +2758,10 @@ Func_080cc7c4:
 	.balign 4
 	.incbin "baserom.gba", 0x000cc9fc, 0x000002bc
 	.section .rom.000cccb8, "ax"
-	.global BattleAction_FindDescriptor
-	.type BattleAction_FindDescriptor, %function
+	.global Scene_FindActorPlacement
+	.type Scene_FindActorPlacement, %function
 	.thumb_func
-BattleAction_FindDescriptor:
+Scene_FindActorPlacement:
 	.incbin "baserom.gba", 0x000cccb8, 0x00000090
 	.section .rom.000ccd76, "ax"
 	.incbin "baserom.gba", 0x000ccd76, 0x00000002
@@ -2988,10 +2988,10 @@ Func_080d1ee8:
 	.section .rom.000d260c, "ax"
 	.incbin "baserom.gba", 0x000d260c, 0x000001d4
 	.section .rom.000d2834, "ax"
-	.global Inventory_PromptAndSetObjectMode
-	.type Inventory_PromptAndSetObjectMode, %function
+	.global Event_AskYesNoWithActorAnimation
+	.type Event_AskYesNoWithActorAnimation, %function
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
+Event_AskYesNoWithActorAnimation:
 	.incbin "baserom.gba", 0x000d2834, 0x0000011c
 	.section .rom.000d2960, "ax"
 	.balign 4

@@ -44,6 +44,9 @@
 #include "object_runtime.h"
 #include "animspr.h"
 #include "map.h"
+#include "map_scroll.h"
+#include "fx_scene.h"
+#include "field_runtime.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -514,6 +517,9 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   Map_CopyCellsTo(78, 59, 110, 36, 1, 1);
   Map_CopyCellsTo(76, 59, 109, 36, 1, 1);
   effectOptions = &options;
+  // The shared initializer grows this path from 0x150 to 0x154 bytes and
+  // moves its palette store after the scales; the stop path also reorders
+  // stores. Keep the ordinary assignments, without a new steering wrapper.
   effectOptions->palette = 7;
   effectOptions->startScaleX = 0x8000;
   effectOptions->startScaleY = 0x8000;
@@ -732,6 +738,8 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
 }
 
 // Choose the random speed component used by stone-door particles.
+// Sharing a centered-velocity helper with other sprays shrinks the fountain
+// from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in English.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   u32 drift = Engine_RandomNext();
 
@@ -797,13 +805,6 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
     }
   }
 }
-
-struct LiftLayer {
-  u8 unk00[12];
-  s32 offset;
-  u8 unk10[12];
-  s32 unk1c;
-};
 
 // Restore the selected stone door's tiles with trailing particles.
 static void MercuryLighthouse_CloseStoneDoor(s32 side) {
@@ -890,8 +891,8 @@ static void MercuryLighthouse_SprayAbovePillar(void) {
 }
 
 // Start the pillar's scheduled particle callback from its object script.
-static s32 MercuryLighthouse_StartActorNineParticles(
-    struct ScriptInterpreter *interpreter) {
+static s32
+MercuryLighthouse_StartPillarSpray(struct ScriptInterpreter *interpreter) {
   s32 priority = 0xc80;
 
   FieldScheduler_AddCallback(MercuryLighthouse_SprayAbovePillar, priority);
@@ -902,10 +903,10 @@ static s32 MercuryLighthouse_StartActorNineParticles(
 // SC_CALL passes the interpreter. The native no-argument form also has two
 // direct callers; adding NULL to those calls inserts two r0 = 0 instructions.
 #ifdef UBFIX
-static s32 MercuryLighthouse_StopActorNinePositionCallback(
-    struct ScriptInterpreter *interpreter) {
+static s32
+MercuryLighthouse_StopPillarSpray(struct ScriptInterpreter *interpreter) {
 #else
-static s32 MercuryLighthouse_StopActorNinePositionCallback(void) {
+static s32 MercuryLighthouse_StopPillarSpray(void) {
 #endif
   Engine_TaskRemoveCallback(MercuryLighthouse_SprayAbovePillar);
   return 0;
@@ -953,9 +954,9 @@ static void MercuryLighthouse_MovePillarDoorBlocks(void) {
           MercuryLighthouse_CloseStoneDoor(2);
           x = 210 << 18;
 #ifdef UBFIX
-          MercuryLighthouse_StopActorNinePositionCallback(NULL);
+          MercuryLighthouse_StopPillarSpray(NULL);
 #else
-          MercuryLighthouse_StopActorNinePositionCallback();
+          MercuryLighthouse_StopPillarSpray();
 #endif
           MercuryLighthouse_OpenStoneDoor(1);
           Object_RefreshSelectorById(9);
@@ -968,16 +969,17 @@ static void MercuryLighthouse_MovePillarDoorBlocks(void) {
           Engine_EventWait(40);
           Engine_GameFlagSet(0x877);
           Engine_ColorBufferApplySource(0x10000, 0);
-          *(s32 *)&(*(struct GameState **)&gEventWork)->scene = 0x100;
+          gEventWork->startTransition =
+              SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           Engine_EventCloseScreen();
           Engine_EventWaitForScreen();
           Engine_EventRequestExit(15);
         } else {
           MercuryLighthouse_CloseStoneDoor(2);
 #ifdef UBFIX
-          MercuryLighthouse_StopActorNinePositionCallback(NULL);
+          MercuryLighthouse_StopPillarSpray(NULL);
 #else
-          MercuryLighthouse_StopActorNinePositionCallback();
+          MercuryLighthouse_StopPillarSpray();
 #endif
           MercuryLighthouse_OpenStoneDoor(1);
           Engine_EventWait(60);
@@ -1073,9 +1075,11 @@ static void MercuryLighthouse_OpenMovedBlockCrossing(void) {
   Engine_EventEnd();
 }
 
-// Cycle the entrance effect's palette once every eight frames.
-static void SceneEffect_RotatePaletteEntries40To47(void) {
-  unsigned int colorIndex;
+// Rotate the selected palette range once every eight frames. Write the saved
+// first color at the end before shifting, preserving the palette access order.
+static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
+                                                        u32 colorCount) {
+  u32 colorIndex;
   u16 *destination;
   u16 *source;
   u32 firstColor;
@@ -1084,16 +1088,21 @@ static void SceneEffect_RotatePaletteEntries40To47(void) {
     return;
   }
 
-  destination = (u16 *)0x05000050;
+  destination = colors;
   firstColor = *destination;
   colorIndex = 0;
-  *(u16 *)0x0500005e = firstColor;
+  colors[colorCount - 1] = firstColor;
 
-  source = (u16 *)0x05000052;
-  while (colorIndex <= 6) {
+  source = colors + 1;
+  while (colorIndex <= colorCount - 2) {
     *destination++ = *source++;
     colorIndex++;
   }
+}
+
+// Cycle the entrance effect's palette once every eight frames.
+static void MercuryLighthouse_CycleEntrancePalette(void) {
+  MercuryLighthouse_RotatePaletteRange((u16 *)0x05000050, 8);
 }
 
 // Have Mia sense someone inside and explain the statue blocking her way.
@@ -1308,7 +1317,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     MercuryLighthouse_FadePaletteToWhite();
     Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
     Engine_MapAnimateCells((s32)gMercuryLighthouse_ColumnCells, 116, 35);
-    Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries40To47);
+    Engine_TaskRemoveCallback(MercuryLighthouse_CycleEntrancePalette);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Engine_EventWait(20);
@@ -1350,26 +1359,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
 }
 
 // Cycle the waterfall effect's seven palette colors every eight frames.
-static void SceneEffect_RotatePaletteEntries97To103(void) {
-  unsigned int colorIndex;
-  u16 *destination;
-  u16 *source;
-  u32 firstColor;
-
-  if ((gFrameCount & 7) != 0) {
-    return;
-  }
-
-  destination = (u16 *)0x050000c2;
-  firstColor = *destination;
-  colorIndex = 0;
-  *(u16 *)0x050000ce = firstColor;
-
-  source = (u16 *)0x050000c4;
-  while (colorIndex <= 5) {
-    *destination++ = *source++;
-    colorIndex++;
-  }
+static void MercuryLighthouse_CycleWaterfallPalette(void) {
+  MercuryLighthouse_RotatePaletteRange((u16 *)0x050000c2, 7);
 }
 
 // Fade the waterfall effect's seven colors to black.
@@ -1408,8 +1399,9 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   } while (blackColors != 7);
 }
 
-// Move an actor into the passage while surrounding it with sparks.
-static void MercuryLighthouse_SinkActorWithSparks(s32 actorId) {
+// Raise an actor into the passage with sparks for 48 ticks, two frames each.
+// Its upward displacement accelerates by about 0.1 pixel per tick.
+static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
   struct FieldActor *actor;
@@ -1462,10 +1454,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 
   Engine_EventBegin();
   Engine_EventWait(20);
-  // Remove the colored waterfall effectOptions before rebuilding the passage
-  // tiles.
+  // Remove the colored waterfall before rebuilding the passage tiles.
   MercuryLighthouse_FadePaletteToBlack();
-  Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries97To103);
+  Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
   Map_CopyCellsTo(45, 77, 45, 73, 9, 4);
   Engine_EventWait(30);
   effectOptions = &options;
@@ -1571,9 +1562,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_WalkTo(0, 0x318, 200);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(0, 18);
-    MercuryLighthouse_SinkActorWithSparks(0);
+    MercuryLighthouse_RaiseActorWithSparks(0);
     Engine_EventWait(60);
-    Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries97To103);
+    Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x10005, 0);
     Engine_ColorBufferInterpolate(120);
@@ -1599,7 +1590,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Engine_EventWait(40);
     Actor_FaceDirection(3, FACING_NORTH, 20);
     Actor_WalkToAndWait(3, 0x318, 200);
-    MercuryLighthouse_SinkActorWithSparks(3);
+    MercuryLighthouse_RaiseActorWithSparks(3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(0, 2);
     Engine_EventWait(30);
@@ -1637,7 +1628,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_ShowEmote(2, EMOTE_IN_FRONT, 0);
     Engine_ActorStartRepeatedMotion(1, 2);
     Engine_ActorStartRepeatedMotion(2, 2);
-    MercuryLighthouse_SinkActorWithSparks(0);
+    MercuryLighthouse_RaiseActorWithSparks(0);
     Engine_EventWait(60);
     Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 0);
     Actor_ShowEmote(2, EMOTE_IN_FRONT | 2, 80);
@@ -1649,13 +1640,13 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     Actor_WalkToAndWait(1, 0x318, 200);
     Engine_EventWait(30);
-    MercuryLighthouse_SinkActorWithSparks(1);
+    MercuryLighthouse_RaiseActorWithSparks(1);
     Actor_WalkToAndWait(2, 0x318, 216);
     Actor_WalkToAndWait(2, 0x318, 200);
     Engine_EventWait(30);
-    MercuryLighthouse_SinkActorWithSparks(2);
+    MercuryLighthouse_RaiseActorWithSparks(2);
     ColorBuffer_ApplySource(0x10000, 0);
-    Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries97To103);
+    Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
     ColorBuffer_ApplyTarget(0x10005, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);
@@ -1683,7 +1674,7 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_EventEnd();
 }
 
-// Inspect the fountain and enable bottle use when the party has one.
+// Inspect the fountain, then open the menu when the party carries a bottle.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Engine_EventBegin();
@@ -1694,11 +1685,11 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
     Engine_MessageShowCentered(
         MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
   if (PartyInventory_FindOwner(ITEM_EMPTY_BOTTLE) != -1) {
-    // The item-use handler reads this flag after the inspection finishes.
-    u16 *itemUseState = &gEventWork->unk172;
+    // The field loop handles this menu request after the inspection ends.
+    s16 *menuRequest = &((struct FieldWork *)gEventWork)->menu;
     s32 enabled = 1;
 
-    *itemUseState = enabled;
+    *menuRequest = enabled;
   }
   Engine_EventEnd();
 }
@@ -2201,7 +2192,7 @@ s32 Scene_Initialize(void) {
     // This scene contains Mia's entrance, the lift and the healing fountain.
     switch (gGameState.entrance) {
     case 10:
-      FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries97To103,
+      FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
                                  0xc80);
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         break;
@@ -2267,7 +2258,7 @@ s32 Scene_Initialize(void) {
         Engine_ActorSetSpritePriority(10, 1);
         Map_CopyCellAttributes(116, 37, 3, 3, 52, 37);
         Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
-        FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries40To47,
+        FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
                                    0xc80);
         break;
       }
@@ -2281,7 +2272,7 @@ s32 Scene_Initialize(void) {
         }
         SetEffectRecordMode(Object_GetById(3), 1);
         Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
-        FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries40To47,
+        FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
                                    0xc80);
       } else {
         Engine_ActorSetPosition(3, 0, 0);
@@ -2399,13 +2390,13 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
 
 // Ride the scrolling lift layer, step off and let the lift return.
 static void MercuryLighthouse_RideLift(void) {
-  struct LiftLayer *liftLayer;
+  struct MapLayerScroll *liftLayer;
   s32 liftSpeed;
 
-  liftLayer = (struct LiftLayer *)(((u8 *)gMapWork[0]) + 356);
+  liftLayer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
   liftSpeed = 0x9c28;
-  liftLayer->offset = 0x04890000;
-  liftLayer->unk1c = 0;
+  liftLayer->offsetY = 0x04890000;
+  liftLayer->speedY = 0;
   Actor_Get(0)->motionFlags = 0;
   Actor_Get(0)->z.fixed += -0x890000;
   Actor_Get(0)->targetZ = Actor_Get(0)->z.fixed;
@@ -2422,12 +2413,12 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_AudioPlayCue(223);
   // Scroll the layer against both riders until the lift reaches its upper stop.
   for (;;) {
-    liftLayer->offset -= liftSpeed;
+    liftLayer->offsetY -= liftSpeed;
     Actor_Get(0)->z.fixed += liftSpeed;
     Actor_Get(0)->targetZ = Actor_Get(0)->z.fixed;
     Actor_Get(13)->z.fixed += liftSpeed;
     Actor_Get(13)->targetZ = Actor_Get(13)->z.fixed;
-    if (liftLayer->offset > 0x04000000) {
+    if (liftLayer->offsetY > 0x04000000) {
       if ((gFrameCount & 15) == 0 && liftSpeed > 0xccb)
         liftSpeed += -0x560;
       Engine_TaskWait(1);
@@ -2435,7 +2426,7 @@ static void MercuryLighthouse_RideLift(void) {
     }
     break;
   }
-  liftLayer->offset = 0x04000000;
+  liftLayer->offsetY = 0x04000000;
   Engine_MapRedraw();
   Engine_TaskWait(2);
   Actor_Get(0)->motionFlags = 3;
@@ -2462,16 +2453,16 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_AudioPlayCue(223);
   // Leave Isaac on the landing while the lift and its other actor return.
   for (;;) {
-    liftLayer->offset += liftSpeed;
+    liftLayer->offsetY += liftSpeed;
     Actor_Get(13)->z.fixed -= liftSpeed;
     Actor_Get(13)->targetZ = Actor_Get(13)->z.fixed;
-    if (liftLayer->offset >= 0x04890000)
+    if (liftLayer->offsetY >= 0x04890000)
       break;
     if ((gFrameCount & 7) == 0 && liftSpeed <= 0xcccc)
       liftSpeed += 0x1999;
     Engine_TaskWait(1);
   }
-  liftLayer->offset = 0x04000000;
+  liftLayer->offsetY = 0x04000000;
   Map_CopyCellsTo(45, 91, 40, 91, 5, 4);
   Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
   Engine_MapRedraw();
@@ -2483,17 +2474,15 @@ static void MercuryLighthouse_RideLift(void) {
 
 // Have Mia cast Ply on the entrance's target actor.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
-  u8 *effectWork;
-  u8 *effectFlags;
+  struct BattleFxScene *effectWork;
   u8 flags;
 
   effectWork = gEffectWork;
   Actor_SetPosition(11, PIXELS(840), PIXELS(600));
   Engine_PsynergyBegin(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(3, 11);
-  effectFlags = effectWork + 0x71c;
-  flags = *effectFlags | 8;
-  *effectFlags = flags;
+  flags = (u8)effectWork->messageMode | 8;
+  effectWork->messageMode = flags;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
@@ -2558,8 +2547,9 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+// Pixel step by direction: X in the upper halfword, Z in the lower. Pack
+// negative steps through unsigned words rather than left-shifting a negative.
+#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
@@ -2644,7 +2634,7 @@ s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),
     SC_SET(SW_SPEED, 0xcccc),
     SC_SET(SW_ACCEL, 0x3333),
-    SC_CALL(MercuryLighthouse_StartActorNineParticles),
+    SC_CALL(MercuryLighthouse_StartPillarSpray),
     SC_MOVE(PIXELS(792), 0, PIXELS(712)),
     SC_SYNC,
     SC_END,
@@ -2654,10 +2644,10 @@ s32 gMercuryLighthouse_PushScriptB[] = {
     SC_WAIT(60),
     SC_SET(SW_SPEED, 0xcccc),
     SC_SET(SW_ACCEL, 0x3333),
-    SC_CALL(MercuryLighthouse_StartActorNineParticles),
+    SC_CALL(MercuryLighthouse_StartPillarSpray),
     SC_MOVE(PIXELS(792), 0, PIXELS(744)),
     SC_SYNC,
-    SC_CALL(MercuryLighthouse_StopActorNinePositionCallback),
+    SC_CALL(MercuryLighthouse_StopPillarSpray),
     SC_END,
 };
 
@@ -2665,16 +2655,16 @@ s32 gMercuryLighthouse_PushScriptD[] = {
     SC_WAIT(60),
     SC_SET(SW_SPEED, 0xcccc),
     SC_SET(SW_ACCEL, 0x3333),
-    SC_CALL(MercuryLighthouse_StartActorNineParticles),
+    SC_CALL(MercuryLighthouse_StartPillarSpray),
     SC_MOVE(PIXELS(824), 0, PIXELS(744)),
     SC_SYNC,
-    SC_CALL(MercuryLighthouse_StopActorNinePositionCallback),
+    SC_CALL(MercuryLighthouse_StopPillarSpray),
     SC_END,
 };
 
 s32 gMercuryLighthouse_PushScriptC[] = {
     SC_WAIT(45),
-    SC_CALL(MercuryLighthouse_StartActorNineParticles),
+    SC_CALL(MercuryLighthouse_StartPillarSpray),
     SC_END,
 };
 

@@ -189,11 +189,11 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     effect->maxSpeed = Random16() * 3 + 0x30000;
     effect->scaleX = 0x10000;
     effect->scaleY = 0x10000;
-    effect->flag42 = state;
+    effect->limitTurnStep = state;
     effect->stopAtTarget = 1;
     (*statePointer)++;
   } else if ((u8)(effect->state - 1) <= 1) {
-    if (BattleFx_HasReachedTarget(effect) == 0) {
+    if (EffectSlot_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
       Vector_AddPolarOffset(0xc0000, Random16(), &position);

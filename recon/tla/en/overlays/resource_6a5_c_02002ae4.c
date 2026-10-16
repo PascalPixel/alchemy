@@ -23,7 +23,7 @@ s32 Func_020058ec();
 s32 Motion_SetVarCbAndRefresh();
 s32 ObjectMotion_ArmCallback();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 Func_020059f4();
 s32 Func_02005924();
 s32 Func_020058fc();
@@ -163,7 +163,7 @@ void Func_02002ae4(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0x6000, 0);
   Call2(Func_020058ec, 5, 0x8000);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
-  t67 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t67 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t67 == 0) {
     Call3(Func_020058d4, 0x1d, 0, 0);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
@@ -379,7 +379,7 @@ void Func_02002ae4(void) {
   Call2(Func_020058ec, 0, 0xc000);
   Call1(Battle_WaitMode0, 0x1e);
   Call2(Func_020058ec, 4, 0x4000);
-  t269 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t269 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t269 == 0) {
     Call2(Object_SetModeById, 0, 3);
     Call1(Battle_WaitMode0, 0x14);

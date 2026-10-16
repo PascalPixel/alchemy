@@ -66,7 +66,7 @@
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Battle_ResetEffectCounter, 1
 	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.BattleFx_HasReachedTarget, 1
+	.set import.EffectSlot_HasPendingTarget, 1
 	.set import.EffectSlot_SetObjectMode, 1
 	.set import.EffectSlot_SetCallback, 1
 	.set import.EffectSlot_Initialize, 1

@@ -32,7 +32,7 @@ struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 gBattleFx_ParticleScript[];
 
-void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter) {
+void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
   u32 randomAngle;

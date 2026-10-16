@@ -1072,7 +1072,7 @@ static void FieldScene_RunThreeActorChoreography(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
   Engine_ActorWalkTo(0, 0x2b2, 200);
 
-  Battle_GetWorkObject1e0()->motionFlags = 0;
+  Camera_GetEventObject()->motionFlags = 0;
   Engine_CameraSetSpeed(0xcccc, 0x1999);
   Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
   work = gEventWork;

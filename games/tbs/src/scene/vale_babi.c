@@ -352,12 +352,12 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   Map_ClearLayerEntryFlag(7);
   Engine_ActorSetPosition(8, PIXELS(534), PIXELS(688));
   Graphics_EnableObjLayerAndCallbacks();
-  Ui_SetRenderResultFromObject(8);
+  Ui_SetMessageVoiceFromActor(8);
   firstMessage = MsgValeWake;
   UiText_ShowCenteredMessage(firstMessage, 1, 0);
   Engine_EventWait(40);
   MapRender_SetValues(65536, 65536, 65536);
-  Ui_SetRenderResultFromObject(8);
+  Ui_SetMessageVoiceFromActor(8);
   UiText_ShowCenteredMessage(firstMessage + 1, 1, 0);
   ObjectDispatch_StopCallbacksAndHideLayers();
   Engine_EventWait(40);

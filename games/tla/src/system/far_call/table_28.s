@@ -13,16 +13,16 @@ BattleFx_StartBufferInterpolationFar:
 	overlay_veneer BattleFx_StartBufferInterpolation
 .endif
 .endif
-	.global Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.global BattlePalette_StopBlendAndReleaseBufferFar
 	.thumb_func
-Runtime_ScheduleCallbackAndReleaseBlock32BFar:
+BattlePalette_StopBlendAndReleaseBufferFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer EventRuntime_StartScreen
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer EventRuntime_StartScreen
 .else
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32B
+	overlay_veneer BattlePalette_StopBlendAndReleaseBuffer
 .endif
 .endif
 	.global BattleFx_SetPrimaryBufferValueFar

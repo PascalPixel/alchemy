@@ -8,7 +8,7 @@ void Func_02000304(s32 actor) {
 
   Func_0200350c(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020035f4(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020035f4(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_0200350c(msg + 1);
   } else {

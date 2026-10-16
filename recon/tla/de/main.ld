@@ -1165,7 +1165,7 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.000f8960)
     "*/games/tla/src/battle/effect/slot_update.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000f8d24)
-    "*/games/tla/src/battle/effect/has_reached_target.o"(.text)
+    "*/games/tla/src/battle/effect/has_pending_target.o"(.text)
     "*/games/tla/src/battle/effect/slot_set_position.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000f8ec8)
     "*/games/tla/src/battle/effect/clear_owned_slot.o"(.text)

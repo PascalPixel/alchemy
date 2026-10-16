@@ -255,7 +255,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjArm(5, 0, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   ShamanVillage_ObjArm(7, 0xa000, 0);
-  result = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+  result = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
   done = &object->unk63;
   owner = gPartyState.currentOwner;
   if (result == 0) {

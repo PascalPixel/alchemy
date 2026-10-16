@@ -127,7 +127,7 @@ struct ObjectRuntime *Func_020057bc(void);
 void Event_FinishScreenTransition(void);
 void Func_0200581c(void);
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   register s32 a_ asm("r1") = a;
@@ -171,7 +171,7 @@ void Func_02002a64(void) {
   Object_SetModeById(6, 3);
   Func_02005764_(0x4006, 0);
   UiText_OpenMessageAtObject(0x6005, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Func_0200578c(7, 256, 20);
     Actor_SetSpeed(7, 0x20000, 0x10000);
     Actor_Walk(7, 340, 296);

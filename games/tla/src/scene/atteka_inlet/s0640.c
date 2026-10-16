@@ -10,7 +10,7 @@ void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
@@ -47,7 +47,7 @@ void Func_02000640(void) {
   Func_020010b8(18, 0x3000);
   Func_02001098(MsgAreWeSetting);
   UiText_OpenMessageAtObject(18, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Object_SetModeById(18, 3);
     Func_020010a8(18, 0);
     gPartyState.ownerOverride = 1;

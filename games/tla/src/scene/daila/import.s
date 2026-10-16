@@ -45,7 +45,7 @@ Engine_EventEnd:
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	overlay_veneer Event_AskYesNoWithActorAnimationFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:

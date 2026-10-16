@@ -318,7 +318,7 @@ static s32 Reveal_ShowSecrets(void) {
   for (i = 100; i <= 107; i++) {
     MapObject_SetPosition(i, -1, -1);
   }
-  BattleFx_EmitRandomParticle();
+  Marker_MoveLeaderAway();
   if (gGameState.scene != (s32)&SceneId_LamakanDesert4) {
     DisplayScroll_DisarmHBlankDma();
   }

@@ -8,7 +8,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const u8 *script);
-void BattleFx_EmitRandomParticleFromEmitter(void);
+void Marker_MoveLeaderAwayFromEmitter(void);
 void Func_080cf350(struct ObjectRuntime *object);
 extern const u8 gData_080effd8[];
 
@@ -22,7 +22,7 @@ void Func_080cf3b4(struct ObjectRuntime *object, s32 flags) {
       ObjectDispatch_InitializeFar(object, gData_080effd8);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
-      object->update = BattleFx_EmitRandomParticleFromEmitter;
+      object->update = Marker_MoveLeaderAwayFromEmitter;
     }
     if (flags == 3)
       WaitFrames(60);
@@ -82,7 +82,7 @@ void Func_080cf424(s32 item, s32 flags) {
     Runtime_ReleaseHeapBlock(68);
 
     if (flags & 1)
-      object->update = BattleFx_EmitRandomParticleFromEmitter;
+      object->update = Marker_MoveLeaderAwayFromEmitter;
     if (flags & 2)
       Func_080cf350(object);
 

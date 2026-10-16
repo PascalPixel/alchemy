@@ -16,7 +16,7 @@ extern s32 gData_02005670[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 void Func_02004b6c(s32 actor, s32 a, s32 b);
 void UiText_OpenMessageAtObject(s32 actor, s32 flags);
 void WaitFrames(s32 frames);
@@ -148,7 +148,7 @@ void Func_02001cb0(void) {
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 0x17, -0x10, 0);
   Call1((void (*)())Battle_WaitMode0, 0x14);
   UiText_OpenMessageAtObject_(0x17, 0);
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0) == 0) {
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Call1((void (*)())Battle_WaitMode0, 0x14);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x17, 3);
     Call1((void (*)())Battle_WaitMode0, 0xa);
@@ -408,7 +408,7 @@ void Func_02002048(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x19, 3);
   Call1((void (*)())Battle_WaitMode0, 0xa);
   UiText_OpenMessageAtObject_(0x19, 0);
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0) != 0) {
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) != 0) {
     Call1((void (*)())Battle_WaitMode0, 0x28);
     Call3((void (*)())ObjectMotion_ArmCallback, 0x1a, 0x8000, 0);
     Call1((void (*)())Battle_WaitMode0, 0x14);
@@ -989,7 +989,7 @@ void Func_02003274(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call1((void (*)())Battle_WaitMode0, 0x14);
   UiText_OpenMessageAtObject_(0x1a, 0);
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0) == 0) {
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Call1((void (*)())Battle_WaitMode0, 0x14);
     Call3((void (*)())Func_02004b4c, 0x1a, 0, 0xa);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -1011,7 +1011,7 @@ void Func_02003274(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 0x1a, 0, 0);
   Call1((void (*)())Battle_WaitMode0, 0x14);
   UiText_OpenMessageAtObject_(0x1a, 0);
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0) != 0) {
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) != 0) {
     Call1((void (*)())Battle_WaitMode0, 0x28);
     Call3((void (*)())Func_02004b4c, 0x1a, 0, 0xa);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x1a, 3);

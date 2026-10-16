@@ -21,7 +21,7 @@ s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object) {
     object->x = link->x;
     object->y = link->y +
                 ((s8)Resource_GetMetadataRecordFarFar(
-                     *BattleAction_FindDescriptor(object->unk66))
+                     *Scene_FindActorPlacement(object->unk66))
                      ->boxX
                  << 16) +
                 0x80000;

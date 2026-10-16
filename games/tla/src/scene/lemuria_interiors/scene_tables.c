@@ -24,7 +24,7 @@ void Func_020028c4();
 void Func_020028fc();
 void Func_0200291c();
 void GameFlag_Test();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void ObjectMotion_ArmCallback();
 void Object_LinkObjectAndSetCallback();
 void UiText_OpenMessageAtObject();
@@ -67,7 +67,7 @@ L_020080ba:
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors05);
   Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
   result2 = Value0((s32 (*)())Func_0200291c);
-  result3 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result2, 0);
+  result3 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, result2, 0);
   if (result3 != 0)
     goto L_020080dc;
   ((void (*)())Func_0200031c)();

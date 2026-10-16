@@ -28,7 +28,7 @@ void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000534(const void *script, s32 x, s32 z);
@@ -122,10 +122,10 @@ static __inline__ void UiText_OpenMessageAtObject_(s32 id, s32 flags) {
   UiText_OpenMessageAtObject(id, flags);
 }
 
-static __inline__ s32 Inventory_PromptAndSetObjectMode_(s32 id, s32 flags) {
+static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  return Inventory_PromptAndSetObjectMode(id, flags);
+  return Event_AskYesNoWithActorAnimation(id, flags);
 }
 
 static __inline__ void Event_FinishScreenTransition_(void) {

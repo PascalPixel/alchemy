@@ -824,7 +824,7 @@ Func_02000714:
 	bl UiText_OpenMessageAtObject
 	ldr r0, [r6]
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008a04
 	ldr r0, [r6]

@@ -118,7 +118,7 @@ void Func_02000d74(void) {
   Kibombo_ObjArm(6, 0xc000, 0);
   Kibombo_ObjArm(26, 0x5000, 20);
   Kibombo_MessageOpen(0x601a, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Kibombo_MessagePut(0x601a, 0);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
   } else {

@@ -222,7 +222,7 @@ void Func_0200115c(void) {
   WORD_AT(Object_GetById(12), 28) = 0x13333;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
   UiText_OpenMessageAtObject_(0x2008, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020035bc();
     Battle_WaitMode0(15);
     Func_020034d4_(12, 0, 0);

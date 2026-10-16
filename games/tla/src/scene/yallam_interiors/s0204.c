@@ -18,7 +18,7 @@ void Func_02000244(void) {
   msg = (s32)MsgYallamInteriors10;
   Func_02000a18(msg);
   UiText_OpenMessageAtObject(9, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02000a18(msg + 1);
   } else {
@@ -129,7 +129,7 @@ void Func_02000480(void) {
   msg = (s32)MsgYallamInteriors31;
   Func_02000a18(msg);
   UiText_OpenMessageAtObject(14, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02000a18(msg + 1);
   } else {

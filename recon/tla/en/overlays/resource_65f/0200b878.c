@@ -34,7 +34,7 @@ s32 Func_0200532c();
 s32 Func_02005334();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 Motion_CamBounds();
 s32 Motion_SetVarCbAndRefresh();
 s32 ObjectDispatch_SetSingleChildFlags();
@@ -664,7 +664,7 @@ L_0200c2bc:;
     goto L_0200c400;
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
 L_0200c400:;
-  t10 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t10 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t10 != 0)
     goto L_0200c434;
   Call1(Battle_WaitMode0, 25);
@@ -1075,7 +1075,7 @@ L_0200caf6:;
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
 L_0200cc42:;
   Call1(Battle_WaitMode0, 20);
-  t20 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+  t20 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t20 != 0)
     goto L_0200cc7c;
   Battle_WaitMode0(30);

@@ -152,7 +152,7 @@ void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_0200202c(s32 id, s32 a, s32 b);
 s32 Func_0200204c(s32 id, s32 emote, s32 frames);
 void Func_02002054(s32 id, s32 a);
@@ -223,7 +223,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002044, 9, 0x8000);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0) == 0) {
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Value3((s32 (*)())Func_0200204c, 5, 263, 20);
     Call2((void (*)())Func_02002034, 5, 0);
     Call2((void (*)())Func_02002034, 6, 0);
@@ -350,7 +350,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002044, 9, 0x8000);
   Call2((void (*)())Object_SetModeById, 9, 3);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
-  if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0) == 1) {
+  if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 1) {
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 9, 4);
     Call2((void (*)())Func_02002034, 9, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;

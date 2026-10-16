@@ -17,7 +17,7 @@ void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_WaitForAnimationChange();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 void Battle_WaitMode0();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
@@ -92,7 +92,7 @@ void Func_02002c64(void) {
   Engine_EventSetMessage((s32)MsgIdejimaCheckForInjuries);
   Value2(UiText_OpenMessageAtObject, 11, 0);
   Task_Wait(1);
-  answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+  answer = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
   leader = gPartyState.currentOwner;
   if (answer == 0) {
     ObjectMotion_WaitForAnimationChange(leader);

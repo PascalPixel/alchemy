@@ -11,7 +11,7 @@ s32 GameFlag_Test();
 s32 Func_02001c74();
 s32 UiText_OpenMessageAtObject();
 s32 Func_02001d34();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 Battle_WaitMode0();
 s32 Func_02001c8c();
 s32 GameFlag_SetBit();
@@ -33,7 +33,7 @@ void Func_0200066c(s32 a0) {
   } else {
     Call1(Func_02001c74, (s32)MsgAlhafra92);
     Call2(UiText_OpenMessageAtObject, a0, 0);
-    t6 = Value2(Inventory_PromptAndSetObjectMode, Func_02001d34(), 0);
+    t6 = Value2(Event_AskYesNoWithActorAnimation, Func_02001d34(), 0);
     if (t6 != 0) {
       Call1(Battle_WaitMode0, 0x14);
       Call1(Func_02001c74, 0x1ca6);

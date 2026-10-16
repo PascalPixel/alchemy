@@ -21,7 +21,7 @@ void Func_0200043c(s32 actor) {
 
   Func_020020e0(msg);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020021a8(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020021a8(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_020020e0(msg + 1);
   } else {

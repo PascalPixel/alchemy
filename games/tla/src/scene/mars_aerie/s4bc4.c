@@ -5,7 +5,7 @@ extern const u8 MsgWillYouCast[];
 void Func_02003658(void);
 void Func_0200567c(s32 id, s32 a1, s32 a2);
 void GameFlag_SetBit(s32 flag);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 void WaitFrames(s32 frames);
 
@@ -40,7 +40,7 @@ void Func_02004c94(void) {
   WaitFrames(1);
   Func_020056dc(MsgWillYouCast);
   UiText_OpenMessageAtObject(18, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Func_0200567c(18, 0, 0);
     WaitFrames(1);
     Func_02003658();

@@ -51,7 +51,7 @@ void Func_02003298();
 void Motion_SetVarCbAndRefresh();
 void UiText_ShowPositionedMessageAndWait();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 void Event_PrepareObjectAndApplyValue();
 void Motion_SetModeAndWaitAnimation();
 void ObjectMotion_Launch();
@@ -153,7 +153,7 @@ void Func_020002b4(void) {
   Battle_WaitMode0(40);
   Value3(Engine_ActorShowEmote, 5, 0x101, 0);
   Value2(UiText_OpenMessageAtObject, 5, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Engine_ActorSetAnimation(5, 3);
     Engine_EventShowMessage(5, 0);
   } else {

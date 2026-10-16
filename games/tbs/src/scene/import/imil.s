@@ -62,7 +62,7 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Battle_GetWorkObject1e0, 1
+	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1

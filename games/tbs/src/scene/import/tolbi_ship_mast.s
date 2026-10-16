@@ -35,7 +35,7 @@
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Engine_CameraFollowActor, 1
 	.set import.Engine_CameraMoveTo, 1
-	.set import.Battle_GetWorkObject1e0, 1
+	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.Field_ClimbDown, 1
 	.set import.Field_ClimbUp, 1

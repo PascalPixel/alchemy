@@ -906,7 +906,7 @@ Func_02000a24:
 .L_ja_02008b44:
 	movs r0, #0
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_ja_02008b1e
 	movs r3, #192

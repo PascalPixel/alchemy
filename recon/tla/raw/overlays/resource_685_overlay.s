@@ -60,7 +60,7 @@ Func_02000208:
 	bl UiText_OpenMessageAtObject
 	bl Func_020035f4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_020082a4
 	movs r0, #10
@@ -466,7 +466,7 @@ Func_02000a34:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008b60
 	movs r0, #20
@@ -1505,7 +1505,7 @@ Func_0200115c:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02009558
 	bl Func_020035bc
@@ -2198,7 +2198,7 @@ Func_02001868:
 	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02009caa
 	b .L_02009c64
@@ -2735,7 +2735,7 @@ Func_02001868:
 	bl Func_02003534
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200a1dc
 	movs r0, #20
@@ -2992,7 +2992,7 @@ Func_02001868:
 	bl Func_02003534
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200a43a
 	movs r0, #15

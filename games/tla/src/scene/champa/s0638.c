@@ -21,7 +21,7 @@ s32 Object_AttachWorkTargetToObject();
 s32 Func_02002b3c();
 s32 Func_02002b1c();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 Func_02002b74();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 Motion_SetVarCbAndRefresh();
@@ -78,7 +78,7 @@ void Func_02000638(void) {
       Call3(ObjectMotion_SetPositionAndReset, 0x1d, 0x13a, 0x270);
       Func_02002b1c(0x1d, 0x101, 0x1e);
       UiText_OpenMessageAtObject(0x1d, 0);
-      t17 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+      t17 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
       if (t17 == 0) {
         Call3(Func_02002aec, 0x1d, 0, 5);
         FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =

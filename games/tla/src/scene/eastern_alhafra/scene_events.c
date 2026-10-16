@@ -33,7 +33,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
 void Battle_WaitMode0();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_0200112c(void);
@@ -85,21 +85,21 @@ void Func_02000730(void) {
   Motion_SetVarCbAndRefresh(22, 2);
   Battle_WaitMode0(10);
   UiText_OpenMessageAtObject(22, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     Battle_WaitMode0(30);
     Call3((void (*)())Func_02004b4c, 22, 0, 0);
   } else {
     Battle_WaitMode0(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     UiText_OpenMessageAtObject(22, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+    if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
       Battle_WaitMode0(30);
       Call3((void (*)())Func_02004b4c, 22, 0, 0);
     } else {
       Battle_WaitMode0(20);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
       UiText_OpenMessageAtObject(22, 0);
-      if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+      if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
         Battle_WaitMode0(30);
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
       } else {

@@ -26,7 +26,7 @@ void Func_020005b4(s32 id) {
     Func_02005888();
   } else {
     UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadPlaceItemPrompt, 13);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 1) == 0)
+    if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 1) == 0)
       ((struct EventWork15a *)Ram_HeapSlots->eventWork)->value = 1;
   }
 }

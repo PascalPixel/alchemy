@@ -18,7 +18,7 @@ void Func_020000a4(void) {
   msg = (s32)MsgMadraInteriors06;
   Func_02001e18(msg);
   UiText_OpenMessageAtObject(9, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02001ee8(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02001ee8(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02001e18(msg + 1);
   } else {
@@ -53,7 +53,7 @@ void Func_020000fc(void) {
 
         Func_02001e18(msg);
         UiText_OpenMessageAtObject(22, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02001ee8(), 0) == 0) {
+        if (Event_AskYesNoWithActorAnimation(Func_02001ee8(), 0) == 0) {
           Battle_WaitMode0(10);
           Func_02001e18(msg + 1);
         } else {

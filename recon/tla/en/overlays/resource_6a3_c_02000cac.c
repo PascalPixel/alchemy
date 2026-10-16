@@ -63,7 +63,7 @@ void Object_LinkPair(s32 a, s32 b, s32 c);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 
 static __inline__ void I_Func_0200494c(s32 a) { Func_0200494c(a); }
 
@@ -121,8 +121,8 @@ static __inline__ s32 I_UiText_OpenMessageAtObject(s32 speaker, s32 flags) {
   return UiText_OpenMessageAtObject(speaker, flags);
 }
 
-static __inline__ s32 I_Inventory_PromptAndSetObjectMode(s32 id, s32 flags) {
-  return Inventory_PromptAndSetObjectMode(id, flags);
+static __inline__ s32 I_Event_AskYesNoWithActorAnimation(s32 id, s32 flags) {
+  return Event_AskYesNoWithActorAnimation(id, flags);
 }
 
 static __inline__ void I_Object_SetModeById(u32 a0, s32 a1) {
@@ -246,7 +246,7 @@ void Func_02000cac(s32 arg) {
   I_ObjectMotion_ArmCallback(5, 0xd000, 0);
   I_UiText_OpenMessageAtObject(7, 0);
   I_ObjectMotion_ArmCallback(4, 0, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     I_Object_SetModeById(28, 3);
     I_Battle_WaitMode0(20);
     I_Battle_WaitMode0(10);

@@ -9,7 +9,7 @@ void Func_02000188(void) {
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Func_02000698(msg);
   UiText_OpenMessageAtObject(9, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020006e8(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020006e8(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02000698(msg + 1);
   } else {

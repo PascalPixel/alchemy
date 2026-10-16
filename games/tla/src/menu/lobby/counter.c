@@ -38,7 +38,7 @@ s32 Func_02000bb0(void) {
     if (!Flag_IsSet(0x173)) {
       Func_02001a64(msg + 5);
       UiText_OpenMessageAtObject(8, 0);
-      answer = Inventory_PromptAndSetObjectMode(4, 0);
+      answer = Event_AskYesNoWithActorAnimation(4, 0);
       if (answer == 0) {
         GameFlag_SetByte(1000, 0);
         Flag_Set(0x173);
@@ -86,7 +86,7 @@ s32 Func_02000bb0(void) {
       else
         Func_02001a64(msg + 1);
       UiText_OpenMessageAtObject(8, 0);
-      if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
         if (Func_0200006c(0)) {
           Flag_Set(0x16c);
           Flag_Set(0x172);

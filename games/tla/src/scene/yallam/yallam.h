@@ -17,7 +17,7 @@ extern const u8 MsgIOnceHeard[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Func_020006bc(s32 id);
 void Func_02001944(void);
 void Func_02002488(void);

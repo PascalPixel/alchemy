@@ -148,7 +148,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(5, 0x4000, 0);
   Contigo_ObjTurn(7, 0x6000, 0);
   Contigo_ObjTurn(9, 0x3000, 0);
-  answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+  answer = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
   owner = gPartyState.currentOwner;
   if (answer == 0) {
     ObjectMotion_WaitForAnimationChange(owner);
@@ -211,7 +211,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(gPartyState.currentOwner, 0xa000, 0);
   Contigo_ObjTurn(5, 0x4000, 0);
   Contigo_ObjTurn(9, 0x3000, 0);
-  answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+  answer = Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0);
   owner = gPartyState.currentOwner;
   if (answer == 0) {
     ObjectMotion_WaitForAnimationChange(owner);
@@ -423,7 +423,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(5, 0x4000, 20);
   Contigo_MessageOpen(5, 0);
   Contigo_ObjTurn(gPartyState.currentOwner, 0xc000, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Contigo_ObjFace(9, 0x3000);
     Contigo_ObjMode(9, 3);
     Contigo_MessagePut(0x1009, 0);

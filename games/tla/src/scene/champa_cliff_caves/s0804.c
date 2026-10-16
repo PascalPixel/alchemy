@@ -47,7 +47,7 @@ void Func_02000804(s32 actor) {
    * shows (r1 before r0); scene_call.h declares it void for the scenes that
    * match so. */
   ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(8, 0);
-  if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Battle_WaitMode0(20);
     Func_0200351c(8, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;

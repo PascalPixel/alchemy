@@ -11,7 +11,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Battle_WaitMode0(s32 frames);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Event_WaitTransitionFrames(void);
 

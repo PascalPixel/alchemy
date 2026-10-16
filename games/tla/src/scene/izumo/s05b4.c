@@ -22,7 +22,7 @@ void Func_020004bc(s32 actor) {
 
     Func_02000d60(message);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02000e00(), 0) == 0) {
       Battle_WaitMode0(10);
       Func_02000d60(message + 1);
     } else {
@@ -45,7 +45,7 @@ void Func_02000538(s32 actor) {
 
     Func_02000d60(message);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02000e00(), 0) == 0) {
       Battle_WaitMode0(10);
       Func_02000d60(message + 1);
     } else {
@@ -65,7 +65,7 @@ void Func_020005b4(s32 actor) {
   message = MsgLadyUzumeAnd;
   Func_02000d60(message);
   UiText_OpenMessageAtObject(actor, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_02000e00(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_02000d60(message + 1);
   } else {

@@ -20,7 +20,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 Battle_WaitMode0();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Motion_SetVarCbAndRefresh();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
@@ -179,7 +179,7 @@ test_wait:
   Prox_MessageOpen(0xa000, 0);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
   result =
-      Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
+      Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0);
   owner = gPartyState.currentOwner;
   if (result == 0) {
     Call1(ObjectMotion_WaitForAnimationChange, owner);

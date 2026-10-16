@@ -1724,7 +1724,6 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
         u32 width;
         u32 height;
 
-// Sequence dimensions before the call: argument assignment/read was UB.
 // Sequence dimensions before the call; assigning and reading them in
 // separate arguments was UB. Plain English trial: 0x30c to 0x320 bytes,
 // with different instructions. Preserve the original native calls.

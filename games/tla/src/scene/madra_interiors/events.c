@@ -21,7 +21,7 @@ void Func_02001ec8();
 void Func_02001ef8();
 void GameFlag_SetBit();
 void GameFlag_Test();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void Motion_SetModeAndWaitAnimation();
 void Motion_SetVarCbAndRefresh();
 void ObjectMotion_ArmCallback();
@@ -140,7 +140,7 @@ void Func_02001450(void) {
   Call3((void (*)())Func_02001e28, 7, 0, 10);
   Value3((s32 (*)())Func_02001e48, 28, 0x102, 30);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 28, 0);
-  result0 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result0 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result0 != 0)
     goto L_02009690;
   Value3((s32 (*)())Func_02001e48, 27, 0x108, 30);

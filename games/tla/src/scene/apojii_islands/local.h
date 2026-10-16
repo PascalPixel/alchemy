@@ -43,7 +43,7 @@ void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -283,10 +283,10 @@ static __inline__ void UiText_OpenMessageAtObject_(s32 id, s32 flags) {
   UiText_OpenMessageAtObject(id, flags);
 }
 
-static __inline__ s32 Inventory_PromptAndSetObjectMode_(s32 id, s32 flags) {
+static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  return Inventory_PromptAndSetObjectMode(id, flags);
+  return Event_AskYesNoWithActorAnimation(id, flags);
 }
 
 static __inline__ void Event_StartScreenTransition_(void) {

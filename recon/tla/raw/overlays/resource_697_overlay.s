@@ -177,7 +177,7 @@ Func_02000330:
 	strh r3, [r2]
 	ldr r0, [r7]
 	movs r1, #1
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008400
 	movs r1, #128

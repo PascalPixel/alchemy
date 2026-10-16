@@ -20,7 +20,7 @@ struct ActorDescriptor {
 };
 
 s32 GameFlag_Test(s32 flag);
-struct ActorDescriptor *BattleAction_FindDescriptor(s32 id);
+struct ActorDescriptor *Scene_FindActorPlacement(s32 id);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 
@@ -36,7 +36,7 @@ void Func_080d784c(void) {
     scene &= 0x7ff;
     if (scene - 300 <= 80 && party->unk256 > 0) {
       for (id = 8; id <= 79; id++) {
-        struct ActorDescriptor *desc = BattleAction_FindDescriptor(id);
+        struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
         struct ObjectRuntime *obj;
 
         if (desc == NULL || desc->scene - 48 != scene - 300)

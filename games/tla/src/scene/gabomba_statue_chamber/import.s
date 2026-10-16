@@ -134,10 +134,10 @@ Func_02001da8:
 	.thumb_func
 PartyInventory_GiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
-	.global Inventory_PromptAndSetObjectMode
+	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
+Event_AskYesNoWithActorAnimation:
+	overlay_veneer Event_AskYesNoWithActorAnimationFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -302,10 +302,10 @@ Func_02001ec8:
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif

@@ -341,7 +341,7 @@ static void FieldScene_RunLongPresentationSequence(void) {
   FieldObject_SetTargetAndCallback(2, 0x1000a, gValeFaceTargetScript);
   FieldObject_SetTargetAndCallback(3, 0x1000a, gValeFaceTargetScript);
   Engine_EventWait(0x12c);
-  Battle_GetWorkObject1e0()->motionFlags = v6;
+  Camera_GetEventObject()->motionFlags = v6;
   Camera_SetSpeed(0x1999, 0x333);
   Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
   Engine_EventWait(240);

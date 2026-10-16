@@ -224,7 +224,7 @@ Func_020016d8:
 	bl ObjectMotion_ArmCallback
 	movs r1, #0
 	movs r0, #5
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	movs r0, #5
 	bl ObjectMotion_WaitForAnimationChange
 	movs r0, #128

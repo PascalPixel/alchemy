@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 36 (ported from The Broken Seal's
-// Ui_SetRenderResultFromObject). Plain, the second branch builds the result's
+// Ui_SetMessageVoiceFromActor). Plain, the second branch builds the result's
 // offset (movs r1, #152) before it reads the event mode and the table, which
 // the native reads first (differ 6). The one-pass block below (permute's
 // best, 3 min) fixes that but ends at the first result's store, which the

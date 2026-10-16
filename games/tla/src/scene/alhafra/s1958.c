@@ -23,7 +23,7 @@ void ObjectMotion_SetVariantCallback(s32 a, s32 b);
 void Func_02001cac(s32 a, s32 b);
 s32 Object_GetById(s32 a);
 void UiText_OpenMessageAtObject(s32 a, s32 b);
-s32 Inventory_PromptAndSetObjectMode(s32 a, s32 b);
+s32 Event_AskYesNoWithActorAnimation(s32 a, s32 b);
 void Func_02001c3c(s32 a, s32 b, s32 c);
 void Func_02001bec(void);
 extern u8 MsgAlhafra28[];
@@ -83,7 +83,7 @@ void Func_02001958(s32 a0) {
       Call3(Func_02001ca4, 0x19, b, c);
     }
     Value2((s32 (*)())UiText_OpenMessageAtObject, 0x19, 0);
-    t30 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
+    t30 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
     if (t30 == 0) {
       Call1(Battle_WaitMode0, 0x1e);
       Call2(Motion_SetVarCbAndRefresh, 0x19, 2);

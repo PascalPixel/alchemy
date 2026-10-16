@@ -230,7 +230,7 @@ Func_020001e4:
 	bl UiText_OpenMessageAtObject
 	movs r0, #0
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	beq .L_ja_02008322
 	b .L_ja_02008486
@@ -558,7 +558,7 @@ Func_020001e4:
 	bl UiText_OpenMessageAtObject
 	movs r0, #0
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	beq .L_020082ee
 	b .L_02008468

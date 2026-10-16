@@ -44,7 +44,7 @@ void Func_02000208(void) {
   msg = (s32)MsgHasMyGrandson;
   Func_0200350c(msg);
   UiText_OpenMessageAtObject(8, 0);
-  if (Inventory_PromptAndSetObjectMode(Func_020035f4(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Func_020035f4(), 0) == 0) {
     Battle_WaitMode0(10);
     Func_0200350c(msg + 1);
   } else {

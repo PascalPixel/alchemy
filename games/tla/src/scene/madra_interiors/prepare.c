@@ -342,7 +342,7 @@ void Func_020007dc(void) {
   Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
   Call1((void (*)())Battle_WaitMode0, 20);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 11, 0);
-  result13 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
+  result13 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result13 != 0)
     goto L_02008e40;
   Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);

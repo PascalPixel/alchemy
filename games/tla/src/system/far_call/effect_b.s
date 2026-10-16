@@ -5,10 +5,10 @@
 	.thumb_func
 EffectSlot_UpdateFar:
 	overlay_veneer EffectSlot_Update
-	.global BattleFx_HasReachedTargetFar
+	.global EffectSlot_HasPendingTargetFar
 	.thumb_func
-BattleFx_HasReachedTargetFar:
-	overlay_veneer BattleFx_HasReachedTarget
+EffectSlot_HasPendingTargetFar:
+	overlay_veneer EffectSlot_HasPendingTarget
 	.global EffectSlot_SetPositionFar
 	.thumb_func
 EffectSlot_SetPositionFar:

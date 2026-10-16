@@ -1299,7 +1299,7 @@ static void TolbiShipInteriors_FightMonstersInHold(void) {
 static void TolbiShipInteriors_TurnBackFromStairs(void) {
   if (GameFlag_IsSet(0x301) != 0) {
     Engine_EventBegin();
-    Ui_SetRenderResultFromObject(8);
+    Ui_SetMessageVoiceFromActor(8);
     UiText_ShowCenteredMessage(MsgTolbiShipWhereGoingSlay, 1, 8);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
@@ -3067,7 +3067,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt) {
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     if (arg != 0) {
-      Battle_GetWorkObject1e0()->motionFlags = 0;
+      Camera_GetEventObject()->motionFlags = 0;
     }
     break;
   case 25:
@@ -3199,7 +3199,7 @@ static void FieldScene_RunPositionTransferPresentation(void) {
   Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_SOUTH, 40);
-  Ui_SetRenderResultFromObject(10);
+  Ui_SetMessageVoiceFromActor(10);
   message = MsgTolbiShipMonstersBelowdecks;
   UiText_ShowCenteredMessage(message, 1, 10);
   Engine_EventWait(10);

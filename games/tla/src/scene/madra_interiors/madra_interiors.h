@@ -50,7 +50,7 @@ void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
 static inline s32 FlagCheck(s32 flag) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */

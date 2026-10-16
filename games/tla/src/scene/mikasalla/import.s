@@ -94,10 +94,10 @@ Func_02000648:
 	.thumb_func
 Func_02000650:
 	overlay_veneer EventRuntime_EndFar
-	.global Inventory_PromptAndSetObjectMode
+	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
+Event_AskYesNoWithActorAnimation:
+	overlay_veneer Event_AskYesNoWithActorAnimationFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

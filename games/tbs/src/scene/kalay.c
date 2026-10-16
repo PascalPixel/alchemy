@@ -356,7 +356,7 @@ static void FieldScene_RunStagedGroupSequence(void) {
     Actor_SetPosition(34, PIXELS(332), PIXELS(280));
     Actor_SetPosition(21, PIXELS(364), PIXELS(272));
     Event_PlayCue(17);
-    Ui_SetRenderResultFromObject(20);
+    Ui_SetMessageVoiceFromActor(20);
     UiText_ShowCenteredMessage(MsgKalayOkListeningLets, 1, 0);
     Event_PlayCue(9);
     Engine_EventWait(10);
@@ -1551,7 +1551,7 @@ static void FieldScene_RunSecondaryGroupSequence(void) {
   Engine_EventWait(20);
   Actor_WalkToAndWait(8, 246, 198);
   Actor_FaceDirection(8, 0, 20);
-  Battle_GetWorkObject1e0()->motionFlags = 0;
+  Camera_GetEventObject()->motionFlags = 0;
   Camera_SetSpeed(0x9999, 0x1333);
   Camera_MoveTo(0xf80000, -1, 0xaa0000, 1);
   Actor_WalkToAndWait(10, 0x10e, 198);

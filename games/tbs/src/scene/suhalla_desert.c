@@ -577,7 +577,7 @@ static s32 SuhallaDesert_ShowRevealObjects(void) {
     Actor_SetPosition(14, PIXELS(248), PIXELS(712));
     Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
     MapObject_SetPosition(100, -1, -1);
-    BattleFx_EmitRandomParticle();
+    Marker_MoveLeaderAway();
     Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
     return FieldScheduler_AddCallback(SuhallaDesert_PulseRevealPalette,
                                       TASK_PRIORITY_SCENE);

@@ -17,7 +17,7 @@ s32 Func_020045ec();
 s32 Func_0200463c();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Event_AskYesNoWithActorAnimation();
 s32 Motion_CamBounds();
 s32 Motion_SetModeAndWaitAnimation();
 s32 ObjectMotion_ArmCallback();
@@ -142,7 +142,7 @@ void Func_02002a8c(void) {
     Call2(Object_SetModeById, 0, 3);
     Prox_MessageOpen(0x8000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) ==
+    if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 0, 3);
       Call2(Func_02004534, 0x8000, 0);
@@ -224,7 +224,7 @@ void Func_02002a8c(void) {
     Prox_Jump(0xb, 0x108, 0x28);
     Prox_MessageOpen(0xa00b, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) ==
+    if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
       Call2(Func_02004534, 0xa00b, 0);
@@ -261,7 +261,7 @@ void Func_02002a8c(void) {
     Call2(Func_0200454c, 0xb, 0xb000);
     Prox_Jump(0xb, 0x103, 0);
     Prox_MessageOpen(0xa00b, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) ==
+    if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
       Call2(Func_02004534, 0xa00b, 0);
@@ -327,7 +327,7 @@ void Func_02002a8c(void) {
     Prox_Jump(0xb, 0x109, 0x28);
     Prox_MessageOpen(0xa00b, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) ==
+    if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
       Call2(Func_02004534, 0xa00b, 0);

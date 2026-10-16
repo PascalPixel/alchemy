@@ -1820,7 +1820,7 @@ Func_02001490:
 	bl ObjectMotion_ArmCallback
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02009d58
 	movs r0, #30
@@ -3631,7 +3631,7 @@ Func_02003878:
 .L_0200c400:
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200c434
 	movs r0, #25
@@ -4476,7 +4476,7 @@ Func_02003878:
 	bl Battle_WaitMode0
 	movs r0, #4
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200cc7c
 	movs r0, #30

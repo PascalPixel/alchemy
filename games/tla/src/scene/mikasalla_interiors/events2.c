@@ -15,7 +15,7 @@ void Func_02000624();
 void Func_0200062c();
 void GameFlag_SetBit();
 void GameFlag_Test();
-void Inventory_PromptAndSetObjectMode();
+void Event_AskYesNoWithActorAnimation();
 void ObjectMotion_SetAngleToward();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
@@ -52,7 +52,7 @@ void Func_020004dc(void) {
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, 18, 0x108, 60);
   Value2((s32 (*)())UiText_OpenMessageAtObject, 18, 0);
-  result0 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode,
+  result0 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
                    gPartyState.currentOwner, 0);
   if (result0 != 0)
     goto L_02008568;

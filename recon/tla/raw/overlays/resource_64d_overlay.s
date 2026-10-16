@@ -754,7 +754,7 @@ Func_02000510:
 	bl Battle_WaitMode0
 	movs r0, #5
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_02008a7c
 	movs r0, #20
@@ -2310,7 +2310,7 @@ Func_02000510:
 	bl UiText_OpenMessageAtObject
 	movs r0, #5
 	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
+	bl Event_AskYesNoWithActorAnimation
 	cmp r0, #0
 	bne .L_0200994c
 	movs r0, #20

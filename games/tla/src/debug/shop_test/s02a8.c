@@ -13,7 +13,7 @@ extern const u8 MsgManSunshineWould[];
 
 void Battle_WaitMode0(s32 frames);
 s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void Party_AdjustCoins(s32 amount);
 void Func_02000d08(s32 value, s32 slot);
@@ -44,7 +44,7 @@ void Func_020002a8(s32 actor) {
     message = (s32)MsgHereSThe;
     Func_02000e08(message);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000e30(), 0) != 0) {
+    if (Event_AskYesNoWithActorAnimation(Func_02000e30(), 0) != 0) {
       Func_02000e08(message + 1);
       Func_02000e18(actor, 0);
     } else if (Func_02000dc8(item) < 0) {

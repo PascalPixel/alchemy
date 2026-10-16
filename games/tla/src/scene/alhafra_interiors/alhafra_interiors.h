@@ -132,7 +132,7 @@ void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Func_02000b5c(s32 actor, s32 emote, s32 frames);
 void Func_02000b64(s32 actor, s32 emote);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);

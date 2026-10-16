@@ -1779,7 +1779,7 @@ static void VenusLighthouse_ResolveFloatingBlock(void) {
       other = Object_GetById(settledIndex + 10);
       FloatingBlock_Settle(other, 0);
       Engine_CameraSetSpeed(0x30000, 0x6000);
-      Battle_GetWorkObject1e0()->motionFlags = 0;
+      Camera_GetEventObject()->motionFlags = 0;
       Engine_CameraMoveTo(0x880000, 0x80000, 0x1580000, 1);
       Engine_CameraWaitForMove();
       // Stack the block, then rebalance the two supports and attach the height

@@ -357,7 +357,7 @@ void Func_02000978(void) {
   Kibombo_ObjArm(gPartyState.currentOwner, 0x8000, 20);
   Func_02005b4c((s32)MsgItLooksLikeHas);
   UiText_OpenMessageAtObject(6, 0);
-  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Kibombo_ObjArm(5, 0x4000, 10);
     Object_SetModeById(5, 3);
     Func_02005b64(5, 0);

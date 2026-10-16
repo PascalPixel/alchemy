@@ -3077,7 +3077,8 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
        * drops it, but its references rank y above the bounds in global
        * allocation, keeping y in r5 as native; without it 114 rows differ in
        * the English build (y in r9). The form is the sibling
-       * Object_SetMoveTarget's three-axis delta. */
+       * Object_SetMoveTarget's three-axis delta. Clamping X then Z with one
+       * minimum/maximum pair and no dead dy changes 273 text bytes in EN. */
       dy = (y - obj->y) / 0x10000;
       dz = (z - obj->z) / 0x10000;
       dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
@@ -3211,7 +3212,12 @@ retry:
      * the loaded pos.x and the copy outlives it into the move target call. As
      * plain statements cse2 swaps them (differ 16), also with dx/dz split or
      * casts. The retry gotos stay: as for(;;) with continue, loop.c hoists &pos
-     * and &probe, which the native recomputes each try (differ 128). */
+     * and &probe, which the native recomputes each try (differ 128).
+     * Moving success into a <= limit branch without the block changes 53
+     * text bytes: the coordinate copies still swap and exits reorder.
+     * A shared inline home-radius predicate used here and by WanderNearHome
+     * adds 8 bytes to each function in EN; that command's deltas must remain
+     * live for its fallback heading. */
     do {
       dx = pos.x / 0x10000 - object->homeX;
       dz = pos.z / 0x10000 - object->homeZ;
@@ -3657,7 +3663,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   }
   /* FAKEMATCH: the volatile read puts gDebugMode's address in r5 here and at
    * the test before it, as the bytes do; read plainly both take r3 (differ 12,
-   * 808 instructions either way). */
+   * 808 instructions either way). Grouping both debug actions under an outer
+   * ordinary test, retaining a fresh read after calls, changes 6 text bytes
+   * in EN: the address still uses r3 and two branch targets differ. */
   if (*(volatile u8 *)&gDebugMode != 0) {
     s32 mask;
 

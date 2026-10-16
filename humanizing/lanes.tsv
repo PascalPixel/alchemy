@@ -1,0 +1,14 @@
+lane	area	linked_c_sources	reviewed_functions
+01	core: shared headers, common C, runtime, system, game, sound	16	0
+02	field and graphics	14	25
+03	window	6	25
+04	menu, shop and debug	9	25
+05	battle	1	0
+06	effect	3	0
+07	object	6	0
+08	scene cohort 1	15	0
+09	scene cohort 2	15	0
+10	scene cohort 3	15	0
+11	scene cohort 4	15	0
+12	scene cohort 5	15	0
+13	scene cohort 6	15	0

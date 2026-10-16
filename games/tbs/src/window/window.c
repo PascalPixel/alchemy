@@ -153,6 +153,19 @@ enum {
 // A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
+// UiRenderWork owns three message channels, each with four line gaps.
+#define UI_MESSAGE_CHANNEL_COUNT 3
+#define UI_MESSAGE_LINE_COUNT 4
+#define UI_TEXT_DEFAULT_COLOUR 15
+#define UI_TEXT_DEFAULT_LINE_SPACING 10
+#define UI_TILEMAP_PALETTE 15
+
+// Window animation lengths and the palette slot's unused marker.
+#define UI_WINDOW_OPEN_FRAMES 8
+#define UI_WINDOW_CLOSE_FRAMES 4
+#define UI_PALETTE_SLOT_FREE 999
+#define UI_CANVAS_BACKGROUND_WORD 0x44444444
+
 // Takes the first render output from the free list, or returns NULL when every
 // output is in use.
 struct RenderOutput *RenderOutput_AcquireFree(void) {
@@ -185,7 +198,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
 
 // Links all 64 render outputs of the pool into the free list.
 void RenderOutput_InitFreeList(void) {
-  s32 n;
+  s32 remainingLinks;
   struct UiRenderWork *work;
   struct RenderOutput *out;
   struct RenderOutput *next;
@@ -193,13 +206,13 @@ void RenderOutput_InitFreeList(void) {
   work = UI_WORK;
   out = work->outputs;
   work->freeOutputs.head = out;
-  n = UI_OUTPUT_COUNT - 2;
+  remainingLinks = UI_OUTPUT_COUNT - 2;
   do {
     next = out + 1;
-    n--;
+    remainingLinks--;
     out->next = next;
     out = next;
-  } while (n >= 0);
+  } while (remainingLinks >= 0);
   next->next = NULL;
   work->freeOutputs.tailLink = &next->next;
 }
@@ -214,6 +227,7 @@ void UiWork_InitializeWithResourceCounters(void) {
   volatile u32 fill;
 #endif
 
+  // Clear the work block before linking any of its embedded lists.
   work = Runtime_AllocateBlock(HEAP_SLOT_WINDOW, RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
   fill = 0;
@@ -224,7 +238,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 #endif
   work->dirty = 1;
   work->glyphResource = NO_GLYPH_RESOURCE;
-  work->level = 15;
+  work->level = UI_TILEMAP_PALETTE;
 #if EDITION_INTERNATIONAL
   fill = UI_TILE_PAIR(UI_TILE_BLANK);
   Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4),
@@ -232,6 +246,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 #else
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
+  // Make the output and palette pools available, then start the updates.
   RenderOutput_InitFreeList();
   UiWork_SetTwoEntriesTo999();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
@@ -247,18 +262,20 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
 #if EDITION_INTERNATIONAL
   volatile u32 fill;
 #endif
-  s32 i;
+  s32 tileIndex;
 
   // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
   // clears the rest of dst.
-  s32 UiWork_CopyTileTail(u32 src, u32 dst) {
-    src &= 0x3ff;
-    dst &= 0x3ff;
-    Dma_Set((void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32),
-            DMA_COPY16(8), REG_DMA3);
-    return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
+  s32 UiWork_CopyTileTail(u32 sourceTile, u32 destinationTile) {
+    sourceTile &= 0x3ff;
+    destinationTile &= 0x3ff;
+    Dma_Set((void *)(0x06000010 + sourceTile * 32),
+            (void *)(0x06000000 + destinationTile * 32), DMA_COPY16(8),
+            REG_DMA3);
+    return Iwram_ClearWords((void *)(0x0600000c + destinationTile * 32), 20);
   }
 
+  // Battle windows share the field's pools but use the canvas tile set.
   work = (struct UiRenderWork *)Runtime_AllocateBlock(HEAP_SLOT_WINDOW,
                                                       RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
@@ -270,7 +287,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   work->dirty = 1;
   work->glyphResource = NO_GLYPH_RESOURCE;
   work->menuState = 1;
-  work->level = 15;
+  work->level = UI_TILEMAP_PALETTE;
 #if EDITION_INTERNATIONAL
   fill = UI_TILE_PAIR(UI_TILE_BLANK);
   Dma_Set(&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4), REG_DMA3);
@@ -287,8 +304,8 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   {
     u8 mode = 4;
 
-    for (i = 2; i >= 0; i--)
-      work->tileAttributes[i] = mode;
+    for (tileIndex = 2; tileIndex >= 0; tileIndex--)
+      work->tileAttributes[tileIndex] = mode;
   }
 }
 
@@ -347,6 +364,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   if (height > 30)
     height = 30;
 
+  // Clear glyph ownership before replacing the corresponding tile entries.
   UiWindow_ClearTileAttributesInRect(x, y, width, height);
 
   row = 0;
@@ -396,10 +414,12 @@ void UiWindow_DrawOpened(struct UiWindow *window) {
   x = window->x;
   y = window->y;
   width = window->width;
+  // Canvas windows need both pixel storage and their tilemap rectangle.
   if (UI_WINDOW_TEXT_CANVAS & flags) {
     if (UI_WINDOW_FRAMED_CANVAS & flags) {
       UiWindow_DrawFrame(x, y, width, height);
-      Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE, 0x44444444);
+      Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE,
+                      UI_CANVAS_BACKGROUND_WORD);
     } else {
       Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE, 0);
     }
@@ -422,6 +442,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 
   slot = UI_WORK->windows;
   found = 0;
+  // A closing slot remains occupied until its animation has finished.
   for (i = 0; i != WINDOW_COUNT; i++, slot++) {
     if ((slot->flags & UI_WINDOW_OPEN) == 0 && slot->duration == 0) {
       found = slot;
@@ -429,6 +450,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
     }
   }
   if (found != 0) {
+    // Reset the slot before applying the caller's canvas and anchor flags.
     found->y = y;
     found->width = width;
     found->height = height;
@@ -461,8 +483,8 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
       UiWindow_DrawOpened(found);
     } else {
       // Zoom open over eight frames, and wait until it is open.
-      found->duration = 8;
-      found->frame = 7;
+      found->duration = UI_WINDOW_OPEN_FRAMES;
+      found->frame = UI_WINDOW_OPEN_FRAMES - 1;
       UiWindow_WaitZoom(found);
       WaitFrames(1);
     }
@@ -489,6 +511,7 @@ void UiWork_Finalize(struct UiWindow *window, s32 instant) {
     return;
 
   RenderOutput_PrepareForRedraw(window);
+  // Keep the old rectangle available while the closing animation shrinks it.
   window->previousX = window->x;
   window->previousY = window->y;
   window->previousWidth = window->width;
@@ -518,7 +541,7 @@ void UiWork_Finalize(struct UiWindow *window, s32 instant) {
   } else {
     // Zoom closed over four frames (UiWork_ProcessDirectWork).
     window->frame = instant;
-    window->duration = 4;
+    window->duration = UI_WINDOW_CLOSE_FRAMES;
   }
 }
 
@@ -546,6 +569,7 @@ void RenderOutput_ClearList(void *outputs) {
   next = NULL;
   if (list != NULL) {
     node = list->head;
+    // Detach the chain before returning its nodes to the shared free pool.
     list->tailLink = &list->head;
     list->head = next;
     while (node != NULL) {
@@ -630,7 +654,7 @@ void RenderOutput_Release(struct RenderOutput *entry) {
       // Free its palette slot (999 marks a free slot).
       u8 *work = gWindowWork[0];
       s32 offset = entry->oam.palette * 2 + RENDER_PALETTE_TABLE_OFFSET;
-      *(u16 *)(work + offset) = 999;
+      *(u16 *)(work + offset) = UI_PALETTE_SLOT_FREE;
     }
   }
   entry->active = 0;
@@ -648,29 +672,30 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
   struct UiChannelSlot *found = NULL;
   u32 i;
 
-  for (i = 0; i != 3; i++, slot++) {
+  for (i = 0; i != UI_MESSAGE_CHANNEL_COUNT; i++, slot++) {
     if (slot->work == NULL) {
       found = slot;
       break;
     }
   }
   if (found != NULL) {
+    // The channel stores pen coordinates in 1/256 pixels.
     found->work = window;
     found->startX = x << 8;
     found->x = x << 8;
     found->y = y << 8;
     found->entry = entry;
-    found->colour = 15;
-    found->lineSpacing = 10;
+    found->colour = UI_TEXT_DEFAULT_COLOUR;
+    found->lineSpacing = UI_TEXT_DEFAULT_LINE_SPACING;
     found->countdown = 0;
     found->outline = 0;
     found->ended = 0;
     found->flags = flags;
     if (spacing != NULL) {
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < UI_MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;
     } else {
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < UI_MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = 0;
     }
     found->line = 0;
@@ -692,7 +717,7 @@ struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
 
   slot = UI_WORK->channels;
   selected = 0;
-  for (index = 0; index != 3; slot++, index++) {
+  for (index = 0; index != UI_MESSAGE_CHANNEL_COUNT; slot++, index++) {
     if (slot->work == 0 || slot->work->state != 0) {
       selected = slot;
       break;
@@ -720,8 +745,9 @@ struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
     zero = 0;
     selected->startX = 3 << 8;
     selected->work->state = zero;
-    selected->colour = 15;
-    selected->lineSpacing = 10;
+    // Start the next text run without retaining the previous run's style.
+    selected->colour = UI_TEXT_DEFAULT_COLOUR;
+    selected->lineSpacing = UI_TEXT_DEFAULT_LINE_SPACING;
     selected->entry = entry;
     selected->countdown = zero;
     selected->outline = zero;
@@ -732,7 +758,7 @@ struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
     do {
       index++;
       *spacing++ = zero;
-    } while (index <= 3);
+    } while (index < UI_MESSAGE_LINE_COUNT);
   }
   return selected;
 }
@@ -744,7 +770,8 @@ s32 Ui_ClearVramBlock(void) {
 
 // Fills the text canvas with the window background colour (4).
 s32 Ui_FillVramBlockPattern(void) {
-  return Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE, 0x44444444);
+  return Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE,
+                         UI_CANVAS_BACKGROUND_WORD);
 }
 
 // Resets the pen and text style of the first idle message channel, clearing
@@ -754,7 +781,7 @@ void UiWork_ResetFreeChannel(void) {
   struct UiChannelSlot *selection = 0;
   s32 i;
 
-  for (i = 0; i != 3; slot++, i++) {
+  for (i = 0; i != UI_MESSAGE_CHANNEL_COUNT; slot++, i++) {
     if (slot->work == 0 || slot->work->state != 0) {
       selection = slot;
       break;
@@ -767,14 +794,14 @@ void UiWork_ResetFreeChannel(void) {
     }
     selection->x = 0;
     selection->countdown = 0;
-    selection->colour = 15;
+    selection->colour = UI_TEXT_DEFAULT_COLOUR;
     selection->outline = 0;
-    selection->lineSpacing = 10;
+    selection->lineSpacing = UI_TEXT_DEFAULT_LINE_SPACING;
   }
 }
 
-// Makes a channel's text colour, outline and line spacing the ones glyphs are
-// drawn with.
+// Copies the channel's text colour, outline and line spacing into the shared
+// glyph renderer before that channel draws its next character.
 void UiText_ApplyChannelStyle(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
 

@@ -85,6 +85,7 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   const u8 *copy;
   const u8 *literal;
 
+  // Uncompressed blocks borrow their payload; compressed blocks use the output.
   token = source[0] | (source[1] << 8);
   literal = source + 2;
   if (token == 0)
@@ -95,6 +96,7 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   start = destination;
   command++;
   control |= 0x100; // a marker bit, shifted down as the flags are read
+  // Consume literals or copy runs until the zero token ends the stream.
   for (;;) {
     if ((control & 1) != 0) {
       if (control != 1) // only the marker is left: read the next command
@@ -145,6 +147,13 @@ enum AnimationCommand {
   ANIM_CMD_BLANK = 255     // show nothing for `arg`
 };
 
+enum {
+  RESOURCE_SLOT_COUNT = 8,
+  ANIMATION_OBJECT_COUNT = 64,
+  ANIMATION_LAYER_COUNT = 4,
+  ANIMATION_NORMAL_STEP = 16
+};
+
 // Advances a sprite's animation layers by one frame, picks each layer's frame
 // for the facing dir, and when any frame changed redraws the sprite: the
 // layers composed by priority into one pixel buffer, an optional outline,
@@ -161,7 +170,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   u8 *pixels;
   u8 *unpacked;
   void *decoded;
-  u16 drawOrder[4];
+  u16 drawOrder[ANIMATION_LAYER_COUNT];
   s32 i;
   s32 k;
   s32 drawCount;
@@ -454,6 +463,7 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   s32 y;
   struct AnimationSpritePart *shadow;
 
+  // Double-size affine sprites need enlarged image bounds and shadow margins.
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
     marginX = 16;
@@ -467,6 +477,7 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   sprite->part[0].affine = affine;
   sprite->part[0].x = x;
   sprite->part[0].y = y;
+  // Place the shadow at ground height independently of the raised image.
   x = (screenX >> 16) - marginX;
   y = ((screenY - groundHeight) >> 16) - marginY;
   shadow = &sprite->part[1];
@@ -486,8 +497,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   s32 matrix;
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
-  s32 size = 8;
-  s32 sizeHalf = 4;
+  s32 shadowHalfWidth = 8;
+  s32 shadowHalfHeight = 4;
   s32 affine;
   s32 scaleX = *scale++;
   s32 screenX = *pos++;
@@ -507,6 +518,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   s32 depth;
   struct AnimationSpritePart *part;
 
+  // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
   flip = Sprite_ComposeAnimationFrame(sprite, facing);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       sprite->rotation == 0) {
@@ -525,8 +537,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
-    size = 16;
-    sizeHalf = 8;
+    shadowHalfWidth = 16;
+    shadowHalfHeight = 8;
   }
   if (height <= -0x640000) {
     slot = 1;
@@ -535,13 +547,14 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
     slot = (screenY >> 17) + 10;
     depth = 2;
   }
-  y = ((screenY - groundHeight) >> 16) - sizeHalf;
+  // Queue the shadow at ground height before the raised image.
+  y = ((screenY - groundHeight) >> 16) - shadowHalfHeight;
   if (sprite->flags & 1) {
     if (y < 160) {
       part = &sprite->part[1];
       part->affine = affine;
       part->affineIndex = matrix;
-      part->x = (screenX >> 16) - size;
+      part->x = (screenX >> 16) - shadowHalfWidth;
       part->y = y;
       Runtime_PushSlotEntry(part, depth);
     }
@@ -583,6 +596,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   s32 offsetY;
   s32 slot;
 
+  // Project first, then discard sprites beyond the padded screen bounds.
   affine = 1;
   if (gMenuCtrlWork->suspended == 0) {
     z = Render_ProjectPoint(point, screen);
@@ -596,6 +610,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       halfHeight = sprite->height >> 1;
       size = 8;
       flip = Sprite_ComposeAnimationFrame(sprite, facing);
+      // Quantize the perspective scale before combining it with local scale.
       roundedScale = (z + 0x400) & -0x800;
       scaleX = Iwram_MulQ16(roundedScale, *scale++);
       scaleY = Iwram_MulQ16(roundedScale, *scale);
@@ -614,6 +629,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
                  scaleY == scaleX) {
         affine = 0;
       }
+      // Mirroring uses negative affine scale when a matrix is needed.
       if (affine != 0) {
         effect.angle = sprite->rotation;
         effect.scaleX = scaleX >> 8;
@@ -641,6 +657,8 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       } else {
         Runtime_PushSlotEntry(sprite, depth);
       }
+      // Project the ground point separately so jumping does not lift the
+      // shadow.
       if (sprite->flags & 1) {
         struct AnimationSpritePart *shadow;
 
@@ -661,6 +679,8 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       return;
     }
   }
+  // Invisible sprites release cached tiles unless their display flags hold
+  // them.
   if (!(sprite->displayFlags & 1)) {
     VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = 1;
@@ -693,8 +713,6 @@ struct ResourceSlotNumber {
   s16 number;
 };
 
-enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
-
 extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
 // Loads the frames of animation id number into resource slot slot's buffer:
@@ -709,9 +727,9 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct ResourceSlot *record;
   struct ResourceSlotNumber *entry;
   u32 *offset;
-  u8 *text;
+  u8 *pixels;
   u8 *end;
-  u8 *table;
+  u8 *colorMap;
   u32 size;
   u32 count;
   u32 index;
@@ -726,6 +744,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   record->tag = (slot << 12) | number;
   record->buffer = buffer;
 
+  // Resolve the animation number to its packed resource.
   entry = gResourceSlot_NumberTable;
   for (count = 0; count < 256; count++) {
     s16 *numbers = &entry->number;
@@ -740,6 +759,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   }
   size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
 
+  // Turn the frame-offset directory into pointers before the pixel payload.
   offset = buffer;
   for (count = 0; count < 256; count++) {
     if (*offset == 0)
@@ -749,30 +769,31 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   }
   if (variant != 0) {
     index = variant - 1;
-    text = (u8 *)(offset + 1);
+    pixels = (u8 *)(offset + 1);
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
-    table = gResourceSlot_ConversionTables[index];
-    for (; text < end; text++) {
-      u32 c = *text;
+    // Values above 0xdf are kept; only the remappable palette range changes.
+    colorMap = gResourceSlot_ConversionTables[index];
+    for (; pixels < end; pixels++) {
+      u32 colorIndex = *pixels;
 
-      if (c <= 0xdf) {
-        c = table[c];
-        *text = c;
+      if (colorIndex <= 0xdf) {
+        colorIndex = colorMap[colorIndex];
+        *pixels = colorIndex;
       }
     }
   }
   return metadata->width * metadata->height;
 }
 
-// Returns the buffer loaded into the resource slot whose tag is key, or 0.
-s32 Animation_LookupValueByKey(s32 key) {
+// Returns the buffer loaded into the resource slot with this tag, or 0.
+s32 Animation_LookupValueByKey(s32 tag) {
   u32 i;
   struct ResourceSlot *slot = gMenuCtrlWork->slots;
 
   for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
-    if (slot->tag == key)
+    if (slot->tag == tag)
       return (s32)slot->buffer;
   }
   return 0;
@@ -795,6 +816,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
       continue;
 
     if (i == 0) {
+      // The first layer supplies the dimensions and origin of the whole sprite.
       sprite->width = metadata->width;
       sprite->height = metadata->height;
       sprite->scale = metadata->scale << 8;
@@ -802,6 +824,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
       sprite->offsetX = metadata->adjustX;
     }
 
+    // Some frame directories are supplied by the resource-slot cache.
     frames = metadata->frames;
     if (frames == 0)
       frames = (void **)Animation_LookupValueByKey(layer->animId);
@@ -828,6 +851,7 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
   if (layer != NULL) {
     metadata = Resource_GetMetadataRecordFar(layer->animId);
     if (metadata->width != 0) {
+      // Keep the layer inactive until an animation script is selected.
       frames = metadata->frames;
       if (frames == 0)
         frames = (void **)Animation_LookupValueByKey(layer->animId);
@@ -848,28 +872,30 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
 // Returns the layer, 0 when no layer record is free, or -1 when the sprite
 // has four layers already.
 s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
-  s32 layer = (s32)sprite->entries[0];
+  s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;
   struct AnimationEntry **entry;
   struct AnimationMetadata *metadata;
 
-  if (layer != 0) {
+  // Find an unused layer slot before reserving a layer record.
+  if (layerHandle != 0) {
     entry = &sprite->entries[0];
     do {
       freeIndex++;
-      if (freeIndex > 3)
+      if (freeIndex >= ANIMATION_LAYER_COUNT)
         break;
       entry++;
-      layer = (s32)*entry;
-    } while (layer != 0);
+      layerHandle = (s32)*entry;
+    } while (layerHandle != 0);
   }
-  if (freeIndex == 4)
+  if (freeIndex == ANIMATION_LAYER_COUNT)
     return -1;
-  layer = (s32)AnimationObject_Allocate(id);
-  if (layer == 0)
+  layerHandle = (s32)AnimationObject_Allocate(id);
+  if (layerHandle == 0)
     return 0;
-  sprite->entries[freeIndex] = (struct AnimationEntry *)layer;
+  sprite->entries[freeIndex] = (struct AnimationEntry *)layerHandle;
   metadata = Resource_GetMetadataRecordFar(id);
+  // Only the first registered layer establishes the sprite's geometry.
   if (sprite->count == 0) {
     sprite->width = metadata->width;
     sprite->height = metadata->height;
@@ -879,7 +905,7 @@ s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
   }
   if (freeIndex == sprite->count)
     sprite->count = freeIndex + 1;
-  return layer;
+  return layerHandle;
 }
 
 // Removes the layer handle from a sprite and clears it, trimming the
@@ -891,14 +917,15 @@ void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer) {
 
   if (sprite != NULL && layer != 0) {
     ResourceMetadata_ClearRecord(layer);
-    for (index = 0; index <= 3; index++) {
+    // Locate the handle, then trim only empty slots at the end of the list.
+    for (index = 0; index < ANIMATION_LAYER_COUNT; index++) {
       if (layer == (s32)sprite->entries[index])
         break;
     }
-    if (index != 4) {
+    if (index != ANIMATION_LAYER_COUNT) {
       sprite->entries[index] = 0;
       laterLayers = 0;
-      for (i = index + 1; i <= 3; i++) {
+      for (i = index + 1; i < ANIMATION_LAYER_COUNT; i++) {
         if (sprite->entries[i] != 0)
           laterLayers++;
       }
@@ -915,13 +942,14 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
   s32 laterLayers;
   u32 i;
 
-  if (sprite != NULL && index <= 3) {
+  if (sprite != NULL && index < ANIMATION_LAYER_COUNT) {
     layer = sprite->entries[index];
     if (layer != NULL) {
       ResourceMetadata_ClearRecord(layer);
       sprite->entries[index] = NULL;
       laterLayers = 0;
-      for (i = index + 1; i <= 3; i++) {
+      // Interior holes stay available; only trailing holes reduce the count.
+      for (i = index + 1; i < ANIMATION_LAYER_COUNT; i++) {
         if (sprite->entries[i] != NULL)
           laterLayers++;
       }
@@ -931,21 +959,21 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
   }
 }
 
-// Starts animation no on a layer: from its first command, unless bit 7 of no
-// is set. An animation number the layer's metadata does not have is ignored.
+// Starts the indexed animation on a layer when its metadata contains it.
+// Bit 7 preserves the command cursor and timer; it remains part of the index.
 void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;
-  s32 script;
+  s32 scriptAddress;
 
   keepPlace = 0x80 & animation;
   if (layer->scripts != 0) {
     metadata = Resource_GetMetadataRecordFar(layer->animId);
     if (animation < metadata->animationCount) {
-      script = (s32)layer->scripts[animation];
+      scriptAddress = (s32)layer->scripts[animation];
       layer->kind = metadata->drawKind;
-      layer->script = (u8 *)script;
-      layer->step = 0x10;
+      layer->script = (u8 *)scriptAddress;
+      layer->step = ANIMATION_NORMAL_STEP;
       if (keepPlace == 0) {
         layer->pos = keepPlace;
         layer->timer = keepPlace;
@@ -984,7 +1012,7 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
           selectedAnimation = (s32)layer->scripts[animation];
           layer->kind = metadata->drawKind;
           layer->script = (u8 *)selectedAnimation;
-          layer->step = 0x10;
+          layer->step = ANIMATION_NORMAL_STEP;
           if (keepPlace == 0) {
             layer->pos = 0;
             layer->timer = 0;
@@ -1005,7 +1033,7 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
   return 0;
 }
 
-// Sets the frame timer of each animated layer of a sprite to val frames.
+// Sets each animated layer's timer to the given duration in frames.
 // Returns 0.
 s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
                                           s32 frames) {
@@ -1014,6 +1042,7 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
   s32 remaining;
 
   if (count != 0) {
+    // The layer timer counts sixteenths of a frame.
     frames <<= 4;
     layerList = sprite->entries;
     remaining = count;
@@ -1053,6 +1082,7 @@ void ObjectSystem_Configure(s32 mode) {
   void *layers;
   volatile u32 zero;
 
+  // World-map mode keeps the sprite and layer pools in the fixed heap blocks.
   if (mode == 3) {
     sprites = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
                                            sizeof(struct AnimationObject));
@@ -1064,6 +1094,7 @@ void ObjectSystem_Configure(s32 mode) {
     layers = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
                                               sizeof(struct AnimationEntry));
   }
+  // Clear both pools, then prepare the shared shadow and tile uploader.
   Palette_LoadBasicObjColors();
   Dma_Fill32Cell(zero, 0, sprites,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
@@ -1083,7 +1114,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   struct AnimationEntry *layer;
   s32 i;
   void **frames;
-  u8 **animation;
+  u8 **scripts;
 
   found = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
@@ -1091,6 +1122,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   layer = NULL;
 
   if (metadata->width != 0) {
+    // A zero facing kind marks a free layer record.
     for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, candidate++) {
       if (candidate->kind == 0) {
         found = candidate;
@@ -1098,6 +1130,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
       }
     }
     if (found != NULL) {
+      // Bind the metadata and start its first animation at command zero.
       /* FAKEMATCH: instruction order only: read as a word, the frames load does
        * not wait on the animId store, so the zero for pos and param loads first
        * as native; the typed read swaps the two (differ 2). */
@@ -1107,12 +1140,12 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
       if (frames == 0)
         frames = (void **)Animation_LookupValueByKey(id);
 
-      animation = metadata->animation;
-      layer->scripts = animation;
+      scripts = metadata->animation;
+      layer->scripts = scripts;
       layer->frames = frames;
       layer->mode = metadata->frameCodec;
       layer->frame = 0xff;
-      layer->script = animation[0];
+      layer->script = scripts[0];
       layer->pos = 0;
       layer->kind = metadata->drawKind;
       layer->param = 0;
@@ -1122,9 +1155,9 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
 }
 
 // Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
-void ResourceMetadata_ClearRecord(void *dst) {
-  if (dst != 0) {
-    Dma_Fill32(0, dst, sizeof(struct AnimationEntry));
+void ResourceMetadata_ClearRecord(void *record) {
+  if (record != 0) {
+    Dma_Fill32(0, record, sizeof(struct AnimationEntry));
   }
 }
 
@@ -1153,7 +1186,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   if (metadata->width == 0)
     return NULL;
   // A width of 0 marks a free sprite.
-  for (i = 0; i <= 63; i++, sprite++) {
+  for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, sprite++) {
     if (sprite->width == 0) {
       freeSprite = sprite;
       break;
@@ -1232,10 +1265,11 @@ void ResourceObject_Release(struct ResourceObjectWork *sprite) {
   void **layer;
 
   if (sprite) {
+    // Release dependent records before clearing the sprite itself.
     if (!(sprite->flags & 1))
       Resource_ResetEntry(sprite->resource);
     layer = sprite->children;
-    remaining = 3;
+    remaining = ANIMATION_LAYER_COUNT - 1;
     do {
       ResourceMetadata_ClearRecord(*layer++);
     } while (--remaining >= 0);
@@ -1250,17 +1284,18 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
   struct AnimationMetadata *metadata;
   u8 *script;
   u8 command;
-  u8 arg;
-  s32 sum = 0;
+  u8 duration;
+  s32 durationSum = 0;
 
   metadata = Resource_GetMetadataRecordFar(id);
   if (animation >= metadata->animationCount) {
     return 0;
   }
   script = ((u8 **)metadata->animation)[animation];
+  // Only timed commands count; control-flow commands terminate this scan.
   for (;;) {
     command = script[0];
-    arg = script[1];
+    duration = script[1];
     script += 2;
     if (command == ANIM_CMD_PLAY || command == ANIM_CMD_HOLD ||
         command == ANIM_CMD_JUMP || command == ANIM_CMD_END) {
@@ -1268,14 +1303,14 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
     }
     if (command == ANIM_CMD_WAIT || command == ANIM_CMD_BLANK ||
         command < ANIM_CMD_END) {
-      sum += arg;
+      durationSum += duration;
       frameCount--;
       if (frameCount == 0) {
         break;
       }
     }
   }
-  return sum;
+  return durationSum;
 }
 
 // Field objects: creating and releasing them, and drawing them each frame.
@@ -1332,6 +1367,7 @@ void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
   u32 step;
 
   step = 0;
+  // Finish all four dissolve steps before waiting for the next video frame.
   do {
     Map_RenderAnimatedTileFrame(sprite, step);
     Map_RenderAnimatedTileFrame(sprite, step + 1);

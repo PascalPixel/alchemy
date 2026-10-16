@@ -169,9 +169,15 @@ enum StatusPanelKind {
 // part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
+// Text colours of the status panel's numbers.
+#define TEXT_COLOR_LOW_HP 4 // HP under a quarter of the maximum
+#define TEXT_COLOR_NO_HP 2  // HP 0
+#define TEXT_COLOR_NORMAL 15
+
 // Copies one BattleUnit with the resident IWRAM word copy.
-static inline void Owner_Copy(void *dst, void *src) {
-  _call_via_r3(dst, src, sizeof(struct BattleUnit), IwramCopyWords);
+static inline void Owner_Copy(struct BattleUnit *destination,
+                              struct BattleUnit *source) {
+  _call_via_r3(destination, source, sizeof(struct BattleUnit), IwramCopyWords);
 }
 
 // Draws the item menu's status panel for the party member owner (window at
@@ -207,7 +213,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
     if (!created) {
       WaitFrames(1);
-      UiWindow_ClearInteriorTilesFar((void *)state->statusWindow, 0, 0, 88, 32);
+      UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_X, 0);
     CharacterMenu_BuildAvailability(ailments, 1, owner);
@@ -246,9 +252,9 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   // Clear the lower part and redraw the member's portrait.
   if (!created) {
     WaitFrames(1);
-    UiWindow_ClearInteriorTilesFar((void *)state->statusWindow, 0, 32, 88, 80);
+    UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 32, 88, 80);
   }
-  RenderOutput_ClearListFar((void *)window);
+  RenderOutput_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
     state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
 
@@ -268,7 +274,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1: { // draws the same panel
-    void *backup;
+    struct BattleUnit *backup;
 
     if (!Item_CanOwnerEquip(owner, item)) {
 #if EDITION_INTERNATIONAL
@@ -389,8 +395,7 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 // before x.
 //
 // number: the value to draw, 0 or more
-// window: the window to draw in, its struct UiWindow pointer held as an
-//         s32, as its callers hold it
+// window: the window to draw in
 // x:      the field's right edge, in pixels within the window
 // y:      the pixel row of the text, within the window
 void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
@@ -412,8 +417,7 @@ void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
 // then the colour goes back to 15, the default text colour.
 //
 // unit:   the character whose figures are drawn
-// window: the window to draw in, its struct UiWindow pointer held as an
-//         s32
+// window: the window to draw in
 void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
@@ -429,13 +433,13 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   UiText_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    UiWork_SetParamNibbleFar(4);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParamNibbleFar(2);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
   }
   UiText_DrawNumberRightAligned(value, window, 48, 40);
-  UiWork_SetParamNibbleFar(15);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
   value = unit->pp;
@@ -453,13 +457,13 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   UiText_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    UiWork_SetParamNibbleFar(4);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParamNibbleFar(2);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
   }
   UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  UiWork_SetParamNibbleFar(15);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
   value = unit->pp;
   UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
@@ -467,11 +471,6 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   UiText_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }
-
-// Text colours of the status panel's numbers.
-#define TEXT_COLOR_LOW_HP 4 // HP under a quarter of the maximum
-#define TEXT_COLOR_NO_HP 2  // HP 0
-#define TEXT_COLOR_NORMAL 15
 
 // The stat arrows: the up and down arrow sprites the menu loads into its two
 // resource slots (Resource_LoadPairedBlocks).
@@ -567,14 +566,9 @@ void UiIcon_PrepareObject(struct RenderOutput *object) {
   }
 }
 
-//--------------------------------------------------------------------------
-// call_icon_routine.c
-// Menu: reload the chosen character's graphics
-//--------------------------------------------------------------------------
-
-// Loads the graphics of character unit into menu entry slot 0. menu, the
-// calling menu, is not used.
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
+// Loads the graphics of character unit into menu entry slot 0. The calling
+// menu argument is not used.
+void PsynergyMenu_CallIconRoutineWithValue(s32 unused, s32 unit) {
   Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }
 
@@ -617,6 +611,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   s32 i;
 
   menu->tabCounts[0] = ownerCount;
+  // Create and position the figures before scheduling their updates.
   for (i = 0; i < ownerCount; i++) {
     struct AnimationObject *figure =
         (struct AnimationObject *)ResourceObject_CreateFar(
@@ -639,6 +634,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       AnimationObjects_SelectAnimationFar(figure, 1);
     }
   }
+  // Clear the unused party slots so the callback can skip them.
   for (; i < 8; i++) {
     menu->tabObjects[i] = 0;
   }

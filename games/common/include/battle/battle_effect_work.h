@@ -2,10 +2,9 @@
 #define ALCHEMY_BATTLE_EFFECT_WORK_H
 
 #include "effect_step.h"
+#include "battle_effect_argument.h"
 #include "static_assert.h"
 #include "types.h"
-
-struct BattleEffectArgument;
 
 struct BattleEffectWork {
   u8 sheet[0x6980];
@@ -46,19 +45,6 @@ struct BattleEffectWork {
   struct BattleEffectArgument *effect;
 };
 
-struct BattleEffectArgument {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 unk000c;
-  s32 unk0010;
-  s32 count;
-  s32 variant;
-  s32 prelude;
-  s32 unk0020;
-  s16 actors[8];
-};
-
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2X) == 0x6980);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, particles) == 0x7080);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
@@ -79,7 +65,5 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, framesSinceTransfer) == 0x7820);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x7824);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, effect) == 0x7828);
 STATIC_ASSERT(sizeof(struct BattleEffectWork) == 0x782c);
-STATIC_ASSERT(offsetof(struct BattleEffectArgument, count) == 0x14);
-STATIC_ASSERT(offsetof(struct BattleEffectArgument, actors) == 0x24);
 
 #endif

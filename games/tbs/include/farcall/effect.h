@@ -4,8 +4,8 @@
 s32 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift,
                              s32 flags, u32 mode);
 void BattleFx_DispatchByIdRangeFar(struct BattleEffectArgument *effect);
-void BattleFx_InitializeModeFar(s32 *arg);
-void BattleFx_DispatchModeFar(s32 *arg);
+void BattleFx_InitializeModeFar(struct BattleEffectArgument *effect);
+void BattleFx_DispatchModeFar(struct BattleEffectArgument *effect);
 void BattleFx_RunIceFleckBurstFar(struct BattleEffectArgument *effect);
 void BattleEffect_RunTileAndPaletteAnimationFar(
     struct BattleEffectArgument *effect);

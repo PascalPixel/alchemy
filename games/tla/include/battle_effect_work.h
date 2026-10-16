@@ -6,10 +6,9 @@
 // reference point, 64 object slots and one more word before the effect.
 
 #include "effect_step.h"
+#include "battle_effect_argument.h"
 #include "static_assert.h"
 #include "types.h"
-
-struct BattleEffectArgument;
 
 struct BattleEffectWork {
   struct EffectStep particles[64];
@@ -53,19 +52,6 @@ struct BattleEffectWork {
   struct BattleEffectArgument *effect;
 };
 
-struct BattleEffectArgument {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 unk000c;
-  s32 unk0010;
-  s32 count;
-  s32 variant;
-  s32 prelude;
-  s32 unk0020;
-  s16 actors[8];
-};
-
 STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 0x700);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2X) == 0x7080);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
@@ -78,7 +64,5 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, objects) == 0x77dc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x78dc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x78e8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, effect) == 0x78f0);
-STATIC_ASSERT(offsetof(struct BattleEffectArgument, count) == 0x14);
-STATIC_ASSERT(offsetof(struct BattleEffectArgument, actors) == 0x24);
 
 #endif

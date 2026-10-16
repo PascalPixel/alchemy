@@ -8620,11 +8620,8 @@ void BattleFx_RunNoEffectFrames(s32 count) {
 
 // Runs one of the large battle effects, the ones whose presentation flags
 // have bit 15 set: takes the effect's sheet, work and canvas, runs the
-// effect chosen by its kind (arg[0]) to the end, and frees them again.
-// arg : the struct BattleEffectArgument.
-void BattleFx_InitializeMode(s32 *arg) {
-  struct BattleEffectArgument *effect = (struct BattleEffectArgument *)arg;
-
+// effect chosen by its kind to the end, and frees them again.
+void BattleFx_InitializeMode(struct BattleEffectArgument *effect) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
                             sizeof(struct BattleEffectWork));
@@ -8679,13 +8676,10 @@ void BattleFx_InitializeMode(s32 *arg) {
 }
 
 // Runs an ordinary battle effect: takes the effect's sheet, work and
-// canvas, runs the entry of gBattleFx_ModeHandlers for its kind (arg[0]),
+// canvas, runs the entry of gBattleFx_ModeHandlers for its kind,
 // and frees them again. Kind 0 is no effect and only clears the variant
-// (arg[6]).
-// arg : the struct BattleEffectArgument.
-void BattleFx_DispatchMode(s32 *arg) {
-  struct BattleEffectArgument *effect = (struct BattleEffectArgument *)arg;
-
+// in the shared command.
+void BattleFx_DispatchMode(struct BattleEffectArgument *effect) {
   s32 kind;
   struct BattleEffectWork *work;
 
@@ -17759,8 +17753,8 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   if (effect->kind <= 199)
     big = 0;
   work->effect = effect;
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   BattleFx_SetupCanvasTileMap();
   REG_BG1CNT = 0x1f80;
@@ -17783,11 +17777,11 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   draw[0] = slots[HEAP_SLOT_BLITTER];
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
   BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->unk000c, 130);
+                                              work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
   BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->unk000c, 130);
+                                              work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, Ram_MapCellBuffer,
                              1, 1);
@@ -17796,11 +17790,11 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
   BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->unk000c, 130);
+                                              work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->unk000c, 130);
+                                              work->effect->firstTarget, 130);
   WaitFrames(1);
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
@@ -17839,8 +17833,8 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
     AudioCommand_PlayFar(212);
     for (frame = 0; frame != 32; frame++) {
-      BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                                  work->effect->unk000c, 130);
+      BattlePres_SetupTransitionAtPairMidpointFar(
+          work->effect->actor, work->effect->firstTarget, 130);
       for (i = 0; i != 64; i++) {
         struct EffectStep *mote = &work->particles[i];
 

@@ -3559,18 +3559,18 @@ s32 BattlePresentation_RunPairedUnitTransition(
   visibleUnits[livingCount] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForList(visibleUnits, 0);
 
-  context.kind = action->parameter;
-  context.actor = actorId;
+  context.effect.kind = action->parameter;
+  context.effect.actor = actorId;
   for (index = 0; index != livingCount; index++) {
-    context.actors[index] = visibleUnits[index];
+    context.effect.actors[index] = visibleUnits[index];
   }
-  context.count = livingCount;
+  context.effect.count = livingCount;
   if (targetId >= 0 && targetId <= 7) {
-    context.side = 1;
+    context.effect.side = 1;
   } else {
-    context.side = 0;
+    context.effect.side = 0;
   }
-  BattleFx_InitializeModeFar((s32 *)&context);
+  BattleFx_InitializeModeFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -3605,34 +3605,35 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
     WaitFrames(30);
   }
 
-  work.actor = input->unitId;
-  if (BattleObject_IsValidId(work.actor) < 0)
+  work.effect.actor = input->unitId;
+  if (BattleObject_IsValidId(work.effect.actor) < 0)
     return -1;
 
-  work.actors[0] = input->target;
-  if (BattleObject_IsValidId(work.actors[0]) < 0)
+  work.effect.actors[0] = input->target;
+  if (BattleObject_IsValidId(work.effect.actors[0]) < 0)
     return -1;
 
-  UnitGetFar(work.actor);
-  UnitGetFar(work.actors[0]);
+  UnitGetFar(work.effect.actor);
+  UnitGetFar(work.effect.actors[0]);
   Random16();
-  UiWork_PushValueSlotFar(work.actor, VALUE_UNIT_NAME);
+  UiWork_PushValueSlotFar(work.effect.actor, VALUE_UNIT_NAME);
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
-  BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
-  ObjectDispatch_ApplyValueToChildrenFar(BattleObjGet(work.actor)->object, 16);
-  BattleObjGet(work.actors[0]);
+  BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], 13, 0);
+  ObjectDispatch_ApplyValueToChildrenFar(
+      BattleObjGet(work.effect.actor)->object, 16);
+  BattleObjGet(work.effect.actors[0]);
 
-  work.count = 1;
-  if ((u16)work.actors[0] <= 7)
-    work.side = 1;
+  work.effect.count = 1;
+  if ((u16)work.effect.actors[0] <= 7)
+    work.effect.side = 1;
   else
-    work.side = 0;
-  work.flags = 0;
+    work.effect.side = 0;
+  work.effect.prelude = 0;
 
   WaitFrames(4);
-  BattleFx_DispatchByIdRangeFar(&work);
-  ObjMotRst(work.actors[0]);
-  ObjMotRst(work.actor);
+  BattleFx_DispatchByIdRangeFar(&work.effect);
+  ObjMotRst(work.effect.actors[0]);
+  ObjMotRst(work.effect.actor);
   return 0;
 }
 
@@ -3659,38 +3660,40 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
     transition->frames = 40;
     WaitFrames(40);
   }
-  work.kind = action->parameter;
-  work.initialValue = action->range;
-  work.actor = action->unitId;
-  work.firstTarget = action->target;
-  if (BattleObject_IsValidId(work.actor) < 0)
+  work.effect.kind = action->parameter;
+  work.effect.range = action->range;
+  work.effect.actor = action->unitId;
+  work.effect.firstTarget = action->target;
+  if (BattleObject_IsValidId(work.effect.actor) < 0)
     return -1;
-  if (work.firstTarget > FIRST_ENEMY_UNIT - 1)
-    work.count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.actors);
+  if (work.effect.firstTarget > FIRST_ENEMY_UNIT - 1)
+    work.effect.count =
+        BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.effect.actors);
   else
-    work.count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.actors);
+    work.effect.count =
+        BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
-  object = BattleObjGet(work.actor)->object;
+  object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
   ObjectDispatch_ApplyValueToChildrenFar(object, 16);
   if ((u16)action->target <= 7) {
-    work.side = 1;
-    BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.actors);
-    work.count = 1;
+    work.effect.side = 1;
+    BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
+    work.effect.count = 1;
   } else {
-    work.side = 0;
-    BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.actors);
-    work.count = 1;
+    work.effect.side = 0;
+    BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.effect.actors);
+    work.effect.count = 1;
   }
 
   // Keep each target's sprite entries' parameters for the effect.
-  for (targetIndex = 0; targetIndex != work.count; targetIndex++) {
+  for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++) {
     struct AnimationObject *animation =
-        BattleObjGet(work.actors[targetIndex])->object->records;
+        BattleObjGet(work.effect.actors[targetIndex])->object->records;
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
-      work.params[targetIndex][entryIndex] =
+      work.savedAnimationParameters[targetIndex][entryIndex] =
           animation->entries[entryIndex]->param;
   }
   /* FAKEMATCH: needed to match: the one-pass stages force fresh work pointers
@@ -3698,22 +3701,22 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
    * plain statements the allocation changes from the side choice on: differ
    * 103, also with the variant stored before the kind. */
   do {
-    work.kind = 0;
-    work.variant = 0;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 1;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 2;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 3;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 0;
-    BattleFx_DispatchModeFar(&work);
+    work.effect.kind = 0;
+    work.effect.variant = 0;
+    BattleFx_RunIceFleckBurstFar(&work.effect);
+    work.effect.kind = 1;
+    BattleFx_RunIceFleckBurstFar(&work.effect);
+    work.effect.kind = 2;
+    BattleFx_RunIceFleckBurstFar(&work.effect);
+    work.effect.kind = 3;
+    BattleFx_RunIceFleckBurstFar(&work.effect);
+    work.effect.kind = 0;
+    BattleFx_DispatchModeFar(&work.effect);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   } while (0);
-  for (targetIndex = 0; targetIndex != work.count; targetIndex++)
-    ObjMotRst(work.actors[targetIndex]);
-  ObjMotRst(work.actor);
+  for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
+    ObjMotRst(work.effect.actors[targetIndex]);
+  ObjMotRst(work.effect.actor);
   return 0;
 }
 
@@ -4645,11 +4648,13 @@ finish:
 // The sound as a caster raises its hand.
 #define SOUND_CAST 0x9a
 
-// Fills an effect's presentation work from a plan: its kind and strength,
+// Fills an effect command from a plan: its kind and strength,
 // the actor and the targets still standing (or every target, for an effect
 // that revives), at least the first.
 s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
-                               struct BattlePresentationWork *work) {
+                               struct BattleEffectArgument *effect) {
+  // Callers ignore the result. As void, native English changes its return
+  // pop/bx from r1 to r0; keep the existing unused integer return type.
   s16 *outputTarget;
   u32 flags;
   s32 livingTargets;
@@ -4657,15 +4662,15 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
   u8 *inputTarget;
 
   livingTargets = 0;
-  work->flags = 0;
+  effect->prelude = 0;
   flags = plan->presentationFlags;
-  work->kind = flags & STAGING_KIND_MASK;
-  work->variant = (flags & STAGING_VARIANT_MASK) >> STAGING_VARIANT_SHIFT;
-  work->actor = plan->actorId;
+  effect->kind = flags & STAGING_KIND_MASK;
+  effect->variant = (flags & STAGING_VARIANT_MASK) >> STAGING_VARIANT_SHIFT;
+  effect->actor = plan->actorId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
     inputTarget = plan->targetIds;
-    outputTarget = work->actors;
+    outputTarget = effect->actors;
     do {
       if (UnitGetFar(*inputTarget)->hp != 0 ||
           (plan->presentationFlags & STAGING_ON_DOWNED)) {
@@ -4677,12 +4682,12 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
     } while (targetIndex < plan->targetCount);
   }
   if (livingTargets == 0) {
-    work->actors[0] = plan->targetIds[0];
+    effect->actors[0] = plan->targetIds[0];
     livingTargets = 1;
   }
-  work->firstTarget = plan->targetIds[0];
-  work->count = livingTargets;
-  work->initialValue = 1;
+  effect->firstTarget = plan->targetIds[0];
+  effect->count = livingTargets;
+  effect->range = 1;
 }
 
 // Plays a unit's attempt to run. The party gets away unless the enemies
@@ -4777,7 +4782,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   void **slots = (void **)&gBattleWork;
 #endif
 
-  BattlePres_BuildTargetList(plan, &work);
+  BattlePres_BuildTargetList(plan, &work.effect);
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->presentationFlags & STAGING_SCENE) {
@@ -4823,7 +4828,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     }
   }
   AudioCommand_PlayFar(SOUND_CAST);
-  BattleFx_PlayUnitElementEffect(work.actor, plan->element, 0, 0);
+  BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 0, 0);
   if (mode & 1)
     BattlePres_SetActorRecordMode(actor, 1);
   for (i = 0; i != 16; i++) {
@@ -4855,34 +4860,36 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     for (n = 0; n < plan->targetCount; n++)
       units[n] = plan->targetIds[n];
     units[n] = BATTLE_UNIT_LIST_END;
-    for (i = 0; i != work.count; i++) {
+    for (i = 0; i != work.effect.count; i++) {
       struct AnimationObject *animation;
       u32 child;
 
-      animation = GetMotionRecord(BattleObjGet(work.actors[i])->object, 0);
+      animation =
+          GetMotionRecord(BattleObjGet(work.effect.actors[i])->object, 0);
       for (child = 0; child != animation->count - 1; child++)
-        work.params[i][child] = animation->entries[child]->param;
+        work.savedAnimationParameters[i][child] =
+            animation->entries[child]->param;
     }
     if (plan->presentationFlags & STAGING_SCENE) {
       if (target > 7)
-        work.side = 0;
+        work.effect.side = 0;
       else
-        work.side = 1;
+        work.effect.side = 1;
     } else {
       if (plan->targetIds[0] <= 7)
-        work.side = 1;
+        work.effect.side = 1;
       else
-        work.side = 0;
+        work.effect.side = 0;
     }
     if (plan->presentationFlags & STAGING_OTHER_SIDE)
-      work.side ^= 1;
+      work.effect.side ^= 1;
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (plan->presentationFlags & STAGING_SCENE)
-      BattleFx_InitializeModeFar((s32 *)&work);
+      BattleFx_InitializeModeFar(&work.effect);
     else if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-      BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
+      BattleFx_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_DispatchModeFar((s32 *)&work);
+      BattleFx_DispatchModeFar(&work.effect);
     BattleEventRuntime_WaitForReady();
   }
   BattleObjPut();
@@ -4979,29 +4986,29 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
   }
 
   BattlePres_SetActorModes(0, 0);
-  BattlePres_BuildTargetList(plan, &work);
-  if (work.kind == 0x87)
+  BattlePres_BuildTargetList(plan, &work.effect);
+  if (work.effect.kind == 0x87)
     PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
 
-  unit = UnitGetFar(work.actor);
-  UnitGetFar(work.actors[0]);
+  unit = UnitGetFar(work.effect.actor);
+  UnitGetFar(work.effect.actors[0]);
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
 
   animation = GetMotionRecord(BattleObjGet(plan->actorId)->object, 0);
   frames = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
                                                  2, 1);
-  BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
+  BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], frames,
                               Battle_GetSpriteFlagHighBits(unit->classId)
                                   << 16);
   ObjectDispatch_ApplyValueToChildrenFar(
-      (struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
-  BattleObjGet(work.actors[0]);
+      (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
+  BattleObjGet(work.effect.actors[0]);
 
-  if ((u16)work.actors[0] <= 7)
-    work.side = 1;
+  if ((u16)work.effect.actors[0] <= 7)
+    work.effect.side = 1;
   else
-    work.side = 0;
+    work.effect.side = 0;
 
   REG_WIN0H = 0x00f0;
   REG_WIN0V = 0x1088;
@@ -5013,26 +5020,26 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
 
   if (missed != 0) {
     WaitFrames(10);
-    BattleMotion_ResetObjectAtScaledAnchor(work.actors[0]);
+    BattleMotion_ResetObjectAtScaledAnchor(work.effect.actors[0]);
     WaitFrames(2);
     WaitFrames(4);
     WaitFrames(10);
     BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->targetIds[0]);
     BattleEvPush(BATTLE_EVENT_MESSAGE, MsgNimblyDodgesBlow);
     BattleEv_DispatchQueued();
-    ObjMotRst(work.actors[0]);
+    ObjMotRst(work.effect.actors[0]);
   } else {
     zoomOnCritical = 0;
-    work.flags = 0;
+    work.effect.prelude = 0;
     if (plan->presentationFlags != 0)
-      work.flags = 1;
+      work.effect.prelude = 1;
 
     if (critical != 0) {
-      work.kind += 200;
+      work.effect.kind += 200;
       zoomOnCritical = 1;
       transition->flag = 1;
-      criticalPair[0] = work.actor;
-      criticalPair[1] = work.firstTarget;
+      criticalPair[0] = work.effect.actor;
+      criticalPair[1] = work.effect.firstTarget;
       criticalPair[2] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForList(criticalPair, 0);
     }
@@ -5046,8 +5053,8 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
 
       for (index = 0; index != frames; index++) {
         if (zoomOnCritical != 0) {
-          first = work.actor;
-          second = work.firstTarget;
+          first = work.effect.actor;
+          second = work.effect.firstTarget;
           BattlePres_SetupTransitionAtPairMidpoint(first, second,
                                                    index * 30 / frames + 100);
         }
@@ -5056,11 +5063,11 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
     }
 
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
-    if (work.kind != 0) {
+    if (work.effect.kind != 0) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-        BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
+        BattleFx_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_DispatchModeFar((s32 *)&work);
+        BattleFx_DispatchModeFar(&work.effect);
     }
     BattleEventRuntime_WaitForReady();
     if (critical != 0) {
@@ -5068,9 +5075,9 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
       BattleParty_ListAllUnitsAndSubmit();
       BattlePres_SetupTransitionScene(0, 0, 0, 100);
     }
-    ObjMotRst(work.actors[0]);
+    ObjMotRst(work.effect.actors[0]);
   }
-  ObjMotRst(work.actor);
+  ObjMotRst(work.effect.actor);
   return 0;
 }
 
@@ -5112,23 +5119,24 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
   }
 
   BattlePres_SetActorModes(0, 0);
-  BattlePres_BuildTargetList(savedInput, &work);
-  UnitGetFar(work.actor);
+  BattlePres_BuildTargetList(savedInput, &work.effect);
+  UnitGetFar(work.effect.actor);
   UnitGetFar(savedInput->targetIds[0]);
 
   missed = flags & 2;
   animation = GetMotionRecord(BattleObjGet(savedInput->actorId)->object, 0);
   frames = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
                                                  2, 1);
-  BattleMotion_ApproachTarget(work.actor, savedInput->targetIds[0], frames, 0);
+  BattleMotion_ApproachTarget(work.effect.actor, savedInput->targetIds[0],
+                              frames, 0);
   ObjectDispatch_ApplyValueToChildrenFar(
-      (struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
+      (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(savedInput->targetIds[0]);
 
   if (savedInput->targetIds[0] <= 7)
-    work.side = 1;
+    work.effect.side = 1;
   else
-    work.side = 0;
+    work.effect.side = 0;
   if (missed != 0) {
     WaitFrames(10);
     BattleMotion_ResetObjectAtScaledAnchor(savedInput->targetIds[0]);
@@ -5137,11 +5145,11 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
     WaitFrames(10);
     ObjMotRst(savedInput->targetIds[0]);
   } else {
-    BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
+    BattleFx_DispatchByIdRangeFar(&work.effect);
     BattleEv_DispatchQueued();
     ObjMotRst(savedInput->targetIds[0]);
   }
-  ObjMotRst(work.actor);
+  ObjMotRst(work.effect.actor);
   return 0;
 }
 
@@ -5179,29 +5187,29 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     targetYaw = YAW_PARTY_TURN;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
-  BattlePres_BuildTargetList(plan, &work);
+  BattlePres_BuildTargetList(plan, &work.effect);
   BattlePres_SetActorModes(0, 0);
-  object = BattleObjGet(work.actor)->object;
+  object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
   ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
   if (plan->targetIds[0] <= 7)
-    work.side = 1;
+    work.effect.side = 1;
   else
-    work.side = 0;
+    work.effect.side = 0;
 
-  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
+  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++) {
     struct AnimationObject *animation = GetMotionRecord(
-        BattleObjGet(work.actors[targetOrFadeIndex])->object, 0);
+        BattleObjGet(work.effect.actors[targetOrFadeIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
-      work.params[targetOrFadeIndex][entryIndex] =
+      work.savedAnimationParameters[targetOrFadeIndex][entryIndex] =
           animation->entries[entryIndex]->param;
   }
 
   Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
-  if (work.kind != 0) {
+  if (work.effect.kind != 0) {
     s32 fade;
 
     targetOrFadeIndex = 0;
@@ -5222,17 +5230,17 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
     if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-      BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
+      BattleFx_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_DispatchModeFar((s32 *)&work);
+      BattleFx_DispatchModeFar(&work.effect);
   } else {
     WaitFrames(60);
   }
   BattleEventRuntime_WaitForReady();
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
-  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
+  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++)
-    ObjMotRst(work.actors[targetOrFadeIndex]);
+    ObjMotRst(work.effect.actors[targetOrFadeIndex]);
 
   unit = UnitGetFar(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
@@ -5347,32 +5355,32 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     transition->frames = 60;
   }
 
-  BattlePres_BuildTargetList(plan, &work);
+  BattlePres_BuildTargetList(plan, &work.effect);
   isDjinni = mode & 1;
   if (isDjinni)
-    work.flags = 1;
+    work.effect.prelude = 1;
   BattlePres_SetActorModes(0, 0);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
-  object = BattleObjGet(work.actor)->object;
+  object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
   ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
   AudioCommand_PlayFar(SOUND_CAST);
   if (mode & 2)
-    BattleFx_PlayUnitElementEffect(work.actor, plan->element, 1, 0);
+    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 1, 0);
   else if (!isDjinni)
-    BattleFx_PlayUnitElementEffect(work.actor, plan->element, 0, 0);
+    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 0, 0);
   if (plan->targetIds[0] <= 7)
-    work.side = 1;
+    work.effect.side = 1;
   else
-    work.side = 0;
+    work.effect.side = 0;
 
-  for (targetIndex = 0; targetIndex != work.count; targetIndex++) {
-    struct AnimationObject *animation =
-        GetMotionRecord(BattleObjGet(work.actors[targetIndex])->object, 0);
+  for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++) {
+    struct AnimationObject *animation = GetMotionRecord(
+        BattleObjGet(work.effect.actors[targetIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
-      work.params[targetIndex][entryIndex] =
+      work.savedAnimationParameters[targetIndex][entryIndex] =
           animation->entries[entryIndex]->param;
   }
   if (plan->failure != 0) {
@@ -5386,18 +5394,18 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     BattlePres_RunWithZeroArguments();
   } else {
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
-    if (work.kind) {
+    if (work.effect.kind) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
-        BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
+        BattleFx_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_DispatchModeFar((s32 *)&work);
+        BattleFx_DispatchModeFar(&work.effect);
     } else {
       BattlePres_RunWithZeroArguments();
     }
     BattleEventRuntime_WaitForReady();
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
-    for (targetIndex = 0; targetIndex != work.count; targetIndex++)
-      ObjMotRst(work.actors[targetIndex]);
+    for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
+      ObjMotRst(work.effect.actors[targetIndex]);
   }
   return 0;
 }
@@ -9860,10 +9868,11 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       s32 start = 0;
 
       battle->background = (u32)&ResourceId_VenusAerieStormBackdrop;
-      presentation.count = BattleParty_ListActorIds(2, presentation.actors);
-      presentation.actors[presentation.count] = 0xff;
-      BattleActor_SpawnObjectsForList(presentation.actors, 0);
-      BattleEffect_RunTileAndPaletteAnimationFar(&presentation);
+      presentation.effect.count =
+          BattleParty_ListActorIds(2, presentation.effect.actors);
+      presentation.effect.actors[presentation.effect.count] = 0xff;
+      BattleActor_SpawnObjectsForList(presentation.effect.actors, 0);
+      BattleEffect_RunTileAndPaletteAnimationFar(&presentation.effect);
       BattlePres_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }
@@ -10811,25 +10820,25 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     }
     BattleFx_ScheduleCallbacksAndReleaseBlocksFar();
   } else if (mode == 2) {
-    launch.flags = 0;
-    launch.kind = element;
-    launch.variant = variant;
-    launch.actor = unitId;
-    launch.actors[0] = unitId;
-    launch.firstTarget = unitId;
-    launch.count = 1;
-    launch.initialValue = 1;
-    BattleFx_RunIceFleckBurstFar((struct BattleEffectArgument *)&launch);
+    launch.effect.prelude = 0;
+    launch.effect.kind = element;
+    launch.effect.variant = variant;
+    launch.effect.actor = unitId;
+    launch.effect.actors[0] = unitId;
+    launch.effect.firstTarget = unitId;
+    launch.effect.count = 1;
+    launch.effect.range = 1;
+    BattleFx_RunIceFleckBurstFar(&launch.effect);
   } else {
-    launch2.kind = element;
-    launch2.flags = 0;
-    launch2.variant = 0;
-    launch2.actor = unitId;
-    launch2.actors[0] = unitId;
-    launch2.firstTarget = unitId;
-    launch2.count = 1;
-    launch2.initialValue = 1;
-    BattleFx_RunGatheringBurstFar(&launch2);
+    launch2.effect.kind = element;
+    launch2.effect.prelude = 0;
+    launch2.effect.variant = 0;
+    launch2.effect.actor = unitId;
+    launch2.effect.actors[0] = unitId;
+    launch2.effect.firstTarget = unitId;
+    launch2.effect.count = 1;
+    launch2.effect.range = 1;
+    BattleFx_RunGatheringBurstFar(&launch2.effect);
   }
 }
 

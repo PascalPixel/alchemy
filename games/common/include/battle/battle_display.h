@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_DISPLAY_H
 
 #include "battle_session.h"
+#include "battle_effect_argument.h"
 
 #include "types.h"
 #include "static_assert.h"
@@ -40,24 +41,16 @@ struct BattlePresentationTransition {
   s32 unk1c;
 };
 
+// The effect updates its command while the presentation keeps animation state.
 struct BattlePresentationWork {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 firstTarget;
-  s32 initialValue;
-  s32 count;
-  s32 variant;
-  s32 flags;
-  u8 unk20[4];
-  s16 actors[8];
-  u8 params[8][4];
+  struct BattleEffectArgument effect;
+  u8 savedAnimationParameters[8][4];
 };
 
 STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
 STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
 STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x54);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
+STATIC_ASSERT(offsetof(struct BattlePresentationWork, effect.actors) == 0x24);
 
 struct BattleBackgroundView {
   u8 unk00[8];

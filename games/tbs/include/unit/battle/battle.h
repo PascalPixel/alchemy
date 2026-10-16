@@ -5,7 +5,7 @@
 
 struct BattleActionRecord;
 struct BattleEventState;
-struct BattlePresentationWork;
+struct BattleEffectArgument;
 struct BattleSummonState;
 struct BattleTransitionEntry;
 struct BattleAct;
@@ -152,7 +152,7 @@ void Battle_ReservedNoOp9B2C(void);
 s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
                                       s32 delay);
 s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
-                               struct BattlePresentationWork *work);
+                               struct BattleEffectArgument *effect);
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);

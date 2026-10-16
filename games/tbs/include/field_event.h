@@ -13,7 +13,8 @@
 // The games' compiler takes the store as written; a current GCC refuses it,
 // so the modern build names the place without its const.
 #ifdef MODERN
-#define STORE_CONST(place) (*(__typeof_unqual__(place) *)&(place))
+// The comma expression removes qualifiers without promoting narrow integers.
+#define STORE_CONST(place) (*(__typeof__(((void)0, (place))) *)&(place))
 #else
 #define STORE_CONST(place) (place)
 #endif

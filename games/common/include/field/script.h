@@ -3,6 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
+#include "layout_guard.h"
 
 struct ScriptInterpreter;
 
@@ -66,25 +67,17 @@ struct ScriptOperands {
   u32 word6c;
 };
 
-#define SCRIPT_OPERANDS_OFFSET(field)                                          \
-  ((u32)&(((struct ScriptOperands *)0)->field))
-
-typedef char ScriptOperands_comparison_result_offset
-    [SCRIPT_OPERANDS_OFFSET(comparisonResult) == 0x57 ? 1 : -1];
-typedef char ScriptOperands_halfword_5e_offset
-    [SCRIPT_OPERANDS_OFFSET(halfword5e) == 0x5e ? 1 : -1];
-typedef char ScriptOperands_signed_halfword_64_offset
-    [SCRIPT_OPERANDS_OFFSET(signedHalfword64) == 0x64 ? 1 : -1];
-typedef char
-    ScriptOperands_word_68_offset[SCRIPT_OPERANDS_OFFSET(word68) == 0x68 ? 1
-                                                                         : -1];
-typedef char
-    ScriptOperands_word_6c_offset[SCRIPT_OPERANDS_OFFSET(word6c) == 0x6c ? 1
-                                                                         : -1];
-typedef char
-    ScriptOperands_size[sizeof(struct ScriptOperands) == 0x70 ? 1 : -1];
-
-#undef SCRIPT_OPERANDS_OFFSET
+LAYOUT_OFFSET_GUARD(ScriptOperands_comparison_result_offset,
+                    struct ScriptOperands, comparisonResult, 0x57);
+LAYOUT_OFFSET_GUARD(ScriptOperands_halfword_5e_offset, struct ScriptOperands,
+                    halfword5e, 0x5e);
+LAYOUT_OFFSET_GUARD(ScriptOperands_signed_halfword_64_offset,
+                    struct ScriptOperands, signedHalfword64, 0x64);
+LAYOUT_OFFSET_GUARD(ScriptOperands_word_68_offset, struct ScriptOperands,
+                    word68, 0x68);
+LAYOUT_OFFSET_GUARD(ScriptOperands_word_6c_offset, struct ScriptOperands,
+                    word6c, 0x6c);
+LAYOUT_SIZE_GUARD(ScriptOperands_size, struct ScriptOperands, 0x70);
 
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) ||                      \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \

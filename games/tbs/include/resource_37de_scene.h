@@ -2,6 +2,7 @@
 #define ALCHEMY_RESOURCE_37DE_SCENE_H
 
 #include "effect_runtime.h"
+#include "layout_guard.h"
 
 struct Resource37deSceneRuntime {
   u8 padding000[0x1c0];
@@ -10,13 +11,10 @@ struct Resource37deSceneRuntime {
   s32 sceneSetupWord1c8;
 };
 
-#define RESOURCE37DE_SCENE_OFFSET(field)                                       \
-  ((u32)&(((struct Resource37deSceneRuntime *)0)->field))
-typedef char Resource37deSceneRuntime_scene_request_offset
-    [RESOURCE37DE_SCENE_OFFSET(sceneRequest1c0) == 0x1c0 ? 1 : -1];
-typedef char Resource37deSceneRuntime_scene_setup_word_offset
-    [RESOURCE37DE_SCENE_OFFSET(sceneSetupWord1c8) == 0x1c8 ? 1 : -1];
-#undef RESOURCE37DE_SCENE_OFFSET
+LAYOUT_OFFSET_GUARD(Resource37deSceneRuntime_scene_request_offset,
+                    struct Resource37deSceneRuntime, sceneRequest1c0, 0x1c0);
+LAYOUT_OFFSET_GUARD(Resource37deSceneRuntime_scene_setup_word_offset,
+                    struct Resource37deSceneRuntime, sceneSetupWord1c8, 0x1c8);
 
 void QueueSceneSound(s32);
 void InitializeSceneRecordBuffer(void);

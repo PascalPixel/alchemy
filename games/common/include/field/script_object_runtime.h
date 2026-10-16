@@ -2,6 +2,7 @@
 #define ALCHEMY_SCRIPT_OBJECT_RUNTIME_H
 
 #include "types.h"
+#include "layout_guard.h"
 
 struct ScriptObjectRuntime {
   const s32 *script;
@@ -39,20 +40,12 @@ struct ScriptObjectRuntime {
   u8 unk6c[0x04];
 };
 
-#define SCRIPT_OBJECT_RUNTIME_OFFSET(field)                                    \
-  ((u32)&(((struct ScriptObjectRuntime *)0)->field))
-
-typedef char ScriptObjectRuntime_size[sizeof(struct ScriptObjectRuntime) == 0x70
-                                          ? 1
-                                          : -1];
-typedef char
-    ScriptObjectRuntime_x_offset[SCRIPT_OBJECT_RUNTIME_OFFSET(x) == 0x08 ? 1
-                                                                         : -1];
-typedef char ScriptObjectRuntime_speed_limit_offset
-    [SCRIPT_OBJECT_RUNTIME_OFFSET(speedLimit) == 0x30 ? 1 : -1];
-typedef char ScriptObjectRuntime_linked_object_offset
-    [SCRIPT_OBJECT_RUNTIME_OFFSET(linkedObject) == 0x68 ? 1 : -1];
-
-#undef SCRIPT_OBJECT_RUNTIME_OFFSET
+LAYOUT_SIZE_GUARD(ScriptObjectRuntime_size, struct ScriptObjectRuntime, 0x70);
+LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_x_offset, struct ScriptObjectRuntime, x,
+                    0x08);
+LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_speed_limit_offset,
+                    struct ScriptObjectRuntime, speedLimit, 0x30);
+LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_linked_object_offset,
+                    struct ScriptObjectRuntime, linkedObject, 0x68);
 
 #endif

@@ -2,6 +2,7 @@
 #define ALCHEMY_OVERLAY_OBJECT_H
 
 #include "types.h"
+#include "layout_guard.h"
 
 struct OverlayObjectRecord {
   u8 unk00[9];
@@ -33,33 +34,25 @@ struct OverlayObject {
   struct OverlayObject *linkedObject;
 };
 
-#define OVERLAY_OBJECT_OFFSET(field)                                           \
-  ((u32)&(((struct OverlayObject *)0)->field))
-typedef char OverlayObjectRecord_flags_offset
-    [((u32)&(((struct OverlayObjectRecord *)0)->flags)) == 0x09 ? 1 : -1];
-typedef char
-    OvObj_record_offset[OVERLAY_OBJECT_OFFSET(record) == 0x50 ? 1 : -1];
-typedef char OvObj_angle_offset[OVERLAY_OBJECT_OFFSET(angle) == 0x06 ? 1 : -1];
-typedef char OvObj_coordinate_08_offset
-    [OVERLAY_OBJECT_OFFSET(coordinate08) == 0x08 ? 1 : -1];
-typedef char OvObj_coordinate_10_offset
-    [OVERLAY_OBJECT_OFFSET(coordinate10) == 0x10 ? 1 : -1];
-typedef char
-    OvObj_field_30_offset[OVERLAY_OBJECT_OFFSET(field30) == 0x30 ? 1 : -1];
-typedef char OvObj_coordinate_38_offset
-    [OVERLAY_OBJECT_OFFSET(coordinate38) == 0x38 ? 1 : -1];
-typedef char OvObj_coordinate_40_offset
-    [OVERLAY_OBJECT_OFFSET(coordinate40) == 0x40 ? 1 : -1];
-typedef char
-    OvObj_unknown_55_offset[OVERLAY_OBJECT_OFFSET(unk55) == 0x55 ? 1 : -1];
-typedef char
-    OvObj_unknown_59_offset[OVERLAY_OBJECT_OFFSET(unk59) == 0x59 ? 1 : -1];
-typedef char OvObj_steering_flags_offset
-    [OVERLAY_OBJECT_OFFSET(steeringFlags) == 0x5a ? 1 : -1];
-typedef char
-    OvObj_angle_64_offset[OVERLAY_OBJECT_OFFSET(angle64) == 0x64 ? 1 : -1];
-typedef char OvObj_linked_object_offset
-    [OVERLAY_OBJECT_OFFSET(linkedObject) == 0x68 ? 1 : -1];
-#undef OVERLAY_OBJECT_OFFSET
+LAYOUT_OFFSET_GUARD(OverlayObjectRecord_flags_offset,
+                    struct OverlayObjectRecord, flags, 0x09);
+LAYOUT_OFFSET_GUARD(OvObj_record_offset, struct OverlayObject, record, 0x50);
+LAYOUT_OFFSET_GUARD(OvObj_angle_offset, struct OverlayObject, angle, 0x06);
+LAYOUT_OFFSET_GUARD(OvObj_coordinate_08_offset, struct OverlayObject,
+                    coordinate08, 0x08);
+LAYOUT_OFFSET_GUARD(OvObj_coordinate_10_offset, struct OverlayObject,
+                    coordinate10, 0x10);
+LAYOUT_OFFSET_GUARD(OvObj_field_30_offset, struct OverlayObject, field30, 0x30);
+LAYOUT_OFFSET_GUARD(OvObj_coordinate_38_offset, struct OverlayObject,
+                    coordinate38, 0x38);
+LAYOUT_OFFSET_GUARD(OvObj_coordinate_40_offset, struct OverlayObject,
+                    coordinate40, 0x40);
+LAYOUT_OFFSET_GUARD(OvObj_unknown_55_offset, struct OverlayObject, unk55, 0x55);
+LAYOUT_OFFSET_GUARD(OvObj_unknown_59_offset, struct OverlayObject, unk59, 0x59);
+LAYOUT_OFFSET_GUARD(OvObj_steering_flags_offset, struct OverlayObject,
+                    steeringFlags, 0x5a);
+LAYOUT_OFFSET_GUARD(OvObj_angle_64_offset, struct OverlayObject, angle64, 0x64);
+LAYOUT_OFFSET_GUARD(OvObj_linked_object_offset, struct OverlayObject,
+                    linkedObject, 0x68);
 
 #endif

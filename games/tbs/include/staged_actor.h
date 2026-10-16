@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "animspr.h"
+#include "layout_guard.h"
 
 union StagedActorCoordinate {
   s32 value;
@@ -41,23 +42,20 @@ struct StagedActor {
   u32 movementCallback;
 };
 
-#define STAGED_ACTOR_OFFSET(field) ((u32)&(((struct StagedActor *)0)->field))
-typedef char StagedActor_size[sizeof(struct StagedActor) == 0x70 ? 1 : -1];
-typedef char StagedActor_x_offset[STAGED_ACTOR_OFFSET(x) == 0x08 ? 1 : -1];
-typedef char StagedActor_transition_mode_offset
-    [STAGED_ACTOR_OFFSET(transitionMode) == 0x22 ? 1 : -1];
-typedef char StagedActor_animation_offset[STAGED_ACTOR_OFFSET(animation) == 0x50
-                                              ? 1
-                                              : -1];
-typedef char StagedActor_collision_flags_offset
-    [STAGED_ACTOR_OFFSET(collisionFlags) == 0x59 ? 1 : -1];
-typedef char StagedActor_transition_busy_offset
-    [STAGED_ACTOR_OFFSET(transitionBusy) == 0x62 ? 1 : -1];
-typedef char StagedActor_vertical_motion_direction_offset
-    [STAGED_ACTOR_OFFSET(verticalMotionDirection) == 0x66 ? 1 : -1];
-typedef char StagedActor_movement_callback_offset
-    [STAGED_ACTOR_OFFSET(movementCallback) == 0x6c ? 1 : -1];
-#undef STAGED_ACTOR_OFFSET
+LAYOUT_SIZE_GUARD(StagedActor_size, struct StagedActor, 0x70);
+LAYOUT_OFFSET_GUARD(StagedActor_x_offset, struct StagedActor, x, 0x08);
+LAYOUT_OFFSET_GUARD(StagedActor_transition_mode_offset, struct StagedActor,
+                    transitionMode, 0x22);
+LAYOUT_OFFSET_GUARD(StagedActor_animation_offset, struct StagedActor, animation,
+                    0x50);
+LAYOUT_OFFSET_GUARD(StagedActor_collision_flags_offset, struct StagedActor,
+                    collisionFlags, 0x59);
+LAYOUT_OFFSET_GUARD(StagedActor_transition_busy_offset, struct StagedActor,
+                    transitionBusy, 0x62);
+LAYOUT_OFFSET_GUARD(StagedActor_vertical_motion_direction_offset,
+                    struct StagedActor, verticalMotionDirection, 0x66);
+LAYOUT_OFFSET_GUARD(StagedActor_movement_callback_offset, struct StagedActor,
+                    movementCallback, 0x6c);
 
 struct StagedActorProbe {
   s32 footprintIndex;
@@ -81,19 +79,13 @@ struct StagedActorFootprint {
   s32 z1;
 };
 
-#define STAGED_ACTOR_PROBE_OFFSET(field)                                       \
-  ((u32)&(((struct StagedActorProbe *)0)->field))
-typedef char
-    StagedActorProbe_size[sizeof(struct StagedActorProbe) == 0x18 ? 1 : -1];
-typedef char StagedActorProbe_position_x_offset
-    [STAGED_ACTOR_PROBE_OFFSET(positionX) == 0x08 ? 1 : -1];
-typedef char StagedActorProbe_position_z_offset
-    [STAGED_ACTOR_PROBE_OFFSET(positionZ) == 0x10 ? 1 : -1];
-#undef STAGED_ACTOR_PROBE_OFFSET
+LAYOUT_SIZE_GUARD(StagedActorProbe_size, struct StagedActorProbe, 0x18);
+LAYOUT_OFFSET_GUARD(StagedActorProbe_position_x_offset, struct StagedActorProbe,
+                    positionX, 0x08);
+LAYOUT_OFFSET_GUARD(StagedActorProbe_position_z_offset, struct StagedActorProbe,
+                    positionZ, 0x10);
 
-typedef char
-    StagedActorFootprint_size[sizeof(struct StagedActorFootprint) == 0x10 ? 1
-                                                                          : -1];
+LAYOUT_SIZE_GUARD(StagedActorFootprint_size, struct StagedActorFootprint, 0x10);
 
 struct StagedActorProbePoint {
   s32 x;
@@ -101,7 +93,7 @@ struct StagedActorProbePoint {
   s32 z;
 };
 
-typedef char StagedActorProbePoint_size
-    [sizeof(struct StagedActorProbePoint) == 0x0c ? 1 : -1];
+LAYOUT_SIZE_GUARD(StagedActorProbePoint_size, struct StagedActorProbePoint,
+                  0x0c);
 
 #endif

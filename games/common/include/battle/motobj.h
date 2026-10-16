@@ -2,6 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 #include "types.h"
+#include "layout_guard.h"
 #include "battle_session.h"
 #include "edition.h"
 #if !GAME_TLA
@@ -53,31 +54,25 @@ void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 #endif
 
-#define MOTION_OBJECT_OFFSET(type, field) ((u32)&(((type *)0)->field))
-
-typedef char MotionObject_size[sizeof(struct MotionObject) == 0x70 ? 1 : -1];
-typedef char MotionObject_scale_x_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, scaleX) == 0x18 ? 1 : -1];
-typedef char MotionObject_x_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, x) == 0x08 ? 1 : -1];
-typedef char MotionObject_velocity_x_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, velocityX) == 0x24 ? 1 : -1];
-typedef char MotionObject_target_x_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, targetX) == 0x38 ? 1 : -1];
-typedef char MotionObject_motion_flags_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, motionFlags) == 0x55 ? 1 : -1];
-typedef char MotionObject_records_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, records) == 0x50 ? 1 : -1];
-typedef char MotionObject_record_storage_kind_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, recordStorageKind) == 0x54 ? 1
-                                                                          : -1];
-typedef char MotionObject_update_offset
-    [MOTION_OBJECT_OFFSET(struct MotionObject, update) == 0x6c ? 1 : -1];
+LAYOUT_SIZE_GUARD(MotionObject_size, struct MotionObject, 0x70);
+LAYOUT_OFFSET_GUARD(MotionObject_scale_x_offset, struct MotionObject, scaleX,
+                    0x18);
+LAYOUT_OFFSET_GUARD(MotionObject_x_offset, struct MotionObject, x, 0x08);
+LAYOUT_OFFSET_GUARD(MotionObject_velocity_x_offset, struct MotionObject,
+                    velocityX, 0x24);
+LAYOUT_OFFSET_GUARD(MotionObject_target_x_offset, struct MotionObject, targetX,
+                    0x38);
+LAYOUT_OFFSET_GUARD(MotionObject_motion_flags_offset, struct MotionObject,
+                    motionFlags, 0x55);
+LAYOUT_OFFSET_GUARD(MotionObject_records_offset, struct MotionObject, records,
+                    0x50);
+LAYOUT_OFFSET_GUARD(MotionObject_record_storage_kind_offset,
+                    struct MotionObject, recordStorageKind, 0x54);
+LAYOUT_OFFSET_GUARD(MotionObject_update_offset, struct MotionObject, update,
+                    0x6c);
 LAYOUT_SIZE_GUARD(SpriteEntry_PrefixSize, struct SpriteEntry, 0x08);
 LAYOUT_OFFSET_GUARD(SpriteEntry_Palette, struct SpriteEntry, palette, 0x05);
 LAYOUT_OFFSET_GUARD(SpriteEntry_Priority, struct SpriteEntry, priority, 0x06);
-
-#undef MOTION_OBJECT_OFFSET
 
 #if GAME_TLA
 s32 ActivateBattleObjectSlot(s32 objectId);

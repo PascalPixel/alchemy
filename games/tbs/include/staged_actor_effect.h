@@ -2,6 +2,7 @@
 #define ALCHEMY_STAGED_ACTOR_EFFECT_H
 
 #include "types.h"
+#include "layout_guard.h"
 
 struct StagedActorEffect {
   u8 unk00[0x0c];
@@ -24,23 +25,15 @@ struct StagedActorEffectRequest {
   s16 cellZ;
 };
 
-#define STAGED_EFFECT_OFFSET(type, field) ((u32)&(((type *)0)->field))
-typedef char StagedActorEffect_position_x_offset
-    [STAGED_EFFECT_OFFSET(struct StagedActorEffect, positionX) == 0x0c ? 1
-                                                                       : -1];
-typedef char StagedActorEffect_elevation_rate_offset
-    [STAGED_EFFECT_OFFSET(struct StagedActorEffect, elevationRate) == 0x28
-         ? 1
-         : -1];
-typedef char StagedActorEffect_motion_flags_offset
-    [STAGED_EFFECT_OFFSET(struct StagedActorEffect, motionFlags) == 0x55 ? 1
-                                                                         : -1];
-typedef char StagedActorEffectRequest_cell_x_offset
-    [STAGED_EFFECT_OFFSET(struct StagedActorEffectRequest, cellX) == 0x02 ? 1
-                                                                          : -1];
-typedef char StagedActorEffectRequest_cell_z_offset
-    [STAGED_EFFECT_OFFSET(struct StagedActorEffectRequest, cellZ) == 0x0a ? 1
-                                                                          : -1];
-#undef STAGED_EFFECT_OFFSET
+LAYOUT_OFFSET_GUARD(StagedActorEffect_position_x_offset,
+                    struct StagedActorEffect, positionX, 0x0c);
+LAYOUT_OFFSET_GUARD(StagedActorEffect_elevation_rate_offset,
+                    struct StagedActorEffect, elevationRate, 0x28);
+LAYOUT_OFFSET_GUARD(StagedActorEffect_motion_flags_offset,
+                    struct StagedActorEffect, motionFlags, 0x55);
+LAYOUT_OFFSET_GUARD(StagedActorEffectRequest_cell_x_offset,
+                    struct StagedActorEffectRequest, cellX, 0x02);
+LAYOUT_OFFSET_GUARD(StagedActorEffectRequest_cell_z_offset,
+                    struct StagedActorEffectRequest, cellZ, 0x0a);
 
 #endif

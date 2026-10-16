@@ -3,6 +3,7 @@
 
 #include "unit/field/field.h"
 #include "types.h"
+#include "layout_guard.h"
 
 struct ScriptObjectEntry {
   void *data;
@@ -14,18 +15,12 @@ struct ScriptObjectEntry {
   u8 unk5a[0x16];
 };
 
-#define SCRIPT_OBJECT_ENTRY_OFFSET(field)                                      \
-  ((u32)&(((struct ScriptObjectEntry *)0)->field))
-
-typedef char ScriptObjectEntry_values_08_offset
-    [SCRIPT_OBJECT_ENTRY_OFFSET(values08) == 0x08 ? 1 : -1];
-typedef char ScriptObjectEntry_value_20_offset
-    [SCRIPT_OBJECT_ENTRY_OFFSET(value20) == 0x20 ? 1 : -1];
-typedef char ScriptObjectEntry_flags_59_offset
-    [SCRIPT_OBJECT_ENTRY_OFFSET(flags59) == 0x59 ? 1 : -1];
-typedef char
-    ScriptObjectEntry_size[sizeof(struct ScriptObjectEntry) == 0x70 ? 1 : -1];
-
-#undef SCRIPT_OBJECT_ENTRY_OFFSET
+LAYOUT_OFFSET_GUARD(ScriptObjectEntry_values_08_offset,
+                    struct ScriptObjectEntry, values08, 0x08);
+LAYOUT_OFFSET_GUARD(ScriptObjectEntry_value_20_offset, struct ScriptObjectEntry,
+                    value20, 0x20);
+LAYOUT_OFFSET_GUARD(ScriptObjectEntry_flags_59_offset, struct ScriptObjectEntry,
+                    flags59, 0x59);
+LAYOUT_SIZE_GUARD(ScriptObjectEntry_size, struct ScriptObjectEntry, 0x70);
 
 #endif

@@ -4,6 +4,7 @@
 #include "unit/field/field.h"
 #include "object_lookup.h"
 #include "types.h"
+#include "layout_guard.h"
 
 struct ObjectRuntime {
   s32 *script;
@@ -46,11 +47,10 @@ struct ObjectRuntime {
 
 extern struct ObjectRuntime gObjectSnapshots[32];
 
-typedef char ObjectRuntime_size[sizeof(struct ObjectRuntime) == 0x70 ? 1 : -1];
-
-typedef char ObjectRuntime_arrival_axis_offset
-    [(u32)&(((struct ObjectRuntime *)0)->arrivalAxis) == 0x56 ? 1 : -1];
-typedef char ObjectRuntime_snap_to_target_offset
-    [(u32)&(((struct ObjectRuntime *)0)->snapToTarget) == 0x58 ? 1 : -1];
+LAYOUT_SIZE_GUARD(ObjectRuntime_size, struct ObjectRuntime, 0x70);
+LAYOUT_OFFSET_GUARD(ObjectRuntime_arrival_axis_offset, struct ObjectRuntime,
+                    arrivalAxis, 0x56);
+LAYOUT_OFFSET_GUARD(ObjectRuntime_snap_to_target_offset, struct ObjectRuntime,
+                    snapToTarget, 0x58);
 
 #endif

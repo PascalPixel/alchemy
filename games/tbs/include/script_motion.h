@@ -2,6 +2,7 @@
 #define ALCHEMY_SCRIPT_MOTION_H
 
 #include "types.h"
+#include "layout_guard.h"
 
 struct ScriptMotionWords {
   s32 word[1];
@@ -47,21 +48,16 @@ struct ScriptMotionObject {
   void (*hook)(struct ScriptMotionObject *);
 };
 
-#define SCRIPT_MOTION_OFFSET(field)                                            \
-  ((u32)&(((struct ScriptMotionObject *)0)->field))
-typedef char
-    ScriptMotionObject_size[sizeof(struct ScriptMotionObject) == 0x70 ? 1 : -1];
-typedef char ScriptMotionObject_vertical_offset
-    [SCRIPT_MOTION_OFFSET(vertical) == 0x44 ? 1 : -1];
-typedef char ScriptMotionObject_arrival_axis_offset
-    [SCRIPT_MOTION_OFFSET(arrivalAxis) == 0x56 ? 1 : -1];
-typedef char
-    ScriptMotionObject_wait_offset[SCRIPT_MOTION_OFFSET(wait) == 0x5e ? 1 : -1];
-typedef char
-    ScriptMotionObject_frozen_offset[SCRIPT_MOTION_OFFSET(frozen) == 0x61 ? 1
-                                                                          : -1];
-typedef char
-    ScriptMotionObject_hook_offset[SCRIPT_MOTION_OFFSET(hook) == 0x6c ? 1 : -1];
-#undef SCRIPT_MOTION_OFFSET
+LAYOUT_SIZE_GUARD(ScriptMotionObject_size, struct ScriptMotionObject, 0x70);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_vertical_offset,
+                    struct ScriptMotionObject, vertical, 0x44);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_arrival_axis_offset,
+                    struct ScriptMotionObject, arrivalAxis, 0x56);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_wait_offset, struct ScriptMotionObject,
+                    wait, 0x5e);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_frozen_offset, struct ScriptMotionObject,
+                    frozen, 0x61);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_hook_offset, struct ScriptMotionObject,
+                    hook, 0x6c);
 
 #endif

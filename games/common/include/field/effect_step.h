@@ -3,6 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
+#include "layout_guard.h"
 
 struct EffectStep {
   s32 x;
@@ -29,26 +30,18 @@ void EffectPosition_ApplyStepAndYOffset(s32 id,
                                         struct EffectPosition *position);
 #endif
 
-#define EFFECT_STEP_OFFSET(field) ((u32)&(((struct EffectStep *)0)->field))
-
-typedef char EffectStep_x_offset[EFFECT_STEP_OFFSET(x) == 0x00 ? 1 : -1];
-typedef char EffectStep_y_offset[EFFECT_STEP_OFFSET(y) == 0x04 ? 1 : -1];
-typedef char EffectStep_z_offset[EFFECT_STEP_OFFSET(z) == 0x08 ? 1 : -1];
-typedef char EffectStep_velocity_x_offset[EFFECT_STEP_OFFSET(velocityX) == 0x0c
-                                              ? 1
-                                              : -1];
-typedef char EffectStep_velocity_y_offset[EFFECT_STEP_OFFSET(velocityY) == 0x10
-                                              ? 1
-                                              : -1];
-typedef char EffectStep_velocity_z_offset[EFFECT_STEP_OFFSET(velocityZ) == 0x14
-                                              ? 1
-                                              : -1];
-typedef char
-    EffectStep_variant_offset[EFFECT_STEP_OFFSET(variant) == 0x18 ? 1 : -1];
-typedef char EffectStep_size[sizeof(struct EffectStep) == 0x1c ? 1 : -1];
-typedef char
-    EffectPosition_size[sizeof(struct EffectPosition) == 0x0c ? 1 : -1];
-
-#undef EFFECT_STEP_OFFSET
+LAYOUT_OFFSET_GUARD(EffectStep_x_offset, struct EffectStep, x, 0x00);
+LAYOUT_OFFSET_GUARD(EffectStep_y_offset, struct EffectStep, y, 0x04);
+LAYOUT_OFFSET_GUARD(EffectStep_z_offset, struct EffectStep, z, 0x08);
+LAYOUT_OFFSET_GUARD(EffectStep_velocity_x_offset, struct EffectStep, velocityX,
+                    0x0c);
+LAYOUT_OFFSET_GUARD(EffectStep_velocity_y_offset, struct EffectStep, velocityY,
+                    0x10);
+LAYOUT_OFFSET_GUARD(EffectStep_velocity_z_offset, struct EffectStep, velocityZ,
+                    0x14);
+LAYOUT_OFFSET_GUARD(EffectStep_variant_offset, struct EffectStep, variant,
+                    0x18);
+LAYOUT_SIZE_GUARD(EffectStep_size, struct EffectStep, 0x1c);
+LAYOUT_SIZE_GUARD(EffectPosition_size, struct EffectPosition, 0x0c);
 
 #endif

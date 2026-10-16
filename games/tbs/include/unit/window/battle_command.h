@@ -35,8 +35,13 @@ void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
 void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags);
+#ifdef UBFIX
+void UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
+                                 s32 length);
+#else
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
                                 s32 length);
+#endif
 void PartyStatusDraw(s32 flags);
 void UiWork_FinalizeAndReleaseBlock16(void);
 void UiWindow_SetTileAttributeBitRect(const struct RenderInput *window, s32 x,
@@ -108,9 +113,15 @@ struct GlyphPalette;
 struct OwnerActionSlot;
 struct SelectionWork;
 
+#ifdef UBFIX
+void Menu_BuildLocalizedPatternTiles(void);
+void UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+                                  s32 unused);
+#else
 s32 Menu_BuildLocalizedPatternTiles(void);
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
                                  s32 unused);
+#endif
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 void Link_DrawShiftedTilePair(s32 offset);
@@ -133,12 +144,21 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
 s32 Ui_RunSelectionScreen(s32 mode);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+#ifdef UBFIX
+void UiText_FormatNumberToHalfwords(s16 *out, s32 value);
+#else
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
+#endif
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
                                const struct OwnerActionSlot *newGrid, u16 *out,
                                s32 *gained, s32 *lost);
+#ifdef UBFIX
+void Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+                                     s32 ability);
+#else
 s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
                                     s32 ability);
+#endif
 struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
                                                 s32 owner, s32 code, s32 page,
                                                 s32 *pageCount);

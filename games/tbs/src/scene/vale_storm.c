@@ -989,8 +989,8 @@ static void EV34_TOUCH(void) {
   struct FieldActor *record;
   s32 *phase;
   struct FieldActor *actor;
-  s32 steps;
-  s32 callback;
+  SchedulerCallback steps;
+  SchedulerCallback callback;
   s32 shifted;
 
   if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
@@ -1049,11 +1049,11 @@ static void EV34_TOUCH(void) {
       Engine_TaskWait(1);
     }
     phase = &sShakeShift;
-    steps = (s32)FieldScene_RunFourPairedSteps;
+    steps = FieldScene_RunFourPairedSteps;
     sShakeDone = 0;
     *phase = 0;
     FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
-    callback = (s32)SceneState_SetValue19ThenCall;
+    callback = SceneState_SetValue19ThenCall;
     FieldScheduler_AddCallback(callback, 0xc80);
     Engine_EventWait(40);
     *phase = 1;

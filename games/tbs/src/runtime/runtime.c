@@ -1210,7 +1210,9 @@ void Scheduler_SortTasks(void) {
    * the native loads the table before the loop and again at the top of every
    * pass. Without it the table address is hoisted into r5 (push r7): differ 28.
    * Reusing the swap cursor, a leading pass test or the reload at the end of a
-   * pass: differ 11 to 26. */
+   * pass: differ 11 to 26. Ordinary struct assignment for all three copies
+   * differs 60 (33 instructions for 39); without the initializer as well,
+   * it differs 64 (31 for 39), measured in tbs-en. */
   struct SchedulerTask saved;
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 pass;

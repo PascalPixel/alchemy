@@ -1930,7 +1930,11 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   unit->rewards = enemy->rewards;
   unit->classIndex = 0;
   unit->classId = enemyId;
+#ifdef UBFIX
+  Unit_CalcBaseElements(unitId, unit->baseElement);
+#else
   Unit_CalcBaseElements(unitId, (s16 (*)[2])unit->baseElement);
+#endif
   UnitCalc(unitId);
   unit->side = 1;
   switch (unit->classId) {
@@ -2176,7 +2180,15 @@ s32 Enemy_GetAttackElement(struct BattleUnit *state) {
 
 // Writes a unit's base power and resistance in each element: an enemy's come
 // from its preset, a character's from its element levels.
+// Both callers ignore the result. The matching return type preserves r0;
+// plain void changes the two return instructions (tbs-en: differ 4).
+// Its array view keeps the table-address addition after the first store;
+// using the typed fields in that build differs 2 in tbs-en.
+#ifdef UBFIX
+void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination) {
+#else
 u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
+#endif
   struct BattleUnit *state = UnitGet(owner);
   u32 index;
   s32 values[4];
@@ -2189,13 +2201,21 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
     if (index > 43)
       index = 0;
 
+#ifdef UBFIX
+    // Copy the packed pairs without accessing halfword members as words.
+    memcpy(destination, gEnemy_ElementPresetTable[index].values,
+           sizeof(gEnemy_ElementPresetTable[index].values));
+    return;
+#else
     i = 0;
     for (;;) {
       ((s32 *)destination)[i] = gEnemy_ElementPresetTable[index].values[i];
       i++;
-      if (i > 3)
+      if (i > 3) {
         return index;
+      }
     }
+#endif
   }
 
   Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
@@ -2213,10 +2233,14 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
     if (tens < 0)
       tens = 0;
 
+#ifdef UBFIX
+    destination[i].power = gElement_PowerResistByLevel[tens].power + ones;
+    destination[i].resistance = gElement_PowerResistByLevel[tens].res + ones;
+#else
     destination[i][0] = gElement_PowerResistByLevel[tens].power + ones;
     destination[i][1] = gElement_PowerResistByLevel[tens].res + ones;
+#endif
   }
-  // No return value here: r0 is left holding the table address
 }
 
 // Returns the class a character has with `djinn` set: the series is chosen by
@@ -2293,7 +2317,11 @@ void Unit_UpdateClass(s32 ownerId) {
   owner->classIndex =
       Class_Determine(owner->classId, (u8 *)owner->djinnAvailable);
   Unit_RefreshPsynergy(ownerId);
+#ifdef UBFIX
+  Unit_CalcBaseElements(ownerId, owner->baseElement);
+#else
   Unit_CalcBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
+#endif
 }
 
 // Returns the multiplier (256 = 1x) for an element difference `input`, read

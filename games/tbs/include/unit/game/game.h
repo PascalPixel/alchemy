@@ -4,6 +4,7 @@
 #include "types.h"
 
 struct BattleAct;
+struct BattleElementStats;
 struct BattleUnit;
 struct CharacterDefinition;
 struct ClassDefinition;
@@ -103,7 +104,11 @@ s32 Class_GetSeries(s32 row, s32 column);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 s32 Unit_GetElementLevel(s32 owner, s32 index);
 s32 Enemy_GetAttackElement(struct BattleUnit *state);
+#ifdef UBFIX
+void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination);
+#else
 u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]);
+#endif
 s32 Class_Determine(s32 character, const u8 *djinn);
 struct ClassDefinition *Class_GetDefinition(s32 arg0);
 void Unit_UpdateClass(s32 owner_id);

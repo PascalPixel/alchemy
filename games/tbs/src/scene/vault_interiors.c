@@ -2724,8 +2724,7 @@ static void VaultInteriors_StartActorStops(void) {
   Actor_SetSpeed(24, 0x10000, 0x13333);
   Actor_SetSpeed(25, 0x18000, 0x18000);
   gVaultInteriors_StopTimer = 0;
-  FieldScheduler_AddOrUpdateCallback((s32)VaultInteriors_UpdateActorStops,
-                                     0xc94);
+  FieldScheduler_AddOrUpdateCallback(VaultInteriors_UpdateActorStops, 0xc94);
   GameFlag_Clear(0x1ff);
   Engine_EventEnd();
   Engine_AudioPlayCue(9);

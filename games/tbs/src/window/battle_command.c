@@ -487,9 +487,14 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags) {
 // empty bar, the bottom three otherwise. Outside battle it first loads the
 // basic colours into BG palette 14, its colour 14 taken from colour 4 of
 // palette 15.
-// The function returns nothing although it is declared s32.
+// The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
+#ifdef UBFIX
+void UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
+                                 s32 length) {
+#else
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
                                 s32 length) {
+#endif
   s32 i;
   struct UiRenderWork *work = UI_WORK;
   s32 fullLength = length;
@@ -3262,7 +3267,12 @@ void Ui_ApplyTableScaleToObject(struct RenderOutput *obj) {
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
+// The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
+#ifdef UBFIX
+void Menu_BuildLocalizedPatternTiles(void) {
+#else
 s32 Menu_BuildLocalizedPatternTiles(void) {
+#endif
   u32 *vram = (u32 *)0x06006280;
   s32 set;
   s32 n;
@@ -3292,15 +3302,20 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
   }
 }
 
+// Void changes pop {r1}; bx r1 to r0 and reorders a preview's argument setup.
+#ifdef UBFIX
+void UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+                                  s32 unused) {
+#else
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
                                  s32 unused) {
-  // 値を返さない int 関数 (pop {r1}; bx r1)
-  s32 tile_offset = arg3 * 2;
-  s32 tile = tile_offset + 0xF315;
+#endif
+  s32 tileOffset = arg3 * 2;
+  s32 tile = tileOffset + 0xF315;
 
   UiWindow_SetTilemapEntry((struct UiWindow *)arg0, 0x400 | tile, arg1, arg2,
                            0);
-  UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tile_offset + 0xF314,
+  UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tileOffset + 0xF314,
                            arg1 + 1, arg2, 0);
   UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tile, arg1 + 2, arg2, 0);
 }
@@ -3986,8 +4001,12 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
   return 0;
 }
 
+// Void changes pop {r1}; bx r1 to r0 and reorders three preview argument pairs.
+#ifdef UBFIX
+void UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
+#else
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
-  // 値を返さない int 関数 (pop {r1}; bx r1)
+#endif
   s16 *dst;
   s32 n;
   u8 *src;
@@ -4050,25 +4069,22 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
   return count;
 }
 
-//--------------------------------------------------------------------------
-// create_output_from_resource_slot.c
-// 表示：わざのアイコンをスプライトとしてウィンドウに置く
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// あいている VRAM キャッシュにアイコンを読み、16x16 のスプライトで出す
-// （あきがなければ何もしない）
-// input : 置く先のウィンドウ
-// x, y  : ウィンドウの中の位置（ドット）
-// ability  : わざの番号
-//--------------------------------------------------------------------------
+// Loads an ability icon into a free VRAM slot and shows it as a 16x16 sprite
+// at pixel (x, y) inside input. Does nothing when no slot is free.
+// The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
+#ifdef UBFIX
+void Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+                                     s32 ability) {
+#else
 s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
                                     s32 ability) {
+#endif
   s32 slot;
 
   slot = Resource_FindFreeEntry();
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(ability, slot);
-    RenderOutput_Create(slot, 0x40000000, input, x, y); // OBJ サイズ 16x16
+    RenderOutput_Create(slot, 0x40000000, input, x, y); // 16x16 sprite
   }
 }
 

@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_RESOURCE_388_RUNTIME_H
 #define ALCHEMY_RESOURCE_388_RUNTIME_H
 
-#include "effect_runtime.h"
+#include "global_cells.h"
 #include "layout_guard.h"
 
 struct Resource388Runtime {

@@ -68,12 +68,22 @@ struct FieldStepWork {
   struct MapCell *previousTile;
 };
 
+// A map marker placed as an actor: a chest or a Psynergy stone.
+struct MarkerSlot {
+  struct ObjectRuntime *object;
+  u8 id; // the trigger of its scene event
+  u8 unk05;
+  u8 column; // its 16-pixel cell
+  u8 row;
+};
+
 // Full event work allocated by Field_RunScene (heap slot 27). The twelve
 // requests from action to event are handled by the field loop.
 struct FieldWork {
   u8 unk000[0x10];
   s32 view;
-  struct FieldActor *actors[86];
+  struct FieldActor *actors[66];
+  struct MarkerSlot markers[10];
   s16 action;     // a scene action to run
   s16 input;      // an input event to dispatch
   s16 exit;       // the exit taken, which ends the scene
@@ -151,7 +161,12 @@ LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterRate, struct FieldStepWork,
                     encounterRate, 0x1b0);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Tile, struct FieldStepWork, tile, 0x1b8);
 LAYOUT_SIZE_GUARD(FieldWork_Size, struct FieldWork, 0xccc);
+LAYOUT_SIZE_GUARD(MarkerSlot_Size, struct MarkerSlot, 8);
+LAYOUT_OFFSET_GUARD(MarkerSlot_Id, struct MarkerSlot, id, 4);
+LAYOUT_OFFSET_GUARD(MarkerSlot_Column, struct MarkerSlot, column, 6);
+LAYOUT_OFFSET_GUARD(MarkerSlot_Row, struct MarkerSlot, row, 7);
 LAYOUT_OFFSET_GUARD(FieldWork_Actors, struct FieldWork, actors, 0x14);
+LAYOUT_OFFSET_GUARD(FieldWork_Markers, struct FieldWork, markers, 0x11c);
 LAYOUT_OFFSET_GUARD(FieldWork_Action, struct FieldWork, action, 0x16c);
 LAYOUT_OFFSET_GUARD(FieldWork_Descriptor, struct FieldWork, descriptor, 0x178);
 LAYOUT_OFFSET_GUARD(FieldWork_Battle, struct FieldWork, battle, 0x17c);

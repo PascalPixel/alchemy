@@ -55,7 +55,6 @@
 #include "text/msg_ids.h"
 #include "object_lookup.h"
 #include "objdisp.h"
-#include "effect_runtime.h"
 #include "object_effect.h"
 #include "item.h"
 #include "motobj.h"
@@ -1459,9 +1458,22 @@ void Event_SetMessageId(s32 message) {
 // Returns the sprite (the first animation's id) of the actor in the low 12
 // bits of actor, or -1 if there is no such animated actor.
 s32 ObjectTable_ReadActiveValue(s32 actor) {
+#ifdef UBFIX
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  s32 sprite = -1;
+  struct ObjectRuntime *entry;
+
+  actor &= 0x0fff;
+  // BUG: the -1 sentinel becomes index 4095, beyond the event work. All
+  // indices from 66 to 4095 lie outside the actor table.
+  if (actor >= 66)
+    return -1;
+  entry = (struct ObjectRuntime *)state->actors[actor];
+#else
   struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
   s32 sprite = -1;
   struct ObjectRuntime *entry = state->actors[actor & 0x0fff];
+#endif
 
   if (entry != 0 && entry->animationKind == 1)
     sprite = ((struct AnimationObject *)entry->animation)->entries[0]->animId;
@@ -1470,13 +1482,13 @@ s32 ObjectTable_ReadActiveValue(s32 actor) {
 
 // Returns the first scene actor (8 to 65) showing sprite, or -1.
 s32 ObjectTable_FindActiveByValue(s32 sprite) {
-  struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 result = -1;
   s32 index;
   struct ObjectRuntime *object;
 
   for (index = 8; index <= 65; index++) {
-    object = state->actors[index];
+    object = (struct ObjectRuntime *)state->actors[index];
     if (object != 0 && object->animationKind == 1 &&
         ((struct AnimationObject *)object->animation)->entries[0]->animId ==
             sprite) {

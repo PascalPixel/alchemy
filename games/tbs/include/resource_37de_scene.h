@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_RESOURCE_37DE_SCENE_H
 #define ALCHEMY_RESOURCE_37DE_SCENE_H
 
-#include "effect_runtime.h"
+#include "global_cells.h"
 #include "layout_guard.h"
 
 struct Resource37deSceneRuntime {

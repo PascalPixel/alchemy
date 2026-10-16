@@ -57,7 +57,6 @@
 #include "text/msg_ids.h"
 #include "object_lookup.h"
 #include "objdisp.h"
-#include "effect_runtime.h"
 #include "object_effect.h"
 #include "item.h"
 #include "motobj.h"
@@ -1213,17 +1212,17 @@ void BattleEffect_ClearAllObjects(void) {
 
 // Empties all 66 actor slots, without destroying the actors.
 void ObjectTable_ClearAll(void) {
-  s32 *current;
-  s32 zero;
-  s32 count;
-  zero = 0;
-  count = 0x41;
-  current = (s32 *)&((struct FieldStepWork *)gEventWork)->actors[65];
+  struct FieldWork *work;
+  struct FieldActor *zero;
+  s32 index;
+
+  zero = NULL;
+  index = 65;
+  work = (struct FieldWork *)gEventWork;
   do {
-    count--;
-    *current = zero;
-    current--;
-  } while (count >= 0);
+    work->actors[index] = zero;
+    index--;
+  } while (index >= 0);
 }
 
 // Returns the actor in slot index (0 to 65), or NULL. Indices up to 191 read
@@ -3659,21 +3658,6 @@ struct MarkerMap {
   u8 *markers; // (column, row, id) triples, ended by 255, 255
 };
 
-// A map marker placed as an actor: a chest or a Psynergy stone.
-struct MarkerSlot {
-  struct ScriptObjectRuntime *object;
-  u8 id; // the trigger of its scene event
-  u8 unk05;
-  u8 column; // its 16-pixel cell
-  u8 row;
-};
-
-// The markers' part of the event work.
-struct MarkerWork {
-  u8 unk000[0x11c];
-  struct MarkerSlot slots[MARKER_MAX];
-};
-
 // Places an actor at each of the map's markers (ids 100 to 239) that the
 // scene has an event for, up to ten: a chest (actor 20) for a chest event,
 // shown open once its flag is set and gone once its mimic was beaten, and a
@@ -3681,10 +3665,10 @@ struct MarkerWork {
 void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MarkerMap *map = gMapWork[0];
-  struct MarkerWork *work = gMapWork[HEAP_SLOT_EVENT - 8];
+  struct FieldWork *work = gMapWork[HEAP_SLOT_EVENT - 8];
   s32 count = 0;
   u8 *list = map->markers;
-  struct MarkerSlot *slot = work->slots;
+  struct MarkerSlot *slot = work->markers;
   const struct SceneEvent *event;
   struct ScriptObjectRuntime *obj;
   u32 column;
@@ -3724,7 +3708,7 @@ void Field_PlaceMapMarkers(void) {
           obj->unk23 = 1;
           obj->flags59 = 1;
           slot->id = event->trigger;
-          slot->object = obj;
+          slot->object = (struct ObjectRuntime *)obj;
           slot->column = obj->x / 0x100000;
           slot->row = obj->z / 0x100000;
           slot++;
@@ -3749,7 +3733,7 @@ void Field_PlaceMapMarkers(void) {
           obj->homeZ = obj->z / 0x10000;
           obj->flags59 = 1;
           obj->unk23 = 1;
-          slot->object = obj;
+          slot->object = (struct ObjectRuntime *)obj;
           slot->id = event->trigger;
           slot->column = obj->x / 0x100000;
           slot->row = obj->z / 0x100000;
@@ -3772,12 +3756,12 @@ void Field_PlaceMapMarkers(void) {
 s32 Marker_FindSlot(s32 id) {
   s32 index;
   s32 found;
-  struct EffectRuntimeSlot *slot;
+  struct MarkerSlot *slot;
 
-  slot = ((struct EffectRuntime *)gEventWork)->slots;
+  slot = ((struct FieldWork *)gEventWork)->markers;
   found = -1;
   for (index = 0; index <= 9; index++, slot++) {
-    if (slot->active == id) {
+    if (slot->id == id) {
       found = index;
       break;
     }
@@ -3792,12 +3776,12 @@ void EffectRuntime_ReservedNoOp(void) {}
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slot;
-  struct EffectRuntimeSlot *marker;
+  struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
   slot = Marker_FindSlot(id);
   if (slot != -1) {
-    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    marker = &((struct FieldWork *)gEventWork)->markers[slot];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
@@ -3812,12 +3796,12 @@ void Marker_CloseChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 5, 0x7d); }
 // Makes the chest of marker id jump up as a mimic.
 void Marker_LaunchMimic(s32 id) {
   s32 slot;
-  struct EffectRuntimeSlot *marker;
+  struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
   slot = Marker_FindSlot(id);
   if (slot != -1) {
-    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    marker = &((struct FieldWork *)gEventWork)->markers[slot];
     object = marker->object;
     WaitFrames(0x12);
     if (object != NULL)
@@ -3836,12 +3820,12 @@ void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, 0x7c); }
 // Shows the chest of marker id open (animation 2).
 void Marker_ShowOpened(s32 id) {
   s32 slot;
-  struct EffectRuntimeSlot *marker;
+  struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
   slot = Marker_FindSlot(id);
   if (slot != -1) {
-    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    marker = &((struct FieldWork *)gEventWork)->markers[slot];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
@@ -3851,23 +3835,23 @@ void Marker_ShowOpened(s32 id) {
 // Returns the actor of marker id, or NULL.
 struct ObjectRuntime *Marker_GetActor(s32 id) {
   s32 slot = Marker_FindSlot(id);
-  struct EffectRuntimeSlot *marker;
+  struct MarkerSlot *marker;
 
   if (slot == -1)
     return NULL;
-  marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+  marker = &((struct FieldWork *)gEventWork)->markers[slot];
   return marker->object;
 }
 
 // Hides the actor of marker id.
 void Marker_Hide(s32 id) {
   s32 slot;
-  struct EffectRuntimeSlot *marker;
+  struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
   slot = Marker_FindSlot(id);
   if (slot != -1) {
-    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    marker = &((struct FieldWork *)gEventWork)->markers[slot];
     object = marker->object;
     if (object != NULL)
       object->animationKind = 0;
@@ -3881,20 +3865,20 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 z) {
   s32 height;
   s32 objectX;
   s32 objectZ;
-  struct EffectRuntimeSlot *marker;
+  struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
   objectZ = z;
   objectX = x;
   slot = Marker_FindSlot(id);
   if (slot != -1) {
-    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    marker = &((struct FieldWork *)gEventWork)->markers[slot];
     object = marker->object;
     if (object != NULL) {
       if (objectX == -1)
-        objectX = (marker->tileX << 20) + 0x80000;
+        objectX = (marker->column << 20) + 0x80000;
       if (objectZ == -1)
-        objectZ = (marker->tileY << 20) + 0x80000;
+        objectZ = (marker->row << 20) + 0x80000;
       object->x = objectX;
       object->z = objectZ;
       height = Map_GetTerrainHeightFar(0, objectX, objectZ);
@@ -3945,7 +3929,7 @@ struct MapEventEntry {
 // it stood, and loses its move target.
 void BattleFx_EmitRandomParticle(void) {
   struct ObjectRuntime *actor = ObjectTable_Get(gGameState.selectedActor);
-  struct MarkerSlot *cell = ((struct MarkerWork *)gEventWork)->slots;
+  struct MarkerSlot *cell = ((struct FieldWork *)gEventWork)->markers;
   s32 i = 0;
   s32 x;
   s32 z;

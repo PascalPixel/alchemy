@@ -3181,10 +3181,18 @@ void BattleFx_SetTransitionFlagAndDisplay(void) {
 // 0x100 onwards beside blank tiles, BG1 blended over the rest, and the
 // effect windows. Also clears the canvas.
 void BattleFx_SetupCanvasTileMap(void) {
+  // UB: indexing past scalar gBattleWork reaches other work slots. Named
+  // slots add four bytes in the native EN trial (0x136 to 0x13a).
+#ifdef UBFIX
+  void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  struct BattleWork *screen = gBattleWork;
+  struct BattleBackgroundView *layer = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
   u8 **cells = (u8 **)&gBattleWork;
   void *canvas = cells[31];
   struct BattleWork *screen = (struct BattleWork *)cells[0];
   struct BattleBackgroundView *layer = (struct BattleBackgroundView *)cells[35];
+#endif
   s32 row;
   s32 col;
   s32 off;

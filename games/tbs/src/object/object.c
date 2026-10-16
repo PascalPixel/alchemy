@@ -1785,57 +1785,6 @@ void Battle_ClearObjectFlag5bWhenMode3(void) {
   }
 }
 
-// The event work (gEventWork) as this file sees it, including the fields after
-// 0xcb6 that the shared struct EventWork does not name. The twelve halfwords
-// from action to event are the field's pending requests, which
-// Field_ClearRequests and Field_CountRequests clear and add up; the field
-// loop of Field_RunScene handles them one at a time.
-struct FieldWork {
-  u8 unk000[0x10];
-  s32 view;
-  struct FieldActor *actors[86];
-  s16 action;     // a scene action to run
-  s16 input;      // an input event to dispatch
-  s16 exit;       // the exit taken, which ends the scene
-  s16 menu;       // open the main menu
-  s16 examine;    // the A button: examine what is ahead
-  s16 start;      // the Start button: open the pause menu
-  u16 descriptor; // an actor's event, as actor | 0x1000
-  s16 tile;       // a tile's event
-  s16 battle;     // the enemy group of a random encounter
-  s16 command;    // a field Psynergy to use
-  s16 item;       // an item to use
-  s16 event;      // a special event: -1 for poison or hazard damage
-  s16 count;      // the characters who fell
-  s16 survived;   // 0 when the whole party fell
-  s16 quantities[9];
-  s16 itemArgument;
-  u8 unk19c[2];
-  s16 mode;
-  u8 unk1a0[8];
-  s32 unk1a8;
-  u8 unk1ac[4];
-  s32 unk1b0;
-  s32 unk1b4;
-  u8 unk1b8[4];
-  u8 *cells;
-  s32 transition;
-  u16 unk1c4;
-  u16 transitionActive;
-  s32 transitionFrames;
-  u8 unk1cc[0xaea];
-  u16 busy;
-  s16 revealActive;  // non-zero while Reveal is active
-  s16 revealFrames;  // the frames Reveal has left
-  s16 revealCenterX; // where Reveal was cast, in pixels
-  s16 revealCenterY;
-  s16 inMainMenu; // 0 while the main menu is open
-  u8 unkcc2[4];
-  s8 resolvingAction; // set while a Psynergy's effect plays
-  s8 unkcc7;
-  s16 queuedSound;
-};
-
 struct MenuCtrl {
   u8 unk00[4];
   u16 wait;
@@ -2079,9 +2028,9 @@ s32 Field_RunScene(s32 entrance) {
           } else if (GameFlag_TestFar(0x107) != 0) {
             work->event = 250;
           } else {
-            work->inMainMenu = 0;
+            work->effectTimerRunning = 0;
             Menu_RunTopSelectionFar();
-            work->inMainMenu = 1;
+            work->effectTimerRunning = 1;
           }
           Battle_ClearObjectFlag5bWhenMode3();
           GameFlag_ClearBitFar(0x106);

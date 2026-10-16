@@ -1885,15 +1885,25 @@ void ObjectSystem_UpdateCamera(void) {
   s32 pos[4];
   u32 layerPlusOne;
 
+  // UB: map and system work are separate globals, beyond gObjectSlots.
+  // Reading their named slots adds eight bytes in the forced EN build.
+#ifdef UBFIX
+  mapWork = gMapWork[0];
+#else
   mapWork = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
+#endif
   view = &mapWork->x;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
+#ifdef UBFIX
+  system = gMenuCtrlWork;
+#else
   system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+#endif
   // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
   system->used = 0;
-  obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
+  obj = (struct CameraObject *)gObjectSlots;
   for (i = 0; i < 64; i++, obj++) {
     if (obj->active == 0)
       continue;
@@ -1996,8 +2006,15 @@ void ObjectSystem_UpdateCameraFixed(void) {
      is 28 bytes for 52 (differ 4, the two sp adjustments). */
   struct CameraPoint spare[2];
 
+  // UB: camera and system work are separate globals, beyond gObjectSlots.
+  // Reading their named slots adds four bytes in the forced EN build.
+#ifdef UBFIX
+  camera = (struct FixedCamera *)gCameraWork;
+  system = gMenuCtrlWork;
+#else
   camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
   system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+#endif
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
   eye = &camera->eye;
   target = &camera->target;
@@ -2015,7 +2032,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   } else {
     Transform_SetLookAt(eye, target);
   }
-  obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
+  obj = (struct CameraObject *)gObjectSlots;
   obj += 63;
   unitScale = 0x10000;
   for (i = 63; i >= 0; i--, obj--) {

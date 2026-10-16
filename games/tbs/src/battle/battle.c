@@ -428,11 +428,20 @@ restart:
 // background's perspective.
 //--------------------------------------------------------------------------
 void BattlePresentation_UpdateCamera(void) {
+  // UB: indexing past scalar gCameraWork reaches other work slots. Named
+  // slots add four bytes in the native EN trial (0xf8 to 0xfc).
+#ifdef UBFIX
+  struct BattleCamera *camera = gCameraWork;
+  struct BattlePresentationTransition *transition =
+      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleWork *work = gBattleWork;
+#else
   void **slot = (void **)&gCameraWork;
   struct BattleCamera *camera = slot[0];
   struct BattlePresentationTransition *transition =
       slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
   struct BattleWork *work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+#endif
   struct FixedPointPosition eyeOffset;
   s32 *focus;
   s16 delta;
@@ -4009,10 +4018,18 @@ void Palette_UpdatePulseBrightness(void) {
 // background's perspective to match.
 //--------------------------------------------------------------------------
 void Camera_ConfigureScene(s32 pos) {
+  // UB: indexing past scalar gCameraWork reaches another work slot. Named
+  // slots add four bytes in the native EN trial (0xd8 to 0xdc).
+#ifdef UBFIX
+  struct BattleCamera *camera = gCameraWork;
+  struct BattlePresentationTransition *transition =
+      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
   void **slots = (void **)&gCameraWork;
   struct BattleCamera *camera = slots[0];
   struct BattlePresentationTransition *transition =
       slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
+#endif
   struct FixedPointPosition eyeOffset;
   u32 result;
 
@@ -4927,7 +4944,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   s32 n;
   u32 kept;
   struct MotionObject *object;
+  // UB: indexing past scalar gBattleWork reaches another work slot. Named
+  // slots keep the native EN size (0x3ba), but reorder address setup.
+#ifndef UBFIX
   void **slots = (void **)&gBattleWork;
+#endif
 
   BattlePres_BuildTargetList(plan, &work);
   actor = plan->actorId;
@@ -4935,7 +4956,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   if (plan->presentationFlags & STAGING_SCENE) {
     struct BattlePresentationTransition *transition;
     s32 yaw;
+#ifdef UBFIX
+    transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
     transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+#endif
     yaw = 0x2000;
     if (actor > 7)
       yaw = 0x5000;
@@ -4944,7 +4969,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   } else {
     struct BattlePresentationTransition *transition;
     s32 yaw;
+#ifdef UBFIX
+    transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
     transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+#endif
     yaw = -0x2000;
     if (actor <= 7)
       yaw = 0x2000;

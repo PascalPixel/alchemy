@@ -103,55 +103,6 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem, flags);
 }
 
-// This file's view of the event work (gEventWork). It also reaches the fields
-// from 0xcb6 on, which the shared EventWork does not describe.
-struct FieldWork {
-  u8 unk000[0x10];
-  s32 view;
-  struct FieldActor *actors[86];
-  s16 action;
-  s16 input;
-  s16 exit;
-  s16 menu;
-  s16 examine;
-  s16 start;
-  u16 descriptor;
-  s16 tile;
-  s16 scene;
-  s16 command;
-  s16 item;
-  s16 event;
-  s16 count;
-  s16 survived;
-  s16 quantities[9];
-  s16 itemArgument;
-  u8 unk19c[2];
-  s16 mode;
-  u8 unk1a0[8];
-  s32 unk1a8;
-  u8 unk1ac[4];
-  s32 unk1b0;
-  s32 unk1b4;
-  u8 unk1b8[4];
-  u8 *cells;
-  s32 transition;
-  u16 unk1c4;
-  u16 transitionActive;
-  s32 transitionFrames;
-  u8 unk1cc[0xaea];
-  u16 busy;
-  s16 effectActive;  // nonzero while a Psynergy effect runs
-  s16 effectFrames;  // frames the effect has left
-  s16 effectCenterX; // centre of the effect, in pixels
-  s16 effectCenterY;
-  s16 effectTimerRunning; // the timed effect (kind 8) counts down while set
-  s16 choiceNameMessage;  // the yes/no menu's name window (EventPromptWork)
-  s16 choiceNameWidth;
-  s8 resolvingAction; // set while a Psynergy effect is being shown
-  s8 castStarted;     // set once a cast has been announced
-  s16 queuedSound;
-};
-
 // Debug only: while debug mode is on, R makes every event wait
 // (Battle_WaitMode0) end at once and L restores normal waits. Runs as a
 // scheduler callback for the length of an event (Battle_Reset).
@@ -5581,7 +5532,7 @@ void BattleEffect_InitializeSharedScene(void) {
   scene = *(gWorkSlot + HEAP_SLOT_EVENT);
   work = *(gWorkSlot + 32);
   Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, REG_DMA3);
-  if (((struct FieldWork *)scene)->effectActive == 0)
+  if (((struct FieldWork *)scene)->revealActive == 0)
     Dma_Set(work->target, scene + 0x236, 0x84000150, REG_DMA3);
   Dma_Set(work->target, work->current, 0x84000000 | (sizeof work->current / 4),
           REG_DMA3);
@@ -5616,7 +5567,7 @@ void BattleFx_PrepareBufferInterpolation(void) {
   field = (u8 *)gEventWork;
   savedPalettes = (s32)(field + 0x236);
   BattleFx_ApplyColorToTargetBuffer(savedPalettes, 2);
-  if (((struct FieldWork *)field)->effectActive != 0) {
+  if (((struct FieldWork *)field)->revealActive != 0) {
     BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   } else {
     BattleFx_ApplyColorToTargetBuffer(savedPalettes, 1);
@@ -6443,15 +6394,15 @@ void FieldEffect_WatchLeaderDistance(void) {
   work = (struct FieldWork *)gEventWork;
   actor = ObjectTable_Get(gGameState.selectedActor);
   if (work->effectTimerRunning != 0) {
-    timer = &work->effectFrames;
+    timer = &work->revealFrames;
     if (*timer != 0)
       (*timer)--;
   }
 
   // x is scaled by 0xd105 (about 0.82) for the comparison.
-  dx = Iwram_MulQ16(work->effectCenterX - actor->x / 0x10000, 0xd105);
-  dz = work->effectCenterY - (actor->z - actor->y) / 0x10000;
-  if (dx * dx + dz * dz >= 3600 || work->effectFrames == 0) {
+  dx = Iwram_MulQ16(work->revealCenterX - actor->x / 0x10000, 0xd105);
+  dz = work->revealCenterY - (actor->z - actor->y) / 0x10000;
+  if (dx * dx + dz * dz >= 3600 || work->revealFrames == 0) {
     u16 *slot = (u16 *)&work->command; // psynergyRequest
     u32 request = 0x2090;
 
@@ -6484,7 +6435,7 @@ void RunBattleEffect08(void) {
   BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   BattleFx_StartBufferInterpolation(1);
 #if !defined(TBS_EDITION_EN)
-  field->effectActive = 0; // not in the English release
+  field->revealActive = 0; // not in the English release
 #endif
   WaitFrames(1);
   event = BattleFx_FindMatchingEvent(0x50000005, 8, &eventTarget);
@@ -6494,10 +6445,10 @@ void RunBattleEffect08(void) {
 
   // Record the centre (in pixels) and the time in the event work, and put
   // markers nearby.
-  field->effectActive = 1;
-  field->effectCenterX = transition->centreX / 0x10000;
-  field->effectCenterY = transition->centreY / 0x10000;
-  field->effectFrames = 600;
+  field->revealActive = 1;
+  field->revealCenterX = transition->centreX / 0x10000;
+  field->revealCenterY = transition->centreY / 0x10000;
+  field->revealFrames = 600;
   field->effectTimerRunning = 1;
   FieldEffect_SpawnNearbyMarkers();
   frame = 0;
@@ -6571,13 +6522,13 @@ void ResetSceneTransitionEffect(void) {
   s32 tid;
   void *ev;
 
-  if (state->effectActive != 0) {
+  if (state->revealActive != 0) {
     AudioCommand_PlayFar(SOUND_SCENE_TRANSITION);
     Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
     zero = 0;
-    state->effectActive = zero;
-    state->effectFrames = zero;
+    state->revealActive = zero;
+    state->revealFrames = zero;
     ObjectDispatch_ApplyValueToKind200Children(0);
 
     BattleFx_ApplyColorToTargetBuffer(PALETTE_TRANSFORM_PLAIN, 1);

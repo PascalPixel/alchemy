@@ -36,7 +36,7 @@ s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
                               s32 y);
 s32 UiIcon_CreateWithResourceVariant(struct UiWindow *window, s32 x, s32 y);
 void UiIcon_PrepareObject(struct RenderOutput *object);
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit);
+void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit);
 struct UiWindow *UiMenu_CreateCursor(void *source);
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused);
@@ -199,7 +199,7 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
                               const struct MenuResult *res);
 s32 PsynergyMenu_SelectAction(void);
 s32 PsynergyMenu_ActionReturnTrue(void);
-void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id);
+void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 ownerId);
 void PsynergyMenu_PreparedIconsNoOp(void);
 void PsynergyMenu_PreparedIconsSecondNoOp(void);
 s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,

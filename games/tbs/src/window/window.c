@@ -668,7 +668,12 @@ void RenderOutput_AppendToList(struct RenderOutputList *list,
    * six editions). */
   if (list != NULL) {
     *list->tailLink = node;
+#ifdef UBFIX
+    // Store the address of next through the tail link's actual pointer type.
+    list->tailLink = &node->next;
+#else
     *(struct RenderOutput **)&list->tailLink = node;
+#endif
   }
 }
 
@@ -982,6 +987,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
   s32 voiceGap;
   s32 glyphWidth;
   s32 glyphAdvance;
+
+  (void)keys;
 
   // In battle, text runs at 3 glyphs a frame, and 5 more for each frame the
   // game is running behind (up to two).
@@ -5348,7 +5355,7 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
   /* FAKEMATCH: the helper takes the node's base field as its record, so each
    * row store forms base + 372 and stores the cursor at #2, as the native does.
    * A plain work->records[7].kind = 0 folds the offset into 374 and stores at
-   * #0 (differ 6). */
+   * #0 (differ 6). The typed SelectionNode helper also changes these stores. */
   cursor->cursor = 0;
 }
 
@@ -5531,24 +5538,24 @@ void SelectionScreen_Draw(void) {
   struct SelectionNode *cursor = &state->records[14];
   struct SelectionNode *transfer = &state->records[15];
   struct SelectionNode *node;
-  struct SelectionSprite *e;
-  struct SelectionSprite *te;
-  s32 cnt = 0;
+  struct SelectionSprite *sprite;
+  struct SelectionSprite *commandSprite;
+  s32 entryIndex = 0;
   s32 slot;
-  s32 tmp;
+  s32 axisStep;
   struct EffectPosition pos;
 
   node = state->head;
   // Move and queue the visible row before drawing its overlays.
   while (node != 0) {
-    e = &node->sprite;
-    e->affine = 0;
-    e->param = 0;
-    e->x = node->x;
-    e->y = node->y;
+    sprite = &node->sprite;
+    sprite->affine = 0;
+    sprite->param = 0;
+    sprite->x = node->x;
+    sprite->y = node->y;
     slot = 240;
     if (state->verticalScroll != 0) {
-      e->y += state->verticalScroll;
+      sprite->y += state->verticalScroll;
     } else if (node->x != node->targetX) {
       if (node->dx > 0) {
         if (node->x + node->dx > node->targetX) {
@@ -5563,8 +5570,8 @@ void SelectionScreen_Draw(void) {
           node->x += node->dx;
         }
       }
-      e->x = node->x;
-    } else if (cnt == state->cursorIndex) {
+      sprite->x = node->x;
+    } else if (entryIndex == state->cursorIndex) {
       slot = 241;
       if (cursor->kind != 0) {
         if (BattleMotion_ProjectScaledPositionFar(
@@ -5582,110 +5589,109 @@ void SelectionScreen_Draw(void) {
     if (node->scale != 0) {
       if (GameFlag_TestFar(0x103) != 0) {
         if (state->records[14].kind == 1) {
-          e->mode = 1;
+          sprite->mode = 1;
         } else {
-          e->mode = 0;
+          sprite->mode = 0;
         }
         if (node->kind == 1) {
-          e->mode = 1;
+          sprite->mode = 1;
         }
       }
-      Runtime_PushSlotEntry((s32 *)e, slot);
+      Runtime_PushSlotEntry(sprite, slot);
     }
     node = node->next;
-    cnt++;
+    entryIndex++;
   }
   // The selected command's large icon owns a separate cached tile block.
   if (transfer->kind != 0) {
     node = Selection_GetCursorNode(state);
-    te = &transfer->sprite;
-    te->mode = 0;
-    te->affine = 0;
-    te->param = 0;
-    te->mosaic = 0;
-    te->colors = 1;
-    te->size = 2;
-    te->shape = 0;
-    te->priority = 0;
-    te->tile = transfer->tile;
-    te->x = node->x - 4;
-    te->y = node->y + (gMenu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
+    commandSprite = &transfer->sprite;
+    commandSprite->mode = 0;
+    commandSprite->affine = 0;
+    commandSprite->param = 0;
+    commandSprite->mosaic = 0;
+    commandSprite->colors = 1;
+    commandSprite->size = 2;
+    commandSprite->shape = 0;
+    commandSprite->priority = 0;
+    commandSprite->tile = transfer->tile;
+    commandSprite->x = node->x - 4;
+    commandSprite->y =
+        node->y + (gMenu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
     if (transfer->scale != transfer->scaleEnd) {
-      state->matrix[0] = transfer->scale;
-      state->matrix[1] = transfer->scale;
-      state->matrix[2] = 0;
-      te->param =
-          AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
-      te->affine = 3;
-      te->x += 0xfff0;
-      te->y += 0xf0;
+      state->transform.scaleX = transfer->scale;
+      state->transform.scaleY = transfer->scale;
+      state->transform.angle = 0;
+      commandSprite->param = AffineMatrix_BuildForEffect(&state->transform);
+      commandSprite->affine = 3;
+      commandSprite->x += 0xfff0;
+      commandSprite->y += 0xf0;
       transfer->scale += transfer->scaleStep;
     }
     if (GameFlag_TestFar(0x103) != 0) {
-      te->mode = 1;
+      commandSprite->mode = 1;
     }
-    Runtime_PushSlotEntry((s32 *)te, 248);
+    Runtime_PushSlotEntry(commandSprite, 248);
   }
   SelectionScreen_DrawArrow(state, 0);
   SelectionScreen_DrawArrow(state, 1);
   // Chosen entries gather at the top-left independently of the scrolling row.
   node = state->path;
   while (node != 0) {
-    e = &node->sprite;
+    sprite = &node->sprite;
     if (node->x != node->targetX) {
       node->x += node->dx;
     }
     if (node->y != node->targetY) {
       node->y += node->dy;
     }
-    e->x = node->x;
-    e->y = node->y;
+    sprite->x = node->x;
+    sprite->y = node->y;
     if (node->scale != node->scaleEnd) {
       node->scale += node->scaleStep;
-      state->matrix[0] = node->scale;
-      state->matrix[1] = node->scale;
-      state->matrix[2] = 0;
-      e->param =
-          AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
-      e->affine = 3;
-      e->x += 0xfff8;
-      e->y += 0xf8;
+      state->transform.scaleX = node->scale;
+      state->transform.scaleY = node->scale;
+      state->transform.angle = 0;
+      sprite->param = AffineMatrix_BuildForEffect(&state->transform);
+      sprite->affine = 3;
+      sprite->x += 0xfff8;
+      sprite->y += 0xf8;
     } else {
-      e->affine = 0;
-      e->param = 0;
+      sprite->affine = 0;
+      sprite->param = 0;
     }
     if (GameFlag_TestFar(0x103) != 0) {
       if (state->records[14].kind == 1) {
-        e->mode = 1;
+        sprite->mode = 1;
       } else {
-        e->mode = 0;
+        sprite->mode = 0;
       }
       if (node->kind == 1) {
-        e->mode = 1;
+        sprite->mode = 1;
       }
     }
-    Runtime_PushSlotEntry((s32 *)e, 240);
+    Runtime_PushSlotEntry(sprite, 240);
     node = node->next;
   }
   // Point at the selected battle target, smoothing each axis separately.
   if (cursor->kind != 0) {
-    cnt = (s32)gMenu_AnimatedCursorTiles;
+    entryIndex = (s32)gMenu_AnimatedCursorTiles;
     {
-      void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
+      void *src = (void *)(entryIndex + (((gFrameTick >> 2) & 15) << 8));
 
       cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
     }
     if (cursor->targetX != cursor->x) {
-      tmp = (cursor->targetX - cursor->x) >> 1;
-      if (tmp != 0) {
-        cursor->x += tmp;
+      axisStep = (cursor->targetX - cursor->x) >> 1;
+      if (axisStep != 0) {
+        cursor->x += axisStep;
       } else {
         cursor->x = cursor->targetX;
       }
     }
     if (cursor->targetY != cursor->y) {
-      if ((tmp = (cursor->targetY - cursor->y) >> 1) != 0) {
-        cursor->y += tmp;
+      if ((axisStep = (cursor->targetY - cursor->y) >> 1) != 0) {
+        cursor->y += axisStep;
       } else {
         cursor->y = cursor->targetY;
       }
@@ -5700,7 +5706,7 @@ void SelectionScreen_Draw(void) {
         cursorEntry->mode = 0;
       }
     }
-    Runtime_PushSlotEntry((s32 *)cursorEntry, 248);
+    Runtime_PushSlotEntry(cursorEntry, 248);
   }
   state->status += 1;
 }
@@ -5735,7 +5741,7 @@ void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
     else
       arrow->mode = 0;
   }
-  Runtime_PushSlotEntry((s32 *)arrow, 238);
+  Runtime_PushSlotEntry(arrow, 238);
   if (state->records[side].base != 0)
     state->records[side].base--;
 }
@@ -6592,7 +6598,7 @@ void UiTextResource_Initialize(struct MenuSprite *sprite, s32 *slot) {
 void UiTextResource_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
-  Runtime_PushSlotEntry((s32 *)sprite, 0xFC);
+  Runtime_PushSlotEntry(sprite, 0xFC);
 }
 
 // Frees an arrow sprite's tile slot.

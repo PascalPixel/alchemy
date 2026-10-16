@@ -584,7 +584,7 @@ void UiIcon_PrepareObject(struct RenderOutput *object) {
 
 // Loads the graphics of character unit into menu entry slot 0. The calling
 // menu argument is not used.
-void PsynergyMenu_CallIconRoutineWithValue(s32 unused, s32 unit) {
+void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
   Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }
 
@@ -645,7 +645,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       menu->tabX[i] = tileX * 8 + offsetX;
       menu->rowPositions[i] = (originY + window->y) * 8 + 16;
       menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
-      ((struct FieldSprite *)figure)->priority = 0;
+      figure->part[0].priority = 0;
       figure->flags = 0;
       AnimationObjects_SelectAnimationFar(figure, 1);
     }
@@ -664,15 +664,15 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
 // Releases the party figures PsynergyMenu_InitializeEntryObjects created and
 // stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
-  u32 ownerIds[7];
+  u16 ownerIds[14];
   struct PsynergyMenuState *menu = gMenuWork;
   s32 count;
-  void **figures;
+  struct AnimationObject **figures;
   s32 i;
 
   count = (u16)Party_ListActiveOwnersFar(ownerIds);
   if (count != 0) {
-    figures = (void **)menu->tabObjects;
+    figures = menu->tabObjects;
     i = count;
     do {
       void *figure = *figures++;
@@ -4661,7 +4661,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
       Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0,
                                 STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
-      PsynergyMenu_CallIconRoutineWithValue((s32)menu, ownerIds[selection]);
+      PsynergyMenu_CallIconRoutineWithValue(menu, ownerIds[selection]);
       for (i = 3; i >= 0; i--)
         menu->rowPositions[i] = 30;
       menu->rowPositions[selection] = 26; // raise the chosen member
@@ -4786,7 +4786,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow,
                                   menu->ownerTable[selection], 0,
                                   STATUS_PANEL_EXPERIENCE);
-        PsynergyMenu_CallIconRoutineWithValue((s32)menu,
+        PsynergyMenu_CallIconRoutineWithValue(menu,
                                               menu->ownerTable[selection]);
         if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
           MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
@@ -5499,8 +5499,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->rowPositions[member] = 26;
         Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerTable[member],
                                   0, STATUS_PANEL_EXPERIENCE);
-        PsynergyMenu_CallIconRoutineWithValue((s32)menu,
-                                              menu->ownerTable[member]);
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerTable[member]);
         break;
       }
 
@@ -5840,7 +5839,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
       }
     }
   }
-  (*(struct UiWork **)&gWindowWork)->dirty = 1;
+  ((struct UiWork *)gWindowWork[0])->dirty = 1;
   for (;;) {
     if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
       break;
@@ -7045,7 +7044,7 @@ s32 PsynergyMenu_SelectAction(void) {
         menu->selectedOwner = menu->ownerTable[ownerIndex];
         menu->ownerIds[0] = menu->ownerTable[ownerIndex];
         menu->tabIndex[0] = ownerIndex;
-        PsynergyMenu_CallIconRoutineWithValue((s32)menu,
+        PsynergyMenu_CallIconRoutineWithValue(menu,
                                               menu->ownerTable[ownerIndex]);
         break;
       }
@@ -7063,7 +7062,7 @@ s32 PsynergyMenu_SelectAction(void) {
 s32 PsynergyMenu_ActionReturnTrue(void) { return 1; }
 
 // Draws this owner's prepared Psynergy list in the shared entry sprites.
-void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 ownerId) {
+void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 ownerId) {
   struct PsynergyMenuState *menu = gMenuWork;
 
   UnitGetFar(ownerId);
@@ -7337,8 +7336,7 @@ s32 ItemMenu_SelectItem(void) {
         menu->selectedOwner = menu->ownerIds[ownerIndex];
         menu->paneOwner[0] = menu->ownerIds[ownerIndex];
         menu->paneIndex[0] = ownerIndex;
-        PsynergyMenu_CallIconRoutineWithValue((s32)menu,
-                                              menu->ownerIds[ownerIndex]);
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
         break;
       }
     }
@@ -8568,7 +8566,7 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
 s32 Menu_ComputeEntryValues(void *table) {
   struct DjinnMenuWork *menu;
   s32 ownerIndex;
-  u16 *entries;
+  u16 (*entries)[DJINN_LIST_ROWS];
   u16 *owners;
   s8 *counts;
   s16 entryCount;
@@ -8579,15 +8577,15 @@ s32 Menu_ComputeEntryValues(void *table) {
   if (ownerIndex < menu->ownerCount) {
     counts = ((struct DjinnListTable *)table)->counts;
     owners = menu->owners;
-    entries = table;
+    entries = ((struct DjinnListTable *)table)->ids;
     do {
-      entryCount = Djinn_ListOwnerEntries(entries, *owners, -1);
+      entryCount = Djinn_ListOwnerEntries(*entries, *owners, -1);
       ownerCount = menu->ownerCount;
       ownerIndex += 1;
       *counts = entryCount;
       owners += 1;
       counts += 1;
-      entries += DJINN_LIST_ROWS;
+      entries++;
     } while (ownerIndex < ownerCount);
   }
 }
@@ -8672,7 +8670,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   u32 tile;
   u32 masked;
 
-  render = gWindowWork[0];
+  render = (struct UiRenderWork *)gWindowWork[0];
   palette <<= 12;
   if (x < 0) {
     width += x;
@@ -9917,12 +9915,12 @@ void FourObjectMotion_UpdateAllPositions(void) {
 
   index = 0;
   while (1) {
-    u32 object = (u32)state->objects[index];
+    struct AnimationObject *object = state->objects[index];
 
     if (object != 0) {
       u32 vertical =
           VERTICAL_ORIGIN - ((s32)state->verticalOrigins[index] << 16);
-      ((struct FieldSprite *)object)->priority = 0;
+      object->part[0].priority = 0;
       motion[0] = FIXED_ONE;
       motion[1] = FIXED_ONE;
       request[0] = (s32)state->positionsX[index] << 16;
@@ -9947,9 +9945,9 @@ void FourObjectMotion_UpdateBottomRow(void) {
   Link_DrawShiftedTilePairFar((void *)0x06002500);
   objectIndex = 0;
   do {
-    u32 objectBits = (u32)menu->objects[objectIndex];
+    struct AnimationObject *object = menu->objects[objectIndex];
 
-    if (objectBits != 0) {
+    if (object != 0) {
       u32 projectedY =
           (241u << 17) - ((u32)(s32)menu->verticalOrigins[objectIndex] << 16);
       s32 phase;
@@ -9967,7 +9965,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
        * u8, s8 or u16 differs 130 to 140, as s16 82. */
       register s32 rowY asm("r2");
 
-      ((struct FieldSprite *)objectBits)->priority = 0;
+      object->part[0].priority = 0;
       phase = menu->phases[objectIndex];
       if (phase < 0) {
         motion[0] = -phase;
@@ -9985,7 +9983,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
       limit = 0x8000;
       if (rowY >= 0)
         limit = 0x4000;
-      Object_ApplyProjectedPlacementFar(objectBits, request, motion, limit);
+      Object_ApplyProjectedPlacementFar(object, request, motion, limit);
     }
     objectIndex++;
   } while (objectIndex <= 3);

@@ -578,9 +578,11 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   field->battle = Encounter_GetEnemyGroupAtSlot(zone, slot); // enemy group
   if (zone == AERIE && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
-  if (field->mode == 3)
-    Encounter_ResolveWorldMapZoneAndBackdrop(
-        (u8 *)ObjectTable_Get(gGameState.selectedActor) + 8); // position
+  if (field->mode == 3) {
+    struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+
+    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
+  }
   BattleFx_SelectBattleCue(zone, slot);
 }
 
@@ -603,9 +605,9 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   gameState->pendingDjinnEvent = (no + DJINNI_0) | skipHop;
   field->battle = Encounter_GetDjinnEnemyGroup(no); // the Djinni's enemy group
   if (field->mode == 3) {
-    void *obj = ObjectTable_Get(gameState->selectedActor);
+    struct ObjectRuntime *leader = ObjectTable_Get(gameState->selectedActor);
 
-    Encounter_ResolveWorldMapZoneAndBackdrop((u8 *)obj + 8); // position
+    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
   BattleFx_SelectBattleCue(0, 0);
 }
@@ -1464,19 +1466,20 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
 // Makes the target actor's sprite show the source actor's graphics (its VRAM
 // block and tile).
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
-  void *p;
+  struct ObjectRuntime *object;
+  struct FieldSprite *sprite;
   u8 vramBlock;
   u32 tile;
 
-  p = Object_GetById(sourceId);
-  p = ((struct ObjectRuntime *)p)->animation;
-  vramBlock = ((struct FieldSprite *)p)->vramBlock;
-  tile = ((struct FieldSprite *)p)->tile;
+  object = Object_GetById(sourceId);
+  sprite = object->animation;
+  vramBlock = sprite->vramBlock;
+  tile = sprite->tile;
 
-  p = Object_GetById(targetId);
-  p = ((struct ObjectRuntime *)p)->animation;
-  ((struct FieldSprite *)p)->vramBlock = vramBlock;
-  ((struct FieldSprite *)p)->tile = tile;
+  object = Object_GetById(targetId);
+  sprite = object->animation;
+  sprite->vramBlock = vramBlock;
+  sprite->tile = tile;
 }
 
 // Does nothing.
@@ -4303,7 +4306,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s32 scale;
   s32 remaining;
   struct FieldActor *djinni;
-  void *effectSlots;
+  struct BattleFxScene *effectScene;
   struct FieldActor *leader;
   struct EffectSlot *slot;
   s8 *slotState;
@@ -4314,7 +4317,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     return;
 
   BattleFx_InitializeSlots();
-  effectSlots = gEffectWork;
+  effectScene = gEffectWork;
   Shop_RestoreSceneTilesFar(0x201090);
   WaitFrames(30);
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
@@ -4339,12 +4342,11 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  slot = ((struct BattleFxScene *)effectSlots)->slots;
+  slot = effectScene->slots;
   remaining = 23;
   do {
     EffectSlot_Initialize(slot, 284, position.x, position.z);
-    EffectSlot_SetCallback(slot,
-                           (void *)BattleEffect_UpdatePhasedRadialParticle);
+    EffectSlot_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 10);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
@@ -4368,7 +4370,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     WaitFrames(20);
     nextState = 2;
-    slotState = &((struct BattleFxScene *)effectSlots)->slots[0].state;
+    slotState = &effectScene->slots[0].state;
     remaining = 23;
     do {
       if (slotState[5] != 0)
@@ -4388,9 +4390,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   {
     s32 nextState;
 
-    slotState = effectSlots;
+    slotState = (s8 *)effectScene;
     nextState = 5;
-    slotState += 152;
+    slotState += offsetof(struct BattleFxScene, slots) +
+                 offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
@@ -4500,12 +4503,12 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
 void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
-  void *effectSlots;
-  u8 *slot;
+  struct BattleFxScene *effectScene;
+  struct EffectSlot *slot;
   s8 *slotState;
   s32 remaining;
   s32 scale;
-  s32 position[3];
+  struct EffectVector position;
 
   leader = (struct CaptureObject *)Object_GetById(gGameState.selectedActor);
   djinni = (struct CaptureObject *)Object_GetById(djinniId);
@@ -4513,7 +4516,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     return;
 
   BattleFx_InitializeSlots();
-  effectSlots = gEffectWork;
+  effectScene = gEffectWork;
   Shop_RestoreSceneTilesFar(0x201204);
   WaitFrames(30);
   djinni->visible = 0;
@@ -4537,40 +4540,41 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   WaitFrames(30);
   Runtime_SetWorkTripleIfNonNegativeFar(0x19999, 0x19999, 0x10000);
 
-  position[0] = djinni->x;
-  position[1] = djinni->y;
-  position[2] = djinni->z;
-  Camera_WorldToScreen((struct EffectVector *)position);
+  position.x = djinni->x;
+  position.y = djinni->y;
+  position.z = djinni->z;
+  Camera_WorldToScreen(&position);
 
-  slot = (u8 *)effectSlots + 88;
+  slot = effectScene->slots;
   remaining = 23;
   do {
-    EffectSlot_Initialize((struct EffectSlot *)slot, 284, position[0],
-                          position[2]);
-    EffectSlot_SetCallback((struct EffectSlot *)slot,
-                           (void *)BattleFx_UpdateRadialSpread);
-    EffectSlot_SetObjectMode((struct EffectSlot *)slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(*(void **)slot, 11);
-    ((struct EffectSlot *)slot)->scaleX = 0x8000;
-    ((struct EffectSlot *)slot)->scaleY = Random16() + 0x18000;
+    EffectSlot_Initialize(slot, 284, position.x, position.z);
+    EffectSlot_SetCallback(slot, BattleFx_UpdateRadialSpread);
+    EffectSlot_SetObjectMode(slot, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 11);
+    slot->scaleX = 0x8000;
+    slot->scaleY = Random16() + 0x18000;
     remaining--;
     WaitFrames(1);
-    slot += 72;
+    slot++;
   } while (remaining >= 0);
 
   WaitFrames(140);
+  // Walking whole slots instead of their state bytes grows native English
+  // from 0x2dc to 0x2e0 bytes.
   {
     s32 nextState;
 
     nextState = 2;
-    slotState = effectSlots;
-    slotState += 152;
+    slotState = (s8 *)effectScene;
+    slotState += offsetof(struct BattleFxScene, slots) +
+                 offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += 72;
+      slotState += sizeof(struct EffectSlot);
     } while (remaining >= 0);
   }
 
@@ -4579,11 +4583,11 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   WaitFrames(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {
-    position[0] = leader->x;
-    position[1] = leader->y + 0x780000;
-    position[2] = leader->z;
-    djinni = (struct CaptureObject *)Object_Spawn(284, position[0], position[1],
-                                                  position[2]);
+    position.x = leader->x;
+    position.y = leader->y + 0x780000;
+    position.z = leader->z;
+    djinni = (struct CaptureObject *)Object_Spawn(284, position.x, position.y,
+                                                  position.z);
     if (djinni != NULL) {
       scale = Random16() / 3 + 0x10000;
       djinni->scaleY = scale;
@@ -4601,12 +4605,12 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   AudioCommand_PlayFar(288);
   WaitFrames(1);
   AudioCommand_PlayFar(151);
-  position[0] = leader->x;
-  position[1] = leader->y + 0x120000;
-  position[2] = leader->z;
+  position.x = leader->x;
+  position.y = leader->y + 0x120000;
+  position.z = leader->z;
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct CaptureObject *)Object_Spawn(284, position[0], position[1],
-                                                  position[2]);
+    djinni = (struct CaptureObject *)Object_Spawn(284, position.x, position.y,
+                                                  position.z);
     if (djinni == NULL)
       break;
     djinni->scaleY = 0x9999;
@@ -4709,10 +4713,10 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *copy;
   struct FieldActor *previous;
   struct FieldSprite *resource;
-  void *scene;
+  struct BattleFxScene *effectScene;
   struct FieldActor **cursor;
   struct FieldActor **list;
-  u8 *slot;
+  struct EffectSlot *slot;
   s8 *slotState;
   s32 kind;
   s32 remaining;
@@ -4726,7 +4730,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
 
   // Tint the screen blue (red 4, green 4, blue 16).
   BattleFx_InitializeSlots();
-  scene = gEffectWork;
+  effectScene = gEffectWork;
   Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | (16 << 10) | (4 << 5) | 4);
   WaitFrames(30);
   djinni->paused = 0;
@@ -4801,34 +4805,35 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  slot = (u8 *)scene + 88; // scene->slots[0]
+  slot = effectScene->slots;
   remaining = PARTICLE_MAX - 1;
   do {
-    EffectSlot_Initialize((struct EffectSlot *)slot, 240, position.x,
-                          position.z);
-    EffectSlot_SetCallback((struct EffectSlot *)slot,
-                           BattleFx_UpdateRandomTargetParticle);
-    EffectSlot_SetObjectMode((struct EffectSlot *)slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(*(void **)slot, 9);
+    EffectSlot_Initialize(slot, 240, position.x, position.z);
+    EffectSlot_SetCallback(slot, BattleFx_UpdateRandomTargetParticle);
+    EffectSlot_SetObjectMode(slot, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 9);
     remaining--;
     WaitFrames(1);
-    slot += 72; // sizeof(struct EffectSlot)
+    slot++;
   } while (remaining >= 0);
 
   // After 120 frames every droplet still in use goes on to state 2.
+  // Walking whole slots instead of their state bytes grows native English
+  // from 0x23c to 0x240 bytes.
   WaitFrames(120);
   {
     s32 nextState;
 
     nextState = 2;
-    slotState = scene;
-    slotState += 152; // scene->slots[0].state
+    slotState = (s8 *)effectScene;
+    slotState += offsetof(struct BattleFxScene, slots) +
+                 offsetof(struct EffectSlot, state);
     remaining = PARTICLE_MAX - 1;
     do {
       if (slotState[5] != 0) // active
         slotState[0] = nextState;
       remaining--;
-      slotState += 72;
+      slotState += sizeof(struct EffectSlot);
     } while (remaining >= 0);
   }
 

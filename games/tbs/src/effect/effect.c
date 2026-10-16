@@ -4710,7 +4710,7 @@ void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
 
   // The panel in work, the pieces of the burst in gMapCellBuffer.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
-  Iwram_CopyWords(BG_PLTT, sheet, 128);
+  Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
   Resource_DecodeType01(sheet, work);
   cells = Ram_MapCellBuffer;
@@ -7714,13 +7714,12 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (work->effect->variant == 0)
-    Iwram_CopyWords((s32)BG_PLTT,
-                    (s32)Resource_GetTableEntry((s32)&ResourceId_RedPaletteB),
-                    128);
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
   else if (work->effect->variant == 2)
-    Iwram_CopyWords(
-        (s32)BG_PLTT,
-        (s32)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
@@ -7988,7 +7987,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
-  Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   if (mode == 4)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == 3)
@@ -10209,7 +10208,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
   } else {
     resource = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
   }
-  Iwram_CopyWords((s32)BG_PLTT, (s32)resource, 128);
+  Iwram_CopyWords((void *)BG_PLTT, resource, 128);
 
   // The djinni: 40x40 at the canvas's own width, the small 20x40 picture at
   // double width.
@@ -10536,13 +10535,13 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
     if (mode == 3)
-      Iwram_CopyWords(
-          (s32)BG_PLTT,
-          (s32)Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
+      Iwram_CopyWords((void *)BG_PLTT,
+                      Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
+                      128);
     else
-      Iwram_CopyWords(
-          (s32)BG_PLTT,
-          (s32)Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+      Iwram_CopyWords((void *)BG_PLTT,
+                      Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                      128);
   } else if (mode == 4) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
@@ -10563,7 +10562,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode) {
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
+    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
   if (mode == 3)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -11229,7 +11228,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
 
   // Copy the background tiles (0x8000 bytes from VRAM 0x06008000) and cut
   // the strip at x 32 to 71, y 96 to 111 into the riseFrame of the sheet.
-  Iwram_CopyWords((s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
+  Iwram_CopyWords(Ram_MapCellBuffer, BG_CHAR_BLOCK(2), 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != PILLAR_W; col++) {
@@ -12626,7 +12625,7 @@ void BattleFx_RunOrbitingSparks(void) {
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1010;
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
-  Iwram_CopyWords(BG_PLTT, skulls, 128);
+  Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
   Resource_DecodeType01(skulls + 128, work);
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -17453,7 +17452,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   Render_ResetTransformState();
-  Transform_SetLookAt((u8 *)camera, (u8 *)camera->pos);
+  Transform_SetLookAt(camera->eye, camera->pos);
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
   screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
   return 0;
@@ -17691,7 +17690,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
               anchor.x - 16, anchor.y - 24, 40, 48);
     Render_ResetTransformState();
-    Transform_SetLookAt(camera, (u8 *)camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;
@@ -17787,7 +17786,8 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
                                               work->effect->firstTarget, 130);
   WaitFrames(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet,
+                             work->imageStorage, 1, 0);
   BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
                                               work->effect->firstTarget, 130);
   WaitFrames(1);
@@ -17919,15 +17919,15 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);
     screenPosition.y += 16;
     if (frame <= 1)
-      draw[0](canvas, work, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
     else if (frame <= 3)
-      draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage + 0x3840, 0, 0, 120, 120);
     else if (frame <= 5)
       draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 7)
       draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
     Render_ResetTransformState();
-    Transform_SetLookAt(camera, (u8 *)camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "window.h"
+#include "affine.h"
 
 struct SelectionSprite {
   struct SelectionSprite *next;
@@ -45,7 +46,7 @@ struct SelectionNode {
 
 struct SelectionScreen {
   struct SelectionNode records[16];
-  u16 matrix[4];
+  struct AffineTransform transform;
   struct SelectionNode *head;
   struct SelectionNode *path;
   struct UiWindow *window;

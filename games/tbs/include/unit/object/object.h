@@ -45,11 +45,14 @@ void Scene_SetDefeatReturnPoint(void);
 s16 Event_GetSpecialValue(void);
 void Battle_SelectSceneBackdrop(void);
 void Battle_SelectTerrainBackdrop(s32 behavior);
-// BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype
-// in scope, as in object.c above its definition: in one file its definition
+// Matching builds call BattleFx_SelectBattleCue without a prototype, as in
+// object.c above its definition: in one file its definition
 // would come before Field_RequestDjinnBattle and
 // Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
 // (2 of 52 instructions in tbs-en). Split evidence for object|psynergy_effects.
+#ifdef UBFIX
+void BattleFx_SelectBattleCue(s32 zone, s32 slot);
+#endif
 void BattleFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
 void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void RunBattleEffect07(void);

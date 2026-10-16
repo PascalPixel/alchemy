@@ -60,7 +60,6 @@
 #include "item.h"
 #include "vram_block.h"
 #include "select.h"
-#include "node_chain.h"
 #include "text/msg_ids.h"
 #include "sound_ids.h"
 #include "layout_guard.h"
@@ -5467,7 +5466,7 @@ void SelectionScreen_Draw(void) {
     cnt++;
   }
   if (transfer->kind != 0) {
-    node = NodeChain_GetNodeAtCount(state);
+    node = Selection_GetCursorNode(state);
     te = &transfer->sprite;
     te->mode = 0;
     te->affine = 0;
@@ -5619,7 +5618,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct UiWindow *window;
 
   screen = gResQueueWork;
-  node = NodeChain_GetNodeAtCount(screen);
+  node = Selection_GetCursorNode(screen);
   slot = &screen->window;
   window = *slot;
   if (window == 0) {
@@ -5765,12 +5764,12 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index) {
   }
 }
 
-// Returns the node st->count links on from st->node.
-struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st) {
-  struct NodeChainNode *node = st->node;
+// Returns the node at the selection screen's cursor index.
+struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen) {
+  struct SelectionNode *node = screen->head;
   s32 i;
 
-  for (i = 0; i != st->count; ++i) {
+  for (i = 0; i != screen->cursorIndex; ++i) {
     node = node->next;
   }
   return node;
@@ -6455,7 +6454,7 @@ void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 // Loads the large icon of the command under the cursor, zooming in.
 void SelectionScreen_LoadLargeIcon(void) {
   struct SelectionScreen *state = gResQueueWork;
-  struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
+  struct SelectionNode *selection = Selection_GetCursorNode(state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
   u8 *table;

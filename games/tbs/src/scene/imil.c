@@ -1199,14 +1199,15 @@ static void FieldScene_RunThreeActorChoreography(void) {
   Engine_EventEnd();
 }
 
-static void SceneActor_TurnTowardTableAngle(s32 z) {
+static void SceneActor_TurnTowardTableAngle(union FieldObject *object) {
   T *o;
+  s32 z;
   s32 t;
   s32 d;
   u16 prev;
   s32 n;
 
-  o = (T *)z;
+  o = (T *)object;
   n = o->unk64;
   z = 0;
   t = ((s16 *)&o->unk64)[z];
@@ -1282,8 +1283,7 @@ static void StagedActor_RunHeadingProbeStep(void) {
     Object_SetMode(subject, 2);
     ObjectDispatch_ApplyValueToChildren(subject, 48);
     Engine_ObjectCommitPosition(subject);
-    subject->update =
-        (void (*)(union FieldObject *))SceneActor_TurnTowardTableAngle;
+    subject->update = SceneActor_TurnTowardTableAngle;
 
     for (;;) {
       FieldVector_AddPolarOffset(0x100000, heading, &probe);

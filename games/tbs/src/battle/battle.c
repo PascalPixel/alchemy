@@ -10550,8 +10550,13 @@ struct SparkWork {
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
+// UB: the scheduler invokes a void callback. Plain void changes the native
+// return register from r1 to r0 in tbs-en; matching builds keep the old type.
+#ifdef UBFIX
+void BattleFx_UpdateStarField(void) {
+#else
 s32 BattleFx_UpdateStarField(void) {
-  // 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
+#endif
   s32 j;
   s32 frame;
   u32 size;
@@ -10650,7 +10655,13 @@ s32 BattleFx_UpdateStarField(void) {
   work->ready = 1;
 }
 
+// UB: the scheduler invokes a void callback. Plain void changes the native
+// return register from r1 to r0 in tbs-en; matching builds keep the old type.
+#ifdef UBFIX
+void Graphics_UploadVramBlock(void) {
+#else
 u32 Graphics_UploadVramBlock(void) {
+#endif
   void *source = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   struct SparkWork *work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
 
@@ -10752,10 +10763,18 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   Io_Write16(0x100, &REG_BG2PD);
   BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
   BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+#ifdef UBFIX
+  Scheduler_AddOrUpdateCallback(BattleFx_UpdateStarField, 0xc80);
+#else
   Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField,
                                 0xc80);
+#endif
+#ifdef UBFIX
+  return Scheduler_AddOrUpdateCallback(Graphics_UploadVramBlock, 0xc80);
+#else
   return Scheduler_AddOrUpdateCallback(
       (SchedulerCallback)Graphics_UploadVramBlock, 0xc80);
+#endif
 }
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
@@ -10765,8 +10784,16 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
   REG_DISPCNT = 0x1341;
+#ifdef UBFIX
+  Scheduler_RemoveCallback(Graphics_UploadVramBlock);
+#else
   Scheduler_RemoveCallback((SchedulerCallback)Graphics_UploadVramBlock);
+#endif
+#ifdef UBFIX
+  return Scheduler_RemoveCallback(BattleFx_UpdateStarField);
+#else
   return Scheduler_RemoveCallback((SchedulerCallback)BattleFx_UpdateStarField);
+#endif
 }
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,

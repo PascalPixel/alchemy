@@ -5440,13 +5440,6 @@ void EffectRuntime_StopCurrentObject(void) {
   WaitFrames(1);
 }
 
-struct BattleEffectPosition {
-  u8 reserved00[4];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 #define BATTLE_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
 
 // Ends a Psynergy effect: frees the effect slots still in use and, unless
@@ -5455,19 +5448,27 @@ struct BattleEffectPosition {
 // tiles, restores the map's shake, plays the queued sound and releases the
 // effect's work.
 void BattleEffect_CleanupSceneObjects(void) {
+#ifndef UBFIX
   struct BattleFxScene **sceneCell;
+#endif
   struct BattleFxScene *scene;
   struct FieldWork *runtime;
-  struct BattleEffectPosition *position;
+  struct MapScrollWork *map;
   struct EffectSlot *sceneObject;
   s32 remaining;
 
+#ifdef UBFIX
+  scene = gEffectWork;
+  runtime = (struct FieldWork *)gEventWork;
+  map = gMapWork[0];
+#else
+  // Indexing beyond the scalar global is undefined in C. Named slots add
+  // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
   sceneCell = (struct BattleFxScene **)&gEffectWork;
   scene = *sceneCell;
-  // The event work (slot 27) and the map work (slot 8), reached from the
-  // effect's slot 56 of gWorkSlot.
   runtime = *(struct FieldWork **)((u8 *)sceneCell - 116);
-  position = *(struct BattleEffectPosition **)((u8 *)sceneCell - 192);
+  map = *(struct MapScrollWork **)((u8 *)sceneCell - 192);
+#endif
   for (remaining = 0; remaining < 24; remaining++) {
     sceneObject = &scene->slots[remaining];
     if (sceneObject->active != 0)
@@ -5507,9 +5508,9 @@ void BattleEffect_CleanupSceneObjects(void) {
     runtime->castStarted = 0;
     Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
     Resource_ResetEntry((s16)scene->tileSlot);
-    position->x = scene->savedX;
-    position->y = scene->savedY;
-    position->z = scene->savedZ;
+    map->shakeX = scene->savedX;
+    map->shakeY = scene->savedY;
+    map->shakeDecay = scene->savedZ;
     if (scene->animation != 8)
       runtime->effectTimerRunning = 1;
     BattleFx_PlayQueuedSound();
@@ -5627,9 +5628,15 @@ void BattleFx_PrepareBufferInterpolation(void) {
 // the screen's x and y and y becomes 0. The world map uses its perspective
 // projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
+#ifdef UBFIX
+  struct EventRuntime *event = (struct EventRuntime *)gEventWork;
+
+  if (event->mode19e == 3) {
+#else
   struct EventRuntime **eventCell = (struct EventRuntime **)&gEventWork;
 
   if ((*eventCell)->mode19e == 3) {
+#endif
     struct EffectVector result;
 
     Render_ProjectPoint(position, &result);
@@ -5637,9 +5644,15 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     position->z = result.y << 16;
     position->y = 0;
   } else {
-    // The map work, gWorkSlot[8], reached from the event work's slot 27.
+#ifdef UBFIX
+    struct MapScrollWork *state = gMapWork[0];
+#else
+    // The named map slot avoids stepping outside gEventWork. In forced native
+    // EN it replaces the address copy/subtract with a separate literal load
+    // and changes register allocation; the extent remains 0x68 bytes.
     struct MapScrollWork *state =
         *(struct MapScrollWork **)((u8 *)eventCell - 76);
+#endif
     s32 x = state->viewX & 0xffff0000;
     s32 z = state->viewY & 0xffff0000;
 
@@ -6541,13 +6554,19 @@ struct BurstParticleVisualGroup {
 // Ends Reveal if it is running: stops its watch, brings the colours back
 // from black over 30 frames and runs stage 4 of the Psynergy event.
 void ResetSceneTransitionEffect(void) {
-  // gEffectWork is slot 56 of gWorkSlot: 0x74 bytes before it is the event
-  // work (slot 27), 0x64 bytes before it slot 31.
+#ifdef UBFIX
+  struct BattleFxScene *work = gEffectWork;
+  struct DisplayTransitionState *scene = gDisplayTransition;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
+#else
+  // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
+  // function in the forced native EN build (0xe8 -> 0xf0).
   struct BattleFxScene **cell = &gEffectWork;
   struct BattleFxScene *work = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
+#endif
   s16 zero;
   s32 tid;
   void *ev;
@@ -7519,17 +7538,27 @@ void RunBattleEffect03(void) {
 // CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
 // the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map.
 void FieldFx_CheckCloakTile(void) {
+#ifndef UBFIX
   u32 slot;
+#endif
   struct EventRuntime *ev;
   struct ObjectRuntime *obj;
   u8 *tile;
   s32 x;
   s32 y;
 
+#ifndef UBFIX
   slot = (u32)&gEventWork;
+#endif
   ev = gEventWork;
   obj = ObjectTable_Get(gGameState.selectedActor);
+#ifdef UBFIX
+  tile = gMapWork[0];
+#else
+  // The named map slot avoids reading outside gEventWork. It adds 4 bytes
+  // to this function in the forced native EN build (0xc0 -> 0xc4).
   tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
+#endif
 
   if (ev->mode19e == 3) {
     u32 tx;

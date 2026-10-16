@@ -5064,8 +5064,15 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   UiWork_Finalize(winMain, 1);
   UiWork_Finalize(winDesc, 1);
   PartyStatusDraw(gBattleWork->partyStatus);
+  // UB: the indexed scalar pointer steps outside gBattleWork to slot 57.
+  // The named slot changes native instructions at the same 0xcf8-byte EN
+  // extent; using gWorkSlot instead adds eight bytes.
+#ifdef UBFIX
+  gLinkCountdownWork->busy = 0;
+#else
   ((struct MenuCell **)&gBattleWork)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]
       ->busy = 0;
+#endif
   WaitFrames(1);
   return 0;
 }
@@ -6642,10 +6649,19 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #endif
   if (spread == 0)
     spread = 1;
+  // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
+  // add 12 bytes here in EN; using gWorkSlot adds 16 bytes.
+#ifdef UBFIX
+  if (mode == 2 || mode == 4)
+    gLinkCountdownWork->slideOffset = -2;
+  else
+    gLinkCountdownWork->slideOffset = 16;
+#else
   if (mode == 2 || mode == 4)
     ((struct MenuCell **)&gBattleWork)[48]->slideOffset = -2;
   else
     ((struct MenuCell **)&gBattleWork)[48]->slideOffset = 16;
+#endif
   for (i = 0; i < 6; i++)
     table[i].flags = 0;
   cursor = -1;

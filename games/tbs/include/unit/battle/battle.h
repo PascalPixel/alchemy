@@ -235,8 +235,16 @@ void BattlePres_ClearAllActorRecordModes(void);
 void Graphics_AdvancePaletteCycle(void);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 
+#ifdef UBFIX
+void BattleFx_UpdateStarField(void);
+#else
 s32 BattleFx_UpdateStarField(void);
+#endif
+#ifdef UBFIX
+void Graphics_UploadVramBlock(void);
+#else
 u32 Graphics_UploadVramBlock(void);
+#endif
 s32 BattleFx_InitializeStarField(s32 mode);
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,

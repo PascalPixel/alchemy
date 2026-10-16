@@ -66,7 +66,14 @@ SceneAudio_PlayCue118AndReturnZero(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object) {
+// UB: the field updater invokes a void hook. Plain void removes the zero
+// result and changes the native return register (three instructions in EN).
+#ifdef UBFIX
+static void SceneActor_FaceLeaderWhileGrounded(union FieldObject *fieldObject) {
+#else
+static s32 SceneActor_FaceLeaderWhileGrounded(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *object = (struct FieldActor *)fieldObject;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if ((leader->z.fixed >> 19) <= 22) {
@@ -75,7 +82,9 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object) {
   } else if (object->facing != 0xc000) {
     Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
   }
+#ifndef UBFIX
   return 0;
+#endif
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -410,8 +419,12 @@ static void MercuryEntrance_CrossDoorway(void) {
   Engine_EventWait(20);
   Engine_ActorShowEmote(3, EMOTE_IN_FRONT | 2, 60);
   actor = Object_GetById(3);
+#ifdef UBFIX
+  actor->update = SceneActor_FaceLeaderWhileGrounded;
+#else
   actor->update =
       (void (*)(union FieldObject *))SceneActor_FaceLeaderWhileGrounded;
+#endif
   Engine_CameraMoveToActor(0, 1);
   Engine_EventWait(30);
   Actor_WalkToAndWait(0, 136, 0x108);

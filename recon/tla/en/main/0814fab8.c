@@ -11,7 +11,7 @@
 // - adds modes 6 and 11 (the palette stepping to a resource every four
 // frames), 8 and 12 (the violet streak; 12 draws a grey ramp for its
 // Djinni), 9 (the wisp in the Mars palette) and 7;
-// - calls BattleEffect_LoadWork (Func_08196404) itself, MAX as mode 1 and
+// - calls BattleFx_LoadWork (Func_08196404) itself, MAX as mode 1 and
 // ADDITIVE as 0, where The Broken Seal's modes are 2 and 3;
 // - plays the opening cue at frame 0 inside the loop.
 // Resources not yet named in directory.s, by row and asset: 0x137
@@ -63,10 +63,10 @@
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                   s32 mode); // BattleEffect_LoadWork
+                   s32 mode); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar

@@ -73,7 +73,7 @@ void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 s32 Func_081963ec(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleEffect_LoadWork
+                   s32 mode); // BattleFx_LoadWork
 s32 Func_08143000(void);      // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);

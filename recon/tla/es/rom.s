@@ -4966,10 +4966,10 @@ Func_08158dc8:
 Func_08159cac:
 	.incbin "baserom.gba", 0x00159cac, 0x00000398
 	.section .rom.0015a110, "ax"
-	.global BattlePres_RunBurstScene
-	.type BattlePres_RunBurstScene, %function
+	.global BattleFx_RunBurstScene
+	.type BattleFx_RunBurstScene, %function
 	.thumb_func
-BattlePres_RunBurstScene:
+BattleFx_RunBurstScene:
 	.incbin "baserom.gba", 0x0015a110, 0x000008d4
 	.global Func_0815a9e4
 	.type Func_0815a9e4, %function
@@ -5042,8 +5042,8 @@ Func_081638d0:
 	.section .rom.00164c0a, "ax"
 	.incbin "baserom.gba", 0x00164c0a, 0x000000ba
 	.section .rom.00164cc4, "ax"
-	.global BattleEffect_RunParticleStreams
-BattleEffect_RunParticleStreams:
+	.global BattleFx_RunParticleStreams
+BattleFx_RunParticleStreams:
 	.incbin "baserom.gba", 0x00164cc4, 0x00000df0
 	.global Func_08165ab4
 	.type Func_08165ab4, %function

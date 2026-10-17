@@ -1,6 +1,6 @@
 // Near miss, differ 41 of 558.
 
-// Twin: The Broken Seal's BattleEffect_RunFallingParticles (effect kind 7 in
+// Twin: The Broken Seal's BattleFx_RunFallingParticles (effect kind 7 in
 // both games), ported as is apart from ⚓️'s calling conventions: the effect is
 // read from the argument (⚓️ never stores work->effect), the heap blocks are
 // read as Ram_HeapSlots fields, the blitters go through Func_081963ec with
@@ -57,7 +57,7 @@ extern u16 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 s32 Func_081963ec(s32 slot, s32 flags);
 s32 Func_08143000(void);  // the canvas transfer callback
 void Func_0813bba0(void); // arms WIN0's HBlank DMA

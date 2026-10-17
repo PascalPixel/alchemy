@@ -344,7 +344,7 @@ s32 BattleFx_SelectBattleCue(s32 row, s32 column);
 void BattleFx_SetupObjectPair(s32 actor, s32 target);
 s32 BattleFx_StartBufferInterpolationFar(s32);
 void BattleMotion_ProjectScaledPositionFar(s32, s32 *);
-void BattlePres_RunBurstScene(struct EffectStep *, s32);
+void BattleFx_RunBurstScene(struct EffectStep *, s32);
 void EffectRuntime_StopCurrentObject(void);
 s32 Event_SpawnObjectTable(s32 event_id, s32 state);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,

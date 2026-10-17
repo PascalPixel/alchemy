@@ -62,7 +62,7 @@ extern u8 gData_08198a98[];  // ☀️ gSparkGroups_FlashCells
 extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08144aac(s32 side,
                    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Object_SetMode(void *object, s32 mode);

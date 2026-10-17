@@ -60,7 +60,7 @@ void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
 void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
-void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void);      // BattleFx_SetupBlendedDisplay
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);

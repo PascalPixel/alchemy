@@ -1,6 +1,6 @@
 // Near miss, differ 213 of 563.
 
-// Twin: The Broken Seal's BattleEffect_RunFallingBolts (effect kind 9 in both
+// Twin: The Broken Seal's BattleFx_RunFallingBolts (effect kind 9 in both
 // games), ported as is apart from ⚓️'s calling conventions: the effect read
 // from the argument, the heap blocks as Ram_HeapSlots fields, Func_081963ec
 // with ⚓️'s mode numbers, Func_0813bba0 for the WIN0 HBlank DMA, callback
@@ -59,7 +59,7 @@ extern u16 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 s32 Func_081963ec(s32 slot, s32 flags);
 s32 Func_08143000(void);  // the canvas transfer callback
 void Func_0813bba0(void); // arms WIN0's HBlank DMA

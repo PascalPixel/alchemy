@@ -55,9 +55,9 @@ extern char ResourceId_SmokeSheet;
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08143488(void); // Palette_StepFadeTransfer
-void Func_081963ec(s32 slot, s32 blitter); // BattleEffect_LoadWork, packed
+void Func_081963ec(s32 slot, s32 blitter); // BattleFx_LoadWork, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers

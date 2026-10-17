@@ -82,7 +82,7 @@ extern u8 gData_081974ad[];
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void Func_08143bb8(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 Func_081963ec(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.

@@ -74,7 +74,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
                    s32 *screenY); // BattleFx_PrepareCanvasEffect
 void Func_08144aac(s32 side,
                    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,

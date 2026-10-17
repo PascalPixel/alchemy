@@ -4,7 +4,7 @@
 
 // New in The Lost Age: no ☀️ function has this body (shape twin
 // BattleFx_RunLeapingStrike 0.471, structure twin
-// BattleEffect_RunDualParticleStream 0.494). Written from the listing on
+// BattleFx_RunDualParticleStream 0.494). Written from the listing on
 // ☀️'s canvas skeleton: the canvas preparer Func_0815585c for modes 0 and
 // 1, a Djinn circling over the canvas when the effect has a prelude, and
 // sixteen textured 64x64 quads drawn through ⚓️'s render jobs
@@ -94,7 +94,7 @@ void Func_08143bb8(void);               // ☀️ BattleFx_EndCanvasLayer
 void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer
 void Func_081434f8(void);               // ☀️ ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);          // ☀️ BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *anchor,

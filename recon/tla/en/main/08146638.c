@@ -49,7 +49,7 @@ void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
 void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll

@@ -100,10 +100,10 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
 void BattleObjPut(void);
 void BattleFx_RunSceneEffectFar(s32 *context);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);
 struct BattleEffectArgument;
-void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
+void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
 
 #endif

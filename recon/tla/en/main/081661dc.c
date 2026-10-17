@@ -70,10 +70,10 @@ struct EffectCamera {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Audio_PlayCue(s32 cue);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void Func_08144aac(s32 side,
                    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters

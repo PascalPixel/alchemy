@@ -1,6 +1,6 @@
 // Draft of Func_08153ebc, summon scene 4 (Func_0814c994's case 4).
 
-// Twin: The Broken Seal's BattleEffect_RunStagedParticles (effect.c), call
+// Twin: The Broken Seal's BattleFx_RunStagedParticles (effect.c), call
 // for call, with The Lost Age's changes:
 // - the giant is eleven sprite objects (Func_0815b290, priority 1, their
 // 1 KB of tiles copied to object VRAM) in a grid of four rows of three,
@@ -55,17 +55,17 @@
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleFx_AdvanceScrollOnInterval
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_0814cca8(void); // BattleFx_SetupBlendedDisplay
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
-void Func_08163c2c(s32 layer, s32 value);  // BattleEffect_WipeCanvas
+void Func_08163c2c(s32 layer, s32 value);  // BattleFx_WipeCanvas
 void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void PaletteDma_LoadBlock(void);

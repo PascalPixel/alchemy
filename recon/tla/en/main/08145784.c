@@ -53,7 +53,7 @@ void Func_081434f8(void);                   // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_08152474(void);                      // BattleFx_ArmBg2AffineHBlankDma
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void Audio_PlayCue(s32 cue);

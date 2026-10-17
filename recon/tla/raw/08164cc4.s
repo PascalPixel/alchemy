@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleEffect_RunParticleStreams
+	.global BattleFx_RunParticleStreams
 	.thumb_func
-BattleEffect_RunParticleStreams:
+BattleFx_RunParticleStreams:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -94,11 +94,11 @@ extern u8 Data_081982d8[];         // ☀️ gBattleFx10_FallWidths
 extern u8 Data_081982db[];         // ☀️ gBattleFx10_FallHeights
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void);                // ☀️ BattlePres_ConfigureEffectDisplay
+void Func_0813ba50(void);                // ☀️ BattleFx_ConfigureEffectDisplay
 void Func_08143000(void);                // ☀️ ProcessPendingGraphicsTransfer
 void Func_08143bb8(void);                // ☀️ BattleFx_EndCanvasLayer
-void Func_08163c2c(s32 mode, s32 value); // ☀️ BattleEffect_WipeCanvas
-s32 Func_081963ec(s32 slot, s32 flags);  // ☀️ BattleEffect_LoadWork
+void Func_08163c2c(s32 mode, s32 value); // ☀️ BattleFx_WipeCanvas
+s32 Func_081963ec(s32 slot, s32 flags);  // ☀️ BattleFx_LoadWork
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
 void Func_08152404(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
@@ -109,7 +109,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-void Func_0814cca8(void); // ☀️ BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void); // ☀️ BattleFx_SetupBlendedDisplay
 void Render_ResetTransformState(void);
 void Func_081180e8(s32 phase); // ☀️ BattleEventRuntime_BeginPhaseFar
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

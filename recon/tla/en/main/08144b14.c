@@ -51,7 +51,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
 void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters

@@ -21,7 +21,7 @@
 // by DMA, the spark sheet, the orb sheet, the transfer callback (half the
 // last frame left behind), and the sparks at the target.
 
-// Port of The Broken Seal's BattlePres_RunBeamSequence, with The Lost
+// Port of The Broken Seal's BattleFx_RunBeamSequence, with The Lost
 // Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
 // work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
 // its own test, the beam is drawn additive (☀️ draws it with max), the
@@ -112,7 +112,7 @@ void Func_08143d80(void);
 void Func_08143d04(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void Func_08143000(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 Func_081963ec(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.

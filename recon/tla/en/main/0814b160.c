@@ -49,7 +49,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);               // ☀️ BattleFx_EndCanvasLayer
 void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase);          // ☀️ BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleFx_LoadWork
 void Audio_PlayCue(s32 cue);
 
 // A spinning star marks each target in turn, sixteen frames apart: a post

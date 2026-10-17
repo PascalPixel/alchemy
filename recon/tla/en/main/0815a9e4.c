@@ -22,7 +22,7 @@
 // Teardown: the callback, both blitters and the rock objects are released
 // and the canvas layer is closed.
 
-// Port of The Broken Seal's BattlePres_RunRisingWall (kind 3 there too),
+// Port of The Broken Seal's BattleFx_RunRisingWall (kind 3 there too),
 // with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
 // callback order, no work->effect store, and the rock object's flags at
 // 0x1a.
@@ -118,7 +118,7 @@ extern struct Scale Data_08196e44;
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void Func_08143bb8(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 Func_081963ec(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.

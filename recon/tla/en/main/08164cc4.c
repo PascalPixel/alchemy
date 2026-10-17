@@ -1,12 +1,12 @@
 // Draft, differ 187 of 1681 (the two nested helpers first, then the body;
 // alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
-// BattleEffect_RunParticleStreams, summon 11 and summon 0's default
+// BattleFx_RunParticleStreams, summon 11 and summon 0's default
 // (Func_0814c994's default case, through BattleFx_RunParticleStreamsMode0 and
 // BattleFx_RunParticleStreamsMode1 in particle_stream_modes.c), with its nested
 // helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused), which
 // adopt with it (S1 notes; alchemy permute cannot parse them).
 
-// Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleFx_RunParticleStreams (games/tbs/src/effect/effect.c),
 // ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
 // kept as the argument, Func_08163c2c for the canvas wipe, the fills through
 // IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 + i *
@@ -112,9 +112,9 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value); // BattleEffect_WipeCanvas
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void Func_08163c2c(s32 mode, s32 value); // BattleFx_WipeCanvas
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 void Func_08152404(s32 count, s32 resource,
                    s32 priority); // BattleFx_SpawnObjects
@@ -124,8 +124,8 @@ void Func_0813bb38(void);                 // Camera_AdvanceBg2Reference
 void Func_08143174(void); // BattleFx_FlushPendingGraphicsTransfer
 void Func_08164bb4(void); // BattleFx_ArmPaletteHBlankDma
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode);                   // BattleEffect_LoadWork
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+                  s32 mode);                   // BattleFx_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                // 7, 7, flags, mode)
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, struct Scale *scale,
@@ -134,7 +134,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 yaw);
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void); // BattleFx_SetupBlendedDisplay
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void BattleActor_CommitPlacementFar(void);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
@@ -157,7 +157,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // becomes a flame where it lands) and the motes. Act two (54 frames): the
 // blast pictures, 32 motes, 128 flashes and 512 embers; the palette
 // brightens from frame 36, the hit at 48.
-void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
+void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                                      s32 mode) {
   u8 offsets[128];
   void *canvas;

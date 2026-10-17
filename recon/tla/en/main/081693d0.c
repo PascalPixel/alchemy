@@ -100,10 +100,10 @@ extern s32 Data_08198aec[];        // the spray's four gravities
 extern u16 gData_08197410[];       // ☀️ gParticleStreams_CellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value);        // BattleEffect_WipeCanvas
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void Func_08163c2c(s32 mode, s32 value);        // BattleFx_WipeCanvas
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
@@ -111,7 +111,7 @@ struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
                                    u32 mode);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
                    s32 width); // BattleFx_DrawClippedCanvasLine
-void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void);      // BattleFx_SetupBlendedDisplay
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar

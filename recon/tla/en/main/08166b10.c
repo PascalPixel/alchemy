@@ -66,10 +66,10 @@ extern s32 gData_08198aa4[]; // the dust's four gravities
 extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void Func_0815f0a0(s32 resourceId); // BattleFx_StepPaletteToResource
 void Func_0815b634(void);

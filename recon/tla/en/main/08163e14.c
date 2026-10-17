@@ -1,9 +1,9 @@
 // Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
 // call reaches it), a second copy of The Broken Seal's
-// BattleEffect_RunEmberColumns (summon 2's, which The Lost Age keeps at
+// BattleFx_RunEmberColumns (summon 2's, which The Lost Age keeps at
 // Func_08148458).
 
-// Twin: ☀️ BattleEffect_RunEmberColumns (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleFx_RunEmberColumns (games/tbs/src/effect/effect.c),
 // ported: the palette goes by DMA 3, the blitters come from
 // Func_08144aac(0, draw), the effect stays an argument (its count and actors
 // are read from it; only Func_0814cc4c reads the work's copy), formation
@@ -67,7 +67,7 @@ extern const u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
 extern const s32 gData_08198974[]; // ☀️ gEmberColumns_Gravity
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08144aac(s32 side,
                    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Func_0814cc4c(
@@ -81,7 +81,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Func_0816442c(s32 formation, s32 x,
                    s32 y); // BattleFx_PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x,
-                   s32 y); // BattleEffect_RunImpactBurst
+                   s32 y); // BattleFx_RunImpactBurst
 void Func_08143bb8(void);  // BattleFx_EndCanvasLayer
 
 struct Point2D {

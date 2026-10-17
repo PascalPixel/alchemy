@@ -1,5 +1,5 @@
 // Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
-// (call order BattleEffect_RunDualParticleStream 0.417): ⚓️'s own effect on ☀️'s
+// (call order BattleFx_RunDualParticleStream 0.417): ⚓️'s own effect on ☀️'s
 // frame, its bursts and jaws drawn as textured quads by ⚓️'s model kernels, as
 // in Triple Chomp (Func_0818b868). The native frame (108) holds the mode at
 // sp+64, work 60, canvas 56, frame 52, graphics 48, the user's position's

@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 60 (one reordered row): The Broken Seal's
-// BattlePres_ConfigureEffectDisplay. The native loads each register value from
+// BattleFx_ConfigureEffectDisplay. The native loads each register value from
 // the pool before it starts the register's address; plainly every address
 // starts first (differ 20). One-pass blocks around the BLDCNT, WIN0H and WININ
 // values put those loads first without moving the literal pools (an empty asm

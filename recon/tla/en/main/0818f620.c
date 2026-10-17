@@ -2,7 +2,7 @@
 // of the canvas burst family (BattleFx_RunCanvasMode0,
 // BattleFx_RunCanvasModeByCount and BattleFx_RunCanvasMode3WithAction in
 // canvas_modes.c), written from the listing on The Broken Seal's canvas
-// skeleton (twins: BattleEffect_RunCirclingFallingScene 0.44, by call
+// skeleton (twins: BattleFx_RunCirclingFallingScene 0.44, by call
 // order BattleFx_RunSparkGroups 0.44).
 // Every call, table and branch of the four modes is in the native's order;
 // the four quarter blits of a disc reload the second blitter for each flip

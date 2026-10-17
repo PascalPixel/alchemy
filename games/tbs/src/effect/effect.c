@@ -83,7 +83,7 @@ static __inline__ void Dma_Stop(volatile u16 *channel) {
   (void)channel[DMA_CONTROL_HALF];
 }
 
-// How BattlePresentation_ProcessPendingGraphicsTransfer moves the effect's
+// How BattleFx_ProcessPendingGraphicsTransfer moves the effect's
 // 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
 // pixels are indices into a palette ramp, so scaling them fades a trail.
 enum CanvasTransferMode {
@@ -113,7 +113,7 @@ enum CanvasTransferMode {
 // from and ends with: no blending, window 0 and window 1 both covering the
 // battle view (lines 16 to 135), and the effect display mode queued for the
 // next frame. Waits one frame.
-void BattlePres_ConfigureEffectDisplay(void) {
+void BattleFx_ConfigureEffectDisplay(void) {
   // Restore the battle viewport before the next effect changes its layers.
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0x100e; // 14/16 of the top layer over all of the bottom
@@ -186,7 +186,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 // (shards and frames: 16 for 46 frames, 20 for 52, 32 for 80); variant 1
 // leaves longer trails and variant 2 draws additively.
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
-void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
+void BattleFx_RunFallingParticles(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -211,7 +211,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100; // unscaled
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   REG_BLDCNT = 0x3f44; // alpha-blend BG2 over everything
   REG_WININ = 0x3337;  // window 1 hides BG2
 
@@ -242,16 +242,14 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
   // The shards fall towards the targets' side, so the blitters mirror them
   // when the targets are the party.
   if (work->effect->side == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_Y,
-                          COMPOSITE_MAX);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_Y,
-                          COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_Y,
+                      COMPOSITE_ADDITIVE);
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
   }
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
@@ -288,8 +286,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != gFallingShards_Counts[work->effect->variant * 2 + 1];
        frame++) {
@@ -378,12 +375,12 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
   }
 
   // Tear down in the reverse order.
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
 }
 
 // The falling bolts keep their sparks after window 0's scanline table in
@@ -412,7 +409,7 @@ struct BoltSparkBuffer {
 // sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
 // frames; it also picks how the canvas fades (see below).
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
-void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
+void BattleFx_RunFallingBolts(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -438,15 +435,14 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
                              work->sheet + 0x604, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   REG_BLDCNT = 0x3f44; // alpha-blend BG2 over everything
   REG_WININ = 0x3337;  // window 1 hides BG2
 
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_Y,
-                        COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   drawBolt = slots[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_Y,
+                    COMPOSITE_ADDITIVE);
   drawSpark = slots[8];
 
   for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++)
@@ -507,8 +503,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
     work->transferMode = CANVAS_COPY_AND_FADE;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != FALLING_BOLT_DURATION(work->effect->variant);
        frame++) {
@@ -591,11 +586,11 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
 
   // Stop both transfers before releasing the blitters and canvas.
   Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
 }
 
 // Streak volleys: three streaks of light fly from the user to each target in
@@ -684,18 +679,17 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
   if (work->effect->side == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
+                      COMPOSITE_MAX);
     drawUpper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                          COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
     drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP,
-                          COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP,
+                      COMPOSITE_MAX);
     drawUpper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   }
 
@@ -722,8 +716,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = CANVAS_COPY_AND_FADE; // halve the canvas each frame
   work->transferValue = 50;                  // so streaks leave a trail
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   {
@@ -834,7 +827,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -883,11 +876,11 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_Y,
+                    COMPOSITE_MAX);
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -898,8 +891,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Every mote starts 5 pixels above the user with a random direction and
   // speed, mostly upwards, and a life of 48 to 79 frames. Only the first 128
@@ -982,7 +974,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -1222,8 +1214,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Strike halfway between the target's middle and its feet.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPosition);
@@ -1244,8 +1235,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         s32 picture = frame / STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) % 6;
 
         if (work->effect->side == 1) {
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                                CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                            COMPOSITE_MAX);
           gBlitters[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTwelveMode_StrikeOffsets[picture],
               targetPosition.x / 2 - (gTwelveMode_StrikeReach[picture] / 2) -
@@ -1254,7 +1245,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
               gTwelveMode_StrikeWidths[picture],
               gTwelveMode_StrikeHeights[picture]);
         } else {
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
           gBlitters[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTwelveMode_StrikeOffsets[picture],
               targetPosition.x / 2 + (gTwelveMode_StrikeReach[picture] / 2) - 8,
@@ -1322,13 +1313,13 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         stage = 3;
       }
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP,
-                            STRIKE_VALUE(mode, STRIKE_COMPOSITE));
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP,
+                        STRIKE_VALUE(mode, STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2 - 18, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                            STRIKE_VALUE(mode, STRIKE_COMPOSITE));
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                        STRIKE_VALUE(mode, STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -1384,9 +1375,9 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
             (gBattleFx_GlintCellWidths[image] / 2);
         y = targetPosition.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleFx_GlintCellHeights[image] / 2);
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              gTwelveMode_GlintDrawFlags[Random16() & 3] | CLIP,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          gTwelveMode_GlintDrawFlags[Random16() & 3] | CLIP,
+                          COMPOSITE_ADDITIVE);
         (*lower)(canvas, work->sheet + gBattleFx_GlintCellOffsets[image], x, y,
                  gBattleFx_GlintCellWidths[image],
                  gBattleFx_GlintCellHeights[image]);
@@ -1396,10 +1387,10 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] = gBlitters[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                          COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                      COMPOSITE_ADDITIVE);
     draw[1] = *lower;
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -1488,7 +1479,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -1530,13 +1521,12 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // Run the user to 90% of the way to the target, then wait for it.
   first = GetBattleObjectSlotFar(work->effect->actor);
   second = GetBattleObjectSlotFar(work->effect->actors[0]);
@@ -1639,7 +1629,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -1673,13 +1663,12 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1000; // invisible to start with
 
   // [0] draws as is, [1] mirrored; both skip colour 0.
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)
       slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   blit = draw;
@@ -1687,8 +1676,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // Scroll the canvas so its middle column sits on the first target.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
@@ -1809,7 +1797,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -1880,11 +1868,9 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   work--;
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
   work->effect->variant++;
   if (work->effect->variant <= 0)
@@ -1913,18 +1899,17 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
 
       i = frame / 2;
       n = i % 4;
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
       draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
       draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       glow = work->sheet + n * 1032 + 0x1100;
       draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
       draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
       n = i % 4;
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
@@ -1964,7 +1949,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
@@ -1990,8 +1975,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
 // the battle backdrop's colours, and from frame 51 32 flashes rise. Runs
 // for 128 frames and allocates its own work, canvas and sheet.
 // effect : only effect->actors[0], the unit that flashes, is read.
-void BattleEffect_RunTileAndPaletteAnimation(
-    struct BattleEffectArgument *effect) {
+void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
   /* FAKEMATCH: needed to match: never read: the native frame keeps 12 unused
    * bytes at sp+44..55, exactly this struct 2026-10-11: without it only the
    * frame shrinks (differ 4). */
@@ -2075,15 +2059,13 @@ void BattleEffect_RunTileAndPaletteAnimation(
                              work->imageStorage, 1, 1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   slotTable = gWorkSlot;
   draw[0] = slotTable[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[1] = slotTable[HEAP_SLOT_BLITTER_ALTERNATE];
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
@@ -2326,7 +2308,7 @@ void BattleEffect_RunTileAndPaletteAnimation(
   // Restore the background and the display.
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
@@ -2414,10 +2396,9 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                        COMPOSITE_ADDITIVE);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_ADDITIVE);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   AudioCommand_PlayFar(140);
@@ -2444,8 +2425,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
       DrawRectangle *slot = &((DrawRectangle *)gWorkSlot)[47];
 
       for (i = 0; i != 4; i++) {
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              gCornerSparks_DrawFlags[i] | CLIP, COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          gCornerSparks_DrawFlags[i] | CLIP, COMPOSITE_MAX);
         draw[1] = *slot;
         draw[1](canvas, work->sheet + (picture << 10), gCornerSparks_X[i] + 32,
                 ground.y + gCornerSparks_Y[i] - 32, 32, 32);
@@ -2477,7 +2458,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
@@ -2488,7 +2469,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
 // 256 streaks with random axes, then each frame draws the first 64 (streak
 // i from frame i / 4) as lines three pixels thick that shrink 4 pixels a
 // frame towards the centre of the canvas, a little below its middle.
-void BattlePresentation_DrawStreaks(void) {
+void BattleFx_DrawStreaks(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 frame;
   s32 i;
@@ -2549,12 +2530,12 @@ void BattlePresentation_DrawStreaks(void) {
 
 // Starts the element streak burst (BattleFx_PlayUnitElementEffect's mode 1)
 // and returns at once: opens the canvas and schedules
-// BattlePresentation_DrawStreaks with a canvas that darkens each frame.
+// BattleFx_DrawStreaks with a canvas that darkens each frame.
 // The caller keeps the canvas on its unit and ends the burst with
 // BattleFx_ScheduleCallbacksAndReleaseBlocks.
 // kind : the element, which picks the palette: 0 Venus yellow, 1 Mercury
 //        blue, 2 Mars red, 3 Jupiter violet, others a dusty grey.
-void BattlePresentation_PrepareScene(s32 kind) {
+void BattleFx_PrepareScene(s32 kind) {
   struct BattleEffectWork *work;
   void *palette;
   s32 id;
@@ -2588,17 +2569,16 @@ void BattlePresentation_PrepareScene(s32 kind) {
   work->frame = 0;
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x06060606; // 6 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattlePresentation_DrawStreaks, 0xC80);
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_DrawStreaks, 0xC80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 }
 
-// Ends the element streak burst that BattlePresentation_PrepareScene
+// Ends the element streak burst that BattleFx_PrepareScene
 // started: stops its callbacks and the background palette fade, clears the
 // canvas in VRAM and frees the work and the canvas.
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void) {
-  Scheduler_RemoveCallback(BattlePresentation_DrawStreaks);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_DrawStreaks);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   {
     Iwram_ClearWords((void *)0x06004000, 0x4000);
   }
@@ -2646,11 +2626,11 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BG2PA = 0x100; // unscaled
   if (work->effect->side == 1) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)slots[7];
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                          COMPOSITE_TRANSPARENT);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                      COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)slots[7];
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
@@ -2663,8 +2643,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
   // Line the canvas up so the swipe crosses the target.
@@ -2716,7 +2695,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -2763,8 +2742,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(143);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
@@ -2776,22 +2754,22 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (frame << 1) | 0x1000;
     if (frame > 53)
       REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 41, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                          transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                      transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 64, 41, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
-                          transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
+                      transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 72, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP,
-                          transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP,
+                      transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 64, 72, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -2806,7 +2784,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
     WaitFrames(1);
     frame++;
   } while (frame != 63);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -2822,7 +2800,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
 // it goes. Returns when the wipe is done, a frame at a time.
 // mode  : 1 sweeps left to right; anything else sweeps top to bottom.
 // value : 0 wipes to colour 1, 1 wipes to colour 0 (clears the canvas).
-void BattleEffect_WipeCanvas(s32 mode, s32 value) {
+void BattleFx_WipeCanvas(s32 mode, s32 value) {
   struct BattleEffectWork *work;
   u8 *canvas;
   u8 delay[128];
@@ -2890,7 +2868,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
 // drawing a frame (transferPending), copies the 128x128 canvas into BG2's
 // character block 1 the way transferMode says, and counts the frames since
 // the last copy.
-void BattlePresentation_ProcessPendingGraphicsTransfer(void) {
+void BattleFx_ProcessPendingGraphicsTransfer(void) {
   void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   struct BattleEffectWork *work = slots[0];
   void *source;
@@ -3472,15 +3450,14 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (i = 0; i != 1024; i++)
     IMPACT_CHIPS[i].life = 0;
@@ -3613,7 +3590,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -3652,16 +3629,15 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                    COMPOSITE_ADDITIVE);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (i = 0; i != 512; i++) {
     PARTICLES[i].x = ((Random16() & 255) - 127) << 15;
@@ -3734,7 +3710,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -3770,16 +3746,15 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01((u8 *)palette + 128, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
+                    COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // On the party's side the canvas is scrolled 104 pixels left.
   if (work->effect->side == 1) {
     REG_BG2X = -0x6800;
@@ -3853,7 +3828,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -3941,8 +3916,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(146);
 
   for (frame = 0;
@@ -4008,7 +3982,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
@@ -4022,22 +3996,20 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 // out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                          COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   } else {
-    BattleEffect_LoadWork(
-        HEAP_SLOT_BLITTER, 7, 7,
-        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
     out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   }
 }
@@ -4110,18 +4082,17 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
 
   // The left half as drawn, the right half mirrored, keeping the higher
   // colour.
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   slots = gWorkSlot;
   draw[0] = slots[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   if (mode == 2) {
     work->shakeFrames = 0;
@@ -4170,7 +4141,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -4262,8 +4233,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = offsetX << 8;
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != work->effect->count * 16 + 116; frame++) {
     struct BattleCamera *camera = gCameraWork;
@@ -4290,10 +4260,10 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way as
@@ -4391,7 +4361,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -4527,35 +4497,33 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
   if (effect->side == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     if (gSevenMode_Records[mode * 2] == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                            COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                        COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     if (gSevenMode_Records[mode * 2] == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                            COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                        COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   if (gSevenMode_Records[mode * 2] == 0)
     total = work->effect->count * 8 + 72;
   else
@@ -4683,7 +4651,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -4741,16 +4709,15 @@ void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
   Resource_DecodeType01(sheet, cells);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)slots[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)slots[8];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = zero;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // curve is where the panel swings about, in 16.16 pixels: the first pass
   // high up on the near side.
   drawPanel = 1;
@@ -4912,7 +4879,7 @@ void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(1, gBattleWork->background, 24);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -5062,8 +5029,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x2000);
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
@@ -5091,11 +5057,11 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] =
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -5164,7 +5130,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -5219,8 +5185,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x1000);
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
@@ -5233,11 +5198,11 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] =
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -5306,7 +5271,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -5354,12 +5319,11 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   ObjectDispatch_ApplyArgumentToChildrenFar(caster, 2);
   ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -5485,7 +5449,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -5527,12 +5491,11 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -5624,7 +5587,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -5695,10 +5658,10 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
   work->effect = argument;
 
   BattleFx_BeginCanvasLayer(0);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)slots[6];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                    COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)slots[7];
 
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
@@ -5710,8 +5673,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // wave is where the block of objects sways, drift a push from each comet.
   wave.x = 0x800000;
@@ -6162,7 +6124,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 
   gProjection.centerX = 120;
 
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
 
   index = 0;
   do {
@@ -6170,7 +6132,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
     index++;
   } while (index != 9);
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -6184,13 +6146,13 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 // Battle effect 385: the rising embers from the user's side, in the
 // LightningBolt colours.
 void BattleFx_RunSideEmbers(struct BattleEffectArgument *effect) {
-  BattleEffect_RunPaletteParticles(effect, 1);
+  BattleFx_RunPaletteParticles(effect, 1);
 }
 
 // Large battle effect 7 (BattleFx_RunSceneEffect): the rising embers with a
 // formation of eight objects that sweeps in and explodes at the end.
 void BattleFx_RunFormationEmbers(struct BattleEffectArgument *effect) {
-  BattleEffect_RunPaletteParticles(effect, 0);
+  BattleFx_RunPaletteParticles(effect, 0);
 }
 
 // A 208-frame effect of embers rising from the ground; pressing A or B
@@ -6198,7 +6160,7 @@ void BattleFx_RunFormationEmbers(struct BattleEffectArgument *effect) {
 // 138, the screen flares white over frames 160 to 175 and fades out after,
 // and the battle shows the damage on frame 178.
 // mode : 0 also brings in a formation of eight objects that sweeps in and,
-//          at the end, explodes with BattleEffect_RunImpactBurst;
+//          at the end, explodes with BattleFx_RunImpactBurst;
 //        1 throws the sparks and flashes from the user's side
 //          (effect->side), in the LightningBolt colours.
 // Four kinds of particle, in canvas coordinates with y growing downwards:
@@ -6209,8 +6171,8 @@ void BattleFx_RunFormationEmbers(struct BattleEffectArgument *effect) {
 //   particles[0..23]   flashes: one a frame over 129 to 175, thrown across
 //   particles[24..39]  streaks: fall at a slant from the top and, below
 //                      y 55, play their images over and over
-void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
-                                      s32 mode) {
+void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition origin;
   void **cursor;
   void *canvas;
@@ -6234,12 +6196,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010; // an even mix
   REG_BG2CNT = 0x784;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] = cursor[6];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[1] = cursor[7];
 
   // The flashes from FlashBurst, the streaks from EmberStreak (at sheet +
@@ -6259,8 +6220,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
                     128);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Mode 1 mirrors everything when the user is on the right (side 1).
   if (mode == 0)
@@ -6567,11 +6527,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   if (mode == 0) {
-    BattleEffect_RunImpactBurst(3, focus.x, focus.y);
+    BattleFx_RunImpactBurst(3, focus.x, focus.y);
     for (i = 0; i != 8; i++)
       ResourceObject_ReleaseFar(work->objects[i]);
   }
@@ -6584,8 +6544,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
 // frames 32 to 79, fall back under gravity and from frame 80 rise away,
 // while three columns of fire stream upwards over frames 32 to 79 and the
 // targets bounce. At the end the formation explodes with
-// BattleEffect_RunImpactBurst; the battle shows the damage on frame 120.
-void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
+// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
+void BattleFx_RunEmberColumns(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
   void *canvas;
@@ -6616,8 +6576,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -6801,10 +6760,10 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
       WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleEffect_RunImpactBurst(1, focus.x, focus.y);
+    BattleFx_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != 12; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }
@@ -6843,10 +6802,10 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
+                    COMPOSITE_MAX);
   REG_BLDALPHA = 0x0f0f; // 15/16 of each
   draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -6875,8 +6834,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(164);
 
   for (frame = 0; frame != gVortexMotes_Counts[work->effect->variant * 2 + 1];
@@ -6953,7 +6911,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   }
 
   Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -6993,10 +6951,10 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)slots[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_MAX);
   draw[1] = (DrawRectangle)slots[8];
 
   // The glints: each waits up to 15 frames, then plays at a random spot on
@@ -7009,8 +6967,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_BLDALPHA = 0x1000; // invisible to start with
   WaitFrames(1);
   AudioCommand_PlayFar(141);
@@ -7084,7 +7041,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -7126,8 +7083,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Line the crystals up above the screen, each starting 8 frames after
   // the last and drifting towards the middle as it falls.
@@ -7227,7 +7183,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -7320,10 +7276,10 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010; // an even mix
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_MAX);
   draw[1] = (DrawRectangle)
       slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
@@ -7343,8 +7299,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
   sparks = gMapCellBuffer;
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   count = gLightningPillar_Counts[work->effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -7450,7 +7405,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -7519,10 +7474,10 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     originY = screenPosition.y + 48;
   }
   REG_BLDALPHA = 0x1010; // an even mix
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                    COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -7576,8 +7531,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0;
        frame != gSparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56;
@@ -7690,7 +7644,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -7734,10 +7688,10 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_MAX);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
   for (i = 0; i != 1024; i++)
@@ -7759,8 +7713,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != 96; frame++) {
     camera = gCameraWork;
@@ -7883,7 +7836,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -8031,8 +7984,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(142);
 
   for (frame = 0; frame != total; frame++) {
@@ -8074,9 +8026,9 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
               (gBattleFx_GlintCellWidths[frame & 3] >> 1);
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (gBattleFx_GlintCellHeights[frame & 3] >> 1);
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                CLIP | gRenderMode_GlintFlips[Random16() & 3],
-                                COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            CLIP | gRenderMode_GlintFlips[Random16() & 3],
+                            COMPOSITE_MAX);
           ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
               canvas,
               work->sheet + gBattleFx_GlintCellOffsets[frame & 3] +
@@ -8086,10 +8038,9 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
       draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
@@ -8168,7 +8119,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   if (!(mode <= 1 || mode == 3))
     Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   BattleFx_EndCanvasLayer();
@@ -8202,10 +8153,10 @@ void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100; // unscaled
   REG_BLDCNT = 0;    // drawn solid
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
   drawUpright = (DrawRectangle)slots[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
+                    COMPOSITE_TRANSPARENT);
   drawFlipped = (DrawRectangle)slots[8];
 
   // Each sheep starts above the canvas at a random x, with a random tumble
@@ -8222,8 +8173,7 @@ void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect) {
     REG_BG2X = -0x7000;                       // over the party's side
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(142);
   for (frame = 0; frame != 148; frame++) {
     struct BattleCamera *camera;
@@ -8275,7 +8225,7 @@ void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -8311,12 +8261,11 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // over the party's side
   }
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
   draw[0] = (DrawRectangle)slot[6];
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // Each flame starts at a random point of its animation.
   for (i = 0; i != work->effect->count; i++) {
     work->particles[i].variant = Random16() & 63;
@@ -8360,7 +8309,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect) {
     WaitFrames(1);
     frame += 1;
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -8420,8 +8369,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // The swirl travels from the user's feet to 90 pixels above the first
   // target over frames 30 to 69.
@@ -8588,7 +8536,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -8652,19 +8600,19 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
   } else {
     switch (effect->kind) {
     case 1:
-      BattleEffect_RunCirclingFallingScene(effect);
+      BattleFx_RunCirclingFallingScene(effect);
       break;
     case 2:
-      BattleEffect_RunEmberColumns(effect);
+      BattleFx_RunEmberColumns(effect);
       break;
     case 3:
       BattleFx_RunObjectRow(effect);
       break;
     case 4:
-      BattleEffect_RunStagedParticles(effect);
+      BattleFx_RunStagedParticles(effect);
       break;
     case 5:
-      BattleEffect_RunDitherDissolveScene(effect);
+      BattleFx_RunDitherDissolveScene(effect);
       break;
     case 6:
       BattleFx_RunFormationSweep(effect);
@@ -8676,7 +8624,7 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
       BattleFx_RunWhirlwindComets(effect);
       break;
     case 9:
-      BattleEffect_RunShockwaveScene(effect);
+      BattleFx_RunShockwaveScene(effect);
       break;
     case 10:
       BattleFx_RunRockAndIceScene(effect);
@@ -8789,7 +8737,7 @@ void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg) {
 // Shows the BG1 battle background behind a cleared canvas: clears the canvas
 // buffer and the 16 KiB of VRAM it is copied to, then blends BG2 over the
 // rest at 14/16 and moves the projection centre down to line 120.
-void BattleEffect_SetupBlendedDisplay(void) {
+void BattleFx_SetupBlendedDisplay(void) {
   void **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
   u8 *canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
   struct BattleWork *battle = slots[0];
@@ -8885,7 +8833,7 @@ void BattleFx_InitTilemapAndFlushQueue(void) {
 // dissolves pixel by pixel, and the targets drop and explode.
 //
 // effect: the targets.
-void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -8929,18 +8877,16 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_BG2X = -0x2000; // 32 pixels left (20.8 fixed point)
 
   // Vines (0 to 15): x, the y of the root, the growth speed and the frames
@@ -9269,21 +9215,20 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + 0x1680, 1, 1);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
       draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       REG_BLDCNT = 0x3f46;
       REG_BG2PA = 0x80;
       REG_BG2X = 0;
       work->transferMode = CANVAS_COPY_AND_FADE;
       work->transferValue = 75;
-      Scheduler_AddOrUpdateCallback(
-          BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                    0x480);
       for (i = 0; i != work->effect->count; i++) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
@@ -9353,16 +9298,15 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleEventRuntime_BeginPhaseFar(134);
-  BattleEffect_RunImpactBurst(2, 128 << 16, height);
+  BattleFx_RunImpactBurst(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleFx_EndCanvasLayer();
 }
-
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define ICE_BLOCK_TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
@@ -9404,23 +9348,21 @@ void BattleFx_RunRockAndIceScene(struct BattleEffectArgument *effect) {
   edgeSpeed = 1;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)0x05000002 = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_WININ = 0x2137;
-  BattleEffect_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0; // an empty window
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   drawAlt = (DrawRectangle)
       slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
   gProjection.centerY = 240;
@@ -9686,7 +9628,7 @@ void BattleFx_RunRockAndIceScene(struct BattleEffectArgument *effect) {
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   REG_BLDALPHA = 0x1010;
   AudioCommand_PlayFar(289);
 
@@ -9825,7 +9767,7 @@ void BattleFx_RunRockAndIceScene(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -9860,8 +9802,8 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 
   for (i = 0; i != 8 * ICE_SHARDS_PER_TARGET; i++)
@@ -9906,8 +9848,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
     if (frame == 32)
@@ -9948,7 +9889,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -10024,13 +9965,12 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect) {
 
   // Draw with the maximum blend, and lower every canvas pixel by 4 on each
   // transfer so the motes leave fading trails.
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
@@ -10094,7 +10034,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -10320,8 +10260,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas to 3/4, for trails
   work->transferValue = 75; // percent
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;
@@ -10450,7 +10389,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -10621,8 +10560,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer halves the canvas, for trails
   work->transferValue = 50; // percent
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   if (work->effect->side == 1)
     drawFlags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
@@ -10642,11 +10580,11 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           ((Trig_Sin(frame << 11) * 20) >> 16) + originX + canvasShiftX - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
 
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags ^ COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
       draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -10678,11 +10616,10 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       // Turn the flares and move them 2 pixels a frame towards the centre.
       if (frame > member * 8) {
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags, COMPOSITE_MAX);
         draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, drawFlags,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, drawFlags,
+                          COMPOSITE_ADDITIVE);
         draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (mode == 0) {
           SceneTransform_ApplyPitch(-frame << 10);
@@ -10736,8 +10673,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cel = (frame - member * 8 - 52) / 4 % 6;
 
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags, COMPOSITE_MAX);
         draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
         draw[0](canvas, work->sheet + cel * 1600 + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
@@ -10750,8 +10686,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cel = (frame - member * 8 - 80) / 4 % 7;
 
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
-                                COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
           draw[0](canvas, work->sheet + cel * 960 + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
@@ -10762,8 +10697,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
-                                COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
           draw[0](canvas, work->sheet + cel * 2048 + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
@@ -10774,11 +10708,10 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 2 % 6;
 
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
-                                COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
           draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
           draw[0](canvas, work->sheet + cel * 2048 + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);
@@ -10792,8 +10725,8 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
-                                COMPOSITE_ADDITIVE);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, drawFlags,
+                            COMPOSITE_ADDITIVE);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
           draw[0](canvas, work->sheet + cel * 1600 + STAT_BOOST_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
@@ -10806,7 +10739,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -10934,8 +10867,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw = blitters);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != work->effect->count * 4 + 64; frame++) {
     camera = gCameraWork;
@@ -11010,7 +10942,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -11052,9 +10984,8 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x100e;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 
   // The arc: from -90 degrees in steps of 22.5, 32 pixels across and 16
@@ -11088,8 +11019,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *effect) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(136);
   frame = 0;
   do {
@@ -11164,7 +11094,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *effect) {
     frame += 1;
   } while (frame != 80);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -11275,14 +11205,13 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   } else {
     xOffset = 0;
   }
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   for (member = 0; member != work->effect->count; member++)
     work->particles[member].variant = 0;      // 1 once the target has landed
   work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   heights = (*(const struct RockWallHeights *)&wallHeights);
   work->shakeFrames = 128;
   AudioCommand_PlayFar(141);
@@ -11364,7 +11293,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -11403,13 +11332,12 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDALPHA = 0x1010;
@@ -11439,8 +11367,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0;
        frame != (gHomingEmbers_Counts[work->effect->variant] >> 1) + 132;
@@ -11553,7 +11480,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -11619,8 +11546,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   if (work->effect->side == 1)
     REG_BG2X = -0x7000;
 
@@ -11832,7 +11758,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -11875,10 +11801,10 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
     REG_BG2PA = 0x80; // double width
   else
     REG_BG2PA = 0x100;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + CLOSING_BOLT_CELLS, 1, 1);
@@ -11910,8 +11836,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(138);
 
   for (frame = 0; frame != 64; frame++) {
@@ -12000,7 +11925,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -12097,14 +12022,13 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != gParticleField_Counts[variant][FIELD_FRAMES];
        frame++) {
@@ -12195,7 +12119,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -12247,37 +12171,37 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
 
 // Fire flash bursts from the user towards randomly chosen targets.
 void BattleFx_RunBurstShowerMode0(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 0);
+  BattleFx_RunBurstShower(effect, 0);
 }
 
 // Fire the burst shower in the water-spray palette.
 void BattleFx_RunBurstShowerMode2(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 2);
+  BattleFx_RunBurstShower(effect, 2);
 }
 
 // Fire grey bursts and leave the targets in palette 14.
 void BattleFx_RunBurstShowerMode6(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 6);
+  BattleFx_RunBurstShower(effect, 6);
 }
 
 // Fire pink bursts from 16 pixels below the normal origin.
 void BattleFx_RunBurstShowerMode3(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 3);
+  BattleFx_RunBurstShower(effect, 3);
 }
 
 // Show violet lightning between the user and targets instead of bursts.
 void BattleFx_RunBurstShowerMode5(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 5);
+  BattleFx_RunBurstShower(effect, 5);
 }
 
 // Fire demon-face bursts from 16 pixels in front of the user.
 void BattleFx_RunBurstShowerMode7(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 7);
+  BattleFx_RunBurstShower(effect, 7);
 }
 
 // Fire Mars-coloured bursts from 28 pixels in front of the user.
 void BattleFx_RunBurstShowerMode4(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, 4);
+  BattleFx_RunBurstShower(effect, 4);
 }
 
 // Burst shower: for 48 frames the user fires one burst a frame at a random
@@ -12291,8 +12215,7 @@ void BattleFx_RunBurstShowerMode4(struct BattleEffectArgument *effect) {
 //       faces from 16 pixels in front. Mode 5 fires no bursts: a violet
 //       lightning bolt stands between the user and the targets, on a
 //       canvas shown at three times its width.
-void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
-                                 s32 mode) {
+void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   u32 *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -12320,12 +12243,12 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   REG_BLDALPHA = 0x1010;
 
   if (mode == 7) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     blit[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
-    BattleEffect_LoadWork(
-        HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
     blit[1] = (DrawRectangle)
         slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
   } else {
@@ -12382,8 +12305,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     work->transferMode = CANVAS_COPY_AND_FADE;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Where the bursts start: the user, moved for some modes.
   for (i = 0; i != 64; i++) {
@@ -12528,7 +12450,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     frame += 1;
   } while (frame != 64);
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -12571,8 +12493,7 @@ void BattleFx_RunSwirlingStars(void *object) {
   }
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   center[0] = 0;
   center[1] = 160 << 15;
   center[2] = 0;
@@ -12631,7 +12552,7 @@ void BattleFx_RunSwirlingStars(void *object) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -12665,15 +12586,14 @@ void BattleFx_RunOrbitingSparks(void) {
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
   Resource_DecodeType01(skulls + 128, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   draw[0] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   if (work->effect->side == 0)
     xOffset = 0;
   else
@@ -12748,7 +12668,7 @@ void BattleFx_RunOrbitingSparks(void) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -12786,12 +12706,11 @@ void BattleFx_RunTargetBursts(void *object) {
                              work->sheet + TARGET_BURST_CELLS, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   drawBurst = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   drawSmoke = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 
   // Six puffs for each target: five scatter at random, the sixth (the
@@ -12819,8 +12738,7 @@ void BattleFx_RunTargetBursts(void *object) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != 96; frame++) {
     s32 member;
@@ -12865,7 +12783,7 @@ void BattleFx_RunTargetBursts(void *object) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -12901,7 +12819,7 @@ enum SlashSheetCell {
 // targets and burst into flame, hitting each target as they land.
 //
 // effect: the targets.
-void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
+void BattleFx_RunStagedParticles(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
   struct SpritePlacement position;
@@ -12934,13 +12852,12 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_WipeCanvas(0, 0);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_WipeCanvas(0, 0);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 370, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
@@ -12948,11 +12865,10 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] = slots[2];
   /* FAKEMATCH: needed to match: the one-pass block keeps the table address
    * after the second read 2026-10-11: without the block differ 2 (mov r2, sp
@@ -12969,7 +12885,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   work->scrollStepY = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
   view->busy = 1;
-  BattleEffect_WipeCanvas(0, 1);
+  BattleFx_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
@@ -13120,7 +13036,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
   view->busy = 0;
   gBgScroll[1].x = scrollX;
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   REG_BG2PA = 0x80;
@@ -13214,7 +13130,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -13306,13 +13222,12 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   rectangle[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   secondSlot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   /* FAKEMATCH: needed to match: the columns draw through a second pointer to
    * the pair, whose address the frame keeps in a stack slot 2026-10-11:
@@ -13353,8 +13268,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   frame = 0;
   if (duration != 0) {
@@ -13493,7 +13407,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
       frame++;
     } while (frame != duration);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -13503,7 +13417,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 // targets, 2 frames apart, and shrink back.
 //
 // effect: the targets.
-void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunRisingColumns(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -13534,13 +13448,12 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
   middle += (last.x - middle) / 2;
   first.x = middle;
   REG_BG2X = (64 - first.x) << 8;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)
       slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   column = work->particles;
@@ -13551,8 +13464,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
   } while (i != 16);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   frame = 0;
   do {
     if (frame == 32) {
@@ -13590,7 +13502,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
     WaitFrames(1);
     frame++;
   } while (frame != 70);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -13629,19 +13541,17 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   draw = ((DrawRectangle *)slots)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
   drawFlip = ((DrawRectangle *)
                   slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   frameCount = gBattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
   for (i = 0; i != 1024; i++) {
@@ -13755,7 +13665,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -13810,8 +13720,8 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
@@ -13823,8 +13733,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
     work->particles[j].variant = -1;
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(138);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
@@ -13892,11 +13801,10 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
           x -= spread / 2;
           x -= (gBattleFx_GlintCellWidths[kind] >> 1);
 
-          BattleEffect_LoadWork(
-              HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-              gLightningBolts_GlintPalettes[Random16() & 3] | COMPOSITE_CLIP_X |
-                  COMPOSITE_CLIP_Y,
-              gLightningBolts_GlintModes[work->effect->variant]);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            gLightningBolts_GlintPalettes[Random16() & 3] |
+                                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                            gLightningBolts_GlintModes[work->effect->variant]);
           LIGHTNING_GLINT_BLITTER(
               canvas, work->sheet + gBattleFx_GlintCellOffsets[kind], x, y,
               gBattleFx_GlintCellWidths[kind],
@@ -13930,7 +13838,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -14003,19 +13911,17 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   Resource_DecodeType01(palette + 128, work);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (side == 1) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
-    BattleEffect_LoadWork(
-        HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                          COMPOSITE_ADDITIVE);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -14037,8 +13943,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   }
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
   center[0] = user->x;
@@ -14187,7 +14092,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
@@ -14367,16 +14272,16 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   // 128x128 drawing, mirrored on side 1.
   if (mode == 5) {
     if (work->effect->side == 1)
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
     else
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   } else {
     if (work->effect->side == 1)
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                            COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                        COMPOSITE_ADDITIVE);
     else
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 
@@ -14439,8 +14344,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferMode = CANVAS_COPY_AND_FADE;
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -14546,11 +14450,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame > 69)
           y = y - frame * 2 + 138;
         if (work->effect->side == 1)
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
         else
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                                COMPOSITE_ADDITIVE);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                            COMPOSITE_ADDITIVE);
         draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame <= 3)
           draw[1](canvas, work->sheet + VOLLEY_DJINNI_CELLS, x, y, 20, 40);
@@ -14687,11 +14591,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               // The picture holds the top half; the bottom half is drawn
               // flipped.
               if (work->effect->side == 1)
-                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+                BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
               else
-                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                                      COMPOSITE_MAX);
+                BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                                  COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
@@ -14699,11 +14603,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   gVolley_CometHeights[kind]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               if (work->effect->side == 1)
-                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                      CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+                BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
               else
-                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                      CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+                BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
@@ -14747,16 +14651,16 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 step = flash->z / 2;
 
             if (!(i & 1)) {
-              BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                                    COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                                COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + gVolley_FlashOffsets[step],
                   flash->x - gVolley_FlashWidths[step],
                   flash->y - gVolley_FlashRises[step],
                   gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-              BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                    CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + gVolley_FlashOffsets[step], flash->x,
                   flash->y + gVolley_FlashSteps[step] -
@@ -14764,8 +14668,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else {
-              BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                                    COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                                COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
                   work->sheet + gVolley_FlashOffsets[step] +
@@ -14774,8 +14678,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   flash->y - gVolley_FlashWidths[step],
                   gVolley_FlashHeights[step], gVolley_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-              BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                    CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
                   work->sheet + gVolley_FlashOffsets[step] +
@@ -14831,7 +14735,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     }
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -14984,14 +14888,14 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
 
   // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
+                      COMPOSITE_MAX);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -15020,8 +14924,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Send the user in and ready the sparks at the target (they fly towards
   // the middle of the field).
@@ -15087,7 +14990,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -15169,8 +15072,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
   Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   for (i = 0; i != 8; i++)
     work->particles[i].variant = -1;
   for (i = 0; i != 512; i++)
@@ -15258,7 +15160,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
     WaitFrames(1);
     frame++;
   } while (frame != 96);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -15301,8 +15203,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
                              work->sheet + 0x320, 1, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // The flameballs start at x 64 to 127, y -80 to -17.
   for (i = 0; i != 32; i++) {
@@ -15381,7 +15282,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
     angle -= 0x800; // 11.25 degrees
     frame++;
   } while (frame != 96);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -15431,12 +15332,11 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
-                        COMPOSITE_MAX);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
+                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -15446,8 +15346,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
                              work->sheet + 0x2f8, 1, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // The flame columns start at the bottom, at random x.
   for (i = 0; i != 32; i++) {
     column = &work->particles[i];
@@ -15520,7 +15419,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
     angle -= 0x800;
     frame++;
   } while (frame != 96);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -15568,8 +15467,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
                              1, 1);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Nine flames along a flattened arc, 2 frames apart, each with 16
   // embers that rise wobbling from the ground beneath it.
@@ -15690,7 +15588,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
     diveY += 8;
     frame++;
   } while (frame != 112);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -15733,8 +15631,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
 
   // The chips burst up from the first target.
@@ -15839,7 +15736,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -15876,12 +15773,12 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
                                &screenY);
   REG_BLDALPHA = 0x1010;
   if (work->effect->side == 1)
-    BattleEffect_LoadWork(
-        HEAP_SLOT_BLITTER, 7, 7,
-        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
   else
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
@@ -15889,8 +15786,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
                              work->sheet + ROCK_TOSS_DJINNI_CELLS, 1, 1);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   // The rocks leave the user 66 pixels up, fanning out.
@@ -15918,14 +15814,14 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
       if (frame > 16)
         y = y - frame * 2 + 32;
       if (work->effect->side == 1)
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_X,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_ADDITIVE);
       else
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                          COMPOSITE_ADDITIVE);
       if (frame <= 3)
         ((DrawRectangle)((union HeapState *)gWorkSlot)
              ->slots[HEAP_SLOT_BLITTER_ALTERNATE])(
@@ -15971,8 +15867,8 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
             s32 chipX;
             s32 chipY;
 
-            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  chip->velocityY, COMPOSITE_MAX);
+            BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                              chip->velocityY, COMPOSITE_MAX);
             draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                           ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
             if (chip->velocityY & 4)
@@ -16020,7 +15916,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -16156,7 +16052,7 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
     }
   }
 
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)0x05000002 = 0; // background palette 0, colour 1
   REG_BG2CNT = 0x2784;
@@ -16166,17 +16062,15 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
   work->scrollStepY = 0;
   view->busy = 1;
   Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   work->transferMode = CANVAS_COPY;
-  BattleEffect_WipeCanvas(0, 0);
+  BattleFx_WipeCanvas(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   gProjection.centerY = 240;
-  BattleEffect_WipeCanvas(0, 1);
+  BattleFx_WipeCanvas(0, 1);
   REG_BG2PA = 0x80;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   blitters = (DrawRectangle *)gWorkSlot;
   blit[0] = blitters[HEAP_SLOT_BLITTER];
   REG_DISPCNT = 0x7741;
@@ -16307,14 +16201,13 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
         level = 7;
       }
       if (frame <= 139) {
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                          COMPOSITE_ADDITIVE);
         drawAlt = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
       } else {
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
         drawAlt = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
       }
       dotCount = count;
@@ -16372,15 +16265,14 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
       }
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
       gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas, work->sheet, 32,
                                              (frame - 151) * 20 - 12, 32, 96);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
       gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas, work->sheet, 64,
                                              (frame - 151) * 20 - 12, 32, 96);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -16394,7 +16286,7 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
   // the formation is pushed back in smoke, ending in an impact burst.
   view->busy = 0;
   Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 0x173, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
@@ -16500,9 +16392,9 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
-              BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                    COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                                COMPOSITE_MAX);
               gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
                   canvas, work->sheet + i % 3 * 0x1440, boltX, boltY, 72, 72);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -16545,32 +16437,31 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
           mirrorX = moteX + 72;
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
                                                work->sheet + STORM_MOTE_CELLS,
                                                moteX + 60, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_X,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
                                                work->sheet + STORM_MOTE_CELLS,
                                                mirrorX, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_Y,
+                          COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
             canvas, work->sheet + STORM_MOTE_CELLS, moteX + 60, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
             canvas, work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -16594,10 +16485,10 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
         }
       }
 
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X |
+                            COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
       {
         DrawRectangle draw = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
         struct EffectStep *spark;
@@ -16643,8 +16534,8 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
                   (gBattleFx_GlintCellWidths[fullWidth] >> 1);
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -
                   (gBattleFx_GlintCellHeights[fullWidth] >> 1);
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                3 | gMode12_SmokeFlips[Random16() & 3], 2);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            3 | gMode12_SmokeFlips[Random16() & 3], 2);
           gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
               canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[fullWidth],
               x, y + 56, gBattleFx_GlintCellWidths[fullWidth],
@@ -16663,8 +16554,8 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
     }
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-    BattleEffect_RunImpactBurst(0, formationX, formationY);
+    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+    BattleFx_RunImpactBurst(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
@@ -16707,9 +16598,8 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   blit = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
   EffectPosition_ApplyStepAndYOffset(
@@ -16718,8 +16608,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
   REG_BG2X = (64 - first.x) << 8;
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   rockCount = gShatterRocks_RockCounts[work->effect->variant];
   for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
@@ -16801,59 +16690,59 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
 
 // The flurry's entries: each passes its kind of flurry to
-// BattlePres_RunBurstScene. The dispatch table supplies actual effect
+// BattleFx_RunBurstScene. The dispatch table supplies actual effect
 // arguments; their variant selects the flurry when an entry covers several
 // modes.
 void EffectStep_RunAnimationMode6Or7Or8(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
-    BattlePres_RunBurstScene(effect, 6);
+    BattleFx_RunBurstScene(effect, 6);
     return;
   }
   if (effect->variant == 1) {
-    BattlePres_RunBurstScene(effect, 7);
+    BattleFx_RunBurstScene(effect, 7);
     return;
   }
-  BattlePres_RunBurstScene(effect, 8);
+  BattleFx_RunBurstScene(effect, 8);
 }
 
 // Play the first flurry style selected by the effect table.
 void EffectStep_RunAnimationMode0(struct BattleEffectArgument *effect) {
-  BattlePres_RunBurstScene(effect, 0);
+  BattleFx_RunBurstScene(effect, 0);
 }
 
 // Use the same first flurry style for this alternate effect-table entry.
 void EffectStep_RunAnimationMode0Alternate(
     struct BattleEffectArgument *effect) {
-  BattlePres_RunBurstScene(effect, 0);
+  BattleFx_RunBurstScene(effect, 0);
 }
 
 // Play the second flurry style selected by the effect table.
 void EffectStep_RunAnimationMode1(struct BattleEffectArgument *effect) {
-  BattlePres_RunBurstScene(effect, 1);
+  BattleFx_RunBurstScene(effect, 1);
 }
 
 // Play the third flurry style selected by the effect table.
 void EffectStep_RunAnimationMode2(struct BattleEffectArgument *effect) {
-  BattlePres_RunBurstScene(effect, 2);
+  BattleFx_RunBurstScene(effect, 2);
 }
 
 // Choose flurry styles 3, 4 or 5 from the effect variant.
 void EffectStep_RunAnimationMode3Or4Or5(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
-    BattlePres_RunBurstScene(effect, 3);
+    BattleFx_RunBurstScene(effect, 3);
     return;
   }
   if (effect->variant == 1) {
-    BattlePres_RunBurstScene(effect, 4);
+    BattleFx_RunBurstScene(effect, 4);
     return;
   }
-  BattlePres_RunBurstScene(effect, 5);
+  BattleFx_RunBurstScene(effect, 5);
 }
 
 // Flurries of strikes, and the rising rock wall.
@@ -16882,8 +16771,7 @@ enum BurstField {
 // effect: the user and the targets; prelude 1 brings in a Jupiter djinni
 //         first.
 // variant: the row of gBurstScene_Records.
-void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
-                              s32 variant) {
+void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
   struct EffectPosition screen;
@@ -16958,8 +16846,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPos);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails, fading to 3/4
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Motes wait 25 pixels above the target, set to fly towards the middle
   // of the field.
@@ -16988,20 +16875,18 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 
     // Arcs and waves; odd strikes are drawn flipped.
     if (work->effect->side == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
-      BattleEffect_LoadWork(
-          HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP,
+                        COMPOSITE_MAX);
     }
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -17060,11 +16945,10 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
     // Motes: drawn until they die out, bouncing off the ground.
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                          COMPOSITE_ADDITIVE);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (i = 0; i != 512; i++) {
@@ -17093,10 +16977,9 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
-
 
 // The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
 // in the rebuilt sheet.
@@ -17110,7 +16993,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 // animation objects, moved by particles[10] to particles[20].
 //
 // effect: the targets; variant 0 to 2 widens the wall.
-void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
+void BattleFx_RunRisingWall(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void **cursor;
@@ -17226,19 +17109,18 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
       work->objects[i]->image.priority = 1;
     }
   }
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                    COMPOSITE_MAX);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDCNT = 0x3f46;
   REG_BLDALPHA = 0x1010;
   work->transferMode = CANVAS_COPY_AND_FADE; // trails, fading to 3/4
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Rocks: x is the column, y counts down from 128 by z, velocityX cycles
   // through 1 to 12, and variant is the wait before the rock appears.
@@ -17431,7 +17313,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   for (i = 0; i != 11; i++)
@@ -17557,16 +17439,16 @@ void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   if ((u32)value <= 35) {
     BattleFx_RunCastingImpact(effect, value);
   } else if (kind > 199) {
-    BattlePres_RunRingAndSparkScene(effect);
+    BattleFx_RunRingAndSparkScene(effect);
   } else {
-    BattlePres_RunBeamSequence(effect);
+    BattleFx_RunBeamSequence(effect);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 }
 // Draw the selected beam and its projected sparks over the first target.
-void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
+void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -17597,46 +17479,42 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
   work->effect = effect;
   unit = UnitGetFar(effect->actor);
   WaitFrames(1);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   BattleFx_SetupCanvasTileMap();
   REG_BG1CNT = 0x1f80;
   WaitFrames(1);
   if (kind == 5) {
     if (work->effect->side == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_Y,
-                            COMPOSITE_ADDITIVE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
+                        COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                            COMPOSITE_ADDITIVE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X |
+                            COMPOSITE_FLIP_Y,
+                        COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X |
+                            COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
     }
   } else {
     if (work->effect->side == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                            COMPOSITE_ADDITIVE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                        COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_ADDITIVE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
     }
   }
   slots = (DrawRectangle *)gWorkSlot;
@@ -17672,8 +17550,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
                              1, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_BG1CNT = 0x1f81;
   EffectPosition_ApplyAnimationAndYOffset(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
@@ -17780,7 +17657,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   gBgScroll[1].y = 32;
@@ -17788,7 +17665,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
 }
 
 // Play the selected ring-and-spark strike, restoring the user motion after it.
-void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -17833,19 +17710,17 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   BattleFx_SetupCanvasTileMap();
   REG_BG1CNT = 0x1f80;
   if (work->effect->side == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                          COMPOSITE_ADDITIVE);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
-    BattleEffect_LoadWork(
-        HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_MAX);
   }
   slots = (DrawRectangle *)gWorkSlot;
   draw[0] = slots[HEAP_SLOT_BLITTER];
@@ -17873,8 +17748,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   if (big == 1) {
     object = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -18018,7 +17892,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   gBgScroll[1].y = 32;
@@ -18070,7 +17944,7 @@ static __inline__ void CastingImpact_LoadResource(const void *id, void *dest,
    * arguments local; only BattleFx_RunCastingImpact loads through it: with its
    * 24 loads called directly it differs throughout and is 2 instructions longer
    * (tbs-en, 2026-10-14), and the same inline as a layer for the whole effect
-   * family breaks BattleFx_RunProjectileVolley and BattlePres_RunBurstScene (L6
+   * family breaks BattleFx_RunProjectileVolley and BattleFx_RunBurstScene (L6
    * review) */
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
@@ -18135,7 +18009,7 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   Iwram_ClearWords(canvas, 0x4000);
   work->effect->prelude = 0;
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }
@@ -18318,8 +18192,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   /* FAKEMATCH: needed to match: retain each output pointer while preparing its
    * call 2026-10-11: the pointers set in statements before the calls differ 38,
    * after the calls 142. */
@@ -18799,10 +18672,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
           drawFlags = Random16(); // Random flips
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                gCastingImpact_GlintDrawFlags[drawFlags & 3] |
-                                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            gCastingImpact_GlintDrawFlags[drawFlags & 3] |
+                                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                            COMPOSITE_MAX);
           ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
               canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[image],
               imageX, imageY + 56, gBattleFx_GlintCellWidths[image],
@@ -18834,9 +18707,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           fall = 0;
         while (scroll > 104)
           scroll -= 104;
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
         draw = (DrawRectangle *)gWorkSlot;
         draw += HEAP_SLOT_BLITTER_ALTERNATE;
         columnX = originX - 8;
@@ -18883,17 +18755,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       if (frame >= 4 && frame <= 23) {
         pairX = targetScreen->x / 2;
         height = 48;
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
         slotDraw = (DrawRectangle *)gWorkSlot;
         CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, pairX - 24, 48, 24,
                                 height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_X,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_MAX);
         CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, pairX, 48, 24,
                                 height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -19245,7 +19116,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     Iwram_ClearWords(canvas, 0x4000);
     work->effect->prelude = 0;
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_RunStatReductionMode1(command);
@@ -19254,7 +19125,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         kind == 29) {
       Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     }
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -19307,8 +19178,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Build one quadrant and mirror it into the other three.
   for (y = 0; y != 64; y++) {
@@ -19389,7 +19259,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect) {
   }
 
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -19442,8 +19312,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Clear the reusable spark pool before moving the user.
   particleLife = &gMapCellBuffer->variant;
@@ -19544,7 +19413,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -19603,7 +19472,7 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 // Also rearrange the objects into formation during the first 36 frames.
 // formation: layout used by BattleFx_PlaceFormationObjects
 // x, y: impact position in 16.16 pixels
-void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
+void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **heap;
   void **cursor;
   struct BattleEffectWork *work;
@@ -19628,10 +19497,10 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BLDCNT = 0x3f46;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   maxBlend = heap[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                    COMPOSITE_ADDITIVE);
   additive = heap[8];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
@@ -19639,8 +19508,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
                              work->sheet + IMPACT_SHARD_CELLS, 0, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Large sparks: speed 256-511, lifetime 16-31 frames; use the first 30.
   for (i = 0; i != 64; i++) {
@@ -19764,7 +19632,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   }
 
   // Finish by clearing background character block 1.
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -19807,12 +19675,12 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 
 // Run the particle stream in mode 0.
 void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect) {
-  BattleEffect_RunParticleStreams(effect, 0);
+  BattleFx_RunParticleStreams(effect, 0);
 }
 
 // Run the particle stream in mode 1.
 void BattleFx_RunParticleStreamsMode1(struct BattleEffectArgument *effect) {
-  BattleEffect_RunParticleStreams(effect, 1);
+  BattleFx_RunParticleStreams(effect, 1);
 }
 
 
@@ -19825,8 +19693,8 @@ extern u16 gParticleStreams_FlashSizes[];
 
 // Animate the selected particle stream and its formation before the impact
 // burst.
-void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
-                                     s32 mode) {
+void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
+                                 s32 mode) {
   volatile u32 fill;
   u8 offsets[128];
   void **cache;
@@ -19903,14 +19771,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   } else {
     direction = -1;
   }
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)0x05000002 = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_WipeCanvas(0, 0);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_WipeCanvas(0, 0);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   if (mode == 1) {
     for (i = 0; i != 2; i++) {
       struct AnimationObject *object =
@@ -20003,8 +19870,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 8, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 8, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
     work->transferMode = CANVAS_COPY_AND_DARKEN;
     work->transferValue = (s32)(Ram_MapBlocks + 0x202);
@@ -20207,14 +20074,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     gBgScroll[1].y = savedY;
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
   REG_BLDALPHA = 0x1010;
   REG_BG2CNT = 0x2784;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw = gWorkSlot[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
   for (i = 0; i != 32; i++) {
@@ -20247,8 +20114,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0x10101010;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (frame = 0; frame != 54; frame++) {
     s32 size = (frame + 0x1d0) << 8;
@@ -20374,7 +20240,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   if (mode == 0)
     ResourceObject_ReleaseFar(work->objects[0]);
@@ -20383,7 +20249,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
 // Move a formation and orbiting picture while six rocks bounce and scatter
 // puffs.
-void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
@@ -20404,13 +20270,12 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
   sheet = cache[1];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)0x05000002 = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_WipeCanvas(1, 0);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_WipeCanvas(1, 0);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 379, 2);
   // Add the six falling rocks after creating the nine-object formation.
@@ -20424,19 +20289,18 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
       work->objects[9 + i]->image.priority = 1;
     }
   }
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_WININ = 0x2737;
   REG_WIN0H = 0xf0;
   REG_WIN1V = 0x1088;
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
-  BattleEffect_WipeCanvas(1, 1);
+  BattleFx_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;
@@ -20617,17 +20481,17 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
   }
 
   BattleEventRuntime_BeginPhaseFar(134);
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
 
 // Follow the encoded flame path with a fading trail and projected particles.
-void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect) {
+void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition position;
   DrawRectangle draw[2];
@@ -20678,8 +20542,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   for (j = 0; j != 40; j++) {
     struct EffectStep *ember = &work->particles[8 + j];
@@ -20865,7 +20728,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -20936,8 +20799,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
   } while (i != 64);
 
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
 
@@ -20949,14 +20811,14 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, &position);
     if (frame >= 6 && frame <= 11) {
       if (work->effect->side == 0)
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                          COMPOSITE_ADDITIVE);
       else
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_X,
-                              COMPOSITE_ADDITIVE);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_ADDITIVE);
       blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       if (work->effect->side == 0)
         blitters[0](canvas, work->sheet + (frame - 6) * 0xd80,
@@ -20970,8 +20832,8 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
       s32 step = (frame - 16) / 2;
       s32 strip;
 
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
       blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       if (step > 2)
         step = 2;
@@ -21024,7 +20886,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -21112,8 +20974,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // Reduce to 3/4 on each transfer for an afterimage.
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   frame = 0;
   do {
@@ -21272,7 +21133,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect) {
   } while (frame != 80);
 
   ObjectDispatch_ApplyValueToChildrenFar(user, 16);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -21309,12 +21170,11 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
                                               &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   blitters[0] = heap[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
   blitters[1] = heap[8];
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, work->sheet + 20000,
@@ -21327,8 +21187,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   i = 0;
   do {
@@ -21618,7 +21477,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 102);
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -21641,7 +21500,7 @@ extern u8 gShockwaveScene_ShardHeights[];
 
 // Stage a formation above the violet backdrop, then pulse and scatter its
 // images.
-void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];
   struct EffectPosition projectedPosition;
@@ -21686,17 +21545,15 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)0x05000002 = 0;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_WipeCanvas(0, 0);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_WipeCanvas(0, 0);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(16, 0x17e, 1);
   gProjection.centerY = 240;
@@ -21704,7 +21561,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   ctrl->active = 1;
   gBgScroll[1].x = 0;
-  BattleEffect_WipeCanvas(0, 1);
+  BattleFx_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
@@ -21909,29 +21766,27 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
       high = gShockwaveScene_BurstHeights[n];
       cell = gShockwaveScene_BurstCells[n] + 0x600;
 
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X |
+                            COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60, 80, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -21953,15 +21808,14 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
       s32 top = (frame << 4) - 2272;
       s32 n;
       s32 r;
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                            COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                        COMPOSITE_ADDITIVE);
       (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 36, top, 24, 64);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_ADDITIVE);
       (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 60, top, 24, 64);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 
@@ -21973,9 +21827,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
         /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp.
          * 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
         s32 high = 8;
-        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                              COMPOSITE_MAX);
+        BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
         blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != 128; i++) {
           s32 angle = i << 9;
@@ -22008,8 +21861,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + 0x4000, 1, 1);
@@ -22138,7 +21991,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 280) {
-      BattleEffect_SetupBlendedDisplay();
+      BattleFx_SetupBlendedDisplay();
       fill = 0;
       Dma_Set(&fill, work, 0x85000e10, REG_DMA3);
       fill = 0x01010101;
@@ -22196,29 +22049,27 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
       } else {
         sheet = work->sheet + 0x4240;
       }
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 36, top - 24, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 59, top - 24, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 36, top - 1, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                            COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X |
+                            COMPOSITE_FLIP_Y,
+                        COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 59, top - 1, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -22383,9 +22234,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
       }
     }
 
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                          COMPOSITE_ADDITIVE);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 85) {
       draw[1](canvas, work, 0, 0, 120, 120);
@@ -22489,7 +22339,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
 
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -22528,14 +22378,13 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   sheet = cursor[1];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   REG_BG2CNT = 0x784;
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  BattleEffect_WipeCanvas(1, 0);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  BattleFx_WipeCanvas(1, 0);
   BattleFx_SpawnObjects(9, 0x175, 1);
   gProjection.centerY = 240;
   BattleFx_SelectLivingTargets(work->effect);
@@ -22543,7 +22392,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   REG_WIN0H = 0xca;
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-  BattleEffect_WipeCanvas(1, 1);
+  BattleFx_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;
@@ -22571,9 +22420,8 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 64);
 
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   blit =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   REG_BG2CNT = 0x786;
@@ -22731,7 +22579,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
 
   gBgScroll[1].x = savedX;
   control->busy = 0;
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   REG_WIN0H = 0xf0;
 
   i = 0;
@@ -22901,7 +22749,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
     i++;
   } while (i != 9);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -22954,16 +22802,15 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
   particleSheet = (u8 *)cache[41 - 40];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattlePres_ConfigureEffectDisplay();
+  BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)0x05000002 = 0;
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0x480);
   Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_WININ = 0x2137;
-  BattleEffect_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0;
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(8, 0x17a, 1);
@@ -22990,12 +22837,11 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   background->busy = 1;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   blit[0] = (DrawRectangle)cache[46 - 40];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   blit[1] = (DrawRectangle)cache[47 - 40];
   REG_BG2CNT = 0x784;
 
@@ -23281,7 +23127,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
   ((struct BgScrollWords *)gBgScroll)->unk04 = savedScrollWord;
   background->busy = 0;
   Runtime_SetIrqHandler(2, 0, 0);
-  BattleEffect_SetupBlendedDisplay();
+  BattleFx_SetupBlendedDisplay();
   Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
   REG_WIN0H = 0xf0;
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -23389,7 +23235,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
   for (i = 0; i != 8; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -23462,8 +23308,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
   }
   work->transferMode = CANVAS_COPY_AND_CLEAR; // Clear to 0 each frame.
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Move the acting unit toward the target over 16 frames.
   if (variant == 1)
@@ -23474,12 +23319,12 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
   WaitFrames(16);
 
   if (work->effect->side == 1)
-    BattleEffect_LoadWork(
-        HEAP_SLOT_BLITTER, 7, 7,
-        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_COPY);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_COPY);
   else
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_COPY);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_COPY);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   AudioCommand_PlayFar(212);
   for (frame = 0; frame != 21; frame++) {
@@ -23506,7 +23351,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
     WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -23548,8 +23393,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE; // 3/4 afterimage
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(
-      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Shift so that canvas x = 64 lines up with the target.
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
@@ -23592,10 +23436,10 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect) {
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-                                  COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
           else
-            BattleEffect_LoadWork(
+            BattleFx_LoadWork(
                 HEAP_SLOT_BLITTER, 7, 7,
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           draw[0] = ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER]);
@@ -23636,7 +23480,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
 
@@ -23653,8 +23497,8 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect) {
 // heightShift are log2 dimensions; flags select clipping and mirroring, and
 // mode selects how source pixels combine with the destination.
 // Returns whether the template walk reached the expected kernel boundary.
-s32 BattleEffect_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                          u32 mode) {
+s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                      u32 mode) {
   const u32 *templateWords;
   u32 *codeWords;
   u32 *emptyRowsBranch;

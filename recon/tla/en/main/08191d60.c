@@ -1,6 +1,6 @@
 // Draft, differ 538 of 893 (draft 881 instructions, no device): summon 16,
 // written from the listing on The Broken Seal's summon skeleton
-// (BattleEffect_RunEmberColumns: canvas layer, blitter pair through
+// (BattleFx_RunEmberColumns: canvas layer, blitter pair through
 // Func_08144aac, transfer callback at 0xc80, SelectLivingTargets,
 // SpawnObjects, a frame loop with an A/B skip, PlaceFormationObjects,
 // RunImpactBurst and the twelve object releases). Its rings use the ARM

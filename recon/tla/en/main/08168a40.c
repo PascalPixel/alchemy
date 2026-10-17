@@ -82,15 +82,15 @@ extern u16 gData_08197410[];         // ☀️ gParticleStreams_CellOffsets
 extern u32 gCameraSceneParameters[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void BattleEffect_WipeCanvas(s32 mode, s32 value);
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_WipeCanvas(s32 mode, s32 value);
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
 void Func_08152404(s32 count, s32 resource,
                    s32 priority); // BattleFx_SpawnObjects
 void ResourceObject_ReleaseFar(void *object);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);
@@ -105,7 +105,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void);         // BattleFx_SetupBlendedDisplay
 void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 
 // Summon 3: the battlefield turns to forest; a row of nine riders gallops in
@@ -150,7 +150,7 @@ void Func_08168a40(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000002 = 0x18;
   work->transferMode = 0;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-  BattleEffect_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(1, 0);
   Func_08152404(9, 644, 1);
   gCameraSceneParameters[4] = 240;
   Func_0814cc4c(work->effect);
@@ -158,7 +158,7 @@ void Func_08168a40(struct BattleEffectArgument *effect) {
   REG_WIN0H = 0xca;
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-  BattleEffect_WipeCanvas(1, 1);
+  BattleFx_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;

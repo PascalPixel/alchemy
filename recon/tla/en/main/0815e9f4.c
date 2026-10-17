@@ -19,7 +19,7 @@
 // caster is an enemy (actor 8 and up), the spark sheet, and the transfer
 // callback in copy mode.
 
-// Port of The Broken Seal's BattlePres_RunRingAndSparkScene, with The Lost
+// Port of The Broken Seal's BattleFx_RunRingAndSparkScene, with The Lost
 // Age's heap slots, blitter modes (3 minus ☀️'s) and callback orders (the
 // transfer at 0xc80, the fade at 0x480), no work->effect store, and these
 // changes: the palette goes by DMA, the canvases are cleared 0x3c00 bytes
@@ -109,7 +109,7 @@ void Func_08143d04(void);
 void Func_08143000(void);
 // Steps the background palette fade.
 void Func_08143488(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 Func_081963ec(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.

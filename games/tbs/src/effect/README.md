@@ -51,7 +51,7 @@ it spans the screen; `BattleFx_BeginCanvasLayer` sets that up.
 
 An effect never writes the canvas to video memory itself. It draws a frame,
 sets the work block's `transferPending` and waits a frame. The scheduled
-callback `BattlePresentation_ProcessPendingGraphicsTransfer` copies the canvas
+callback `BattleFx_ProcessPendingGraphicsTransfer` copies the canvas
 to video memory and then treats the pixels it keeps according to the work
 block's transfer mode (`enum CanvasTransferMode`): leave them, clear them,
 fade them, darken or brighten them. Canvas pixels are indices into a palette
@@ -62,7 +62,7 @@ instead, flushed by `BattleFx_FlushPendingGraphicsTransfer`.
 ## Blitters
 
 Drawing a picture onto the canvas goes through a blitter, a small ARM routine
-that `BattleEffect_LoadWork` assembles at run time from the fragments in
+that `BattleFx_LoadWork` assembles at run time from the fragments in
 `battle_effect_composite.s`, for one cell size, one mirroring, one clip and one
 way of combining pixels (copy, additive, brightest wins and so on). A general
 routine that tested all of these for every pixel would be far too slow. The

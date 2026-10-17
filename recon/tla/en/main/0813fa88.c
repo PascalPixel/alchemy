@@ -1,6 +1,6 @@
 // Near miss, differ 2 of 280 (10 without its devices).
 
-// Twin: The Broken Seal's BattlePresentation_PrepareScene, the start of the
+// Twin: The Broken Seal's BattleFx_PrepareScene, the start of the
 // light-streak backdrop the scenes raise behind the battle (Func_0813fd40,
 // already C, takes it down; both are reached through the far-call table,
 // table_47.s). ⚓️ rebuilt it: instead of BattleFx_BeginCanvasLayer it sets
@@ -63,11 +63,11 @@ extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_VioletPaletteD;
 extern char ResourceId_DustPuffSheet;
 
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_0814355c(void); // the BG2 canvas's registers
 void Func_0813fa44(void); // fades the battle background
 void Func_0813f89c(void); // halves the canvas into VRAM
-void Func_0813f8d4(void); // BattlePresentation_DrawStreaks
+void Func_0813f8d4(void); // BattleFx_DrawStreaks
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);

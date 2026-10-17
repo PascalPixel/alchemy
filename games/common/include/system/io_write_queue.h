@@ -62,7 +62,7 @@ void IoWriteQueue_FlushPending(void);
 // variable while disabling and restoring interrupts.
 /* FAKEMATCH: the count goes through count_ as in IO_WRITE_QUEUE_PUSH (see its
  * tag): written as q->count, BattleFx_PlayUnitElementEffect and
- * BattleEffect_RunShockwaveScene, its users, are among the sections that
+ * BattleFx_RunShockwaveScene, its users, are among the sections that
  * differ. */
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \

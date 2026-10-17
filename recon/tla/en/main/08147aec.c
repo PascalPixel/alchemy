@@ -2,7 +2,7 @@
 
 // Summon 7, mode 0 (the wrapper in series_e.c; mode 1 is the kind that
 // casts the same scene from the caster's side). Twin: The Broken Seal's
-// BattleEffect_RunPaletteParticles, ported call for call. The Lost Age's
+// BattleFx_RunPaletteParticles, ported call for call. The Lost Age's
 // changes: every picture unpacked by Resource_LoadAndDecompress; the pair
 // from Func_08144aac; BG2CNT set with the blending; an alternate layout
 // (formation 6, eight pixels right and lower, sparks and flashes with it)

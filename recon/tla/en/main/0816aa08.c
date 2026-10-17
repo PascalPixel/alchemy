@@ -1,7 +1,7 @@
 // Draft of Func_0816aa08, effect kind 85 (Plume Edge), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleEffect_RunImpactBurst 0.566, call order BattleFx_RunJupiterDjinnFall
-// 0.677); the pillar's two-piece scroll is BattleEffect_RunEmberColumns'.
+// BattleFx_RunImpactBurst 0.566, call order BattleFx_RunJupiterDjinnFall
+// 0.677); the pillar's two-piece scroll is BattleFx_RunEmberColumns'.
 
 // Listing 467 instructions, draft 467, differ 36.
 // Left: order rows only. The native moves the work pointer to r9 before
@@ -59,7 +59,7 @@ extern u16 gData_08197410[];
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers

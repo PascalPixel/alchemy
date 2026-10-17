@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattlePres_RunBurstScene
+	.global BattleFx_RunBurstScene
 	.thumb_func
-BattlePres_RunBurstScene:
+BattleFx_RunBurstScene:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

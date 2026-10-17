@@ -1432,7 +1432,7 @@ Data_081985ab:
 	.global Data_081985b0
 Data_081985b0:
 	.byte 1, 3, 5
-@ read by BattlePres_RunBurstScene
+@ read by BattleFx_RunBurstScene
 	.global Data_081985b3
 Data_081985b3:
 	.byte 1, 0, 5, 16, 12, 80, 0, 0, 1, 1, 7, 16, 12, 104, 0, 0
@@ -1442,7 +1442,7 @@ Data_081985b3:
 	.byte 0, 2, 3, 32, 12, 52, 1, 0, 1, 0, 3, 16, 12, 50, 0, 0
 	.byte 1, 0, 1, 16, 12, 40, 0, 1, 1, 0, 1, 16, 12, 80, 0, 2
 	.byte 1, 3, 1, 16, 16, 30, 0, 0
-@ read by BattlePres_RunBurstScene
+@ read by BattleFx_RunBurstScene
 	.global Data_0819861b
 Data_0819861b:
 	.byte 0, 4, 8, 12, 0
@@ -1753,22 +1753,22 @@ gData_081989ea:
 	.global gData_081989f2
 gData_081989f2:
 	.2byte 0, 4608, 9216, 13356, 16020, 18684, 20668, 22020
-@ The Broken Seal's gParticleStreams_OrbitPoints; read by BattleEffect_RunParticleStreams
+@ The Broken Seal's gParticleStreams_OrbitPoints; read by BattleFx_RunParticleStreams
 	.global Data_08198a02
 Data_08198a02:
 	.2byte -64, -96, 24, -48, -120, 32, -32, -80
 	.2byte -48, -16, -72, -24, 16, -80, 16, 32
 	.2byte -112, -32, 48, -96, 56
-@ The Broken Seal's gParticleStreams_DropPoints; read by BattleEffect_RunParticleStreams
+@ The Broken Seal's gParticleStreams_DropPoints; read by BattleFx_RunParticleStreams
 	.global Data_08198a2c
 Data_08198a2c:
 	.2byte 32, 32, 48, 96, 80, 80, 112, 100
 	.2byte 176, 80, 196, 64, 204, 96
-@ The Broken Seal's gParticleField_PuffCells; read by BattleEffect_RunParticleStreams
+@ The Broken Seal's gParticleField_PuffCells; read by BattleFx_RunParticleStreams
 	.global Data_08198a48
 Data_08198a48:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gThornVines_EmberSizes; read by BattleEffect_RunParticleStreams
+@ The Broken Seal's gThornVines_EmberSizes; read by BattleFx_RunParticleStreams
 	.global Data_08198a56
 Data_08198a56:
 	.2byte 16, 32, 48, 48, 48, 48, 48

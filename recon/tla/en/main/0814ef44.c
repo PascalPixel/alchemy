@@ -58,7 +58,7 @@
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
 void Func_08144aac(s32 side,
                    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters

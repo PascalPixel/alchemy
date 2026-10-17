@@ -67,7 +67,7 @@ void Func_08143000(void);
 void Func_08143488(void);
 // Counts down the actors' flash timers.
 void Func_081434f8(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 Func_081963ec(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.

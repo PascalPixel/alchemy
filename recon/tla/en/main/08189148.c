@@ -1,5 +1,5 @@
 // Draft: listing 1123 instructions, draft 1136, differ 855. ☀️ twin:
-// BattleEffect_RunDualParticleStream (effect.c, structure 0.725): the puff arc,
+// BattleFx_RunDualParticleStream (effect.c, structure 0.725): the puff arc,
 // the faded copies of the pillar sheet, the head flying the path and its trail,
 // the camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
 // target, sends the head to the target before it dives, and added a second

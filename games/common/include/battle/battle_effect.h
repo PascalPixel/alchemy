@@ -6,13 +6,12 @@
 
 struct BattleEffectArgument;
 #if GAME_TLA
-void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
-                                     s32 mode);
+void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect);
 void BattleFx_RunParticleStreamsMode1(struct BattleEffectArgument *effect);
-void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
-                                      s32 mode);
-void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
+void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
+                                  s32 mode);
+void BattleFx_RunDitherDissolveScene(struct BattleEffectArgument *effect);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 
@@ -34,8 +33,8 @@ enum {
   COMPOSITE_ADDITIVE
 };
 #if GAME_TLA
-s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift,
-                          s32 flags, u32 mode);
+s32 BattleFx_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
+                      u32 mode);
 #endif
 
 typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,

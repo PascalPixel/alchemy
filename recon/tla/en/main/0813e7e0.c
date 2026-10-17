@@ -2,7 +2,7 @@
 
 // No twin: an unused ⚓️ function that no handler or caller reaches. Its
 // set-up is 0813eb70's (The Broken Seal's
-// BattleEffect_RunTileAndPaletteAnimation): the same BG2 canvas, tile map,
+// BattleFx_RunTileAndPaletteAnimation): the same BG2 canvas, tile map,
 // clears and blitters. After running Func_08191530 on the effect it holds
 // the battle background on screen, fading its colours up from black over 64
 // frames, until A is pressed; B starts the fade again. It reads as a viewer

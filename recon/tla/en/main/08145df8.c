@@ -46,7 +46,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
 void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll

@@ -1,4 +1,4 @@
-// Draft of BattlePres_RunBurstScene, the burst family's body (ten kinds
+// Draft of BattleFx_RunBurstScene, the burst family's body (ten kinds
 // through eight wrappers): blow after blow lands on the first target.
 
 // On screen: the caster closes in on the first target (kind variant 12
@@ -36,7 +36,7 @@
 // Teardown: the callbacks are removed and the canvas layer is closed; the
 // blitters are built and released every frame.
 
-// Port of The Broken Seal's BattlePres_RunBurstScene, reworked in The Lost
+// Port of The Broken Seal's BattleFx_RunBurstScene, reworked in The Lost
 // Age: an eighth record byte and its two extras, the orb packed into the
 // map cell buffer, 256 motes where ☀️ has 768, the approach by variant,
 // The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
@@ -167,10 +167,10 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 Func_081963ec(s32 slot, s32 modeFlags);
-// BattleEffect_LoadWork itself.
+// BattleFx_LoadWork itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
 // Closes the canvas layer.
@@ -191,7 +191,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 
-void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
+void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
                               s32 variant) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;

@@ -60,7 +60,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);               // ☀️ BattleFx_EndCanvasLayer
 void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase);          // ☀️ BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle

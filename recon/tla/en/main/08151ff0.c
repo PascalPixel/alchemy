@@ -42,9 +42,9 @@
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar

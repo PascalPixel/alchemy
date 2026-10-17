@@ -1,7 +1,7 @@
 // Draft, differ 78 of 804: Func_08165ab4, summon 1 (Func_0814c994's case 1,
-// actflags 0x8001), The Broken Seal's BattleEffect_RunCirclingFallingScene.
+// actflags 0x8001), The Broken Seal's BattleFx_RunCirclingFallingScene.
 
-// Twin: ☀️ BattleEffect_RunCirclingFallingScene
+// Twin: ☀️ BattleFx_RunCirclingFallingScene
 // (games/tbs/src/effect/effect.c), ported: Func_0813ba50 sets the display,
 // the six rock objects are resource 653 at objects 9 to 14 (☀️ 390), the
 // formation is resource 648 (☀️ 379), the blitters come from
@@ -89,9 +89,9 @@ extern u16 gData_08198a84[];          // ☀️ gThornVines_EmberSizes
 extern u16 gData_08197410[];          // ☀️ gParticleStreams_CellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void BattleEffect_WipeCanvas(s32 mode, s32 value);
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_WipeCanvas(s32 mode, s32 value);
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
 void Func_08152404(s32 count, s32 resource,
@@ -99,7 +99,7 @@ void Func_08152404(s32 count, s32 resource,
 void *ResourceObject_CreateFar(s32 resource);
 void ResourceObject_ReleaseFar(void *object);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);
@@ -114,7 +114,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void);         // BattleFx_SetupBlendedDisplay
 void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 
 // Summon 1: the battlefield turns to desert; an orb circles over a standing
@@ -155,7 +155,7 @@ void Func_08165ab4(struct BattleEffectArgument *effect) {
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-  BattleEffect_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(1, 0);
   Func_0814cc4c(work->effect);
   Func_08152404(FORMATION_SIZE, FORMATION, 2);
   for (i = 0; i != ROCK_COUNT; i++) {
@@ -181,7 +181,7 @@ void Func_08165ab4(struct BattleEffectArgument *effect) {
 
   // The desert, the dust and spark pictures, and the blend.
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
-  BattleEffect_WipeCanvas(1, 1);
+  BattleFx_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;

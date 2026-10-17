@@ -182,13 +182,13 @@ u8 gRenderMode_GlintFlips[] = {0, 4, 8, 12};
 BattleFxHandler gBattleFx_EffectHandlers[] = {
     BattleFx_RunRockWall,                        // 1
     BattleFx_RunShatteringRocks,                 // 2
-    BattlePres_RunRisingWall,                    // 3
+    BattleFx_RunRisingWall,                      // 3
     BattleFx_RunGrowingColumnsMode0,             // 4
     BattleFx_RaisePillars,                       // 5
     BattleFx_RunRisingMotes,                     // 6
-    BattleEffect_RunFallingParticles,            // 7
+    BattleFx_RunFallingParticles,                // 7
     BattleFx_RunFallingCrystals,                 // 8
-    BattleEffect_RunFallingBolts,                // 9
+    BattleFx_RunFallingBolts,                    // 9
     BattleFx_RunVortexMotes,                     // 10
     BattleFx_RunPuffArc,                         // 11
     BattleFx_RunHomingEmbers,                    // 12
@@ -228,7 +228,7 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     BattleFx_RunStatBoostMode0,                  // 46
     BattleFx_RunStatReductionMode1,              // 47
     NULL,                                        // 48
-    BattleEffect_RunDualParticleStream,          // 49
+    BattleFx_RunDualParticleStream,              // 49
     BattleFx_RunPinkGatheringLights,             // 50
     BattleFx_RunFireSwirlCharge,                 // 51
     BattleFx_RunRevealColumnMode1,               // 52
@@ -381,7 +381,7 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     NULL,                               // 197-199
     BattleFx_RunStatBoostMode3,         // 200
     BattleFx_RunVenusDjinnBeams,        // 201
-    BattleEffect_RunRisingColumns,      // 202
+    BattleFx_RunRisingColumns,          // 202
     BattleFx_RunVenusDjinnRockToss,     // 203
     BattleFx_RunHealingMotesMode0,      // 204
     BattleFx_RunProjectileVolleyMode7,  // 205

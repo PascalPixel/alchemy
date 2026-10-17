@@ -1,6 +1,6 @@
 // Draft, differ 44 of 430 (2026-10-15; 46 before Func_081963ec returned its
 // loader's s32, as nibble_pair.c now does): The Broken Seal's
-// BattleEffect_RunImpactBurst with The Lost Age's blitter loads
+// BattleFx_RunImpactBurst with The Lost Age's blitter loads
 // (Func_081963ec(104, 19) and (188, 3), read back from the heap slots at 0x68
 // and 0xbc), its resources (0x134, 0x120, 0x121) and callback (Func_08143000 at
 // 0xc80). Everything matches but reordered rows, all of one kind: the native

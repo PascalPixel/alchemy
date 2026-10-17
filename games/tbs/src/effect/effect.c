@@ -5605,7 +5605,6 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct SpriteScale gBattleFx_StarsUnitScale;
 extern u8 gWhirlwindComets_GridX[];
 extern u8 gWhirlwindComets_GridY[];
 extern u16 gWhirlwindComets_Frames[];
@@ -5628,6 +5627,7 @@ extern u16 gWhirlwindComets_CellOffsets[];
 // Pressing A or B skips to frame 160, or from there to frame 395. At the
 // end the battle shows the damage and the targets go back to their places.
 void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
+  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void *canvas;
   struct BattleCamera *camera;
@@ -5912,7 +5912,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
     // From frame 160: sway the block of objects, faster for its first 64
     // frames, plus what is left of each comet's push.
     if (frame > 159) {
-      scale = gBattleFx_StarsUnitScale;
+      scale = unitScale;
       size = 16;
       if (frame - 160 <= 64)
         size = 32;
@@ -9341,7 +9341,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct SpriteScale gBattleFx10_UnitScale;
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
@@ -9352,6 +9351,7 @@ extern const struct SpriteScale gBattleFx10_UnitScale;
 //
 // effect: the targets.
 void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
+  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 rockPoints[32][2]; // a copy of gBattleFx10_Points that nothing reads
   struct SpritePlacement position;
   void *canvas;
@@ -9493,7 +9493,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
     }
 
     // Lay out the 3x3 objects 32 pixels apart.
-    scale = gBattleFx10_UnitScale;
+    scale = unitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++) {
         work->objects[i]->image.priority = 0;
@@ -11190,6 +11190,12 @@ struct RockWallHeights {
 //
 // effect: the targets; variant picks the row of gRockWall_Timings.
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
+  static const s32 wallHeights[4] = {
+      -32,
+      -32,
+      -32,
+      -32,
+  };
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -11247,7 +11253,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  heights = (*(const struct RockWallHeights *)&gRockWall_Heights);
+  heights = (*(const struct RockWallHeights *)&wallHeights);
   work->shakeFrames = 128;
   AudioCommand_PlayFar(141);
 
@@ -16007,7 +16013,6 @@ void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
   restoredCenter->centerY = 0x78;
 }
 
-extern const s16 gMode12_Points[][2];
 extern u8 gMode12_Animations[];
 extern u8 gMode12_SmokeFlips[];
 
@@ -16025,6 +16030,9 @@ extern u8 gMode12_SmokeFlips[];
 // effect: the targets.
 
 void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
+  static const s16 points[6][2] = {
+      {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
+  };
   u8 ramp[32];
   s32 point[3];
   struct EffectPosition screen[11];
@@ -16194,12 +16202,12 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch(frame << 8);
     }
 
-    // The three lines, drawn dot by dot between pairs of gMode12_Points.
+    // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        point[0] = (gMode12_Points[i][0] - 96) << 16;
+        point[0] = (points[i][0] - 96) << 16;
         point[1] = 0;
-        point[2] = (gMode12_Points[i][1] - 96) << 16;
+        point[2] = (points[i][1] - 96) << 16;
         EffectPosition_ApplyBaseAndYOffset(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -17026,7 +17034,6 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct SpriteScale gRisingWall_UnitScale;
 
 // The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
 // in the rebuilt sheet.
@@ -17041,6 +17048,7 @@ extern const struct SpriteScale gRisingWall_UnitScale;
 //
 // effect: the targets; variant 0 to 2 widens the wall.
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
+  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -17296,7 +17304,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
         s32 slot;
 
         if (rock->variant == 0) {
-          scale = gRisingWall_UnitScale;
+          scale = unitScale;
           if (frame > 71) {
             scale.x = (k << 12) + 0x8000;
             scale.x += work->effect->variant << 14;
@@ -19477,9 +19485,11 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
 //            2 = 8 in rows of 3, 2, 3; 3 = 8 scaled by 1.25.
 // x, z: formation origin in 16.16 pixels
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
+  static const struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
+  static const struct SpriteScale smallScale = {{{0x14000, 0x14000}}};
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  struct SpriteScale normal = gFormation_NormalScale;
-  struct SpriteScale big = gFormation_SmallScale;
+  struct SpriteScale normal = normalScale;
+  struct SpriteScale big = smallScale;
   struct SpritePlacement pos;
   s32 i;
 
@@ -19734,7 +19744,6 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, 1);
 }
 
-extern const struct SpriteScale gCirclingScene_UnitScale;
 
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_DropPoints[][2];
@@ -20304,6 +20313,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 // Move a formation and orbiting picture while six rocks bounce and scatter
 // puffs.
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
+  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
@@ -20393,7 +20403,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(156);
     if (frame == 260)
       AudioCommand_PlayFar(145);
-    scale = gCirclingScene_UnitScale;
+    scale = unitScale;
     if (frame >= 96 && frame <= 251)
       work->shakeFrames = 1;
     else if (frame >= 260 && frame <= 263)
@@ -21540,7 +21550,6 @@ struct ShockwaveWork {
   u8 ramp[8][770];
 };
 
-extern const struct SpriteScale gShockwaveScene_UnitScale;
 extern u16 gShockwaveScene_ShardCells[];
 extern u8 gShockwaveScene_ShardWidths[];
 extern u8 gShockwaveScene_ShardHeights[];
@@ -21550,6 +21559,7 @@ extern u8 gShockwaveScene_ShardHeights[];
 // Stage a formation above the violet backdrop, then pulse and scatter its
 // images.
 void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
+  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];
   struct EffectPosition projectedPosition;
   struct SpritePlacement place;
@@ -21767,7 +21777,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
       }
     }
 
-    pair = gShockwaveScene_UnitScale;
+    pair = unitScale;
     place.groundHeight = 0;
     place.height = 0;
     for (i = 0; i != 16; i++) {
@@ -22403,6 +22413,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
 // Sweep the object formation across the field, then lift it out through
 // particle bursts.
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
+  static const struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
+  static const struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
   void **cursor;
   struct SpritePlacement place;
   struct EffectPosition unit;
@@ -22511,7 +22523,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
     }
 
     if (frame <= 149) {
-      struct SpriteScale pair = gObjectRow_SweepPair;
+      struct SpriteScale pair = sweepScale;
       s32 lift;
 
       lift = 0;
@@ -22674,7 +22686,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
     frame = 0;
     do {
       if (frame <= 23) {
-        struct SpriteScale pair2 = gObjectRow_RisePair;
+        struct SpriteScale pair2 = riseScale;
         s32 ang;
         s32 rise;
 
@@ -22806,7 +22818,6 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct SpriteScale gBattleFx6_UnitScale;
 
 // Restore the background 2 horizontal scale to one screen pixel per source
 // pixel.
@@ -22818,6 +22829,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
 // Sweep the formation across the field, burst into flares and finish with blue
 // flames.
 void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
+  static const struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;
   struct EffectPosition targetPosition;
   void *canvas;
@@ -22955,7 +22967,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 21) {
-      scale = gBattleFx6_UnitScale;
+      scale = unitScale;
       if (frame <= 83) {
         if (frame > 48) {
           formationVelocityX = formationVelocityX * 60 / 64;
@@ -24151,35 +24163,3 @@ s32 BattleEffect_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   return templateWords == codeEnd;
 }
 
-// {x, y} scale factors (Q16)
-const struct SpriteScale gBattleFx_StarsUnitScale = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gBattleFx10_UnitScale = {{{0x10000, 0x10000}}};
-
-// Rock wall height
-const s32 gRockWall_Heights[4] = {
-    -32,
-    -32,
-    -32,
-    -32,
-};
-
-const s16 gMode12_Points[6][2] = {
-    {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
-};
-
-const struct SpriteScale gRisingWall_UnitScale = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gFormation_NormalScale = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gFormation_SmallScale = {{{0x14000, 0x14000}}};
-
-const struct SpriteScale gCirclingScene_UnitScale = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gShockwaveScene_UnitScale = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gObjectRow_SweepPair = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gObjectRow_RisePair = {{{0x10000, 0x10000}}};
-
-const struct SpriteScale gBattleFx6_UnitScale = {{{0x18000, 0x18000}}};

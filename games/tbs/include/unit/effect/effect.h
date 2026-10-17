@@ -331,8 +331,5 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect);
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift,
                           s32 flags, u32 mode);
 
-extern const s32 gRockWall_Heights[4];
-extern const struct SpriteScale gFormation_NormalScale;
-extern const struct SpriteScale gFormation_SmallScale;
 
 #endif

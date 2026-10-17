@@ -270,8 +270,6 @@ extern u8 gMemberBeam_HeadWidths[];
 extern u8 gMemberBeam_MotePictures[];
 extern u8 gMemberBurst_Counts[];
 extern const u8 gObjectMotion_LinkedActionScript[];
-extern const struct SpriteScale gObjectRow_RisePair;
-extern const struct SpriteScale gObjectRow_SweepPair;
 extern u8 gPaletteParticles_DropSizes[];
 extern u8 gPaletteParticles_DropSpeeds[];
 extern u8 gPaletteParticles_SparkPixels[];

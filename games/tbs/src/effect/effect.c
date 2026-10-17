@@ -18324,6 +18324,48 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }
 
+// The casting impacts, by kind - 100: each is named for the first ability
+// whose gBattle_ActionFlags entry selects it; the four no ability selects
+// keep their numbers.
+enum CastingImpact {
+  CASTING_IMPACT_BANE = 0,
+  CASTING_IMPACT_SMOG,
+  CASTING_IMPACT_MIST,
+  CASTING_IMPACT_FEVER,
+  CASTING_IMPACT_FLINT,
+  CASTING_IMPACT_SCORCH,
+  CASTING_IMPACT_SQUALL,
+  CASTING_IMPACT_SAP,
+  CASTING_IMPACT_TERRA_STRIKE,
+  CASTING_IMPACT_POISON_CLOUD,
+  CASTING_IMPACT_DEADLY_POISON,
+  CASTING_IMPACT_MORTAL_DANGER, // also Death Size
+  CASTING_IMPACT_BAD_OMEN,
+  CASTING_IMPACT_LIFE_NOURISH,
+  CASTING_IMPACT_AQUA_SOCK,
+  CASTING_IMPACT_15,
+  CASTING_IMPACT_FROST_BITE,
+  CASTING_IMPACT_17,
+  CASTING_IMPACT_LIFE_LEECH,
+  CASTING_IMPACT_PSY_LEECH,
+  CASTING_IMPACT_BROIL,
+  CASTING_IMPACT_MELTDOWN,
+  CASTING_IMPACT_HEAT_MIRAGE, // also Heat Flash
+  CASTING_IMPACT_BARRAGE,
+  CASTING_IMPACT_24,
+  CASTING_IMPACT_ACID_BATH,
+  CASTING_IMPACT_26,
+  CASTING_IMPACT_STUN_VOLTAGE,
+  CASTING_IMPACT_BLINDING_SMOG,
+  CASTING_IMPACT_MURK,
+  CASTING_IMPACT_CYCLONE_SLASH,
+  CASTING_IMPACT_PSYPHON_SEAL,
+  CASTING_IMPACT_ASURA,
+  CASTING_IMPACT_FORCIBLE_ARM,
+  CASTING_IMPACT_TRUNCHEON_FIST,
+  CASTING_IMPACT_SEVERE_BLOW,
+};
+
 // Djinn abilities
 // Gather sparks around the acting unit, launch the Djinni and draw its impact.
 // Kinds 15, 17, 24, 26 and 35 hand off to another effect after gathering.
@@ -18380,7 +18422,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   sprites = (u8 *)slots[2];
   work->effect = command;
-  if (kind == 11 || kind == 8 || kind == 32) {
+  if (kind == CASTING_IMPACT_MORTAL_DANGER ||
+      kind == CASTING_IMPACT_TERRA_STRIKE || kind == CASTING_IMPACT_ASURA) {
     BattleFx_BeginTiledCanvas(0);
   } else {
     BattleFx_BeginCanvasLayer(0);
@@ -18407,86 +18450,89 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     CastingImpact_PackRows(Ram_MapCellBuffer, work->sheet + 0x5100, width,
                            height);
   }
-  if (kind == 5 || kind == 23) {
+  if (kind == CASTING_IMPACT_SCORCH || kind == CASTING_IMPACT_BARRAGE) {
     CastingImpact_LoadResource(&ResourceId_FlashBurstSheet, Ram_MapCellBuffer,
                                1, 0);
-  } else if (kind == 12) {
+  } else if (kind == CASTING_IMPACT_BAD_OMEN) {
     CastingImpact_LoadResource(&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
-  } else if (kind == 6 || kind == 27) {
+  } else if (kind == CASTING_IMPACT_SQUALL ||
+             kind == CASTING_IMPACT_STUN_VOLTAGE) {
     CastingImpact_LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1,
                                0);
     CastingImpact_LoadResource(&ResourceId_LightningBoltSheet,
                                Ram_MapCellBuffer + 0xc56, 1, 0);
-  } else if (kind == 31) {
+  } else if (kind == CASTING_IMPACT_PSYPHON_SEAL) {
     CastingImpact_LoadResource(&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
-  } else if (kind == 8) {
+  } else if (kind == CASTING_IMPACT_TERRA_STRIKE) {
     CastingImpact_LoadResource(&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1,
                                1);
-  } else if (kind == 14) {
+  } else if (kind == CASTING_IMPACT_AQUA_SOCK) {
     CastingImpact_LoadResource(&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1,
                                0);
-  } else if (kind == 30) {
+  } else if (kind == CASTING_IMPACT_CYCLONE_SLASH) {
     CastingImpact_LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1,
                                0);
-  } else if (kind == 16) {
+  } else if (kind == CASTING_IMPACT_FROST_BITE) {
     CastingImpact_LoadResource(&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1,
                                0);
-  } else if (kind == 20) {
+  } else if (kind == CASTING_IMPACT_BROIL) {
     CastingImpact_LoadResource(&ResourceId_EmberStreakSheet, Ram_MapCellBuffer,
                                1, 0);
-  } else if (kind == 33 || kind == 34) {
+  } else if (kind == CASTING_IMPACT_FORCIBLE_ARM ||
+             kind == CASTING_IMPACT_TRUNCHEON_FIST) {
     CastingImpact_LoadResource(&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1,
                                0);
-  } else if (kind != 11 && kind != 32) {
+  } else if (kind != CASTING_IMPACT_MORTAL_DANGER &&
+             kind != CASTING_IMPACT_ASURA) {
     CastingImpact_LoadResource(&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
   }
   switch (kind) // Djinni element
   {
-  case 0: // Earth
-  case 4:
-  case 7:
-  case 8:
-  case 9:
-  case 10:
-  case 11:
-  case 12:
-  case 13:
-  case 33:
+  case CASTING_IMPACT_BANE: // Earth
+  case CASTING_IMPACT_FLINT:
+  case CASTING_IMPACT_SAP:
+  case CASTING_IMPACT_TERRA_STRIKE:
+  case CASTING_IMPACT_POISON_CLOUD:
+  case CASTING_IMPACT_DEADLY_POISON:
+  case CASTING_IMPACT_MORTAL_DANGER:
+  case CASTING_IMPACT_BAD_OMEN:
+  case CASTING_IMPACT_LIFE_NOURISH:
+  case CASTING_IMPACT_FORCIBLE_ARM:
     CastingImpact_LoadResource(&ResourceId_VenusDjinnSmallSheet,
                                Ram_MapCellBuffer + 0x3c56, 1, 1);
     break;
-  case 2: // Water
-  case 14:
-  case 15:
-  case 16:
-  case 17:
-  case 18:
-  case 19:
+  case CASTING_IMPACT_MIST: // Water
+  case CASTING_IMPACT_AQUA_SOCK:
+  case CASTING_IMPACT_15:
+  case CASTING_IMPACT_FROST_BITE:
+  case CASTING_IMPACT_17:
+  case CASTING_IMPACT_LIFE_LEECH:
+  case CASTING_IMPACT_PSY_LEECH:
     CastingImpact_LoadResource(&ResourceId_MercuryDjinnSmallSheet,
                                Ram_MapCellBuffer + 0x3c56, 1, 1);
     break;
-  case 3: // Fire
-  case 5:
-  case 20:
-  case 21:
-  case 22:
-  case 23:
-  case 24:
-  case 25:
-  case 34:
-  case 35:
+  case CASTING_IMPACT_FEVER: // Fire
+  case CASTING_IMPACT_SCORCH:
+  case CASTING_IMPACT_BROIL:
+  case CASTING_IMPACT_MELTDOWN:
+  case CASTING_IMPACT_HEAT_MIRAGE:
+  case CASTING_IMPACT_BARRAGE:
+  case CASTING_IMPACT_24:
+  case CASTING_IMPACT_ACID_BATH:
+  case CASTING_IMPACT_TRUNCHEON_FIST:
+  case CASTING_IMPACT_SEVERE_BLOW:
     CastingImpact_LoadResource(&ResourceId_MarsDjinnSmallSheet,
                                Ram_MapCellBuffer + 0x3c56, 1, 1);
     break;
-  case 1: // Wind
-  case 6:
-  case 26:
-  case 27:
-  case 28:
-  case 29:
-  case 30:
-  case 31:
-  case 32:
+  case CASTING_IMPACT_SMOG: // Wind
+  case CASTING_IMPACT_SQUALL:
+  case CASTING_IMPACT_26:
+  case CASTING_IMPACT_STUN_VOLTAGE:
+  case CASTING_IMPACT_BLINDING_SMOG:
+  case CASTING_IMPACT_MURK:
+  case CASTING_IMPACT_CYCLONE_SLASH:
+  case CASTING_IMPACT_PSYPHON_SEAL:
+  case CASTING_IMPACT_ASURA:
     CastingImpact_LoadResource(&ResourceId_JupiterDjinnSmallSheet,
                                Ram_MapCellBuffer + 0x3c56, 1, 1);
     break;
@@ -18497,7 +18543,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   }
   work->transferMode =
       CANVAS_COPY_AND_FADE; // Afterimage: 3/4 for kind 12, otherwise 1/2.
-  if (kind == 12) {
+  if (kind == CASTING_IMPACT_BAD_OMEN) {
     work->transferValue = 75;
   } else {
     work->transferValue = 50;
@@ -18569,7 +18615,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             sparkScreen.x = sparkScreen.x / 2 + casterScreen->x;
             if (kind <= 7)
               sparkScreen.y = sparkScreen.y + casterScreen->y - 8;
-            else if (kind == 35)
+            else if (kind == CASTING_IMPACT_SEVERE_BLOW)
               sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
@@ -18613,7 +18659,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   // Prepare BG2 for each ability: normal horizontal scale, impact at the
   // target.
   //------------------------------------------------------------------
-  if (kind == 11) {
+  if (kind == CASTING_IMPACT_MORTAL_DANGER) {
     REG_BG2PA = 0x100;
     if (work->effect->side == 0) {
       REG_BG2X = (frame - targetScreen->x) << 8; // frame is 32 here.
@@ -18621,7 +18667,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       REG_BG2X = (96 - targetScreen->x) << 8;
     }
   } else {
-    if (kind == 32) {
+    if (kind == CASTING_IMPACT_ASURA) {
       // Scroll the image horizontally; scrollPos is in 16.16 pixels.
       REG_BG2PA = 0x100;
       if (work->effect->side == 0) {
@@ -18634,7 +18680,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       REG_BG2X = (scrollPos >> 16) << 8;
     }
   }
-  if (kind == 8) {
+  if (kind == CASTING_IMPACT_TERRA_STRIKE) {
     REG_BG2PA = 0x100;
     REG_BG2X = (64 - targetScreen->x) << 8;
     work->transferMode = CANVAS_COPY_AND_CLEAR; // Clear to 0 each frame.
@@ -18643,7 +18689,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     Iwram_ClearWords(canvas, 0x4000);
     REG_BLDCNT = 0;
   }
-  if (kind == 31) {
+  if (kind == CASTING_IMPACT_PSYPHON_SEAL) {
     REG_BG2PA = 0x100;
     if (work->effect->side == 0) {
       REG_BG2X = (32 - targetScreen->x) << 8;
@@ -18652,16 +18698,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     }
   }
   // Kinds 15, 17, 24 and 26 clear the canvas and hand off to another effect.
-  if (kind == 15 || kind == 17 || kind == 24 || kind == 26) {
+  if (kind == CASTING_IMPACT_15 || kind == CASTING_IMPACT_17 ||
+      kind == CASTING_IMPACT_24 || kind == CASTING_IMPACT_26) {
     CastingImpact_EndPrelude(work, canvas);
     ObjectDispatch_ApplyArgumentToChildrenFar(casterActor, 3);
-    if (kind == 15) {
+    if (kind == CASTING_IMPACT_15) {
       BattleFx_RunProjectileVolley(command, 9);
     }
-    if (kind == 24) {
+    if (kind == CASTING_IMPACT_24) {
       BattleFx_RunMysticFlame(command);
     }
-    if (kind != 26) {
+    if (kind != CASTING_IMPACT_26) {
       return;
     }
     BattleFx_RunProjectileVolley(command, 8);
@@ -18674,7 +18721,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;
   // Kind 35 clears the canvas and hands off to BattleFx_RunSparkGroups.
-  if (kind == 35) {
+  if (kind == CASTING_IMPACT_SEVERE_BLOW) {
     CastingImpact_EndPrelude(work, canvas);
     command->variant = 3;
     BattleFx_RunSparkGroups(command, 2);
@@ -18692,14 +18739,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     particle->variant = 0;
   }
   // Impact particles scatter from half the target height; variant is lifetime.
-  if (kind != 14) {
+  if (kind != CASTING_IMPACT_AQUA_SOCK) {
     s32 height = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
     for (i = 0; i != 32; i++) {
       particle = &work->particles[i];
       particle->x = targetActor->x;
       particle->y = height;
       particle->z = targetActor->z;
-      if (kind == 31) {
+      if (kind == CASTING_IMPACT_PSYPHON_SEAL) {
         particle->velocityX = ((Random16() & 255) - 127) << 12;
         particle->velocityY = ((Random16() & 255) - 64) << 10;
         particle->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -18712,13 +18759,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     }
   }
   // Kinds 11 and 32 replace the acting-unit overlay and impact graphics.
-  if (kind == 11) {
+  if (kind == CASTING_IMPACT_MORTAL_DANGER) {
     CastingImpact_LoadResource(&ResourceId_CounterRevealSheet, work, 1, 1);
     CastingImpact_LoadResource(&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer,
                                1, 0);
     REG_BLDALPHA = 0xe10;
   }
-  if (kind == 32) {
+  if (kind == CASTING_IMPACT_ASURA) {
     CastingImpact_LoadResource(&ResourceId_BlueBeastSheet, work->imageStorage,
                                1, 1);
     CastingImpact_LoadResource(&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer,
@@ -18726,21 +18773,23 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     REG_BLDALPHA = 0xe10;
   }
   // 64 impact-image particles at gMapCellBuffer + 0x4000.
-  if (kind != 7 && kind != 13 && kind != 18 && kind != 11 && kind != 32 &&
-      kind != 19) {
+  if (kind != CASTING_IMPACT_SAP && kind != CASTING_IMPACT_LIFE_NOURISH &&
+      kind != CASTING_IMPACT_LIFE_LEECH &&
+      kind != CASTING_IMPACT_MORTAL_DANGER && kind != CASTING_IMPACT_ASURA &&
+      kind != CASTING_IMPACT_PSY_LEECH) {
     s32 height = 0;
-    if (kind != 12)
+    if (kind != CASTING_IMPACT_BAD_OMEN)
       height = 0x140000;
     for (i = 0; i != 64; i++) {
       particle = &((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[i];
       particle->x = targetActor->x;
       particle->y = height;
       particle->z = targetActor->z;
-      if (kind == 5 || kind == 23) {
+      if (kind == CASTING_IMPACT_SCORCH || kind == CASTING_IMPACT_BARRAGE) {
         particle->velocityX = ((Random16() & 255) - 127) << 11;
         particle->velocityY = (Random16() & 255) << 11;
         particle->velocityZ = ((Random16() & 255) - 127) << 11;
-      } else if (kind == 25) {
+      } else if (kind == CASTING_IMPACT_ACID_BATH) {
         particle->velocityX = ((Random16() & 255) - 127) << 11;
         particle->velocityY = (Random16() & 127) << 10;
         particle->velocityZ = ((Random16() & 255) - 127) << 11;
@@ -18754,25 +18803,35 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   }
   // Kinds 2, 3, 12, 22, 28 and 29 wave BG2 by scanline.
   kindFromTwo = kind - 2;
-  if ((kindFromTwo >= 0 && kindFromTwo <= 1) || kind == 12 || kind == 22 ||
-      kind == 29 || kind == 28) {
+  if ((kindFromTwo >= 0 && kindFromTwo <= 1) ||
+      kind == CASTING_IMPACT_BAD_OMEN || kind == CASTING_IMPACT_HEAT_MIRAGE ||
+      kind == CASTING_IMPACT_MURK || kind == CASTING_IMPACT_BLINDING_SMOG) {
     Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   }
 
   // Duration in frames
   kindFromFour = kind - 4;
-  if ((kindFromFour >= 0 && kindFromFour <= 2) || kind == 23 || kind == 30 ||
-      kind == 27 || kind == 33 || kind == 34 || kind == 100) {
+  if ((kindFromFour >= 0 && kindFromFour <= 2) ||
+      kind == CASTING_IMPACT_BARRAGE || kind == CASTING_IMPACT_CYCLONE_SLASH ||
+      kind == CASTING_IMPACT_STUN_VOLTAGE ||
+      kind == CASTING_IMPACT_FORCIBLE_ARM ||
+      kind == CASTING_IMPACT_TRUNCHEON_FIST || kind == 100) {
     duration = 32;
-  } else if (kind >= 0 && kind <= 3 || kind == 8 || kind == 9 || kind == 10 ||
-             kind == 22 || kind == 25 || kind == 29 || kind == 31 ||
-             kind == 14) {
+  } else if (kind >= 0 && kind <= 3 || kind == CASTING_IMPACT_TERRA_STRIKE ||
+             kind == CASTING_IMPACT_POISON_CLOUD ||
+             kind == CASTING_IMPACT_DEADLY_POISON ||
+             kind == CASTING_IMPACT_HEAT_MIRAGE ||
+             kind == CASTING_IMPACT_ACID_BATH || kind == CASTING_IMPACT_MURK ||
+             kind == CASTING_IMPACT_PSYPHON_SEAL ||
+             kind == CASTING_IMPACT_AQUA_SOCK) {
     duration = 48;
-  } else if (kind == 21) {
+  } else if (kind == CASTING_IMPACT_MELTDOWN) {
     duration = 20;
-  } else if (kind == 11 || kind == 32 || kind == 20) {
+  } else if (kind == CASTING_IMPACT_MORTAL_DANGER ||
+             kind == CASTING_IMPACT_ASURA || kind == CASTING_IMPACT_BROIL) {
     duration = 40;
-  } else if (kind == 28 || kind == 12) {
+  } else if (kind == CASTING_IMPACT_BLINDING_SMOG ||
+             kind == CASTING_IMPACT_BAD_OMEN) {
     duration = 64;
   } else {
     duration = 80;
@@ -18783,8 +18842,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   frame = 0;
   while (frame != duration) {
     // BG2 wave table: BG2X for each scanline.
-    if (kind != 11) {
-      if (kind != 32) {
+    if (kind != CASTING_IMPACT_MORTAL_DANGER) {
+      if (kind != CASTING_IMPACT_ASURA) {
         s32 base;
         scanline = work->bg2X;
         i = 0;
@@ -18806,7 +18865,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       casterScreen->y += 16;
     }
     // Acting-unit overlay: six frames, two ticks each.
-    if (kind != 11 && kind != 8 && kind != 32 && kind != 33 && kind != 34) {
+    if (kind != CASTING_IMPACT_MORTAL_DANGER &&
+        kind != CASTING_IMPACT_TERRA_STRIKE && kind != CASTING_IMPACT_ASURA &&
+        kind != CASTING_IMPACT_FORCIBLE_ARM &&
+        kind != CASTING_IMPACT_TRUNCHEON_FIST) {
       if (frame <= 11) {
         if (work->effect->side == 0) {
           blitters[0](canvas, work->sheet + frame / 2 * 3456,
@@ -18819,56 +18881,57 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     }
     // Move the BG palette one step toward the ability's resource palette.
     switch (kind) {
-    case 33:
+    case CASTING_IMPACT_FORCIBLE_ARM:
       BattleFx_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
       break;
-    case 14:
+    case CASTING_IMPACT_AQUA_SOCK:
       BattleFx_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
       break;
-    case 31:
+    case CASTING_IMPACT_PSYPHON_SEAL:
       BattleFx_StepPaletteToResource((s32)&ResourceId_RuneSheet);
       break;
-    case 8:
+    case CASTING_IMPACT_TERRA_STRIKE:
       BattleFx_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
       break;
-    case 0:
-    case 10:
+    case CASTING_IMPACT_BANE:
+    case CASTING_IMPACT_DEADLY_POISON:
       BattleFx_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
       break;
-    case 12:
-    case 13:
-    case 25:
+    case CASTING_IMPACT_BAD_OMEN:
+    case CASTING_IMPACT_LIFE_NOURISH:
+    case CASTING_IMPACT_ACID_BATH:
       BattleFx_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
       break;
-    case 18:
+    case CASTING_IMPACT_LIFE_LEECH:
       BattleFx_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
       break;
-    case 19:
+    case CASTING_IMPACT_PSY_LEECH:
       BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       break;
-    case 2:
-    case 29:
+    case CASTING_IMPACT_MIST:
+    case CASTING_IMPACT_MURK:
       BattleFx_StepPaletteToResource((s32)&ResourceId_TanPalette);
       break;
-    case 1:
-    case 28:
+    case CASTING_IMPACT_SMOG:
+    case CASTING_IMPACT_BLINDING_SMOG:
       BattleFx_StepPaletteToResource((s32)&ResourceId_CyanPalette);
       break;
-    case 3:
-    case 20:
-    case 22:
+    case CASTING_IMPACT_FEVER:
+    case CASTING_IMPACT_BROIL:
+    case CASTING_IMPACT_HEAT_MIRAGE:
       BattleFx_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
       break;
-    case 9:
+    case CASTING_IMPACT_POISON_CLOUD:
       BattleFx_StepPaletteToResource((s32)&ResourceId_LimePalette);
       break;
-    case 5:
-    case 23:
+    case CASTING_IMPACT_SCORCH:
+    case CASTING_IMPACT_BARRAGE:
       BattleFx_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
       break;
     }
     // Impact orb on frames 4-15; impact particles from frame 4.
-    if (kind != 11 && kind != 8 && kind != 32) {
+    if (kind != CASTING_IMPACT_MORTAL_DANGER &&
+        kind != CASTING_IMPACT_TERRA_STRIKE && kind != CASTING_IMPACT_ASURA) {
       if (frame >= 4 && frame <= 15) {
         drawPair[1](canvas, work->sheet + (frame - 4) / 2 * 960 + 0x5100,
                     targetScreen->x / 2 - 8, casterScreen->y - 24, 20, 48);
@@ -18897,7 +18960,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     //------------------------------------------------------------------
     // Ability-specific impact
     //------------------------------------------------------------------
-    if (kind == 7 || kind == 13 || kind == 18 || kind == 19) {
+    if (kind == CASTING_IMPACT_SAP || kind == CASTING_IMPACT_LIFE_NOURISH ||
+        kind == CASTING_IMPACT_LIFE_LEECH || kind == CASTING_IMPACT_PSY_LEECH) {
       // From frame 12, draw target particles toward the acting unit.
       if (frame == 50) {
         ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
@@ -18947,9 +19011,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           }
         }
       }
-    } else if (kind == 21) {
+    } else if (kind == CASTING_IMPACT_MELTDOWN) {
       // Draw nothing; finish with BattleFx_RunImpair.
-    } else if (kind == 6 || kind == 27) {
+    } else if (kind == CASTING_IMPACT_SQUALL ||
+               kind == CASTING_IMPACT_STUN_VOLTAGE) {
       // Two tall images (four 24x104 frames) and fragments around the target.
       if (frame >= 6 && frame <= 19) {
         phase = frame;
@@ -18993,7 +19058,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
         }
       }
-    } else if (kind == 14) {
+    } else if (kind == CASTING_IMPACT_AQUA_SOCK) {
       // Descending column (17-pixel image scrolling down) and particles from
       // the target.
       s32 fall;
@@ -19056,7 +19121,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         }
       }
       BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
-    } else if (kind == 31) {
+    } else if (kind == CASTING_IMPACT_PSYPHON_SEAL) {
       // Mirrored 24x48 images
       s32 height;
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -19079,7 +19144,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
       BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
-    } else if (kind == 30) {
+    } else if (kind == CASTING_IMPACT_CYCLONE_SLASH) {
       // Three 40x32 frames, two ticks each; fade from frame 16.
       s32 image;
       if (frame > 15) {
@@ -19096,7 +19161,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         blitters[0](canvas, cellOffset + (Ram_MapCellBuffer + 0x1156), stripX,
                     80, 40, 32);
       }
-    } else if (kind == 5 || kind == 23) {
+    } else if (kind == CASTING_IMPACT_SCORCH ||
+               kind == CASTING_IMPACT_BARRAGE) {
       // Six 32x64 frames per particle, two ticks each.
       struct EffectStep *step =
           (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
@@ -19114,9 +19180,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           }
         }
       }
-    } else if (kind == 4) {
+    } else if (kind == CASTING_IMPACT_FLINT) {
       // Draw nothing.
-    } else if (kind == 11) {
+    } else if (kind == CASTING_IMPACT_MORTAL_DANGER) {
       // Large target overlay: seven frames, two ticks each, bobbing vertically.
       // Fill the canvas on frames 4 and 5.
       s32 imageY;
@@ -19168,7 +19234,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                       imageY + gCastingImpact_ImageY[6], 76, 25);
         }
       }
-    } else if (kind == 32) {
+    } else if (kind == CASTING_IMPACT_ASURA) {
       // Image that scrolls and stops, plus large images lasting two frames
       // each. Fade from frame 16.
       scrollPos += scrollSpeed;
@@ -19222,7 +19288,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           blitters[0](canvas, Ram_MapCellBuffer + 0x5980, 0, 16, 128, 26);
         }
       }
-    } else if (kind == 20) {
+    } else if (kind == CASTING_IMPACT_BROIL) {
       // Twelve particles every other frame, spreading sideways over six
       // two-tick frames.
       for (i = 0; i != 12; i++) {
@@ -19249,7 +19315,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                              gBattleFx_PuffArcCellHeights[image]);
         }
       }
-    } else if (kind == 16) {
+    } else if (kind == CASTING_IMPACT_FROST_BITE) {
       // 64 fragments converge in straight lines from around the target.
       // The target reacts whenever another group of eight arrives.
       if (frame == 0) {
@@ -19295,7 +19361,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           }
         }
       }
-    } else if (kind == 8) {
+    } else if (kind == CASTING_IMPACT_TERRA_STRIKE) {
       // 32-pixel-wide image grows from the ground to 96 pixels, then shrinks.
       s32 height;
       if (frame >= 5 && frame <= 49) {
@@ -19310,7 +19376,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, 48, 104 - height, 32,
                                 height, &blitters[0]);
       }
-    } else if (kind == 33 || kind == 34) {
+    } else if (kind == CASTING_IMPACT_FORCIBLE_ARM ||
+               kind == CASTING_IMPACT_TRUNCHEON_FIST) {
       // 32x64 image falls diagonally onto the target over six frames.
       s32 offset;
       s32 imageX;
@@ -19337,7 +19404,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         CastingImpact_DrawTallImage(canvas, Ram_MapCellBuffer, imageX - 16,
                                     imageY - 32, 32, &blitters[1]);
       }
-    } else if (kind == 12) {
+    } else if (kind == CASTING_IMPACT_BAD_OMEN) {
       // 16 particles with three 24x24 images; fade from frame 48.
       if (frame > 47) {
         REG_BLDALPHA = (64 - frame) | 0x1000;
@@ -19368,7 +19435,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             projected.x /= 2;
             blitters[i & 1](canvas, Ram_MapCellBuffer + image * 1152,
                             projected.x - 12, projected.y - 24, 24, 48);
-            if (kind == 25)
+            if (kind == CASTING_IMPACT_ACID_BATH)
               EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
             else
               EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
@@ -19399,14 +19466,20 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       AudioCommand_PlayFar(134);
     }
     if (frame == 6) {
-      if (kind == 4 || kind == 5 || kind == 7 || kind == 13 || kind == 18 ||
-          kind == 19 || kind == 23 || kind == 34 || kind == 100) {
+      if (kind == CASTING_IMPACT_FLINT || kind == CASTING_IMPACT_SCORCH ||
+          kind == CASTING_IMPACT_SAP || kind == CASTING_IMPACT_LIFE_NOURISH ||
+          kind == CASTING_IMPACT_LIFE_LEECH ||
+          kind == CASTING_IMPACT_PSY_LEECH || kind == CASTING_IMPACT_BARRAGE ||
+          kind == CASTING_IMPACT_TRUNCHEON_FIST || kind == 100) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
         work->shakeFrames = 8;
-      } else if (kind == 20 || kind == 14 || kind == 33) {
+      } else if (kind == CASTING_IMPACT_BROIL ||
+                 kind == CASTING_IMPACT_AQUA_SOCK ||
+                 kind == CASTING_IMPACT_FORCIBLE_ARM) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
         work->shakeFrames = 2;
-      } else if (kind == 30 || kind == 8) {
+      } else if (kind == CASTING_IMPACT_CYCLONE_SLASH ||
+                 kind == CASTING_IMPACT_TERRA_STRIKE) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
         work->shakeFrames = 8;
       }
@@ -19423,7 +19496,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     WaitFrames(1);
     frame++;
   }
-  if (kind == 21) {
+  if (kind == CASTING_IMPACT_MELTDOWN) {
     Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
     Iwram_ClearWords(canvas, 0x4000);
     work->effect->prelude = 0;
@@ -19433,8 +19506,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_RunImpair(command);
   } else {
-    if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 ||
-        kind == 29) {
+    if (kind == CASTING_IMPACT_MIST || kind == CASTING_IMPACT_FEVER ||
+        kind == CASTING_IMPACT_BAD_OMEN || kind == CASTING_IMPACT_HEAT_MIRAGE ||
+        kind == CASTING_IMPACT_BLINDING_SMOG || kind == CASTING_IMPACT_MURK) {
       Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     }
     Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);

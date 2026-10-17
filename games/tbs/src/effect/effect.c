@@ -208,6 +208,21 @@ enum CanvasTransferMode {
   (Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer),          \
    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER), BattleFx_EndCanvasLayer())
 
+// Particle sheets hold ten mote cells, 1x2 to 10x20 pixels. Draws mote cell
+// `size` (size pixels wide, twice that tall) of `sheet` through blitter
+// `draw`, centred across x and standing on y: the motes, sparks and dust of
+// 32 effects, from the mote fountain to the summons.
+#define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
+  (draw)(canvas, (sheet) + gBattleFx_MoteCellOffsets[(size) - 1],              \
+         (x) - (size) / 2, (y) - (size), size, (size) * 2)
+
+// Draws flare cell `size` of `sheet`, a square `size` pixels from its centre
+// to each edge, centred on (x, y): Douse's sparks and the glowing points of
+// the ice fleck and gathering bursts, stat boosts, beams and rings.
+#define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
+  (draw)(canvas, (sheet) + gBattleFx_FlareCells[(size) - 1], (x) - (size),     \
+         (y) - (size), (size) * 2, (size) * 2)
+
 // The two halves of a WIN0H or WIN1H value: the window's left edge and its
 // right edge (exclusive) on one scanline.
 #define WINDOW_SPAN(left, right) (((left) << 8) | (right))
@@ -723,8 +738,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
         if (size > 6)
           size = 6;
-        drawSpark(canvas, work->sheet + gBattleFx_FlareCells[size - 1],
-                  HI(spark->x) - size, HI(spark->y) - size, size * 2, size * 2);
+        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet, HI(spark->x),
+                          HI(spark->y), size);
         EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
         spark->variant--;
       }
@@ -1101,8 +1116,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
         if (position.depth > 634)
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                position.x - size / 2, position.y - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
         EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
         // Mode 1 pushes every mote towards the other side of the field.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
@@ -1647,8 +1661,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
             size >>= 3;
             size++;
-            draw[1](canvas, particleSheet + gBattleFx_MoteCellOffsets[size - 1],
-                    position.x - size / 2, position.y - size, size, size * 2);
+            EFFECT_DRAW_MOTE(draw[1], canvas, particleSheet, position.x,
+                             position.y, size);
             step->variant--;
           }
         }
@@ -2142,9 +2156,8 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
         screenPosition.x /= 2;
         size = (i & 1) + work->effect->variant;
-        draw[0](canvas, sheet + gBattleFx_FlareCells[size - 1],
-                screenPosition.x - size, screenPosition.y - size, size * 2,
-                size * 2);
+        EFFECT_DRAW_FLARE(draw[0], canvas, sheet, screenPosition.x,
+                          screenPosition.y, size);
       }
       fleck->variant++;
     }
@@ -2666,8 +2679,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[0](canvas, sheet + gBattleFx_FlareCells[size - 1], x - size,
-                  y - size, size * 2, size * 2);
+          EFFECT_DRAW_FLARE(draw[0], canvas, sheet, x, y, size);
           mote->y -= 2;
           mote->variant--;
         }
@@ -3870,9 +3882,8 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
         } else if ((chip->x >= 0 && chip->x < 127 << 16) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          draw[i & 1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                      (chip->x >> 16) - size / 2, (chip->y >> 16) - size, size,
-                      size * 2);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, (chip->x >> 16),
+                           (chip->y >> 16), size);
         }
       }
     }
@@ -5729,8 +5740,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              draw[0](canvas, graphics + gBattleFx_MoteCellOffsets[size - 1],
-                      x - size / 2, y - size, size, size * 2);
+              EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
             }
           }
         }
@@ -5873,9 +5883,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
                   s32 y = from->velocityY +
                           (to->velocityY - from->velocityY) * k / 12;
 
-                  draw[0](canvas,
-                          graphics + gBattleFx_MoteCellOffsets[size - 1],
-                          x - size / 2, y - size, size, size * 2);
+                  EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
                 }
               }
             }
@@ -6273,8 +6281,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
               if (screen.depth > 350)
                 screen.depth = 350;
               span = 6 - (screen.depth - 170) / 36;
-              draw[1](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
-                      screen.x - span / 2, screen.y - span, span, span * 2);
+              EFFECT_DRAW_MOTE(draw[1], canvas, graphics, screen.x, screen.y,
+                               span);
               point->x -= point->x / dist;
               point->y -= point->y / dist;
               point->z -= point->z / dist;
@@ -6329,8 +6337,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 3 - (screen.depth - 170) / 90;
-                draw[0](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
-                        screen.x - span / 2, screen.y - span, span, span * 2);
+                EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
+                                 span);
                 spark[index].x += spark[index].velocityX;
                 spark[index].y += spark[index].velocityY;
                 spark[index].z += spark[index].velocityY;
@@ -6405,8 +6413,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 3 - (screen.depth - 170) / 90;
-                draw[0](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
-                        screen.x - span / 2, screen.y - span, span, span * 2);
+                EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
+                                 span);
                 slot++;
               } while (slot != 28);
             }
@@ -7090,9 +7098,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
             size = 9;
           if (frame > 76)
             size = 10;
-          draw[spark->velocityY > 0](
-              canvas, graphics + gBattleFx_MoteCellOffsets[size - 1],
-              HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[spark->velocityY > 0], canvas, graphics,
+                           HI(spark->x), HI(spark->y), size);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
@@ -7786,8 +7793,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
             y = spark->y >> 16;
             size = spark->variant / 8 + 1;
-            draw[k & 1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                        x - size / 2, y - size, size, size * 2);
+            EFFECT_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
           }
         }
       }
@@ -8038,9 +8044,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
               s32 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;
 
-              draw[j & 1](canvas,
-                          graphics + gBattleFx_MoteCellOffsets[size - 1],
-                          x - size / 2, y - size, size, size * 2);
+              EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);
             }
           }
         }
@@ -8245,8 +8249,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[i & 1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                      px - size / 2, py - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, px, py, size);
         }
       }
     }
@@ -8873,8 +8876,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
         if (screen.depth > 634)
           screen.depth = 634;
         size = 9 - (screen.depth - 250) / 64;
-        callbacks[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                     screen.x - size / 2, screen.y - size, size, size * 2);
+        EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
         if (frame > i + 30) {
           s32 dx = -spark->x >> 8;
@@ -10368,8 +10370,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
             s32 size;
 
             size = i % 3 + 1;
-            draw(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                 HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
+            EFFECT_DRAW_MOTE(draw, canvas, sheet, HI(shard->x), HI(shard->y),
+                             size);
             EffectStep_AdvanceWithGravity2D(shard, 62, gBreak_Gravities[i & 3]);
             shard->variant++;
             if (shard->velocityY > 0 && HI(shard->y) > 112)
@@ -10497,8 +10499,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
             EffectPosition_ApplyBaseAndYOffset(mote, &screen);
             screen.x >>= 1;
             size = 6;
-            draw(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                 screen.x - size / 2, screen.y - size, size, size * 2);
+            EFFECT_DRAW_MOTE(draw, canvas, sheet, screen.x, screen.y, size);
             EffectStep_AdvanceWithGravity3D(mote, 62, 0);
 
             // 10 frames after it appears (one frame later for each mote), a
@@ -10877,8 +10878,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                 draw[1](canvas, cell, screen.x - half, screen.y - half, edge,
                         edge);
               } else {
-                draw[1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                        screen.x - size / 2, screen.y - size, size, size * 2);
+                EFFECT_DRAW_MOTE(draw[1], canvas, sprites, screen.x, screen.y,
+                                 size);
               }
 
               // Move the mote 2 pixels a frame towards the centre.
@@ -11158,8 +11159,8 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
               if (screen.depth > 634)
                 screen.depth = 634;
               size = 6 - (screen.depth - 314) / 64;
-              draw[1](canvas, work->sheet + gBattleFx_FlareCells[size - 1],
-                      screen.x - size, screen.y - size, size * 2, size * 2);
+              EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet, screen.x,
+                                screen.y, size);
               flare->x -= flare->x / distance;
               flare->y -= flare->y / distance;
               flare->z -= flare->z / distance;
@@ -12437,8 +12438,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;
 
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                  x - size / 2, y - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, x, y, size);
         }
       }
     }
@@ -14387,8 +14387,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;
 
-          draw[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                  x - size / 2, y - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, size);
         }
       }
     }
@@ -14582,8 +14581,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         if (position.depth > 634)
           position.depth = 634;
         size = 8 - (position.depth - 250) / 64;
-        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                position.x - size / 2, position.y - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y, size);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
         if (frame >= i / 8 + 24) {
           s32 pullX = -spark->x >> 7;
@@ -14634,8 +14632,8 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                  HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, HI(mote->x), HI(mote->y),
+                           size);
           EffectStep_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
         }
@@ -15285,9 +15283,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 3) + 1;
 
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                  HI(particle->x) - size / 2, HI(particle->y) - size, size,
-                  size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, HI(particle->x),
+                           HI(particle->y), size);
           EffectStep_AdvanceWithGravity2D(particle, 60, 0x1000);
           if (particle->y > 0x700000)
             particle->velocityY = -particle->velocityY / 2;
@@ -15302,9 +15299,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 4) + 1;
 
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                  HI(particle->x) - size / 2, HI(particle->y) - size, size,
-                  size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, HI(particle->x),
+                           HI(particle->y), size);
           EffectStep_AdvanceWithGravity2D(particle, 60, -0x4000);
           particle->variant--;
         }
@@ -15554,9 +15550,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
           size >>= 4;
           size += 2;
           sparkScreen.x >>= 1;
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                  sparkScreen.x - size / 2, sparkScreen.y - size, size,
-                  size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, sparkScreen.x, sparkScreen.y,
+                           size);
           EffectStep_AdvanceWithGravity3D(spark, 60, -0x200);
           spark->variant--;
         }
@@ -15750,8 +15745,8 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, HI(mote->x), HI(mote->y),
+                         size);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
@@ -15871,8 +15866,8 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 1;
 
-        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, HI(mote->x), HI(mote->y),
+                         size);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
@@ -16005,8 +16000,8 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, HI(mote->x), HI(mote->y),
+                         size);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
@@ -16796,8 +16791,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             s32 y = screen[i * 2].y +
                     Iwram_MulQ16(j * (screen[i * 2 + 1].y - screen[i * 2].y),
                                  0x555);
-            blit[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                    x - size / 2, y - size, size, size * 2);
+            EFFECT_DRAW_MOTE(blit[0], canvas, sprites, x, y, size);
           }
         }
       }
@@ -17121,8 +17115,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
               s32 x = spark->x >> 16;
               s32 y = spark->y >> 16;
               s32 dotSize = spark->variant / 16 + 1;
-              draw(canvas, sprites + gBattleFx_MoteCellOffsets[dotSize - 1],
-                   x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
+              EFFECT_DRAW_MOTE(draw, canvas, sprites, x, y, dotSize);
             }
           }
         }
@@ -17842,8 +17835,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          draw[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                  HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, HI(dust->x), HI(dust->y),
+                           size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
             dust->y = 0x600000;
@@ -18304,8 +18297,8 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
           point.x += shake;
           size >>= 3;
           size += 2;
-          draw[pair & 1](canvas, sheet + gBattleFx_FlareCells[size - 1],
-                         point.x - size, point.y - size, size * 2, size * 2);
+          EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, point.x, point.y,
+                            size);
           EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
         }
@@ -18457,8 +18450,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           if (point.depth > 60)
             point.depth = 60;
           point.depth += 60;
-          draw[0](canvas, sheet + gBattleFx_FlareCells[size - 1],
-                  point.x - size, point.y - size, size * 2, size * 2);
+          EFFECT_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
           mote->x -= 4;
         }
       }
@@ -18536,8 +18528,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           size >>= 3;
           size += 2;
           spot.y += 16;
-          draw[pair & 1](canvas, sheet + gBattleFx_FlareCells[size - 1],
-                         spot.x - size, spot.y - size, size * 2, size * 2);
+          EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y,
+                            size);
           EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
         }
@@ -18985,9 +18977,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             if (sparkScreen.depth > 60)
               sparkScreen.depth = 60;
             sparkScreen.depth += 60; // 0〜120
-            blitters[1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                        sparkScreen.x - size / 2, sparkScreen.y - size, size,
-                        size * 2);
+            EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
+                             sparkScreen.y, size);
           }
           step->x -= 4;
         }
@@ -19309,9 +19300,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             size >>= 4;
             size++;
             projected.x /= 2;
-            blitters[index & 1](
-                canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
-                projected.x - size / 2, projected.y - size, size, size * 2);
+            EFFECT_DRAW_MOTE(blitters[index & 1], canvas, sprites, projected.x,
+                             projected.y, size);
             EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
             step->variant--;
           }
@@ -20352,8 +20342,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         size = particle->variant / 16 + 3;
         px = HI(particle->x);
         py = HI(particle->y);
-        additive(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                 px - size / 2, py - size, size, size * 2);
+        EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
       }
     }
 
@@ -20370,8 +20359,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         size = particle->variant / 16 + 1;
         px = HI(particle->x);
         py = HI(particle->y);
-        additive(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                 px - size / 2, py - size, size, size * 2);
+        EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
       }
     }
 
@@ -21281,9 +21269,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        draw[i & 1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                    HI(spark->x) - size / 2, HI(spark->y) - size, size,
-                    size * 2);
+        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, HI(spark->x), HI(spark->y),
+                         size);
         EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
         spark->variant--;
       }
@@ -21522,8 +21509,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
               ember->variant++;
             }
           } else {
-            draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                    position.x - size / 2, position.y - size, size, size * 2);
+            EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y,
+                             size);
           }
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
@@ -22242,9 +22229,8 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
           if (frame > 76) {
             size = 10;
           }
-          blitters[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-                      HI(dust->x) - size / 2, HI(dust->y) - size, size,
-                      size * 2);
+          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, HI(dust->x), HI(dust->y),
+                           size);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -22583,9 +22569,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         if (maximumDepth < z) {
           maximumDepth = z;
         }
-        draw[0](canvas, ramp + gBattleFx_MoteCellOffsets[size - 1],
-                projectedPosition.x - size / 2, projectedPosition.y - size,
-                size, size * 2);
+        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+                         projectedPosition.y, size);
         if (frame == 64) {
           SHOCKWAVE_SPARKS[i].velocityX +=
               (Trig_Sin(SHOCKWAVE_SPARKS[i].variant) * 255) >> 3;
@@ -22626,9 +22611,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         size = projectedPosition.depth / 20 + 2;
         projectedPosition.x += 60;
         projectedPosition.y += 80;
-        draw[0](canvas, ramp + gBattleFx_MoteCellOffsets[size - 1],
-                projectedPosition.x - size / 2, projectedPosition.y - size,
-                size, size * 2);
+        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+                         projectedPosition.y, size);
       }
     }
 
@@ -23477,8 +23461,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
         s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-        blit(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1], x - size / 2,
-             y - size, size, size * 2);
+        EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
     }
 
@@ -23665,8 +23648,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         if (burst->variant > 0) {
           s32 size = 3;
 
-          blit(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
-               HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
+          EFFECT_DRAW_MOTE(blit, canvas, sheet, HI(burst->x), HI(burst->y),
+                           size);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
           burst->variant--;
@@ -24088,8 +24071,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         s32 m = 3;
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
-          draw(canvas, particleSheet + gBattleFx_MoteCellOffsets[k - 1],
-               HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
+          EFFECT_DRAW_MOTE(draw, canvas, particleSheet, HI(PARTICLES[i].x),
+                           HI(PARTICLES[i].y), k);
           EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62,
                                           gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
@@ -24203,8 +24186,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         } else if (PARTICLES[i].x >= 0 && (x = PARTICLES[i].x >> 16) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
-          blit[i & 1](canvas, particleSheet + gBattleFx_MoteCellOffsets[k - 1],
-                      x - k / 2, y - k, k, k * 2);
+          EFFECT_DRAW_MOTE(blit[i & 1], canvas, particleSheet, x, y, k);
         }
       }
     }

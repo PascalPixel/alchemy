@@ -16886,8 +16886,21 @@ extern u8 gThor_SmokeFlips[];
 #define STORM_PARTICLE_COUNT 910     // particles in STORM_PARTICLES
 #define STORM_DIMMED_DOTS 10000      // the darker copies of the dot pictures
 #define STORM_DIMMED_DOT_BYTES 0x302 // bytes in each darker copy
+#define STORM_DUSK_FRAMES 170        // frames, at most, of the dusk part
+#define STORM_LIGHTNING_FRAMES 192   // frames of the lightning part
+#define STORM_BOLTS 30               // violet bolts after the pillar
 
 // Abilities: Thor (scene kind 12).
+//
+// The scene plays in two parts on the effect canvas. In the dusk part
+// (STORM_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
+// lines across it form over scrolling dusk clouds; the circle turns, sinks
+// into the sky and a beam of light falls from it. In the lightning part
+// (STORM_LIGHTNING_FRAMES) a pillar of lightning strikes the formation and
+// throws sparks, STORM_BOLTS violet bolts follow while a violet mote sways
+// above, and the formation is pushed back in smoke until an impact burst ends
+// the effect. The sparks live in STORM_PARTICLES; a spark whose variant is 0
+// is free, and a positive variant counts the frames it has left.
 void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
@@ -16996,7 +17009,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   // First part, 170 frames (A or B skips it): a circle of dots and
   // three lines across it form and turn over dusk clouds, the circle shrinks
   // into the sky, and a beam of light falls from it.
-  for (frame = 0; frame != 170; frame++) {
+  for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
@@ -17225,7 +17238,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     pillarX = 60;
     pillarY = 112;
 
-    for (frame = 0; frame != 192; frame++) {
+    for (frame = 0; frame != STORM_LIGHTNING_FRAMES; frame++) {
       s32 stormFrame;
       if (frame == 20) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB, work,
@@ -17288,7 +17301,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             Iwram_FillWords(canvas, 0x4000, 0x10101010);
           }
         }
-        for (i = 0; i != 30; i++) {
+        for (i = 0; i != STORM_BOLTS; i++) {
           if (frame >= i * 2 + 80) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
@@ -20819,8 +20832,16 @@ extern u16 gParticleStreams_FlashSizes[];
 #define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise
 #define PARTICLE_STREAMS_BURST_FRAMES 54 // frames of the burst
 
-// Animate the selected particle stream and its formation before the impact
-// burst.
+// The stream runs in two halves. The rise dissolves the battle map into a
+// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
+// objects while motes, orbiting sparks and falling drops are drawn into the
+// map buffer over a heat-tinted scanline palette. The burst then switches to
+// a blended half-scale canvas and throws embers, screen motes and growing
+// flashes from the origin for PARTICLE_STREAMS_BURST_FRAMES shaking frames.
+//
+// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
+// the 512 after them (STREAM_EMBERS); work->particles holds the rising motes
+// (0 to 31) and the flames (32 to 47).
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                                  s32 mode) {
   volatile u32 fill;
@@ -21382,8 +21403,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
 // Abilities: Ramses (scene kind 1).
 //
-// Move a formation and orbiting picture while six rocks bounce and scatter
-// puffs.
+// Over the desert backdrop a formation stands while an orb circles, drops
+// three times throwing puffs, and flies off; RAMSES_ROCKS rocks fall and
+// bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks from
+// PARTICLES. Within a frame the order of the steps matters: later steps draw
+// over earlier ones, and several of them consume random numbers.
 void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
@@ -21637,7 +21661,10 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
 
 // Abilities: Dragon Cloud (kind 49).
 //
-// Follow the encoded flame path with a fading trail and projected particles.
+// A flame leaves the user along a stored path with a fading trail of copies
+// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
+// bursts into embers and flashes. The trail's copies are darker versions of
+// the trail picture, each DRAGON_CLOUD_TRAIL_CELL_BYTES long.
 void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition position;
@@ -23645,8 +23672,11 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
 // Abilities: Kirin (scene kind 3).
 //
-// Sweep the object formation across the field, then lift it out through
-// particle bursts.
+// The scene runs in two stages. In the sweep, KIRIN_OBJECTS objects ride in
+// on a sine wave while the backdrop scrolls, a ring of motes opens around
+// them and a trail of fire follows. In the rise the row slides across the
+// targets; each target the row passes throws a burst of 32 motes and plays its
+// hit reaction, and the fire sheet slides off behind it.
 void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
@@ -24065,8 +24095,13 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
 
 // Abilities: Neptune (scene kind 6).
 //
-// Sweep the formation across the field, burst into flares and finish with blue
-// flames.
+// The scene runs in two stages. The first places NEPTUNE_OBJECTS objects at
+// one and a half times their size, opens the window with an edge table built
+// every frame, sprays particles under gravity, converges a ring of flares,
+// then breaks into a burst of light; meanwhile a frame callback and an HBlank
+// interrupt change BG2's horizontal scale. The second stage drops five blue
+// flame columns onto the targets; each throws sparks when it reaches the
+// ground (NEPTUNE_FLAME_GROUND).
 void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;

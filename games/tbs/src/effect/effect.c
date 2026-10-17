@@ -226,6 +226,11 @@ enum CanvasTransferMode {
 // callback, then waits for the next frame. Nearly every effect loop ends so.
 #define EFFECT_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
 
+// The usual end of an effect frame: counts down the targets' flash timers
+// (ObjectGroup_TickMemberTimers), then presents the canvas.
+#define EFFECT_END_FRAME(work)                                                 \
+  (ObjectGroup_TickMemberTimers(), EFFECT_PRESENT_FRAME(work))
+
 // Frees the two blitters, the alternate first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
   (Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE),                      \
@@ -816,8 +821,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
         spark->variant--;
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   // Stop both transfers before releasing the blitters and canvas.
@@ -1067,8 +1071,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       Camera_ApplyShake(8, 8);
-      ObjectGroup_TickMemberTimers();
-      EFFECT_PRESENT_FRAME(work);
+      EFFECT_END_FRAME(work);
     }
   }
 
@@ -1213,8 +1216,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -1733,8 +1735,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       Camera_ApplyShake(8, 8);
     else
       Camera_ApplyShake(2, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -2068,8 +2069,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
         AudioCommand_PlayFar(133);
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -2216,8 +2216,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
       }
       fleck->variant++;
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -2576,8 +2575,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
       }
     }
 
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   // Restore the background and the display.
@@ -2732,8 +2730,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -2969,8 +2966,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -3888,8 +3884,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -4005,8 +4000,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -4269,8 +4263,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -4428,8 +4421,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -4928,8 +4920,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Camera_ApplyShake(2, 2);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -5738,8 +5729,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -5870,8 +5860,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -6385,8 +6374,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
       }
     }
 
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != 400);
 
@@ -6847,8 +6835,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -7237,8 +7224,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
                       work->effect->variant * 2 + 2);
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
@@ -7369,8 +7355,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
     work->shakeFrames = 1;
     Camera_ApplyShake(WHIRLWIND_SHAKE(work->effect->variant),
                       WHIRLWIND_SHAKE(work->effect->variant) * 2);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_RELEASE_BLITTERS();
@@ -7519,8 +7504,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
     }
     Camera_ApplyShake(work->effect->variant * 2 + 4,
                       work->effect->variant * 4 + 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -7734,8 +7718,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -7992,8 +7975,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
       }
     }
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -8186,8 +8168,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_RELEASE_BLITTERS();
@@ -8485,8 +8466,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       }
     }
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -9658,8 +9638,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(4, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -10267,8 +10246,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -10405,8 +10383,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -10767,8 +10744,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -11106,8 +11082,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -11478,8 +11453,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
       }
       i += 1;
     }
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame += 1;
   } while (frame != 80);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -11676,8 +11650,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
     }
     Camera_ApplyShake(gQuake_Timings[work->effect->variant][TIMING_SHAKE],
                       gQuake_Timings[work->effect->variant][TIMING_SHAKE]);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -11851,8 +11824,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -12292,8 +12264,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(2, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -12481,8 +12452,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
     if (frame == 2)
       work->shakeFrames = 6;
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -13498,8 +13468,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -13780,8 +13749,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
       } while (i != 512);
 
       Camera_ApplyShake(4, 4);
-      ObjectGroup_TickMemberTimers();
-      EFFECT_PRESENT_FRAME(work);
+      EFFECT_END_FRAME(work);
       frame++;
     } while (frame != duration);
   }
@@ -13877,8 +13845,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
       column++;
     } while (i != VINE_COLUMNS);
     Camera_ApplyShake(4, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != VINE_FRAMES);
   EFFECT_FINISH_CANVAS();
@@ -14036,8 +14003,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -14203,8 +14169,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(2, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -15087,8 +15052,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         }
       }
       Camera_ApplyShake(4, 4);
-      ObjectGroup_TickMemberTimers();
-      EFFECT_PRESENT_FRAME(work);
+      EFFECT_END_FRAME(work);
     }
   }
 
@@ -15338,8 +15302,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -15530,8 +15493,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != MERCURY_FRAMES);
   EFFECT_FINISH_CANVAS();
@@ -15650,8 +15612,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     angle -= 0x800; // 11.25 degrees
     frame++;
   } while (frame != JUPITER_FRAMES);
@@ -15783,8 +15744,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     angle -= 0x800;
     frame++;
   } while (frame != VENUS_FRAMES);
@@ -15953,8 +15913,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     diveY += 8;
     frame++;
   } while (frame != MARS_FRAMES);
@@ -16096,8 +16055,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
     }
 
     Camera_ApplyShake(4, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -16277,8 +16235,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -16918,8 +16875,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       } else {
         Camera_ApplyShake(4, 4);
       }
-      ObjectGroup_TickMemberTimers();
-      EFFECT_PRESENT_FRAME(work);
+      EFFECT_END_FRAME(work);
     }
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -17052,8 +17008,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
       }
     }
     Camera_ApplyShake(2, 4);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -17336,8 +17291,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
     }
     EFFECT_RELEASE_BLITTERS();
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
@@ -17664,8 +17618,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
@@ -19541,8 +19494,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                                 POSE_DAMAGE, 0, 4);
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame++;
   }
   if (kind == CASTING_IMPACT_MELTDOWN) {
@@ -19867,8 +19819,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -20963,8 +20914,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   BattleEventRuntime_BeginPhaseFar(134);
@@ -21229,8 +21179,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -21385,8 +21334,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_RED_TINT,
                                 -1, -1, 0);
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
@@ -21657,8 +21605,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
     } while (col != RAGNAROK_COLUMNS);
 
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != RAGNAROK_FRAMES);
 
@@ -22007,8 +21954,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
 
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != TITAN_BLADE_FRAMES);
 
@@ -23353,8 +23299,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       }
 
       Camera_ApplyShake(8, 8);
-      ObjectGroup_TickMemberTimers();
-      EFFECT_PRESENT_FRAME(work);
+      EFFECT_END_FRAME(work);
       frame++;
     } while (frame != 96);
   }
@@ -23853,8 +23798,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 8);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   } while (++frame != 144);
 
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
@@ -23974,8 +23918,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
     }
     Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -24102,8 +24045,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(16, 16);
-    ObjectGroup_TickMemberTimers();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_END_FRAME(work);
   }
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();

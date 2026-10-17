@@ -24078,7 +24078,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   s32 formationZ;
   s32 formationVelocityX;
   s32 formationVelocityZ;
-  s32 savedScrollWord;
+  s32 savedBg1ScrollX;
   struct BattleBackgroundView *background;
   s32 j;
   s32 emittedSparks;
@@ -24135,7 +24135,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   formationZ = 200 << 16;
   formationVelocityX = -0x40000;
   formationVelocityZ = -0x80000;
-  savedScrollWord = ((struct BgScrollWords *)gBgScroll)->unk04;
+  savedBg1ScrollX = gBgScroll[1].x;
   background = (struct BattleBackgroundView *)cache[44 - 40];
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
@@ -24433,7 +24433,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
-  ((struct BgScrollWords *)gBgScroll)->unk04 = savedScrollWord;
+  gBgScroll[1].x = savedBg1ScrollX;
   background->busy = 0;
   Runtime_SetIrqHandler(2, 0, 0);
   BattleFx_SetupBlendedDisplay();

@@ -126,12 +126,6 @@ struct CameraWork {
   u8 unk00[0x36];
   u16 scroll;
 };
-struct BgScrollWords {
-  u16 unk00;
-  u16 unk02;
-  u16 unk04;
-  u16 unk06;
-};
 struct EffectVector {
   s32 x;
   s32 y;

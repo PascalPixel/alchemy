@@ -181,10 +181,14 @@ enum CanvasTransferMode {
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
   BattleFx_LoadWork(slot, 7, 7, flags, mode)
 
-// Starts copying the canvas to VRAM once a frame, treating what is left in it
-// as `mode` with `value` (see enum CanvasTransferMode).
+// Sets how the canvas transfer treats what is left in the canvas after each
+// copy: `mode` with `value` (see enum CanvasTransferMode).
+#define EFFECT_SET_TRANSFER(work, mode, value)                                 \
+  ((work)->transferMode = (mode), (work)->transferValue = (value))
+
+// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(work, mode, value)                               \
-  ((work)->transferMode = (mode), (work)->transferValue = (value),             \
+  (EFFECT_SET_TRANSFER(work, mode, value),                                     \
    Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,      \
                                  0x480))
 
@@ -222,6 +226,14 @@ enum CanvasTransferMode {
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
   (draw)(canvas, (sheet) + gBattleFx_FlareCells[(size) - 1], (x) - (size),     \
          (y) - (size), (size) * 2, (size) * 2)
+
+// Shows the canvas: the effect display mode, BG2 stretched to twice its width
+// (the 128-pixel canvas shown 256 pixels wide) and blended over everything
+// below with `top` sixteenths of its colour.
+#define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
+  (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
+   REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
+   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 // The two halves of a WIN0H or WIN1H value: the window's left edge and its
 // right edge (exclusive) on one scanline.
@@ -657,14 +669,11 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
   // Variant 0 clears the canvas every frame; the others leave trails.
   if (work->effect->variant == 0) {
-    work->transferMode = CANVAS_COPY_AND_CLEAR;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (work->effect->variant == 1) {
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -4738,8 +4747,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
   slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -5333,8 +5341,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 
   slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
@@ -5493,8 +5500,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
 
   slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
@@ -6652,13 +6658,11 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     if (frame == 128)
       work->transferValue = 50;
     if (frame == 176) {
-      work->transferMode = CANVAS_COPY_AND_DARKEN;
-      work->transferValue = 0x02020202;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
       palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
     } else if (frame >= 160 && frame <= 175) {
-      work->transferMode = CANVAS_COPY_AND_CLEAR;
-      work->transferValue = 0x10101010;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
       if (frame > 173)
         work->transferValue = 0x3f3f3f3f;
       Palette_BrightenBgEntries(2, 2, 2);
@@ -7330,8 +7334,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
 
   slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
@@ -7520,8 +7523,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
       BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
     if (frame == PRISM_FRAMES(work->effect->variant) - 8) {
       // Darken the canvas away over the last 8 frames.
-      work->transferMode = CANVAS_COPY_AND_DARKEN;
-      work->transferValue = 0x06060606;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x06060606);
     }
     if (frame <= PRISM_FRAMES(work->effect->variant) - 8) {
       for (i = 0; i != PRISM_CRYSTAL_COUNT(work->effect->variant); i++) {
@@ -7674,8 +7676,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -7879,8 +7880,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
 
   slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (kind == 0) {
@@ -8097,8 +8097,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -9870,12 +9869,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleFx_SpawnObjects(9, 0x174, 1);
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
+  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (i = 0; i != 64; i++) {
     PARTICLES[i].x = (Random16() & 63) + 32;
@@ -10293,8 +10288,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
@@ -10417,8 +10411,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
   if (effect->variant == 0)
@@ -11706,8 +11699,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -11851,8 +11843,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
 
   slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
@@ -12058,8 +12049,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -12325,8 +12315,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   // The work, the canvas, and BG2's scale and position.
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginTiledCanvas(1);
@@ -12870,11 +12859,9 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   if (mode == BURST_SHOWER_MODE_FACES) {
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -13152,10 +13139,8 @@ void BattleFx_RunOrbitingSparks(void) {
   Resource_DecodeType01(skulls + 128, work);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_MAX);
-  work->transferMode = CANVAS_COPY_AND_CLEAR;
-  work->transferValue = 0;
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   draw[0] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   if (work->effect->side == 0)
@@ -13442,10 +13427,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
   view->busy = 1;
   BattleFx_WipeCanvas(0, 1);
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;
   // Each blade starts at a random spot with 24 trail particles, each on a
@@ -13467,8 +13449,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
       Transform_Store(STAGED_PARTICLE_MATRICES + (i * 24 + j) * 48);
     }
   }
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
@@ -14886,34 +14867,28 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         Iwram_CopyWords((void *)BG_PLTT, pal, 128);
       }
     }
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   } else if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work, 1, 1);
     REG_BLDCNT = 0;
-    work->transferMode = CANVAS_COPY_AND_CLEAR;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == 2) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage, work, 0,
                                0);
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else if (mode == 3 || mode == 4 || mode == 11) {
     Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work, 1, 1);
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else if (mode == 6) {
     Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work, 1, 1);
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                work->sheet + VOLLEY_DJINNI_CELLS, 1, 0);
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -16681,12 +16656,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   blitters = (DrawRectangle *)gWorkSlot;
   blit[0] = blitters[HEAP_SLOT_BLITTER];
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(15, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SHOW_WIDE_CANVAS(15);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // One row of the beam: brightest in the middle, darker to each side.
   for (i = 0; i != 16; i++) {
@@ -16722,11 +16693,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     }
     Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
     if (frame == 150) {
-      work->transferMode = CANVAS_COPY_AND_CLEAR;
-      work->transferValue = 0x1a1a1a1a;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x1a1a1a1a);
     } else {
-      work->transferMode = CANVAS_COPY_AND_FADE;
-      work->transferValue = 75;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
     }
     Projection_Set(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
     Render_ResetTransformState();
@@ -16927,8 +16896,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       work->particles[i].y = Random16() & 63;
       work->particles[i].variant = -(Random16() & 15);
     }
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
     AudioCommand_PlayFar(145);
     pillarX = 60;
     pillarY = 112;
@@ -18118,8 +18086,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 
   heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = heapCache;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   kind = effect->kind;
@@ -18345,8 +18312,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
 
   heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = heapCache;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   big = 1;
@@ -18467,8 +18433,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
 
   Iwram_ClearWords(canvas, words);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), words);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
@@ -20664,8 +20629,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 8, 7,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
-    work->transferMode = CANVAS_COPY_AND_DARKEN;
-    work->transferValue = (s32)(Ram_MapBlocks + 0x202);
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
+                        (s32)(Ram_MapBlocks + 0x202));
     Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0x4fe);
     for (i = 0; i != 64; i++)
       work->particles[i].variant = -1;
@@ -21102,12 +21067,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   BattleFx_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
+  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   base.x = 0xbc0000;
   base.y = 0x5c0000;
   orb.x = 0xa00000;
@@ -21584,8 +21545,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
 
   heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = heapCache;
-  work = *cursor++;
-  canvas = *cursor;
+  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   particleSheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapCellBuffer;
@@ -21620,8 +21580,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
 
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &origin);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
@@ -22459,10 +22418,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   ctrl->active = 1;
   gBgScroll[1].x = 0;
   BattleFx_WipeCanvas(0, 1);
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  EFFECT_SHOW_WIDE_CANVAS(16);
   depth = 0xffc00000;
   zoom = 0x80000;
   minimumDepth = 0xffff;
@@ -22520,8 +22476,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     SHOCKWAVE_SPARKS[i].variant = angle;
   }
 
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
@@ -22794,8 +22749,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   ring = 0;
   sx = 8;
   rings = 2;
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   fill = shift;
   Dma_Set(&fill, work, SHOCKWAVE_DMA_FILL_WAVE, REG_DMA3);
@@ -22907,8 +22861,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         particle->z = 0;
       }
       shift = 272;
-      work->transferMode = CANVAS_COPY;
-      work->transferValue = 0;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
     }
 
     if (frame > 279) {
@@ -23182,8 +23135,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame >= 246 && frame < 280) {
       shift += 8;
-      work->transferMode = CANVAS_COPY;
-      work->transferValue = 75;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
     }
 
     if (frame > 213) {
@@ -23343,18 +23295,14 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   BattleFx_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  EFFECT_SHOW_WIDE_CANVAS(14);
 
   baseX = 0;
   grow = 0;
   savedX = gBgScroll[1].x;
   control = cursor[4];
   shift = 0;
-  work->transferMode = CANVAS_COPY_AND_CLEAR;
-  work->transferValue = baseX;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   control->busy = 1;
 
   i = 0;
@@ -23466,8 +23414,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 24) {
-      work->transferMode = CANVAS_COPY_AND_FADE;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
     }
     if (frame == 28) {
       REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -23562,8 +23509,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       i++;
     } while (i != 160 << 1);
 
-    work->transferMode = CANVAS_COPY_AND_FADE;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
     REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -23664,8 +23610,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         s32 slide = (frame - 40) * 12;
         s32 y;
 
-        work->transferMode = CANVAS_COPY;
-        work->transferValue = 75;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
         i = 0;
         y = -8;
         do {
@@ -23781,10 +23726,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  EFFECT_SHOW_WIDE_CANVAS(16);
   windowEdgeStep = 1;
   formationX = 140 << 17;
   formationZ = 200 << 16;
@@ -23793,8 +23735,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   savedBg1ScrollX = gBgScroll[1].x;
   background = (struct BattleBackgroundView *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   background->busy = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_ADDITIVE);
@@ -24095,8 +24036,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   BattleFx_SetupBlendedDisplay();
   Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   for (i = 0; i != NEPTUNE_PARTICLES; i++) {
     PARTICLES[i].variant = 0;
   }

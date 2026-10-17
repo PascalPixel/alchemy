@@ -1,7 +1,7 @@
 // Draft, differ 44 of 620: Func_081665a4, effect kind 58, The Broken Seal's
-// BattleFx_RunFlameBlade.
+// BattleFx_RunRagnarok.
 
-// Twin: ☀️ BattleFx_RunFlameBlade (games/tbs/src/effect/effect.c), ported:
+// Twin: ☀️ BattleFx_RunRagnarok (games/tbs/src/effect/effect.c), ported:
 // the strike columns are placed from the first target's position (half its x
 // less 24, or less 92 on side 1), the user's mode is set to 2 (Object_SetMode,
 // where ☀️ applies argument 2 to the children), the effect stays an argument

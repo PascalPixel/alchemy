@@ -1,7 +1,7 @@
 // Draft of Func_08154d5c, effect kind 202: sixteen green vines spring up
 // around the middle of the targets, two frames apart, and sink back.
 
-// Twin: The Broken Seal's BattleFx_RunRisingColumns (effect.c), the same
+// Twin: The Broken Seal's BattleFx_RunVine (effect.c), the same
 // kind; the Lost Age keeps its frame counts, cue and tables.
 // Listing 245 instructions, draft 245, differ 20 (28 without the tagged
 // BG2CNT pin).

@@ -2,7 +2,7 @@
 // target in turn, eight frames apart, throwing sparks that bounce on the
 // ground and flashing glints of light around the target.
 
-// Twin: The Broken Seal's BattleFx_RunLightningBolts (effect.c), the same
+// Twin: The Broken Seal's BattleFx_RunBolt (effect.c), the same
 // kind, with the same tables, frame counts and cues.
 // Listing 552 instructions, draft 556, differ 144 (204 without the tagged
 // glint pointers).

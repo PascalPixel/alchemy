@@ -1,6 +1,6 @@
 // Near miss of Func_08150c74, effect kind 1: differ 58 of 444 (draft 444).
 
-// Twin: The Broken Seal's BattleFx_RunRockWall (effect.c), call for call.
+// Twin: The Broken Seal's BattleFx_RunQuake (effect.c), call for call.
 // The Lost Age reads the effect from its argument, takes its heap blocks as
 // Ram_HeapSlots fields, loads the blitter through Func_081963ec
 // (BLIT_TRANSPARENT is 2 where COMPOSITE_TRANSPARENT is 1), orders the

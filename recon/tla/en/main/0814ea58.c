@@ -1,7 +1,7 @@
 // Draft of Func_0814ea58, the body behind Func_0814ea3c (mode 0, or 1 when
 // the variant is not 0) and Func_0814ea4c (mode 2).
 
-// Twin: The Broken Seal's BattleFx_RunGatheringMotes (effect.c), rebuilt
+// Twin: The Broken Seal's BattleFx_RunDrain (effect.c), rebuilt
 // around a mode. Mode 0 is The Broken Seal's variant 0 (the ice palette)
 // and mode 1 its other variants (the blast palette). Mode 2 is new: it
 // draws a 10-pixel disc (Func_0815b510) instead of the particle sheet,

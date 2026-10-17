@@ -1,6 +1,6 @@
 // Near miss, differ 104 of 503 (effect kind 8, the falling crystals).
 
-// ☀️ twin: BattleFx_RunFallingCrystals (games/tbs/src/effect/effect.c),
+// ☀️ twin: BattleFx_RunPrism (games/tbs/src/effect/effect.c),
 // shape 0.800, structure 0.979. ⚓️'s changes: the counts table
 // Data_081979b7 holds three bytes for each variant (crystals, frames and the
 // frame that begins phase 134, where ☀️ begins it 80 frames before the

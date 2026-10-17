@@ -11,7 +11,7 @@ struct FxRunWork {
 };
 
 struct BattleEffectArgument;
-void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect);
+void BattleFx_RunMeteor(struct BattleEffectArgument *effect);
 void Func_08165ab4(s32 *arg);
 void Func_08148458(s32 *arg);
 void Func_08168a40(s32 *arg);
@@ -60,7 +60,7 @@ void Func_0814c994(s32 *arg) {
   work->script = arg;
   work->active = 1;
   if (*arg == 0) {
-    BattleFx_RunParticleStreamsMode0((struct BattleEffectArgument *)arg);
+    BattleFx_RunMeteor((struct BattleEffectArgument *)arg);
   } else {
     switch (*arg) {
     case 1:
@@ -94,7 +94,7 @@ void Func_0814c994(s32 *arg) {
       Func_0814db04(arg);
       break;
     case 11:
-      BattleFx_RunParticleStreamsMode0((struct BattleEffectArgument *)arg);
+      BattleFx_RunMeteor((struct BattleEffectArgument *)arg);
       break;
     case 12:
       Func_08158dc8(arg);

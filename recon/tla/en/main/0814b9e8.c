@@ -3,8 +3,8 @@
 // Func_0814b9dc (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
 
 // New in The Lost Age: no ☀️ function has this body (shape twin
-// BattleFx_RunLeapingStrike 0.471, structure twin
-// BattleFx_RunDualParticleStream 0.494). Written from the listing on
+// BattleFx_RunPlanetDiver 0.471, structure twin
+// BattleFx_RunDragonCloud 0.494). Written from the listing on
 // ☀️'s canvas skeleton: the canvas preparer Func_0815585c for modes 0 and
 // 1, a Djinn circling over the canvas when the effect has a prelude, and
 // sixteen textured 64x64 quads drawn through ⚓️'s render jobs

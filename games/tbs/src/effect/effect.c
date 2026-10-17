@@ -178,6 +178,8 @@ void BattleFx_ArmWin0HBlankDma(void) {
 // Ram_MapCellBuffer for their particle arrays.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
+// Abilities: Ice, Ice Horn, Ice Missile (kind 7).
+//
 // Battle effect 7: ice shards rain down diagonally onto the targets' side of
 // the field and shatter into puffs of sparkle, flashing and shaking each
 // target as they land. The canvas shows only inside a slanted band of
@@ -186,7 +188,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 // (shards and frames: 16 for 46 frames, 20 for 52, 32 for 80); variant 1
 // leaves longer trails and variant 2 draws additively.
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
-void BattleFx_RunFallingParticles(struct BattleEffectArgument *effect) {
+void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -401,6 +403,8 @@ struct BoltSparkBuffer {
 #define FALLING_BOLT_SPACING(variant) gFallingBolts_Counts[(variant) * 4 + 2]
 #define FALLING_BOLT_DURATION(variant) gFallingBolts_Counts[(variant) * 4 + 3]
 
+// Abilities: Douse, Drench, Deluge (kind 9).
+//
 // Battle effect 9: blue bolts streak down diagonally onto the targets' side
 // of the field, each bursting into a fountain of falling sparks where it
 // lands, while the targets flash. Like the falling shards, the canvas shows
@@ -409,7 +413,7 @@ struct BoltSparkBuffer {
 // sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
 // frames; it also picks how the canvas fades (see below).
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
-void BattleFx_RunFallingBolts(struct BattleEffectArgument *effect) {
+void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -613,28 +617,38 @@ enum StreakStyle {
   STREAK_STYLE_CYAN
 };
 
+// Abilities: Sonic Wave (kind 300).
+//
 // Battle effect 300: ember streaks.
-void BattleFx_RunEmberStreaks(struct BattleEffectArgument *effect) {
+void BattleFx_RunSonicWave(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_EMBER);
 }
 
+// Abilities: Shriek (kind 301).
+//
 // Battle effect 301: lime streaks.
-void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
+void BattleFx_RunShriek(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
 }
 
+// Abilities: Banshee Howl (kind 302).
+//
 // Battle effect 302: violet streaks.
-void BattleFx_RunVioletStreaks(struct BattleEffectArgument *effect) {
+void BattleFx_RunBansheeHowl(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_VIOLET);
 }
 
+// Abilities: War Cry (kind 304).
+//
 // Battle effect 304: cyan streaks.
-void BattleFx_RunCyanStreaks(struct BattleEffectArgument *effect) {
+void BattleFx_RunWarCry(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_CYAN);
 }
 
+// Abilities: Wicked Howl (kind 305).
+//
 // Battle effect 305: red streaks.
-void BattleFx_RunRedStreaks(struct BattleEffectArgument *effect) {
+void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_RED);
 }
 
@@ -837,13 +851,17 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
 enum MoteFountainMode { MOTE_FOUNTAIN_HEALING, MOTE_FOUNTAIN_DRIFTING };
 enum { MOTE_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
+// Abilities: Sleep Star (kind 349).
+//
 // Battle effect 349: rising motes that drift onto the targets and strike.
-void BattleFx_RunDriftingMoteFountain(struct BattleEffectArgument *effect) {
+void BattleFx_RunSleepStar(struct BattleEffectArgument *effect) {
   BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
 }
 
+// Abilities: Soothing Star (kind 344).
+//
 // Battle effect 344: rising healing motes.
-void BattleFx_RunHealingMoteFountain(struct BattleEffectArgument *effect) {
+void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
   BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_HEALING);
 }
 
@@ -1020,64 +1038,88 @@ enum {
   STRIKE_STYLE_MARS_SMOKE_COLUMN = 10
 };
 
+// Abilities: Numbing Sting (kind 313).
+//
 // Battle effect 313: one slash with glints, lightning colours.
-void BattleFx_RunLightningGlintSlash(struct BattleEffectArgument *effect) {
+void BattleFx_RunNumbingSting(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 
+// Abilities: Cannibal Fang (kind 316).
+//
 // Battle effect 316: three ember columns that drain the target into the user.
-void BattleFx_RunEmberDrainColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunCannibalFang(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
 }
 
+// Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
+//
 // Battle effects 318 and 323: one lime column with smoke.
-void BattleFx_RunLimeSmokeColumn(struct BattleEffectArgument *effect) {
+void BattleFx_RunPoisonousBite(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIME_SMOKE_COLUMN);
 }
 
+// Abilities: Rabid Fang (kind 336).
+//
 // Battle effect 336: one column with smoke, Mars Djinn colours.
-void BattleFx_RunMarsSmokeColumn(struct BattleEffectArgument *effect) {
+void BattleFx_RunRabidFang(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_MARS_SMOKE_COLUMN);
 }
 
+// Abilities: Electric Bite (kind 324).
+//
 // Battle effect 324: three lightning columns with glints.
-void BattleFx_RunLightningGlintColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunElectricBite(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
 }
 
+// Abilities: Poison Tail (kind 325).
+//
 // Battle effect 325: one lime slash with smoke.
-void BattleFx_RunLimeSmokeSlash(struct BattleEffectArgument *effect) {
+void BattleFx_RunPoisonTail(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 
+// Abilities: Vampiric Fang (kind 327).
+//
 // Battle effect 327: three columns that drain the target, Mars Djinn colours.
-void BattleFx_RunMarsDrainColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunVampiricFang(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_MARS_DRAIN_COLUMNS);
 }
 
+// Abilities: Double Fang (kind 332).
+//
 // Battle effect 332: two blue columns with sparks.
-void BattleFx_RunBlueSparkColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunDoubleFang(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, STRIKE_STYLE_BLUE_SPARK_COLUMNS);
 }
 
+// Abilities: Mortal Blow (kind 333).
+//
 // Battle effect 333: one heavy slash with sparks, Mars Djinn colours.
-void BattleFx_RunHeavyMarsSlash(struct BattleEffectArgument *effect) {
+void BattleFx_RunMortalBlow(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, 8);
 }
 
+// Abilities: Twin Beaks (kind 335).
+//
 // Battle effect 335: two slashes with sparks, lightning colours.
-void BattleFx_RunLightningSparkSlashes(struct BattleEffectArgument *effect) {
+void BattleFx_RunTwinBeaks(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, 7);
 }
 
+// Abilities: Acid Bite (kind 337).
+//
 // Battle effect 337: three pink columns with smoke.
-void BattleFx_RunPinkSmokeColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunAcidBite(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, 2);
 }
 
+// Abilities: Drain Fang (kind 386).
+//
 // Battle effect 386: three additive columns that drain the target with large
 // motes, Mars Djinn colours.
-void BattleFx_RunLargeDrainColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunDrainFang(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetStrike(effect, 0xB);
 }
 
@@ -1490,11 +1532,13 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 // Somersault strikes, falling blades, pillars of spiralling motes and a
 // picture that shatters.
 
+// Abilities: Death Plunge (kind 53).
+//
 // Battle effect 53: the user runs 9/10 of the way to the first target, then
 // both leap and turn upside down in the air; on frame 54 the target is hit
 // and both bounce back, while flashes burst from the user and rise in a
 // widening ring.
-void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect) {
+void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -2592,13 +2636,17 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+// Abilities: Poison Beat (kind 382).
+//
 // Battle effect 382: a lime swipe that knocks the target back.
-void BattleFx_RunLimeSwipe(struct BattleEffectArgument *effect) {
+void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunSwirlSwipe(effect, 0);
 }
 
+// Abilities: Spinning Beat (kind 383).
+//
 // Battle effect 383: a magenta swipe that throws the target into the air.
-void BattleFx_RunLaunchingSwipe(struct BattleEffectArgument *effect) {
+void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunSwirlSwipe(effect, 1);
 }
 
@@ -2707,6 +2755,8 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Spider Web (kind 345).
+//
 // Battle effect 345: a spider web spreads over the targets, drawn as four
 // mirrored 32x32 quarters around the point between the first and last
 // target. It fades in over 8 frames; the targets flash on frame 10, the
@@ -3424,11 +3474,13 @@ struct ImpactChip {
 
 #define IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
 
+// Abilities: Planet Diver (kind 60).
+//
 // Battle effect 60: the user flashes and leaps into the air, turns into a
 // ball of fire, falls onto the first target and bursts into chips that
 // bounce on the ground. 88 frames.
 // effect->side says which way the ball falls; actors[0] is where it lands.
-void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
+void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
   void **slots;
@@ -3605,12 +3657,14 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
 
 // Closing skulls.
 
+// Abilities: Haunt (kind 39).
+//
 // Battle effect 39: around each target in turn, 32 frames apart, eight
 // skulls appear one every 4 frames, scattered up to 64 pixels away, and
 // close in on a point 20 pixels above the target while the group spins; the
 // effect layer ripples throughout. PARTICLES holds 64 skulls per target, of
 // which the first 8 are used.
-void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
+void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   s32 point[3];
   void **slots;
@@ -3844,18 +3898,24 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 
 // Lights that scatter from the user and gather into each target.
 
+// Abilities: Demon Night (kind 50).
+//
 // Battle effect 50: pink lights.
-void BattleFx_RunPinkGatheringLights(struct BattleEffectArgument *effect) {
+void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 0);
 }
 
+// Abilities: Rumble (kind 308).
+//
 // Battle effect 308: lights in Mars Djinn colours.
-void BattleFx_RunMarsGatheringLights(struct BattleEffectArgument *effect) {
+void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 1);
 }
 
+// Abilities: Haunting (kind 351).
+//
 // Battle effect 351: lights in Mercury Djinn colours.
-void BattleFx_RunMercuryGatheringLights(struct BattleEffectArgument *effect) {
+void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 2);
 }
 
@@ -4021,19 +4081,25 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   }
 }
 
+// Abilities: Berserk (kind 353).
+//
 // Battle effect 353: the wall rises wide and shakes the screen hard.
-void BattleFx_RunWideWall(struct BattleEffectArgument *effect) {
+void BattleFx_RunBerserk(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 1);
 }
 
+// Abilities: Spasm (kind 348).
+//
 // Battle effect 348: the wall rises with a long gentle shake and the
 // recovery sound.
-void BattleFx_RunShakingWall(struct BattleEffectArgument *effect) {
+void BattleFx_RunSpasm(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 0);
 }
 
+// Abilities: Recovery (kind 389).
+//
 // Battle effect 389: a wide wall of fire, without a shake.
-void BattleFx_RunWallOfFire(struct BattleEffectArgument *effect) {
+void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 2);
 }
 
@@ -4161,13 +4227,17 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
 #define DJINN_BEAM_MOTE_CELLS 0x2710   // the motes (CrescentMoonSheet, 24x24)
 #define DJINN_BEAM_DJINNI_CELLS 0x65c0 // the Djinni (40x40)
 
+// Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
+//
 // Battle effects 25 and 201: with a Venus Djinni.
-void BattleFx_RunVenusDjinnBeams(struct BattleEffectArgument *effect) {
+void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
   BattleFx_RunDjinnBeams(effect, 0);
 }
 
+// Abilities: Dew (kind 209).
+//
 // Battle effect 209: with a Mercury Djinni.
-void BattleFx_RunMercuryDjinnBeams(struct BattleEffectArgument *effect) {
+void BattleFx_RunDew(struct BattleEffectArgument *effect) {
   BattleFx_RunDjinnBeams(effect, 1);
 }
 
@@ -4376,39 +4446,53 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
+// Abilities: Mad Spatter (kind 347).
+//
 // Battle effect 347: gold shells that burst into shards.
-void BattleFx_RunGoldShardShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 4);
 }
 
+// Abilities: Decompose (kind 350).
+//
 // Battle effect 350: green shells that burst into smoke.
-void BattleFx_RunGreenShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 5);
 }
 
+// Abilities: Bone Chiller (kind 309).
+//
 // Battle effect 309: blue shells that burst into smoke.
-void BattleFx_RunBlueShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 0);
 }
 
+// Abilities: Sticky Goo (kind 315).
+//
 // Battle effect 315: shells in the spider web's colours that burst into
 // smoke.
-void BattleFx_RunWebShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 1);
 }
 
+// Abilities: Poison Ink (kind 340).
+//
 // Battle effect 340: shells in Mars Djinn colours that burst into smoke.
-void BattleFx_RunMarsShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 6);
 }
 
+// Abilities: Sticky Poison (kind 322).
+//
 // Battle effect 322: lime shells that burst into smoke.
-void BattleFx_RunLimeShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 2);
 }
 
+// Abilities: Rotten Blood (kind 330).
+//
 // Battle effect 330: green shells that burst into shards.
-void BattleFx_RunGreenShardShells(struct BattleEffectArgument *effect) {
+void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 3);
 }
 
@@ -4673,12 +4757,14 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 // The full-screen picture the blue ramp works on.
 #define BLUE_RAMP_PIXELS Ram_MapCellBuffer
 
+// Abilities: Condemn (kind 40).
+//
 // Battle effect 40: a tall panel (57x98) swings across the screen three
 // times, each pass fading out through a ripple, the last over the first
 // target; on frame 88 it shatters in a white flash into a burst of larger
 // pieces and the target is knocked back, bouncing on frame 120. The effect
 // layer ripples throughout. 132 frames.
-void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
+void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -4979,12 +5065,14 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   WaitFrames(1);
 }
 
+// Abilities: Bind (kind 38); Luff (kind 218).
+//
 // Battle effects 38 and 218: a triangle of light spins and shrinks onto the
 // first target for 64 frames, then a rune stands on the target; the battle
 // shows the result on frame 64. When effect->prelude is 1 a Jupiter Djinni
 // appears first, sways and rises away. The canvas darkens a little faster
 // every 16 frames.
-void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
+void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
@@ -5148,7 +5236,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
 }
 
 // Battle effect 67: the spinning triangle and rune of
-// BattleFx_RunSpinningTriangle without the Djinni; on frame 46 the user
+// BattleFx_RunBind without the Djinni; on frame 46 the user
 // steps up to the first target.
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
@@ -5289,11 +5377,13 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Astral Blast (kind 68).
+//
 // Battle effect 68: three star-shaped rings of light fly from 40 pixels
 // above the user at the first target, 12 frames apart, growing and
 // spinning as they go, while the camera swings round; each knocks the
 // target back on arrival, and the third lets the battle show the damage.
-void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
+void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition base;
   struct Vector3 scale;
@@ -5469,11 +5559,13 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Shining Star (kind 62).
+//
 // Battle effect 62: eight spinning star outlines fall from 120 pixels above
 // the user towards the first target, a few frames apart, and bounce off the
 // ground near it, each bounce shaking the screen and flashing the targets;
 // the battle shows the damage on frame 96. 128 frames.
-void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
+void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -5615,6 +5707,8 @@ extern u8 gWhirlwindComets_CellHeights[];
 extern u8 gWhirlwindComets_CellBiasY[];
 extern u16 gWhirlwindComets_CellOffsets[];
 
+// Abilities: Procne (scene kind 8).
+//
 // Large battle effect 8 (BattleFx_RunSceneEffect), 400 frames:
 //   0 to 159   : a whirlwind rises over the field and lifts the targets,
 //                spinning them round it and drawing them in, while dust
@@ -5628,7 +5722,7 @@ extern u16 gWhirlwindComets_CellOffsets[];
 //   395        : the targets fall back to the ground.
 // Pressing A or B skips to frame 160, or from there to frame 395. At the
 // end the battle shows the damage and the targets go back to their places.
-void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
+void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void *canvas;
@@ -6155,15 +6249,19 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 
 // Rising embers, and embers with three columns of fire.
 
+// Abilities: Dragon Driver (kind 385).
+//
 // Battle effect 385: the rising embers from the user's side, in the
 // LightningBolt colours.
-void BattleFx_RunSideEmbers(struct BattleEffectArgument *effect) {
+void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 1);
 }
 
+// Abilities: Tiamat (scene kind 7).
+//
 // Large battle effect 7 (BattleFx_RunSceneEffect): the rising embers with a
 // formation of eight objects that sweeps in and explodes at the end.
-void BattleFx_RunFormationEmbers(struct BattleEffectArgument *effect) {
+void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 0);
 }
 
@@ -6550,6 +6648,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Nereid (scene kind 2).
+//
 // Large battle effect 2 (BattleFx_RunSceneEffect), 124 frames; pressing A
 // or B during frames 33 to 97 skips to frame 98. A formation of twelve
 // objects sweeps in from the right; embers burst up on frame 28 and over
@@ -6557,7 +6657,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
 // while three columns of fire stream upwards over frames 32 to 79 and the
 // targets bounce. At the end the formation explodes with
 // BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
-void BattleFx_RunEmberColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
   void *canvas;
@@ -6782,13 +6882,15 @@ void BattleFx_RunEmberColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
+//
 // Battle effect 10: motes fly out of the top of the user, hang, and from 48
 // frames after each appears home in on the targets in turn; each that
 // reaches the ground strikes in a burst, flashing and knocking back its
 // target, while the camera swings round over frames 17 to 63.
 // effect->variant picks the volley from gVortexMotes_Counts (motes and
 // frames) and how hard the screen shakes.
-void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
+void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct BattleEffectWork *work;
   void *canvas;
@@ -6929,13 +7031,15 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
+//
 // Battle effect 20: tornadoes sweep across the targets for 80 frames,
 // sparkling with glints; the canvas flashes and the targets reel seven
 // times, 8 frames apart, from frame 16, and the battle shows the damage on
 // frame 32.
 // effect->variant picks the shape from gTornado_Shapes: how many
 // tornadoes, how far they sway and how hard the screen shakes.
-void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
+void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
   void **cursor;
@@ -7059,6 +7163,8 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
 
 // Falling crystals.
 
+// Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
+//
 // Battle effect 8: crystals drop out of the sky onto the targets' side, 8
 // frames apart, and shatter on the ground into 16 spinning shards each,
 // flashing the targets and shaking the screen; the battle shows the damage
@@ -7069,7 +7175,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
 // The crystals are particles[]: z is 1 once shattered, variant is the frame
 // it starts to fall. The shards are 16 per crystal in gMapCellBuffer: z is
 // how fast it spins.
-void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
+void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
   struct BattleEffectWork *work;
@@ -7257,6 +7363,9 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 
 #define LIGHTNING_PILLAR_SPARK_COUNT 1024 // sparks
 
+// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
+// Thunderstorm (kind 18).
+//
 // Battle effect 18: pillars of lightning strike one every 8 frames, each
 // with a white flash, throwing sparks up from the ground and knocking the
 // targets back; the battle shows the damage on frame 32.
@@ -7264,7 +7373,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 // sparks each throws and how long the screen shakes (gLightningPillar_Sparks);
 // with variant 2 the camera also swings round for the first 64 frames.
 // effect->side picks the row of pillar positions.
-void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
+void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
   void **cursor;
@@ -7425,15 +7534,20 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
 
 // Spark bursts.
 
+// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind
+// 15).
+//
 // Battle effect 15: bursts at (60, 48), the canvas behind the battle's
 // first layer (priority 1).
-void BattleFx_RunSparkBursts(struct BattleEffectArgument *effect) {
+void BattleFx_RunNova(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 0);
 }
 
+// Abilities: Dynamite (kind 338).
+//
 // Battle effect 338: orange bursts at (60, 64), the canvas in front
 // (priority 0).
-void BattleFx_RunOrangeSparkBursts(struct BattleEffectArgument *effect) {
+void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }
 
@@ -7662,13 +7776,16 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
+// Storm (kind 13).
+//
 // Battle effect 13: one, two or four columns of fire (gFirePillars_Counts by
 // effect->variant) rise near the far edge on the targets' side, at the
 // depths of gFirePillars_Depths, starting at gFirePillars_StartFrames; each
 // erupts with a fountain of 200 sparks and keeps spitting more, and each
 // eruption knocks the targets back. The battle shows the damage on frame
 // 16. Variant 0 is red, 2 orange; variant 2 also swings the camera round.
-void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
+void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -7857,8 +7974,10 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
 
 // Swirling motes around each target, in eight styles.
 
+// Abilities: Taint, Poison (kind 32).
+//
 // Battle effect 32: lime smoke (effect->variant 0) or pink smoke.
-void BattleFx_RunTargetMotesMode0Or1(struct BattleEffectArgument *effect) {
+void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);
     return;
@@ -7871,34 +7990,46 @@ UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
+// Abilities: Delude, Confuse, Mist (kind 33).
+//
 // Battle effect 33: cyan smoke that rises.
-void BattleFx_RunTargetMotesMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 2);
 }
 
+// Abilities: Paralyze (kind 36).
+//
 // Battle effect 36: rising smoke with glints.
-void BattleFx_RunTargetMotesMode3(struct BattleEffectArgument *effect) {
+void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 3);
 }
 
+// Abilities: Heartrender (kind 346); kind 35 is used by no ability.
+//
 // Battle effects 35 and 346: hearts.
-void BattleFx_RunTargetMotesMode4(struct BattleEffectArgument *effect) {
+void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 4);
 }
 
+// Abilities: Mystic Flame (kind 312).
+//
 // Battle effect 312: glowing orbs.
-void BattleFx_RunTargetMotesMode5(struct BattleEffectArgument *effect) {
+void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 5);
 }
 
+// Abilities: Demon Fire (kind 64).
+//
 // Battle effect 64: glowing orbs in Mars Djinn colours, and the user
 // strikes.
-void BattleFx_RunTargetMotesMode7(struct BattleEffectArgument *effect) {
+void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 7);
 }
 
+// Abilities: Drown (kind 66).
+//
 // Battle effect 66: vortex motes.
-void BattleFx_RunTargetMotesMode6(struct BattleEffectArgument *effect) {
+void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 6);
 }
 
@@ -8140,11 +8271,13 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Sleep (kind 37).
+//
 // Battle effect 37: twelve sheep drop onto the targets' side, one every 4
 // frames, tumbling through eight images (the last four mirrored both
 // ways); each target plays animation 5 in turn from frame 64, and the
 // battle shows the result on frame 80. 148 frames.
-void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect) {
+void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -8247,10 +8380,12 @@ void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+//
 // Battle effects 41 and 354: a small flame burns above each target in
 // turn, 16 frames apart, for 72 frames each, over a marker at its feet;
 // the battle shows the result on frame 32.
-void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect) {
+void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;
   void *canvas;
@@ -8606,6 +8741,9 @@ void BattleFx_RunNoEffectFrames(s32 count) {
 // Runs one of the large battle effects, the ones whose presentation flags
 // have bit 15 set: takes the effect's sheet, work and canvas, runs the
 // effect chosen by its kind to the end, and frees them again.
+// Each scene is named for the summon whose gBattle_ActionFlags entry selects
+// its kind, as the handlers of gBattleFx_EffectHandlers are; kind 0, which no
+// ability selects, runs Meteor's scene too.
 void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
@@ -8613,44 +8751,44 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
   if (effect->kind == 0) {
-    BattleFx_RunParticleStreamsMode0(effect);
+    BattleFx_RunMeteor(effect);
   } else {
     switch (effect->kind) {
     case 1:
-      BattleFx_RunCirclingFallingScene(effect);
+      BattleFx_RunRamses(effect);
       break;
     case 2:
-      BattleFx_RunEmberColumns(effect);
+      BattleFx_RunNereid(effect);
       break;
     case 3:
-      BattleFx_RunObjectRow(effect);
+      BattleFx_RunKirin(effect);
       break;
     case 4:
-      BattleFx_RunStagedParticles(effect);
+      BattleFx_RunAtalanta(effect);
       break;
     case 5:
-      BattleFx_RunDitherDissolveScene(effect);
+      BattleFx_RunCybele(effect);
       break;
     case 6:
-      BattleFx_RunFormationSweep(effect);
+      BattleFx_RunNeptune(effect);
       break;
     case 7:
-      BattleFx_RunFormationEmbers(effect);
+      BattleFx_RunTiamat(effect);
       break;
     case 8:
-      BattleFx_RunWhirlwindComets(effect);
+      BattleFx_RunProcne(effect);
       break;
     case 9:
-      BattleFx_RunShockwaveScene(effect);
+      BattleFx_RunJudgment(effect);
       break;
     case 10:
-      BattleFx_RunRockAndIceScene(effect);
+      BattleFx_RunBoreas(effect);
       break;
     case 11:
-      BattleFx_RunParticleStreamsMode0(effect);
+      BattleFx_RunMeteor(effect);
       break;
     case 12:
-      BattleFx_RunStormScene(effect);
+      BattleFx_RunThor(effect);
       break;
     }
   }
@@ -8845,12 +8983,14 @@ void BattleFx_InitTilemapAndFlushQueue(void) {
 // The family-specific scratch views describe trails, shards and gathering
 // motes in the shared particle buffer.
 
+// Abilities: Cybele (scene kind 5).
+//
 // Thorn vines: thorns fly in from the right, vines grow out of the ground
 // and lift the targets while sparks flash around them, the picture
 // dissolves pixel by pixel, and the targets drop and explode.
 //
 // effect: the targets.
-void BattleFx_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -9328,12 +9468,14 @@ void BattleFx_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define ICE_BLOCK_TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
 
+// Abilities: Boreas (scene kind 10).
+//
 // Rocks and ice blocks: a window opens on rocks that crumble, a big ice
 // block drops and throws up spray; then ice blocks rain down on the
 // targets, and boulders crumble into bouncing chips.
 //
 // effect: the targets.
-void BattleFx_RunRockAndIceScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 rockPoints[32][2]; // a copy of gBattleFx10_Points that nothing reads
   struct SpritePlacement position;
@@ -9791,10 +9933,12 @@ void BattleFx_RunRockAndIceScene(struct BattleEffectArgument *effect) {
 // Ice shards.
 #define ICE_SHARDS_PER_TARGET 128 // shards for each target
 
+// Abilities: Break (kind 43).
+//
 // Ice shards burst up from each target in turn, 20 frames apart, tinting
 // the target as they go, and fall away below line 112.
 // effect: the targets.
-void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect) {
+void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -9916,12 +10060,14 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect) {
 
 #define GATHERING_MOTES_PER_TARGET 128 // motes for each target
 
+// Abilities: Drain, Psy Drain (kind 42).
+//
 // Motes burst from each target in turn, 20 frames apart, and are pulled
 // into the centre of the user's body.
 //
 // effect: the targets; variant 0 takes the ice block palette, any other
 //         the blast palette.
-void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect) {
+void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -10065,23 +10211,33 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect) {
 
 #define HEALING_DJINNI_CELLS 0x1000 // the djinni picture in the sheet
 
+// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
+// (kind 22); Fizz (kind 204).
+//
 // One entry for each mode.
-void BattleFx_RunHealingMotesMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunPly(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 0);
 }
 
+// Abilities: Wish, Wish Well, Pure Wish (kind 23); Regenerate (kind 44);
+// Reflect (kind 45); Spritz (kind 206).
+//
 // Gather healing motes around each target with scattering style 1.
-void BattleFx_RunHealingMotesMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunWish(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 1);
 }
 
+// Abilities: Cure, Cure Well, Potent Cure, Corn (kind 21); Worms (kind 352).
+//
 // Gather healing motes using the blast sheet.
-void BattleFx_RunHealingMotesMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunCure(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 2);
 }
 
+// Abilities: Cure Poison, Restore, Antidote, Elixir (kind 24).
+//
 // Mode 3 when effect->variant is 0, mode 4 otherwise.
-void BattleFx_RunHealingMotesMode3Or4(struct BattleEffectArgument *effect) {
+void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunHealingMotes(effect, 3);
     return;
@@ -10094,13 +10250,17 @@ void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
 
+// Abilities: Tonic (kind 208).
+//
 // Send healing sparkles out from each target with scattering style 5.
-void BattleFx_RunHealingMotesMode5(struct BattleEffectArgument *effect) {
+void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 5);
 }
 
+// Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
+//
 // Gather healing motes in the Mars Djinni palette.
-void BattleFx_RunHealingMotesMode6(struct BattleEffectArgument *effect) {
+void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 6);
 }
 
@@ -10411,36 +10571,50 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
+// (kind 210); kind 46 is used by no ability.
+//
 // Stat boosts, in six modes: light gathers on each target and bursts, and
 // a picture (a dagger, a shield, a streak or a wisp) plays over it.
 // PARTICLES holds the gathering flares, 64 for each target.
 // One entry for each mode.
-void BattleFx_RunStatBoostMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 0);
 }
 
+// Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
+//
 // Gather stat-boost light and display a shield in Mars colours.
-void BattleFx_RunStatBoostMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 1);
 }
 
+// Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
+// 215).
+//
 // Gather stat-boost light and display a shield in Jupiter colours.
-void BattleFx_RunStatBoostMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunWard(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 2);
 }
 
+// Abilities: Granite (kind 200).
+//
 // Gather stat-boost light and display a violet streak in Venus colours.
-void BattleFx_RunStatBoostMode3(struct BattleEffectArgument *effect) {
+void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 3);
 }
 
+// Abilities: Flash (kind 213).
+//
 // Gather stat-boost light and display a violet streak in Mars colours.
-void BattleFx_RunStatBoostMode5(struct BattleEffectArgument *effect) {
+void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 5);
 }
 
+// Abilities: Zephyr (kind 216).
+//
 // Gather stat-boost light and display a wisp without replacing its palette.
-void BattleFx_RunStatBoostMode4(struct BattleEffectArgument *effect) {
+void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 4);
 }
 
@@ -10763,18 +10937,24 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // Named table fields describe the counts and timing values used by each
 // family's variant rows.
 
+// Abilities: Dull, Blunt (kind 27).
+//
 // Break the dagger picture into shards that fade through darker copies.
-void BattleFx_RunStatReductionMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunDull(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 0);
 }
 
+// Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
+//
 // Break the shield picture into fading shards with style 1.
-void BattleFx_RunStatReductionMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 1);
 }
 
+// Abilities: Weaken, Enfeeble (kind 31).
+//
 // Break the shield picture into fading shards with style 2.
-void BattleFx_RunStatReductionMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 2);
 }
 
@@ -10966,13 +11146,15 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
 
 #define FLAME_ARC_COUNT 9 // flames on the arc
 
+// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
+//
 // Flame arc: nine flames rise one after another, 4 frames apart, along a
 // half circle, over 80 frames. Each target is hit in turn, 8 frames apart
 // from frame 16.
 //
 // effect: the targets. variant 1 adds a second flame 16 pixels above each
 //         one, variant 2 a third 32 pixels above (and longer trails).
-void BattleFx_RunPuffArc(struct BattleEffectArgument *effect) {
+void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   u32 *slots;
   u32 *cursor;
   struct BattleEffectWork *work;
@@ -11161,12 +11343,14 @@ struct RockWallHeights {
 #define ROCK_WALL_PIXEL_OFFSET(x, y)                                           \
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
+// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
+//
 // Rock wall: three rock pillars rise from the left, 4 frames apart, and
 // sink again, throwing the targets standing on them into the air. Each
 // pillar is capped with a strip of ground cut from the background.
 //
 // effect: the targets; variant picks the row of gRockWall_Timings.
-void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
+void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   static s32 wallHeights[4] = {
       -32,
       -32,
@@ -11316,13 +11500,15 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Fire, Fireball, Inferno (kind 12).
+//
 // Homing embers: embers burst from the user two a frame, turn towards the
 // targets 48 frames after they appear, and each one that hits the ground
 // shows an impact flare for 12 frames.
 //
 // effect: the targets; variant picks the number of embers
 //         (gHomingEmbers_Counts).
-void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
+void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -11516,13 +11702,15 @@ enum {
 #define RISING_MOTE_TIMING(field)                                              \
   (gRisingMotes_Timings[work->effect->variant * 3 + (field)])
 
+// Abilities: Frost, Tundra, Glacier (kind 6).
+//
 // Rising motes: motes spiral upwards while ice columns spring up one every
 // 3 frames; at the burst frame the motes spread and fall, chips fly and
 // smoke rises.
 //
 // effect: the targets; variant picks the number of motes and columns and
 //         the burst frame (gRisingMotes_Timings).
-void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
+void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -11788,6 +11976,8 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
 #define CLOSING_BOLT_CELLS 0x60e // the bolt pictures in the sheet
 #define CLOSING_BOLT_COUNT 4
 
+// Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
+//
 // Four bolts turn in towards the centre for 16 frames, scattering sparks
 // from their roots; the sparks fly on until frame 64.
 //
@@ -11795,7 +11985,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
 //         variant 0 draws every bolt with the maximum blend, the others
 //         alternate it with additive. The variant also sets the sparks
 //         each bolt throws a frame (gLightningBolts_Sparks).
-void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
+void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -11949,14 +12139,18 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
+//
 // Erupt grey motes and smoke using the second count-table row.
-void BattleFx_RunEruptionMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunEruption(effect, 1);
+void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
+  BattleFx_RunBlastAndSmokeBomb(effect, 1);
 }
 
+// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
+//
 // Erupt fire-coloured motes and smoke and recoil the targets.
-void BattleFx_RunEruptionMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunEruption(effect, 0);
+void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
+  BattleFx_RunBlastAndSmokeBomb(effect, 0);
 }
 
 // The columns of a gParticleField_Counts row.
@@ -11969,14 +12163,17 @@ enum {
 // The mote pictures in the sheet: two sets of sizes, 770 bytes apart.
 #define FIELD_MOTE_CELLS 0x3200
 
-// Eruption: a fountain of motes and puffs of smoke bursts up beside the
+// Shared by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
+//
+// A fountain of motes and puffs of smoke bursts up beside the
 // targets and falls back, hitting the targets one frame apart.
 //
 // effect: the targets.
 // mode: 0 burns (the fire streak palette, the effect's variant picks the
 //       counts, and the targets recoil); 1 is grey (a ramp of greys,
 //       variant 1's counts).
-void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -12187,38 +12384,52 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
   Dma_Set(work->bg2X, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
 }
 
+// Abilities: Fire Blessing (kind 400).
+//
 // Fire flash bursts from the user towards randomly chosen targets.
-void BattleFx_RunBurstShowerMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 0);
 }
 
+// Abilities: Water Blessing (kind 401).
+//
 // Fire the burst shower in the water-spray palette.
-void BattleFx_RunBurstShowerMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 2);
 }
 
+// Abilities: Dark Blessing (kind 403).
+//
 // Fire grey bursts and leave the targets in palette 14.
-void BattleFx_RunBurstShowerMode6(struct BattleEffectArgument *effect) {
+void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 6);
 }
 
+// Abilities: Dark Blessing, Acid Blessing (kind 404).
+//
 // Fire pink bursts from 16 pixels below the normal origin.
-void BattleFx_RunBurstShowerMode3(struct BattleEffectArgument *effect) {
+void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 3);
 }
 
+// Abilities: Storm Blessing (kind 405).
+//
 // Show violet lightning between the user and targets instead of bursts.
-void BattleFx_RunBurstShowerMode5(struct BattleEffectArgument *effect) {
+void BattleFx_RunStormBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 5);
 }
 
+// Abilities: Evil Blessing (kind 406).
+//
 // Fire demon-face bursts from 16 pixels in front of the user.
-void BattleFx_RunBurstShowerMode7(struct BattleEffectArgument *effect) {
+void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 7);
 }
 
+// Abilities: Deadly Gas (kind 407).
+//
 // Fire Mars-coloured bursts from 28 pixels in front of the user.
-void BattleFx_RunBurstShowerMode4(struct BattleEffectArgument *effect) {
+void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, 4);
 }
 
@@ -12831,13 +13042,15 @@ enum SlashSheetCell {
   SLASH_BOTTOM = 0x1bf3
 };
 
+// Abilities: Atalanta (scene kind 4).
+//
 // Rain of blades: under a violet sky, a 3x3 formation of objects flies
 // along a stored path while sixteen blades gather trails of light, flash
 // and fly off; A or B skips ahead. Then 24 blades fall diagonally on the
 // targets and burst into flame, hitting each target as they land.
 //
 // effect: the targets.
-void BattleFx_RunStagedParticles(struct BattleEffectArgument *effect) {
+void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
   struct SpritePlacement position;
@@ -13174,13 +13387,17 @@ struct DualColumn {
   s32 start;     // the frame it starts to grow
 };
 
+// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
+//
 // Grow vines from the ground, scattering dust from each root.
-void BattleFx_RunGrowingColumnsMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 0);
 }
 
+// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
+//
 // Grow green pillars from the ground, scattering dust from each root.
-void BattleFx_RunGrowingColumnsMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 1);
 }
 
@@ -13434,11 +13651,13 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Vine (kind 202).
+//
 // Rising vines: sixteen green vines grow from the middle of the row of
 // targets, 2 frames apart, and shrink back.
 //
 // effect: the targets.
-void BattleFx_RunRisingColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -13529,13 +13748,15 @@ void BattleFx_RunRisingColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Thorn, Briar, Nettle (kind 5).
+//
 // Rising thorns: thorns burst from the ground one every 8 frames, throwing
 // up dust from their roots.
 //
 // effect: the targets; variant picks the number of thorns
 //         (gBattleFxPillar_Counts). gBattleFxPillar_Kinds gives each
 //         thorn's size and direction.
-void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
+void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
@@ -13714,11 +13935,13 @@ enum {
 // The bolt pictures in the sheet, after the tornado.
 #define LIGHTNING_BOLT_CELLS 0xc56
 
+// Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
+//
 // A bolt of lightning strikes each target in turn, 8 frames apart.
 //
 // effect: the targets; variant picks the row of gLightningBolts_Counts
 //         and the glints' blend.
-void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
+void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -14130,33 +14353,45 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
 #define VOLLEY_ANIMATION_STEP_FAST 0x30
 #define VOLLEY_ANIMATION_STEP_NORMAL 0x10
 
+// Abilities: Slash, Wind Slash, Sonic Slash (kind 19).
+//
 // Fire the projectile volley using its first table row.
-void BattleFx_RunProjectileVolleyMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 0);
 }
 
+// Abilities: Shuriken (kind 54).
+//
 // Fire the projectile volley using its second table row.
-void BattleFx_RunProjectileVolleyMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunShuriken(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 1);
 }
 
+// Abilities: Crazy Voice (kind 303).
+//
 // Fire the projectile volley whose shots bounce on impact.
-void BattleFx_RunProjectileVolleyMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 2);
 }
 
+// Abilities: Wing Flutter (kind 307).
+//
 // Fire the projectile volley using table row 3.
-void BattleFx_RunProjectileVolleyMode3(struct BattleEffectArgument *effect) {
+void BattleFx_RunWingFlutter(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 3);
 }
 
+// Abilities: Wing Stroke (kind 381).
+//
 // Fire the projectile volley using table row 11.
-void BattleFx_RunProjectileVolleyMode11(struct BattleEffectArgument *effect) {
+void BattleFx_RunWingStroke(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 11);
 }
 
+// Abilities: Wing Beat (kind 306).
+//
 // Fire the projectile volley using table row 4.
-void BattleFx_RunProjectileVolleyMode4(struct BattleEffectArgument *effect) {
+void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 4);
 }
 
@@ -14173,31 +14408,38 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
   ObjectDispatch_ApplyValueToChildrenFar(user, VOLLEY_ANIMATION_STEP_NORMAL);
 }
 
+// Abilities: Cutting Edge (kind 57).
+//
 // Volley mode 5, fired from the user's action pose.
-void BattleFx_RunProjectileVolleyMode5WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 5);
 }
 
+// Abilities: Heat Wave (kind 59).
+//
 // Volley mode 6, fired from the user's action pose.
-void BattleFx_RunProjectileVolleyMode6WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 6);
 }
 
+// Abilities: Sleet (kind 205).
+//
 // Fire the projectile volley with the delayed frame-48 hit cue.
-void BattleFx_RunProjectileVolleyMode7(struct BattleEffectArgument *effect) {
+void BattleFx_RunSleet(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 7);
 }
 
+// Abilities: Ice Blessing (kind 402).
+//
 // Fire the projectile volley using table row 10.
-void BattleFx_RunProjectileVolleyMode10(struct BattleEffectArgument *effect) {
+void BattleFx_RunIceBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 10);
 }
 
+// Abilities: Blizzard (kind 63).
+//
 // Volley mode 9, fired from the user's action pose.
-void BattleFx_RunProjectileVolleyMode9WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 9);
 }
 
@@ -14853,23 +15095,31 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 #define RUSHING_STRIKE_SPARK_COUNT 64   // sparks
 #define RUSHING_STRIKE_RING_BYTES 0x3c0 // one 20x48 ring picture
 
+// Abilities: Bone Charge (kind 311).
+//
 // The rushing strike in each of its four palettes.
-void BattleFx_RunRushingStrikeMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 0);
 }
 
+// Abilities: Brute Force (kind 314).
+//
 // Rush the target and scatter sparks in the ice-block palette.
-void BattleFx_RunRushingStrikeMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 1);
 }
 
+// Abilities: Onslaught (kind 326).
+//
 // Rush the target and scatter sparks in the pink-burst palette.
-void BattleFx_RunRushingStrikeMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 2);
 }
 
+// Abilities: Headbutt (kind 339).
+//
 // Rush the target and scatter sparks in the blast palette.
-void BattleFx_RunRushingStrikeMode3(struct BattleEffectArgument *effect) {
+void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 3);
 }
 
@@ -15063,12 +15313,14 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // Djinni attacks, reveal particles and camera shake.
 // Sheet cell layouts select the images; particle records carry their motion.
 
+// Abilities: Mercury (kind 251).
+//
 // Mercury djinni flames: the small Mercury djinni spirals around (96, 60)
 // and fires five blue flames to the left; each flame shatters into 32
 // motes after 5 frames, hitting every target.
 //
 // effect: the targets.
-void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
+void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -15197,12 +15449,14 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Jupiter (kind 253).
+//
 // Jupiter djinni fall: the small Jupiter djinni spirals while eight
 // flameballs fall from the top right to the bottom left, 4 frames apart;
 // each shatters into 32 motes below line 95, hitting every target.
 //
 // effect: the targets.
-void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
+void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -15336,12 +15590,14 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
   Resource_DecodeType01(data, dst);
 }
 
+// Abilities: Venus (kind 250).
+//
 // Venus djinni columns: the small Venus djinni sways while ten columns of
 // flame in its colours rise from the ground one after another, each
 // bursting into motes and hitting every target.
 //
 // effect: the targets.
-void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
+void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -15456,6 +15712,8 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Mars (kind 252).
+//
 // Mars Djinni flames: a glowing orb flares, the small Mars Djinni dives to
 // the ground, and nine flames erupt in a row while embers rise. The scene
 // runs for 112 frames:
@@ -15467,7 +15725,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
 //   40 on      the embers rise, 16 more every 2 frames
 //
 // effect: the targets.
-void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
+void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -15632,12 +15890,14 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
 #define REVEAL_CHIP_CELLS 0x400
 #define REVEAL_DJINNI_CELLS 0x65c0
 
+// Abilities: Hail (kind 207).
+//
 // Water burst: after a Mercury djinni enters, ice chips burst out of the
 // first target and waves rise along the bottom of the screen; the canvas
 // fades out at the end.
 //
 // effect: the user and the targets; prelude 1 keeps the djinni circling.
-void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
+void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -15778,12 +16038,14 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
 // The small Venus djinni in the rock toss's sheet.
 #define ROCK_TOSS_DJINNI_CELLS 0x65c0
 
+// Abilities: Ground (kind 203).
+//
 // Venus djinni rock toss: after a Venus djinni enters, six rocks rise from
 // the user shedding chips, swirl, and home in on the first target, each
 // hitting it as it lands.
 //
 // effect: the user and the targets; prelude 1 keeps the djinni circling.
-void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
+void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -16021,7 +16283,8 @@ extern u8 gMode12_SmokeFlips[];
 //
 // effect: the targets.
 
-void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
+// Abilities: Thor (scene kind 12).
+void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
   };
@@ -16598,12 +16861,14 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
 // The shard pictures in the sheet, after the boulder.
 #define SHATTER_SHARD_CELLS 0x83c
 
+// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
+//
 // Shattering rocks: boulders drop along the row of targets, centred on
 // it, and burst into tumbling shards, hitting every target as each lands.
 //
 // object: the targets; variant picks the number of boulders
 //         (gShatterRocks_RockCounts).
-void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
+void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -16727,11 +16992,13 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
+//
 // The flurry's entries: each passes its kind of flurry to
 // BattleFx_RunBurstScene. The dispatch table supplies actual effect
 // arguments; their variant selects the flurry when an entry covers several
 // modes.
-void EffectStep_RunAnimationMode6Or7Or8(struct BattleEffectArgument *effect) {
+void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 6);
     return;
@@ -16743,29 +17010,38 @@ void EffectStep_RunAnimationMode6Or7Or8(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 8);
 }
 
+// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
+//
 // Play the first flurry style selected by the effect table.
-void EffectStep_RunAnimationMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
 
+// Abilities: Ransack (kind 321); Mad Dash (kind 343).
+//
 // Use the same first flurry style for this alternate effect-table entry.
-void EffectStep_RunAnimationMode0Alternate(
-    struct BattleEffectArgument *effect) {
+void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
 
+// Abilities: Bacteria Rush (kind 328).
+//
 // Play the second flurry style selected by the effect table.
-void EffectStep_RunAnimationMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 1);
 }
 
+// Abilities: Freebite Rush (kind 334).
+//
 // Play the third flurry style selected by the effect table.
-void EffectStep_RunAnimationMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 2);
 }
 
+// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
+//
 // Choose flurry styles 3, 4 or 5 from the effect variant.
-void EffectStep_RunAnimationMode3Or4Or5(struct BattleEffectArgument *effect) {
+void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 3);
     return;
@@ -17017,6 +17293,9 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
 #define WALL_TOP_CELLS 0x13c0
 #define WALL_FOOT_CELLS 0x25c0
 
+// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
+// (kind 3).
+//
 // Rising wall: the ground swells, a wall of rock rises from it, stands
 // while rocks tumble up its face and the targets are battered, and sinks
 // again. The wall is symmetric: its left half is drawn, then mirrored for
@@ -17024,7 +17303,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
 // animation objects, moved by particles[10] to particles[20].
 //
 // effect: the targets; variant 0 to 2 widens the wall.
-void BattleFx_RunRisingWall(struct BattleEffectArgument *effect) {
+void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void **cursor;
@@ -18380,7 +18659,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       BattleFx_RunProjectileVolley(command, 9);
     }
     if (kind == 24) {
-      BattleFx_RunTargetMotesMode5(command);
+      BattleFx_RunMysticFlame(command);
     }
     if (kind != 26) {
       return;
@@ -18669,7 +18948,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         }
       }
     } else if (kind == 21) {
-      // Draw nothing; finish with BattleFx_RunStatReductionMode1.
+      // Draw nothing; finish with BattleFx_RunImpair.
     } else if (kind == 6 || kind == 27) {
       // Two tall images (four 24x104 frames) and fragments around the target.
       if (frame >= 6 && frame <= 19) {
@@ -19152,7 +19431,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleFx_RunStatReductionMode1(command);
+    BattleFx_RunImpair(command);
   } else {
     if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 ||
         kind == 29) {
@@ -19169,11 +19448,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
 // The formation tables describe object placement; the burst tables describe
 // the sprite frames drawn at the impact.
 
+// Abilities: Torch (kind 214).
+//
 // Build a mirrored radial picture, then fade it in and out through scanline
 // ripples while its rings run outward. The scene runs for 96 frames: it
 // fades in over the first 9, ripples throughout and fades out over the
 // last 7.
-void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect) {
+void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   void **heapCache;
   struct BattleEffectWork *work;
   void *canvas;
@@ -19298,8 +19579,10 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Kite (kind 217).
+//
 // Show the extended Jupiter Djinni prelude on the side opposite the effect.
-void ObjectGroup_StoreObjectAndRunStep7(struct BattleEffectArgument *effect) {
+void BattleFx_RunKite(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   s32 originX;
   s32 originY;
@@ -19312,9 +19595,11 @@ void ObjectGroup_StoreObjectAndRunStep7(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Helm Splitter (kind 51).
+//
 // Leap towards the first target, strike through a fire swirl and scatter
 // sparks.
-void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
+void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   void **heapCache;
   void **cursor;
   struct BattleEffectWork *work;
@@ -19706,16 +19991,19 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 // Multi-stage particle streams and circling object scenes.
 // The stream effect keeps its embers after the first 128 particle records.
 
+// Abilities: Meteor (scene kind 11).
+//
 // Run the particle stream in mode 0.
-void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 0);
 }
 
+// Abilities: Outer Space (kind 384).
+//
 // Run the particle stream in mode 1.
-void BattleFx_RunParticleStreamsMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 1);
 }
-
 
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_DropPoints[][2];
@@ -20278,9 +20566,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Ramses (scene kind 1).
+//
 // Move a formation and orbiting picture while six rocks bounce and scatter
 // puffs.
-void BattleFx_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
@@ -20521,8 +20811,10 @@ void BattleFx_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Dragon Cloud (kind 49).
+//
 // Follow the encoded flame path with a fading trail and projected particles.
-void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
+void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition position;
   DrawRectangle draw[2];
@@ -20771,6 +21063,8 @@ void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Annihilation (kind 55).
+//
 // The user closes on the first target and fire bursts from it in a shower of
 // shards. The scene runs for 64 frames:
 //
@@ -20781,7 +21075,7 @@ void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
 //
 // effect: the user and the target; a nonzero variant gives the burst its
 // second picture and a sound.
-void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
+void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   void **heapCache;
   void **cursor;
   struct BattleEffectWork *work;
@@ -20933,11 +21227,13 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
 #define FLAME_BLADE_FLASH_CELLS                                                \
   (64 * 128) // Place flash graphics after the 64x128 sword image.
 
+// Abilities: Ragnarok (kind 58).
+//
 // Draw the sword for 40 frames, swinging down over 10 frames. Flash the
 // two columns at frames 16 and 24; scatter sparks six frames later.
 // Column x comes from gFlameBlade_StrikeColumns: first two of three per side.
 // PARTICLES holds 340 sparks per column.
-void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect) {
+void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **heapCache;
   void **cursor;
   struct BattleEffectWork *work;
@@ -21179,8 +21475,10 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect) {
 #define FALLING_SWORD_SPARKS                                                   \
   ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
+// Abilities: Titan Blade (kind 61).
+//
 // Drop a sword onto the first target amid charging flashes, dust and sparks.
-void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
+void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   void **heap;
   void **slotCursor;
   struct BattleEffectWork *work;
@@ -21535,9 +21833,11 @@ extern u8 gShockwaveScene_ShardHeights[];
 
 #define SHOCKWAVE_SPARKS (&PARTICLES[128])
 
+// Abilities: Judgment (scene kind 9).
+//
 // Stage a formation above the violet backdrop, then pulse and scatter its
 // images.
-void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
+void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];
   struct EffectPosition projectedPosition;
@@ -22385,9 +22685,11 @@ void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
 // The formation sweep temporarily changes BG2's horizontal scale through
 // frame and interrupt callbacks.
 
+// Abilities: Kirin (scene kind 3).
+//
 // Sweep the object formation across the field, then lift it out through
 // particle bursts.
-void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
+void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
   void **cursor;
@@ -22791,7 +23093,6 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-
 // Restore the background 2 horizontal scale to one screen pixel per source
 // pixel.
 void Graphics_ResetBg2Pa(void) { REG_BG2PA = 0x100; }
@@ -22799,9 +23100,11 @@ void Graphics_ResetBg2Pa(void) { REG_BG2PA = 0x100; }
 // Stretch background 2 to twice its source width.
 void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
 
+// Abilities: Neptune (scene kind 6).
+//
 // Sweep the formation across the field, burst into flares and finish with blue
 // flames.
-void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
+void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;
   struct EffectPosition targetPosition;
@@ -23277,8 +23580,10 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Thrash (kind 388).
+//
 // Hop the acting unit toward the first target; trigger type 4 after 29 frames.
-void BattleFx_RunSparkApproachVariant4(struct BattleEffectArgument *effect) {
+void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   // Hop 3/4 of the distance at displacement / 24, initial vertical speed 12.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
   WaitFrames(29);
@@ -23297,12 +23602,15 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 
 // Battle effect: four-frame image, rising columns and sparks
 
-void BattleFx_RunRevealColumnMode1(struct BattleEffectArgument *effect) {
+// Abilities: Quick Strike (kind 52).
+void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
   BattleFx_RunRevealColumn(effect, 1);
 }
 
+// Abilities: Vorpal Slash (kind 65).
+//
 // Flash the target using the first pair of reveal-mask resources.
-void BattleFx_RunRevealColumnMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunRevealColumn(effect, 2);
 }
 
@@ -23391,8 +23699,10 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
+// Abilities: Undead Sword (kind 320).
+//
 // Two mirrored columns rise at the target's feet, scattering 16 sparks.
-void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect) {
+void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   void **heap;
   void **cursor;
   struct BattleEffectWork *work;

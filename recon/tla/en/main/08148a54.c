@@ -1,6 +1,6 @@
 // Near miss, differ 22 of 500 (effect kind 10, the vortex motes).
 
-// ☀️ twin: BattleFx_RunVortexMotes (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunFroth (games/tbs/src/effect/effect.c), shape
 // 0.879, structure 0.949. Ported with ⚓️'s checklist: the effect argument is
 // read directly (the dispatcher stores work->effect), the vortex sheet is
 // unpacked straight into the work with Resource_LoadAndDecompress where ☀️

@@ -1,5 +1,5 @@
 // Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
-// frame and the spark blitting are ☀️'s (BattleFx_RunVenusDjinnColumns, shape
+// frame and the spark blitting are ☀️'s (BattleFx_RunVenus, shape
 // 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s
 // own. The native frame (84) holds effect at sp+60, work 56, canvas 52, frame
 // 48, the blitter pair at 40 and 44 (the second word unused), graphics 36, the

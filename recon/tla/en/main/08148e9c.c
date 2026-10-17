@@ -1,6 +1,6 @@
 // Near miss, differ 64 of 429 (effect kind 20, the tornado).
 
-// ☀️ twin: BattleFx_RunTornado (games/tbs/src/effect/effect.c), shape 0.835,
+// ☀️ twin: BattleFx_RunWhirlwind (games/tbs/src/effect/effect.c), shape 0.835,
 // structure 0.941. Ported with ⚓️'s checklist: the effect argument read
 // directly, the tornado sheet unpacked into the work with
 // Resource_LoadAndDecompress, max blitters from Func_081963ec(104, 0x13)

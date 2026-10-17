@@ -1,5 +1,5 @@
 // Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:
-// BattleFx_RunFireSwirlCharge (effect.c, structure 0.800): the same swirl and
+// BattleFx_RunHelmSplitter (effect.c, structure 0.800): the same swirl and
 // spark burst, with a second variant ⚓️ added at the target.
 // Statements, allocation and frame all match (effect r10, work r11, canvas at
 // sp+16, the two blitters at sp+20, the position at sp+28 and its address in
@@ -12,7 +12,7 @@
 // load sooner than agscc's arm9tdmi costs rank it. Measured: the BLDALPHA and
 // BG2PA stores take f18284c.c's blend pin (each differ 2 without); the timer
 // clear through &sparks->variant, i before the pixel pointer, the pixels
-// indexed and the sparks as &sparks[i] (as in BattleFx_RunFireSwirlCharge) are
+// indexed and the sparks as &sparks[i] (as in BattleFx_RunHelmSplitter) are
 // the source's forms (38 to 22); a one-pass block on y fixes the height test
 // but moves the IntegrateVector2 arguments (18); an asm barrier on y relays out
 // the function (105). 2026-10-15 (fx-n3): rewritten for reading on struct

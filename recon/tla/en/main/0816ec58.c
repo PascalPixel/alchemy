@@ -1,5 +1,5 @@
 // Draft of Func_0816ec58, effect kind 75 (Cool), The Broken Seal's
-// BattleFx_RunRisingBurst as The Lost Age reworked it (structure twin
+// BattleFx_RunUndeadSword as The Lost Age reworked it (structure twin
 // 0.772): the two columns became up to ten leaning ice columns, three
 // more for each level of the spell, each with its own start, height and
 // lean; the columns' blitters are loaded once a frame through

@@ -1,6 +1,6 @@
 // Near miss, differ 41 of 558.
 
-// Twin: The Broken Seal's BattleFx_RunFallingParticles (effect kind 7 in
+// Twin: The Broken Seal's BattleFx_RunIce (effect kind 7 in
 // both games), ported as is apart from ⚓️'s calling conventions: the effect is
 // read from the argument (⚓️ never stores work->effect), the heap blocks are
 // read as Ram_HeapSlots fields, the blitters go through Func_081963ec with

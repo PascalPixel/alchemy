@@ -1,6 +1,6 @@
 // Draft, differ 386 of 783: BattleFx_RunSparkGroups, the body of the
 // spark-group effects through Func_08149b94 (kind 0), Func_08149ba0
-// (kind 1) and BattleFx_RunSparkApproachVariant4 (kind 2).
+// (kind 1) and BattleFx_RunThrash (kind 2).
 
 // ☀️ twin: BattleFx_RunSparkGroups (games/tbs/src/effect/effect.c), shape
 // 0.803, structure 0.938. ⚓️'s changes: kind 1 also starts a palette fade

@@ -552,12 +552,12 @@ gData_08197aa0:
 	.4byte Func_0815537c            @ 16
 	.4byte Func_08151b48            @ 17
 	.4byte Func_08149794            @ 18
-	.4byte BattleFx_RunProjectileVolleyMode0        @ 19
+	.4byte BattleFx_RunSlash        @ 19
 	.4byte Func_08148e9c            @ 20
-	.4byte BattleFx_RunHealingMotesMode2 @ 21
-	.4byte BattleFx_RunHealingMotesMode0 @ 22
-	.4byte BattleFx_RunHealingMotesMode1 @ 23
-	.4byte BattleFx_RunHealingMotesMode3Or4 @ 24
+	.4byte BattleFx_RunCure @ 21
+	.4byte BattleFx_RunPly @ 22
+	.4byte BattleFx_RunWish @ 23
+	.4byte BattleFx_RunCurePoison @ 24
 	.4byte Func_08144af0            @ 25
 	.4byte Func_0814fa08            @ 26
 	.4byte SummonFx_RunCanvasMode3  @ 27
@@ -565,11 +565,11 @@ gData_08197aa0:
 	.4byte SummonFx_RunCanvasMode1  @ 29
 	.4byte Func_0814fa38            @ 30
 	.4byte SummonFx_RunCanvasMode2  @ 31
-	.4byte BattleFx_RunTargetMotesMode0Or1  @ 32
-	.4byte BattleFx_RunTargetMotesMode2     @ 33
+	.4byte BattleFx_RunTaint  @ 32
+	.4byte BattleFx_RunDelude     @ 33
 	.4byte Func_08144368            @ 34
-	.4byte BattleFx_RunTargetMotesMode4     @ 35
-	.4byte BattleFx_RunTargetMotesMode3     @ 36
+	.4byte BattleFx_RunHeartrender     @ 35
+	.4byte BattleFx_RunParalyze     @ 36
 	.4byte Func_0814aebc            @ 37
 	.4byte Func_08145df8            @ 38
 	.4byte Func_08144044            @ 39
@@ -577,8 +577,8 @@ gData_08197aa0:
 	.4byte Func_0814b160            @ 41
 	.4byte Func_0814ea3c            @ 42
 	.4byte Func_0814e744            @ 43
-	.4byte BattleFx_RunHealingMotesMode1 @ 44
-	.4byte BattleFx_RunHealingMotesMode1 @ 45
+	.4byte BattleFx_RunWish @ 44
+	.4byte BattleFx_RunWish @ 45
 	.4byte Func_0814fa08            @ 46
 	.4byte SummonFx_RunCanvasMode1  @ 47
 	.4byte 0                        @ 48
@@ -587,19 +587,19 @@ gData_08197aa0:
 	.4byte Func_08188cb0            @ 51
 	.4byte Func_0816a29c            @ 52
 	.4byte Func_08188714            @ 53
-	.4byte BattleFx_RunProjectileVolleyMode1        @ 54
+	.4byte BattleFx_RunShuriken        @ 54
 	.4byte Func_081661dc            @ 55
 	.4byte Func_081548c4            @ 56
-	.4byte BattleFx_RunProjectileVolleyMode5WithAction @ 57
+	.4byte BattleFx_RunCuttingEdge @ 57
 	.4byte Func_081665a4            @ 58
-	.4byte BattleFx_RunProjectileVolleyMode6WithAction @ 59
+	.4byte BattleFx_RunHeatWave @ 59
 	.4byte Func_0818d590            @ 60
 	.4byte Func_08166af8            @ 61
 	.4byte Func_08146a6c            @ 62
-	.4byte BattleFx_RunProjectileVolleyMode9WithAction @ 63
-	.4byte BattleFx_RunTargetMotesMode7     @ 64
+	.4byte BattleFx_RunBlizzard @ 63
+	.4byte BattleFx_RunDemonFire     @ 64
 	.4byte Func_0816a2a8            @ 65
-	.4byte BattleFx_RunTargetMotesMode6     @ 66
+	.4byte BattleFx_RunDrown     @ 66
 	.4byte Func_0814627c            @ 67
 	.4byte Func_08146638            @ 68
 	.4byte Func_08178ee4            @ 69
@@ -737,28 +737,28 @@ gData_08197aa0:
 	.4byte Func_08144af0            @ 201
 	.4byte Func_08154d5c            @ 202
 	.4byte Func_081587e4            @ 203
-	.4byte BattleFx_RunHealingMotesMode0 @ 204
-	.4byte BattleFx_RunProjectileVolleyMode7        @ 205
-	.4byte BattleFx_RunHealingMotesMode1 @ 206
+	.4byte BattleFx_RunPly @ 204
+	.4byte BattleFx_RunSleet        @ 205
+	.4byte BattleFx_RunWish @ 206
 	.4byte Func_0815842c            @ 207
-	.4byte BattleFx_RunHealingMotesMode5 @ 208
+	.4byte BattleFx_RunTonic @ 208
 	.4byte Func_08144afc            @ 209
 	.4byte Func_0814fa08            @ 210
 	.4byte Func_0814fa14            @ 211
-	.4byte BattleFx_RunHealingMotesMode6 @ 212
+	.4byte BattleFx_RunPsyCrystal @ 212
 	.4byte Func_0814fa5c            @ 213
 	.4byte Func_081638d0            @ 214
 	.4byte Func_0814fa38            @ 215
 	.4byte Func_0814fa80            @ 216
 	.4byte Func_08163c00            @ 217
 	.4byte Func_08145df8            @ 218
-	.4byte EffectStep_RunAnimationMode6Or7Or8 @ 219
+	.4byte BattleFx_RunGust @ 219
 	.4byte Func_0814fa20            @ 220
 	.4byte Func_0814fa44            @ 221
 	.4byte Func_0814fa68            @ 222
 	.4byte Func_0814fa08            @ 223
 	.4byte Func_0814fa8c            @ 224
-	.4byte BattleFx_RunHealingMotesMode2 @ 225
+	.4byte BattleFx_RunCure @ 225
 	.4byte BattleFx_RunHealingMotesMode7 @ 226
 	.4byte BattleFx_RunHealingMotesMode8 @ 227
 	.4byte BattleFx_RunHealingMotesMode9 @ 228
@@ -836,38 +836,38 @@ gData_08197aa0:
 	.4byte Func_0813c5ac            @ 300
 	.4byte Func_0813c5b8            @ 301
 	.4byte Func_0813c5c4            @ 302
-	.4byte BattleFx_RunProjectileVolleyMode2        @ 303
+	.4byte BattleFx_RunCrazyVoice        @ 303
 	.4byte Func_0813c5d0            @ 304
 	.4byte Func_0813c5dc            @ 305
-	.4byte BattleFx_RunProjectileVolleyMode4        @ 306
-	.4byte BattleFx_RunProjectileVolleyMode3        @ 307
+	.4byte BattleFx_RunWingBeat        @ 306
+	.4byte BattleFx_RunWingFlutter        @ 307
 	.4byte Func_08144604            @ 308
 	.4byte Func_081450d8            @ 309
-	.4byte EffectStep_RunAnimationMode6Or7Or8 @ 310
+	.4byte BattleFx_RunGust @ 310
 	.4byte Func_0817e078            @ 311
-	.4byte BattleFx_RunTargetMotesMode5     @ 312
+	.4byte BattleFx_RunMysticFlame     @ 312
 	.4byte Func_0813cf80            @ 313
 	.4byte Func_0817e084            @ 314
 	.4byte Func_081450e4            @ 315
 	.4byte Func_0813cf8c            @ 316
-	.4byte EffectStep_RunAnimationMode0 @ 317
+	.4byte BattleFx_RunBearClaw @ 317
 	.4byte Func_0813cf98            @ 318
-	.4byte EffectStep_RunAnimationMode3Or4Or5 @ 319
+	.4byte BattleFx_RunFlyingAttack @ 319
 	.4byte Func_0816a730            @ 320
-	.4byte EffectStep_RunAnimationMode0Alternate @ 321
+	.4byte BattleFx_RunRansack @ 321
 	.4byte Func_081450fc            @ 322
 	.4byte Func_0813cf98            @ 323
 	.4byte Func_0813cfb0            @ 324
 	.4byte Func_0813cfbc            @ 325
 	.4byte Func_0817e090            @ 326
 	.4byte Func_0813cfc8            @ 327
-	.4byte EffectStep_RunAnimationMode1 @ 328
-	.4byte EffectStep_RunAnimationMode3Or4Or5 @ 329
+	.4byte BattleFx_RunBacteriaRush @ 328
+	.4byte BattleFx_RunFlyingAttack @ 329
 	.4byte Func_08145108            @ 330
 	.4byte 0                        @ 331
 	.4byte Func_0813cfd4            @ 332
 	.4byte Func_0813cfe0            @ 333
-	.4byte EffectStep_RunAnimationMode2 @ 334
+	.4byte BattleFx_RunFreebiteRush @ 334
 	.4byte Func_0813cfec            @ 335
 	.4byte Func_0813cfa4            @ 336
 	.4byte Func_0813cff8            @ 337
@@ -875,17 +875,17 @@ gData_08197aa0:
 	.4byte Func_0817e09c            @ 339
 	.4byte Func_081450f0            @ 340
 	.4byte 0                        @ 341
-	.4byte EffectStep_RunAnimationMode0 @ 342
-	.4byte EffectStep_RunAnimationMode0Alternate @ 343
+	.4byte BattleFx_RunBearClaw @ 342
+	.4byte BattleFx_RunRansack @ 343
 	.4byte Func_0813cb1c            @ 344
 	.4byte Func_0815cbd0            @ 345
-	.4byte BattleFx_RunTargetMotesMode4     @ 346
+	.4byte BattleFx_RunHeartrender     @ 346
 	.4byte Func_081450b4            @ 347
 	.4byte Func_0817e668            @ 348
 	.4byte Func_0813cb10            @ 349
 	.4byte Func_081450cc            @ 350
 	.4byte Func_08144610            @ 351
-	.4byte BattleFx_RunHealingMotesMode2 @ 352
+	.4byte BattleFx_RunCure @ 352
 	.4byte Func_0817e674            @ 353
 	.4byte Func_0814b160            @ 354
 	.4byte 0                        @ 355
@@ -914,14 +914,14 @@ gData_08197aa0:
 	.4byte 0                        @ 378
 	.4byte 0                        @ 379
 	.4byte Func_08151fd8            @ 380
-	.4byte BattleFx_RunProjectileVolleyMode11       @ 381
+	.4byte BattleFx_RunWingStroke       @ 381
 	.4byte Func_0815c958            @ 382
 	.4byte Func_0815c964            @ 383
-	.4byte BattleFx_RunParticleStreamsMode1 @ 384
+	.4byte BattleFx_RunOuterSpace @ 384
 	.4byte Func_08147ad4            @ 385
 	.4byte Func_0813d004            @ 386
 	.4byte BattleFx_RunSparkApproachVariant3 @ 387
-	.4byte BattleFx_RunSparkApproachVariant4 @ 388
+	.4byte BattleFx_RunThrash @ 388
 	.4byte Func_0817e680            @ 389
 	.4byte Func_0818c7ac            @ 390
 	.4byte Func_0816aee0            @ 391
@@ -935,7 +935,7 @@ gData_08197aa0:
 	.4byte Func_0813d010            @ 399
 	.4byte BattleFx_RunVolleyBMode0 @ 400
 	.4byte BattleFx_RunVolleyBMode2 @ 401
-	.4byte BattleFx_RunProjectileVolleyMode10       @ 402
+	.4byte BattleFx_RunIceBlessing       @ 402
 	.4byte BattleFx_RunVolleyBMode6 @ 403
 	.4byte BattleFx_RunVolleyBMode3 @ 404
 	.4byte BattleFx_RunVolleyBMode5 @ 405
@@ -962,7 +962,7 @@ gData_08197aa0:
 	.4byte Func_0818b868            @ 426
 	.4byte EffectStep_RunAnimationMode6Or7Or8B @ 427
 	.4byte BattleFx_RunTargetMotesMode1     @ 428
-	.4byte BattleFx_RunTargetMotesMode2     @ 429
+	.4byte BattleFx_RunDelude     @ 429
 	.4byte Func_08145114            @ 430
 	.4byte Func_0817e68c            @ 431
 	.4byte BattleFx_RunVolleyBMode19 @ 432

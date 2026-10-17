@@ -1,8 +1,8 @@
 // Draft, differ 149 of 863 (864 here): Func_08166b10, the body of two effect
 // kinds (series_h.c's Func_08166af8 and Func_08166b04 pass modes 0 and 1),
-// The Broken Seal's BattleFx_RunFallingSword.
+// The Broken Seal's BattleFx_RunTitanBlade.
 
-// Twin: ☀️ BattleFx_RunFallingSword (games/tbs/src/effect/effect.c) with The
+// Twin: ☀️ BattleFx_RunTitanBlade (games/tbs/src/effect/effect.c) with The
 // Lost Age's mode argument: mode 2 skips the sword sheet, mode 1 rotates each
 // BG colour's three fields first and at frame 61 copies resource 0x188's
 // palette and calls Func_0815b634, mode 0 steps the palette toward the blast

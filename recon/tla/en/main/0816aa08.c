@@ -1,7 +1,7 @@
 // Draft of Func_0816aa08, effect kind 85 (Plume Edge), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunImpactBurst 0.566, call order BattleFx_RunJupiterDjinnFall
-// 0.677); the pillar's two-piece scroll is BattleFx_RunEmberColumns'.
+// BattleFx_RunImpactBurst 0.566, call order BattleFx_RunJupiter
+// 0.677); the pillar's two-piece scroll is BattleFx_RunNereid'.
 
 // Listing 467 instructions, draft 467, differ 36.
 // Left: order rows only. The native moves the work pointer to r9 before

@@ -1,6 +1,6 @@
 // Near miss of Func_08151b48, effect kind 17.
 
-// Twin: The Broken Seal's BattleFx_RunClosingBolts (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunRay (effect.c), call for
 // call, with The Lost Age's changes: on its own side the canvas begins
 // filled (BattleFx_BeginTiledCanvasFilled), with BG control 0x2001; the
 // blitters come through Func_081963ec (BLIT_MAX 1, BLIT_ADDITIVE 0); and

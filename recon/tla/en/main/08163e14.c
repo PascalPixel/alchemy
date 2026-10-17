@@ -1,9 +1,9 @@
 // Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
 // call reaches it), a second copy of The Broken Seal's
-// BattleFx_RunEmberColumns (summon 2's, which The Lost Age keeps at
+// BattleFx_RunNereid (summon 2's, which The Lost Age keeps at
 // Func_08148458).
 
-// Twin: ☀️ BattleFx_RunEmberColumns (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleFx_RunNereid (games/tbs/src/effect/effect.c),
 // ported: the palette goes by DMA 3, the blitters come from
 // Func_08144aac(0, draw), the effect stays an argument (its count and actors
 // are read from it; only Func_0814cc4c reads the work's copy), formation

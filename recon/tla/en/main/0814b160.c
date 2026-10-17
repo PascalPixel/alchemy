@@ -1,6 +1,6 @@
 // Near miss, differ 42 of 222 (effect kinds 41 and 354, the target markers).
 
-// ☀️ twin: BattleFx_RunTargetMarkers (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunCurse (games/tbs/src/effect/effect.c), shape
 // 0.771, structure 1.000. ⚓️'s changes: the effect argument read directly
 // (the dispatcher stores work->effect), the star cross sheet (directory row
 // 0x13b), the blitter from Func_081963ec(104, 0x23) (transparent, ⚓️ mode

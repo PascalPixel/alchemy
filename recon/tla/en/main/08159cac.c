@@ -18,7 +18,7 @@
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunShatteringRocks (kind 2 there
+// Port of The Broken Seal's BattleFx_RunSpire (kind 2 there
 // too), with The Lost Age's heap slots, blitter mode (3 minus ☀️'s) and
 // callback order, no work->effect store, and The Lost Age's timing: the
 // effect runs 65 frames past the last drop, not 80, and the first crash

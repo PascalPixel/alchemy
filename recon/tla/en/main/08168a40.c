@@ -1,7 +1,7 @@
 // Draft, differ 126 of 1065: Func_08168a40, summon 3 (Func_0814c994's case 3,
-// actflags 0x8003), The Broken Seal's BattleFx_RunObjectRow.
+// actflags 0x8003), The Broken Seal's BattleFx_RunKirin.
 
-// Twin: ☀️ BattleFx_RunObjectRow (games/tbs/src/effect/effect.c), ported:
+// Twin: ☀️ BattleFx_RunKirin (games/tbs/src/effect/effect.c), ported:
 // Func_0813ba50 sets the display, the second BG colour is 0x18, the formation
 // is resource 644, the projection's centre is gCameraSceneParameters[4], the
 // control is the heap slot at 0xb0, one blitter (Func_081963ec(104, 3)), the

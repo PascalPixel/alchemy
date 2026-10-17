@@ -1,6 +1,6 @@
 // Near miss, differ 20 of 300 (effect kind 37, the bouncing sheep).
 
-// ☀️ twin: BattleFx_RunBouncingSheep (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunSleep (games/tbs/src/effect/effect.c), shape
 // 0.776, structure 0.977. ⚓️'s changes: the canvas layer at priority 1; the
 // effect runs 98 frames where ☀️ runs 148; the sheep follow the middle of
 // the targets (Func_0815e22c) where ☀️ moves BG2 for side 1: the middle,

@@ -1,7 +1,7 @@
 // Draft, differ 26 of 427: Func_081661dc, effect kind 55, The Broken Seal's
-// BattleFx_RunFireBurstShards.
+// BattleFx_RunAnnihilation.
 
-// Twin: ☀️ BattleFx_RunFireBurstShards (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleFx_RunAnnihilation (games/tbs/src/effect/effect.c),
 // ported: the effect stays an argument, the camera comes from its heap slot
 // (0x30), the blitters from Func_081963ec(104, 3, 7 or 19) and slot 0x68, the
 // canvas filled through IwramFillWords where ☀️ uses Dma_Fill32, callback

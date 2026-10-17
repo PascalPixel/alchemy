@@ -1,6 +1,6 @@
 // Near miss, differ 132 of 1375 (summon 10, the ice and rock scene).
 
-// ☀️ twin: BattleFx_RunRockAndIceScene (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunBoreas (games/tbs/src/effect/effect.c), shape
 // 0.915, structure 1.000, ported line for line: the 21 tables are the same
 // data under ⚓️'s labels, a max and a transparent blitter from
 // Func_081963ec(104, 0x13) and (188, 0x23), formation 643, the

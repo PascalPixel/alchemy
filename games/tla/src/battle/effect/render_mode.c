@@ -11,7 +11,7 @@
 // Each entry passes a particle type (color and count) to
 // BattleFx_RunTargetMotes. effect: effect arguments.
 //--------------------------------------------------------------------------
-void BattleFx_RunTargetMotesMode0Or1(struct BattleEffectArgument *effect) {
+void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);
     return;
@@ -23,26 +23,26 @@ void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-void BattleFx_RunTargetMotesMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 2);
 }
 
-void BattleFx_RunTargetMotesMode3(struct BattleEffectArgument *effect) {
+void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 3);
 }
 
-void BattleFx_RunTargetMotesMode4(struct BattleEffectArgument *effect) {
+void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 4);
 }
 
-void BattleFx_RunTargetMotesMode5(struct BattleEffectArgument *effect) {
+void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 5);
 }
 
-void BattleFx_RunTargetMotesMode7(struct BattleEffectArgument *effect) {
+void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 7);
 }
 
-void BattleFx_RunTargetMotesMode6(struct BattleEffectArgument *effect) {
+void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 6);
 }

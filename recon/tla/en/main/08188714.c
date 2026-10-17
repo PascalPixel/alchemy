@@ -1,5 +1,5 @@
 // Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
-// BattleFx_RunFlippingBurst (effect.c, call order 0.675): the leap, the flip
+// BattleFx_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
 // and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
 // spins the jaw quad of Triple Chomp (Func_0818b868) at the target. The native
 // frame (104) holds effect at sp+56, work 52, canvas 48, frame 44, the blitter

@@ -1,5 +1,5 @@
 // Draft of Func_0816d724, effect kind 115 (Soul Shatter), The Broken
-// Seal's BattleFx_RunRisingBurst as The Lost Age reworked it (structure
+// Seal's BattleFx_RunUndeadSword as The Lost Age reworked it (structure
 // twin 0.703): the same two mirrored halves of a column and the same
 // sixteen sparks, over a longer effect in which the target is thrown up
 // and 32 motes of its soul drift back into the user (pulled as

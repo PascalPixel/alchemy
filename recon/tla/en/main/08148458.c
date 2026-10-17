@@ -1,7 +1,7 @@
 // Near miss, differ 60 of 689 (88 without the one device below).
 
 // Summon 2 (Func_0814c994's case 2). Twin: The Broken Seal's
-// BattleFx_RunEmberColumns, ported call for call. The Lost Age's changes:
+// BattleFx_RunNereid, ported call for call. The Lost Age's changes:
 // the heap blocks are read canvas, work, sheet; three
 // Resource_LoadAndDecompress loads where The Broken Seal copies a palette
 // and decodes two sheets; Func_08144aac for the blitter pair; formation

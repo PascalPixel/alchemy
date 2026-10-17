@@ -1,6 +1,6 @@
 // Near miss of Func_081509b4, effect kind 11: differ 14 of 274 (draft 274).
 
-// Twin: The Broken Seal's BattleFx_RunPuffArc (effect.c), call for call.
+// Twin: The Broken Seal's BattleFx_RunFlare (effect.c), call for call.
 // The Lost Age blends BG1 and BG2 at 16:16 where The Broken Seal has 14:16,
 // runs 60 frames instead of 80, reads the effect from its argument, loads
 // its blitter through Func_081963ec (BLIT_ADDITIVE is 0 where

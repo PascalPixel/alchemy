@@ -1,6 +1,6 @@
 // Near miss of Func_08151040, effect kind 12.
 
-// Twin: The Broken Seal's BattleFx_RunHomingEmbers (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunFire (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
 // blocks as Ram_HeapSlots fields, loads its blitters through Func_081963ec
 // (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal has 3 and 2),

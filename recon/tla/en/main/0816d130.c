@@ -1,5 +1,5 @@
 // Draft, differ 97 of 298 (297 here), from the listing (The Broken Seal's
-// BattleFx_RunGatheringMotes is only a hint): a mote leaves the first
+// BattleFx_RunDrain is only a hint): a mote leaves the first
 // target as a ring of 24 sparks turning about it and is pulled toward the
 // user until it passes it. The blitter declared before the camera and the
 // sheet gives the native's stack slots; the spark size kept in a local set

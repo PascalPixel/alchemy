@@ -1,6 +1,6 @@
 // Draft of Func_0816f594, effect kind 110 (Radiant Fire), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunRisingBurst 0.525, call order BattleFx_RunIceShardBursts
+// BattleFx_RunUndeadSword 0.525, call order BattleFx_RunBreak
 // 0.551); the textured square goes through the ARM polygon kernels as in
 // the summons (Func_081969f8, Func_08196958, Func_08196a7c).
 

@@ -24,11 +24,11 @@ Data_08196e0c:
 	.global Data_08196e14
 Data_08196e14:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's wallHeights in BattleFx_RunRockWall; read by Func_08150c74
+@ The Broken Seal's wallHeights in BattleFx_RunQuake; read by Func_08150c74
 	.global Data_08196e1c
 Data_08196e1c:
 	.4byte -32, -32, -32, -32
-@ The Broken Seal's points in BattleFx_RunStormScene; read by Func_08158dc8
+@ The Broken Seal's points in BattleFx_RunThor; read by Func_08158dc8
 	.global Data_08196e2c
 Data_08196e2c:
 	.2byte 8, 135, 184, 135, 128, 135, 96, 32
@@ -69,11 +69,11 @@ gData_08196e7c:
 	.global gData_08196e84
 gData_08196e84:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's unitScale in BattleFx_RunFormationSweep; read by Func_081693d0
+@ The Broken Seal's unitScale in BattleFx_RunNeptune; read by Func_081693d0
 	.global Data_08196e8c
 Data_08196e8c:
 	.4byte 0x18000, 0x18000
-@ The Broken Seal's unitScale in BattleFx_RunFormationSweep; read by Func_08170364
+@ The Broken Seal's unitScale in BattleFx_RunNeptune; read by Func_08170364
 	.global Data_08196e94
 Data_08196e94:
 	.4byte 0x18000, 0x18000

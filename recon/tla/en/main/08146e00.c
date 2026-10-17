@@ -1,7 +1,7 @@
 // Draft, differ 774 of 1493 (the draft has 1507).
 
 // Summon 8 (Func_0814c994's case 8). Twin: The Broken Seal's
-// BattleFx_RunWhirlwindComets, ported by trial 2 and rewritten here. The
+// BattleFx_RunProcne, ported by trial 2 and rewritten here. The
 // Lost Age's changes: Func_08144aac for the pair; the whirlwind unpacked
 // with its palette by Resource_LoadAndDecompress into the work sheet, the
 // comets into work->sheet + 0x3600; frame / 4 % 3 written through

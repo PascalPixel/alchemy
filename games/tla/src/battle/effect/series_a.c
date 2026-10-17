@@ -10,15 +10,15 @@
 #include "types.h"
 #include "battle_effect_work.h"
 
-void BattleFx_RunHealingMotesMode0(struct BattleEffectArgument *effect) {
+void BattleFx_RunPly(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 0);
 }
 
-void BattleFx_RunHealingMotesMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunWish(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 1);
 }
 
-void BattleFx_RunHealingMotesMode2(struct BattleEffectArgument *effect) {
+void BattleFx_RunCure(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 2);
 }
 
@@ -30,7 +30,7 @@ void BattleFx_RunHealingMotesMode9(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 9);
 }
 
-void BattleFx_RunHealingMotesMode3Or4(struct BattleEffectArgument *effect) {
+void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunHealingMotes(effect, 3);
     return;
@@ -42,7 +42,7 @@ void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
 
-void BattleFx_RunHealingMotesMode5(struct BattleEffectArgument *effect) {
+void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 5);
 }
 
@@ -50,7 +50,7 @@ void BattleFx_RunHealingMotesMode7(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 7);
 }
 
-void BattleFx_RunHealingMotesMode6(struct BattleEffectArgument *effect) {
+void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 6);
 }
 

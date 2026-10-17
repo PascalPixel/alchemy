@@ -1,6 +1,6 @@
 // Draft of Func_08153ebc, summon scene 4 (Func_0814c994's case 4).
 
-// Twin: The Broken Seal's BattleFx_RunStagedParticles (effect.c), call
+// Twin: The Broken Seal's BattleFx_RunAtalanta (effect.c), call
 // for call, with The Lost Age's changes:
 // - the giant is eleven sprite objects (Func_0815b290, priority 1, their
 // 1 KB of tiles copied to object VRAM) in a grid of four rows of three,

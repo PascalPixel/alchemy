@@ -1,6 +1,6 @@
 // Draft of Func_081514bc, effect kind 6.
 
-// Twin: The Broken Seal's BattleFx_RunRisingMotes (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunFrost (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
 // blocks as Ram_HeapSlots fields, orders the callback 0xc80, ends 50
 // frames after the burst (The Broken Seal: 75) and begins the results

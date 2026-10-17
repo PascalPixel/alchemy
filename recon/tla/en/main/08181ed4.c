@@ -2,7 +2,7 @@
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
 // Func_08181eb0, Func_08181ebc and Func_08181ec8 pass modes 0, 2 and 1).
 // Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
-// nearest ☀️ shape is BattleFx_RunLightningPillars (0.50), which is no twin.
+// nearest ☀️ shape is BattleFx_RunPlasma (0.50), which is no twin.
 // The statements, frame (texture sp+40, the blitter pair sp+48, midpoint
 // sp+56) and the instruction count match.
 // Left:

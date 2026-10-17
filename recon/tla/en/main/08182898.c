@@ -1,7 +1,7 @@
 // Draft (tla-en): listing 225 instructions, draft 225, common 221, differ 8.
 // Written from the listing; called only by Func_0818284c (f18284c.c), which
 // opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
-// shapes are BattleFx_RunPuffArc (0.55) and BattleFx_RunFallingCrystals.
+// shapes are BattleFx_RunFlare (0.55) and BattleFx_RunPrism.
 // Statements, registers, stores and the frame (canvas sp+20, the blitter pair
 // sp+12/sp+16, frame sp+8) all match; four places are left where the native
 // loads first and this build does not: Func_08143000's address before work

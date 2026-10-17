@@ -29,7 +29,7 @@
 // Restores IME from saved.
 /* FAKEMATCH: the do { } while (0) wrapper steers: written plainly as *(ime) =
  * (saved), BattleFx_PlayUnitElementEffect differs 2 and
- * BattleFx_RunShockwaveScene differs 6 in all six ☀️ editions;
+ * BattleFx_RunJudgment differs 6 in all six ☀️ editions;
  * BattlePresentation_SetPaletteLevel's plain restore matches, and
  * IME_RESTORE((volatile u16 *)&REG_IME, saved) there differs 2 in all six
  * (measured 2026-10-14). A device at each use, as IRQ_UNLOCK is (S2). */

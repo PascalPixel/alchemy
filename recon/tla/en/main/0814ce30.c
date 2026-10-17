@@ -1,7 +1,7 @@
 // Near miss, differ 150 of 1490 (summon 5, the thorn vines), with one
 // tagged forced temporary (355 without).
 
-// ☀️ twin: BattleFx_RunDitherDissolveScene
+// ☀️ twin: BattleFx_RunCybele
 // (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line
 // for line: formation 645 spawned first, transparent blitters
 // Func_081963ec(104, 0x23) and (188, 0x27) and then max blitters (104,

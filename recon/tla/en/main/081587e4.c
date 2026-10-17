@@ -19,7 +19,7 @@
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunVenusDjinnRockToss (kind 203 there
+// Port of The Broken Seal's BattleFx_RunGround (kind 203 there
 // too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
 // callback order, no work->effect store, the canvas preparer's packed
 // arguments, and the chips' blitter built by BattleFx_LoadWork

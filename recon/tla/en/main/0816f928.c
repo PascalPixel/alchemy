@@ -1,7 +1,7 @@
 // Draft of Func_0816f928, effect kind 105 (Hurricane), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunJupiterDjinnFall 0.513, call order
-// BattleFx_RunLightningPillars 0.600). It ends without closing the canvas
+// BattleFx_RunJupiter 0.513, call order
+// BattleFx_RunPlasma 0.600). It ends without closing the canvas
 // layer: it clears the canvas and hands it to SummonFx_RunCanvasEffect
 // mode 3.
 

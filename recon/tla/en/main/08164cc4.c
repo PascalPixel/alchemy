@@ -1,8 +1,8 @@
 // Draft, differ 187 of 1681 (the two nested helpers first, then the body;
 // alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
 // BattleFx_RunParticleStreams, summon 11 and summon 0's default
-// (Func_0814c994's default case, through BattleFx_RunParticleStreamsMode0 and
-// BattleFx_RunParticleStreamsMode1 in particle_stream_modes.c), with its nested
+// (Func_0814c994's default case, through BattleFx_RunMeteor and
+// BattleFx_RunOuterSpace in particle_stream_modes.c), with its nested
 // helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused), which
 // adopt with it (S1 notes; alchemy permute cannot parse them).
 

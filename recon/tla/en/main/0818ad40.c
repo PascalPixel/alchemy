@@ -1,5 +1,5 @@
 // Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
-// (call order BattleFx_RunRockAndIceScene 0.468): ⚓️'s own effect on ☀️'s frame, a
+// (call order BattleFx_RunBoreas 0.468): ⚓️'s own effect on ☀️'s frame, a
 // sibling of the four cards of Func_0818a220. The card itself scrolls on a
 // tiled background; its picture is a textured quad by ⚓️'s model kernels.
 // The native frame (84) holds effect at sp+48, the mode 44, canvas 40, the

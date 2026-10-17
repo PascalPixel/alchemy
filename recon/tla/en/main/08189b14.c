@@ -1,5 +1,5 @@
 // Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
-// order BattleFx_RunCirclingFallingScene 0.455): ⚓️'s own effect on ☀️'s
+// order BattleFx_RunRamses 0.455): ⚓️'s own effect on ☀️'s
 // frame, with its rune and swords drawn as textured quads by ⚓️'s model
 // kernels, as in Triple Chomp (Func_0818b868).
 // The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,

@@ -18,7 +18,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunVenusDjinnColumns (kind 250 there),
+// Port of The Broken Seal's BattleFx_RunVenus (kind 250 there),
 // with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
 // order, and no work->effect store: the effect argument stays live instead.
 

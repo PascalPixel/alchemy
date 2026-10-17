@@ -1,6 +1,6 @@
 // Near miss, differ 42 of 457 (effect kind 18, the lightning pillars).
 
-// ☀️ twin: BattleFx_RunLightningPillars (games/tbs/src/effect/effect.c),
+// ☀️ twin: BattleFx_RunPlasma (games/tbs/src/effect/effect.c),
 // shape 0.846, structure 1.000. ⚓️'s changes: blitters from
 // Func_081963ec(104, 0x03) (additive, ⚓️ mode 0) and (188, 0x17) (max,
 // mirrored); the effect runs count * 7 + 42 frames where ☀️ runs

@@ -1,7 +1,7 @@
 // Near miss, differ 84 of 518.
 
 // Effect kinds 38 and 218. Twin: The Broken Seal's
-// BattleFx_RunSpinningTriangle, ported call for call; the body is
+// BattleFx_RunBind, ported call for call; the body is
 // Func_0814627c's (TriangleStrike) with the prelude. The Lost Age's changes
 // are those of Func_0814627c, plus: the canvas is prepared by Func_0815585c
 // (kind 3 | side << 4, then two three-word arrays) where The Broken Seal calls

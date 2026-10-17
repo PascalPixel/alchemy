@@ -1,7 +1,7 @@
 // Draft, differ 6 of 354: Func_081638d0, effect kind 214, The Broken Seal's
-// BattleFx_RunRipplingDisc.
+// BattleFx_RunTorch.
 
-// Twin: ☀️ BattleFx_RunRipplingDisc (games/tbs/src/effect/effect.c), ported
+// Twin: ☀️ BattleFx_RunTorch (games/tbs/src/effect/effect.c), ported
 // with The Lost Age's changes: the canvas set up through Func_0815585c
 // (kind | side << 4 | anchor << 5), 80 frames where ☀️ has 96 (the fade out
 // from frame 72), and a hit at frame 48 (results phase, eight frames of shake,

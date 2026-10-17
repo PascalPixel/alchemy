@@ -22,7 +22,7 @@
 // Teardown: the callback, both blitters and the rock objects are released
 // and the canvas layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunRisingWall (kind 3 there too),
+// Port of The Broken Seal's BattleFx_RunGaia (kind 3 there too),
 // with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
 // callback order, no work->effect store, and the rock object's flags at
 // 0x1a.

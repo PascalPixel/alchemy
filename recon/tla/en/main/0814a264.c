@@ -1,6 +1,6 @@
 // Near miss, differ 102 of 604 (effect kind 13, the fire pillars).
 
-// ☀️ twin: BattleFx_RunFirePillars (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunVolcano (games/tbs/src/effect/effect.c), shape
 // 0.847, structure 1.000. ⚓️'s changes: the effect argument read directly,
 // the red and orange palettes from directory rows 0x147 and 0x148, two max
 // blitters from Func_081963ec(104, 0x13) and (188, 0x17) (⚓️ max is mode

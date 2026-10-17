@@ -1,7 +1,7 @@
 // Draft, differ 78 of 804: Func_08165ab4, summon 1 (Func_0814c994's case 1,
-// actflags 0x8001), The Broken Seal's BattleFx_RunCirclingFallingScene.
+// actflags 0x8001), The Broken Seal's BattleFx_RunRamses.
 
-// Twin: ☀️ BattleFx_RunCirclingFallingScene
+// Twin: ☀️ BattleFx_RunRamses
 // (games/tbs/src/effect/effect.c), ported: Func_0813ba50 sets the display,
 // the six rock objects are resource 653 at objects 9 to 14 (☀️ 390), the
 // formation is resource 648 (☀️ 379), the blitters come from

@@ -1,6 +1,6 @@
 // Near miss, differ 69 of 355 (the draft has 356).
 
-// Effect kind 39. Twin: The Broken Seal's BattleFx_RunClosingSkulls, ported
+// Effect kind 39. Twin: The Broken Seal's BattleFx_RunHaunt, ported
 // call for call. The Lost Age's changes: work and canvas read directly, the
 // camera read again each frame; the skull sheet unpacked with its palette by
 // Resource_LoadAndDecompress and the pink burst palette copied after it;

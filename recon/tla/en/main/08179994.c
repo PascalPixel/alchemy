@@ -1,7 +1,7 @@
 // Draft (tla-en): listing 552 instructions, draft 556, common 396, differ 316.
 // Effect kind 78, written from the listing on ☀️'s skeleton; its nearest ☀️
-// shapes are BattleFx_RunLightningPillars (0.49) and
-// BattleFx_RunFireSwirlCharge (0.67 by calls), neither a twin.
+// shapes are BattleFx_RunPlasma (0.49) and
+// BattleFx_RunHelmSplitter (0.67 by calls), neither a twin.
 // Written 2026-10-15 (lane N2).
 // Left:
 // - the native frame is 120 bytes, here 124: one more spill slot, so

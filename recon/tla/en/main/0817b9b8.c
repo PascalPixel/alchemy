@@ -1,5 +1,5 @@
 // Draft (tla-en): listing 436 instructions, draft 436, common 392, differ 88.
-// Written from the listing (☀️'s BattleFx_RunJupiterDjinnFall is only a
+// Written from the listing (☀️'s BattleFx_RunJupiter is only a
 // hint). The pink star burst: 32 smoke puffs rise from the caster for 24
 // frames, the caster rises and leans to the target, and at frame 32 the
 // target bursts into 16 pink stars for 24 frames.

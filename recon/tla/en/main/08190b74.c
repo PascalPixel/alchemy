@@ -1,6 +1,6 @@
 // Draft, differ 743 of 1075 (draft 1058 instructions, no device): effect
 // kind 125, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleFx_RunFallingSword 0.44 by shape, BattleFx_RunHealingMotes 0.38
+// (twins: BattleFx_RunTitanBlade 0.44 by shape, BattleFx_RunHealingMotes 0.38
 // by call order); its backdrop swap is the one Func_0818fefc (kind 124)
 // also makes. Every call, cue and table read is in the native's order.
 // The native frame is 136 bytes: to at sp+124, from sp+112, the spawn list

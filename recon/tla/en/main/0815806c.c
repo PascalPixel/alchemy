@@ -17,7 +17,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunMarsDjinnPuffs (kind 252 there),
+// Port of The Broken Seal's BattleFx_RunMars (kind 252 there),
 // with The Lost Age's heap slots and callback order and no work->effect
 // store.
 

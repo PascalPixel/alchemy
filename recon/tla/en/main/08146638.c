@@ -1,6 +1,6 @@
 // Near miss, differ 34 of 480.
 
-// Twin: The Broken Seal's BattleFx_RunRingBolts (effect kind 68 there and
+// Twin: The Broken Seal's BattleFx_RunAstralBlast (effect kind 68 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), the rune palette and
 // resource 0x134 as in Func_08146a6c, Object_SetMode for the caster where The

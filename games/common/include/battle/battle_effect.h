@@ -7,11 +7,11 @@
 struct BattleEffectArgument;
 #if GAME_TLA
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
-void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleStreamsMode1(struct BattleEffectArgument *effect);
+void BattleFx_RunMeteor(struct BattleEffectArgument *effect);
+void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                                   s32 mode);
-void BattleFx_RunDitherDissolveScene(struct BattleEffectArgument *effect);
+void BattleFx_RunCybele(struct BattleEffectArgument *effect);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 

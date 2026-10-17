@@ -1,7 +1,7 @@
 // Draft, differ 10 of 320: Func_0816a730, effect kind 320, The Broken Seal's
-// BattleFx_RunRisingBurst.
+// BattleFx_RunUndeadSword.
 
-// Twin: ☀️ BattleFx_RunRisingBurst (games/tbs/src/effect/effect.c), ported:
+// Twin: ☀️ BattleFx_RunUndeadSword (games/tbs/src/effect/effect.c), ported:
 // the heap blocks read from Ram_HeapSlots, the effect kept as the argument (the
 // dispatcher stores work->effect), no blitter fetch before the loop (only the
 // one after each frame's columns), a lighter shake while the columns are still

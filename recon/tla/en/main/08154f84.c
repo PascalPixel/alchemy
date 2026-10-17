@@ -1,7 +1,7 @@
 // Draft of Func_08154f84, effect kind 5: thorns burst out of the ground one
 // after another, eight frames apart, each throwing up two frames of dust.
 
-// Twin: The Broken Seal's BattleFx_RaisePillars (effect.c), the same kind.
+// Twin: The Broken Seal's BattleFx_RunThorn (effect.c), the same kind.
 // Listing 453 instructions, draft 453, differ 50 with two tagged devices
 // (the heap base barrier and the spelled-out lean); 61 with the barrier
 // removed, 84 with age stepped as its own induction variable instead of

@@ -20,7 +20,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunParticleReveal (kind 207 there
+// Port of The Broken Seal's BattleFx_RunHail (kind 207 there
 // too), with The Lost Age's heap slots and callback order, no work->effect
 // store, and the canvas preparer's packed arguments: kind | side << 4 |
 // anchor << 5, with the screen point returned in a three-word array.

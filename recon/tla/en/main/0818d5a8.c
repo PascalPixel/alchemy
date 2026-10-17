@@ -1,7 +1,7 @@
 // Draft, differ 564 of 927 (draft 935 instructions, no device): the body
 // of the leaping strike family (Func_0818d590 mode 0 and Func_0818d59c
 // mode 1 in summon_modes_7.c), written from the listing on The Broken
-// Seal's canvas skeleton (twin BattleFx_RunLeapingStrike 0.53 by shape and
+// Seal's canvas skeleton (twin BattleFx_RunPlanetDiver 0.53 by shape and
 // call order: the caster object leaps, lands and slides as there) with the
 // ARM model renderer for mode 1's claw, rings and pillars.
 // The native frame is 92 bytes: effect sp+68, mode sp+64, work sp+60,

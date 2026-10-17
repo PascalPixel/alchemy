@@ -1,7 +1,7 @@
 // Draft, differ 809 of 895 (draft 874 instructions, no device): effect kind
 // 123, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleFx_RunFallingSword 0.46, by call order
-// BattleFx_RunJupiterDjinnFall 0.50), with the ARM model renderer for its
+// (twins: BattleFx_RunTitanBlade 0.46, by call order
+// BattleFx_RunJupiter 0.50), with the ARM model renderer for its
 // flashes, shards, splashes and rings.
 // Every call, cue and table read is in the native's order; what is left is
 // the frame. The native frame is 92 bytes: from at sp+80, to at sp+68, the

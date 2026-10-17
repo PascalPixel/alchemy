@@ -1,7 +1,7 @@
 // Draft of Func_0816d3d8, effect kind 100 (Stone Justice), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunShatteringRocks 0.502, call order BattleFx_RunFallingCrystals
-// 0.680); the shard drawing follows BattleFx_RunShatteringRocks, and the
+// BattleFx_RunSpire 0.502, call order BattleFx_RunPrism
+// 0.680); the shard drawing follows BattleFx_RunSpire, and the
 // shard tables are its gShatterRocks_ShardWidths, Heights and Cells.
 
 // Listing 374 instructions, draft 374, differ 30.

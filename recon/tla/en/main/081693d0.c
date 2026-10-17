@@ -1,8 +1,8 @@
 // Draft, differ 360 of 1632 (1628 here): Func_081693d0, summon 6
 // (Func_0814c994's case 6, actflags 0x8006), The Broken Seal's
-// BattleFx_RunFormationSweep as The Lost Age reworked it.
+// BattleFx_RunNeptune as The Lost Age reworked it.
 
-// Twin: ☀️ BattleFx_RunFormationSweep (games/tbs/src/effect/effect.c), with The
+// Twin: ☀️ BattleFx_RunNeptune (games/tbs/src/effect/effect.c), with The
 // Lost Age's changes: no BattleFx_SpawnObjects; instead its own object build
 // (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
 // Resource_DecodeType01 into the map cell buffer, eight

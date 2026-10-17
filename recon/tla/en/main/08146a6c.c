@@ -1,6 +1,6 @@
 // Near miss, differ 30 of 410.
 
-// Twin: The Broken Seal's BattleFx_RunSpinningStars (effect kind 62 there and
+// Twin: The Broken Seal's BattleFx_RunShiningStar (effect kind 62 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), resource 0x134 is
 // unpacked into the sheet slot where The Broken Seal decodes its particle

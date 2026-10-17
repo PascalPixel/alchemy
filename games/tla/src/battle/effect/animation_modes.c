@@ -11,7 +11,7 @@ void BattleFx_RunBurstScene(struct EffectStep *, s32);
 // Each entry passes a burst type to BattleFx_RunBurstScene.
 // step: effect arguments.
 //--------------------------------------------------------------------------
-void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step) {
+void BattleFx_RunGust(struct EffectStep *step) {
   if (step->variant == 0) {
     BattleFx_RunBurstScene(step, 6);
     return;
@@ -23,23 +23,23 @@ void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step) {
   BattleFx_RunBurstScene(step, 8);
 }
 
-void EffectStep_RunAnimationMode0(struct EffectStep *step) {
+void BattleFx_RunBearClaw(struct EffectStep *step) {
   BattleFx_RunBurstScene(step, 0);
 }
 
-void EffectStep_RunAnimationMode0Alternate(struct EffectStep *step) {
+void BattleFx_RunRansack(struct EffectStep *step) {
   BattleFx_RunBurstScene(step, 0);
 }
 
-void EffectStep_RunAnimationMode1(struct EffectStep *step) {
+void BattleFx_RunBacteriaRush(struct EffectStep *step) {
   BattleFx_RunBurstScene(step, 1);
 }
 
-void EffectStep_RunAnimationMode2(struct EffectStep *step) {
+void BattleFx_RunFreebiteRush(struct EffectStep *step) {
   BattleFx_RunBurstScene(step, 2);
 }
 
-void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step) {
+void BattleFx_RunFlyingAttack(struct EffectStep *step) {
   if (step->variant == 0) {
     BattleFx_RunBurstScene(step, 3);
     return;

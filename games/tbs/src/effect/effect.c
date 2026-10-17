@@ -255,6 +255,17 @@ enum CanvasTransferMode {
 // is inside the window.
 #define WINDOW_SPAN_EMPTY WINDOW_SPAN(1, 0)
 
+// Keeps `v` within low to high, the low bound tested first: a screen depth,
+// a colour level or a clipped coordinate. A plain block, as a do-while (0)
+// compiles differently at some of its sites.
+#define EFFECT_CLAMP(v, low, high)                                             \
+  {                                                                            \
+    if ((v) < (low))                                                           \
+      (v) = (low);                                                             \
+    if ((v) > (high))                                                          \
+      (v) = (high);                                                            \
+  }
+
 // Used for clipping canvas lines and comparing projectile travel distances.
 #define EFFECT_ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -3597,14 +3608,8 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 tmp;
   u32 offset;
 
-  if (y0 < 0)
-    y0 = 0;
-  if (y0 > 127)
-    y0 = 127;
-  if (y1 < 0)
-    y1 = 0;
-  if (y1 > 127)
-    y1 = 127;
+  EFFECT_CLAMP(y0, 0, 127);
+  EFFECT_CLAMP(y1, 0, 127);
 
   if (EFFECT_ABS(dx) < EFFECT_ABS(dy)) {
     // Steep: step y a pixel at a time and follow x in fixed point.
@@ -7224,10 +7229,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
       if (frame > i * 2 && flags[i] == 0) {
         EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
         screenPosition.x >>= 1;
-        if (screenPosition.depth < 160)
-          screenPosition.depth = 160;
-        if (screenPosition.depth > 0x31f)
-          screenPosition.depth = 0x31f;
+        EFFECT_CLAMP(screenPosition.depth, 160, 0x31f);
         draw[0](canvas, work->sheet + FROTH_MOTE_CELL, screenPosition.x - 6,
                 screenPosition.y - 12, 12, 24);
         point->x += point->velocityX;
@@ -7595,18 +7597,9 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     green = (index + greenOffset) / 2;
     blue = (index + blueOffset) / 2;
 
-    if (red < 0)
-      red = 0;
-    if (red > 31)
-      red = 31;
-    if (green < 0)
-      green = 0;
-    if (green > 31)
-      green = 31;
-    if (blue < 0)
-      blue = 0;
-    if (blue > 31)
-      blue = 31;
+    EFFECT_CLAMP(red, 0, 31);
+    EFFECT_CLAMP(green, 0, 31);
+    EFFECT_CLAMP(blue, 0, 31);
 
     *output++ = (blue << 10) | (green << 5) | red;
     index++;
@@ -8850,10 +8843,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset(spark, &screen);
         screen.x >>= 1;
         Transform_Pop();
-        if (screen.depth < 250)
-          screen.depth = 250;
-        if (screen.depth > 634)
-          screen.depth = 634;
+        EFFECT_CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
@@ -8933,10 +8923,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
               EffectPosition_ApplyBaseAndYOffset(spark, &view);
               view.x >>= 1;
-              if (view.depth < 314)
-                view.depth = 314;
-              if (view.depth > 634)
-                view.depth = 634;
+              EFFECT_CLAMP(view.depth, 314, 634);
               /* FAKEMATCH: needed to match: the size series A draws its sparks
                * at, kept from that effect and never used here. Without the dead
                * store: differ 479. */
@@ -9126,10 +9113,7 @@ void BattleFx_BuildWindowEdgeTable(void) {
   for (scanline = 0; scanline != 160; scanline++) {
     if (scanline >= 8 && scanline <= 135) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
-      if (rightEdge < 0)
-        rightEdge = 0;
-      if (rightEdge > 240)
-        rightEdge = 240;
+      EFFECT_CLAMP(rightEdge, 0, 240);
       scanlineEdges[scanline] = rightEdge;
     } else {
       scanlineEdges[scanline] = 0xfff1;
@@ -10834,10 +10818,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 
               // Size 3 to 1 over depths 314 to 634 (mode 0 cycles through 9
               // sizes).
-              if (screen.depth < 314)
-                screen.depth = 314;
-              if (screen.depth > 634)
-                screen.depth = 634;
+              EFFECT_CLAMP(screen.depth, 314, 634);
               size = 3 - (screen.depth - 314) / 128;
               if (mode == 0)
                 size = (i * 4 + frame) % 9;
@@ -11125,10 +11106,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
               // The size (half the width) runs 6 to 1 over depths 314 to 634.
               EffectPosition_ApplyBaseAndYOffset(flare, &screen);
               screen.x = screen.x * 4 / 5 + canvasShiftX;
-              if (screen.depth < 314)
-                screen.depth = 314;
-              if (screen.depth > 634)
-                screen.depth = 634;
+              EFFECT_CLAMP(screen.depth, 314, 634);
               size = 6 - (screen.depth - 314) / 64;
               EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet, screen.x,
                                 screen.y, size);
@@ -11894,10 +11872,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         // frames, additive after.
         EffectPosition_ApplyBaseAndYOffset(ember, &screen);
         screen.x >>= 1;
-        if (screen.depth < 160)
-          screen.depth = 160;
-        if (screen.depth > 799)
-          screen.depth = 799;
+        EFFECT_CLAMP(screen.depth, 160, 799);
         size = 10 - (screen.depth - 160) / 64;
         draw[frame < launchFrame + 48 ? 1 : 0](
             canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
@@ -12546,10 +12521,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
         EffectPosition_ApplyBaseAndYOffset(mote, &screen);
         screen.x >>= 1;
         screen.x += work->effect->side * 32 - 16;
-        if (screen.depth < 160)
-          screen.depth = 160;
-        if (screen.depth > 799)
-          screen.depth = 799;
+        EFFECT_CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
                 work->sheet +
@@ -13061,10 +13033,7 @@ void BattleFx_RunSwirlingStars(void *object) {
         EffectPosition_ApplyBaseAndYOffset(star, &screen);
         screen.x >>= 1;
         Transform_Pop();
-        if (screen.depth < 250)
-          screen.depth = 250;
-        if (screen.depth > 0x27a)
-          screen.depth = 0x27a;
+        EFFECT_CLAMP(screen.depth, 250, 0x27a);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet +
@@ -14534,10 +14503,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
         position.x >>= 1;
         Transform_Pop();
-        if (position.depth < 250)
-          position.depth = 250;
-        if (position.depth > 634)
-          position.depth = 634;
+        EFFECT_CLAMP(position.depth, 250, 634);
         size = 8 - (position.depth - 250) / 64;
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y, size);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
@@ -17727,10 +17693,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     if (frame >= 12 && frame <= 87) {
       s32 row = (frame - 64) / 3;
 
-      if (row < 0)
-        row = 0;
-      if (row > 7)
-        row = 7;
+      EFFECT_CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
@@ -17744,10 +17707,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     if (frame >= 160 && frame <= 183) {
       s32 row = 7 - (frame - 160) / 3;
 
-      if (row < 0)
-        row = 0;
-      if (row > 7)
-        row = 7;
+      EFFECT_CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
@@ -18384,10 +18344,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           EffectPosition_ApplyBaseAndYOffset(&mote->x, &point);
           point.x += 64;
           point.y = point.y + screenPosition.y + 24;
-          if (point.depth < -60)
-            point.depth = -60;
-          if (point.depth > 60)
-            point.depth = 60;
+          EFFECT_CLAMP(point.depth, -60, 60);
           point.depth += 60;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
           mote->x -= 4;
@@ -18910,10 +18867,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
               sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
-            if (sparkScreen.depth < -60)
-              sparkScreen.depth = -60;
-            if (sparkScreen.depth > 60)
-              sparkScreen.depth = 60;
+            EFFECT_CLAMP(sparkScreen.depth, -60, 60);
             sparkScreen.depth += 60; // 0〜120
             EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
                              sparkScreen.y, size);
@@ -20693,14 +20647,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         red = level - 32;
         green = level - 80;
 
-        if (red < 0)
-          red = 0;
-        if (red > 31)
-          red = 31;
-        if (green < 0)
-          green = 0;
-        if (green > 31)
-          green = 31;
+        EFFECT_CLAMP(red, 0, 31);
+        EFFECT_CLAMP(green, 0, 31);
         *line++ = (red << 10) | (green << 5) | (green >> 1);
       }
       for (; i != 160; i++)

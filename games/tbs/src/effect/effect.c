@@ -12841,6 +12841,18 @@ void BattleFx_RunNoEffect(void) {}
 // The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_IMAGE (work->sheet + 0xC56)
 
+// The burst shower's styles, its mode argument.
+enum BurstShowerMode {
+  BURST_SHOWER_MODE_FLASH,     // flash bursts
+  BURST_SHOWER_MODE_ICE,       // in the ice block palette
+  BURST_SHOWER_MODE_SPRAY,     // in the water spray palette
+  BURST_SHOWER_MODE_PINK,      // pink, fired from 16 pixels lower
+  BURST_SHOWER_MODE_DJINNI,    // Mars djinni palette, 28 pixels in front
+  BURST_SHOWER_MODE_LIGHTNING, // no bursts: a violet lightning bolt
+  BURST_SHOWER_MODE_GREY,      // grey; the targets keep palette 14
+  BURST_SHOWER_MODE_FACES,     // demon faces from 16 pixels in front
+};
+
 // Arms DMA 0 to copy one word of gBattleFxWork's bg2X table into BG2X at
 // each horizontal blank, bending BG2 line by line.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
@@ -12854,53 +12866,52 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
 //
 // Fire flash bursts from the user towards randomly chosen targets.
 void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 0);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
 }
 
 // Abilities: Water Blessing (kind 401).
 //
 // Fire the burst shower in the water-spray palette.
 void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 2);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
 }
 
 // Abilities: Dark Blessing (kind 403).
 //
 // Fire grey bursts and leave the targets in palette 14.
 void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 6);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
 }
 
 // Abilities: Dark Blessing, Acid Blessing (kind 404).
 //
 // Fire pink bursts from 16 pixels below the normal origin.
 void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 3);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
 }
 
 // Abilities: Storm Blessing (kind 405).
 //
 // Show violet lightning between the user and targets instead of bursts.
 void BattleFx_RunStormBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 5);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
 }
 
 // Abilities: Evil Blessing (kind 406).
 //
 // Fire demon-face bursts from 16 pixels in front of the user.
 void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 7);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
 }
 
 // Abilities: Deadly Gas (kind 407).
 //
 // Fire Mars-coloured bursts from 28 pixels in front of the user.
 void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, 4);
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
 }
 
 #define BURST_SHOWER_FRAMES 64 // frames in the effect
-#define BURST_SHOWER_MODE_LIGHTNING 5 // the mode that draws a lightning bolt
 
 // Burst shower: for 48 frames the user fires one burst a frame at a random
 // point near one of the targets, and each target is hit every 8 frames.
@@ -12940,7 +12951,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
 
-  if (mode == 7) {
+  if (mode == BURST_SHOWER_MODE_FACES) {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     blit[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
@@ -12958,7 +12969,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
                                BURST_SHOWER_IMAGE, 1, 1);
-  } else if (mode == 7) {
+  } else if (mode == BURST_SHOWER_MODE_FACES) {
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                BURST_SHOWER_IMAGE, 1, 1);
   } else {
@@ -12966,7 +12977,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
                                BURST_SHOWER_IMAGE, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
-    if (mode == 6) {
+    if (mode == BURST_SHOWER_MODE_GREY) {
       for (i = 0, color = (u16 *)BG_PLTT; i != 64; i++) {
         level = i / 4;
         *color = ((level << 10) | (level << 5)) | level;
@@ -12975,19 +12986,19 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       REG_BLDCNT = 0;
     } else {
       switch (mode) {
-      case 0:
+      case BURST_SHOWER_MODE_FLASH:
         paletteId = (s32)&ResourceId_FlashBurstSheet;
         break;
-      case 1:
+      case BURST_SHOWER_MODE_ICE:
         paletteId = (s32)&ResourceId_IceBlockSheet;
         break;
-      case 2:
+      case BURST_SHOWER_MODE_SPRAY:
         paletteId = (s32)&ResourceId_WaterSpraySheet;
         break;
-      case 3:
+      case BURST_SHOWER_MODE_PINK:
         paletteId = (s32)&ResourceId_PinkPalette;
         break;
-      case 4:
+      case BURST_SHOWER_MODE_DJINNI:
       default:
         paletteId = (s32)&ResourceId_MarsDjinnSheet;
         break;
@@ -12996,7 +13007,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  if (mode == 7) {
+  if (mode == BURST_SHOWER_MODE_FACES) {
     work->transferMode = CANVAS_COPY_AND_FADE;
     work->transferValue = 50;
   } else {
@@ -13011,17 +13022,17 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   EffectPosition_ApplyAnimationAndYOffset(work->effect->actor, &origin);
-  if (mode == 3) {
+  if (mode == BURST_SHOWER_MODE_PINK) {
     origin.y -= 16;
   }
-  if (mode == 4) {
+  if (mode == BURST_SHOWER_MODE_DJINNI) {
     if (work->effect->side == 1) {
       origin.x += 28;
     } else {
       origin.x -= 28;
     }
   }
-  if (mode == 7) {
+  if (mode == BURST_SHOWER_MODE_FACES) {
     if (work->effect->side == 1) {
       origin.x += 16;
     } else {
@@ -13047,7 +13058,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 4) {
       AudioCommand_PlayFar(136);
     }
-    if (mode != 6) {
+    if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {
         BattleEventRuntime_BeginPhaseFar(134);
       }
@@ -13086,13 +13097,13 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     do {
       struct EffectStep *spark = &work->particles[i];
       if (spark->variant >= 0) {
-        if (mode == 7) {
+        if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
             blit[work->effect->side](canvas, BURST_SHOWER_IMAGE,
                                      HI(spark->x) - 16, HI(spark->y) - 32,
                                      width, height);
           }
-        } else if (mode == 4) {
+        } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
             blit[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
                     HI(spark->x) - 16, HI(spark->y) - 32, width, height);
@@ -13128,7 +13139,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       while (i != work->effect->count) {
         if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
-          if (mode == 6) {
+          if (mode == BURST_SHOWER_MODE_GREY) {
             ObjectGroup_UpdateMembers(work->effect->actors[i], 14, 5, i, 4);
           } else {
             ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 4);
@@ -13140,7 +13151,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Camera_ApplyShake(4, 4);
-    if (mode != 6) {
+    if (mode != BURST_SHOWER_MODE_GREY) {
       ObjectGroup_TickMemberTimers();
     }
     work->transferPending = 1;

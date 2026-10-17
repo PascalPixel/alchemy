@@ -158,7 +158,8 @@ enum CanvasTransferMode {
 void BattleFx_ConfigureEffectDisplay(void) {
   // Restore the battle viewport before the next effect changes its layers.
   REG_BLDCNT = 0;
-  REG_BLDALPHA = 0x100e; // 14/16 of the top layer over all of the bottom
+  REG_BLDALPHA =
+      BLEND_ALPHA(14, 16); // 14/16 of the top layer over all of the bottom
   REG_WIN0H = 0x00f0;    // x 0 to 240
   REG_WIN0V = 0x1088;    // y 16 to 136
   REG_WIN1H = 0x00f0;
@@ -1261,7 +1262,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
 
   // The images: glints at the start of the sheet, the slashes or the
   // columns at 0xc80, smoke at 0x3200, and the style's palette.
@@ -1835,7 +1836,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;     // unscaled
-  REG_BLDALPHA = 0x1000; // invisible to start with
+  REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
 
   // [0] draws as is, [1] mirrored; both skip colour 0.
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -2009,7 +2010,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = 0x100c; // 12/16 over all of the background
+  REG_BLDALPHA = BLEND_ALPHA(12, 16); // 12/16 over all of the background
   REG_BG2PA = 0x100;     // unscaled
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
@@ -2236,7 +2237,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(canvas, size);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), size);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask,
                              work->imageStorage, 1, 1);
@@ -2540,7 +2541,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  REG_BLDALPHA = 0x100c; // 12/16 over all of the background
+  REG_BLDALPHA = BLEND_ALPHA(12, 16); // 12/16 over all of the background
   REG_BG2PA = 0x100;     // unscaled
   Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
                              0);
@@ -2729,7 +2730,7 @@ void BattleFx_PrepareScene(s32 kind) {
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   REG_BG2PA = 0x100;     // unscaled
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   switch (kind) {
   case 0:
     id = (s32)&ResourceId_YellowPaletteB;
@@ -3286,7 +3287,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 
   REG_BLDCNT = 0x3f44;   // alpha-blend BG2 over everything
-  REG_BLDALPHA = 0x100e; // 14:16
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000; // 16 lines down
   REG_BG2PA = 0x80;   // twice the width
@@ -3357,7 +3358,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 
   REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
   REG_BG2PA = 0x80;
@@ -3511,7 +3512,7 @@ void BattleFx_SetupCanvasTileMap(void) {
   REG_WIN1V = 0x1088;
   REG_WININ = 0x3537;
   REG_WINOUT = 0x3f21;
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   Iwram_ClearWords(canvas, 0x4000);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   WaitFrames(1);
@@ -4732,7 +4733,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
 
   // The shell images, the smoke at 0x3e80 and the style's palette.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
@@ -5024,7 +5025,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   work->effect = object;
   BattleFx_BeginTiledCanvas(0);
   REG_BG2PA = 0x100;     // unscaled
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
 
   // The panel in work, the pieces of the burst in gMapCellBuffer.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
@@ -5083,7 +5084,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
       drawPanel = 0;
     }
     if (frame == 33) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       drawPanel = 1;
     }
     // Frame 64: the last pass, on the first target.
@@ -5098,7 +5099,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
       drawPanel = 0;
     }
     if (frame == 65) {
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       drawPanel = 1;
     }
     // The last 16 frames of each of the first two passes ripple harder and
@@ -6574,7 +6575,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   sheet = cursor[1];    // [41] the particle images
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   REG_BG2CNT = 0x784;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -6957,7 +6958,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   graphics = cursor[1]; // [41] the particle images
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   BattleFx_FetchRectangleBlitters(0, draw);
 
   // The band along the bottom from WaterSpray, the columns from FirePillarA
@@ -7210,7 +7211,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
-  REG_BLDALPHA = 0x0f0f; // 15/16 of each
+  REG_BLDALPHA = BLEND_ALPHA(15, 15); // 15/16 of each
   draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
@@ -7356,7 +7357,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -7378,7 +7379,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  REG_BLDALPHA = 0x1000; // invisible to start with
+  REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
   AudioCommand_PlayFar(141);
 
@@ -7498,7 +7499,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
@@ -7705,7 +7706,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
@@ -7932,7 +7933,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;
   }
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
@@ -8142,7 +8143,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010; // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -9279,7 +9280,7 @@ void BattleFx_SetupBlendedDisplay(void) {
   Dma_Fill32Cell(fill, 0, canvas, 0x4000);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), 0x4000);
   WaitFrames(1);
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
   gProjection.centerY = 120;
@@ -9950,7 +9951,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   BattleFx_SpawnObjects(9, 0x174, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0x3f44;
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
@@ -10207,7 +10208,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
   BattleFx_SetupBlendedDisplay();
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   AudioCommand_PlayFar(289);
 
   for (i = 0; i != 64; i++) {
@@ -11650,7 +11651,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDCNT = 0x3f46;
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -12015,7 +12016,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the bodyTop of the user's body in a random direction and
   // speed, rising at -16 to 111 sixty-fourths of a pixel a frame.
@@ -12982,7 +12983,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   sprites = (u8 *)slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   if (mode == BURST_SHOWER_MODE_FACES) {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -13327,7 +13328,7 @@ void BattleFx_RunOrbitingSparks(void) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
   Resource_DecodeType01(skulls + 128, work);
@@ -13637,7 +13638,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   BattleFx_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0x3f44;
   pathX = 0;
   pathY = 0;
@@ -14312,7 +14313,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = 0x100; // the canvas at its own width
   REG_BLDCNT = 0;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
@@ -14873,7 +14874,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Iwram_ClearWords(canvas, 0x4000);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 }
 
 // Projectile volleys and rushing strikes.
@@ -16072,7 +16073,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   draw = blit;
   BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -16215,7 +16216,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y,
                     COMPOSITE_MAX);
@@ -16674,7 +16675,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screenX,
                                &screenY);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
@@ -16996,7 +16997,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   blit[0] = blitters[HEAP_SLOT_BLITTER];
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x100f;
+  REG_BLDALPHA = BLEND_ALPHA(15, 16);
   REG_BLDCNT = 0x3f44;
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
@@ -17219,7 +17220,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
     s32 formationX;
     s32 formationY;
@@ -17734,7 +17735,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->prelude == 1)
     BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screenX,
                                  &screenY);
@@ -18055,7 +18056,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
                     COMPOSITE_MAX);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDCNT = 0x3f46;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails, fading to 3/4
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
@@ -19111,7 +19112,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   } else {
     BattleFx_BeginCanvasLayer(0);
   }
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   //------------------------------------------------------------------
   // Graphics
@@ -19446,14 +19447,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     CastingImpact_LoadResource(&ResourceId_CounterRevealSheet, work, 1, 1);
     CastingImpact_LoadResource(&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer,
                                1, 0);
-    REG_BLDALPHA = 0xe10;
+    REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   if (kind == CASTING_IMPACT_ASURA) {
     CastingImpact_LoadResource(&ResourceId_BlueBeastSheet, work->imageStorage,
                                1, 1);
     CastingImpact_LoadResource(&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer,
                                1, 0);
-    REG_BLDALPHA = 0xe10;
+    REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   // 64 impact-image particles at gMapCellBuffer + 0x4000.
   if (kind != CASTING_IMPACT_SAP && kind != CASTING_IMPACT_LIFE_NOURISH &&
@@ -20261,7 +20262,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   BattleFx_PrepareCanvasEffect(effect, 6, work->effect->side, 2, &screenX,
                                &screenY);
   REG_BG2CNT = 0x2784;
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = 0xaa;
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -21017,7 +21018,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (limit <= 191);
   }
   REG_BLDCNT = 0x3f42;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
@@ -21235,7 +21236,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = 0x2784;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -21472,7 +21473,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0x3f44;
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
@@ -21701,7 +21702,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   sheet = heapCache[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
                              1);
   for (i = 1; i != 20; i++) {
@@ -22153,7 +22154,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   effect->variant = 1;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleFx_FetchRectangleBlitters(work->effect->side, blit);
   ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
   ObjectDispatch_ApplyValueToChildrenFar(user, 48);
@@ -22407,7 +22408,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
 
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
                                               &screenPosition);
   canvasCenterX = screenPosition.x / 2;
@@ -22854,7 +22855,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   BattleFx_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0x3f44;
   depth = 0xffc00000;
   zoom = 0x80000;
@@ -23289,7 +23290,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       fill = 0x01010101;
       Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
       ctrl->active = 0;
-      REG_BLDALPHA = 0x1010;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         particle->x = ((Random16() & 63) + 256) << 16;
@@ -23733,7 +23734,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x100e;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT = 0x3f44;
 
   baseX = 0;
@@ -23953,7 +23954,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     work->transferMode = CANVAS_COPY_AND_FADE;
     work->transferValue = 75;
     REG_BG2CNT = 0x784;
-    REG_BLDALPHA = 0x1010;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
     frame = 0;
     do {
@@ -24172,7 +24173,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0x3f44;
   windowEdgeStep = 1;
   formationX = 140 << 17;
@@ -24504,7 +24505,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
                              1);
   AudioCommand_PlayFar(0x121);
   REG_BG2PA = 0x80;
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   frame = 0;
   do {

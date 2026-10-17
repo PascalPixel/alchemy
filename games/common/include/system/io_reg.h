@@ -53,6 +53,8 @@ enum DisplayControl {
 #define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
+// A REG_BLDALPHA value: top and bottom are the two targets' weights, out of 16.
+#define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054)
 
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)

@@ -3476,7 +3476,6 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
 
 // REG_BLDCNT: blend the targets' sprites over every layer, fading.
 #define BLEND_SPRITES_OVER_ALL 0x3f40
-#define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 
 // Auto battle: plays a Psynergy. The camera turns to the caster's side and
 // the caster raises its hand; the target side fades out, its living units

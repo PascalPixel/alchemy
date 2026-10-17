@@ -22804,7 +22804,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   struct EffectPosition projectedPosition;
   struct SpritePlacement place;
   volatile u32 fill;
-  struct SpritePlacement place2;
+  struct SpritePlacement debrisPlace;
   struct SpriteScale pair;
   struct SpriteScale scale;
   void *canvas;
@@ -23436,7 +23436,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
           s32 err = ring;
           while (radius >= slope) {
             s32 half;
-            s32 half2;
+            s32 halfSlope;
             s32 left;
             s32 right;
             s32 top;
@@ -23484,8 +23484,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + left] = 20;
             work->sheet[top * SHOCKWAVE_WAVE_SIZE + left] = 20;
 
-            half2 = slope / 2;
-            dx = (half2 * sx) / 8;
+            halfSlope = slope / 2;
+            dx = (halfSlope * sx) / 8;
             right = cx + dx;
             /* FAKEMATCH: a dead branch restores the label CSE and reload saw
              * between the edges. 2026-10-13: without it 1954 of 2455 differ,
@@ -23512,8 +23512,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             work->sheet[top * SHOCKWAVE_WAVE_SIZE + right] = 20;
             work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + left] = 20;
             work->sheet[top * SHOCKWAVE_WAVE_SIZE + left] = 20;
-            right = cx + half2 + 1;
-            left = cx - half2 + 1;
+            right = cx + halfSlope + 1;
+            left = cx - halfSlope + 1;
             if (left < 0) {
               left = 0;
             }
@@ -23582,8 +23582,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 213) {
-      place2.groundHeight = 0;
-      place2.height = 0;
+      debrisPlace.groundHeight = 0;
+      debrisPlace.height = 0;
       for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         if (particle->variant != 0) {
@@ -23592,11 +23592,11 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             scale.x = 0x800;
           }
           scale.y = scale.x;
-          place2.x = particle->x;
-          place2.height = 0xff0000;
-          place2.y = particle->y + 0xff0000;
-          Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &scale,
-                                            0);
+          debrisPlace.x = particle->x;
+          debrisPlace.height = 0xff0000;
+          debrisPlace.y = particle->y + 0xff0000;
+          Object_ApplyProjectedPlacementFar(work->objects[i], &debrisPlace,
+                                            &scale, 0);
           particle->y -= particle->velocityY;
           if (particle->y < 0x100000) {
             if (frame <= 279) {
@@ -23702,7 +23702,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   struct EffectPosition unit;
   u8 jitterRow[16];
   u8 hitRow[14];
-  struct SpritePlacement place2;
+  struct SpritePlacement risePlace;
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle blit;
@@ -23966,7 +23966,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     frame = 0;
     do {
       if (frame <= 23) {
-        struct SpriteScale pair2 = riseScale;
+        struct SpriteScale riseScaleCopy = riseScale;
         s32 ang;
         s32 rise;
 
@@ -23984,14 +23984,14 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
           }
           rise = ((Trig_Sin(ang) * 32)) >> 16;
         }
-        place2.groundHeight = 0;
-        place2.height = 255 << 16;
+        risePlace.groundHeight = 0;
+        risePlace.height = 255 << 16;
         i = 0;
         do {
-          place2.x = (rowX + gKirin_Columns[i]) << 16;
-          place2.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
-          Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &pair2,
-                                            0);
+          risePlace.x = (rowX + gKirin_Columns[i]) << 16;
+          risePlace.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
+          Object_ApplyProjectedPlacementFar(work->objects[i], &risePlace,
+                                            &riseScaleCopy, 0);
           i++;
         } while (i != KIRIN_OBJECTS);
       }

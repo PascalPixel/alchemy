@@ -445,4 +445,14 @@ void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 void PartyStatusDrawFar(s32 mode);
 #endif
 
+// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+// that the battle code picks by name.
+enum BattlePose {
+  POSE_ENEMY_HELD = 0, // an enemy asleep, stunned or held
+  POSE_STANDING = 1,
+  POSE_PARTY_HELD = 4, // asleep, stunned or held; also a downed member
+  POSE_DAMAGE = 5,     // taking damage
+  POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
+};
+
 #endif

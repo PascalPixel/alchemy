@@ -3232,7 +3232,8 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
       remainingParts = partCount;
       do {
         entry = *entrySlot++;
-        if (entry != 0 && entry->script != 0 && entry->param != 15)
+        if (entry != 0 && entry->script != 0 &&
+            entry->param != SPRITE_COLOR_HIDDEN)
           entry->param = replacement;
         remainingParts--;
       } while (remainingParts != 0);

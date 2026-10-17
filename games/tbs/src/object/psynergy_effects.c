@@ -7628,7 +7628,7 @@ void FieldFx_EndCloak(void) {
   ((struct ScriptMotionObject *)obj)->hook = 0;
 
   for (i = 0; i < 5; ++i) {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     anim->dirty = 1;
     anim->flags = 2;
     WaitFrames(2);
@@ -7638,7 +7638,7 @@ void FieldFx_EndCloak(void) {
   }
 
   for (i = 0; i < 5; ++i) {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     anim->dirty = 1;
     anim->flags = 0;
     WaitFrames(2);
@@ -7674,7 +7674,7 @@ void FieldFx_StartCloak(void) {
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
   do {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = 2;
     WaitFrames(2);
@@ -9170,7 +9170,7 @@ void RunBattleEffect16(void) {
   object->phase = 1;
   WaitFrames(10);
   for (count = 0; count < 20; count++) {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     group->dirty = 1;
     WaitFrames(2);
     group->dirty = 1;

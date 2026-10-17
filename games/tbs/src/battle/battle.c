@@ -2587,12 +2587,6 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
   }
 }
 
-// The battle poses BattlePres_SetActorModeAndAction picks.
-#define POSE_ENEMY_HELD 0
-#define POSE_STANDING 1
-#define POSE_PARTY_HELD 4 // asleep, stunned or held; also a downed member
-#define POSE_ENEMY_DOWN 5
-
 // Sets unit id's pose to match its state: held (asleep, stunned or unable
 // to move) or down, else standing; then gives its sprites their palette
 // row, 14 to 17 by unit.
@@ -5158,7 +5152,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
 #define ITEM_USE_CONSUMED 1  // one is used up
 #define ITEM_USE_MAY_BREAK 2 // breaks one time in eight
 #define ITEM_USE_EMPTIES 4   // Hermes' Water leaves an Empty Bottle
-
 
 // Inventory_RemoveFar's result when the last one left its slot, and the
 // slots after it moved up.
@@ -7835,9 +7828,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 #define PLAY_FELLED 11      // Remove a defeated enemy.
 #define PLAY_MESSAGE_ADD 13 // Continue the message without waiting for a key.
 
-#define POSE_DAMAGE 5 // Pose when taking damage.
-#define PAL_HIT 7     // Flash colour.
-
 #define FELLED_FLASH 0x400 // Timer base while changing colour.
 
 #define OBJ_VRAM 0x06010000
@@ -8051,7 +8041,7 @@ void BattleEvent_Playback(void) {
           selection[0] = events->actorId;
           selection[1] = 0xff;
           BattleMotion_SetRecordChildValues(
-              BattleObjGet(events->actorId)->object, PAL_HIT);
+              BattleObjGet(events->actorId)->object, SPRITE_COLOR_WHITE);
         }
         BattleLayout_HighlightPartyPanelsFar(selection);
       }

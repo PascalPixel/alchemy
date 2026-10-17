@@ -182,6 +182,13 @@ enum CanvasTransferMode {
   for ((i) = 0; (i) != (count); (i)++)                                         \
   (particles)[i].variant = -1
 
+// Starts a frame's 3D projection from the battle camera: resets the
+// transform, then looks from camera->eye towards camera->pos. Effects that
+// place pictures at battle positions do this before projecting them.
+#define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
+  (Render_ResetTransformState(),                                               \
+   Transform_SetLookAt((camera)->eye, (camera)->pos))
+
 // The canvas life cycle, shared by every canvas effect. The statement macros
 // are comma expressions, not do { } while (0) blocks: agscc compiles a
 // do-while (0) in an effect's frame loop differently at some sites, and the
@@ -971,8 +978,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
       // Fade the canvas out over the last 16 frames.
       if (frame > totalFrames - 16)
         REG_BLDALPHA = (totalFrames - frame) | 0x1000;
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       EFFECT_FOR_EACH_TARGET(k, work->effect) {
         if (frame >= k * STREAK_TARGET_DELAY) {
           for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
@@ -1151,8 +1157,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   for (frame = 0; frame != MOTE_FOUNTAIN_FRAMES; frame++) {
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != MOTE_VISIBLE_COUNT; i++) {
       mote = &PARTICLES[i];
       if (frame >= i / 32 * 8 && mote->variant >= 0) {
@@ -1640,8 +1645,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     draw[0] = gBlitters[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
@@ -1825,8 +1829,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera;
 
     camera = gCameraWork;
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     // Frame 0: both leap. Frame 11: both turn upside down, raised by their
     // own heights so they flip about their middles.
@@ -1858,8 +1861,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       ObjectDispatch_InitFromTable6Far(user);
       Object_SetMoveTargetFar(user, 0, 0, user->z);
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     point[0] = user->x;
     point[1] = user->y;
     point[2] = user->z;
@@ -2190,8 +2192,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     }
     GetBattleObjectSlotFar(work->effect->actor);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The first 32 motes: each frame a mote turns 0x400 (about 5.6
     // degrees), rises 5 pixels and moves 4 pixels further out.
@@ -3775,8 +3776,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame > 17 || frame == 0) {
       EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor,
                                                   &screenPosition);
@@ -3971,8 +3971,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Centre on the point 20 pixels above the target and spin the group
       // about it.
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       point[0] = target->x;
       point[1] = 20 << 16;
       point[2] = target->z;
@@ -4086,8 +4085,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
         angle += 1024;
       }
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     member = 0;
     if (work->effect->count != 0) {
       while (member != work->effect->count) {
@@ -4230,8 +4228,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
       else
         BattleEventRuntime_BeginPhaseFar(133);
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     // Ripple the canvas sideways, line by line.
     row = work->bg2X;
@@ -4568,8 +4565,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
       s32 start = k * 16;
 
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       point[0] = target->x;
       point[1] = 0;
       point[2] = target->z;
@@ -4611,8 +4607,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
         struct MotionObject *target =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_GRB,
                                     -1, -1, 0);
@@ -4831,8 +4826,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct EffectStep *burst;
 
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     // The shells: target k's shell flies from frame 8k, and the target is
     // hit on frame 8k + 17.
     k = 0;
@@ -5395,8 +5389,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
       tick = frame - member * 8;
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
       if (tick >= 0 && tick < 96) {
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         position.world.x = object->x;
         position.world.y = object->y;
         position.world.z = object->z;
@@ -5533,8 +5526,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       tick = frame - member * 8;
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
       if (tick >= 0 && tick < 96) {
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         position.world.x = object->x;
         position.world.y = object->y;
         position.world.z = object->z;
@@ -5687,8 +5679,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
         size = (frame - start) / 4 + 2;
         if (size > 10)
           size = 10;
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         SceneTransform_ApplyPosition(EffectStep_Coordinates(step));
         // The ring's ten points, alternately near and far from its centre,
         // projected onto the canvas; peak is the farthest depth.
@@ -5845,8 +5836,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
     for (i = 0; i != 8; i++) {
       step = &work->particles[i];
       if (frame >= step->variant) {
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         EffectPosition_ApplyBaseAndYOffset(step, &screenPosition);
         screenPosition.x >>= 1;
         // On the canvas, draw the star: ten points, alternately near and
@@ -6037,8 +6027,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
         frame = 395;
     }
 
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame == 16)
       AudioCommand_PlayFar(141);
@@ -6633,8 +6622,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
       frame = 160;
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 178)
       BattleEventRuntime_BeginPhaseFar(134);
 
@@ -7222,8 +7210,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     // on each hit.
     if (frame == FROTH_FRAMES(work->effect->variant) - 16)
       BattleEventRuntime_BeginPhaseFar(132);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != FROTH_MOTE_COUNT(work->effect->variant); i++) {
       point = &work->particles[i];
       if (frame > i * 2 && flags[i] == 0) {
@@ -8122,8 +8109,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
     }
     if (frame == 16)
       BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame < 64) {
       for (pillar = 0; pillar != gVolcano_Counts[work->effect->variant];
@@ -8456,8 +8442,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       point[0] = object->x;
       point[1] = 160 << 13;
       point[2] = object->z;
@@ -8604,8 +8589,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
       target =
           GetBattleObjectSlotFar(work->effect->actors[targetIndex])->object;
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       anchor[0] = target->x;
       anchor[1] = 160 << 14;
       anchor[2] = target->z;
@@ -8805,8 +8789,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(212);
     if (frame == 80)
       AudioCommand_PlayFar(142);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
       position[1] += delta[1];
@@ -8880,8 +8863,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
   for (frame = 0; frame != work->effect->count * 8 + 72; frame++) {
     struct BattleCamera *camera = gCameraWork;
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     // The Djinni sways, and flies up and away for the last 32 frames.
     if (frame >= work->effect->count * 8 + 40)
       target[1] += 0x40000;
@@ -8895,8 +8877,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 start = member * 8;
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       position[0] = object->x;
       position[1] = 160 << 14;
       position[2] = object->z;
@@ -9369,8 +9350,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     }
     if (frame == 224)
       work->transferMode = CANVAS_COPY;
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 31) {
       work->shakeFrames = 8;
       AudioCommand_PlayFar(157);
@@ -10266,8 +10246,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * ICE_SHARDS_PER_TARGET);
 
-  Render_ResetTransformState();
-  Transform_SetLookAt(camera->eye, camera->pos);
+  EFFECT_VIEW_FROM_CAMERA(camera);
 
   // Scatter the shards around the middle of each body; they spread sideways
   // and jump up.
@@ -10431,8 +10410,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
     halfHeight = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
     if (frame == 64)
       BattleEventRuntime_BeginPhaseFar(133);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 40)
       ObjectGroup_UpdateMembers(work->effect->actor, SPRITE_COLOR_WHITE, -1, -1,
                                 0);
@@ -10764,8 +10742,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       s32 start = member * 8;
 
       // Centre on the point 40 pixels above the target.
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       point[0] = object->x;
       point[1] = 40 << 16;
       point[2] = object->z;
@@ -11064,8 +11041,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       if (frame == member * 8 + 80)
         AudioCommand_PlayFar(212);
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
       point[0] = object->x;
       point[1] = height;
@@ -11360,13 +11336,11 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
       targetFrame = frame - j * 4;
       object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
       if (targetFrame > 0) {
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         point[0] = object->x;
         point[1] = 160 << 13;
         point[2] = object->z;
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         SceneTransform_ApplyPosition(point);
         origin[0] = 0;
         origin[1] = 0;
@@ -11698,8 +11672,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != gQuake_Timings[work->effect->variant][TIMING_FRAMES];
        frame++) {
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == gQuake_Timings[work->effect->variant][TIMING_FRAMES] - 16)
       BattleEventRuntime_BeginPhaseFar(
           133); // 16 frames before the end, move on to the results
@@ -11856,8 +11829,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
       BattleEventRuntime_BeginPhaseFar(133);
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight.
     for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
@@ -12505,8 +12477,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
     struct BattleCamera *camera;
 
     camera = gCameraWork;
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       AudioCommand_PlayFar(144);
     if (frame == gBlastAndSmokeBomb_Counts[variant][FIELD_FRAMES] - 48)
@@ -13006,8 +12977,7 @@ void BattleFx_RunSwirlingStars(void *object) {
     struct BattleCamera *camera;
 
     camera = gCameraWork;
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     SceneTransform_ApplyPosition(center);
     star = PARTICLES;
     for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
@@ -13134,8 +13104,7 @@ void BattleFx_RunOrbitingSparks(void) {
          * store). */
         register s32 *rec asm("r0");
 
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         rec = point;
         rec[0] = object->x;
         rec[1] = object->y;
@@ -13239,8 +13208,7 @@ void BattleFx_RunTargetBursts(void *object) {
       struct MotionObject *object;
 
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       point[0] = object->x;
       point[1] = 160 << 13;
       point[2] = object->z;
@@ -14463,8 +14431,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
       REG_BLDALPHA = (168 - frame * 2) | 0x1000;
     if (frame == 8)
       AudioCommand_PlayFar(212);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 6 && frame <= 45) {
       center[0] += step[0];
       center[1] += step[1];
@@ -14953,8 +14920,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       }
 
       // The shots.
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       index = 0;
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         struct MotionObject *target =
@@ -15458,8 +15424,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
     }
     // The sparks.
     if (ringFrame >= 0 && ringFrame <= 55) {
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
         spark = &work->particles[i];
         size = spark->variant;
@@ -16344,8 +16309,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
         chip->velocityY = gGround_ChipFlips[Random16() & 3];
       }
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != GROUND_ROCKS; i++) {
       struct EffectStep *rock = &work->particles[i];
 
@@ -17460,8 +17424,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
     EFFECT_RELEASE_BLITTERS();
 
     // Motes: drawn until they die out, bouncing off the ground.
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                         COMPOSITE_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -17918,8 +17881,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   camera = gCameraWork;
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
-  Render_ResetTransformState();
-  Transform_SetLookAt(camera->eye, camera->pos);
+  EFFECT_VIEW_FROM_CAMERA(camera);
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
   screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
   return 0;
@@ -18184,8 +18146,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     if (frame >= 4 && frame <= 15)
       draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
               anchor.x - 16, anchor.y - 24, 40, 48);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;
@@ -18409,8 +18370,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 7)
       draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;
@@ -18880,8 +18840,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     if (kind <= 7) {
       alive = n;
       if (alive <= 63) {
-        Render_ResetTransformState();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         EffectPosition_ApplyBaseAndYOffset(&djinnPos, &sparkScreen);
         sparkScreen.x /= 2;
         djinnX = sparkScreen.x;
@@ -19180,8 +19139,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                     work->sheet + (frame - 4) / 2 * 960 + CASTING_ORB_CELLS,
                     targetScreen->x / 2 - 8, casterScreen->y - 24, 20, 48);
       }
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       if (frame > 3) {
         for (i = 0; i != 128; i++) {
           s32 index = i / 2;
@@ -20813,8 +20771,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       }
       BattleEventRuntime_BeginPhaseFar(134);
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != 64; i++) {
       struct EffectStep *ember = &STREAM_EMBERS[i];
 
@@ -21335,8 +21292,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
                   trail[j].y, 24, 39);
       }
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
       s32 lift;
 
@@ -21547,8 +21503,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == 8) {
       Dma_Fill32(0x3f3f3f3f, canvas, 0x4000);
     }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame > 3) {
       BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
       for (i = 0; i != 64; i++) {
@@ -22417,8 +22372,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     // Retain the disabled particle stage: this loop starts at frame zero.
     if (frame < 0) {
-      Render_ResetTransformState();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != 128; i++) {
         s32 z;
         s32 size;

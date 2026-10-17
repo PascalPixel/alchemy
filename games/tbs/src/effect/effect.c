@@ -111,6 +111,11 @@
 // Outside the battle view: BG0 and blending only.
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
+// A work slot read through a pointer to the effect's own slot,
+// gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], or to the canvas slot just after it.
+#define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
+#define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
+
 // Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
@@ -287,7 +292,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sparkles = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sparkles = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   // Load the shard and puff images before shaping their visible canvas.
   BattleFx_BeginCanvasLayer(0x2001);
@@ -531,10 +536,10 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  drawBolt = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  drawBolt = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_Y,
                     COMPOSITE_ADDITIVE);
-  drawSpark = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  drawSpark = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
   for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++)
     FALLING_BOLT_SPARKS->sparks[i].variant = -1; // spark slot free
@@ -778,7 +783,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
 
@@ -787,17 +792,17 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   if (work->effect->side == 0) {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-    drawUpper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_MAX);
-    drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   } else {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
-    drawUpper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   }
 
   // The streak images, and the background palette for the style's colour.
@@ -1269,8 +1274,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  particleSheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   if (mode == 8)
     BattleFx_BeginCanvasLayer(0);
@@ -1713,7 +1718,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // Run the user to 90% of the way to the target, then wait for it.
   first = GetBattleObjectSlotFar(work->effect->actor);
@@ -1855,12 +1860,11 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   // [0] draws as is, [1] mirrored; both skip colour 0.
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1,
                              1);
@@ -2841,12 +2845,12 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   if (work->effect->side == 1) {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   } else {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
@@ -3107,7 +3111,7 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
   s32 nextCounter;
 
   if (work->transferPending == 1) {
-    source = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_EFFECT];
+    source = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_CANVAS);
     switch (work->transferMode) {
     case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
@@ -3733,7 +3737,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   Resource_DecodeType01(
@@ -3744,10 +3748,10 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   palette += 128;
   Resource_DecodeType01(palette, work);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
@@ -3929,10 +3933,10 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404; // 4 off every pixel each frame
@@ -4048,10 +4052,10 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01((u8 *)palette + 128, work);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
@@ -4190,7 +4194,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   Resource_DecodeType01(
@@ -4783,7 +4787,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
@@ -5091,12 +5095,11 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   Resource_DecodeType01(sheet, cells);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = zero;
@@ -5387,7 +5390,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -5551,7 +5554,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
@@ -6635,10 +6638,10 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                BGCNT_SCREEN_BASE(7);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  draw[0] = cursor[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+  draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  draw[1] = cursor[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
+  draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_BLITTER_ALTERNATE);
 
   // The flashes from FlashBurst, the streaks from EmberStreak (at sheet +
   // 0x3000).
@@ -7420,11 +7423,10 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   palette += 128;
   Resource_DecodeType01(palette, work);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
   // The glints: each waits up to 15 frames, then plays at a random spot on
   // its tornado.
@@ -7761,17 +7763,16 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -7975,7 +7976,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (kind == 0) {
     BattleFx_BeginCanvasLayer(1);
@@ -8198,7 +8199,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
@@ -8717,12 +8718,10 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_TRANSPARENT);
-  drawUpright =
-      (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  drawUpright = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_TRANSPARENT);
-  drawFlipped = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  drawFlipped = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
   // Each sheep starts above the canvas at a random x, with a random tumble
   // speed (z) and starting image.
@@ -8835,7 +8834,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
                     COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  draw[0] = (DrawRectangle)slot[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+  draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // Each flame starts at a random point of its animation.
   for (i = 0; i != work->effect->count; i++) {
@@ -8919,7 +8918,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -9125,8 +9124,7 @@ void Camera_ApplyPhasedDelta(void) {
   // English from 0x58 to 0x5c bytes. Capture both owners from the same table.
   void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   struct BattleEffectWork *work = slots[0];
-  struct BattleCamera *camera =
-      slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  struct BattleCamera *camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   s32 *phase = &work->cameraPhase;
 
   if (*phase == 1) {
@@ -9983,9 +9981,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
 
   slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)
-      slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  puffSheet = (u8 *)slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
+  puffSheet = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
@@ -10001,11 +9998,10 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  draw = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+  draw = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
-  drawAlt = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
+  drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   gProjection.centerY = 240;
   BattleFx_SelectLivingTargets(work->effect);
   WaitFrames(1);
@@ -10438,8 +10434,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -10447,7 +10443,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  draw = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 
   for (i = 0; i != 8 * ICE_SHARDS_PER_TARGET; i++)
     PARTICLES[i].variant = -1;
@@ -10567,7 +10563,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
   if (effect->variant == 0)
     alternate = 0;
@@ -10804,7 +10800,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   canvasShiftX = 0;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
@@ -11719,7 +11715,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
                              1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  draw = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 
   // The arc: from -90 degrees in steps of 22.5, 32 pixels across and 16
   // high. Against enemies (ids from 128) it runs from the left, otherwise
@@ -12062,7 +12058,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   work = *cursor++;
   canvas = *cursor;
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (effect->side == 1)
     BattleFx_BeginCanvasLayer(1);
@@ -12270,7 +12266,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  puffSheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
@@ -12540,7 +12536,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginTiledCanvas(1);
   if (work->effect->variant == 2)
@@ -13041,9 +13037,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
 
   slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)
-      slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  sprites = (u8 *)slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
+  sprites = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -13051,12 +13046,11 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == BURST_SHOWER_MODE_FACES) {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-    blit[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+    blit[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                       COMPOSITE_MAX);
-    blit[1] = (DrawRectangle)
-        slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
+    blit[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   } else {
     BattleFx_FetchRectangleBlitters(work->effect->side, blit);
   }
@@ -13519,10 +13513,10 @@ void BattleFx_RunTargetBursts(void *object) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  drawBurst = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  drawBurst = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  drawSmoke = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  drawSmoke = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
   // Six puffs for each target: five scatter at random, the sixth (the
   // burst) stays in the middle.
@@ -14289,12 +14283,11 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   REG_BG2X = (64 - first.x) << 8;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   column = work->particles;
   i = 0;
   do {
@@ -14557,12 +14550,12 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + LIGHTNING_BOLT_CELLS, 1, 1);
@@ -14721,7 +14714,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
@@ -15143,7 +15136,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   camera = *(struct BattleCamera **)((u8 *)slots - (HEAP_SLOT_BATTLE_EFFECT -
                                                     HEAP_SLOT_CAMERA) *
                                                        sizeof(void *));
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
   work->effect = effect;
   kind = effect->variant;
@@ -15787,8 +15780,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
@@ -15994,7 +15987,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   draw = blit;
@@ -16134,7 +16127,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -16277,7 +16270,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -16286,8 +16279,8 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
                     COMPOSITE_MAX);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
@@ -16411,7 +16404,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   draw = blitters;
@@ -17599,7 +17592,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
-  blit = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  blit = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
   EffectPosition_ApplyStepAndYOffset(
       work->effect->actors[work->effect->count - 1], &last);
@@ -18025,7 +18018,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
@@ -18520,8 +18513,8 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   kind = effect->kind;
   work->effect = effect;
   unit = UnitGetFar(effect->actor);
@@ -18747,8 +18740,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   big = 1;
   if (effect->kind <= 199)
     big = 0;
@@ -19180,7 +19173,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   work = (struct BattleEffectWork *)*slot++;
   canvas = *slot;
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
-  sprites = (u8 *)slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = (u8 *)EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = command;
   if (kind == CASTING_IMPACT_MORTAL_DANGER ||
       kind == CASTING_IMPACT_TERRA_STRIKE || kind == CASTING_IMPACT_ASURA) {
@@ -20473,7 +20466,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
-  graphics = heapCache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  graphics = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BG2PA = 0x100;
@@ -21776,7 +21769,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   drift = 0;
   x = 0;
   y = 0;
-  sheet = heapCache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -22043,8 +22036,8 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
-  particleSheet = heapCache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  particleSheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapCellBuffer;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
@@ -22225,7 +22218,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
 
   user = GetBattleObjectSlotFar(effect->actor)->object;
   effect->variant = 1;
@@ -22906,10 +22899,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   cache = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   ime = (u16 *)&REG_IME;
   canvas = cache[0];
-  work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  ctrl = cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
-  ramp = cache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
-  camera = cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
+  work = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
+  ctrl = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
+  camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
@@ -22918,7 +22911,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   *(u16 *)&BG_PLTT[1] = 0;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+  draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   BattleFx_WipeCanvas(0, 0);
@@ -24230,9 +24223,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   cache =
       (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)cache[0];
-  work = (struct BattleEffectWork *)
-      cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  particleSheet = (u8 *)cache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  work = (struct BattleEffectWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
+  particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
@@ -24266,18 +24258,17 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   formationVelocityX = -0x40000;
   formationVelocityZ = -0x80000;
   savedBg1ScrollX = gBgScroll[1].x;
-  background = (struct BattleBackgroundView *)
-      cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
+  background = (struct BattleBackgroundView *)CANVAS_SLOT(
+      cache, HEAP_SLOT_BATTLE_BACKGROUND);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   background->busy = 1;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  blit[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+  blit[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  blit[1] = (DrawRectangle)
-      cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
+  blit[1] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER_ALTERNATE);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 

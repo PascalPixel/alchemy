@@ -983,7 +983,7 @@ gData_08197aa0:
 	.4byte BattleFx_RunOceanFist           @ 447
 	.4byte BattleFx_RunCallDullahan        @ 448
 	.4byte BattleFx_RunGhostSoldier        @ 449
-	.4byte Func_0817d724                   @ 450
+	.4byte BattleFx_RunRisingDragonEnemy   @ 450
 	.4byte BattleFx_RunTrueCollide         @ 451
 	.4byte BattleFx_RunStarMine            @ 452
 	.4byte BattleFx_RunFormicAcid          @ 453
@@ -2352,7 +2352,7 @@ Data_0819959c:
 Data_081995cc:
 	.2byte 0, 24, 8, 52, 16, 40, 36, 28
 	.2byte 32, 4, 20, 56, 60, 12, 44, 48
-@ read by Func_08180c94
+@ read by BattleFx_RunDaedalusAlt
 	.global Data_081995ec
 Data_081995ec:
 	.byte 80, 84, 86, 88, 90, 92, 94

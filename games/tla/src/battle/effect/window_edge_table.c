@@ -36,7 +36,7 @@ void BattleFx_RunAzul(s32 *arg);
 void BattleFx_RunCatastrophe(s32 *arg);
 void BattleFx_RunCharon(s32 *arg);
 void BattleFx_RunIris(s32 *arg);
-void Func_08180c94(s32 *arg);
+void BattleFx_RunDaedalusAlt(s32 *arg);
 void BattleFx_RunTrident(s32 *arg);
 void BattleFx_RunCruelRuin(s32 *arg);
 void BattleFx_RunMeteorBlow(s32 *arg);
@@ -139,7 +139,7 @@ void Func_0814c994(s32 *arg) {
       BattleFx_RunIris(arg);
       break;
     case 26:
-      Func_08180c94(arg);
+      BattleFx_RunDaedalusAlt(arg);
       break;
     case 27:
       BattleFx_RunTrident(arg);

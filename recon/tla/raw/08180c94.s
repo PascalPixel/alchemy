@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_08180c94
+@ Abilities: Daedalus (scene kind 26), ability 403; the party's summon
+@ Daedalus is ability 402, scene kind 21.
+	.global BattleFx_RunDaedalusAlt
 	.thumb_func
-Func_08180c94:
+BattleFx_RunDaedalusAlt:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

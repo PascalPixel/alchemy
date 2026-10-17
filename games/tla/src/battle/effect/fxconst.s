@@ -113,7 +113,7 @@ Data_08196ed8:
 	.global Data_08196ee0
 Data_08196ee0:
 	.4byte 0x11999, 0x11999
-@ read by Func_08180c94
+@ read by BattleFx_RunDaedalusAlt
 	.global Data_08196ee8
 Data_08196ee8:
 	.4byte 0x20000, 0x20000

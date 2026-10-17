@@ -1,9 +1,11 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_0817d724
+@ Abilities: Rising Dragon (kind 450), the enemies' one; the Light Blade
+@ unleash Rising Dragon is kind 108.
+	.global BattleFx_RunRisingDragonEnemy
 	.thumb_func
-Func_0817d724:
+BattleFx_RunRisingDragonEnemy:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

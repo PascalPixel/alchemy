@@ -4277,10 +4277,10 @@ BattleFx_RunStarMine:
 	.incbin "baserom.gba", 0x0017d174, 0x00000550
 	.section .rom.0017d724, "ax"
 	.balign 4
-	.global Func_0817d724
-	.type Func_0817d724, %function
+	.global BattleFx_RunRisingDragonEnemy
+	.type BattleFx_RunRisingDragonEnemy, %function
 	.thumb_func
-Func_0817d724:
+BattleFx_RunRisingDragonEnemy:
 	.incbin "baserom.gba", 0x0017d724, 0x00000954
 	.section .rom.0017e0c0, "ax"
 	.balign 4
@@ -4298,10 +4298,10 @@ Func_0817e698:
 	.thumb_func
 BattleFx_RunDaedalus:
 	.incbin "baserom.gba", 0x0017ea58, 0x0000223c
-	.global Func_08180c94
-	.type Func_08180c94, %function
+	.global BattleFx_RunDaedalusAlt
+	.type BattleFx_RunDaedalusAlt, %function
 	.thumb_func
-Func_08180c94:
+BattleFx_RunDaedalusAlt:
 	.incbin "baserom.gba", 0x00180c94, 0x00000540
 	.global BattleFx_RunVengeance
 	.type BattleFx_RunVengeance, %function

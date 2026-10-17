@@ -170,6 +170,12 @@ enum CanvasTransferMode {
   ((slots) = gBattleFxWork, (cursor) = (slots),                                \
    EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
 
+// Loops `i` over the effect's targets, effect->actors[0] to
+// effect->actors[effect->count - 1]: the loops that flash, shake, strike or
+// aim at each target in turn.
+#define EFFECT_FOR_EACH_TARGET(i, effect)                                      \
+  for ((i) = 0; (i) != (effect)->count; (i)++)
+
 // The canvas life cycle, shared by every canvas effect. The statement macros
 // are comma expressions, not do { } while (0) blocks: agscc compiles a
 // do-while (0) in an effect's frame loop differently at some sites, and the
@@ -488,7 +494,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
             AudioCommand_PlayFar(115);
           work->shakeFrames = 2;
           shard->variant = 0;
-          for (k = 0; k != work->effect->count; k++)
+          EFFECT_FOR_EACH_TARGET(k, work->effect)
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, k,
                                       8);
@@ -724,7 +730,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
           // flashes white in its damage pose for 2 frames.
           if ((i & 3) == 0)
             AudioCommand_PlayFar(132);
-          for (k = 0; k != work->effect->count; k++)
+          EFFECT_FOR_EACH_TARGET(k, work->effect)
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
         }
@@ -901,7 +907,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
 
     // Every streak starts 20 pixels above the user and moves in a straight
     // line to 20 pixels above its target over 24 frames.
-    for (k = 0; k != work->effect->count; k++) {
+    EFFECT_FOR_EACH_TARGET(k, work->effect) {
       target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
         struct EffectStep *streak = &work->particles[k * streaks + streakIndex];
@@ -928,7 +934,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
         REG_BLDALPHA = (totalFrames - frame) | 0x1000;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
-      for (k = 0; k != work->effect->count; k++) {
+      EFFECT_FOR_EACH_TARGET(k, work->effect) {
         if (frame >= k * STREAK_TARGET_DELAY) {
           for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
             if (frame >=
@@ -1139,7 +1145,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     }
     // Each target reacts in turn, and the battle shows its result.
     if (mode == MOTE_FOUNTAIN_DRIFTING) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
           BattleEventRuntime_BeginPhaseFar(-1);
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
@@ -1147,7 +1153,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     } else {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
           AudioCommand_PlayFar(SOUND_RECOVERY);
           BattleEventRuntime_BeginPhaseFar(-1);
@@ -3016,7 +3022,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     if (frame == 32)
       BattleEventRuntime_BeginPhaseFar(143);
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == 10)
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
@@ -3974,7 +3980,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
     }
 
-    for (k = 0; k != work->effect->count; k++) {
+    EFFECT_FOR_EACH_TARGET(k, work->effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
@@ -4205,7 +4211,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   // direction at up to 2 pixels a frame.
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
-  for (k = 0; k != work->effect->count; k++) {
+  EFFECT_FOR_EACH_TARGET(k, work->effect) {
     struct MotionObject *src =
         GetBattleObjectSlotFar(work->effect->actor)->object;
     s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
@@ -4248,7 +4254,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     for (i = 0; i != 160; i++)
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
-    for (k = 0; k != work->effect->count; k++) {
+    EFFECT_FOR_EACH_TARGET(k, work->effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
       s32 half = Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
@@ -4573,7 +4579,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way as
     // they sink a pixel a frame; they go out 8 pixels above the ground.
-    for (k = 0; k != work->effect->count; k++) {
+    EFFECT_FOR_EACH_TARGET(k, work->effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
       s32 start = k * 16;
@@ -4614,7 +4620,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     // The column: drawn in two mirrored halves from the top of the canvas
     // down to the target's feet, 6 pixels each, narrowing by a pixel every
     // 3 frames from 16 frames after it falls. The target glows meanwhile.
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       s32 start = i * 16;
 
       if (frame >= start + 72) {
@@ -4784,7 +4790,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     PARTICLES[i].variant = -1;
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   height = 0x40000;
-  for (k = 0; k != work->effect->count; k++) {
+  EFFECT_FOR_EACH_TARGET(k, work->effect) {
     struct MotionObject *target =
         GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
@@ -5902,7 +5908,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
           step->velocityZ /= 2;
           work->shakeFrames = 4;
           AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
-          for (j = 0; j != work->effect->count; j++)
+          EFFECT_FOR_EACH_TARGET(j, work->effect)
             ObjectGroup_UpdateMembers(work->effect->actors[j],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 8);
         }
@@ -6011,7 +6017,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 
   // Remember each target's place, and its heading and distance from the
   // middle of the field for the whirlwind to turn.
-  for (index = 0; index != work->effect->count; index++) {
+  EFFECT_FOR_EACH_TARGET(index, work->effect) {
     battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
     object = battleObject->object;
     home[index].x = object->x;
@@ -6068,7 +6074,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
     // The targets, from 16i frames: spin faster round the middle and close
     // in, rising quickly once near it, until frame 160; they keep turning
     // until frame 490 (past the end), and flash on each comet strike.
-    for (index = 0; index != work->effect->count; index++) {
+    EFFECT_FOR_EACH_TARGET(index, work->effect) {
       if (frame > index * 16) {
         battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
         object = battleObject->object;
@@ -6200,7 +6206,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
         index++;
       } while (index != 512);
 
-      for (index = 0; index != work->effect->count; index++) {
+      EFFECT_FOR_EACH_TARGET(index, work->effect) {
         battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
         object = battleObject->object;
         object->y = ((Random16() & 15) + 8) << 16;
@@ -6219,7 +6225,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
         index++;
       } while (index != 32);
 
-      for (index = 0; index != work->effect->count; index++) {
+      EFFECT_FOR_EACH_TARGET(index, work->effect) {
         radius[index] = 16;
         spin[index] = 6000;
       }
@@ -6438,7 +6444,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
   BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
 
   // Put the targets back.
-  for (index = 0; index != work->effect->count; index++) {
+  EFFECT_FOR_EACH_TARGET(index, work->effect) {
     struct MotionObject *obj;
 
     battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
@@ -6640,7 +6646,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
         AnimationObjects_SelectAnimationFar(work->objects[3], 10);
         AnimationObjects_SelectAnimationFar(work->objects[4], 11);
       }
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i],
                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, -1, 0);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
@@ -6851,7 +6857,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       BattleFx_PlaceFormationObjects(3, focus.x, focus.y);
     }
     if (frame == 138) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i],
                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, -1, 0);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
@@ -7121,7 +7127,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       // The targets bounce and flash white on frames 36, 48, 60 and 72,
       // getting their colours back 6 frames later.
       if (frame <= 79) {
-        for (k = 0; k != work->effect->count; k++) {
+        EFFECT_FOR_EACH_TARGET(k, work->effect) {
           if (frame > 29) {
             s32 phase = frame % 12;
 
@@ -7212,7 +7218,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     flags[i] = 0;
   }
   // Where each target stands, on the ground.
-  for (i = 0; i != work->effect->count; i++) {
+  EFFECT_FOR_EACH_TARGET(i, work->effect) {
     seat = &work->particles[FROTH_FIRST_TARGET + i];
     object = GetBattleObjectSlotFar(work->effect->actors[i])->object;
     seat->x = object->x;
@@ -7414,7 +7420,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       }
     }
     // Target j reels 3j frames after each flash.
-    for (j = 0; j != work->effect->count; j++) {
+    EFFECT_FOR_EACH_TARGET(j, work->effect) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
@@ -7567,7 +7573,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
             }
             work->shakeFrames = 8;
             AudioCommand_PlayFar(144);
-            for (j = 0; j != work->effect->count; j++)
+            EFFECT_FOR_EACH_TARGET(j, work->effect)
               ObjectGroup_UpdateMembers(work->effect->actors[j],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);
           }
@@ -7769,7 +7775,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == start + 4) {
-        for (k = 0; k != work->effect->count; k++) {
+        EFFECT_FOR_EACH_TARGET(k, work->effect) {
           BattleMotion_ApplyVariantMotionFar(work->effect->actors[k], 1);
           ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, k, 8);
@@ -8049,7 +8055,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
           }
         }
       }
-      for (j = 0; j != work->effect->count; j++) {
+      EFFECT_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 10);
@@ -8214,7 +8220,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
         }
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
-          for (i = 0; i != work->effect->count; i++) {
+          EFFECT_FOR_EACH_TARGET(i, work->effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[i],
                                       SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
@@ -8445,7 +8451,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     for (i = 0; i != 160; i++)
       *row++ = (0x40000 - ((Trig_Sin((frame << 12) + i * 0x800) * 4))) >> 10;
 
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
 
@@ -8626,7 +8632,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
     camera = gCameraWork;
     if (frame == 80)
       BattleEventRuntime_BeginPhaseFar(0);
-    for (targetIndex = 0; targetIndex != work->effect->count; targetIndex++) {
+    EFFECT_FOR_EACH_TARGET(targetIndex, work->effect) {
       struct MotionObject *target;
 
       target =
@@ -8714,7 +8720,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   // Each flame starts at a random point of its animation.
-  for (i = 0; i != work->effect->count; i++) {
+  EFFECT_FOR_EACH_TARGET(i, work->effect) {
     work->particles[i].variant = Random16() & 63;
   }
   frame = 0;
@@ -8921,7 +8927,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     EffectPosition_ApplyBaseAndYOffset(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work, view.x - 10, view.y - 17, 20, 34);
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 start = member * 8;
@@ -9410,7 +9416,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     if (frame == 31) {
       work->shakeFrames = 8;
       AudioCommand_PlayFar(157);
-      for (i = 0; i != work->effect->count; i++)
+      EFFECT_FOR_EACH_TARGET(i, work->effect)
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
     }
     if (frame == 72)
@@ -9580,7 +9586,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
     // Six sparks keep flashing around each target's body.
     if (phase >= 0 && phase <= 172) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
@@ -9642,7 +9648,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
     // Lift the targets to a height of 128 pixels, 8 frames apart.
     if (frame >= 161 && frame <= 223) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame > i * 8 + 160) {
           struct BattleObj *slot =
               GetBattleObjectSlotFar(work->effect->actors[i]);
@@ -9661,7 +9667,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     }
     // Drop the targets from 96 pixels, 5 frames apart, and hit each one 16
     // frames later.
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 5 + 286) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
@@ -9698,7 +9704,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
       EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
@@ -9717,7 +9723,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     }
     // The blast (six 40x24 frames, drawn as two halves), then five embers.
     if (frame > 301) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         s32 start = i * 4 + 302;
 
         if (frame >= start && frame < i * 4 + 314) {
@@ -10226,7 +10232,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
 
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8 + 32) {
         ObjectGroup_UpdateMembers(work->effect->actors[i],
                                   SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
@@ -10308,7 +10314,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
   // Scatter the shards around the middle of each body; they spread sideways
   // and jump up.
-  for (member = 0; member != work->effect->count; member++) {
+  EFFECT_FOR_EACH_TARGET(member, work->effect) {
     struct MotionObject *object;
     s32 offset;
     s32 height;
@@ -10345,7 +10351,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
     if (frame == 32)
       BattleEventRuntime_BeginPhaseFar(0);
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       s32 offset;
 
       offset = member * ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
@@ -10432,7 +10438,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   for (i = 0; i != 8 * GATHERING_MOTES_PER_TARGET; i++)
     PARTICLES[i].variant = -1;
 
-  for (member = 0; member != work->effect->count; member++) {
+  EFFECT_FOR_EACH_TARGET(member, work->effect) {
     struct MotionObject *object;
     s32 halfHeight;
 
@@ -10476,7 +10482,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
                                 0);
     if (frame == work->effect->count * 20 + 52)
       ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       if (frame == member * 20)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
@@ -10796,7 +10802,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       }
     }
 
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 start = member * 8;
@@ -11097,7 +11103,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       EFFECT_RELEASE_BLITTERS();
     }
 
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 height =
@@ -11395,7 +11401,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
     camera = gCameraWork;
     if (frame == 72)
       BattleEventRuntime_BeginPhaseFar(0);
-    for (j = 0; j != work->effect->count; j++) {
+    EFFECT_FOR_EACH_TARGET(j, work->effect) {
       struct MotionObject *object;
       s32 targetFrame;
       s32 x;
@@ -11731,7 +11737,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  for (member = 0; member != work->effect->count; member++)
+  EFFECT_FOR_EACH_TARGET(member, work->effect)
     work->particles[member].variant = 0;      // 1 once the target has landed
   work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
@@ -11775,7 +11781,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
              ROCK_PILLAR_WIDTH, 16);
 
         // Throw up the targets standing on the pillar.
-        for (member = 0; member != work->effect->count; member++) {
+        EFFECT_FOR_EACH_TARGET(member, work->effect) {
           struct MotionObject *object;
 
           object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
@@ -11798,7 +11804,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
     }
 
     // A target that lands flashes white for 5 frames.
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object;
       struct EffectStep *state;
 
@@ -12086,7 +12092,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(115);
     if (frame == 85)
       AudioCommand_PlayFar(136);
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 4 + 40)
         ObjectGroup_UpdateMembers(work->effect->actors[i],
                                   SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
@@ -12434,7 +12440,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
     // The targets are hit 4 frames apart.
     if (frame >= 4 && frame < 96) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 4 + 4)
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 10);
@@ -12617,7 +12623,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
     }
 
     if (mode == 0) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 10);
@@ -12625,7 +12631,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
         }
       }
     } else {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6)
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 10);
@@ -13164,7 +13170,7 @@ void BattleFx_RunOrbitingSparks(void) {
     step->z = 4;
   }
   for (frame = 0; frame != work->effect->count * 16 + 64; frame++) {
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object;
       u32 memberFrame;
 
@@ -13288,7 +13294,7 @@ void BattleFx_RunTargetBursts(void *object) {
     struct BattleCamera *camera;
 
     camera = gCameraWork;
-    for (member = 0; member != work->effect->count; member++) {
+    EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object;
 
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
@@ -14017,7 +14023,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   do {
     if (frame == 32) {
       AudioCommand_PlayFar(143);
-      for (i = 0; i != work->effect->count; i++)
+      EFFECT_FOR_EACH_TARGET(i, work->effect)
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 16);
     }
@@ -14179,7 +14185,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           }
         }
       }
-      for (j = 0; j != work->effect->count; j++) {
+      EFFECT_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
           AudioCommand_PlayFar(132);
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
@@ -14276,11 +14282,11 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
       BattleEventRuntime_BeginPhaseFar(133);
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8)
         Iwram_FillWords(canvas, 0x4000, 0x10101010);
     }
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       s32 start = i * 8;
 
       EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i],
@@ -14904,7 +14910,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     if (work->effect->count * shots > 63) // keep within particles[64]
       work->effect->count = 1;
 
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[i])->object;
       s32 targetHeight = Battle_GetObjectTableValueFar(work->effect->actors[i]);
@@ -15013,7 +15019,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
       index = 0;
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         struct MotionObject *target =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
@@ -15705,7 +15711,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
           }
         }
         if (frame == gMercury_LaunchFrames[i] + 6) {
-          for (j = 0; j != work->effect->count; j++) {
+          EFFECT_FOR_EACH_TARGET(j, work->effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[j],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 6);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
@@ -15826,7 +15832,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
           }
           AudioCommand_PlayFar(133);
           work->shakeFrames = 4;
-          for (j = 0; j != work->effect->count; j++) {
+          EFFECT_FOR_EACH_TARGET(j, work->effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[j],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 6);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
@@ -15960,7 +15966,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
           if (i & 1)
             AudioCommand_PlayFar(133);
           work->shakeFrames = 4;
-          for (j = 0; j != work->effect->count; j++) {
+          EFFECT_FOR_EACH_TARGET(j, work->effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[j],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 6);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
@@ -16145,7 +16151,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
     } while (index != 144);
 
     if (frame == 38) {
-      for (index = 0; index != work->effect->count; index++) {
+      EFFECT_FOR_EACH_TARGET(index, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[index],
                                   SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 16);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[index], 6);
@@ -16948,7 +16954,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 10) {
-        for (i = 0; i != work->effect->count; i++) {
+        EFFECT_FOR_EACH_TARGET(i, work->effect) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 8);
           BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
@@ -16998,7 +17004,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
                 }
               }
               work->shakeFrames = 8;
-              for (j = 0; j != work->effect->count; j++) {
+              EFFECT_FOR_EACH_TARGET(j, work->effect) {
                 ObjectGroup_UpdateMembers(work->effect->actors[j],
                                           gThor_TargetPalettes[Random16() & 3],
                                           5, j, 4);
@@ -17256,7 +17262,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
           rock->y = 0x320000;
       }
       if (frame == gSpire_DropFrames[i] + 18) {
-        for (j = 0; j != work->effect->count; j++)
+        EFFECT_FOR_EACH_TARGET(j, work->effect)
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 8);
       }
@@ -17872,7 +17878,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
     // The targets (frames 86 to 158).
     if (frame <= 158) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame > 85) {
           if (frame % 12 == 0)
             ObjectGroup_UpdateMembers(work->effect->actors[i],
@@ -21201,7 +21207,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == RAMSES_STRIKE_FRAME) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
@@ -21923,7 +21929,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
         } while (i != RAGNAROK_DRAWN_SPARKS);
       }
 
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == start + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 10);
@@ -22269,7 +22275,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 68) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 16);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 7);
@@ -23118,7 +23124,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 319) {
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_BLACK,
                                   POSE_DAMAGE, -1, 0);
       }
@@ -23558,7 +23564,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         AudioCommand_PlayFar(137);
       }
 
-      for (i = 0; i != work->effect->count; i++) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (hit[i] == 0) {
           EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i],
                                                       &unit);
@@ -23624,7 +23630,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         work->transferMode = CANVAS_COPY_AND_FADE;
       }
       if (frame == 58) {
-        for (i = 0; i != work->effect->count; i++) {
+        EFFECT_FOR_EACH_TARGET(i, work->effect) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_BLACK,
                                     POSE_DAMAGE, -1, 0);
         }
@@ -24045,7 +24051,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     work->particles[i].y = 0;
     work->particles[i].variant = 0;
   }
-  for (i = 0; i != work->effect->count; i++) {
+  EFFECT_FOR_EACH_TARGET(i, work->effect) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],
                                        &targetPosition);
     work->particles[i].x = targetPosition.x / 2;
@@ -24107,7 +24113,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         }
       }
     }
-    for (i = 0; i != work->effect->count; i++) {
+    EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 16 + 8) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 8);

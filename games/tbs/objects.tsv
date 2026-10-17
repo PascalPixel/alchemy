@@ -126,7 +126,7 @@ main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
 main	rom_main_08	games/tbs/src/effect/effect	.text .rodata
 main	rom_main_08	games/tbs/src/effect/battle_effect_composite
-main	rom_main_08	games/tbs/src/effect/effect_table	.rodata
+main	rom_main_08	games/tbs/src/effect/effect_table	.data
 main	rom_main_08	games/tbs/src/effect/battle_effect_composite_color
 main	rom_main_08	games/tbs/src/effect/effect_bits	.rodata
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL

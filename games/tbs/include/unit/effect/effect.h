@@ -11,7 +11,7 @@ struct EffectPosition;
 struct EffectStep;
 
 typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
-extern const BattleFxHandler gBattleFx_ModeHandlers[];
+extern BattleFxHandler gBattleFx_ModeHandlers[];
 
 typedef struct {
   s32 reserved00[3];

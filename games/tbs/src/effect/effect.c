@@ -261,6 +261,31 @@ enum CanvasTransferMode {
 // Closing bolts and lightning columns use the same 24x120 picture cells.
 #define LIGHTNING_BOLT_CELL_BYTES 2880
 
+// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
+// 135.
+#define EFFECT_SET_BATTLE_WINDOWS()                                            \
+  (REG_WIN0H = WIN_RANGE(0, 240), REG_WIN0V = WIN_RANGE(16, 136),              \
+   REG_WIN1H = WIN_RANGE(0, 240), REG_WIN1V = WIN_RANGE(16, 136))
+
+// BG2 shows the canvas from screen line 16 down (BG2Y is -16.0), stretched to
+// twice its width: the 128x128 canvas across the battle view.
+#define EFFECT_SET_CANVAS_AFFINE()                                             \
+  (REG_BG2X = 0, REG_BG2Y = -0x1000, REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0,    \
+   REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
+
+// Writes one row of BG2's map for the canvas: its 16 tiles of row `row` in
+// order. An affine map has one byte per tile, so they are written two at a
+// time, eight halfwords from `offset` on.
+#define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \
+  for ((column) = 0; (column) != 8; (column)++, (offset) += 2) {               \
+    s32 tileIndex;                                                             \
+    s16 pair;                                                                  \
+                                                                               \
+    tileIndex = (row) * 16 + (column) * 2;                                     \
+    pair = ((tileIndex + 1) << 8) | tileIndex;                                 \
+    *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
+  }
+
 // Puts the battle screen back into the display state every effect starts
 // from and ends with: no blending, window 0 and window 1 both covering the
 // battle view (lines 16 to 135), and the effect display mode queued for the
@@ -270,10 +295,7 @@ void BattleFx_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
   REG_BLDALPHA =
       BLEND_ALPHA(14, 16); // 14/16 of the top layer over all of the bottom
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_BATTLE_WINDOWS();
   // Window 1 starts as window 0 without BG1.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -2272,16 +2294,8 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(7);
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
   view->secondMode = 0;
-  REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000; // 16 lines down
-  REG_BG2PA = Q_8_8(0.5); // stretched to twice the width
-  REG_BG2PB = 0;
-  REG_BG2PC = 0;
-  REG_BG2PD = Q_8_8(1);
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_CANVAS_AFFINE();
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
@@ -3353,16 +3367,8 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   WaitFrames(1);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  REG_BG2X = 0;
-  REG_BG2Y = -0x1000; // 16 lines down
-  REG_BG2PA = Q_8_8(0.5); // twice the width
-  REG_BG2PB = 0;
-  REG_BG2PC = 0;
-  REG_BG2PD = Q_8_8(1);
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_CANVAS_AFFINE();
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
@@ -3372,14 +3378,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   // per tile, so they are written two at a time.
   offset = 0;
   for (row = 0; row != 16; row++) {
-    for (column = 0; column != 8; column++, offset += 2) {
-      s32 tileIndex;
-      s16 pair;
-
-      tileIndex = row * 16 + column * 2;
-      pair = ((tileIndex + 1) << 8) | tileIndex;
-      *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
-    }
+    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
   }
 
   Iwram_ClearWords(canvas, 0x4000);
@@ -3434,16 +3433,8 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  REG_BG2X = 0;
-  REG_BG2Y = -0x1000;
-  REG_BG2PA = Q_8_8(0.5);
-  REG_BG2PB = 0;
-  REG_BG2PC = 0;
-  REG_BG2PD = Q_8_8(1);
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_CANVAS_AFFINE();
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
@@ -3452,14 +3443,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
 
   offset = 0;
   for (row = 0; row != 16; row++) {
-    for (column = 0; column != 8; column++, offset += 2) {
-      s32 tileIndex;
-      s16 pair;
-
-      tileIndex = row * 16 + column * 2;
-      pair = ((tileIndex + 1) << 8) | tileIndex;
-      *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
-    }
+    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
   }
 
   Iwram_ClearWords(canvas, 0x4000);
@@ -3480,14 +3464,7 @@ void BattleFx_BeginTiledCanvas(s32 bgControl) {
   REG_BG2CNT = bgControl | 0x6784;
   offset = 0;
   for (row = 0; row != 16; row++) {
-    for (column = 0; column != 8; column++, offset += 2) {
-      s32 tileIndex;
-      s16 pair;
-
-      tileIndex = row * 16 + column * 2;
-      pair = ((tileIndex + 1) << 8) | tileIndex;
-      *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
-    }
+    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     for (column = 0; column != 8; column++, offset += 2) {
       *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
     }
@@ -3592,10 +3569,7 @@ void BattleFx_SetupCanvasTileMap(void) {
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;

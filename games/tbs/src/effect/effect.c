@@ -19053,6 +19053,10 @@ enum CastingImpact {
 #define CASTING_DJINNI_CELLS 0x3c56 // the Djinni pictures, in gMapCellBuffer
 #define CASTING_GATHER_FRAMES 32    // frames the sparks gather
 #define CASTING_SPARKS 64           // sparks in work->particles
+// The impact pictures' particles, in gMapCellBuffer after the Djinni.
+#define CASTING_IMPACT_PARTICLES                                               \
+  ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
+#define CASTING_IMPACT_PARTICLE_COUNT 64
 
 // gCastingImpact_ImageX has seven pictures for each side.
 #define CASTING_IMAGE_X(side, image) gCastingImpact_ImageX[(side) * 7 + (image)]
@@ -19471,8 +19475,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     s32 height = 0;
     if (kind != CASTING_IMPACT_BAD_OMEN)
       height = 0x140000;
-    for (i = 0; i != 64; i++) {
-      particle = &((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[i];
+    for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++) {
+      particle = &CASTING_IMPACT_PARTICLES[i];
       particle->x = targetActor->x;
       particle->y = height;
       particle->z = targetActor->z;
@@ -19662,8 +19666,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
       }
       if (frame == 12) {
-        particle = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
-        for (i = 0; i != 64; i++, particle++) {
+        particle = CASTING_IMPACT_PARTICLES;
+        for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++, particle++) {
           particle->x = targetActor->x;
           particle->y = 0x140000;
           particle->z = targetActor->z;
@@ -19674,8 +19678,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         }
       }
       if (frame > 11) {
-        struct EffectStep *step =
-            (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
+        struct EffectStep *step = CASTING_IMPACT_PARTICLES;
         struct MotionObject *caster;
         s32 height;
         caster = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -19856,8 +19859,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     } else if (kind == CASTING_IMPACT_SCORCH ||
                kind == CASTING_IMPACT_BARRAGE) {
       // Six 32x64 frames per particle, two ticks each.
-      struct EffectStep *step =
-          (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
+      struct EffectStep *step = CASTING_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
         if (frame >= i / 2 + 4) {
           s32 age = step->variant;
@@ -20009,8 +20011,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       // 64 fragments converge in straight lines from around the target.
       // The target reacts whenever another group of eight arrives.
       if (frame == 0) {
-        for (i = 0; i != 64; i++) {
-          particle = &((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[i];
+        for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++) {
+          particle = &CASTING_IMPACT_PARTICLES[i];
           particle->x = (Random16() & 127) + 32;
           particle->y = 0;
           particle->z = 0;
@@ -20018,18 +20020,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           particle->velocityY = Random16() & 0xffff;
           particle->velocityZ = Random16() & 0xffff;
         }
-        ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[63].y = 159;
+        CASTING_IMPACT_PARTICLES[63].y = 159;
       }
       {
-        struct EffectStep *step =
-            (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
+        struct EffectStep *step = CASTING_IMPACT_PARTICLES;
         struct EffectPosition *origin;
         /* FAKEMATCH: a zero offset known only after gcse keeps the origin copy,
          * hoisted after the projection address. origin = targetScreen, or
          * targetScreen->x and ->y read directly, differ 64 on tbs-en, two
          * instructions fewer. */
         s32 bias = 0;
-        for (i = 0; i != 64; i++, step++) {
+        for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++, step++) {
           if (step->x >= 0 && frame >= i / 2) {
             s32 image = i & 3;
             Render_ResetTransformState();
@@ -20100,8 +20101,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         REG_BLDALPHA = (64 - frame) | 0x1000;
       }
       {
-        struct EffectStep *step =
-            (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
+        struct EffectStep *step = CASTING_IMPACT_PARTICLES;
         for (i = 0; i != 16; i++, step++) {
           s32 image = i % 3;
           EffectPosition_ApplyBaseAndYOffset(step, &projected);
@@ -20114,8 +20114,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       }
     } else if (kind != 100) {
       // Other kinds: six 24x48 frames per particle, four ticks each.
-      struct EffectStep *step =
-          (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
+      struct EffectStep *step = CASTING_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
         if (frame >= i + 4) {
           s32 age = step->variant;

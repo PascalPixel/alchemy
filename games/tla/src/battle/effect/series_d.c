@@ -3,42 +3,52 @@
 struct BattleEffectArgument;
 void Func_0814512c(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_081450b4(struct BattleEffectArgument *effect) {
+// Abilities: Mad Spatter (kind 347).
+void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 4);
 }
 
-void Func_081450c0(struct BattleEffectArgument *effect) {
+// Abilities: Mud (kind 237).
+void BattleFx_RunMud(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 7);
 }
 
-void Func_081450cc(struct BattleEffectArgument *effect) {
+// Abilities: Decompose (kind 350).
+void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 5);
 }
 
-void Func_081450d8(struct BattleEffectArgument *effect) {
+// Abilities: Bone Chiller (kind 309).
+void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 0);
 }
 
-void Func_081450e4(struct BattleEffectArgument *effect) {
+// Abilities: Sticky Goo (kind 315).
+void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 1);
 }
 
-void Func_081450f0(struct BattleEffectArgument *effect) {
+// Abilities: Poison Ink (kind 340).
+void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 6);
 }
 
-void Func_081450fc(struct BattleEffectArgument *effect) {
+// Abilities: Sticky Poison (kind 322).
+void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 2);
 }
 
-void Func_08145108(struct BattleEffectArgument *effect) {
+// Abilities: Rotten Blood (kind 330).
+void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 3);
 }
 
-void Func_08145114(struct BattleEffectArgument *effect) {
+// Abilities: Rising Venom (kind 430).
+void BattleFx_RunRisingVenom(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 8);
 }
 
-void Func_08145120(struct BattleEffectArgument *effect) {
+// Abilities: Formic Acid (kind 453).
+void BattleFx_RunFormicAcid(struct BattleEffectArgument *effect) {
   Func_0814512c(effect, 9);
 }

@@ -77,7 +77,7 @@ extern u8 gMapCellBuffer[];
 // again twice as it closes on the target, then splits into its panels one
 // after another with a white flash at frame 72, when the target is thrown
 // and the screen shakes. The background waves while the image fades.
-void Func_08145784(struct BattleEffectArgument *effect) {
+void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];

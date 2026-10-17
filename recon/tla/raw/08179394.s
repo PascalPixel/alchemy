@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08179394
+@ Abilities: Raging Heat, Fiery Abyss, Dire Inferno (kind 74).
+	.global BattleFx_RunRagingHeat
 	.thumb_func
-Func_08179394:
+BattleFx_RunRagingHeat:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

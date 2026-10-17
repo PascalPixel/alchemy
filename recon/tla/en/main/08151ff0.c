@@ -1,5 +1,5 @@
 // Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
-// Func_08151fe4) and 380 (mode 1, through Func_08151fd8).
+// BattleFx_RunBlast) and 380 (mode 1, through BattleFx_RunSmokeBomb).
 
 // Twin: The Broken Seal's BattleFx_RunBlastAndSmokeBomb (effect.c), call for
 // call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its

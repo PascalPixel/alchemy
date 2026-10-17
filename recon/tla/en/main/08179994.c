@@ -101,7 +101,7 @@ void Func_08143bb8(void);
 // sparks burst from each, and the screen shakes. The variant sets the
 // ring's rise, its flames and sparks and the shake; variant 2 also takes
 // the orange palette.
-void Func_08179994(struct BattleEffectArgument *effect) {
+void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
   struct EffectPosition caster;
   struct EffectPosition midpoint;
   s32 vector[3];

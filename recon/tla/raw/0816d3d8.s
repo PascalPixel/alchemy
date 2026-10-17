@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816d3d8
+@ Abilities: Stone Justice (kind 100).
+	.global BattleFx_RunStoneJustice
 	.thumb_func
-Func_0816d3d8:
+BattleFx_RunStoneJustice:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,6 +1,6 @@
 // Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
-// The body of effect kinds 348, 353, 389 and 431 (Func_0817e668 to
-// Func_0817e68c in variant_k.c pass modes 0 to 3). Written from the
+// The body of effect kinds 348, 353, 389 and 431 (BattleFx_RunSpasm to
+// BattleFx_RunSack in variant_k.c pass modes 0 to 3). Written from the
 // listing; ☀️'s BattleFx_RunFortyEightFrameEffect has the same frame count
 // and shape (0.55) but is not its twin.
 // The shape matches, including the three mirrored copies as indexed loops

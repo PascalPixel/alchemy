@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814aebc
+@ Abilities: Sleep (kind 37).
+	.global BattleFx_RunSleep
 	.thumb_func
-Func_0814aebc:
+BattleFx_RunSleep:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

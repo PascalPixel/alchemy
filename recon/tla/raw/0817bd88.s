@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817bd88
+@ Abilities: Fire Puppet (kind 82).
+	.global BattleFx_RunFirePuppet
 	.thumb_func
-Func_0817bd88:
+BattleFx_RunFirePuppet:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

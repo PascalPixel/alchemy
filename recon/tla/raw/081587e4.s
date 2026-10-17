@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081587e4
+@ Abilities: Ground (kind 203).
+	.global BattleFx_RunGround
 	.thumb_func
-Func_081587e4:
+BattleFx_RunGround:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

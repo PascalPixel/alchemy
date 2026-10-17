@@ -1,4 +1,4 @@
-// Draft of Func_0816ec58, effect kind 75 (Cool), The Broken Seal's
+// Draft of BattleFx_RunCool, effect kind 75 (Cool), The Broken Seal's
 // BattleFx_RunUndeadSword as The Lost Age reworked it (structure twin
 // 0.772): the two columns became up to ten leaning ice columns, three
 // more for each level of the spell, each with its own start, height and
@@ -93,7 +93,7 @@ void Audio_PlayCue(s32 cue);
 // target two frames in, and sinks 10 pixels a frame from frame 32 + 4 per
 // level. The columns are drawn with max blitters until frame 24 on the
 // higher levels, with additive ones otherwise.
-void Func_0816ec58(struct BattleEffectArgument *effect) {
+void BattleFx_RunCool(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 stagger;

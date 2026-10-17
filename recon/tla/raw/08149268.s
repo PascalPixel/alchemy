@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08149268
+@ Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
+	.global BattleFx_RunPrism
 	.thumb_func
-Func_08149268:
+BattleFx_RunPrism:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

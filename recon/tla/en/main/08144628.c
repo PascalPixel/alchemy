@@ -1,6 +1,6 @@
 // Near miss, differ 70 of 511.
 
-// The body of four effect kinds (Func_081445f8 and the next three wrappers
+// The body of four effect kinds (BattleFx_RunDemonNight and the next three wrappers
 // pass modes 0 to 3). Twin: The Broken Seal's BattleFx_RunMemberBurst, whose
 // modes 0 to 2 these are; The Lost Age adds mode 3 and reworks the effect:
 // the picture unpacked by Resource_LoadAndDecompress, the palette for mode 0

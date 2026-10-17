@@ -70,7 +70,7 @@ void Audio_PlayCue(s32 cue);
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens
 // over the last eight frames.
-void Func_08149268(struct BattleEffectArgument *effect) {
+void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;

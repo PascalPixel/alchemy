@@ -103,7 +103,7 @@ void Func_08143bb8(void);
 // knocks it up. At frame 80 the daggers turn point down in a fan above the
 // target and plunge into it; the last strike, at frame 90, starts the
 // result phase.
-void Func_0817b66c(struct BattleEffectArgument *effect) {
+void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct DaggerTexture texture;

@@ -1,4 +1,4 @@
-// Draft of Func_0815537c, effect kind 16: a bolt of lightning strikes each
+// Draft of BattleFx_RunBolt, effect kind 16: a bolt of lightning strikes each
 // target in turn, eight frames apart, throwing sparks that bounce on the
 // ground and flashing glints of light around the target.
 
@@ -100,7 +100,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 // The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
-void Func_0815537c(struct BattleEffectArgument *effect) {
+void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;

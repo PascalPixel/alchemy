@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814b160
+@ Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+	.global BattleFx_RunCurse
 	.thumb_func
-Func_0814b160:
+BattleFx_RunCurse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

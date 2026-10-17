@@ -113,7 +113,7 @@ void ResourceObject_ReleaseFar(void *object);
 // retires the column), particles 24-39 the embers of the closing glow; the
 // map cell buffer holds the motes (variant counts down the frames before a
 // mote appears, 0 is a live mote).
-void Func_08191d60(struct BattleEffectArgument *effect) {
+void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
   struct Point2D focus;

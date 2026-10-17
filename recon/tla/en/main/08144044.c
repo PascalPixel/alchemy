@@ -63,7 +63,7 @@ extern char ResourceId_PinkBurstSheet;
 // appear one every four frames from all around, up to 64 pixels away, and
 // close in on a point 20 pixels above the target while the view of them
 // turns; the background waves line by line throughout.
-void Func_08144044(struct BattleEffectArgument *effect) {
+void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectPosition pos;
   s32 point[3];

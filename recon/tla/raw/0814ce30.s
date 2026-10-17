@@ -1,9 +1,10 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_0814ce30
+@ Abilities: Cybele (scene kind 5).
+	.global BattleFx_RunCybele
 	.thumb_func
-Func_0814ce30:
+BattleFx_RunCybele:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

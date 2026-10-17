@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817ea58
+@ Abilities: Daedalus (scene kind 21).
+	.global BattleFx_RunDaedalus
 	.thumb_func
-Func_0817ea58:
+BattleFx_RunDaedalus:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0815cde8
+@ Abilities: Azul (scene kind 22).
+	.global BattleFx_RunAzul
 	.thumb_func
-Func_0815cde8:
+BattleFx_RunAzul:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

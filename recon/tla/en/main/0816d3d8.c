@@ -1,4 +1,4 @@
-// Draft of Func_0816d3d8, effect kind 100 (Stone Justice), written from the
+// Draft of BattleFx_RunStoneJustice, effect kind 100 (Stone Justice), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunSpire 0.502, call order BattleFx_RunPrism
 // 0.680); the shard drawing follows BattleFx_RunSpire, and the
@@ -24,8 +24,8 @@
 // (s16)(v >> 16), *((s16 *)&v + 1)                                332
 // HI through an inline helper (FAKEMATCH below)                       30
 // alchemy permute 8 minutes, 2 jobs (found the helper)                30
-// The helper is a device here: Func_0816aa08 goes from 36 to 135 with
-// it, and Func_0816f928 from 218 to 212.
+// The helper is a device here: BattleFx_RunPlumeEdge goes from 36 to 135 with
+// it, and BattleFx_RunHurricane from 218 to 212.
 
 #include "types.h"
 #include "io_reg.h"
@@ -91,7 +91,7 @@ void Audio_PlayCue(s32 cue);
 // they fly; from frame 64 the background scrolls after them and each
 // boulder turns toward the target; every boulder that reaches the target
 // shakes the screen and knocks the target back.
-void Func_0816d3d8(struct BattleEffectArgument *effect) {
+void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;

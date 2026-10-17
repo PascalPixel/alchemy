@@ -1,4 +1,4 @@
-// Near miss of Func_08151040, effect kind 12.
+// Near miss of BattleFx_RunFire, effect kind 12.
 
 // Twin: The Broken Seal's BattleFx_RunFire (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
@@ -75,7 +75,7 @@ extern u8 Data_08198309[];      // gFire_FlareHeights
 // it leaves a six-picture flare, its target flashes and the screen shakes
 // for two frames. The camera sways between frames 16 and 80. The variant
 // chooses the number of embers.
-void Func_08151040(struct BattleEffectArgument *effect) {
+void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

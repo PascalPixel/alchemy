@@ -1,4 +1,4 @@
-// Draft of Func_0815842c, effect kind 207: a spray of ice chips over a
+// Draft of BattleFx_RunHail, effect kind 207: a spray of ice chips over a
 // rising wave.
 
 // On screen: a band of water five tiles wide rises 32 pixels from the
@@ -96,7 +96,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void Func_0815842c(struct BattleEffectArgument *effect) {
+void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screen[3];

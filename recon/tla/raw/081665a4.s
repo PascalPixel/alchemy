@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081665a4
+@ Abilities: Ragnarok (kind 58).
+	.global BattleFx_RunRagnarok
 	.thumb_func
-Func_081665a4:
+BattleFx_RunRagnarok:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

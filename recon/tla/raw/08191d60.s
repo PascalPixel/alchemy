@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08191d60
+@ Abilities: Moloch (scene kind 16).
+	.global BattleFx_RunMoloch
 	.thumb_func
-Func_08191d60:
+BattleFx_RunMoloch:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

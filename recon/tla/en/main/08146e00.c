@@ -113,7 +113,7 @@ extern u16 gData_08197410[];       // dot sizes 1 to 10: cell offsets
 // in; a cloud of sparks gathers on its centre, and from frame 330 four
 // comets strike one after another, each with a burst of sparks, throwing
 // the enemies down. A or B skips frames 161 to 394.
-void Func_08146e00(struct BattleEffectArgument *effect) {
+void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   void *camera;
   struct BattleEffectWork *work;
   void *canvas;

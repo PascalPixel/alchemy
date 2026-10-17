@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08145df8
+@ Abilities: Bind (kind 38); Luff (kind 218).
+	.global BattleFx_RunBind
 	.thumb_func
-Func_08145df8:
+BattleFx_RunBind:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

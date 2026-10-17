@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08150c74
+@ Abilities: Quake, Earthquake, Quake Sphere (kind 1).
+	.global BattleFx_RunQuake
 	.thumb_func
-Func_08150c74:
+BattleFx_RunQuake:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

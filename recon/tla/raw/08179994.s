@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08179994
+@ Abilities: Juggle, Heat Juggle, Fiery Juggle (kind 78).
+	.global BattleFx_RunJuggle
 	.thumb_func
-Func_08179994:
+BattleFx_RunJuggle:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

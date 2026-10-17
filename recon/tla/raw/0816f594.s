@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816f594
+@ Abilities: Radiant Fire (kind 110).
+	.global BattleFx_RunRadiantFire
 	.thumb_func
-Func_0816f594:
+BattleFx_RunRadiantFire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

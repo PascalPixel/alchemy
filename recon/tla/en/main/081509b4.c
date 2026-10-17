@@ -1,4 +1,4 @@
-// Near miss of Func_081509b4, effect kind 11: differ 14 of 274 (draft 274).
+// Near miss of BattleFx_RunFlare, effect kind 11: differ 14 of 274 (draft 274).
 
 // Twin: The Broken Seal's BattleFx_RunFlare (effect.c), call for call.
 // The Lost Age blends BG1 and BG2 at 16:16 where The Broken Seal has 14:16,
@@ -61,7 +61,7 @@ extern u8 gData_0819746d[];  // gBattleFx_PuffArcCellHeights
 // steps through six pictures, four frames each; variant 1 adds a copy 16
 // pixels higher, variant 2 another 32 higher and a brighter trail. The
 // targets are hit from frame 16, eight frames apart.
-void Func_081509b4(struct BattleEffectArgument *effect) {
+void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

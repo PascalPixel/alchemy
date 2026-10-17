@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0813fd84
+@ Abilities: Cruel Ruin (scene kind 28).
+	.global BattleFx_RunCruelRuin
 	.thumb_func
-Func_0813fd84:
+BattleFx_RunCruelRuin:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

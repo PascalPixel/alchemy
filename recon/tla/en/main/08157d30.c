@@ -1,4 +1,4 @@
-// Draft of Func_08157d30, effect kind 280: the Venus Djinn's columns.
+// Draft of BattleFx_RunVenus, effect kind 280: the Venus Djinn's columns.
 
 // On screen: a small Venus Djinn swings down over the targets on a
 // narrowing arc while ten columns burst out of the ground one after
@@ -103,7 +103,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void Func_08157d30(struct BattleEffectArgument *effect) {
+void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;

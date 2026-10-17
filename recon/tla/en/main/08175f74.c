@@ -266,7 +266,7 @@ void Func_081434f8(void);
 void Scheduler_RemoveCallback(void *);
 void Func_08143bb8(void);
 
-void Func_08175f74(struct BattleEffectArgument *arg) {
+void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];
   struct Local264 local264;
   s32 pos248[4];

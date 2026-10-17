@@ -1,4 +1,4 @@
-// Draft, differ 126 of 1065: Func_08168a40, summon 3 (Func_0814c994's case 3,
+// Draft, differ 126 of 1065: BattleFx_RunKirin, summon 3 (Func_0814c994's case 3,
 // actflags 0x8003), The Broken Seal's BattleFx_RunKirin.
 
 // Twin: ☀️ BattleFx_RunKirin (games/tbs/src/effect/effect.c), ported:
@@ -119,7 +119,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // frames; the fire trail from frame 18; the flames from 32. Act two (96
 // frames): the row sweeps left 16 pixels a frame, rising; each target it
 // passes takes a burst of 32 sparks; the flames slide across from frame 41.
-void Func_08168a40(struct BattleEffectArgument *effect) {
+void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   struct FxPlacement place;
   struct EffectPosition unit;
   u8 jitterRow[16];

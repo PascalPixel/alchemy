@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816aa08
+@ Abilities: Plume Edge (kind 85).
+	.global BattleFx_RunPlumeEdge
 	.thumb_func
-Func_0816aa08:
+BattleFx_RunPlumeEdge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

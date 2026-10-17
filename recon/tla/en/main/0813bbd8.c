@@ -85,7 +85,7 @@ void WaitFrames(s32 frames);
 // Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
 // its age: -1 is a shard still falling or a free puff.
 
-void Func_0813bbd8(struct BattleEffectArgument *effect) {
+void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

@@ -3,10 +3,13 @@
 struct BattleEffectArgument;
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_08149b94(struct BattleEffectArgument *effect) {
+// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind
+// 15).
+void BattleFx_RunNova(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 0);
 }
 
-void Func_08149ba0(struct BattleEffectArgument *effect) {
+// Abilities: Dynamite, Angry Mine (kind 338).
+void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }

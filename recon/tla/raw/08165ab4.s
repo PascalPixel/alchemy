@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08165ab4
+@ Abilities: Ramses (scene kind 1).
+	.global BattleFx_RunRamses
 	.thumb_func
-Func_08165ab4:
+BattleFx_RunRamses:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

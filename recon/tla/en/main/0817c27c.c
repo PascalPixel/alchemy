@@ -81,7 +81,7 @@ void Func_08143bb8(void);
 // flashes, the result phase starts, and 256 sparks spray from the slash's
 // end toward the target, half of them falling and half rising as they burn
 // down.
-void Func_0817c27c(struct BattleEffectArgument *effect) {
+void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap = Ram_HeapSlots;
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)heap->battleFxWork[0];

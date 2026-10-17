@@ -36,10 +36,12 @@ void Func_08108148(void);
 s32 Func_0810b378(s32 value);
 void Func_0810824c(void);
 
-void Func_0814ea3c(u8 *effect) {
+// Abilities: Drain, Psy Drain (kind 42).
+void BattleFx_RunDrain(u8 *effect) {
   s32 value = *(s32 *)(effect + 24);
 
   Func_0814ea58(effect, (u32)(-value | value) >> 31);
 }
 
-void Func_0814ea4c(u8 *effect) { Func_0814ea58(effect, 2); }
+// Abilities: True Collide (kind 451).
+void BattleFx_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }

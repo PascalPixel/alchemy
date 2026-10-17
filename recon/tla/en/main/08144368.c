@@ -55,7 +55,7 @@ extern char ResourceId_SpiralSheet;
 // Member orbit: over each target in turn, sixteen frames apart, four
 // spirals circle a point 40 pixels above it for 60 frames, the blitter
 // flipping every sixteen frames; the background waves line by line.
-void Func_08144368(struct BattleEffectArgument *effect) {
+void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];

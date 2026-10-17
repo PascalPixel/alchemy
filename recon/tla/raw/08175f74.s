@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08175f74
+@ Abilities: Charon (scene kind 24).
+	.global BattleFx_RunCharon
 	.thumb_func
-Func_08175f74:
+BattleFx_RunCharon:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

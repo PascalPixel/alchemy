@@ -1,4 +1,4 @@
-// Draft, differ 360 of 1632 (1628 here): Func_081693d0, summon 6
+// Draft, differ 360 of 1632 (1628 here): BattleFx_RunNeptune, summon 6
 // (Func_0814c994's case 6, actflags 0x8006), The Broken Seal's
 // BattleFx_RunNeptune as The Lost Age reworked it.
 
@@ -144,7 +144,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 // a ring of sparks; the sea rolls along the bottom all the while. Act two
 // (144 frames): a flame pillar falls on each target 16 frames apart, splashing
 // sparks where it lands and striking that target; results at frame 96.
-void Func_081693d0(struct BattleEffectArgument *effect) {
+void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   s32 position[4];
   s32 target[3];
   void *canvas;

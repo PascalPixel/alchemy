@@ -1,4 +1,4 @@
-// Draft of Func_08154d5c, effect kind 202: sixteen green vines spring up
+// Draft of BattleFx_RunVine, effect kind 202: sixteen green vines spring up
 // around the middle of the targets, two frames apart, and sink back.
 
 // Twin: The Broken Seal's BattleFx_RunVine (effect.c), the same
@@ -78,7 +78,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 // Func_081963ec(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
-void Func_08154d5c(struct BattleEffectArgument *effect) {
+void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;

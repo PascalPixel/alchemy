@@ -3,11 +3,11 @@
 // Twin: The Broken Seal's BattleFx_RunAstralBlast (effect kind 68 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), the rune palette and
-// resource 0x134 as in Func_08146a6c, Object_SetMode for the caster where The
+// resource 0x134 as in BattleFx_RunShiningStar, Object_SetMode for the caster where The
 // Broken Seal dispatches an argument to its children, one blitter from
 // Func_081963ec(104, MAX), the callback at 0xc80, and the target thrown with
 // Object_ResetMotion and Object_SetPosition. The tables are not const (see
-// Func_08146a6c).
+// BattleFx_RunShiningStar).
 
 // Func_081963ec is declared to return s32, as The Lost Age's LoadWork
 // returns its store-flag and The Broken Seal's returns s32: void it is 36.
@@ -80,7 +80,7 @@ extern u8 gMapCellBuffer[];
 // Three rings of light fly one after another from the caster to the target,
 // each growing as it spins, while the camera swings round; each ring that
 // lands throws the target back, and the last begins the results.
-void Func_08146638(struct BattleEffectArgument *effect) {
+void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct EffectPosition base;
   s32 scale[3];

@@ -3,18 +3,22 @@
 
 void Func_0818a220(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_0818a1f0(struct BattleEffectArgument *effect) {
+// Abilities: Bramble Card (kind 88).
+void BattleFx_RunBrambleCard(struct BattleEffectArgument *effect) {
   Func_0818a220(effect, 0);
 }
 
-void Func_0818a1fc(struct BattleEffectArgument *effect) {
+// Abilities: Frost Card (kind 87).
+void BattleFx_RunFrostCard(struct BattleEffectArgument *effect) {
   Func_0818a220(effect, 1);
 }
 
-void Func_0818a208(struct BattleEffectArgument *effect) {
+// Abilities: Flame Card (kind 79).
+void BattleFx_RunFlameCard(struct BattleEffectArgument *effect) {
   Func_0818a220(effect, 2);
 }
 
-void Func_0818a214(struct BattleEffectArgument *effect) {
+// Abilities: Thunder Card (kind 89).
+void BattleFx_RunThunderCard(struct BattleEffectArgument *effect) {
   Func_0818a220(effect, 3);
 }

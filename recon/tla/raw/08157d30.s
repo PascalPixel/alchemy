@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08157d30
+@ Abilities: Venus (kind 280).
+	.global BattleFx_RunVenus
 	.thumb_func
-Func_08157d30:
+BattleFx_RunVenus:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

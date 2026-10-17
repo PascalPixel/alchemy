@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_0815a9e4
+@ Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche (kind
+@ 3).
+	.global BattleFx_RunGaia
 	.thumb_func
-Func_0815a9e4:
+BattleFx_RunGaia:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

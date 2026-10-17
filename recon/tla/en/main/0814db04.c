@@ -123,7 +123,7 @@ void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
 // and spray (A or B skips to the second half). Then ice blocks rain on the
 // targets, boulders pile up and burst, and their pieces bounce on the
 // ground among puffs of smoke.
-void Func_0814db04(struct BattleEffectArgument *effect) {
+void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   s32 pts[32][2];
   s32 pos[4];
   void *canvas;

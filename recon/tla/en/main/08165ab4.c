@@ -1,4 +1,4 @@
-// Draft, differ 78 of 804: Func_08165ab4, summon 1 (Func_0814c994's case 1,
+// Draft, differ 78 of 804: BattleFx_RunRamses, summon 1 (Func_0814c994's case 1,
 // actflags 0x8001), The Broken Seal's BattleFx_RunRamses.
 
 // Twin: ☀️ BattleFx_RunRamses
@@ -131,7 +131,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // dust; the orb draws back at frame 244 and flies left from 252; at frame 260
 // the targets are struck and the sparks burst. At the end the results phase
 // begins and every object is released.
-void Func_08165ab4(struct BattleEffectArgument *effect) {
+void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   s32 position[4];
   DrawRectangle draw[2];
   struct FxScale scale;

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08182aa8
+@ Abilities: Coatlicue (scene kind 20).
+	.global BattleFx_RunCoatlicue
 	.thumb_func
-Func_08182aa8:
+BattleFx_RunCoatlicue:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

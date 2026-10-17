@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816729c
+@ Abilities: Judgment (scene kind 9).
+	.global BattleFx_RunJudgment
 	.thumb_func
-Func_0816729c:
+BattleFx_RunJudgment:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

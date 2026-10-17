@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816ec58
+@ Abilities: Cool, Supercool, Megacool (kind 75).
+	.global BattleFx_RunCool
 	.thumb_func
-Func_0816ec58:
+BattleFx_RunCool:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

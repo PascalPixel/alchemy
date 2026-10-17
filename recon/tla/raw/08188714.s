@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08188714
+@ Abilities: Death Plunge, Death Leap (kind 53).
+	.global BattleFx_RunDeathPlunge
 	.thumb_func
-Func_08188714:
+BattleFx_RunDeathPlunge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

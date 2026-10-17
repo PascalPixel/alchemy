@@ -105,7 +105,7 @@ void Audio_PlayCue(s32 cue);
 //
 // The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
 // shard's roll); the map cell buffer is cleared but not drawn.
-void Func_0818eda4(struct BattleEffectArgument *effect) {
+void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
   struct EffectPosition from;
   struct EffectPosition to;
   DrawRectangle draw[2];

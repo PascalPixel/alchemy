@@ -83,7 +83,7 @@ extern u16 gData_08197410[]; // spark sizes 1 to 10: cell offsets in the sheet
 // back; three columns of fire stream up meanwhile, and every twelve frames
 // the targets flash and jump. After frame 80 the sparks rise away. A or B
 // skips frames 33 to 97.
-void Func_08148458(struct BattleEffectArgument *effect) {
+void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   void *canvas;
   struct BattleEffectWork *work;

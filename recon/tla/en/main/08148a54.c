@@ -79,7 +79,7 @@ s32 Battle_GetObjectTableValueFar(s32 id);
 // Thirty motes rise from the caster, swirl, and home in on the targets; each
 // one that reaches the ground flashes and knocks back its target and plays a
 // three-cel splash where it landed.
-void Func_08148a54(struct BattleEffectArgument *effect) {
+void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct BattleEffectWork *work;
   void *canvas;

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08168a40
+@ Abilities: Kirin (scene kind 3).
+	.global BattleFx_RunKirin
 	.thumb_func
-Func_08168a40:
+BattleFx_RunKirin:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

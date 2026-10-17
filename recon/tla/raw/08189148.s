@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08189148
+@ Abilities: Dragon Cloud, Epicenter (kind 49).
+	.global BattleFx_RunDragonCloud
 	.thumb_func
-Func_08189148:
+BattleFx_RunDragonCloud:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

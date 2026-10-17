@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0813c0b8
+@ Abilities: Douse, Drench, Deluge (kind 9).
+	.global BattleFx_RunDouse
 	.thumb_func
-Func_0813c0b8:
+BattleFx_RunDouse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

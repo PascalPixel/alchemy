@@ -1,4 +1,4 @@
-// Draft of Func_081514bc, effect kind 6.
+// Draft of BattleFx_RunFrost, effect kind 6.
 
 // Twin: The Broken Seal's BattleFx_RunFrost (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
@@ -78,7 +78,7 @@ extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 // from below, and smoke rises half a pixel a frame through the height the
 // motes and chips cover. The variant chooses the number of motes and
 // pillars and the frame of the burst.
-void Func_081514bc(struct BattleEffectArgument *effect) {
+void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

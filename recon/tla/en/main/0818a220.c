@@ -1,7 +1,7 @@
 // Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
 // (call order BattleFx_RunTitanBlade 0.459): ⚓️'s own effect on ☀️'s frame,
 // its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
-// in Triple Chomp (Func_0818b868) and Legend (Func_08189b14). The native frame
+// in Triple Chomp (BattleFx_RunTripleChomp) and Legend (BattleFx_RunLegend). The native frame
 // (216) holds effect at sp+84, work 80, canvas 76, frame 72, the blitter 64,
 // graphics 60, the card's scale 56, the card's position's address 52, the hit's
 // speed 48, the texture's address 32, the member's actor offset 28, the

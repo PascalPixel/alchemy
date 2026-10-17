@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814e744
+@ Abilities: Break (kind 43).
+	.global BattleFx_RunBreak
 	.thumb_func
-Func_0814e744:
+BattleFx_RunBreak:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

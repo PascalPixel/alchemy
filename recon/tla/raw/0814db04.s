@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814db04
+@ Abilities: Boreas (scene kind 10).
+	.global BattleFx_RunBoreas
 	.thumb_func
-Func_0814db04:
+BattleFx_RunBoreas:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

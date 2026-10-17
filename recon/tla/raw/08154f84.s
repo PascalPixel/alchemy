@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08154f84
+@ Abilities: Thorn, Briar, Nettle (kind 5).
+	.global BattleFx_RunThorn
 	.thumb_func
-Func_08154f84:
+BattleFx_RunThorn:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

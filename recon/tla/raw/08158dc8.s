@@ -1,9 +1,10 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_08158dc8
+@ Abilities: Thor (scene kind 12).
+	.global BattleFx_RunThor
 	.thumb_func
-Func_08158dc8:
+BattleFx_RunThor:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

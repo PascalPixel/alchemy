@@ -1,4 +1,4 @@
-// Draft of Func_0816f594, effect kind 110 (Radiant Fire), written from the
+// Draft of BattleFx_RunRadiantFire, effect kind 110 (Radiant Fire), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunUndeadSword 0.525, call order BattleFx_RunBreak
 // 0.551); the textured square goes through the ARM polygon kernels as in
@@ -108,7 +108,7 @@ void Audio_PlayCue(s32 cue);
 // Frame loop (66 frames): at frame 0 the bursts are placed at random
 // around the target and the user closes in; from frame 8 burst i lands at
 // frame 16 + 4i and burns for 24 frames.
-void Func_0816f594(struct BattleEffectArgument *effect) {
+void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

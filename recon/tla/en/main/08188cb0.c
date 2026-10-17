@@ -92,7 +92,7 @@ void Func_08143000(void);
 // ground. Variant 0 is ☀️'s: the swirl rises at the caster and throws pink
 // stars. Variant 1 is ⚓️'s own: the swirl, recoloured into the blue flame's
 // palette, rises at the target and throws 32 skulls.
-void Func_08188cb0(struct BattleEffectArgument *effect) {
+void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];

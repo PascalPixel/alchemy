@@ -1,6 +1,6 @@
 // First draft, differ 472 of 549: Func_0814b9e8, the body of three effect
-// kinds through Func_0814b9c4 (mode 0), Func_0814b9d0 (mode 1) and
-// Func_0814b9dc (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
+// kinds through BattleFx_RunBalm (mode 0), BattleFx_RunTinder (mode 1) and
+// BattleFx_RunPhoenix (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
 
 // New in The Lost Age: no ☀️ function has this body (shape twin
 // BattleFx_RunPlanetDiver 0.471, structure twin

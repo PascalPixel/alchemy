@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0818cb74
+@ Abilities: Trident (scene kind 27).
+	.global BattleFx_RunTrident
 	.thumb_func
-Func_0818cb74:
+BattleFx_RunTrident:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

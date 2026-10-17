@@ -1,4 +1,4 @@
-// Draft of Func_08154f84, effect kind 5: thorns burst out of the ground one
+// Draft of BattleFx_RunThorn, effect kind 5: thorns burst out of the ground one
 // after another, eight frames apart, each throwing up two frames of dust.
 
 // Twin: The Broken Seal's BattleFx_RunThorn (effect.c), the same kind.
@@ -93,7 +93,7 @@ void WaitFrames(s32 frames);
 // Func_081963ec(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
-void Func_08154f84(struct BattleEffectArgument *effect) {
+void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;

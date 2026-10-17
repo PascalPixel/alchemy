@@ -1,4 +1,4 @@
-// Draft of Func_08153ebc, summon scene 4 (Func_0814c994's case 4).
+// Draft of BattleFx_RunAtalanta, summon scene 4 (Func_0814c994's case 4).
 
 // Twin: The Broken Seal's BattleFx_RunAtalanta (effect.c), call
 // for call, with The Lost Age's changes:
@@ -139,7 +139,7 @@ extern u8 gData_0819746d[];  // gBattleFx_PuffArcCellHeights
 // and flies off. Second loop (88 frames): 32 slashes fall from the sky, the
 // first 24 two frames apart, and burst into flame on the ground, each one
 // shaking the screen and flashing a target.
-void Func_08153ebc(struct BattleEffectArgument *effect) {
+void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
   s32 position[4];

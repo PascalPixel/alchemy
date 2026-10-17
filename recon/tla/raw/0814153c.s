@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814153c
+@ Abilities: Eclipse (scene kind 19).
+	.global BattleFx_RunEclipse
 	.thumb_func
-Func_0814153c:
+BattleFx_RunEclipse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

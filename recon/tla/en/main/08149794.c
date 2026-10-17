@@ -81,7 +81,7 @@ void Audio_PlayCue(s32 cue);
 // Pillars of lightning strike the targets' row one after another, eight
 // frames apart; each flashes the screen, throws a fan of sparks up from its
 // base and shakes the camera, and the sparks bounce on the ground.
-void Func_08149794(struct BattleEffectArgument *effect) {
+void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;

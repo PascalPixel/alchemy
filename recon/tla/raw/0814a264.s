@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_0814a264
+@ Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma Storm
+@ (kind 13).
+	.global BattleFx_RunVolcano
 	.thumb_func
-Func_0814a264:
+BattleFx_RunVolcano:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081509b4
+@ Abilities: Flare, Flare Wall, Flare Storm (kind 11).
+	.global BattleFx_RunFlare
 	.thumb_func
-Func_081509b4:
+BattleFx_RunFlare:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

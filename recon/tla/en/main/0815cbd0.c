@@ -1,4 +1,4 @@
-// Draft of Func_0815cbd0, effect kind 345: a spider web over the targets.
+// Draft of BattleFx_RunSpiderWeb, effect kind 345: a spider web over the targets.
 
 // On screen: a web fades in over the targets, centred between the first
 // and the last, drawn as four 32-pixel quarters (the one picture flipped
@@ -82,7 +82,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void SummonFx_RunCanvasMode1(void *action);
 
-void Func_0815cbd0(struct BattleEffectArgument *effect) {
+void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
   void *canvas;
   struct BattleEffectWork *work;

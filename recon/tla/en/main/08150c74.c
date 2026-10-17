@@ -1,4 +1,4 @@
-// Near miss of Func_08150c74, effect kind 1: differ 58 of 444 (draft 444).
+// Near miss of BattleFx_RunQuake, effect kind 1: differ 58 of 444 (draft 444).
 
 // Twin: The Broken Seal's BattleFx_RunQuake (effect.c), call for call.
 // The Lost Age reads the effect from its argument, takes its heap blocks as
@@ -84,7 +84,7 @@ extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 // pillar is launched upward, and a target that lands flashes; the camera
 // shakes all the while. The variant chooses the length, the rise time and
 // the shake.
-void Func_08150c74(struct BattleEffectArgument *effect) {
+void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

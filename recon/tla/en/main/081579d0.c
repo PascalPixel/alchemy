@@ -1,4 +1,4 @@
-// Draft of Func_081579d0, effect kind 283: the Jupiter Djinn's fall.
+// Draft of BattleFx_RunJupiter, effect kind 283: the Jupiter Djinn's fall.
 
 // On screen: a small Jupiter Djinn circles over the targets, 11.25 degrees
 // a frame, on a radius of 64 - 2 x frame pixels (half that across) that
@@ -87,7 +87,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void Func_081579d0(struct BattleEffectArgument *effect) {
+void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

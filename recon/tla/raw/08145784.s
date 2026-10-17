@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08145784
+@ Abilities: Condemn (kind 40).
+	.global BattleFx_RunCondemn
 	.thumb_func
-Func_08145784:
+BattleFx_RunCondemn:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

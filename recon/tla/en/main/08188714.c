@@ -1,7 +1,7 @@
 // Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
 // BattleFx_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
 // and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
-// spins the jaw quad of Triple Chomp (Func_0818b868) at the target. The native
+// spins the jaw quad of Triple Chomp (BattleFx_RunTripleChomp) at the target. The native
 // frame (104) holds effect at sp+56, work 52, canvas 48, frame 44, the blitter
 // pair at 36 and 40, the target 32, the user's and the target's heights at 28
 // and 24, the target's screen position's address at 20 and the user's action
@@ -116,7 +116,7 @@ void Func_08143000(void);
 // 32 sparks burst from the target at frame 56 (of which the first 16 are
 // drawn), and Triple Chomp's jaw closes on the target twice, at 45 and 135
 // degrees, growing and fading from frame 56.
-void Func_08188714(struct BattleEffectArgument *effect) {
+void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

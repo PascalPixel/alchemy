@@ -72,7 +72,7 @@ extern u8 gMapCellBuffer[];
 // Eight rings of stars fly from the caster to the target, one every eight
 // frames and spinning as they go; each bounces where it meets the ground,
 // shaking the screen and flashing the targets.
-void Func_08146a6c(struct BattleEffectArgument *effect) {
+void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

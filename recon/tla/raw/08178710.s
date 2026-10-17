@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08178710
+@ Abilities: Rising Dragon (kind 108).
+	.global BattleFx_RunRisingDragon
 	.thumb_func
-Func_08178710:
+BattleFx_RunRisingDragon:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_08144368
+@ Abilities: none; kind 34 is used by no ability. Named for The Broken Seal's
+@ twin.
+	.global BattleFx_RunOrbitingSpirals
 	.thumb_func
-Func_08144368:
+BattleFx_RunOrbitingSpirals:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

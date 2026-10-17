@@ -1,9 +1,9 @@
-// Draft of Func_0816d724, effect kind 115 (Soul Shatter), The Broken
+// Draft of BattleFx_RunSoulShatter, effect kind 115 (Soul Shatter), The Broken
 // Seal's BattleFx_RunUndeadSword as The Lost Age reworked it (structure
 // twin 0.703): the same two mirrored halves of a column and the same
 // sixteen sparks, over a longer effect in which the target is thrown up
 // and 32 motes of its soul drift back into the user (pulled as
-// Func_0816d130's orb is).
+// BattleFx_RunNirvana's orb is).
 
 // Listing 589 instructions, draft 587, differ 176.
 // Left: the spark blitter choice. The native computes the mirror choice
@@ -100,7 +100,7 @@ void Audio_PlayCue(s32 cue);
 // frame, stands at 80 pixels (drawn with max blitters) and sinks from
 // frame 80; the target is thrown up at frame 10 and comes down at frame
 // 80.
-void Func_0816d724(struct BattleEffectArgument *effect) {
+void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;

@@ -1,4 +1,4 @@
-// Near miss of Func_08151b48, effect kind 17.
+// Near miss of BattleFx_RunRay, effect kind 17.
 
 // Twin: The Broken Seal's BattleFx_RunRay (effect.c), call for
 // call, with The Lost Age's changes: on its own side the canvas begins
@@ -74,7 +74,7 @@ extern u16 gData_08197410[];    // gBattleFx_MoteCellOffsets
 // canvas wiped every five frames, and each bolt throws the variant's
 // number of sparks; the sparks fall and bounce off y = 120 until frame 64.
 // The targets are hit from frame 4, four frames apart.
-void Func_08151b48(struct BattleEffectArgument *effect) {
+void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

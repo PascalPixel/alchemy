@@ -1,8 +1,8 @@
 // Draft of Func_081548d0, the body of a two-kind family: vines (mode 0) or
 // green pillars (mode 1) shoot up out of the ground, left and right in
 // turn four frames apart, each throwing up dust at its root. The number of
-// columns grows with the strength. Its wrappers Func_081548b8 (mode 0) and
-// Func_081548c4 (mode 1) are C in fxmoded.c.
+// columns grows with the strength. Its wrappers BattleFx_RunGrowth (mode 0) and
+// BattleFx_RunPunji (mode 1) are C in fxmoded.c.
 
 // Twin: The Broken Seal's BattleFx_RunGrowingColumns (effect.c), with the same
 // tables, frame counts and fade.

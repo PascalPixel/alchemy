@@ -1,6 +1,6 @@
 // Draft (tla-en): listing 513 instructions, draft 513, common 393, differ 240.
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
-// Func_08181eb0, Func_08181ebc and Func_08181ec8 pass modes 0, 2 and 1).
+// BattleFx_RunPurgatory, BattleFx_RunDjinnBlast and BattleFx_RunDjinnStorm pass modes 0, 2 and 1).
 // Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
 // nearest ☀️ shape is BattleFx_RunPlasma (0.50), which is no twin.
 // The statements, frame (texture sp+40, the blitter pair sp+48, midpoint

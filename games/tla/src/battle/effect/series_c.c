@@ -3,14 +3,17 @@
 struct BattleEffectArgument;
 void Func_08144b14(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_08144af0(struct BattleEffectArgument *effect) {
+// Abilities: Revive, Water of Life, Lich (kind 25); Quartz (kind 201).
+void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
   Func_08144b14(effect, 0);
 }
 
-void Func_08144afc(struct BattleEffectArgument *effect) {
+// Abilities: Dew (kind 209).
+void BattleFx_RunDew(struct BattleEffectArgument *effect) {
   Func_08144b14(effect, 1);
 }
 
-void Func_08144b08(struct BattleEffectArgument *effect) {
+// Abilities: Spark (kind 255).
+void BattleFx_RunSpark(struct BattleEffectArgument *effect) {
   Func_08144b14(effect, 2);
 }

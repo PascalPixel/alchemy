@@ -52,7 +52,7 @@ void Func_081434f8(void);
 
 // A mote leaves the first target and is drawn as a ring of 24 sparks
 // turning about it while it is pulled back to the user.
-void Func_0816d130(struct BattleEffectArgument *effect) {
+void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
   struct BattleFxWork *work;
   void *canvas;
   DrawRectangle blit;

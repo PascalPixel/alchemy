@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081514bc
+@ Abilities: Frost, Tundra, Glacier (kind 6).
+	.global BattleFx_RunFrost
 	.thumb_func
-Func_081514bc:
+BattleFx_RunFrost:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

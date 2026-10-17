@@ -1,7 +1,7 @@
 // Draft, differ 743 of 1075 (draft 1058 instructions, no device): effect
 // kind 125, written from the listing on The Broken Seal's canvas skeleton
 // (twins: BattleFx_RunTitanBlade 0.44 by shape, BattleFx_RunHealingMotes 0.38
-// by call order); its backdrop swap is the one Func_0818fefc (kind 124)
+// by call order); its backdrop swap is the one BattleFx_RunMegiddo (kind 124)
 // also makes. Every call, cue and table read is in the native's order.
 // The native frame is 136 bytes: to at sp+124, from sp+112, the spawn list
 // sp+84, the blitter pair sp+76, the texture sp+68, effect sp+60, work
@@ -119,7 +119,7 @@ void Audio_PlayCue(s32 cue);
 // a great slash crosses the screen and at 90 the target is struck and 128
 // flat shards scatter, tumbling; from frame 100 everything fades to white,
 // and at the end the battle backdrop returns.
-void Func_08190b74(struct BattleEffectArgument *effect) {
+void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
   struct EffectPosition from;
   struct EffectPosition to;
   s16 list[3];

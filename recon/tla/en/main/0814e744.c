@@ -1,4 +1,4 @@
-// Near miss of Func_0814e744, effect kind 43: differ 36 of 337 (draft 337).
+// Near miss of BattleFx_RunBreak, effect kind 43: differ 36 of 337 (draft 337).
 
 // Twin: The Broken Seal's BattleFx_RunBreak (effect.c), call for
 // call. The Lost Age reads the effect from its argument (it never stores
@@ -69,7 +69,7 @@ extern s32 gData_081982e4[];          // gBreak_Gravities
 // and thrown sideways and up. Frame loop: from its cue a target flashes, and
 // its shards fall under one of four gravities until they drop below y = 112.
 // The effect runs 20 frames per target plus 56.
-void Func_0814e744(struct BattleEffectArgument *effect) {
+void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw;

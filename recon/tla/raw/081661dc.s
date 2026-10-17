@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081661dc
+@ Abilities: Annihilation (kind 55).
+	.global BattleFx_RunAnnihilation
 	.thumb_func
-Func_081661dc:
+BattleFx_RunAnnihilation:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

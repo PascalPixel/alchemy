@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816c274
+@ Abilities: Crystal (kind 244).
+	.global BattleFx_RunCrystal
 	.thumb_func
-Func_0816c274:
+BattleFx_RunCrystal:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

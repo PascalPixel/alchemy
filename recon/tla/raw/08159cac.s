@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08159cac
+@ Abilities: Spire, Clay Spire, Stone Spire (kind 2).
+	.global BattleFx_RunSpire
 	.thumb_func
-Func_08159cac:
+BattleFx_RunSpire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

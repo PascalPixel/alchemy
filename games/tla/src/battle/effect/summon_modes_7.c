@@ -3,10 +3,12 @@
 
 void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_0818d590(struct BattleEffectArgument *effect) {
+// Abilities: Planet Diver (kind 60).
+void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   Func_0818d5a8(effect, 0);
 }
 
-void Func_0818d59c(struct BattleEffectArgument *effect) {
+// Abilities: Planetary (kind 128).
+void BattleFx_RunPlanetary(struct BattleEffectArgument *effect) {
   Func_0818d5a8(effect, 1);
 }

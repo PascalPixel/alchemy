@@ -3,10 +3,12 @@
 
 void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_0818c7a0(struct BattleEffectArgument *effect) {
+// Abilities: Human Hunt (kind 437).
+void BattleFx_RunHumanHunt(struct BattleEffectArgument *effect) {
   Func_0818c7b8(effect, 0);
 }
 
-void Func_0818c7ac(struct BattleEffectArgument *effect) {
+// Abilities: Echo Cut (kind 390).
+void BattleFx_RunEchoCut(struct BattleEffectArgument *effect) {
   Func_0818c7b8(effect, 1);
 }

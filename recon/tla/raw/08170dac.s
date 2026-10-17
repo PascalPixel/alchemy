@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08170dac
+@ Abilities: Void Beam (kind 121).
+	.global BattleFx_RunVoidBeam
 	.thumb_func
-Func_08170dac:
+BattleFx_RunVoidBeam:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

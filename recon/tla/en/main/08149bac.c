@@ -1,5 +1,5 @@
 // Draft, differ 386 of 783: BattleFx_RunSparkGroups, the body of the
-// spark-group effects through Func_08149b94 (kind 0), Func_08149ba0
+// spark-group effects through BattleFx_RunNova (kind 0), BattleFx_RunDynamite
 // (kind 1) and BattleFx_RunThrash (kind 2).
 
 // ☀️ twin: BattleFx_RunSparkGroups (games/tbs/src/effect/effect.c), shape

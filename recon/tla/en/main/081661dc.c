@@ -1,4 +1,4 @@
-// Draft, differ 26 of 427: Func_081661dc, effect kind 55, The Broken Seal's
+// Draft, differ 26 of 427: BattleFx_RunAnnihilation, effect kind 55, The Broken Seal's
 // BattleFx_RunAnnihilation.
 
 // Twin: ☀️ BattleFx_RunAnnihilation (games/tbs/src/effect/effect.c),
@@ -100,7 +100,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // knocked back); the burst's three pictures (two frames each, then held) on
 // the target from frame 16 to 47; from frame 4 the shards in 3D, their
 // picture shrinking with their life.
-void Func_081661dc(struct BattleEffectArgument *effect) {
+void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

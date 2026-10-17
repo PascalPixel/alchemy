@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08186dfc
+@ Abilities: Haures (scene kind 18).
+	.global BattleFx_RunHaures
 	.thumb_func
-Func_08186dfc:
+BattleFx_RunHaures:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0818eda4
+@ Abilities: Liquifier (kind 123).
+	.global BattleFx_RunLiquifier
 	.thumb_func
-Func_0818eda4:
+BattleFx_RunLiquifier:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

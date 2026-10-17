@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081843fc
+@ Abilities: Catastrophe (scene kind 23).
+	.global BattleFx_RunCatastrophe
 	.thumb_func
-Func_081843fc:
+BattleFx_RunCatastrophe:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

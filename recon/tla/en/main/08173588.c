@@ -1,5 +1,5 @@
 // Draft of Func_08173588, the body of effect kinds 240 (Rime, mode 0) and
-// 238 (Haze, mode 1) through Func_08173570 and Func_0817357c, written from
+// 238 (Haze, mode 1) through BattleFx_RunRime and BattleFx_RunHaze, written from
 // the listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunUndeadSword 0.470, call order
 // BattleFx_RunDragonCloud 0.456). Func_0815585c, the canvas

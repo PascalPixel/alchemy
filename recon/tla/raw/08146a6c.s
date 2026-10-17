@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08146a6c
+@ Abilities: Shining Star (kind 62).
+	.global BattleFx_RunShiningStar
 	.thumb_func
-Func_08146a6c:
+BattleFx_RunShiningStar:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

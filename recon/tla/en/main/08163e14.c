@@ -1,7 +1,7 @@
 // Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
 // call reaches it), a second copy of The Broken Seal's
 // BattleFx_RunNereid (summon 2's, which The Lost Age keeps at
-// Func_08148458).
+// BattleFx_RunNereid).
 
 // Twin: ☀️ BattleFx_RunNereid (games/tbs/src/effect/effect.c),
 // ported: the palette goes by DMA 3, the blitters come from

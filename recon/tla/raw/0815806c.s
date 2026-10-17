@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0815806c
+@ Abilities: Mars (kind 282).
+	.global BattleFx_RunMars
 	.thumb_func
-Func_0815806c:
+BattleFx_RunMars:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

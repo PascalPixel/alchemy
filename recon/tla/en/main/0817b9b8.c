@@ -89,7 +89,7 @@ void Func_08143bb8(void);
 // beside the target, which is knocked back and flashes, and sixteen pink
 // stars burst from it for 24 frames. Battle work byte 0x866 is set for the
 // whole effect.
-void Func_0817b9b8(struct BattleEffectArgument *effect) {
+void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *canvas;
   struct EffectPosition caster;

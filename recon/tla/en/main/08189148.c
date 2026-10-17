@@ -103,7 +103,7 @@ void Func_08143000(void);
 // Variant 1, ⚓️'s own, loads orange colours, throws 128 sparks up from the
 // user's side at the start, sheds four sparks a frame from the head and
 // throws 128 more from the target with the embers.
-void Func_08189148(struct BattleEffectArgument *effect) {
+void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition target;
   struct EffectPosition position;

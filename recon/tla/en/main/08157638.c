@@ -1,4 +1,4 @@
-// Draft of Func_08157638, effect kind 281: the Mercury Djinn's flames.
+// Draft of BattleFx_RunMercury, effect kind 281: the Mercury Djinn's flames.
 
 // On screen: a small Mercury Djinn circles over the targets, one turn every
 // 32 frames, on a radius of 64 - 2 x frame pixels (half that across) that
@@ -89,7 +89,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void Func_08157638(struct BattleEffectArgument *effect) {
+void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08189b14
+@ Abilities: Legend (kind 122).
+	.global BattleFx_RunLegend
 	.thumb_func
-Func_08189b14:
+BattleFx_RunLegend:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -89,7 +89,7 @@ void WaitFrames(s32 frames);
 // after the line table. A variant of -1 is a drop still falling or a free
 // droplet.
 
-void Func_0813c0b8(struct BattleEffectArgument *effect) {
+void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   void **heapCache;
   struct BattleEffectWork *work;
   void *canvas;

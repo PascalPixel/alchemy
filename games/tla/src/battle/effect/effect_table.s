@@ -13,7 +13,7 @@ gData_08197410:
 Data_08197424:
 	.2byte 0, 4, 20, 56, 120, 220, 364, 560
 	.2byte 816, 1140
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197438
 Data_08197438:
 	.2byte 0, 8, 40, 112, 240, 440, 728, 1120
@@ -90,11 +90,11 @@ gData_0819750c:
 	.global gData_0819751a
 gData_0819751a:
 	.byte 0, 20, 2, 2, 34, 64, 68
-@ The Broken Seal's gIce_Counts; read by Func_0813bbd8
+@ The Broken Seal's gIce_Counts; read by BattleFx_RunIce
 	.global Data_08197521
 Data_08197521:
 	.byte 16, 46, 20, 52, 32, 80
-@ The Broken Seal's gFallingBolts_Counts; read by Func_0813c0b8
+@ The Broken Seal's gFallingBolts_Counts; read by BattleFx_RunDouse
 	.global Data_08197527
 Data_08197527:
 	.byte 6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80
@@ -188,84 +188,84 @@ Data_081976d6:
 Data_081976da:
 	.byte 0, 4, 8, 12
 	.balign 4
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_081976e0
 Data_081976e0:
 	.4byte 32764, 32516, 250, 6
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_081976f0
 Data_081976f0:
 	.2byte 10240, 56579, 56579, 58880
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_081976f8
 Data_081976f8:
 	.2byte 39680, 42496, 32768, 22016
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197700
 Data_08197700:
 	.byte 24, 48
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197702
 Data_08197702:
 	.byte 24, 32
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197704
 Data_08197704:
 	.byte 7, 37, 45, 58, 74, 80
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_0819770a
 Data_0819770a:
 	.byte 96, 48, 64, 64, 96, 128
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197710
 Data_08197710:
 	.byte 48, 48, 32, 0, 0, 24
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197716
 Data_08197716:
 	.byte 96, 96, 96, 96, 120, 120
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_0819771c
 Data_0819771c:
 	.byte 2, 26, 104, 150
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197720
 Data_08197720:
 	.byte 32, 16, 24, 64
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197724
 Data_08197724:
 	.byte 96, 48, 24, 16
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197728
 Data_08197728:
 	.byte 16, 8, 12, 8
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_0819772c
 Data_0819772c:
 	.byte 16, 4, 16, 24
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197730
 Data_08197730:
 	.byte 96, 96, 96, 120
-@ read by Func_0813fd84
+@ read by BattleFx_RunCruelRuin
 	.global Data_08197734
 Data_08197734:
 	.4byte 0x9000, 0xa000, 0x9000, 0x9000
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0814153c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunEclipse
 	.global Data_08197744
 Data_08197744:
 	.byte 0, 4, 8, 12
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_08197748
 Data_08197748:
 	.byte 8, 9, 25, 14, 15, 20, 21
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_0819774f
 Data_0819774f:
 	.byte 148, 160, 162, 164, 170, 174, 178, 182, 188, 194, 196, 200, 202, 206, 208, 210
 	.byte 220
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_08197760
 Data_08197760:
 	.4byte 404232216, 269488144, 269488144, 404232216
@@ -273,21 +273,21 @@ Data_08197760:
 	.4byte 741092396, 741092396, 269488144, 269488144
 	.4byte 269488144, 741092396, 741092396, 269488144
 	.4byte 269488144
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_081977a4
 Data_081977a4:
 	.byte 0, 32, 64, 96, 160, 192, 0, 32, 64, 96, 128, 160, 192, 224, 64, 96
 	.byte 128, 160, 192, 224, 64, 96, 128, 160, 192, 224, 64, 96, 128, 160, 192, 224
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_081977c4
 Data_081977c4:
 	.byte 0, 0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32, 32, 32, 64, 64
 	.byte 64, 64, 64, 64, 96, 96, 96, 96, 96, 96, 128, 128, 128, 128, 128, 128
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_081977e4
 Data_081977e4:
 	.byte 4, 3, 5, 3
-@ read by Func_0814153c
+@ read by BattleFx_RunEclipse
 	.global Data_081977e8
 Data_081977e8:
 	.byte 16, 12, 4, -8
@@ -303,7 +303,7 @@ Data_081977f0:
 	.global Data_081977f4
 Data_081977f4:
 	.byte 3, 4, 5, 6
-@ The Broken Seal's gPrism_ShardStarts; read by Func_08149268 and Func_0815f16c
+@ The Broken Seal's gPrism_ShardStarts; read by BattleFx_RunPrism and Func_0815f16c
 	.global gData_081977f8
 gData_081977f8:
 	.byte 32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99, 54, 69, 34, 82
@@ -364,57 +364,57 @@ Data_081978cc:
 	.2byte 0, 108, 228, 336, 444, 552, 684, 816
 	.2byte 948, 1092, 1140, 1189, 1231, 1273, 1321, 1357
 	.2byte 1389, 1413
-@ The Broken Seal's gCondemn_PanelX; read by Func_08145784
+@ The Broken Seal's gCondemn_PanelX; read by BattleFx_RunCondemn
 	.global Data_081978f0
 Data_081978f0:
 	.byte 10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0
-@ The Broken Seal's gCondemn_PanelY; read by Func_08145784
+@ The Broken Seal's gCondemn_PanelY; read by BattleFx_RunCondemn
 	.global Data_081978fe
 Data_081978fe:
 	.byte 0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4
-@ The Broken Seal's gBind_Vertex; read by Func_08145df8
+@ The Broken Seal's gBind_Vertex; read by BattleFx_RunBind
 	.global Data_0819790c
 Data_0819790c:
 	.4byte 0, 24, 0
-@ The Broken Seal's gBind_Vertex; read by Func_0814627c
+@ The Broken Seal's gBind_Vertex; read by BattleFx_RunTriangleStrike
 	.global Data_08197918
 Data_08197918:
 	.4byte 0, 24, 0
-@ The Broken Seal's gAstralBlast_Points; read by Func_08146638
+@ The Broken Seal's gAstralBlast_Points; read by BattleFx_RunAstralBlast
 	.global gData_08197924
 gData_08197924:
 	.4byte 0, 0x300000, 0, 0
 	.4byte 0x1c0000, 0
-@ read by Func_08146a6c
+@ read by BattleFx_RunShiningStar
 	.global gData_0819793c
 gData_0819793c:
 	.byte 32, 16
-@ The Broken Seal's gWhirlwindComets_GridX; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_GridX; read by BattleFx_RunProcne
 	.global Data_0819793e
 Data_0819793e:
 	.byte 0, 32, 64, 0, 32, 64, 0, 32, 64
-@ The Broken Seal's gWhirlwindComets_GridY; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_GridY; read by BattleFx_RunProcne
 	.global Data_08197947
 Data_08197947:
 	.byte 0, 0, 0, 32, 32, 32, 64, 64, 64
-@ The Broken Seal's gWhirlwindComets_Frames; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_Frames; read by BattleFx_RunProcne
 	.global Data_08197950
 Data_08197950:
 	.2byte 334, 347, 359, 372
-@ The Broken Seal's gWhirlwindComets_CellWidths; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_CellWidths; read by BattleFx_RunProcne
 	.global Data_08197958
 Data_08197958:
 	.byte 14, 24, 48
-@ The Broken Seal's gWhirlwindComets_CellHeights; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_CellHeights; read by BattleFx_RunProcne
 	.global Data_0819795b
 Data_0819795b:
 	.byte 14, 19, 24
-@ The Broken Seal's gWhirlwindComets_CellBiasY; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_CellBiasY; read by BattleFx_RunProcne
 	.global Data_0819795e
 Data_0819795e:
 	.byte 8, 12, 17
 	.balign 2
-@ The Broken Seal's gWhirlwindComets_CellOffsets; read by Func_08146e00
+@ The Broken Seal's gWhirlwindComets_CellOffsets; read by BattleFx_RunProcne
 	.global Data_08197962
 Data_08197962:
 	.2byte 13824, 14020, 14476
@@ -446,35 +446,35 @@ Data_0819797e:
 	.global Data_08197984
 Data_08197984:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
-@ The Broken Seal's gNereid_Columns; read by Func_08148458
+@ The Broken Seal's gNereid_Columns; read by BattleFx_RunNereid
 	.global Data_08197990
 Data_08197990:
 	.byte 16, 104, 32, 104, 48, 104, 64, 104
-@ The Broken Seal's gNereid_Gravity; read by Func_08148458
+@ The Broken Seal's gNereid_Gravity; read by BattleFx_RunNereid
 	.global Data_08197998
 Data_08197998:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
-@ The Broken Seal's gFroth_Counts; read by Func_08148a54
+@ The Broken Seal's gFroth_Counts; read by BattleFx_RunFroth
 	.global gData_081979a8
 gData_081979a8:
 	.byte 6, 140, 12, 160, 30, 200
-@ The Broken Seal's gWhirlwind_Shapes; read by Func_08148e9c
+@ The Broken Seal's gWhirlwind_Shapes; read by BattleFx_RunWhirlwind
 	.global gData_081979ae
 gData_081979ae:
 	.byte 1, 16, 2, 2, 24, 2, 4, 32, 4
-@ read by Func_08149268
+@ read by BattleFx_RunPrism
 	.global Data_081979b7
 Data_081979b7:
 	.byte 1, 85, 30, 4, 124, 54, 12, 166, 86
-@ The Broken Seal's gPlasma_Sparks; read by Func_08149794
+@ The Broken Seal's gPlasma_Sparks; read by BattleFx_RunPlasma
 	.global Data_081979c0
 Data_081979c0:
 	.2byte 384, 2, 256, 3, 192, 4
-@ The Broken Seal's gPlasma_Columns; read by Func_08149794
+@ The Broken Seal's gPlasma_Columns; read by BattleFx_RunPlasma
 	.global Data_081979cc
 Data_081979cc:
 	.byte 32, 64, 16, 48, 72, 96, 64, 88, 56, 104, 72, 48, 24, 56
-@ The Broken Seal's gPlasma_Counts; read by Func_08149794
+@ The Broken Seal's gPlasma_Counts; read by BattleFx_RunPlasma
 	.global Data_081979da
 Data_081979da:
 	.byte 1, 3, 7
@@ -490,15 +490,15 @@ Data_081979de:
 	.global Data_08197a1a
 Data_08197a1a:
 	.byte 5, 5, 4, 3, 2, 1
-@ The Broken Seal's gVolcano_Counts; read by Func_0814a264
+@ The Broken Seal's gVolcano_Counts; read by BattleFx_RunVolcano
 	.global Data_08197a20
 Data_08197a20:
 	.byte 1, 2, 4
-@ The Broken Seal's gVolcano_Depths; read by Func_0814a264
+@ The Broken Seal's gVolcano_Depths; read by BattleFx_RunVolcano
 	.global Data_08197a23
 Data_08197a23:
 	.byte 0, 0, 0, 0, 24, -24, 0, 0, -20, 20, -60, 60
-@ The Broken Seal's gVolcano_StartFrames; read by Func_0814a264
+@ The Broken Seal's gVolcano_StartFrames; read by BattleFx_RunVolcano
 	.global Data_08197a2f
 Data_08197a2f:
 	.byte 8, 18, 24, 30, 34
@@ -506,27 +506,27 @@ Data_08197a2f:
 	.global Data_08197a34
 Data_08197a34:
 	.byte 0, 4, 8, 12
-@ read by Func_0814bee0
+@ read by BattleFx_RunZagan
 	.global Data_08197a38
 Data_08197a38:
 	.2byte 0, 0, 0, 32, 32, 0, 32, 32
 	.2byte 32, 64, 64, 0, 64, 32, 64, 64
 	.2byte 96, 0, 96, 32, 96, 64
-@ read by Func_0814bee0
+@ read by BattleFx_RunZagan
 	.global Data_08197a64
 Data_08197a64:
 	.2byte 0, 16, 0, 48, 32, 0, 32, 32
 	.2byte 32, 64, 64, 0, 64, 32, 64, 64
 	.2byte 64, 96, 96, 0, 96, 64, 96, 96
-@ read by Func_0814bee0
+@ read by BattleFx_RunZagan
 	.global Data_08197a94
 Data_08197a94:
 	.byte 0, 6, 8, 9
-@ read by Func_0814bee0
+@ read by BattleFx_RunZagan
 	.global Data_08197a98
 Data_08197a98:
 	.byte 5, 8, 7, 3
-@ read by Func_0814bee0
+@ read by BattleFx_RunZagan
 	.global Data_08197a9c
 Data_08197a9c:
 	.byte 32, 12, -24, 0
@@ -534,606 +534,606 @@ Data_08197a9c:
 @ gBattleFx_EffectHandlers (effect/effect_table.c); 0 where a kind has none.
 	.global gData_08197aa0
 gData_08197aa0:
-	.4byte Func_08150c74            @ 1
-	.4byte Func_08159cac            @ 2
-	.4byte Func_0815a9e4            @ 3
-	.4byte Func_081548b8            @ 4
-	.4byte Func_08154f84            @ 5
-	.4byte Func_081514bc            @ 6
-	.4byte Func_0813bbd8            @ 7
-	.4byte Func_08149268            @ 8
-	.4byte Func_0813c0b8            @ 9
-	.4byte Func_08148a54            @ 10
-	.4byte Func_081509b4            @ 11
-	.4byte Func_08151040            @ 12
-	.4byte Func_0814a264            @ 13
-	.4byte Func_08151fe4            @ 14
-	.4byte Func_08149b94            @ 15
-	.4byte Func_0815537c            @ 16
-	.4byte Func_08151b48            @ 17
-	.4byte Func_08149794            @ 18
-	.4byte BattleFx_RunSlash        @ 19
-	.4byte Func_08148e9c            @ 20
-	.4byte BattleFx_RunCure @ 21
-	.4byte BattleFx_RunPly @ 22
-	.4byte BattleFx_RunWish @ 23
-	.4byte BattleFx_RunCurePoison @ 24
-	.4byte Func_08144af0            @ 25
-	.4byte Func_0814fa08            @ 26
-	.4byte SummonFx_RunCanvasMode3  @ 27
-	.4byte Func_0814fa14            @ 28
-	.4byte SummonFx_RunCanvasMode1  @ 29
-	.4byte Func_0814fa38            @ 30
-	.4byte SummonFx_RunCanvasMode2  @ 31
-	.4byte BattleFx_RunTaint  @ 32
-	.4byte BattleFx_RunDelude     @ 33
-	.4byte Func_08144368            @ 34
-	.4byte BattleFx_RunHeartrender     @ 35
-	.4byte BattleFx_RunParalyze     @ 36
-	.4byte Func_0814aebc            @ 37
-	.4byte Func_08145df8            @ 38
-	.4byte Func_08144044            @ 39
-	.4byte Func_08145784            @ 40
-	.4byte Func_0814b160            @ 41
-	.4byte Func_0814ea3c            @ 42
-	.4byte Func_0814e744            @ 43
-	.4byte BattleFx_RunWish @ 44
-	.4byte BattleFx_RunWish @ 45
-	.4byte Func_0814fa08            @ 46
-	.4byte SummonFx_RunCanvasMode1  @ 47
-	.4byte 0                        @ 48
-	.4byte Func_08189148            @ 49
-	.4byte Func_081445f8            @ 50
-	.4byte Func_08188cb0            @ 51
-	.4byte Func_0816a29c            @ 52
-	.4byte Func_08188714            @ 53
-	.4byte BattleFx_RunShuriken        @ 54
-	.4byte Func_081661dc            @ 55
-	.4byte Func_081548c4            @ 56
-	.4byte BattleFx_RunCuttingEdge @ 57
-	.4byte Func_081665a4            @ 58
-	.4byte BattleFx_RunHeatWave @ 59
-	.4byte Func_0818d590            @ 60
-	.4byte Func_08166af8            @ 61
-	.4byte Func_08146a6c            @ 62
-	.4byte BattleFx_RunBlizzard @ 63
-	.4byte BattleFx_RunDemonFire     @ 64
-	.4byte Func_0816a2a8            @ 65
-	.4byte BattleFx_RunDrown     @ 66
-	.4byte Func_0814627c            @ 67
-	.4byte Func_08146638            @ 68
-	.4byte Func_08178ee4            @ 69
-	.4byte 0                        @ 70
-	.4byte BattleFx_RunHealingMotesMode11 @ 71
-	.4byte Func_0817c6ac            @ 72
-	.4byte Func_0818bc60            @ 73
-	.4byte Func_08179394            @ 74
-	.4byte Func_0816ec58            @ 75
-	.4byte Func_0817b66c            @ 76
-	.4byte Func_0817b9b8            @ 77
-	.4byte Func_08179994            @ 78
-	.4byte Func_0818a208            @ 79
-	.4byte Func_0817c27c            @ 80
-	.4byte Func_08171b98            @ 81
-	.4byte Func_0817bd88            @ 82
+	.4byte BattleFx_RunQuake               @ 1
+	.4byte BattleFx_RunSpire               @ 2
+	.4byte BattleFx_RunGaia                @ 3
+	.4byte BattleFx_RunGrowth              @ 4
+	.4byte BattleFx_RunThorn               @ 5
+	.4byte BattleFx_RunFrost               @ 6
+	.4byte BattleFx_RunIce                 @ 7
+	.4byte BattleFx_RunPrism               @ 8
+	.4byte BattleFx_RunDouse               @ 9
+	.4byte BattleFx_RunFroth               @ 10
+	.4byte BattleFx_RunFlare               @ 11
+	.4byte BattleFx_RunFire                @ 12
+	.4byte BattleFx_RunVolcano             @ 13
+	.4byte BattleFx_RunBlast               @ 14
+	.4byte BattleFx_RunNova                @ 15
+	.4byte BattleFx_RunBolt                @ 16
+	.4byte BattleFx_RunRay                 @ 17
+	.4byte BattleFx_RunPlasma              @ 18
+	.4byte BattleFx_RunSlash               @ 19
+	.4byte BattleFx_RunWhirlwind           @ 20
+	.4byte BattleFx_RunCure                @ 21
+	.4byte BattleFx_RunPly                 @ 22
+	.4byte BattleFx_RunWish                @ 23
+	.4byte BattleFx_RunCurePoison          @ 24
+	.4byte BattleFx_RunRevive              @ 25
+	.4byte BattleFx_RunImpact              @ 26
+	.4byte SummonFx_RunCanvasMode3         @ 27
+	.4byte BattleFx_RunGuard               @ 28
+	.4byte SummonFx_RunCanvasMode1         @ 29
+	.4byte BattleFx_RunWard                @ 30
+	.4byte SummonFx_RunCanvasMode2         @ 31
+	.4byte BattleFx_RunTaint               @ 32
+	.4byte BattleFx_RunDelude              @ 33
+	.4byte BattleFx_RunOrbitingSpirals     @ 34
+	.4byte BattleFx_RunHeartrender         @ 35
+	.4byte BattleFx_RunParalyze            @ 36
+	.4byte BattleFx_RunSleep               @ 37
+	.4byte BattleFx_RunBind                @ 38
+	.4byte BattleFx_RunHaunt               @ 39
+	.4byte BattleFx_RunCondemn             @ 40
+	.4byte BattleFx_RunCurse               @ 41
+	.4byte BattleFx_RunDrain               @ 42
+	.4byte BattleFx_RunBreak               @ 43
+	.4byte BattleFx_RunWish                @ 44
+	.4byte BattleFx_RunWish                @ 45
+	.4byte BattleFx_RunImpact              @ 46
+	.4byte SummonFx_RunCanvasMode1         @ 47
+	.4byte 0                               @ 48
+	.4byte BattleFx_RunDragonCloud         @ 49
+	.4byte BattleFx_RunDemonNight          @ 50
+	.4byte BattleFx_RunHelmSplitter        @ 51
+	.4byte BattleFx_RunQuickStrike         @ 52
+	.4byte BattleFx_RunDeathPlunge         @ 53
+	.4byte BattleFx_RunShuriken            @ 54
+	.4byte BattleFx_RunAnnihilation        @ 55
+	.4byte BattleFx_RunPunji               @ 56
+	.4byte BattleFx_RunCuttingEdge         @ 57
+	.4byte BattleFx_RunRagnarok            @ 58
+	.4byte BattleFx_RunHeatWave            @ 59
+	.4byte BattleFx_RunPlanetDiver         @ 60
+	.4byte BattleFx_RunTitanBlade          @ 61
+	.4byte BattleFx_RunShiningStar         @ 62
+	.4byte BattleFx_RunBlizzard            @ 63
+	.4byte BattleFx_RunDemonFire           @ 64
+	.4byte BattleFx_RunVorpalSlash         @ 65
+	.4byte BattleFx_RunDrown               @ 66
+	.4byte BattleFx_RunTriangleStrike      @ 67
+	.4byte BattleFx_RunAstralBlast         @ 68
+	.4byte BattleFx_RunHeartbreak          @ 69
+	.4byte 0                               @ 70
+	.4byte BattleFx_RunHealingMotesMode11  @ 71
+	.4byte BattleFx_RunFume                @ 72
+	.4byte BattleFx_RunBeam                @ 73
+	.4byte BattleFx_RunRagingHeat          @ 74
+	.4byte BattleFx_RunCool                @ 75
+	.4byte BattleFx_RunSabreDance          @ 76
+	.4byte BattleFx_RunBackstab            @ 77
+	.4byte BattleFx_RunJuggle              @ 78
+	.4byte BattleFx_RunFlameCard           @ 79
+	.4byte BattleFx_RunWhiplash            @ 80
+	.4byte BattleFx_RunPoisonFlow          @ 81
+	.4byte BattleFx_RunFirePuppet          @ 82
 	.4byte BattleFx_RunProjectileVolleyMode14WithAction @ 83
-	.4byte Func_0816bc70            @ 84
-	.4byte Func_0816aa08            @ 85
-	.4byte Func_0816fc9c            @ 86
-	.4byte Func_0818a1fc            @ 87
-	.4byte Func_0818a1f0            @ 88
-	.4byte Func_0818a214            @ 89
-	.4byte Func_0818ad1c            @ 90
-	.4byte Func_0818ad34            @ 91
-	.4byte Func_0818ad10            @ 92
-	.4byte Func_0818ad28            @ 93
-	.4byte 0                        @ 94
-	.4byte 0                        @ 95
-	.4byte 0                        @ 96
-	.4byte 0                        @ 97
-	.4byte 0                        @ 98
-	.4byte 0                        @ 99
-	.4byte Func_0816d3d8            @ 100
-	.4byte Func_0816e644            @ 101
-	.4byte 0                        @ 102
-	.4byte Func_0816f080            @ 103
-	.4byte Func_08166b04            @ 104
-	.4byte Func_0816f928            @ 105
-	.4byte Func_0816aed4            @ 106
-	.4byte Func_08171b8c            @ 107
-	.4byte Func_08178710            @ 108
-	.4byte Func_0816a2c0            @ 109
-	.4byte Func_0816f594            @ 110
+	.4byte BattleFx_RunDiamondBerg         @ 84
+	.4byte BattleFx_RunPlumeEdge           @ 85
+	.4byte BattleFx_RunThunderMine         @ 86
+	.4byte BattleFx_RunFrostCard           @ 87
+	.4byte BattleFx_RunBrambleCard         @ 88
+	.4byte BattleFx_RunThunderCard         @ 89
+	.4byte BattleFx_RunBaffleCard          @ 90
+	.4byte BattleFx_RunSwordCard           @ 91
+	.4byte BattleFx_RunSleepCard           @ 92
+	.4byte BattleFx_RunDeathCard           @ 93
+	.4byte 0                               @ 94
+	.4byte 0                               @ 95
+	.4byte 0                               @ 96
+	.4byte 0                               @ 97
+	.4byte 0                               @ 98
+	.4byte 0                               @ 99
+	.4byte BattleFx_RunStoneJustice        @ 100
+	.4byte BattleFx_RunHeavyDivide         @ 101
+	.4byte 0                               @ 102
+	.4byte BattleFx_RunWyrdCurse           @ 103
+	.4byte BattleFx_RunAcheronsGrief       @ 104
+	.4byte BattleFx_RunHurricane           @ 105
+	.4byte BattleFx_RunDreamtide           @ 106
+	.4byte BattleFx_RunLetheAlbion         @ 107
+	.4byte BattleFx_RunRisingDragon        @ 108
+	.4byte BattleFx_RunBoostHack           @ 109
+	.4byte BattleFx_RunRadiantFire         @ 110
 	.4byte BattleFx_RunVolleyBMode11WithAction @ 111
 	.4byte BattleFx_RunProjectileVolleyMode12WithAction @ 112
-	.4byte BattleFx_RunCanvasMode0  @ 113
-	.4byte Func_08181eb0            @ 114
-	.4byte Func_0816d724            @ 115
+	.4byte BattleFx_RunCanvasMode0         @ 113
+	.4byte BattleFx_RunPurgatory           @ 114
+	.4byte BattleFx_RunSoulShatter         @ 115
 	.4byte BattleFx_RunVolleyBMode10WithAction @ 116
-	.4byte Func_0813d064            @ 117
-	.4byte Func_0816a2b4            @ 118
-	.4byte Func_0816d130            @ 119
-	.4byte Func_08171430            @ 120
-	.4byte Func_08170dac            @ 121
-	.4byte Func_08189b14            @ 122
-	.4byte Func_0818eda4            @ 123
-	.4byte Func_0818fefc            @ 124
-	.4byte Func_08190b74            @ 125
-	.4byte Func_081811d4            @ 126
-	.4byte Func_0814461c            @ 127
-	.4byte Func_0818d59c            @ 128
-	.4byte Func_08181910            @ 129
-	.4byte 0                        @ 130
-	.4byte 0                        @ 131
-	.4byte 0                        @ 132
-	.4byte 0                        @ 133
-	.4byte 0                        @ 134
-	.4byte 0                        @ 135
-	.4byte 0                        @ 136
-	.4byte 0                        @ 137
-	.4byte 0                        @ 138
-	.4byte 0                        @ 139
-	.4byte 0                        @ 140
-	.4byte 0                        @ 141
-	.4byte 0                        @ 142
-	.4byte 0                        @ 143
-	.4byte 0                        @ 144
-	.4byte 0                        @ 145
-	.4byte 0                        @ 146
-	.4byte 0                        @ 147
-	.4byte 0                        @ 148
-	.4byte 0                        @ 149
-	.4byte 0                        @ 150
-	.4byte 0                        @ 151
-	.4byte 0                        @ 152
-	.4byte 0                        @ 153
-	.4byte 0                        @ 154
-	.4byte 0                        @ 155
-	.4byte 0                        @ 156
-	.4byte 0                        @ 157
-	.4byte 0                        @ 158
-	.4byte 0                        @ 159
-	.4byte 0                        @ 160
-	.4byte 0                        @ 161
-	.4byte 0                        @ 162
-	.4byte 0                        @ 163
-	.4byte 0                        @ 164
-	.4byte 0                        @ 165
-	.4byte 0                        @ 166
-	.4byte 0                        @ 167
-	.4byte 0                        @ 168
-	.4byte 0                        @ 169
-	.4byte 0                        @ 170
-	.4byte 0                        @ 171
-	.4byte 0                        @ 172
-	.4byte 0                        @ 173
-	.4byte 0                        @ 174
-	.4byte 0                        @ 175
-	.4byte 0                        @ 176
-	.4byte 0                        @ 177
-	.4byte 0                        @ 178
-	.4byte 0                        @ 179
-	.4byte 0                        @ 180
-	.4byte Func_0814fa98            @ 181
-	.4byte BattleFx_RunHealingMotesMode13 @ 182
-	.4byte 0                        @ 183
-	.4byte 0                        @ 184
-	.4byte 0                        @ 185
-	.4byte 0                        @ 186
-	.4byte 0                        @ 187
-	.4byte 0                        @ 188
-	.4byte 0                        @ 189
-	.4byte 0                        @ 190
-	.4byte 0                        @ 191
-	.4byte 0                        @ 192
-	.4byte 0                        @ 193
-	.4byte 0                        @ 194
-	.4byte 0                        @ 195
-	.4byte 0                        @ 196
-	.4byte 0                        @ 197
-	.4byte 0                        @ 198
-	.4byte 0                        @ 199
-	.4byte Func_0814fa50            @ 200
-	.4byte Func_08144af0            @ 201
-	.4byte Func_08154d5c            @ 202
-	.4byte Func_081587e4            @ 203
-	.4byte BattleFx_RunPly @ 204
-	.4byte BattleFx_RunSleet        @ 205
-	.4byte BattleFx_RunWish @ 206
-	.4byte Func_0815842c            @ 207
-	.4byte BattleFx_RunTonic @ 208
-	.4byte Func_08144afc            @ 209
-	.4byte Func_0814fa08            @ 210
-	.4byte Func_0814fa14            @ 211
-	.4byte BattleFx_RunPsyCrystal @ 212
-	.4byte Func_0814fa5c            @ 213
-	.4byte Func_081638d0            @ 214
-	.4byte Func_0814fa38            @ 215
-	.4byte Func_0814fa80            @ 216
-	.4byte Func_08163c00            @ 217
-	.4byte Func_08145df8            @ 218
-	.4byte BattleFx_RunGust @ 219
-	.4byte Func_0814fa20            @ 220
-	.4byte Func_0814fa44            @ 221
-	.4byte Func_0814fa68            @ 222
-	.4byte Func_0814fa08            @ 223
-	.4byte Func_0814fa8c            @ 224
-	.4byte BattleFx_RunCure @ 225
-	.4byte BattleFx_RunHealingMotesMode7 @ 226
-	.4byte BattleFx_RunHealingMotesMode8 @ 227
-	.4byte BattleFx_RunHealingMotesMode9 @ 228
-	.4byte BattleFx_RunHealingMotesMode10 @ 229
-	.4byte Func_0814b9c4            @ 230
-	.4byte Func_0814b9d0            @ 231
-	.4byte Func_08171b74            @ 232
-	.4byte Func_08171b80            @ 233
-	.4byte Func_0816b6d4            @ 234
-	.4byte 0                        @ 235
-	.4byte Func_08172ae8            @ 236
-	.4byte Func_081450c0            @ 237
-	.4byte Func_0817357c            @ 238
-	.4byte BattleFx_RunVolleyBMode8 @ 239
-	.4byte Func_08173570            @ 240
-	.4byte Func_08173a40            @ 241
-	.4byte Func_081739ec            @ 242
-	.4byte BattleFx_RunVolleyBMode9 @ 243
-	.4byte Func_0816c274            @ 244
-	.4byte BattleFx_RunHealingMotesMode12 @ 245
-	.4byte Func_08172af4            @ 246
-	.4byte Func_0816b6e0            @ 247
-	.4byte Func_081739f8            @ 248
-	.4byte Func_08173a04            @ 249
-	.4byte Func_08173a1c            @ 250
-	.4byte Func_08173a28            @ 251
-	.4byte Func_08173a34            @ 252
-	.4byte Func_0816c6f8            @ 253
-	.4byte Func_0816dc50            @ 254
-	.4byte Func_08144b08            @ 255
-	.4byte BattleFx_RunVolleyBMode22 @ 256
-	.4byte BattleFx_RunVolleyBMode24 @ 257
-	.4byte 0                        @ 258
-	.4byte 0                        @ 259
-	.4byte 0                        @ 260
-	.4byte 0                        @ 261
-	.4byte 0                        @ 262
-	.4byte 0                        @ 263
-	.4byte 0                        @ 264
-	.4byte 0                        @ 265
-	.4byte 0                        @ 266
-	.4byte 0                        @ 267
-	.4byte 0                        @ 268
-	.4byte 0                        @ 269
-	.4byte 0                        @ 270
-	.4byte 0                        @ 271
-	.4byte 0                        @ 272
-	.4byte 0                        @ 273
-	.4byte 0                        @ 274
-	.4byte 0                        @ 275
-	.4byte 0                        @ 276
-	.4byte 0                        @ 277
-	.4byte 0                        @ 278
-	.4byte 0                        @ 279
-	.4byte Func_08157d30            @ 280
-	.4byte Func_08157638            @ 281
-	.4byte Func_0815806c            @ 282
-	.4byte Func_081579d0            @ 283
-	.4byte 0                        @ 284
-	.4byte 0                        @ 285
-	.4byte 0                        @ 286
-	.4byte 0                        @ 287
-	.4byte 0                        @ 288
-	.4byte 0                        @ 289
-	.4byte 0                        @ 290
-	.4byte 0                        @ 291
-	.4byte 0                        @ 292
-	.4byte 0                        @ 293
-	.4byte 0                        @ 294
-	.4byte 0                        @ 295
-	.4byte 0                        @ 296
-	.4byte 0                        @ 297
-	.4byte 0                        @ 298
-	.4byte 0                        @ 299
-	.4byte Func_0813c5ac            @ 300
-	.4byte Func_0813c5b8            @ 301
-	.4byte Func_0813c5c4            @ 302
-	.4byte BattleFx_RunCrazyVoice        @ 303
-	.4byte Func_0813c5d0            @ 304
-	.4byte Func_0813c5dc            @ 305
-	.4byte BattleFx_RunWingBeat        @ 306
-	.4byte BattleFx_RunWingFlutter        @ 307
-	.4byte Func_08144604            @ 308
-	.4byte Func_081450d8            @ 309
-	.4byte BattleFx_RunGust @ 310
-	.4byte Func_0817e078            @ 311
-	.4byte BattleFx_RunMysticFlame     @ 312
-	.4byte Func_0813cf80            @ 313
-	.4byte Func_0817e084            @ 314
-	.4byte Func_081450e4            @ 315
-	.4byte Func_0813cf8c            @ 316
-	.4byte BattleFx_RunBearClaw @ 317
-	.4byte Func_0813cf98            @ 318
-	.4byte BattleFx_RunFlyingAttack @ 319
-	.4byte Func_0816a730            @ 320
-	.4byte BattleFx_RunRansack @ 321
-	.4byte Func_081450fc            @ 322
-	.4byte Func_0813cf98            @ 323
-	.4byte Func_0813cfb0            @ 324
-	.4byte Func_0813cfbc            @ 325
-	.4byte Func_0817e090            @ 326
-	.4byte Func_0813cfc8            @ 327
-	.4byte BattleFx_RunBacteriaRush @ 328
-	.4byte BattleFx_RunFlyingAttack @ 329
-	.4byte Func_08145108            @ 330
-	.4byte 0                        @ 331
-	.4byte Func_0813cfd4            @ 332
-	.4byte Func_0813cfe0            @ 333
-	.4byte BattleFx_RunFreebiteRush @ 334
-	.4byte Func_0813cfec            @ 335
-	.4byte Func_0813cfa4            @ 336
-	.4byte Func_0813cff8            @ 337
-	.4byte Func_08149ba0            @ 338
-	.4byte Func_0817e09c            @ 339
-	.4byte Func_081450f0            @ 340
-	.4byte 0                        @ 341
-	.4byte BattleFx_RunBearClaw @ 342
-	.4byte BattleFx_RunRansack @ 343
-	.4byte Func_0813cb1c            @ 344
-	.4byte Func_0815cbd0            @ 345
-	.4byte BattleFx_RunHeartrender     @ 346
-	.4byte Func_081450b4            @ 347
-	.4byte Func_0817e668            @ 348
-	.4byte Func_0813cb10            @ 349
-	.4byte Func_081450cc            @ 350
-	.4byte Func_08144610            @ 351
-	.4byte BattleFx_RunCure @ 352
-	.4byte Func_0817e674            @ 353
-	.4byte Func_0814b160            @ 354
-	.4byte 0                        @ 355
-	.4byte 0                        @ 356
-	.4byte 0                        @ 357
-	.4byte 0                        @ 358
-	.4byte 0                        @ 359
-	.4byte 0                        @ 360
-	.4byte 0                        @ 361
-	.4byte 0                        @ 362
-	.4byte 0                        @ 363
-	.4byte 0                        @ 364
-	.4byte 0                        @ 365
-	.4byte 0                        @ 366
-	.4byte 0                        @ 367
-	.4byte 0                        @ 368
-	.4byte 0                        @ 369
-	.4byte 0                        @ 370
-	.4byte 0                        @ 371
-	.4byte 0                        @ 372
-	.4byte 0                        @ 373
-	.4byte 0                        @ 374
-	.4byte 0                        @ 375
-	.4byte 0                        @ 376
-	.4byte 0                        @ 377
-	.4byte 0                        @ 378
-	.4byte 0                        @ 379
-	.4byte Func_08151fd8            @ 380
-	.4byte BattleFx_RunWingStroke       @ 381
-	.4byte Func_0815c958            @ 382
-	.4byte Func_0815c964            @ 383
-	.4byte BattleFx_RunOuterSpace @ 384
-	.4byte Func_08147ad4            @ 385
-	.4byte Func_0813d004            @ 386
+	.4byte BattleFx_RunMadZephyr           @ 117
+	.4byte BattleFx_RunLunarSlash          @ 118
+	.4byte BattleFx_RunNirvana             @ 119
+	.4byte BattleFx_RunLightSurge          @ 120
+	.4byte BattleFx_RunVoidBeam            @ 121
+	.4byte BattleFx_RunLegend              @ 122
+	.4byte BattleFx_RunLiquifier           @ 123
+	.4byte BattleFx_RunMegiddo             @ 124
+	.4byte BattleFx_RunOdyssey             @ 125
+	.4byte BattleFx_RunVengeance           @ 126
+	.4byte BattleFx_RunThornyGrave         @ 127
+	.4byte BattleFx_RunPlanetary           @ 128
+	.4byte BattleFx_RunLifeShear           @ 129
+	.4byte 0                               @ 130
+	.4byte 0                               @ 131
+	.4byte 0                               @ 132
+	.4byte 0                               @ 133
+	.4byte 0                               @ 134
+	.4byte 0                               @ 135
+	.4byte 0                               @ 136
+	.4byte 0                               @ 137
+	.4byte 0                               @ 138
+	.4byte 0                               @ 139
+	.4byte 0                               @ 140
+	.4byte 0                               @ 141
+	.4byte 0                               @ 142
+	.4byte 0                               @ 143
+	.4byte 0                               @ 144
+	.4byte 0                               @ 145
+	.4byte 0                               @ 146
+	.4byte 0                               @ 147
+	.4byte 0                               @ 148
+	.4byte 0                               @ 149
+	.4byte 0                               @ 150
+	.4byte 0                               @ 151
+	.4byte 0                               @ 152
+	.4byte 0                               @ 153
+	.4byte 0                               @ 154
+	.4byte 0                               @ 155
+	.4byte 0                               @ 156
+	.4byte 0                               @ 157
+	.4byte 0                               @ 158
+	.4byte 0                               @ 159
+	.4byte 0                               @ 160
+	.4byte 0                               @ 161
+	.4byte 0                               @ 162
+	.4byte 0                               @ 163
+	.4byte 0                               @ 164
+	.4byte 0                               @ 165
+	.4byte 0                               @ 166
+	.4byte 0                               @ 167
+	.4byte 0                               @ 168
+	.4byte 0                               @ 169
+	.4byte 0                               @ 170
+	.4byte 0                               @ 171
+	.4byte 0                               @ 172
+	.4byte 0                               @ 173
+	.4byte 0                               @ 174
+	.4byte 0                               @ 175
+	.4byte 0                               @ 176
+	.4byte 0                               @ 177
+	.4byte 0                               @ 178
+	.4byte 0                               @ 179
+	.4byte 0                               @ 180
+	.4byte Func_0814fa98                   @ 181
+	.4byte BattleFx_RunHealingMotesMode13  @ 182
+	.4byte 0                               @ 183
+	.4byte 0                               @ 184
+	.4byte 0                               @ 185
+	.4byte 0                               @ 186
+	.4byte 0                               @ 187
+	.4byte 0                               @ 188
+	.4byte 0                               @ 189
+	.4byte 0                               @ 190
+	.4byte 0                               @ 191
+	.4byte 0                               @ 192
+	.4byte 0                               @ 193
+	.4byte 0                               @ 194
+	.4byte 0                               @ 195
+	.4byte 0                               @ 196
+	.4byte 0                               @ 197
+	.4byte 0                               @ 198
+	.4byte 0                               @ 199
+	.4byte BattleFx_RunGranite             @ 200
+	.4byte BattleFx_RunRevive              @ 201
+	.4byte BattleFx_RunVine                @ 202
+	.4byte BattleFx_RunGround              @ 203
+	.4byte BattleFx_RunPly                 @ 204
+	.4byte BattleFx_RunSleet               @ 205
+	.4byte BattleFx_RunWish                @ 206
+	.4byte BattleFx_RunHail                @ 207
+	.4byte BattleFx_RunTonic               @ 208
+	.4byte BattleFx_RunDew                 @ 209
+	.4byte BattleFx_RunImpact              @ 210
+	.4byte BattleFx_RunGuard               @ 211
+	.4byte BattleFx_RunPsyCrystal          @ 212
+	.4byte BattleFx_RunFlash               @ 213
+	.4byte BattleFx_RunTorch               @ 214
+	.4byte BattleFx_RunWard                @ 215
+	.4byte BattleFx_RunZephyr              @ 216
+	.4byte BattleFx_RunKite                @ 217
+	.4byte BattleFx_RunBind                @ 218
+	.4byte BattleFx_RunGust                @ 219
+	.4byte BattleFx_RunIron                @ 220
+	.4byte BattleFx_RunSteam               @ 221
+	.4byte BattleFx_RunShade               @ 222
+	.4byte BattleFx_RunImpact              @ 223
+	.4byte BattleFx_RunCoal                @ 224
+	.4byte BattleFx_RunCure                @ 225
+	.4byte BattleFx_RunHealingMotesMode7   @ 226
+	.4byte BattleFx_RunHealingMotesMode8   @ 227
+	.4byte BattleFx_RunHealingMotesMode9   @ 228
+	.4byte BattleFx_RunHealingMotesMode10  @ 229
+	.4byte BattleFx_RunBalm                @ 230
+	.4byte BattleFx_RunTinder              @ 231
+	.4byte BattleFx_RunWhorl               @ 232
+	.4byte BattleFx_RunGale                @ 233
+	.4byte BattleFx_RunWaft                @ 234
+	.4byte 0                               @ 235
+	.4byte BattleFx_RunCore                @ 236
+	.4byte BattleFx_RunMud                 @ 237
+	.4byte BattleFx_RunHaze                @ 238
+	.4byte BattleFx_RunVolleyBMode8        @ 239
+	.4byte BattleFx_RunRime                @ 240
+	.4byte BattleFx_RunLull                @ 241
+	.4byte BattleFx_RunGasp                @ 242
+	.4byte BattleFx_RunVolleyBMode9        @ 243
+	.4byte BattleFx_RunCrystal             @ 244
+	.4byte BattleFx_RunHealingMotesMode12  @ 245
+	.4byte BattleFx_RunCannon              @ 246
+	.4byte BattleFx_RunAroma               @ 247
+	.4byte BattleFx_RunReflux              @ 248
+	.4byte BattleFx_RunDjinnCounter        @ 249
+	.4byte BattleFx_RunMold                @ 250
+	.4byte BattleFx_RunMeld                @ 251
+	.4byte BattleFx_RunShine               @ 252
+	.4byte BattleFx_RunGeode               @ 253
+	.4byte BattleFx_RunSerac               @ 254
+	.4byte BattleFx_RunSpark               @ 255
+	.4byte BattleFx_RunVolleyBMode22       @ 256
+	.4byte BattleFx_RunVolleyBMode24       @ 257
+	.4byte 0                               @ 258
+	.4byte 0                               @ 259
+	.4byte 0                               @ 260
+	.4byte 0                               @ 261
+	.4byte 0                               @ 262
+	.4byte 0                               @ 263
+	.4byte 0                               @ 264
+	.4byte 0                               @ 265
+	.4byte 0                               @ 266
+	.4byte 0                               @ 267
+	.4byte 0                               @ 268
+	.4byte 0                               @ 269
+	.4byte 0                               @ 270
+	.4byte 0                               @ 271
+	.4byte 0                               @ 272
+	.4byte 0                               @ 273
+	.4byte 0                               @ 274
+	.4byte 0                               @ 275
+	.4byte 0                               @ 276
+	.4byte 0                               @ 277
+	.4byte 0                               @ 278
+	.4byte 0                               @ 279
+	.4byte BattleFx_RunVenus               @ 280
+	.4byte BattleFx_RunMercury             @ 281
+	.4byte BattleFx_RunMars                @ 282
+	.4byte BattleFx_RunJupiter             @ 283
+	.4byte 0                               @ 284
+	.4byte 0                               @ 285
+	.4byte 0                               @ 286
+	.4byte 0                               @ 287
+	.4byte 0                               @ 288
+	.4byte 0                               @ 289
+	.4byte 0                               @ 290
+	.4byte 0                               @ 291
+	.4byte 0                               @ 292
+	.4byte 0                               @ 293
+	.4byte 0                               @ 294
+	.4byte 0                               @ 295
+	.4byte 0                               @ 296
+	.4byte 0                               @ 297
+	.4byte 0                               @ 298
+	.4byte 0                               @ 299
+	.4byte BattleFx_RunSonicWave           @ 300
+	.4byte BattleFx_RunShriek              @ 301
+	.4byte BattleFx_RunBansheeHowl         @ 302
+	.4byte BattleFx_RunCrazyVoice          @ 303
+	.4byte BattleFx_RunWarCry              @ 304
+	.4byte BattleFx_RunWickedHowl          @ 305
+	.4byte BattleFx_RunWingBeat            @ 306
+	.4byte BattleFx_RunWingFlutter         @ 307
+	.4byte BattleFx_RunRumble              @ 308
+	.4byte BattleFx_RunBoneChiller         @ 309
+	.4byte BattleFx_RunGust                @ 310
+	.4byte BattleFx_RunBoneCharge          @ 311
+	.4byte BattleFx_RunMysticFlame         @ 312
+	.4byte BattleFx_RunNumbingSting        @ 313
+	.4byte BattleFx_RunBruteForce          @ 314
+	.4byte BattleFx_RunStickyGoo           @ 315
+	.4byte BattleFx_RunCannibalFang        @ 316
+	.4byte BattleFx_RunBearClaw            @ 317
+	.4byte BattleFx_RunPoisonousBite       @ 318
+	.4byte BattleFx_RunFlyingAttack        @ 319
+	.4byte BattleFx_RunUndeadSword         @ 320
+	.4byte BattleFx_RunRansack             @ 321
+	.4byte BattleFx_RunStickyPoison        @ 322
+	.4byte BattleFx_RunPoisonousBite       @ 323
+	.4byte BattleFx_RunElectricBite        @ 324
+	.4byte BattleFx_RunPoisonTail          @ 325
+	.4byte BattleFx_RunOnslaught           @ 326
+	.4byte BattleFx_RunVampiricFang        @ 327
+	.4byte BattleFx_RunBacteriaRush        @ 328
+	.4byte BattleFx_RunFlyingAttack        @ 329
+	.4byte BattleFx_RunRottenBlood         @ 330
+	.4byte 0                               @ 331
+	.4byte BattleFx_RunDoubleFang          @ 332
+	.4byte BattleFx_RunMortalBlow          @ 333
+	.4byte BattleFx_RunFreebiteRush        @ 334
+	.4byte BattleFx_RunTwinBeaks           @ 335
+	.4byte BattleFx_RunRabidFang           @ 336
+	.4byte BattleFx_RunAcidBite            @ 337
+	.4byte BattleFx_RunDynamite            @ 338
+	.4byte BattleFx_RunHeadbutt            @ 339
+	.4byte BattleFx_RunPoisonInk           @ 340
+	.4byte 0                               @ 341
+	.4byte BattleFx_RunBearClaw            @ 342
+	.4byte BattleFx_RunRansack             @ 343
+	.4byte BattleFx_RunSoothingStar        @ 344
+	.4byte BattleFx_RunSpiderWeb           @ 345
+	.4byte BattleFx_RunHeartrender         @ 346
+	.4byte BattleFx_RunMadSpatter          @ 347
+	.4byte BattleFx_RunSpasm               @ 348
+	.4byte BattleFx_RunSleepStar           @ 349
+	.4byte BattleFx_RunDecompose           @ 350
+	.4byte BattleFx_RunHaunting            @ 351
+	.4byte BattleFx_RunCure                @ 352
+	.4byte BattleFx_RunBerserk             @ 353
+	.4byte BattleFx_RunCurse               @ 354
+	.4byte 0                               @ 355
+	.4byte 0                               @ 356
+	.4byte 0                               @ 357
+	.4byte 0                               @ 358
+	.4byte 0                               @ 359
+	.4byte 0                               @ 360
+	.4byte 0                               @ 361
+	.4byte 0                               @ 362
+	.4byte 0                               @ 363
+	.4byte 0                               @ 364
+	.4byte 0                               @ 365
+	.4byte 0                               @ 366
+	.4byte 0                               @ 367
+	.4byte 0                               @ 368
+	.4byte 0                               @ 369
+	.4byte 0                               @ 370
+	.4byte 0                               @ 371
+	.4byte 0                               @ 372
+	.4byte 0                               @ 373
+	.4byte 0                               @ 374
+	.4byte 0                               @ 375
+	.4byte 0                               @ 376
+	.4byte 0                               @ 377
+	.4byte 0                               @ 378
+	.4byte 0                               @ 379
+	.4byte BattleFx_RunSmokeBomb           @ 380
+	.4byte BattleFx_RunWingStroke          @ 381
+	.4byte BattleFx_RunPoisonBeat          @ 382
+	.4byte BattleFx_RunSpinningBeat        @ 383
+	.4byte BattleFx_RunOuterSpace          @ 384
+	.4byte BattleFx_RunDragonDriver        @ 385
+	.4byte BattleFx_RunDrainFang           @ 386
 	.4byte BattleFx_RunSparkApproachVariant3 @ 387
-	.4byte BattleFx_RunThrash @ 388
-	.4byte Func_0817e680            @ 389
-	.4byte Func_0818c7ac            @ 390
-	.4byte Func_0816aee0            @ 391
-	.4byte Func_08171ba4            @ 392
+	.4byte BattleFx_RunThrash              @ 388
+	.4byte BattleFx_RunRecovery            @ 389
+	.4byte BattleFx_RunEchoCut             @ 390
+	.4byte BattleFx_RunWateryGrave         @ 391
+	.4byte BattleFx_RunRagingFlood         @ 392
 	.4byte BattleFx_RunProjectileVolleyMode13WithAction @ 393
-	.4byte BattleFx_LongApproachThenSpark @ 394
-	.4byte Func_0813cb28            @ 395
-	.4byte Func_08173a10            @ 396
-	.4byte BattleFx_RunVolleyBMode17 @ 397
-	.4byte BattleFx_RunVolleyBMode18 @ 398
-	.4byte Func_0813d010            @ 399
-	.4byte BattleFx_RunVolleyBMode0 @ 400
-	.4byte BattleFx_RunVolleyBMode2 @ 401
-	.4byte BattleFx_RunIceBlessing       @ 402
-	.4byte BattleFx_RunVolleyBMode6 @ 403
-	.4byte BattleFx_RunVolleyBMode3 @ 404
-	.4byte BattleFx_RunVolleyBMode5 @ 405
-	.4byte BattleFx_RunVolleyBMode7 @ 406
-	.4byte BattleFx_RunVolleyBMode4 @ 407
-	.4byte BattleFx_RunVolleyBMode13 @ 408
-	.4byte BattleFx_RunVolleyBMode14 @ 409
-	.4byte BattleFx_RunVolleyBMode15 @ 410
-	.4byte BattleFx_RunVolleyBMode16 @ 411
-	.4byte BattleFx_RunVolleyBMode12 @ 412
-	.4byte BattleFx_RunVolleyBMode20 @ 413
-	.4byte Func_0818bc8c            @ 414
-	.4byte BattleFx_RunVolleyBMode21 @ 415
-	.4byte BattleFx_RunVolleyBMode0 @ 416
-	.4byte 0                        @ 417
-	.4byte 0                        @ 418
-	.4byte 0                        @ 419
-	.4byte 0                        @ 420
-	.4byte Func_0813d028            @ 421
-	.4byte EffectStep_RunAnimationMode9 @ 422
-	.4byte EffectStep_RunAnimationMode10 @ 423
-	.4byte EffectStep_RunAnimationMode11 @ 424
-	.4byte Func_0816a2cc            @ 425
-	.4byte Func_0818b868            @ 426
+	.4byte BattleFx_LongApproachThenSpark  @ 394
+	.4byte BattleFx_RunSlaver              @ 395
+	.4byte BattleFx_RunCounterRush         @ 396
+	.4byte BattleFx_RunVolleyBMode17       @ 397
+	.4byte BattleFx_RunVolleyBMode18       @ 398
+	.4byte BattleFx_RunAngleSpike          @ 399
+	.4byte BattleFx_RunVolleyBMode0        @ 400
+	.4byte BattleFx_RunVolleyBMode2        @ 401
+	.4byte BattleFx_RunIceBlessing         @ 402
+	.4byte BattleFx_RunVolleyBMode6        @ 403
+	.4byte BattleFx_RunVolleyBMode3        @ 404
+	.4byte BattleFx_RunVolleyBMode5        @ 405
+	.4byte BattleFx_RunVolleyBMode7        @ 406
+	.4byte BattleFx_RunVolleyBMode4        @ 407
+	.4byte BattleFx_RunVolleyBMode13       @ 408
+	.4byte BattleFx_RunVolleyBMode14       @ 409
+	.4byte BattleFx_RunVolleyBMode15       @ 410
+	.4byte BattleFx_RunVolleyBMode16       @ 411
+	.4byte BattleFx_RunVolleyBMode12       @ 412
+	.4byte BattleFx_RunVolleyBMode20       @ 413
+	.4byte BattleFx_RunBlastBreath         @ 414
+	.4byte BattleFx_RunVolleyBMode21       @ 415
+	.4byte BattleFx_RunVolleyBMode0        @ 416
+	.4byte 0                               @ 417
+	.4byte 0                               @ 418
+	.4byte 0                               @ 419
+	.4byte 0                               @ 420
+	.4byte BattleFx_RunManeater            @ 421
+	.4byte EffectStep_RunAnimationMode9    @ 422
+	.4byte EffectStep_RunAnimationMode10   @ 423
+	.4byte EffectStep_RunAnimationMode11   @ 424
+	.4byte BattleFx_RunTwinShear           @ 425
+	.4byte BattleFx_RunTripleChomp         @ 426
 	.4byte EffectStep_RunAnimationMode6Or7Or8B @ 427
-	.4byte BattleFx_RunTargetMotesMode1     @ 428
-	.4byte BattleFx_RunDelude     @ 429
-	.4byte Func_08145114            @ 430
-	.4byte Func_0817e68c            @ 431
-	.4byte BattleFx_RunVolleyBMode19 @ 432
-	.4byte Func_0817e0a8            @ 433
-	.4byte Func_0818bc6c            @ 434
-	.4byte Func_08173aa0            @ 435
-	.4byte Func_0814b9dc            @ 436
-	.4byte Func_0818c7a0            @ 437
-	.4byte Func_0813d034            @ 438
-	.4byte Func_0813d040            @ 439
-	.4byte Func_0813cfbc            @ 440
-	.4byte Func_0813d04c            @ 441
-	.4byte BattleFx_RunProjectileVolleyMode15       @ 442
-	.4byte BattleFx_RunProjectileVolleyMode16       @ 443
-	.4byte BattleFx_RunProjectileVolleyMode17       @ 444
-	.4byte Func_08173a4c            @ 445
-	.4byte Func_08173a58            @ 446
-	.4byte Func_0817cc30            @ 447
-	.4byte Func_08173a64            @ 448
-	.4byte Func_0818bc7c            @ 449
-	.4byte Func_0817d724            @ 450
-	.4byte Func_0814ea4c            @ 451
-	.4byte Func_0817d174            @ 452
-	.4byte Func_08145120            @ 453
-	.4byte EffectStep_RunAnimationMode12 @ 454
-	.4byte Func_08173a70            @ 455
-	.4byte Func_0813d058            @ 456
-	.4byte Func_0817e0b4            @ 457
-	.4byte Func_0813d01c            @ 458
-	.4byte Func_0816fc90            @ 459
-	.4byte Func_0814fa74            @ 460
-	.4byte Func_08181ebc            @ 461
-	.4byte Func_08181ec8            @ 462
+	.4byte BattleFx_RunTargetMotesMode1    @ 428
+	.4byte BattleFx_RunDelude              @ 429
+	.4byte BattleFx_RunRisingVenom         @ 430
+	.4byte BattleFx_RunSack                @ 431
+	.4byte BattleFx_RunVolleyBMode19       @ 432
+	.4byte BattleFx_RunStunMuscle          @ 433
+	.4byte BattleFx_RunRollingFlame        @ 434
+	.4byte BattleFx_RunCage                @ 435
+	.4byte BattleFx_RunPhoenix             @ 436
+	.4byte BattleFx_RunHumanHunt           @ 437
+	.4byte Func_0813d034                   @ 438
+	.4byte Func_0813d040                   @ 439
+	.4byte BattleFx_RunPoisonTail          @ 440
+	.4byte BattleFx_RunKillSting           @ 441
+	.4byte BattleFx_RunProjectileVolleyMode15 @ 442
+	.4byte BattleFx_RunProjectileVolleyMode16 @ 443
+	.4byte BattleFx_RunProjectileVolleyMode17 @ 444
+	.4byte BattleFx_RunDemonEye            @ 445
+	.4byte BattleFx_RunEmu                 @ 446
+	.4byte BattleFx_RunOceanFist           @ 447
+	.4byte BattleFx_RunCallDullahan        @ 448
+	.4byte BattleFx_RunGhostSoldier        @ 449
+	.4byte Func_0817d724                   @ 450
+	.4byte BattleFx_RunTrueCollide         @ 451
+	.4byte BattleFx_RunStarMine            @ 452
+	.4byte BattleFx_RunFormicAcid          @ 453
+	.4byte EffectStep_RunAnimationMode12   @ 454
+	.4byte BattleFx_RunBeatDance           @ 455
+	.4byte Func_0813d058                   @ 456
+	.4byte BattleFx_RunLivingArmor         @ 457
+	.4byte BattleFx_RunHeatStun            @ 458
+	.4byte BattleFx_RunEarthForce          @ 459
+	.4byte BattleFx_RunGuardAura           @ 460
+	.4byte BattleFx_RunDjinnBlast          @ 461
+	.4byte BattleFx_RunDjinnStorm          @ 462
 	.4byte BattleFx_RunCanvasMode3WithAction @ 463
-	.4byte Func_08173a88            @ 464
-	.4byte Func_08182390            @ 465
-	.4byte Func_0818239c            @ 466
-	.4byte Func_08173a7c            @ 467
-	.4byte Func_08173a94            @ 468
-	.4byte Func_0816e650            @ 469
-	.4byte BattleFx_RunProjectileVolleyMode18       @ 470
-	.4byte BattleFx_RunVolleyBMode23 @ 471
-@ The Broken Seal's gCybele_ObjectPoses; read by Func_0814ce30
+	.4byte BattleFx_RunElementSwap         @ 464
+	.4byte BattleFx_RunDjinnStun           @ 465
+	.4byte BattleFx_RunMysticCall          @ 466
+	.4byte BattleFx_RunClarionCry          @ 467
+	.4byte BattleFx_RunPsyBoost            @ 468
+	.4byte BattleFx_RunStrongHit           @ 469
+	.4byte BattleFx_RunProjectileVolleyMode18 @ 470
+	.4byte BattleFx_RunVolleyBMode23       @ 471
+@ The Broken Seal's gCybele_ObjectPoses; read by BattleFx_RunCybele
 	.global Data_081981fc
 Data_081981fc:
 	.byte 8, 10, 9, 11, 3, 4
-@ The Broken Seal's gCybele_ThornOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornOffsets; read by BattleFx_RunCybele
 	.global Data_08198202
 Data_08198202:
 	.2byte 3920, 3932, 3947, 3955, 3970
-@ The Broken Seal's gCybele_ThornWidths; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornWidths; read by BattleFx_RunCybele
 	.global Data_0819820c
 Data_0819820c:
 	.byte 2, 5, 2, 5, 3
-@ The Broken Seal's gCybele_ThornHeights; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornHeights; read by BattleFx_RunCybele
 	.global Data_08198211
 Data_08198211:
 	.byte 6, 3, 4, 3, 3
-@ The Broken Seal's gCybele_LeafOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_LeafOffsets; read by BattleFx_RunCybele
 	.global Data_08198216
 Data_08198216:
 	.2byte 3456, 3712, 3856
-@ The Broken Seal's gCybele_LeafSizes; read by Func_0814ce30
+@ The Broken Seal's gCybele_LeafSizes; read by BattleFx_RunCybele
 	.global Data_0819821c
 Data_0819821c:
 	.byte 16, 12, 8
 	.balign 2
-@ The Broken Seal's gCybele_ThornOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornOffsets; read by BattleFx_RunCybele
 	.global Data_08198220
 Data_08198220:
 	.2byte 3920, 3932, 3947, 3955, 3970
-@ The Broken Seal's gCybele_ThornWidths; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornWidths; read by BattleFx_RunCybele
 	.global Data_0819822a
 Data_0819822a:
 	.byte 2, 5, 2, 5, 3
-@ The Broken Seal's gCybele_ThornHeights; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornHeights; read by BattleFx_RunCybele
 	.global Data_0819822f
 Data_0819822f:
 	.byte 6, 3, 4, 3, 3
-@ The Broken Seal's gCybele_SparkOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_SparkOffsets; read by BattleFx_RunCybele
 	.global Data_08198234
 Data_08198234:
 	.2byte 3979, 4043, 4268, 4389, 4470
-@ The Broken Seal's gCybele_SparkSizes; read by Func_0814ce30
+@ The Broken Seal's gCybele_SparkSizes; read by BattleFx_RunCybele
 	.global Data_0819823e
 Data_0819823e:
 	.byte 8, 15, 11, 9, 5
 	.balign 2
-@ The Broken Seal's gCybele_EmberOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_EmberOffsets; read by BattleFx_RunCybele
 	.global Data_08198244
 Data_08198244:
 	.2byte 5760, 6016, 7040, 9344, 11648, 13952, 16256
-@ The Broken Seal's gCybele_EmberSizes; read by Func_0814ce30
+@ The Broken Seal's gCybele_EmberSizes; read by BattleFx_RunCybele
 	.global Data_08198252
 Data_08198252:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gBoreas_Points; read by Func_0814db04
+@ The Broken Seal's gBoreas_Points; read by BattleFx_RunBoreas
 	.global Data_08198260
 Data_08198260:
 	.byte 57, 130, 75, 128, 71, 104, 101, 130, 86, 126, 85, 98, 64, 98, 98, 96
 	.byte 77, 87, 84, 88, 68, 67, 81, 49, 94, 70, 70, 51, 93, 36, 81, 50
-@ The Broken Seal's gBoreas_ShakeOffsets; read by Func_0814db04
+@ The Broken Seal's gBoreas_ShakeOffsets; read by BattleFx_RunBoreas
 	.global Data_08198280
 Data_08198280:
 	.byte -4, -3, -2, 0
-@ The Broken Seal's gBoreas_RockCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockCells; read by BattleFx_RunBoreas
 	.global Data_08198284
 Data_08198284:
 	.2byte 0, 1152, 2064
-@ The Broken Seal's gBoreas_RockWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockWidths; read by BattleFx_RunBoreas
 	.global Data_0819828a
 Data_0819828a:
 	.byte 24, 24, 20
-@ The Broken Seal's gBoreas_RockHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockHeights; read by BattleFx_RunBoreas
 	.global Data_0819828d
 Data_0819828d:
 	.byte 48, 38, 26
-@ The Broken Seal's gBoreas_Animations; read by Func_0814db04
+@ The Broken Seal's gBoreas_Animations; read by BattleFx_RunBoreas
 	.global Data_08198290
 Data_08198290:
 	.byte 2, 9, 10, 11
-@ The Broken Seal's gBoreas_DebrisWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_DebrisWidths; read by BattleFx_RunBoreas
 	.global Data_08198294
 Data_08198294:
 	.byte 12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7
-@ The Broken Seal's gBoreas_DebrisHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_DebrisHeights; read by BattleFx_RunBoreas
 	.global Data_0819829f
 Data_0819829f:
 	.byte 10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10
-@ The Broken Seal's gBoreas_DebrisCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_DebrisCells; read by BattleFx_RunBoreas
 	.global Data_081982aa
 Data_081982aa:
 	.2byte 2584, 2704, 2880, 2992, 5062, 5094, 5142, 5157
 	.2byte 5185, 5227, 5299
-@ read by Func_0814db04
+@ read by BattleFx_RunBoreas
 	.global Data_081982c0
 Data_081982c0:
 	.byte 16, 16, 16
-@ read by Func_0814db04
+@ read by BattleFx_RunBoreas
 	.global Data_081982c3
 Data_081982c3:
 	.byte 16, 16, 16
-@ The Broken Seal's gBoreas_SprayCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_SprayCells; read by BattleFx_RunBoreas
 	.global Data_081982c6
 Data_081982c6:
 	.2byte 4294, 4550, 4806
-@ The Broken Seal's gBoreas_RockCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockCells; read by BattleFx_RunBoreas
 	.global Data_081982cc
 Data_081982cc:
 	.2byte 0, 1152, 2064
-@ The Broken Seal's gBoreas_RockWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockWidths; read by BattleFx_RunBoreas
 	.global Data_081982d2
 Data_081982d2:
 	.byte 24, 24, 20
-@ The Broken Seal's gBoreas_RockHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockHeights; read by BattleFx_RunBoreas
 	.global Data_081982d5
 Data_081982d5:
 	.byte 48, 38, 26
-@ The Broken Seal's gBoreas_RockWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockWidths; read by BattleFx_RunBoreas
 	.global Data_081982d8
 Data_081982d8:
 	.byte 24, 24, 20
-@ The Broken Seal's gBoreas_RockHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockHeights; read by BattleFx_RunBoreas
 	.global Data_081982db
 Data_081982db:
 	.byte 48, 38, 26
-@ The Broken Seal's gBoreas_RockCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockCells; read by BattleFx_RunBoreas
 	.global Data_081982de
 Data_081982de:
 	.2byte 0, 1152, 2064
-@ The Broken Seal's gBreak_Gravities; read by Func_0814e744
+@ The Broken Seal's gBreak_Gravities; read by BattleFx_RunBreak
 	.global gData_081982e4
 gData_081982e4:
 	.4byte 0x4000, 0x2000, 0x4000, 0x8000
@@ -1141,76 +1141,76 @@ gData_081982e4:
 	.global Data_081982f4
 Data_081982f4:
 	.byte 6, 6, 10
-@ The Broken Seal's gQuake_Timings; read by Func_08150c74
+@ The Broken Seal's gQuake_Timings; read by BattleFx_RunQuake
 	.global Data_081982f7
 Data_081982f7:
 	.byte 80, 32, 2, 112, 64, 4, 144, 96, 8
-@ The Broken Seal's gFire_Counts; read by Func_08151040
+@ The Broken Seal's gFire_Counts; read by BattleFx_RunFire
 	.global Data_08198300
 Data_08198300:
 	.byte 16, 32, 64
-@ The Broken Seal's gBattleFx_PuffArcCellWidths; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellWidths; read by BattleFx_RunFire
 	.global Data_08198303
 Data_08198303:
 	.byte 24, 29, 30, 27, 24, 16
-@ The Broken Seal's gBattleFx_PuffArcCellHeights; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellHeights; read by BattleFx_RunFire
 	.global Data_08198309
 Data_08198309:
 	.byte 23, 32, 37, 49, 53, 52
-@ The Broken Seal's gBattleFx_PuffArcCellBiasY; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellBiasY; read by BattleFx_RunFire
 	.global Data_0819830f
 Data_0819830f:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
-@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by BattleFx_RunFire
 	.global Data_08198316
 Data_08198316:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
-@ The Broken Seal's gRisingMotes_ColumnSpots; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_ColumnSpots; read by BattleFx_RunFrost
 	.global Data_08198322
 Data_08198322:
 	.byte 53, 108, 73, 110, 29, 110, 73, 108, 33, 104, 96, 106, 8, 109, 62, 98
 	.byte 33, 100, 87, 100, 21, 95, 53, 90, 33, 90, 72, 91, 82, 91, 77, 86
 	.byte 52, 84, 18, 92, 56, 81
-@ The Broken Seal's gRisingMotes_Timings; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_Timings; read by BattleFx_RunFrost
 	.global Data_08198348
 Data_08198348:
 	.byte 32, 8, 85, 48, 12, 97, 64, 19, 109
-@ The Broken Seal's gRisingMotes_MoteWidths; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_MoteWidths; read by BattleFx_RunFrost
 	.global Data_08198351
 Data_08198351:
 	.byte 12, 10, 7, 10, 8, 8, 8, 8
-@ The Broken Seal's gRisingMotes_MoteHeights; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_MoteHeights; read by BattleFx_RunFrost
 	.global Data_08198359
 Data_08198359:
 	.byte 9, 16, 14, 15, 8, 8, 8, 8
 	.balign 2
-@ The Broken Seal's gRisingMotes_MoteCells; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_MoteCells; read by BattleFx_RunFrost
 	.global Data_08198362
 Data_08198362:
 	.2byte 1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500
-@ The Broken Seal's gRisingMotes_ColumnCells; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_ColumnCells; read by BattleFx_RunFrost
 	.global Data_08198372
 Data_08198372:
 	.2byte 0, 768, 1280
-@ The Broken Seal's gRisingMotes_ColumnHeights; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_ColumnHeights; read by BattleFx_RunFrost
 	.global Data_08198378
 Data_08198378:
 	.byte 24, 16, 16
-@ The Broken Seal's gRisingMotes_MoteWidths; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_MoteWidths; read by BattleFx_RunFrost
 	.global Data_0819837b
 Data_0819837b:
 	.byte 12, 10, 7, 10, 8, 8, 8, 8
-@ The Broken Seal's gRisingMotes_MoteHeights; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_MoteHeights; read by BattleFx_RunFrost
 	.global Data_08198383
 Data_08198383:
 	.byte 9, 16, 14, 15, 8, 8, 8, 8
 	.balign 2
-@ The Broken Seal's gRisingMotes_MoteCells; read by Func_081514bc
+@ The Broken Seal's gRisingMotes_MoteCells; read by BattleFx_RunFrost
 	.global Data_0819838c
 Data_0819838c:
 	.2byte 1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500
-@ The Broken Seal's gLightningBolts_Sparks; read by Func_08151b48
+@ The Broken Seal's gLightningBolts_Sparks; read by BattleFx_RunRay
 	.global Data_0819839c
 Data_0819839c:
 	.byte 2, 4, 2, 6, 4, 8
@@ -1231,7 +1231,7 @@ Data_081983ba:
 	.global Data_081983c8
 Data_081983c8:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gWorldMap_UnitScale; read by Func_08153ebc
+@ The Broken Seal's gWorldMap_UnitScale; read by BattleFx_RunAtalanta
 	.global Data_081983cc
 Data_081983cc:
 	.4byte 0x10000, 0x10000
@@ -1281,44 +1281,44 @@ Data_0819840c:
 	.global Data_08198414
 Data_08198414:
 	.2byte 0, 50, 148, 379, 891, 1926, 3276
-@ The Broken Seal's gVine_ColumnOffsets; read by Func_08154d5c
+@ The Broken Seal's gVine_ColumnOffsets; read by BattleFx_RunVine
 	.global Data_08198422
 Data_08198422:
 	.byte 0, 14, -32, 8, 32, -48, 4, 12, -24, 24, -12, -40, -4, -16, -32, 12
-@ The Broken Seal's gThorn_Kinds; read by Func_08154f84
+@ The Broken Seal's gThorn_Kinds; read by BattleFx_RunThorn
 	.global Data_08198432
 Data_08198432:
 	.byte 0, 3, 2, 1, 2, 3, 2, 1
-@ The Broken Seal's gThorn_X; read by Func_08154f84
+@ The Broken Seal's gThorn_X; read by BattleFx_RunThorn
 	.global Data_0819843a
 Data_0819843a:
 	.byte 24, 80, 24, 48, 88, 40, 8, 96
-@ The Broken Seal's gThorn_Counts; read by Func_08154f84
+@ The Broken Seal's gThorn_Counts; read by BattleFx_RunThorn
 	.global Data_08198442
 Data_08198442:
 	.byte 3, 5, 8
-@ The Broken Seal's gThorn_PuffWidths; read by Func_08154f84
+@ The Broken Seal's gThorn_PuffWidths; read by BattleFx_RunThorn
 	.global Data_08198445
 Data_08198445:
 	.byte 5, 7, 11, 17, 32, 32, 19
-@ The Broken Seal's gThorn_PuffHeights; read by Func_08154f84
+@ The Broken Seal's gThorn_PuffHeights; read by BattleFx_RunThorn
 	.global Data_0819844c
 Data_0819844c:
 	.byte 10, 14, 21, 34, 59, 60, 38
 	.balign 2
-@ The Broken Seal's gThorn_PuffCells; read by Func_08154f84
+@ The Broken Seal's gThorn_PuffCells; read by BattleFx_RunThorn
 	.global Data_08198454
 Data_08198454:
 	.2byte 5888, 5938, 6036, 6267, 6845, 8733, 10653
-@ The Broken Seal's gLightningBolts_Counts; read by Func_0815537c
+@ The Broken Seal's gLightningBolts_Counts; read by BattleFx_RunBolt
 	.global Data_08198462
 Data_08198462:
 	.byte 16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815537c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunBolt
 	.global Data_0819846e
 Data_0819846e:
 	.byte 0, 4, 8, 12
-@ read by Func_0815537c
+@ read by BattleFx_RunBolt
 	.global Data_08198472
 Data_08198472:
 	.byte 1, 1, 0
@@ -1363,53 +1363,53 @@ Data_08198502:
 	.global Data_0819850a
 Data_0819850a:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gMercury_LaunchFrames; read by Func_08157638
+@ The Broken Seal's gMercury_LaunchFrames; read by BattleFx_RunMercury
 	.global Data_0819850e
 Data_0819850e:
 	.byte 4, 7, 10, 21, 34
-@ The Broken Seal's gHail_CellWidths; read by Func_0815842c
+@ The Broken Seal's gHail_CellWidths; read by BattleFx_RunHail
 	.global Data_08198513
 Data_08198513:
 	.byte 8, 8, 8, 8
-@ The Broken Seal's gHail_CellHeights; read by Func_0815842c
+@ The Broken Seal's gHail_CellHeights; read by BattleFx_RunHail
 	.global Data_08198517
 Data_08198517:
 	.byte 8, 8, 8, 8
 	.balign 2
-@ The Broken Seal's gVolley_PelletOffsets; read by Func_0815842c
+@ The Broken Seal's gVolley_PelletOffsets; read by BattleFx_RunHail
 	.global Data_0819851c
 Data_0819851c:
 	.2byte 2308, 2372, 2436, 2500
-@ The Broken Seal's gGround_ChipFlips; read by Func_081587e4
+@ The Broken Seal's gGround_ChipFlips; read by BattleFx_RunGround
 	.global Data_08198524
 Data_08198524:
 	.byte 3, 7, 11, 15
-@ The Broken Seal's gGround_ChipWidths; read by Func_081587e4
+@ The Broken Seal's gGround_ChipWidths; read by BattleFx_RunGround
 	.global Data_08198528
 Data_08198528:
 	.byte 24, 7, 7, 8, 6, 13, 10, 11, 7
-@ The Broken Seal's gGround_ChipHeights; read by Func_081587e4
+@ The Broken Seal's gGround_ChipHeights; read by BattleFx_RunGround
 	.global Data_08198531
 Data_08198531:
 	.byte 48, 13, 14, 24, 24, 17, 20, 14, 20
-@ The Broken Seal's gGround_ChipCells; read by Func_081587e4
+@ The Broken Seal's gGround_ChipCells; read by BattleFx_RunGround
 	.global Data_0819853a
 Data_0819853a:
 	.2byte 0, 1152, 1243, 1341, 1533, 1677, 1898, 2098
 	.2byte 2252
-@ The Broken Seal's gGround_ChipX; read by Func_081587e4
+@ The Broken Seal's gGround_ChipX; read by BattleFx_RunGround
 	.global Data_0819854c
 Data_0819854c:
 	.byte 0, 9, 9, 11, 10, 0, 3, 13, 7
-@ The Broken Seal's gGround_ChipY; read by Func_081587e4
+@ The Broken Seal's gGround_ChipY; read by BattleFx_RunGround
 	.global Data_08198555
 Data_08198555:
 	.byte 0, 18, 18, 0, 24, 20, 5, 22, 26
-@ The Broken Seal's gThor_TargetPalettes; read by Func_08158dc8
+@ The Broken Seal's gThor_TargetPalettes; read by BattleFx_RunThor
 	.global Data_0819855e
 Data_0819855e:
 	.byte 7, 14, 10, 4
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_08158dc8
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunThor
 	.global Data_08198562
 Data_08198562:
 	.byte 0, 4, 8, 12
@@ -1420,15 +1420,15 @@ Data_08198566:
 	.byte 61, 75, 72, 81, 69, 71, 66, 70, 71, 64, 49, 71, 59, 69, 53, 68
 	.byte 78, 73, 55, 67, 75, 62, 61, 65, 53, 61, 0, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-@ The Broken Seal's gSpire_RockX; read by Func_08159cac
+@ The Broken Seal's gSpire_RockX; read by BattleFx_RunSpire
 	.global Data_081985a6
 Data_081985a6:
 	.byte 0, -12, 12, -8, 16
-@ The Broken Seal's gSpire_DropFrames; read by Func_08159cac
+@ The Broken Seal's gSpire_DropFrames; read by BattleFx_RunSpire
 	.global Data_081985ab
 Data_081985ab:
 	.byte 8, 16, 20, 24, 32
-@ The Broken Seal's gSpire_RockCounts; read by Func_08159cac
+@ The Broken Seal's gSpire_RockCounts; read by BattleFx_RunSpire
 	.global Data_081985b0
 Data_081985b0:
 	.byte 1, 3, 5
@@ -1446,61 +1446,61 @@ Data_081985b3:
 	.global Data_0819861b
 Data_0819861b:
 	.byte 0, 4, 8, 12, 0
-@ The Broken Seal's gGaia_RowSheetOffsets; read by Func_0815a9e4
+@ The Broken Seal's gGaia_RowSheetOffsets; read by BattleFx_RunGaia
 	.global Data_08198620
 Data_08198620:
 	.2byte 0, 160, 352, 640, 1024, 1504, 2080, 2752
 	.2byte 3776
-@ The Broken Seal's gGaia_RowWidths; read by Func_0815a9e4
+@ The Broken Seal's gGaia_RowWidths; read by BattleFx_RunGaia
 	.global Data_08198632
 Data_08198632:
 	.byte 5, 6, 9, 12, 15, 18, 21, 32, 40
 	.balign 2
-@ The Broken Seal's gGaia_MoundSheetOffsets; read by Func_0815a9e4
+@ The Broken Seal's gGaia_MoundSheetOffsets; read by BattleFx_RunGaia
 	.global Data_0819863c
 Data_0819863c:
 	.2byte 10672, 11505, 12550
-@ The Broken Seal's gEarthWall_CellWidths; read by Func_0815a9e4
+@ The Broken Seal's gEarthWall_CellWidths; read by BattleFx_RunGaia
 	.global Data_08198642
 Data_08198642:
 	.byte 17, 19, 20
-@ The Broken Seal's gEarthWall_CellHeights; read by Func_0815a9e4
+@ The Broken Seal's gEarthWall_CellHeights; read by BattleFx_RunGaia
 	.global Data_08198645
 Data_08198645:
 	.byte 49, 55, 64
-@ The Broken Seal's gGaia_Bg2Shifts; read by Func_0815a9e4
+@ The Broken Seal's gGaia_Bg2Shifts; read by BattleFx_RunGaia
 	.global Data_08198648
 Data_08198648:
 	.byte -8, 0, 12, -72, -40, -16
-@ The Broken Seal's gGaia_LateRockColumns; read by Func_0815a9e4
+@ The Broken Seal's gGaia_LateRockColumns; read by BattleFx_RunGaia
 	.global Data_0819864e
 Data_0819864e:
 	.byte 136, 40, 120, 56, 104, 72
-@ read by Func_0815b764
+@ read by BattleFx_RunUlysses
 	.global Data_08198654
 Data_08198654:
 	.byte 0, 32, 0, 32, 0, 32, 32
-@ read by Func_0815b764
+@ read by BattleFx_RunUlysses
 	.global Data_0819865b
 Data_0819865b:
 	.byte 8, 0, 40, 32, 72, 64, 96
-@ read by Func_0815b764
+@ read by BattleFx_RunUlysses
 	.global Data_08198662
 Data_08198662:
 	.byte 12, 9, 6, 5, 8, 9, 12, 9, 8, 8, 8, 10, 11, 10, 8, 6
 	.byte 6, 9
-@ read by Func_0815b764
+@ read by BattleFx_RunUlysses
 	.global Data_08198674
 Data_08198674:
 	.byte 18, 17, 15, 12, 14, 15, 16, 13, 8, 4, 4, 6, 9, 9, 10, 10
 	.byte 13, 16
-@ read by Func_0815b764
+@ read by BattleFx_RunUlysses
 	.global Data_08198686
 Data_08198686:
 	.2byte 0, 216, 369, 459, 519, 631, 766, 958
 	.2byte 1075, 1139, 1171, 1203, 1263, 1362, 1452, 1532
 	.2byte 1592, 1670
-@ read by Func_0815b764
+@ read by BattleFx_RunUlysses
 	.global Data_081986aa
 Data_081986aa:
 	.byte 100, 60, 64, -6, -6, 112, 44, -64, -6, 4, 96, 28, 64, -6, -5, 112
@@ -1525,7 +1525,7 @@ gData_081986e0:
 	.global gData_081986ec
 gData_081986ec:
 	.byte 0, 4, 24, -6, -20, -28
-@ read by Func_0815cde8
+@ read by BattleFx_RunAzul
 	.global Data_081986f2
 Data_081986f2:
 	.byte 23, 13, 0, 0, 42, 0, 28, 41, 28, 41, 48, 28, 42, 0, 78, 31
@@ -1548,27 +1548,27 @@ Data_081986f2:
 	.byte 211, 16, 239, 52, 205, 88, 205, 88, 228, 87, 239, 52, 239, 119, 205, 88
 	.byte 205, 88, 200, 108, 185, 93, 205, 88, 239, 119, 175, 119, 169, 106, 185, 93
 	.byte 175, 119, 137, 104, 137, 104
-@ The Broken Seal's gWorldMap_UnitScale; read by Func_0815cde8
+@ The Broken Seal's gWorldMap_UnitScale; read by BattleFx_RunAzul
 	.global Data_08198828
 Data_08198828:
 	.4byte 0x10000, 0x10000
-@ read by Func_0815cde8
+@ read by BattleFx_RunAzul
 	.global Data_08198830
 Data_08198830:
 	.byte 35, 45, 14, 1, 1, 40, 9, 40, 9, 25, 39, 8
-@ read by Func_0815cde8
+@ read by BattleFx_RunAzul
 	.global Data_0819883c
 Data_0819883c:
 	.byte 0, 32, 32, 64, 96, 51, 51, 83, 83, 106, 129, 129
-@ The Broken Seal's gWorldMap_UnitScale; read by Func_0815cde8
+@ The Broken Seal's gWorldMap_UnitScale; read by BattleFx_RunAzul
 	.global Data_08198848
 Data_08198848:
 	.4byte 0x10000, 0x10000
-@ read by Func_0815cde8
+@ read by BattleFx_RunAzul
 	.global Data_08198850
 Data_08198850:
 	.byte 0, 32, 32, 64, 96, 50, 51, 82
-@ read by Func_0815cde8
+@ read by BattleFx_RunAzul
 	.global Data_08198858
 Data_08198858:
 	.byte 10, 0, 32, 45, 45, 5, 36, 5
@@ -1772,27 +1772,27 @@ Data_08198a48:
 	.global Data_08198a56
 Data_08198a56:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gRamses_ObjectColumns; read by Func_08165ab4
+@ The Broken Seal's gRamses_ObjectColumns; read by BattleFx_RunRamses
 	.global gData_08198a64
 gData_08198a64:
 	.byte 12, 44, 28, 60, 0, 32, 64, 0, 32
-@ The Broken Seal's gRamses_ObjectRows; read by Func_08165ab4
+@ The Broken Seal's gRamses_ObjectRows; read by BattleFx_RunRamses
 	.global gData_08198a6d
 gData_08198a6d:
 	.byte 0, 0, 32, 32, 64, 64, 64, 32, 32
-@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_08165ab4
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by BattleFx_RunRamses
 	.global gData_08198a76
 gData_08198a76:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gCybele_EmberSizes; read by Func_08165ab4
+@ The Broken Seal's gCybele_EmberSizes; read by BattleFx_RunRamses
 	.global gData_08198a84
 gData_08198a84:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gRagnarok_StrikeColumns; read by Func_081665a4
+@ The Broken Seal's gRagnarok_StrikeColumns; read by BattleFx_RunRagnarok
 	.global gData_08198a92
 gData_08198a92:
 	.byte 32, 24, 0, 96, 104, 128
-@ The Broken Seal's gSparkGroups_FlashCells; read by Func_081665a4
+@ The Broken Seal's gSparkGroups_FlashCells; read by BattleFx_RunRagnarok
 	.global gData_08198a98
 gData_08198a98:
 	.byte 5, 5, 4, 3, 2, 1
@@ -1804,39 +1804,39 @@ gData_08198a9e:
 	.global gData_08198aa4
 gData_08198aa4:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
-@ read by Func_0816729c
+@ read by BattleFx_RunJudgment
 	.global Data_08198ab4
 Data_08198ab4:
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 0
-@ read by Func_0816729c
+@ read by BattleFx_RunJudgment
 	.global Data_08198ac2
 Data_08198ac2:
 	.2byte 1536, 2125, 2838, 3551, 3950, 4286
-@ The Broken Seal's gBattleFx_GlintCellWidths; read by Func_0816729c
+@ The Broken Seal's gBattleFx_GlintCellWidths; read by BattleFx_RunJudgment
 	.global Data_08198ace
 Data_08198ace:
 	.byte 19, 23, 23, 19, 16, 17
-@ The Broken Seal's gBattleFx_GlintCellHeights; read by Func_0816729c
+@ The Broken Seal's gBattleFx_GlintCellHeights; read by BattleFx_RunJudgment
 	.global Data_08198ad4
 Data_08198ad4:
 	.byte 31, 31, 31, 21, 21, 24
-@ The Broken Seal's gKirin_Columns; read by Func_08168a40
+@ The Broken Seal's gKirin_Columns; read by BattleFx_RunKirin
 	.global gData_08198ada
 gData_08198ada:
 	.byte 8, 40, 72, 104, 8, 40, 72, 104, 0
-@ The Broken Seal's gKirin_Rows; read by Func_08168a40
+@ The Broken Seal's gKirin_Rows; read by BattleFx_RunKirin
 	.global gData_08198ae3
 gData_08198ae3:
 	.byte 0, 0, 0, 24, 32, 32, 32, 56, 64
-@ The Broken Seal's gNereid_Gravity; read by Func_081693d0
+@ The Broken Seal's gNereid_Gravity; read by BattleFx_RunNeptune
 	.global Data_08198aec
 Data_08198aec:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
-@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_0816a730
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by BattleFx_RunUndeadSword
 	.global gData_08198afc
 gData_08198afc:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ read by Func_0816a730
+@ read by BattleFx_RunUndeadSword
 	.global gData_08198b0a
 gData_08198b0a:
 	.2byte 16, 32, 48, 48, 48, 48, 48, 1536
@@ -1845,63 +1845,63 @@ gData_08198b0a:
 	.global Data_08198b24
 Data_08198b24:
 	.byte 3, 3
-@ read by Func_0816bc70
+@ read by BattleFx_RunDiamondBerg
 	.global Data_08198b26
 Data_08198b26:
 	.byte 0, 2, 4, 5
-@ read by Func_0816bc70
+@ read by BattleFx_RunDiamondBerg
 	.global Data_08198b2a
 Data_08198b2a:
 	.byte 6, 7, 6, 8
-@ read by Func_0816bc70
+@ read by BattleFx_RunDiamondBerg
 	.global Data_08198b2e
 Data_08198b2e:
 	.byte 32, 16, -8, -24
-@ read by Func_0816bc70
+@ read by BattleFx_RunDiamondBerg
 	.global Data_08198b32
 Data_08198b32:
 	.2byte 8192, 24576, 8192, 24576, 8192, 24576, 8192, 24576
-@ read by Func_0816bc70
+@ read by BattleFx_RunDiamondBerg
 	.global Data_08198b42
 Data_08198b42:
 	.2byte -2048, -2048, -2048, -2048, -2048, -2048, -2048, -2048
-@ read by Func_0816c6f8
+@ read by BattleFx_RunGeode
 	.global Data_08198b52
 Data_08198b52:
 	.byte 0, 6, 8, 9
-@ read by Func_0816c6f8
+@ read by BattleFx_RunGeode
 	.global Data_08198b56
 Data_08198b56:
 	.byte 5, 8, 7, 3
-@ read by Func_0816c6f8
+@ read by BattleFx_RunGeode
 	.global Data_08198b5a
 Data_08198b5a:
 	.byte 32, 32, 32, 32
-@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_0816d724
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by BattleFx_RunSoulShatter
 	.global Data_08198b5e
 Data_08198b5e:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gCybele_EmberSizes; read by Func_0816d724
+@ The Broken Seal's gCybele_EmberSizes; read by BattleFx_RunSoulShatter
 	.global Data_08198b6c
 Data_08198b6c:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ read by Func_0816dc50
+@ read by BattleFx_RunSerac
 	.global Data_08198b7a
 Data_08198b7a:
 	.byte -96, -88, -72, -64, -48, -32, -8, 0
-@ read by Func_0816dc50
+@ read by BattleFx_RunSerac
 	.global Data_08198b82
 Data_08198b82:
 	.byte 1, 6, 10, 12, 16, 24, 30, 32
-@ read by Func_0816dc50
+@ read by BattleFx_RunSerac
 	.global Data_08198b8a
 Data_08198b8a:
 	.byte 6, 8, 10, 11
-@ read by Func_0816dc50
+@ read by BattleFx_RunSerac
 	.global Data_08198b8e
 Data_08198b8e:
 	.byte 8, 7, 6, 3
-@ read by Func_0816dc50
+@ read by BattleFx_RunSerac
 	.global Data_08198b92
 Data_08198b92:
 	.byte 16, 32, 56, 72
@@ -1917,32 +1917,32 @@ Data_08198b98:
 	.global Data_08198b9a
 Data_08198b9a:
 	.byte 58, 58
-@ read by Func_0816ec58
+@ read by BattleFx_RunCool
 	.global Data_08198b9c
 Data_08198b9c:
 	.2byte 92, 72, 32, 48, 88, 56, 80, 88
 	.2byte -8, 132
-@ read by Func_0816ec58
+@ read by BattleFx_RunCool
 	.global Data_08198bb0
 Data_08198bb0:
 	.byte 0, 4, 7, 10, 13, 16, 20, 23, 25, 27
-@ read by Func_0816ec58
+@ read by BattleFx_RunCool
 	.global Data_08198bba
 Data_08198bba:
 	.byte 64, 64, 48, 64, 64, 56, 62, 64, 46, 52
-@ read by Func_0816ec58
+@ read by BattleFx_RunCool
 	.global Data_08198bc4
 Data_08198bc4:
 	.byte 0, 3, 1, 2, 3, 0, 1, 2, 1, 0
-@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_0816ec58
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by BattleFx_RunCool
 	.global Data_08198bce
 Data_08198bce:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gCybele_EmberSizes; read by Func_0816ec58
+@ The Broken Seal's gCybele_EmberSizes; read by BattleFx_RunCool
 	.global Data_08198bdc
 Data_08198bdc:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ read by Func_0816f080
+@ read by BattleFx_RunWyrdCurse
 	.global Data_08198bea
 Data_08198bea:
 	.byte -12, 4, -8, 14
@@ -1951,23 +1951,23 @@ Data_08198bea:
 Data_08198bee:
 	.byte 0, 4, 8, 12
 	.byte 0, 0
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_08170364
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunMegaera
 	.global Data_08198bf4
 Data_08198bf4:
 	.byte 0, 4, 8, 12
-@ read by Func_08170364
+@ read by BattleFx_RunMegaera
 	.global Data_08198bf8
 Data_08198bf8:
 	.byte 1, 1, 0, 0
-@ read by Func_08171430
+@ read by BattleFx_RunLightSurge
 	.global Data_08198bfc
 Data_08198bfc:
 	.4byte 18000, 12000, 30000, 40000
-@ read by Func_08171430
+@ read by BattleFx_RunLightSurge
 	.global Data_08198c0c
 Data_08198c0c:
 	.4byte 16578814
-@ read by Func_08171430
+@ read by BattleFx_RunLightSurge
 	.global Data_08198c10
 Data_08198c10:
 	.byte -24, -8, 24, 48
@@ -1993,7 +1993,7 @@ Data_08198c34:
 	.global Data_08198c64
 Data_08198c64:
 	.byte 32, 64, 255
-@ read by Func_08175f74
+@ read by BattleFx_RunCharon
 	.global gData_08198c67
 gData_08198c67:
 	.byte 16, 60, 108, 0, 0
@@ -2075,7 +2075,7 @@ Data_08198ec4:
 	.2byte 96, 111, 3935, 0, 4096, 31, 127, 3967
 	.2byte 3951, 0, 15, 31, 111, 127, 3951, 0
 	.2byte 0, 0, 0, 0, 0, 0
-@ read by Func_0816c6f8
+@ read by BattleFx_RunGeode
 	.global Data_08199050
 Data_08199050:
 	.4byte 0x40f800, 2947116, 63550, 13957164
@@ -2105,11 +2105,11 @@ gData_081990d0:
 	.2byte 63, 95, 16192, 0, 2048, 15, 127, 16255
 	.2byte 16224, 0, 7, 15, 95, 127, 16224, 0
 	.2byte 0, 0, 0, 0, 0, 0
-@ read by Func_0816dc50 and Func_08190b74
+@ read by BattleFx_RunSerac and BattleFx_RunOdyssey
 	.global Data_0819919c
 Data_0819919c:
 	.4byte 0x20100, 0
-@ read by Func_0816dc50 and Func_08190b74
+@ read by BattleFx_RunSerac and BattleFx_RunOdyssey
 	.global Data_081991a4
 Data_081991a4:
 	.4byte 16384250, 16384006, 393466
@@ -2133,7 +2133,7 @@ Data_081991e0:
 	.global gData_081991f0
 gData_081991f0:
 	.2byte 49376, 0, 49184, 0, 224, 0, 32, 0
-@ read by Func_08189b14
+@ read by BattleFx_RunLegend
 	.global Data_08199200
 Data_08199200:
 	.4byte 12599536, 12599312, 14576, 14352
@@ -2173,7 +2173,7 @@ Data_081992b0:
 	.2byte 0, 0, 256, 2, 0, 15, 16128, 0
 	.2byte 769, 2, 15, 16143, 16128, 0, 0, 0
 	.2byte 0, 0, 0, 0
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_081992f8
 Data_081992f8:
 	.2byte 256, 2, 0, 63, 7936, 0, 769, 2
@@ -2197,7 +2197,7 @@ gData_08199364:
 	.2byte 769, 2, 127, 32639, 32512, 0, 256, 2
 	.2byte 0, 127, 32512, 0, 0, 0, 0, 0
 	.2byte 0, 0
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199388
 Data_08199388:
 	.2byte 769, 2, 47, 18223, 18176, 0, 256, 2
@@ -2205,84 +2205,84 @@ Data_08199388:
 	.2byte 0, 0, 769, 2, 4143, 12079, 12048, 0
 	.2byte 256, 2, 4112, 4143, 12048, 0, 0, 0
 	.2byte 0, 0, 0, 0
-@ read by Func_08178ee4
+@ read by BattleFx_RunHeartbreak
 	.global gData_081993d0
 gData_081993d0:
 	.byte 32, 39, 42, 71
-@ read by Func_08178ee4
+@ read by BattleFx_RunHeartbreak
 	.global gData_081993d4
 gData_081993d4:
 	.byte 29, 32, 48, 57
-@ read by Func_08178ee4
+@ read by BattleFx_RunHeartbreak
 	.global gData_081993d8
 gData_081993d8:
 	.2byte 0, 928, 2176, 4192
-@ read by Func_08178ee4
+@ read by BattleFx_RunHeartbreak
 	.global gData_081993e0
 gData_081993e0:
 	.byte 29, 37, 48, 47, 52, 32, 22, 17
-@ read by Func_08178ee4
+@ read by BattleFx_RunHeartbreak
 	.global gData_081993e8
 gData_081993e8:
 	.byte 34, 26, 15, 14, 7, 11, 8, 6
-@ read by Func_08178ee4
+@ read by BattleFx_RunHeartbreak
 	.global gData_081993f0
 gData_081993f0:
 	.2byte 0, 928, 2112, 3648, 5152, 6816, 7840, 8544
-@ read by Func_08179394
+@ read by BattleFx_RunRagingHeat
 	.global Data_08199400
 Data_08199400:
 	.byte 8, 127, 64, 32, 12, 191, 96, 64, 16, 255, 128, 255
-@ read by Func_08179994
+@ read by BattleFx_RunJuggle
 	.global Data_0819940c
 Data_0819940c:
 	.byte 1, 24, 4, 64, 32, 4, 0, 2, 32, 8, 32, 64, 8, 0, 2, 48
 	.byte 16, 32, 128, 16, 0
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_08199421
 Data_08199421:
 	.byte 4, 8, 16, 24, 0
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_08199426
 Data_08199426:
 	.2byte 0, 32, 160, 672
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_0819942e
 Data_0819942e:
 	.2byte 114, 117, 120, 250
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_08199436
 Data_08199436:
 	.2byte 0, 24576, -28576, 11008
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_0819943e
 Data_0819943e:
 	.2byte 16384, 4096, 2096, -7168
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_08199446
 Data_08199446:
 	.byte 16, 16, 16, -16
-@ read by Func_08179f18
+@ read by BattleFx_RunFlora
 	.global Data_0819944a
 Data_0819944a:
 	.byte 0, 0, 0, 12, 0, 0
-@ read by Func_0817b66c
+@ read by BattleFx_RunSabreDance
 	.global gData_08199450
 gData_08199450:
 	.2byte 256, 2, 6, 25, 7942, 0, 769, 2
 	.2byte 25, 7961, 7942, 0, 0, 0, 0, 0
 	.2byte 0, 0
-@ read by Func_0817b66c
+@ read by BattleFx_RunSabreDance
 	.global gData_08199474
 gData_08199474:
 	.2byte 61680, 0, 61456, 0, 16624, 0, 16400, 0
-@ read by Func_0817c6ac
+@ read by BattleFx_RunFume
 	.global Data_08199484
 Data_08199484:
 	.2byte 16384, 16, 24, 96, 8, 4096, 24576, 16
 	.2byte 48, 192, 16, 8192, 40768, 32, 38, 256
 	.2byte 32, 16384
-@ read by Func_0817cc30
+@ read by BattleFx_RunOceanFist
 	.global Data_081994a8
 Data_081994a8:
 	.4byte -0x2000, -0x4000, -0x4000, -0x8000
@@ -2299,21 +2299,21 @@ gData_081994d0:
 	.global gData_081994e0
 gData_081994e0:
 	.4byte -8, -8, -8, 0
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_081994f0
 Data_081994f0:
 	.byte 0, -1, 1, -1, 0, 2, 1, 0, -1, -1, -2, -2, -3, -3, -4, -4
 	.byte -4, -3, -3, -3, -2, -2, -1, -1
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199508
 Data_08199508:
 	.byte 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199514
 Data_08199514:
 	.byte 112, 128, 128, 112, 112, 128, 128, 112, 128, 112, 112, 112, 180, 120, 140, 120
 	.byte 140, 120, 136, 120
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199528
 Data_08199528:
 	.4byte -120000, -70000, -117000, -68000
@@ -2321,33 +2321,33 @@ Data_08199528:
 	.4byte -80000, -80000, -80000, -95000
 	.4byte -100000, -80000, -100000, -90000
 	.4byte -120000, -95000, -100000, -95000
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199578
 Data_08199578:
 	.byte 16, 16, 40, 40, 40, 68, 40, 72, 72, 96
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199582
 Data_08199582:
 	.2byte 16, 115, 243, 371, 499
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_0819958c
 Data_0819958c:
 	.2byte 568, 5
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199590
 Data_08199590:
 	.byte 66, 64
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_08199592
 Data_08199592:
 	.byte 0, 0, 32, 0, 0, 32, 32, 32, 32, 64
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_0819959c
 Data_0819959c:
 	.byte 60, 64, 58, 72, 56, 80, 54, 88, 54, 96, 56, 104, 78, 56, 78, 64
 	.byte 80, 72, 82, 80, 84, 88, 84, 96, 76, 60, 74, 60, 72, 60, 70, 60
 	.byte 68, 60, 66, 60, 60, 64, 61, 64, 62, 63, 63, 62, 64, 61, 66, 60
-@ read by Func_0817ea58
+@ read by BattleFx_RunDaedalus
 	.global Data_081995cc
 Data_081995cc:
 	.2byte 0, 24, 8, 52, 16, 40, 36, 28
@@ -2356,24 +2356,24 @@ Data_081995cc:
 	.global Data_081995ec
 Data_081995ec:
 	.byte 80, 84, 86, 88, 90, 92, 94
-@ read by Func_081811d4
+@ read by BattleFx_RunVengeance
 	.global Data_081995f3
 Data_081995f3:
 	.byte 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1
 	.byte 1, 1, 1, 1, 1
-@ read by Func_08181910
+@ read by BattleFx_RunLifeShear
 	.global Data_08199608
 Data_08199608:
 	.2byte 769, 2, 3711, 13695, 13568, 0, 256, 2
 	.2byte 3584, 3711, 13568, 0, 0, 0, 0, 0
 	.2byte 0, 0
-@ read by Func_08181910
+@ read by BattleFx_RunLifeShear
 	.global Data_0819962c
 Data_0819962c:
 	.2byte 769, 2, 127, 8063, 7936, 0, 256, 2
 	.2byte 0, 127, 7936, 0, 0, 0, 0, 0
 	.2byte 0, 0
-@ read by Func_08181910
+@ read by BattleFx_RunLifeShear
 	.global Data_08199650
 Data_08199650:
 	.2byte 61615, 0, 61487, 0, 4271, 0, 4143, 0
@@ -2398,89 +2398,89 @@ gData_0819967e:
 gData_0819968e:
 	.2byte 0, 512, 962, 1354, 1692, 1980, 2222, 2422
 	.2byte 2584, 2712, 2810, 2882, 2932, 2964, 2988
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_081996ac
 Data_081996ac:
 	.byte 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 4, 3
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_081996bb
 Data_081996bb:
 	.byte 32, 30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_081996ca
 Data_081996ca:
 	.2byte 0, 512, 962, 1354, 1692, 1980, 2222, 2422
 	.2byte 2584, 2712, 2810, 2882, 2932, 2964, 2988
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_081996e8
 Data_081996e8:
 	.2byte 0, 0, 10, 78, 82, 112, 250, 254
 	.2byte 284
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_081996fa
 Data_081996fa:
 	.byte 32, 64, 80, 32, 16, 88, 32, 16, 88
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199703
 Data_08199703:
 	.byte 80, 96, 120, 120, 120, 120, 120, 120, 120
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_0819970c
 Data_0819970c:
 	.byte 32, 8, 32, 8, 16, 16, 8, 16, 16
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199715
 Data_08199715:
 	.byte 16, 8, 16, 8, 12, 12, 8, 12, 12
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_0819971e
 Data_0819971e:
 	.byte -24, 4, 20, 0, -2, 2, 0, -2, 2
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199727
 Data_08199727:
 	.byte -64, -32, -64, -16, -32, -32, -16, -32, -32
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199730
 Data_08199730:
 	.byte 1, 0, 4, -2, 1, 0, -2, 1, 0
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199739
 Data_08199739:
 	.byte 16, 1, 12, 0, 0, 0, 0, 0, 0
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199742
 Data_08199742:
 	.byte 3, 5, 7, 9
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199746
 Data_08199746:
 	.2byte 81, 209, 518, 540
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_0819974e
 Data_0819974e:
 	.2byte 498, 503, 508
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199754
 Data_08199754:
 	.2byte 518
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199756
 Data_08199756:
 	.byte 0, 82
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199758
 Data_08199758:
 	.2byte 4096, 18384
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_0819975c
 Data_0819975c:
 	.2byte 8192, 40960
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199760
 Data_08199760:
 	.2byte 256, 572
-@ read by Func_08182aa8
+@ read by BattleFx_RunCoatlicue
 	.global Data_08199764
 Data_08199764:
 	.2byte 44160, 52720
@@ -2604,21 +2604,21 @@ Data_081999ee:
 Data_081999f2:
 	.2byte 14797, -1097, -8198, 4962, 15494, -5489, -9298, 3744
 	.2byte 11252, -9996, 15443, -4373, -15930, 15898, -13623, 3906
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199a12
 Data_08199a12:
 	.2byte 0, 0, 0, 32, 32, 32, 64, 32
 	.2byte 96, 42, 0, 64, 32, 64, 64, 64
 	.2byte 96, 74, 32, 96, 64, 96
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199a3e
 Data_08199a3e:
 	.byte 120, 88, 144, 112, 0, 0
-@ The Broken Seal's gWorldMap_UnitScale; read by Func_08186dfc
+@ The Broken Seal's gWorldMap_UnitScale; read by BattleFx_RunHaures
 	.global Data_08199a44
 Data_08199a44:
 	.4byte 0x10000, 0x10000
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199a4c
 Data_08199a4c:
 	.byte 0, 0, 0, 2, 6, 9, 10, 11, 13, 14, 15, 16, 17, 18, 18, 16
@@ -2647,11 +2647,11 @@ Data_08199a4c:
 	.byte 76, 72, 70, 66, 62, 60, 56, 51, 47, 42, 36, 24, 15, 10, 8, 0
 	.byte 0, 8, 83, 96, 104, 110, 115, 118, 120, 116, 114, 114, 115, 116, 119, 121
 	.byte 120, 117, 114, 111, 108, 106, 102, 100, 97, 87, 30, 22, 15, 10, 8, 0
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199bec
 Data_08199bec:
 	.byte 27, 15, 13, 5, 14, 16, 11, 13, 8, 18, 24, 26, 100
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199bf9
 Data_08199bf9:
 	.byte 23, 13, 0, 0, 42, 0, 28, 41, 28, 41, 48, 28, 42, 0, 78, 31
@@ -2674,31 +2674,31 @@ Data_08199bf9:
 	.byte 211, 16, 239, 52, 205, 88, 205, 88, 228, 87, 239, 52, 239, 119, 205, 88
 	.byte 205, 88, 200, 108, 185, 93, 205, 88, 239, 119, 175, 119, 169, 106, 185, 93
 	.byte 175, 119, 137, 104, 137, 104
-@ read by Func_08186dfc
+@ read by BattleFx_RunHaures
 	.global Data_08199d2f
 Data_08199d2f:
 	.byte 10, 30
-@ The Broken Seal's gHelmSplitter_CellWidths; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellWidths; read by BattleFx_RunHelmSplitter
 	.global gData_08199d31
 gData_08199d31:
 	.byte 26, 46, 63, 77, 60, 39, 32
-@ read by Func_08188cb0
+@ read by BattleFx_RunHelmSplitter
 	.global gData_08199d38
 gData_08199d38:
 	.byte 11, 20, 37, 65, 65, 54, 39, 0
-@ The Broken Seal's gHelmSplitter_CellSourceOffsets; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellSourceOffsets; read by BattleFx_RunHelmSplitter
 	.global gData_08199d40
 gData_08199d40:
 	.2byte 0, 286, 1206, 3537, 8542, 12442, 14548
-@ The Broken Seal's gHelmSplitter_CellBiasX; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellBiasX; read by BattleFx_RunHelmSplitter
 	.global gData_08199d4e
 gData_08199d4e:
 	.byte 53, 36, 16, 2, 2, 2, 2
-@ The Broken Seal's gHelmSplitter_CellBiasY; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellBiasY; read by BattleFx_RunHelmSplitter
 	.global gData_08199d55
 gData_08199d55:
 	.byte 2, 3, 3, 3, 4, 14, 29
-@ read by Func_08189148
+@ read by BattleFx_RunDragonCloud
 	.global Data_08199d5c
 Data_08199d5c:
 	.byte 48, 40, 0, 0
@@ -2712,7 +2712,7 @@ Data_08199d64:
 	.4byte 0x2000, 62, 1, 0x2000
 	.4byte 62, 1, -0x2000, 62
 	.4byte 1, 2048, 64, 4
-@ read by Func_0818b868
+@ read by BattleFx_RunTripleChomp
 	.global gData_08199d94
 gData_08199d94:
 	.byte 0, 12, 24
@@ -2744,32 +2744,32 @@ Data_08199dbb:
 	.global Data_08199dc7
 Data_08199dc7:
 	.byte 56, 14, 6, 56
-@ read by Func_0818cb74
+@ read by BattleFx_RunTrident
 	.global Data_08199dcb
 Data_08199dcb:
 	.byte 8, 10, 12, 13, 64, 67, 70, 72
-@ read by Func_0818cb74
+@ read by BattleFx_RunTrident
 	.global Data_08199dd3
 Data_08199dd3:
 	.byte 8, 7, 6, 7, 8, 8, 9, 8
-@ read by Func_0818cb74
+@ read by BattleFx_RunTrident
 	.global Data_08199ddb
 Data_08199ddb:
 	.byte 16, 0, -24, -40, 16, 0, -24, -40, 0
-@ read by Func_0818cb74
+@ read by BattleFx_RunTrident
 	.global Data_08199de4
 Data_08199de4:
 	.4byte 5528, 488, 62272, 308
 	.4byte 52392, -698, 34584, 634
 	.4byte 19692, 736, 28062, 746
 	.4byte 48958, -694, 1508, -576
-@ read by Func_0818cb74
+@ read by BattleFx_RunTrident
 	.global Data_08199e24
 Data_08199e24:
 	.2byte 32762, 0, 32518, 0, 64762, 0, 64518, 0
 	.2byte 32762, 0, 32518, 0, 250, 0, 6, 0
 	.2byte 32758, 0, 32514, 0, 65526, 0, 65282, 0
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0818cb74
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunTrident
 	.global Data_08199e54
 Data_08199e54:
 	.byte 0, 4, 8, 12
@@ -2797,51 +2797,51 @@ Data_08199e68:
 	.global Data_08199e6c
 Data_08199e6c:
 	.byte 32, 16, 16, 24
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e70
 Data_08199e70:
 	.byte 30, 16, 16, 16, 10, 8, 8
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e77
 Data_08199e77:
 	.byte 30, 16, 16, 16, 16, 8, 8
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e7e
 Data_08199e7e:
 	.2byte 0, 900, 1156, 1412, 1668, 1828, 1892
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e8c
 Data_08199e8c:
 	.byte 0, 4, 9, 10
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e90
 Data_08199e90:
 	.byte 3, 4, 3, 5
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e94
 Data_08199e94:
 	.byte 3, 4, 5, 6
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e98
 Data_08199e98:
 	.byte 0, 3, 16, 7
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199e9c
 Data_08199e9c:
 	.byte 5, 8, 10, 8
-@ read by Func_0818df5c
+@ read by BattleFx_RunMeteorBlow
 	.global Data_08199ea0
 Data_08199ea0:
 	.byte -40, 24, 24, 24
-@ read by Func_0818eda4
+@ read by BattleFx_RunLiquifier
 	.global Data_08199ea4
 Data_08199ea4:
 	.2byte 49360, 0, 49200, 0, 1248, 0, 1056, 0
-@ read by Func_0818eda4
+@ read by BattleFx_RunLiquifier
 	.global Data_08199eb4
 Data_08199eb4:
 	.byte 18, 21, 16, 17, 22, 19, 23, 18
-@ read by Func_0818eda4
+@ read by BattleFx_RunLiquifier
 	.global Data_08199ebc
 Data_08199ebc:
 	.byte 40, 56, 70, 48, 64, 80, 58, 64, 72
@@ -2849,63 +2849,63 @@ Data_08199ebc:
 	.global Data_08199ec5
 Data_08199ec5:
 	.byte 5, 5, 4, 3, 2, 1, 0
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199ecc
 Data_08199ecc:
 	.2byte 0, -10240, 0, -10240, 10240
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199ed6
 Data_08199ed6:
 	.2byte 0, -4864, 0, -4864, -4864
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199ee0
 Data_08199ee0:
 	.2byte 4, 8, 171, 175, 176
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199eea
 Data_08199eea:
 	.2byte -12544, -10496, -8704, 8704, -8448, 12800, 10752, 11264
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199efa
 Data_08199efa:
 	.2byte 0, 11776, 0, -14336, 11264, -19968, -22016, -22272
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199f0a
 Data_08199f0a:
 	.2byte -21504, 13312, 22224, -18944, -32768, 8448, 25600, -28928
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199f1a
 Data_08199f1a:
 	.byte 6, 9, 6, 2, 6, 3, 6, 7
-@ read by Func_0818fefc
+@ read by BattleFx_RunMegiddo
 	.global Data_08199f22
 Data_08199f22:
 	.byte -6, -4, -7, -9, -6, -7, -9, -7
-@ read by Func_08190b74
+@ read by BattleFx_RunOdyssey
 	.global Data_08199f2a
 Data_08199f2a:
 	.2byte 0, -10240
-@ read by Func_08190b74
+@ read by BattleFx_RunOdyssey
 	.global Data_08199f2e
 Data_08199f2e:
 	.2byte 0, -4864, 0
-@ read by Func_08191d60
+@ read by BattleFx_RunMoloch
 	.global Data_08199f34
 Data_08199f34:
 	.byte 0, 6, 8, 9
-@ read by Func_08191d60
+@ read by BattleFx_RunMoloch
 	.global Data_08199f38
 Data_08199f38:
 	.byte 7, 8, 7, 8
-@ read by Func_08191d60
+@ read by BattleFx_RunMoloch
 	.global Data_08199f3c
 Data_08199f3c:
 	.byte 24, 12, -24, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199f40
 Data_08199f40:
 	.4byte 24, 16
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199f48
 Data_08199f48:
 	.byte 7, 5, 0, 0
@@ -2926,89 +2926,89 @@ Data_08199f98:
 	.4byte 0x20100, 0x1f0000, 0x3f00, 196866
 	.4byte 0x1f3f00, 16159, 0, 0
 	.4byte 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199fbc
 Data_08199fbc:
 	.byte 84, 93, 108, 111, 116, 132, 135, 141, 153, 158, 171, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199fc8
 Data_08199fc8:
 	.2byte 231, 244, 259, 265, 270
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199fd2
 Data_08199fd2:
 	.2byte 279, 287, 293, 298, 302, 307
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199fde
 Data_08199fde:
 	.byte -10, 80, 110, -10, 76, 50, 110, 80, 40, 30, 80, 20, 50, 80, 20
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199fed
 Data_08199fed:
 	.byte 116, 136, 128, 112, 136, 136, 128, 136, 136, 136, 136, 136, 136, 136, 136
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_08199ffc
 Data_08199ffc:
 	.byte 208, 71, 24, 244, 208, 199, 0, 64, 24, 244, 232, 11, 208, 199, 24, 244
 	.byte 208, 15, 160, 23, 72, 236, 136, 27, 232, 11, 24, 244, 160, 23
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a01a
 Data_0819a01a:
 	.2byte -406, 64, 380, -326, 64, -64, 380, 64
 	.2byte -84, -64, 94, -94, -64, 64, -64
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a038
 Data_0819a038:
 	.byte 23, 47, 56, 63, 63, 56, 47, 23
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a040
 Data_0819a040:
 	.4byte 7, 5
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a048
 Data_0819a048:
 	.2byte 230, 238, 260, 265, 253, 258
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a054
 Data_0819a054:
 	.2byte 320, 328, 330, 335, 326, 332
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a060
 Data_0819a060:
 	.byte 34, 86, 18, 102, 8, 112
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a066
 Data_0819a066:
 	.byte 64, 62, 32, 32, 80, 80
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a06c
 Data_0819a06c:
 	.byte 0, 0, 1, 1, 0, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a072
 Data_0819a072:
 	.byte 8, 4, 1, 2, 4, 8
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a078
 Data_0819a078:
 	.byte 16, 16, 16, 16, 32, 32
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a07e
 Data_0819a07e:
 	.byte 1, 1, 1, 1, 2, 2
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a084
 Data_0819a084:
 	.2byte 49402, 0, 49170, 0, 57591, 0, 57359, 0
 	.2byte 243, 0, 8, 0, 8429, 0, 8447, 0
 	.2byte 16612, 0, 16628, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a0ac
 Data_0819a0ac:
 	.2byte 49187, 0, 49224, 0, 57372, 0, 57410, 0
 	.2byte 18, 0, 51, 0, 8198, 0, 8225, 0
 	.2byte 16628, 0, 16393, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a0d4
 Data_0819a0d4:
 	.byte 0, 1, 2, 0, 0, 0, 31, 0, 0, 15, 0, 0, 2, 1, 3, 0
@@ -3018,12 +3018,12 @@ Data_0819a0d4:
 	.byte 0, 47, 31, 31, 31, 47, 0, 0, 6, 7, 8, 0, 0, 47, 31, 47
 	.byte 0, 63, 0, 0, 8, 7, 9, 0, 0, 63, 31, 47, 31, 63, 0, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a140
 Data_0819a140:
 	.2byte 55296, 0, 64763, 0, 64517, 0, 4342, 0
 	.2byte 4106, 0, 8428, 0, 8212, 0, 0, 0
-@ read by Func_08192c9c
+@ read by BattleFx_RunIris
 	.global Data_0819a160
 Data_0819a160:
 	.4byte 458753, 0x1f00, 7951, 197121

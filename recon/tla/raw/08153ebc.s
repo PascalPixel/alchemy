@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08153ebc
+@ Abilities: Atalanta (scene kind 4).
+	.global BattleFx_RunAtalanta
 	.thumb_func
-Func_08153ebc:
+BattleFx_RunAtalanta:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

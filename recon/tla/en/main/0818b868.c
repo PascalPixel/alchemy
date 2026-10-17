@@ -131,7 +131,7 @@ void Func_08143000(void);
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
 // further each bite, that grows and fades over 16 frames.
-void Func_0818b868(struct BattleEffectArgument *effect) {
+void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

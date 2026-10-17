@@ -12,34 +12,34 @@ struct FxRunWork {
 
 struct BattleEffectArgument;
 void BattleFx_RunMeteor(struct BattleEffectArgument *effect);
-void Func_08165ab4(s32 *arg);
-void Func_08148458(s32 *arg);
-void Func_08168a40(s32 *arg);
-void Func_08153ebc(s32 *arg);
-void Func_0814ce30(s32 *arg);
-void Func_081693d0(s32 *arg);
-void Func_08147ae0(s32 *arg);
-void Func_08146e00(s32 *arg);
-void Func_0816729c(s32 *arg);
-void Func_0814db04(s32 *arg);
-void Func_08158dc8(s32 *arg);
-void Func_0814bee0(s32 *arg);
-void Func_08170364(s32 *arg);
-void Func_08179f18(s32 *arg);
-void Func_08191d60(s32 *arg);
-void Func_0815b764(s32 *arg);
-void Func_08186dfc(s32 *arg);
-void Func_0814153c(s32 *arg);
-void Func_08182aa8(s32 *arg);
-void Func_0817ea58(s32 *arg);
-void Func_0815cde8(s32 *arg);
-void Func_081843fc(s32 *arg);
-void Func_08175f74(s32 *arg);
-void Func_08192c9c(s32 *arg);
+void BattleFx_RunRamses(s32 *arg);
+void BattleFx_RunNereid(s32 *arg);
+void BattleFx_RunKirin(s32 *arg);
+void BattleFx_RunAtalanta(s32 *arg);
+void BattleFx_RunCybele(s32 *arg);
+void BattleFx_RunNeptune(s32 *arg);
+void BattleFx_RunTiamat(s32 *arg);
+void BattleFx_RunProcne(s32 *arg);
+void BattleFx_RunJudgment(s32 *arg);
+void BattleFx_RunBoreas(s32 *arg);
+void BattleFx_RunThor(s32 *arg);
+void BattleFx_RunZagan(s32 *arg);
+void BattleFx_RunMegaera(s32 *arg);
+void BattleFx_RunFlora(s32 *arg);
+void BattleFx_RunMoloch(s32 *arg);
+void BattleFx_RunUlysses(s32 *arg);
+void BattleFx_RunHaures(s32 *arg);
+void BattleFx_RunEclipse(s32 *arg);
+void BattleFx_RunCoatlicue(s32 *arg);
+void BattleFx_RunDaedalus(s32 *arg);
+void BattleFx_RunAzul(s32 *arg);
+void BattleFx_RunCatastrophe(s32 *arg);
+void BattleFx_RunCharon(s32 *arg);
+void BattleFx_RunIris(s32 *arg);
 void Func_08180c94(s32 *arg);
-void Func_0818cb74(s32 *arg);
-void Func_0813fd84(s32 *arg);
-void Func_0818df5c(s32 *arg);
+void BattleFx_RunTrident(s32 *arg);
+void BattleFx_RunCruelRuin(s32 *arg);
+void BattleFx_RunMeteorBlow(s32 *arg);
 
 extern void (*gData_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
@@ -64,91 +64,91 @@ void Func_0814c994(s32 *arg) {
   } else {
     switch (*arg) {
     case 1:
-      Func_08165ab4(arg);
+      BattleFx_RunRamses(arg);
       break;
     case 2:
-      Func_08148458(arg);
+      BattleFx_RunNereid(arg);
       break;
     case 3:
-      Func_08168a40(arg);
+      BattleFx_RunKirin(arg);
       break;
     case 4:
-      Func_08153ebc(arg);
+      BattleFx_RunAtalanta(arg);
       break;
     case 5:
-      Func_0814ce30(arg);
+      BattleFx_RunCybele(arg);
       break;
     case 6:
-      Func_081693d0(arg);
+      BattleFx_RunNeptune(arg);
       break;
     case 7:
-      Func_08147ae0(arg);
+      BattleFx_RunTiamat(arg);
       break;
     case 8:
-      Func_08146e00(arg);
+      BattleFx_RunProcne(arg);
       break;
     case 9:
-      Func_0816729c(arg);
+      BattleFx_RunJudgment(arg);
       break;
     case 10:
-      Func_0814db04(arg);
+      BattleFx_RunBoreas(arg);
       break;
     case 11:
       BattleFx_RunMeteor((struct BattleEffectArgument *)arg);
       break;
     case 12:
-      Func_08158dc8(arg);
+      BattleFx_RunThor(arg);
       break;
     case 13:
-      Func_0814bee0(arg);
+      BattleFx_RunZagan(arg);
       break;
     case 14:
-      Func_08170364(arg);
+      BattleFx_RunMegaera(arg);
       break;
     case 15:
-      Func_08179f18(arg);
+      BattleFx_RunFlora(arg);
       break;
     case 16:
-      Func_08191d60(arg);
+      BattleFx_RunMoloch(arg);
       break;
     case 17:
-      Func_0815b764(arg);
+      BattleFx_RunUlysses(arg);
       break;
     case 18:
-      Func_08186dfc(arg);
+      BattleFx_RunHaures(arg);
       break;
     case 19:
-      Func_0814153c(arg);
+      BattleFx_RunEclipse(arg);
       break;
     case 20:
-      Func_08182aa8(arg);
+      BattleFx_RunCoatlicue(arg);
       break;
     case 21:
-      Func_0817ea58(arg);
+      BattleFx_RunDaedalus(arg);
       break;
     case 22:
-      Func_0815cde8(arg);
+      BattleFx_RunAzul(arg);
       break;
     case 23:
-      Func_081843fc(arg);
+      BattleFx_RunCatastrophe(arg);
       break;
     case 24:
-      Func_08175f74(arg);
+      BattleFx_RunCharon(arg);
       break;
     case 25:
-      Func_08192c9c(arg);
+      BattleFx_RunIris(arg);
       break;
     case 26:
       Func_08180c94(arg);
       break;
     case 27:
-      Func_0818cb74(arg);
+      BattleFx_RunTrident(arg);
       break;
     case 28:
-      Func_0813fd84(arg);
+      BattleFx_RunCruelRuin(arg);
       break;
     case 29:
-      Func_0818df5c(arg);
+      BattleFx_RunMeteorBlow(arg);
       break;
     }
   }

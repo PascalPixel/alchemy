@@ -1,5 +1,5 @@
 // Draft, differ 564 of 927 (draft 935 instructions, no device): the body
-// of the leaping strike family (Func_0818d590 mode 0 and Func_0818d59c
+// of the leaping strike family (BattleFx_RunPlanetDiver mode 0 and BattleFx_RunPlanetary
 // mode 1 in summon_modes_7.c), written from the listing on The Broken
 // Seal's canvas skeleton (twin BattleFx_RunPlanetDiver 0.53 by shape and
 // call order: the caster object leaps, lands and slides as there) with the
@@ -106,7 +106,7 @@ void Func_081434f8(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 
-// The leaping strike family (Func_0818d590 is mode 0, Func_0818d59c mode
+// The leaping strike family (BattleFx_RunPlanetDiver is mode 0, BattleFx_RunPlanetary mode
 // 1; effect kinds 60 and 128). The caster flashes and sixteen flames ring
 // it (frames 2-15), leaps up at frame 4 and comes down on the target at
 // frame 16, sliding to it over the frames after; on landing 256 sparks

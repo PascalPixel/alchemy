@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816a730
+@ Abilities: Undead Sword (kind 320).
+	.global BattleFx_RunUndeadSword
 	.thumb_func
-Func_0816a730:
+BattleFx_RunUndeadSword:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

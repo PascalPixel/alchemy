@@ -96,7 +96,7 @@ void Func_081434f8(void);            // ☀️ ObjectGroup_TickMemberTimers
 // and lift them while the ground throws up debris; the picture is erased
 // dot by dot, the targets are dropped from on high, and each lands in an
 // explosion with a ring of embers. A or B skips to the drop.
-void Func_0814ce30(struct BattleEffectArgument *effect) {
+void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;

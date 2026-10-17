@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08179f18
+@ Abilities: Flora (scene kind 15).
+	.global BattleFx_RunFlora
 	.thumb_func
-Func_08179f18:
+BattleFx_RunFlora:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

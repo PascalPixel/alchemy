@@ -93,7 +93,7 @@ void Func_08143bb8(void);
 // and at frame 80 the blow lands and the result phase starts. From frame
 // 92 it fades out and rises away; the battle background is reloaded at the
 // end. On the far side the whole figure is drawn mirrored.
-void Func_08178ee4(struct BattleEffectArgument *effect) {
+void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   u8 *canvas;

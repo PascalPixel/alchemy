@@ -70,7 +70,7 @@ void Audio_PlayCue(s32 cue);
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the
 // next phase begins, and each target turns back to its own palette in turn.
-void Func_0814aebc(struct BattleEffectArgument *effect) {
+void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   struct EffectPosition middle;

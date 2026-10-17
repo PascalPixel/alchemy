@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08148e9c
+@ Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
+	.global BattleFx_RunWhirlwind
 	.thumb_func
-Func_08148e9c:
+BattleFx_RunWhirlwind:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

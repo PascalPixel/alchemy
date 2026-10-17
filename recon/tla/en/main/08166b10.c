@@ -1,5 +1,5 @@
 // Draft, differ 149 of 863 (864 here): Func_08166b10, the body of two effect
-// kinds (series_h.c's Func_08166af8 and Func_08166b04 pass modes 0 and 1),
+// kinds (series_h.c's BattleFx_RunTitanBlade and BattleFx_RunAcheronsGrief pass modes 0 and 1),
 // The Broken Seal's BattleFx_RunTitanBlade.
 
 // Twin: ☀️ BattleFx_RunTitanBlade (games/tbs/src/effect/effect.c) with The

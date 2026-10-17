@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081579d0
+@ Abilities: Jupiter (kind 283).
+	.global BattleFx_RunJupiter
 	.thumb_func
-Func_081579d0:
+BattleFx_RunJupiter:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

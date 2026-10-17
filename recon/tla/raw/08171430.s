@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08171430
+@ Abilities: Light Surge (kind 120).
+	.global BattleFx_RunLightSurge
 	.thumb_func
-Func_08171430:
+BattleFx_RunLightSurge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

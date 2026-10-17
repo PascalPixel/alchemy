@@ -9,7 +9,7 @@
 // #19 before movs r0, #104, the 0xffff angle mask after the particle stores,
 // the pooled sheet offsets), and the shifted literal pools follow. The empty
 // asm at the start and the BG2PA halfword pinned in a one-pass block (as
-// Func_0816a730) take it from 54 to 48, and the tables declared without const
+// BattleFx_RunUndeadSword) take it from 54 to 48, and the tables declared without const
 // to 46.
 #include "types.h"
 #include "ram_buffer.h"

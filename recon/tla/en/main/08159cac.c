@@ -1,4 +1,4 @@
-// Draft of Func_08159cac, effect kind 2: shattering rocks.
+// Draft of BattleFx_RunSpire, effect kind 2: shattering rocks.
 
 // On screen: boulders drop out of the sky onto the targets, one after
 // another, from the variant's row of drop frames. Each falls faster every
@@ -105,7 +105,7 @@ void Func_08158ce0(s32 randomMask, s32 shakeRange);
 void Func_081434f8(void);
 void WaitFrames(s32 frames);
 
-void Func_08159cac(struct BattleEffectArgument *effect) {
+void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;

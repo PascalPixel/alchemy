@@ -54,7 +54,7 @@ void Audio_PlayCue(s32 cue);
 
 // A spinning star marks each target in turn, sixteen frames apart: a post
 // under the target and the star turning above it, each for 72 frames.
-void Func_0814b160(struct BattleEffectArgument *effect) {
+void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
   /* FAKEMATCH: the family's blitter pair, as in ☀️: this effect loads only

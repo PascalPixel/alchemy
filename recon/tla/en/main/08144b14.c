@@ -100,7 +100,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   /* FAKEMATCH: a pointer to the heap slots held from here, used only for
    * the second blitter's read: spilled, it makes reload rebuild the
-   * 0x03000000 base there, as the native does (see Func_0814627c).
+   * 0x03000000 base there, as the native does (see BattleFx_RunTriangleStrike).
    * Measured (2026-10-15): 152 without it, 62 with it. */
   heap = Ram_HeapSlots;
 

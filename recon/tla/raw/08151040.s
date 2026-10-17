@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08151040
+@ Abilities: Fire, Fireball, Inferno (kind 12).
+	.global BattleFx_RunFire
 	.thumb_func
-Func_08151040:
+BattleFx_RunFire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

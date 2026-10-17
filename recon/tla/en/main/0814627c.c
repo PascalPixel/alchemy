@@ -69,7 +69,7 @@ extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 // target, shrinking, for 64 frames; then the rune picture is stamped in two
 // halves where it landed. The caster approaches the target at frame 46, the
 // palette pulses throughout and the trail fades a step every 16 frames.
-void Func_0814627c(struct BattleEffectArgument *effect) {
+void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   s32 vector[3];
   struct EffectPosition screen;

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08178ee4
+@ Abilities: Heartbreak (kind 69).
+	.global BattleFx_RunHeartbreak
 	.thumb_func
-Func_08178ee4:
+BattleFx_RunHeartbreak:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

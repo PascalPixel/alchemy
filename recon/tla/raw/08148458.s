@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08148458
+@ Abilities: Nereid (scene kind 2).
+	.global BattleFx_RunNereid
 	.thumb_func
-Func_08148458:
+BattleFx_RunNereid:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_0814627c
+@ Abilities: none; kind 67 is used by no ability. Named for The Broken Seal's
+@ twin.
+	.global BattleFx_RunTriangleStrike
 	.thumb_func
-Func_0814627c:
+BattleFx_RunTriangleStrike:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

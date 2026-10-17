@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081811d4
+@ Abilities: Vengeance (kind 126).
+	.global BattleFx_RunVengeance
 	.thumb_func
-Func_081811d4:
+BattleFx_RunVengeance:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

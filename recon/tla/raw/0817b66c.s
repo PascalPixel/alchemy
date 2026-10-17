@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817b66c
+@ Abilities: Sabre Dance (kind 76).
+	.global BattleFx_RunSabreDance
 	.thumb_func
-Func_0817b66c:
+BattleFx_RunSabreDance:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

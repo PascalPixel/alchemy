@@ -2,6 +2,8 @@
 
 void Func_081548d0(void *object, s32 mode);
 
-void Func_081548b8(void *object) { Func_081548d0(object, 0); }
+// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
+void BattleFx_RunGrowth(void *object) { Func_081548d0(object, 0); }
 
-void Func_081548c4(void *object) { Func_081548d0(object, 1); }
+// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
+void BattleFx_RunPunji(void *object) { Func_081548d0(object, 1); }

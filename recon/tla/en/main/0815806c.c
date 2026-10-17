@@ -1,4 +1,4 @@
-// Draft of Func_0815806c, effect kind 282: the Mars Djinn's puffs.
+// Draft of BattleFx_RunMars, effect kind 282: the Mars Djinn's puffs.
 
 // On screen: a glowing orb swells over the targets for 24 frames; at frame
 // 20 a small Mars Djinn appears in it, and from frame 24 it dives down and
@@ -94,7 +94,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void Func_0815806c(struct BattleEffectArgument *effect) {
+void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;

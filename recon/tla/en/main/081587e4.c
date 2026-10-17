@@ -1,4 +1,4 @@
-// Draft of Func_081587e4, effect kind 203: the Venus Djinn's rock toss.
+// Draft of BattleFx_RunGround, effect kind 203: the Venus Djinn's rock toss.
 
 // On screen: the background slowly takes on the portal's colours from
 // frame 17. Six rocks leave the caster one after another, every two
@@ -116,7 +116,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 
-void Func_081587e4(struct BattleEffectArgument *effect) {
+void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;

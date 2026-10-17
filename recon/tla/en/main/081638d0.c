@@ -1,4 +1,4 @@
-// Draft, differ 6 of 354: Func_081638d0, effect kind 214, The Broken Seal's
+// Draft, differ 6 of 354: BattleFx_RunTorch, effect kind 214, The Broken Seal's
 // BattleFx_RunTorch.
 
 // Twin: ☀️ BattleFx_RunTorch (games/tbs/src/effect/effect.c), ported
@@ -91,7 +91,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
 // rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
 // camera. At frame 48 the target is struck; from frame 72 the disc fades.
-void Func_081638d0(struct BattleEffectArgument *effect) {
+void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenX[3];

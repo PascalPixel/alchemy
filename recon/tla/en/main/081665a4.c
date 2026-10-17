@@ -1,4 +1,4 @@
-// Draft, differ 44 of 620: Func_081665a4, effect kind 58, The Broken Seal's
+// Draft, differ 44 of 620: BattleFx_RunRagnarok, effect kind 58, The Broken Seal's
 // BattleFx_RunRagnarok.
 
 // Twin: ☀️ BattleFx_RunRagnarok (games/tbs/src/effect/effect.c), ported:
@@ -93,7 +93,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // colours; each column strikes 8 frames after the last (shake, its flash, its
 // targets flashed) and 6 frames later throws its sparks and knocks the
 // targets back.
-void Func_081665a4(struct BattleEffectArgument *effect) {
+void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 col;

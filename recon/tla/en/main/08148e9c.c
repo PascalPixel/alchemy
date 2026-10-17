@@ -72,7 +72,7 @@ void Audio_PlayCue(s32 cue);
 // One to four funnels of wind sway across the targets for 80 frames, each
 // drawn as three stacked segments with glints swirling around it; the canvas
 // is wiped every eight frames, and each target is struck seven times.
-void Func_08148e9c(struct BattleEffectArgument *effect) {
+void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;

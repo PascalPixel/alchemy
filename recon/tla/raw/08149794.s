@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_08149794
+@ Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
+@ Thunderhead (kind 18).
+	.global BattleFx_RunPlasma
 	.thumb_func
-Func_08149794:
+BattleFx_RunPlasma:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

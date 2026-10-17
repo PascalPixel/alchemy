@@ -1,4 +1,4 @@
-// Draft of Func_0815a9e4, effect kind 3: a wall of rock rises and sinks.
+// Draft of BattleFx_RunGaia, effect kind 3: a wall of rock rises and sinks.
 
 // On screen: the background darkens, the ground in front of the caster
 // heaves up in a mound (frames 0-81), then a wall of rock grows out of it,
@@ -147,7 +147,7 @@ void Func_08158ce0(s32 randomMask, s32 shakeRange);
 void Func_081434f8(void);
 void WaitFrames(s32 frames);
 
-void Func_0815a9e4(struct BattleEffectArgument *effect) {
+void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

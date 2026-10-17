@@ -1,7 +1,7 @@
 // Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
 // order BattleFx_RunRamses 0.455): ⚓️'s own effect on ☀️'s
 // frame, with its rune and swords drawn as textured quads by ⚓️'s model
-// kernels, as in Triple Chomp (Func_0818b868).
+// kernels, as in Triple Chomp (BattleFx_RunTripleChomp).
 // The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
 // the blitter 32, graphics 28, the start's address 24, the vertices 20, the
 // texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
@@ -122,7 +122,7 @@ void Func_08143000(void);
 // at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
 // while a flash grows and fades where it lands. The effect lasts 86 frames
 // and 16 more for each further sword.
-void Func_08189b14(struct BattleEffectArgument *effect) {
+void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

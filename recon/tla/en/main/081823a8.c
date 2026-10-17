@@ -1,6 +1,6 @@
 // Draft (tla-en): listing 535 instructions, draft 537, common 388, differ 296.
-// The body of effect kinds 465 and 466 (summon_modes_2.c's Func_08182390
-// and Func_0818239c pass modes 0 and 1). The Lost Age's rework of ☀️'s
+// The body of effect kinds 465 and 466 (summon_modes_2.c's BattleFx_RunDjinnStun
+// and BattleFx_RunMysticCall pass modes 0 and 1). The Lost Age's rework of ☀️'s
 // BattleFx_RunSwirlingStars (structure 0.70): the same four rotations by
 // star and the same depth-sized cels, one swarm per target.
 // Written 2026-10-15 (lane N2) from the listing and the twin.

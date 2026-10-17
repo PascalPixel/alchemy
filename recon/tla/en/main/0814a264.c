@@ -78,7 +78,7 @@ void Audio_PlayCue(s32 cue);
 // another; each burns for the rest of the first 64 frames, scrolling its
 // flames upward, throws a burst of sparks when it starts and a few more
 // every frame after its sixteenth, and strikes every target as it starts.
-void Func_0814a264(struct BattleEffectArgument *effect) {
+void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

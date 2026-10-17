@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0813bbd8
+@ Abilities: Ice, Ice Horn, Ice Missile (kind 7).
+	.global BattleFx_RunIce
 	.thumb_func
-Func_0813bbd8:
+BattleFx_RunIce:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

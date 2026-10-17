@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081638d0
+@ Abilities: Torch (kind 214).
+	.global BattleFx_RunTorch
 	.thumb_func
-Func_081638d0:
+BattleFx_RunTorch:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

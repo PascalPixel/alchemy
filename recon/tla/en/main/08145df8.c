@@ -2,19 +2,19 @@
 
 // Effect kinds 38 and 218. Twin: The Broken Seal's
 // BattleFx_RunBind, ported call for call; the body is
-// Func_0814627c's (TriangleStrike) with the prelude. The Lost Age's changes
-// are those of Func_0814627c, plus: the canvas is prepared by Func_0815585c
+// BattleFx_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost Age's changes
+// are those of BattleFx_RunTriangleStrike, plus: the canvas is prepared by Func_0815585c
 // (kind 3 | side << 4, then two three-word arrays) where The Broken Seal calls
 // BattleFx_PrepareCanvasEffect(effect, 3, side, 0, &x, &y); the Djinn sheet is
 // unpacked with its palette; and the prelude's blitter pair comes from
 // Func_08144aac.
 
-// Left: order only, as in Func_0814627c: single swaps of a load with its
+// Left: order only, as in BattleFx_RunTriangleStrike: single swaps of a load with its
 // neighbour.
 
 // Tried: the prelude arrays declared before the anchor, which gives the
 // native's slots (148, 136, then the anchor at 124): 104 -> 98; the
-// tagged heap pointer for the second blitter's read (see Func_0814627c)
+// tagged heap pointer for the second blitter's read (see BattleFx_RunTriangleStrike)
 // 98 -> 84.
 
 #include "battle.h"
@@ -70,11 +70,11 @@ extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 #define CORNERS 3
 #define EDGE_STEPS 24 // flares drawn along each edge
 
-// Spinning triangle (kinds 38 and 218): as Func_0814627c, a triangle of
+// Spinning triangle (kinds 38 and 218): as BattleFx_RunTriangleStrike, a triangle of
 // flares spins down onto the target and leaves the rune picture where it
 // lands; when the effect has a prelude, the Jupiter Djinn also circles
 // above its place for the first frames and rises away after frame 32.
-void Func_08145df8(struct BattleEffectArgument *effect) {
+void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   s32 origin[3];
   s32 originSize[3];
   struct EffectPosition anchor;

@@ -1,4 +1,4 @@
-// Draft of Func_0816f928, effect kind 105 (Hurricane), written from the
+// Draft of BattleFx_RunHurricane, effect kind 105 (Hurricane), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunJupiter 0.513, call order
 // BattleFx_RunPlasma 0.600). It ends without closing the canvas
@@ -19,7 +19,7 @@
 // PARTICLES[i].field with no pointer                                218
 // the streak loop, and the splash loop, indexed (&work->particles[i])
 // rather than stepped                                               218
-// HI through an inline helper (Func_0816d3d8's device)               212
+// HI through an inline helper (BattleFx_RunStoneJustice's device)               212
 
 #include "types.h"
 #include "io_reg.h"
@@ -85,7 +85,7 @@ void Audio_PlayCue(s32 cue);
 // Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
 // fall in turn, one more each frame; a streak that falls below line 48
 // starts its splash.
-void Func_0816f928(struct BattleEffectArgument *effect) {
+void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;

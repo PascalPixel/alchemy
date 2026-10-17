@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816d724
+@ Abilities: Soul Shatter (kind 115).
+	.global BattleFx_RunSoulShatter
 	.thumb_func
-Func_0816d724:
+BattleFx_RunSoulShatter:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

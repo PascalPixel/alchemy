@@ -1,5 +1,5 @@
-// Draft of Func_0814ea58, the body behind Func_0814ea3c (mode 0, or 1 when
-// the variant is not 0) and Func_0814ea4c (mode 2).
+// Draft of Func_0814ea58, the body behind BattleFx_RunDrain (mode 0, or 1 when
+// the variant is not 0) and BattleFx_RunTrueCollide (mode 2).
 
 // Twin: The Broken Seal's BattleFx_RunDrain (effect.c), rebuilt
 // around a mode. Mode 0 is The Broken Seal's variant 0 (the ice palette)

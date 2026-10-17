@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08192c9c
+@ Abilities: Iris (scene kind 25).
+	.global BattleFx_RunIris
 	.thumb_func
-Func_08192c9c:
+BattleFx_RunIris:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

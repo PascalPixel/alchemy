@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817c27c
+@ Abilities: Whiplash (kind 80).
+	.global BattleFx_RunWhiplash
 	.thumb_func
-Func_0817c27c:
+BattleFx_RunWhiplash:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

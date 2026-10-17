@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08146e00
+@ Abilities: Procne (scene kind 8).
+	.global BattleFx_RunProcne
 	.thumb_func
-Func_08146e00:
+BattleFx_RunProcne:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

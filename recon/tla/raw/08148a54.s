@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08148a54
+@ Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
+	.global BattleFx_RunFroth
 	.thumb_func
-Func_08148a54:
+BattleFx_RunFroth:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

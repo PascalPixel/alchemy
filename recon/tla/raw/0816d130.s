@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816d130
+@ Abilities: Nirvana (kind 119).
+	.global BattleFx_RunNirvana
 	.thumb_func
-Func_0816d130:
+BattleFx_RunNirvana:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,4 +1,4 @@
-// Draft, differ 10 of 320: Func_0816a730, effect kind 320, The Broken Seal's
+// Draft, differ 10 of 320: BattleFx_RunUndeadSword, effect kind 320, The Broken Seal's
 // BattleFx_RunUndeadSword.
 
 // Twin: ☀️ BattleFx_RunUndeadSword (games/tbs/src/effect/effect.c), ported:
@@ -91,7 +91,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // rise 12 pixels a frame to 80, held there with the brighter MAX blitter, and
 // from frame 32 sink 6 a frame; each spark shows its blast picture for its
 // age and falls under gravity. The target is struck at frame 10.
-void Func_0816a730(struct BattleEffectArgument *effect) {
+void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   void *sprites;

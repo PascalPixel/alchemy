@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08144044
+@ Abilities: Haunt (kind 39).
+	.global BattleFx_RunHaunt
 	.thumb_func
-Func_08144044:
+BattleFx_RunHaunt:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

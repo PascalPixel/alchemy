@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08146638
+@ Abilities: Astral Blast (kind 68).
+	.global BattleFx_RunAstralBlast
 	.thumb_func
-Func_08146638:
+BattleFx_RunAstralBlast:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

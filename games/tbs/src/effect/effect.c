@@ -296,7 +296,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Load the shard and puff images before shaping their visible canvas.
   BattleFx_BeginCanvasLayer(0x2001);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
   BattleFx_ConfigureEffectDisplay();
@@ -526,7 +526,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // The beam and its sparks use separate images but the same clipped canvas.
   BattleFx_BeginCanvasLayer(0x2001);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_CELL, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
@@ -1867,7 +1867,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100;                 // unscaled
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
 
   // [0] draws as is, [1] mirrored; both skip colour 0.
@@ -2043,7 +2043,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = BLEND_ALPHA(12, 16); // 12/16 over all of the background
-  REG_BG2PA = 0x100;                  // unscaled
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   switch (work->effect->kind) {
@@ -2247,10 +2247,10 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
   view->secondMode = 0;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000; // 16 lines down
-  REG_BG2PA = 0x80;      // stretched to twice the width
+  REG_BG2PA = Q_8_8(0.5); // stretched to twice the width
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  REG_BG2PD = 0x100;
+  REG_BG2PD = Q_8_8(1);
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
@@ -2585,7 +2585,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = BLEND_ALPHA(12, 16); // 12/16 over all of the background
-  REG_BG2PA = 0x100;                  // unscaled
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
@@ -2774,7 +2774,7 @@ void BattleFx_PrepareScene(s32 kind) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
-  REG_BG2PA = 0x100;                  // unscaled
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   switch (kind) {
   case 0:
@@ -2858,7 +2858,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   if (work->effect->side == 1) {
     BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -2971,7 +2971,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(2);
   transparent = (s32)&REG_BLDALPHA;
-  REG_BG2PA = 0x100;            // unscaled
+  REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
   EffectPosition_ApplyStepAndYOffset(
@@ -3344,10 +3344,10 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000; // 16 lines down
-  REG_BG2PA = 0x80;   // twice the width
+  REG_BG2PA = Q_8_8(0.5); // twice the width
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  REG_BG2PD = 0x100;
+  REG_BG2PD = Q_8_8(1);
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
@@ -3425,10 +3425,10 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  REG_BG2PD = 0x100;
+  REG_BG2PD = Q_8_8(1);
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
@@ -4068,7 +4068,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01((u8 *)palette + 128, work);
@@ -4416,11 +4416,11 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
                                               &screenPosition);
   if (mode == 0) {
-    REG_BG2PA = 0x100; // unscaled
+    REG_BG2PA = Q_8_8(1);
     x = 64 - screenPosition.x;
     REG_BG2X = x << 8;
   } else {
-    REG_BG2PA = 0xcc; // 0.8: shown 1.25 times as wide
+    REG_BG2PA = Q_8_8(0.8); // shown 1.25 times as wide
     x = (-screenPosition.x * 4) / 5 + 64;
     REG_BG2X = x << 8;
   }
@@ -4571,7 +4571,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // With one target, scroll BG2 so the target is at the canvas's x 64.
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   if (work->effect->count == 1) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &one);
     offsetX = 64 - one.x;
@@ -5107,7 +5107,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   zero = 0;
   work->effect = object;
   BattleFx_BeginTiledCanvas(0);
-  REG_BG2PA = 0x100;                  // unscaled
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
 
   // The panel in work, the pieces of the burst in gMapCellBuffer.
@@ -5424,7 +5424,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   if (work->effect->prelude == 1)
     BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side, 0, &originX,
                                  &originY);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
 
   // The rune, the motes at 0x1000 and the Djinni at 0x2000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
@@ -5585,7 +5585,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
 
   // The rune, and the motes at 0x1000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
@@ -8753,7 +8753,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;    // drawn solid
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
@@ -8863,7 +8863,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   work = slot[-1];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // unscaled
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;    // drawn solid
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
@@ -9520,7 +9520,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   }
 
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
@@ -9873,7 +9873,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
-      REG_BG2PA = 0x80;
+      REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
       work->transferMode = CANVAS_COPY_AND_FADE;
       work->transferValue = 75;
@@ -10052,7 +10052,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleFx_SpawnObjects(9, 0x174, 1);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -10870,7 +10870,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &base);
     canvasShiftX = 64 - base.x;
     REG_BG2X = canvasShiftX << 8;
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
     doubleWidth = 0;
   } else {
     doubleWidth = 1;
@@ -11221,7 +11221,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
                                    &originX, &originY);
     originX = originX * 4 / 5;
   }
-  REG_BG2PA = 0xcc; // 1.25 times the width
+  REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
   // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
@@ -11572,7 +11572,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   if (mode == 0)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
   else
@@ -11959,7 +11959,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // the canvas at its own width
+  REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;    // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_WALL_CELLS, 1, 1);
@@ -12316,7 +12316,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   BattleFx_FetchRectangleBlitters(0, draw = pair);
@@ -12588,9 +12588,9 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginTiledCanvas(1);
   if (work->effect->variant == 2)
-    REG_BG2PA = 0x80; // double width
+    REG_BG2PA = Q_8_8(0.5); // double width
   else
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
@@ -13183,7 +13183,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   }
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     origin.x = origin.x / 3;
-    REG_BG2PA = 85;
+    REG_BG2PA = Q_8_8(1.0 / 3);
   }
 
   // Where each target stands.
@@ -13438,7 +13438,7 @@ void BattleFx_RunOrbitingSparks(void) {
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
@@ -13712,7 +13712,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   scrollX = gBgScroll[1].x;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   BattleFx_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
@@ -13748,7 +13748,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   view->busy = 1;
   BattleFx_WipeCanvas(0, 1);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   pathX = 0;
@@ -13901,7 +13901,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   BattleFx_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              Ram_MapCellBuffer, 1, 0);
@@ -14094,7 +14094,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // the canvas at its own width
+  REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
@@ -14323,7 +14323,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_PrepareCanvasEffect(effect, 4, effect->side, 4, &originX, &originY);
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // the canvas at its own width
+  REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
                              1);
@@ -14425,7 +14425,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   canvas = (void *)*cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // the canvas at its own width
+  REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
@@ -17072,7 +17072,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   sprites = slots[-3];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
@@ -17117,13 +17117,13 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   gProjection.centerY = 240;
   BattleFx_WipeCanvas(0, 1);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   blitters = (DrawRectangle *)gWorkSlot;
   blit[0] = blitters[HEAP_SLOT_BLITTER];
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(15, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -17657,7 +17657,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   canvas = *cursor;
   work->effect = object;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -18096,9 +18096,9 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
   // The higher the variant, the wider the wall.
   if (work->effect->variant == 0)
-    REG_BG2PA = 204; // 1.25 times the width
+    REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
   else if (work->effect->variant == 1)
-    REG_BG2PA = 170; // 1.5 times the width
+    REG_BG2PA = Q_8_8(1.0 / 1.5); // 1.5 times the width
   if (work->effect->side == 1) {
     wallX = 8;
     if (work->effect->variant == 0)
@@ -19486,7 +19486,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   // target.
   //------------------------------------------------------------------
   if (kind == CASTING_IMPACT_MORTAL_DANGER) {
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
     if (work->effect->side == 0) {
       REG_BG2X = (frame - targetScreen->x) << 8; // frame is 32 here.
     } else {
@@ -19495,7 +19495,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   } else {
     if (kind == CASTING_IMPACT_ASURA) {
       // Scroll the image horizontally; scrollPos is in 16.16 pixels.
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       if (work->effect->side == 0) {
         scrollPos = -0x800000;
         scrollSpeed = 0xc0000;
@@ -19507,7 +19507,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     }
   }
   if (kind == CASTING_IMPACT_TERRA_STRIKE) {
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
     REG_BG2X = (64 - targetScreen->x) << 8;
     work->transferMode = CANVAS_COPY_AND_CLEAR; // Clear to 0 each frame.
     work->transferValue = 0;
@@ -19516,7 +19516,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     REG_BLDCNT = 0;
   }
   if (kind == CASTING_IMPACT_PSYPHON_SEAL) {
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
     if (work->effect->side == 0) {
       REG_BG2X = (32 - targetScreen->x) << 8;
     } else {
@@ -20405,7 +20405,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
-  REG_BG2PA = 0xaa;
+  REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
@@ -20546,7 +20546,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   graphics = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1,
                              1);
@@ -20751,7 +20751,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   orgX = x;
   x += 40 << 16;
   x /= 2; // Canvas uses half the horizontal width.
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -21054,7 +21054,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   /* FAKEMATCH: test through direction so CSE retains the mode reload
    * in this arm. Testing mode directly replaces ldr r4,[sp,#76] with
    * movs r4,#1 (1532 instructions, two differing rows). 2026-10-13:
@@ -21105,7 +21105,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
   WaitFrames(1);
   REG_BLDCNT = 0;
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -21379,7 +21379,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_SetupBlendedDisplay();
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -21620,7 +21620,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -22990,7 +22990,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
@@ -23009,7 +23009,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = 0;
   BattleFx_WipeCanvas(0, 1);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   depth = 0xffc00000;
@@ -23328,7 +23328,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   work->fadeFrames = 0;
   work->fadeStep = 0;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG2X = -0x3c00;
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -23370,7 +23370,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       if (frame >= 5 && frame < 150) {
         frame = 150;
-        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, 0x80, 0x20000);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
         IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + SHOCKWAVE_SHEET_EXPLOSION, 1,
@@ -23383,7 +23383,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 64) {
-      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, 0x80, 0x20000);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
       fill = 0;
       Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
@@ -23893,7 +23893,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 
@@ -24257,10 +24257,10 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
 
 // Restore the background 2 horizontal scale to one screen pixel per source
 // pixel.
-void Graphics_ResetBg2Pa(void) { REG_BG2PA = 0x100; }
+void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 // Stretch background 2 to twice its source width.
-void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
+void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   // where the blue flames throw sparks
 #define NEPTUNE_OBJECTS 8          // objects in the formation
@@ -24336,7 +24336,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   windowEdgeStep = 1;
@@ -24670,7 +24670,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
   AudioCommand_PlayFar(0x121);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   frame = 0;
@@ -24917,7 +24917,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   work->effect = effect;
   sprites = heap[2];
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100; // Normal horizontal scale too
+  REG_BG2PA = Q_8_8(1); // Normal horizontal scale too
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);

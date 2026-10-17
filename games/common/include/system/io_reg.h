@@ -38,6 +38,11 @@ enum DisplayControl {
 #define REG_BG3HOFS (*(volatile u16 *)0x0400001c)
 #define REG_BG3VOFS (*(volatile u16 *)0x0400001e)
 
+// The BG2/BG3 affine matrix entries are signed 8.8 fixed point: texels
+// stepped per screen pixel. Q_8_8(1) draws the layer at its own size and
+// Q_8_8(0.5) twice as large.
+#define Q_8_8(n) ((s16)((n) * 256))
+
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
 #define REG_BG2PB (*(volatile u16 *)0x04000022)
 #define REG_BG2PC (*(volatile u16 *)0x04000024)

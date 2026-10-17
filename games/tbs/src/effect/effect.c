@@ -176,6 +176,12 @@ enum CanvasTransferMode {
 #define EFFECT_FOR_EACH_TARGET(i, effect)                                      \
   for ((i) = 0; (i) != (effect)->count; (i)++)
 
+// Marks particles[0] to particles[count - 1] free: a particle whose variant
+// is -1 is not drawn or moved until an effect gives it a life.
+#define EFFECT_FREE_PARTICLES(i, particles, count)                             \
+  for ((i) = 0; (i) != (count); (i)++)                                         \
+  (particles)[i].variant = -1
+
 // The canvas life cycle, shared by every canvas effect. The statement macros
 // are comma expressions, not do { } while (0) blocks: agscc compiles a
 // do-while (0) in an effect's frame loop differently at some sites, and the
@@ -626,8 +632,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   drawSpark = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
-  for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++)
-    FALLING_BOLT_SPARKS->sparks[i].variant = -1; // spark slot free
+  EFFECT_FREE_PARTICLES(i, FALLING_BOLT_SPARKS->sparks,
+                        FALLING_BOLT_SPARK_COUNT);
 
   // Line the bolts up above the screen along the slant, FALLING_BOLT_SPACING
   // apart.
@@ -4209,8 +4215,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 
   // The lights start at the top of the user's body and fly off in any
   // direction at up to 2 pixels a frame.
-  for (i = 0; i != 1024; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   EFFECT_FOR_EACH_TARGET(k, work->effect) {
     struct MotionObject *src =
         GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -4786,8 +4791,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
   // Each target's shells start 4 pixels up at the user, with a 16-frame
   // flight to the target and an upward throw.
-  for (i = 0; i != 1024; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   height = 0x40000;
   EFFECT_FOR_EACH_TARGET(k, work->effect) {
@@ -4806,8 +4810,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
       shot->variant = 0;
     }
   }
-  for (i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++)
-    SHELL_BURSTS[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, SHELL_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
@@ -6616,8 +6619,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   // The formation's centre starts at (212, -60).
   focus.x = 212 << 16;
   focus.y = -(60 << 16);
-  for (i = 0; i != 64; i++)
-    work->particles[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, work->particles, 64);
   for (i = 0; i != PALETTE_PARTICLES_STREAKS; i++) {
     struct EffectStep *streak =
         &work->particles[PALETTE_PARTICLES_FIRST_STREAK + i];
@@ -6629,8 +6631,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     streak->y = (Random16() & 7) - 72;
     streak->variant = -(Random16() & 31); // frames to wait before falling
   }
-  for (i = 0; i != PALETTE_PARTICLES_EMBERS; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
   if (mode == 0) {
     BattleFx_SelectLivingTargets(work->effect);
     WaitFrames(1);
@@ -6984,8 +6985,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
     focus.y = 88 << 16;
     velocity.x = -(16 << 16);
     velocity.y = -(4 << 16);
-    for (k = 0; k != 64; k++)
-      work->particles[k].variant = -1;
+    EFFECT_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
       point->x = Random16() & 127;
@@ -10306,8 +10306,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
                       COMPOSITE_MAX);
   draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 
-  for (i = 0; i != 8 * ICE_SHARDS_PER_TARGET; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * ICE_SHARDS_PER_TARGET);
 
   Render_ResetTransformState();
   Transform_SetLookAt(camera->eye, camera->pos);
@@ -10435,8 +10434,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 
   // The motes fly out of the centre of each target's body at random speeds
   // of up to 2 pixels a frame on each axis.
-  for (i = 0; i != 8 * GATHERING_MOTES_PER_TARGET; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * GATHERING_MOTES_PER_TARGET);
 
   EFFECT_FOR_EACH_TARGET(member, work->effect) {
     struct MotionObject *object;
@@ -14275,8 +14273,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
-  for (j = 0; j != 64; j++)
-    work->particles[j].variant = -1;
+  EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   AudioCommand_PlayFar(138);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
@@ -15650,10 +15647,8 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  for (i = 0; i != 8; i++)
-    work->particles[i].variant = -1;
-  for (i = 0; i != 512; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, work->particles, 8);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 512);
   AudioCommand_PlayFar(162);
   frame = 0;
   do {
@@ -15788,8 +15783,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     ball->x = (Random16() & 63) + 64;
     ball->y = (Random16() & 63) - 80;
   }
-  for (i = 0; i != 512; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 512);
   AudioCommand_PlayFar(171);
   frame = 0;
   angle = 0x8000; // 180 degrees
@@ -15927,8 +15921,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
     column->x = Random16() & 63;
     column->y = 104;
   }
-  for (i = 0; i != 512; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 512);
   AudioCommand_PlayFar(141);
   frame = 0;
   angle = 0x8000;
@@ -20638,8 +20631,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
                         (s32)(Ram_MapBlocks + 0x202));
     Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0x4fe);
-    for (i = 0; i != 64; i++)
-      work->particles[i].variant = -1;
+    EFFECT_FREE_PARTICLES(i, work->particles, 64);
     presentation->active = 1;
     work->frame = 0;
     frame = 0;
@@ -21090,8 +21082,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   }
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
-  for (i = 0; i != 1024; i++)
-    PARTICLES[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 

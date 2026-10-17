@@ -189,6 +189,10 @@ enum CanvasTransferMode {
   (Render_ResetTransformState(),                                               \
    Transform_SetLookAt((camera)->eye, (camera)->pos))
 
+// Sets the x, y (up) and z of a three-part vector: a battle position about
+// to be projected, a per-frame step or a scale.
+#define EFFECT_SET_VECTOR(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
+
 // The canvas life cycle, shared by every canvas effect. The statement macros
 // are comma expressions, not do { } while (0) blocks: agscc compiles a
 // do-while (0) in an effect's frame loop differently at some sites, and the
@@ -1165,9 +1169,9 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
 
         // Wobble sideways, project onto the half-width canvas and draw a
         // 1x2 to 6x12 mote, larger the nearer it is to the camera.
-        worldPoint[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
-        worldPoint[1] = mote->y;
-        worldPoint[2] = mote->z;
+        EFFECT_SET_VECTOR(
+            worldPoint, mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
+            mote->y, mote->z);
         EffectPosition_ApplyBaseAndYOffset(worldPoint, &position);
         position.x >>= 1;
         if (position.depth <= 313)
@@ -1862,9 +1866,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       Object_SetMoveTargetFar(user, 0, 0, user->z);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    point[0] = user->x;
-    point[1] = user->y;
-    point[2] = user->z;
+    EFFECT_SET_VECTOR(point, user->x, user->y, user->z);
     EffectPosition_ApplyBaseAndYOffset(point, &screen);
     screen.x >>= 1;
 
@@ -3972,9 +3974,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
       // Centre on the point 20 pixels above the target and spin the group
       // about it.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      point[0] = target->x;
-      point[1] = 20 << 16;
-      point[2] = target->z;
+      EFFECT_SET_VECTOR(point, target->x, 20 << 16, target->z);
       SceneTransform_ApplyPosition(point);
       if (frame > k * 32) {
         SceneTransform_ApplyPitch(frame << 9);
@@ -4100,9 +4100,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[member], 0,
                                       POSE_DAMAGE, -1, 0);
           }
-          point[0] = obj->x;
-          point[1] = 40 << 16;
-          point[2] = obj->z;
+          EFFECT_SET_VECTOR(point, obj->x, 40 << 16, obj->z);
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, through four images,
@@ -4566,9 +4564,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       s32 start = k * 16;
 
       EFFECT_VIEW_FROM_CAMERA(camera);
-      point[0] = target->x;
-      point[1] = 0;
-      point[2] = target->z;
+      EFFECT_SET_VECTOR(point, target->x, 0, target->z);
       SceneTransform_ApplyPosition(point);
       if (frame > start) {
         for (i = 0; i != 8; i++) {
@@ -4613,9 +4609,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
                                     -1, -1, 0);
         if (frame == start + 88)
           ObjectGroup_UpdateMembers(work->effect->actors[i], 0, -1, -1, 0);
-        ground[0] = target->x;
-        ground[1] = 0;
-        ground[2] = target->z;
+        EFFECT_SET_VECTOR(ground, target->x, 0, target->z);
         EffectPosition_ApplyBaseAndYOffset(ground, &screenPosition);
         screenPosition.x += offsetX;
         if (frame < start + 104) {
@@ -8443,9 +8437,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                           COMPOSITE_MAX);
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       EFFECT_VIEW_FROM_CAMERA(camera);
-      point[0] = object->x;
-      point[1] = 160 << 13;
-      point[2] = object->z;
+      EFFECT_SET_VECTOR(point, object->x, 160 << 13, object->z);
       SceneTransform_ApplyPosition(point);
       // Turn the group; mote i joins i frames after the target's turn
       // starts and takes a new image every 4 frames.
@@ -8590,9 +8582,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
       target =
           GetBattleObjectSlotFar(work->effect->actors[targetIndex])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      anchor[0] = target->x;
-      anchor[1] = 160 << 14;
-      anchor[2] = target->z;
+      EFFECT_SET_VECTOR(anchor, target->x, 160 << 14, target->z);
       SceneTransform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
         ObjectGroup_UpdateMembers(work->effect->actors[targetIndex], 0,
@@ -8774,15 +8764,11 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
   // The swirl travels from the user's feet to 90 pixels above the first
   // target over frames 30 to 69.
-  position[0] = actor->x;
-  position[1] = 0;
-  position[2] = actor->z;
-  target[0] = goal->x;
-  target[1] = 180 << 15;
-  target[2] = 0;
-  delta[0] = (target[0] - position[0]) / 40;
-  delta[1] = (target[1] - position[1]) / 40;
-  delta[2] = (target[2] - position[2]) / 40;
+  EFFECT_SET_VECTOR(position, actor->x, 0, actor->z);
+  EFFECT_SET_VECTOR(target, goal->x, 180 << 15, 0);
+  EFFECT_SET_VECTOR(delta, (target[0] - position[0]) / 40,
+                    (target[1] - position[1]) / 40,
+                    (target[2] - position[2]) / 40);
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
     struct BattleCamera *camera = gCameraWork;
     if (frame == 8)
@@ -8843,9 +8829,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     }
     // The Djinni appears at the swirl's centre, bobbing.
     if (frame > 82) {
-      djinniPoint[0] = 0;
-      djinniPoint[1] = (Trig_Sin(frame << 10) * 4);
-      djinniPoint[2] = 0;
+      EFFECT_SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       EffectPosition_ApplyBaseAndYOffset(djinniPoint, &screen);
       screen.x >>= 1;
       draw[1](canvas, work, screen.x - 10, screen.y - 17, 20, 34);
@@ -8867,9 +8851,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     // The Djinni sways, and flies up and away for the last 32 frames.
     if (frame >= work->effect->count * 8 + 40)
       target[1] += 0x40000;
-    point[0] = target[0];
-    point[1] = target[1];
-    point[2] = target[2] + Trig_Sin(frame << 11) * 40;
+    EFFECT_SET_VECTOR(point, target[0], target[1],
+                      target[2] + Trig_Sin(frame << 11) * 40);
     EffectPosition_ApplyBaseAndYOffset(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work, view.x - 10, view.y - 17, 20, 34);
@@ -8878,9 +8861,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      position[0] = object->x;
-      position[1] = 160 << 14;
-      position[2] = object->z;
+      EFFECT_SET_VECTOR(position, object->x, 160 << 14, object->z);
       SceneTransform_ApplyPosition(position);
       if (frame == start + 30)
         AudioCommand_PlayFar(SOUND_RECOVERY);
@@ -9528,9 +9509,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-        point[0] = object->x;
-        point[1] = object->y;
-        point[2] = object->z;
+        EFFECT_SET_VECTOR(point, object->x, object->y, object->z);
         EffectPosition_ApplyBaseAndYOffset(point, &screen);
         for (j = 0; j != 6; j++) {
           struct EffectStep *spark =
@@ -9669,9 +9648,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           struct MotionObject *object =
               GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-          point[0] = object->x;
-          point[1] = 0;
-          point[2] = object->z;
+          EFFECT_SET_VECTOR(point, object->x, 0, object->z);
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
           screen.x >>= 1;
           draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24,
@@ -10259,9 +10236,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
     offset = member * ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
     height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
-    point[0] = object->x;
-    point[1] = height;
-    point[2] = object->z;
+    EFFECT_SET_VECTOR(point, object->x, height, object->z);
     EffectPosition_ApplyBaseAndYOffset(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
@@ -10743,9 +10718,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 
       // Centre on the point 40 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      point[0] = object->x;
-      point[1] = 40 << 16;
-      point[2] = object->z;
+      EFFECT_SET_VECTOR(point, object->x, 40 << 16, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
         AudioCommand_PlayFar(SOUND_RECOVERY);
@@ -11043,9 +11016,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         AudioCommand_PlayFar(212);
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
-      point[0] = object->x;
-      point[1] = height;
-      point[2] = object->z;
+      EFFECT_SET_VECTOR(point, object->x, height, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame == member * 8 + 48)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
@@ -11096,9 +11067,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       // The centre's position on screen.
-      center[0] = 0;
-      center[1] = 0;
-      center[2] = 0;
+      EFFECT_SET_VECTOR(center, 0, 0, 0);
       EffectPosition_ApplyBaseAndYOffset(center, &screen);
       screen.x = screen.x * 4 / 5 + canvasShiftX;
 
@@ -11337,14 +11306,10 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
       object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
       if (targetFrame > 0) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        point[0] = object->x;
-        point[1] = 160 << 13;
-        point[2] = object->z;
+        EFFECT_SET_VECTOR(point, object->x, 160 << 13, object->z);
         EFFECT_VIEW_FROM_CAMERA(camera);
         SceneTransform_ApplyPosition(point);
-        origin[0] = 0;
-        origin[1] = 0;
-        origin[2] = 0;
+        EFFECT_SET_VECTOR(origin, 0, 0, 0);
         EffectPosition_ApplyBaseAndYOffset(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
@@ -11708,9 +11673,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
           struct MotionObject *object;
 
           object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-          point[0] = object->x;
-          point[1] = object->y;
-          point[2] = object->z;
+          EFFECT_SET_VECTOR(point, object->x, object->y, object->z);
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * ROCK_PILLAR_WIDTH + 8 &&
@@ -12002,9 +11965,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     highest = 0;
     if (frame == RISING_MOTE_TIMING(RISE_FRAME) + 11)
       BattleEventRuntime_BeginPhaseFar(132);
-    point[0] = 0;
-    point[1] = 0;
-    point[2] = 512 << 16;
+    EFFECT_SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
@@ -12035,9 +11996,8 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
             u32 width;
             u32 height;
 
-            xyz[0] = mote->z * Trig_Sin(mote->x);
-            xyz[1] = mote->y;
-            xyz[2] = mote->z * Trig_Cos(mote->x);
+            EFFECT_SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
+                              mote->z * Trig_Cos(mote->x));
             EffectPosition_ApplyBaseAndYOffset(xyz, position = &screen);
             position->x = (position->x >> 17) + 64;
             position->y = HI(position->y) + 60;
@@ -12970,9 +12930,7 @@ void BattleFx_RunSwirlingStars(void *object) {
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  center[0] = 0;
-  center[1] = 160 << 15;
-  center[2] = 0;
+  EFFECT_SET_VECTOR(center, 0, 160 << 15, 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera;
 
@@ -13106,9 +13064,7 @@ void BattleFx_RunOrbitingSparks(void) {
 
         EFFECT_VIEW_FROM_CAMERA(camera);
         rec = point;
-        rec[0] = object->x;
-        rec[1] = object->y;
-        rec[2] = object->z;
+        EFFECT_SET_VECTOR(rec, object->x, object->y, object->z);
         EffectPosition_ApplyBaseAndYOffset(rec, &center);
         /* FAKEMATCH: needed to match: sched2 barrier, so this store precedes
          * the spark counter as in the reference 2026-10-11: without it differ 2
@@ -13209,9 +13165,7 @@ void BattleFx_RunTargetBursts(void *object) {
 
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      point[0] = object->x;
-      point[1] = 160 << 13;
-      point[2] = object->z;
+      EFFECT_SET_VECTOR(point, object->x, 160 << 13, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct EffectStep *puff;
@@ -14391,39 +14345,26 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
-  center[0] = user->x;
-  center[1] = 0;
-  center[2] = user->z;
+  EFFECT_SET_VECTOR(center, user->x, 0, user->z);
   switch (anchor) {
   case 0:
-    goal[0] = target->x;
-    goal[1] = 0x3c0000;
-    goal[2] = target->z;
+    EFFECT_SET_VECTOR(goal, target->x, 0x3c0000, target->z);
     break;
   case 1:
-    goal[0] = target->x;
-    goal[1] = 0x3c0000;
-    goal[2] = 0;
+    EFFECT_SET_VECTOR(goal, target->x, 0x3c0000, 0);
     break;
   case 2:
-    goal[0] = user->x;
-    goal[1] = 0x3c0000;
-    goal[2] = user->z;
+    EFFECT_SET_VECTOR(goal, user->x, 0x3c0000, user->z);
     break;
   case 3:
-    goal[0] = user->x;
-    goal[1] = 0x3c0000;
-    goal[2] = 0;
+    EFFECT_SET_VECTOR(goal, user->x, 0x3c0000, 0);
     break;
   case 4:
-    goal[0] = 0;
-    goal[1] = 0x3c0000;
-    goal[2] = 0;
+    EFFECT_SET_VECTOR(goal, 0, 0x3c0000, 0);
     break;
   }
-  step[0] = (goal[0] - center[0]) / 40;
-  step[1] = (goal[1] - center[1]) / 40;
-  step[2] = (goal[2] - center[2]) / 40;
+  EFFECT_SET_VECTOR(step, (goal[0] - center[0]) / 40,
+                    (goal[1] - center[1]) / 40, (goal[2] - center[2]) / 40);
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
@@ -14493,9 +14434,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     }
     // The djinni sways at the centre on frames 54 to 69.
     if (frame >= 54 && frame <= 69) {
-      point[0] = (Trig_Sin(frame << 10) * 4);
-      point[1] = 0;
-      point[2] = 0;
+      EFFECT_SET_VECTOR(point, (Trig_Sin(frame << 10) * 4), 0, 0);
       EffectPosition_ApplyBaseAndYOffset(point, &position);
       *outX = position.x;
       *outY = position.y;
@@ -16607,9 +16546,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
-      position[0] = 0;
-      position[1] = -sinkFrame << 17;
-      position[2] = 0x2000000;
+      EFFECT_SET_VECTOR(position, 0, -sinkFrame << 17, 0x2000000);
       size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
@@ -16620,20 +16557,15 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch(0x8000);
       SceneTransform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
-        scale[0] = frame * 0x1800 - 0xd9400;
-        scale[1] = scale[0];
-        scale[2] = scale[0];
+        EFFECT_SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
         size = 5;
       } else {
-        scale[0] = 0x10000 - sinkFrame * 3 * 0x400;
-        scale[1] = scale[0];
-        scale[2] = scale[0];
+        EFFECT_SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0],
+                          scale[0]);
       }
       SceneTransform_ApplyScale(scale);
     } else {
-      position[0] = 0;
-      position[1] = 0;
-      position[2] = 0x1000000;
+      EFFECT_SET_VECTOR(position, 0, 0, 0x1000000);
       SceneTransform_ApplyPosition(position);
       SceneTransform_ApplyPitch(-0x1000);
       SceneTransform_ApplyRoll(frame << 8);
@@ -16643,9 +16575,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        point[0] = (points[i][0] - 96) << 16;
-        point[1] = 0;
-        point[2] = (points[i][1] - 96) << 16;
+        EFFECT_SET_VECTOR(point, (points[i][0] - 96) << 16, 0,
+                          (points[i][1] - 96) << 16);
         EffectPosition_ApplyBaseAndYOffset(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -20657,9 +20588,10 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       SceneTransform_ApplyRoll(0x800);
       SceneTransform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
-        vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;
-        vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
-        vector[2] = (gParticleStreams_OrbitPoints[i][2] / 2) << 16;
+        EFFECT_SET_VECTOR(vector,
+                          (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
+                          (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
+                          (gParticleStreams_OrbitPoints[i][2] / 2) << 16);
         EffectPosition_ApplyBaseAndYOffset(vector, screenPosition = &spot);
         screenPosition->x = HI(screenPosition->x) + 128;
         screenPosition->y = HI(screenPosition->y) + 60;

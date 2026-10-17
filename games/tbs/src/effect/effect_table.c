@@ -11,7 +11,10 @@
 // Battle effect tables, in the order of the effect code that reads them.
 //--------------------------------------------------------------------------
 
-// Consumers declare these without const to preserve matching code.
+// The code reads most of these tables as const. Fifty-two are declared
+// without const where they are read: as const, the compiler keeps their
+// addresses in registers instead of reloading them, and the original
+// functions reload them.
 
 struct BattleEffectArgument;
 

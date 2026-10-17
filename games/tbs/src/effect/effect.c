@@ -4416,9 +4416,9 @@ void BattleFx_RunGreenShardShells(struct BattleEffectArgument *effect) {
 // gSevenMode_Records has two entries per style; the first is nonzero when
 // the shells burst into shards instead of smoke.
 extern s8 gSevenMode_Records[];
-extern u8 gSevenMode_ShardWidths[];
-extern u8 gSevenMode_ShardHeights[];
-extern u16 gSevenMode_ShardOffsets[];
+extern const u8 gSevenMode_ShardWidths[];
+extern const u8 gSevenMode_ShardHeights[];
+extern const u16 gSevenMode_ShardOffsets[];
 
 // The bursts live after the shells in gMapCellBuffer.
 #define gBursts ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
@@ -5605,13 +5605,13 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-extern u8 gWhirlwindComets_GridX[];
-extern u8 gWhirlwindComets_GridY[];
-extern u16 gWhirlwindComets_Frames[];
-extern u8 gWhirlwindComets_CellWidths[];
-extern u8 gWhirlwindComets_CellHeights[];
-extern u8 gWhirlwindComets_CellBiasY[];
-extern u16 gWhirlwindComets_CellOffsets[];
+extern const u8 gWhirlwindComets_GridX[];
+extern const u8 gWhirlwindComets_GridY[];
+extern const u16 gWhirlwindComets_Frames[];
+extern const u8 gWhirlwindComets_CellWidths[];
+extern const u8 gWhirlwindComets_CellHeights[];
+extern const u8 gWhirlwindComets_CellBiasY[];
+extern const u16 gWhirlwindComets_CellOffsets[];
 
 // Large battle effect 8 (BattleFx_InitializeMode), 400 frames:
 //   0 to 159   : a whirlwind rises over the field and lifts the targets,
@@ -14225,15 +14225,15 @@ void BattleFx_RunMode9WithAction(struct BattleEffectArgument *effect) {
 }
 
 // Projectile volleys, and moving battlers about.
-extern u8 gVolley_CometHeights[];
+extern const u8 gVolley_CometHeights[];
 // Five bytes for each mode; see VolleyField.
 extern u8 gVolley_Modes[];
 extern u8 gVolley_FlashWidths[];
 extern u8 gVolley_FlashHeights[];
-extern u8 gVolley_FlashSteps[];
+extern const u8 gVolley_FlashSteps[];
 extern u8 gVolley_FlashRises[];
 extern u16 gVolley_FlashOffsets[];
-extern u16 gVolley_PelletOffsets[];
+extern const u16 gVolley_PelletOffsets[];
 
 // PARTICLES holds the hit flashes from 0, the sparks from 100 and the
 // fireball trails from 512.
@@ -16013,8 +16013,8 @@ void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
   restoredCenter->centerY = 0x78;
 }
 
-extern u8 gMode12_Animations[];
-extern u8 gMode12_SmokeFlips[];
+extern const u8 gMode12_Animations[];
+extern const u8 gMode12_SmokeFlips[];
 
 // 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
 // before them.
@@ -19745,10 +19745,10 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *effect) {
 }
 
 
-extern s16 gParticleStreams_OrbitPoints[][3];
-extern s16 gParticleStreams_DropPoints[][2];
+extern const s16 gParticleStreams_OrbitPoints[][3];
+extern const s16 gParticleStreams_DropPoints[][2];
 extern u16 gParticleStreams_FlashSheetOffsets[];
-extern u16 gParticleStreams_FlashSizes[];
+extern const u16 gParticleStreams_FlashSizes[];
 
 #define EMBERS (&PARTICLES[128])
 
@@ -21550,9 +21550,9 @@ struct ShockwaveWork {
   u8 ramp[8][770];
 };
 
-extern u16 gShockwaveScene_ShardCells[];
+extern const u16 gShockwaveScene_ShardCells[];
 extern u8 gShockwaveScene_ShardWidths[];
-extern u8 gShockwaveScene_ShardHeights[];
+extern const u8 gShockwaveScene_ShardHeights[];
 
 #define SPARKS (&PARTICLES[128])
 

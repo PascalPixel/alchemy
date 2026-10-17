@@ -57,11 +57,11 @@ extern char ResourceId_BlueFlameSheet;
 
 // The swirl's seven growth frames, cut from one sheet. Not const: the native
 // reloads them after every call.
-extern u16 gFireSwirl_CellSourceOffsets[];
-extern s8 gFireSwirl_CellBiasX[];
-extern s8 gFireSwirl_CellBiasY[];
-extern u8 gFireSwirl_CellWidths[];
-extern u8 gFireSwirl_CellHeights[];
+extern u16 gHelmSplitter_CellSourceOffsets[];
+extern s8 gHelmSplitter_CellBiasX[];
+extern s8 gHelmSplitter_CellBiasY[];
+extern u8 gHelmSplitter_CellWidths[];
+extern u8 gHelmSplitter_CellHeights[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
@@ -168,16 +168,18 @@ void Func_08188cb0(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  gFireSwirl_CellBiasX[cell] + 30,
-                  gFireSwirl_CellBiasY[cell] + position.y - 60,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+                  gHelmSplitter_CellBiasX[cell] + 30,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         } else {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  -gFireSwirl_CellBiasX[cell] - gFireSwirl_CellWidths[cell] +
-                      98,
-                  gFireSwirl_CellBiasY[cell] + position.y - 60,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+                  -gHelmSplitter_CellBiasX[cell] -
+                      gHelmSplitter_CellWidths[cell] + 98,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         }
       }
     } else {
@@ -188,16 +190,18 @@ void Func_08188cb0(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  position.x / 2 + gFireSwirl_CellBiasX[cell] - 16,
-                  gFireSwirl_CellBiasY[cell] + position.y - 92,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+                  position.x / 2 + gHelmSplitter_CellBiasX[cell] - 16,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         } else {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  position.x / 2 - gFireSwirl_CellBiasX[cell] -
-                      gFireSwirl_CellWidths[cell] + 16,
-                  gFireSwirl_CellBiasY[cell] + position.y - 92,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+                  position.x / 2 - gHelmSplitter_CellBiasX[cell] -
+                      gHelmSplitter_CellWidths[cell] + 16,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         }
       }
     }

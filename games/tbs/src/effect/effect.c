@@ -184,7 +184,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 // the field and shatter into puffs of sparkle, flashing and shaking each
 // target as they land. The canvas shows only inside a slanted band of
 // window 0, so the shards stream out of the sky above the targets.
-// effect->variant picks the size of the volley from gFallingShards_Counts
+// effect->variant picks the size of the volley from gIce_Counts
 // (shards and frames: 16 for 46 frames, 20 for 52, 32 for 80); variant 1
 // leaves longer trails and variant 2 draws additively.
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
@@ -290,16 +290,16 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
     work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
-  for (frame = 0; frame != gFallingShards_Counts[work->effect->variant * 2 + 1];
+  for (frame = 0; frame != gIce_Counts[work->effect->variant * 2 + 1];
        frame++) {
     // 16 frames before the end, the battle shows the damage, with sound
     // 132 as each target is hit.
-    if (frame == gFallingShards_Counts[work->effect->variant * 2 + 1] - 16)
+    if (frame == gIce_Counts[work->effect->variant * 2 + 1] - 16)
       BattleEventRuntime_BeginPhaseFar(132);
 
     // Shards: fall 8 pixels a frame down the slant; on landing, shatter
     // through five images, kicking up puffs in the middle of it.
-    for (i = 0; i != gFallingShards_Counts[work->effect->variant * 2]; i++) {
+    for (i = 0; i != gIce_Counts[work->effect->variant * 2]; i++) {
       shard = &work->particles[i];
       if (shard->variant == -1) {
         s32 x = shard->x / 8;
@@ -4910,51 +4910,50 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
       // The panel until frame 91; from frame 88 the burst: a white flash
       // over the whole canvas, then larger pieces two frames each.
       if (frame <= 87) {
-        draw[work->effect->side](
-            canvas, work, gCounterReveal_PanelX[panelColumn * 7],
-            gCounterReveal_PanelY[panelRow * 7] + screenY, 57, 98);
+        draw[work->effect->side](canvas, work, gCondemn_PanelX[panelColumn * 7],
+                                 gCondemn_PanelY[panelRow * 7] + screenY, 57,
+                                 98);
       } else {
         if (frame <= 91) {
           draw[work->effect->side](
-              canvas, work, gCounterReveal_PanelX[panelColumn * 7],
-              gCounterReveal_PanelY[panelRow * 7] + screenY, 57, 98);
+              canvas, work, gCondemn_PanelX[panelColumn * 7],
+              gCondemn_PanelY[panelRow * 7] + screenY, 57, 98);
         }
         draw[work->effect->side](
-            canvas, work->sheet + 0x15d2,
-            gCounterReveal_PanelX[panelColumn * 7 + 1],
-            gCounterReveal_PanelY[panelRow * 7 + 1] + screenY, 99, 69);
+            canvas, work->sheet + 0x15d2, gCondemn_PanelX[panelColumn * 7 + 1],
+            gCondemn_PanelY[panelRow * 7 + 1] + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
           Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
         }
         if ((frame - 90) <= 1U) {
-          draw[work->effect->side](
-              canvas, work->sheet + 0x3081,
-              gCounterReveal_PanelX[panelColumn * 7 + 2],
-              gCounterReveal_PanelY[panelRow * 7 + 2] + screenY, 128, 91);
+          draw[work->effect->side](canvas, work->sheet + 0x3081,
+                                   gCondemn_PanelX[panelColumn * 7 + 2],
+                                   gCondemn_PanelY[panelRow * 7 + 2] + screenY,
+                                   128, 91);
         }
         if ((frame - 92) <= 1U) {
-          draw[work->effect->side](
-              canvas, (void *)gMapCellBuffer,
-              gCounterReveal_PanelX[panelColumn * 7 + 3],
-              gCounterReveal_PanelY[panelRow * 7 + 3] + screenY, 128, 91);
+          draw[work->effect->side](canvas, (void *)gMapCellBuffer,
+                                   gCondemn_PanelX[panelColumn * 7 + 3],
+                                   gCondemn_PanelY[panelRow * 7 + 3] + screenY,
+                                   128, 91);
         }
         if ((frame - 94) <= 1U) {
-          draw[work->effect->side](
-              canvas, (u8 *)gMapCellBuffer + 0x2d80,
-              gCounterReveal_PanelX[panelColumn * 7 + 4],
-              gCounterReveal_PanelY[panelRow * 7 + 4] + screenY, 128, 59);
+          draw[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x2d80,
+                                   gCondemn_PanelX[panelColumn * 7 + 4],
+                                   gCondemn_PanelY[panelRow * 7 + 4] + screenY,
+                                   128, 59);
         }
         if ((frame - 96) <= 1U) {
-          draw[work->effect->side](
-              canvas, (u8 *)gMapCellBuffer + 0x4b00,
-              gCounterReveal_PanelX[panelColumn * 7 + 5],
-              gCounterReveal_PanelY[panelRow * 7 + 5] + screenY, 122, 29);
+          draw[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x4b00,
+                                   gCondemn_PanelX[panelColumn * 7 + 5],
+                                   gCondemn_PanelY[panelRow * 7 + 5] + screenY,
+                                   122, 29);
         }
         if ((frame - 98) <= 1U) {
-          draw[work->effect->side](
-              canvas, (u8 *)gMapCellBuffer + 0x58d2,
-              gCounterReveal_PanelX[panelColumn * 7 + 6],
-              gCounterReveal_PanelY[panelRow * 7 + 6] + screenY, 76, 25);
+          draw[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x58d2,
+                                   gCondemn_PanelX[panelColumn * 7 + 6],
+                                   gCondemn_PanelY[panelRow * 7 + 6] + screenY,
+                                   76, 25);
         }
       }
     }
@@ -5196,7 +5195,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(gSpinningTriangle_Vertex,
+            EffectPosition_ApplyBaseAndYOffset(gBind_Vertex,
                                                &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
@@ -5489,8 +5488,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale.z = scale.x;
           SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
           SceneTransform_ApplyRoll(j * 0x199a);
-          depth = EffectPosition_ApplyBaseAndYOffset(&gRingBolts_Points[j & 1],
-                                                     &screenPosition);
+          depth = EffectPosition_ApplyBaseAndYOffset(
+              &gAstralBlast_Points[j & 1], &screenPosition);
           if (peak < depth)
             peak = depth;
           screenPosition.x >>= 1;
@@ -5645,13 +5644,13 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
                 trails[i * 10 + j].velocityX =
                     screenPosition.x +
                     ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
-                      gSpinningStars_Radii[j & 1]) /
+                      gShiningStar_Radii[j & 1]) /
                          2 >>
                      16);
                 trails[i * 10 + j].velocityY =
                     screenPosition.y -
                     (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
-                         gSpinningStars_Radii[j & 1] >>
+                         gShiningStar_Radii[j & 1] >>
                      16);
               }
               for (j = 0; j != 10; j++) {
@@ -6794,12 +6793,10 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
         for (k = 0; k != 3; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-          draw[0](canvas, work->sheet + 0x6e4,
-                  gEmberColumns_Columns[k * 2] - 17,
-                  gEmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
-          draw[0](canvas, work->sheet + 0x6e4,
-                  gEmberColumns_Columns[k * 2] - 17,
-                  gEmberColumns_Columns[k * 2 + 1] - span, 34, span);
+          draw[0](canvas, work->sheet + 0x6e4, gNereid_Columns[k * 2] - 17,
+                  gNereid_Columns[k * 2 + 1] - span - 104, 34, 104);
+          draw[0](canvas, work->sheet + 0x6e4, gNereid_Columns[k * 2] - 17,
+                  gNereid_Columns[k * 2 + 1] - span, 34, span);
         }
       }
 
@@ -6812,7 +6809,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       }
 
       // Embers: grow from frame 68; those falling are drawn additively. Until
-      // frame 80 they fall under gEmberColumns_Gravity, then speed upwards;
+      // frame 80 they fall under gNereid_Gravity, then speed upwards;
       // they slow to 62/64 a frame, and go out when they fall below y 104.
       for (k = 0; k != 1024; k++) {
         spark = &sparks[k];
@@ -6839,7 +6836,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
           if (frame > 80)
             spark->velocityY += -0x8000;
           else
-            spark->velocityY += gEmberColumns_Gravity[k & 3];
+            spark->velocityY += gNereid_Gravity[k & 3];
           spark->velocityX = spark->velocityX * 62 / 64;
           spark->velocityY = spark->velocityY * 62 / 64;
           spark->variant++;
@@ -6888,7 +6885,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
 // frames after each appears home in on the targets in turn; each that
 // reaches the ground strikes in a burst, flashing and knocking back its
 // target, while the camera swings round over frames 17 to 63.
-// effect->variant picks the volley from gVortexMotes_Counts (motes and
+// effect->variant picks the volley from gFroth_Counts (motes and
 // frames) and how hard the screen shakes.
 void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
@@ -6951,7 +6948,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   AudioCommand_PlayFar(164);
 
-  for (frame = 0; frame != gVortexMotes_Counts[work->effect->variant * 2 + 1];
+  for (frame = 0; frame != gFroth_Counts[work->effect->variant * 2 + 1];
        frame++) {
     camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
@@ -6960,11 +6957,11 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
       work->cameraDelta = 0;
     // 16 frames before the end the battle shows the damage, with sound 132
     // on each hit.
-    if (frame == gVortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
+    if (frame == gFroth_Counts[work->effect->variant * 2 + 1] - 16)
       BattleEventRuntime_BeginPhaseFar(132);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    for (i = 0; i != gVortexMotes_Counts[work->effect->variant * 2]; i++) {
+    for (i = 0; i != gFroth_Counts[work->effect->variant * 2]; i++) {
       point = &work->particles[i];
       if (frame > i * 2 && flags[i] == 0) {
         EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
@@ -7037,7 +7034,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 // sparkling with glints; the canvas flashes and the targets reel seven
 // times, 8 frames apart, from frame 16, and the battle shows the damage on
 // frame 32.
-// effect->variant picks the shape from gTornado_Shapes: how many
+// effect->variant picks the shape from gWhirlwind_Shapes: how many
 // tornadoes, how far they sway and how hard the screen shakes.
 void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   BlitterPair draw;
@@ -7108,8 +7105,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (0x4f - frame) | 0x1000;
     // Each tornado: three sections stacked, swaying about the sweep, a
     // quarter turn apart, with four glints.
-    for (i = 0; i != gTornado_Shapes[work->effect->variant * 3]; i++) {
-      x = ((gTornado_Shapes[work->effect->variant * 3 + 1] *
+    for (i = 0; i != gWhirlwind_Shapes[work->effect->variant * 3]; i++) {
+      x = ((gWhirlwind_Shapes[work->effect->variant * 3 + 1] *
                 Trig_Sin((frame << 11) + i * 0x4000) +
             wave) >>
            16) +
@@ -7148,8 +7145,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       }
     }
     work->shakeFrames = 1;
-    Camera_ApplyShake(gTornado_Shapes[work->effect->variant * 3 + 2],
-                      gTornado_Shapes[work->effect->variant * 3 + 2] * 2);
+    Camera_ApplyShake(gWhirlwind_Shapes[work->effect->variant * 3 + 2],
+                      gWhirlwind_Shapes[work->effect->variant * 3 + 2] * 2);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
@@ -7169,7 +7166,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
 // frames apart, and shatter on the ground into 16 spinning shards each,
 // flashing the targets and shaking the screen; the battle shows the damage
 // 80 frames before the end, and the canvas darkens away over the last 8.
-// effect->variant picks the volley from gCrystal_Counts (crystals and
+// effect->variant picks the volley from gPrism_Counts (crystals and
 // frames: 1 in 110, 4 in 134, 12 in 166); with variant 2 the camera also
 // swings round for the first 104 frames.
 // The crystals are particles[]: z is 1 once shattered, variant is the frame
@@ -7205,7 +7202,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
 
   // Line the crystals up above the screen, each starting 8 frames after
   // the last and drifting towards the middle as it falls.
-  for (j = 0; j != gCrystal_Counts[work->effect->variant * 2]; j++) {
+  for (j = 0; j != gPrism_Counts[work->effect->variant * 2]; j++) {
     seed = &work->particles[j];
     x = Random16() & 31;
     seed->y = -0x400000;
@@ -7222,7 +7219,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
     seed->variant = j * 8;
   }
 
-  for (frame = 0; frame != gCrystal_Counts[work->effect->variant * 2 + 1];
+  for (frame = 0; frame != gPrism_Counts[work->effect->variant * 2 + 1];
        frame++) {
     if (work->effect->variant == 2 && frame <= 103) {
       // Swing the camera round, slowing from frame 96.
@@ -7238,26 +7235,26 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
       else
         camera->yaw += speed;
     }
-    if (frame == gCrystal_Counts[work->effect->variant * 2 + 1] - 80)
+    if (frame == gPrism_Counts[work->effect->variant * 2 + 1] - 80)
       BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
-    if (frame == gCrystal_Counts[work->effect->variant * 2 + 1] - 8) {
+    if (frame == gPrism_Counts[work->effect->variant * 2 + 1] - 8) {
       // Darken the canvas away over the last 8 frames.
       work->transferMode = CANVAS_COPY_AND_DARKEN;
       work->transferValue = 0x06060606;
     }
-    if (frame <= gCrystal_Counts[work->effect->variant * 2 + 1] - 8) {
-      for (i = 0; i != gCrystal_Counts[work->effect->variant * 2]; i++) {
+    if (frame <= gPrism_Counts[work->effect->variant * 2 + 1] - 8) {
+      for (i = 0; i != gPrism_Counts[work->effect->variant * 2]; i++) {
         crystal = &work->particles[i];
         if (crystal->z == 1) {
           // A shattered crystal: its shards fly and spin, slowing down.
           for (j = 0; j != 16; j++) {
             cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
             shard = &shards[i * 16 + j];
-            draw[j <= 2](
-                canvas, work->sheet + gCrystal_ShardOffsets[cell] + 0x800,
-                HI(shard->x) - gCrystal_ShardWidths[cell] / 2,
-                HI(shard->y) - gCrystal_ShardHeights[cell] / 2,
-                gCrystal_ShardWidths[cell], gCrystal_ShardHeights[cell]);
+            draw[j <= 2](canvas,
+                         work->sheet + gPrism_ShardOffsets[cell] + 0x800,
+                         HI(shard->x) - gPrism_ShardWidths[cell] / 2,
+                         HI(shard->y) - gPrism_ShardHeights[cell] / 2,
+                         gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             EffectStep_AdvanceWithGravity2D(shard, 64, 0x2000);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
@@ -7274,9 +7271,8 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
             crystal->y = 0x380000;
             for (j = 0; j != 16; j++) {
               shard = &shards[i * 16 + j];
-              shard->x =
-                  ((gCrystal_ShardStarts[j * 2] - 40) << 16) + crystal->x;
-              shard->y = gCrystal_ShardStarts[j * 2 + 1] << 16;
+              shard->x = ((gPrism_ShardStarts[j * 2] - 40) << 16) + crystal->x;
+              shard->y = gPrism_ShardStarts[j * 2 + 1] << 16;
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               if (i & 1) {
@@ -7369,8 +7365,8 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 // Battle effect 18: pillars of lightning strike one every 8 frames, each
 // with a white flash, throwing sparks up from the ground and knocking the
 // targets back; the battle shows the damage on frame 32.
-// effect->variant picks how many pillars (gLightningPillar_Counts), how many
-// sparks each throws and how long the screen shakes (gLightningPillar_Sparks);
+// effect->variant picks how many pillars (gPlasma_Counts), how many
+// sparks each throws and how long the screen shakes (gPlasma_Sparks);
 // with variant 2 the camera also swings round for the first 64 frames.
 // effect->side picks the row of pillar positions.
 void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
@@ -7422,7 +7418,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  count = gLightningPillar_Counts[work->effect->variant];
+  count = gPlasma_Counts[work->effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
     // Variant 2 swings the camera round for the first 64 frames.
@@ -7453,12 +7449,10 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
           draw[0](canvas, work,
-                  gLightningPillar_Columns[i + work->effect->side * 7] - 24, 0,
-                  48, 112);
+                  gPlasma_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + 0x1500,
-                  gLightningPillar_Columns[i + work->effect->side * 7] - 24, 0,
-                  48, 112);
+                  gPlasma_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
 
         // Throw sparks from the pillar's foot (y 104), anywhere in the
         // upper half circle, and shake the screen.
@@ -7474,19 +7468,17 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - 0x4000;
 
-              spark->x = gLightningPillar_Columns[i + work->effect->side * 7]
-                         << 16;
+              spark->x = gPlasma_Columns[i + work->effect->side * 7] << 16;
               spark->y = 104 << 16;
               spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
               spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
               spark->variant = (Random16() & 7) + 32;
               spawned++;
-              if (spawned == gLightningPillar_Sparks[work->effect->variant * 2])
+              if (spawned == gPlasma_Sparks[work->effect->variant * 2])
                 break;
             }
           }
-          work->shakeFrames =
-              gLightningPillar_Sparks[work->effect->variant * 2 + 1];
+          work->shakeFrames = gPlasma_Sparks[work->effect->variant * 2 + 1];
         }
       }
       if (frame == start + 4) {
@@ -7779,9 +7771,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
 // Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 // Storm (kind 13).
 //
-// Battle effect 13: one, two or four columns of fire (gFirePillars_Counts by
+// Battle effect 13: one, two or four columns of fire (gVolcano_Counts by
 // effect->variant) rise near the far edge on the targets' side, at the
-// depths of gFirePillars_Depths, starting at gFirePillars_StartFrames; each
+// depths of gVolcano_Depths, starting at gVolcano_StartFrames; each
 // erupts with a fountain of 200 sparks and keeps spitting more, and each
 // eruption knocks the targets back. The battle shows the damage on frame
 // 16. Variant 0 is red, 2 orange; variant 2 also swings the camera round.
@@ -7835,7 +7827,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
     x = ((Random16() & 15) + 72) << 16;
     base->y = 0;
     base->x = x;
-    base->z = gFirePillars_Depths[work->effect->variant][i] << 16;
+    base->z = gVolcano_Depths[work->effect->variant][i] << 16;
     if (object->x < 0)
       base->x = -x;
   }
@@ -7858,16 +7850,16 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera->eye, camera->pos);
 
     if (frame < 64) {
-      for (pillar = 0; pillar != gFirePillars_Counts[work->effect->variant];
+      for (pillar = 0; pillar != gVolcano_Counts[work->effect->variant];
            pillar++) {
         EffectPosition_ApplyBaseAndYOffset(&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
-        if (frame == gFirePillars_StartFrames[pillar])
+        if (frame == gVolcano_StartFrames[pillar])
           AudioCommand_PlayFar(145);
         // From 4 frames after it starts: the column, scrolling up 16
         // pixels a frame, and a flickering flame at its foot.
-        if (frame >= gFirePillars_StartFrames[pillar] + 4) {
+        if (frame >= gVolcano_StartFrames[pillar] + 4) {
           s32 scroll = (frame * 16 + pillar * 25) % 104;
 
           draw[pillar & 1](canvas, work, screen.x - 17, screen.y - scroll - 104,
@@ -7887,8 +7879,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
           }
         }
         // Sparks: 200 at the start, then 4 a frame from 16 frames on.
-        if (frame == gFirePillars_StartFrames[pillar] ||
-            frame >= gFirePillars_StartFrames[pillar] + 16) {
+        if (frame == gVolcano_StartFrames[pillar] ||
+            frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;
 
           for (i = 0; i != 1024; i++) {
@@ -7905,7 +7897,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
               spark->z = (Trig_Sin(angle) * speed) >> 15;
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;
-              if (frame == gFirePillars_StartFrames[pillar]) {
+              if (frame == gVolcano_StartFrames[pillar]) {
                 spark->variant = (Random16() & 7) + 48;
                 if (spawned == 200)
                   break;
@@ -7917,7 +7909,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
             }
           }
         }
-        if (frame == gFirePillars_StartFrames[pillar]) {
+        if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
           for (i = 0; i != work->effect->count; i++) {
             ObjectGroup_UpdateMembers(work->effect->actors[i], 10, 5, i, 8);
@@ -9116,9 +9108,9 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       s32 pose = (frame - 48) / 24 % 3;
 
       AnimationObjects_SelectAnimationFar(work->objects[3],
-                                          gThornVines_ObjectPoses[pose * 2]);
-      AnimationObjects_SelectAnimationFar(
-          work->objects[4], gThornVines_ObjectPoses[pose * 2 + 1]);
+                                          gCybele_ObjectPoses[pose * 2]);
+      AnimationObjects_SelectAnimationFar(work->objects[4],
+                                          gCybele_ObjectPoses[pose * 2 + 1]);
     }
 
     // Launch one thorn per frame.
@@ -9130,12 +9122,12 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           s32 cel = (frame + i) / 4 % 5;
           s32 x = HI(thorn->x);
           s32 y = thorn->y >> 16;
-          u8 *cell = work->sheet + gThornVines_ThornOffsets[cel];
-          u32 width = gThornVines_ThornWidths[cel];
+          u8 *cell = work->sheet + gCybele_ThornOffsets[cel];
+          u32 width = gCybele_ThornWidths[cel];
           u32 tall;
 
           x -= width >> 1;
-          tall = gThornVines_ThornHeights[cel];
+          tall = gCybele_ThornHeights[cel];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
           EffectStep_AdvanceWithGravity2D(thorn, 64, 0x1000);
@@ -9203,13 +9195,13 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           if ((i & 1) != 0) {
             s32 y = ((vine->y - top) & 127) - 16;
             s32 kind = i % 3;
-            s32 full = gThornVines_LeafSizes[kind];
+            s32 full = gCybele_LeafSizes[kind];
             s32 rows = full;
 
             if (y + rows > vine->y)
               rows -= y + rows - vine->y;
             if (rows > 0)
-              draw[i & 1](canvas, work->sheet + gThornVines_LeafOffsets[kind],
+              draw[i & 1](canvas, work->sheet + gCybele_LeafOffsets[kind],
                           vine->x + 8, y, full, rows);
           }
         }
@@ -9223,9 +9215,9 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cel = i % 5;
 
-          draw[0](canvas, work->sheet + gThornVines_ChipOffsets[cel],
-                  HI(chip->x), HI(chip->y), gThornVines_ChipWidths[cel],
-                  gThornVines_ChipHeights[cel]);
+          draw[0](canvas, work->sheet + gCybele_ChipOffsets[cel], HI(chip->x),
+                  HI(chip->y), gCybele_ChipWidths[cel],
+                  gCybele_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += 0x4000;
@@ -9284,8 +9276,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
             spark->y = screen.y + (Random16() & 15) - 40;
           }
           if (spark->variant >= 0 && spark->variant <= 4) {
-            u8 *cell = work->sheet + gThornVines_SparkOffsets[spark->variant];
-            u32 size = gThornVines_SparkSizes[spark->variant];
+            u8 *cell = work->sheet + gCybele_SparkOffsets[spark->variant];
+            u32 size = gCybele_SparkSizes[spark->variant];
             u32 half = size >> 1;
 
             draw[0](canvas, cell, spark->x - half, spark->y - half, size, size);
@@ -9431,8 +9423,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
             screen.x >>= 1;
             if (ember->variant >= 0 && ember->variant <= 26) {
               s32 cel = 6;
-              s32 offset = gThornVines_EmberOffsets[cel];
-              u32 size = gThornVines_EmberSizes[cel];
+              s32 offset = gCybele_EmberOffsets[cel];
+              u32 size = gCybele_EmberSizes[cel];
 
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
@@ -9477,7 +9469,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 // effect: the targets.
 void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
-  s32 rockPoints[32][2]; // a copy of gBattleFx10_Points that nothing reads
+  s32 rockPoints[32][2]; // a copy of gBoreas_Points that nothing reads
   struct SpritePlacement position;
   void *canvas;
   struct BattleEffectWork *work;
@@ -9543,8 +9535,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   }
 
   for (i = 0; i != 32; i++) {
-    rockPoints[i][0] = gBattleFx10_Points[i][0];
-    rockPoints[i][1] = gBattleFx10_Points[i][1];
+    rockPoints[i][0] = gBoreas_Points[i][0];
+    rockPoints[i][1] = gBoreas_Points[i][1];
   }
 
   AudioCommand_PlayFar(141);
@@ -9601,18 +9593,18 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = 32;
     }
     if (frame >= 176 && frame < 180) {
-      shakeX = -gBattleFx10_ShakeOffsets[frame - 176];
-      shakeY = gBattleFx10_ShakeOffsets[frame - 176];
+      shakeX = -gBoreas_ShakeOffsets[frame - 176];
+      shakeY = gBoreas_ShakeOffsets[frame - 176];
       gBgScroll[1].x = shakeX;
       gBgScroll[1].y = shakeY + 32;
     }
 
     for (i = 0; i != count; i++) {
       s32 cell = i % 3;
-      draw(canvas, work->sheet + gBattleFx10_RockCells[cell],
-           gBattleFx10_Points[i][0] - shakeX,
-           gBattleFx10_Points[i][1] - gBattleFx10_RockHeights[cell] - shakeY,
-           gBattleFx10_RockWidths[cell], gBattleFx10_RockHeights[cell]);
+      draw(canvas, work->sheet + gBoreas_RockCells[cell],
+           gBoreas_Points[i][0] - shakeX,
+           gBoreas_Points[i][1] - gBoreas_RockHeights[cell] - shakeY,
+           gBoreas_RockWidths[cell], gBoreas_RockHeights[cell]);
     }
 
     // Lay out the 3x3 objects 32 pixels apart.
@@ -9623,8 +9615,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 208) {
-      AnimationObjects_SelectAnimationFar(
-          work->objects[2], gBattleFx10_Animations[(frame / 4) & 3]);
+      AnimationObjects_SelectAnimationFar(work->objects[2],
+                                          gBoreas_Animations[(frame / 4) & 3]);
     }
 
     scale.x = 0x10000;
@@ -9711,10 +9703,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
           } else {
             cell = i & 3;
           }
-          drawAlt(canvas, work->sheet + gBattleFx10_DebrisCells[cell],
+          drawAlt(canvas, work->sheet + gBoreas_DebrisCells[cell],
                   HI(PARTICLES[i].x), HI(PARTICLES[i].y),
-                  gBattleFx10_DebrisWidths[cell],
-                  gBattleFx10_DebrisHeights[cell]);
+                  gBoreas_DebrisWidths[cell], gBoreas_DebrisHeights[cell]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           PARTICLES[i].velocityY += 0x2000;
@@ -9738,9 +9729,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
         if (frame >= i / 4 + 224) {
           s32 cell = i % 3;
           if ((i & 1) == 0) {
-            draw(canvas, work->sheet + gBattleFx10_SprayCells[cell],
+            draw(canvas, work->sheet + gBoreas_SprayCells[cell],
                  HI(PARTICLES[i].x), HI(PARTICLES[i].y),
-                 gBattleFx10_SprayWidths[cell], gBattleFx10_SprayHeights[cell]);
+                 gBoreas_SprayWidths[cell], gBoreas_SprayHeights[cell]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
@@ -9834,17 +9825,17 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     if (frame <= 71) {
       for (i = 0; i != count; i++) {
         s32 cell = i % 3;
-        draw(canvas, work->sheet + gBattleFx10_BoulderCells[cell],
-             gBattleFx10_Points[i][0] - 56,
-             gBattleFx10_Points[i][1] - gBattleFx10_BoulderHeights[cell],
-             gBattleFx10_BoulderWidths[cell], gBattleFx10_BoulderHeights[cell]);
+        draw(canvas, work->sheet + gBoreas_BoulderCells[cell],
+             gBoreas_Points[i][0] - 56,
+             gBoreas_Points[i][1] - gBoreas_BoulderHeights[cell],
+             gBoreas_BoulderWidths[cell], gBoreas_BoulderHeights[cell]);
       }
     }
     // The boulders crumble, throwing up 64 chips from where they stood.
     if (frame == 72) {
       for (i = 0; i != 64; i++) {
-        work->particles[i].x = (gBattleFx10_Points[i & 15][0] - 56) << 16;
-        work->particles[i].y = gBattleFx10_Points[i & 15][1] << 16;
+        work->particles[i].x = (gBoreas_Points[i & 15][0] - 56) << 16;
+        work->particles[i].y = gBoreas_Points[i & 15][1] << 16;
         work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
         work->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
       }
@@ -9864,9 +9855,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
         y = HI(chip->y);
         if (y <= 135) {
           s32 cell = i % 3;
-          draw(canvas, work->sheet + gBattleFx10_FallCells[cell], HI(chip->x),
-               y - gBattleFx10_FallHeights[cell], gBattleFx10_FallWidths[cell],
-               gBattleFx10_FallHeights[cell]);
+          draw(canvas, work->sheet + gBoreas_FallCells[cell], HI(chip->x),
+               y - gBoreas_FallHeights[cell], gBoreas_FallWidths[cell],
+               gBoreas_FallHeights[cell]);
           EffectStep_AdvanceWithGravity2D(chip, 64, 1 << 16);
           if (HI(chip->y) > 120 && chip->velocityY > 8 << 16) {
             chip->velocityY = -chip->velocityY / 4;
@@ -10035,8 +10026,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
             size = i % 3 + 1;
             draw(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                  HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
-            EffectStep_AdvanceWithGravity2D(shard, 62,
-                                            gIceShardBursts_Gravities[i & 3]);
+            EffectStep_AdvanceWithGravity2D(shard, 62, gBreak_Gravities[i & 3]);
             shard->variant++;
             if (shard->velocityY > 0 && HI(shard->y) > 112)
               shard->variant = -1;
@@ -11323,7 +11313,7 @@ UNUSED s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
   return outputCount;
 }
 
-// The columns of a gRockWall_Timings row.
+// The columns of a gQuake_Timings row.
 enum {
   TIMING_FRAMES,      // frames in the whole effect
   TIMING_RISE_FRAMES, // frames each pillar stands
@@ -11349,7 +11339,7 @@ struct RockWallHeights {
 // sink again, throwing the targets standing on them into the air. Each
 // pillar is capped with a strip of ground cut from the background.
 //
-// effect: the targets; variant picks the row of gRockWall_Timings.
+// effect: the targets; variant picks the row of gQuake_Timings.
 void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   static s32 wallHeights[4] = {
       -32,
@@ -11418,12 +11408,11 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   work->shakeFrames = 128;
   AudioCommand_PlayFar(141);
 
-  for (frame = 0;
-       frame != gRockWall_Timings[work->effect->variant][TIMING_FRAMES];
+  for (frame = 0; frame != gQuake_Timings[work->effect->variant][TIMING_FRAMES];
        frame++) {
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    if (frame == gRockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
+    if (frame == gQuake_Timings[work->effect->variant][TIMING_FRAMES] - 16)
       BattleEventRuntime_BeginPhaseFar(
           133); // 16 frames before the end, move on to the results
 
@@ -11435,8 +11424,9 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
           riseFrame) // never true: the left side is 32 or more
         heights.column[column] += 32;
       if (frame >= riseFrame &&
-          frame < riseFrame + gRockWall_Timings[work->effect->variant]
-                                               [TIMING_RISE_FRAMES]) {
+          frame <
+              riseFrame +
+                  gQuake_Timings[work->effect->variant][TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
 
@@ -11488,8 +11478,8 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
                                   5);
       }
     }
-    Camera_ApplyShake(gRockWall_Timings[work->effect->variant][TIMING_SHAKE],
-                      gRockWall_Timings[work->effect->variant][TIMING_SHAKE]);
+    Camera_ApplyShake(gQuake_Timings[work->effect->variant][TIMING_SHAKE],
+                      gQuake_Timings[work->effect->variant][TIMING_SHAKE]);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
@@ -11507,7 +11497,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
 // shows an impact flare for 12 frames.
 //
 // effect: the targets; variant picks the number of embers
-//         (gHomingEmbers_Counts).
+//         (gFire_Counts).
 void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -11573,21 +11563,20 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   work->transferValue = 75; // each transfer fades the canvas to 3/4
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
-  for (frame = 0;
-       frame != (gHomingEmbers_Counts[work->effect->variant] >> 1) + 132;
+  for (frame = 0; frame != (gFire_Counts[work->effect->variant] >> 1) + 132;
        frame++) {
     if (frame > 16 && frame < 80)
       work->cameraDelta = 0x100;
     else
       work->cameraDelta = 0;
-    if (frame == (gHomingEmbers_Counts[work->effect->variant] >> 1) + 108)
+    if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
       BattleEventRuntime_BeginPhaseFar(133);
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
 
     // The embers in flight.
-    for (i = 0; i != gHomingEmbers_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
       struct EffectStep *ember = &PARTICLES[i];
       s32 launchFrame;
 
@@ -11649,7 +11638,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     }
 
     // The impact flares: six pictures, 2 frames each.
-    for (i = 0; i != gHomingEmbers_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
       struct EffectStep *ember = &PARTICLES[i];
 
       if (ember->variant >= 0 && ember->variant < 12) {
@@ -11661,16 +11650,15 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
 // separate arguments was UB. Plain English trial: unchanged 0x4a8 bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-        width = gHomingEmbers_FlareWidths[cel];
-        draw[1](canvas, work->sheet + gHomingEmbers_FlareCells[cel],
-                ember->x - (width >> 1),
-                ember->y + gHomingEmbers_FlareBiasY[cel] - 56, width,
-                gHomingEmbers_FlareHeights[cel]);
+        width = gFire_FlareWidths[cel];
+        draw[1](canvas, work->sheet + gFire_FlareCells[cel],
+                ember->x - (width >> 1), ember->y + gFire_FlareBiasY[cel] - 56,
+                width, gFire_FlareHeights[cel]);
 #else
-        draw[1](canvas, work->sheet + gHomingEmbers_FlareCells[cel],
-                ember->x - ((width = gHomingEmbers_FlareWidths[cel]) >> 1),
-                ember->y + gHomingEmbers_FlareBiasY[cel] - 56, width,
-                gHomingEmbers_FlareHeights[cel]);
+        draw[1](canvas, work->sheet + gFire_FlareCells[cel],
+                ember->x - ((width = gFire_FlareWidths[cel]) >> 1),
+                ember->y + gFire_FlareBiasY[cel] - 56, width,
+                gFire_FlareHeights[cel]);
 #endif
         ember->variant++;
       }
@@ -12153,7 +12141,7 @@ void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
   BattleFx_RunBlastAndSmokeBomb(effect, 0);
 }
 
-// The columns of a gParticleField_Counts row.
+// The columns of a gBlastAndSmokeBomb_Counts row.
 enum {
   FIELD_MOTES, // motes thrown
   FIELD_PUFFS, // puffs of smoke thrown
@@ -12245,7 +12233,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
-  for (frame = 0; frame != gParticleField_Counts[variant][FIELD_FRAMES];
+  for (frame = 0; frame != gBlastAndSmokeBomb_Counts[variant][FIELD_FRAMES];
        frame++) {
     struct BattleCamera *camera;
 
@@ -12254,10 +12242,10 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
       AudioCommand_PlayFar(144);
-    if (frame == gParticleField_Counts[variant][FIELD_FRAMES] - 48)
+    if (frame == gBlastAndSmokeBomb_Counts[variant][FIELD_FRAMES] - 48)
       BattleEventRuntime_BeginPhaseFar(133);
 
-    for (i = 0; i != gParticleField_Counts[variant][FIELD_MOTES]; i++) {
+    for (i = 0; i != gBlastAndSmokeBomb_Counts[variant][FIELD_MOTES]; i++) {
       struct EffectStep *mote = &PARTICLES[i];
 
       if (mote->y >= 0) {
@@ -12281,7 +12269,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
     }
 
     if (frame > 2) {
-      for (i = 0; i != gParticleField_Counts[variant][FIELD_PUFFS]; i++) {
+      for (i = 0; i != gBlastAndSmokeBomb_Counts[variant][FIELD_PUFFS]; i++) {
         struct EffectStep *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
@@ -12296,13 +12284,14 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
 // separate arguments was UB. Plain English trial: unchanged 0x444 bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-            width = gParticleField_PuffSizes[cel];
-            draw[0](canvas, work->sheet + gParticleField_PuffCells[cel],
+            width = gBlastAndSmokeBomb_PuffSizes[cel];
+            draw[0](canvas, work->sheet + gBlastAndSmokeBomb_PuffCells[cel],
                     screen.x - (width >> 1), screen.y - (width >> 1), width,
                     width);
 #else
-            draw[0](canvas, work->sheet + gParticleField_PuffCells[cel],
-                    screen.x - ((width = gParticleField_PuffSizes[cel]) >> 1),
+            draw[0](canvas, work->sheet + gBlastAndSmokeBomb_PuffCells[cel],
+                    screen.x -
+                        ((width = gBlastAndSmokeBomb_PuffSizes[cel]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
           }
@@ -13699,7 +13688,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   column = work->particles;
   i = 0;
   do {
-    column[i].x = gRisingColumns_ColumnOffsets[i] + 64;
+    column[i].x = gVine_ColumnOffsets[i] + 64;
     i++;
   } while (i != 16);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
@@ -13754,7 +13743,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 // up dust from their roots.
 //
 // effect: the targets; variant picks the number of thorns
-//         (gBattleFxPillar_Counts). gBattleFxPillar_Kinds gives each
+//         (gThorn_Counts). gThorn_Kinds gives each
 //         thorn's size and direction.
 void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
@@ -13794,7 +13783,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   drawFlip = ((DrawRectangle *)
                   slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  frameCount = gBattleFxPillar_Counts[work->effect->variant] * 8 + 56;
+  frameCount = gThorn_Counts[work->effect->variant] * 8 + 56;
 
   for (i = 0; i != 1024; i++) {
     PARTICLES[i].variant = -1; // free
@@ -13810,7 +13799,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (frameCount - frame - 1) | 0x1000;
     }
 
-    for (i = 0; i != gBattleFxPillar_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gThorn_Counts[work->effect->variant]; i++) {
       start = i * 8 + 8;
       age = frame - (i * 8 + 8);
       if (frame > start) {
@@ -13819,7 +13808,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
 
         // Kinds 0 and 1 are big thorns (48 wide), 2 and 3 small ones (32 wide);
         // odd kinds are mirrored. A thorn leans sideways as it grows.
-        if (gBattleFxPillar_Kinds[i] < 2) {
+        if (gThorn_Kinds[i] < 2) {
           height = age * 16;
           lean = age * 6;
           if (height > 80) {
@@ -13828,12 +13817,12 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           if (lean > 30) {
             lean = 30;
           }
-          if (gBattleFxPillar_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet, gBattleFxPillar_X[i] - lean,
-                     108 - height, 48, height);
+          if (gThorn_Kinds[i] & 1) {
+            drawFlip(canvas, work->sheet, gThorn_X[i] - lean, 108 - height, 48,
+                     height);
           } else {
-            draw(canvas, work->sheet, gBattleFxPillar_X[i] + lean, 108 - height,
-                 48, height);
+            draw(canvas, work->sheet, gThorn_X[i] + lean, 108 - height, 48,
+                 height);
           }
         } else {
           height = age * 8;
@@ -13844,12 +13833,12 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           if (age > 8) {
             lean = 8;
           }
-          if (gBattleFxPillar_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] - lean,
+          if (gThorn_Kinds[i] & 1) {
+            drawFlip(canvas, work->sheet + 0xf00, gThorn_X[i] - lean,
                      108 - height, 32, height);
           } else {
-            draw(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] + lean,
-                 108 - height, 32, height);
+            draw(canvas, work->sheet + 0xf00, gThorn_X[i] + lean, 108 - height,
+                 32, height);
           }
         }
         if (frame == start + 1) {
@@ -13863,7 +13852,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           for (j = 0; j != 64; j++) {
             puff = &PARTICLES[j];
             if (puff->variant == -1) {
-              puff->x = gBattleFxPillar_X[i] + (Random16() & 31) + 32;
+              puff->x = gThorn_X[i] + (Random16() & 31) + 32;
               if (puff->x > 96) {
                 puff->x = 96;
               }
@@ -13886,16 +13875,13 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
         s32 cel = PARTICLES[i].variant / 2;
-        draw(canvas, work->sheet + gBattleFxPillar_PuffCells[cel],
-             PARTICLES[i].x - gBattleFxPillar_PuffWidths[cel],
-             PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[cel] / 2,
-             gBattleFxPillar_PuffWidths[cel],
-             (s8)gBattleFxPillar_PuffHeights[cel]);
-        drawFlip(canvas, work->sheet + gBattleFxPillar_PuffCells[cel],
-                 PARTICLES[i].x,
-                 PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[cel] / 2,
-                 gBattleFxPillar_PuffWidths[cel],
-                 (s8)gBattleFxPillar_PuffHeights[cel]);
+        draw(canvas, work->sheet + gThorn_PuffCells[cel],
+             PARTICLES[i].x - gThorn_PuffWidths[cel],
+             PARTICLES[i].y - (s8)gThorn_PuffHeights[cel] / 2,
+             gThorn_PuffWidths[cel], (s8)gThorn_PuffHeights[cel]);
+        drawFlip(canvas, work->sheet + gThorn_PuffCells[cel], PARTICLES[i].x,
+                 PARTICLES[i].y - (s8)gThorn_PuffHeights[cel] / 2,
+                 gThorn_PuffWidths[cel], (s8)gThorn_PuffHeights[cel]);
         if (++PARTICLES[i].variant == 14) {
           PARTICLES[i].variant = -1;
         }
@@ -15405,7 +15391,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       for (i = 0; i != 5; i++) {
         // Fire a flame on each launch frame; 6 frames later the targets take
         // palette 7 and animation 5 for 6 frames, and motion 6.
-        if (frame == gMercuryDjinnFlames_LaunchFrames[i]) {
+        if (frame == gMercury_LaunchFrames[i]) {
           struct EffectStep *shot = &work->particles[i];
 
           if (shot->variant == -1) {
@@ -15416,7 +15402,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
             break;
           }
         }
-        if (frame == gMercuryDjinnFlames_LaunchFrames[i] + 6) {
+        if (frame == gMercury_LaunchFrames[i] + 6) {
           for (j = 0; j != work->effect->count; j++) {
             ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
@@ -15981,21 +15967,19 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 // separate arguments was UB. Plain English trial: unchanged 0x3bc bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-        width = gParticleReveal_CellWidths[cell];
-        height = gParticleReveal_CellHeights[cell];
-        draw[i & 1](canvas,
-                    work->sheet + REVEAL_CHIP_CELLS +
-                        gParticleReveal_CellSourceOffsets[cell],
-                    HI(chip->x) - width / 2, HI(chip->y) - height / 2, width,
-                    height);
-#else
+        width = gHail_CellWidths[cell];
+        height = gHail_CellHeights[cell];
         draw[i & 1](
             canvas,
-            work->sheet + REVEAL_CHIP_CELLS +
-                gParticleReveal_CellSourceOffsets[cell],
-            HI(chip->x) - (width = gParticleReveal_CellWidths[cell]) / 2,
-            HI(chip->y) - (height = gParticleReveal_CellHeights[cell]) / 2,
-            width, height);
+            work->sheet + REVEAL_CHIP_CELLS + gHail_CellSourceOffsets[cell],
+            HI(chip->x) - width / 2, HI(chip->y) - height / 2, width, height);
+#else
+        draw[i & 1](canvas,
+                    work->sheet + REVEAL_CHIP_CELLS +
+                        gHail_CellSourceOffsets[cell],
+                    HI(chip->x) - (width = gHail_CellWidths[cell]) / 2,
+                    HI(chip->y) - (height = gHail_CellHeights[cell]) / 2, width,
+                    height);
 #endif
         EffectStep_AdvanceWithGravity3D(chip, 63, 0x1000);
       }
@@ -16131,7 +16115,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
         struct EffectStep *chip = &work->particles[32 + i];
 
         chip->velocityX = Random16() % 6 + 3;
-        chip->velocityY = gRockToss_ChipFlips[Random16() & 3];
+        chip->velocityY = gGround_ChipFlips[Random16() & 3];
       }
     }
     Render_ResetTransformState();
@@ -16150,13 +16134,13 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           y = position.y - 24;
           draw[0](canvas, work->sheet, x, y, 24, 48);
           if ((frame & 3) <= 1)
-            draw[0](canvas, work->sheet + gRockToss_ChipCells[1],
-                    x + gRockToss_ChipX[1], y + gRockToss_ChipY[1],
-                    gRockToss_ChipWidths[1], gRockToss_ChipHeights[1]);
+            draw[0](canvas, work->sheet + gGround_ChipCells[1],
+                    x + gGround_ChipX[1], y + gGround_ChipY[1],
+                    gGround_ChipWidths[1], gGround_ChipHeights[1]);
           else
-            draw[0](canvas, work->sheet + gRockToss_ChipCells[2],
-                    x + gRockToss_ChipX[2], y + gRockToss_ChipY[2],
-                    gRockToss_ChipWidths[2], gRockToss_ChipHeights[2]);
+            draw[0](canvas, work->sheet + gGround_ChipCells[2],
+                    x + gGround_ChipX[2], y + gGround_ChipY[2],
+                    gGround_ChipWidths[2], gGround_ChipHeights[2]);
           for (j = 0; j != 4; j++) {
             struct EffectStep *chip = &work->particles[32 + i * 4 + j];
             s32 chipX;
@@ -16167,18 +16151,18 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
             draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                           ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
             if (chip->velocityY & 4)
-              chipX = x - gRockToss_ChipWidths[chip->velocityX] -
-                      gRockToss_ChipX[chip->velocityX] + 24;
+              chipX = x - gGround_ChipWidths[chip->velocityX] -
+                      gGround_ChipX[chip->velocityX] + 24;
             else
-              chipX = x + gRockToss_ChipX[chip->velocityX];
+              chipX = x + gGround_ChipX[chip->velocityX];
             if (chip->velocityY & 8)
-              chipY = y - gRockToss_ChipHeights[chip->velocityX] -
-                      gRockToss_ChipY[chip->velocityX] + 48;
+              chipY = y - gGround_ChipHeights[chip->velocityX] -
+                      gGround_ChipY[chip->velocityX] + 48;
             else
-              chipY = y + gRockToss_ChipY[chip->velocityX];
-            draw[1](canvas, work->sheet + gRockToss_ChipCells[chip->velocityX],
-                    chipX, chipY, gRockToss_ChipWidths[chip->velocityX],
-                    gRockToss_ChipHeights[chip->velocityX]);
+              chipY = y + gGround_ChipY[chip->velocityX];
+            draw[1](canvas, work->sheet + gGround_ChipCells[chip->velocityX],
+                    chipX, chipY, gGround_ChipWidths[chip->velocityX],
+                    gGround_ChipHeights[chip->velocityX]);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
           }
           rock->x += rock->velocityX;
@@ -16867,7 +16851,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 // it, and burst into tumbling shards, hitting every target as each lands.
 //
 // object: the targets; variant picks the number of boulders
-//         (gShatterRocks_RockCounts).
+//         (gSpire_RockCounts).
 void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   void **slots;
   void **cursor;
@@ -16906,7 +16890,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  rockCount = gShatterRocks_RockCounts[work->effect->variant];
+  rockCount = gSpire_RockCounts[work->effect->variant];
   for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
     rock->y = -0x400000;
@@ -16917,26 +16901,24 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
     for (j = 0; j != 21; j++) {
       struct EffectStep *shard = &PARTICLES[i * 21 + j];
 
-      shard->x = (gShatterRocks_ShardOffsets[j * 2] + gShatterRocks_RockX[i])
-                 << 16;
-      shard->y = gShatterRocks_ShardOffsets[j * 2 + 1] << 16;
+      shard->x = (gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]) << 16;
+      shard->y = gSpire_ShardOffsets[j * 2 + 1] << 16;
       shard->velocityX = ((Random16() % 96) - 48) << 10;
       shard->velocityY = -((Random16() & 127) + 32) << 11;
       shard->z = 32;
       shard->variant = 0;
     }
   }
-  for (frame = 0; frame != gShatterRocks_DropFrames[rockCount - 1] + 80;
-       frame++) {
-    if (frame == gShatterRocks_DropFrames[rockCount - 1] + 48)
+  for (frame = 0; frame != gSpire_DropFrames[rockCount - 1] + 80; frame++) {
+    if (frame == gSpire_DropFrames[rockCount - 1] + 48)
       BattleEventRuntime_BeginPhaseFar(132);
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
-      if (frame == gShatterRocks_DropFrames[i] + 18) {
+      if (frame == gSpire_DropFrames[i] + 18) {
         AudioCommand_PlayFar(134);
         work->shakeFrames = 4;
       }
-      if (frame >= gShatterRocks_DropFrames[i] + 18) {
+      if (frame >= gSpire_DropFrames[i] + 18) {
         for (j = 0; j != 21; j++) {
           shard = &PARTICLES[i * 21 + j];
           cell = (j % 5) * 3 + shard->variant / 96 % 3;
@@ -16944,20 +16926,17 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
 // separate arguments was UB. Plain English trial: unchanged 0x3bc bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-          width = gShatterRocks_ShardWidths[cell];
-          height = gShatterRocks_ShardHeights[cell];
+          width = gSpire_ShardWidths[cell];
+          height = gSpire_ShardHeights[cell];
           blit(canvas,
-               work->sheet + gShatterRocks_ShardCells[cell] +
-                   SHATTER_SHARD_CELLS,
+               work->sheet + gSpire_ShardCells[cell] + SHATTER_SHARD_CELLS,
                HI(shard->x) - (width >> 1), HI(shard->y) - (height >> 1), width,
                height);
 #else
           blit(canvas,
-               work->sheet + gShatterRocks_ShardCells[cell] +
-                   SHATTER_SHARD_CELLS,
-               HI(shard->x) - ((width = gShatterRocks_ShardWidths[cell]) >> 1),
-               HI(shard->y) -
-                   ((height = gShatterRocks_ShardHeights[cell]) >> 1),
+               work->sheet + gSpire_ShardCells[cell] + SHATTER_SHARD_CELLS,
+               HI(shard->x) - ((width = gSpire_ShardWidths[cell]) >> 1),
+               HI(shard->y) - ((height = gSpire_ShardHeights[cell]) >> 1),
                width, height);
 #endif
           EffectStep_AdvanceWithGravity2D(shard, 64, 0x4000);
@@ -16967,17 +16946,16 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
         }
       }
       // The rock falls from its drop frame and lands 18 frames later.
-      if (frame < gShatterRocks_DropFrames[i] + 18) {
-        if (frame >= gShatterRocks_DropFrames[i])
-          blit(canvas, work->sheet, gShatterRocks_RockX[i] + 47, HI(rock->y),
-               34, 62);
+      if (frame < gSpire_DropFrames[i] + 18) {
+        if (frame >= gSpire_DropFrames[i])
+          blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
         rock->y += rock->velocityY;
-        if (frame > gShatterRocks_DropFrames[i])
+        if (frame > gSpire_DropFrames[i])
           rock->velocityY += 0x10000;
         if (rock->y > 0x320000)
           rock->y = 0x320000;
       }
-      if (frame == gShatterRocks_DropFrames[i] + 18) {
+      if (frame == gSpire_DropFrames[i] + 18) {
         for (j = 0; j != work->effect->count; j++)
           ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 8);
       }
@@ -17349,8 +17327,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     wallX = -16;
     rockX = -12;
   }
-  REG_BG2X = gRisingWall_Bg2Shifts[work->effect->side][work->effect->variant]
-             << 8;
+  REG_BG2X = gGaia_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
 
   // Palette: background colours 1 to 63, each channel 8 steps darker.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
@@ -17387,10 +17364,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   sheetIndex = 0;
   for (j = 0; j != 9; j++) {
     for (i = 0; i != 32; i++) {
-      for (k = 0; k != gRisingWall_RowWidths[j]; k++, sheetIndex++)
+      for (k = 0; k != gGaia_RowWidths[j]; k++, sheetIndex++)
         work->sheet[sheetIndex] = src[k];
     }
-    src += gRisingWall_RowWidths[j];
+    src += gGaia_RowWidths[j];
   }
   for (j = 0; j != 32; j++) {
     for (i = 0; i != 3; i++) {
@@ -17402,8 +17379,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != 1008; i++)
     work->sheet[sheetIndex++] = *src++;
   for (i = 0; i != 3; i++) {
-    for (k = 0; k != gRisingWall_MoundWidths[i] * gRisingWall_MoundHeights[i];
-         k++)
+    for (k = 0; k != gGaia_MoundWidths[i] * gGaia_MoundHeights[i]; k++)
       work->sheet[sheetIndex++] = *src++;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -17446,7 +17422,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     rock->variant = 44 - i * 4;
   }
   for (i = 0; i != 6; i++)
-    work->particles[16 + i].x = gRisingWall_LateRockColumns[i];
+    work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
   // Dust rises from the foot of the wall.
   for (i = 0; i != 256; i++) {
@@ -17475,13 +17451,13 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
       if (cell > 2)
         cell = (cell & 1) + 1;
-      draw[0](canvas, work->sheet + gRisingWall_MoundSheetOffsets[cell],
-              wallX - gRisingWall_MoundWidths[cell] + 64,
-              116 - gRisingWall_MoundHeights[cell],
-              gRisingWall_MoundWidths[cell], gRisingWall_MoundHeights[cell]);
-      draw[1](canvas, work->sheet + gRisingWall_MoundSheetOffsets[cell],
-              wallX + 64, 116 - gRisingWall_MoundHeights[cell],
-              gRisingWall_MoundWidths[cell], gRisingWall_MoundHeights[cell]);
+      draw[0](canvas, work->sheet + gGaia_MoundSheetOffsets[cell],
+              wallX - gGaia_MoundWidths[cell] + 64,
+              116 - gGaia_MoundHeights[cell], gGaia_MoundWidths[cell],
+              gGaia_MoundHeights[cell]);
+      draw[1](canvas, work->sheet + gGaia_MoundSheetOffsets[cell], wallX + 64,
+              116 - gGaia_MoundHeights[cell], gGaia_MoundWidths[cell],
+              gGaia_MoundHeights[cell]);
     }
 
     // The rising wall (frames 12 to 87).
@@ -17493,11 +17469,11 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
       if (row > 7)
         row = 7;
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gRisingWall_RowSheetOffsets[row],
-                wallX - gRisingWall_RowWidths[row] + 64, i * 32 - 12,
-                gRisingWall_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gRisingWall_RowSheetOffsets[row],
-                wallX + 64, i * 32 - 12, gRisingWall_RowWidths[row], 32);
+        draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
+                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
+                gGaia_RowWidths[row], 32);
+        draw[1](canvas, work->sheet + gGaia_RowSheetOffsets[row], wallX + 64,
+                i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
 
@@ -17510,11 +17486,11 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
       if (row > 7)
         row = 7;
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gRisingWall_RowSheetOffsets[row],
-                wallX - gRisingWall_RowWidths[row] + 64, i * 32 - 12,
-                gRisingWall_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gRisingWall_RowSheetOffsets[row],
-                wallX + 64, i * 32 - 12, gRisingWall_RowWidths[row], 32);
+        draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
+                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
+                gGaia_RowWidths[row], 32);
+        draw[1](canvas, work->sheet + gGaia_RowSheetOffsets[row], wallX + 64,
+                i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
 
@@ -19755,15 +19731,18 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
       if (cell > 6)
         cell = 6;
       if (work->effect->side == 0) {
-        draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                gFireSwirl_CellBiasX[cell] + 30,
-                gFireSwirl_CellBiasY[cell] + position.y - 60,
-                gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+        draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+                gHelmSplitter_CellBiasX[cell] + 30,
+                gHelmSplitter_CellBiasY[cell] + position.y - 60,
+                gHelmSplitter_CellWidths[cell],
+                gHelmSplitter_CellHeights[cell]);
       } else {
-        draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                -gFireSwirl_CellBiasX[cell] - gFireSwirl_CellWidths[cell] + 108,
-                gFireSwirl_CellBiasY[cell] + position.y - 60,
-                gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+        draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+                -gHelmSplitter_CellBiasX[cell] -
+                    gHelmSplitter_CellWidths[cell] + 108,
+                gHelmSplitter_CellBiasY[cell] + position.y - 60,
+                gHelmSplitter_CellWidths[cell],
+                gHelmSplitter_CellHeights[cell]);
       }
     }
     if (frame == 18) {
@@ -20741,8 +20720,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = (gCirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
-      position.y = (gCirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
+      position.x = (gRamses_ObjectColumns[i] << 16) + base.x - 0x200000;
+      position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
       Object_ApplyProjectedPlacementFar(work->objects[i], &position, &scale, 0);
     }
     if (frame <= 90) {
@@ -20823,11 +20802,10 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
         if (puff->variant >= 0 && puff->variant <= 23) {
           s32 cell = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gCirclingScene_PuffSheetOffsets[cell],
-                  HI(puff->x) - gCirclingScene_PuffSizes[cell] / 2,
-                  HI(puff->y) - gCirclingScene_PuffSizes[cell] / 2,
-                  gCirclingScene_PuffSizes[cell],
-                  gCirclingScene_PuffSizes[cell]);
+          draw[0](canvas, work->sheet + gRamses_PuffSheetOffsets[cell],
+                  HI(puff->x) - gRamses_PuffSizes[cell] / 2,
+                  HI(puff->y) - gRamses_PuffSizes[cell] / 2,
+                  gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
         }
         EffectStep_AdvanceWithGravity2D(puff, 60, -0x4000);
         puff->variant++;
@@ -21305,7 +21283,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
 //
 // Draw the sword for 40 frames, swinging down over 10 frames. Flash the
 // two columns at frames 16 and 24; scatter sparks six frames later.
-// Column x comes from gFlameBlade_StrikeColumns: first two of three per side.
+// Column x comes from gRagnarok_StrikeColumns: first two of three per side.
 // PARTICLES holds 340 sparks per column.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **heapCache;
@@ -21369,7 +21347,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & 0xffff;
-      spark->x = gFlameBlade_StrikeColumns[col + work->effect->side * 3] << 16;
+      spark->x = gRagnarok_StrikeColumns[col + work->effect->side * 3] << 16;
       spark->y = 88 << 16;
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -21457,7 +21435,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
         // Large flash for the first two frames, then 12 small flashes.
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + FLAME_BLADE_FLASH_CELLS,
-                  gFlameBlade_StrikeColumns[col + work->effect->side * 3] - 16,
+                  gRagnarok_StrikeColumns[col + work->effect->side * 3] - 16,
                   56, 32, 64);
         }
         i = 0;
@@ -21470,11 +21448,11 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
 
           y = HI(flash->y);
           x = HI(flash->x) +
-              gFlameBlade_StrikeColumns[col + work->effect->side * 3];
+              gRagnarok_StrikeColumns[col + work->effect->side * 3];
           life = flash->variant;
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
-                    work->sheet + (gFlameBlade_FlashCells[life / 3] << 11) +
+                    work->sheet + (gRagnarok_FlashCells[life / 3] << 11) +
                         FLAME_BLADE_FLASH_CELLS,
                     x - 16, y + 56, 32, 64);
           }
@@ -21686,7 +21664,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
         life = flash->variant;
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
-                      work->sheet + (gFallingSword_FlashCells[life / 3] << 11) +
+                      work->sheet + (gTitanBlade_FlashCells[life / 3] << 11) +
                           (221 << 4),
                       x - 16, y + 48, 32, 64);
         }
@@ -21794,7 +21772,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
           if (frame > 80) {
             dust->velocityY += -32768;
           } else {
-            dust->velocityY += gFallingSword_DustGravity[i & 3];
+            dust->velocityY += gTitanBlade_DustGravity[i & 3];
           }
           dust->velocityX = dust->velocityX * 62 / 64;
           dust->velocityY = dust->velocityY * 62 / 64;
@@ -22903,8 +22881,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       place.height = 255 << 16;
       i = 0;
       do {
-        place.x = ((baseX + gObjectRow_Columns[i] - lift) << 16) + (224 << 16);
-        place.y = ((gObjectRow_Rows[i] - wave) << 16) + (144 << 15);
+        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
+        place.y = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
         Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
         i++;
       } while (i != 9);
@@ -23057,8 +23035,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         place2.height = 255 << 16;
         i = 0;
         do {
-          place2.x = (rowX + gObjectRow_Columns[i]) << 16;
-          place2.y = ((gObjectRow_Rows[i] - rise) << 16) + (144 << 15);
+          place2.x = (rowX + gKirin_Columns[i]) << 16;
+          place2.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
           Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &pair2,
                                             0);
           i++;
@@ -23348,9 +23326,9 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
       pos.height = 0;
       for (i = 0; i != 8; i++) {
         pos.x =
-            (((gBattleFx6_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
+            (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
         pos.y =
-            (((gBattleFx6_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
+            (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
         Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &scale, 0);
       }
     }
@@ -23522,7 +23500,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           draw(canvas, particleSheet + gBattleFx_MoteCellOffsets[k - 1],
                HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
           EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62,
-                                          gBattleFx6_Gravity[i & m]);
+                                          gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104) {
             PARTICLES[i].variant = -1;
@@ -23882,8 +23860,8 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
         py = HI(particle->y);
         if (cell > 6)
           cell = 6;
-        src = work->sheet + gRisingBurst_SparkCells[cell] + 0x460;
-        size = gRisingBurst_SparkSizes[cell];
+        src = work->sheet + gUndeadSword_SparkCells[cell] + 0x460;
+        size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
         particle->variant++;
         EffectStep_AdvanceWithGravity2D(particle, 62, -0x2000);

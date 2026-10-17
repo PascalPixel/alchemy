@@ -46,13 +46,13 @@
 extern char ResourceId_BoulderSheet; // directory row 0x14d
 extern char ResourceId_CrystalSheet; // directory row 0x193
 
-// ☀️ gCrystal_Counts, with a third byte: crystals, frames and the frame
+// ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
 // that begins phase 134, for each variant.
 extern u8 Data_081979b7[];
-extern u32 gData_08197834[]; // ☀️ gCrystal_ShardOffsets
-extern u8 gData_0819781a[];  // ☀️ gCrystal_ShardWidths
-extern u8 gData_08197826[];  // ☀️ gCrystal_ShardHeights
-extern u8 gData_081977f8[];  // ☀️ gCrystal_ShardStarts: x, y for each shard
+extern u32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
+extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
+extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
+extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);         // ☀️ BattleFx_EndCanvasLayer

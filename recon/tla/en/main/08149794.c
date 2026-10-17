@@ -59,9 +59,9 @@ extern char ResourceId_LightningPillarSheet; // directory row 0x194
 extern char ResourceId_ParticleSpritesA;
 extern char ResourceId_VioletPaletteB; // directory row 0x122
 
-extern u8 Data_081979da[];   // ☀️ gLightningPillar_Counts
-extern u8 Data_081979cc[];   // ☀️ gLightningPillar_Columns, 7 for each side
-extern u16 Data_081979c0[];  // ☀️ gLightningPillar_Sparks: sparks, shake
+extern u8 Data_081979da[];   // ☀️ gPlasma_Counts
+extern u8 Data_081979cc[];   // ☀️ gPlasma_Columns, 7 for each side
+extern u16 Data_081979c0[];  // ☀️ gPlasma_Sparks: sparks, shake
 extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);

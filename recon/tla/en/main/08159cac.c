@@ -66,14 +66,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define HI(v) (((s16 *)&(v))[1])
 
 extern char ResourceId_BoulderSheet;
-// ☀️'s gShatterRocks_RockCounts, by variant.
+// ☀️'s gSpire_RockCounts, by variant.
 extern u8 Data_081985b0[];
-// ☀️'s gShatterRocks_ShardOffsets: x, y in the boulder for each shard.
+// ☀️'s gSpire_ShardOffsets: x, y in the boulder for each shard.
 extern u8 Data_08198566[];
-// ☀️'s gShatterRocks_RockX and gShatterRocks_DropFrames, by boulder.
+// ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
 extern s8 Data_081985a6[];
 extern u8 Data_081985ab[];
-// The shard cels: ☀️'s gShatterRocks_ShardCells, _ShardWidths and
+// The shard cels: ☀️'s gSpire_ShardCells, _ShardWidths and
 // _ShardHeights.
 extern u16 gData_081974bc[];
 extern u8 gData_0819749e[];

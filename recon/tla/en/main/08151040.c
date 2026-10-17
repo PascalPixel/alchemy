@@ -59,12 +59,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_Data134; // the particle sheet
-extern u8 Data_08198300[];      // gHomingEmbers_Counts
+extern u8 Data_08198300[];      // gFire_Counts
 extern u16 gData_08197410[];    // gBattleFx_MoteCellOffsets
-extern u16 Data_08198316[];     // gHomingEmbers_FlareCells
-extern u8 Data_08198303[];      // gHomingEmbers_FlareWidths
-extern u8 Data_0819830f[];      // gHomingEmbers_FlareBiasY
-extern u8 Data_08198309[];      // gHomingEmbers_FlareHeights
+extern u16 Data_08198316[];     // gFire_FlareCells
+extern u8 Data_08198303[];      // gFire_FlareWidths
+extern u8 Data_0819830f[];      // gFire_FlareBiasY
+extern u8 Data_08198309[];      // gFire_FlareHeights
 
 // Embers spray out of the user, two a frame, then home in on the targets.
 

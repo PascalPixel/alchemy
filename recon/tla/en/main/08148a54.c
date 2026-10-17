@@ -8,7 +8,7 @@
 // Func_081963ec(104, 0x13) and (188, 0x1f) (⚓️'s mode is 3 minus ☀️'s),
 // the camera callback Func_0814c928 and the transfer callback at order
 // 0xc80, phase 133 where ☀️ begins phase 132, the frame and mote counts from
-// the byte table gData_081979a8 (☀️ gVortexMotes_Counts) and Func_08118088
+// the byte table gData_081979a8 (☀️ gFroth_Counts) and Func_08118088
 // for the struck target's motion.
 
 // Same frame, registers and instructions. What is left is order at eight
@@ -59,7 +59,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 extern char ResourceId_VortexSheet;
 
-// ☀️ gVortexMotes_Counts: motes, then frames, for each variant.
+// ☀️ gFroth_Counts: motes, then frames, for each variant.
 extern u8 gData_081979a8[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);

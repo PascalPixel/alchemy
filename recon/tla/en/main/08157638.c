@@ -54,7 +54,7 @@ extern char ResourceId_ParticleSpritesA;
 extern char ResourceId_MercuryDjinnSmallSheet;
 extern char ResourceId_BlueFlameSheet;
 // The frames the Djinn throws its five flames on (☀️'s
-// gMercuryDjinnFlames_LaunchFrames).
+// gMercury_LaunchFrames).
 extern const u8 Data_0819850e[];
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern const u16 gData_08197410[];

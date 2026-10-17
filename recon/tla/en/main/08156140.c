@@ -109,7 +109,7 @@ extern u16 Data_081984f4[]; // _FlashOffsets
 extern u16 Data_08198502[]; // _PelletOffsets
 extern u8 Data_0819850a[];  // the glints' palettes
 // gBattleFx_MoteCellOffsets; gBattleFx_GlintCell* (offsets, widths,
-// heights); gCrystal_ShardOffsets and the shards' widths and heights.
+// heights); gPrism_ShardOffsets and the shards' widths and heights.
 extern u16 gData_08197410[];
 extern u16 gData_08197486[];
 extern u8 gData_08197492[];

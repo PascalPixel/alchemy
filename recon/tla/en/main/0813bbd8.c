@@ -41,7 +41,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define PHASE_RESULTS 133
 
 // Shards and frames for each variant (The Broken Seal's
-// gFallingShards_Counts).
+// gIce_Counts).
 extern u8 Data_08197521[];
 #define SHARD_COUNT(variant) Data_08197521[(variant) * 2]
 #define FRAME_COUNT(variant) Data_08197521[(variant) * 2 + 1]

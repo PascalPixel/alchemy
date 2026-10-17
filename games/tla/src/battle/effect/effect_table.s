@@ -56,7 +56,7 @@ gData_08197492:
 	.global gData_08197498
 gData_08197498:
 	.byte 31, 31, 31, 21, 21, 24
-@ The Broken Seal's gShatterRocks_ShardWidths; read by 4 functions
+@ The Broken Seal's gSpire_ShardWidths; read by 4 functions
 	.global gData_0819749e
 gData_0819749e:
 	.byte 5, 11, 10, 7, 7, 12, 13, 9, 19, 12, 17, 22, 15, 16, 14
@@ -64,7 +64,7 @@ gData_0819749e:
 	.global gData_081974ad
 gData_081974ad:
 	.byte 11, 6, 10, 11, 10, 7, 17, 21, 12, 21, 17, 13, 16, 16, 15
-@ The Broken Seal's gShatterRocks_ShardCells; read by 4 functions
+@ The Broken Seal's gSpire_ShardCells; read by 4 functions
 	.global gData_081974bc
 gData_081974bc:
 	.2byte 0, 55, 121, 221, 298, 368, 452, 673
@@ -82,7 +82,7 @@ Data_081974f4:
 	.global Data_08197500
 Data_08197500:
 	.byte 12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5
-@ The Broken Seal's gCounterReveal_PanelX; read by Func_0815f16c and Func_0818ad40
+@ The Broken Seal's gCondemn_PanelX; read by Func_0815f16c and Func_0818ad40
 	.global gData_0819750c
 gData_0819750c:
 	.byte 10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0
@@ -90,7 +90,7 @@ gData_0819750c:
 	.global gData_0819751a
 gData_0819751a:
 	.byte 0, 20, 2, 2, 34, 64, 68
-@ The Broken Seal's gFallingShards_Counts; read by Func_0813bbd8
+@ The Broken Seal's gIce_Counts; read by Func_0813bbd8
 	.global Data_08197521
 Data_08197521:
 	.byte 16, 46, 20, 52, 32, 80
@@ -303,13 +303,13 @@ Data_081977f0:
 	.global Data_081977f4
 Data_081977f4:
 	.byte 3, 4, 5, 6
-@ The Broken Seal's gCrystal_ShardStarts; read by Func_08149268 and Func_0815f16c
+@ The Broken Seal's gPrism_ShardStarts; read by Func_08149268 and Func_0815f16c
 	.global gData_081977f8
 gData_081977f8:
 	.byte 32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99, 54, 69, 34, 82
 	.byte 45, 71, 31, 91, 32, 69, 26, 80, 40, 68, 41, 60, 46, 60, 36, 63
 	.byte 0, 0
-@ The Broken Seal's gCrystal_ShardWidths; read by 5 functions
+@ The Broken Seal's gPrism_ShardWidths; read by 5 functions
 	.global gData_0819781a
 gData_0819781a:
 	.byte 5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22
@@ -317,7 +317,7 @@ gData_0819781a:
 	.global gData_08197826
 gData_08197826:
 	.byte 14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20, 0, 0
-@ The Broken Seal's gCrystal_ShardOffsets, byte for byte
+@ The Broken Seal's gPrism_ShardOffsets, byte for byte
 	.global gData_08197834
 gData_08197834:
 	.4byte 0, 70, 170, 247, 429, 597
@@ -364,23 +364,23 @@ Data_081978cc:
 	.2byte 0, 108, 228, 336, 444, 552, 684, 816
 	.2byte 948, 1092, 1140, 1189, 1231, 1273, 1321, 1357
 	.2byte 1389, 1413
-@ The Broken Seal's gCounterReveal_PanelX; read by Func_08145784
+@ The Broken Seal's gCondemn_PanelX; read by Func_08145784
 	.global Data_081978f0
 Data_081978f0:
 	.byte 10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0
-@ The Broken Seal's gCounterReveal_PanelY; read by Func_08145784
+@ The Broken Seal's gCondemn_PanelY; read by Func_08145784
 	.global Data_081978fe
 Data_081978fe:
 	.byte 0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4
-@ The Broken Seal's gSpinningTriangle_Vertex; read by Func_08145df8
+@ The Broken Seal's gBind_Vertex; read by Func_08145df8
 	.global Data_0819790c
 Data_0819790c:
 	.4byte 0, 24, 0
-@ The Broken Seal's gSpinningTriangle_Vertex; read by Func_0814627c
+@ The Broken Seal's gBind_Vertex; read by Func_0814627c
 	.global Data_08197918
 Data_08197918:
 	.4byte 0, 24, 0
-@ The Broken Seal's gRingBolts_Points; read by Func_08146638
+@ The Broken Seal's gAstralBlast_Points; read by Func_08146638
 	.global gData_08197924
 gData_08197924:
 	.4byte 0, 0x300000, 0, 0
@@ -446,19 +446,19 @@ Data_0819797e:
 	.global Data_08197984
 Data_08197984:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
-@ The Broken Seal's gEmberColumns_Columns; read by Func_08148458
+@ The Broken Seal's gNereid_Columns; read by Func_08148458
 	.global Data_08197990
 Data_08197990:
 	.byte 16, 104, 32, 104, 48, 104, 64, 104
-@ The Broken Seal's gEmberColumns_Gravity; read by Func_08148458
+@ The Broken Seal's gNereid_Gravity; read by Func_08148458
 	.global Data_08197998
 Data_08197998:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
-@ The Broken Seal's gVortexMotes_Counts; read by Func_08148a54
+@ The Broken Seal's gFroth_Counts; read by Func_08148a54
 	.global gData_081979a8
 gData_081979a8:
 	.byte 6, 140, 12, 160, 30, 200
-@ The Broken Seal's gTornado_Shapes; read by Func_08148e9c
+@ The Broken Seal's gWhirlwind_Shapes; read by Func_08148e9c
 	.global gData_081979ae
 gData_081979ae:
 	.byte 1, 16, 2, 2, 24, 2, 4, 32, 4
@@ -466,15 +466,15 @@ gData_081979ae:
 	.global Data_081979b7
 Data_081979b7:
 	.byte 1, 85, 30, 4, 124, 54, 12, 166, 86
-@ The Broken Seal's gLightningPillar_Sparks; read by Func_08149794
+@ The Broken Seal's gPlasma_Sparks; read by Func_08149794
 	.global Data_081979c0
 Data_081979c0:
 	.2byte 384, 2, 256, 3, 192, 4
-@ The Broken Seal's gLightningPillar_Columns; read by Func_08149794
+@ The Broken Seal's gPlasma_Columns; read by Func_08149794
 	.global Data_081979cc
 Data_081979cc:
 	.byte 32, 64, 16, 48, 72, 96, 64, 88, 56, 104, 72, 48, 24, 56
-@ The Broken Seal's gLightningPillar_Counts; read by Func_08149794
+@ The Broken Seal's gPlasma_Counts; read by Func_08149794
 	.global Data_081979da
 Data_081979da:
 	.byte 1, 3, 7
@@ -490,15 +490,15 @@ Data_081979de:
 	.global Data_08197a1a
 Data_08197a1a:
 	.byte 5, 5, 4, 3, 2, 1
-@ The Broken Seal's gFirePillars_Counts; read by Func_0814a264
+@ The Broken Seal's gVolcano_Counts; read by Func_0814a264
 	.global Data_08197a20
 Data_08197a20:
 	.byte 1, 2, 4
-@ The Broken Seal's gFirePillars_Depths; read by Func_0814a264
+@ The Broken Seal's gVolcano_Depths; read by Func_0814a264
 	.global Data_08197a23
 Data_08197a23:
 	.byte 0, 0, 0, 0, 24, -24, 0, 0, -20, 20, -60, 60
-@ The Broken Seal's gFirePillars_StartFrames; read by Func_0814a264
+@ The Broken Seal's gVolcano_StartFrames; read by Func_0814a264
 	.global Data_08197a2f
 Data_08197a2f:
 	.byte 8, 18, 24, 30, 34
@@ -1005,94 +1005,94 @@ gData_08197aa0:
 	.4byte Func_0816e650            @ 469
 	.4byte BattleFx_RunProjectileVolleyMode18       @ 470
 	.4byte BattleFx_RunVolleyBMode23 @ 471
-@ The Broken Seal's gThornVines_ObjectPoses; read by Func_0814ce30
+@ The Broken Seal's gCybele_ObjectPoses; read by Func_0814ce30
 	.global Data_081981fc
 Data_081981fc:
 	.byte 8, 10, 9, 11, 3, 4
-@ The Broken Seal's gThornVines_ThornOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornOffsets; read by Func_0814ce30
 	.global Data_08198202
 Data_08198202:
 	.2byte 3920, 3932, 3947, 3955, 3970
-@ The Broken Seal's gThornVines_ThornWidths; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornWidths; read by Func_0814ce30
 	.global Data_0819820c
 Data_0819820c:
 	.byte 2, 5, 2, 5, 3
-@ The Broken Seal's gThornVines_ThornHeights; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornHeights; read by Func_0814ce30
 	.global Data_08198211
 Data_08198211:
 	.byte 6, 3, 4, 3, 3
-@ The Broken Seal's gThornVines_LeafOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_LeafOffsets; read by Func_0814ce30
 	.global Data_08198216
 Data_08198216:
 	.2byte 3456, 3712, 3856
-@ The Broken Seal's gThornVines_LeafSizes; read by Func_0814ce30
+@ The Broken Seal's gCybele_LeafSizes; read by Func_0814ce30
 	.global Data_0819821c
 Data_0819821c:
 	.byte 16, 12, 8
 	.balign 2
-@ The Broken Seal's gThornVines_ThornOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornOffsets; read by Func_0814ce30
 	.global Data_08198220
 Data_08198220:
 	.2byte 3920, 3932, 3947, 3955, 3970
-@ The Broken Seal's gThornVines_ThornWidths; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornWidths; read by Func_0814ce30
 	.global Data_0819822a
 Data_0819822a:
 	.byte 2, 5, 2, 5, 3
-@ The Broken Seal's gThornVines_ThornHeights; read by Func_0814ce30
+@ The Broken Seal's gCybele_ThornHeights; read by Func_0814ce30
 	.global Data_0819822f
 Data_0819822f:
 	.byte 6, 3, 4, 3, 3
-@ The Broken Seal's gThornVines_SparkOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_SparkOffsets; read by Func_0814ce30
 	.global Data_08198234
 Data_08198234:
 	.2byte 3979, 4043, 4268, 4389, 4470
-@ The Broken Seal's gThornVines_SparkSizes; read by Func_0814ce30
+@ The Broken Seal's gCybele_SparkSizes; read by Func_0814ce30
 	.global Data_0819823e
 Data_0819823e:
 	.byte 8, 15, 11, 9, 5
 	.balign 2
-@ The Broken Seal's gThornVines_EmberOffsets; read by Func_0814ce30
+@ The Broken Seal's gCybele_EmberOffsets; read by Func_0814ce30
 	.global Data_08198244
 Data_08198244:
 	.2byte 5760, 6016, 7040, 9344, 11648, 13952, 16256
-@ The Broken Seal's gThornVines_EmberSizes; read by Func_0814ce30
+@ The Broken Seal's gCybele_EmberSizes; read by Func_0814ce30
 	.global Data_08198252
 Data_08198252:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gBattleFx10_Points; read by Func_0814db04
+@ The Broken Seal's gBoreas_Points; read by Func_0814db04
 	.global Data_08198260
 Data_08198260:
 	.byte 57, 130, 75, 128, 71, 104, 101, 130, 86, 126, 85, 98, 64, 98, 98, 96
 	.byte 77, 87, 84, 88, 68, 67, 81, 49, 94, 70, 70, 51, 93, 36, 81, 50
-@ The Broken Seal's gBattleFx10_ShakeOffsets; read by Func_0814db04
+@ The Broken Seal's gBoreas_ShakeOffsets; read by Func_0814db04
 	.global Data_08198280
 Data_08198280:
 	.byte -4, -3, -2, 0
-@ The Broken Seal's gBattleFx10_RockCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockCells; read by Func_0814db04
 	.global Data_08198284
 Data_08198284:
 	.2byte 0, 1152, 2064
-@ The Broken Seal's gBattleFx10_RockWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockWidths; read by Func_0814db04
 	.global Data_0819828a
 Data_0819828a:
 	.byte 24, 24, 20
-@ The Broken Seal's gBattleFx10_RockHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockHeights; read by Func_0814db04
 	.global Data_0819828d
 Data_0819828d:
 	.byte 48, 38, 26
-@ The Broken Seal's gBattleFx10_Animations; read by Func_0814db04
+@ The Broken Seal's gBoreas_Animations; read by Func_0814db04
 	.global Data_08198290
 Data_08198290:
 	.byte 2, 9, 10, 11
-@ The Broken Seal's gBattleFx10_DebrisWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_DebrisWidths; read by Func_0814db04
 	.global Data_08198294
 Data_08198294:
 	.byte 12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7
-@ The Broken Seal's gBattleFx10_DebrisHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_DebrisHeights; read by Func_0814db04
 	.global Data_0819829f
 Data_0819829f:
 	.byte 10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10
-@ The Broken Seal's gBattleFx10_DebrisCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_DebrisCells; read by Func_0814db04
 	.global Data_081982aa
 Data_081982aa:
 	.2byte 2584, 2704, 2880, 2992, 5062, 5094, 5142, 5157
@@ -1105,35 +1105,35 @@ Data_081982c0:
 	.global Data_081982c3
 Data_081982c3:
 	.byte 16, 16, 16
-@ The Broken Seal's gBattleFx10_SprayCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_SprayCells; read by Func_0814db04
 	.global Data_081982c6
 Data_081982c6:
 	.2byte 4294, 4550, 4806
-@ The Broken Seal's gBattleFx10_RockCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockCells; read by Func_0814db04
 	.global Data_081982cc
 Data_081982cc:
 	.2byte 0, 1152, 2064
-@ The Broken Seal's gBattleFx10_RockWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockWidths; read by Func_0814db04
 	.global Data_081982d2
 Data_081982d2:
 	.byte 24, 24, 20
-@ The Broken Seal's gBattleFx10_RockHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockHeights; read by Func_0814db04
 	.global Data_081982d5
 Data_081982d5:
 	.byte 48, 38, 26
-@ The Broken Seal's gBattleFx10_RockWidths; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockWidths; read by Func_0814db04
 	.global Data_081982d8
 Data_081982d8:
 	.byte 24, 24, 20
-@ The Broken Seal's gBattleFx10_RockHeights; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockHeights; read by Func_0814db04
 	.global Data_081982db
 Data_081982db:
 	.byte 48, 38, 26
-@ The Broken Seal's gBattleFx10_RockCells; read by Func_0814db04
+@ The Broken Seal's gBoreas_RockCells; read by Func_0814db04
 	.global Data_081982de
 Data_081982de:
 	.2byte 0, 1152, 2064
-@ The Broken Seal's gIceShardBursts_Gravities; read by Func_0814e744
+@ The Broken Seal's gBreak_Gravities; read by Func_0814e744
 	.global gData_081982e4
 gData_081982e4:
 	.4byte 0x4000, 0x2000, 0x4000, 0x8000
@@ -1141,11 +1141,11 @@ gData_081982e4:
 	.global Data_081982f4
 Data_081982f4:
 	.byte 6, 6, 10
-@ The Broken Seal's gRockWall_Timings; read by Func_08150c74
+@ The Broken Seal's gQuake_Timings; read by Func_08150c74
 	.global Data_081982f7
 Data_081982f7:
 	.byte 80, 32, 2, 112, 64, 4, 144, 96, 8
-@ The Broken Seal's gHomingEmbers_Counts; read by Func_08151040
+@ The Broken Seal's gFire_Counts; read by Func_08151040
 	.global Data_08198300
 Data_08198300:
 	.byte 16, 32, 64
@@ -1214,16 +1214,16 @@ Data_0819838c:
 	.global Data_0819839c
 Data_0819839c:
 	.byte 2, 4, 2, 6, 4, 8
-@ The Broken Seal's gParticleField_Counts; read by Func_08151ff0
+@ The Broken Seal's gBlastAndSmokeBomb_Counts; read by Func_08151ff0
 	.global Data_081983a2
 Data_081983a2:
 	.byte 16, 8, 72, 32, 16, 80, 128, 32, 88
 	.balign 2
-@ The Broken Seal's gParticleField_PuffCells; read by Func_08151ff0
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_08151ff0
 	.global Data_081983ac
 Data_081983ac:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gThornVines_EmberSizes; read by Func_08151ff0
+@ The Broken Seal's gCybele_EmberSizes; read by Func_08151ff0
 	.global Data_081983ba
 Data_081983ba:
 	.2byte 16, 32, 48, 48, 48, 48, 48
@@ -1281,32 +1281,32 @@ Data_0819840c:
 	.global Data_08198414
 Data_08198414:
 	.2byte 0, 50, 148, 379, 891, 1926, 3276
-@ The Broken Seal's gRisingColumns_ColumnOffsets; read by Func_08154d5c
+@ The Broken Seal's gVine_ColumnOffsets; read by Func_08154d5c
 	.global Data_08198422
 Data_08198422:
 	.byte 0, 14, -32, 8, 32, -48, 4, 12, -24, 24, -12, -40, -4, -16, -32, 12
-@ The Broken Seal's gBattleFxPillar_Kinds; read by Func_08154f84
+@ The Broken Seal's gThorn_Kinds; read by Func_08154f84
 	.global Data_08198432
 Data_08198432:
 	.byte 0, 3, 2, 1, 2, 3, 2, 1
-@ The Broken Seal's gBattleFxPillar_X; read by Func_08154f84
+@ The Broken Seal's gThorn_X; read by Func_08154f84
 	.global Data_0819843a
 Data_0819843a:
 	.byte 24, 80, 24, 48, 88, 40, 8, 96
-@ The Broken Seal's gBattleFxPillar_Counts; read by Func_08154f84
+@ The Broken Seal's gThorn_Counts; read by Func_08154f84
 	.global Data_08198442
 Data_08198442:
 	.byte 3, 5, 8
-@ The Broken Seal's gBattleFxPillar_PuffWidths; read by Func_08154f84
+@ The Broken Seal's gThorn_PuffWidths; read by Func_08154f84
 	.global Data_08198445
 Data_08198445:
 	.byte 5, 7, 11, 17, 32, 32, 19
-@ The Broken Seal's gBattleFxPillar_PuffHeights; read by Func_08154f84
+@ The Broken Seal's gThorn_PuffHeights; read by Func_08154f84
 	.global Data_0819844c
 Data_0819844c:
 	.byte 10, 14, 21, 34, 59, 60, 38
 	.balign 2
-@ The Broken Seal's gBattleFxPillar_PuffCells; read by Func_08154f84
+@ The Broken Seal's gThorn_PuffCells; read by Func_08154f84
 	.global Data_08198454
 Data_08198454:
 	.2byte 5888, 5938, 6036, 6267, 6845, 8733, 10653
@@ -1363,15 +1363,15 @@ Data_08198502:
 	.global Data_0819850a
 Data_0819850a:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gMercuryDjinnFlames_LaunchFrames; read by Func_08157638
+@ The Broken Seal's gMercury_LaunchFrames; read by Func_08157638
 	.global Data_0819850e
 Data_0819850e:
 	.byte 4, 7, 10, 21, 34
-@ The Broken Seal's gParticleReveal_CellWidths; read by Func_0815842c
+@ The Broken Seal's gHail_CellWidths; read by Func_0815842c
 	.global Data_08198513
 Data_08198513:
 	.byte 8, 8, 8, 8
-@ The Broken Seal's gParticleReveal_CellHeights; read by Func_0815842c
+@ The Broken Seal's gHail_CellHeights; read by Func_0815842c
 	.global Data_08198517
 Data_08198517:
 	.byte 8, 8, 8, 8
@@ -1380,28 +1380,28 @@ Data_08198517:
 	.global Data_0819851c
 Data_0819851c:
 	.2byte 2308, 2372, 2436, 2500
-@ The Broken Seal's gRockToss_ChipFlips; read by Func_081587e4
+@ The Broken Seal's gGround_ChipFlips; read by Func_081587e4
 	.global Data_08198524
 Data_08198524:
 	.byte 3, 7, 11, 15
-@ The Broken Seal's gRockToss_ChipWidths; read by Func_081587e4
+@ The Broken Seal's gGround_ChipWidths; read by Func_081587e4
 	.global Data_08198528
 Data_08198528:
 	.byte 24, 7, 7, 8, 6, 13, 10, 11, 7
-@ The Broken Seal's gRockToss_ChipHeights; read by Func_081587e4
+@ The Broken Seal's gGround_ChipHeights; read by Func_081587e4
 	.global Data_08198531
 Data_08198531:
 	.byte 48, 13, 14, 24, 24, 17, 20, 14, 20
-@ The Broken Seal's gRockToss_ChipCells; read by Func_081587e4
+@ The Broken Seal's gGround_ChipCells; read by Func_081587e4
 	.global Data_0819853a
 Data_0819853a:
 	.2byte 0, 1152, 1243, 1341, 1533, 1677, 1898, 2098
 	.2byte 2252
-@ The Broken Seal's gRockToss_ChipX; read by Func_081587e4
+@ The Broken Seal's gGround_ChipX; read by Func_081587e4
 	.global Data_0819854c
 Data_0819854c:
 	.byte 0, 9, 9, 11, 10, 0, 3, 13, 7
-@ The Broken Seal's gRockToss_ChipY; read by Func_081587e4
+@ The Broken Seal's gGround_ChipY; read by Func_081587e4
 	.global Data_08198555
 Data_08198555:
 	.byte 0, 18, 18, 0, 24, 20, 5, 22, 26
@@ -1413,22 +1413,22 @@ Data_0819855e:
 	.global Data_08198562
 Data_08198562:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gShatterRocks_ShardOffsets, byte for byte
+@ The Broken Seal's gSpire_ShardOffsets, byte for byte
 	.global Data_08198566
 Data_08198566:
 	.byte 65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72, 85, 56, 88, 51, 80
 	.byte 61, 75, 72, 81, 69, 71, 66, 70, 71, 64, 49, 71, 59, 69, 53, 68
 	.byte 78, 73, 55, 67, 75, 62, 61, 65, 53, 61, 0, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-@ The Broken Seal's gShatterRocks_RockX; read by Func_08159cac
+@ The Broken Seal's gSpire_RockX; read by Func_08159cac
 	.global Data_081985a6
 Data_081985a6:
 	.byte 0, -12, 12, -8, 16
-@ The Broken Seal's gShatterRocks_DropFrames; read by Func_08159cac
+@ The Broken Seal's gSpire_DropFrames; read by Func_08159cac
 	.global Data_081985ab
 Data_081985ab:
 	.byte 8, 16, 20, 24, 32
-@ The Broken Seal's gShatterRocks_RockCounts; read by Func_08159cac
+@ The Broken Seal's gSpire_RockCounts; read by Func_08159cac
 	.global Data_081985b0
 Data_081985b0:
 	.byte 1, 3, 5
@@ -1446,17 +1446,17 @@ Data_081985b3:
 	.global Data_0819861b
 Data_0819861b:
 	.byte 0, 4, 8, 12, 0
-@ The Broken Seal's gRisingWall_RowSheetOffsets; read by Func_0815a9e4
+@ The Broken Seal's gGaia_RowSheetOffsets; read by Func_0815a9e4
 	.global Data_08198620
 Data_08198620:
 	.2byte 0, 160, 352, 640, 1024, 1504, 2080, 2752
 	.2byte 3776
-@ The Broken Seal's gRisingWall_RowWidths; read by Func_0815a9e4
+@ The Broken Seal's gGaia_RowWidths; read by Func_0815a9e4
 	.global Data_08198632
 Data_08198632:
 	.byte 5, 6, 9, 12, 15, 18, 21, 32, 40
 	.balign 2
-@ The Broken Seal's gRisingWall_MoundSheetOffsets; read by Func_0815a9e4
+@ The Broken Seal's gGaia_MoundSheetOffsets; read by Func_0815a9e4
 	.global Data_0819863c
 Data_0819863c:
 	.2byte 10672, 11505, 12550
@@ -1468,11 +1468,11 @@ Data_08198642:
 	.global Data_08198645
 Data_08198645:
 	.byte 49, 55, 64
-@ The Broken Seal's gRisingWall_Bg2Shifts; read by Func_0815a9e4
+@ The Broken Seal's gGaia_Bg2Shifts; read by Func_0815a9e4
 	.global Data_08198648
 Data_08198648:
 	.byte -8, 0, 12, -72, -40, -16
-@ The Broken Seal's gRisingWall_LateRockColumns; read by Func_0815a9e4
+@ The Broken Seal's gGaia_LateRockColumns; read by Func_0815a9e4
 	.global Data_0819864e
 Data_0819864e:
 	.byte 136, 40, 120, 56, 104, 72
@@ -1697,7 +1697,7 @@ gData_08198966:
 	.global gData_0819896a
 gData_0819896a:
 	.byte 16, 104, 32, 104, 48, 104, 64, 104, 0, 0
-@ The Broken Seal's gEmberColumns_Gravity; read by Func_08163e14
+@ The Broken Seal's gNereid_Gravity; read by Func_08163e14
 	.global gData_08198974
 gData_08198974:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
@@ -1764,31 +1764,31 @@ Data_08198a02:
 Data_08198a2c:
 	.2byte 32, 32, 48, 96, 80, 80, 112, 100
 	.2byte 176, 80, 196, 64, 204, 96
-@ The Broken Seal's gParticleField_PuffCells; read by BattleFx_RunParticleStreams
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by BattleFx_RunParticleStreams
 	.global Data_08198a48
 Data_08198a48:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gThornVines_EmberSizes; read by BattleFx_RunParticleStreams
+@ The Broken Seal's gCybele_EmberSizes; read by BattleFx_RunParticleStreams
 	.global Data_08198a56
 Data_08198a56:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gCirclingScene_ObjectColumns; read by Func_08165ab4
+@ The Broken Seal's gRamses_ObjectColumns; read by Func_08165ab4
 	.global gData_08198a64
 gData_08198a64:
 	.byte 12, 44, 28, 60, 0, 32, 64, 0, 32
-@ The Broken Seal's gCirclingScene_ObjectRows; read by Func_08165ab4
+@ The Broken Seal's gRamses_ObjectRows; read by Func_08165ab4
 	.global gData_08198a6d
 gData_08198a6d:
 	.byte 0, 0, 32, 32, 64, 64, 64, 32, 32
-@ The Broken Seal's gParticleField_PuffCells; read by Func_08165ab4
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_08165ab4
 	.global gData_08198a76
 gData_08198a76:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gThornVines_EmberSizes; read by Func_08165ab4
+@ The Broken Seal's gCybele_EmberSizes; read by Func_08165ab4
 	.global gData_08198a84
 gData_08198a84:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gFlameBlade_StrikeColumns; read by Func_081665a4
+@ The Broken Seal's gRagnarok_StrikeColumns; read by Func_081665a4
 	.global gData_08198a92
 gData_08198a92:
 	.byte 32, 24, 0, 96, 104, 128
@@ -1800,7 +1800,7 @@ gData_08198a98:
 	.global gData_08198a9e
 gData_08198a9e:
 	.byte 5, 5, 4, 3, 2, 1
-@ The Broken Seal's gEmberColumns_Gravity; read by Func_08166b10
+@ The Broken Seal's gNereid_Gravity; read by Func_08166b10
 	.global gData_08198aa4
 gData_08198aa4:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
@@ -1820,19 +1820,19 @@ Data_08198ace:
 	.global Data_08198ad4
 Data_08198ad4:
 	.byte 31, 31, 31, 21, 21, 24
-@ The Broken Seal's gObjectRow_Columns; read by Func_08168a40
+@ The Broken Seal's gKirin_Columns; read by Func_08168a40
 	.global gData_08198ada
 gData_08198ada:
 	.byte 8, 40, 72, 104, 8, 40, 72, 104, 0
-@ The Broken Seal's gObjectRow_Rows; read by Func_08168a40
+@ The Broken Seal's gKirin_Rows; read by Func_08168a40
 	.global gData_08198ae3
 gData_08198ae3:
 	.byte 0, 0, 0, 24, 32, 32, 32, 56, 64
-@ The Broken Seal's gEmberColumns_Gravity; read by Func_081693d0
+@ The Broken Seal's gNereid_Gravity; read by Func_081693d0
 	.global Data_08198aec
 Data_08198aec:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
-@ The Broken Seal's gParticleField_PuffCells; read by Func_0816a730
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_0816a730
 	.global gData_08198afc
 gData_08198afc:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
@@ -1877,11 +1877,11 @@ Data_08198b56:
 	.global Data_08198b5a
 Data_08198b5a:
 	.byte 32, 32, 32, 32
-@ The Broken Seal's gParticleField_PuffCells; read by Func_0816d724
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_0816d724
 	.global Data_08198b5e
 Data_08198b5e:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gThornVines_EmberSizes; read by Func_0816d724
+@ The Broken Seal's gCybele_EmberSizes; read by Func_0816d724
 	.global Data_08198b6c
 Data_08198b6c:
 	.2byte 16, 32, 48, 48, 48, 48, 48
@@ -1934,11 +1934,11 @@ Data_08198bba:
 	.global Data_08198bc4
 Data_08198bc4:
 	.byte 0, 3, 1, 2, 3, 0, 1, 2, 1, 0
-@ The Broken Seal's gParticleField_PuffCells; read by Func_0816ec58
+@ The Broken Seal's gBlastAndSmokeBomb_PuffCells; read by Func_0816ec58
 	.global Data_08198bce
 Data_08198bce:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gThornVines_EmberSizes; read by Func_0816ec58
+@ The Broken Seal's gCybele_EmberSizes; read by Func_0816ec58
 	.global Data_08198bdc
 Data_08198bdc:
 	.2byte 16, 32, 48, 48, 48, 48, 48
@@ -2678,7 +2678,7 @@ Data_08199bf9:
 	.global Data_08199d2f
 Data_08199d2f:
 	.byte 10, 30
-@ The Broken Seal's gFireSwirl_CellWidths; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellWidths; read by Func_08188cb0
 	.global gData_08199d31
 gData_08199d31:
 	.byte 26, 46, 63, 77, 60, 39, 32
@@ -2686,15 +2686,15 @@ gData_08199d31:
 	.global gData_08199d38
 gData_08199d38:
 	.byte 11, 20, 37, 65, 65, 54, 39, 0
-@ The Broken Seal's gFireSwirl_CellSourceOffsets; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellSourceOffsets; read by Func_08188cb0
 	.global gData_08199d40
 gData_08199d40:
 	.2byte 0, 286, 1206, 3537, 8542, 12442, 14548
-@ The Broken Seal's gFireSwirl_CellBiasX; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellBiasX; read by Func_08188cb0
 	.global gData_08199d4e
 gData_08199d4e:
 	.byte 53, 36, 16, 2, 2, 2, 2
-@ The Broken Seal's gFireSwirl_CellBiasY; read by Func_08188cb0
+@ The Broken Seal's gHelmSplitter_CellBiasY; read by Func_08188cb0
 	.global gData_08199d55
 gData_08199d55:
 	.byte 2, 3, 3, 3, 4, 14, 29

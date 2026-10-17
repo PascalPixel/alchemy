@@ -5,7 +5,7 @@
 // directly, the tornado sheet unpacked into the work with
 // Resource_LoadAndDecompress, max blitters from Func_081963ec(104, 0x13)
 // and (188, 0x17), the transfer callback at 0xc80, the shape table
-// gData_081979ae (☀️ gTornado_Shapes) and the glint cell tables
+// gData_081979ae (☀️ gWhirlwind_Shapes) and the glint cell tables
 // gData_08197486/92/98, Func_08118088 for the struck targets, and the two
 // blitters released before the callback is removed, as ☀️ does.
 
@@ -50,7 +50,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 extern char ResourceId_TornadoSheet;
 
-// ☀️ gTornado_Shapes: funnels, sway radius and shake, for each variant.
+// ☀️ gWhirlwind_Shapes: funnels, sway radius and shake, for each variant.
 extern u8 gData_081979ae[];
 // ☀️ gBattleFx_GlintCellOffsets, Widths and Heights.
 extern u16 gData_08197486[];

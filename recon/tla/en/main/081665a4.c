@@ -57,7 +57,7 @@ extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_BlastSheet;
-extern u8 gData_08198a92[];  // ☀️ gFlameBlade_StrikeColumns
+extern u8 gData_08198a92[];  // ☀️ gRagnarok_StrikeColumns
 extern u8 gData_08198a98[];  // ☀️ gSparkGroups_FlashCells
 extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 

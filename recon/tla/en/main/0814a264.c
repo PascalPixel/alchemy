@@ -57,9 +57,9 @@ extern char ResourceId_ParticleSpritesA; // directory row 0x134
 extern char ResourceId_RedPaletteB;      // directory row 0x147
 extern char ResourceId_OrangePaletteB;   // directory row 0x148
 
-extern u8 Data_08197a20[];    // ☀️ gFirePillars_Counts, for each variant
-extern s8 Data_08197a23[][4]; // ☀️ gFirePillars_Depths
-extern u8 Data_08197a2f[];    // ☀️ gFirePillars_StartFrames
+extern u8 Data_08197a20[];    // ☀️ gVolcano_Counts, for each variant
+extern s8 Data_08197a23[][4]; // ☀️ gVolcano_Depths
+extern u8 Data_08197a2f[];    // ☀️ gVolcano_StartFrames
 extern u16 gData_08197410[];  // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);

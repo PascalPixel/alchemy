@@ -57,7 +57,7 @@ extern s16 Data_08198b9c[];
 extern u8 Data_08198bb0[];
 extern u8 Data_08198bba[];
 extern u8 Data_08198bc4[];
-// The Broken Seal's gParticleField_PuffCells and gThornVines_EmberSizes:
+// The Broken Seal's gBlastAndSmokeBomb_PuffCells and gCybele_EmberSizes:
 // the spark pictures by stage.
 extern u16 Data_08198bce[];
 extern u16 Data_08198bdc[];

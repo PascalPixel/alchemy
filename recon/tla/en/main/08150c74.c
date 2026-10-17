@@ -72,7 +72,7 @@ struct RockWallHeights {
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
 extern char ResourceId_RockWallSheet;
-extern u8 Data_081982f7[][3];                // gRockWall_Timings
+extern u8 Data_081982f7[][3];                // gQuake_Timings
 extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 
 // Three rock pillars rise from the ground, left to right four frames apart,

@@ -43,7 +43,7 @@
 // Directory row 0x16b, BattleFx_GreenVineSheet: five 32x32 vine cels.
 extern char ResourceId_GreenVineSheet;
 
-// The Broken Seal's gRisingColumns_ColumnOffsets: each vine's x about the
+// The Broken Seal's gVine_ColumnOffsets: each vine's x about the
 // middle of the targets.
 extern const s8 Data_08198422[];
 

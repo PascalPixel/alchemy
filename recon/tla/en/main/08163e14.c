@@ -64,7 +64,7 @@ extern char ResourceId_FirePillarSheetA;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
 extern u8 gData_0819896a[];        // the pillars' feet, x and y
 extern const u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
-extern const s32 gData_08198974[]; // ☀️ gEmberColumns_Gravity
+extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer

@@ -60,8 +60,8 @@
 extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_LimeColumnSheet;
 extern char ResourceId_BlastSheet;
-extern const u16 gData_08198afc[]; // ☀️ gRisingBurst_SparkCells
-extern const u16 gData_08198b0a[]; // ☀️ gRisingBurst_SparkSizes
+extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
+extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer

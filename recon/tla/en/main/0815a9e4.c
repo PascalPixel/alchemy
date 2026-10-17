@@ -97,18 +97,18 @@ struct RockObject {
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_OrangePaletteA;
 extern char ResourceId_ParticleSpritesA;
-// ☀️'s gRisingWall_Bg2Shifts, by side and variant.
+// ☀️'s gGaia_Bg2Shifts, by side and variant.
 extern s8 Data_08198648[][3];
-// The growing wall's nine rows: ☀️'s gRisingWall_RowWidths and
-// gRisingWall_RowSheetOffsets.
+// The growing wall's nine rows: ☀️'s gGaia_RowWidths and
+// gGaia_RowSheetOffsets.
 extern u8 Data_08198632[];
 extern u16 Data_08198620[];
-// The mound's three cels: ☀️'s gRisingWall_MoundWidths, _MoundHeights and
+// The mound's three cels: ☀️'s gGaia_MoundWidths, _MoundHeights and
 // _MoundSheetOffsets.
 extern u8 Data_08198642[];
 extern u8 Data_08198645[];
 extern u16 Data_0819863c[];
-// ☀️'s gRisingWall_LateRockColumns.
+// ☀️'s gGaia_LateRockColumns.
 extern u8 Data_0819864e[];
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern u16 gData_08197410[];

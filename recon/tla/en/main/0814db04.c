@@ -71,27 +71,27 @@ extern u32 gCameraSceneParameters[];
 extern char ResourceId_IceBlockSheet;
 extern char ResourceId_SparkleDots; // directory row 0x17e
 extern char ResourceId_VioletSkyBackdrop;
-extern u8 Data_08198260[][2];      // ☀️ gBattleFx10_Points
-extern s8 Data_08198280[];         // ☀️ gBattleFx10_ShakeOffsets
-extern u16 Data_08198284[];        // ☀️ gBattleFx10_RockCells
-extern u8 Data_0819828a[];         // ☀️ gBattleFx10_RockWidths
-extern u8 Data_0819828d[];         // ☀️ gBattleFx10_RockHeights
-extern u8 Data_08198290[];         // ☀️ gBattleFx10_Animations
+extern u8 Data_08198260[][2];      // ☀️ gBoreas_Points
+extern s8 Data_08198280[];         // ☀️ gBoreas_ShakeOffsets
+extern u16 Data_08198284[];        // ☀️ gBoreas_RockCells
+extern u8 Data_0819828a[];         // ☀️ gBoreas_RockWidths
+extern u8 Data_0819828d[];         // ☀️ gBoreas_RockHeights
+extern u8 Data_08198290[];         // ☀️ gBoreas_Animations
 extern struct Scale Data_08196e14; // ☀️ gBattleFx10_UnitScale
-extern u16 Data_081982aa[];        // ☀️ gBattleFx10_DebrisCells
-extern u8 Data_08198294[];         // ☀️ gBattleFx10_DebrisWidths
-extern u8 Data_0819829f[];         // ☀️ gBattleFx10_DebrisHeights
-extern u16 Data_081982c6[];        // ☀️ gBattleFx10_SprayCells
-extern u8 Data_081982c0[];         // ☀️ gBattleFx10_SprayWidths
-extern u8 Data_081982c3[];         // ☀️ gBattleFx10_SprayHeights
+extern u16 Data_081982aa[];        // ☀️ gBoreas_DebrisCells
+extern u8 Data_08198294[];         // ☀️ gBoreas_DebrisWidths
+extern u8 Data_0819829f[];         // ☀️ gBoreas_DebrisHeights
+extern u16 Data_081982c6[];        // ☀️ gBoreas_SprayCells
+extern u8 Data_081982c0[];         // ☀️ gBoreas_SprayWidths
+extern u8 Data_081982c3[];         // ☀️ gBoreas_SprayHeights
 extern u8 Data_0819745e[];         // ☀️ gBattleFx_PuffSizes
 extern u16 Data_0819744c[];        // ☀️ gBattleFx_PuffCells
-extern u16 Data_081982cc[];        // ☀️ gBattleFx10_BoulderCells
-extern u8 Data_081982d2[];         // ☀️ gBattleFx10_BoulderWidths
-extern u8 Data_081982d5[];         // ☀️ gBattleFx10_BoulderHeights
-extern u16 Data_081982de[];        // ☀️ gBattleFx10_FallCells
-extern u8 Data_081982d8[];         // ☀️ gBattleFx10_FallWidths
-extern u8 Data_081982db[];         // ☀️ gBattleFx10_FallHeights
+extern u16 Data_081982cc[];        // ☀️ gBoreas_BoulderCells
+extern u8 Data_081982d2[];         // ☀️ gBoreas_BoulderWidths
+extern u8 Data_081982d5[];         // ☀️ gBoreas_BoulderHeights
+extern u16 Data_081982de[];        // ☀️ gBoreas_FallCells
+extern u8 Data_081982d8[];         // ☀️ gBoreas_FallWidths
+extern u8 Data_081982db[];         // ☀️ gBoreas_FallHeights
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void);                // ☀️ BattleFx_ConfigureEffectDisplay

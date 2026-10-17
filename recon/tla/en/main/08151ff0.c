@@ -66,10 +66,10 @@ enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
 extern char ResourceId_BlastSheet;
 extern char ResourceId_FireStreakSheet;
-extern u8 Data_081983a2[][3]; // gParticleField_Counts
+extern u8 Data_081983a2[][3]; // gBlastAndSmokeBomb_Counts
 extern u16 gData_08197410[];  // gBattleFx_MoteCellOffsets
-extern u16 Data_081983ac[];   // gParticleField_PuffCells
-extern u16 Data_081983ba[];   // gParticleField_PuffSizes
+extern u16 Data_081983ac[];   // gBlastAndSmokeBomb_PuffCells
+extern u16 Data_081983ba[];   // gBlastAndSmokeBomb_PuffSizes
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.

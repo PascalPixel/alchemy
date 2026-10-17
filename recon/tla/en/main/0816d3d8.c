@@ -2,7 +2,7 @@
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunSpire 0.502, call order BattleFx_RunPrism
 // 0.680); the shard drawing follows BattleFx_RunSpire, and the
-// shard tables are its gShatterRocks_ShardWidths, Heights and Cells.
+// shard tables are its gSpire_ShardWidths, Heights and Cells.
 
 // Listing 374 instructions, draft 374, differ 30.
 // Left: order rows only. The native loads the REG_BG2PA value from the
@@ -57,7 +57,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 extern char ResourceId_BoulderSheet;
 
-// The Broken Seal's gShatterRocks_ShardWidths, ShardHeights and ShardCells.
+// The Broken Seal's gSpire_ShardWidths, ShardHeights and ShardCells.
 extern u8 gData_0819749e[];
 extern u8 gData_081974ad[];
 extern u16 gData_081974bc[];

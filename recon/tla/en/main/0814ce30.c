@@ -55,19 +55,19 @@ struct EffectCamera {
 extern char ResourceId_ThornVineSheet;
 extern char ResourceId_YellowRingSheet;
 extern char ResourceId_BlastSheet;
-extern u8 Data_081981fc[];  // ☀️ gThornVines_ObjectPoses
-extern u16 Data_08198202[]; // ☀️ gThornVines_ThornOffsets
-extern u8 Data_0819820c[];  // ☀️ gThornVines_ThornWidths
-extern u8 Data_08198211[];  // ☀️ gThornVines_ThornHeights
-extern u16 Data_08198216[]; // ☀️ gThornVines_LeafOffsets
-extern u8 Data_0819821c[];  // ☀️ gThornVines_LeafSizes
-extern u16 Data_08198220[]; // ☀️ the second gThornVines_ThornOffsets
-extern u8 Data_0819822a[];  // ☀️ the second gThornVines_ThornWidths
-extern u8 Data_0819822f[];  // ☀️ the second gThornVines_ThornHeights
-extern u16 Data_08198234[]; // ☀️ gThornVines_SparkOffsets
-extern u8 Data_0819823e[];  // ☀️ gThornVines_SparkSizes
-extern u16 Data_08198244[]; // ☀️ gThornVines_EmberOffsets
-extern u16 Data_08198252[]; // ☀️ gThornVines_EmberSizes
+extern u8 Data_081981fc[];  // ☀️ gCybele_ObjectPoses
+extern u16 Data_08198202[]; // ☀️ gCybele_ThornOffsets
+extern u8 Data_0819820c[];  // ☀️ gCybele_ThornWidths
+extern u8 Data_08198211[];  // ☀️ gCybele_ThornHeights
+extern u16 Data_08198216[]; // ☀️ gCybele_LeafOffsets
+extern u8 Data_0819821c[];  // ☀️ gCybele_LeafSizes
+extern u16 Data_08198220[]; // ☀️ the second gCybele_ThornOffsets
+extern u8 Data_0819822a[];  // ☀️ the second gCybele_ThornWidths
+extern u8 Data_0819822f[];  // ☀️ the second gCybele_ThornHeights
+extern u16 Data_08198234[]; // ☀️ gCybele_SparkOffsets
+extern u8 Data_0819823e[];  // ☀️ gCybele_SparkSizes
+extern u16 Data_08198244[]; // ☀️ gCybele_EmberOffsets
+extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer

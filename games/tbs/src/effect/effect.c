@@ -24152,9 +24152,10 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
 
   cache =
       (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = (void *)cache[40 - 40];
-  work = (struct BattleEffectWork *)cache[39 - 40];
-  particleSheet = (u8 *)cache[41 - 40];
+  canvas = (void *)cache[0];
+  work = (struct BattleEffectWork *)
+      cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  particleSheet = (u8 *)cache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
@@ -24188,16 +24189,18 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   formationVelocityX = -0x40000;
   formationVelocityZ = -0x80000;
   savedBg1ScrollX = gBgScroll[1].x;
-  background = (struct BattleBackgroundView *)cache[44 - 40];
+  background = (struct BattleBackgroundView *)
+      cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   background->busy = 1;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
-  blit[0] = (DrawRectangle)cache[46 - 40];
+  blit[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
   BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  blit[1] = (DrawRectangle)cache[47 - 40];
+  blit[1] = (DrawRectangle)
+      cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
   REG_BG2CNT = 0x784;
 
   for (i = 0; i != NEPTUNE_PARTICLES; i++) {

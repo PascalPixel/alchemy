@@ -625,7 +625,7 @@ void BattleFx_RunRedStreaks(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_RED);
 }
 
-// Lime streaks again; no effect table entry points here.
+// The streak volley in lime. UNUSED: no effect table entry points here.
 UNUSED void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
 }
@@ -1615,12 +1615,13 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-//--------------------------------------------------------------------------
-// Blade rain: 16 swords drop one every 4 frames, slanting in towards the
-// first target (the middle of the canvas, x 64) and sticking in the ground,
-// where their bottom 4 pixels are hidden. The canvas fades in over 16
-// frames and out from frame 104. No effect table entry points here.
-//--------------------------------------------------------------------------
+// Drop 16 swords, one every 4 frames, slanting in towards the first target
+// (the middle of the canvas, x 64) and sticking in the ground, where their
+// bottom 4 pixels are hidden.
+//
+// Sword i falls from frame 4i + 16 and sticks at frame 4i + 25. Every 4
+// frames from 24 to 84 the target flashes palette 7 with animation 5 for 2
+// frames and the screen shakes; every 8 frames the hit sound plays.
 UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
@@ -4895,11 +4896,11 @@ void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
   BattleFx_EndCanvasLayer();
 }
 
-// Turns the full-screen picture in gMapCellBuffer into shades of a blue
-// ramp (colours 32 to 63), row by row from the top with a ragged edge that
-// speeds up, a frame at a time, then moves it onto a second blue ramp
-// (colours 96 to 127). Each pixel takes the brightest of its colour's red,
-// green and blue, inverted. Nothing calls it.
+// Turn the screen into shades of blue, top down, with a ragged edge. Works
+// on a copy of the screen in gMapCellBuffer. Each column starts up to 63
+// lines late, and the edge speeds up a little every frame; after at most 27
+// frames the picture moves onto a second blue ramp at colours 96 to 127.
+// Takes 256 random numbers, one a column. Nothing calls it.
 UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
@@ -11135,12 +11136,9 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// Lists the indices within indexRadius of where currentValue sits in
-// values, keeping only those from 0 to entryLimit - 1.
-//
-// window: the values and the limits.
-// output: receives the indices.
-// Returns the number of indices listed.
+// List the indices within indexRadius of where currentValue sits in values,
+// keeping only those from 0 to entryLimit - 1. Writes the indices to output
+// and returns how many there are.
 UNUSED s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                            s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;
@@ -15472,9 +15470,15 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// Mars djinni flames: a glowing orb flares, the small Mars djinni dives
-// to the ground, and nine flames erupt in a row while embers rise,
-// hitting every target.
+// Mars Djinni flames: a glowing orb flares, the small Mars Djinni dives to
+// the ground, and nine flames erupt in a row while embers rise. The scene
+// runs for 112 frames:
+//
+//   0 to 23    the orb flares
+//   20 to 31   the Djinni appears, then dives from frame 24
+//   32         it strikes: the screen shakes and the flames start erupting
+//   38         every target is hit
+//   40 on      the embers rise, 16 more every 2 frames
 //
 // effect: the targets.
 void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
@@ -19195,7 +19199,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   }
 }
 
-// Build a mirrored radial picture, then fade it through scanline ripples.
+// Build a mirrored radial picture, then fade it in and out through scanline
+// ripples while its rings run outward. The scene runs for 96 frames: it
+// fades in over the first 9, ripples throughout and fades out over the
+// last 7.
 void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect) {
   void **heapCache;
   struct BattleEffectWork *work;
@@ -20800,8 +20807,16 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// Approach the first target and scatter projected fire particles around its
-// burst.
+// The user closes on the first target and fire bursts from it in a shower of
+// shards. The scene runs for 64 frames:
+//
+//   4 on       64 shards scatter from the target and fall
+//   6 to 11    a fire streak flares in front of the user
+//   8          the target is struck; the canvas is filled
+//   16 to 47   a fire burst grows over the target in three steps
+//
+// effect: the user and the target; a nonzero variant gives the burst its
+// second picture and a sound.
 void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
   void **heapCache;
   void **cursor;

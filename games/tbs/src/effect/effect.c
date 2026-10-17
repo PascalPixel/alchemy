@@ -6,6 +6,24 @@
 // is scratch storage: different families give it different particle or image
 // layouts. The individual runners document those layouts and remove their
 // drawing callbacks before releasing the buffers.
+//
+// Pictures: the effects draw from decoded sheets, byte-per-pixel pictures
+// whose pixel values are colour levels, indices into a palette ramp. A cell
+// offset (the *_CELL and *_CELLS constants) is a byte offset into a decoded
+// sheet, and each runner decodes its picture sets at fixed offsets in
+// work->sheet. A fade draws from darker copies of a picture built before the
+// first frame, and a symmetric picture is drawn left of its centre line and
+// then mirrored to the right.
+//
+// Debris: several families break something apart. Boulders crumble into
+// chips, shells burst into shards, an impact throws out fragments and
+// Judgment lifts pieces of the field into the air. Each piece is an
+// EffectStep: a 16.16 position, a 16.16 velocity and a variant the family
+// uses as a lifetime, an image phase or an "alive" mark. Pieces move with
+// EffectStep_AdvanceWithGravity2D or 3D and are drawn by their top-left
+// corner, centred on their position or standing on it, as each family
+// chooses. Spawning stays with each runner: every family draws its own
+// random ranges, and the order of those draws is part of the effect.
 
 #include "unit/effect/effect_table.h"
 #include "unit/effect/effect.h"
@@ -59,6 +77,24 @@
 #include "irq.h"
 #include "unit/effect/effect_bits.h"
 #include "call.h"
+
+// Display, palette and scanline effects.
+//
+// Effects change the screen around their drawing in three ways:
+//
+// - Display state: the windows that frame the battle view (lines 16 to
+//   135), the blend and display registers, and the set-up every effect
+//   starts and ends with (BattleFx_ConfigureEffectDisplay, below).
+// - Per-frame callbacks the runner schedules: background scrolling, the
+//   camera shake and the backdrop palette fades that make the canvas stand
+//   out.
+// - Per-scanline work: HBlank DMA that feeds a window edge, BG2's affine
+//   reference or a palette row to the hardware line by line
+//   (BattleFx_ArmWin0HBlankDma, BattleFx_ArmBg2AffineHBlankDma and
+//   BattleFx_ArmPaletteHBlankDma), and the tables those transfers read.
+//
+// The callbacks read the current effect's work block, so the runner that
+// schedules them must remove them before that block is released.
 
 // The battle screen's display mode while an effect plays: background mode 1
 // with BG0 to BG2, sprites and both windows on.
@@ -9756,6 +9792,31 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Rock, ice and wall effects that raise or break the battlefield.
+//
+// Boreas, Break, Quake, Spire, Gaia and the mirrored wall
+// (BattleFx_RunMirroredWall) all draw onto the 128x128 effect canvas, which
+// the canvas layer shows on BG2, and run a fixed number of frames, presenting
+// the canvas at the end of each. Most throw pieces of debris about.
+//
+// Boreas, the rock and ice scene, is the longest. Its first half opens a
+// window on a field of rocks that crumble in three waves, throwing up chips,
+// while a big ice block drops in and bursts into spray trailed by smoke. Its
+// second half rains ice blocks on the targets while boulders rise and crumble
+// into chunks that bounce on the ground. Each half is a loop over frames
+// whose steps run in the order the original drew and moved things, since the
+// order of the random draws is part of the effect.
+//
+// Gaia, the rising wall, rebuilds its pictures from one decoded sheet: nine
+// one-line rows of the growing wall stretched to 32 lines, the top and the
+// foot of the standing wall and three frames of swelling ground. The ground
+// swells, the wall grows row by row, stands while rocks (animation objects)
+// tumble up its face, and sinks.
+//
+// The others are simpler: Break's ice shards burst from each target, the
+// mirrored wall rises at a target's feet, Quake's three rock pillars throw
+// the targets into the air, and Spire's boulders drop and shatter.
+
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define ICE_BLOCK_TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
@@ -18076,6 +18137,20 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Particle motion and projection into the battle view.
+//
+// Effect particles are EffectStep records in 16.16 fixed point. The two
+// integrators move a particle one frame: they add its velocity to its
+// position, add gravity to its vertical speed and then damp every speed by a
+// factor out of 64. The 3D one works in field space, before projection; the
+// 2D one works directly on the screen.
+//
+// The EffectPosition_Apply*AndYOffset helpers turn a point or a battler into
+// an EffectPosition on the screen through the current transform. Each returns
+// a point 16 pixels higher than the projection, which is where effects anchor
+// on a battler. They differ only in how the battler is projected: at its
+// sprite's scaled height, scaled for the battle view, or plainly.
+
 // Moves a particle one frame in three dimensions: adds its velocity, then
 // gravity to its vertical speed, then damps every speed by damping / 64.
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
@@ -21860,8 +21935,26 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// Flame-blade and falling-sword scenes.
-// Frame counters schedule the impact flashes, sparks and actor reactions.
+// The flame blade (Ragnarok) and the falling sword (Titan Blade): a huge
+// sword cuts or drops onto the targets amid flashes, sparks and dust.
+//
+// Both scenes draw a large sword picture onto the effect canvas and time
+// everything else by frame number: sounds, screen shakes, palette fades and
+// the targets' reactions each happen on a fixed frame.
+//
+// - Ragnarok swings a 64x128 blade down over 10 frames, pauses until frame
+//   20 and then creeps on until frame 39. Two columns of light strike at
+//   frames 16 and 24: each is a large flash, a ring of 12 small flashes and
+//   256 sparks that bounce on the ground. The targets recoil as each
+//   column's sparks fly.
+// - Titan Blade raises embers from frame 28 while a pillar of fire scrolls
+//   over the target. The sword then drops onto the target, a ring of
+//   flashes bursts from frame 56, sparks fly from frame 60 and the embers
+//   swell as they clear. The canvas is wiped at frames 9 and 60.
+//
+// Flashes live in work->particles and the sword pictures in the work sheet.
+// Sparks and embers share PARTICLES: Ragnarok keeps 340 sparks per column
+// there, Titan Blade 684 embers and then its sparks.
 
 #define FLAME_BLADE_FLASH_CELLS                                                \
   (64 * 128) // Place flash graphics after the 64x128 sword image.
@@ -22463,9 +22556,33 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// Formation shockwaves with palette ramps and projected debris.
-// ShockwaveWork separates sheet pixels from their ramp copies; the sparks
-// share the particle buffer after its first 128 records.
+// The shockwave scene (Judgment): a gathering formation, its burst, and a
+// sweep of debris across three backdrops.
+//
+// The scene runs in two parts, each with its own frame clock.
+//
+// - The gathering, on the violet sky backdrop: a projected formation of
+//   sixteen objects moves forward while rotating motes shrink in on its
+//   centre. A burst then grows there, shards fly from it, and a ring of
+//   dimming motes spreads outward. It runs SHOCKWAVE_GATHER_FRAMES frames.
+// - The sweep, SHOCKWAVE_SWEEP_FRAMES frames: the formation gives way to
+//   debris objects and the scene cuts to an aerial backdrop, then to beach
+//   and forest ones, swapping palettes, backdrop and debris on set frames.
+//   Meanwhile expanding elliptical rings are drawn into a wave picture that
+//   persists in work, explosion cells fan out from the impact, and the
+//   debris objects rise and are recycled behind a scrolling explosion front.
+//
+// Both parts skip ahead on A or B, by different rules: the gathering simply
+// ends after frame 4, while the sweep jumps to its next transition frame
+// (150, 214 or 280).
+//
+// Particle slots: the gathering's motes use PARTICLES 0 to 127 and its
+// sparks 128 to 255 (SHOCKWAVE_SPARKS). The sweep's debris use particles 0
+// to 15, one for each debris object.
+//
+// The work block is laid out as ShockwaveWork: the sheet's pixels first (the
+// sweep's wave picture is its first 120x120 bytes), then eight dimmed copies
+// of the mote sheet.
 
 struct ShockwaveWork {
   u8 sheet[0x2710];

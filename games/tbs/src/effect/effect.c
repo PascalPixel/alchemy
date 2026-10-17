@@ -110,6 +110,12 @@
 // edge or a scroll register.
 #define DMA_HBLANK_HALFWORD_PER_LINE 0xa2600001
 
+// The same a word at a time: BG2's affine reference point.
+#define DMA_HBLANK_WORD_PER_LINE 0xa6600001
+
+// DMA control word that fills n words from one fixed source word.
+#define DMA_FILL_WORDS(n) (0x85000000 | (n))
+
 // Stops a DMA channel: clears its repeat and start timing bits, then its
 // enable bit, and reads the control register back so the stop takes effect
 // before the channel is set up again.
@@ -160,7 +166,8 @@ void BattleFx_ConfigureEffectDisplay(void) {
   REG_WININ = 0x3537;  // window 0: BG0 to BG2, sprites, blending; window 1:
                        // the same without BG1
   REG_WINOUT = 0x3f21; // outside the battle view: BG0 and blending only
-  IO_WRITE_QUEUE_PUSH(0x04000000, EFFECT_DISPCNT, 2 << 16); // DISPCNT, 2 frames
+  // Queues the effect display mode, 2 frames ahead.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, 2 << 16);
   WaitFrames(1);
 }
 
@@ -2227,8 +2234,8 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
   }
 
   Iwram_ClearWords(canvas, size);
-  Iwram_ClearWords((void *)0x06004000, size);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), size);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask,
@@ -2266,14 +2273,14 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
 
   // Save the picture at VRAM 0x06008000, fill it with colour 1, and turn
   // background palettes 6 to 13 white.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
   Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
-  IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
-  Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f81, 0x20000);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
   AudioCommand_PlayFar(212);
   ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 3, 0, 30);
 
@@ -2298,7 +2305,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
     if (frame > 7) {
       u16 *color;
 
-      color = (u16 *)0x050000c0;
+      color = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++) {
         s32 red = *color & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
@@ -2324,7 +2331,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 4)
-      Iwram_FillWords((void *)0x06008000, 0x7800, 0x02020202);
+      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, 0x02020202);
 
     // Frames 0 to 3: grow the disc by 32 pixels of radius and brighten its
     // grey (colour 2).
@@ -2407,7 +2414,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
           octantY++;
         }
       }
-      Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
     }
 
     // Draw the pieces up to frame 50; they start to fall on frame 4.
@@ -2490,7 +2497,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
   WaitFrames(1);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
@@ -2757,7 +2764,7 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void) {
   Scheduler_RemoveCallback(BattleFx_DrawStreaks);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   {
-    Iwram_ClearWords((void *)0x06004000, 0x4000);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   }
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
@@ -2916,7 +2923,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   work = *(struct BattleEffectWork **)(size - 4);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(2);
-  transparent = 0x04000052;
+  transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = 0x100;            // unscaled
   *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
@@ -3078,27 +3085,27 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
     source = slots[1];
     switch (work->transferMode) {
     case CANVAS_COPY:
-      Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
       break;
     case CANVAS_COPY_AND_CLEAR:
-      Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
       Iwram_FillWords(source, 0x4000, work->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
       if (work->transferValue == 50) {
-        ColorBuffer_BackupAndHalve(source, (void *)0x06004000, 0x4000);
+        ColorBuffer_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1), 0x4000);
       } else {
-        ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000,
-                                                0x4000);
+        ColorBuffer_BackupAndScaleThreeQuarters(
+            source, (void *)BG_CHAR_BLOCK(1), 0x4000);
       }
       break;
     case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_BackupAndDarken(source, work->transferValue,
-                                  (void *)0x06004000, 0x4000);
+                                  (void *)BG_CHAR_BLOCK(1), 0x4000);
       break;
     case CANVAS_COPY_AND_BRIGHTEN:
       ColorBuffer_BackupAndBrighten(source, work->transferValue,
-                                    (void *)0x06004000, 0x4000);
+                                    (void *)BG_CHAR_BLOCK(1), 0x4000);
       break;
     }
     work->transferPending = 0;
@@ -3132,23 +3139,23 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
   transferMode = work->transferMode;
   switch (transferMode) {
   case CANVAS_COPY:
-    Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
     break;
   case CANVAS_COPY_AND_CLEAR:
-    Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
     Iwram_FillWords(source, 0x7800, work->transferValue);
     break;
   case CANVAS_COPY_AND_FADE:
     if (work->transferValue == 50) {
-      ColorBuffer_BackupAndHalve(source, (void *)0x06008000, 0x7800);
+      ColorBuffer_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
     } else {
-      ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06008000,
+      ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
                                               0x7800);
     }
     break;
   case CANVAS_COPY_AND_DARKEN:
-    ColorBuffer_BackupAndDarken(source, work->transferValue, (void *)0x06008000,
-                                0x7800);
+    ColorBuffer_BackupAndDarken(source, work->transferValue,
+                                (void *)BG_CHAR_BLOCK(2), 0x7800);
     break;
   }
 
@@ -4315,14 +4322,14 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   // The EarthWall images, coloured with the Mars Djinn palette (the Fireball
   // palette in mode 2).
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
   palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   if (mode == 2) {
     palette = Resource_GetTableEntry((s32)&ResourceId_FireballSheet);
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 
   // Scroll BG2 so the canvas's x 64 is on the target.
@@ -5217,7 +5224,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   u8 *delays, *p, *pixel;
   u16 *palette;
   u32 delayMask;
-  palette = (u16 *)0x05000040;
+  palette = (u16 *)&BG_PLTT_COLOR(2, 0);
   i = 0;
   do {
     s32 half;
@@ -5228,7 +5235,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   delays = *(u8 **)&gWorkSlot[HEAP_SLOT_BATTLE_SHEET];
   end = 0;
   speed = 16;
-  Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2), 0x7800);
   delayMask = 63;
   p = delays;
   do {
@@ -5247,7 +5254,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
           if (y <= 119) {
             pixel = BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) +
                                         ((y & 7) << 3) + ((y / 8) << 11));
-            color = ((s16 *)0x05000000)[*pixel];
+            color = ((s16 *)BG_PLTT)[*pixel];
             red = color & 31;
             green = (color >> 5) & 31;
             blue = (color >> 10) & 31;
@@ -5262,13 +5269,13 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
       } while (x != 256);
       row++;
     }
-    Iwram_CopyWords((void *)0x06008000, BLUE_RAMP_PIXELS, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, 0x7800);
     WaitFrames(1);
     if (end > 248)
       break;
     i++;
   } while (i != 27);
-  palette = (u16 *)0x050000c0;
+  palette = (u16 *)&BG_PLTT_COLOR(6, 0);
   i = 0;
   do {
     s32 half;
@@ -5281,7 +5288,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
     BLUE_RAMP_PIXELS[i] += 64;
     i++;
   } while (i != 0x7800);
-  Iwram_CopyWords((void *)0x06008000, BLUE_RAMP_PIXELS, 0x7800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, 0x7800);
   WaitFrames(1);
 }
 
@@ -7649,7 +7656,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     index++;
   } while (index != 64);
 
-  Iwram_CopyWords((void *)0x05000002, palette, sizeof(palette));
+  Iwram_CopyWords((void *)&BG_PLTT[1], palette, sizeof(palette));
 }
 
 // Pillars of lightning and the sparks they throw up.
@@ -9921,7 +9928,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0; // background palette 0, colour 1
+  *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_WININ = 0x2137;
@@ -12884,7 +12891,8 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->bg2X, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
+  Dma_Set(work->bg2X, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
+          (volatile u32 *)channel);
 }
 
 // Abilities: Fire Blessing (kind 400).
@@ -16967,7 +16975,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0; // background palette 0, colour 1
+  *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   REG_BG2CNT = 0x2784;
   work->scrollTimer = 0;
   work->scrollInterval = 2;
@@ -18434,7 +18442,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   DrawRectangle *slots;
   struct MotionObject *target;
-  void *colors = (void *)0x05000000;
+  void *colors = (void *)BG_PLTT;
   s32 half;
   s32 frame;
   s32 i;
@@ -18657,7 +18665,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   struct MotionObject *object;
   struct MotionObject *target;
   u16 *background;
-  void *colors = (void *)0x05000000;
+  void *colors = (void *)BG_PLTT;
   s32 words = 0x4000;
   s32 big;
   s32 half;
@@ -18790,7 +18798,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   }
 
   Iwram_ClearWords(canvas, words);
-  Iwram_ClearWords((void *)0x06004000, words);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), words);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   REG_BG1CNT = 0x1f81;
@@ -18876,7 +18884,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
 // Move each RGB555 channel one level towards the resource palette.
 void BattleFx_StepPaletteToResource(s32 resourceId) {
   u16 target[64];
-  u16 *color = (u16 *)0x05000000;
+  u16 *color = (u16 *)BG_PLTT;
   s32 i;
 
   Iwram_CopyWords(target, Resource_GetTableEntry(resourceId), 128);
@@ -18903,7 +18911,7 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
       blue--;
     target[i] = (blue << 10) | (green << 5) | red;
   }
-  Iwram_CopyWords((u16 *)0x05000000, target, 128);
+  Iwram_CopyWords((u16 *)BG_PLTT, target, 128);
 }
 
 // Battle effects: Djinn abilities (effects 100-135)
@@ -20750,7 +20758,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
 // Add per-channel steps to background colours 1 to 63, capped at 31.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
-  u16 *color = (u16 *)0x05000002;
+  u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;
 
   for (i = 0; i != 63; i++) {
@@ -20776,7 +20784,7 @@ void BattleFx_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->sheet + 0x1f80, (void *)0x05000000, 0xa2600001,
+  Dma_Set(work->sheet + 0x1f80, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
 
@@ -20851,7 +20859,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   DrawRectangle draw;
   s32 direction;
   struct BattleEffectWork *work;
-  void *colors = (void *)0x05000000;
+  void *colors = (void *)BG_PLTT;
 
   // Start a flame in the first free particle slot from 32 to 47.
   void ParticleStreams_SpawnFlame(s32 x, s32 y, s32 velocityX) {
@@ -20922,7 +20930,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   BattleFx_WipeCanvas(0, 0);
@@ -20948,8 +20956,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   fill = 0x01010101;
-  Dma_Set((void *)&fill, Ram_MapCellBuffer, 0x85002000, REG_DMA3);
-  Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+  Dma_Set((void *)&fill, Ram_MapCellBuffer, DMA_FILL_WORDS(0x2000), REG_DMA3);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
   WaitFrames(1);
   REG_BLDCNT = 0;
   REG_BG2PA = 0x100;
@@ -20960,10 +20968,10 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
+    ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = (blue << 10) | (green << 5) | red;
   }
   fill = 0;
-  Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
+  Dma_Set((void *)&fill, canvas, DMA_FILL_WORDS(0x1000), REG_DMA3);
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
     s32 y = Random16() & 127;
@@ -20971,7 +20979,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
   gProjection.centerY = 240;
   BattleFx_SelectLivingTargets(work->effect);
   work->bg2x = 0;
@@ -21431,7 +21439,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   BattleFx_WipeCanvas(1, 0);
@@ -22773,9 +22781,10 @@ extern u8 gShockwaveScene_ShardHeights[];
 #define SHOCKWAVE_SHEET_FLASH_STREAK 0x64e8
 #define SHOCKWAVE_EXPLOSION_CELL_BYTES 1728  // bytes in each explosion picture
 #define SHOCKWAVE_WAVE_SIZE 120              // the wave picture is 120x120
-#define SHOCKWAVE_DMA_FILL_CANVAS 0x85001000 // DMA word that clears the canvas
+#define SHOCKWAVE_DMA_FILL_CANVAS                                              \
+  DMA_FILL_WORDS(0x1000) // DMA word that clears the canvas
 // DMA word that clears the wave picture.
-#define SHOCKWAVE_DMA_FILL_WAVE 0x85000e10
+#define SHOCKWAVE_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
 
 // Abilities: Judgment (scene kind 9).
 //
@@ -22817,7 +22826,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   volatile u16 *ime;
 
   cache = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
-  ime = (u16 *)0x04000208;
+  ime = (u16 *)&REG_IME;
   canvas = cache[0];
   work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   ctrl = cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
@@ -22828,7 +22837,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)&BG_PLTT[1] = 0;
   BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
@@ -22872,7 +22881,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
   }
 
-  Iwram_CopyWords((void *)0x05000000,
+  Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet),
                   128);
 
@@ -23203,8 +23212,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       if (frame >= 5 && frame < 150) {
         frame = 150;
-        IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000020, 0x80, 0x20000);
-        IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, 0, 0x30000);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, 0x80, 0x20000);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + SHOCKWAVE_SHEET_EXPLOSION, 1,
                                    0);
@@ -23216,8 +23225,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 64) {
-      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000020, 0x80, 0x20000);
-      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, 0, 0x30000);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, 0x80, 0x20000);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
       fill = 0;
       Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
@@ -23228,7 +23237,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 66) {
-      u16 *pal = (u16 *)0x050000c0;
+      u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++, pal++) {
         *pal ^= 0x7fff;
       }
@@ -24142,7 +24151,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)&BG_PLTT[1] = 0;
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0x480);
   Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;

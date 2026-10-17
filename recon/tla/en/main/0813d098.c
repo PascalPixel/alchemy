@@ -58,7 +58,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 
-// Seven bytes for each mode (The Broken Seal's gTwelveMode_Records, grown
+// Seven bytes for each mode (The Broken Seal's gTargetStrike_Records, grown
 // from 12 modes to 21).
 extern u8 Data_0819754f[];
 #define RECORD(mode, field) Data_0819754f[(mode) * 7 + (field)]
@@ -78,8 +78,8 @@ extern u8 Data_0819754f[];
 #define FLAG_FLASH 32 // as heavy, with flash pictures for wisps
 #define FLAG_STAR 64  // a star model swells on the target
 
-// The strike pictures (gTwelveMode_StrikeWidths, Heights, Offsets, Reach)
-// and the column stages (gTwelveMode_ColumnStages).
+// The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
+// and the column stages (gTargetStrike_ColumnStages).
 extern u8 Data_081975e2[];
 extern u8 Data_081975e8[];
 extern u16 Data_081975ee[];
@@ -87,7 +87,7 @@ extern u8 Data_081975fa[];
 extern u8 Data_08197600[];
 
 // The glint pictures (gBattleFx_GlintCellWidths, Heights, Offsets) and
-// their flips (gTwelveMode_GlintDrawFlags).
+// their flips (gTargetStrike_GlintDrawFlags).
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern u16 gData_08197486[];

@@ -240,7 +240,7 @@ extern s8 gHelmSplitter_CellBiasY[];
 extern u8 gHelmSplitter_CellHeights[];
 extern u16 gHelmSplitter_CellSourceOffsets[];
 extern u8 gHelmSplitter_CellWidths[];
-extern s8 gFiveMode_Records[];
+extern s8 gStreakVolley_Records[];
 #ifndef OWN_gBattleBgFxWork
 extern struct WaveFxWork *gBattleBgFxWork;
 #endif
@@ -335,12 +335,12 @@ extern u8 gCybele_ThornHeights[];
 extern u16 gCybele_ThornOffsets[];
 extern u8 gCybele_ThornWidths[];
 extern struct Vector3 gTriangleStrike_Vertex[];
-extern u8 gTwelveMode_Records[];
-extern s8 gTwoResource_CellBiasY[];
-extern u8 gTwoResource_CellHeights[];
-extern u16 gTwoResource_CellSourceOffsets[];
-extern u8 gTwoResource_CellWidths[];
-extern u8 gTwoResource_CellX[];
+extern u8 gTargetStrike_Records[];
+extern s8 gSwirlSwipe_CellBiasY[];
+extern u8 gSwirlSwipe_CellHeights[];
+extern u16 gSwirlSwipe_CellSourceOffsets[];
+extern u8 gSwirlSwipe_CellWidths[];
+extern u8 gSwirlSwipe_CellX[];
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];

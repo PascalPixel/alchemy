@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// The two kinds of target strike (gTwelveMode_Records).
+// The two kinds of target strike (gTargetStrike_Records).
 #define STRIKE_KIND_SLASH 0  // sideways slashes
 #define STRIKE_KIND_COLUMN 1 // columns of light
 
@@ -15,13 +15,13 @@
 #define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
 
 extern u8 gIce_Counts[];
-extern s8 gFiveMode_Tremble[];
-extern u8 gTwelveMode_StrikeWidths[];
-extern u8 gTwelveMode_StrikeHeights[];
-extern u16 gTwelveMode_StrikeOffsets[];
-extern u8 gTwelveMode_StrikeReach[];
-extern u8 gTwelveMode_ColumnStages[];
-extern u8 gTwelveMode_GlintDrawFlags[];
+extern s8 gStreakVolley_Tremble[];
+extern u8 gTargetStrike_Widths[];
+extern u8 gTargetStrike_Heights[];
+extern u16 gTargetStrike_Offsets[];
+extern u8 gTargetStrike_Reach[];
+extern u8 gTargetStrike_ColumnStages[];
+extern u8 gTargetStrike_GlintDrawFlags[];
 extern u8 gBladeRain_CellWidths[];
 extern u8 gBladeRain_CellHeights[];
 extern u16 gBladeRain_CellSourceOffsets[];

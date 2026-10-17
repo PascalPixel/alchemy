@@ -131,7 +131,7 @@ extern u8 gData_08197498[];  // gBattleFx_GlintCellHeights
 extern u8 gData_0819749e[];  // gSpire_ShardWidths
 extern u8 gData_081974ad[];  // the shard heights
 extern u16 gData_081974bc[]; // gSpire_ShardCells
-extern u8 Data_081983c8[];   // gTwelveMode_GlintDrawFlags
+extern u8 Data_081983c8[];   // gTargetStrike_GlintDrawFlags
 
 // A volley of shots flies from the user at the targets, one launched each
 // frame toward the next target.

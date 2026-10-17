@@ -47,7 +47,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #define CALLBACK_ORDER 0xc80
 
-// Four signed bytes for each mode (The Broken Seal's gFiveMode_Records).
+// Four signed bytes for each mode (The Broken Seal's gStreakVolley_Records).
 extern s8 Data_08197533[];
 #define RECORD(mode, field) Data_08197533[(mode) * 4 + (field)]
 #define RECORD_ANIMATE 0 // cycle the streak through its three pictures
@@ -55,7 +55,7 @@ extern s8 Data_08197533[];
 #define RECORD_MOTION 2  // the target's recoil motion, or -1
 #define RECORD_SHAKE 3   // tremble the target after the hit
 
-// The struck target's sideways tremble, in pixels (gFiveMode_Tremble).
+// The struck target's sideways tremble, in pixels (gStreakVolley_Tremble).
 extern s8 Data_08197547[];
 
 #define STREAK_MAX 3 // streaks for each target

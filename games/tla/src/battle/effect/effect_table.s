@@ -98,12 +98,12 @@ Data_08197521:
 	.global Data_08197527
 Data_08197527:
 	.byte 6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80
-@ The Broken Seal's gFiveMode_Records; read by Func_0813c5f4
+@ The Broken Seal's gStreakVolley_Records; read by Func_0813c5f4
 	.global Data_08197533
 Data_08197533:
 	.byte 0, 1, 0, 0, 0, 1, 4, 0, 0, 1, -1, 1, 1, 1, -1, 1
 	.byte 1, 1, 4, 0
-@ The Broken Seal's gFiveMode_Tremble; read by Func_0813c5f4
+@ The Broken Seal's gStreakVolley_Tremble; read by Func_0813c5f4
 	.global Data_08197547
 Data_08197547:
 	.byte -1, -1, 1, 1, 1, 1, -1, -1
@@ -120,27 +120,27 @@ Data_0819754f:
 	.byte 0, 1, 40, 6, 2, 1, 50, 1, 1, 24, 4, 6, 0, 50, 1, 1
 	.byte 40, 6, 2, 1, 50, 0, 1, 64, 4, 2, 0, 22, 1, 1, 8, 0
 	.byte 6, 0, 70
-@ The Broken Seal's gTwelveMode_StrikeWidths; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Widths; read by Func_0813d098
 	.global Data_081975e2
 Data_081975e2:
 	.byte 38, 54, 71, 74, 77, 65
-@ The Broken Seal's gTwelveMode_StrikeHeights; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Heights; read by Func_0813d098
 	.global Data_081975e8
 Data_081975e8:
 	.byte 7, 9, 11, 13, 13, 11
-@ The Broken Seal's gTwelveMode_StrikeOffsets; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Offsets; read by Func_0813d098
 	.global Data_081975ee
 Data_081975ee:
 	.2byte 3200, 3466, 3952, 4733, 5695, 6696
-@ The Broken Seal's gTwelveMode_StrikeReach; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Reach; read by Func_0813d098
 	.global Data_081975fa
 Data_081975fa:
 	.byte 58, 42, 25, 13, 5, 0
-@ The Broken Seal's gTwelveMode_ColumnStages; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_ColumnStages; read by Func_0813d098
 	.global Data_08197600
 Data_08197600:
 	.byte 0, 1, 2, 3, 2
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0813d098
 	.global Data_08197605
 Data_08197605:
 	.byte 0, 4, 8, 12
@@ -252,7 +252,7 @@ Data_08197730:
 	.global Data_08197734
 Data_08197734:
 	.4byte 0x9000, 0xa000, 0x9000, 0x9000
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0814153c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0814153c
 	.global Data_08197744
 Data_08197744:
 	.byte 0, 4, 8, 12
@@ -348,17 +348,17 @@ Data_08197880:
 	.byte 0, 0, 1, 72, 0, 0, 1, 72, 0, 0, 1, 72, 1, 0, 1, 40
 	.byte 1, 0, 1, 56, 0, 0, 1, 56, 0, 0, 1, 72, 1, 0, 4, 52
 	.byte 0, 1, 1, 72, 0, 0, 1, 72
-@ The Broken Seal's gSevenMode_ShardWidths; read by Func_0814512c
+@ The Broken Seal's gLobbedShells_ShardWidths; read by Func_0814512c
 	.global Data_081978a8
 Data_081978a8:
 	.byte 9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8
 	.byte 8, 8
-@ The Broken Seal's gSevenMode_ShardHeights; read by Func_0814512c
+@ The Broken Seal's gLobbedShells_ShardHeights; read by Func_0814512c
 	.global Data_081978ba
 Data_081978ba:
 	.byte 12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4
 	.byte 3, 3
-@ The Broken Seal's gSevenMode_ShardOffsets; read by Func_0814512c
+@ The Broken Seal's gLobbedShells_ShardOffsets; read by Func_0814512c
 	.global Data_081978cc
 Data_081978cc:
 	.2byte 0, 108, 228, 336, 444, 552, 684, 816
@@ -502,7 +502,7 @@ Data_08197a23:
 	.global Data_08197a2f
 Data_08197a2f:
 	.byte 8, 18, 24, 30, 34
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by BattleFx_RunTargetMotes
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunTargetMotes
 	.global Data_08197a34
 Data_08197a34:
 	.byte 0, 4, 8, 12
@@ -1227,7 +1227,7 @@ Data_081983ac:
 	.global Data_081983ba
 Data_081983ba:
 	.2byte 16, 32, 48, 48, 48, 48, 48
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by BattleFx_RunProjectileVolleyB
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunProjectileVolleyB
 	.global Data_081983c8
 Data_081983c8:
 	.byte 0, 4, 8, 12
@@ -1314,7 +1314,7 @@ Data_08198454:
 	.global Data_08198462
 Data_08198462:
 	.byte 16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0815537c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815537c
 	.global Data_0819846e
 Data_0819846e:
 	.byte 0, 4, 8, 12
@@ -1359,7 +1359,7 @@ Data_081984f4:
 	.global Data_08198502
 Data_08198502:
 	.2byte 2308, 2372, 2436, 2500
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by BattleFx_RunProjectileVolley
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleFx_RunProjectileVolley
 	.global Data_0819850a
 Data_0819850a:
 	.byte 0, 4, 8, 12
@@ -1405,11 +1405,11 @@ Data_0819854c:
 	.global Data_08198555
 Data_08198555:
 	.byte 0, 18, 18, 0, 24, 20, 5, 22, 26
-@ The Broken Seal's gMode12_Animations; read by Func_08158dc8
+@ The Broken Seal's gThor_TargetPalettes; read by Func_08158dc8
 	.global Data_0819855e
 Data_0819855e:
 	.byte 7, 14, 10, 4
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_08158dc8
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_08158dc8
 	.global Data_08198562
 Data_08198562:
 	.byte 0, 4, 8, 12
@@ -1505,19 +1505,19 @@ Data_08198686:
 Data_081986aa:
 	.byte 100, 60, 64, -6, -6, 112, 44, -64, -6, 4, 96, 28, 64, -6, -5, 112
 	.byte 80, -64, -6, 4, 104, 32, 64, -6, 5, 102, 68, -64, -6, 4
-@ The Broken Seal's gTwoResource_CellWidths; read by Func_0815c970
+@ The Broken Seal's gSwirlSwipe_CellWidths; read by Func_0815c970
 	.global gData_081986c8
 gData_081986c8:
 	.byte 40, 112, 112, 112, 88, 64
-@ The Broken Seal's gTwoResource_CellHeights; read by Func_0815c970
+@ The Broken Seal's gSwirlSwipe_CellHeights; read by Func_0815c970
 	.global gData_081986ce
 gData_081986ce:
 	.byte 56, 80, 64, 64, 80, 88
-@ The Broken Seal's gTwoResource_CellSourceOffsets; read by Func_0815c970
+@ The Broken Seal's gSwirlSwipe_CellSourceOffsets; read by Func_0815c970
 	.global gData_081986d4
 gData_081986d4:
 	.2byte 0, 2240, 11200, 18368, 0, 7040
-@ The Broken Seal's gTwoResource_CellX; read by Func_0815c970
+@ The Broken Seal's gSwirlSwipe_CellX; read by Func_0815c970
 	.global gData_081986e0
 gData_081986e0:
 	.byte 72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0
@@ -1572,11 +1572,11 @@ Data_08198850:
 	.global Data_08198858
 Data_08198858:
 	.byte 10, 0, 32, 45, 45, 5, 36, 5
-@ The Broken Seal's gTwelveMode_StrikeWidths; read by Func_0815e3ac
+@ The Broken Seal's gTargetStrike_Widths; read by Func_0815e3ac
 	.global Data_08198860
 Data_08198860:
 	.byte 38, 54, 71, 74, 77, 65
-@ The Broken Seal's gTwelveMode_StrikeHeights; read by Func_0815e3ac
+@ The Broken Seal's gTargetStrike_Heights; read by Func_0815e3ac
 	.global Data_08198866
 Data_08198866:
 	.byte 7, 9, 11, 13, 13, 11
@@ -1584,15 +1584,15 @@ Data_08198866:
 	.global Data_0819886c
 Data_0819886c:
 	.2byte 0, 266, 752, 1533, 2495, 3496
-@ The Broken Seal's gTwelveMode_StrikeReach; read by Func_0815e3ac
+@ The Broken Seal's gTargetStrike_Reach; read by Func_0815e3ac
 	.global Data_08198878
 Data_08198878:
 	.byte 58, 42, 25, 13, 5, 0
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0815f16c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815f16c
 	.global gData_0819887e
 gData_0819887e:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0815f16c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815f16c
 	.global gData_08198882
 gData_08198882:
 	.byte 0, 4, 8, 12
@@ -1665,7 +1665,7 @@ gData_08198940:
 	.global gData_08198946
 gData_08198946:
 	.2byte 2308, 2372, 2436, 2500
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0815f16c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815f16c
 	.global gData_0819894e
 gData_0819894e:
 	.byte 0, 4, 8, 12
@@ -1951,7 +1951,7 @@ Data_08198bea:
 Data_08198bee:
 	.byte 0, 4, 8, 12
 	.byte 0, 0
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_08170364
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_08170364
 	.global Data_08198bf4
 Data_08198bf4:
 	.byte 0, 4, 8, 12
@@ -2595,7 +2595,7 @@ Data_081999a6:
 	.2byte 2, 2, -1, 0, 1, -1, 2, -1
 	.2byte 0, 1, -1, 0, -1, 0, 1, -1
 	.2byte 0, 1, -1, 0
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_081848ec
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_081848ec
 	.global Data_081999ee
 Data_081999ee:
 	.byte 0, 4, 8, 12
@@ -2769,7 +2769,7 @@ Data_08199e24:
 	.2byte 32762, 0, 32518, 0, 64762, 0, 64518, 0
 	.2byte 32762, 0, 32518, 0, 250, 0, 6, 0
 	.2byte 32758, 0, 32514, 0, 65526, 0, 65282, 0
-@ The Broken Seal's gTwelveMode_GlintDrawFlags; read by Func_0818cb74
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0818cb74
 	.global Data_08199e54
 Data_08199e54:
 	.byte 0, 4, 8, 12

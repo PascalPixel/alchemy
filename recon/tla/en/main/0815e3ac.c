@@ -73,7 +73,7 @@ extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_YellowOrbSheet;
 // The strike's six cels: ☀️'s gBeamSequence_CellSheetOffsets and
-// gTwelveMode_StrikeReach, _StrikeWidths and _StrikeHeights.
+// gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
 extern u16 Data_0819886c[];
 extern u8 Data_08198878[];
 extern u8 Data_08198860[];

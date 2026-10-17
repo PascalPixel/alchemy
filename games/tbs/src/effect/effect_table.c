@@ -43,7 +43,7 @@ u8 gFallingBolts_Counts[] = {
 };
 
 // Falling streak timing and motion records.
-s8 gFiveMode_Records[] = {
+s8 gStreakVolley_Records[] = {
     // STREAK_ANIMATE, STREAK_HIT, STREAK_MOTION, STREAK_SHAKE
     0, 1, 0,  0, // STREAK_STYLE_EMBER
     0, 1, 4,  0, // STREAK_STYLE_LIME
@@ -52,11 +52,11 @@ s8 gFiveMode_Records[] = {
     1, 1, 4,  0, // STREAK_STYLE_CYAN
 };
 // Pixels the target trembles by, frame by frame.
-s8 gFiveMode_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
+s8 gStreakVolley_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
 // Target strike timing, motion and picture cells.
 // clang-format off
-u8 gTwelveMode_Records[] = {
+u8 gTargetStrike_Records[] = {
     // STRIKE_KIND, _HITS, _FLAGS, _COLOUR, _IMAGE_FRAMES, _COMPOSITE, _FRAMES
     STRIKE_KIND_COLUMN, 2, STRIKE_SPARKS, 0, 6, COMPOSITE_ADDITIVE, 70, // 0
     STRIKE_KIND_COLUMN, 1, STRIKE_SMOKE,  1, 6, COMPOSITE_MAX,      54, // 1
@@ -74,14 +74,14 @@ u8 gTwelveMode_Records[] = {
 };
 // clang-format on
 // The six slash pictures: size, sheet offset and reach from the target.
-u8 gTwelveMode_StrikeWidths[] = {38, 54, 71, 74, 77, 65};
-u8 gTwelveMode_StrikeHeights[] = {7, 9, 11, 13, 13, 11};
-u16 gTwelveMode_StrikeOffsets[] = {3200, 3466, 3952, 4733, 5695, 6696};
-u8 gTwelveMode_StrikeReach[] = {58, 42, 25, 13, 5, 0};
+u8 gTargetStrike_Widths[] = {38, 54, 71, 74, 77, 65};
+u8 gTargetStrike_Heights[] = {7, 9, 11, 13, 13, 11};
+u16 gTargetStrike_Offsets[] = {3200, 3466, 3952, 4733, 5695, 6696};
+u8 gTargetStrike_Reach[] = {58, 42, 25, 13, 5, 0};
 // The column stage shown by each picture of a rise.
-u8 gTwelveMode_ColumnStages[] = {0, 1, 2, 3, 2};
+u8 gTargetStrike_ColumnStages[] = {0, 1, 2, 3, 2};
 // The flips a glint may be drawn in.
-u8 gTwelveMode_GlintDrawFlags[] = {0, 4, 8, 12};
+u8 gTargetStrike_GlintDrawFlags[] = {0, 4, 8, 12};
 
 // Blade rain and shattering tile pieces.
 // The sword pictures, by how steeply the sword falls.
@@ -115,12 +115,12 @@ s8 gCornerSparks_X[] = {0, 32, 0, 32};
 s8 gCornerSparks_Y[] = {0, 0, 32, 32};
 u8 gCornerSparks_DrawFlags[] = {0, 4, 8, 12};
 // The six pictures: the first four from the swirl sheet, the last two from the
-// tail sheet. gTwoResource_CellX has six entries for each side.
-u8 gTwoResource_CellWidths[] = {40, 112, 112, 112, 88, 64};
-u8 gTwoResource_CellHeights[] = {56, 80, 64, 64, 80, 88};
-u16 gTwoResource_CellSourceOffsets[] = {0, 2240, 11200, 18368, 0, 7040};
-u8 gTwoResource_CellX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
-s8 gTwoResource_CellBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
+// tail sheet. gSwirlSwipe_CellX has six entries for each side.
+u8 gSwirlSwipe_CellWidths[] = {40, 112, 112, 112, 88, 64};
+u8 gSwirlSwipe_CellHeights[] = {56, 80, 64, 64, 80, 88};
+u16 gSwirlSwipe_CellSourceOffsets[] = {0, 2240, 11200, 18368, 0, 7040};
+u8 gSwirlSwipe_CellX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
+s8 gSwirlSwipe_CellBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 // Leaping strike counts.
 u8 gMemberBurst_Counts[] = {
@@ -146,7 +146,7 @@ u8 gMemberBeam_HeadWidths[] = {17, 19, 20};
 u8 gMemberBeam_HeadHeights[] = {49, 55, 64};
 
 // Shell explosion records and shards.
-s8 gSevenMode_Records[] = {
+s8 gLobbedShells_Records[] = {
     // nonzero: the shells burst into shards, not smoke; unused
     0, 0, // mode 0
     0, 0, // mode 1
@@ -158,13 +158,13 @@ s8 gSevenMode_Records[] = {
 };
 // Lobbed shells: nine tumbling images in two sets, the second (cells 9 to 17)
 // smaller.
-u8 gSevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12,
-                               6, 7,  7, 7, 6, 6,  8,  8,  8};
-u8 gSevenMode_ShardHeights[] = {12, 12, 12, 12, 12, 12, 12, 12, 12,
-                                8,  7,  6,  6,  8,  6,  4,  3,  3};
-u16 gSevenMode_ShardOffsets[] = {0,    108,  228,  336,  444,  552,
-                                 684,  816,  948,  1092, 1140, 1189,
-                                 1231, 1273, 1321, 1357, 1389, 1413};
+u8 gLobbedShells_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12,
+                                  6, 7,  7, 7, 6, 6,  8,  8,  8};
+u8 gLobbedShells_ShardHeights[] = {12, 12, 12, 12, 12, 12, 12, 12, 12,
+                                   8,  7,  6,  6,  8,  6,  4,  3,  3};
+u16 gLobbedShells_ShardOffsets[] = {0,    108,  228,  336,  444,  552,
+                                    684,  816,  948,  1092, 1140, 1189,
+                                    1231, 1273, 1321, 1357, 1389, 1413};
 
 // Shattered panel coordinates.
 // Where each stage of the panel is drawn: seven x positions for each side of
@@ -885,9 +885,9 @@ u8 gGround_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 // Storm scene animations and shattering rocks.
 // Animations played on targets struck by a bolt, chosen at random.
-u8 gMode12_Animations[] = {7, 14, 10, 4};
+u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
 // Flip flags for the smoke puffs, chosen at random.
-u8 gMode12_SmokeFlips[] = {0, 4, 8, 12};
+u8 gThor_SmokeFlips[] = {0, 4, 8, 12};
 u8 gSpire_ShardOffsets[32 * 2] = {65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72,
                                   85, 56,  88, 51, 80, 61, 75, 72, 81, 69, 71,
                                   66, 70,  71, 64, 49, 71, 59, 69, 53, 68, 78,

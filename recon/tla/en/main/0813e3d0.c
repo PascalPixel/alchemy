@@ -64,7 +64,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The flecks live in the map cell buffer.
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The fleck's cell for each size from 1 to 6 (gBattleFx6_FlareCells).
+// The fleck's cell for each size from 1 to 6 (gBattleFx_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_IceTileSheet;

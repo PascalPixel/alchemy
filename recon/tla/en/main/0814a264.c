@@ -60,7 +60,7 @@ extern char ResourceId_OrangePaletteB;   // directory row 0x148
 extern u8 Data_08197a20[];    // ☀️ gFirePillars_Counts, for each variant
 extern s8 Data_08197a23[][4]; // ☀️ gFirePillars_Depths
 extern u8 Data_08197a2f[];    // ☀️ gFirePillars_StartFrames
-extern u16 gData_08197410[];  // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[];  // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer

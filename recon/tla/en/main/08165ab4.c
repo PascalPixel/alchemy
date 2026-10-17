@@ -86,7 +86,7 @@ extern u8 gData_08198a64[];           // ☀️ gCirclingScene_ObjectColumns
 extern u8 gData_08198a6d[];           // ☀️ gCirclingScene_ObjectRows
 extern u16 gData_08198a76[];          // ☀️ gParticleField_PuffCells
 extern u16 gData_08198a84[];          // ☀️ gThornVines_EmberSizes
-extern u16 gData_08197410[];          // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[];          // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay

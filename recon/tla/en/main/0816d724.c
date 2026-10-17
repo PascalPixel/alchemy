@@ -62,7 +62,7 @@ extern char ResourceId_OrangePaletteB;
 // the spark pictures by stage.
 extern u16 Data_08198b5e[];
 extern u16 Data_08198b6c[];
-// The Broken Seal's gParticleStreams_CellOffsets: spark cells of the
+// The Broken Seal's gBattleFx_MoteCellOffsets: spark cells of the
 // Data134 sheet, by size - 1.
 extern u16 gData_08197410[];
 

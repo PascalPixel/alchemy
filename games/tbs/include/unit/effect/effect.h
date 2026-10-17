@@ -57,7 +57,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
 // Particle storage: reuse Ram_MapCellBuffer as an array of struct EffectStep.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define CLIP                                                                   \
+#define EFFECT_CLIP_BOUNDS                                                     \
   (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y) // Clip overflow on all four sides.
 
 // Extract signed 16.16 pixels without reading an s32 through an s16 alias.

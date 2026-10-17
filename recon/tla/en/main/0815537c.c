@@ -56,7 +56,7 @@ extern u8 Data_08198462[];
 extern u8 Data_0819846e[];
 extern u8 Data_08198472[];
 // The Broken Seal's gBattleFx_GlintCellOffsets, _GlintCellWidths and
-// _GlintCellHeights, and gParticleStreams_CellOffsets.
+// _GlintCellHeights, and gBattleFx_MoteCellOffsets.
 extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];

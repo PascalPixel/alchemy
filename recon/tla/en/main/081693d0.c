@@ -97,7 +97,7 @@ extern u32 gCameraSceneParameters[];
 extern struct Scale Data_08196e8c; // the serpent's scale
 extern u16 Data_08197424[];        // the sparkle cells by size
 extern s32 Data_08198aec[];        // the spray's four gravities
-extern u16 gData_08197410[];       // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[];       // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay

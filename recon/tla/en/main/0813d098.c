@@ -93,7 +93,7 @@ extern u8 gData_08197498[];
 extern u16 gData_08197486[];
 extern u8 Data_08197605[];
 
-// The mote's cell for each size (gParticleStreams_CellOffsets).
+// The mote's cell for each size (gBattleFx_MoteCellOffsets).
 extern u16 gData_08197410[];
 
 // The star model and its four projected corners.

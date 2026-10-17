@@ -3,7 +3,7 @@
 @ The Broken Seal's effect/effect_table.c. Cell offsets count bytes from the
 @ start of a sheet; widths and heights are pixels. Labels keep their
 @ placeholders: most readers are not C yet.
-@ The Broken Seal's gParticleStreams_CellOffsets; read by 84 functions
+@ The Broken Seal's gBattleFx_MoteCellOffsets; read by 84 functions
 	.global gData_08197410
 gData_08197410:
 	.2byte 0, 2, 10, 28, 60, 110, 182, 280
@@ -27,20 +27,20 @@ Data_0819744c:
 	.global Data_0819745e
 Data_0819745e:
 	.byte 5, 7, 7, 7, 7, 5, 3, 1, 1
-@ The Broken Seal's gPuffArc_CellWidths; read by 7 functions
+@ The Broken Seal's gBattleFx_PuffArcCellWidths; read by 7 functions
 	.global gData_08197467
 gData_08197467:
 	.byte 24, 29, 30, 27, 24, 16
-@ The Broken Seal's gPuffArc_CellHeights; read by 7 functions
+@ The Broken Seal's gBattleFx_PuffArcCellHeights; read by 7 functions
 	.global gData_0819746d
 gData_0819746d:
 	.byte 23, 32, 37, 49, 53, 52
-@ The Broken Seal's gPuffArc_CellBiasY; read by 7 functions
+@ The Broken Seal's gBattleFx_PuffArcCellBiasY; read by 7 functions
 	.global gData_08197473
 gData_08197473:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
-@ The Broken Seal's gPuffArc_CellSourceOffsets; read by 7 functions
+@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by 7 functions
 	.global gData_0819747a
 gData_0819747a:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
@@ -430,11 +430,11 @@ Data_0819796c:
 	.global Data_0819796e
 Data_0819796e:
 	.byte 1, 1, 2, 3
-@ The Broken Seal's gPuffArc_CellWidths; read by Func_08147aec
+@ The Broken Seal's gBattleFx_PuffArcCellWidths; read by Func_08147aec
 	.global Data_08197972
 Data_08197972:
 	.byte 24, 29, 30, 27, 24, 16
-@ The Broken Seal's gPuffArc_CellHeights; read by Func_08147aec
+@ The Broken Seal's gBattleFx_PuffArcCellHeights; read by Func_08147aec
 	.global Data_08197978
 Data_08197978:
 	.byte 23, 32, 37, 49, 53, 52
@@ -442,7 +442,7 @@ Data_08197978:
 	.global Data_0819797e
 Data_0819797e:
 	.byte 41, 32, 26, 11, 4, 2
-@ The Broken Seal's gPuffArc_CellSourceOffsets; read by Func_08147aec
+@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by Func_08147aec
 	.global Data_08197984
 Data_08197984:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
@@ -1149,20 +1149,20 @@ Data_081982f7:
 	.global Data_08198300
 Data_08198300:
 	.byte 16, 32, 64
-@ The Broken Seal's gPuffArc_CellWidths; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellWidths; read by Func_08151040
 	.global Data_08198303
 Data_08198303:
 	.byte 24, 29, 30, 27, 24, 16
-@ The Broken Seal's gPuffArc_CellHeights; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellHeights; read by Func_08151040
 	.global Data_08198309
 Data_08198309:
 	.byte 23, 32, 37, 49, 53, 52
-@ The Broken Seal's gPuffArc_CellBiasY; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellBiasY; read by Func_08151040
 	.global Data_0819830f
 Data_0819830f:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
-@ The Broken Seal's gPuffArc_CellSourceOffsets; read by Func_08151040
+@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by Func_08151040
 	.global Data_08198316
 Data_08198316:
 	.2byte 0, 552, 1480, 2590, 3913, 5185

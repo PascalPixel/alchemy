@@ -128,7 +128,7 @@ extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_MercuryDjinnSheet;
 extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
-extern u16 Data_08197424[]; // gBattleFx6_FlareCells
+extern u16 Data_08197424[]; // gBattleFx_FlareCells
 
 // Lights gather around each target in turn, eight frames apart, turning as
 // they close in; at the center they burst, and the mode's picture plays

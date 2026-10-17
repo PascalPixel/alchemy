@@ -573,7 +573,7 @@ void BattleFx_RunFallingBolts(struct BattleEffectArgument *effect) {
 
         if (size > 6)
           size = 6;
-        drawSpark(canvas, work->sheet + gBattleFx6_FlareCells[size - 1],
+        drawSpark(canvas, work->sheet + gBattleFx_FlareCells[size - 1],
                   HI(spark->x) - size, HI(spark->y) - size, size * 2, size * 2);
         EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
         spark->variant--;
@@ -679,17 +679,18 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
   if (work->effect->side == 0) {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
-                      COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
     drawUpper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   } else {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP,
-                      COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
     drawUpper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   }
 
@@ -876,11 +877,11 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_Y,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -939,7 +940,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
         if (position.depth > 634)
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                 position.x - size / 2, position.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
         // Mode 1 pushes every mote towards the other side of the field.
@@ -1235,7 +1236,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         s32 picture = frame / STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) % 6;
 
         if (work->effect->side == 1) {
-          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
           gBlitters[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTwelveMode_StrikeOffsets[picture],
@@ -1245,7 +1247,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
               gTwelveMode_StrikeWidths[picture],
               gTwelveMode_StrikeHeights[picture]);
         } else {
-          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                            COMPOSITE_MAX);
           gBlitters[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTwelveMode_StrikeOffsets[picture],
               targetPosition.x / 2 + (gTwelveMode_StrikeReach[picture] / 2) - 8,
@@ -1313,12 +1316,13 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         stage = 3;
       }
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP,
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                         STRIKE_VALUE(mode, STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2 - 18, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         STRIKE_VALUE(mode, STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2, 56, 18, 48);
@@ -1376,7 +1380,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         y = targetPosition.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleFx_GlintCellHeights[image] / 2);
         BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          gTwelveMode_GlintDrawFlags[Random16() & 3] | CLIP,
+                          gTwelveMode_GlintDrawFlags[Random16() & 3] |
+                              EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
         (*lower)(canvas, work->sheet + gBattleFx_GlintCellOffsets[image], x, y,
                  gBattleFx_GlintCellWidths[image],
@@ -1387,9 +1392,10 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     draw[0] = gBlitters[HEAP_SLOT_BLITTER];
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
     draw[1] = *lower;
     for (k = 0; k != 1; k++) {
@@ -1427,8 +1433,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0) {
             EffectPosition_ApplyBaseAndYOffset(step, &position);
             position.x >>= 1;
-            draw[1](canvas,
-                    particleSheet + gParticleStreams_CellOffsets[size - 1],
+            draw[1](canvas, particleSheet + gBattleFx_MoteCellOffsets[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
@@ -1460,8 +1465,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
             size >>= 3;
             size++;
-            draw[1](canvas,
-                    particleSheet + gParticleStreams_CellOffsets[size - 1],
+            draw[1](canvas, particleSheet + gBattleFx_MoteCellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             step->variant--;
           }
@@ -1937,7 +1941,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
         screenPosition.x /= 2;
         size = (i & 1) + work->effect->variant;
-        draw[0](canvas, sheet + gBattleFx6_FlareCells[size - 1],
+        draw[0](canvas, sheet + gBattleFx_FlareCells[size - 1],
                 screenPosition.x - size, screenPosition.y - size, size * 2,
                 size * 2);
       }
@@ -2397,8 +2401,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   AudioCommand_PlayFar(140);
@@ -2426,7 +2430,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != 4; i++) {
         BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                          gCornerSparks_DrawFlags[i] | CLIP, COMPOSITE_MAX);
+                          gCornerSparks_DrawFlags[i] | EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
         draw[1] = *slot;
         draw[1](canvas, work->sheet + (picture << 10), gCornerSparks_X[i] + 32,
                 ground.y + gCornerSparks_Y[i] - 32, 32, 32);
@@ -2445,7 +2450,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[0](canvas, sheet + gBattleFx6_FlareCells[size - 1], x - size,
+          draw[0](canvas, sheet + gBattleFx_FlareCells[size - 1], x - size,
                   y - size, size * 2, size * 2);
           mote->y -= 2;
           mote->variant--;
@@ -2626,10 +2631,12 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BG2PA = 0x100; // unscaled
   if (work->effect->side == 1) {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)slots[7];
   } else {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)slots[7];
   }
@@ -2754,22 +2761,22 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (frame << 1) | 0x1000;
     if (frame > 53)
       REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 41, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                      transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 64, 41, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
-                      transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 72, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP,
-                      transparent);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 64, 72, size,
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -3450,10 +3457,10 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
@@ -3578,7 +3585,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
         } else if ((chip->x >= 0 && chip->x < 127 << 16) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          draw[i & 1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
+          draw[i & 1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                       (chip->x >> 16) - size / 2, (chip->y >> 16) - size, size,
                       size * 2);
         }
@@ -3629,9 +3636,9 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
@@ -3746,10 +3753,10 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01((u8 *)palette + 128, work);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
@@ -4260,10 +4267,11 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way as
@@ -4497,27 +4505,29 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
   if (effect->side == 0) {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     if (gSevenMode_Records[mode * 2] == 0) {
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     } else {
       BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   } else {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                      COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     if (gSevenMode_Records[mode * 2] == 0) {
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     } else {
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   }
@@ -4709,9 +4719,11 @@ void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
   Resource_DecodeType01(sheet, cells);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)slots[7];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)slots[8];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
@@ -5057,11 +5069,12 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     draw[0] =
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -5112,7 +5125,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleFx6_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -5198,11 +5211,12 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     draw[0] =
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                      CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -5253,7 +5267,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleFx6_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -5319,7 +5333,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   ObjectDispatch_ApplyArgumentToChildrenFar(caster, 2);
   ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
@@ -5413,7 +5427,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              draw[0](canvas, graphics + gParticleStreams_CellOffsets[size - 1],
+              draw[0](canvas, graphics + gBattleFx_MoteCellOffsets[size - 1],
                       x - size / 2, y - size, size, size * 2);
             }
           }
@@ -5491,7 +5505,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
@@ -5559,7 +5573,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
                           (to->velocityY - from->velocityY) * k / 12;
 
                   draw[0](canvas,
-                          graphics + gParticleStreams_CellOffsets[size - 1],
+                          graphics + gBattleFx_MoteCellOffsets[size - 1],
                           x - size / 2, y - size, size, size * 2);
                 }
               }
@@ -5658,9 +5672,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
   work->effect = argument;
 
   BattleFx_BeginCanvasLayer(0);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)slots[6];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)slots[7];
 
@@ -5958,7 +5972,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
               if (screen.depth > 350)
                 screen.depth = 350;
               span = 6 - (screen.depth - 170) / 36;
-              draw[1](canvas, graphics + gParticleStreams_CellOffsets[span - 1],
+              draw[1](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
                       screen.x - span / 2, screen.y - span, span, span * 2);
               point->x -= point->x / dist;
               point->y -= point->y / dist;
@@ -5971,7 +5985,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 
           if (alive > 0) {
             span = alive / 10 + 1;
-            draw[1](canvas, graphics + gParticleStreams_CellOffsets[span - 1],
+            draw[1](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
                     (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                     span, span * 2);
           }
@@ -6014,8 +6028,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 3 - (screen.depth - 170) / 90;
-                draw[0](canvas,
-                        graphics + gParticleStreams_CellOffsets[span - 1],
+                draw[0](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
                         screen.x - span / 2, screen.y - span, span, span * 2);
                 spark[index].x += spark[index].velocityX;
                 spark[index].y += spark[index].velocityY;
@@ -6091,8 +6104,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 3 - (screen.depth - 170) / 90;
-                draw[0](canvas,
-                        graphics + gParticleStreams_CellOffsets[span - 1],
+                draw[0](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
                         screen.x - span / 2, screen.y - span, span, span * 2);
                 slot++;
               } while (slot != 28);
@@ -6434,7 +6446,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           u8 size = gPaletteParticles_DropSizes[i & 3];
           s32 height = size * 2;
 
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
           grain->x += grain->velocityX * dir;
           grain->y += grain->velocityY;
@@ -6514,7 +6526,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
             AudioCommand_PlayFar(136);
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {
           streak->variant++;
@@ -6720,7 +6732,7 @@ void BattleFx_RunEmberColumns(struct BattleEffectArgument *effect) {
           if (frame > 76)
             size = 10;
           draw[spark->velocityY > 0](
-              canvas, graphics + gParticleStreams_CellOffsets[size - 1],
+              canvas, graphics + gBattleFx_MoteCellOffsets[size - 1],
               HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
@@ -6802,10 +6814,10 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
   REG_BLDALPHA = 0x0f0f; // 15/16 of each
   draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -6951,10 +6963,10 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)slots[7];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)slots[8];
 
   // The glints: each waits up to 15 frames, then plays at a random spot on
@@ -7276,10 +7288,11 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010; // an even mix
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                    COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)
       slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
@@ -7392,8 +7405,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
             y = spark->y >> 16;
             size = spark->variant / 8 + 1;
-            draw[k & 1](canvas,
-                        sprites + gParticleStreams_CellOffsets[size - 1],
+            draw[k & 1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                         x - size / 2, y - size, size, size * 2);
           }
         }
@@ -7474,9 +7486,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     originY = screenPosition.y + 48;
   }
   REG_BLDALPHA = 0x1010; // an even mix
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -7625,7 +7637,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
               s32 size = spark->variant / 5 + 1;
 
               draw[j & 1](canvas,
-                          graphics + gParticleStreams_CellOffsets[size - 1],
+                          graphics + gBattleFx_MoteCellOffsets[size - 1],
                           x - size / 2, y - size, size, size * 2);
             }
           }
@@ -7688,10 +7700,10 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
   for (i = 0; i != 1024; i++)
@@ -7823,7 +7835,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[i & 1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[i & 1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                       px - size / 2, py - size, size, size * 2);
         }
       }
@@ -8027,7 +8039,8 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (gBattleFx_GlintCellHeights[frame & 3] >> 1);
           BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            CLIP | gRenderMode_GlintFlips[Random16() & 3],
+                            EFFECT_CLIP_BOUNDS |
+                                gRenderMode_GlintFlips[Random16() & 3],
                             COMPOSITE_MAX);
           ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
               canvas,
@@ -8038,9 +8051,11 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_ADDITIVE);
       draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_MAX);
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
@@ -8153,10 +8168,11 @@ void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100; // unscaled
   REG_BLDCNT = 0;    // drawn solid
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
-  drawUpright = (DrawRectangle)slots[7];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_TRANSPARENT);
+  drawUpright = (DrawRectangle)slots[7];
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_TRANSPARENT);
   drawFlipped = (DrawRectangle)slots[8];
 
   // Each sheep starts above the canvas at a random x, with a random tumble
@@ -8261,7 +8277,8 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // over the party's side
   }
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
   draw[0] = (DrawRectangle)slot[6];
@@ -8430,7 +8447,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
         if (screen.depth > 634)
           screen.depth = 634;
         size = 9 - (screen.depth - 250) / 64;
-        callbacks[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        callbacks[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
         if (frame > i + 30) {
@@ -9872,7 +9889,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect) {
             s32 size;
 
             size = i % 3 + 1;
-            draw(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+            draw(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                  HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
             EffectStep_AdvanceWithGravity2D(shard, 62,
                                             gIceShardBursts_Gravities[i & 3]);
@@ -10003,7 +10020,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect) {
             EffectPosition_ApplyBaseAndYOffset(mote, &screen);
             screen.x >>= 1;
             size = 6;
-            draw(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+            draw(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                  screen.x - size / 2, screen.y - size, size, size * 2);
             EffectStep_AdvanceWithGravity3D(mote, 62, 0);
 
@@ -10368,8 +10385,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                 draw[1](canvas, cell, screen.x - half, screen.y - half, edge,
                         edge);
               } else {
-                draw[1](canvas,
-                        sprites + gParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                         screen.x - size / 2, screen.y - size, size, size * 2);
               }
 
@@ -10650,7 +10666,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
               if (screen.depth > 634)
                 screen.depth = 634;
               size = 6 - (screen.depth - 314) / 64;
-              draw[1](canvas, work->sheet + gBattleFx6_FlareCells[size - 1],
+              draw[1](canvas, work->sheet + gBattleFx_FlareCells[size - 1],
                       screen.x - size, screen.y - size, size * 2, size * 2);
               flare->x -= flare->x / distance;
               flare->y -= flare->y / distance;
@@ -11037,42 +11053,43 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *effect) {
 // separate arguments was UB. Plain English trial: unchanged 0x284 bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-        width = gPuffArc_CellWidths[cell];
-        draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
-             flame->x - (width >> 1), flame->y + gPuffArc_CellBiasY[cell],
-             width, gPuffArc_CellHeights[cell]);
+        width = gBattleFx_PuffArcCellWidths[cell];
+        draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+             flame->x - (width >> 1),
+             flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
+             gBattleFx_PuffArcCellHeights[cell]);
 #else
-        draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
-             flame->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
-             flame->y + gPuffArc_CellBiasY[cell], width,
-             gPuffArc_CellHeights[cell]);
+        draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+             flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
+             flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
+             gBattleFx_PuffArcCellHeights[cell]);
 #endif
         if (work->effect->variant != 0) {
 #ifdef UBFIX
-          width = gPuffArc_CellWidths[cell];
-          draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+          width = gBattleFx_PuffArcCellWidths[cell];
+          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
                flame->x - (width >> 1),
-               (flame->y + gPuffArc_CellBiasY[cell]) - 16, width,
-               gPuffArc_CellHeights[cell]);
+               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 16, width,
+               gBattleFx_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
-               flame->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
-               (flame->y + gPuffArc_CellBiasY[cell]) - 16, width,
-               gPuffArc_CellHeights[cell]);
+          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+               flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
+               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 16, width,
+               gBattleFx_PuffArcCellHeights[cell]);
 #endif
         }
         if (work->effect->variant == 2) {
 #ifdef UBFIX
-          width = gPuffArc_CellWidths[cell];
-          draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+          width = gBattleFx_PuffArcCellWidths[cell];
+          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
                flame->x - (width >> 1),
-               (flame->y + gPuffArc_CellBiasY[cell]) - 32, width,
-               gPuffArc_CellHeights[cell]);
+               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 32, width,
+               gBattleFx_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
-               flame->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
-               (flame->y + gPuffArc_CellBiasY[cell]) - 32, width,
-               gPuffArc_CellHeights[cell]);
+          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+               flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
+               (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 32, width,
+               gBattleFx_PuffArcCellHeights[cell]);
 #endif
         }
       }
@@ -11205,7 +11222,8 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   } else {
     xOffset = 0;
   }
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   for (member = 0; member != work->effect->count; member++)
     work->particles[member].variant = 0;      // 1 once the target has landed
@@ -11401,7 +11419,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
           screen.depth = 799;
         size = 10 - (screen.depth - 160) / 64;
         draw[frame < launchFrame + 48 ? 1 : 0](
-            canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+            canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
             screen.x - size / 2, screen.y - size, size, size * 2);
         ember->x += ember->velocityX;
         ember->y += ember->velocityY;
@@ -11801,10 +11819,10 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
     REG_BG2PA = 0x80; // double width
   else
     REG_BG2PA = 0x100;
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    COMPOSITE_ADDITIVE);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + CLOSING_BOLT_CELLS, 1, 1);
@@ -11906,7 +11924,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;
 
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   x - size / 2, y - size, size, size * 2);
         }
       }
@@ -12058,7 +12076,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
                 work->sheet +
-                    (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) +
+                    (gBattleFx_MoteCellOffsets[size - 1] + (i & 1) * 770) +
                     FIELD_MOTE_CELLS,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
@@ -12535,7 +12553,7 @@ void BattleFx_RunSwirlingStars(void *object) {
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet +
-                    ((i & 3) * 770 + gParticleStreams_CellOffsets[size - 1]),
+                    ((i & 3) * 770 + gBattleFx_MoteCellOffsets[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(star, 60, 0);
         if (frame > i / 4 + 30) {
@@ -13023,7 +13041,7 @@ void BattleFx_RunStagedParticles(struct BattleEffectArgument *effect) {
               screen.y = screen.y + y + 16;
 #endif
               trail->x -= 4;
-              draw[1](canvas, sheet + gParticleStreams_CellOffsets[4],
+              draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[4],
                       screen.x - 2, screen.y - 5, 5, 10);
             }
           }
@@ -13073,18 +13091,21 @@ void BattleFx_RunStagedParticles(struct BattleEffectArgument *effect) {
 // separate arguments was UB. Plain English trial: unchanged 0x944 bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-            width = gPuffArc_CellWidths[cell];
+            width = gBattleFx_PuffArcCellWidths[cell];
             draw[i & 1](canvas,
-                        Ram_MapCellBuffer + gPuffArc_CellSourceOffsets[cell],
+                        Ram_MapCellBuffer +
+                            gBattleFx_PuffArcCellSourceOffsets[cell],
                         slash->x - (width >> 1) - 8,
-                        slash->y + gPuffArc_CellBiasY[cell] - 40, width,
-                        gPuffArc_CellHeights[cell]);
+                        slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,
+                        gBattleFx_PuffArcCellHeights[cell]);
 #else
             draw[i & 1](
-                canvas, Ram_MapCellBuffer + gPuffArc_CellSourceOffsets[cell],
-                slash->x - ((width = gPuffArc_CellWidths[cell]) >> 1) - 8,
-                slash->y + gPuffArc_CellBiasY[cell] - 40, width,
-                gPuffArc_CellHeights[cell]);
+                canvas,
+                Ram_MapCellBuffer + gBattleFx_PuffArcCellSourceOffsets[cell],
+                slash->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1) -
+                    8,
+                slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,
+                gBattleFx_PuffArcCellHeights[cell]);
 #endif
             if (slash->variant <= 11) {
               draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4,
@@ -13828,7 +13849,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;
 
-          draw[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                   x - size / 2, y - size, size, size * 2);
         }
       }
@@ -14030,7 +14051,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         if (position.depth > 634)
           position.depth = 634;
         size = 8 - (position.depth - 250) / 64;
-        draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                 position.x - size / 2, position.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
         if (frame >= i / 8 + 24) {
@@ -14082,7 +14103,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
           EffectStep_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
@@ -14272,16 +14293,19 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   // 128x128 drawing, mirrored on side 1.
   if (mode == 5) {
     if (work->effect->side == 1)
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     else
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_MAX);
   } else {
     if (work->effect->side == 1)
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
     else
-      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+      BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_ADDITIVE);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 
@@ -14451,10 +14475,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           y = y - frame * 2 + 138;
         if (work->effect->side == 1)
           BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                            CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
-        else
-          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
+        else
+          BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
         draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame <= 3)
           draw[1](canvas, work->sheet + VOLLEY_DJINNI_CELLS, x, y, 20, 40);
@@ -14592,10 +14617,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               // flipped.
               if (work->effect->side == 1)
                 BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-              else
-                BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                                  EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                   COMPOSITE_MAX);
+              else
+                BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
@@ -14604,10 +14630,12 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               if (work->effect->side == 1)
                 BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+                                  EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                  COMPOSITE_MAX);
               else
                 BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+                                  EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                                  COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
@@ -14651,8 +14679,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 step = flash->z / 2;
 
             if (!(i & 1)) {
-              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                                COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + gVolley_FlashOffsets[step],
                   flash->x - gVolley_FlashWidths[step],
@@ -14660,7 +14688,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + gVolley_FlashOffsets[step], flash->x,
                   flash->y + gVolley_FlashSteps[step] -
@@ -14668,8 +14697,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else {
-              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
-                                COMPOSITE_MAX);
+              BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                                EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
                   work->sheet + gVolley_FlashOffsets[step] +
@@ -14679,7 +14708,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   gVolley_FlashHeights[step], gVolley_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                                CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
                   work->sheet + gVolley_FlashOffsets[step] +
@@ -14704,7 +14734,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 3) + 1;
 
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   HI(particle->x) - size / 2, HI(particle->y) - size, size,
                   size * 2);
           EffectStep_AdvanceWithGravity2D(particle, 60, 0x1000);
@@ -14721,7 +14751,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 4) + 1;
 
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   HI(particle->x) - size / 2, HI(particle->y) - size, size,
                   size * 2);
           EffectStep_AdvanceWithGravity2D(particle, 60, -0x4000);
@@ -14888,14 +14918,15 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
 
   // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
     BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                      CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
   } else {
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                      COMPOSITE_MAX);
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP,
-                      COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -14977,7 +15008,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
           size >>= 4;
           size += 2;
           sparkScreen.x >>= 1;
-          draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   sparkScreen.x - size / 2, sparkScreen.y - size, size,
                   size * 2);
           EffectStep_AdvanceWithGravity3D(spark, 60, -0x200);
@@ -15148,7 +15179,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                 HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
@@ -15269,7 +15300,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 1;
 
-        draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                 HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
@@ -15406,7 +15437,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                 HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
@@ -15535,16 +15566,18 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
 // separate arguments was UB. Plain English trial: unchanged 0x3c4 bytes,
 // with different instructions. Preserve the original native calls.
 #ifdef UBFIX
-          width = gPuffArc_CellWidths[cell];
-          blitters[0](canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+          width = gBattleFx_PuffArcCellWidths[cell];
+          blitters[0](canvas,
+                      work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
                       step->x - (width >> 1),
-                      step->y + gPuffArc_CellBiasY[cell], width,
-                      gPuffArc_CellHeights[cell]);
+                      step->y + gBattleFx_PuffArcCellBiasY[cell], width,
+                      gBattleFx_PuffArcCellHeights[cell]);
 #else
-          blitters[0](canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
-                      step->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
-                      step->y + gPuffArc_CellBiasY[cell], width,
-                      gPuffArc_CellHeights[cell]);
+          blitters[0](
+              canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+              step->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
+              step->y + gBattleFx_PuffArcCellBiasY[cell], width,
+              gBattleFx_PuffArcCellHeights[cell]);
 #endif
         }
         index++;
@@ -15563,7 +15596,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
 
         size = (index & 1) + 3;
         x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-        draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                 x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
         EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
         angle = step->z;
@@ -16182,7 +16215,7 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
             s32 y = screen[i * 2].y +
                     Iwram_MulQ16(j * (screen[i * 2 + 1].y - screen[i * 2].y),
                                  0x555);
-            blit[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
+            blit[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                     x - size / 2, y - size, size, size * 2);
           }
         }
@@ -16221,13 +16254,12 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
         screen[0].y = (screen[0].y >> 16) + 60;
-        drawAlt(
-            canvas,
-            work->sheet +
-                (level * 0x302 + gParticleStreams_CellOffsets[dotSize - 1]) +
-                rings,
-            screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
-            dotSize * 2);
+        drawAlt(canvas,
+                work->sheet +
+                    (level * 0x302 + gBattleFx_MoteCellOffsets[dotSize - 1]) +
+                    rings,
+                screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
+                dotSize * 2);
       }
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     }
@@ -16502,7 +16534,7 @@ void BattleFx_RunStormScene(struct BattleEffectArgument *effect) {
               s32 x = spark->x >> 16;
               s32 y = spark->y >> 16;
               s32 dotSize = spark->variant / 16 + 1;
-              draw(canvas, sprites + gParticleStreams_CellOffsets[dotSize - 1],
+              draw(canvas, sprites + gBattleFx_MoteCellOffsets[dotSize - 1],
                    x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
             }
           }
@@ -16961,8 +16993,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
         screen.x /= 2;
         size >>= 3;
         size++;
-        draw[(i / 2) & 1](canvas,
-                          sprites + gParticleStreams_CellOffsets[size - 1],
+        draw[(i / 2) & 1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                           screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
         if (mote->y < 0x80000)
@@ -17227,7 +17258,7 @@ void BattleFx_RunRisingWall(struct BattleEffectArgument *effect) {
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          draw[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
+          draw[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                   HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
@@ -17646,7 +17677,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
           point.x += shake;
           size >>= 3;
           size += 2;
-          draw[pair & 1](canvas, sheet + gBattleFx6_FlareCells[size - 1],
+          draw[pair & 1](canvas, sheet + gBattleFx_FlareCells[size - 1],
                          point.x - size, point.y - size, size * 2, size * 2);
           EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
@@ -17802,7 +17833,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           if (point.depth > 60)
             point.depth = 60;
           point.depth += 60;
-          draw[0](canvas, sheet + gBattleFx6_FlareCells[size - 1],
+          draw[0](canvas, sheet + gBattleFx_FlareCells[size - 1],
                   point.x - size, point.y - size, size * 2, size * 2);
           mote->x -= 4;
         }
@@ -17881,7 +17912,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           size >>= 3;
           size += 2;
           spot.y += 16;
-          draw[pair & 1](canvas, sheet + gBattleFx6_FlareCells[size - 1],
+          draw[pair & 1](canvas, sheet + gBattleFx_FlareCells[size - 1],
                          spot.x - size, spot.y - size, size * 2, size * 2);
           EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
@@ -18268,9 +18299,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             if (sparkScreen.depth > 60)
               sparkScreen.depth = 60;
             sparkScreen.depth += 60; // 0〜120
-            blitters[1](
-                canvas, sprites + gParticleStreams_CellOffsets[size - 1],
-                sparkScreen.x - size / 2, sparkScreen.y - size, size, size * 2);
+            blitters[1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
+                        sparkScreen.x - size / 2, sparkScreen.y - size, size,
+                        size * 2);
           }
           step->x -= 4;
         }
@@ -18576,7 +18607,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             size++;
             projected.x /= 2;
             blitters[index & 1](
-                canvas, sprites + gParticleStreams_CellOffsets[size - 1],
+                canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                 projected.x - size / 2, projected.y - size, size, size * 2);
             EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
             step->variant--;
@@ -18619,8 +18650,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             s32 size = (i & 1) + 6;
             EffectPosition_ApplyBaseAndYOffset(step, &projected);
             projected.x >>= 1;
-            blitters[0](canvas,
-                        sprites + gParticleStreams_CellOffsets[size - 1],
+            blitters[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
                         projected.x - (u32)size / 2, projected.y - size, size,
                         size * 2);
             EffectStep_AdvanceWithGravity3D(step, 62, 0);
@@ -18919,7 +18949,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       for (i = 0; i != 12; i++) {
         if (frame >= i + 6 && frame < i + 18) {
           s32 image = (frame - i - 6) / 2;
-          s32 imageX = targetScreen->x / 2 - gPuffArc_CellWidths[image] / 2;
+          s32 imageX =
+              targetScreen->x / 2 - gBattleFx_PuffArcCellWidths[image] / 2;
           s32 mirrored;
           if (i & 1)
             imageX += (1 + i) / 2 * 3;
@@ -18931,10 +18962,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             if (((i - 1) & 3) > 1)
               mirrored = 1;
           }
-          blitters[mirrored](
-              canvas, Ram_MapCellBuffer + gPuffArc_CellSourceOffsets[image],
-              imageX, gPuffArc_CellBiasY[image] + 48,
-              gPuffArc_CellWidths[image], gPuffArc_CellHeights[image]);
+          blitters[mirrored](canvas,
+                             Ram_MapCellBuffer +
+                                 gBattleFx_PuffArcCellSourceOffsets[image],
+                             imageX, gBattleFx_PuffArcCellBiasY[image] + 48,
+                             gBattleFx_PuffArcCellWidths[image],
+                             gBattleFx_PuffArcCellHeights[image]);
         }
       }
     } else if (kind == 16) {
@@ -19497,9 +19530,9 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BLDCNT = 0x3f46;
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER, 7, 7, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   maxBlend = heap[7];
-  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+  BattleFx_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, EFFECT_CLIP_BOUNDS,
                     COMPOSITE_ADDITIVE);
   additive = heap[8];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -19585,7 +19618,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         size = particle->variant / 16 + 3;
         px = HI(particle->x);
         py = HI(particle->y);
-        additive(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        additive(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                  px - size / 2, py - size, size, size * 2);
       }
     }
@@ -19602,7 +19635,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         size = particle->variant / 16 + 1;
         px = HI(particle->x);
         py = HI(particle->y);
-        additive(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        additive(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                  px - size / 2, py - size, size, size * 2);
       }
     }
@@ -20156,8 +20189,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
              work->sheet +
-                 (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) +
-                 0x3200,
+                 (gBattleFx_MoteCellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
@@ -20176,8 +20208,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 size = rise + 3;
 
       draw(canvas,
-           work->sheet +
-               (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) +
+           work->sheet + (gBattleFx_MoteCellOffsets[size - 1] + (i & 1) * 770) +
                0x3200,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
@@ -20467,7 +20498,7 @@ void BattleFx_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        draw[i & 1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+        draw[i & 1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                     HI(spark->x) - size / 2, HI(spark->y) - size, size,
                     size * 2);
         EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
@@ -20603,12 +20634,16 @@ void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
     if (frame <= 17) {
       s32 cell = frame / 3;
 
-      draw[0](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-              48, gPuffArc_CellBiasY[cell] + 60, gPuffArc_CellWidths[cell],
-              gPuffArc_CellHeights[cell]);
-      draw[1](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-              56, gPuffArc_CellBiasY[cell] + 60, gPuffArc_CellWidths[cell],
-              gPuffArc_CellHeights[cell]);
+      draw[0](canvas,
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCellSourceOffsets[cell],
+              48, gBattleFx_PuffArcCellBiasY[cell] + 60,
+              gBattleFx_PuffArcCellWidths[cell],
+              gBattleFx_PuffArcCellHeights[cell]);
+      draw[1](canvas,
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCellSourceOffsets[cell],
+              56, gBattleFx_PuffArcCellBiasY[cell] + 60,
+              gBattleFx_PuffArcCellWidths[cell],
+              gBattleFx_PuffArcCellHeights[cell]);
     }
     if (frame >= 18 && frame <= 58) {
       if (frame == 18) {
@@ -20692,7 +20727,7 @@ void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
               ember->variant++;
             }
           } else {
-            draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+            draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
           }
           ember->x += ember->velocityX;
@@ -20714,10 +20749,12 @@ void BattleFx_RunDualParticleStream(struct BattleEffectArgument *effect) {
           s32 cell = puff->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-                  puff->x - gPuffArc_CellWidths[cell] / 2,
-                  puff->y + gPuffArc_CellBiasY[cell], gPuffArc_CellWidths[cell],
-                  gPuffArc_CellHeights[cell]);
+                  &work->sheet[0x3c00] +
+                      gBattleFx_PuffArcCellSourceOffsets[cell],
+                  puff->x - gBattleFx_PuffArcCellWidths[cell] / 2,
+                  puff->y + gBattleFx_PuffArcCellBiasY[cell],
+                  gBattleFx_PuffArcCellWidths[cell],
+                  gBattleFx_PuffArcCellHeights[cell]);
         }
         puff->variant++;
       }
@@ -20864,7 +20901,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
           out.y = out.y + origin.y - 112;
           size = (life >> 3) + 2;
           blitters[(i / 2) & 1](
-              canvas, particleSheet + gParticleStreams_CellOffsets[size - 1],
+              canvas, particleSheet + gBattleFx_MoteCellOffsets[size - 1],
               out.x - size / 2, out.y - size, size, size * 2);
           EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
           shard->variant--;
@@ -21105,7 +21142,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect) {
                 // compositing.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cel = sheet + gParticleStreams_CellOffsets[size - 1];
+                cel = sheet + gBattleFx_MoteCellOffsets[size - 1];
                 px -= size / 2;
                 py -= size;
                 blit[lane](canvas, cel, px, py, size, size * 2);
@@ -21376,7 +21413,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
           if (frame > 76) {
             size = 10;
           }
-          blitters[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          blitters[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                       HI(dust->x) - size / 2, HI(dust->y) - size, size,
                       size * 2);
 
@@ -21443,7 +21480,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = sheet + gParticleStreams_CellOffsets[size - 1];
+              cell = sheet + gBattleFx_MoteCellOffsets[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;
@@ -21671,7 +21708,7 @@ void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
         if (maximumDepth < z) {
           maximumDepth = z;
         }
-        draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1],
+        draw[0](canvas, ramp + gBattleFx_MoteCellOffsets[size - 1],
                 projectedPosition.x - size / 2, projectedPosition.y - size,
                 size, size * 2);
         if (frame == 64) {
@@ -21714,7 +21751,7 @@ void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
         size = projectedPosition.depth / 20 + 2;
         projectedPosition.x += 60;
         projectedPosition.y += 80;
-        draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1],
+        draw[0](canvas, ramp + gBattleFx_MoteCellOffsets[size - 1],
                 projectedPosition.x - size / 2, projectedPosition.y - size,
                 size, size * 2);
       }
@@ -21823,7 +21860,7 @@ void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
       r = frame * 10 - 1424;
       work->transferValue = 75;
       if (n <= 6) {
-        s32 cell = n * 770 + gParticleStreams_CellOffsets[7] + 0x2710;
+        s32 cell = n * 770 + gBattleFx_MoteCellOffsets[7] + 0x2710;
         /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp.
          * 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
         s32 high = 8;
@@ -22111,7 +22148,7 @@ void BattleFx_RunShockwaveScene(struct BattleEffectArgument *effect) {
         s32 angle = i << 8;
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
-        draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1], x + 60,
+        draw[0](canvas, ramp + gBattleFx_MoteCellOffsets[size - 1], x + 60,
                 y + 50, size, size * 2);
       }
     }
@@ -22512,8 +22549,8 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
         s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
         s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-        blit(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
-             x - size / 2, y - size, size, size * 2);
+        blit(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1], x - size / 2,
+             y - size, size, size * 2);
       }
     }
 
@@ -22533,7 +22570,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          blit(canvas, sheet + gParticleStreams_CellOffsets[size - 1], fire->x,
+          blit(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1], fire->x,
                HI(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
@@ -22699,7 +22736,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
         if (burst->variant > 0) {
           s32 size = 3;
 
-          blit(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+          blit(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
@@ -22968,7 +23005,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
           s32 fy = HI(flare->y) + 62;
           s32 r = (i & 3) + 5;
           s = r * 2;
-          blit[0](canvas, work->sheet + gBattleFx6_FlareCells[r - 1] + 0x4e20,
+          blit[0](canvas, work->sheet + gBattleFx_FlareCells[r - 1] + 0x4e20,
                   fx - r, fy - r, s, s);
           flare->x += flare->velocityX;
           flare->y += flare->velocityY;
@@ -23001,7 +23038,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
     }
     if (frame > 221) {
       for (i = 0; i != 64; i++) {
-        u16 *cells = gBattleFx6_FlareCells;
+        u16 *cells = gBattleFx_FlareCells;
         s32 r = 1;
         if (frame >= i / 2 + 222) {
           blit[0](canvas, work->sheet + cells[r - 1] + 0x4e20,
@@ -23052,7 +23089,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
       if (z > 4) {
         z = 4;
       }
-      blit[1](canvas, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20,
+      blit[1](canvas, work->sheet + gBattleFx_FlareCells[z - 1] + 0x4e20,
               108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame >= 192 && frame < 200) {
@@ -23061,7 +23098,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
       if (z > 6) {
         z = 6;
       }
-      blit[1](canvas, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20,
+      blit[1](canvas, work->sheet + gBattleFx_FlareCells[z - 1] + 0x4e20,
               108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame > 199) {
@@ -23071,14 +23108,14 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
       if (z > 8) {
         z = 8;
       }
-      blit[1](canvas, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20,
+      blit[1](canvas, work->sheet + gBattleFx_FlareCells[z - 1] + 0x4e20,
               108 - z, 60 - z, z * 2, z * 2);
       if (frame <= 213) {
         z = u / 4 + 1;
         if (z > 4) {
           z = 4;
         }
-        blit[1](canvas, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20,
+        blit[1](canvas, work->sheet + gBattleFx_FlareCells[z - 1] + 0x4e20,
                 100 - z, 52 - z, z * 2, z * 2);
       }
     }
@@ -23105,7 +23142,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
         s32 m = 3;
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
-          draw(canvas, particleSheet + gParticleStreams_CellOffsets[k - 1],
+          draw(canvas, particleSheet + gBattleFx_MoteCellOffsets[k - 1],
                HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
           EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62,
                                           gBattleFx6_Gravity[i & m]);
@@ -23220,8 +23257,7 @@ void BattleFx_RunFormationSweep(struct BattleEffectArgument *effect) {
         } else if (PARTICLES[i].x >= 0 && (x = PARTICLES[i].x >> 16) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
-          blit[i & 1](canvas,
-                      particleSheet + gParticleStreams_CellOffsets[k - 1],
+          blit[i & 1](canvas, particleSheet + gBattleFx_MoteCellOffsets[k - 1],
                       x - k / 2, y - k, k, k * 2);
         }
       }
@@ -23583,13 +23619,13 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     }
     PUT(templateWords[6]);
     PUT(templateWords[7]);
-    PUT(templateWords[8] + gBattleEffect_BitOperands[widthShift]);
+    PUT(templateWords[8] + gBattleFx_BitOperands[widthShift]);
     if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(templateWords[9]);
     } else {
       PUT(templateWords[10]);
     }
-    PUT(templateWords[11] + gBattleEffect_BitOperands[widthShift]);
+    PUT(templateWords[11] + gBattleFx_BitOperands[widthShift]);
   }
   templateWords += 12;
 
@@ -23891,13 +23927,13 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     }
     PUT(templateWords[6]);
     PUT(templateWords[7]);
-    PUT(templateWords[8] + gBattleEffect_BitOperands[widthShift]);
+    PUT(templateWords[8] + gBattleFx_BitOperands[widthShift]);
     if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(templateWords[9]);
     } else {
       PUT(templateWords[10]);
     }
-    PUT(templateWords[11] + gBattleEffect_BitOperands[widthShift]);
+    PUT(templateWords[11] + gBattleFx_BitOperands[widthShift]);
   }
   templateWords += 12;
 
@@ -24091,7 +24127,7 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   PUT(*templateWords++);
   PUT(*templateWords++);
 
-  codeEnd = (const u32 *)gParticleStreams_CellOffsets;
+  codeEnd = (const u32 *)gBattleFx_MoteCellOffsets;
   return templateWords == codeEnd;
 }
 

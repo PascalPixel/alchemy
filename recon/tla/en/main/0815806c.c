@@ -58,7 +58,7 @@ extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern u16 gData_08197410[];
-// The ember puff's six cels: ☀️'s gPuffArc_CellWidths, _CellHeights,
+// The ember puff's six cels: ☀️'s gBattleFx_PuffArcCellWidths, _CellHeights,
 // _CellBiasY and _CellSourceOffsets.
 extern u8 gData_08197467[];
 extern u8 gData_0819746d[];

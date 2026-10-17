@@ -106,7 +106,7 @@ extern s16 Data_08198a02[][3]; // ☀️ gParticleStreams_OrbitPoints
 extern s16 Data_08198a2c[][2]; // ☀️ gParticleStreams_DropPoints
 extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashSheetOffsets
 extern u16 Data_08198a56[];    // ☀️ gParticleStreams_FlashSizes
-extern u16 gData_08197410[];   // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[];   // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,

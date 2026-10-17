@@ -60,7 +60,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_Data134; // the particle sheet
 extern u8 Data_08198300[];      // gHomingEmbers_Counts
-extern u16 gData_08197410[];    // gParticleStreams_CellOffsets
+extern u16 gData_08197410[];    // gBattleFx_MoteCellOffsets
 extern u16 Data_08198316[];     // gHomingEmbers_FlareCells
 extern u8 Data_08198303[];      // gHomingEmbers_FlareWidths
 extern u8 Data_0819830f[];      // gHomingEmbers_FlareBiasY

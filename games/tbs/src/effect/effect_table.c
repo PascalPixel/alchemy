@@ -15,17 +15,15 @@
 struct BattleEffectArgument;
 
 // Shared cell layouts
-u16 gParticleStreams_CellOffsets[] = {0,   2,   10,  28,  60,
-                                            110, 182, 280, 408, 570};
-u16 gBattleFx6_FlareCells[] = {0,   4,   20,   56,   120,  220, 364,
-                                     560, 816, 1140, 0,    8,    40,  112,
-                                     240, 440, 728,  1120, 1632, 2280};
+u16 gBattleFx_MoteCellOffsets[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
+u16 gBattleFx_FlareCells[] = {0, 4, 20, 56,  120, 220, 364, 560,  816,  1140,
+                              0, 8, 40, 112, 240, 440, 728, 1120, 1632, 2280};
 u16 gBattleFx_PuffCells[] = {0, 25, 74, 123, 172, 221, 246, 255, 256};
 u8 gBattleFx_PuffSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
-u8 gPuffArc_CellWidths[] = {24, 29, 30, 27, 24, 16};
-u8 gPuffArc_CellHeights[] = {23, 32, 37, 49, 53, 52};
-u8 gPuffArc_CellBiasY[] = {41, 32, 26, 11, 4, 2};
-u16 gPuffArc_CellSourceOffsets[] = {0, 552, 1480, 2590, 3913, 5185};
+u8 gBattleFx_PuffArcCellWidths[] = {24, 29, 30, 27, 24, 16};
+u8 gBattleFx_PuffArcCellHeights[] = {23, 32, 37, 49, 53, 52};
+u8 gBattleFx_PuffArcCellBiasY[] = {41, 32, 26, 11, 4, 2};
+u16 gBattleFx_PuffArcCellSourceOffsets[] = {0, 552, 1480, 2590, 3913, 5185};
 u16 gBattleFx_GlintCellOffsets[] = {0, 589, 1302, 2015, 2414, 2750};
 u8 gBattleFx_GlintCellWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gBattleFx_GlintCellHeights[] = {31, 31, 31, 21, 21, 24};

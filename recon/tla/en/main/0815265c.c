@@ -124,7 +124,7 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_IceBlockSheet;
 extern char ResourceId_EffectPalette01;
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
 extern u16 gData_08197486[]; // gBattleFx_GlintCellOffsets
 extern u8 gData_08197492[];  // gBattleFx_GlintCellWidths
 extern u8 gData_08197498[];  // gBattleFx_GlintCellHeights

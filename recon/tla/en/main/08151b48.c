@@ -64,7 +64,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_Data134; // the particle sheet
 extern u8 Data_0819839c[][2];   // gLightningBolts_Sparks
-extern u16 gData_08197410[];    // gParticleStreams_CellOffsets
+extern u16 gData_08197410[];    // gBattleFx_MoteCellOffsets
 
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.

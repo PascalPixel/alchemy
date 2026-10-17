@@ -60,7 +60,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 
 extern char ResourceId_Data134;       // the particle sheet
 extern char ResourceId_IceBlockSheet; // its palette
-extern u16 gData_08197410[];          // gParticleStreams_CellOffsets
+extern u16 gData_08197410[];          // gBattleFx_MoteCellOffsets
 extern s32 gData_081982e4[];          // gIceShardBursts_Gravities
 
 // Ice shards burst up from each target in turn, 20 frames apart.

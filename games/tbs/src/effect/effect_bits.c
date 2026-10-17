@@ -17,5 +17,5 @@
       ARM_IMMEDIATE_BIT(15)
 
 // Two identical tables; the first has no references.
-u16 gBattleEffect_ColorBitOperands[] = {ARM_IMMEDIATE_POWERS};
-u16 gBattleEffect_BitOperands[] = {ARM_IMMEDIATE_POWERS};
+u16 gBattleFx_ColorBitOperands[] = {ARM_IMMEDIATE_POWERS};
+u16 gBattleFx_BitOperands[] = {ARM_IMMEDIATE_POWERS};

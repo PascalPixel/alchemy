@@ -62,7 +62,7 @@ extern char ResourceId_VioletPaletteB; // directory row 0x122
 extern u8 Data_081979da[];   // ☀️ gLightningPillar_Counts
 extern u8 Data_081979cc[];   // ☀️ gLightningPillar_Columns, 7 for each side
 extern u16 Data_081979c0[];  // ☀️ gLightningPillar_Sparks: sparks, shake
-extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer

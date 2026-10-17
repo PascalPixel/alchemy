@@ -65,7 +65,7 @@ extern u8 ResourceId_JupiterDjinnSmallSheet[];
 extern u8 ResourceId_VenusDjinnSmallSheet[];
 extern u8 ResourceId_Data134[];
 
-// The Broken Seal's gParticleStreams_CellOffsets: each spark size's cel.
+// The Broken Seal's gBattleFx_MoteCellOffsets: each spark size's cel.
 extern const u16 gData_08197410[];
 
 u8 *Resource_GetTableEntry(s32 id);

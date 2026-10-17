@@ -59,7 +59,7 @@ extern u8 Data_081976da[];
 extern s8 Data_081976d2[];
 extern s8 Data_081976d6[];
 
-// The mote's cell for each size from 1 to 6 (gBattleFx6_FlareCells).
+// The mote's cell for each size from 1 to 6 (gBattleFx_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_CyanSparkSheet;

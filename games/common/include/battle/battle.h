@@ -171,7 +171,7 @@ extern u32 gBattleFx_PulseScales[];
 extern const s32 gBattleFx_SourceHoldScript[];
 extern s16 gBattleFx_TargetRangeByMode[];
 extern const s32 gBattleFx_UntargetedObjectScript[];
-extern u16 gBattleFx6_FlareCells[];
+extern u16 gBattleFx_FlareCells[];
 extern u8 gBattleFxPillar_Counts[];
 extern u8 gBattleFxPillar_Kinds[];
 extern u16 gBattleFxPillar_PuffCells[];
@@ -281,13 +281,13 @@ extern u8 gParticleField_Counts[][3];
 extern u16 gParticleField_PuffCells[];
 extern u16 gParticleField_PuffSizes[];
 #ifndef OWN_ParticleStreams_CellOffsets
-extern u16 gParticleStreams_CellOffsets[];
+extern u16 gBattleFx_MoteCellOffsets[];
 #endif
 extern const s16 gParty_PairResolveRules[];
-extern u8 gPuffArc_CellBiasY[];
-extern u8 gPuffArc_CellHeights[];
-extern u16 gPuffArc_CellSourceOffsets[];
-extern u8 gPuffArc_CellWidths[];
+extern u8 gBattleFx_PuffArcCellBiasY[];
+extern u8 gBattleFx_PuffArcCellHeights[];
+extern u16 gBattleFx_PuffArcCellSourceOffsets[];
+extern u8 gBattleFx_PuffArcCellWidths[];
 extern u8 gRenderMode_GlintFlips[];
 extern struct Vector3 gRingBolts_Points[];
 extern u16 gRisingMotes_ColumnCells[];

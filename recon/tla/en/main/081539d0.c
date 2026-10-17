@@ -43,7 +43,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 #define STARS ((struct EffectStep *)Ram_MapCellBuffer)
 
 extern char ResourceId_StarDotSheet;
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
 
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.

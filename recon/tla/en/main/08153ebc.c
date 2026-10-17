@@ -123,11 +123,11 @@ extern char ResourceId_StagedParticlePath;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_EmberStreakSheet;
 extern s32 Data_081983cc[];  // gStagedParticles_UnitScale
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
-extern u16 gData_0819747a[]; // gPuffArc_CellSourceOffsets
-extern u8 gData_08197467[];  // gPuffArc_CellWidths
-extern u8 gData_08197473[];  // gPuffArc_CellBiasY
-extern u8 gData_0819746d[];  // gPuffArc_CellHeights
+extern u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern u16 gData_0819747a[]; // gBattleFx_PuffArcCellSourceOffsets
+extern u8 gData_08197467[];  // gBattleFx_PuffArcCellWidths
+extern u8 gData_08197473[];  // gBattleFx_PuffArcCellBiasY
+extern u8 gData_0819746d[];  // gBattleFx_PuffArcCellHeights
 
 // Summon 4: a giant strides across a violet sky and cuts the air; sixteen
 // slashes gather light and fly, then rain down on the targets.

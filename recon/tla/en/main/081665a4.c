@@ -59,7 +59,7 @@ extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_BlastSheet;
 extern u8 gData_08198a92[];  // ☀️ gFlameBlade_StrikeColumns
 extern u8 gData_08198a98[];  // ☀️ gSparkGroups_FlashCells
-extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer

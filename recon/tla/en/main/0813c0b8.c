@@ -50,7 +50,7 @@ extern u8 Data_08197527[];
 #define DROP_SPACING(variant) Data_08197527[(variant) * 4 + 2]
 #define FRAME_COUNT(variant) Data_08197527[(variant) * 4 + 3]
 
-// The splash's cell for each size from 1 to 6 (gBattleFx6_FlareCells).
+// The splash's cell for each size from 1 to 6 (gBattleFx_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_BlueBeamSheet;

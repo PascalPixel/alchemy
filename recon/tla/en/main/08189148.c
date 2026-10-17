@@ -54,10 +54,10 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_DualStreamPath;
 
 // The puff arc's six cells, cut from the ember streak sheet.
-extern u8 gPuffArc_CellWidths[];
-extern u8 gPuffArc_CellHeights[];
-extern u8 gPuffArc_CellBiasY[];
-extern u16 gPuffArc_CellSourceOffsets[];
+extern u8 gBattleFx_PuffArcCellWidths[];
+extern u8 gBattleFx_PuffArcCellHeights[];
+extern u8 gBattleFx_PuffArcCellBiasY[];
+extern u16 gBattleFx_PuffArcCellSourceOffsets[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
@@ -234,12 +234,18 @@ void Func_08189148(struct BattleEffectArgument *effect) {
     if (frame <= 17) {
       s32 cell = frame / 3;
 
-      draw[0](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-              56 - gPuffArc_CellWidths[cell] / 2, gPuffArc_CellBiasY[cell] + 60,
-              gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
-      draw[1](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-              64 - gPuffArc_CellWidths[cell] / 2, gPuffArc_CellBiasY[cell] + 60,
-              gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
+      draw[0](canvas,
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCellSourceOffsets[cell],
+              56 - gBattleFx_PuffArcCellWidths[cell] / 2,
+              gBattleFx_PuffArcCellBiasY[cell] + 60,
+              gBattleFx_PuffArcCellWidths[cell],
+              gBattleFx_PuffArcCellHeights[cell]);
+      draw[1](canvas,
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCellSourceOffsets[cell],
+              64 - gBattleFx_PuffArcCellWidths[cell] / 2,
+              gBattleFx_PuffArcCellBiasY[cell] + 60,
+              gBattleFx_PuffArcCellWidths[cell],
+              gBattleFx_PuffArcCellHeights[cell]);
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
@@ -447,10 +453,12 @@ void Func_08189148(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-                  step->x - gPuffArc_CellWidths[cell] / 2,
-                  step->y + gPuffArc_CellBiasY[cell], gPuffArc_CellWidths[cell],
-                  gPuffArc_CellHeights[cell]);
+                  &work->sheet[0x3c00] +
+                      gBattleFx_PuffArcCellSourceOffsets[cell],
+                  step->x - gBattleFx_PuffArcCellWidths[cell] / 2,
+                  step->y + gBattleFx_PuffArcCellBiasY[cell],
+                  gBattleFx_PuffArcCellWidths[cell],
+                  gBattleFx_PuffArcCellHeights[cell]);
         }
         step->variant++;
       }

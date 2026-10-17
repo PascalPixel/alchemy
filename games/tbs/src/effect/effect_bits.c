@@ -17,5 +17,5 @@
       IMM_BIT(11), IMM_BIT(12), IMM_BIT(13), IMM_BIT(14), IMM_BIT(15)
 
 // Two identical tables; the first has no references.
-const u16 gBattleEffect_ColorBitOperands[] = {IMM_BITS};
-const u16 gBattleEffect_BitOperands[] = {IMM_BITS};
+u16 gBattleEffect_ColorBitOperands[] = {IMM_BITS};
+u16 gBattleEffect_BitOperands[] = {IMM_BITS};

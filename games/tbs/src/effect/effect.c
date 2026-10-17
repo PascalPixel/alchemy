@@ -5627,7 +5627,7 @@ extern u16 gWhirlwindComets_CellOffsets[];
 // Pressing A or B skips to frame 160, or from there to frame 395. At the
 // end the battle shows the damage and the targets go back to their places.
 void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
-  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void *canvas;
   struct BattleCamera *camera;
@@ -9351,7 +9351,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
 //
 // effect: the targets.
 void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
-  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 rockPoints[32][2]; // a copy of gBattleFx10_Points that nothing reads
   struct SpritePlacement position;
   void *canvas;
@@ -11190,7 +11190,7 @@ struct RockWallHeights {
 //
 // effect: the targets; variant picks the row of gRockWall_Timings.
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
-  static const s32 wallHeights[4] = {
+  static s32 wallHeights[4] = {
       -32,
       -32,
       -32,
@@ -12831,7 +12831,7 @@ void BattleFx_RunTargetBursts(void *object) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct SpriteScale gStagedParticles_UnitScale;
+extern struct SpriteScale gStagedParticles_UnitScale;
 
 // The trail particles' random rotations, 48 bytes each, after the 384
 // particles in PARTICLES.
@@ -16030,7 +16030,7 @@ extern u8 gMode12_SmokeFlips[];
 // effect: the targets.
 
 void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
-  static const s16 points[6][2] = {
+  static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
   };
   u8 ramp[32];
@@ -17048,7 +17048,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 //
 // effect: the targets; variant 0 to 2 widens the wall.
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
-  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -19485,8 +19485,8 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
 //            2 = 8 in rows of 3, 2, 3; 3 = 8 scaled by 1.25.
 // x, z: formation origin in 16.16 pixels
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  static const struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
-  static const struct SpriteScale smallScale = {{{0x14000, 0x14000}}};
+  static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale smallScale = {{{0x14000, 0x14000}}};
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct SpriteScale normal = normalScale;
   struct SpriteScale big = smallScale;
@@ -20313,7 +20313,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 // Move a formation and orbiting picture while six rocks bounce and scatter
 // puffs.
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
-  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
@@ -21559,7 +21559,7 @@ extern u8 gShockwaveScene_ShardHeights[];
 // Stage a formation above the violet backdrop, then pulse and scatter its
 // images.
 void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
-  static const struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];
   struct EffectPosition projectedPosition;
   struct SpritePlacement place;
@@ -22413,8 +22413,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
 // Sweep the object formation across the field, then lift it out through
 // particle bursts.
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
-  static const struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
-  static const struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
   void **cursor;
   struct SpritePlacement place;
   struct EffectPosition unit;
@@ -22829,7 +22829,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
 // Sweep the formation across the field, burst into flares and finish with blue
 // flames.
 void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
-  static const struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
+  static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;
   struct EffectPosition targetPosition;
   void *canvas;

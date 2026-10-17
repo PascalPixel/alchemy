@@ -3,6 +3,17 @@
 
 #include "types.h"
 
+// The two kinds of target strike (gTwelveMode_Records).
+#define STRIKE_KIND_SLASH 0  // sideways slashes
+#define STRIKE_KIND_COLUMN 1 // columns of light
+
+// A target strike style's extras.
+#define STRIKE_SMOKE 1  // each hit raises smoke puffs from the target's feet
+#define STRIKE_ABSORB 2 // motes fly out of the target and back into the user
+#define STRIKE_GLINTS 4 // glints sparkle around the target
+#define STRIKE_SPARKS 8 // each hit scatters sparks
+#define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
+
 extern u8 gIce_Counts[];
 extern s8 gFiveMode_Tremble[];
 extern u8 gTwelveMode_StrikeWidths[];

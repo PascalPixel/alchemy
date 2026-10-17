@@ -29,20 +29,49 @@ u8 gBattleFx_GlintCellWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gBattleFx_GlintCellHeights[] = {31, 31, 31, 21, 21, 24};
 
 // Falling shard and bolt wave counts.
-u8 gIce_Counts[] = {16, 46, 20, 52, 32, 80};
-u8 gFallingBolts_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
+u8 gIce_Counts[] = {
+    // shards, frames
+    16, 46, // variant 0
+    20, 52, // variant 1
+    32, 80, // variant 2
+};
+u8 gFallingBolts_Counts[] = {
+    // bolts, sparks per bolt, spacing, frames
+    6,  8,  32, 80, // variant 0
+    8,  16, 24, 80, // variant 1
+    32, 4,  8,  80, // variant 2
+};
 
 // Falling streak timing and motion records.
-s8 gFiveMode_Records[] = {0,  1, 0, 0, 0,  1, 4, 0, 0, 1,
-                                -1, 1, 1, 1, -1, 1, 1, 1, 4, 0};
+s8 gFiveMode_Records[] = {
+    // STREAK_ANIMATE, STREAK_HIT, STREAK_MOTION, STREAK_SHAKE
+    0, 1, 0,  0, // STREAK_STYLE_EMBER
+    0, 1, 4,  0, // STREAK_STYLE_LIME
+    0, 1, -1, 1, // STREAK_STYLE_VIOLET
+    1, 1, -1, 1, // STREAK_STYLE_RED
+    1, 1, 4,  0, // STREAK_STYLE_CYAN
+};
 s8 gFiveMode_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
 // Target strike timing, motion and picture cells.
+// clang-format off
 u8 gTwelveMode_Records[] = {
-    1, 2, 8, 0, 6, 3, 70, 1, 1, 1, 1, 6, 2, 54, 1, 3, 1,  2, 6, 2, 96,
-    1, 3, 2, 3, 4, 2, 96, 1, 3, 2, 4, 4, 2, 96, 1, 3, 4,  5, 4, 3, 96,
-    0, 1, 4, 5, 4, 3, 38, 0, 2, 8, 5, 2, 3, 48, 0, 1, 24, 4, 2, 3, 50,
-    0, 1, 1, 1, 2, 3, 46, 1, 1, 1, 4, 6, 2, 54, 1, 3, 2,  4, 4, 3, 96};
+    // STRIKE_KIND, _HITS, _FLAGS, _COLOUR, _IMAGE_FRAMES, _COMPOSITE, _FRAMES
+    STRIKE_KIND_COLUMN, 2, STRIKE_SPARKS, 0, 6, COMPOSITE_ADDITIVE, 70, // 0
+    STRIKE_KIND_COLUMN, 1, STRIKE_SMOKE,  1, 6, COMPOSITE_MAX,      54, // 1
+    STRIKE_KIND_COLUMN, 3, STRIKE_SMOKE,  2, 6, COMPOSITE_MAX,      96, // 2
+    STRIKE_KIND_COLUMN, 3, STRIKE_ABSORB, 3, 4, COMPOSITE_MAX,      96, // 3
+    STRIKE_KIND_COLUMN, 3, STRIKE_ABSORB, 4, 4, COMPOSITE_MAX,      96, // 4
+    STRIKE_KIND_COLUMN, 3, STRIKE_GLINTS, 5, 4, COMPOSITE_ADDITIVE, 96, // 5
+    STRIKE_KIND_SLASH,  1, STRIKE_GLINTS, 5, 4, COMPOSITE_ADDITIVE, 38, // 6
+    STRIKE_KIND_SLASH,  2, STRIKE_SPARKS, 5, 2, COMPOSITE_ADDITIVE, 48, // 7
+    STRIKE_KIND_SLASH,  1, STRIKE_SPARKS | STRIKE_HEAVY,
+                                          4, 2, COMPOSITE_ADDITIVE, 50, // 8
+    STRIKE_KIND_SLASH,  1, STRIKE_SMOKE,  1, 2, COMPOSITE_ADDITIVE, 46, // 9
+    STRIKE_KIND_COLUMN, 1, STRIKE_SMOKE,  4, 6, COMPOSITE_MAX,      54, // 10
+    STRIKE_KIND_COLUMN, 3, STRIKE_ABSORB, 4, 4, COMPOSITE_ADDITIVE, 96, // 11
+};
+// clang-format on
 u8 gTwelveMode_StrikeWidths[] = {38, 54, 71, 74, 77, 65};
 u8 gTwelveMode_StrikeHeights[] = {7, 9, 11, 13, 13, 11};
 u16 gTwelveMode_StrikeOffsets[] = {3200, 3466, 3952, 4733, 5695, 6696};
@@ -55,22 +84,22 @@ u8 gBladeRain_CellWidths[] = {20, 21, 22, 25};
 u8 gBladeRain_CellHeights[] = {32, 31, 27, 24};
 u16 gBladeRain_CellSourceOffsets[] = {0, 640, 1291, 1885};
 u8 gBattlePieceWidth[] = {21, 20, 24, 30, 35, 69, 19, 23, 9,  22, 33,
-                                10, 18, 9,  7,  9,  17, 55, 30, 25, 40, 29,
-                                10, 28, 14, 5,  32, 23, 19, 32, 8,  43, 15};
+                          10, 18, 9,  7,  9,  17, 55, 30, 25, 40, 29,
+                          10, 28, 14, 5,  32, 23, 19, 32, 8,  43, 15};
 u8 gBattlePieceHeight[] = {23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35,
-                                 17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41,
-                                 15, 45, 59, 41, 26, 50, 21, 35, 12, 57, 11};
-u16 gBattlePieceOffset[] = {
-    0,     483,   1423,  2023,  3223,  3923,  7580,  8112,  8779,
-    8986,  9294,  10449, 10619, 10943, 11069, 11174, 11282, 11503,
-    13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733,
-    22565, 23715, 24114, 25234, 25330, 27781, 27946};
+                           17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41,
+                           15, 45, 59, 41, 26, 50, 21, 35, 12, 57, 11};
+u16 gBattlePieceOffset[] = {0,     483,   1423,  2023,  3223,  3923,  7580,
+                            8112,  8779,  8986,  9294,  10449, 10619, 10943,
+                            11069, 11174, 11282, 11503, 13538, 14678, 15703,
+                            18103, 19292, 19442, 20702, 21528, 21733, 22565,
+                            23715, 24114, 25234, 25330, 27781, 27946};
 u8 gBattlePieceStartX[] = {0,  21, 28, 46, 70, 51, 0,  13, 37, 77, 87,
-                                 19, 25, 35, 44, 45, 48, 65, 0,  0,  0,  5,
-                                 33, 15, 36, 46, 47, 50, 53, 65, 72, 77, 105};
+                           19, 25, 35, 44, 45, 48, 65, 0,  0,  0,  5,
+                           33, 15, 36, 46, 47, 50, 53, 65, 72, 77, 105};
 u8 gBattlePieceStartY[] = {0,  0,  0,  0,  0,  0,  19, 17, 23,  28, 8,
-                                 36, 43, 43, 40, 47, 48, 37, 42, 67,  60, 79,
-                                 62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
+                           36, 43, 43, 40, 47, 48, 37, 42, 67,  60, 79,
+                           62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
 
 // Canvas corner sparks and two-resource picture cells.
 s8 gCornerSparks_X[] = {0, 32, 0, 32};
@@ -83,7 +112,12 @@ u8 gTwoResource_CellX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
 s8 gTwoResource_CellBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 // Leaping strike counts.
-u8 gMemberBurst_Counts[] = {16, 88, 8, 72, 12, 80};
+u8 gMemberBurst_Counts[] = {
+    // lights per target, frames
+    16, 88, // mode 0
+    8,  72, // mode 1
+    12, 80, // mode 2
+};
 
 // Mirrored earth wall picture cells.
 u16 gEarthWall_CellSourceOffsets[] = {2702, 3535, 4580};
@@ -97,28 +131,35 @@ u8 gMemberBeam_HeadWidths[] = {17, 19, 20};
 u8 gMemberBeam_HeadHeights[] = {49, 55, 64};
 
 // Shell explosion records and shards.
-s8 gSevenMode_Records[] = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0};
+s8 gSevenMode_Records[] = {
+    // nonzero: the shells burst into shards, not smoke; unused
+    0, 0, // mode 0
+    0, 0, // mode 1
+    0, 0, // mode 2
+    1, 0, // mode 3
+    1, 0, // mode 4
+    0, 0, // mode 5
+    0, 0, // mode 6
+};
 u8 gSevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12,
-                                     6, 7,  7, 7, 6, 6,  8,  8,  8};
+                               6, 7,  7, 7, 6, 6,  8,  8,  8};
 u8 gSevenMode_ShardHeights[] = {12, 12, 12, 12, 12, 12, 12, 12, 12,
-                                      8,  7,  6,  6,  8,  6,  4,  3,  3};
+                                8,  7,  6,  6,  8,  6,  4,  3,  3};
 u16 gSevenMode_ShardOffsets[] = {0,    108,  228,  336,  444,  552,
-                                       684,  816,  948,  1092, 1140, 1189,
-                                       1231, 1273, 1321, 1357, 1389, 1413};
+                                 684,  816,  948,  1092, 1140, 1189,
+                                 1231, 1273, 1321, 1357, 1389, 1413};
 
 // Shattered panel coordinates.
-u8 gCondemn_PanelX[] = {10, 30, 0, 0, 0, 6, 52,
-                                    60, 0,  0, 0, 0, 0, 0};
-u8 gCondemn_PanelY[] = {0, 20, 2, 2, 34, 64, 68,
-                                    0, 9,  4, 4, 4,  4,  4};
+u8 gCondemn_PanelX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
+u8 gCondemn_PanelY[] = {0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4};
 
 // Spinning and striking triangle vertices.
 struct Vector3 gBind_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
 struct Vector3 gTriangleStrike_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
 
 // Ring bolt, spinning star and whirlwind comet paths.
-struct Vector3 gAstralBlast_Points[] = {
-    {.x = 0, .y = 48 << 16, .z = 0}, {.x = 0, .y = 28 << 16, .z = 0}};
+struct Vector3 gAstralBlast_Points[] = {{.x = 0, .y = 48 << 16, .z = 0},
+                                        {.x = 0, .y = 28 << 16, .z = 0}};
 u8 gShiningStar_Radii[] = {32, 16};
 u8 gWhirlwindComets_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 u8 gWhirlwindComets_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
@@ -136,41 +177,66 @@ u8 gPaletteParticles_StreakWidths[] = {24, 29, 30, 27, 24, 16};
 u8 gPaletteParticles_StreakHeights[] = {23, 32, 37, 49, 53, 52};
 u8 gPaletteParticles_StreakDrops[] = {41, 32, 26, 11, 4, 2};
 u16 gPaletteParticles_StreakOffsets[] = {0, 552, 1480, 2590, 3913, 5185};
-u8 gNereid_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104};
+u8 gNereid_Columns[] = {
+    // the foot of each column of fire: x, y
+    16, 104, 32, 104, 48, 104, 64, 104,
+};
 s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
 // Vortex mote counts and tornado shapes.
-u8 gFroth_Counts[] = {6, 140, 12, 160, 30, 200};
-u8 gWhirlwind_Shapes[] = {1, 16, 2, 2, 24, 2, 4, 32, 4};
+u8 gFroth_Counts[] = {
+    // motes, frames
+    6,  140, // variant 0
+    12, 160, // variant 1
+    30, 200, // variant 2
+};
+u8 gWhirlwind_Shapes[] = {
+    // tornadoes, sway, screen shake
+    1, 16, 2, // variant 0
+    2, 24, 2, // variant 1
+    4, 32, 4, // variant 2
+};
 
 // Crystal counts and picture cells.
-u8 gPrism_ShardStarts[] = {
-    32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99, 54, 69, 34, 82, 45,
-    71, 31, 91, 32, 69, 26, 80, 40, 68, 41, 60, 46, 60, 36, 63, 0,  0};
-u8 gPrism_Counts[] = {1, 110, 4, 134, 12, 166};
-u8 gPrism_ShardWidths[] = {5,  10, 11, 14, 12, 11,
-                                   19, 18, 23, 12, 22, 22};
-u8 gPrism_ShardHeights[] = {14, 10, 7,  13, 14, 14,
-                                    32, 30, 24, 38, 20, 20};
+u8 gPrism_ShardStarts[] = {32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99,
+                           54, 69, 34, 82, 45, 71, 31, 91, 32, 69, 26, 80,
+                           40, 68, 41, 60, 46, 60, 36, 63, 0,  0};
+u8 gPrism_Counts[] = {
+    // crystals, frames
+    1,  110, // variant 0
+    4,  134, // variant 1
+    12, 166, // variant 2
+};
+u8 gPrism_ShardWidths[] = {5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
+u8 gPrism_ShardHeights[] = {14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20};
 s32 gPrism_ShardOffsets[] = {0,   70,   170,  247,  429,  597,
-                                     751, 1359, 1899, 2451, 2907, 3347};
+                             751, 1359, 1899, 2451, 2907, 3347};
 
 // Lightning pillar sparks, columns and counts.
-u16 gPlasma_Sparks[] = {384, 2, 256, 3, 192, 4};
+u16 gPlasma_Sparks[] = {
+    // sparks per pillar, shake frames
+    384, 2, // variant 0
+    256, 3, // variant 1
+    192, 4, // variant 2
+};
 u8 gPlasma_Columns[] = {32, 64, 16,  48, 72, 96, 64,
-                                       88, 56, 104, 72, 48, 24, 56};
+                        88, 56, 104, 72, 48, 24, 56};
 u8 gPlasma_Counts[] = {1, 3, 7};
 
 // Spark group shapes and flash cells.
-u16 gSparkGroups_Shapes[] = {128, 1,   16, 0, 0,  255, 1,   16, 0,
-                                   0,   192, 3,  0, 24, 48,  340, 1,  16,
-                                   24,  48,  32, 1, 16, 0,   0};
+u16 gSparkGroups_Shapes[] = {
+    // sparks per burst, bursts, each burst's offset across
+    128, 1, 16, 0,  0,  // variant 0
+    255, 1, 16, 0,  0,  // variant 1
+    192, 3, 0,  24, 48, // variant 2
+    340, 1, 16, 24, 48, // variant 3
+    32,  1, 16, 0,  0,  // variant 4
+};
 u8 gSparkGroups_FlashCells[] = {5, 5, 4, 3, 2, 1};
 
 // Fire pillar counts, depths and start frames.
 u8 gVolcano_Counts[] = {1, 2, 4};
-s8 gVolcano_Depths[][4] = {
-    {0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
+s8 gVolcano_Depths[][4] = {{0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
 u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 
 // Target mote glint orientations.
@@ -608,13 +674,12 @@ u8 gCybele_ChipWidths[] = {2, 5, 2, 5, 3};
 u8 gCybele_ChipHeights[] = {6, 3, 4, 3, 3};
 u16 gCybele_SparkOffsets[] = {3979, 4043, 4268, 4389, 4470};
 u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
-u16 gCybele_EmberOffsets[] = {5760,  6016,  7040, 9344,
-                                        11648, 13952, 16256};
+u16 gCybele_EmberOffsets[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
 u16 gCybele_EmberSizes[] = {16, 32, 48, 48, 48, 48, 48};
 u8 gBoreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
-                                    {86, 126}, {85, 98},  {64, 98},  {98, 96},
-                                    {77, 87},  {84, 88},  {68, 67},  {81, 49},
-                                    {94, 70},  {70, 51},  {93, 36},  {81, 50}};
+                          {86, 126}, {85, 98},  {64, 98},  {98, 96},
+                          {77, 87},  {84, 88},  {68, 67},  {81, 49},
+                          {94, 70},  {70, 51},  {93, 36},  {81, 50}};
 s8 gBoreas_ShakeOffsets[] = {-4, -3, -2, 0};
 u16 gBoreas_RockCells[] = {0, 1152, 2064};
 u8 gBoreas_RockWidths[] = {24, 24, 20};
@@ -623,7 +688,7 @@ u8 gBoreas_Animations[] = {2, 9, 10, 11};
 u8 gBoreas_DebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
 u8 gBoreas_DebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
 u16 gBoreas_DebrisCells[] = {2584, 2704, 2880, 2992, 5062, 5094,
-                                       5142, 5157, 5185, 5227, 5299};
+                             5142, 5157, 5185, 5227, 5299};
 u8 gBoreas_SprayWidths[] = {16, 16, 16};
 u8 gBoreas_SprayHeights[] = {16, 16, 16};
 u16 gBoreas_SprayCells[] = {4294, 4550, 4806};
@@ -637,10 +702,9 @@ s32 gBreak_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
 
 // Stat-reduction shard geometry.
 u16 gPaletteRamp_ShardCells[] = {0,   120, 180, 258, 298, 352,
-                                       408, 471, 567, 607, 631, 661};
+                                 408, 471, 567, 607, 631, 661};
 u8 gPaletteRamp_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
-u8 gPaletteRamp_ShardHeights[] = {12, 12, 13, 8, 9, 8,
-                                        7,  12, 10, 4, 5, 5};
+u8 gPaletteRamp_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
 // Rock wall timing.
 u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
@@ -653,35 +717,33 @@ u8 gFire_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
 u16 gFire_FlareCells[] = {0, 552, 1480, 2590, 3913, 5185};
 
 // Rising mote geometry and timing.
-u8 gRisingMotes_ColumnSpots[] = {
-    53,  108, 73, 110, 29,  110, 73,  108, 33, 104, 96, 106, 8,
-    109, 62,  98, 33,  100, 87,  100, 21,  95, 53,  90, 33,  90,
-    72,  91,  82, 91,  77,  86,  52,  84,  18, 92,  56, 81};
+u8 gRisingMotes_ColumnSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
+                                 96, 106, 8,  109, 62, 98,  33, 100, 87, 100,
+                                 21, 95,  53, 90,  33, 90,  72, 91,  82, 91,
+                                 77, 86,  52, 84,  18, 92,  56, 81};
 u8 gRisingMotes_Timings[] = {32, 8, 85, 48, 12, 97, 64, 19, 109};
 u8 gRisingMotes_MoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 u8 gRisingMotes_MoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
-u16 gRisingMotes_MoteCells[] = {1792, 1900, 2060, 2158,
-                                      2308, 2372, 2436, 2500};
+u16 gRisingMotes_MoteCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 u16 gRisingMotes_ColumnCells[] = {0, 768, 1280};
 u8 gRisingMotes_ColumnHeights[] = {24, 16, 16};
 u8 gRisingMotes_EmberWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 u8 gRisingMotes_EmberHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 u16 gRisingMotes_EmberCells[] = {1792, 1900, 2060, 2158,
-                                       2308, 2372, 2436, 2500};
+                                 2308, 2372, 2436, 2500};
 
 // Closing bolt sparks by variant.
 u8 gLightningBolts_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
 // Eruption counts and puff layouts.
-u8 gBlastAndSmokeBomb_Counts[][3] = {
-    {16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
+u8 gBlastAndSmokeBomb_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 u16 gBlastAndSmokeBomb_PuffCells[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 u16 gBlastAndSmokeBomb_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 // Unreferenced cell layouts, from 6x6 through 20x20
 u16 gUnused_SheetCells6[] = {0, 36, 100, 200, 344, 540};
 u16 gUnused_SheetCells[] = {0,   36,   100,  200,  344, 540,
-                                  796, 1120, 1520, 1900, 2300};
+                            796, 1120, 1520, 1900, 2300};
 u8 gUnused_SheetWidths[] = {6, 8, 10, 12, 14, 16, 18, 20, 19, 20};
 u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
@@ -696,20 +758,19 @@ u8 gDualTable_PillarWidths[] = {10, 8, 9};
 u16 gDualTable_PillarCells[] = {0, 1080, 1888};
 u8 gDualTable_ColumnCounts[] = {4, 8, 12};
 u8 gDualTable_ColumnX[] = {64, 72,  56, 80, 48, 88, 40, 96,
-                                 32, 104, 24, 72, 56, 80, 48, 88};
+                           32, 104, 24, 72, 56, 80, 48, 88};
 s8 gDualTable_PillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
 s8 gDualTable_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
 u8 gDualTable_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
 u16 gDualTable_PuffCells[] = {0, 50, 148, 379, 891, 1926, 3276};
 s8 gVine_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
-                                           -24, 24, -12, -40, -4, -16, -32, 12};
+                            -24, 24, -12, -40, -4, -16, -32, 12};
 u8 gThorn_Kinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
 s8 gThorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 u8 gThorn_Counts[] = {3, 5, 8};
 s8 gThorn_PuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
 u8 gThorn_PuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
-u16 gThorn_PuffCells[] = {5888, 5938, 6036, 6267,
-                                         6845, 8733, 10653};
+u16 gThorn_PuffCells[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 
 // Lightning bolt counts and glint palettes.
 u8 gLightningBolts_Counts[] = {16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3};
@@ -719,10 +780,20 @@ u8 gLightningBolts_GlintModes[] = {2, 2, 3};
 // Projectile volley modes and picture cells.
 u8 gVolley_CometHeights[] = {24, 36, 48};
 u8 gVolley_Modes[][5] = {
-    {6, 10, 3, 32, 4},  {4, 10, 5, 32, 8},  {10, 32, 3, 32, 4},
-    {5, 10, 5, 32, 4},  {10, 10, 1, 32, 4}, {1, 5, 0, 32, 80},
-    {7, 8, 2, 32, 40},  {30, 24, 1, 32, 4}, {6, 2, 3, 32, 4},
-    {60, 10, 1, 32, 4}, {60, 10, 1, 32, 4}, {10, 10, 1, 32, 4}};
+    // VOLLEY_SHOTS, _STEPS, _STAGGER, _DELAY, _SPARKS
+    {6, 10, 3, 32, 4},  // mode 0
+    {4, 10, 5, 32, 8},  // mode 1
+    {10, 32, 3, 32, 4}, // mode 2
+    {5, 10, 5, 32, 4},  // mode 3
+    {10, 10, 1, 32, 4}, // mode 4
+    {1, 5, 0, 32, 80},  // mode 5
+    {7, 8, 2, 32, 40},  // mode 6
+    {30, 24, 1, 32, 4}, // mode 7
+    {6, 2, 3, 32, 4},   // mode 8
+    {60, 10, 1, 32, 4}, // mode 9
+    {60, 10, 1, 32, 4}, // mode 10
+    {10, 10, 1, 32, 4}, // mode 11
+};
 u8 gVolley_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
 u8 gVolley_FlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
 u8 gVolley_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
@@ -740,36 +811,41 @@ u16 gHail_CellSourceOffsets[] = {2308, 2372, 2436, 2500};
 u8 gGround_ChipFlips[] = {3, 7, 11, 15};
 u8 gGround_ChipWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
 u8 gGround_ChipHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
-u16 gGround_ChipCells[] = {0,    1152, 1243, 1341, 1533,
-                                   1677, 1898, 2098, 2252};
+u16 gGround_ChipCells[] = {0, 1152, 1243, 1341, 1533, 1677, 1898, 2098, 2252};
 u8 gGround_ChipX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
 u8 gGround_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 // Storm scene animations and shattering rocks.
 u8 gMode12_Animations[] = {7, 14, 10, 4};
 u8 gMode12_SmokeFlips[] = {0, 4, 8, 12};
-u8 gSpire_ShardOffsets[32 * 2] = {
-    65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72, 85, 56, 88,
-    51, 80,  61, 75, 72, 81, 69, 71, 66, 70, 71, 64, 49, 71,
-    59, 69,  53, 68, 78, 73, 55, 67, 75, 62, 61, 65, 53, 61};
+u8 gSpire_ShardOffsets[32 * 2] = {65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72,
+                                  85, 56,  88, 51, 80, 61, 75, 72, 81, 69, 71,
+                                  66, 70,  71, 64, 49, 71, 59, 69, 53, 68, 78,
+                                  73, 55,  67, 75, 62, 61, 65, 53, 61};
 s8 gSpire_RockX[] = {0, -12, 12, -8, 16};
 u8 gSpire_DropFrames[] = {8, 16, 20, 24, 32};
 u8 gSpire_RockCounts[] = {1, 3, 5};
 u8 gSpire_ShardWidths[] = {5,  11, 10, 7,  7,  12, 13, 9,
-                                        19, 12, 17, 22, 15, 16, 14};
+                           19, 12, 17, 22, 15, 16, 14};
 u8 gSpire_ShardHeights[] = {11, 6,  10, 11, 10, 7,  17, 21,
-                                         12, 21, 17, 13, 16, 16, 15};
-u16 gSpire_ShardCells[] = {0,    55,   121,  221,  298,  368,
-                                        452,  673,  862,  1090, 1342, 1631,
-                                        1917, 2157, 2413, 2623};
+                            12, 21, 17, 13, 16, 16, 15};
+u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
+                           862, 1090, 1342, 1631, 1917, 2157, 2413, 2623};
 
 // Burst scene records and rising wall geometry.
 u8 gBurstScene_Records[] = {
-    1, 0, 5, 16, 12, 80, 0, 1, 1, 7, 16, 12, 104, 0, 1, 2, 9, 16, 12, 128, 0,
-    1, 3, 1, 16, 16, 36, 0, 1, 3, 2, 20, 16, 52,  0, 1, 3, 3, 24, 16, 68,  0,
-    0, 2, 1, 32, 12, 28, 1, 0, 2, 2, 32, 12, 40,  1, 0, 2, 3, 32, 12, 52,  1};
-u16 gGaia_RowSheetOffsets[] = {0,    160,  352,  640, 1024,
-                                           1504, 2080, 2752, 3776};
+    // BURST_ARC_SHEET, _PALETTE, _STRIKES, _MOTES, _INTERVAL, _FRAMES, _FLASH
+    1, 0, 5, 16, 12, 80,  0, // variant 0
+    1, 1, 7, 16, 12, 104, 0, // variant 1
+    1, 2, 9, 16, 12, 128, 0, // variant 2
+    1, 3, 1, 16, 16, 36,  0, // variant 3
+    1, 3, 2, 20, 16, 52,  0, // variant 4
+    1, 3, 3, 24, 16, 68,  0, // variant 5
+    0, 2, 1, 32, 12, 28,  1, // variant 6
+    0, 2, 2, 32, 12, 40,  1, // variant 7
+    0, 2, 3, 32, 12, 52,  1, // variant 8
+};
+u16 gGaia_RowSheetOffsets[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
 u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 u16 gGaia_MoundSheetOffsets[] = {10672, 11505, 12550};
 u8 gGaia_MoundWidths[] = {17, 19, 20};
@@ -785,8 +861,7 @@ u8 gBeamSequence_CellReaches[] = {58, 42, 25, 13, 5, 0};
 
 // Casting impact glints and orbit cells.
 u8 gCastingImpact_GlintDrawFlags[] = {0, 4, 8, 12};
-u8 gCastingImpact_ImageX[] = {10, 30, 0, 0, 0, 6, 52,
-                                    60, 0,  0, 0, 0, 0, 0};
+u8 gCastingImpact_ImageX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 u8 gCastingImpact_ImageY[] = {0, 20, 2, 2, 34, 64, 68};
 u16 gCastingImpact_OrbitCells[] = {2308, 2372, 2436, 2500, 0};
 
@@ -794,13 +869,12 @@ u16 gCastingImpact_OrbitCells[] = {2308, 2372, 2436, 2500, 0};
 u8 gHelmSplitter_CellWidths[] = {26, 46, 63, 77, 60, 39, 32};
 u8 gHelmSplitter_CellHeights[] = {11, 20, 37, 65, 65, 54, 39};
 u16 gHelmSplitter_CellSourceOffsets[] = {0,    286,   1206, 3537,
-                                            8542, 12442, 14548};
+                                         8542, 12442, 14548};
 s8 gHelmSplitter_CellBiasX[] = {53, 36, 16, 2, 2, 2, 2};
 s8 gHelmSplitter_CellBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
 // Object formation coordinates and impact burst cells.
-u8 gFormation_TwelveX[] = {52, 25,  57, 89, 7,  39,
-                                 71, 103, 21, 53, 85, 117};
+u8 gFormation_TwelveX[] = {52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117};
 u8 gFormation_TwelveZ[] = {0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
 u8 gFormation_RightEightX[] = {0, 32, 64, 16, 48, 0, 32, 64};
 u8 gFormation_RightEightZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
@@ -809,7 +883,7 @@ u8 gFormation_SmallEightZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
 u8 gImpactBurst_CellWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
 u8 gImpactBurst_CellHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
 u16 gImpactBurst_CellSourceOffsets[] = {0,     4608,  9216,  13356,
-                                              16020, 18684, 20668, 22020};
+                                        16020, 18684, 20668, 22020};
 
 // Particle stream paths and circling scene geometry.
 s16 gParticleStreams_OrbitPoints[][3] = {
@@ -818,12 +892,11 @@ s16 gParticleStreams_OrbitPoints[][3] = {
 s16 gParticleStreams_DropPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 u16 gParticleStreams_FlashSheetOffsets[] = {0,    256,  1280, 3584,
-                                                  5888, 8192, 10496};
+                                            5888, 8192, 10496};
 u16 gParticleStreams_FlashSizes[] = {16, 32, 48, 48, 48, 48, 48};
 u8 gRamses_ObjectColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 u8 gRamses_ObjectRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
-u16 gRamses_PuffSheetOffsets[] = {0,    256,  1280, 3584,
-                                               5888, 8192, 10496};
+u16 gRamses_PuffSheetOffsets[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 u16 gRamses_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 // Flame blade strike columns and flash cells.

@@ -1053,7 +1053,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
 // gTwelveMode_Records has seven entries for each style.
 #define STRIKE_VALUE(mode, field) gTwelveMode_Records[(mode) * 7 + (field)]
 enum {
-  STRIKE_KIND,         // 0: sideways slashes, 1: columns of light
+  STRIKE_KIND,         // STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
   STRIKE_HITS,         // how many times the target is struck
   STRIKE_FLAGS,        // STRIKE_SMOKE and so on
   STRIKE_COLOUR,       // background palette, 0 to 5 (see below)
@@ -1061,11 +1061,7 @@ enum {
   STRIKE_COMPOSITE,    // how the columns are drawn (COMPOSITE_MAX or _ADDITIVE)
   STRIKE_FRAMES        // length of the effect in frames
 };
-#define STRIKE_SMOKE 1  // each hit raises smoke puffs from the target's feet
-#define STRIKE_ABSORB 2 // motes fly out of the target and back into the user
-#define STRIKE_GLINTS 4 // glints sparkle around the target
-#define STRIKE_SPARKS 8 // each hit scatters sparks
-#define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
+// STRIKE_KIND_* and the STRIKE_SMOKE flags are in effect_table.h.
 
 // Rows of gTwelveMode_Records used by these effect entry points.
 enum {
@@ -1207,7 +1203,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-  if (STRIKE_VALUE(mode, STRIKE_KIND) == 0)
+  if (STRIKE_VALUE(mode, STRIKE_KIND) == STRIKE_KIND_SLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage,
                                work->sheet + 0xc80, 0, 0);
   else
@@ -1271,7 +1267,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       TARGET_STRIKE_SPARKS[i].x = target->x;
       TARGET_STRIKE_SPARKS[i].y = 0x140000;
       TARGET_STRIKE_SPARKS[i].z = target->z;
-      if (STRIKE_VALUE(mode, STRIKE_KIND) == 1) {
+      if (STRIKE_VALUE(mode, STRIKE_KIND) == STRIKE_KIND_COLUMN) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityZ = ((Random16() & 255) - 128) << 11;
@@ -1312,7 +1308,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     s32 length = span * 4;
     s32 glint = 0;
 
-    if (STRIKE_VALUE(mode, STRIKE_KIND) == 0) {
+    if (STRIKE_VALUE(mode, STRIKE_KIND) == STRIKE_KIND_SLASH) {
       // Slashes: six images sweep across the target from the user's side,
       // once per hit; the fifth image of each sweep is the hit.
       if (frame < span * 6) {

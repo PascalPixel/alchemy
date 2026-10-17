@@ -116,6 +116,13 @@
 #define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
 #define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
 
+// Defines the battle effect kind `name` as a call of a shared runner with one
+// fixed argument, its style or variant. The strike, volley, shower, mote and
+// stat-change families each have one runner and a kind like this for each
+// ability that uses it.
+#define DEFINE_EFFECT_KIND(name, runner, arg)                                  \
+  void name(struct BattleEffectArgument *effect) { runner(effect, arg); }
+
 // Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
@@ -716,37 +723,32 @@ enum StreakStyle {
 // Abilities: Sonic Wave (kind 300).
 //
 // Battle effect 300: ember streaks.
-void BattleFx_RunSonicWave(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAK_STYLE_EMBER);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSonicWave, BattleFx_RunStreakVolley,
+                   STREAK_STYLE_EMBER)
 
 // Abilities: Shriek (kind 301).
 //
 // Battle effect 301: lime streaks.
-void BattleFx_RunShriek(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunShriek, BattleFx_RunStreakVolley,
+                   STREAK_STYLE_LIME)
 
 // Abilities: Banshee Howl (kind 302).
 //
 // Battle effect 302: violet streaks.
-void BattleFx_RunBansheeHowl(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAK_STYLE_VIOLET);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBansheeHowl, BattleFx_RunStreakVolley,
+                   STREAK_STYLE_VIOLET)
 
 // Abilities: War Cry (kind 304).
 //
 // Battle effect 304: cyan streaks.
-void BattleFx_RunWarCry(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAK_STYLE_CYAN);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWarCry, BattleFx_RunStreakVolley,
+                   STREAK_STYLE_CYAN)
 
 // Abilities: Wicked Howl (kind 305).
 //
 // Battle effect 305: red streaks.
-void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, STREAK_STYLE_RED);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWickedHowl, BattleFx_RunStreakVolley,
+                   STREAK_STYLE_RED)
 
 // The streak volley in lime. UNUSED: no effect table entry points here.
 UNUSED void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect) {
@@ -963,16 +965,14 @@ enum { MOTE_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 // Abilities: Sleep Star (kind 349).
 //
 // Battle effect 349: rising motes that drift onto the targets and strike.
-void BattleFx_RunSleepStar(struct BattleEffectArgument *effect) {
-  BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSleepStar, BattleFx_RunMoteFountain,
+                   MOTE_FOUNTAIN_DRIFTING)
 
 // Abilities: Soothing Star (kind 344).
 //
 // Battle effect 344: rising healing motes.
-void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
-  BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_HEALING);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSoothingStar, BattleFx_RunMoteFountain,
+                   MOTE_FOUNTAIN_HEALING)
 
 #define MOTE_FOUNTAIN_FRAMES 128 // frames in the effect
 
@@ -1171,87 +1171,71 @@ enum {
 // Abilities: Numbing Sting (kind 313).
 //
 // Battle effect 313: one slash with glints, lightning colours.
-void BattleFx_RunNumbingSting(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunNumbingSting, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_LIGHTNING_GLINT_SLASH)
 
 // Abilities: Cannibal Fang (kind 316).
 //
 // Battle effect 316: three ember columns that drain the target into the user.
-void BattleFx_RunCannibalFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCannibalFang, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_EMBER_DRAIN_COLUMNS)
 
 // Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
 //
 // Battle effects 318 and 323: one lime column with smoke.
-void BattleFx_RunPoisonousBite(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIME_SMOKE_COLUMN);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPoisonousBite, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_LIME_SMOKE_COLUMN)
 
 // Abilities: Rabid Fang (kind 336).
 //
 // Battle effect 336: one column with smoke, Mars Djinn colours.
-void BattleFx_RunRabidFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_MARS_SMOKE_COLUMN);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRabidFang, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_MARS_SMOKE_COLUMN)
 
 // Abilities: Electric Bite (kind 324).
 //
 // Battle effect 324: three lightning columns with glints.
-void BattleFx_RunElectricBite(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunElectricBite, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS)
 
 // Abilities: Poison Tail (kind 325).
 //
 // Battle effect 325: one lime slash with smoke.
-void BattleFx_RunPoisonTail(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIME_SMOKE_SLASH);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPoisonTail, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_LIME_SMOKE_SLASH)
 
 // Abilities: Vampiric Fang (kind 327).
 //
 // Battle effect 327: three columns that drain the target, Mars Djinn colours.
-void BattleFx_RunVampiricFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_MARS_DRAIN_COLUMNS);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVampiricFang, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_MARS_DRAIN_COLUMNS)
 
 // Abilities: Double Fang (kind 332).
 //
 // Battle effect 332: two blue columns with sparks.
-void BattleFx_RunDoubleFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_BLUE_SPARK_COLUMNS);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDoubleFang, BattleFx_RunTargetStrike,
+                   STRIKE_STYLE_BLUE_SPARK_COLUMNS)
 
 // Abilities: Mortal Blow (kind 333).
 //
 // Battle effect 333: one heavy slash with sparks, Mars Djinn colours.
-void BattleFx_RunMortalBlow(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 8);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMortalBlow, BattleFx_RunTargetStrike, 8)
 
 // Abilities: Twin Beaks (kind 335).
 //
 // Battle effect 335: two slashes with sparks, lightning colours.
-void BattleFx_RunTwinBeaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunTwinBeaks, BattleFx_RunTargetStrike, 7)
 
 // Abilities: Acid Bite (kind 337).
 //
 // Battle effect 337: three pink columns with smoke.
-void BattleFx_RunAcidBite(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunAcidBite, BattleFx_RunTargetStrike, 2)
 
 // Abilities: Drain Fang (kind 386).
 //
 // Battle effect 386: three additive columns that drain the target with large
 // motes, Mars Djinn colours.
-void BattleFx_RunDrainFang(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 0xB);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDrainFang, BattleFx_RunTargetStrike, 0xB)
 
 // Strikes the first target STRIKE_HITS times with a sideways slash or a
 // column of light, with the extras its flags choose, and lets the battle
@@ -2820,16 +2804,12 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void) {
 // Abilities: Poison Beat (kind 382).
 //
 // Battle effect 382: a lime swipe that knocks the target back.
-void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunSwirlSwipe(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPoisonBeat, BattleFx_RunSwirlSwipe, 0)
 
 // Abilities: Spinning Beat (kind 383).
 //
 // Battle effect 383: a magenta swipe that throws the target into the air.
-void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunSwirlSwipe(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSpinningBeat, BattleFx_RunSwirlSwipe, 1)
 
 // A swirling swipe across the first target, six images four frames each,
 // from the user's side: the first four from the swirl sheet, the last two
@@ -4167,23 +4147,17 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 // Abilities: Demon Night (kind 50).
 //
 // Battle effect 50: pink lights.
-void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDemonNight, BattleFx_RunGatheringLights, 0)
 
 // Abilities: Rumble (kind 308).
 //
 // Battle effect 308: lights in Mars Djinn colours.
-void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRumble, BattleFx_RunGatheringLights, 1)
 
 // Abilities: Haunting (kind 351).
 //
 // Battle effect 351: lights in Mercury Djinn colours.
-void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHaunting, BattleFx_RunGatheringLights, 2)
 
 // gMemberBurst_Counts has two entries for each mode.
 #define GATHERING_LIGHTS_COUNT(mode) gMemberBurst_Counts[(mode) * 2]
@@ -4356,24 +4330,18 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
 // Abilities: Berserk (kind 353).
 //
 // Battle effect 353: the wall rises wide and shakes the screen hard.
-void BattleFx_RunBerserk(struct BattleEffectArgument *effect) {
-  BattleFx_RunMirroredWall(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBerserk, BattleFx_RunMirroredWall, 1)
 
 // Abilities: Spasm (kind 348).
 //
 // Battle effect 348: the wall rises with a long gentle shake and the
 // recovery sound.
-void BattleFx_RunSpasm(struct BattleEffectArgument *effect) {
-  BattleFx_RunMirroredWall(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSpasm, BattleFx_RunMirroredWall, 0)
 
 // Abilities: Recovery (kind 389).
 //
 // Battle effect 389: a wide wall of fire, without a shake.
-void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
-  BattleFx_RunMirroredWall(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRecovery, BattleFx_RunMirroredWall, 2)
 
 // Raises a symmetrical wall (the EarthWall images) at the first target's
 // feet for 48 frames; the target glows and the battle shows the result on
@@ -4504,16 +4472,12 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
 // Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
 //
 // Battle effects 25 and 201: with a Venus Djinni.
-void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
-  BattleFx_RunDjinnBeams(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRevive, BattleFx_RunDjinnBeams, 0)
 
 // Abilities: Dew (kind 209).
 //
 // Battle effect 209: with a Mercury Djinni.
-void BattleFx_RunDew(struct BattleEffectArgument *effect) {
-  BattleFx_RunDjinnBeams(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDew, BattleFx_RunDjinnBeams, 1)
 
 // When effect->prelude is 1, a Djinni appears, sways and then rises out of
 // sight. Over each target in turn, 16 frames apart, eight motes drift down,
@@ -4724,52 +4688,38 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 // Abilities: Mad Spatter (kind 347).
 //
 // Battle effect 347: gold shells that burst into shards.
-void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMadSpatter, BattleFx_RunLobbedShells, 4)
 
 // Abilities: Decompose (kind 350).
 //
 // Battle effect 350: green shells that burst into smoke.
-void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDecompose, BattleFx_RunLobbedShells, 5)
 
 // Abilities: Bone Chiller (kind 309).
 //
 // Battle effect 309: blue shells that burst into smoke.
-void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBoneChiller, BattleFx_RunLobbedShells, 0)
 
 // Abilities: Sticky Goo (kind 315).
 //
 // Battle effect 315: shells in the spider web's colours that burst into
 // smoke.
-void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunStickyGoo, BattleFx_RunLobbedShells, 1)
 
 // Abilities: Poison Ink (kind 340).
 //
 // Battle effect 340: shells in Mars Djinn colours that burst into smoke.
-void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPoisonInk, BattleFx_RunLobbedShells, 6)
 
 // Abilities: Sticky Poison (kind 322).
 //
 // Battle effect 322: lime shells that burst into smoke.
-void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunStickyPoison, BattleFx_RunLobbedShells, 2)
 
 // Abilities: Rotten Blood (kind 330).
 //
 // Battle effect 330: green shells that burst into shards.
-void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRottenBlood, BattleFx_RunLobbedShells, 3)
 
 // gLobbedShells_Records has two entries per style; the first is nonzero when
 // the shells burst into shards instead of smoke.
@@ -6600,17 +6550,13 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 //
 // Battle effect 385: the rising embers from the user's side, in the
 // LightningBolt colours.
-void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
-  BattleFx_RunPaletteParticles(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDragonDriver, BattleFx_RunPaletteParticles, 1)
 
 // Abilities: Tiamat (scene kind 7).
 //
 // Large battle effect 7 (BattleFx_RunSceneEffect): the rising embers with a
 // formation of eight objects that sweeps in and explodes at the end.
-void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
-  BattleFx_RunPaletteParticles(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunTiamat, BattleFx_RunPaletteParticles, 0)
 
 #define PALETTE_PARTICLES_FRAMES 208 // frames in the effect
 // Falling streaks, work->particles 24 to 39.
@@ -7958,17 +7904,13 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 //
 // Battle effect 15: bursts at (60, 48), the canvas behind the battle's
 // first layer (priority 1).
-void BattleFx_RunNova(struct BattleEffectArgument *effect) {
-  BattleFx_RunSparkGroups(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunNova, BattleFx_RunSparkGroups, 0)
 
 // Abilities: Dynamite (kind 338).
 //
 // Battle effect 338: orange bursts at (60, 64), the canvas in front
 // (priority 0).
-void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
-  BattleFx_RunSparkGroups(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
 
 // gSparkGroups_Shapes has five entries for each variant.
 #define SPARK_GROUPS_SPARKS(variant) gSparkGroups_Shapes[(variant) * 5]
@@ -8439,45 +8381,33 @@ UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
 // Abilities: Delude, Confuse, Mist (kind 33).
 //
 // Battle effect 33: cyan smoke that rises.
-void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDelude, BattleFx_RunTargetMotes, 2)
 
 // Abilities: Paralyze (kind 36).
 //
 // Battle effect 36: rising smoke with glints.
-void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunParalyze, BattleFx_RunTargetMotes, 3)
 
 // Abilities: Heartrender (kind 346); kind 35 is used by no ability.
 //
 // Battle effects 35 and 346: hearts.
-void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHeartrender, BattleFx_RunTargetMotes, 4)
 
 // Abilities: Mystic Flame (kind 312).
 //
 // Battle effect 312: glowing orbs.
-void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMysticFlame, BattleFx_RunTargetMotes, 5)
 
 // Abilities: Demon Fire (kind 64).
 //
 // Battle effect 64: glowing orbs in Mars Djinn colours, and the user
 // strikes.
-void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDemonFire, BattleFx_RunTargetMotes, 7)
 
 // Abilities: Drown (kind 66).
 //
 // Battle effect 66: vortex motes.
-void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)
 
 // Styles whose motes start in a wide ball and last 64 frames more.
 #define TARGET_MOTES_START_WIDE(mode)                                          \
@@ -10755,24 +10685,18 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 // (kind 22); Fizz (kind 204).
 //
 // One entry for each mode.
-void BattleFx_RunPly(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPly, BattleFx_RunHealingMotes, 0)
 
 // Abilities: Wish, Wish Well, Pure Wish (kind 23); Regenerate (kind 44);
 // Reflect (kind 45); Spritz (kind 206).
 //
 // Gather healing motes around each target with scattering style 1.
-void BattleFx_RunWish(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWish, BattleFx_RunHealingMotes, 1)
 
 // Abilities: Cure, Cure Well, Potent Cure, Corn (kind 21); Worms (kind 352).
 //
 // Gather healing motes using the blast sheet.
-void BattleFx_RunCure(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCure, BattleFx_RunHealingMotes, 2)
 
 // Abilities: Cure Poison, Restore, Antidote, Elixir (kind 24).
 //
@@ -10786,23 +10710,17 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
 }
 
 // Send healing sparkles out from each target with scattering style 4.
-void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode4, BattleFx_RunHealingMotes, 4)
 
 // Abilities: Tonic (kind 208).
 //
 // Send healing sparkles out from each target with scattering style 5.
-void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
 
 // Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
 //
 // Gather healing motes in the Mars Djinni palette.
-void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
 
 #define HEALING_MOTES 512 // motes in PARTICLES
 #define HEALING_SLOTS 64  // particles reserved for each target
@@ -11121,45 +11039,33 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 // a picture (a dagger, a shield, a streak or a wisp) plays over it.
 // PARTICLES holds the gathering flares, 64 for each target.
 // One entry for each mode.
-void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunImpact, BattleFx_RunStatBoost, 0)
 
 // Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
 //
 // Gather stat-boost light and display a shield in Mars colours.
-void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunGuard, BattleFx_RunStatBoost, 1)
 
 // Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
 // 215).
 //
 // Gather stat-boost light and display a shield in Jupiter colours.
-void BattleFx_RunWard(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWard, BattleFx_RunStatBoost, 2)
 
 // Abilities: Granite (kind 200).
 //
 // Gather stat-boost light and display a violet streak in Venus colours.
-void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunGranite, BattleFx_RunStatBoost, 3)
 
 // Abilities: Flash (kind 213).
 //
 // Gather stat-boost light and display a violet streak in Mars colours.
-void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunFlash, BattleFx_RunStatBoost, 5)
 
 // Abilities: Zephyr (kind 216).
 //
 // Gather stat-boost light and display a wisp without replacing its palette.
-void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunZephyr, BattleFx_RunStatBoost, 4)
 
 // Where each picture sits in the sheet.
 enum StatBoostSheet {
@@ -11514,28 +11420,20 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // Abilities: Dull, Blunt (kind 27).
 //
 // Break the dagger picture into shards that fade through darker copies.
-void BattleFx_RunDull(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDull, BattleFx_RunStatReduction, 0)
 
 // Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
 //
 // Break the shield picture into fading shards with style 1.
-void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunImpair, BattleFx_RunStatReduction, 1)
 
 // Abilities: Weaken, Enfeeble (kind 31).
 //
 // Break the shield picture into fading shards with style 2.
-void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWeaken, BattleFx_RunStatReduction, 2)
 
 // Break the shield picture into fading shards with style 3.
-void BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3, BattleFx_RunStatReduction, 3)
 
 // The shard picture in the sheet, followed by seven copies of it, each
 // with its colour levels capped 7 lower than the one before.
@@ -12725,16 +12623,12 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 // Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 //
 // Erupt grey motes and smoke using the second count-table row.
-void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
-  BattleFx_RunBlastAndSmokeBomb(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSmokeBomb, BattleFx_RunBlastAndSmokeBomb, 1)
 
 // Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
 //
 // Erupt fire-coloured motes and smoke and recoil the targets.
-void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
-  BattleFx_RunBlastAndSmokeBomb(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBlast, BattleFx_RunBlastAndSmokeBomb, 0)
 
 // The columns of a gBlastAndSmokeBomb_Counts row.
 enum {
@@ -13009,51 +12903,44 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
 // Abilities: Fire Blessing (kind 400).
 //
 // Fire flash bursts from the user towards randomly chosen targets.
-void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunFireBlessing, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_FLASH)
 
 // Abilities: Water Blessing (kind 401).
 //
 // Fire the burst shower in the water-spray palette.
-void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWaterBlessing, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_SPRAY)
 
 // Abilities: Dark Blessing (kind 403).
 //
 // Fire grey bursts and leave the targets solid black.
-void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDarkBlessing, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_GREY)
 
 // Abilities: Dark Blessing, Acid Blessing (kind 404).
 //
 // Fire pink bursts from 16 pixels below the normal origin.
-void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunAcidBlessing, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_PINK)
 
 // Abilities: Storm Blessing (kind 405).
 //
 // Show violet lightning between the user and targets instead of bursts.
-void BattleFx_RunStormBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunStormBlessing, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_LIGHTNING)
 
 // Abilities: Evil Blessing (kind 406).
 //
 // Fire demon-face bursts from 16 pixels in front of the user.
-void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunEvilBlessing, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_FACES)
 
 // Abilities: Deadly Gas (kind 407).
 //
 // Fire Mars-coloured bursts from 28 pixels in front of the user.
-void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDeadlyGas, BattleFx_RunBurstShower,
+                   BURST_SHOWER_MODE_DJINNI)
 
 #define BURST_SHOWER_FRAMES 64 // frames in the effect
 
@@ -14035,16 +13922,12 @@ struct DualColumn {
 // Abilities: Growth, Mad Growth, Wild Growth (kind 4).
 //
 // Grow vines from the ground, scattering dust from each root.
-void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
-  BattleFx_RunGrowingColumns(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunGrowth, BattleFx_RunGrowingColumns, 0)
 
 // Abilities: Punji, Punji Trap, Punji Strike (kind 56).
 //
 // Grow green pillars from the ground, scattering dust from each root.
-void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
-  BattleFx_RunGrowingColumns(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPunji, BattleFx_RunGrowingColumns, 1)
 
 // Vines (mode 0) or green pillars (mode 1) grow one every 4 frames,
 // alternately mirrored, each throwing up dust from its root.
@@ -15030,44 +14913,32 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
 // Abilities: Slash, Wind Slash, Sonic Slash (kind 19).
 //
 // Fire the projectile volley using its first table row.
-void BattleFx_RunSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSlash, BattleFx_RunProjectileVolley, 0)
 
 // Abilities: Shuriken (kind 54).
 //
 // Fire the projectile volley using its second table row.
-void BattleFx_RunShuriken(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunShuriken, BattleFx_RunProjectileVolley, 1)
 
 // Abilities: Crazy Voice (kind 303).
 //
 // Fire the projectile volley whose shots bounce on impact.
-void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCrazyVoice, BattleFx_RunProjectileVolley, 2)
 
 // Abilities: Wing Flutter (kind 307).
 //
 // Fire the projectile volley using table row 3.
-void BattleFx_RunWingFlutter(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWingFlutter, BattleFx_RunProjectileVolley, 3)
 
 // Abilities: Wing Stroke (kind 381).
 //
 // Fire the projectile volley using table row 11.
-void BattleFx_RunWingStroke(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 11);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWingStroke, BattleFx_RunProjectileVolley, 11)
 
 // Abilities: Wing Beat (kind 306).
 //
 // Fire the projectile volley using table row 4.
-void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWingBeat, BattleFx_RunProjectileVolley, 4)
 
 // Puts the user into its action pose (2) and fires the volley in this mode
 // while its animation runs fast.
@@ -15085,37 +14956,27 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
 // Abilities: Cutting Edge (kind 57).
 //
 // Volley mode 5, fired from the user's action pose.
-void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCuttingEdge, BattleFx_RunVolleyWithAction, 5)
 
 // Abilities: Heat Wave (kind 59).
 //
 // Volley mode 6, fired from the user's action pose.
-void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHeatWave, BattleFx_RunVolleyWithAction, 6)
 
 // Abilities: Sleet (kind 205).
 //
 // Fire the projectile volley with the delayed frame-48 hit cue.
-void BattleFx_RunSleet(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSleet, BattleFx_RunProjectileVolley, 7)
 
 // Abilities: Ice Blessing (kind 402).
 //
 // Fire the projectile volley using table row 10.
-void BattleFx_RunIceBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 10);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunIceBlessing, BattleFx_RunProjectileVolley, 10)
 
 // Abilities: Blizzard (kind 63).
 //
 // Volley mode 9, fired from the user's action pose.
-void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, 9);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBlizzard, BattleFx_RunVolleyWithAction, 9)
 
 // Projectile volleys, and moving battlers about.
 extern u8 gVolley_CometHeights[];
@@ -15776,30 +15637,22 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 // Abilities: Bone Charge (kind 311).
 //
 // The rushing strike in each of its four palettes.
-void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBoneCharge, BattleFx_RunRushingStrike, 0)
 
 // Abilities: Brute Force (kind 314).
 //
 // Rush the target and scatter sparks in the ice-block palette.
-void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBruteForce, BattleFx_RunRushingStrike, 1)
 
 // Abilities: Onslaught (kind 326).
 //
 // Rush the target and scatter sparks in the pink-burst palette.
-void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunOnslaught, BattleFx_RunRushingStrike, 2)
 
 // Abilities: Headbutt (kind 339).
 //
 // Rush the target and scatter sparks in the blast palette.
-void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHeadbutt, BattleFx_RunRushingStrike, 3)
 
 #define RUSHING_STRIKE_FRAMES 60 // frames in the effect
 #define RUSHING_STRIKE_FRAME 10  // the user strikes
@@ -17773,30 +17626,22 @@ void BattleFx_RunGust(struct BattleEffectArgument *effect) {
 // Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
 //
 // Play the first flurry style selected by the effect table.
-void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBearClaw, BattleFx_RunBurstScene, 0)
 
 // Abilities: Ransack (kind 321); Mad Dash (kind 343).
 //
 // Use the same first flurry style for this alternate effect-table entry.
-void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRansack, BattleFx_RunBurstScene, 0)
 
 // Abilities: Bacteria Rush (kind 328).
 //
 // Play the second flurry style selected by the effect table.
-void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBacteriaRush, BattleFx_RunBurstScene, 1)
 
 // Abilities: Freebite Rush (kind 334).
 //
 // Play the third flurry style selected by the effect table.
-void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunFreebiteRush, BattleFx_RunBurstScene, 2)
 
 // Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
 //
@@ -20964,16 +20809,12 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 // Abilities: Meteor (scene kind 11).
 //
 // Run the particle stream in mode 0.
-void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticleStreams(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMeteor, BattleFx_RunParticleStreams, 0)
 
 // Abilities: Outer Space (kind 384).
 //
 // Run the particle stream in mode 1.
-void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticleStreams(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
 
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_DropPoints[][2];
@@ -24790,16 +24631,12 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 // at the end.
 
 // Abilities: Quick Strike (kind 52).
-void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
-  BattleFx_RunRevealColumn(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunQuickStrike, BattleFx_RunRevealColumn, 1)
 
 // Abilities: Vorpal Slash (kind 65).
 //
 // Flash the target using the first pair of reveal-mask resources.
-void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunRevealColumn(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVorpalSlash, BattleFx_RunRevealColumn, 2)
 
 // Draw four 120x120 frames on the canvas, four ticks each,
 // then fill the canvas and strike the target.

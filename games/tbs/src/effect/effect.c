@@ -384,6 +384,20 @@ void BattleFx_ArmWin0HBlankDma(void) {
           (volatile u32 *)channel);
 }
 
+// Fills window 0's per-scanline edges for the falling shards and bolts:
+// lines 8 to `last` take `slant`, an expression of the line `i`; the rest of
+// the battle view, down to line 135, takes the fixed `span`; and the lines
+// below it are empty.
+#define EFFECT_BUILD_SLANTED_WINDOW(line, i, last, slant, span)                \
+  for ((i) = 0; (i) != 160; (i)++) {                                           \
+    if ((i) >= 8 && (i) <= (last))                                             \
+      (line)[i] = (slant);                                                     \
+    else if ((i) <= 135)                                                       \
+      (line)[i] = (span);                                                      \
+    else                                                                       \
+      (line)[i] = WINDOW_SPAN_EMPTY;                                           \
+  }
+
 // Falling shards and bolts, streak volleys and the mote fountain: four effects
 // that throw many small pictures at the targets.
 //
@@ -500,24 +514,12 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   // fall, then a fixed span down to line 135, and nothing below that.
   if (work->effect->side == 0) {
     line = (u16 *)gMapCellBuffer;
-    for (i = 0; i != 160; i++) {
-      if (i >= 8 && i <= 103)
-        line[i] = (0xf0 - i) | ((0x70 - i) << 8);
-      else if (i <= 135)
-        line[i] = WINDOW_SPAN(8, 136);
-      else
-        line[i] = WINDOW_SPAN_EMPTY;
-    }
+    EFFECT_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
+                                WINDOW_SPAN(8, 136));
   } else {
     line = (u16 *)gMapCellBuffer;
-    for (i = 0; i != 160; i++) {
-      if (i >= 8 && i <= 95)
-        line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
-      else if (i <= 135)
-        line[i] = WINDOW_SPAN(120, 248);
-      else
-        line[i] = WINDOW_SPAN_EMPTY;
-    }
+    EFFECT_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
+                                WINDOW_SPAN(120, 248));
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
@@ -714,24 +716,14 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
   if (work->effect->side == 0) {
     line = (u16 *)gMapCellBuffer;
-    for (i = 0; i != 160; i++) {
-      if (i >= 8 && i <= 103)
-        line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
-      else if (i <= 135)
-        line[i] = WINDOW_SPAN(0, 128);
-      else
-        line[i] = WINDOW_SPAN_EMPTY;
-    }
+    EFFECT_BUILD_SLANTED_WINDOW(line, i, 103,
+                                ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
+                                WINDOW_SPAN(0, 128));
   } else {
     line = (u16 *)gMapCellBuffer;
-    for (i = 0; i != 160; i++) {
-      if (i >= 8 && i <= 103)
-        line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
-      else if (i <= 135)
-        line[i] = WINDOW_SPAN(112, 240);
-      else
-        line[i] = WINDOW_SPAN_EMPTY;
-    }
+    EFFECT_BUILD_SLANTED_WINDOW(line, i, 103,
+                                ((i / 2 + 60) << 8) | (i / 2 + 188),
+                                WINDOW_SPAN(112, 240));
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);

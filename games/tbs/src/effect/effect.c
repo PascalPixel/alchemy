@@ -651,8 +651,6 @@ enum StreakStyle {
 //
 // Battle effect 300: ember streaks.
 void BattleFx_RunSonicWave(struct BattleEffectArgument *effect) {
-#define STREAK_SPACING 6 // frames between streaks
-
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_EMBER);
 }
 
@@ -688,6 +686,8 @@ void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect) {
 UNUSED void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
 }
+
+#define STREAK_SPACING 6 // frames between streaks
 
 // Fires STREAK_MAX streaks at each target from 20 pixels above the user,
 // one every 6 frames, each reaching 20 pixels above its target 24 frames
@@ -4036,11 +4036,6 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 //
 // Battle effect 50: pink lights.
 void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
-// gMemberBurst_Counts has two entries for each mode.
-#define GATHERING_LIGHTS_COUNT(mode) gMemberBurst_Counts[(mode) * 2]
-#define GATHERING_LIGHTS_FRAMES(mode) gMemberBurst_Counts[(mode) * 2 + 1]
-#define GATHERING_LIGHTS_SLOTS 128 // particles reserved for each target
-
   BattleFx_RunGatheringLights(effect, 0);
 }
 
@@ -4057,6 +4052,11 @@ void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
 void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 2);
 }
+
+// gMemberBurst_Counts has two entries for each mode.
+#define GATHERING_LIGHTS_COUNT(mode) gMemberBurst_Counts[(mode) * 2]
+#define GATHERING_LIGHTS_FRAMES(mode) gMemberBurst_Counts[(mode) * 2 + 1]
+#define GATHERING_LIGHTS_SLOTS 128 // particles reserved for each target
 
 // For each target in turn, 20 frames apart, lights burst out of the user;
 // 30 frames after each one appears it is pulled towards the middle of the
@@ -4589,9 +4589,6 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 //
 // Battle effect 347: gold shells that burst into shards.
 void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
-#define LOBBED_SHELLS_SLOTS 16        // particles reserved for each target
-#define LOBBED_SHELLS_BURST_SLOTS 256 // burst particles after the shells
-
   BattleFx_RunLobbedShells(effect, 4);
 }
 
@@ -4647,6 +4644,8 @@ extern u16 gSevenMode_ShardOffsets[];
 
 // The bursts live after the shells in gMapCellBuffer.
 #define SHELL_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
+#define LOBBED_SHELLS_SLOTS 16        // particles reserved for each target
+#define LOBBED_SHELLS_BURST_SLOTS 256 // burst particles after the shells
 
 // Lobs a shell from the user at each target in turn, 8 frames apart. Each
 // tumbles through ten images as it flies and, when it lands, the target
@@ -6451,11 +6450,6 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 // Battle effect 385: the rising embers from the user's side, in the
 // LightningBolt colours.
 void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
-// Falling streaks, work->particles 24 to 39.
-#define PALETTE_PARTICLES_STREAKS 16
-#define PALETTE_PARTICLES_FIRST_STREAK 24 // the first streak in work->particles
-#define PALETTE_PARTICLES_FIRST_SPARK 40  // the first spark in work->particles
-
   BattleFx_RunPaletteParticles(effect, 1);
 }
 
@@ -6468,6 +6462,10 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 }
 
 #define PALETTE_PARTICLES_FRAMES 208 // frames in the effect
+// Falling streaks, work->particles 24 to 39.
+#define PALETTE_PARTICLES_STREAKS 16
+#define PALETTE_PARTICLES_FIRST_STREAK 24 // the first streak in work->particles
+#define PALETTE_PARTICLES_FIRST_SPARK 40  // the first spark in work->particles
 
 // A 208-frame effect of embers rising from the ground; pressing A or B
 // during frames 49 to 159 skips to frame 160. The targets reel on frame
@@ -6849,10 +6847,6 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   if (mode == 0) {
-#define IMPACT_BURST_FRAGMENTS 3    // fragments, work->particles 61 to 63
-#define IMPACT_BURST_DRAWN_LARGE 30 // large sparks drawn
-#define IMPACT_BURST_DRAWN_SMALL 60 // small sparks drawn
-
     BattleFx_RunImpactBurst(3, focus.x, focus.y);
     for (i = 0; i != 8; i++)
       ResourceObject_ReleaseFar(work->objects[i]);
@@ -7786,17 +7780,6 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 // Battle effect 15: bursts at (60, 48), the canvas behind the battle's
 // first layer (priority 1).
 void BattleFx_RunNova(struct BattleEffectArgument *effect) {
-// gSparkGroups_Shapes has five entries for each variant.
-#define SPARK_GROUPS_SPARKS(variant) gSparkGroups_Shapes[(variant) * 5]
-#define SPARK_GROUPS_BURSTS(variant) gSparkGroups_Shapes[(variant) * 5 + 1]
-#define SPARK_GROUPS_OFFSET(variant, burst)                                    \
-  gSparkGroups_Shapes[(variant) * 5 + (burst) + 2]
-
-#define SPARK_GROUPS_FLASHES 16 // flashes kept per burst
-#define SPARK_GROUPS_SPACING 8  // frames between bursts
-#define SPARK_GROUPS_RING 12    // of which drawn as the ring
-#define SPARK_FLASH_DRAWN 18    // a flash is drawn for its last 18 frames
-
   BattleFx_RunSparkGroups(effect, 0);
 }
 
@@ -7807,6 +7790,17 @@ void BattleFx_RunNova(struct BattleEffectArgument *effect) {
 void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }
+
+// gSparkGroups_Shapes has five entries for each variant.
+#define SPARK_GROUPS_SPARKS(variant) gSparkGroups_Shapes[(variant) * 5]
+#define SPARK_GROUPS_BURSTS(variant) gSparkGroups_Shapes[(variant) * 5 + 1]
+#define SPARK_GROUPS_OFFSET(variant, burst)                                    \
+  gSparkGroups_Shapes[(variant) * 5 + (burst) + 2]
+
+#define SPARK_GROUPS_FLASHES 16 // flashes kept per burst
+#define SPARK_GROUPS_SPACING 8  // frames between bursts
+#define SPARK_GROUPS_RING 12    // of which drawn as the ring
+#define SPARK_FLASH_DRAWN 18    // a flash is drawn for its last 18 frames
 
 // One to three bursts, 8 frames apart: each flashes, rings itself with
 // twelve smaller flashes that fade, and throws out sparks that bounce on
@@ -8247,8 +8241,6 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 // Battle effect 32: lime smoke (effect->variant 0) or pink smoke.
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
-#define TARGET_MOTES 512 // motes scattered at the start
-
     BattleFx_RunTargetMotes(effect, 0);
     return;
   }
@@ -8312,6 +8304,8 @@ void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
 
 // Where mode 3 keeps its glint images in work->sheet.
 enum { TARGET_MOTE_GLINT_CELLS = 0x2580 };
+
+#define TARGET_MOTES 512 // motes scattered at the start
 
 // Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
 // turn about a point 20 pixels up, either closing in on it or rising, and
@@ -9049,11 +9043,6 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
   } else {
     switch (effect->kind) {
     case 1:
-#define RAMSES_ROCKS 6            // rocks that fall and bounce
-#define RAMSES_FIRST_PUFF 6       // the first puff in work->particles
-#define RAMSES_FIRST_ROCK_PUFF 30 // the first rock puff in work->particles
-#define RAMSES_SPARKS 512         // sparks of the orb's burst
-
       BattleFx_RunRamses(effect);
       break;
     case 2:
@@ -9066,15 +9055,9 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
       BattleFx_RunAtalanta(effect);
       break;
     case 5:
-#define CYBELE_CHIP_COUNT 48 // chips thrown by the thorns
-
       BattleFx_RunCybele(effect);
       break;
     case 6:
-#define NEPTUNE_FLAME_GROUND 112 // where the blue flames throw sparks
-#define NEPTUNE_OBJECTS 8        // objects in the formation
-#define NEPTUNE_PARTICLES 1024   // map-buffer particle slots
-
       BattleFx_RunNeptune(effect);
       break;
     case 7:
@@ -9084,14 +9067,9 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
       BattleFx_RunProcne(effect);
       break;
     case 9:
-#define SHOCKWAVE_SHEET_FLARE_B 0x4240 // the second flare picture in the sheet
-
       BattleFx_RunJudgment(effect);
       break;
     case 10:
-#define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
-#define BOREAS_FALLING_BLOCK_CELLS 0x14f9 // the diagonal 40x80 ice block
-
       BattleFx_RunBoreas(effect);
       break;
     case 11:
@@ -9294,6 +9272,7 @@ void BattleFx_InitTilemapAndFlushQueue(void) {
 // motes in the shared particle buffer.
 
 #define CYBELE_FRAMES 366 // frames in the effect
+#define CYBELE_CHIP_COUNT 48 // chips thrown by the thorns
 
 // Abilities: Cybele (scene kind 5).
 //
@@ -9779,6 +9758,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define ICE_BLOCK_TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
+#define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
+#define BOREAS_FALLING_BLOCK_CELLS 0x14f9 // the diagonal 40x80 ice block
 
 // Abilities: Boreas (scene kind 10).
 //
@@ -10907,10 +10888,6 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 // PARTICLES holds the gathering flares, 64 for each target.
 // One entry for each mode.
 void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
-#define STAT_BOOST_SCATTERED 512 // flares scattered at the start
-#define STAT_BOOST_DRAWN 32      // flares drawn for each target
-#define STAT_BOOST_SLOTS 64      // particles reserved for each target
-
   BattleFx_RunStatBoost(effect, 0);
 }
 
@@ -10957,6 +10934,10 @@ enum StatBoostSheet {
   STAT_BOOST_PICTURE = 0x2b8e, // the picture the mode picks
   STAT_BOOST_DJINNI = 0x65c0   // the 40x40 djinni
 };
+
+#define STAT_BOOST_SCATTERED 512 // flares scattered at the start
+#define STAT_BOOST_DRAWN 32      // flares drawn for each target
+#define STAT_BOOST_SLOTS 64      // particles reserved for each target
 
 // Flares of light swirl in to the centre of each target, one target every
 // 8 frames, burst, and the mode's picture plays. The canvas is shown at
@@ -11300,9 +11281,6 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 //
 // Break the dagger picture into shards that fade through darker copies.
 void BattleFx_RunDull(struct BattleEffectArgument *effect) {
-#define STAT_REDUCTION_SHARDS 24 // shards drawn for each target
-#define STAT_REDUCTION_SLOTS 32  // particles reserved for each target
-
   BattleFx_RunStatReduction(effect, 0);
 }
 
@@ -11329,6 +11307,8 @@ void BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
 // with its colour levels capped 7 lower than the one before.
 #define STAT_REDUCTION_SHARD_CELLS 0x2580
 #define STAT_REDUCTION_SHARD_BYTES 696 // bytes in each copy
+#define STAT_REDUCTION_SHARDS 24       // shards drawn for each target
+#define STAT_REDUCTION_SLOTS 32        // particles reserved for each target
 
 // Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
 // target, 4 frames apart, and then breaks into 24 shards that fly off and
@@ -12772,8 +12752,6 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
 //
 // Fire flash bursts from the user towards randomly chosen targets.
 void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
-#define BURST_SHOWER_MODE_LIGHTNING 5 // the mode that draws a lightning bolt
-
   BattleFx_RunBurstShower(effect, 0);
 }
 
@@ -12820,6 +12798,7 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
 }
 
 #define BURST_SHOWER_FRAMES 64 // frames in the effect
+#define BURST_SHOWER_MODE_LIGHTNING 5 // the mode that draws a lightning bolt
 
 // Burst shower: for 48 frames the user fires one burst a frame at a random
 // point near one of the targets, and each target is hit every 8 frames.
@@ -20391,6 +20370,9 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_SHARD_CELLS 0x59d8 // Fragment graphics: four 12x24 images
 
 #define IMPACT_BURST_FRAMES 72 // frames in the effect
+#define IMPACT_BURST_FRAGMENTS 3    // fragments, work->particles 61 to 63
+#define IMPACT_BURST_DRAWN_LARGE 30 // large sparks drawn
+#define IMPACT_BURST_DRAWN_SMALL 60 // small sparks drawn
 
 // Open an impact flash and scatter sparks and fragments over 72 frames.
 // Also rearrange the objects into formation during the first 36 frames.
@@ -21204,6 +21186,10 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
 #define RAMSES_FRAMES 320       // frames in the effect
 #define RAMSES_STRIKE_FRAME 260 // the orb's burst strikes the targets
+#define RAMSES_ROCKS 6          // rocks that fall and bounce
+#define RAMSES_FIRST_PUFF 6     // the first puff in work->particles
+#define RAMSES_FIRST_ROCK_PUFF 30 // the first rock puff in work->particles
+#define RAMSES_SPARKS 512         // sparks of the orb's burst
 
 // Abilities: Ramses (scene kind 1).
 //
@@ -22494,6 +22480,7 @@ extern u8 gShockwaveScene_ShardHeights[];
 
 #define SHOCKWAVE_GATHER_FRAMES 160 // frames of the gathering
 #define SHOCKWAVE_SWEEP_FRAMES 320  // frames of the sweep
+#define SHOCKWAVE_SHEET_FLARE_B 0x4240 // the second flare picture in the sheet
 
 // Abilities: Judgment (scene kind 9).
 //
@@ -23777,6 +23764,10 @@ void Graphics_ResetBg2Pa(void) { REG_BG2PA = 0x100; }
 
 // Stretch background 2 to twice its source width.
 void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
+
+#define NEPTUNE_FLAME_GROUND 112 // where the blue flames throw sparks
+#define NEPTUNE_OBJECTS 8        // objects in the formation
+#define NEPTUNE_PARTICLES 1024   // map-buffer particle slots
 
 // Abilities: Neptune (scene kind 6).
 //

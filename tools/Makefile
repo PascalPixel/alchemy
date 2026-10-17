@@ -7,8 +7,9 @@ OUT := tools/out
 OBJ := $(OUT)/obj
 NAMES := graphics audio music text objects deps overlays header
 BINARIES := $(addprefix $(OUT)/ags-,$(NAMES))
-COMMON := $(OBJ)/common/common.o
-COMPRESS := $(OBJ)/common/compress.o
+# Shared runtime, codecs, and assembly output are linked only where needed.
+COMMON := $(addprefix $(OBJ)/common/,common.o files.o strings.o)
+COMPRESS := $(addprefix $(OBJ)/common/,compress.o lz.o arena.o)
 ASSEMBLY := $(OBJ)/common/assembly.o
 PNG_CFLAGS = $(shell $(PKG_CONFIG) --cflags libpng 2>/dev/null)
 PNG_LIBS = $(shell $(PKG_CONFIG) --libs libpng 2>/dev/null)
@@ -31,9 +32,9 @@ $(OUT)/ags-graphics: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-graphi
 	$(HOST_CC) $^ $(HOST_LDFLAGS) $(PNG_LIBS) -o $@
 $(OUT)/ags-audio: $(OBJ)/ags-audio/ags-audio.o $(COMMON)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -lm -o $@
-$(OUT)/ags-music: $(OBJ)/ags-music/ags-music.o $(OBJ)/ags-music/midi.o $(COMMON) $(ASSEMBLY)
+$(OUT)/ags-music: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-music/*.c)) $(COMMON) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
-$(OUT)/ags-text: $(OBJ)/ags-text/ags-text.o $(COMMON) $(ASSEMBLY)
+$(OUT)/ags-text: $(patsubst tools/%.c,$(OBJ)/%.o,$(wildcard tools/ags-text/*.c)) $(COMMON) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) $(UTF8_LIBS) -o $@
 $(OUT)/ags-objects: $(OBJ)/ags-objects/ags-objects.o $(COMMON)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
@@ -52,7 +53,7 @@ $(OBJ)/%.o: tools/%.c
 
 test: all $(OUT)/test-tools
 	$(OUT)/test-tools $(OUT)
-$(OUT)/test-tools: $(OBJ)/tests/tests.o $(OBJ)/ags-graphics/graphics.o $(COMMON) $(COMPRESS)
+$(OUT)/test-tools: $(OBJ)/tests/tests.o $(OBJ)/ags-graphics/graphics.o $(OBJ)/ags-graphics/image.o $(COMMON) $(COMPRESS) $(ASSEMBLY)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) $(PNG_LIBS) -o $@
 
 clean:

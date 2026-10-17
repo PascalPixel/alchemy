@@ -1,130 +1,182 @@
-/* Render bytes with labels and relocatable pointers as GNU assembler source. */
+/*
+ * assembly.c
+ *
+ * Build assembly from byte payloads, ordered labels, and relocations.
+ * Pointers reserve four zero bytes in the payload and are emitted as symbolic
+ * expressions. Appending an assembly rebases both labels and pointers; rendering
+ * walks the ordered records once and appends source to the caller's buffer.
+ */
 #include "assembly.h"
 #include <ctype.h>
 #include <inttypes.h>
-bool identifier(const char *s) {
-  if (*s != '_' && !isalpha((unsigned char)*s))
-    return false;
-  for (s++; *s; s++)
-    if (*s != '_' && !isalnum((unsigned char)*s))
-      return false;
-  return true;
+bool
+identifier(const char *s)
+{
+	if (*s != '_' && !isalpha((unsigned char) *s))
+		return false;
+	for (s++; *s; s++)
+		if (*s != '_' && !isalnum((unsigned char) *s))
+			return false;
+	return true;
 }
 
-void labelAt(Assembly *a, const char *name, size_t at, bool global) {
-  if (!identifier(name))
-    fail("invalid assembly symbol: %s", name);
-  if (a->labelCount && at < a->labels[a->labelCount - 1].offset)
-    fail("assembly labels must follow byte order");
-  for (size_t i = 0; i < a->labelCount; i++)
-    if (!strcmp(a->labels[i].name, name))
-      fail("duplicate label: %s", name);
-  a->labels = resize(a->labels, a->labelCount + 1, sizeof(Label));
-  a->labels[a->labelCount++] = (Label){at, copyString(name), global};
+/*
+ * Several labels may share an offset, but names are unique and offsets must
+ * arrive in byte order.
+ */
+void
+labelAt(Assembly *assembly, const char *name, size_t at, bool global)
+{
+	if (!identifier(name))
+		fail("invalid assembly symbol: %s", name);
+	if (assembly->labelCount &&
+		at < assembly->labels[assembly->labelCount - 1].offset)
+		fail("assembly labels must follow byte order");
+	for (size_t i = 0; i < assembly->labelCount; i++)
+		if (!strcmp(assembly->labels[i].name, name))
+			fail("duplicate label: %s", name);
+	assembly->labels =
+		resize(assembly->labels, assembly->labelCount + 1, sizeof(Label));
+	assembly->labels[assembly->labelCount++] =
+		(Label){at, copyString(name), global};
 }
 
-void pointerAt(Assembly *a, const char *name, size_t at, int64_t addend) {
-  if (!identifier(name))
-    fail("invalid pointer symbol: %s", name);
-  if (a->pointerCount && at < a->pointers[a->pointerCount - 1].offset + 4)
-    fail("assembly pointers overlap or are out of order");
-  a->pointers = resize(a->pointers, a->pointerCount + 1, sizeof(Pointer));
-  a->pointers[a->pointerCount++] = (Pointer){at, copyString(name), addend};
+/*
+ * Relocations occupy four bytes and may not overlap an earlier relocation.
+ */
+void
+pointerAt(Assembly *assembly, const char *name, size_t at, int64_t addend)
+{
+	if (!identifier(name))
+		fail("invalid pointer symbol: %s", name);
+	if (assembly->pointerCount &&
+		at < assembly->pointers[assembly->pointerCount - 1].offset + 4)
+		fail("assembly pointers overlap or are out of order");
+	assembly->pointers =
+		resize(assembly->pointers, assembly->pointerCount + 1, sizeof(Pointer));
+	assembly->pointers[assembly->pointerCount++] =
+		(Pointer){at, copyString(name), addend};
 }
 
-void addPointer(Assembly *a, const char *name, int64_t addend) {
-  pointerAt(a, name, a->bytes.len, addend);
-  word(&a->bytes, 0);
+void
+addPointer(Assembly *assembly, const char *name, int64_t addend)
+{
+	pointerAt(assembly, name, assembly->bytes.len, addend);
+	word(&assembly->bytes, 0);
 }
 
-void alignAssembly(Assembly *a, size_t n, uint8_t fill) {
-  if (!n || (n & (n - 1)))
-    fail("alignment is not a power of two");
-  if (a->alignment < n)
-    a->alignment = n;
-  while (a->bytes.len % n)
-    byte(&a->bytes, fill);
+void
+alignAssembly(Assembly *assembly, size_t n, uint8_t fill)
+{
+	if (!n || (n & (n - 1)))
+		fail("alignment is not a power of two");
+	if (assembly->alignment < n)
+		assembly->alignment = n;
+	while (assembly->bytes.len % n)
+		byte(&assembly->bytes, fill);
 }
 
-void appendAssembly(Assembly *a, Assembly *other) {
-  size_t at = a->bytes.len;
-  if (other->alignment && at % other->alignment)
-    fail("appended assembly is unaligned");
-  if (a->alignment < other->alignment)
-    a->alignment = other->alignment;
-  append(&a->bytes, other->bytes.data, other->bytes.len);
-  for (size_t i = 0; i < other->labelCount; i++)
-    labelAt(a, other->labels[i].name, at + other->labels[i].offset,
-            other->labels[i].global);
-  for (size_t i = 0; i < other->pointerCount; i++)
-    pointerAt(a, other->pointers[i].symbol, at + other->pointers[i].offset,
-              other->pointers[i].addend);
+/*
+ * Copy a completed fragment at the current offset. Its required alignment
+ * must already have been satisfied by the caller.
+ */
+void
+appendAssembly(Assembly *assembly, Assembly *other)
+{
+	size_t at = assembly->bytes.len;
+	if (other->alignment && at % other->alignment)
+		fail("appended assembly is unaligned");
+	if (assembly->alignment < other->alignment)
+		assembly->alignment = other->alignment;
+	append(&assembly->bytes, other->bytes.data, other->bytes.len);
+	for (size_t i = 0; i < other->labelCount; i++)
+		labelAt(assembly, other->labels[i].name, at + other->labels[i].offset,
+				other->labels[i].global);
+	for (size_t i = 0; i < other->pointerCount; i++)
+		pointerAt(assembly, other->pointers[i].symbol,
+				  at + other->pointers[i].offset, other->pointers[i].addend);
 }
 
-Buffer assemblySource(const Assembly *a) {
-  Buffer text = {0};
-  if (a->alignment > 1)
-    print(&text, "\t.balign %zu\n", a->alignment);
-  /* Assemblies are built in byte order. Walk each label and pointer once,
+/*
+ * Append source at a line boundary. Flush byte rows before labels and pointers
+ * so a relocation cannot accidentally become part of a byte directive.
+ */
+void
+appendAssemblySource(Buffer *text, const Assembly *assembly)
+{
+	if (assembly->alignment > 1)
+		print(text, "\t.balign %zu\n", assembly->alignment);
+	/* Assemblies are built in byte order. Walk each label and pointer once,
    * even when a sprite bank contains several megabytes of pixel data. */
-  size_t row = 0, label = 0, pointer = 0;
-  for (size_t at = 0; at <= a->bytes.len;) {
-    while (label < a->labelCount && a->labels[label].offset == at) {
-      const Label *l = a->labels + label++;
-      if (row) {
-        byte(&text, '\n');
-        row = 0;
-      }
-      if (l->global)
-        print(&text, "\t.global %s\n", l->name);
-      print(&text, "%s:\n", l->name);
-    }
-    if (at == a->bytes.len)
-      break;
-    const Pointer *p =
-        pointer < a->pointerCount && a->pointers[pointer].offset == at
-            ? a->pointers + pointer++
-            : NULL;
-    if (p) {
-      if (at + 4 > a->bytes.len || read32(a->bytes.data + at))
-        fail("invalid assembly pointer at %zu", at);
-      if (row) {
-        byte(&text, '\n');
-        row = 0;
-      }
-      print(&text, "\t.4byte %s", p->symbol);
-      if (p->addend > 0)
-        print(&text, " + %" PRId64, p->addend);
-      else if (p->addend < 0)
-        print(&text, " - %" PRId64, -p->addend);
-      byte(&text, '\n');
-      at += 4;
-      continue;
-    }
-    static const char hex[] = "0123456789abcdef";
-    uint8_t value = a->bytes.data[at++];
-    const char digits[] = {'0', 'x', hex[value >> 4], hex[value & 15]};
-    append(&text, row ? ", " : "\t.byte ", row ? 2 : 7);
-    append(&text, digits, sizeof(digits));
-    if (++row == 16) {
-      byte(&text, '\n');
-      row = 0;
-    }
-  }
-  if (label != a->labelCount || pointer != a->pointerCount)
-    fail("assembly label or pointer lies outside its data");
-  if (row)
-    byte(&text, '\n');
-  return text;
+	size_t row = 0, labelIndex = 0, pointerIndex = 0;
+	for (size_t at = 0; at <= assembly->bytes.len;)
+	{
+		while (labelIndex < assembly->labelCount &&
+			   assembly->labels[labelIndex].offset == at)
+		{
+			const Label *label = assembly->labels + labelIndex++;
+			if (row)
+			{
+				byte(text, '\n');
+				row = 0;
+			}
+			if (label->global)
+				print(text, "\t.global %s\n", label->name);
+			print(text, "%s:\n", label->name);
+		}
+		if (at == assembly->bytes.len)
+			break;
+		const Pointer *relocation =
+			pointerIndex < assembly->pointerCount &&
+					assembly->pointers[pointerIndex].offset == at
+				? assembly->pointers + pointerIndex++
+				: NULL;
+		if (relocation)
+		{
+			if (at + 4 > assembly->bytes.len ||
+				read32(assembly->bytes.data + at))
+				fail("invalid assembly pointer at %zu", at);
+			if (row)
+			{
+				byte(text, '\n');
+				row = 0;
+			}
+			print(text, "\t.4byte %s", relocation->symbol);
+			if (relocation->addend > 0)
+				print(text, " + %" PRId64, relocation->addend);
+			else if (relocation->addend < 0)
+				print(text, " - %" PRId64, -relocation->addend);
+			byte(text, '\n');
+			at += 4;
+			continue;
+		}
+		static const char hex[] = "0123456789abcdef";
+		uint8_t value = assembly->bytes.data[at++];
+		const char digits[] = {'0', 'x', hex[value >> 4], hex[value & 15]};
+		append(text, row ? ", " : "\t.byte ", row ? 2 : 7);
+		append(text, digits, sizeof(digits));
+		if (++row == 16)
+		{
+			byte(text, '\n');
+			row = 0;
+		}
+	}
+	if (labelIndex != assembly->labelCount ||
+		pointerIndex != assembly->pointerCount)
+		fail("assembly label or pointer lies outside its data");
+	if (row)
+		byte(text, '\n');
 }
 
-void freeAssembly(Assembly *a) {
-  free(a->bytes.data);
-  for (size_t i = 0; i < a->labelCount; i++)
-    free(a->labels[i].name);
-  for (size_t i = 0; i < a->pointerCount; i++)
-    free(a->pointers[i].symbol);
-  free(a->labels);
-  free(a->pointers);
-  *a = (Assembly){0};
+void
+freeAssembly(Assembly *assembly)
+{
+	free(assembly->bytes.data);
+	for (size_t i = 0; i < assembly->labelCount; i++)
+		free(assembly->labels[i].name);
+	for (size_t i = 0; i < assembly->pointerCount; i++)
+		free(assembly->pointers[i].symbol);
+	free(assembly->labels);
+	free(assembly->pointers);
+	*assembly = (Assembly){0};
 }

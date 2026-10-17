@@ -173,9 +173,29 @@ void BattleFx_ArmWin0HBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-// Falling shards and bolts, streak volleys and mote fountains.
-// Variant tables control emission counts and timings. The runners reuse
-// Ram_MapCellBuffer for their particle arrays.
+// Falling shards and bolts, streak volleys and the mote fountain: four effects
+// that throw many small pictures at the targets.
+//
+// - The falling shards (Ice) and bolts (Douse) rain diagonally onto the
+//   targets' side. Both show the canvas only inside a slanted band of
+//   window 0, whose edges an HBlank DMA feeds line by line from a table at
+//   the start of gMapCellBuffer. Each particle falls until it passes y 80,
+//   then lands: shards shatter and kick up sparkle puffs, bolts flash and
+//   throw a fountain of sparks. A small timing table per effect picks the
+//   count, spacing and duration from effect->variant.
+// - The streak volley fires three streaks of light from the user at each
+//   target in turn; a settings row per style says whether the streak
+//   animates and how a hit looks.
+// - The mote fountain bursts motes out of the user that float upwards and
+//   wobble while each target reacts.
+//
+// Particle slots: the shards use work->particles, 0 to 31 for the shards and
+// 32 to 63 for their puffs; the bolts use work->particles for the bolts and
+// gMapCellBuffer, after the window table, for their sparks; the streaks use
+// work->particles, one per target and streak; the motes use PARTICLES. A
+// falling particle's variant is -1 until it lands, then counts the frames
+// since. Shards and bolts are positioned in eighths of a pixel; sparks,
+// streaks and motes in 16.16 fixed point.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 // Abilities: Ice, Ice Horn, Ice Missile (kind 7).
@@ -1003,8 +1023,29 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
 // The runners coordinate their own drawing callbacks and release them
 // before returning their drawing buffers.
 
-// Target strikes: repeated slashes or columns of light on the first target,
-// in twelve styles.
+// Target strikes: repeated slashes or columns of light on the first target.
+//
+// One runner, BattleFx_RunTargetStrike, plays all twelve strike styles. Each
+// style's row gives its kind (0 for a sideways slash, 1 for a column of
+// light), its number of hits, its extras (smoke, an absorbing drain, glints,
+// sparks or one heavy hit), its palette, the frames each picture is held, the
+// column's composite mode and the scene's duration. The wrappers above it
+// name the style of each effect.
+//
+// The scene runs in three phases:
+//
+// - Setup loads the pictures and the style's palette, then parks every
+//   particle, idle, where it will start: 64 smoke puffs at the target's feet,
+//   128 motes and 512 sparks 20 pixels up its body, each with a random
+//   velocity. A particle is idle while its variant is -1.
+// - Each frame first draws the strike (a slash sweep or a column) and, on a
+//   hit frame, shakes and flashes the target and lights the next group of
+//   particles. Glints are then scattered around the target, and the lit
+//   smoke, motes and sparks are drawn and moved.
+// - The finish releases the canvas layer.
+//
+// Several steps consume random numbers, so their order within a frame is part
+// of the effect.
 
 // The strike sparks live after the motes in gMapCellBuffer.
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
@@ -1529,8 +1570,31 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
-// Somersault strikes, falling blades, pillars of spiralling motes and a
-// picture that shatters.
+// Somersault strikes, falling blades, element pillars and bursts, swirling
+// swipes, the spider web and a picture that shatters.
+//
+// - Death Plunge runs the user up to the first target; both leap, turn upside
+//   down, and on the hit bounce apart while a ring of flashes rises from the
+//   user.
+// - The blade rain drops 16 swords, one every 4 frames, slanting in on the
+//   first target and sticking in the ground. No effect table entry points at
+//   it.
+// - The element pillar (BattleFx_RunIceFleckBurst) stands a mirrored pillar
+//   of light at a unit's feet while motes spiral up around it.
+// - The gathering burst flares sparks at four corners around a unit, draws
+//   motes spiralling in, then plays a burst of light over it.
+// - The swirl swipe (Poison Beat, Spinning Beat) sweeps a swirl across the
+//   first target; its two modes differ in colour, length and how the target
+//   reacts.
+// - The spider web spreads four mirrored quarters of a web over the targets
+//   and fades it in and out.
+//
+// Every runner sets up its canvas layer, pictures and particles, then runs a
+// fixed number of frames, each ending with a canvas present (or a plain frame
+// wait), and finally releases what the setup took. The two element runners
+// allocate their own work, canvas and sheet instead of using the shared ones.
+// Within a frame the order of the steps matters: later steps draw over
+// earlier ones and some consume random numbers.
 
 // Abilities: Death Plunge (kind 53).
 //
@@ -2846,8 +2910,21 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
 }
 
 // Shared canvas transfers, palette fades, clipping and target flash timers.
-// Runners mark transferPending after drawing; the scheduled transfer consumes
-// it before the next frame. Stop that callback before releasing its buffers.
+//
+// Most effects draw into a 128x128 canvas of 8-bit colour in the canvas heap
+// block, stored as 16x16 tiles of 8x8 pixels. Each frame a runner draws, then
+// sets transferPending. The scheduled callback
+// BattleFx_ProcessPendingGraphicsTransfer copies the canvas to video memory
+// before the next frame and, by transferMode, clears, fades, darkens or
+// brightens the pixels it keeps, so that trails decay. Effects that draw a
+// full-screen picture in Ram_MapCellBuffer use BG1 instead
+// (BattleFx_SetupCanvasTileMap) and the matching flush callback. A runner
+// must remove its transfer callback before the buffers are released.
+//
+// A reaction may start one of the eight actor timers in the effect's work
+// block; ObjectGroup_TickMemberTimers counts them down each frame and gives
+// the battler its own palette back when one runs out. The timers are indexed
+// like effect->actors, so timer n belongs to actor n.
 
 // A shared pixel-address helper changed registers at unchanged English
 // size 0x15c. Merging the nested bounds tests also changed native code;
@@ -3454,9 +3531,36 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   }
 }
 
-// Projected leaps, orbiting lights, mirrored walls and lobbed shells.
-// The impact-chip and shell-burst views below reuse the map buffer that
-// other effects address as an array of EffectStep records.
+// Things thrown or flown at the targets: the leaping fireball, closing skulls,
+// orbiting spirals, gathering lights and lobbed shells; and the mirrored
+// walls.
+//
+// Each runner loads its pictures and blitters, places its particles, then
+// plays a fixed number of frames. A frame resets the 3D transform to the
+// camera, moves and draws every live particle, hits the targets on their
+// scheduled frames and presents the canvas. The order of the steps within a
+// frame matters: later steps draw over earlier ones, and several of them draw
+// random numbers.
+//
+// - Planet Diver flashes the user, throws it into the air, turns it into a
+//   ball of fire that falls on the target and bursts into 256 chips that
+//   bounce on the ground.
+// - The closing skulls (Haunt) gather around each target in turn, eight
+//   skulls scattered in 3D that step towards a point above the target while
+//   the group spins.
+// - The orbiting spirals circle above each target in turn, four of them a
+//   quarter turn apart.
+// - The gathering lights burst out of the user and are pulled into each
+//   target until they reach it.
+// - The lobbed shells fly from the user to each target, tumbling, and burst
+//   into smoke or shards where they land.
+//
+// Particle slots: the skulls take 64 slots of PARTICLES per target, of which
+// 8 are used; the lights 128 per target; the shells 16 per target, of which
+// the first flies. The impact-chip and shell-burst views below reuse the map
+// buffer that other effects address as an array of EffectStep records. The
+// skulls, spirals and lights ripple the effect layer throughout, through the
+// HBlank DMA of BG2's affine origin.
 
 // The leap that falls as a ball of fire.
 
@@ -4752,6 +4856,25 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 // Shattering panels, rotating shapes and whirlwind formations.
+//
+// The triangle, ring and star effects all draw an outline the same way: a
+// handful of corner points are projected onto the canvas and stored in the
+// velocity fields of EffectStep records, then each edge between neighbouring
+// corners is sampled at a fixed number of evenly spaced points and a mote or
+// flare is stamped at each sample.
+//
+// - The triangle effects (Bind, Luff and BattleFx_RunTriangleStrike) spin a
+//   shrinking triangle onto the first target for 64 frames and then stand a
+//   rune there.
+// - Astral Blast flies three ten-pointed rings at the target, knocking it
+//   back; Shining Star drops eight ten-pointed stars that bounce near the
+//   target.
+// - Procne's whirlwind of comets is a 400-frame scene in several phases: a
+//   whirlwind lifts and spins the targets while dust spirals up; at frame 160
+//   the sky turns violet and a block of nine objects appears and sways; motes
+//   gather into the block; four comets shoot out of it with rings of sparks;
+//   finally the targets fall and are put back.
+//
 // The blue-ramp helper also converts a full-screen tiled picture in place.
 
 // The full-screen picture the blue ramp works on.
@@ -6245,6 +6368,38 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 
 // Embers, vortices, crystals and columns of lightning or fire.
 // Each family reads its counts and animation geometry from effect_table.c.
+//
+// Two scenes raise embers, small motes that drift upwards:
+//
+// - The palette particles scene raises embers from the user's side while
+//   flashes, sparks and falling streaks fly; in mode 0 a formation of eight
+//   objects sweeps in with them and explodes at the end. gMapCellBuffer holds
+//   512 embers, and work->particles hold 24 flashes, 16 streaks and 24
+//   sparks, in that order. An idle particle's variant is -1; a live one's
+//   counts its age up until it goes out.
+// - The ember columns scene draws three wrapping columns of fire over a band
+//   rising along the canvas floor. Its embers burst from one point, fall back
+//   under gravity, and from frame 80 rise away; one that falls below the band
+//   goes out and its slot is lit again.
+//
+// The ember columns' embers are shared with the falling sword (Titan Blade).
+//
+// The pillars of lightning (Plasma) and of fire (Volcano) strike columns one
+// after another, each on its own schedule, and throw sparks up from each
+// column's foot into one pool of 1024 in gMapCellBuffer. A spark's variant is
+// its remaining life, 0 when idle.
+//
+// - The lightning pillars strike every 8 frames with a white flash, showing
+//   two pictures over three frames. Their sparks move in 16.16 fixed point
+//   and bounce off the ground at y = 104.
+// - The fire pillars stand at random distances on the targets' side and
+//   scroll a column of fire up with a flickering flame at its foot. Each
+//   erupts with a fountain of 200 sparks and keeps spitting 4 a frame. Their
+//   sparks move in 24.8 fixed point, with z holding the speed across, and
+//   bounce off y = 120.
+//
+// These sparks differ from the shared spark bursts in their fixed point,
+// their bounds and how fast they shrink, so they keep their own loops.
 
 // Rising embers, and embers with three columns of fire.
 
@@ -7525,6 +7680,23 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 }
 
 // Spark bursts.
+//
+// A spark burst is a large flash, a ring of small flashes that fade, and a
+// spray of sparks that fall and bounce on the ground. The spark groups scene
+// strikes one to three such bursts, 8 frames apart, and the sword effects
+// build their strikes from the same parts:
+//
+// - A flash is an EffectStep whose x and y are an offset from its burst's
+//   centre and whose variant counts down its life. It is drawn only for its
+//   last 18 frames, from a 32x64 flash picture chosen by its age.
+// - A spark moves in 16.16 fixed point under its own gravity, and its variant
+//   is its remaining life. Below the floor it bounces back at half speed
+//   instead of being drawn; it shrinks as its life runs out.
+// - A strike makes every target flash and recoil at once.
+//
+// The spark groups scene keeps its flashes in work->particles, sixteen per
+// burst (only the first twelve are drawn), and its sparks in gMapCellBuffer,
+// one run per burst.
 
 // Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind
 // 15).
@@ -7965,6 +8137,17 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 // Mote modes choose how the particles gather or spread around each target.
 
 // Swirling motes around each target, in eight styles.
+//
+// Around each target in turn, 8 frames apart, motes turn about a point 20
+// pixels up, either closing in on it or rising, while the effect layer
+// ripples line by line and the target flashes. Each mote cycles through six
+// images, 4 frames each, and then starts again: a closing mote where it is, a
+// rising one at a new random point below.
+//
+// The motes live in PARTICLES, 64 slots for each target, of which the first
+// 16, 24 or 32 are drawn; their variant counts the frames of the current
+// image cycle. The bouncing sheep (Sleep) and the target markers (Curse) that
+// follow keep theirs in work->particles.
 
 // Abilities: Taint, Poison (kind 32).
 //
@@ -8727,8 +8910,22 @@ void BattleFx_RunNoEffectFrames(s32 count) {
 }
 
 // Entry points for scene effects and table-dispatched effects.
-// The dispatchers own the sheet, work and canvas allocations. Shared helpers
-// below manage the scanline window and the targets' animation objects.
+//
+// The battle asks for an effect by kind through one of three entry points:
+//
+// - BattleFx_RunTableEffect looks the kind up in gBattleFx_EffectHandlers,
+//   the table of ordinary effects.
+// - BattleFx_RunSceneEffect picks one of the large scene effects, the ones
+//   whose presentation flags have bit 15 set, by a switch.
+// - BattleFx_DispatchByIdRange runs the casting impacts, beam sequences and
+//   ring scenes, which need a sprite sheet twice the usual size.
+//
+// Each entry point allocates the effect's three heap blocks (sprite sheet,
+// work block and canvas), runs the effect to its end and releases them. A
+// runner may schedule callbacks that use those blocks, but it must remove
+// them before it returns to the dispatcher, since the blocks are gone
+// afterwards. Shared helpers below manage the scanline window and the
+// targets' animation objects.
 
 // Runs one of the large battle effects, the ones whose presentation flags
 // have bit 15 set: takes the effect's sheet, work and canvas, runs the
@@ -10193,8 +10390,24 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 }
 
 // Healing and stat-boost presentations.
-// Mode entries select pictures and scattering styles. An optional prelude
-// draws the Djinni before the motes gather around the targets.
+//
+// Healing sparkles come in seven modes. Motes of light scattered around each
+// target swirl in towards it, one target every 8 frames, with the recovery
+// sound on each target's 20th frame and a tint on its 36th. The modes differ
+// in how the motes scatter and turn and in which resource they draw; the
+// wrappers name the mode of each effect.
+//
+// PARTICLES holds the motes: 512 are scattered, and target n draws from the
+// 64 at n * 64 (32 of them, or 128 running into the next target's, by the
+// effect's variant). Each mote keeps its position relative to the target's
+// centre, so swirling the motes is a turn of the whole frame of reference,
+// and drawing one in is a step of 2 pixels a frame along the line to the
+// centre.
+//
+// A stat boost brings out a Djinni, which sways from side to side and, after
+// 32 frames, rises 2 pixels a frame; then it swirls flares of light in to
+// each target in turn, 8 frames apart, and a burst of light and the mode's
+// picture (a dagger, a shield, a streak or a wisp) play over it.
 
 // Healing sparkles, in seven modes: motes of light swirl in around each
 // target. PARTICLES holds the motes, 64 for each target.
@@ -10926,6 +11139,33 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // Stat-reduction shards, flame arcs, rock pillars and erupting particles.
 // Named table fields describe the counts and timing values used by each
 // family's variant rows.
+//
+// A stat reduction shows the dagger or the shield over each target, 4 frames
+// apart, and breaks it into 24 shards that fly off and darken through seven
+// dimmed copies of the shard picture. Its shards live in PARTICLES, 64 for
+// each target, and are drawn with trails: each transfer of the canvas fades
+// or darkens what is already there.
+//
+// The scenes after it each throw a pattern of particles and play it out over
+// a fixed number of frames:
+//
+// - Flare raises nine flames one after another along a half circle,
+//   optionally stacked two or three high.
+// - Quake raises three rock pillars that throw the targets into the air.
+// - Fire's homing embers fly out of the user, hang, and then home in on the
+//   targets, striking with a flare where they reach the ground.
+// - Frost's rising motes spiral up around the target while ice columns spring
+//   up, then burst: the motes spread and fall, chips fly and smoke rises over
+//   the heights they span.
+// - The blast (Blast, Smoke Bomb) bursts a fountain of motes and puffs of
+//   smoke up beside the targets, which fall back under gravity.
+//
+// Each scene takes over the canvas layer, loads its sheet, seeds its
+// particles and then runs its frames, each ending with a canvas present. A
+// free or waiting particle is usually marked by a negative variant, which
+// otherwise counts the frames of its animation. effect->variant picks each
+// scene's counts from its timing table. Several steps consume random numbers,
+// so their order within a frame is part of the effect.
 
 // Abilities: Dull, Blunt (kind 27).
 //
@@ -12357,9 +12597,32 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
 // An effect that does nothing.
 void BattleFx_RunNoEffect(void) {}
 
-// Burst showers, orbiting sparks and staged slashes.
-// The staged slash effect stores each trail particle's rotation matrix
-// after the particle records in the shared scratch buffer.
+// Burst showers, swirling stars, orbiting sparks, target bursts and staged
+// slashes.
+//
+// Each effect here is a frame loop over the shared effect canvas: it loads its
+// sheet, seeds its particles in work->particles (or in the larger shared pool,
+// PARTICLES), then draws and advances them every frame before presenting the
+// canvas.
+//
+// - The burst shower fires one burst a frame from the user at random points
+//   near the targets, and hits each target every 8 frames. One mode draws a
+//   lightning bolt instead. Each burst is one particle slot, its variant
+//   counting the 24 frames it lives (-1 when free).
+// - The swirling stars spin 64 stars about a point above the field, each on
+//   its own axis, then pull them back to the centre.
+// - The orbiting skulls (BattleFx_RunOrbitingSparks) circle each target in
+//   turn, three to a target, their angles kept in the particles' velocityX.
+// - The target bursts flare up on each target while five puffs of smoke
+//   scatter around each flare; six particle slots per target.
+// - Atalanta's staged slashes run in two parts. In the gathering part a 3x3
+//   formation follows a stored path while sixteen blades draw their trail
+//   particles in, flash and fly off; each trail particle's random rotation
+//   matrix is stored after the particle records in the shared scratch buffer.
+//   In the falling part 24 blades drop onto the targets and burst into flame.
+//
+// The order of the steps within a frame matters: later steps draw over
+// earlier ones, and several of them consume random numbers.
 
 // The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_IMAGE (work->sheet + 0xC56)
@@ -13360,8 +13623,21 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
 }
 
 // Growing vines and pillars, lightning strikes and Djinni entrances.
-// Variant rows supply counts and sprite geometry. A Djinni entrance leaves
-// the canvas cleared for the effect that follows it.
+//
+// Growing columns and thorns spring up one after another on a fixed schedule,
+// each shaking the screen as it appears, throwing up puffs of dust from its
+// root and making the targets react a few frames later. The dust is a pool
+// of EffectSteps in PARTICLES, a free one marked by variant -1; each puff
+// plays seven pictures, drawn mirrored about its x. Both scenes fade out over
+// their last 16 frames.
+//
+// Lightning bolts (Bolt) strike the targets in turn, each throwing sparks and
+// glints from its foot. Sparks fall under gravity and bounce off the ground
+// at half speed.
+//
+// Variant rows supply the counts and sprite geometry. Every scene ends by
+// finishing the canvas it began. A Djinni entrance leaves the canvas cleared
+// for the effect that follows it.
 
 // Growing columns: vines or pillars spring from the ground one after
 // another, throwing up dust. PARTICLES holds the dust.
@@ -14332,8 +14608,33 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
 }
 
 // Projectile volleys and rushing strikes.
-// Mode entries retain their table indices; the family name identifies the
-// runner that interprets those indices.
+//
+// A projectile volley fires a row of shots from the user at each target. The
+// mode (0 to 11) picks the shot picture, how the shots are aimed and which
+// sounds play; the mode's row gives its number of shots per target, their
+// flight time and the stagger between shots and targets. Mode entries retain
+// their table indices; the wrappers name the mode of each ability.
+//
+// The volley runs in four parts every frame:
+//
+//   flight:     each launched shot moves one step along its aim and is drawn
+//               on the half-width canvas;
+//   collision:  a shot that passes its target's x on the target's side of the
+//               field hits once: it starts a hit flash, throws sparks, shakes
+//               the camera and makes the target reel;
+//   flashes:    comet volleys draw each hit flash for 12 frames, as half a
+//               picture drawn again flipped for the other half;
+//   sparks and trails: the particles thrown by hits fall and bounce, and
+//               those left behind fireballs rise.
+//
+// All particles share PARTICLES: hit flashes from 0, sparks from 100 and
+// fireball trails from 512. A particle's variant is its frames left (0 when
+// free); a flash's z counts the frames it has shown. The shots themselves
+// live in work->particles, one per target and shot, whose variant is set once
+// the shot has hit.
+//
+// The rushing strike sends the user at the first target; on frame 10 it
+// strikes, a ring flares and 64 sparks scatter, over 60 frames in all.
 
 // Actor animation steps while firing and after the volley finishes.
 #define VOLLEY_ANIMATION_STEP_FAST 0x30
@@ -15297,7 +15598,32 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 }
 
 // Djinni attacks, reveal particles and camera shake.
-// Sheet cell layouts select the images; particle records carry their motion.
+//
+// Each attack draws one of the small Djinn on the effect canvas and throws its
+// element at the targets:
+//
+// - The Mercury Djinni spirals through the centre of the field and fires five
+//   blue flames to the left, each shattering into motes.
+// - The Jupiter Djinni spirals the other way while eight flameballs fall from
+//   the top right and shatter on the ground.
+// - The Venus Djinni sways while ten flame columns rise from the ground, each
+//   throwing motes upwards.
+// - The Mars Djinni flares from a glowing orb, dives to the ground and sets
+//   nine flames erupting in an arc while embers rise.
+// - The Venus Djinni of the rock toss (Ground) throws six rocks from the
+//   user, shedding chips, which swirl and home in on the first target.
+//
+// Every attack sets up the canvas, its blitters and its particles, then runs
+// a fixed number of frames, each a list of steps run in a fixed order and
+// ending with a canvas present, which waits for the next frame. The order
+// matters: later steps draw over earlier ones and several consume random
+// numbers.
+//
+// The motes the flames shatter into live in PARTICLES, 32 slots per flame;
+// the flames, rocks and chips themselves live in work->particles. The
+// appearance prelude leaves the canvas ready for the calling attack; each
+// attack removes its callbacks before returning. Sheet cell layouts select
+// the images.
 
 // Abilities: Mercury (kind 251).
 //
@@ -17700,8 +18026,34 @@ void BattleFx_ProbeKeysForExtendedActor(void) {
 }
 
 // Casting impacts, beam sequences and ring-and-spark scenes.
-// A casting impact may hand off to another runner after removing its prelude
-// callbacks and releasing the blitters that runner will replace.
+//
+// A casting impact (enum CastingImpact, the ability's effect kind less 100)
+// runs in four phases:
+//
+// - Gathering: for 32 frames 64 sparks close in on the caster, four more each
+//   frame, each in its own random rotation. Djinni impacts (Bane to Sap, 0 to
+//   7) show their Djinni 80 pixels over the caster once the first sparks have
+//   gone out.
+// - Background: BG2 is placed so the impact sits over the target. Impacts 15,
+//   17, 24, 26 and 35 stop here and hand the canvas to another effect.
+// - Impact: for 20 to 80 frames, depending on the impact, the caster's
+//   overlay, an orb, sparks and the impact's own animation are drawn while
+//   the background palette steps toward the impact's palette. A Djinni flies
+//   to the target over the first six frames, and the target is hit on
+//   frame 6.
+// - Finish: the canvas and its callbacks are released, or impact 21 hands
+//   them to the stat reduction.
+//
+// The particles are used twice: work->particles holds the gathering sparks
+// and then, from the impact, 32 scattering sparks (variant is their
+// lifetime); the 64 records at gMapCellBuffer + 0x4000 belong to the impact's
+// own animation.
+//
+// The beam sequence draws a growing beam picture and its projected sparks
+// over the first target. The ring-and-spark scene plays a strike of rings and
+// sparks, restoring the user's motion afterwards. A casting impact may hand
+// off to another runner after removing its prelude callbacks and releasing
+// the blitters that runner will replace.
 
 // Runs a battle effect from the second range of kinds: 100 to 135 are the
 // casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
@@ -18303,43 +18655,50 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
 // The casting impacts, by kind - 100: each is named for the first ability
 // whose gBattle_ActionFlags entry selects it; the four no ability selects
 // keep their numbers.
+//
+// The trailing comments give each impact's own animation, drawn over the
+// target after the orb and sparks. Most animations use the 64 particles at
+// gMapCellBuffer + 0x4000, which start at the target; their pictures are in
+// gMapCellBuffer. "Smoke" is puffs of smoke rising from the target; "hands
+// off" impacts stop after gathering and hand the canvas to another effect.
 enum CastingImpact {
-  CASTING_IMPACT_BANE = 0,
-  CASTING_IMPACT_SMOG,
-  CASTING_IMPACT_MIST,
-  CASTING_IMPACT_FEVER,
-  CASTING_IMPACT_FLINT,
-  CASTING_IMPACT_SCORCH,
-  CASTING_IMPACT_SQUALL,
-  CASTING_IMPACT_SAP,
-  CASTING_IMPACT_TERRA_STRIKE,
-  CASTING_IMPACT_POISON_CLOUD,
-  CASTING_IMPACT_DEADLY_POISON,
-  CASTING_IMPACT_MORTAL_DANGER, // also Death Size
-  CASTING_IMPACT_BAD_OMEN,
-  CASTING_IMPACT_LIFE_NOURISH,
-  CASTING_IMPACT_AQUA_SOCK,
-  CASTING_IMPACT_15,
-  CASTING_IMPACT_FROST_BITE,
-  CASTING_IMPACT_17,
-  CASTING_IMPACT_LIFE_LEECH,
-  CASTING_IMPACT_PSY_LEECH,
-  CASTING_IMPACT_BROIL,
-  CASTING_IMPACT_MELTDOWN,
-  CASTING_IMPACT_HEAT_MIRAGE, // also Heat Flash
-  CASTING_IMPACT_BARRAGE,
-  CASTING_IMPACT_24,
-  CASTING_IMPACT_ACID_BATH,
-  CASTING_IMPACT_26,
-  CASTING_IMPACT_STUN_VOLTAGE,
-  CASTING_IMPACT_BLINDING_SMOG,
-  CASTING_IMPACT_MURK,
-  CASTING_IMPACT_CYCLONE_SLASH,
-  CASTING_IMPACT_PSYPHON_SEAL,
-  CASTING_IMPACT_ASURA,
-  CASTING_IMPACT_FORCIBLE_ARM,
-  CASTING_IMPACT_TRUNCHEON_FIST,
-  CASTING_IMPACT_SEVERE_BLOW,
+  CASTING_IMPACT_BANE = 0,       // smoke
+  CASTING_IMPACT_SMOG,           // smoke
+  CASTING_IMPACT_MIST,           // smoke
+  CASTING_IMPACT_FEVER,          // smoke
+  CASTING_IMPACT_FLINT,          // nothing
+  CASTING_IMPACT_SCORCH,         // flash bursts rise from the target
+  CASTING_IMPACT_SQUALL,         // two bolts strike among glints
+  CASTING_IMPACT_SAP,            // motes fly back to the caster
+  CASTING_IMPACT_TERRA_STRIKE,   // a rock spire grows and sinks
+  CASTING_IMPACT_POISON_CLOUD,   // smoke
+  CASTING_IMPACT_DEADLY_POISON,  // smoke
+  CASTING_IMPACT_MORTAL_DANGER,  // also Death Size; a large picture rises and
+                                 // breaks
+  CASTING_IMPACT_BAD_OMEN,       // skulls rise from the target
+  CASTING_IMPACT_LIFE_NOURISH,   // motes fly back to the caster
+  CASTING_IMPACT_AQUA_SOCK,      // a blue flame column falls onto the target
+  CASTING_IMPACT_15,             // hands off
+  CASTING_IMPACT_FROST_BITE,     // ice chips converge on the target
+  CASTING_IMPACT_17,             // hands off
+  CASTING_IMPACT_LIFE_LEECH,     // motes fly back to the caster
+  CASTING_IMPACT_PSY_LEECH,      // motes fly back to the caster
+  CASTING_IMPACT_BROIL,          // ember streaks spread sideways
+  CASTING_IMPACT_MELTDOWN,       // nothing; hands to the stat reduction
+  CASTING_IMPACT_HEAT_MIRAGE,    // also Heat Flash; smoke
+  CASTING_IMPACT_BARRAGE,        // flash bursts rise from the target
+  CASTING_IMPACT_24,             // hands off
+  CASTING_IMPACT_ACID_BATH,      // smoke
+  CASTING_IMPACT_26,             // hands off
+  CASTING_IMPACT_STUN_VOLTAGE,   // two bolts strike among glints
+  CASTING_IMPACT_BLINDING_SMOG,  // smoke
+  CASTING_IMPACT_MURK,           // smoke
+  CASTING_IMPACT_CYCLONE_SLASH,  // a tornado stands over the target
+  CASTING_IMPACT_PSYPHON_SEAL,   // a rune opens over the target
+  CASTING_IMPACT_ASURA,          // a beast scrolls across and breaks
+  CASTING_IMPACT_FORCIBLE_ARM,   // a flame falls diagonally
+  CASTING_IMPACT_TRUNCHEON_FIST, // a flame falls diagonally
+  CASTING_IMPACT_SEVERE_BLOW,    // hands off
 };
 
 // Djinn abilities
@@ -19495,8 +19854,24 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
 }
 
 // Formation placement, radial ripples, fire charges and impact bursts.
-// The formation tables describe object placement; the burst tables describe
-// the sprite frames drawn at the impact.
+//
+// Three canvas effects whose pictures are described the same way: each sheet
+// is a list of cells, given as widths, heights and byte offsets, and an
+// animation picks a cell by frame.
+//
+// - Torch's rippling disc builds a radial picture by computing one quadrant
+//   and mirroring it into the other three, then bends it line by line through
+//   BG2's affine reference while the palette cycles. Each pixel holds its
+//   distance from the middle, so rotating the palette makes rings run
+//   outward.
+// - Helm Splitter's fire swirl charge leaps the user at the first target,
+//   plays the swirl over it and scatters bouncing sparks. The sparks live in
+//   gMapCellBuffer, whose 1024 slots are cleared first.
+// - The impact burst plays a flash with large and small sparks and three
+//   fragments, while the effect's objects settle into one of the formations
+//   of BattleFx_PlaceFormationObjects. Large sparks and the fragments use
+//   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
+//   large sparks), small sparks gMapCellBuffer.
 
 // Abilities: Torch (kind 214).
 //
@@ -20042,7 +20417,32 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 }
 
 // Multi-stage particle streams and circling object scenes.
-// The stream effect keeps its embers after the first 128 particle records.
+//
+// The particle stream runs in two halves. The rise dissolves the battle map
+// into a starfield, then for up to 192 frames lifts a formation of objects
+// while motes, orbiting sparks and falling drops are drawn into the map
+// buffer over a heat-tinted scanline palette. The burst then switches to a
+// blended half-scale canvas and throws embers, screen motes and growing
+// flashes from the origin for 54 shaking frames. The burst's flashes use the
+// first 128 shared particle records and its embers the 512 records after
+// them; the work's own particle slots hold the rising motes (0 to 31) and the
+// flames (32 to 47).
+//
+// The other three effects are one frame loop each:
+//
+// - The circling scene (Ramses), over the desert backdrop: a formation
+//   stands while an orb circles, drops three times throwing puffs, and flies
+//   off; six rocks fall and bounce, and the orb's flight ends in a burst of
+//   512 sparks from the shared particle records.
+// - The dual stream (Dragon Cloud): a flame leaves the user along a stored
+//   path with a fading trail of 19 copies behind it, then strikes the first
+//   target and bursts into embers and flashes.
+// - The fire burst shards (Annihilation): the user closes on the first
+//   target, a fire streak flares and a burst of 64 shards scatters from the
+//   target.
+//
+// Within a frame the order of the steps matters: later steps draw over
+// earlier ones, and several of them consume random numbers.
 
 // Abilities: Meteor (scene kind 11).
 //
@@ -22734,8 +23134,24 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 }
 
 // Object formations that sweep, rise or break into flares.
-// The formation sweep temporarily changes BG2's horizontal scale through
-// frame and interrupt callbacks.
+//
+// These effects move a formation of the effect's animation objects
+// (work->objects, created by BattleFx_SpawnObjects) across the battlefield
+// while the canvas layer (BG2) draws particles behind and around them.
+//
+// The object row runs in two stages. In the sweep stage nine objects ride in
+// on a sine wave while the backdrop scrolls, a ring of motes opens around
+// them and a trail of fire follows. In the rise stage the row slides across
+// the targets; each target the row passes throws a burst of 32 motes and
+// plays its hit reaction, and the fire sheet slides off behind it.
+//
+// The formation sweep also runs in two stages. The first places eight objects
+// at one and a half times their size, opens the window with an edge table
+// built every frame, sprays particles under gravity, converges a ring of
+// flares, then breaks into a burst of light. During it a frame callback and
+// an H-blank interrupt change BG2's horizontal scale. The second stage drops
+// five blue flame columns onto the targets; each column throws sparks when it
+// reaches the ground.
 
 // Abilities: Kirin (scene kind 3).
 //
@@ -23652,7 +24068,13 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
 }
 
-// Battle effect: four-frame image, rising columns and sparks
+// Smaller object effects: two hops that start a spark group, a four-frame
+// image revealed in front of the target, and two mirrored columns rising at
+// the target's feet.
+//
+// Every effect follows the canvas protocol: claim the canvas layer, load
+// sheets, draw into the canvas each frame, present it, and finish the canvas
+// at the end.
 
 // Abilities: Quick Strike (kind 52).
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
@@ -23883,8 +24305,53 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
 }
 
 // Build specialized canvas blitters from the resident ARM kernels.
-// The first pass counts the selected instructions. The second allocates the
-// destination, copies the same kernels and resolves their branch targets.
+//
+// Effects draw sprite cells onto a 128x128 canvas with small ARM routines
+// built at run time for one cell size, one mirroring and one way of combining
+// pixels. A general routine that tested all of these for every pixel would be
+// far too slow, so each routine is spliced together from a template and the
+// pixel fragments of its mode. Some template words are taken as they are,
+// some are chosen by the flags, and some have an immediate or a branch
+// displacement added before they are written.
+//
+// The generated routine has these blocks, in order:
+//
+// 1. Prologue: three entry words, the three-word additive mask for additive
+//    compositing, then one of four alternatives that set up the walk for the
+//    mirroring asked for (X only: 3 words, Y only: 4, both: 3, neither: 1).
+// 2. Vertical clip, for vertically clipped cells only: eight words, the third
+//    chosen by vertical mirroring and the last two carrying the cell height.
+// 3. Columns: a test and a forward branch that skips the whole routine when
+//    no rows remain, then either a width mask (unclipped) or twelve clip
+//    words whose shifts carry the cell width as an ARM rotated immediate
+//    (gBattleFx_BitOperands). A second test and forward branch skip
+//    everything when no columns remain. Six words, then one or two, then
+//    five more finish the set-up.
+// 4. Row loop: four loop-head words carrying the row count and the width's
+//    shift, and a fifth when unclipped; then for each row
+//    a. a leading partial run, pixel by pixel up to the first 8-pixel
+//       boundary, skipped by a forward branch when empty;
+//    b. the full-cell loop, eight pixels per pass, from the mode's 8-pixel
+//       fragment, skipped when there are no full cells;
+//    c. a trailing partial run like (a).
+//    Three words then advance to the next row and a fourth branches back to
+//    the loop head.
+// 5. Exit: the two skip branches of block 3 land here, on two final words.
+//
+// Where the template offers alternatives, the cursor always moves past all of
+// them, whichever is written; so the walk ends at the template's last word
+// for every combination, and BattleFx_LoadWork checks that it does. In each
+// partial run and the full-cell loop the template keeps four words where the
+// generated routine has its mode's fragment; those four are skipped too.
+//
+// Forward branches are written with a zero displacement, their word index
+// remembered, and patched when the target is reached. Backward branches are
+// computed at once. ARM branch displacements count words from the branch
+// plus two, as the processor reads two words ahead.
+//
+// The same walk runs twice: first without an output buffer, to count the
+// words, then into a heap block of exactly that size. Branch locations are
+// word indices, so the counting pass needs no buffer.
 
 #define DMA_COPY_WORDS(n) (0x84000000 | (n))
 

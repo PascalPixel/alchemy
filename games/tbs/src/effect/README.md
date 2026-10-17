@@ -33,9 +33,9 @@ The battle starts an effect through one of three functions, each of which
 allocates the effect's three heap blocks (sprite sheet, work block and
 canvas), runs the effect and releases them:
 
-- `BattleFx_DispatchMode` looks the effect's kind up in
-  `gBattleFx_ModeHandlers`, the table of ordinary effects.
-- `BattleFx_InitializeMode` runs one of the large effects, those whose
+- `BattleFx_RunTableEffect` looks the effect's kind up in
+  `gBattleFx_EffectHandlers`, the table of ordinary effects.
+- `BattleFx_RunSceneEffect` runs one of the large effects, those whose
   presentation flags have bit 15 set, chosen by its kind.
 - `BattleFx_DispatchByIdRange` runs the casting impacts, beam sequences and
   ring scenes, which need a sprite sheet twice the usual size.

@@ -8,8 +8,8 @@ struct BattleEffectArgument;
 #if GAME_TLA
 void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
                                      s32 mode);
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect);
-void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
+void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect);
+void BattleFx_RunParticleStreamsMode1(struct BattleEffectArgument *effect);
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
                                       s32 mode);
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);

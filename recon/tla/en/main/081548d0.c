@@ -4,7 +4,7 @@
 // columns grows with the strength. Its wrappers Func_081548b8 (mode 0) and
 // Func_081548c4 (mode 1) are C in fxmoded.c.
 
-// Twin: The Broken Seal's BattleFx_RunDualTable (effect.c), with the same
+// Twin: The Broken Seal's BattleFx_RunGrowingColumns (effect.c), with the same
 // tables, frame counts and fade.
 // Listing 514 instructions, draft 515, differ 237.
 

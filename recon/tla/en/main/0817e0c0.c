@@ -2,7 +2,7 @@
 // The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
 // Func_0817e078 to Func_0817e0b4 pass modes 4, 1, 2, 3, 4 and 5). Written
 // from the listing on ☀️'s skeleton; its nearest ☀️ shape is
-// BattleFx_RunParticleFieldVariant (0.54), which is no twin.
+// BattleFx_RunRushingStrike (0.54), which is no twin.
 // Written 2026-10-15 (lane N2). The frame matches (texture sp+44, the
 // blitter pair sp+52, screen sp+60, caster sp+72, target sp+84; mode,
 // canvas, frame, camera and the spark cels spilled at sp+40 down to sp+24).

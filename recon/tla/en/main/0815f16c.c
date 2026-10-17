@@ -231,7 +231,7 @@ void BattleFx_BeginTiledCanvas(s32);
 void Func_08143bb8(void);
 void Func_08144aac(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
-void BattleFx_RenderMode5(struct SummonAction *);
+void BattleFx_RunTargetMotesMode5(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void SummonFx_RunCanvasMode3(struct SummonAction *);
 void SummonFx_RunCanvasMode1(struct SummonAction *);
@@ -713,7 +713,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (kind == 45)
       BattleFx_RunProjectileVolley(action, 9);
     if (kind == 54)
-      BattleFx_RenderMode5(action);
+      BattleFx_RunTargetMotesMode5(action);
     if (kind == 56)
       BattleFx_RunProjectileVolley(action, 8);
     return;

@@ -3572,7 +3572,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   } else {
     context.effect.side = 0;
   }
-  BattleFx_InitializeModeFar(&context.effect);
+  BattleFx_RunSceneEffectFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -3713,7 +3713,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
     work.effect.kind = 3;
     BattleFx_RunIceFleckBurstFar(&work.effect);
     work.effect.kind = 0;
-    BattleFx_DispatchModeFar(&work.effect);
+    BattleFx_RunTableEffectFar(&work.effect);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
@@ -4643,7 +4643,7 @@ finish:
 #define STAGING_VARIANT_MASK 0x3000
 #define STAGING_VARIANT_SHIFT 12
 #define STAGING_BY_ID_RANGE 0x4000 // BattleFx_DispatchByIdRangeFar
-#define STAGING_SCENE 0x8000       // BattleFx_InitializeModeFar, actor's view
+#define STAGING_SCENE 0x8000       // BattleFx_RunSceneEffectFar, actor's view
 #define STAGING_ON_DOWNED 0x10000  // shown on downed targets too (revivals)
 #define STAGING_OTHER_SIDE 0x20000 // played from the other side
 
@@ -4887,11 +4887,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       work.effect.side ^= 1;
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (plan->presentationFlags & STAGING_SCENE)
-      BattleFx_InitializeModeFar(&work.effect);
+      BattleFx_RunSceneEffectFar(&work.effect);
     else if (plan->presentationFlags & STAGING_BY_ID_RANGE)
       BattleFx_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_DispatchModeFar(&work.effect);
+      BattleFx_RunTableEffectFar(&work.effect);
     BattleEventRuntime_WaitForReady();
   }
   BattleObjPut();
@@ -5069,7 +5069,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
         BattleFx_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_DispatchModeFar(&work.effect);
+        BattleFx_RunTableEffectFar(&work.effect);
     }
     BattleEventRuntime_WaitForReady();
     if (critical != 0) {
@@ -5232,7 +5232,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     if (plan->presentationFlags & STAGING_BY_ID_RANGE)
       BattleFx_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_DispatchModeFar(&work.effect);
+      BattleFx_RunTableEffectFar(&work.effect);
   } else {
     WaitFrames(60);
   }
@@ -5398,7 +5398,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
         BattleFx_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_DispatchModeFar(&work.effect);
+        BattleFx_RunTableEffectFar(&work.effect);
     } else {
       BattlePres_RunWithZeroArguments();
     }

@@ -1,7 +1,7 @@
 // Draft of Func_0814fab8, the body behind the twelve wrappers of
 // s14fa08.c (17 effect kinds).
 
-// Twin: The Broken Seal's BattleFx_RunSeriesB (effect.c), grown from six
+// Twin: The Broken Seal's BattleFx_RunStatBoost (effect.c), grown from six
 // modes to thirteen. The Lost Age:
 // - packs the prelude Djinni's element, side and anchor for
 // Func_0815585c (Venus for modes 3 and 6, Mercury for 7, 8 and 11,

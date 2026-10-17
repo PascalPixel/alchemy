@@ -30,11 +30,11 @@ void Func_08164bb4(void) {
 }
 
 // The particle streams in mode 0.
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect) {
+void BattleFx_RunParticleStreamsMode0(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, 0);
 }
 
 // The particle streams in mode 1.
-void BattleFx_InitializeMode1(struct BattleEffectArgument *effect) {
+void BattleFx_RunParticleStreamsMode1(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, 1);
 }

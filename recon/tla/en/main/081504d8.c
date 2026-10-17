@@ -1,7 +1,7 @@
 // Near miss of SummonFx_RunCanvasEffect, the body behind the four wrappers of
 // summon_canvas_modes.c.
 
-// Twin: The Broken Seal's BattleFx_RunPaletteRamp (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunStatReduction (effect.c), call for
 // call. The Lost Age adds mode 3 (the dagger in the glow palette), reads
 // the effect from its argument, takes its heap blocks as Ram_HeapSlots
 // fields and orders the callback 0xc80. Resources not yet named in

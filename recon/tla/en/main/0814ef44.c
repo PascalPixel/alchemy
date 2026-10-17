@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunSeriesA, the body behind the eleven wrappers of
+// Draft of BattleFx_RunHealingMotes, the body behind the eleven wrappers of
 // series_a.c (18 effect kinds).
 
-// Twin: The Broken Seal's BattleFx_RunSeriesA (effect.c), grown from seven
+// Twin: The Broken Seal's BattleFx_RunHealingMotes (effect.c), grown from seven
 // modes to fourteen. The Lost Age adds:
 // - a Djinni of any element for the prelude (Func_0815585c takes the
 // element, the side and the anchor packed into one word: Venus for
@@ -113,7 +113,7 @@ extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
 // 40 pixels above it, turn about it by the mode's axes, and close in two
 // pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
 // The variant chooses 32, 64 or 128 motes a target.
-void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
+void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 total;

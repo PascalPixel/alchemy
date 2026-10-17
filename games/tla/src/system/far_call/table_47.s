@@ -11,9 +11,9 @@ Func_08138000:
 	.thumb_func
 Func_08138008:
 	overlay_veneer BattleFx_DispatchByIdRange
-	.global BattleFx_InitializeModeFar
+	.global BattleFx_RunSceneEffectFar
 	.thumb_func
-BattleFx_InitializeModeFar:
+BattleFx_RunSceneEffectFar:
 	overlay_veneer Func_0814c994
 	.global Func_08138018
 	.thumb_func

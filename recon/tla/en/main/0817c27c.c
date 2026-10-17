@@ -1,5 +1,5 @@
 // Draft (tla-en): listing 464 instructions, draft 462, common 321, differ 284.
-// Written from the listing (☀️'s BattleFx_RunParticleFieldVariant is only
+// Written from the listing (☀️'s BattleFx_RunRushingStrike is only
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
 // at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
 // from frame 18 on with sizes from gData_08197410.

@@ -3748,10 +3748,10 @@ Func_0814a264:
 	.section .rom.0014a812, "ax"
 	.incbin "baserom.gba", 0x0014a812, 0x00000002
 	.section .rom.0014a814, "ax"
-	.global BattleFx_RenderMode
-	.type BattleFx_RenderMode, %function
+	.global BattleFx_RunTargetMotes
+	.type BattleFx_RunTargetMotes, %function
 	.thumb_func
-BattleFx_RenderMode:
+BattleFx_RunTargetMotes:
 	.incbin "baserom.gba", 0x0014a814, 0x000006a8
 	.global Func_0814aebc
 	.type Func_0814aebc, %function
@@ -3810,10 +3810,10 @@ Func_0814ea58:
 	.incbin "baserom.gba", 0x0014ea58, 0x00000430
 	.section .rom.0014ef44, "ax"
 	.balign 4
-	.global BattleFx_RunSeriesA
-	.type BattleFx_RunSeriesA, %function
+	.global BattleFx_RunHealingMotes
+	.type BattleFx_RunHealingMotes, %function
 	.thumb_func
-BattleFx_RunSeriesA:
+BattleFx_RunHealingMotes:
 	.incbin "baserom.gba", 0x0014ef44, 0x00000ac4
 	.section .rom.0014fab8, "ax"
 	.balign 4

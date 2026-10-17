@@ -4,12 +4,9 @@
 #include "vector3.h"
 #include "render_placement.h"
 
-//--------------------------------------------------------------------------
-// Battle effect tables
-// Ordered like the effect code that uses them. Cell offsets are bytes from
-// the sheet start, accumulated as width times height.
-// Battle effect tables, in the order of the effect code that reads them.
-//--------------------------------------------------------------------------
+// Cell layouts, timing rows and handler entries for the battle effects.
+// Keep the definitions in link order. Picture cell offsets are byte offsets
+// from the sheet start, accumulated as width times height.
 
 // The tables are plain arrays, not const, as the effect code reads them:
 // it reloads their addresses where const would let the compiler keep
@@ -33,16 +30,16 @@ u16 gBattleFx_GlintCellOffsets[] = {0, 589, 1302, 2015, 2414, 2750};
 u8 gBattleFx_GlintCellWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gBattleFx_GlintCellHeights[] = {31, 31, 31, 21, 21, 24};
 
-// falling.c
+// Falling shard and bolt wave counts.
 u8 gFallingShards_Counts[] = {16, 46, 20, 52, 32, 80};
 u8 gFallingBolts_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
 
-// run_five_mode_mode0.c
+// Falling streak timing and motion records.
 s8 gFiveMode_Records[] = {0,  1, 0, 0, 0,  1, 4, 0, 0, 1,
                                 -1, 1, 1, 1, -1, 1, 1, 1, 4, 0};
 s8 gFiveMode_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
-// twelve_mode.c
+// Target strike timing, motion and picture cells.
 u8 gTwelveMode_Records[] = {
     1, 2, 8, 0, 6, 3, 70, 1, 1, 1, 1, 6, 2, 54, 1, 3, 1,  2, 6, 2, 96,
     1, 3, 2, 3, 4, 2, 96, 1, 3, 2, 4, 4, 2, 96, 1, 3, 4,  5, 4, 3, 96,
@@ -55,7 +52,7 @@ u8 gTwelveMode_StrikeReach[] = {58, 42, 25, 13, 5, 0};
 u8 gTwelveMode_ColumnStages[] = {0, 1, 2, 3, 2};
 u8 gTwelveMode_GlintDrawFlags[] = {0, 4, 8, 12};
 
-// flipping_burst.c
+// Blade rain and shattering tile pieces.
 u8 gBladeRain_CellWidths[] = {20, 21, 22, 25};
 u8 gBladeRain_CellHeights[] = {32, 31, 27, 24};
 u16 gBladeRain_CellSourceOffsets[] = {0, 640, 1291, 1885};
@@ -77,7 +74,7 @@ u8 gBattlePieceStartY[] = {0,  0,  0,  0,  0,  0,  19, 17, 23,  28, 8,
                                  36, 43, 43, 40, 47, 48, 37, 42, 67,  60, 79,
                                  62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
 
-// canvfx.c
+// Canvas corner sparks and two-resource picture cells.
 s8 gCornerSparks_X[] = {0, 32, 0, 32};
 s8 gCornerSparks_Y[] = {0, 0, 32, 32};
 u8 gCornerSparks_DrawFlags[] = {0, 4, 8, 12};
@@ -87,21 +84,21 @@ u16 gTwoResource_CellSourceOffsets[] = {0, 2240, 11200, 18368, 0, 7040};
 u8 gTwoResource_CellX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
 s8 gTwoResource_CellBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
-// memberfx.c
+// Leaping strike counts.
 u8 gMemberBurst_Counts[] = {16, 88, 8, 72, 12, 80};
 
-// earthwal.c
+// Mirrored earth wall picture cells.
 u16 gEarthWall_CellSourceOffsets[] = {2702, 3535, 4580};
 u8 gEarthWall_CellWidths[] = {17, 19, 20};
 u8 gEarthWall_CellHeights[] = {49, 55, 64};
 
-// member_beam.c
+// Djinni beam motes and heads.
 u8 gMemberBeam_MotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
 u16 gMemberBeam_HeadOffsets[] = {2702, 3535, 4580};
 u8 gMemberBeam_HeadWidths[] = {17, 19, 20};
 u8 gMemberBeam_HeadHeights[] = {49, 55, 64};
 
-// seven_mode_dispatch.c
+// Shell explosion records and shards.
 s8 gSevenMode_Records[] = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0};
 u8 gSevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12,
                                      6, 7,  7, 7, 6, 6,  8,  8,  8};
@@ -111,17 +108,17 @@ u16 gSevenMode_ShardOffsets[] = {0,    108,  228,  336,  444,  552,
                                        684,  816,  948,  1092, 1140, 1189,
                                        1231, 1273, 1321, 1357, 1389, 1413};
 
-// reveal.c
+// Shattered panel coordinates.
 u8 gCounterReveal_PanelX[] = {10, 30, 0, 0, 0, 6, 52,
                                     60, 0,  0, 0, 0, 0, 0};
 u8 gCounterReveal_PanelY[] = {0, 20, 2, 2, 34, 64, 68,
                                     0, 9,  4, 4, 4,  4,  4};
 
-// triangle.c
+// Spinning and striking triangle vertices.
 struct Vector3 gSpinningTriangle_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
 struct Vector3 gTriangleStrike_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
 
-// stars.c
+// Ring bolt, spinning star and whirlwind comet paths.
 struct Vector3 gRingBolts_Points[] = {
     {.x = 0, .y = 48 << 16, .z = 0}, {.x = 0, .y = 28 << 16, .z = 0}};
 u8 gSpinningStars_Radii[] = {32, 16};
@@ -133,7 +130,7 @@ u8 gWhirlwindComets_CellHeights[] = {14, 19, 24};
 u8 gWhirlwindComets_CellBiasY[] = {8, 12, 17};
 u16 gWhirlwindComets_CellOffsets[] = {13824, 14020, 14476};
 
-// embers.c
+// Palette particle and ember column layouts.
 u8 gPaletteParticles_DropSpeeds[] = {0, 8, 12, 16};
 u8 gPaletteParticles_SparkPixels[] = {32, 32};
 u8 gPaletteParticles_DropSizes[] = {1, 1, 2, 3};
@@ -144,11 +141,11 @@ u16 gPaletteParticles_StreakOffsets[] = {0, 552, 1480, 2590, 3913, 5185};
 u8 gEmberColumns_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104};
 s32 gEmberColumns_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
-// vortex.c
+// Vortex mote counts and tornado shapes.
 u8 gVortexMotes_Counts[] = {6, 140, 12, 160, 30, 200};
 u8 gTornado_Shapes[] = {1, 16, 2, 2, 24, 2, 4, 32, 4};
 
-// crystal.c
+// Crystal counts and picture cells.
 u8 gCrystal_ShardStarts[] = {
     32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99, 54, 69, 34, 82, 45,
     71, 31, 91, 32, 69, 26, 80, 40, 68, 41, 60, 46, 60, 36, 63, 0,  0};
@@ -160,98 +157,97 @@ u8 gCrystal_ShardHeights[] = {14, 10, 7,  13, 14, 14,
 s32 gCrystal_ShardOffsets[] = {0,   70,   170,  247,  429,  597,
                                      751, 1359, 1899, 2451, 2907, 3347};
 
-// lightning.c
+// Lightning pillar sparks, columns and counts.
 u16 gLightningPillar_Sparks[] = {384, 2, 256, 3, 192, 4};
 u8 gLightningPillar_Columns[] = {32, 64, 16,  48, 72, 96, 64,
                                        88, 56, 104, 72, 48, 24, 56};
 u8 gLightningPillar_Counts[] = {1, 3, 7};
 
-// sparks.c
+// Spark group shapes and flash cells.
 u16 gSparkGroups_Shapes[] = {128, 1,   16, 0, 0,  255, 1,   16, 0,
                                    0,   192, 3,  0, 24, 48,  340, 1,  16,
                                    24,  48,  32, 1, 16, 0,   0};
 u8 gSparkGroups_FlashCells[] = {5, 5, 4, 3, 2, 1};
 
-// pillars.c
+// Fire pillar counts, depths and start frames.
 u8 gFirePillars_Counts[] = {1, 2, 4};
 s8 gFirePillars_Depths[][4] = {
     {0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
 u8 gFirePillars_StartFrames[] = {8, 18, 24, 30, 34};
 
-// render_mode.c
+// Target mote glint orientations.
 u8 gRenderMode_GlintFlips[] = {0, 4, 8, 12};
 
-// dispatch.c
-// Handler for each effect kind minus 1
-BattleFxHandler gBattleFx_ModeHandlers[] = {
-    BattleFx_RunRockWall,               // 1
-    BattleFx_RunShatteringRocks,        // 2
-    BattlePres_RunRisingWall,           // 3
-    BattleFx_RunDualTableMode0,         // 4
-    BattleFx_RaisePillars,              // 5
-    BattleFx_RunRisingMotes,            // 6
-    BattleEffect_RunFallingParticles,   // 7
-    BattleFx_RunFallingCrystals,        // 8
-    BattleEffect_RunFallingBolts,       // 9
-    BattleFx_RunVortexMotes,            // 10
-    BattleFx_RunPuffArc,                // 11
-    BattleFx_RunHomingEmbers,           // 12
-    BattleFx_RunFirePillars,            // 13
-    BattleFx_RunParticleFieldMode0,     // 14
-    BattleFx_RunSparkBursts,            // 15
-    BattleFx_RunLightningBolts,         // 16
-    BattleFx_RunClosingBolts,           // 17
-    BattleFx_RunLightningPillars,       // 18
-    BattleFx_RunMode0,                  // 19
-    BattleFx_RunTornado,                // 20
-    BattleFx_RunSeriesAMode2,           // 21
-    BattleFx_RunSeriesAMode0,           // 22
-    BattleFx_RunSeriesAMode1,           // 23
-    BattleFx_RunSeriesAMode3Or4,        // 24
-    BattleFx_RunVenusDjinnBeams,        // 25
-    BattleFx_RunSeriesBMode0,           // 26
-    BattleFx_RunPaletteRampMode0,       // 27
-    BattleFx_RunSeriesBMode1,           // 28
-    BattleFx_RunPaletteRampMode1,       // 29
-    BattleFx_RunSeriesBMode2,           // 30
-    BattleFx_RunPaletteRampMode2,       // 31
-    BattleFx_RenderMode0Or1,            // 32
-    BattleFx_RenderMode2,               // 33
-    BattleFx_RunOrbitingSpirals,        // 34
-    BattleFx_RenderMode4,               // 35
-    BattleFx_RenderMode3,               // 36
-    BattleFx_RunBouncingSheep,          // 37
-    BattleFx_RunSpinningTriangle,       // 38
-    BattleFx_RunClosingSkulls,          // 39
-    BattleFx_RunShatteringPanel,        // 40
-    BattleFx_RunTargetMarkers,          // 41
-    BattleFx_RunGatheringMotes,         // 42
-    BattleFx_RunIceShardBursts,         // 43
-    BattleFx_RunSeriesAMode1,           // 44
-    BattleFx_RunSeriesAMode1,           // 45
-    BattleFx_RunSeriesBMode0,           // 46
-    BattleFx_RunPaletteRampMode1,       // 47
-    NULL,                               // 48
-    BattleEffect_RunDualParticleStream, // 49
-    BattleFx_RunPinkGatheringLights,    // 50
-    BattleFx_RunFireSwirlCharge,        // 51
-    BattleFx_RunRevealColumnMode1,      // 52
-    BattleFx_RunFlippingBurst,          // 53
-    BattleFx_RunMode1,                  // 54
-    BattleFx_RunFireBurstShards,        // 55
-    BattleFx_RunDualTableMode1,         // 56
-    BattleEffect_RunMode5WithAction,    // 57
-    BattleFx_RunFlameBlade,             // 58
-    BattleFx_RunMode6WithAction,        // 59
-    BattleFx_RunLeapingStrike,          // 60
-    BattleFx_RunFallingSword,           // 61
-    BattleFx_RunSpinningStars,          // 62
-    BattleFx_RunMode9WithAction,        // 63
-    BattleFx_RenderMode7,               // 64
-    BattleFx_RunRevealColumnMode2,      // 65
-    BattleFx_RenderMode6,               // 66
-    BattleFx_RunTriangleStrike,         // 67
-    BattleFx_RunRingBolts,              // 68
+// Indexed by effect kind minus one; kind zero is handled by the dispatcher.
+BattleFxHandler gBattleFx_EffectHandlers[] = {
+    BattleFx_RunRockWall,                        // 1
+    BattleFx_RunShatteringRocks,                 // 2
+    BattlePres_RunRisingWall,                    // 3
+    BattleFx_RunGrowingColumnsMode0,             // 4
+    BattleFx_RaisePillars,                       // 5
+    BattleFx_RunRisingMotes,                     // 6
+    BattleEffect_RunFallingParticles,            // 7
+    BattleFx_RunFallingCrystals,                 // 8
+    BattleEffect_RunFallingBolts,                // 9
+    BattleFx_RunVortexMotes,                     // 10
+    BattleFx_RunPuffArc,                         // 11
+    BattleFx_RunHomingEmbers,                    // 12
+    BattleFx_RunFirePillars,                     // 13
+    BattleFx_RunEruptionMode0,                   // 14
+    BattleFx_RunSparkBursts,                     // 15
+    BattleFx_RunLightningBolts,                  // 16
+    BattleFx_RunClosingBolts,                    // 17
+    BattleFx_RunLightningPillars,                // 18
+    BattleFx_RunProjectileVolleyMode0,           // 19
+    BattleFx_RunTornado,                         // 20
+    BattleFx_RunHealingMotesMode2,               // 21
+    BattleFx_RunHealingMotesMode0,               // 22
+    BattleFx_RunHealingMotesMode1,               // 23
+    BattleFx_RunHealingMotesMode3Or4,            // 24
+    BattleFx_RunVenusDjinnBeams,                 // 25
+    BattleFx_RunStatBoostMode0,                  // 26
+    BattleFx_RunStatReductionMode0,              // 27
+    BattleFx_RunStatBoostMode1,                  // 28
+    BattleFx_RunStatReductionMode1,              // 29
+    BattleFx_RunStatBoostMode2,                  // 30
+    BattleFx_RunStatReductionMode2,              // 31
+    BattleFx_RunTargetMotesMode0Or1,             // 32
+    BattleFx_RunTargetMotesMode2,                // 33
+    BattleFx_RunOrbitingSpirals,                 // 34
+    BattleFx_RunTargetMotesMode4,                // 35
+    BattleFx_RunTargetMotesMode3,                // 36
+    BattleFx_RunBouncingSheep,                   // 37
+    BattleFx_RunSpinningTriangle,                // 38
+    BattleFx_RunClosingSkulls,                   // 39
+    BattleFx_RunShatteringPanel,                 // 40
+    BattleFx_RunTargetMarkers,                   // 41
+    BattleFx_RunGatheringMotes,                  // 42
+    BattleFx_RunIceShardBursts,                  // 43
+    BattleFx_RunHealingMotesMode1,               // 44
+    BattleFx_RunHealingMotesMode1,               // 45
+    BattleFx_RunStatBoostMode0,                  // 46
+    BattleFx_RunStatReductionMode1,              // 47
+    NULL,                                        // 48
+    BattleEffect_RunDualParticleStream,          // 49
+    BattleFx_RunPinkGatheringLights,             // 50
+    BattleFx_RunFireSwirlCharge,                 // 51
+    BattleFx_RunRevealColumnMode1,               // 52
+    BattleFx_RunFlippingBurst,                   // 53
+    BattleFx_RunProjectileVolleyMode1,           // 54
+    BattleFx_RunFireBurstShards,                 // 55
+    BattleFx_RunGrowingColumnsMode1,             // 56
+    BattleFx_RunProjectileVolleyMode5WithAction, // 57
+    BattleFx_RunFlameBlade,                      // 58
+    BattleFx_RunProjectileVolleyMode6WithAction, // 59
+    BattleFx_RunLeapingStrike,                   // 60
+    BattleFx_RunFallingSword,                    // 61
+    BattleFx_RunSpinningStars,                   // 62
+    BattleFx_RunProjectileVolleyMode9WithAction, // 63
+    BattleFx_RunTargetMotesMode7,                // 64
+    BattleFx_RunRevealColumnMode2,               // 65
+    BattleFx_RunTargetMotesMode6,                // 66
+    BattleFx_RunTriangleStrike,                  // 67
+    BattleFx_RunRingBolts,                       // 68
     NULL,
     NULL,
     NULL,
@@ -383,23 +379,23 @@ BattleFxHandler gBattleFx_ModeHandlers[] = {
     NULL,
     NULL,
     NULL,                               // 197-199
-    BattleFx_RunSeriesBMode3,           // 200
+    BattleFx_RunStatBoostMode3,         // 200
     BattleFx_RunVenusDjinnBeams,        // 201
     BattleEffect_RunRisingColumns,      // 202
     BattleFx_RunVenusDjinnRockToss,     // 203
-    BattleFx_RunSeriesAMode0,           // 204
-    BattleFx_RunMode7,                  // 205
-    BattleFx_RunSeriesAMode1,           // 206
+    BattleFx_RunHealingMotesMode0,      // 204
+    BattleFx_RunProjectileVolleyMode7,  // 205
+    BattleFx_RunHealingMotesMode1,      // 206
     BattleFx_RunParticleReveal,         // 207
-    BattleFx_RunSeriesAMode5,           // 208
+    BattleFx_RunHealingMotesMode5,      // 208
     BattleFx_RunMercuryDjinnBeams,      // 209
-    BattleFx_RunSeriesBMode0,           // 210
-    BattleFx_RunSeriesBMode1,           // 211
-    BattleFx_RunSeriesAMode6,           // 212
-    BattleFx_RunSeriesBMode5,           // 213
+    BattleFx_RunStatBoostMode0,         // 210
+    BattleFx_RunStatBoostMode1,         // 211
+    BattleFx_RunHealingMotesMode6,      // 212
+    BattleFx_RunStatBoostMode5,         // 213
     BattleFx_RunRipplingDisc,           // 214
-    BattleFx_RunSeriesBMode2,           // 215
-    BattleFx_RunSeriesBMode4,           // 216
+    BattleFx_RunStatBoostMode2,         // 215
+    BattleFx_RunStatBoostMode4,         // 216
     ObjectGroup_StoreObjectAndRunStep7, // 217
     BattleFx_RunSpinningTriangle,       // 218
     EffectStep_RunAnimationMode6Or7Or8, // 219
@@ -486,18 +482,18 @@ BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunEmberStreaks,              // 300
     BattleFx_RunLimeStreaks,               // 301
     BattleFx_RunVioletStreaks,             // 302
-    BattleFx_RunMode2,                     // 303
+    BattleFx_RunProjectileVolleyMode2,     // 303
     BattleFx_RunCyanStreaks,               // 304
     BattleFx_RunRedStreaks,                // 305
-    BattleFx_RunMode4,                     // 306
-    BattleFx_RunMode3,                     // 307
+    BattleFx_RunProjectileVolleyMode4,     // 306
+    BattleFx_RunProjectileVolleyMode3,     // 307
     BattleFx_RunMarsGatheringLights,       // 308
     BattleFx_RunBlueShells,                // 309
     EffectStep_RunAnimationMode6Or7Or8,    // 310
-    BattleFx_RunParticleFieldVariant0,     // 311
-    BattleFx_RenderMode5,                  // 312
+    BattleFx_RunRushingStrikeMode0,        // 311
+    BattleFx_RunTargetMotesMode5,          // 312
     BattleFx_RunLightningGlintSlash,       // 313
-    BattleFx_RunParticleFieldVariant1,     // 314
+    BattleFx_RunRushingStrikeMode1,        // 314
     BattleFx_RunWebShells,                 // 315
     BattleFx_RunEmberDrainColumns,         // 316
     EffectStep_RunAnimationMode0,          // 317
@@ -509,7 +505,7 @@ BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunLimeSmokeColumn,           // 323
     BattleFx_RunLightningGlintColumns,     // 324
     BattleFx_RunLimeSmokeSlash,            // 325
-    BattleFx_RunParticleFieldVariant2,     // 326
+    BattleFx_RunRushingStrikeMode2,        // 326
     BattleFx_RunMarsDrainColumns,          // 327
     EffectStep_RunAnimationMode1,          // 328
     EffectStep_RunAnimationMode3Or4Or5,    // 329
@@ -522,20 +518,20 @@ BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunMarsSmokeColumn,           // 336
     BattleFx_RunPinkSmokeColumns,          // 337
     BattleFx_RunOrangeSparkBursts,         // 338
-    BattleFx_RunParticleFieldVariant3,     // 339
+    BattleFx_RunRushingStrikeMode3,        // 339
     BattleFx_RunMarsShells,                // 340
     NULL,                                  // 341
     EffectStep_RunAnimationMode0,          // 342
     EffectStep_RunAnimationMode0Alternate, // 343
     BattleFx_RunHealingMoteFountain,       // 344
     BattleFx_RunSpiderWeb,                 // 345
-    BattleFx_RenderMode4,                  // 346
+    BattleFx_RunTargetMotesMode4,          // 346
     BattleFx_RunGoldShardShells,           // 347
     BattleFx_RunShakingWall,               // 348
     BattleFx_RunDriftingMoteFountain,      // 349
     BattleFx_RunGreenShells,               // 350
     BattleFx_RunMercuryGatheringLights,    // 351
-    BattleFx_RunSeriesAMode2,              // 352
+    BattleFx_RunHealingMotesMode2,         // 352
     BattleFx_RunWideWall,                  // 353
     BattleFx_RunTargetMarkers,             // 354
     NULL,
@@ -561,18 +557,18 @@ BattleFxHandler gBattleFx_ModeHandlers[] = {
     NULL,
     NULL,
     NULL,
-    NULL,                              // 371-378
-    NULL,                              // 379
-    BattleFx_RunParticleFieldMode1,    // 380
-    BattleFx_RunMode11,                // 381
-    BattleFx_RunLimeSwipe,             // 382
-    BattleFx_RunLaunchingSwipe,        // 383
-    BattleFx_InitializeMode1,          // 384
-    BattleFx_RunSideEmbers,            // 385
-    BattleFx_RunLargeDrainColumns,     // 386
-    BattleFx_RunSparkApproachVariant3, // 387
-    BattleFx_RunSparkApproachVariant4, // 388
-    BattleFx_RunWallOfFire,            // 389
+    NULL,                               // 371-378
+    NULL,                               // 379
+    BattleFx_RunEruptionMode1,          // 380
+    BattleFx_RunProjectileVolleyMode11, // 381
+    BattleFx_RunLimeSwipe,              // 382
+    BattleFx_RunLaunchingSwipe,         // 383
+    BattleFx_RunParticleStreamsMode1,   // 384
+    BattleFx_RunSideEmbers,             // 385
+    BattleFx_RunLargeDrainColumns,      // 386
+    BattleFx_RunSparkApproachVariant3,  // 387
+    BattleFx_RunSparkApproachVariant4,  // 388
+    BattleFx_RunWallOfFire,             // 389
     NULL,
     NULL,
     NULL,
@@ -582,18 +578,18 @@ BattleFxHandler gBattleFx_ModeHandlers[] = {
     NULL,
     NULL, // 390-397
     NULL,
-    NULL,                     // 398-399
-    BattleFx_RunSeriesIMode0, // 400
-    BattleFx_RunSeriesIMode2, // 401
-    BattleFx_RunMode10,       // 402
-    BattleFx_RunSeriesIMode6, // 403
-    BattleFx_RunSeriesIMode3, // 404
-    BattleFx_RunSeriesIMode5, // 405
-    BattleFx_RunSeriesIMode7, // 406
-    BattleFx_RunSeriesIMode4  // 407
+    NULL,                               // 398-399
+    BattleFx_RunBurstShowerMode0,       // 400
+    BattleFx_RunBurstShowerMode2,       // 401
+    BattleFx_RunProjectileVolleyMode10, // 402
+    BattleFx_RunBurstShowerMode6,       // 403
+    BattleFx_RunBurstShowerMode3,       // 404
+    BattleFx_RunBurstShowerMode5,       // 405
+    BattleFx_RunBurstShowerMode7,       // 406
+    BattleFx_RunBurstShowerMode4        // 407
 };
 
-// initialize_mode10.c
+// Rock and ice scene geometry.
 u8 gThornVines_ObjectPoses[] = {8, 10, 9, 11, 3, 4};
 u16 gThornVines_ThornOffsets[] = {3920, 3932, 3947, 3955, 3970};
 u8 gThornVines_ThornWidths[] = {2, 5, 2, 5, 3};
@@ -632,24 +628,24 @@ u8 gBattleFx10_FallHeights[] = {48, 38, 26};
 u16 gBattleFx10_FallCells[] = {0, 1152, 2064};
 s32 gIceShardBursts_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
 
-// palette_ramp.c
+// Stat-reduction shard geometry.
 u16 gPaletteRamp_ShardCells[] = {0,   120, 180, 258, 298, 352,
                                        408, 471, 567, 607, 631, 661};
 u8 gPaletteRamp_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
 u8 gPaletteRamp_ShardHeights[] = {12, 12, 13, 8, 9, 8,
                                         7,  12, 10, 4, 5, 5};
 
-// rockwall.c
+// Rock wall timing.
 u8 gRockWall_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
-// homing.c
+// Homing ember counts and flare geometry.
 u8 gHomingEmbers_Counts[] = {16, 32, 64};
 u8 gHomingEmbers_FlareWidths[] = {24, 29, 30, 27, 24, 16};
 u8 gHomingEmbers_FlareHeights[] = {23, 32, 37, 49, 53, 52};
 u8 gHomingEmbers_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
 u16 gHomingEmbers_FlareCells[] = {0, 552, 1480, 2590, 3913, 5185};
 
-// motes.c
+// Rising mote geometry and timing.
 u8 gRisingMotes_ColumnSpots[] = {
     53,  108, 73, 110, 29,  110, 73,  108, 33, 104, 96, 106, 8,
     109, 62,  98, 33,  100, 87,  100, 21,  95, 53,  90, 33,  90,
@@ -666,10 +662,10 @@ u8 gRisingMotes_EmberHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 u16 gRisingMotes_EmberCells[] = {1792, 1900, 2060, 2158,
                                        2308, 2372, 2436, 2500};
 
-// bolts.c
+// Closing bolt sparks by variant.
 u8 gLightningBolts_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
-// particle_field.c
+// Eruption counts and puff layouts.
 u8 gParticleField_Counts[][3] = {
     {16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 u16 gParticleField_PuffCells[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
@@ -682,10 +678,10 @@ u16 gUnused_SheetCells[] = {0,   36,   100,  200,  344, 540,
 u8 gUnused_SheetWidths[] = {6, 8, 10, 12, 14, 16, 18, 20, 19, 20};
 u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
-// staged_particles.c
+// Staged particle scale.
 struct SpriteScale gStagedParticles_UnitScale = {{{0x10000, 0x10000}}};
 
-// columns.c
+// Growing vine and pillar geometry.
 u8 gDualTable_VineWidths[] = {21, 28, 19};
 u8 gDualTable_HeightLimits[] = {119, 119, 102};
 u16 gDualTable_VineCells[] = {0, 2499, 5831};
@@ -708,12 +704,12 @@ u8 gBattleFxPillar_PuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
 u16 gBattleFxPillar_PuffCells[] = {5888, 5938, 6036, 6267,
                                          6845, 8733, 10653};
 
-// lightning_bolts.c
+// Lightning bolt counts and glint palettes.
 u8 gLightningBolts_Counts[] = {16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3};
 u8 gLightningBolts_GlintPalettes[] = {0, 4, 8, 12};
 u8 gLightningBolts_GlintModes[] = {2, 2, 3};
 
-// approach.c
+// Projectile volley modes and picture cells.
 u8 gVolley_CometHeights[] = {24, 36, 48};
 u8 gVolley_Modes[][5] = {
     {6, 10, 3, 32, 4},  {4, 10, 5, 32, 8},  {10, 32, 3, 32, 4},
@@ -727,10 +723,10 @@ u8 gVolley_FlashRises[] = {0, 3, 5, 7, 10, 12, 12};
 u16 gVolley_FlashOffsets[] = {8192, 8312, 8582, 9014, 9674, 10646, 11738};
 u16 gVolley_PelletOffsets[] = {2308, 2372, 2436, 2500};
 
-// djinn_bursts.c
+// Mercury Djinni flame launch frames.
 u8 gMercuryDjinnFlames_LaunchFrames[] = {4, 7, 10, 21, 34};
 
-// particle_reveal.c
+// Particle reveal and rock toss chips.
 u8 gParticleReveal_CellWidths[] = {8, 8, 8, 8};
 u8 gParticleReveal_CellHeights[] = {8, 8, 8, 8};
 u16 gParticleReveal_CellSourceOffsets[] = {2308, 2372, 2436, 2500};
@@ -742,7 +738,7 @@ u16 gRockToss_ChipCells[] = {0,    1152, 1243, 1341, 1533,
 u8 gRockToss_ChipX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
 u8 gRockToss_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
-// shatter_rocks.c
+// Storm scene animations and shattering rocks.
 u8 gMode12_Animations[] = {7, 14, 10, 4};
 u8 gMode12_SmokeFlips[] = {0, 4, 8, 12};
 u8 gShatterRocks_ShardOffsets[32 * 2] = {
@@ -760,7 +756,7 @@ u16 gShatterRocks_ShardCells[] = {0,    55,   121,  221,  298,  368,
                                         452,  673,  862,  1090, 1342, 1631,
                                         1917, 2157, 2413, 2623};
 
-// burst_scene.c
+// Burst scene records and rising wall geometry.
 u8 gBurstScene_Records[] = {
     1, 0, 5, 16, 12, 80, 0, 1, 1, 7, 16, 12, 104, 0, 1, 2, 9, 16, 12, 128, 0,
     1, 3, 1, 16, 16, 36, 0, 1, 3, 2, 20, 16, 52,  0, 1, 3, 3, 24, 16, 68,  0,
@@ -774,20 +770,20 @@ u8 gRisingWall_MoundHeights[] = {49, 55, 64};
 s8 gRisingWall_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
 u8 gRisingWall_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
 
-// fxstep.c
+// Beam sequence picture cells and reach.
 u8 gBeamSequence_CellWidths[] = {38, 54, 71, 74, 77, 65};
 u8 gBeamSequence_CellHeights[] = {7, 9, 11, 13, 13, 11};
 u16 gBeamSequence_CellSheetOffsets[] = {0, 266, 752, 1533, 2495, 3496};
 u8 gBeamSequence_CellReaches[] = {58, 42, 25, 13, 5, 0};
 
-// casting.c
+// Casting impact glints and orbit cells.
 u8 gCastingImpact_GlintDrawFlags[] = {0, 4, 8, 12};
 u8 gCastingImpact_ImageX[] = {10, 30, 0, 0, 0, 6, 52,
                                     60, 0,  0, 0, 0, 0, 0};
 u8 gCastingImpact_ImageY[] = {0, 20, 2, 2, 34, 64, 68};
 u16 gCastingImpact_OrbitCells[] = {2308, 2372, 2436, 2500, 0};
 
-// ripple.c
+// Fire swirl picture cells.
 u8 gFireSwirl_CellWidths[] = {26, 46, 63, 77, 60, 39, 32};
 u8 gFireSwirl_CellHeights[] = {11, 20, 37, 65, 65, 54, 39};
 u16 gFireSwirl_CellSourceOffsets[] = {0,    286,   1206, 3537,
@@ -795,7 +791,7 @@ u16 gFireSwirl_CellSourceOffsets[] = {0,    286,   1206, 3537,
 s8 gFireSwirl_CellBiasX[] = {53, 36, 16, 2, 2, 2, 2};
 s8 gFireSwirl_CellBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
-// place_formation_objects.c
+// Object formation coordinates and impact burst cells.
 u8 gFormation_TwelveX[] = {52, 25,  57, 89, 7,  39,
                                  71, 103, 21, 53, 85, 117};
 u8 gFormation_TwelveZ[] = {0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
@@ -808,7 +804,7 @@ u8 gImpactBurst_CellHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
 u16 gImpactBurst_CellSourceOffsets[] = {0,     4608,  9216,  13356,
                                               16020, 18684, 20668, 22020};
 
-// scenefx.c
+// Particle stream paths and circling scene geometry.
 s16 gParticleStreams_OrbitPoints[][3] = {
     {-64, -96, 24}, {-48, -120, 32}, {-32, -80, -48}, {-16, -72, -24},
     {16, -80, 16},  {32, -112, -32}, {48, -96, 56}};
@@ -823,11 +819,11 @@ u16 gCirclingScene_PuffSheetOffsets[] = {0,    256,  1280, 3584,
                                                5888, 8192, 10496};
 u16 gCirclingScene_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-// flame_blade.c
+// Flame blade strike columns and flash cells.
 u8 gFlameBlade_StrikeColumns[] = {32, 24, 0, 96, 104, 128};
 u8 gFlameBlade_FlashCells[] = {5, 5, 4, 3, 2, 1};
 
-// falling_sword.c
+// Falling sword flashes, dust and shockwave debris.
 u8 gFallingSword_FlashCells[] = {5, 5, 4, 3, 2, 1};
 s32 gFallingSword_DustGravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 u8 gShockwaveScene_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
@@ -836,15 +832,15 @@ u16 gShockwaveScene_ShardCells[] = {2396, 2985, 3698, 4411, 4810, 5146};
 u8 gShockwaveScene_ShardWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gShockwaveScene_ShardHeights[] = {31, 31, 31, 21, 21, 24};
 
-// object_row.c
+// Object row coordinates.
 u8 gObjectRow_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
 u8 gObjectRow_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
-// swoop.c
+// Formation sweep coordinates and gravity.
 u8 gBattleFx6_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
 u8 gBattleFx6_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
 s32 gBattleFx6_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
-// colburst.c
+// Rising burst spark cells.
 u16 gRisingBurst_SparkCells[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 u16 gRisingBurst_SparkSizes[] = {16, 32, 48, 48, 48, 48, 48};

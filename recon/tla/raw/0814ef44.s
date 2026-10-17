@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global BattleFx_RunSeriesA
+	.global BattleFx_RunHealingMotes
 	.thumb_func
-BattleFx_RunSeriesA:
+BattleFx_RunHealingMotes:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

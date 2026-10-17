@@ -1,8 +1,8 @@
-// Draft, differ 338 of 755: BattleFx_RenderMode, the body of nine effect
+// Draft, differ 338 of 755: BattleFx_RunTargetMotes, the body of nine effect
 // kinds through the wrappers in games/tla/src/battle/effect/render_mode.c
 // (modes 0 to 7).
 
-// ☀️ twin: BattleFx_RenderMode (games/tbs/src/effect/effect.c), shape 0.898,
+// ☀️ twin: BattleFx_RunTargetMotes (games/tbs/src/effect/effect.c), shape 0.898,
 // structure 0.907. ⚓️'s changes: the effect argument read directly; mode
 // 1 takes its palette from the Mars Djinn sheet (directory row 0x150) as
 // mode 7 does, where ☀️'s mode 1 takes the pink burst's; the blitters from
@@ -101,7 +101,7 @@ void Audio_PlayCue(s32 cue);
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
 // in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
 // the caster at the first target for the final blow.
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
+void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   s32 total;
   s32 member;
   s32 count;

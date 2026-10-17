@@ -46,12 +46,12 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object);
 s8 BattleFx_GetResourceGroup(s32 effect_index);
 #endif
 void BattleFx_PrepareBufferInterpolation(void);
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
+void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_RunNoEffect(void);
 void BattleFx_RunOrbitingParticles(void);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode);
-void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
+void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode);
 void *BattleFx_StartItemBreak(void *object);
 s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);

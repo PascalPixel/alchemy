@@ -8,41 +8,41 @@
 #include "battle_effect_work.h"
 
 //--------------------------------------------------------------------------
-// Each entry passes a particle type (color and count) to BattleFx_RenderMode.
-// effect: effect arguments.
+// Each entry passes a particle type (color and count) to
+// BattleFx_RunTargetMotes. effect: effect arguments.
 //--------------------------------------------------------------------------
-void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect) {
+void BattleFx_RunTargetMotesMode0Or1(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
-    BattleFx_RenderMode(effect, 0);
+    BattleFx_RunTargetMotes(effect, 0);
     return;
   }
-  BattleFx_RenderMode(effect, 1);
+  BattleFx_RunTargetMotes(effect, 1);
 }
 
-void BattleFx_RenderMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 1);
+void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 1);
 }
 
-void BattleFx_RenderMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 2);
+void BattleFx_RunTargetMotesMode2(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 2);
 }
 
-void BattleFx_RenderMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 3);
+void BattleFx_RunTargetMotesMode3(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 3);
 }
 
-void BattleFx_RenderMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 4);
+void BattleFx_RunTargetMotesMode4(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 4);
 }
 
-void BattleFx_RenderMode5(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 5);
+void BattleFx_RunTargetMotesMode5(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 5);
 }
 
-void BattleFx_RenderMode7(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 7);
+void BattleFx_RunTargetMotesMode7(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 7);
 }
 
-void BattleFx_RenderMode6(struct BattleEffectArgument *effect) {
-  BattleFx_RenderMode(effect, 6);
+void BattleFx_RunTargetMotesMode6(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 6);
 }

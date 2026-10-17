@@ -406,7 +406,7 @@ Func_0811df70:
 	cmp r3, #0
 	beq .L_0811e27a
 	mov r0, r8
-	bl BattleFx_InitializeModeFar
+	bl BattleFx_RunSceneEffectFar
 	b .L_0811e296
 .L_0811e27a:
 	movs r3, #128

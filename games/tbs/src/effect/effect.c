@@ -116,13 +116,6 @@
 #define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
 #define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
 
-// Defines the battle effect kind `name` as a call of a shared runner with one
-// fixed argument, its style or variant. The strike, volley, shower, mote and
-// stat-change families each have one runner and a kind like this for each
-// ability that uses it.
-#define DEFINE_EFFECT_KIND(name, runner, arg)                                  \
-  void name(struct BattleEffectArgument *effect) { runner(effect, arg); }
-
 // Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
@@ -169,12 +162,6 @@ enum CanvasTransferMode {
 #define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
   ((slots) = gBattleFxWork, (cursor) = (slots),                                \
    EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
-
-// Loops `i` over the effect's targets, effect->actors[0] to
-// effect->actors[effect->count - 1]: the loops that flash, shake, strike or
-// aim at each target in turn.
-#define EFFECT_FOR_EACH_TARGET(i, effect)                                      \
-  for ((i) = 0; (i) != (effect)->count; (i)++)
 
 // Marks particles[0] to particles[count - 1] free: a particle whose variant
 // is -1 is not drawn or moved until an effect gives it a life.

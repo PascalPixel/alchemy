@@ -19,30 +19,16 @@ void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunTargetMotesMode1, BattleFx_RunTargetMotes, 1)
 
-void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDelude, BattleFx_RunTargetMotes, 2)
 
-void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunParalyze, BattleFx_RunTargetMotes, 3)
 
-void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHeartrender, BattleFx_RunTargetMotes, 4)
 
-void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMysticFlame, BattleFx_RunTargetMotes, 5)
 
-void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDemonFire, BattleFx_RunTargetMotes, 7)
 
-void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)

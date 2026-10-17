@@ -1,14 +1,10 @@
 #include "types.h"
+#include "battle_effect_argument.h"
 
-struct BattleEffectArgument;
 void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode);
 
 // Abilities: Smoke Bomb, Sleep Bomb (kind 380).
-void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
-  Func_08151ff0(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSmokeBomb, Func_08151ff0, 1)
 
 // Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
-void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
-  Func_08151ff0(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBlast, Func_08151ff0, 0)

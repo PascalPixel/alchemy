@@ -4,9 +4,7 @@
 void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode);
 
 // Abilities: Beam, Cycle Beam, Searing Beam (kind 73).
-void BattleFx_RunBeam(struct BattleEffectArgument *effect) {
-  Func_0818bc98(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBeam, Func_0818bc98, 0)
 
 // Abilities: Rolling Flame (kind 434).
 void BattleFx_RunRollingFlame(struct BattleEffectArgument *effect) {
@@ -21,6 +19,4 @@ void BattleFx_RunGhostSoldier(struct BattleEffectArgument *effect) {
 }
 
 // Abilities: Blast Breath (kind 414).
-void BattleFx_RunBlastBreath(struct BattleEffectArgument *effect) {
-  Func_0818bc98(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBlastBreath, Func_0818bc98, 3)

@@ -10,25 +10,15 @@
 #include "types.h"
 #include "battle_effect_work.h"
 
-void BattleFx_RunPly(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPly, BattleFx_RunHealingMotes, 0)
 
-void BattleFx_RunWish(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWish, BattleFx_RunHealingMotes, 1)
 
-void BattleFx_RunCure(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCure, BattleFx_RunHealingMotes, 2)
 
-void BattleFx_RunHealingMotesMode8(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 8);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode8, BattleFx_RunHealingMotes, 8)
 
-void BattleFx_RunHealingMotesMode9(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 9);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode9, BattleFx_RunHealingMotes, 9)
 
 void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
@@ -38,33 +28,19 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
 
-void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode4, BattleFx_RunHealingMotes, 4)
 
-void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
 
-void BattleFx_RunHealingMotesMode7(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode7, BattleFx_RunHealingMotes, 7)
 
-void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
 
-void BattleFx_RunHealingMotesMode10(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 10);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode10, BattleFx_RunHealingMotes, 10)
 
-void BattleFx_RunHealingMotesMode11(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 11);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode11, BattleFx_RunHealingMotes, 11)
 
-void BattleFx_RunHealingMotesMode12(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 12);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode12, BattleFx_RunHealingMotes, 12)
 
 void BattleFx_RunHealingMotesMode13(struct BattleEffectArgument *effect) {
   effect->prelude = 0;

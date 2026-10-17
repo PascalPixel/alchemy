@@ -6,64 +6,40 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode);
 
 // Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 // (kind 210); Kindle (kind 223); kind 46 is used by no ability.
-void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunImpact, Func_0814fab8, 0)
 
 // Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
-void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunGuard, Func_0814fab8, 1)
 
 // Abilities: Iron (kind 220).
-void BattleFx_RunIron(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunIron, Func_0814fab8, 6)
 
-void Func_0814fa2c(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 7);
-}
+DEFINE_EFFECT_KIND(Func_0814fa2c, Func_0814fab8, 7)
 
 // Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
 // 215).
-void BattleFx_RunWard(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWard, Func_0814fab8, 2)
 
 // Abilities: Steam (kind 221).
-void BattleFx_RunSteam(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 11);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSteam, Func_0814fab8, 11)
 
 // Abilities: Granite (kind 200).
-void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunGranite, Func_0814fab8, 3)
 
 // Abilities: Flash (kind 213).
-void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunFlash, Func_0814fab8, 5)
 
 // Abilities: Shade (kind 222).
-void BattleFx_RunShade(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 8);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunShade, Func_0814fab8, 8)
 
 // Abilities: Guard Aura (kind 460).
-void BattleFx_RunGuardAura(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 12);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunGuardAura, Func_0814fab8, 12)
 
 // Abilities: Zephyr (kind 216).
-void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunZephyr, Func_0814fab8, 4)
 
 // Abilities: Coal (kind 224).
-void BattleFx_RunCoal(struct BattleEffectArgument *effect) {
-  Func_0814fab8(effect, 9);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCoal, Func_0814fab8, 9)
 
 void Func_0814fa98(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =

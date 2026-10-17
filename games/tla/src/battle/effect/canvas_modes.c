@@ -22,9 +22,7 @@ void BattleFx_RunCanvasModeByCount(s32 *effect) {
     Func_0818f620(effect, 1);
 }
 
-void BattleFx_RunCanvasMode0(struct BattleEffectArgument *effect) {
-  Func_0818f620(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCanvasMode0, Func_0818f620, 0)
 
 void BattleFx_RunCanvasMode3WithAction(struct BattleEffectArgument *effect) {
   struct FieldActor *object;

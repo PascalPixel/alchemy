@@ -1,54 +1,34 @@
 #include "types.h"
+#include "battle_effect_argument.h"
 
-struct BattleEffectArgument;
 void Func_0814512c(struct BattleEffectArgument *effect, s32 mode);
 
 // Abilities: Mad Spatter (kind 347).
-void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMadSpatter, Func_0814512c, 4)
 
 // Abilities: Mud (kind 237).
-void BattleFx_RunMud(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunMud, Func_0814512c, 7)
 
 // Abilities: Decompose (kind 350).
-void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunDecompose, Func_0814512c, 5)
 
 // Abilities: Bone Chiller (kind 309).
-void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunBoneChiller, Func_0814512c, 0)
 
 // Abilities: Sticky Goo (kind 315).
-void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunStickyGoo, Func_0814512c, 1)
 
 // Abilities: Poison Ink (kind 340).
-void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunPoisonInk, Func_0814512c, 6)
 
 // Abilities: Sticky Poison (kind 322).
-void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunStickyPoison, Func_0814512c, 2)
 
 // Abilities: Rotten Blood (kind 330).
-void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRottenBlood, Func_0814512c, 3)
 
 // Abilities: Rising Venom (kind 430).
-void BattleFx_RunRisingVenom(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 8);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunRisingVenom, Func_0814512c, 8)
 
 // Abilities: Formic Acid (kind 453).
-void BattleFx_RunFormicAcid(struct BattleEffectArgument *effect) {
-  Func_0814512c(effect, 9);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunFormicAcid, Func_0814512c, 9)

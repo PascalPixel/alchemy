@@ -1719,9 +1719,6 @@ Unit_CalcBaseElements:
 	.thumb_func
 Class_Determine:
 	.incbin "baserom.gba", 0x000b5144, 0x00000144
-	.section .rom.000b575c, "ax"
-	.align 2, 0
-	.incbin "baserom.gba", 0x000b575c, 0x00000338
 	.section .rom.000b5d58, "ax"
 	.global DjinnRecovery_Remove
 	.type DjinnRecovery_Remove, %function

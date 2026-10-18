@@ -60,8 +60,9 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -218,7 +219,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   }
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + DJINNI_SHEET);
-  Func_08144aac(effect->side, draw = blit); // [0] MAX, [1] ADDITIVE
+  BattleFx_FetchRectangleBlitters(effect->side,
+                                  draw = blit); // [0] MAX, [1] ADDITIVE
 
   // Scatter the motes; the mode decides how, and how long the effect is.
   if (mode == 0 || mode == 6 || mode == 8 || mode == 9 || mode == 10) {

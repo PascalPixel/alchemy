@@ -407,7 +407,7 @@ BattleFx_RunSoulShatter:
 	ldr r3, [sp, #36]
 	ldr r1, [sp, #12]
 	ldr r0, [r3, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r4, #0
 	mov r8, r4
 	mov r5, r11

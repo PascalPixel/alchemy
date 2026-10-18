@@ -6,9 +6,9 @@
 // unpacked with its palette by Resource_LoadAndDecompress; the canvas
 // prepared by Func_0815585c (mode | (side ^ prelude) << 4, then two
 // three-word arrays) where The Broken Seal calls
-// BattleFx_PrepareCanvasEffect; Func_08144aac for the Djinn's pair; the
-// callback at 0xc80; the effect argument read directly; the camera read
-// each frame.
+// BattleFx_PrepareCanvasEffect; BattleFx_FetchRectangleBlitters for the Djinn's
+// pair; the callback at 0xc80; the effect argument read directly; the camera
+// read each frame.
 
 // Left: order only: single swaps of a load (the effect's fields, the work
 // pointer's spill, a table) with the constant beside it, about thirty
@@ -54,7 +54,8 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
 void SceneTransform_ApplyPosition(s32 *position);
@@ -164,7 +165,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn[0] + offsetX - 20;
       s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn[1] - 24;
 
-      Func_08144aac(effect->side ^ prelude, draw);
+      BattleFx_FetchRectangleBlitters(effect->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);

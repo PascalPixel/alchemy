@@ -75,8 +75,9 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Audio_PlayCue(s32 cue);
 void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void BattleFx_RunNoEffectFrames(s32 frames);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -211,7 +212,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     Render_ResetTransformState();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame > 3) {
-      Func_08144aac(effect->side, draw);
+      BattleFx_FetchRectangleBlitters(effect->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 

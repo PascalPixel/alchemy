@@ -129,7 +129,7 @@ BattleFx_RunDragonCloud:
 	ldr r0, [r5, #4]
 	adds r1, r7, #0
 	str r7, [sp, #20]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11

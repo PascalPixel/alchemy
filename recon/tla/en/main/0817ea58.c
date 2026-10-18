@@ -149,7 +149,7 @@ Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
 void Func_08013560(s32);
 void Func_0801314c(s32);
-void Func_08144aac(s32, void **);
+void BattleFx_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
 s32 Func_08002090(s32);
 s32 Func_08002096(s32);
@@ -384,7 +384,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   *(vu16 *)0x0400000c = 0x786;
   *(vu16 *)0x04000020 = 0x80;
   *(s32 *)0x04000028 = 0;
-  Func_08144aac(0, blit);
+  BattleFx_FetchRectangleBlitters(0, blit);
   work->unk7790 = 0;
   work->unk7794 = 5;
   work->unk7798 = -1;

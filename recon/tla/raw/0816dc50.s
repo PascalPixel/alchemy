@@ -69,7 +69,7 @@ BattleFx_RunSerac:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #48]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r4, [sp, #56]
 	movs r0, #239
 	movs r1, #238

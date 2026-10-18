@@ -65,7 +65,7 @@ Func_08144628:
 	mov r3, r9
 	ldr r0, [r3, #4]
 	add r1, sp, #72
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, .L_081449a8
 	movs r1, #1
 	movs r2, #128

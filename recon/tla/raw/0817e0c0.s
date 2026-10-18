@@ -36,7 +36,7 @@ Func_0817e0c0:
 	adds r1, #52
 	movs r0, #0
 	str r1, [sp, #20]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_0817e130
 	ldr r1, [sp, #24]
 	movs r2, #0

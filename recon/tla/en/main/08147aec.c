@@ -4,10 +4,11 @@
 // casts the same scene from the caster's side). Twin: The Broken Seal's
 // BattleFx_RunPaletteParticles, ported call for call. The Lost Age's
 // changes: every picture unpacked by Resource_LoadAndDecompress; the pair
-// from Func_08144aac; BG2CNT set with the blending; an alternate layout
-// (formation 6, eight pixels right and lower, sparks and flashes with it)
-// when the first target's animation kind is 2; formation resource 647; two
-// separate mode-0 tests at the teardown; the callback at 0xc80.
+// from BattleFx_FetchRectangleBlitters; BG2CNT set with the blending; an
+// alternate layout (formation 6, eight pixels right and lower, sparks and
+// flashes with it) when the first target's animation kind is 2; formation
+// resource 647; two separate mode-0 tests at the teardown; the callback at
+// 0xc80.
 
 // Left: order only: about twenty single swaps of a load (the argument's
 // spill, a pooled constant, the work pointer) with the constant beside it.
@@ -51,7 +52,8 @@ void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
 void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
@@ -109,7 +111,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   REG_BG2CNT = 0x784;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,

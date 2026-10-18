@@ -269,7 +269,7 @@ SummonFx_RunCanvasEffect:
 	ldr r0, [r5, #4]
 	adds r1, #64
 	str r1, [sp, #32]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #52]
 	movs r5, #239
 	lsls r5, r5, #7

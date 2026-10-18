@@ -303,7 +303,7 @@ BattleFx_RunAnnihilation:
 	ldr r0, [r3, #4]
 	add r1, sp
 	mov r11, r1
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r3, #52
 	ldr r7, [sp, #40]
 	movs r2, #0

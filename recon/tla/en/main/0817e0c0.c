@@ -108,7 +108,7 @@ extern const s32 Data_081994b8[];
 extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08144aac(s32 side, DrawRectangle *pair);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -174,7 +174,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
 

@@ -287,7 +287,7 @@ BattleFx_RunHealingMotes:
 	ldr r0, [r1, #4]
 	adds r1, r2, #0
 	str r2, [sp, #40]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	cmp r7, #0
 	beq .L_0814f16a
 	cmp r7, #6

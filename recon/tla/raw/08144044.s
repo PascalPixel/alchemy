@@ -42,7 +42,7 @@ BattleFx_RunHaunt:
 	.2byte 0xf800
 	movs r0, #0
 	add r1, sp, #44
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	adds r1, r5, #0
 	ldr r0, .L_08144354
 	bl Scheduler_AddOrUpdateCallback

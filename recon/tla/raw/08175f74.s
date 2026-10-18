@@ -145,7 +145,7 @@ BattleFx_RunCharon:
 	str r0, [r3]
 	adds r1, #176
 	str r1, [sp, #64]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_081760bc
 	bl Resource_GetTableEntry
 	movs r2, #160

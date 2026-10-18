@@ -37,7 +37,7 @@ BattleFx_RunMegaera:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #68]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #80]
 	ldr r0, .L_081703dc
 	adds r1, r3, r6

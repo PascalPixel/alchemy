@@ -229,7 +229,7 @@ void Func_081434f8(void);
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_BeginTiledCanvas(s32);
 void Func_08143bb8(void);
-void Func_08144aac(s32, struct DrawFuncs *);
+void BattleFx_FetchRectangleBlitters(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
 void BattleFx_RunMysticFlame(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
@@ -579,7 +579,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
   EffectPosition_ApplyStepAndYOffset(action->actor, target);
   EffectPosition_ApplyStepAndYOffset(action->target, base);
-  Func_08144aac(action->side, &drawFuncs);
+  BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
   work->unk77b4 = 24;
   work->unk77b8 = 0;
   object = *Func_08118098(action->target);
@@ -1139,7 +1139,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
           Func_0801314c(188);
-          Func_08144aac(action->side, &drawFuncs);
+          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
     } else if (kind == 68) {
@@ -1156,7 +1156,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
           Func_0801314c(188);
-          Func_08144aac(action->side, &drawFuncs);
+          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       p = SPARKS;
@@ -1212,7 +1212,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 61) {
       Func_0801314c(188);
       Func_0801314c(104);
@@ -1225,7 +1225,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x, 48, 24, 48);
         Func_0801314c(188);
       }
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 60) {
       if (frame > 15)
         REG_BLDALPHA = (32 - frame) | 0x1000;
@@ -1352,7 +1352,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       Func_0801314c(104);
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 96 || kind == 97 || kind == 98) {
       if (frame < 20) {
         if (frame < 8)
@@ -1368,7 +1368,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         Func_081963ec(104, 7);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2, 56, 18, 48);
         Func_0801314c(104);
-        Func_08144aac(action->side, &drawFuncs);
+        BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
       }
       if ((kind == 97 || kind == 98) && frame < 24) {
         if (kind == 97)
@@ -1428,7 +1428,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             gData_081988b2[m]);
       }
       Func_0801314c(104);
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 88) {
       work->unk7780 = 1;
       work->unk7784 = 0;
@@ -1489,7 +1489,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       Func_0801314c(104);
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 62) {
       scrollA += scrollB;
       if (frame > 6)
@@ -1749,7 +1749,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
           Func_0801314c(188);
-          Func_08144aac(action->side, &drawFuncs);
+          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       if (frame > 3) {

@@ -32,7 +32,7 @@ BattleFx_RunStarMine:
 	strh r3, [r2]
 	add r1, sp, #56
 	movs r0, #0
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r2, [sp, #44]
 	movs r3, #224
 	lsls r3, r3, #3

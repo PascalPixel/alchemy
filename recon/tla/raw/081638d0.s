@@ -45,7 +45,7 @@ BattleFx_RunTorch:
 	ldr r3, [sp, #20]
 	add r1, sp, #24
 	ldr r0, [r3, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10

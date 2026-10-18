@@ -69,7 +69,7 @@ BattleFx_RunJuggle:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #48]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r8

@@ -260,7 +260,7 @@ Func_0814512c:
 	ldr r0, [r1, #4]
 	adds r1, r2, #0
 	str r2, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #48]
 	cmp r3, #4
 	beq .L_0814532a

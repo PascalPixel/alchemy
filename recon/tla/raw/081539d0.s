@@ -32,7 +32,7 @@ Func_081539d0:
 	eors r0, r3
 	add r1, sp, #20
 	ldr r5, .L_08153c24
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r3, #255
 	movs r7, #0
 	mov r8, r3

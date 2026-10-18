@@ -872,7 +872,7 @@ Func_0815f16c:
 	ldr r0, [r5, #4]
 	adds r1, r2, #0
 	str r2, [sp, #84]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r5, #238
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7
@@ -3415,7 +3415,7 @@ Func_0815f16c:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r0, #1
 	add r11, r0
 	mov r1, r11
@@ -3519,7 +3519,7 @@ Func_0815f16c:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #84]
 	add r11, r5
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	mov r0, r11
 	cmp r0, #3
 	bne .L_08160d26
@@ -4503,7 +4503,7 @@ Func_0815f16c:
 	ldr r2, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r2, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	bl .L_0816342a
 .L_0816157e:
 	ldr r3, [sp, #124]
@@ -4589,7 +4589,7 @@ Func_0815f16c:
 	ldr r1, [sp, #128]
 	ldr r0, [r1, #4]
 	ldr r1, [sp, #84]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 .L_0816162e:
 	ldr r3, [sp, #124]
 	subs r3, #97
@@ -4890,7 +4890,7 @@ Func_0815f16c:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	bl .L_0816342a
 .L_0816187c:
 	ldr r0, [sp, #124]
@@ -5188,7 +5188,7 @@ Func_0815f16c:
 	ldr r3, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r3, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	bl .L_0816342a
 	.2byte 0x0000
 .L_08161ac4:
@@ -6630,7 +6630,7 @@ Func_0815f16c:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #84]
 	add r11, r5
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	mov r0, r11
 	cmp r0, #3
 	bne .L_08162526

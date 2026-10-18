@@ -48,7 +48,7 @@ BattleFx_RunFrost:
 	movs r0, #0
 	adds r1, r4, #0
 	str r4, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r5, [sp, #44]
 	b .L_08151530
 	.2byte 0x0000

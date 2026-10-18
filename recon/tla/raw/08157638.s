@@ -28,7 +28,7 @@ BattleFx_RunMercury:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_081579b0
 	ldr r1, [sp, #20]
 	movs r2, #0

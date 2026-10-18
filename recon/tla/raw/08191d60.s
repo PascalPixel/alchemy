@@ -33,7 +33,7 @@ BattleFx_RunMoloch:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_08191dcc

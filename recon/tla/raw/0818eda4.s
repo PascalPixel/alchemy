@@ -33,7 +33,7 @@ BattleFx_RunLiquifier:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_0818ee10
 	ldr r1, .L_0818ee14
 	movs r2, #1

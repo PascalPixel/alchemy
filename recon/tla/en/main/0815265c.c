@@ -56,8 +56,9 @@ void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08143488(void); // Palette_StepFadeTransfer
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
 void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
                    s32 mode); // BattleFx_LoadWork
@@ -206,7 +207,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (effect->prelude == 1) {
     if (effect->side == 0) {
-      Func_08144aac(0, draw = pair);
+      BattleFx_FetchRectangleBlitters(0, draw = pair);
     } else {
       Func_081963ec(104, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -228,7 +229,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     draw = pair;
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   } else {
-    Func_08144aac(effect->side, draw = pair);
+    BattleFx_FetchRectangleBlitters(effect->side, draw = pair);
   }
 
   // The pictures and the colors.
@@ -665,7 +666,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                 canvas, work->sheet + gData_08197486[cel], x, y,
                 gData_08197492[cel], gData_08197498[cel]);
             Runtime_ReleaseHeapBlock(188);
-            Func_08144aac(effect->side, draw);
+            BattleFx_FetchRectangleBlitters(effect->side, draw);
           }
         }
       }

@@ -76,7 +76,7 @@ void Func_08143000(void);
 // Counts down the actors' flash timers.
 void Func_081434f8(void);
 // Fetches the max and additive blitters, flipped or not.
-void Func_08144aac(s32 flip, DrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -113,7 +113,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   draw = blit;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);

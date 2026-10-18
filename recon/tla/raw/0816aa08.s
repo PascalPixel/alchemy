@@ -30,7 +30,7 @@ BattleFx_RunPlumeEdge:
 	add r1, sp, #36
 	strh r3, [r2]
 	movs r0, #0
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r9

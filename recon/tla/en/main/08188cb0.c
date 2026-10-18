@@ -67,7 +67,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_08144aac(s32 side, DrawRectangle *draw);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
@@ -142,7 +142,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
 
   // No spark is alive yet.
   for (i = 0, life = &work->particles[0].variant; i != 64; i++) {

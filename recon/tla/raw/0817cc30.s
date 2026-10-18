@@ -35,7 +35,7 @@ BattleFx_RunOceanFist:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_0817cca4
 	adds r1, r5, #0
 	movs r2, #1

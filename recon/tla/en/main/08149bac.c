@@ -5,9 +5,9 @@
 // ☀️ twin: BattleFx_RunSparkGroups (games/tbs/src/effect/effect.c), shape
 // 0.803, structure 0.938. ⚓️'s changes: kind 1 also starts a palette fade
 // (work->fadeFrames 24, work->fadeStep 0); the blitter pair comes from
-// Func_08144aac(0, draw) where ☀️ loads max and additive blitters itself;
-// the shapes table Data_081979de holds halfwords; the effect runs
-// count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
+// BattleFx_FetchRectangleBlitters(0, draw) where ☀️ loads max and additive
+// blitters itself; the shapes table Data_081979de holds halfwords; the effect
+// runs count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
 // 145 at frame 2; the variant 3 wipe goes through the IWRAM call layer
 // (☀️ calls the fixed entry, tagged); the transfer callback runs at 0xc80.
 
@@ -87,7 +87,8 @@ void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimer
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -142,7 +143,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
 
   // The flash sheet, the particle sprites and the kind's palette.
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);

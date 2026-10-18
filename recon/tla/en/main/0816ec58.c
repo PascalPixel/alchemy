@@ -68,7 +68,8 @@ void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);                       // BattleFx_LoadWork
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
@@ -213,7 +214,7 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
 
     // Spark i rises from frame 8 + 2i through seven pictures, three frames
     // apiece; past the first 16 they wait until the columns sink.
-    Func_08144aac(effect->side, draw);
+    BattleFx_FetchRectangleBlitters(effect->side, draw);
     spark = work->particles;
     for (i = 0; i != effect->variant * 4 + 8; i++, spark++) {
       if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&

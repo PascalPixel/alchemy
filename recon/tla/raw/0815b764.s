@@ -190,7 +190,7 @@ BattleFx_RunUlysses:
 	adds r1, r4, #0
 	movs r0, #0
 	str r4, [sp, #72]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	b .L_0815b904
 .L_0815b8d8:
 	.4byte 0x00000080

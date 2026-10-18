@@ -72,7 +72,8 @@ void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);                       // BattleFx_LoadWork
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);          // ObjectGroup_UpdateMembers
 void Func_081434f8(void);                // ObjectGroup_TickMemberTimers
@@ -223,7 +224,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
 
     // The sparks: from frame 8, two more each frame, through seven
     // pictures three frames apiece; one in four is drawn mirrored.
-    Func_08144aac(effect->side, draw);
+    BattleFx_FetchRectangleBlitters(effect->side, draw);
     spark = work->particles;
     for (i = 0; i != SPARKS; i++, spark++) {
       if (frame >= i / 2 + 8 && spark->variant <= 28) {

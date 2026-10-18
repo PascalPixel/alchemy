@@ -130,7 +130,7 @@ BattleFx_RunHelmSplitter:
 	mov r1, r10
 	ldr r0, [r1, #4]
 	add r1, sp, #20
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #0
 	mov r3, r11
 	mov r8, r2

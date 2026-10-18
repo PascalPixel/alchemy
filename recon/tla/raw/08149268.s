@@ -47,7 +47,7 @@ BattleFx_RunPrism:
 	ldr r0, [r3, #4]
 	adds r1, r4, #0
 	str r4, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r5, [sp, #28]
 	b .L_081492d8
 .L_081492cc:

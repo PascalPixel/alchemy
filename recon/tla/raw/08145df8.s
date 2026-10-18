@@ -179,7 +179,7 @@ BattleFx_RunBind:
 	adds r6, r0, #0
 	ldr r1, [sp, #24]
 	ldr r0, [r2, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #64]
 	subs r6, #24
 	cmp r3, #32

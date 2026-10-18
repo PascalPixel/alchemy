@@ -5,9 +5,9 @@
 
 // Twin: ☀️ BattleFx_RunNereid (games/tbs/src/effect/effect.c),
 // ported: the palette goes by DMA 3, the blitters come from
-// Func_08144aac(0, draw), the effect stays an argument (its count and actors
-// are read from it; only Func_0814cc4c reads the work's copy), formation
-// resource 649, callback Func_08143000 at 0xc80.
+// BattleFx_FetchRectangleBlitters(0, draw), the effect stays an argument (its
+// count and actors are read from it; only Func_0814cc4c reads the work's copy),
+// formation resource 649, callback Func_08143000 at 0xc80.
 
 // The column table is not const: the native reads it again after each draw
 // call, and as const data the reuse moved every register (differ 292).
@@ -68,8 +68,9 @@ extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
 void Func_08152404(s32 count, s32 resource,
@@ -113,7 +114,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
   cells = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
 
   // The spray's palette and picture, the pillar's picture, the ember cells.
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);

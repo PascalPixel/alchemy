@@ -35,7 +35,7 @@ BattleFx_RunNereid:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #32]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #40]
 	ldr r0, .L_081484c0
 	adds r1, r3, r6

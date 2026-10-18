@@ -60,7 +60,8 @@ extern u16 gData_08197410[];
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
 void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
@@ -101,7 +102,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);

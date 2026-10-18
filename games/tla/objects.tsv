@@ -5789,8 +5789,8 @@ main	rom_main_09	recon/tla/fr/rom	.rom.00144628	fr
 main	rom_main_09	recon/tla/es/rom	.rom.00144628	es
 main	rom_main_09	recon/tla/de/rom	.rom.00144628	de
 main	rom_main_09	recon/tla/raw/08144628	.text	en
-main	rom_main_09	recon/tla/raw/08144aac	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00144628	ja
+main	rom_main_09	games/tla/src/battle/effect/fetch_rectangle_blitters	.text
 main	rom_main_09	games/tla/src/battle/effect/series_c	.text
 main	rom_main_09	recon/tla/it/rom	.rom.00144b14	it
 main	rom_main_09	recon/tla/fr/rom	.rom.00144b14	fr

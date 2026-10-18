@@ -47,8 +47,9 @@
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair);                // BattleFx_FetchRectangleBlitters
 void Func_081180e8(s32 phase);           // BattleEventRuntime_BeginPhaseFar
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -156,7 +157,7 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  Func_08144aac(effect->side, draw = callbacks);
+  BattleFx_FetchRectangleBlitters(effect->side, draw = callbacks);
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);

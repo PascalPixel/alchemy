@@ -39,7 +39,7 @@ BattleFx_RunRagnarok:
 	ldr r0, [r3, #4]
 	adds r1, r5, #0
 	str r5, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #2
 	ldr r0, [sp, #36]
 	bl Object_SetMode

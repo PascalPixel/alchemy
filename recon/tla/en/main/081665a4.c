@@ -63,8 +63,9 @@ extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 void EffectPosition_ApplyAlternateStepAndYOffset(
@@ -113,7 +114,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   user = GetBattleObjectSlotFar(effect->actor)->object;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   Object_SetMode(user, 2);
   ObjectDispatch_ApplyValueToChildrenFar(user, 48);
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);

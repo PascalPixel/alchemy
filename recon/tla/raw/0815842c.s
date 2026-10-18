@@ -38,7 +38,7 @@ BattleFx_RunHail:
 	ldr r0, [r4, #4]
 	adds r1, #24
 	str r1, [sp, #8]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_081585a0

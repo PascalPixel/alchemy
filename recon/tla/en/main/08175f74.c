@@ -226,7 +226,7 @@ void Func_08013560(s32);
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
-void Func_08144aac(s32, DrawRectangleFn *);
+void BattleFx_FetchRectangleBlitters(s32, DrawRectangleFn *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -341,7 +341,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
   REG_BG2PA = (u32)&Value_00000080;
   REG_BG2X = 0;
   blit = routine;
-  Func_08144aac(0, blit);
+  BattleFx_FetchRectangleBlitters(0, blit);
 
   source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009c);
   CpuCopy(PLTT + 0x120, source, 0x140);

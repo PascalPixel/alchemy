@@ -1,10 +1,10 @@
 // Draft, differ 538 of 893 (draft 881 instructions, no device): summon 16,
 // written from the listing on The Broken Seal's summon skeleton
 // (BattleFx_RunNereid: canvas layer, blitter pair through
-// Func_08144aac, transfer callback at 0xc80, SelectLivingTargets,
-// SpawnObjects, a frame loop with an A/B skip, PlaceFormationObjects,
-// RunImpactBurst and the twelve object releases). Its rings use the ARM
-// model renderer as summon 25's pillars do (Func_0819273c).
+// BattleFx_FetchRectangleBlitters, transfer callback at 0xc80,
+// SelectLivingTargets, SpawnObjects, a frame loop with an A/B skip,
+// PlaceFormationObjects, RunImpactBurst and the twelve object releases). Its
+// rings use the ARM model renderer as summon 25's pillars do (Func_0819273c).
 // The native frame is 60 bytes: the blitter pair at sp+52, the ring
 // texture at sp+44, effect sp+40, canvas sp+36, graphics sp+32, &draw
 // sp+28, focus sp+20/24, frame - 217 at sp+16 and frame - 91 at sp+12.
@@ -72,7 +72,7 @@ extern const s8 Data_08199f3c[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143bb8(void);
-void Func_08144aac(s32 flip, DrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Func_08143000(void);
 void Func_0815b410(void);
 void Func_0814cc4c(struct BattleEffectArgument *effect);
@@ -133,7 +133,7 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x3000, 0,

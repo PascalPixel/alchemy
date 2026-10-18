@@ -64,7 +64,7 @@ extern const u8 Data_0819940c[][7];
 extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08144aac(s32 side, DrawRectangle *pair);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -127,7 +127,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);

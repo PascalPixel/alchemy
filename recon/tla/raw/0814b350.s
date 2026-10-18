@@ -44,7 +44,7 @@ Func_0814b350:
 	eors r0, r3
 	adds r1, r6, #0
 	str r6, [sp, #52]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, [r5, #8]
 	bl GetBattleObjectSlotFar
 	ldr r0, [r0]

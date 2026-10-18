@@ -185,7 +185,7 @@ BattleFx_RunZagan:
 	adds r1, r6, #0
 	movs r0, #0
 	str r6, [sp, #36]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10

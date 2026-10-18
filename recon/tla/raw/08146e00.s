@@ -34,7 +34,7 @@ BattleFx_RunProcne:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #76]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r5, [sp, #88]
 	ldr r0, .L_08147114
 	adds r1, r5, r6

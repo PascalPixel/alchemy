@@ -69,7 +69,7 @@ extern u8 Data_08199d5c[];
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void Func_08144aac(s32 side, DrawRectangle *draw);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 u32 Random16(void);
@@ -156,7 +156,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)0x05000000,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);

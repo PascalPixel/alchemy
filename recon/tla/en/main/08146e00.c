@@ -2,11 +2,11 @@
 
 // Summon 8 (Func_0814c994's case 8). Twin: The Broken Seal's
 // BattleFx_RunProcne, ported by trial 2 and rewritten here. The
-// Lost Age's changes: Func_08144aac for the pair; the whirlwind unpacked
-// with its palette by Resource_LoadAndDecompress into the work sheet, the
-// comets into work->sheet + 0x3600; frame / 4 % 3 written through
-// Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by 36
-// and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
+// Lost Age's changes: BattleFx_FetchRectangleBlitters for the pair; the
+// whirlwind unpacked with its palette by Resource_LoadAndDecompress into the
+// work sheet, the comets into work->sheet + 0x3600; frame / 4 % 3 written
+// through Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by
+// 36 and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
 // source makes: agscc emits __modsi3 and __divsi3 for the operators); HI()
 // reads of screen.y and screen.depth; Iwram_TransformVector at the comet
 // sparks; formation resource 646; the effect argument for the actor loops;
@@ -56,7 +56,8 @@ void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
 void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
@@ -152,7 +153,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   // Set up: the max and additive pair, the whirlwind with its palette, the
   // dots, and the transfer at half strength.
   BattleFx_BeginCanvasLayer(0);
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlwindSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);

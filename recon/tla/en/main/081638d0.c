@@ -72,8 +72,9 @@
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
                    s32 *screenY); // BattleFx_PrepareCanvasEffect
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
@@ -138,7 +139,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   }
   REG_BLDALPHA = 0x1000;
   REG_BG2PA = 0xaa;
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);

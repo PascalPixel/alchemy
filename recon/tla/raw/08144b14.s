@@ -240,7 +240,7 @@ Func_08144b14:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #32]
 	eors r0, r7
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r5, [sp, #48]
 	subs r6, #24
 	cmp r5, #32

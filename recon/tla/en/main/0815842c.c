@@ -71,7 +71,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 // Fetches the max and additive blitters, flipped or not.
-void Func_08144aac(s32 flip, DrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // Closes the canvas layer.
 void Func_08143bb8(void);
 // Copies the canvas to VRAM when a transfer is pending.
@@ -113,7 +113,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);
   Func_0815585c(effect, PREPARE(1, effect->side, 2), screen, otherPoint);
-  Func_08144aac(effect->side, blit);
+  BattleFx_FetchRectangleBlitters(effect->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   work->transferMode = 2;

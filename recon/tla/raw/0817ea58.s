@@ -802,7 +802,7 @@ BattleFx_RunDaedalus:
 	str r0, [sp, #84]
 	ldr r1, [sp, #84]
 	movs r0, #0
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r3, #238
 	lsls r3, r3, #7
 	movs r2, #238

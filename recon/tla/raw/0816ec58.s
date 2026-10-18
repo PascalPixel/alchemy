@@ -424,7 +424,7 @@ BattleFx_RunCool:
 	mov r4, r10
 	ldr r0, [r4, #4]
 	ldr r1, [sp, #8]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	mov r3, r10
 	ldr r2, [r3, #24]
 	movs r4, #8

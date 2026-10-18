@@ -248,7 +248,7 @@ BattleFx_RunUndeadSword:
 	ldr r4, [sp, #20]
 	ldr r1, [sp, #12]
 	ldr r0, [r4, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #0
 	mov r8, r2
 	mov r5, r10

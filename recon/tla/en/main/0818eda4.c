@@ -66,7 +66,7 @@ extern const u8 gData_08199210[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143bb8(void);
-void Func_08144aac(s32 flip, DrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Func_08143000(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
@@ -126,7 +126,7 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02014000,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CB, work->sheet, 0, 0);

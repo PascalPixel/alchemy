@@ -4,9 +4,9 @@
 // BattleFx_RunNereid, ported call for call. The Lost Age's changes:
 // the heap blocks are read canvas, work, sheet; three
 // Resource_LoadAndDecompress loads where The Broken Seal copies a palette
-// and decodes two sheets; Func_08144aac for the blitter pair; formation
-// resource 649 for 380; the callback at 0xc80; and the hit loop reads the
-// effect argument. The resource rows WaterSpraySheet (303) and
+// and decodes two sheets; BattleFx_FetchRectangleBlitters for the blitter pair;
+// formation resource 649 for 380; the callback at 0xc80; and the hit loop reads
+// the effect argument. The resource rows WaterSpraySheet (303) and
 // FirePillarSheetA (326) have no name yet in directory.s.
 
 // Left: order only, and the literal pool offsets that follow it. The
@@ -50,7 +50,8 @@ void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
 void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
@@ -104,7 +105,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   do {
     REG_BLDALPHA = 0x1010;
   } while (0);
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA,

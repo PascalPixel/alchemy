@@ -70,7 +70,7 @@ void Func_08143000(void);
 // Counts down the actors' flash timers.
 void Func_081434f8(void);
 // Fetches the max and additive blitters, flipped or not.
-void Func_08144aac(s32 flip, DrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 width, s32 height);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
@@ -110,7 +110,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   sheet = slots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   draw = blit;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
 
   // The flame picture is the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;

@@ -33,7 +33,7 @@ Func_08163e14:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #32]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_08163e7c
 	bl Resource_GetTableEntry
 	movs r3, #128

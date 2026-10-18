@@ -6,7 +6,8 @@
 // frame that begins phase 134, where ☀️ begins it 80 frames before the
 // end); the boulder sheet is unpacked into the work before the crystal
 // sheet; the shard offsets gData_08197834 are words; the camera is
-// Ram_HeapSlots->cameraWork; Func_08144aac fetches the blitter pair.
+// Ram_HeapSlots->cameraWork; BattleFx_FetchRectangleBlitters fetches the
+// blitter pair.
 
 // Same frame and instruction count. What is left: the loop counters i and j
 // take r8 and r10 the other way round, which moves every row that uses
@@ -60,7 +61,8 @@ void Func_08143000(void);         // ☀️ ProcessPendingGraphicsTransfer
 void Func_081434f8(void);         // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);    // ☀️ BattleEventRuntime_BeginPhaseFar
-void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -92,7 +94,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);

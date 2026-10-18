@@ -33,7 +33,7 @@ BattleFx_RunJupiter:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #20]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_08157a3c
 	ldr r1, [sp, #24]
 	movs r2, #0

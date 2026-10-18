@@ -28,7 +28,7 @@ BattleFx_RunMars:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #12]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_081583f4
 	ldr r1, [sp, #16]
 	movs r2, #0

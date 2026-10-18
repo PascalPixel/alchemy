@@ -4,9 +4,9 @@
 // call for call. The Lost Age's changes: work and canvas read directly, the
 // camera read again each frame; the skull sheet unpacked with its palette by
 // Resource_LoadAndDecompress and the pink burst palette copied after it;
-// Func_08144aac for the max and additive pair; both callbacks at 0xc80; the
-// effect runs count * 32 + 64 frames (96 there) and begins the results at
-// frame 92 (96 there); the actor loops read the effect argument.
+// BattleFx_FetchRectangleBlitters for the max and additive pair; both callbacks
+// at 0xc80; the effect runs count * 32 + 64 frames (96 there) and begins the
+// results at frame 92 (96 there); the actor loops read the effect argument.
 
 // Left: order and one instruction. The native takes &pos as add r1, sp, #64
 // where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
@@ -46,7 +46,8 @@ void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -84,7 +85,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
   work->transferMode = 3;
   work->transferValue = 0x04040404;

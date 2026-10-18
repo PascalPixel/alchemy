@@ -83,7 +83,7 @@ BattleFx_RunSparkGroups:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #20]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r4, [sp, #48]
 	movs r5, #224
 	lsls r5, r5, #3

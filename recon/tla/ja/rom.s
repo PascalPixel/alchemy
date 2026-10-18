@@ -4177,7 +4177,7 @@ BattleFx_RunOrbitingSpirals:
 	.type Func_08144628, %function
 	.thumb_func
 Func_08144628:
-	.incbin "baserom.gba", 0x00144628, 0x000004c8
+	.incbin "baserom.gba", 0x00144628, 0x00000484
 	.section .rom.00144b14, "ax"
 	.balign 4
 	.global Func_08144b14

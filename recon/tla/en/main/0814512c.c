@@ -8,9 +8,9 @@
 // shots per target, each with its own start; mode 7 prepares a canvas with
 // Func_0815585c and sets BG2CNT; the shots' height by mode; the pictures and
 // palettes unpacked by Resource_LoadAndDecompress; the pair from
-// Func_08144aac; modes 4 and 7 clear the canvas each frame with blending
-// off; modes 3 and 5 clear both canvases and run a summon canvas effect
-// (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
+// BattleFx_FetchRectangleBlitters; modes 4 and 7 clear the canvas each frame
+// with blending off; modes 3 and 5 clear both canvases and run a summon canvas
+// effect (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
 
 // Left: the calls, their order, the loops and the tables are the native's;
 // the allocation is not. The native frame is 100 bytes, this one 108: the
@@ -55,7 +55,8 @@ void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -182,7 +183,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
   // each frame and turn blending off, the others fade it to three quarters.
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   if (mode == 4 || mode == 7) {
     work->transferMode = 1;
     work->transferValue = 0;

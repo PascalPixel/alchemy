@@ -2,12 +2,12 @@
 
 // Effect kinds 38 and 218. Twin: The Broken Seal's
 // BattleFx_RunBind, ported call for call; the body is
-// BattleFx_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost Age's changes
-// are those of BattleFx_RunTriangleStrike, plus: the canvas is prepared by Func_0815585c
-// (kind 3 | side << 4, then two three-word arrays) where The Broken Seal calls
-// BattleFx_PrepareCanvasEffect(effect, 3, side, 0, &x, &y); the Djinn sheet is
-// unpacked with its palette; and the prelude's blitter pair comes from
-// Func_08144aac.
+// BattleFx_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost
+// Age's changes are those of BattleFx_RunTriangleStrike, plus: the canvas is
+// prepared by Func_0815585c (kind 3 | side << 4, then two three-word arrays)
+// where The Broken Seal calls BattleFx_PrepareCanvasEffect(effect, 3, side, 0,
+// &x, &y); the Djinn sheet is unpacked with its palette; and the prelude's
+// blitter pair comes from BattleFx_FetchRectangleBlitters.
 
 // Left: order only, as in BattleFx_RunTriangleStrike: single swaps of a load with its
 // neighbour.
@@ -52,7 +52,8 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
 void Audio_PlayCue(s32 cue);
@@ -145,7 +146,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 
       x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       y = ((Trig_Cos(frame << 11) << 2) >> 16) + origin[1] - 24;
-      Func_08144aac(effect->side, draw);
+      BattleFx_FetchRectangleBlitters(effect->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + DJINN_SHEET, x, y, DJINN_SIZE, DJINN_SIZE);

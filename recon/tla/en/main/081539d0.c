@@ -34,8 +34,9 @@
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair);                // BattleFx_FetchRectangleBlitters
 void Func_080150e4(s32 angle);           // SceneTransform_ApplyRoll
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -66,7 +67,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  Func_08144aac(effect->side ^ 1, draw);
+  BattleFx_FetchRectangleBlitters(effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
     star->x = ((Random16() & 0xff) - 127) << 16;

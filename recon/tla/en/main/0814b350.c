@@ -52,7 +52,8 @@ extern u8 Data_0819745e[];   // ☀️ gBattleFx_PuffSizes
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void); // ☀️ BattleFx_EndCanvasLayer
 void Func_08143000(void); // ☀️ ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);       // ☀️ SceneTransform_ApplyRoll
@@ -95,7 +96,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Func_08144aac(effect->side ^ 1, draw = callbacks);
+  BattleFx_FetchRectangleBlitters(effect->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(effect->actor)->object;
   goal = GetBattleObjectSlotFar(effect->actors[0])->object;
 

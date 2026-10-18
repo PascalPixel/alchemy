@@ -137,7 +137,7 @@ BattleFx_RunProjectileVolleyB:
 	movs r0, #0
 	adds r1, r6, #0
 	str r6, [sp, #36]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	b .L_08152808
 .L_0815276c:
 	movs r1, #23
@@ -214,7 +214,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r0, [r1, #4]
 	adds r1, r2, #0
 	str r2, [sp, #36]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 .L_08152808:
 	ldr r3, [sp, #76]
 	movs r6, #224
@@ -2117,7 +2117,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r5, [sp, #84]
 	ldr r1, [sp, #36]
 	ldr r0, [r5, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r6, [sp, #56]
 	adds r6, #1
 	str r6, [sp, #56]

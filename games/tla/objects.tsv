@@ -3503,10 +3503,14 @@ main	rom_main_05	recon/tla/fr/rom	.rom.000dcdb0	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e0db0	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e4dbc	de
 main	rom_main_05	recon/tla/raw/080d7dbc	.text	en
-main	rom_main_05	recon/tla/raw/080d7f80	.text	en
-main	rom_main_05	recon/tla/raw/080d8148	.text	en
-main	rom_main_05	recon/tla/raw/080d8174	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d7d78	ja
+main	rom_main_05	games/tla/src/battle/effect/mars_join	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000d8168	it
+main	rom_main_05	recon/tla/fr/rom	.rom.000dd168	fr
+main	rom_main_05	recon/tla/es/rom	.rom.000e1168	es
+main	rom_main_05	recon/tla/de/rom	.rom.000e5174	de
+main	rom_main_05	recon/tla/raw/080d8174	.text	en
+main	rom_main_05	recon/tla/ja/rom	.rom.000d8130	ja
 main	rom_main_05	games/tla/src/battle/effect/radial_spread	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d82d4	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dd2d4	fr

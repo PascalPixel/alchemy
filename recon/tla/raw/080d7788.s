@@ -66,7 +66,7 @@ Func_080d7788:
 	cmp r5, #2
 	bne .L_080d780e
 	mov r0, r8
-	bl Func_080d7f80
+	bl Djinn_RunMarsJoinEffect
 	b .L_080d7818
 .L_080d780e:
 	cmp r5, #3

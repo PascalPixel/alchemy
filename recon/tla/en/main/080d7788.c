@@ -18,7 +18,7 @@ void EventRuntime_Begin(void);
 void EventRuntime_End(void);
 void Func_080d82e0(s32 actor);
 void Func_080d8740(s32 actor);
-void Func_080d7f80(s32 actor);
+void Djinn_RunMarsJoinEffect(s32 actor);
 void Djinn_RunJupiterJoinEffect(s32 actor);
 void Func_080cb82c(void);
 void Func_08038328(s32 owner, s32 element, s32 djinni);
@@ -56,7 +56,7 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
     else if (element == 1)
       Func_080d8740(actor);
     else if (element == 2)
-      Func_080d7f80(actor);
+      Djinn_RunMarsJoinEffect(actor);
     else if (element == 3)
       Djinn_RunJupiterJoinEffect(actor);
   }

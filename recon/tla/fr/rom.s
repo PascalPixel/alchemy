@@ -2292,7 +2292,13 @@ Func_080d7788:
 Func_080d7b04:
 	.incbin "baserom.gba", 0x000dcaf8, 0x00000100
 	.section .rom.000dcdb0, "ax"
-	.incbin "baserom.gba", 0x000dcdb0, 0x00000430
+	.global BattleEffect_UpdatePhasedRadialParticle
+	.type BattleEffect_UpdatePhasedRadialParticle, %function
+	.thumb_func
+BattleEffect_UpdatePhasedRadialParticle:
+	.incbin "baserom.gba", 0x000dcdb0, 0x000001c4
+	.section .rom.000dd168, "ax"
+	.incbin "baserom.gba", 0x000dd168, 0x00000078
 	.section .rom.000dd2d4, "ax"
 	.incbin "baserom.gba", 0x000dd2d4, 0x0000042c
 	.section .rom.000dd734, "ax"

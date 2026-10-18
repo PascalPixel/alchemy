@@ -81,8 +81,6 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Runtime_ReleaseHeapBlock(0x11);
 }
 
-extern GlyphTransfer *gGlyphWork;
-
 #define ICON_FRAME 1
 #define ICON_COUNT_ABOVE_ONE 2
 #define ICON_COUNT 4

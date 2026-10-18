@@ -29,8 +29,6 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-void UiWork_CloseAndRelease(void);
-
 // Draw the resource-menu icons, pulsing the selected icon with one affine
 // matrix. Update the horizontal window spans to reveal the active icon row.
 // UB: native pointers traverse scalar link/span fields into adjacent fields

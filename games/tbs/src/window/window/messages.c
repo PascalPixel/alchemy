@@ -385,8 +385,6 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message) {
   MemFree(routine);
 }
 
-extern const void *const Text_MessageContexts[][2];
-
 // Decodes the next symbol of a message. Messages are Huffman coded with one
 // tree per previous symbol: the previous code picks the tree, the message's
 // bits walk it to a leaf, and the leaf's 12-bit symbol is returned and

@@ -15,10 +15,6 @@
 
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
-extern const u8 gDjinnMenu_BlinkTile[32];
-extern const u8 gDjinnMenu_ElementXOffsets[4];
-extern const u8 gDjinnMenu_ElementYOffsets[4];
-
 // A selected Djinni packs its element/index, standby bit and recovery turns.
 #define DJINN_ENTRY_STANDBY 0x10000
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000

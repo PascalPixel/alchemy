@@ -1,3 +1,19 @@
+@ The pieces BattleFx_LoadWork (effect/blitter.c) builds canvas blitters from.
+@ None of this code runs where it is: the builder copies its words into a
+@ heap block, one routine per cell size, mirroring, clip and mode.
+@
+@ Each pixel fragment combines picture pixels, read through r1, into the
+@ canvas, written through r9: Copy writes them, Transparent skips zeros, Max
+@ keeps the brighter of the two, Additive adds them, capped at 63. Forward
+@ fragments read the picture left to right and Reverse ones right to left;
+@ canvas rows stay in tile order. The 8 variants do eight pixels a pass. The
+@ additive fragments add four pixels a word at a time: BattleEffect_Mask puts
+@ 0x40 in every byte of sl, and a byte that reaches it becomes 63.
+@ BattleEffect_Composite is the template the builder walks; blitter.c
+@ describes its blocks. The colour fragments are in
+@ battle_effect_composite_color.s.
+@
+@ Why assembly:
 @ C2: r11/fp holds a row counter (rsb fp, ip, #16; mov lr, fp), not a frame.
 @ The preceding entries also share unsaved r5/r9 state with the main body.
 .syntax unified

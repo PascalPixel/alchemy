@@ -1,7 +1,14 @@
+@ The command decoder BattleEffect_Expand (dot_product.s) calls: ExpandRead
+@ takes the next packed value and jumps, through BattleEffect_ExpandCaseTable,
+@ to one of the case commands below, which update the running pixel value in
+@ r5. They share the decoder's registers (r0 source, r2 and r3 read state,
+@ r5 value, r11 the mask 7) and have no frames of their own.
+@
+@ Why assembly:
 @ C2: BattleEffect_ExpandRead:
 @ Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use
-@ fp as a mask. ldr pc jumps into those commands in battle_effect_expand.s
-@ and battle_effect_expand_commands.s.
+@ fp as a mask. ldr pc jumps into those commands, below in this file
+@ and in its .text.battle_effect_expand_commands section.
 @ In this file itself: it is a two-instruction fragment of that decoder, with
 @ no prologue and no return of its own, and its tell is the computed pc into
 @ code. and ip, r3, #7 / ldr pc, [pc, ip, lsl #2] is unconditional and has

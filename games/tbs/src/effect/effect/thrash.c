@@ -1,6 +1,10 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Thrash, Quick Strike and Vorpal Slash.
 
+// The effects here: two hops that start a spark group, a four-frame
+// image revealed in front of the target, and two mirrored columns rising at
+// the target's feet.
+
 // Abilities: Thrash (kind 388).
 //
 // Hop the acting unit toward the first target; trigger type 4 after 29 frames.
@@ -20,14 +24,6 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   effect->variant = 3;
   BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
 }
-
-// Smaller object effects: two hops that start a spark group, a four-frame
-// image revealed in front of the target, and two mirrored columns rising at
-// the target's feet.
-//
-// Every effect follows the canvas protocol: claim the canvas layer, load
-// sheets, draw into the canvas each frame, present it, and finish the canvas
-// at the end.
 
 // Abilities: Quick Strike (kind 52).
 //

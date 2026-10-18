@@ -1,6 +1,33 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The casting impact scene and its image helpers.
 
+// Casting impacts.
+//
+// A casting impact (enum CastingImpact, the ability's effect kind less 100)
+// runs in four phases:
+//
+// - Gathering: for 32 frames 64 sparks close in on the caster, four more each
+//   frame, each in its own random rotation. Djinni impacts (Bane to Sap, 0 to
+//   7) show their Djinni 80 pixels over the caster once the first sparks have
+//   gone out.
+// - Background: BG2 is placed so the impact sits over the target. Impacts 15,
+//   17, 24, 26 and 35 stop here and hand the canvas to another effect.
+// - Impact: for 20 to 80 frames, depending on the impact, the caster's
+//   overlay, an orb, sparks and the impact's own animation are drawn while
+//   the background palette steps toward the impact's palette. A Djinni flies
+//   to the target over the first six frames, and the target is hit on
+//   frame 6.
+// - Finish: the canvas and its callbacks are released, or impact 21 hands
+//   them to the stat reduction.
+//
+// The particles are used twice: work->particles holds the gathering sparks
+// and then, from the impact, 32 scattering sparks (variant is their
+// lifetime); the 64 records at gMapCellBuffer + 0x4000 belong to the impact's
+// own animation.
+//
+// A casting impact may hand off to another runner after removing its
+// prelude callbacks and releasing the blitters that runner will replace.
+
 // Moves each RGB555 channel of background colours 0 to 63 one level towards
 // the resource palette. Colour 0 always goes towards black, whatever the
 // resource holds.
@@ -36,16 +63,14 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
   Iwram_CopyWords((u16 *)BG_PLTT, target, 128);
 }
 
-// Battle effects: Djinn abilities (effects 100-135)
-
 static __inline__ void CastingImpact_LoadResource(const void *id, void *dest,
                                                   s32 skip, s32 copy) {
   /* FAKEMATCH: needed to match: inline scope keeps each resource call's
    * arguments local; only BattleFx_RunCastingImpact loads through it: with its
    * 24 loads called directly it differs throughout and is 2 instructions longer
    * (tbs-en, 2026-10-14), and the same inline as a layer for the whole effect
-   * family breaks BattleFx_RunProjectileVolley and BattleFx_RunBurstScene (L6
-   * review) */
+   * family breaks BattleFx_RunProjectileVolley and BattleFx_RunBurstScene
+   * (measured 2026-10-14) */
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
@@ -174,7 +199,6 @@ enum CastingImpact {
 // gCastingImpact_ImageX has seven pictures for each side.
 #define CASTING_IMAGE_X(side, image) gCastingImpact_ImageX[(side) * 7 + (image)]
 
-// Djinn abilities
 // Gather sparks around the acting unit, launch the Djinni and draw its impact.
 // Kinds 15, 17, 24, 26 and 35 hand off to another effect after gathering.
 // command: effect arguments

@@ -107,36 +107,6 @@ void BattleFx_ProbeKeysForExtendedActor(void) {
     (void)gKeysHeld;
 }
 
-// Casting impacts, beam sequences and ring-and-spark scenes.
-//
-// A casting impact (enum CastingImpact, the ability's effect kind less 100)
-// runs in four phases:
-//
-// - Gathering: for 32 frames 64 sparks close in on the caster, four more each
-//   frame, each in its own random rotation. Djinni impacts (Bane to Sap, 0 to
-//   7) show their Djinni 80 pixels over the caster once the first sparks have
-//   gone out.
-// - Background: BG2 is placed so the impact sits over the target. Impacts 15,
-//   17, 24, 26 and 35 stop here and hand the canvas to another effect.
-// - Impact: for 20 to 80 frames, depending on the impact, the caster's
-//   overlay, an orb, sparks and the impact's own animation are drawn while
-//   the background palette steps toward the impact's palette. A Djinni flies
-//   to the target over the first six frames, and the target is hit on
-//   frame 6.
-// - Finish: the canvas and its callbacks are released, or impact 21 hands
-//   them to the stat reduction.
-//
-// The particles are used twice: work->particles holds the gathering sparks
-// and then, from the impact, 32 scattering sparks (variant is their
-// lifetime); the 64 records at gMapCellBuffer + 0x4000 belong to the impact's
-// own animation.
-//
-// The beam sequence draws a growing beam picture and its projected sparks
-// over the first target. The ring-and-spark scene plays a strike of rings and
-// sparks, restoring the user's motion afterwards. A casting impact may hand
-// off to another runner after removing its prelude callbacks and releasing
-// the blitters that runner will replace.
-
 // Runs a battle effect from the second range of kinds: 100 to 135 are the
 // casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
 // the ring and spark scenes. Allocates the sheet, the work and the canvas

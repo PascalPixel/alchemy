@@ -26,11 +26,10 @@ u16 gBattleFx_FlareCells[] = {0, 4, 20, 56,  120, 220, 364, 560,  816,  1140,
 // Nine square puff cells; gBattleFx_PuffSizes gives each one's side.
 u16 gBattleFx_PuffCells[] = {0, 25, 74, 123, 172, 221, 246, 255, 256};
 u8 gBattleFx_PuffSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
-// The six cells of an erupting flame puff: size, a downward offset from
-// the flame's point, and where each begins in the sheet. The Mars Djinni
-// shows each for 8 frames, centred on the flame's x.
-// Six cells drawn centred across x with their tops PuffArcCellBiasY below
-// the anchor, so that all six stand on about the same line.
+// The six cells of an erupting flame puff: width, height, how far below its
+// anchor its top goes (so that all six stand on about the same line) and
+// where each begins in the sheet. Each is drawn centred across x; the Mars
+// Djinni shows each for 8 frames, centred on the flame's x.
 u8 gBattleFx_PuffArcCellWidths[] = {24, 29, 30, 27, 24, 16};
 u8 gBattleFx_PuffArcCellHeights[] = {23, 32, 37, 49, 53, 52};
 u8 gBattleFx_PuffArcCellBiasY[] = {41, 32, 26, 11, 4, 2};
@@ -300,77 +299,79 @@ u8 gTargetMotes_GlintFlips[] = {0, 4, 8, 12};
 // and Quake Sphere, so BattleFx_RunQuake. A handler several kinds share takes
 // the name of its lowest kind's first ability, and a name another handler has
 // already taken passes to the next ability (kind 15 is BattleFx_RunNova, as
-// its first ability is a second Blast). Each handler's comment lists every
-// ability that reaches it. Kinds that no ability uses keep descriptive names.
+// its first ability is a second Blast). Kinds that no ability uses keep
+// descriptive names. Each row gives the kind, the part of effect.c that
+// defines its handler and its first ability; the handler's own comment there
+// lists every ability that reaches it.
 BattleFxHandler gBattleFx_EffectHandlers[] = {
-    BattleFx_RunQuake,           // 1
-    BattleFx_RunSpire,           // 2
-    BattleFx_RunGaia,            // 3
-    BattleFx_RunGrowth,          // 4
-    BattleFx_RunThorn,           // 5
-    BattleFx_RunFrost,           // 6
-    BattleFx_RunIce,             // 7
-    BattleFx_RunPrism,           // 8
-    BattleFx_RunDouse,           // 9
-    BattleFx_RunFroth,           // 10
-    BattleFx_RunFlare,           // 11
-    BattleFx_RunFire,            // 12
-    BattleFx_RunVolcano,         // 13
-    BattleFx_RunBlast,           // 14
-    BattleFx_RunNova,            // 15
-    BattleFx_RunBolt,            // 16
-    BattleFx_RunRay,             // 17
-    BattleFx_RunPlasma,          // 18
-    BattleFx_RunSlash,           // 19
-    BattleFx_RunWhirlwind,       // 20
-    BattleFx_RunCure,            // 21
-    BattleFx_RunPly,             // 22
-    BattleFx_RunWish,            // 23
-    BattleFx_RunCurePoison,      // 24
-    BattleFx_RunRevive,          // 25
-    BattleFx_RunImpact,          // 26
-    BattleFx_RunDull,            // 27
-    BattleFx_RunGuard,           // 28
-    BattleFx_RunImpair,          // 29
-    BattleFx_RunWard,            // 30
-    BattleFx_RunWeaken,          // 31
-    BattleFx_RunTaint,           // 32
-    BattleFx_RunDelude,          // 33
-    BattleFx_RunOrbitingSpirals, // 34
-    BattleFx_RunHeartrender,     // 35
-    BattleFx_RunParalyze,        // 36
-    BattleFx_RunSleep,           // 37
-    BattleFx_RunBind,            // 38
-    BattleFx_RunHaunt,           // 39
-    BattleFx_RunCondemn,         // 40
-    BattleFx_RunCurse,           // 41
-    BattleFx_RunDrain,           // 42
-    BattleFx_RunBreak,           // 43
-    BattleFx_RunWish,            // 44
-    BattleFx_RunWish,            // 45
-    BattleFx_RunImpact,          // 46
-    BattleFx_RunImpair,          // 47
+    BattleFx_RunQuake,           // 1, quake.c: Quake
+    BattleFx_RunSpire,           // 2, spire.c: Spire
+    BattleFx_RunGaia,            // 3, gaia.c: Gaia
+    BattleFx_RunGrowth,          // 4, growth.c: Growth
+    BattleFx_RunThorn,           // 5, growth.c: Thorn
+    BattleFx_RunFrost,           // 6, frost.c: Frost
+    BattleFx_RunIce,             // 7, falling.c: Ice
+    BattleFx_RunPrism,           // 8, prism.c: Prism
+    BattleFx_RunDouse,           // 9, falling.c: Douse
+    BattleFx_RunFroth,           // 10, vortices.c: Froth
+    BattleFx_RunFlare,           // 11, flare.c: Flare
+    BattleFx_RunFire,            // 12, fire.c: Fire
+    BattleFx_RunVolcano,         // 13, volcano.c: Volcano
+    BattleFx_RunBlast,           // 14, eruption.c: Blast
+    BattleFx_RunNova,            // 15, plasma.c: Blast
+    BattleFx_RunBolt,            // 16, bolt.c: Bolt
+    BattleFx_RunRay,             // 17, ray.c: Ray
+    BattleFx_RunPlasma,          // 18, plasma.c: Plasma
+    BattleFx_RunSlash,           // 19, projectiles.c: Slash
+    BattleFx_RunWhirlwind,       // 20, vortices.c: Whirlwind
+    BattleFx_RunCure,            // 21, healing.c: Cure
+    BattleFx_RunPly,             // 22, healing.c: Ply
+    BattleFx_RunWish,            // 23, healing.c: Wish
+    BattleFx_RunCurePoison,      // 24, healing.c: Cure Poison
+    BattleFx_RunRevive,          // 25, djinn_beams.c: Revive
+    BattleFx_RunImpact,          // 26, stat_change.c: Impact
+    BattleFx_RunDull,            // 27, stat_change.c: Dull
+    BattleFx_RunGuard,           // 28, stat_change.c: Guard
+    BattleFx_RunImpair,          // 29, stat_change.c: Impair
+    BattleFx_RunWard,            // 30, stat_change.c: Ward
+    BattleFx_RunWeaken,          // 31, stat_change.c: Weaken
+    BattleFx_RunTaint,           // 32, target_motes.c: Taint
+    BattleFx_RunDelude,          // 33, target_motes.c: Delude
+    BattleFx_RunOrbitingSpirals, // 34, planet_diver.c
+    BattleFx_RunHeartrender,     // 35, target_motes.c: Heartrender
+    BattleFx_RunParalyze,        // 36, target_motes.c: Paralyze
+    BattleFx_RunSleep,           // 37, target_motes.c: Sleep
+    BattleFx_RunBind,            // 38, bind.c: Bind
+    BattleFx_RunHaunt,           // 39, planet_diver.c: Haunt
+    BattleFx_RunCondemn,         // 40, condemn.c: Condemn
+    BattleFx_RunCurse,           // 41, target_motes.c: Curse
+    BattleFx_RunDrain,           // 42, drain.c: Drain
+    BattleFx_RunBreak,           // 43, drain.c: Break
+    BattleFx_RunWish,            // 44, healing.c: Wish
+    BattleFx_RunWish,            // 45, healing.c: Wish
+    BattleFx_RunImpact,          // 46, stat_change.c: Impact
+    BattleFx_RunImpair,          // 47, stat_change.c: Impair
     NULL,                        // 48
-    BattleFx_RunDragonCloud,     // 49
-    BattleFx_RunDemonNight,      // 50
-    BattleFx_RunHelmSplitter,    // 51
-    BattleFx_RunQuickStrike,     // 52
-    BattleFx_RunDeathPlunge,     // 53
-    BattleFx_RunShuriken,        // 54
-    BattleFx_RunAnnihilation,    // 55
-    BattleFx_RunPunji,           // 56
-    BattleFx_RunCuttingEdge,     // 57
-    BattleFx_RunRagnarok,        // 58
-    BattleFx_RunHeatWave,        // 59
-    BattleFx_RunPlanetDiver,     // 60
-    BattleFx_RunTitanBlade,      // 61
-    BattleFx_RunShiningStar,     // 62
-    BattleFx_RunBlizzard,        // 63
-    BattleFx_RunDemonFire,       // 64
-    BattleFx_RunVorpalSlash,     // 65
-    BattleFx_RunDrown,           // 66
-    BattleFx_RunTriangleStrike,  // 67
-    BattleFx_RunAstralBlast,     // 68
+    BattleFx_RunDragonCloud,     // 49, dragon_cloud.c: Dragon Cloud
+    BattleFx_RunDemonNight,      // 50, gathering_lights.c: Demon Night
+    BattleFx_RunHelmSplitter,    // 51, helm_splitter.c: Helm Splitter
+    BattleFx_RunQuickStrike,     // 52, thrash.c: Quick Strike
+    BattleFx_RunDeathPlunge,     // 53, death_plunge.c: Death Plunge
+    BattleFx_RunShuriken,        // 54, projectiles.c: Shuriken
+    BattleFx_RunAnnihilation,    // 55, annihilation.c: Annihilation
+    BattleFx_RunPunji,           // 56, growth.c: Punji
+    BattleFx_RunCuttingEdge,     // 57, projectiles.c: Cutting Edge
+    BattleFx_RunRagnarok,        // 58, ragnarok.c: Ragnarok
+    BattleFx_RunHeatWave,        // 59, projectiles.c: Heat Wave
+    BattleFx_RunPlanetDiver,     // 60, planet_diver.c: Planet Diver
+    BattleFx_RunTitanBlade,      // 61, titan_blade.c: Titan Blade
+    BattleFx_RunShiningStar,     // 62, stars.c: Shining Star
+    BattleFx_RunBlizzard,        // 63, projectiles.c: Blizzard
+    BattleFx_RunDemonFire,       // 64, target_motes.c: Demon Fire
+    BattleFx_RunVorpalSlash,     // 65, thrash.c: Vorpal Slash
+    BattleFx_RunDrown,           // 66, target_motes.c: Drown
+    BattleFx_RunTriangleStrike,  // 67, bind.c
+    BattleFx_RunAstralBlast,     // 68, stars.c: Astral Blast
     NULL,
     NULL,
     NULL,
@@ -502,26 +503,26 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     NULL,
     NULL,
     NULL,                   // 197-199
-    BattleFx_RunGranite,    // 200
-    BattleFx_RunRevive,     // 201
-    BattleFx_RunVine,       // 202
-    BattleFx_RunGround,     // 203
-    BattleFx_RunPly,        // 204
-    BattleFx_RunSleet,      // 205
-    BattleFx_RunWish,       // 206
-    BattleFx_RunHail,       // 207
-    BattleFx_RunTonic,      // 208
-    BattleFx_RunDew,        // 209
-    BattleFx_RunImpact,     // 210
-    BattleFx_RunGuard,      // 211
-    BattleFx_RunPsyCrystal, // 212
-    BattleFx_RunFlash,      // 213
-    BattleFx_RunTorch,      // 214
-    BattleFx_RunWard,       // 215
-    BattleFx_RunZephyr,     // 216
-    BattleFx_RunKite,       // 217
-    BattleFx_RunBind,       // 218
-    BattleFx_RunGust,       // 219
+    BattleFx_RunGranite,    // 200, stat_change.c: Granite
+    BattleFx_RunRevive,     // 201, djinn_beams.c: Revive
+    BattleFx_RunVine,       // 202, growth.c: Vine
+    BattleFx_RunGround,     // 203, hail.c: Ground
+    BattleFx_RunPly,        // 204, healing.c: Ply
+    BattleFx_RunSleet,      // 205, projectiles.c: Sleet
+    BattleFx_RunWish,       // 206, healing.c: Wish
+    BattleFx_RunHail,       // 207, hail.c: Hail
+    BattleFx_RunTonic,      // 208, healing.c: Tonic
+    BattleFx_RunDew,        // 209, djinn_beams.c: Dew
+    BattleFx_RunImpact,     // 210, stat_change.c: Impact
+    BattleFx_RunGuard,      // 211, stat_change.c: Guard
+    BattleFx_RunPsyCrystal, // 212, healing.c: Psy Crystal
+    BattleFx_RunFlash,      // 213, stat_change.c: Flash
+    BattleFx_RunTorch,      // 214, torch.c: Torch
+    BattleFx_RunWard,       // 215, stat_change.c: Ward
+    BattleFx_RunZephyr,     // 216, stat_change.c: Zephyr
+    BattleFx_RunKite,       // 217, torch.c: Kite
+    BattleFx_RunBind,       // 218, bind.c: Bind
+    BattleFx_RunGust,       // 219, burst_scene.c: Gust
     NULL,
     NULL,
     NULL,
@@ -552,10 +553,10 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     NULL,
     NULL,
     NULL,                // 244-249
-    BattleFx_RunVenus,   // 250
-    BattleFx_RunMercury, // 251
-    BattleFx_RunMars,    // 252
-    BattleFx_RunJupiter, // 253
+    BattleFx_RunVenus,   // 250, djinn_attacks.c: Venus
+    BattleFx_RunMercury, // 251, djinn_attacks.c: Mercury
+    BattleFx_RunMars,    // 252, djinn_attacks.c: Mars
+    BattleFx_RunJupiter, // 253, djinn_attacks.c: Jupiter
     NULL,
     NULL,
     NULL,
@@ -602,61 +603,61 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     NULL,
     NULL,
     NULL,                      // 294-299
-    BattleFx_RunSonicWave,     // 300
-    BattleFx_RunShriek,        // 301
-    BattleFx_RunBansheeHowl,   // 302
-    BattleFx_RunCrazyVoice,    // 303
-    BattleFx_RunWarCry,        // 304
-    BattleFx_RunWickedHowl,    // 305
-    BattleFx_RunWingBeat,      // 306
-    BattleFx_RunWingFlutter,   // 307
-    BattleFx_RunRumble,        // 308
-    BattleFx_RunBoneChiller,   // 309
-    BattleFx_RunGust,          // 310
-    BattleFx_RunBoneCharge,    // 311
-    BattleFx_RunMysticFlame,   // 312
-    BattleFx_RunNumbingSting,  // 313
-    BattleFx_RunBruteForce,    // 314
-    BattleFx_RunStickyGoo,     // 315
-    BattleFx_RunCannibalFang,  // 316
-    BattleFx_RunBearClaw,      // 317
-    BattleFx_RunPoisonousBite, // 318
-    BattleFx_RunFlyingAttack,  // 319
-    BattleFx_RunUndeadSword,   // 320
-    BattleFx_RunRansack,       // 321
-    BattleFx_RunStickyPoison,  // 322
-    BattleFx_RunPoisonousBite, // 323
-    BattleFx_RunElectricBite,  // 324
-    BattleFx_RunPoisonTail,    // 325
-    BattleFx_RunOnslaught,     // 326
-    BattleFx_RunVampiricFang,  // 327
-    BattleFx_RunBacteriaRush,  // 328
-    BattleFx_RunFlyingAttack,  // 329
-    BattleFx_RunRottenBlood,   // 330
+    BattleFx_RunSonicWave,     // 300, streaks.c: Sonic Wave
+    BattleFx_RunShriek,        // 301, streaks.c: Shriek
+    BattleFx_RunBansheeHowl,   // 302, streaks.c: Banshee Howl
+    BattleFx_RunCrazyVoice,    // 303, projectiles.c: Crazy Voice
+    BattleFx_RunWarCry,        // 304, streaks.c: War Cry
+    BattleFx_RunWickedHowl,    // 305, streaks.c: Wicked Howl
+    BattleFx_RunWingBeat,      // 306, projectiles.c: Wing Beat
+    BattleFx_RunWingFlutter,   // 307, projectiles.c: Wing Flutter
+    BattleFx_RunRumble,        // 308, gathering_lights.c: Rumble
+    BattleFx_RunBoneChiller,   // 309, lobbed_shells.c: Bone Chiller
+    BattleFx_RunGust,          // 310, burst_scene.c: Gust
+    BattleFx_RunBoneCharge,    // 311, rushing_strike.c: Bone Charge
+    BattleFx_RunMysticFlame,   // 312, target_motes.c: Mystic Flame
+    BattleFx_RunNumbingSting,  // 313, target_strike.c: Numbing Sting
+    BattleFx_RunBruteForce,    // 314, rushing_strike.c: Brute Force
+    BattleFx_RunStickyGoo,     // 315, lobbed_shells.c: Sticky Goo
+    BattleFx_RunCannibalFang,  // 316, target_strike.c: Cannibal Fang
+    BattleFx_RunBearClaw,      // 317, burst_scene.c: Bear Claw
+    BattleFx_RunPoisonousBite, // 318, target_strike.c: Poisonous Bite
+    BattleFx_RunFlyingAttack,  // 319, burst_scene.c: Flying Attack
+    BattleFx_RunUndeadSword,   // 320, undead_sword.c: Undead Sword
+    BattleFx_RunRansack,       // 321, burst_scene.c: Ransack
+    BattleFx_RunStickyPoison,  // 322, lobbed_shells.c: Sticky Poison
+    BattleFx_RunPoisonousBite, // 323, target_strike.c: Poisonous Bite
+    BattleFx_RunElectricBite,  // 324, target_strike.c: Electric Bite
+    BattleFx_RunPoisonTail,    // 325, target_strike.c: Poison Tail
+    BattleFx_RunOnslaught,     // 326, rushing_strike.c: Onslaught
+    BattleFx_RunVampiricFang,  // 327, target_strike.c: Vampiric Fang
+    BattleFx_RunBacteriaRush,  // 328, burst_scene.c: Bacteria Rush
+    BattleFx_RunFlyingAttack,  // 329, burst_scene.c: Flying Attack
+    BattleFx_RunRottenBlood,   // 330, lobbed_shells.c: Rotten Blood
     NULL,                      // 331
-    BattleFx_RunDoubleFang,    // 332
-    BattleFx_RunMortalBlow,    // 333
-    BattleFx_RunFreebiteRush,  // 334
-    BattleFx_RunTwinBeaks,     // 335
-    BattleFx_RunRabidFang,     // 336
-    BattleFx_RunAcidBite,      // 337
-    BattleFx_RunDynamite,      // 338
-    BattleFx_RunHeadbutt,      // 339
-    BattleFx_RunPoisonInk,     // 340
+    BattleFx_RunDoubleFang,    // 332, target_strike.c: Double Fang
+    BattleFx_RunMortalBlow,    // 333, target_strike.c: Mortal Blow
+    BattleFx_RunFreebiteRush,  // 334, burst_scene.c: Freebite Rush
+    BattleFx_RunTwinBeaks,     // 335, target_strike.c: Twin Beaks
+    BattleFx_RunRabidFang,     // 336, target_strike.c: Rabid Fang
+    BattleFx_RunAcidBite,      // 337, target_strike.c: Acid Bite
+    BattleFx_RunDynamite,      // 338, plasma.c: Dynamite
+    BattleFx_RunHeadbutt,      // 339, rushing_strike.c: Headbutt
+    BattleFx_RunPoisonInk,     // 340, lobbed_shells.c: Poison Ink
     NULL,                      // 341
-    BattleFx_RunBearClaw,      // 342
-    BattleFx_RunRansack,       // 343
-    BattleFx_RunSoothingStar,  // 344
-    BattleFx_RunSpiderWeb,     // 345
-    BattleFx_RunHeartrender,   // 346
-    BattleFx_RunMadSpatter,    // 347
-    BattleFx_RunSpasm,         // 348
-    BattleFx_RunSleepStar,     // 349
-    BattleFx_RunDecompose,     // 350
-    BattleFx_RunHaunting,      // 351
-    BattleFx_RunCure,          // 352
-    BattleFx_RunBerserk,       // 353
-    BattleFx_RunCurse,         // 354
+    BattleFx_RunBearClaw,      // 342, burst_scene.c: Bear Claw
+    BattleFx_RunRansack,       // 343, burst_scene.c: Ransack
+    BattleFx_RunSoothingStar,  // 344, streaks.c: Soothing Star
+    BattleFx_RunSpiderWeb,     // 345, spider_web.c: Spider Web
+    BattleFx_RunHeartrender,   // 346, target_motes.c: Heartrender
+    BattleFx_RunMadSpatter,    // 347, lobbed_shells.c: Mad Spatter
+    BattleFx_RunSpasm,         // 348, mirrored_wall.c: Spasm
+    BattleFx_RunSleepStar,     // 349, streaks.c: Sleep Star
+    BattleFx_RunDecompose,     // 350, lobbed_shells.c: Decompose
+    BattleFx_RunHaunting,      // 351, gathering_lights.c: Haunting
+    BattleFx_RunCure,          // 352, healing.c: Cure
+    BattleFx_RunBerserk,       // 353, mirrored_wall.c: Berserk
+    BattleFx_RunCurse,         // 354, target_motes.c: Curse
     NULL,
     NULL,
     NULL,
@@ -682,16 +683,16 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     NULL,
     NULL,                              // 371-378
     NULL,                              // 379
-    BattleFx_RunSmokeBomb,             // 380
-    BattleFx_RunWingStroke,            // 381
-    BattleFx_RunPoisonBeat,            // 382
-    BattleFx_RunSpinningBeat,          // 383
-    BattleFx_RunOuterSpace,            // 384
-    BattleFx_RunDragonDriver,          // 385
-    BattleFx_RunDrainFang,             // 386
-    BattleFx_RunSparkApproachVariant3, // 387
-    BattleFx_RunThrash,                // 388
-    BattleFx_RunRecovery,              // 389
+    BattleFx_RunSmokeBomb,             // 380, eruption.c: Smoke Bomb
+    BattleFx_RunWingStroke,            // 381, projectiles.c: Wing Stroke
+    BattleFx_RunPoisonBeat,            // 382, spider_web.c: Poison Beat
+    BattleFx_RunSpinningBeat,          // 383, spider_web.c: Spinning Beat
+    BattleFx_RunOuterSpace,            // 384, particle_streams.c: Outer Space
+    BattleFx_RunDragonDriver,          // 385, tiamat.c: Dragon Driver
+    BattleFx_RunDrainFang,             // 386, target_strike.c: Drain Fang
+    BattleFx_RunSparkApproachVariant3, // 387, thrash.c
+    BattleFx_RunThrash,                // 388, thrash.c: Thrash
+    BattleFx_RunRecovery,              // 389, mirrored_wall.c: Recovery
     NULL,
     NULL,
     NULL,
@@ -702,13 +703,13 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
     NULL, // 390-397
     NULL,
     NULL,                      // 398-399
-    BattleFx_RunFireBlessing,  // 400
-    BattleFx_RunWaterBlessing, // 401
-    BattleFx_RunIceBlessing,   // 402
-    BattleFx_RunDarkBlessing,  // 403
-    BattleFx_RunAcidBlessing,  // 404
-    BattleFx_RunStormBlessing, // 405
-    BattleFx_RunEvilBlessing,  // 406
+    BattleFx_RunFireBlessing,  // 400, burst_shower.c: Fire Blessing
+    BattleFx_RunWaterBlessing, // 401, burst_shower.c: Water Blessing
+    BattleFx_RunIceBlessing,   // 402, projectiles.c: Ice Blessing
+    BattleFx_RunDarkBlessing,  // 403, burst_shower.c: Dark Blessing
+    BattleFx_RunAcidBlessing,  // 404, burst_shower.c: Dark Blessing
+    BattleFx_RunStormBlessing, // 405, burst_shower.c: Storm Blessing
+    BattleFx_RunEvilBlessing,  // 406, burst_shower.c: Evil Blessing
     BattleFx_RunDeadlyGas      // 407
 };
 

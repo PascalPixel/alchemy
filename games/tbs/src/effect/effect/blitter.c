@@ -50,12 +50,9 @@
 // words, then into a heap block of exactly that size. Branch locations are
 // word indices, so the counting pass needs no buffer.
 
-// The fragments in battle_effect_composite.s read the picture through r1 and
-// write the canvas through r9; forward and reverse fragments pick the
-// direction the picture is read in, while canvas rows stay in tile order.
-// The additive fragments add four pixels a word at a time and cap each at
-// 63: BattleEffect_Mask puts 0x40 in every byte of sl, and a byte that
-// reaches it becomes 63.
+// The fragments' registers and modes are described at the top of
+// battle_effect_composite.s.
+
 #define DMA_COPY_WORDS(n) (0x84000000 | (n))
 
 #define BRANCH_FIELD(site, target)                                             \

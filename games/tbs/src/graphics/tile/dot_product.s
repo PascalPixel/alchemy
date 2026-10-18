@@ -1,3 +1,17 @@
+@ Two ARM routines in bank 09, beside the credits slides that use the second.
+@
+@ BattleEffect_DotProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
+@ ax*bx + ay*by + az*bz, the last two arguments on the stack, summed in 64
+@ bits and returned shifted right 16. Nothing in the game calls it.
+@
+@ BattleEffect_Expand(source, destination, offset): decodes a credits slide's
+@ packed picture (r0) into 8bpp tiles (r1), 15 bands of 8 tiles of 32 rows,
+@ adding offset (r2, the same palette offset in every byte) to each pixel.
+@ Graphics_LoadCharacterBlockAndPalette (slides.c) copies it into a heap slot
+@ and calls it there, so its first loop relocates the table of decoder
+@ commands (expand.s) for wherever the copy landed.
+@
+@ Why assembly:
 @ C2: BattleEffect_DotProduct:
 @ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and

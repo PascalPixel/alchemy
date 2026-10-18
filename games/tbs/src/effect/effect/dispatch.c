@@ -16,23 +16,10 @@ void BattleFx_RunNoEffectFrames(s32 count) {
   }
 }
 
-// Entry points for scene effects and table-dispatched effects.
-//
-// The battle asks for an effect by kind through one of three entry points:
-//
-// - BattleFx_RunTableEffect looks the kind up in gBattleFx_EffectHandlers,
-//   the table of ordinary effects.
-// - BattleFx_RunSceneEffect picks one of the large scene effects, the ones
-//   whose presentation flags have bit 15 set, by a switch.
-// - BattleFx_DispatchByIdRange runs the casting impacts, beam sequences and
-//   ring scenes, which need a sprite sheet twice the usual size.
-//
-// Each entry point allocates the effect's three heap blocks (sprite sheet,
-// work block and canvas), runs the effect to its end and releases them. A
-// runner may schedule callbacks that use those blocks, but it must remove
-// them before it returns to the dispatcher, since the blocks are gone
-// afterwards. Shared helpers below manage the scanline window and the
-// targets' animation objects.
+// Two of the battle's three entry points, BattleFx_RunSceneEffect and
+// BattleFx_RunTableEffect; README.md describes all three and the heap blocks
+// they lend an effect. The shared helpers after them manage the scanline
+// window and the targets' animation objects.
 
 // Runs one of the large battle effects, the ones whose presentation flags
 // have bit 15 set: takes the effect's sheet, work and canvas, runs the

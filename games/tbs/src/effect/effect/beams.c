@@ -1,6 +1,10 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Beam sequences and the ring and spark scene.
 
+// The beam sequence draws a growing beam picture and its projected sparks
+// over the first target. The ring-and-spark scene plays a strike of rings and
+// sparks, restoring the user's motion afterwards.
+
 // Draw the selected beam and its projected sparks over the first target: a
 // beam, arc or wave shoots from the user; from frame 4 the target is hit,
 // a yellow orb flashes over it and sparks fly off, for 32 frames in all.

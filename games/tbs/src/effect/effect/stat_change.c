@@ -1,6 +1,11 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Stat boosts and reductions (Impact, Guard, Ward, Dull, Weaken ...).
 
+// A stat boost brings out a Djinni, which sways from side to side and, after
+// 32 frames, rises 2 pixels a frame; then it swirls flares of light in to
+// each target in turn, 8 frames apart, and a burst of light and the mode's
+// picture (a dagger, a shield, a streak or a wisp) play over it.
+
 // Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 // (kind 210); kind 46 is used by no ability.
 //

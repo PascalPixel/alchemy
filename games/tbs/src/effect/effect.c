@@ -1,40 +1,16 @@
-// Battle effects combine a software canvas, sprite reactions and scanline
-// window or scroll tables. Each runner prepares its resources, advances the
-// effect one frame at a time, then releases its callbacks and drawing buffers.
-//
-// The effect families below share one set of work slots. Ram_MapCellBuffer
-// is scratch storage: different families give it different particle or image
-// layouts. The individual runners document those layouts and remove their
-// drawing callbacks before releasing the buffers.
-//
-// Pictures: the effects draw from decoded sheets, byte-per-pixel pictures
-// whose pixel values are colour levels, indices into a palette ramp. A cell
-// offset (the *_CELL and *_CELLS constants) is a byte offset into a decoded
-// sheet, and each runner decodes its picture sets at fixed offsets in
-// work->sheet. A fade draws from darker copies of a picture built before the
-// first frame, and a symmetric picture is drawn left of its centre line and
-// then mirrored to the right.
-//
-// Debris: several families break something apart. Boulders crumble into
-// chips, shells burst into shards, an impact throws out fragments and
-// Judgment lifts pieces of the field into the air. Each piece is an
-// EffectStep: a 16.16 position, a 16.16 velocity and a variant the family
-// uses as a lifetime, an image phase or an "alive" mark. Pieces move with
-// EffectStep_AdvanceWithGravity2D or 3D and are drawn by their top-left
-// corner, centred on their position or standing on it, as each family
-// chooses. Spawning stays with each runner: every family draws its own
-// random ranges, and the order of those draws is part of the effect.
-//
-// Finding your way: this file holds what every effect shares (includes,
-// macros and the frame-loop helpers); the code itself is in the parts under
-// effect/, included at the end in the order it has in the ROM. That order
+// The battle effect object: everything drawn over the battle while an
+// ability plays. This file holds what every effect shares (includes, macros
+// and the frame-loop helpers); the effects are in the parts under effect/,
+// included at the end in the order their code has in the ROM. That order
 // mixes families, Djinn, summons and shared machinery, and each part is one
 // run of it, named for what it holds. Camelot's own files are not
 // recoverable: the ROM shows one object, and these parts are ours, cut where
-// one family ends and the next begins. The effect a move plays is
-// BattleFx_Run and the move's name (BattleFx_RunQuake, BattleFx_RunCure,
-// BattleFx_RunThor), and gBattleFx_EffectHandlers in effect_table.c lists
-// every effect kind with the abilities that use it. The shared machinery:
+// one family ends and the next begins.
+//
+// To find the effect a move plays, search for the move's English name: each
+// handler's "Abilities:" comment lists the abilities that reach it, and each
+// row of gBattleFx_EffectHandlers (effect_table.c) gives its kind, its part
+// and its first ability. The shared machinery:
 //
 //   Entry points    dispatch.c: BattleFx_RunTableEffect,
 //                   BattleFx_RunSceneEffect; positions.c:
@@ -49,8 +25,8 @@
 //   Targets         dispatch.c: BattleFx_SelectLivingTargets;
 //                   helm_splitter.c: BattleFx_PlaceFormationObjects
 //
-// README.md in this folder explains the canvas, blitters, the frame loop and
-// particles in more detail.
+// README.md in this folder explains the ideas: the canvas, blitters, the
+// frame loop, particles, pictures and how to change an effect.
 
 #include "unit/effect/effect_table.h"
 #include "unit/effect/effect.h"

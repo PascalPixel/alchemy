@@ -1,17 +1,9 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The canvas layer: transfers, opening and closing, tile maps, lines.
 
-// Shared canvas transfers, palette fades, clipping and target flash timers.
-//
-// Most effects draw into a 128x128 canvas of 8-bit colour in the canvas heap
-// block, stored as 16x16 tiles of 8x8 pixels. Each frame a runner draws, then
-// sets transferPending. The scheduled callback
-// BattleFx_ProcessPendingGraphicsTransfer copies the canvas to video memory
-// before the next frame and, by transferMode, clears, fades, darkens or
-// brightens the pixels it keeps, so that trails decay. Effects that draw a
-// full-screen picture in Ram_MapCellBuffer use BG1 instead
-// (BattleFx_SetupCanvasTileMap) and the matching flush callback. A runner
-// must remove its transfer callback before the buffers are released.
+// The canvas layer's functions: opening and closing it, its transfers and
+// palette fades, clipping and the target flash timers. README.md describes
+// the canvas, its transfer modes and the two BG1 paths.
 //
 // A reaction may start one of the eight actor timers in the effect's work
 // block; ObjectGroup_TickMemberTimers counts them down each frame and gives

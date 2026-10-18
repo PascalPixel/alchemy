@@ -1,7 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Healing motes: Ply, Wish, Cure, Cure Poison.
 
-// Healing and stat-boost presentations.
+// Healing sparkles.
 //
 // Healing sparkles come in seven modes. Motes of light scattered around each
 // target swirl in towards it, one target every 8 frames, with the recovery
@@ -15,14 +15,6 @@
 // centre, so swirling the motes is a turn of the whole frame of reference,
 // and drawing one in is a step of 2 pixels a frame along the line to the
 // centre.
-//
-// A stat boost brings out a Djinni, which sways from side to side and, after
-// 32 frames, rises 2 pixels a frame; then it swirls flares of light in to
-// each target in turn, 8 frames apart, and a burst of light and the mode's
-// picture (a dagger, a shield, a streak or a wisp) play over it.
-
-// Healing sparkles, in seven modes: motes of light swirl in around each
-// target. PARTICLES holds the motes, 64 for each target.
 
 #define HEALING_DJINNI_CELLS 0x1000 // the djinni picture in the sheet
 

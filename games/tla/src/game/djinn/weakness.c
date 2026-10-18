@@ -120,3 +120,122 @@ s32 Battle_IsReviveEffect(s32 effect_id) {
   }
   return 0;
 }
+
+s32 Unit_GetElementLevel(s32 unitId, s32 element);
+u32 BattleRandomPercent(void);
+
+// Rolls whether effect `effectId` takes hold on `target`, as The Broken Seal's
+// function of the same name: it fails at once when there is nothing for it to
+// do; the chance is the base rate, plus three times the caster's lead over the
+// target in the element, less half the target's luck, plus 25 against a
+// weakness, times `successScale` percent. This game adds effects 90 and 91,
+// decided by the target's enemy id; a target with 40 luck or more shrugs off
+// effects 18, 19, 26 to 28, 34, 80 and 82, and a character 82; effects 80 and
+// 85 get three tries as 67 does.
+s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
+                         s32 effectId, s32 successScale) {
+  u8 *state = UnitGet(target);
+  struct BattleUnit *unit = (struct BattleUnit *)state;
+  s32 attempts = 1;
+  s32 score;
+  s32 attempt;
+  u8 *luck;
+  s8 *poison;
+  u8 *delusion;
+  u8 *confusion;
+  u8 *charm;
+  u8 *stun;
+  u8 *sleep;
+
+  if (effectId == 90)
+    return Battle_IsEffect90Class(unit->enemyId);
+  if (effectId == 91)
+    return Battle_IsEffect91Class(unit->enemyId);
+
+  if (Battle_IsReviveEffect(effectId) != 0 && unit->hp != 0) {
+    return 0;
+  }
+
+  if (effectId == 3 && unit->poison == 0) {
+    return 0;
+  }
+
+  goto action4_check;
+action4_tail:
+  if (unit->stun == 0 && unit->sleep == 0 &&
+      state[(u32)&((struct BattleUnit *)0)->psySeal] == 0 &&
+      unit->grimReaper == 0) {
+    return 0;
+  }
+  goto action4_done;
+action4_check:
+  if (effectId == 4) {
+    if (unit->delusion == 0 &&
+        state[(u32)&((struct BattleUnit *)0)->confusion] == 0 &&
+        unit->charm == 0) {
+      goto action4_tail;
+    }
+  }
+
+action4_done:
+  poison = &unit->poison;
+  delusion = &unit->delusion;
+  confusion = (u8 *)&unit->confusion;
+  charm = &unit->charm;
+  stun = &unit->stun;
+  sleep = &unit->sleep;
+  if (effectId == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 &&
+      *charm == 0 && *stun == 0 && *sleep == 0 && unit->psySeal == 0 &&
+      unit->grimReaper == 0 &&
+      state[(u32)&((struct BattleUnit *)0)->haunt] == 0) {
+    return 0;
+  }
+
+  if (effectId == 0x1C && unit->grimReaper == 1) {
+    return 0;
+  }
+
+  luck = &unit->luck;
+  if (*luck >= 40) {
+    switch (effectId) {
+    case 18:
+    case 19:
+    case 26:
+    case 27:
+    case 28:
+    case 34:
+    case 80:
+    case 82:
+      return 0;
+    }
+  }
+  if (unit->classIndex != 0 && effectId == 82)
+    return 0;
+
+  score = Func_080b0514(effectId);
+  if (score > 0) {
+    s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
+                     Unit_GetElementLevel(target, resistanceCategory) -
+                     (*luck >> 1);
+    score += difference * 3;
+    if (BattleTarget_IsWeakToEffect(unit, effectId) != 0) {
+      score += 25;
+    }
+  } else {
+    score = -score;
+  }
+
+  if (effectId == 67)
+    attempts = 3;
+  if (effectId == 80)
+    attempts = 3;
+  if (effectId == 85)
+    attempts = 3;
+
+  for (attempt = 0; attempt < attempts; attempt++) {
+    if (score * successScale / 100 >= (s32)BattleRandomPercent()) {
+      return 1;
+    }
+  }
+  return 0;
+}

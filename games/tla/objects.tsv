@@ -2132,11 +2132,8 @@ main	rom_main_03	recon/tla/raw/080ae868		en
 main	rom_main_03	recon/tla/ja/rom	.rom.000a9864	ja
 main	rom_main_03	games/tla/src/game/character/ratios	.text
 main	rom_main_03	games/common/src/game/ratios_second_input	.text
-main	rom_main_03	recon/tla/raw/080aeb9a		en
 main	rom_main_03	games/tla/src/game/character/values	.text
-main	rom_main_03	recon/tla/raw/080aebce		en
 main	rom_main_03	games/tla/src/game/character/adjust	.text
-main	rom_main_03	recon/tla/raw/080aec02		en
 main	rom_main_03	games/tla/src/game/definition	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000aec72	it
 main	rom_main_03	recon/tla/it/rom	.rom.000aec74	it
@@ -2151,7 +2148,6 @@ main	rom_main_03	recon/tla/raw/080aec68		en
 main	rom_main_03	recon/tla/ja/rom	.rom.000a9c62	ja
 main	rom_main_03	recon/tla/ja/rom	.rom.000a9c64	ja
 main	rom_main_03	games/tla/src/game/inventory/items	.text
-main	rom_main_03	recon/tla/raw/080aed6a		en
 main	rom_main_03	games/tla/src/game/inventory/add	.text
 main	rom_main_03	games/tla/src/game/inventory/find	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000aef40	it
@@ -2161,7 +2157,6 @@ main	rom_main_03	recon/tla/de/rom	.rom.000bbf34	de
 main	rom_main_03	recon/tla/raw/080aef34		en
 main	rom_main_03	recon/tla/ja/rom	.rom.000a9f30	ja
 main	rom_main_03	games/tla/src/game/inventory/equipped	.text
-main	rom_main_03	recon/tla/raw/080af092		en
 main	rom_main_03	games/tla/src/game/inventory/get_equipment	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000af0ee	it
 main	rom_main_03	recon/tla/it/rom	.rom.000af0f0	it
@@ -2185,7 +2180,6 @@ main	rom_main_03	games/tla/src/game/inventory/mutation	.text
 main	rom_main_03	games/tla/src/game/inventory/remove	.text
 main	rom_main_03	games/tla/src/game/inventory/state	.text
 main	rom_main_03	games/tla/src/game/inventory/countit	.text
-main	rom_main_03	recon/tla/raw/080af402		en
 main	rom_main_03	games/tla/src/game/inventory/count	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000af4f0	it
 main	rom_main_03	recon/tla/fr/rom	.rom.000b44e4	fr
@@ -2236,12 +2230,6 @@ main	rom_main_03	games/tla/src/game/character/get_record_stride84	.text
 main	rom_main_03	games/tla/src/game/random16	.text
 main	rom_main_03	games/tla/src/game/item/get_unleash_rate_bonus	.text
 main	rom_main_03	games/tla/src/game/djinn/weakness	.text
-main	rom_main_03	recon/tla/it/rom	.rom.000b0768	it
-main	rom_main_03	recon/tla/fr/rom	.rom.000b575c	fr
-main	rom_main_03	recon/tla/es/rom	.rom.000b9768	es
-main	rom_main_03	recon/tla/de/rom	.rom.000bd75c	de
-main	rom_main_03	recon/tla/raw/080b075c	.text	en
-main	rom_main_03	recon/tla/ja/rom	.rom.000ab758	ja
 main	rom_main_03	games/tla/src/game/djinn/management	.text
 main	rom_main_03	games/tla/src/game/djinn/activate	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000b0d64	it

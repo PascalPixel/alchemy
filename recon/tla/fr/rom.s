@@ -4572,8 +4572,13 @@ ReelGame_Run:
 	.incbin "baserom.gba", 0x001b34a8, 0x0000098c
 	.section .rom.001b3ed8, "ax"
 	.incbin "baserom.gba", 0x001b3ed8, 0x000009b0
-	.section .rom.001b810c, "ax"
-	.incbin "baserom.gba", 0x001b810c, 0x000002b8
+	.section .rom.001b8180, "ax"
+	.balign 4
+	.global Func_081b8180
+	.type Func_081b8180, %function
+	.thumb_func
+Func_081b8180:
+	.incbin "baserom.gba", 0x001b8180, 0x00000244
 	.section .rom.001b83c4, "ax"
 	.global Func_081b83c4
 	.type Func_081b83c4, %function

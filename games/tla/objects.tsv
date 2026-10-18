@@ -3748,11 +3748,8 @@ main	rom_main_05	recon/tla/it/rom	.rom.000dc1a4	it
 main	rom_main_05	recon/tla/es/rom	.rom.000e51a4	es
 main	rom_main_05	games/tla/src/battle/effect/palfade	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000dc288	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000e1288	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e5288	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e9294	de
-main	rom_main_05	recon/tla/raw/080dc294	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000dc250	ja
+main	rom_main_05	games/tla/src/battle/effect/shared_scene	.text	ja en de fr
 main	rom_main_05	games/tla/src/battle/effect/scene	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000dc404	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e1404	fr

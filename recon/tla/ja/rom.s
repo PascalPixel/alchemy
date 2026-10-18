@@ -2978,12 +2978,6 @@ Func_080dbb78:
 	.section .rom.000dbe8c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000dbe8c, 0x00000174
-	.section .rom.000dc250, "ax"
-	.global BattleEffect_InitializeSharedScene
-	.type BattleEffect_InitializeSharedScene, %function
-	.thumb_func
-BattleEffect_InitializeSharedScene:
-	.incbin "baserom.gba", 0x000dc250, 0x000000e8
 	.section .rom.000dc3cc, "ax"
 	.global BattleFx_LoadActionEffectResources
 	.type BattleFx_LoadActionEffectResources, %function

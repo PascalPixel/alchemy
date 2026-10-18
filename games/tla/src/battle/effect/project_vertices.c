@@ -4,6 +4,7 @@
 #include "mem.h"
 #include "io_reg.h"
 #include "ramcode.h"
+#include "macros.h"
 
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
@@ -30,13 +31,9 @@ void Func_081969ac(s8 *vertices, s16 *screen, s32 count) {
   s32 point[3];
 
   for (; count != 0; count--) {
-    point[0] = vertices[0] << 16;
-    point[1] = vertices[1] << 16;
-    point[2] = vertices[2] << 16;
+    SET_VECTOR(point, vertices[0] << 16, vertices[1] << 16, vertices[2] << 16);
     Render_ProjectPoint(point, point);
-    screen[0] = point[0];
-    screen[1] = point[1];
-    screen[2] = point[2];
+    SET_VECTOR(screen, point[0], point[1], point[2]);
     vertices += 4;
     screen += 4;
   }

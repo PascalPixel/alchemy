@@ -1,6 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "macros.h"
 
 extern char SceneId_Ov676Room1;
 
@@ -18,9 +19,7 @@ static __inline__ void Func_02002470_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 void Func_02002244(void) {
   if (GameFlag_Test(0x300)) {
-    Object_GetById(9)->x = 0xa80000;
-    Object_GetById(9)->y = 0;
-    Object_GetById(9)->z = 0xc00000;
+    SET_POSITION(Object_GetById(9), 0xa80000, 0, 0xc00000);
   }
 }
 

@@ -5,6 +5,7 @@
 #include "fx_scene.h"
 #include "ram_buffer.h"
 #include "party_state.h"
+#include "macros.h"
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
@@ -113,9 +114,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
   s32 values[3];
 
   if (object != 0) {
-    values[0] = object->x;
-    values[1] = object->y;
-    values[2] = object->z;
+    SET_VECTOR(values, object->x, object->y, object->z);
     Vector_AddPolarOffset(magnitude, angle, values);
     Object_SetPosition(object, values[0], values[1], values[2]);
   }

@@ -3,6 +3,7 @@
 #include "object_runtime.h"
 #include "flag_call.h"
 #include "call.h"
+#include "macros.h"
 
 struct JupiterLighthouseRoom5EventWork1ac {
   u8 unk000[0x1ac];
@@ -39,16 +40,12 @@ s32 Func_02000ae8(void) {
   object = Object_GetById(23);
   object->scaleX = 0;
   object->motionFlags = 0;
-  object->x = 0x2a80000;
-  object->y = 0x200000;
-  object->z = 0x2440000;
+  SET_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(23), 0);
   object = Object_GetById(24);
   object->scaleX = 0;
   object->motionFlags = 0;
-  object->x = 0x2a80000;
-  object->y = 0x400000;
-  object->z = 0x2440000;
+  SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(24), 0);
   if (Flag_IsSet(0xa00)) {
     Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);

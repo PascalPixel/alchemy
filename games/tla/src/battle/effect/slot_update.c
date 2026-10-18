@@ -10,6 +10,7 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "iwram_call.h"
+#include "macros.h"
 
 void EffectSlot_Update(struct EffectSlot *effect) {
   if (effect->active != 0) {
@@ -44,9 +45,7 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object) {
     offset = 0x1fc0000 - object->z;
   scale[0] = Iwram_MulQ16(object->scaleX, sprite->scale);
   scale[1] = Iwram_MulQ16(object->scaleY, sprite->scale);
-  position[0] = object->x;
-  position[1] = offset;
-  position[2] = object->z + offset;
+  SET_VECTOR(position, object->x, offset, object->z + offset);
   position[3] = 0;
   if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 &&
       object->z < 0xe00000)

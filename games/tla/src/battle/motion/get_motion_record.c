@@ -5,6 +5,7 @@
 #include "fixed_point_position.h"
 #include "battle_work.h"
 #include "battle_display.h"
+#include "macros.h"
 
 void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
   s32 storageKind;
@@ -34,9 +35,7 @@ void Camera_InitDefaultTransform(void) {
   state->yaw = 192 << 6;
   state->pitch = 254 << 8;
   state->distance = 255 << 17;
-  state->pos[0] = 0;
-  state->pos[1] = 0;
-  state->pos[2] = 0;
+  SET_VECTOR(state->pos, 0, 0, 0);
   state->followPos = 0;
   state->unk18 = 0;
 

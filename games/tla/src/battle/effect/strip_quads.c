@@ -1,4 +1,5 @@
 #include "types.h"
+#include "macros.h"
 
 // Two triangles of a strip: three vertex indices and a texture coordinate
 // pair for each corner.
@@ -39,7 +40,5 @@ void Func_08178680(struct StripQuad *quad, s32 width, s32 height, s32 count) {
     quad[i].lower.uv[0][1] = height - 1;
     quad[i].lower.uv[1][1] = height - 1;
   }
-  quad[count].upper.vertex[0] = 0;
-  quad[count].upper.vertex[1] = 0;
-  quad[count].upper.vertex[2] = 0;
+  SET_VECTOR(quad[count].upper.vertex, 0, 0, 0);
 }

@@ -51,6 +51,7 @@ void Func_020024e4(void);
 void Func_02002708(void);
 void Func_02002e6c(struct ObjectRuntime *object);
 #include "party_state.h"
+#include "macros.h"
 
 void Func_02003118(struct ObjectRuntime *object, s32 value);
 void Func_020032b8(s32 value);
@@ -67,11 +68,7 @@ void Func_0200170c(void);
 
 s32 Func_02003084(struct ObjectRuntime *object) {
   Func_02002e6c(object);
-  object->x = 0;
-  object->y = 0;
-  object->z = 0;
-  object->velocityX = 0;
-  object->velocityY = 0;
-  object->velocityZ = 0;
+  SET_POSITION(object, 0, 0, 0);
+  SET_VELOCITY(object, 0, 0, 0);
   return 0;
 }

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
@@ -32,9 +33,7 @@ void Func_080246b8(void) {
           z += WORD_AT(carrier, 0x78);
         }
       }
-      object->x = x;
-      object->y = y;
-      object->z = z;
+      SET_POSITION(object, x, y, z);
     }
   }
 }

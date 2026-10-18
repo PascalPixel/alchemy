@@ -37,6 +37,7 @@
 #include "script_motion.h"
 #include "vram_block.h"
 #include "iwram_call.h"
+#include "macros.h"
 
 extern struct ObjectRuntime *gObjectSlots;
 
@@ -788,9 +789,7 @@ void ObjectSystem_UpdateCamera(void) {
           obj->layer = bitsVal - 1;
         scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
         scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
-        pos[0] = dx;
-        pos[1] = obj->y;
-        pos[2] = dz;
+        SET_VECTOR(pos, dx, obj->y, dz);
         pos[3] = obj->height;
         if (obj->flags & 2) {
           pos[1] += 0xfec00000; // -20 pixels.

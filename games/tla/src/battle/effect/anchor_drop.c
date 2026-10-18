@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 struct AnchorWork {
   u8 unk0000[0x1930];
@@ -34,9 +35,7 @@ void Func_080e70f8(s32 id) {
   object = Object_GetById(id);
 
   if (anchor != NULL) {
-    object->x = anchor->x;
-    object->y = anchor->y;
-    object->z = anchor->z;
+    SET_POSITION(object, anchor->x, anchor->y, anchor->z);
   }
   if (*((s8 *)event + 394) == 3) {
     object->motionFlags = 2;

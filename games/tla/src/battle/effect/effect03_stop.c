@@ -3,6 +3,7 @@
 #include "object_runtime.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
+#include "macros.h"
 
 struct ResourceEntry {
   u8 unk00[0x10];
@@ -65,9 +66,7 @@ void Func_080de9f8(void) {
   if (target != 0) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
-    target->x = scene->x;
-    target->y = scene->y + 0x100000;
-    target->z = scene->z;
+    SET_POSITION(target, scene->x, scene->y + 0x100000, scene->z);
     target->motionFlags = 4;
     Animation_ApplyChildValuesFar(target, 7);
   }

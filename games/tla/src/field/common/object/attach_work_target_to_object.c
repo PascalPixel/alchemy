@@ -12,6 +12,7 @@
 #include "event_work.h"
 #include "map.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 void WaitFrames(s32);
 
@@ -29,9 +30,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
     map->origin = &target->x;
     ObjectDispatch_InitFromTable4WithArgumentFar(target, obj);
     if (flag == 0) {
-      target->x = obj->x;
-      target->y = obj->y;
-      target->z = obj->z;
+      SET_POSITION(target, obj->x, obj->y, obj->z);
       WaitFrames(1);
       if (work->controlMode != 3)
         Map_ApplyWorkOriginAndSpanFar();

@@ -1,4 +1,5 @@
 #include "local.h"
+#include "macros.h"
 
 struct MagmaRockInsideWork {
   s32 unk00;
@@ -51,9 +52,7 @@ void Func_02001190(s32 mode, s32 cue) {
 
     Func_02004a5c(object->x, object->y + 0xf0000, object->z, 8);
     target = work->target;
-    target->x = 0;
-    target->y = 0;
-    target->z = 0;
+    SET_POSITION(target, 0, 0, 0);
   }
   if (cue == 0x3e7)
     Func_02004bd4();

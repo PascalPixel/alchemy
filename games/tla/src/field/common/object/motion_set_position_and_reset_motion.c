@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "object_runtime.h"
+#include "macros.h"
 
 //--------------------------------------------------------------------------
 // Set position, clear the destination, and zero velocity.
@@ -18,7 +19,5 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
   obj->targetZ = 0x80000000;
   obj->x = x;
   obj->y = y;
-  obj->velocityX = 0;
-  obj->velocityY = 0;
-  obj->velocityZ = 0;
+  SET_VELOCITY(obj, 0, 0, 0);
 }

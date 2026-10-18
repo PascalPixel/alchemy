@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
+#include "macros.h"
 
 extern const u8 gData_02004f90[];
 extern const u8 gData_02004f9c[];
@@ -68,9 +69,7 @@ void Func_02003aac(struct ObjectRuntime *object) {
   struct FieldSprite *sprite;
 
   Iwram_MulQ16(object->scaleX, 0x18000);
-  position[0] = object->x;
-  position[1] = object->y + 0x20000;
-  position[2] = object->z;
+  SET_VECTOR(position, object->x, object->y + 0x20000, object->z);
   angle = Random16Far();
   Vector_AddPolarOffsetFar(angle * 20, Random16Far(), position);
   particle = Func_02004b30(674, position[0], position[1], position[2]);

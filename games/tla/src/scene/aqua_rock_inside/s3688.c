@@ -1,4 +1,5 @@
 #include "local.h"
+#include "macros.h"
 
 s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
   struct BeamWork *work = &gData_02005970;
@@ -6,8 +7,6 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
 
   if (entry->x != 0)
     entry++;
-  entry->x = (x << 20) + 0x80000;
-  entry->y = y << 20;
-  entry->z = (z << 20) + 0x80000;
+  SET_POSITION(entry, (x << 20) + 0x80000, y << 20, (z << 20) + 0x80000);
   entry->kind = kind;
 }

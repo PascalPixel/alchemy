@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
+#include "macros.h"
 
 struct EffectSprite {
   u8 unk00[4];
@@ -71,9 +72,7 @@ void Func_080e6388(struct EffectSprite *sprite, struct EffectParticle *particle,
     scale = 0x10000;
   sprite->scaleX = scale;
   sprite->scaleY = scale;
-  position[0] = particle->x;
-  position[1] = particle->y;
-  position[2] = particle->z;
+  SET_VECTOR(position, particle->x, particle->y, particle->z);
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];

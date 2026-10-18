@@ -11,6 +11,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "event_work.h"
+#include "macros.h"
 
 void Event_ShowCounterAtPosition();
 
@@ -36,10 +37,7 @@ void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
     px = minX;
   if (px > 312)
     px = 312;
-  if (py < minY)
-    py = minY;
-  if (py > 220)
-    py = 220;
+  CLAMP(py, minY, 220);
 
   ret = UiText_OpenMessageWindowFar((s16)state->messageId, px, py, 1);
   while (UiWork_IsIdleFar(ret) == 0)

@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "frame.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 struct RideEntry {
   s16 a;
@@ -53,11 +54,7 @@ void Func_02002ad0(struct ObjectRuntime *object);
 
 s32 Func_02002ce8(struct ObjectRuntime *object) {
   Func_02002ad0(object);
-  object->x = 0;
-  object->y = 0;
-  object->z = 0;
-  object->velocityX = 0;
-  object->velocityY = 0;
-  object->velocityZ = 0;
+  SET_POSITION(object, 0, 0, 0);
+  SET_VELOCITY(object, 0, 0, 0);
   return 0;
 }

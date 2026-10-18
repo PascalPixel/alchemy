@@ -1,4 +1,5 @@
 #include "caverns.h"
+#include "macros.h"
 
 s32 Func_02000c38(struct FieldActor *object, s16 *position) {
   u8 *flags = &object->motionFlags;
@@ -54,8 +55,6 @@ void Func_02000cdc(void) {
     x = leader->x;
   } while (0);
   x += 0x200000;
-  position[0] = x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  SET_VECTOR(position, x, leader->y, leader->z);
   Func_02000c38(leader, (s16 *)position);
 }

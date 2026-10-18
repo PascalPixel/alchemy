@@ -18,6 +18,7 @@
 #include "object_runtime.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
+#include "macros.h"
 
 struct OrbitingParticle;
 
@@ -69,9 +70,7 @@ void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle) {
       pos.z = particle->targetZ;
       Vector_AddPolarOffset(life << 17, (s16)particle->unk66 + (life << 11),
                             &pos);
-      particle->x = pos.x;
-      particle->y = pos.y;
-      particle->z = pos.z;
+      SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
       particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleFade;
     }
@@ -93,9 +92,7 @@ void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle) {
       pos.z = particle->targetZ;
       Vector_AddPolarOffset(life << 17, (s16)particle->unk66 - (life << 11),
                             &pos);
-      particle->x = pos.x;
-      particle->y = pos.y;
-      particle->z = pos.z;
+      SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
       particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleFade;
     }
@@ -160,9 +157,7 @@ void BattleFx_RunOrbitingParticles(void) {
       particle->unk66 = Random16();
       Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 9);
 
-      p->x = scene->x;
-      p->y = scene->y;
-      p->z = scene->z;
+      SET_POSITION(p, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + (2 << 16);
       Vector_AddPolarOffset(dist, Random16(), p);
       particle->targetX = p->x;

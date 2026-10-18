@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "magma_rock.h"
+#include "macros.h"
 
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void FieldEvent_WaitFrames(s32 frames);
@@ -60,9 +61,7 @@ void Func_020014bc(s32 mode, s32 cue) {
 
     Func_02003820(object->x, object->y + 0xf0000, object->z, 8);
     target = work->target;
-    target->x = 0;
-    target->y = 0;
-    target->z = 0;
+    SET_POSITION(target, 0, 0, 0);
   }
   if (cue == 0x3e7)
     Func_02003998();

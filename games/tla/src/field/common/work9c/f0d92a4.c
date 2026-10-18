@@ -1,4 +1,5 @@
 #include "work9c.h"
+#include "macros.h"
 
 void Func_080d92a4(s32 index, s32 *position) {
   struct Work9c *work = WORK_9C;
@@ -13,7 +14,5 @@ void Func_080d92a4(s32 index, s32 *position) {
       node = node->next;
     } while (depth != 0);
   }
-  position[0] = node->x;
-  position[1] = node->y;
-  position[2] = node->z;
+  SET_VECTOR(position, node->x, node->y, node->z);
 }

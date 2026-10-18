@@ -2,6 +2,7 @@
 
 #include "scene_call.h"
 #include "text/msg_ids.h"
+#include "macros.h"
 
 struct EventWork15a {
   u8 unk000[0x15a];
@@ -64,9 +65,8 @@ void Func_02000660(s32 id) {
 s32 Func_02000694(struct ObjectRuntime *object) {
   struct ObjectRuntime *owner = object->linkedObject;
 
-  object->x = owner->x;
-  object->y = owner->y + (OBJECT_BYTE(object, 99) << 16);
-  object->z = owner->z;
+  SET_POSITION(object, owner->x, owner->y + (OBJECT_BYTE(object, 99) << 16),
+               owner->z);
   object->terrainHeight = owner->terrainHeight;
   return 1;
 }

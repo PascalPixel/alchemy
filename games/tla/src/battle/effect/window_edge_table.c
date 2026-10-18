@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "mem.h"
+#include "macros.h"
 
 struct FxRunWork {
   u8 unk0000[0x78e4];
@@ -195,10 +196,7 @@ void BattleFx_BuildWindowEdgeTable(void) {
   for (i = 0; i != 160; i++) {
     if ((u32)(i - 8) <= 127) {
       right = *edge - inset[i - 8];
-      if (right < 0)
-        right = 0;
-      if (right > 240)
-        right = 240;
+      CLAMP(right, 0, 240);
       line[i] = right;
     } else {
       line[i] = 0xfff1;

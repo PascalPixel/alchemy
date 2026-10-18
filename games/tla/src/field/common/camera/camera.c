@@ -13,6 +13,7 @@
 #include "iwram_call.h"
 #include "fixed_point_position.h"
 #include "battle_display.h"
+#include "macros.h"
 
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *position);
@@ -40,9 +41,7 @@ void Camera_ResetSceneDefaultsB(void) {
 
   state->pitch = 147 << 8;
   state->distance = 255 << 17;
-  state->pos[0] = 0;
-  state->pos[1] = 0;
-  state->pos[2] = 0;
+  SET_VECTOR(state->pos, 0, 0, 0);
   state->yaw = 0;
   state->followPos = 0;
   // The projection's centre.

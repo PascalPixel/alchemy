@@ -1,4 +1,5 @@
 #include "types.h"
+#include "macros.h"
 
 struct Orbiter {
   u8 unk00[6];
@@ -25,9 +26,8 @@ void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z) {
   s32 angle = (actor->phase << 16) / 180;
   s32 turn;
 
-  position[0] = (actor->centerX + 16) << 16;
-  position[1] = 0x100000;
-  position[2] = actor->centerZ << 16;
+  SET_VECTOR(position, (actor->centerX + 16) << 16, 0x100000,
+             actor->centerZ << 16);
   turn = gData_02005af0 * 0x3000 + angle;
   Vector_AddPolarOffsetFar(0xd0000, turn + 0x8000, position);
   *x = position[0];
@@ -40,9 +40,8 @@ s32 Func_02000408(struct Orbiter *actor) {
   s32 next;
 
   actor->flags23 = 0;
-  actor->x = (actor->centerX + 16) << 16;
-  actor->y = 0x100000;
-  actor->z = actor->centerZ << 16;
+  SET_POSITION(actor, (actor->centerX + 16) << 16, 0x100000,
+               actor->centerZ << 16);
   Vector_AddPolarOffsetFar(0xd0000, angle + 0x8000, &actor->x);
   next = *phase + gData_02005af0;
   if (next < 0)

@@ -5,6 +5,7 @@
 #include "object_runtime.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
+#include "macros.h"
 
 struct SwayObject {
   u8 unk00[8];
@@ -67,9 +68,7 @@ void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
       } while (0);
       pos.z = scene->z;
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
-      object->x = pos.x;
-      object->y = pos.y;
-      object->z = pos.z;
+      SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                    gBattleFx_CommonParticleScript);

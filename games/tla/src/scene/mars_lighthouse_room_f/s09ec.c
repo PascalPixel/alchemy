@@ -1,5 +1,6 @@
 #include "room.h"
 #include "input.h"
+#include "macros.h"
 
 extern s16 gData_02005f18[];
 
@@ -101,9 +102,8 @@ void Func_02000b40(void) {
       s32 z;
       u8 *cells;
 
-      position[0] = (leader->x & 0xfff00000) + 0x80000;
-      position[1] = leader->y;
-      position[2] = (leader->z & 0xfff00000) + 0x80000;
+      SET_VECTOR(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
+                 (leader->z & 0xfff00000) + 0x80000);
       Vector_AddPolarOffsetFar(0x100000, angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;

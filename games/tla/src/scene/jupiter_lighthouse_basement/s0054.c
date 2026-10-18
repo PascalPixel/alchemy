@@ -4,6 +4,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 #include "scene_ids.h"
+#include "macros.h"
 
 struct PartyState254 {
   u8 unk000[0x254];
@@ -67,15 +68,11 @@ void Func_0200015c(struct ObjectRuntime *object) {
     s32 radius;
     s32 angle;
 
-    position[0] = 200 << 16;
-    position[1] = -32 << 16;
-    position[2] = 164 << 16;
+    SET_VECTOR(position, 200 << 16, -32 << 16, 164 << 16);
     radius = Random16Far();
     angle = Random16Far();
     Vector_AddPolarOffsetFar((radius << 5) + 0x80000, angle, position);
-    object->x = position[0];
-    object->y = position[1];
-    object->z = position[2];
+    SET_POSITION(object, position[0], position[1], position[2]);
   }
   object->unk66 = object->action;
   if (object->action == 212)

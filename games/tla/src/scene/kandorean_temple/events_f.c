@@ -1,4 +1,5 @@
 #include "local.h"
+#include "macros.h"
 
 void Func_02000b5c(void) {
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
@@ -34,9 +35,7 @@ void Func_02000bf4(void) {
   s32 position[3];
 
   if (gData_02006298 != 0 && gFrameCount % 9 == 0) {
-    position[0] = 0x1280000;
-    position[1] = 0;
-    position[2] = 0xb00000;
+    SET_VECTOR(position, 0x1280000, 0, 0xb00000);
     Func_0200098c(position, 0x20000);
   }
 }
@@ -45,9 +44,7 @@ void Func_02000c34(void) {
   s32 position[3];
 
   if (gData_0200629c != 0 && gFrameCount % 5 == 0) {
-    position[0] = 0x1580000;
-    position[1] = 0;
-    position[2] = 0xa00000;
+    SET_VECTOR(position, 0x1580000, 0, 0xa00000);
     Func_0200098c(position, 0x40000);
   }
 }

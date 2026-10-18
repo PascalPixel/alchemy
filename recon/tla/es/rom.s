@@ -5452,7 +5452,7 @@ BattleFx_RunIris:
 	.type Func_08196404, %function
 	.thumb_func
 Func_08196404:
-	.incbin "baserom.gba", 0x00196404, 0x00000554
+	.incbin "baserom.gba", 0x00196404, 0x00000508
 	.section .rom.001a052c, "ax"
 	.incbin "baserom.gba", 0x001a052c, 0x00000148
 	.section .rom.001a06e0, "ax"

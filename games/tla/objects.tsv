@@ -6409,8 +6409,8 @@ main	rom_main_09	recon/tla/fr/rom	.rom.00196404	fr
 main	rom_main_09	recon/tla/es/rom	.rom.00196404	es
 main	rom_main_09	recon/tla/de/rom	.rom.00196404	de
 main	rom_main_09	recon/tla/raw/08196404	.text	en
-main	rom_main_09	recon/tla/raw/0819690c	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00196408	ja
+main	rom_main_09	games/tla/src/battle/effect/run_relocated_kernel_0	.text
 main	rom_main_09	games/tla/src/battle/effect/project_vertices	.text
 main	rom_main_09	games/tla/src/battle/effect/fxconst	.rodata
 main	rom_main_09	games/tla/src/battle/effect/battle_effect_composite	.text

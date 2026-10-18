@@ -1,11 +1,6 @@
-// Draft: the runner for the ARM kernel at Data_081380ac, the same wrapper as
-// Func_08196958 (project_vertices.c) and UiText_LookupMessage, with two
-// arguments. Nothing in the image calls it. The kernel is 0x3cc bytes; the
-// native loads that size from its literal pool, so it is written as the
-// kernel's size symbol (Data_081380acCodeSize, a ". - Data_081380ac" set
-// after the kernel's last word, as relocated_kernel_11.s defines
-// Data_0813b9a0CodeSize); adopting needs that set in the kernel's listing
-// (recon/tla/raw/081380ae.s).
+// The runner for the ARM kernel at Data_081380ac (relocated_kernel_0.s), the
+// same wrapper as Func_08196958 (project_vertices.c) and UiText_LookupMessage,
+// with two arguments. Nothing in the image calls it.
 #include "types.h"
 #include "dma.h"
 #include "mem.h"

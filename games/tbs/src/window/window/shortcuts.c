@@ -319,7 +319,7 @@ UNUSED void Menu_AllocateSelectionWorkspace(void) {
 // Closes the window of heap slot 19's work block, frees its two icons and
 // frees the block.
 // Nothing calls it.
-UNUSED void Ui_FinalizeWorkAndReleaseHeap13(void) {
+UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   struct SelectionWorkspace *state;
 
   state = *(struct SelectionWorkspace **)gSelectionWorkspace;

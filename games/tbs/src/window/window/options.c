@@ -524,7 +524,7 @@ s32 Menu_RunWorkspaceOptions(void) {
       RenderOutput_ClearList(helpWindow);
       UiText_DrawResource(selectedOption + MsgOptionHelp, helpWindow, 0, 0);
     }
-    Ui_ApplyTableOffsetToPair(pair);
+    RenderOutput_BobPair(pair);
     WaitFrames(1);
 
     if (gKeysPressed & KEY_SELECT) {
@@ -770,7 +770,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
       y = (((selectedEntry * 3) + top) * 8) + 0x10;
       Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
     }
-    Ui_ApplyTableOffsetToPair(pair);
+    RenderOutput_BobPair(pair);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;

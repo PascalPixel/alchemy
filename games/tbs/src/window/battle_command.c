@@ -17,7 +17,7 @@
 //                   PartyStatusDraw
 //   Saving          save.c: SaveMenu_SelectSlot, Save_WriteSelectedSlot
 //   Battle menus    party_commands.c: Battle_CollectPartyCommands, which
-//                   runs command_row.c: Ui_RunSelectionScreen and the menus
+//                   runs command_row.c: Menu_RunCommandRow and the menus
 //                   of djinn_menu.c, summon_menu.c, item_menu.c,
 //                   psynergy_menu.c and targets.c
 //   Icon menus      icon_menu.c: Menu_SelectTopEntry, Menu_SelectSaveSlotAction

@@ -46,7 +46,7 @@ RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y) {
 
 // Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
 // by gUi_PairBobOffsets, one step every four frames.
-void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj) {
+void RenderOutput_BobPair(struct RenderOutput *obj) {
   s32 value;
 
   value = (u8)obj->y + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
@@ -336,13 +336,13 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
 
 // Load a party portrait into the supplied cache slot and return its tile.
 // In the prologue, Isaac and Garet use their childhood portrait entries.
-s32 Ui_LoadEntryForKind(u32 kind, s32 value) {
+s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
   s32 tile;
   s32 slot;
   u32 portrait;
 
-  portrait = kind;
-  slot = value;
+  portrait = member;
+  slot = cacheSlot;
   if (portrait > 7U) {
     portrait = 0;
   }
@@ -371,7 +371,7 @@ s32 Ui_GetTableWordZero(s32 no) {
 // source and byte buffer, then releases the copied code. Its ARM entry reads
 // the stream through r0 and writes bytes through r1, as UiIcon_Decode does.
 // Nothing calls it.
-UNUSED void Ui_RunCopiedRoutine(GlyphTransfer *work) {
+UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
   RamCode_LoadSlot(49, Tile_Decompress4bpp, Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))((union HeapState *)gWorkSlot)->slots[49])(
       work->encoded, work->input);

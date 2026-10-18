@@ -148,7 +148,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       state->hintTimer = 60;
     }
     if (commandCount > 0) {
-      mode = Ui_RunSelectionScreen(0);
+      mode = Menu_RunCommandRow(0);
     } else {
       mode = 14;
     }
@@ -221,7 +221,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       iconSprite->oam.word.attr01 = 0x80000400;
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile =
-          Ui_LoadEntryForKind(unit->classId, smallIconSlot);
+          UiGlyph_LoadPortrait(unit->classId, smallIconSlot);
       iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
       iconSprite->oam.f.y = 0x80;
       iconSprite->oam.f.palette = 14;
@@ -252,7 +252,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       BattlePres_SetActorModesFar(signatureHeader, 1);
       BattleLayout_HighlightPartyPanels(signatureHeader);
       WaitFrames(1);
-      mode = Ui_RunSelectionScreen(1);
+      mode = Menu_RunCommandRow(1);
       WaitFrames(1);
       if (mode == -2) {
         void *block;

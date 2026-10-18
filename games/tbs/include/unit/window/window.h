@@ -362,7 +362,7 @@ void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
 void Menu_RunSelectionHook(void);
 
 void Menu_AllocateSelectionWorkspace(void);
-void Ui_FinalizeWorkAndReleaseHeap13(void);
+void Menu_ReleaseSelectionWorkspace(void);
 void GraphicsPalette_ReservedNoOpC9BC(void);
 void GraphicsPalette_ReservedNoOpC9C0(void);
 void GraphicsPalette_ReservedNoOpC9C4(void);

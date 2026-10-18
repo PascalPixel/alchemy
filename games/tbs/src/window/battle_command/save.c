@@ -1108,7 +1108,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     }
     ShopCursor_AdvanceFar(&fileCursor);
 #endif
-    Ui_ApplyTableOffsetToPair(modePicture);
+    RenderOutput_BobPair(modePicture);
     WaitFrames(1);
     // Up and down move to the previous or next file the mode allows.
     if (gKeysRepeat & KEY_UP) {

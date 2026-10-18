@@ -19,6 +19,7 @@
 #include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "iowrite.h"
+#include "macros.h"
 
 #define NULL ((void *)0)
 #include "field_obj.h"
@@ -341,9 +342,7 @@ s32 MercuryLighthouseEntrance_ApplyEntryState(void) {
     options.palette = 7;
     for (sparkIndex = 0; sparkIndex <= 16; sparkIndex++) {
       angle = sparkIndex << 12;
-      velocity[0] = Engine_MathCos(angle);
-      velocity[1] = 0;
-      velocity[2] = Engine_MathSin(angle);
+      SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
       velocity[0] -= velocity[0] / 4;
       velocity[2] -= velocity[2] / 2;
       Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0],

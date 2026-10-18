@@ -84,6 +84,7 @@
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
+#include "macros.h"
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
@@ -578,10 +579,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     // Each level (up to five) the party's average is above the zone's raises
     // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
-    if (level < 0)
-      level = 0;
-    if (level > 5)
-      level = 5;
+    CLAMP(level, 0, 5);
     if (level > 0 && gGameState.avoidDistance != 0)
       return 0;
     rate += level * 5;
@@ -1037,9 +1035,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   ObjectTable_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
-  entry->x = gGameState.x;
-  entry->y = 0;
-  entry->z = gGameState.z;
+  SET_POSITION(entry, gGameState.x, 0, gGameState.z);
   entry->facing = gGameState.heading;
   Event_SpawnObjectTable(entry, leader);
   Event_SpawnObjectTable(table, ACTOR_FIRST_PLACED);
@@ -2662,9 +2658,7 @@ s32 Scene_TalkToActor(s32 id) {
         leader->targetX = leader->x;
         leader->targetY = leader->y;
         leader->targetZ = leader->z;
-        leader->velocityX = 0;
-        leader->velocityY = 0;
-        leader->velocityZ = 0;
+        SET_VELOCITY(leader, 0, 0, 0);
         Object_LinkPair(id, gGameState.selectedActor, 0);
       }
     }

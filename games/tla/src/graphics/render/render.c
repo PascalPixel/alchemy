@@ -22,6 +22,7 @@
 #include "io_reg.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
+#include "macros.h"
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
@@ -33,7 +34,6 @@
 #define COS(a) Trig_Sin((a) + 0x4000)
 
 #include "ram_buffer.h"
-#include "macros.h"
 
 //--------------------------------------------------------------------------
 // Do nothing.

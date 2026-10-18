@@ -1,10 +1,10 @@
 #include "types.h"
+#include "macros.h"
 
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "scene_ids.h"
-#include "macros.h"
 
 struct PartyState254 {
   u8 unk000[0x254];

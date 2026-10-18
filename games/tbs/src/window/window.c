@@ -91,6 +91,7 @@
 #include "shop.h"
 #include "display_transition.h"
 #include "frame.h"
+#include "macros.h"
 
 // Edition-specific text and window layout values.
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -993,10 +994,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
   // game is running behind (up to two).
   if (work->menuState != 0) {
     lag = gLagFramesShown;
-    if (lag < 0)
-      lag = 0;
-    if (lag > 2)
-      lag = 2;
+    CLAMP(lag, 0, 2);
     glyphsLeft = lag * 5 + 3;
   }
 
@@ -7214,18 +7212,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
   red = Iwram_MulQ16(rgb[0] << 16, redScale) >> 16;
   green = Iwram_MulQ16(rgb[1] << 16, greenScale) >> 16;
   blue = Iwram_MulQ16(rgb[2] << 16, blueScale) >> 16;
-  if (red < 0)
-    red = 0;
-  if (red > 31)
-    red = 31;
-  if (green < 0)
-    green = 0;
-  if (green > 31)
-    green = 31;
-  if (blue < 0)
-    blue = 0;
-  if (blue > 31)
-    blue = 31;
+  CLAMP(red, 0, 31);
+  CLAMP(green, 0, 31);
+  CLAMP(blue, 0, 31);
   return red + ((blue << 10) + (green << 5));
 }
 
@@ -7245,18 +7234,9 @@ void PaletteGlow_Update(s32 phase, s32 brightness) {
   red = gPaletteGlow_WaveTable[(step % 96)] + offset;
   green = gPaletteGlow_WaveTable[(step + 32) % 96] + offset;
   blue = gPaletteGlow_WaveTable[(step + 64) % 96] + offset;
-  if (red < 0)
-    red = 0;
-  if (red > 31)
-    red = 31;
-  if (green < 0)
-    green = 0;
-  if (green > 31)
-    green = 31;
-  if (blue < 0)
-    blue = 0;
-  if (blue > 31)
-    blue = 31;
+  CLAMP(red, 0, 31);
+  CLAMP(green, 0, 31);
+  CLAMP(blue, 0, 31);
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;

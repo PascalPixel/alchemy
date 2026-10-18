@@ -1,8 +1,8 @@
 #include "trial_road.h"
+#include "macros.h"
 
 #include "scene_call.h"
 #include "text/msg_ids.h"
-#include "macros.h"
 
 struct EventWork15a {
   u8 unk000[0x15a];

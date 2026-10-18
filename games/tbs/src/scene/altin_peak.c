@@ -1,5 +1,6 @@
 #include "script.h"
 #include "version.h"
+#include "macros.h"
 // Altin Mine, the eleven rooms under Altin where the hydros statues flood
 // the village. The party rides rolling logs, freezes puddles into pillars
 // with Frost, fights the water beasts, lowers the water three times and
@@ -1680,9 +1681,7 @@ static void AltinPeak_SpawnLeaf(void) {
 
 // Save the gust origin and direction, then start its leaf spawner.
 static void AltinPeak_StartLeafGust(s32 x, s32 y, s32 z, s32 facing) {
-  gAltinPeak_LeafOrigin[0] = x;
-  gAltinPeak_LeafOrigin[1] = y;
-  gAltinPeak_LeafOrigin[2] = z;
+  SET_VECTOR(gAltinPeak_LeafOrigin, x, y, z);
   gAltinPeak_LeafMode = facing;
 
   BattleFx_SetQueuedSoundAndPlay(170);
@@ -1716,9 +1715,9 @@ static void AltinPeak_SpawnFallingSparks(void) {
       spark->sprite->image.priority = 1;
       Object_SetMode(spark, 1);
       Engine_ObjectSetScript(spark, gAltinPeak_SparkScript);
-      spark->velocityX = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
-      spark->velocityY = PIXELS(8);
-      spark->velocityZ = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
+      SET_VELOCITY(spark, (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16,
+                   PIXELS(8),
+                   ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300);
     }
   }
 }
@@ -2075,9 +2074,7 @@ static void AltinPeak_TurnRollingObjectRight(struct FieldActor *object) {
 
   angle = (object->facing + 0x4000) & 0xc000;
   point = &position;
-  point->x = object->x.fixed;
-  point->y = object->y.fixed;
-  point->z = object->z.fixed;
+  SET_POSITION(point, object->x.fixed, object->y.fixed, object->z.fixed);
   FieldVector_AddPolarOffset(PIXELS(24), angle, point);
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
@@ -2110,9 +2107,7 @@ static void AltinPeak_TurnRollingObjectLeft(struct FieldActor *object) {
 
   angle = (object->facing - 0x4000) & 0xc000;
   point = &position;
-  point->x = object->x.fixed;
-  point->y = object->y.fixed;
-  point->z = object->z.fixed;
+  SET_POSITION(point, object->x.fixed, object->y.fixed, object->z.fixed);
   FieldVector_AddPolarOffset(PIXELS(24), angle, point);
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
@@ -2164,9 +2159,7 @@ static void AltinPeak_AdvanceRollingObject(struct FieldActor *object) {
     }
   }
   point = &position;
-  point->x = object->x.fixed;
-  point->y = object->y.fixed;
-  point->z = object->z.fixed;
+  SET_POSITION(point, object->x.fixed, object->y.fixed, object->z.fixed);
   FieldVector_AddPolarOffset(Iwram_MulQ16(radius, 3 * Q16_ONE / 4), angle,
                              point);
   object->x.fixed = point->x;

@@ -32,6 +32,7 @@
 #include "objcmd.h"
 #include "map_scroll.h"
 #include "field_runtime.h"
+#include "macros.h"
 
 // Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
@@ -700,9 +701,7 @@ static void VaultCave_OffsetActorRadially(struct FieldActor *actor, s32 radius,
   if (actor == NULL) {
     return;
   }
-  destination[0] = actor->x.fixed;
-  destination[1] = actor->y.fixed;
-  destination[2] = actor->z.fixed;
+  SET_VECTOR(destination, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(radius, angle, destination);
   Engine_ObjectSetPosition(actor, destination[0], destination[1],
                            destination[2]);

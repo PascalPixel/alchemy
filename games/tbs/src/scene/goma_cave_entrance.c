@@ -30,6 +30,7 @@
 #include "objcmd.h"
 #include "global_cells.h"
 #include "ability_ids.h"
+#include "macros.h"
 
 // Private scene actions used by the reunion sequence.
 static void GomaCaveEntrance_RunWhirlwindEffect(void);
@@ -518,9 +519,7 @@ static void GomaCaveEntrance_RunSpinningLeap(s32 id) {
   Map_SetShake(-1, -1, 0xe666);
   for (i = 0; i <= 16; i++) {
     v = &dir;
-    v->x = Engine_MathCos(i << 12);
-    v->y = 0;
-    v->z = Engine_MathSin(i << 12);
+    SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
     Effect_Spawn(actor->x, actor->y, actor->z, v->x, v->y, v->z, 0, NULL);

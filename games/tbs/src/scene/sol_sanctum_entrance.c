@@ -23,6 +23,7 @@
 #include "ability_ids.h"
 #include "field_obj.h"
 #include "fixed_math.h"
+#include "macros.h"
 
 // Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
@@ -400,9 +401,8 @@ static void SolSanctumEntrance_PushFacedBlock(void) {
     block->terrainId = 2;
     destination = &target;
     packedStep = gSolSanctumPushSteps[direction];
-    destination->x = block->x.fixed + (packedStep & -0x10000);
-    destination->y = block->y.fixed;
-    destination->z = block->z.fixed + (packedStep << 16);
+    SET_POSITION(destination, block->x.fixed + (packedStep & -0x10000),
+                 block->y.fixed, block->z.fixed + (packedStep << 16));
     // Move only after the block's proposed position passes collision.
     if (FieldObject_CheckMovementCollision(block, destination) <= 0) {
       Object_SetMode(leader, 8);

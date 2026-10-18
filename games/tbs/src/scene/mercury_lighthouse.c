@@ -54,6 +54,7 @@
 #include "battle_unit.h"
 #include "flags.h"
 #include "sound_ids.h"
+#include "macros.h"
 
 #if TBS_PATCH_1
 #define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_MoveToAndWait
@@ -1875,9 +1876,7 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
         options.palette = 5;
       options.startScaleX = 0x9999;
       options.startScaleY = 0x9999;
-      velocity[0] = 0;
-      velocity[1] = 0;
-      velocity[2] = 0;
+      SET_VECTOR(velocity, 0, 0, 0);
       Vector_AddPolarOffset((6 - (particleIndex >> 1)) * 0x1999, angle,
                             velocity);
       {

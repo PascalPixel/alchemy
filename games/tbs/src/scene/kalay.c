@@ -31,6 +31,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "script.h"
+#include "macros.h"
 
 #include "field_obj.h"
 #include "object_effect.h"
@@ -1687,9 +1688,8 @@ static void Kalay_PushTunnelBlock(void) {
     block->terrainId = 2;
     target = &destination;
     moveStep = gKalay_Data01[direction];
-    target->x = block->x.fixed + (moveStep & -0x10000);
-    target->y = block->y.fixed;
-    target->z = block->z.fixed + (moveStep << 16);
+    SET_POSITION(target, block->x.fixed + (moveStep & -0x10000), block->y.fixed,
+                 block->z.fixed + (moveStep << 16));
     if (FieldObject_CheckMovementCollision(block, target) <= 0) {
       Object_SetMode(leader, 8);
       pushSpeed = PIXELS(1) / 5;

@@ -28,6 +28,7 @@
 #include "map_scroll.h"
 #include "text/msg_ids.h"
 #include "field_obj.h"
+#include "macros.h"
 
 // Forward declarations.
 static void FieldScene_RunFourActorPresentation(void);
@@ -259,9 +260,8 @@ static void SceneActor_InitializeMotion(void) {
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   angle = (actor->facing + 0x1000) & 0xe000;
   flags = actor->motionFlags;
-  position[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
-  position[1] = actor->y.fixed;
-  position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
+  SET_VECTOR(position, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, position);
   if (FieldObject_CheckMovementCollision(actor, position) == 0) {
     Engine_GameFlagClear(592);

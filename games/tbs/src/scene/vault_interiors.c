@@ -35,6 +35,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
+#include "macros.h"
 
 #if TBS_PATCH_3
 #define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(451)
@@ -145,9 +146,8 @@ static void VaultInteriors_JumpAcrossRoofGap(void) {
 #else
     leader = Object_GetById(0);
     pos = &target;
-    pos->x = leader->x.fixed;
-    pos->y = Object_GetById(0)->y.fixed;
-    pos->z = Object_GetById(0)->z.fixed - PIXELS(30);
+    SET_POSITION(pos, leader->x.fixed, Object_GetById(0)->y.fixed,
+                 Object_GetById(0)->z.fixed - PIXELS(30));
     VaultInteriors_TryJumpTo(pos);
 #endif
     x = 42;
@@ -160,9 +160,8 @@ static void VaultInteriors_JumpAcrossRoofGap(void) {
 #else
     leader = Object_GetById(0);
     pos = &target;
-    pos->x = leader->x.fixed;
-    pos->y = Object_GetById(0)->y.fixed;
-    pos->z = Object_GetById(0)->z.fixed + PIXELS(30);
+    SET_POSITION(pos, leader->x.fixed, Object_GetById(0)->y.fixed,
+                 Object_GetById(0)->z.fixed + PIXELS(30));
     VaultInteriors_TryJumpTo(pos);
 #endif
     x = 42;

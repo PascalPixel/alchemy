@@ -27,6 +27,7 @@
 #include "map_scroll.h"
 #include "fixed_math.h"
 #include "resource_37de_scene.h"
+#include "macros.h"
 
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
@@ -513,9 +514,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
     Actor_FaceDirection(0, FACING_SOUTH, 0);
     Engine_EventWait(30);
     savedOrigin = map->origin;
-    cameraPosition[0] = leader->x.fixed;
-    cameraPosition[1] = leader->y.fixed;
-    cameraPosition[2] = leader->z.fixed;
+    SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
+               leader->z.fixed);
     map->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
       cameraPosition[2] += PIXELS(1);
@@ -527,9 +527,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
     Actor_WalkToAndWait(0, 577, 222);
     Actor_FaceDirection(0, FACING_NORTH, 0);
     Engine_EventWait(30);
-    cameraPosition[0] = leader->x.fixed;
-    cameraPosition[1] = leader->y.fixed;
-    cameraPosition[2] = leader->z.fixed;
+    SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
+               leader->z.fixed);
     savedOrigin = map->origin;
     map->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
@@ -925,9 +924,7 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         statue->x.fixed = 0;
         statue->y.fixed = 0;
         statue->z.fixed = 0;
-        statue->velocityX = 0;
-        statue->velocityY = 0;
-        statue->velocityZ = 0;
+        SET_VELOCITY(statue, 0, 0, 0);
         Engine_ActorSetPosition(17, 0, 0);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);

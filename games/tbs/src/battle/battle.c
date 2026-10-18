@@ -84,6 +84,7 @@
 #include "b5_context.h"
 #include "frame.h"
 #include "unit/object/psynergy_effects.h"
+#include "macros.h"
 
 // The kinds of argument a message's placeholders take, for
 // UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
@@ -1269,12 +1270,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     UiWork_InitializeFar(0);
 
   // The camera's starting view, and the enemies.
-  focus[0] = 0;
-  focus[1] = 0x400000;
-  focus[2] = 0;
-  camera->eye[0] = 0;
-  camera->eye[1] = 0xb40000;
-  camera->eye[2] = 0x400000;
+  SET_VECTOR(focus, 0, 0x400000, 0);
+  SET_VECTOR(camera->eye, 0, 0xb40000, 0x400000);
   camera->yaw = 0x2800;
   camera->pitch = 0x5000;
   camera->distance = 0x1000000;
@@ -2861,9 +2858,8 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
 s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
   struct BattleWork *battle = gBattleWork;
 
-  position->x = battle->slots[place].anchorX;
-  position->y = 0;
-  position->z = battle->slots[place].anchorZ;
+  SET_POSITION(position, battle->slots[place].anchorX, 0,
+               battle->slots[place].anchorZ);
   return 0;
 }
 
@@ -2888,9 +2884,7 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   s32 projectionScale;
 
   Camera_ApplyTransformByFlag();
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  SET_VECTOR(position, object->x, object->y, object->z);
   projectionScale = Render_ProjectPoint(position, projected);
   (void)Iwram_MulQ16(projectionScale, record->scale);
   return 0;
@@ -2918,9 +2912,7 @@ void Camera_InitDefaultTransform(void) {
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;
   camera->distance = 255 << 17;
-  camera->pos[0] = 0;
-  camera->pos[1] = 0;
-  camera->pos[2] = 0;
+  SET_VECTOR(camera->pos, 0, 0, 0);
   camera->followPos = 0;
   camera->unk18 = 0;
 
@@ -8500,10 +8492,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->failure = 0;
       actor->pp -= ability->ppCost;
       UnitRatioFar(request->unitId);
-      if (actor->pp < 0)
-        actor->pp = 0;
-      if (actor->pp > actor->maxPp)
-        actor->pp = actor->maxPp;
+      CLAMP(actor->pp, 0, actor->maxPp);
     }
   } break;
 
@@ -10131,9 +10120,7 @@ UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   s32 width;
   u32 result;
 
-  focus[0] = x;
-  focus[1] = depth;
-  focus[2] = y;
+  SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
   alpha = 0xc000;
   sourceBounds[1] = 0;
@@ -10178,9 +10165,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 width;
   u32 result;
 
-  focus[0] = x;
-  focus[1] = depth;
-  focus[2] = y;
+  SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
   alpha = 0xc000;
   sourceBounds[1] = 0;
@@ -11006,58 +10991,40 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
   value = unit->baseHp;
   value += levels * 97 / 10;
   minimumStat = base->baseHp * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 9999)
-    value = 9999;
+  CLAMP(value, minimumStat, 9999);
   unit->baseHp = value;
 
   value = unit->basePp;
   value += levels * 15 / 10;
   minimumStat = base->basePp * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 9999)
-    value = 9999;
+  CLAMP(value, minimumStat, 9999);
   unit->basePp = value;
 
   minimumStat = levels * 123 / 10;
   value = unit->baseAttack;
   value += minimumStat;
   minimumStat = base->baseAttack * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 999)
-    value = 999;
+  CLAMP(value, minimumStat, 999);
   unit->baseAttack = value;
 
   minimumStat = levels * 33 / 10;
   value = unit->baseDefense;
   value += minimumStat;
   minimumStat = base->baseDefense * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 999)
-    value = 999;
+  CLAMP(value, minimumStat, 999);
   unit->baseDefense = value;
 
   minimumStat = levels * 51 / 10;
   value = unit->baseAgility;
   value += minimumStat;
   minimumStat = base->baseAgility * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 999)
-    value = 999;
+  CLAMP(value, minimumStat, 999);
   unit->baseAgility = value;
 
   for (element = 0; element < 4; element++) {
     value = unit->baseElement[element].power + levels * 15;
     minimumStat = base->element[element].power * 7 / 10;
-    if (value < minimumStat)
-      value = minimumStat;
-    if (value > 200)
-      value = 200;
+    CLAMP(value, minimumStat, 200);
     unit->baseElement[element].power = value;
   }
 

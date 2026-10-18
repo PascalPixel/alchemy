@@ -6,6 +6,7 @@
 #include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
+#include "macros.h"
 
 #define NULL ((void *)0)
 #include "field_obj.h"
@@ -407,9 +408,8 @@ static void Xian_WatchKungFuDemonstration(void) {
     Engine_EventShowMessage(KUNG_FU_STUDENT, 0);
     Engine_ActorRunRepeatedMotion(0, 2);
     Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    stepBackOffset[0] = demonstrationSeen;
-    stepBackOffset[1] = demonstrationSeen;
-    stepBackOffset[2] = demonstrationSeen;
+    SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
+               demonstrationSeen);
     leader = Object_GetById(0);
     FieldVector_AddPolarOffset(-0x80000, leader->facing,
                                (struct FieldPosition *)stepBackOffset);

@@ -20,6 +20,7 @@
 #include "ramcode.h"
 #include "battle_system.h"
 #include "transform.h"
+#include "macros.h"
 
 #if GAME_TLA
 #include "ram_buffer.h"
@@ -37,7 +38,6 @@
 #include "script_motion.h"
 #include "vram_block.h"
 #include "iwram_call.h"
-#include "macros.h"
 
 extern struct ObjectRuntime *gObjectSlots;
 

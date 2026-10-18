@@ -1,5 +1,6 @@
 #include "script.h"
 #include "flags.h"
+#include "macros.h"
 // Below the decks of the ship across the Karagol Sea: the captain's cabin,
 // the passengers' hold and the rowing deck. Under sail the party chooses which
 // passenger rows at each open seat; flags 0x929 to 0x92b number the seat being
@@ -124,9 +125,7 @@ TolbiShipInteriors_ResetActor(struct ScriptInterpreter *interpreter) {
   actor->x.fixed = 0;
   actor->y.fixed = 0;
   actor->z.fixed = 0;
-  actor->velocityX = 0;
-  actor->velocityY = 0;
-  actor->velocityZ = 0;
+  SET_VELOCITY(actor, 0, 0, 0);
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetX = ACTOR_NO_TARGET;
   return 0;

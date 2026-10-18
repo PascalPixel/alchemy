@@ -60,6 +60,7 @@
 #include "battle_effect.h"
 #include "four_object_motion.h"
 #include "item_ids.h"
+#include "macros.h"
 
 extern u8 IwramCopyWords[];
 
@@ -10695,10 +10696,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     }
     frame++;
     blink = frame % 60 - 5;
-    if (blink < 0)
-      blink = 0;
-    if (blink > 29)
-      blink = 29;
+    CLAMP(blink, 0, 29);
     FourObjectMotion_SetSlotPosition(0, 32, 200, 0);
     if (redraw) {
       redraw = 0;

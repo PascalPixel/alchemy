@@ -44,6 +44,7 @@
 #include "object_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "macros.h"
 
 #define WATER_ACTOR 16
 // Room 3: the water has been raised.
@@ -425,9 +426,8 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
   }
   position = destination;
 #if TBS_PATCH_1
-  position[0] = (leader->x.fixed & -0x100000) + PIXELS(8);
-  position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & -0x100000) + PIXELS(8);
+  SET_VECTOR(position, (leader->x.fixed & -0x100000) + PIXELS(8),
+             leader->y.fixed, (leader->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), jumpDirection, position);
 #else
   jumpDirection = leader->facing >> 12;
@@ -441,9 +441,8 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
   if (FieldObject_CheckMovementCollision(leader, position) != 1 &&
       StagedActor_FindAtTile(position, (struct StagedActor *)leader) == 0) {
 #if TBS_PATCH_1
-    position[0] = (leader->x.fixed & -0x100000) + PIXELS(8);
-    position[1] = leader->y.fixed;
-    position[2] = (leader->z.fixed & -0x100000) + PIXELS(8);
+    SET_VECTOR(position, (leader->x.fixed & -0x100000) + PIXELS(8),
+               leader->y.fixed, (leader->z.fixed & -0x100000) + PIXELS(8));
     Vector_AddPolarOffset(PIXELS(32), jumpDirection, position);
 #else
     step = gStagedActor_DirectionSteps[jumpDirection];
@@ -950,9 +949,7 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
         actor->y = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_ShrinkPillar(id);
-        actor->x = 0;
-        actor->y = 0;
-        actor->z = 0;
+        SET_POSITION(actor, 0, 0, 0);
         actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else {
         CrossboneIslePillarRooms_SettleActorOnGround((struct FieldActor *)actor);

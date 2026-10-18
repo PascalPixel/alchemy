@@ -22,6 +22,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
+#include "macros.h"
 
 // Forward declarations.
 static void ColosseumEntrance_ApplyArrivalState(void);
@@ -642,9 +643,7 @@ static void ColosseumEntrance_SendContestantsToFinals(void) {
       actor->update = NULL;
       actor->timer = 0;
       actor->work = 0;
-      actor->velocityX = 0;
-      actor->velocityY = 0;
-      actor->velocityZ = 0;
+      SET_VELOCITY(actor, 0, 0, 0);
       actor->targetX = ACTOR_NO_TARGET;
       actor->targetY = ACTOR_NO_TARGET;
       actor->targetZ = ACTOR_NO_TARGET;

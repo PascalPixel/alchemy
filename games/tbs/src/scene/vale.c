@@ -37,6 +37,7 @@
 #include "field_effect.h"
 #include "map_scroll.h"
 #include "fixed_math.h"
+#include "macros.h"
 
 #if TBS_PATCH_2
 #define VALE_GARET_REUNION_Z 829
@@ -372,9 +373,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   jenna->targetX = ACTOR_NO_TARGET;
   jenna->targetY = ACTOR_NO_TARGET;
   jenna->targetZ = ACTOR_NO_TARGET;
-  jenna->velocityX = 0;
-  jenna->velocityY = 0;
-  jenna->velocityZ = 0;
+  SET_VELOCITY(jenna, 0, 0, 0);
   jenna->terrainHeight = leader->y.fixed;
   Engine_TaskWait(1);
   Actor_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
@@ -417,9 +416,8 @@ static void Vale_WatchThePuppies(void) {
     Engine_EventShowMessageAndWait(15, 0, 2);
     Engine_EventShowMessageAndWait(16, 0, 2);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    cameraPosition[0] = leader->x.fixed;
-    cameraPosition[1] = leader->y.fixed;
-    cameraPosition[2] = leader->z.fixed;
+    SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
+               leader->z.fixed);
     savedOrigin = map->origin;
     map->origin = cameraPosition;
     frame = 0;
@@ -2611,9 +2609,9 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   s32 spawnPosition[3];
   s32 randomDistance;
   struct FieldActor *particle;
-  spawnPosition[0] = source->x.fixed;
-  spawnPosition[1] = source->y.fixed - (Engine_RandomNext() << 4) - PIXELS(8);
-  spawnPosition[2] = source->z.fixed;
+  SET_VECTOR(spawnPosition, source->x.fixed,
+             source->y.fixed - (Engine_RandomNext() << 4) - PIXELS(8),
+             source->z.fixed);
   randomDistance = Engine_RandomNext();
   Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
                         Engine_RandomNext(), spawnPosition);
@@ -2683,9 +2681,7 @@ static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
   emitter->targetX = ACTOR_NO_TARGET;
   emitter->targetY = ACTOR_NO_TARGET;
   emitter->targetZ = ACTOR_NO_TARGET;
-  emitter->velocityX = 0;
-  emitter->velocityY = 0;
-  emitter->velocityZ = 0;
+  SET_VELOCITY(emitter, 0, 0, 0);
 }
 
 // Move a particle outward in the horizontal plane without changing its height.
@@ -2693,9 +2689,8 @@ static void Effect_UpdateParticlePosition(struct FieldActor *particle,
                                           s32 distance, s32 angle) {
   s32 position[3];
   if (particle != 0) {
-    position[0] = particle->x.fixed;
-    position[1] = particle->y.fixed;
-    position[2] = particle->z.fixed;
+    SET_VECTOR(position, particle->x.fixed, particle->y.fixed,
+               particle->z.fixed);
     Vector_AddPolarOffset(distance, angle, position);
     Engine_ObjectSetPosition(particle, position[0], position[1], position[2]);
   }

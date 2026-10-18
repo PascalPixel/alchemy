@@ -16,6 +16,7 @@
 #include "lunpa.h"
 #include "text/msg_ids.h"
 #include "field_obj.h"
+#include "macros.h"
 
 // Lunpa, the town under Dodonpa's fortress, on two maps: the town itself
 // (Lunpa 1), with its well, its hidden passage to the jail and Reveal's
@@ -687,9 +688,8 @@ static void Leader_KickUpDust(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((gFrameCount & 15) == 0) {
     dustAngle = (((u32)Engine_RandomNext() * 52) >> 16) * 64 + 230;
-    dustVelocity[0] = Engine_MathCos(dustAngle) / 4;
-    dustVelocity[1] = 0;
-    dustVelocity[2] = Engine_MathSin(dustAngle) / 2;
+    SET_VECTOR(dustVelocity, Engine_MathCos(dustAngle) / 4, 0,
+               Engine_MathSin(dustAngle) / 2);
     Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                  dustVelocity[0], dustVelocity[1], dustVelocity[2], 0, NULL);
   }

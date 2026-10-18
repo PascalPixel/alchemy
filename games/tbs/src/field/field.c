@@ -64,6 +64,7 @@
 #include "unit/field/vertices.h"
 #include "unit/field/curve_data.h"
 #include "unit/field/griddata.h"
+#include "macros.h"
 
 // Decompresses an LZ stream from source into destination and returns
 // destination. The stream starts with a little-endian halfword: the offset of
@@ -669,9 +670,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       if (sprite->flags & 1) {
         struct AnimationSpritePart *shadow;
 
-        ground[0] = point[0];
-        ground[1] = 0;
-        ground[2] = point[2];
+        SET_VECTOR(ground, point[0], 0, point[2]);
         Render_ProjectPoint(ground, screen);
         shadow = &sprite->shadow;
         shadow->x = screen[0] - size;
@@ -2266,9 +2265,9 @@ void Object_UpdateAllThumb(void) {
                               Iwram_MulQ16(velocityZ, velocityZ));
             if (speed > object->speedLimit) {
               ratio = Iwram_RatioMulQ14(speed, object->speedLimit);
-              object->velocityX = Iwram_MulQ16(velocityX, ratio);
-              object->velocityY = Iwram_MulQ16(velocityY, ratio);
-              object->velocityZ = Iwram_MulQ16(velocityZ, ratio);
+              SET_VELOCITY(object, Iwram_MulQ16(velocityX, ratio),
+                           Iwram_MulQ16(velocityY, ratio),
+                           Iwram_MulQ16(velocityZ, ratio));
             }
           }
         } else {
@@ -2282,13 +2281,10 @@ void Object_UpdateAllThumb(void) {
             if (reducedSpeed < 0)
               reducedSpeed = 0;
             ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-            object->velocityX = Iwram_MulQ16(dx, ratio);
-            object->velocityY = Iwram_MulQ16(dy, ratio);
-            object->velocityZ = Iwram_MulQ16(dz, ratio);
+            SET_VELOCITY(object, Iwram_MulQ16(dx, ratio),
+                         Iwram_MulQ16(dy, ratio), Iwram_MulQ16(dz, ratio));
           } else {
-            object->velocityX = 0;
-            object->velocityY = 0;
-            object->velocityZ = 0;
+            SET_VELOCITY(object, 0, 0, 0);
           }
         }
       } else {
@@ -2366,9 +2362,8 @@ void Object_UpdateAllThumb(void) {
               if (reducedSpeed < 0)
                 reducedSpeed = 0;
               ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-              object->velocityX = Iwram_MulQ16(dx, ratio);
-              object->velocityY = Iwram_MulQ16(dy, ratio);
-              object->velocityZ = Iwram_MulQ16(dz, ratio);
+              SET_VELOCITY(object, Iwram_MulQ16(dx, ratio),
+                           Iwram_MulQ16(dy, ratio), Iwram_MulQ16(dz, ratio));
             }
           }
           object->terrainHeight = ground;
@@ -2409,9 +2404,7 @@ void Object_UpdateAllThumb(void) {
 
     // A solid object does not move into another; count the refusals.
     if ((object->collisionFlags & 0x80) != 0) {
-      pos[0] = x;
-      pos[1] = y;
-      pos[2] = z;
+      SET_VECTOR(pos, x, y, z);
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
           0) {
         object->refused++;
@@ -2458,9 +2451,7 @@ void Object_UpdateAllThumb(void) {
       object->arrivalAxis = 0;
     }
 
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
 
     // Turn to face the direction of travel, at most 0x1000 a frame.
     if ((object->steeringFlags & 1) != 0) {
@@ -2492,9 +2483,7 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
   object->targetZ = TARGET_UNSET;
   object->x = x;
   object->y = y;
-  object->velocityX = 0;
-  object->velocityY = 0;
-  object->velocityZ = 0;
+  SET_VELOCITY(object, 0, 0, 0);
 }
 
 // Sends an object towards (x, y, z), in 16.16 pixels. Within a pixel it
@@ -2524,9 +2513,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
                   Iwram_MulQ16(dz, dz));
   }
   if (distance < 0x10000) {
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
@@ -2711,9 +2698,7 @@ void Object_UpdateAllMotion(void) {
       object->targetZ = TARGET_UNSET;
       object->arrivalAxis = 0;
     }
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
     if (object->steeringFlags & 1) {
       x = object->velocityX;
       z = object->velocityZ;
@@ -3126,9 +3111,7 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
     if (z > maxZ)
       z = maxZ;
     if (cameraObject->action != 0) {
-      cameraObject->x = x;
-      cameraObject->y = y;
-      cameraObject->z = z;
+      SET_POSITION(cameraObject, x, y, z);
     } else {
       // The distance in the XZ plane: dy is computed as in
       // Object_SetMoveTarget but not used for the distance.
@@ -4437,9 +4420,7 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    SET_VELOCITY(object, 0, 0, 0);
   } else {
     Object_SetMoveTarget(object, position.x, position.y, position.z);
   }
@@ -4892,14 +4873,8 @@ void Map_UpdateLayerScroll(void) {
     maxX = minX;
   if (minY > maxY)
     maxY = minY;
-  if (baseX < minX)
-    baseX = minX;
-  if (baseX > maxX)
-    baseX = maxX;
-  if (baseY < minY)
-    baseY = minY;
-  if (baseY > maxY)
-    baseY = maxY;
+  CLAMP(baseX, minX, maxX);
+  CLAMP(baseY, minY, maxY);
 
   if (work->shakeX != 0) {
     s32 shakeRollA = Random16();
@@ -4961,14 +4936,8 @@ void Map_SetCameraCenter(s32 x, s32 y) {
 
   x -= 0x780000;
   y -= 0x600000;
-  if (x < work->minX)
-    x = work->minX;
-  if (x > work->maxX - 0xf00000)
-    x = work->maxX - 0xf00000;
-  if (y < work->minY)
-    y = work->minY;
-  if (y > work->maxY - 0xa00000)
-    y = work->maxY - 0xa00000;
+  CLAMP(x, work->minX, work->maxX - 0xf00000);
+  CLAMP(y, work->minY, work->maxY - 0xa00000);
   work->viewX = x;
   work->viewY = y;
 
@@ -5602,9 +5571,7 @@ s32 Map_InitializePerspectiveScene(void) {
   gProjection.centerX = 120;
   gProjection.centerY = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
-  cameraPosition[0] = 0;
-  cameraPosition[1] = 0;
-  cameraPosition[2] = 0;
+  SET_VECTOR(cameraPosition, 0, 0, 0);
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(cameraPosition);
   yaw = &perspective->yaw;
@@ -5625,9 +5592,7 @@ s32 Map_InitializePerspectiveScene(void) {
   gScanlinePitch = perspective->pitch;
   ((PlaneFn)gWorkSlot[46])(camera, cameraPosition, frameWork->scanlines,
                            affinePages[gFrameCount & 1]);
-  cameraPosition[0] = 0;
-  cameraPosition[1] = 0;
-  cameraPosition[2] = 0;
+  SET_VECTOR(cameraPosition, 0, 0, 0);
   Render_ResetTransformState();
   Io_Put16(pitch, 0xe000);
   *yaw = 0;
@@ -5922,9 +5887,7 @@ void WorldMap_UpdateView(void) {
   gProjection.centerX = 120;
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
-  cameraPosition[0] = *followedPosition++;
-  cameraPosition[1] = 0;
-  cameraPosition[2] = followedPosition[1];
+  SET_VECTOR(cameraPosition, *followedPosition++, 0, followedPosition[1]);
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(cameraPosition);
   SceneTransform_ApplyYaw(perspective->yaw);
@@ -7030,9 +6993,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
   s32 horizontal;
 
   zero = 0;
-  groundPoint[0] = position[0];
-  groundPoint[1] = zero;
-  groundPoint[2] = position[2];
+  SET_VECTOR(groundPoint, position[0], zero, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
   cameraCoordinates = cameraPoint;
   horizon = cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], depth);

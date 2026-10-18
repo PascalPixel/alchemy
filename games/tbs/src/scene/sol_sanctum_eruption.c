@@ -33,6 +33,7 @@
 #include "vram_tab.h"
 #include "fixed_math.h"
 #include "palbuf.h"
+#include "macros.h"
 
 // Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
@@ -583,9 +584,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     actor->x.fixed = 0;
     actor->y.fixed = 0;
     actor->z.fixed = 0;
-    actor->velocityX = 0;
-    actor->velocityY = 0;
-    actor->velocityZ = 0;
+    SET_VELOCITY(actor, 0, 0, 0);
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
@@ -644,9 +643,7 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->x.fixed = 0;
           landedEmber->y.fixed = 0;
           landedEmber->z.fixed = 0;
-          landedEmber->velocityX = 0;
-          landedEmber->velocityY = 0;
-          landedEmber->velocityZ = 0;
+          SET_VELOCITY(landedEmber, 0, 0, 0);
           landedEmber->targetX = ACTOR_NO_TARGET;
           landedEmber->targetY = ACTOR_NO_TARGET;
           landedEmber->targetZ = ACTOR_NO_TARGET;

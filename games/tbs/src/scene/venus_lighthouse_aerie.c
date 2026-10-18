@@ -13,6 +13,7 @@
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
+#include "macros.h"
 
 #define NULL ((void *)0)
 #include "field_obj.h"
@@ -188,9 +189,8 @@ static void VenusLighthouseAerie_TryLeaderJump(void) {
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   angle = (actor->facing + 0x1000) & 0xe000;
   flags = actor->motionFlags;
-  destination.coordinates[0] = (actor->x.fixed & 0xfff00000) + PIXELS(8);
-  destination.coordinates[1] = actor->y.fixed;
-  destination.coordinates[2] = (actor->z.fixed & 0xfff00000) + PIXELS(8);
+  SET_VECTOR(destination.coordinates, (actor->x.fixed & 0xfff00000) + PIXELS(8),
+             actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
   if (FieldObject_CheckMovementCollision(actor, &destination.position) == 0) {
     Engine_GameFlagClear(592);
@@ -2805,9 +2805,7 @@ static void VenusLighthouseAerie_StopActorMotion(struct FieldActor *actor) {
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
 
-  actor->velocityX = 0;
-  actor->velocityY = 0;
-  actor->velocityZ = 0;
+  SET_VELOCITY(actor, 0, 0, 0);
 
   actor->timer = 0;
 }

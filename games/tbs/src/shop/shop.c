@@ -40,6 +40,7 @@
 #include "field_runtime.h"
 #include "battle_calc.h"
 #include "field_obj.h"
+#include "heap_state.h"
 
 // English menu entries 48..51 establish the four shop actions.
 enum ShopAction {
@@ -160,7 +161,7 @@ void Shop_InitializeCursorWork(void) {
   struct ShopRuntime *shop;
   s32 resourceSlot;
 
-  shop = Runtime_AllocateHeapBlock(55, 0xa70);
+  shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
   Battle_ResetEffectCounterFar();
   Dma_Fill32(0, shop, 0x29c * 4);
   shop->mode = 12;
@@ -200,7 +201,7 @@ void Inn_Cleanup(void) {
   Resource_ResetEntry(state->gemIcon);
   Resource_ResetEntry(state->statUpIcon);
   Resource_ResetEntry(state->statDownIcon);
-  Runtime_ReleaseHeapBlock(0x37);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
 }
 
 // Runs the shop's buy, sell, artifacts and repair menu with the selected
@@ -283,12 +284,12 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   gGameState.coins = 0x30d40;
   gGameState.shopGifts = 0x1c;
-  Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
-  Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
-  Inventory_AddItemFar(2, 0xe7);
-  UnitGetFar(3)->poison = 1;
-  UnitGetFar(5)->poison = 1;
-  UnitGetFar(2)->haunt = 1;
+  Inventory_EquipFar(GARET, Inventory_AddItemFar(GARET, 0x48d));
+  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, 0x40b));
+  Inventory_AddItemFar(IVAN, ITEM_BONE);
+  UnitGetFar(MIA)->poison = 1;
+  UnitGetFar(JENNA)->poison = 1;
+  UnitGetFar(IVAN)->haunt = 1;
   Shop_Run(SHOP_DEBUG_STOCK_ROW, 0x1e);
   return 0;
 }

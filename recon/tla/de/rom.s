@@ -2262,12 +2262,8 @@ Func_080e3074:
 	.thumb_func
 Func_080e3698:
 	.incbin "baserom.gba", 0x000f0698, 0x00000148
-	.section .rom.000f07e0, "ax"
-	.global Func_080e37e0
-	.type Func_080e37e0, %function
-	.thumb_func
-Func_080e37e0:
-	.incbin "baserom.gba", 0x000f07e0, 0x0000051c
+	.section .rom.000f08c8, "ax"
+	.incbin "baserom.gba", 0x000f08c8, 0x00000434
 	.global BattleFx_CallEffect26
 	.type BattleFx_CallEffect26, %function
 	.thumb_func

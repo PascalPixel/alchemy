@@ -4041,26 +4041,26 @@ main	rom_main_05	games/tla/src/battle/effect/spin	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000e3068	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e368c	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e37d4	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000e8068	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000e868c	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000e87d4	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000e9238	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000ec068	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ec68c	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ec7d4	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ed238	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ed2c8	es
+main	rom_main_05	recon/tla/fr/rom	.rom.000e8068	fr
+main	rom_main_05	recon/tla/fr/rom	.rom.000e868c	fr
 main	rom_main_05	recon/tla/de/rom	.rom.000f0074	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f0698	de
-main	rom_main_05	recon/tla/de/rom	.rom.000f07e0	de
-main	rom_main_05	recon/tla/de/rom	.rom.000f1244	de
 main	rom_main_05	recon/tla/raw/080e3074	.text	en
 main	rom_main_05	recon/tla/raw/080e3698	.text	en
-main	rom_main_05	recon/tla/raw/080e37e0	.text	en
-main	rom_main_05	recon/tla/raw/080e38c8	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e3030	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000e3654	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000e379c	ja
+main	rom_main_05	games/tla/src/battle/effect/spin_ring	.text	ja en de fr
+main	rom_main_05	recon/tla/fr/rom	.rom.000e88bc	fr
+main	rom_main_05	recon/tla/fr/rom	.rom.000e9238	fr
+main	rom_main_05	recon/tla/de/rom	.rom.000f08c8	de
+main	rom_main_05	recon/tla/de/rom	.rom.000f1244	de
+main	rom_main_05	recon/tla/raw/080e38c8	.text	en
+main	rom_main_05	recon/tla/ja/rom	.rom.000e3884	ja
 main	rom_main_05	games/tla/src/battle/effect/psynergy_effects_01	.text	ja en it
 main	rom_main_05	recon/tla/it/rom	.rom.000e3cf8	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e4238	it

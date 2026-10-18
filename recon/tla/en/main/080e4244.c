@@ -1,5 +1,9 @@
-// Near miss: listing 70 instructions, draft 70, common 68, differ 4; the rest
-// differs in instruction order.
+// Near miss, differ 2 of 70 (was 4 with the event byte read inline): the
+// native builds the heap slots address before it zeroes the result; here the
+// zero comes first. Empty asm barriers around the zeroing measured 6 and 8.
+// Returns 1 when the event mode is not 3 and Func_08020308 reports the
+// object's cell, ORed with 2 when it overlaps any other collidable script
+// object.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -12,11 +16,13 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
 s32 Func_080dbd48(s32 x, s32 z, s32 layer);
 
 s32 Func_080e4244(struct ObjectRuntime *object) {
-  s32 result = 0;
+  s32 result;
   struct ObjectRuntime *other;
   s32 i;
 
-  if (*((s8 *)Ram_HeapSlots->eventWork + 394) != 3) {
+  s8 *work = Ram_HeapSlots->eventWork;
+  result = 0;
+  if (work[394] != 3) {
     if (Func_08020308(object->x, object->z, 0, object->terrainHeight) != 0)
       result = 1;
   }

@@ -312,12 +312,6 @@ ResourceObject_Create:
 	.thumb_func
 Func_08023220:
 	.incbin "baserom.gba", 0x00023220, 0x00000188
-	.section .rom.000233a8, "ax"
-	.global ObjectDispatch_Initialize
-	.type ObjectDispatch_Initialize, %function
-	.thumb_func
-ObjectDispatch_Initialize:
-	.incbin "baserom.gba", 0x000233a8, 0x00000028
 	.section .rom.0002367e, "ax"
 	.incbin "baserom.gba", 0x0002367e, 0x00000002
 	.section .rom.00023680, "ax"

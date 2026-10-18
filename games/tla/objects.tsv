@@ -465,17 +465,11 @@ main	rom_main_01	games/tla/src/field/common/map/render_animated_tile_frame	.text
 main	rom_main_01	games/tla/src/field/common/map/animation_work	.text
 main	rom_main_01	games/tla/src/field/common/object/object	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00023220	it
-main	rom_main_01	recon/tla/it/rom	.rom.000233a8	it
 main	rom_main_01	recon/tla/fr/rom	.rom.00023220	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000233a8	fr
 main	rom_main_01	recon/tla/es/rom	.rom.00023220	es
-main	rom_main_01	recon/tla/es/rom	.rom.000233a8	es
 main	rom_main_01	recon/tla/de/rom	.rom.00023220	de
-main	rom_main_01	recon/tla/de/rom	.rom.000233a8	de
 main	rom_main_01	recon/tla/raw/08023220	.text	en
-main	rom_main_01	recon/tla/raw/080233a8	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00023220	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.000233a8	ja
 main	rom_main_01	games/tla/src/field/common/object/dispatch	.text
 main	rom_main_01	games/tla/src/field/common/object/dispinit	.text
 main	rom_main_01	games/tla/src/field/common/object/child_state	.text

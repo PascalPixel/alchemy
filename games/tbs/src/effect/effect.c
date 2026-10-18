@@ -5223,6 +5223,85 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   WaitFrames(1);
 }
 
+// The per-frame body Bind and Triangle Strike share: load the plain and
+// mirrored max-composite blitters, darken the canvas a step faster every 16
+// frames, then for the first target spin and shrink a triangle of 24-mote
+// sides built from `vertex` onto it over 64 frames and stand the rune in two
+// mirrored halves from frame 64; then present the frame. It uses the
+// caller's locals work, canvas, draw, camera, anchor, shift, frame, member,
+// tick, object, position, screen, scale, point, size, j and k.
+#define EFFECT_DRAW_TRIANGLE_AND_RUNE(vertex)                                  \
+  {                                                                            \
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX); \
+    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)                    \
+                  ->slots[HEAP_SLOT_BLITTER];                                  \
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,                           \
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX); \
+    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];           \
+    if (frame > 16 && (frame & 15) == 0)                                       \
+      work->transferValue += 0x01010101;                                       \
+                                                                               \
+    /* Only the first target is drawn. */                                      \
+    for (member = 0; member != 1; member++) {                                  \
+      tick = frame - member * 8;                                               \
+      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;   \
+      if (tick >= 0 && tick < 96) {                                            \
+        EFFECT_VIEW_FROM_CAMERA(camera);                                       \
+        position.world.x = object->x;                                          \
+        position.world.y = object->y;                                          \
+        position.world.z = object->z;                                          \
+        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);          \
+        screen.x = anchor.x + shift;                                           \
+        screen.y -= 24;                                                        \
+        /* The triangle: its three corners, turned a third of a circle apart   \
+         * and shrinking as they spin, are projected into the particles'       \
+         * velocity fields; each side is 24 motes. */                          \
+        if (tick <= 67) {                                                      \
+          for (j = 0; j != 3; j++) {                                           \
+            point = &work->particles[member * 32 + j];                         \
+            Render_ResetTransformState();                                      \
+            if (tick <= 63) {                                                  \
+              scale.x = 0x2a000 - (tick * 3 << 9);                             \
+              scale.y = 0x2a000 - (tick * 3 << 9);                             \
+              scale.z = 0x2a000 - (tick * 3 << 9);                             \
+              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));          \
+              SceneTransform_ApplyRoll((64 - tick) << 9);                      \
+              SceneTransform_ApplyYaw((64 - tick) << 9);                       \
+            }                                                                  \
+            SceneTransform_ApplyRoll(j * 0x5555);                              \
+            EffectPosition_ApplyBaseAndYOffset((vertex), &position.projected); \
+            point->velocityX = position.projected.x + screen.x;                \
+            point->velocityY = position.projected.y + screen.y + 16;           \
+          }                                                                    \
+          for (j = 0; j != 3; j++) {                                           \
+            struct EffectStep *from = &work->particles[j + member * 32];       \
+            struct EffectStep *to =                                            \
+                &work->particles[(j + 1) % 3 + member * 32];                   \
+                                                                               \
+            size = 5 - tick / 16;                                              \
+            for (k = 0; k != 24; k++) {                                        \
+              s32 x = from->velocityX +                                        \
+                      k * (to->velocityX - from->velocityX) / 24;              \
+              s32 y = from->velocityY +                                        \
+                      k * (to->velocityY - from->velocityY) / 24;              \
+                                                                               \
+              draw[0](canvas,                                                  \
+                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,   \
+                      x - size, y - size, size * 2, size * 2);                 \
+            }                                                                  \
+          }                                                                    \
+        }                                                                      \
+        /* Then the rune, in two mirrored halves. */                           \
+        if (tick > 63) {                                                       \
+          draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);         \
+          draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);              \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+    EFFECT_RELEASE_BLITTERS();                                                 \
+    EFFECT_PRESENT_FRAME(work);                                                \
+  }
+
 // Abilities: Bind (kind 38); Luff (kind 218).
 //
 // Battle effects 38 and 218: a triangle of light spins and shrinks onto the
@@ -5313,74 +5392,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         draw[1](canvas, work->sheet + 0x2000, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] =
-        (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-    if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
-
-    // Only the first target is drawn.
-    for (member = 0; member != 1; member++) {
-      tick = frame - member * 8;
-      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-      if (tick >= 0 && tick < 96) {
-        EFFECT_VIEW_FROM_CAMERA(camera);
-        position.world.x = object->x;
-        position.world.y = object->y;
-        position.world.z = object->z;
-        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);
-        screen.x = anchor.x + shift;
-        screen.y -= 24;
-        // The triangle: its three corners, turned a third of a circle
-        // apart and shrinking as they spin, are projected into the
-        // particles' velocity fields; each side is 24 motes.
-        if (tick <= 67) {
-          for (j = 0; j != 3; j++) {
-            point = &work->particles[member * 32 + j];
-            Render_ResetTransformState();
-            if (tick <= 63) {
-              scale.x = 0x2a000 - (tick * 3 << 9);
-              scale.y = 0x2a000 - (tick * 3 << 9);
-              scale.z = 0x2a000 - (tick * 3 << 9);
-              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
-              SceneTransform_ApplyRoll((64 - tick) << 9);
-              SceneTransform_ApplyYaw((64 - tick) << 9);
-            }
-            SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(gBind_Vertex,
-                                               &position.projected);
-            point->velocityX = position.projected.x + screen.x;
-            point->velocityY = position.projected.y + screen.y + 16;
-          }
-          for (j = 0; j != 3; j++) {
-            struct EffectStep *from = &work->particles[j + member * 32];
-            struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
-
-            size = 5 - tick / 16;
-            for (k = 0; k != 24; k++) {
-              s32 x =
-                  from->velocityX + k * (to->velocityX - from->velocityX) / 24;
-              s32 y =
-                  from->velocityY + k * (to->velocityY - from->velocityY) / 24;
-
-              draw[0](canvas,
-                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,
-                      x - size, y - size, size * 2, size * 2);
-            }
-          }
-        }
-        // Then the rune, in two mirrored halves.
-        if (tick > 63) {
-          draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
-          draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
-        }
-      }
-    }
-    EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_DRAW_TRIANGLE_AND_RUNE(gBind_Vertex);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -5449,74 +5461,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] =
-        (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-    if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
-
-    // Only the first target is drawn.
-    for (member = 0; member != 1; member++) {
-      tick = frame - member * 8;
-      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-      if (tick >= 0 && tick < 96) {
-        EFFECT_VIEW_FROM_CAMERA(camera);
-        position.world.x = object->x;
-        position.world.y = object->y;
-        position.world.z = object->z;
-        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);
-        screen.x = anchor.x + shift;
-        screen.y -= 24;
-        // The triangle: its three corners, turned a third of a circle
-        // apart and shrinking as they spin, are projected into the
-        // particles' velocity fields; each side is 24 motes.
-        if (tick <= 67) {
-          for (j = 0; j != 3; j++) {
-            point = &work->particles[member * 32 + j];
-            Render_ResetTransformState();
-            if (tick <= 63) {
-              scale.x = 0x2a000 - (tick * 3 << 9);
-              scale.y = 0x2a000 - (tick * 3 << 9);
-              scale.z = 0x2a000 - (tick * 3 << 9);
-              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
-              SceneTransform_ApplyRoll((64 - tick) << 9);
-              SceneTransform_ApplyYaw((64 - tick) << 9);
-            }
-            SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(gTriangleStrike_Vertex,
-                                               &position.projected);
-            point->velocityX = position.projected.x + screen.x;
-            point->velocityY = position.projected.y + screen.y + 16;
-          }
-          for (j = 0; j != 3; j++) {
-            struct EffectStep *from = &work->particles[j + member * 32];
-            struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
-
-            size = 5 - tick / 16;
-            for (k = 0; k != 24; k++) {
-              s32 x =
-                  from->velocityX + k * (to->velocityX - from->velocityX) / 24;
-              s32 y =
-                  from->velocityY + k * (to->velocityY - from->velocityY) / 24;
-
-              draw[0](canvas,
-                      work->sheet + gBattleFx_FlareCells[size - 1] + 0x1000,
-                      x - size, y - size, size * 2, size * 2);
-            }
-          }
-        }
-        // Then the rune, in two mirrored halves.
-        if (tick > 63) {
-          draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
-          draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
-        }
-      }
-    }
-    EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_FRAME(work);
+    EFFECT_DRAW_TRIANGLE_AND_RUNE(gTriangleStrike_Vertex);
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);

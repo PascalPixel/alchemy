@@ -1,15 +1,3 @@
-// Near miss, differ 7 of 102 (2026-10-15), The Broken Seal's
-// BattleEffect_InitializeSharedScene. ☀️ copies the palettes into the target
-// buffer itself and picks the tint from the frame counter, overridden by
-// flags 0x148-0x14f; ⚓️ adds a tint fixed by the animation for its newer
-// kinds and leaves the copy to Field_BeginColorTransition (palfade.c).
-// Left: the last animation test. The native reads the animation twice at
-// the top, signed for the chain (ldrsh) and unsigned (ldrh), and tests the
-// unsigned copy's low half against 30 (lsls r3, r3, #16; cmp with 30 << 16);
-// this tests a halfword load against 30 (cmp r3, #30).
-// Tried: (s16)*(u16 *)&scene->animation, (s16)scene->action and a u16 local
-// read before the chain all fold into the signed load (differ 30-32); the
-// chain on a u16 or s16 local, with (u16) or (s16) casts, differ 18-29.
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -26,13 +14,22 @@ extern const u32 gData_080f3954[8];
 
 // Tint the field for a Psynergy animation: a tint chosen by the frame counter
 // (so each cast looks a little different), fixed for some animations, and
-// forced by the tint flags; then fade towards it over eight frames.
+// forced by the tint flags; then fade towards it over eight frames. ☀️'s
+// function of the same name also copies the palettes; ⚓️ leaves the copy to
+// Field_BeginColorTransition (palfade.c).
 void BattleEffect_InitializeSharedScene(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   s32 tint;
   s32 animation;
+  s32 raw;
 
   tint = gFrameCount & 7;
+  raw = *(u16 *)&scene->animation;
+  /* FAKEMATCH: ⚓️ reads the animation twice, unsigned (ldrh) and signed
+   * (ldrsh), and tests the unsigned copy's low half against 30 by shifts;
+   * without the barrier the signed read is derived from the unsigned one
+   * (differ 7). */
+  asm("" : "+r"(raw));
   animation = scene->animation;
   if (animation == 18)
     tint = 0;
@@ -54,7 +51,7 @@ void BattleEffect_InitializeSharedScene(void) {
     tint = 0;
   if (animation == 21)
     tint = 7;
-  if ((u16)scene->animation == 30)
+  if ((s16)raw == 30)
     tint = 6;
 
   if (GameFlag_Test(FLAG_TINT_FIRST + 0))

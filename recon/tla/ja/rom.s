@@ -2938,7 +2938,7 @@ Func_080d9e98:
 Func_080da060:
 	.incbin "baserom.gba", 0x000da01c, 0x000008a8
 	.section .rom.000da964, "ax"
-	.incbin "baserom.gba", 0x000da964, 0x00000500
+	.incbin "baserom.gba", 0x000da964, 0x00000494
 	.section .rom.000dae88, "ax"
 	.global Func_080daecc
 	.type Func_080daecc, %function
@@ -2951,12 +2951,6 @@ Func_080daecc:
 	.thumb_func
 Func_080db0b0:
 	.incbin "baserom.gba", 0x000db06c, 0x00000394
-	.section .rom.000db400, "ax"
-	.global Func_080db444
-	.type Func_080db444, %function
-	.thumb_func
-Func_080db444:
-	.incbin "baserom.gba", 0x000db400, 0x00000048
 	.section .rom.000db962, "ax"
 	.incbin "baserom.gba", 0x000db962, 0x00000002
 	.section .rom.000dba18, "ax"
@@ -2970,12 +2964,6 @@ Func_080dbb78:
 	.section .rom.000dbe8c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000dbe8c, 0x00000174
-	.section .rom.000dc250, "ax"
-	.global BattleEffect_InitializeSharedScene
-	.type BattleEffect_InitializeSharedScene, %function
-	.thumb_func
-BattleEffect_InitializeSharedScene:
-	.incbin "baserom.gba", 0x000dc250, 0x000000e8
 	.section .rom.000dc3cc, "ax"
 	.global BattleFx_LoadActionEffectResources
 	.type BattleFx_LoadActionEffectResources, %function
@@ -3029,13 +3017,6 @@ Func_080dd054:
 	.thumb_func
 BattleFx_StartItemBreak:
 	.incbin "baserom.gba", 0x000dd4e4, 0x00000114
-	.section .rom.000dd624, "ax"
-	.balign 4
-	.global UpdateRisingParticleBurst
-	.type UpdateRisingParticleBurst, %function
-	.thumb_func
-UpdateRisingParticleBurst:
-	.incbin "baserom.gba", 0x000dd624, 0x000000e0
 	.section .rom.000dd710, "ax"
 	.incbin "baserom.gba", 0x000dd710, 0x000000cc
 	.global Func_080dd820

@@ -7,7 +7,9 @@
 // Heap-slot 0xa0 workspace: eight slots and 128 nodes.
 struct WorkA0Node {
   struct WorkA0Node *next;
-  u8 unk04[12];
+  s32 x;
+  s32 y;
+  s32 z;
   s8 used;
   u8 unk11[15];
 };
@@ -35,7 +37,8 @@ struct WorkA0 {
 // Heap-slot 0xa4 workspace.
 struct WorkA4Slot {
   s16 id;
-  u8 unk02[26];
+  u8 unk02[22];
+  struct ChainLink *root; // the first link Func_080daecc hangs; NULL if free
 };
 
 struct WorkA4Item {

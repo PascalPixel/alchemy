@@ -1,13 +1,14 @@
-// Near miss, differ 8 of 137 (2026-10-15), The Broken Seal's
+// Near miss, differ 4 of 137 (2026-10-18; 8 on 2026-10-15), The Broken Seal's
 // RunBattleEffect08: Reveal. ⚓️
 // centres the transition on the caster from the effect scene, clears the
 // active flag as ☀️'s non-English editions do, finds the Reveal event
 // through Func_080ce31c/Func_080ce458 and schedules the watch only while the
 // scene's mode byte is clear.
-// Left: order only, four pairs. Three times the native loads a field
-// between the halves of a split offset (the caster's x after movs r0, #160,
-// its z before movs r1, #166), one slot earlier than this; and it stores
-// active = 1 before it reloads the centre, where this loads first.
+// Left: order only, two pairs: the native loads the caster's x between the
+// halves of a split offset (after movs r0, #160), one slot earlier than
+// this, and its z after movs r1, #166, one slot later. The one-pass block
+// round the cue stores active = 1 before the centre is reloaded, as the
+// native does (found by five minutes of permuter).
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -71,11 +72,14 @@ void Func_080dd820(void) {
   if (pending != 0)
     EventRuntime_RunPendingEvent(pending, scene->firstObjectId,
                                  scene->secondObjectId);
-  Audio_PlayCue(SE_REVEAL);
-
   // Leave the centre (in pixels) and the time in the event work, and put
   // up the markers nearby.
-  event->active = 1;
+  /* FAKEMATCH: the one-pass block stores active before the centre is
+   * reloaded (one reordered pair without it). */
+  do {
+    Audio_PlayCue(SE_REVEAL);
+    event->active = 1;
+  } while (0);
   event->centreX = transition->centreX / 0x10000;
   event->centreY = transition->centreY / 0x10000;
   event->frames = REVEAL_FRAMES;

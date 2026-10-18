@@ -1,81 +1,66 @@
+// Near miss, differ 8 of 120 (2026-10-18): ☀️'s BattleFx_StartItemBreak with
+// ⚓️'s objects 278 and 673, a direct cue and Object_SetMode. Left: order
+// only. The native loads the source's x and y before it finishes the angle
+// (adds r5, r3, r0; movs r3, #192 after the loads), and loads the angle
+// before it subtracts the second jitter (ldrh r3, [r2, #6] before subs r5).
+// A held angle behind an empty asm moves every register (differ 92); the
+// angle added first, differ 33.
 #include "types.h"
 #include "system.h"
-#include "ram_buffer.h"
-#include "motobj.h"
 #include "objdisp.h"
-#include "object_effect_scripts.h"
+#include "object_runtime.h"
 
-struct BattleFxScene {
-  u8 pad00[16];
-  void *volatile mainObject;
-};
+extern const s32 gData_080f0e78[];
 
-void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_StartItemBreak(void *object);
-void BattleFx_SnapScaleToFull(struct MotionObject *object);
-void Object_SetMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
-void UpdateRisingParticleBurst(void *object);
-extern void *Object_Spawn(s32, s32, s32, s32);
-extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object,
-                                                       s32 magnitude,
-                                                       s32 angle);
-extern void BattleFx_UpdateItemBreakFragment(void *);
-extern void Audio_PlayCue(s32);
-s32 Object_CommitPosition();
-extern void Object_Destroy(void *object);
-#define SOUND_ITEM_BREAK 138
-void *BattleFx_StartItemBreak(void *source) {
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+                                                s32 magnitude, s32 angle);
+void BattleFx_UpdateItemBreakFragment(void);
+
+#define SE_ITEM_BREAK 138
+
+void *BattleFx_StartItemBreak(void *object) {
+  struct ObjectRuntime *source = object;
+  struct ObjectRuntime *parent;
+  struct ObjectRuntime *child;
   s32 angle;
-  s32 fragmentHeight;
-  s32 fragmentScale;
-  s32 fragmentCount;
-  u32 vel;
-  u32 rotationJitter;
-  s32 zero;
-  void *parent;
-  void *child;
+  s32 radius;
+  s32 speed;
+  s32 fragmentIndex;
+  u32 spread;
+  u32 jitter;
 
-  angle = (((struct MotionObject *)source)->angle + 0x2000) & 0xc000;
-  parent = Object_Spawn(0x116, *(s32 *)((s8 *)source + 8),
-                        ((struct MotionObject *)source)->y + 0x100000,
-                        *(s32 *)((s8 *)source + 16));
+  angle = (source->angle + 0x2000) & 0xc000;
+  parent = Object_Spawn(278, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
-  *(s32 *)((s8 *)parent + 0x1c) = 0x4000;
-  *(s32 *)((s8 *)parent + 0x18) = 0x4000;
-  *(s32 *)((s8 *)parent + 0x6c) = (s32)BattleFx_UpdateItemBreakFragment;
-  *(s32 *)((s8 *)parent + 0x30) = 0x20000;
-  *(s32 *)((s8 *)parent + 0x34) = 0x20000;
-  zero = 0;
-  *(s8 *)((s8 *)parent + 0x55) = zero;
+  parent->scaleY = 0x4000;
+  parent->scaleX = 0x4000;
+  parent->update = BattleFx_UpdateItemBreakFragment;
+  parent->speedLimit = 2 << 16;
+  parent->acceleration = 2 << 16;
+  parent->motionFlags = 0;
   Object_SetMode(parent, 3);
-  Motion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
+  Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
-  fragmentCount = 7;
-  do {
-    child = Object_Spawn(0x2a1, *(s32 *)((s8 *)source + 8),
-                         ((struct MotionObject *)source)->y + 0x100000,
-                         *(s32 *)((s8 *)source + 16));
+  for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
+    child = Object_Spawn(673, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
-                                   (u32)&gBattleFx_FragmentScript);
-      fragmentScale = Random16() + 0x10000;
-      *(s32 *)((s8 *)child + 0x34) = 0x10000;
-      *(s32 *)((s8 *)child + 0x30) = fragmentScale;
-      *(s8 *)((s8 *)child + 0x55) = 2;
-      *(s32 *)((s8 *)child + 0x48) = 0x51e;
-      vel = Random16();
-      *(s32 *)((s8 *)child + 0x28) = vel - Random16();
-      fragmentHeight = Random16() * 0x18 + 0x80000;
-      rotationJitter = Random16();
+                                   gData_080f0e78);
+      speed = Random16() + 0x10000;
+      child->acceleration = 1 << 16;
+      child->speedLimit = speed;
+      child->motionFlags = 2;
+      child->gravity = 0x51e;
+      spread = Random16();
+      child->velocityY = spread - Random16();
+      radius = Random16() * 24 + (8 << 16);
+      jitter = Random16();
       Motion_SetTargetPositionFromMagnitudeAngle(
-          child, fragmentHeight,
-          ((rotationJitter - Random16()) >> 3) +
-              ((struct MotionObject *)source)->angle);
+          child, radius, ((jitter - Random16()) >> 3) + source->angle);
     }
-    fragmentCount--;
-  } while (fragmentCount >= 0);
-  Audio_PlayCue(SOUND_ITEM_BREAK);
+  }
+  Audio_PlayCue(SE_ITEM_BREAK);
   return parent;
 }

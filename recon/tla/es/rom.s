@@ -3317,7 +3317,7 @@ Func_080dbe44:
 Func_080d3b28:
 	.incbin "baserom.gba", 0x000e392c, 0x00000030
 	.section .rom.000e399c, "ax"
-	.incbin "baserom.gba", 0x000e399c, 0x00000500
+	.incbin "baserom.gba", 0x000e399c, 0x00000494
 	.section .rom.000e3ec0, "ax"
 	.global Func_080cdf5c
 	.type Func_080cdf5c, %function
@@ -3521,13 +3521,6 @@ Func_080ca6a4:
 	.thumb_func
 BattleFx_StartItemBreak:
 	.incbin "baserom.gba", 0x000e651c, 0x00000114
-	.section .rom.000e665c, "ax"
-	.balign 4
-	.global UpdateRisingParticleBurst
-	.type UpdateRisingParticleBurst, %function
-	.thumb_func
-UpdateRisingParticleBurst:
-	.incbin "baserom.gba", 0x000e665c, 0x000000e0
 	.section .rom.000e6748, "ax"
 	.incbin "baserom.gba", 0x000e6748, 0x000001fc
 	.section .rom.000e6944, "ax"

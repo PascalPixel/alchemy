@@ -314,7 +314,8 @@ static void Bilibin_ReceiveJillsHardNut(void) {
   struct FieldActor *nearbyVillager;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0 || GameFlag_IsSet(0x848) == 0)
+  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
+      GameFlag_IsSet(0x848) == 0)
     return;
 
   Engine_EventBegin();

@@ -80,7 +80,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gMercuryLighthouseAeriePlacements;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gMercuryLighthouseAerieEvents; }
+const struct SceneEvent *Scene_GetEvents(void) {
+  return gMercuryLighthouseAerieEvents;
+}
 
 s32 Scene_Initialize(void) {
   u32 i;
@@ -1444,8 +1446,8 @@ static void MercuryLighthouseAerie_RiseActorPair(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
-// MercuryLighthouseAerie_LowerCollectedActors passes its lift as a third argument,
-// which this function does not take.
+// MercuryLighthouseAerie_LowerCollectedActors passes its lift as a third
+// argument, which this function does not take.
 static void MercuryLighthouseAerie_CollectBandSlots(s32 *out, s32 y) {
   struct ActorTable *table;
   u32 slot;
@@ -1480,7 +1482,8 @@ static void MercuryLighthouseAerie_LowerCollectedActors(void) {
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
   // the lift goes as a third argument, as the bytes show: the cast keeps it
-  ((void (*)())MercuryLighthouseAerie_CollectBandSlots)(ids, lift->offsetY, lift);
+  ((void (*)())MercuryLighthouseAerie_CollectBandSlots)(ids, lift->offsetY,
+                                                        lift);
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;
@@ -1626,7 +1629,8 @@ static void MercuryLighthouseAerie_FlickerActorEight(void) {
     return;
   }
   sprite = spark->sprite;
-  Engine_ObjectSetScript((struct FieldActor *)spark, gMercuryLighthouseAerie_SparkScript);
+  Engine_ObjectSetScript((struct FieldActor *)spark,
+                         gMercuryLighthouseAerie_SparkScript);
   ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
   spark->motionFlags = tick;
   angle = Engine_RandomNext() & 0x0ffff000;

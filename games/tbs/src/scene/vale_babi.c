@@ -900,7 +900,8 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
         Resource_ResetEntry(sprite->slot);
         sprite->slot = work->vramBlock;
         sprite->retainCacheEntry = 1;
-        sprite->image.tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.tile =
+            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         part->image.size = 2;

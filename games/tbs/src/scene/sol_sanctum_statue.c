@@ -41,8 +41,9 @@
 // Forward declarations.
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 static void SolSanctumStatue_UpdateCenterStatue(void);
-static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn, s32 statueRow,
-                                 s32 leaderColumn, s32 leaderRow);
+static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
+                                        s32 statueRow, s32 leaderColumn,
+                                        s32 leaderRow);
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row);
 static void SolSanctumStatue_OpenNorthwestSeal(void);
 static void SolSanctumStatue_OpenNortheastSeal(void);
@@ -120,7 +121,9 @@ struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
 }
 
 // Return the movement triggers and statue interactions.
-struct SceneEvent *SolSanctumStatue_GetEvents(void) { return gSolSanctumStatue_Events; }
+struct SceneEvent *SolSanctumStatue_GetEvents(void) {
+  return gSolSanctumStatue_Events;
+}
 
 // Choose the next story scene from the saved state of the hall.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
@@ -798,7 +801,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   {
     s32 priority = 3200;
 
-    FieldScheduler_AddCallback(SolSanctumStatue_UpdateScrollingSprites, priority);
+    FieldScheduler_AddCallback(SolSanctumStatue_UpdateScrollingSprites,
+                               priority);
   }
 }
 
@@ -1061,8 +1065,9 @@ static void SolSanctumStatue_PushRightBeamStatueNorth(void) {
 }
 
 // Move the leader and statue together to the centers of their target cells.
-static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn, s32 statueRow,
-                                 s32 leaderColumn, s32 leaderRow) {
+static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
+                                        s32 statueRow, s32 leaderColumn,
+                                        s32 leaderRow) {
   s32 statueX;
   s32 statueZ;
 
@@ -1492,8 +1497,10 @@ struct ScenePlacement gSolSanctumStatue_Placements[] = {
 struct SceneEvent gSolSanctumStatue_Events[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
-    {0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
+    {0x202, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
+    {0x202, 11, CONDITION_ALWAYS,
+     EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
     {PSYNERGY_ON_ACTOR(0x8c), 9, FLAG_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TryNorthwestSeal)},
     {PSYNERGY_ON_ACTOR(0x8c), 11, FLAG_NORTHEAST_SEAL_OPEN,

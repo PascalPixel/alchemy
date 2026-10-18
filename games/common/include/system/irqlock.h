@@ -52,10 +52,11 @@
  * from the code before it. Written plainly as REG_IME = saved, 7 of the 8
  * Scheduler_ functions in ☀️'s runtime.c that lock differ 2 in tbs-en
  * (Scheduler_ResumeOverlayTasks matches either way), and ⚓️'s
- * BattleFx_TransferHalvedCanvas and BattleFx_ProcessPendingStampTransfer differ 2 in all six editions;
- * BattlePresentation_SetPaletteLevel's plain restore matches, and through
- * IRQ_UNLOCK it differs 2 in all six (measured 2026-10-13). Not every use
- * matches through it, so it is a device at each use, not a layer (S2). */
+ * BattleFx_TransferHalvedCanvas and BattleFx_ProcessPendingStampTransfer differ
+ * 2 in all six editions; BattlePresentation_SetPaletteLevel's plain restore
+ * matches, and through IRQ_UNLOCK it differs 2 in all six (measured
+ * 2026-10-13). Not every use matches through it, so it is a device at each use,
+ * not a layer (S2). */
 #define IRQ_UNLOCK(saved)                                                      \
   do {                                                                         \
     REG_IME = saved;                                                           \

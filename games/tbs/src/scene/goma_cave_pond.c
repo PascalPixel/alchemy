@@ -25,11 +25,15 @@ u8 *SceneData_GetPrimaryTable(void) { return (u8 *)gGomaCavePond_SceneTable0; }
 
 s32 SceneData_ReturnZero(void) { return 0; }
 
-u8 *SceneData_GetSecondaryTable(void) { return (u8 *)gGomaCavePond_SceneTable1; }
+u8 *SceneData_GetSecondaryTable(void) {
+  return (u8 *)gGomaCavePond_SceneTable1;
+}
 
 u8 *SceneData_GetTertiaryTable(void) { return (u8 *)gGomaCavePond_SceneTable2; }
 
-u8 *SceneData_GetQuaternaryTable(void) { return (u8 *)gGomaCavePond_SceneTable3; }
+u8 *SceneData_GetQuaternaryTable(void) {
+  return (u8 *)gGomaCavePond_SceneTable3;
+}
 
 s32 Scene_PlaceActor8OnGate300(void) {
   struct Resource388Runtime *work;

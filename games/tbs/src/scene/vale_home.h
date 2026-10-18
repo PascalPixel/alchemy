@@ -26,6 +26,4 @@ struct PairWork {
 s32 Math_RemainderUnsigned();
 void Engine_ActorSetSpriteFlags();
 
-
-
 #endif

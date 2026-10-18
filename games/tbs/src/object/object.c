@@ -1182,7 +1182,8 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
           u8 *removed = &actor->spriteStorageKind;
           u32 flags;
 
-          // Release the sprite's retained cache entry when destroying the actor.
+          // Release the sprite's retained cache entry when destroying the
+          // actor.
           *removed = 1;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
@@ -3382,8 +3383,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 nearbyActor =
-          Field_FindNearbyTalkTarget(gGameState.selectedActor);
+      s32 nearbyActor = Field_FindNearbyTalkTarget(gGameState.selectedActor);
       FieldEvent_Begin();
       Event_SetMessageId(event->value);
       FieldEvent_ShowMessageAndWait(nearbyActor, 0);
@@ -3615,8 +3615,8 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gGameState.selectedActor,
-                                                   abilityGroup);
+    target =
+        Field_FindNearbyPsynergyTarget(gGameState.selectedActor, abilityGroup);
     if (after && (after->trigger & 0x400)) // the event plays the effect
     {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -5802,9 +5802,7 @@ void FadeOverlay_Suspend(void) {
 }
 
 // Resumes the fade overlay.
-void FadeOverlay_Resume(void) {
-  Scheduler_ResumeTasks(FadeOverlay_DrawMarks);
-}
+void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }
 
 // Returns the speaker definition of sprite id from gBattleFx_DefinitionTable,
 // or its last entry when there is none.

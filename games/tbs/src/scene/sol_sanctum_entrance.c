@@ -55,7 +55,9 @@ const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
 const struct SceneRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
 
 // Return the shared sanctum exit routes.
-const u32 *SolSanctumEntrance_GetExits(void) { return gSolSanctumEntrance_Exits; }
+const u32 *SolSanctumEntrance_GetExits(void) {
+  return gSolSanctumEntrance_Exits;
+}
 
 // Select the actors for the current map and puzzle room.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
@@ -258,9 +260,10 @@ static void SolSanctumEntrance_PlaceSecondSmallGem(void) {
 }
 
 // Remember which of a movable block's two destination columns it occupies.
-static inline void SolSanctumEntrance_RecordBlockColumn(s32 column, s32 flagBase,
-                                                 s32 leftColumn,
-                                                 s32 rightColumn) {
+static inline void SolSanctumEntrance_RecordBlockColumn(s32 column,
+                                                        s32 flagBase,
+                                                        s32 leftColumn,
+                                                        s32 rightColumn) {
   GameFlag_Clear(flagBase);
   GameFlag_Clear(flagBase + 1);
   if (column == leftColumn) {

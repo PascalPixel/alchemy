@@ -2519,10 +2519,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
       u32 frame = (gFrameTick >> 1) & 7;
 
       output = nameCaret.output;
-      output->oam.x =
-          output->x + gNameEntry_CaretWave[frame];
-      output->oam.y =
-          output->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      output->oam.x = output->x + gNameEntry_CaretWave[frame];
+      output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
@@ -2781,10 +2779,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
       u32 frame = (gFrameTick >> 1) & 7;
 
       output = nameCaret.output;
-      output->oam.x =
-          output->x + gNameEntry_CaretWave[frame];
-      output->oam.y =
-          output->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      output->oam.x = output->x + gNameEntry_CaretWave[frame];
+      output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.

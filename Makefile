@@ -385,8 +385,18 @@ $(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 tools:
 	$(MAKE) -f tools/Makefile
 
-test: tools
+test: tools format-check
 	$(MAKE) -f tools/Makefile test
+
+# ☀️'s C and the shared C are as clang-format writes them (AGENTS.md S3).
+# Without clang-format installed the check says so and is skipped.
+CLANG_FORMAT ?= clang-format
+FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/common/*.c' 'games/common/*.h')
+.PHONY: format-check
+format-check:
+	@if command -v $(CLANG_FORMAT) >/dev/null; then \
+	  $(CLANG_FORMAT) --dry-run -Werror $(FORMATTED); \
+	else echo "format-check: $(CLANG_FORMAT) not found, skipped"; fi
 
 # Reconstruction work is optional. Normal builds use only the C tools above.
 CARGO ?= cargo

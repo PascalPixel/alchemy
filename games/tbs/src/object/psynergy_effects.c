@@ -2101,8 +2101,8 @@ void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
 // the camera to arrive, then 2 frames more.
 void Camera_WaitForArrival(void) {
   FieldObject_WaitForMoveFar(((struct FieldWork *)Runtime_AllocateBlock(
-                                     HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
-                                    ->camera);
+                                  HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+                                 ->camera);
   FieldEvent_WaitFrames(2);
 }
 
@@ -5103,8 +5103,9 @@ s32 ResourceTable_CountFreeBlocks(void) {
 // returns the sprite whose block is shared from now on (sharedSprite, or
 // sourceSprite when there was none), or NULL for no sourceSprite. Chains of
 // afterimages pass one block along this way.
-struct AnimationObject *Sprite_ShareVramCache(
-    struct AnimationObject *sourceSprite, struct AnimationObject *sharedSprite) {
+struct AnimationObject *
+Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
+                      struct AnimationObject *sharedSprite) {
   struct AnimationObject *shared;
   struct AnimationObject *sprite;
 
@@ -6807,8 +6808,8 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
         Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle); \
     }                                                                          \
                                                                                \
-    FieldObject_WaitForMoveFar(pair[0]);                                    \
-    AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                  \
+    FieldObject_WaitForMoveFar(pair[0]);                                       \
+    AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                     \
     for (n = 0; n < ANCHOR_SHARD_MAX; n++) {                                   \
       pos.x = work->x;                                                         \
       pos.y = work->y + 0x100000;                                              \

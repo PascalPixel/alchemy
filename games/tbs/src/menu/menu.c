@@ -5559,8 +5559,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 // battle.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
-  struct BattleAct *action =
-      BattleActGet(((u32)actionEntry << 18) >> 18);
+  struct BattleAct *action = BattleActGet(((u32)actionEntry << 18) >> 18);
 
   if (action->type0c != 0 ||
       (action->flags & (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==

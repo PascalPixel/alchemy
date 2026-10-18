@@ -94,7 +94,6 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 #define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) ((value) << 16)
 #endif
 
-
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"

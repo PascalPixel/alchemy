@@ -68,7 +68,8 @@ struct MapCellFields {
 
 // Wait up to sixty frames for landing, then stop vertical movement on the
 // ground.
-static void CrossboneIslePillarRooms_SettleActorOnGround(struct FieldActor *actor) {
+static void
+CrossboneIslePillarRooms_SettleActorOnGround(struct FieldActor *actor) {
   s32 remainingFrames = 60;
 
   for (;;) {
@@ -89,8 +90,9 @@ static void CrossboneIslePillarRooms_SettleActorOnGround(struct FieldActor *acto
 
 // Wait until the actor reaches the ground or height limit, then stop its
 // descent.
-static void CrossboneIslePillarRooms_StopAtGroundOrHeight(struct FieldActor *actor,
-                                                 s32 limit) {
+static void
+CrossboneIslePillarRooms_StopAtGroundOrHeight(struct FieldActor *actor,
+                                              s32 limit) {
   s32 remainingFrames = 60;
 
   for (;;) {
@@ -112,10 +114,10 @@ static void CrossboneIslePillarRooms_StopAtGroundOrHeight(struct FieldActor *act
 }
 
 // Find the actor's footprint dimensions, grid position, and map-layer origin.
-static s32 CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
-                                          struct StagedActorProbe *probe,
-                                          s32 *layerOriginX,
-                                          s32 *layerOriginZ) {
+static s32
+CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
+                                        struct StagedActorProbe *probe,
+                                        s32 *layerOriginX, s32 *layerOriginZ) {
   struct MapScrollWork *map = gMapWork[0];
   struct FieldActor *actor = Object_GetById(id);
   u32 i;
@@ -181,8 +183,8 @@ static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
   s32 cellX, cellZ;
   u8 mask;
 
-  if (CrossboneIslePillarRooms_QueryFootprint(actorId, &width, &depth, &probe,
-                                     &layerOriginX, &layerOriginZ) == 0) {
+  if (CrossboneIslePillarRooms_QueryFootprint(
+          actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
@@ -224,8 +226,8 @@ static s32 CrossboneIslePillarRooms_RestoreGroundFootprint(s32 actorId) {
   s32 layerOriginX, layerOriginZ;
   struct StagedActorProbe probe;
 
-  if (CrossboneIslePillarRooms_QueryFootprint(actorId, &width, &depth, &probe,
-                                     &layerOriginX, &layerOriginZ) == 0) {
+  if (CrossboneIslePillarRooms_QueryFootprint(
+          actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
@@ -247,7 +249,7 @@ static s32 CrossboneIslePillarRooms_RestoreGroundFootprint(s32 actorId) {
 
 // Read one map cell through DMA, waiting until the transfer finishes.
 static void CrossboneIslePillarRooms_ReadMapCell(s32 layer, s32 x, s32 y,
-                                        struct MapCellFields *dst) {
+                                                 struct MapCellFields *dst) {
   struct MapState *map = gMapWork[0];
 
   if (map != 0) {
@@ -266,7 +268,7 @@ static void CrossboneIslePillarRooms_ReadMapCell(s32 layer, s32 x, s32 y,
 
 // Copy the cell's layer, kind, height, and event without replacing its tile.
 static void CrossboneIslePillarRooms_SetCellAttributes(s32 layer, s32 x, s32 y,
-                                              struct MapCell *source) {
+                                                       struct MapCell *source) {
   struct MapCellFields *src = (struct MapCellFields *)source;
   struct MapState *map = gMapWork[0];
 
@@ -477,7 +479,8 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
 
 // Move the particle while damping its velocity, growing it, and advancing
 // rotation.
-static void CrossboneIslePillarRooms_UpdateDampedParticle(union FieldObject *object) {
+static void
+CrossboneIslePillarRooms_UpdateDampedParticle(union FieldObject *object) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
@@ -497,8 +500,8 @@ static void CrossboneIslePillarRooms_UpdateDampedParticle(union FieldObject *obj
 }
 
 // Apply the actor timer's low four bits to its child sprite value.
-static s32
-CrossboneIslePillarRooms_SetChildValueFromTimer(struct ScriptInterpreter *interpreter) {
+static s32 CrossboneIslePillarRooms_SetChildValueFromTimer(
+    struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue(actor, actor->timer & 15);
   return 0;
@@ -527,10 +530,14 @@ const struct SceneEntrance *CrossboneIslePillarRooms_GetEntrances(void) {
 }
 
 // These rooms have no separate region table.
-const struct SceneRegion *CrossboneIslePillarRooms_GetRegions(void) { return 0; }
+const struct SceneRegion *CrossboneIslePillarRooms_GetRegions(void) {
+  return 0;
+}
 
 // Return the shared exits for the pillar rooms.
-const u32 *CrossboneIslePillarRooms_GetExits(void) { return gCrossboneIslePillarRoomsExits; }
+const u32 *CrossboneIslePillarRooms_GetExits(void) {
+  return gCrossboneIslePillarRoomsExits;
+}
 
 // Select the actor placements for the current pillar room.
 const struct ScenePlacement *CrossboneIslePillarRooms_GetPlacements(void) {
@@ -650,7 +657,8 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   }
   // Increase the chance of showing the alternate scroll on each scanline.
   sShakeChance = 0;
-  FieldScheduler_AddCallback(CrossboneIslePillarRooms_PrepareWaterScroll, 0xc80);
+  FieldScheduler_AddCallback(CrossboneIslePillarRooms_PrepareWaterScroll,
+                             0xc80);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, CrossboneIslePillarRooms_JitterBackgroundScroll);
   Engine_AudioPlayCue(231);
@@ -732,8 +740,9 @@ static void CrossboneIslePillarRooms_FlipWaterSwitch(void) {
 }
 
 // Match a nearby actor's draw priority when it is behind the comparison actor.
-static s32 CrossboneIslePillarRooms_SyncPriorityIfBehind(struct FieldActor *actor,
-                                                struct FieldActor *front) {
+static s32
+CrossboneIslePillarRooms_SyncPriorityIfBehind(struct FieldActor *actor,
+                                              struct FieldActor *front) {
   s32 result = 0;
 
   if (front->x.fixed == actor->x.fixed && front->y.fixed == actor->y.fixed &&
@@ -757,8 +766,9 @@ static s32 CrossboneIslePillarRooms_SyncPriorityIfBehind(struct FieldActor *acto
 
 // Match the comparison actor's draw priority when it overlaps the actor in
 // front.
-static s32 CrossboneIslePillarRooms_SyncPriorityIfAhead(struct FieldActor *front,
-                                               struct FieldActor *actor) {
+static s32
+CrossboneIslePillarRooms_SyncPriorityIfAhead(struct FieldActor *front,
+                                             struct FieldActor *actor) {
   s32 result = 0;
 
   if (actor->x.fixed == front->x.fixed && actor->y.fixed == front->y.fixed &&
@@ -790,7 +800,8 @@ CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *fieldObject) {
 #else
 // Keep each moving pillar's priority and collision flags consistent with the
 // leader.
-static s32 CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *fieldObject) {
+static s32
+CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *leader = Object_GetById(0);
@@ -808,7 +819,8 @@ static s32 CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *field
   }
   hit = CrossboneIslePillarRooms_SyncPriorityIfBehind(actor, leader);
   for (id = 8; id <= 11; id++) {
-    hit += CrossboneIslePillarRooms_SyncPriorityIfBehind(actor, Object_GetById(id));
+    hit += CrossboneIslePillarRooms_SyncPriorityIfBehind(actor,
+                                                         Object_GetById(id));
   }
   if (hit != 0) {
     for (id = 8; id <= 11; id++) {
@@ -925,10 +937,12 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
       actor->motionFlags = 3;
     }
     flags = &actor->motionFlags;
-    CrossboneIslePillarRooms_SetCellAttributes(0, sPillarSlots[i].x, sPillarSlots[i].z,
-                                      (struct MapCell *)&sPillarSlots[i].cell);
-    CrossboneIslePillarRooms_SetCellAttributes(2, sPillarSlots[i].x, sPillarSlots[i].z,
-                                      (struct MapCell *)&sPillarSlots[i].cell);
+    CrossboneIslePillarRooms_SetCellAttributes(
+        0, sPillarSlots[i].x, sPillarSlots[i].z,
+        (struct MapCell *)&sPillarSlots[i].cell);
+    CrossboneIslePillarRooms_SetCellAttributes(
+        2, sPillarSlots[i].x, sPillarSlots[i].z,
+        (struct MapCell *)&sPillarSlots[i].cell);
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
       if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
@@ -944,7 +958,8 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
         CrossboneIslePillarRooms_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
-        CrossboneIslePillarRooms_StopAtGroundOrHeight((struct FieldActor *)actor, 0);
+        CrossboneIslePillarRooms_StopAtGroundOrHeight(
+            (struct FieldActor *)actor, 0);
         Engine_AudioPlayCue(189);
         actor->y = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -952,20 +967,21 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
         SET_POSITION(actor, 0, 0, 0);
         actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else {
-        CrossboneIslePillarRooms_SettleActorOnGround((struct FieldActor *)actor);
+        CrossboneIslePillarRooms_SettleActorOnGround(
+            (struct FieldActor *)actor);
       }
       *flags = 0;
     }
     // Save the new ground cell before applying the pillar's height attributes.
     CrossboneIslePillarRooms_ReadMapCell(0, actor->x >> 20, actor->z >> 20,
-                                &sPillarSlots[i].cell);
+                                         &sPillarSlots[i].cell);
     if (actor->y >= 0) {
       CrossboneIslePillarRooms_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
-      CrossboneIslePillarRooms_SetCellAttributes(0, actor->x >> 20, actor->z >> 20,
-                                        (struct MapCell *)&cell);
+      CrossboneIslePillarRooms_SetCellAttributes(
+          0, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
       cell.kind = sPillarSlots[i].cell.kind;
-      CrossboneIslePillarRooms_SetCellAttributes(2, actor->x >> 20, actor->z >> 20,
-                                        (struct MapCell *)&cell);
+      CrossboneIslePillarRooms_SetCellAttributes(
+          2, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
     }
     sPillarSlots[i].x = actor->x >> 20;
     sPillarSlots[i].y = actor->y >> 20;
@@ -1046,12 +1062,12 @@ static void CrossboneIslePillarRooms_StopRidingPillar(void) {
 #ifdef UBFIX
 // Keep the frozen pool's underfoot flag consistent with the leader's height and
 // depth.
-static void
-CrossboneIslePillarRooms_UpdateFrozenPoolPriority(union FieldObject *fieldObject) {
+static void CrossboneIslePillarRooms_UpdateFrozenPoolPriority(
+    union FieldObject *fieldObject) {
 #else
 // Put the frozen pool under the leader when it is behind and below the leader.
-static s32
-CrossboneIslePillarRooms_UpdateFrozenPoolPriority(union FieldObject *fieldObject) {
+static s32 CrossboneIslePillarRooms_UpdateFrozenPoolPriority(
+    union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1079,8 +1095,8 @@ static void CrossboneIslePillarRooms_FreezePool(s32 id) {
 #ifdef UBFIX
   actor->update = CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
+  actor->update = (void (*)(
+      union FieldObject *))CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
 #endif
   Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                          actor->z.fixed >> 20);
@@ -1176,10 +1192,12 @@ static void CrossboneIslePillarRooms_SpawnFrostParticle(void) {
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
 // Emit a randomized particle from the thawing pool every eight frames.
-static void CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
+static void
+CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #else
 // Emit a randomized particle from the thawing pool every eight frames.
-static s32 CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
+static s32
+CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct EffectOptions options;
@@ -1233,14 +1251,15 @@ static void CrossboneIslePillarRooms_FreezeThirdPool(void) {
     Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
     Engine_EventWait(20);
     // The third pool freezes while the previously frozen second pool thaws.
-    FieldScheduler_AddCallback(CrossboneIslePillarRooms_SpawnFrostParticle, 0xc80);
+    FieldScheduler_AddCallback(CrossboneIslePillarRooms_SpawnFrostParticle,
+                               0xc80);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x201) != 0) {
 #ifdef UBFIX
       Object_GetById(12)->update = CrossboneIslePillarRooms_SpawnThawParticle;
 #else
-      Object_GetById(12)->update =
-          (void (*)(union FieldObject *))CrossboneIslePillarRooms_SpawnThawParticle;
+      Object_GetById(12)->update = (void (*)(
+          union FieldObject *))CrossboneIslePillarRooms_SpawnThawParticle;
 #endif
       Engine_ActorSetAnimation(12, 6);
       ObjectMotion_WaitForAnimationChange(12);
@@ -1357,8 +1376,8 @@ static void CrossboneIslePillarRooms_RestoreFlaggedPillar(s32 actorId) {
 #ifdef UBFIX
     actor->update = CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
 #else
-    actor->update =
-        (void (*)(union FieldObject *))CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
+    actor->update = (void (*)(
+        union FieldObject *))CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
 #endif
     Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                            actor->z.fixed >> 20);
@@ -1375,8 +1394,8 @@ static void CrossboneIslePillarRooms_InitializePillarPriority(s32 id) {
 #ifdef UBFIX
   actor->update = CrossboneIslePillarRooms_UpdateActorPriority;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))CrossboneIslePillarRooms_UpdateActorPriority;
+  actor->update = (void (*)(
+      union FieldObject *))CrossboneIslePillarRooms_UpdateActorPriority;
 #endif
 }
 
@@ -1797,20 +1816,24 @@ struct SceneEvent gCrossboneIslePillarRoomsEvents4[] = {
 struct SceneEvent gCrossboneIslePillarRoomsEvents5[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_RunPushScene)},
+    {0x202, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossboneIslePillarRooms_RunPushScene)},
     {SEARCH(SEARCH_CHEST), 100, 0xede, FIND_COINS(888)},
     {SEARCH(SEARCH_CHEST), 101, 0xedf, FIND_ITEM(0xb7)},
     {SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(0x10c)},
     {SEARCH(SEARCH_CHEST), 103, 0xee1, FIND_ITEM(ITEM_SMOKE_BOMB)},
-    {0x10008c15, 10, 0x204, EVENT_SCRIPT(CrossboneIslePillarRooms_ClearActorTenCell)},
+    {0x10008c15, 10, 0x204,
+     EVENT_SCRIPT(CrossboneIslePillarRooms_ClearActorTenCell)},
     {PSYNERGY_ON_ACTOR(0x8c), 10, 0x204,
      EVENT_SCRIPT(CrossboneIslePillarRooms_SettleMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200,
      EVENT_SCRIPT(CrossboneIslePillarRooms_FreezeFirstPool)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201,
      EVENT_SCRIPT(CrossboneIslePillarRooms_FreezeSecondPool)},
-    {0x10001815, 13, 0x202, EVENT_SCRIPT(CrossboneIslePillarRooms_CheckLeaderOnPillar)},
-    {0x50001815, 13, 0x202, EVENT_SCRIPT(CrossboneIslePillarRooms_RaiseActorFourteen)},
+    {0x10001815, 13, 0x202,
+     EVENT_SCRIPT(CrossboneIslePillarRooms_CheckLeaderOnPillar)},
+    {0x50001815, 13, 0x202,
+     EVENT_SCRIPT(CrossboneIslePillarRooms_RaiseActorFourteen)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202,
      EVENT_SCRIPT(CrossboneIslePillarRooms_FreezeThirdPool)},
     {SCENE_EVENTS_END},

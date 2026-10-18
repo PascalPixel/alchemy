@@ -78,7 +78,7 @@ enum { FLAG_SKIP_SCENE_MUSIC = 0x11a };
 #define ACTOR_SPRITE(actor)                                                    \
   ((struct AnimationObject *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n)                                                 \
-  ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                              \
+  ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                        \
             : (ACTOR_SPRITE(actor)->shadow.priority = 1))
 
 s32 Math_DivideUnsigned();

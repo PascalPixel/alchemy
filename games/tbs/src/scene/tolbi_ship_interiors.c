@@ -525,7 +525,8 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
   } else if (GameFlag_IsSet(0x921) != 0) {
     Engine_EventSetMessage(MsgTolbiShipBadLuckLosingMyLucky);
     Event_ShowMessage(8, 0);
-    if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
+    if (GameFlag_IsSet(0x925) == 0 &&
+        GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
       gEventWork->unk172 = 1;
     }
   } else {
@@ -2176,7 +2177,8 @@ static void SceneState_RunFlagGatedSetupCascade(void) {
     return;
   }
 
-  if (Engine_GameFlagIsSet(0x911) != 0 && Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+  if (Engine_GameFlagIsSet(0x911) != 0 &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_ACTORS_13_AND_14, 0, 0);
     Engine_ActorSetPosition(12, 0, 0);
   }

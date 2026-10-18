@@ -766,8 +766,7 @@ s32 Scene_Initialize(void) {
   sprite->image.palette = 0;
   icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
   Engine_ItemLoadIcon(ITEM_BLACK_ORB);
-  Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES,
-                  &icon[ITEM_ICON_TILES]);
+  Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
   Engine_HeapRelease(HEAP_ITEM_ICON);
 
   if (GameFlag_IsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {

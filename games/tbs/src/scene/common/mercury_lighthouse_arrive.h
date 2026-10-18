@@ -25,7 +25,8 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
 #ifdef UBFIX
     actor->update = MercuryLighthouse_TrailSparks;
 #else
-    actor->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
+    actor->update =
+        (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
 #endif
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);

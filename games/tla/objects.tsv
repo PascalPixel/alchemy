@@ -4250,17 +4250,12 @@ main	rom_main_05	recon/tla/raw/080eadfc	.text	en
 main	rom_main_05	recon/tla/raw/080eaeb4	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000eaadc	ja
 main	rom_main_05	games/tla/src/field/common/object/objfind	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000eaf8c	it
+main	rom_main_05	games/tla/src/battle/effect/effect_sprite	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000eb010	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000eff8c	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000f0010	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f3f8c	es
 main	rom_main_05	recon/tla/es/rom	.rom.000f4010	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f7f98	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f801c	de
-main	rom_main_05	recon/tla/raw/080eaf98	.text	en
 main	rom_main_05	recon/tla/raw/080eb01c	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000eaedc	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000eaf60	ja
 main	rom_main_05	games/tla/src/battle/effect/screen_sprite	.text
 main	rom_main_05	games/tla/src/battle/effect/step_vector	.text

@@ -203,7 +203,7 @@ extern const s32 gBattleFx_RisingPulseScript[];
 extern u16 gBattleUnit_WeaponAnimsClass0[];
 extern u16 gBattleFormation_LevelMatchedEnemies[];
 extern s32 gBattle_BackdropScenes[];
-extern const u32 BattleEffect_Composite[];
+extern const u32 BattleFx_Composite[];
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];

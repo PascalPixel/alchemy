@@ -66,30 +66,30 @@
   default:                                                                     \
   case COMPOSITE_COPY:                                                         \
     if (((flags) & COMPOSITE_FLIP_X) != 0) {                                   \
-      COPY_FROM(BattleEffect_CopyReverse, 2);                                  \
+      COPY_FROM(BattleFx_CopyReverse, 2);                                      \
     } else {                                                                   \
-      COPY_FROM(BattleEffect_CopyForward, 2);                                  \
+      COPY_FROM(BattleFx_CopyForward, 2);                                      \
     }                                                                          \
     break;                                                                     \
   case COMPOSITE_TRANSPARENT:                                                  \
     if (((flags) & COMPOSITE_FLIP_X) != 0) {                                   \
-      COPY_FROM(BattleEffect_TransparentReverse, 4);                           \
+      COPY_FROM(BattleFx_TransparentReverse, 4);                               \
     } else {                                                                   \
-      COPY_FROM(BattleEffect_TransparentForward, 4);                           \
+      COPY_FROM(BattleFx_TransparentForward, 4);                               \
     }                                                                          \
     break;                                                                     \
   case COMPOSITE_MAX:                                                          \
     if (((flags) & COMPOSITE_FLIP_X) != 0) {                                   \
-      COPY_FROM(BattleEffect_MaxReverse, 4);                                   \
+      COPY_FROM(BattleFx_MaxReverse, 4);                                       \
     } else {                                                                   \
-      COPY_FROM(BattleEffect_MaxForward, 4);                                   \
+      COPY_FROM(BattleFx_MaxForward, 4);                                       \
     }                                                                          \
     break;                                                                     \
   case COMPOSITE_ADDITIVE:                                                     \
     if (((flags) & COMPOSITE_FLIP_X) != 0) {                                   \
-      COPY_FROM(BattleEffect_AdditiveReverse, 6);                              \
+      COPY_FROM(BattleFx_AdditiveReverse, 6);                                  \
     } else {                                                                   \
-      COPY_FROM(BattleEffect_AdditiveForward, 6);                              \
+      COPY_FROM(BattleFx_AdditiveForward, 6);                                  \
     }                                                                          \
     break;                                                                     \
   }
@@ -103,7 +103,7 @@
 #define BLITTER_WALK()                                                         \
   COPY(3);                                                                     \
   if (mode == COMPOSITE_ADDITIVE) {                                            \
-    COPY_FROM(BattleEffect_Mask, 3);                                           \
+    COPY_FROM(BattleFx_Mask, 3);                                               \
   }                                                                            \
                                                                                \
   if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {                          \
@@ -233,31 +233,31 @@
                                                                                \
     for (i = 0; i < 8; i++) {                                                  \
       if ((flags & COMPOSITE_FLIP_X) != 0) {                                   \
-        COPY_FROM(BattleEffect_CopyReverse, 2);                                \
+        COPY_FROM(BattleFx_CopyReverse, 2);                                    \
       } else {                                                                 \
-        COPY_FROM(BattleEffect_CopyForward, 2);                                \
+        COPY_FROM(BattleFx_CopyForward, 2);                                    \
       }                                                                        \
     }                                                                          \
   } break;                                                                     \
   case COMPOSITE_TRANSPARENT:                                                  \
     if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
-      COPY_FROM(BattleEffect_Transparent8Reverse, 25);                         \
+      COPY_FROM(BattleFx_Transparent8Reverse, 25);                             \
     } else {                                                                   \
-      COPY_FROM(BattleEffect_Transparent8Forward, 25);                         \
+      COPY_FROM(BattleFx_Transparent8Forward, 25);                             \
     }                                                                          \
     break;                                                                     \
   case COMPOSITE_MAX:                                                          \
     if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
-      COPY_TWICE(BattleEffect_Max4Reverse, 16);                                \
+      COPY_TWICE(BattleFx_Max4Reverse, 16);                                    \
     } else {                                                                   \
-      COPY_TWICE(BattleEffect_Max4Forward, 16);                                \
+      COPY_TWICE(BattleFx_Max4Forward, 16);                                    \
     }                                                                          \
     break;                                                                     \
   case COMPOSITE_ADDITIVE:                                                     \
     if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
-      COPY_TWICE(BattleEffect_ColorReverse, 14);                               \
+      COPY_TWICE(BattleFx_ColorReverse, 14);                                   \
     } else {                                                                   \
-      COPY_TWICE(BattleEffect_ColorForward, 14);                               \
+      COPY_TWICE(BattleFx_ColorForward, 14);                                   \
     }                                                                          \
     break;                                                                     \
   }                                                                            \
@@ -333,7 +333,7 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 
   // First walk: count the words selected by clipping, mirroring and blend mode.
   wordCount = 0;
-  templateWords = BattleEffect_Composite;
+  templateWords = BattleFx_Composite;
 
   BLITTER_WALK();
 
@@ -388,7 +388,7 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 
   // Second walk: allocate, copy the selected kernels and patch their branches.
   codeWords = (u32 *)Runtime_AllocateHeapBlock(slot, wordCount << 2);
-  templateWords = BattleEffect_Composite;
+  templateWords = BattleFx_Composite;
 
   BLITTER_WALK();
 

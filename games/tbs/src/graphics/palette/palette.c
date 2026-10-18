@@ -585,20 +585,20 @@ s32 Title_ShowAnimatedSplash(void) {
   workIndex = (u32)Ram_MapCellBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   resourceData = (u8 *)workIndex;
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4,
-          REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4, REG_DMA3);
   resourceData += 0x1c0;
   Dma_Set(resourceData, BG_SCREEN_BLOCK(6),
-          DMA_ENABLE32 | DMA_32BIT | 0x800 / 4, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800 / 4, REG_DMA3);
   resourceData += 0x800;
-  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_ENABLE32 | DMA_32BIT | 0x4000 / 4,
-          REG_DMA3);
+  Dma_Set(resourceData, BG_CHAR_BLOCK(1),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x4000 / 4, REG_DMA3);
   resourceData += 0x4000;
   for (workIndex = 0; workIndex < 4; workIndex++) {
     gBgScroll[workIndex].y = 0;
     gBgScroll[workIndex].x = 0;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   Fade_FromWhite(1);
@@ -606,8 +606,8 @@ s32 Title_ShowAnimatedSplash(void) {
   REG_DISPCNT = 0x1540;
   for (workIndex = 0; workIndex < 120; workIndex++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + resourceData,
-            BG_CHAR_BLOCK(1) + 0x100, DMA_ENABLE32 | DMA_32BIT | 0x340 / 4,
-            REG_DMA3);
+            BG_CHAR_BLOCK(1) + 0x100,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
     if (gKeysPressed & (KEY_A | KEY_START))
       break;
     WaitFrames(1);
@@ -663,7 +663,7 @@ void PaletteFade_Update(void) {
     for (remaining = 0; remaining <= 0x5ff; remaining++)
       *currentComponents++ += *componentSteps++;
   } else {
-    Dma_Set(work->target, work->current, DMA_ENABLE32 | DMA_32BIT | 0x300,
+    Dma_Set(work->target, work->current, (DMA_ENABLE | DMA_32BIT) << 16 | 0x300,
             REG_DMA3);
     work->duration = 0;
   }
@@ -718,7 +718,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
-            (((colorCount - 1) * 6) >> 1) | DMA_ENABLE32, REG_DMA3);
+            (((colorCount - 1) * 6) >> 1) | (DMA_ENABLE << 16), REG_DMA3);
   } else if (mode < PALETTE_TRANSFORM_FLAGS) {
     switch (mode) {
     case PALETTE_TRANSFORM_GREY:
@@ -947,7 +947,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     if (paletteHalf == 2)
       mode += 0x600;
     Dma_Set((const void *)mode, destination,
-            ((colorCount * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+            ((colorCount * 6) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   }
 }
 

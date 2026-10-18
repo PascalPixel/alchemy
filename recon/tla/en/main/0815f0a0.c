@@ -23,7 +23,7 @@ void Func_0815f0a0(s32 resource) {
   s32 i;
 
   Dma_Set(Resource_GetTableEntry(resource), dst,
-          DMA_ENABLE32 | DMA_32BIT | 0x20, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x20, REG_DMA3);
   dst[0] = 0;
   for (i = 0; i != 64; i++, col++) {
     s32 r = *col & 0x1f;
@@ -47,5 +47,5 @@ void Func_0815f0a0(s32 resource) {
       b--;
     dst[i] = (b << 10) | (g << 5) | r;
   }
-  Dma_Set(dst, (void *)BG_PLTT, DMA_ENABLE32 | 64, REG_DMA3);
+  Dma_Set(dst, (void *)BG_PLTT, (DMA_ENABLE << 16) | 64, REG_DMA3);
 }

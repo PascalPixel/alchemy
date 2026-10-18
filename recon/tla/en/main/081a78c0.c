@@ -27,7 +27,7 @@ void PaletteFade_Update(void) {
     for (i = 0; i <= 0x5ff; i++)
       *current++ += *delta++;
   } else {
-    Dma_Set(work->target, work->current, DMA_ENABLE32 | DMA_32BIT | 0x300,
+    Dma_Set(work->target, work->current, (DMA_ENABLE | DMA_32BIT) << 16 | 0x300,
             REG_DMA3);
     work->duration = 0;
   }

@@ -7774,9 +7774,9 @@ done:
 // Sets DMA3 three times over, stopping it, then calls the IRQ return
 // instruction's word as a routine.
 void Dma_StopAllThenRunHook(void) {
-  Dma_Set(0, 0, DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-  Dma_Set(0, 0, DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-  Dma_Set(0, 0, DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   _call_via_r0(IwramIrqModeWord);
 }
 
@@ -10650,7 +10650,7 @@ s32 BattleFx_InitializeStarField(s32 mode) {
     graphics = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
     break;
   }
-  Dma_Set(graphics, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
+  Dma_Set(graphics, BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 32, REG_DMA3);
   /* FAKEMATCH: the one-pass block keeps the zero ahead of the BG2X
    * address, which reload derives from the DMA register's. Measured:
    * plain stores of 0, or of zero outside a block, load it after the

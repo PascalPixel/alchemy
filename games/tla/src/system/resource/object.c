@@ -16,7 +16,7 @@ void ResourceMetadata_ClearRecord(void *dst) {
 
     zero = 0;
     Dma_Set(&zero, dst,
-            (DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32) |
+            ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
                 (sizeof(struct AnimationEntry) / 4),
             REG_DMA3);
   }

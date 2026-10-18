@@ -164,11 +164,12 @@ enum {
 #define TILE_VFLIP 0x800
 
 // The DMA control word that fills count words from one fixed source word.
-#define DMA_FILL32(count) (DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (count))
+#define DMA_FILL32(count)                                                      \
+  ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (count))
 // The DMA control word that copies count words.
-#define DMA_COPY32(count) (DMA_ENABLE32 | DMA_32BIT | (count))
+#define DMA_COPY32(count) ((DMA_ENABLE | DMA_32BIT) << 16 | (count))
 // The DMA control word that copies count halfwords.
-#define DMA_COPY16(count) (DMA_ENABLE32 | (count))
+#define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
 
 // A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99

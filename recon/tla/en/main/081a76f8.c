@@ -46,20 +46,20 @@ s32 Title_ShowAnimatedSplash(void) {
   decode = Ram_MapCellBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
   buffer = decode;
-  Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4,
+  Dma_Set(buffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4,
           REG_DMA3);
   buffer += 0x1c0;
-  Dma_Set(buffer, (void *)0x06003000, DMA_ENABLE32 | DMA_32BIT | 0x800 / 4,
-          REG_DMA3);
+  Dma_Set(buffer, (void *)0x06003000,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800 / 4, REG_DMA3);
   buffer += 0x800;
-  Dma_Set(buffer, BG_CHAR_BLOCK(1), DMA_ENABLE32 | DMA_32BIT | 0x4000 / 4,
+  Dma_Set(buffer, BG_CHAR_BLOCK(1), (DMA_ENABLE | DMA_32BIT) << 16 | 0x4000 / 4,
           REG_DMA3);
   buffer += 0x4000;
   for (i = 0; i < 4; i++) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   Fade_FromWhite(1);
@@ -69,8 +69,8 @@ s32 Title_ShowAnimatedSplash(void) {
     /* FAKEMATCH: the unsigned address sum retains the DMA source operand order.
      */
     Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer),
-            BG_CHAR_BLOCK(1) + 0x100, DMA_ENABLE32 | DMA_32BIT | 0x340 / 4,
-            REG_DMA3);
+            BG_CHAR_BLOCK(1) + 0x100,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
     if (gInput.pressed & (KEY_A | KEY_START))
       break;
     WaitFrames(1);

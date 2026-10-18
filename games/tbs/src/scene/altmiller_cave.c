@@ -285,7 +285,8 @@ static void AltmillerCave_RespawnActorObject(void) {
                                     original->z.fixed);
   if (replacement != 0) {
     Dma_Set(original, replacement,
-            DMA_ENABLE32 | DMA_32BIT | sizeof(struct FieldActor) / 4, REG_DMA3);
+            (DMA_ENABLE | DMA_32BIT) << 16 | sizeof(struct FieldActor) / 4,
+            REG_DMA3);
     original->update = 0;
     work->mainObject = replacement;
     original->spriteStorageKind = 0;

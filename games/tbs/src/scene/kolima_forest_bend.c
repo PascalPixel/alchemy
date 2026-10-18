@@ -352,7 +352,7 @@ s32 KolimaForestBend_SetupBoard(void) {
   Map_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (Engine_GameFlagIsSet(0x109) == 0) {
     Dma_Set(gKolimaForestBend_DefaultRecords, gKolimaForestBendRecords,
-            DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
     *gKolimaForestBendReturned = 0;
     *(*(u16 **)&gKolimaForestBendLayout) = 1;
   }

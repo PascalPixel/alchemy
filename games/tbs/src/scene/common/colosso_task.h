@@ -52,7 +52,7 @@ static void Colosso_LoadPortrait(s32 id) {
   FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering),
                              buf);
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
-          DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gColosso_PortraitSlot, 0x400,
             (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
   Dma_Wait(REG_DMA3);

@@ -159,7 +159,7 @@ static void Title_LoadSprites(s32 unused) {
 #endif
   // Wait for the final DMA transfer before releasing the decode buffer.
   dma3 = REG_DMA3;
-  while (dma3[2] & DMA_ENABLE32)
+  while (dma3[2] & (DMA_ENABLE << 16))
     ;
   MemFree(decodedSprites);
 }

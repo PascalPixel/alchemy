@@ -48,7 +48,8 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   divide = Iwram_UnsignedDivideEntry;
   mul = Iwram_MulQ16;
   dot = (Dot3Fn)code;
-  Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
+  Dma_Set(RelocatedQ16DotProduct, code, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
+          REG_DMA3);
 
   // Unit viewing direction d, from target to eye.
   dx = target[0] - eye[0];

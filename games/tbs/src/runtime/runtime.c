@@ -172,7 +172,7 @@ void System_CopyBuildStamp(void) {
 
   stamp = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
   copy = (struct BuildStampCopy *)&gIwramHi_Data1;
-  Dma_Set(stamp, copy, DMA_ENABLE32 | DMA_32BIT | 3, REG_DMA3);
+  Dma_Set(stamp, copy, (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
   copy->terminator = 0;
 }
 
@@ -279,10 +279,11 @@ void Runtime_InstallIwramAndIrqs(void) {
   // Keep interrupts masked while replacing both the dispatcher and its table.
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
-  Dma_Set(IwramRuntime_Rom, iwram, DMA_ENABLE32 | DMA_32BIT | 0x500, REG_DMA3);
+  Dma_Set(IwramRuntime_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x500,
+          REG_DMA3);
   gIrqVector = iwram;
   Dma_Set(gRuntime_IrqHandlers, gIrqHandlers,
-          DMA_ENABLE32 | DMA_32BIT | IRQ_COUNT, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | IRQ_COUNT, REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
   // Keypad interrupt only when all ten keys are down: in effect off until
   // System_Initialize arms the soft-reset combination.
@@ -395,7 +396,7 @@ void WaitFrames(s32 frames) {
 
     gSavedStackSize = top - base;
     Dma_Set(base, gSavedStack,
-            (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+            (gSavedStackSize >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
     /* FAKEMATCH: the tied top operand retains its DMA lifetime; an input-only
      * operand adds a copy through ip. */
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
@@ -559,10 +560,10 @@ void WaitFrames(s32 frames) {
           nextSize = &gSavedStackSize;
         if (!sp)
           nextSize = &gSavedStackSize;
-        Dma_Set(gSavedStack, base, (*nextSize >> 2) | DMA_ENABLE32 | DMA_32BIT,
-                REG_DMA3);
+        Dma_Set(gSavedStack, base,
+                (*nextSize >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
       }
-      while (DMA3->control & DMA_ENABLE32)
+      while (DMA3->control & (DMA_ENABLE << 16))
         ;
       gSavedStackSize = 0;
     }
@@ -679,8 +680,9 @@ void System_VBlankHandler(void) {
   if (gFrameRenderPending != 0) {
     if (gOamCopyEnabled != 0)
       Dma_Set(((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_FRAME_SCRATCH],
-              OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
-    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+              OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
+    Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4,
+            REG_DMA3);
     IoWriteQueue_FlushPending();
     gFrameRenderPending = 0;
   }
@@ -728,7 +730,7 @@ s32 Sound_LoadPresetParameters(s32 preset) {
     index = 0;
   }
   Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, IwramSoundPresetCode,
-          DMA_ENABLE32 | DMA_32BIT | (SOUND_PRESET_SIZE / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (SOUND_PRESET_SIZE / 4), REG_DMA3);
   return 0;
 }
 
@@ -1167,7 +1169,8 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
       if (src == (const void *)-1) {
         Iwram_ClearWords(dst, size);
       } else {
-        Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE32 | DMA_32BIT), REG_DMA3);
+        Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE | DMA_32BIT) << 16,
+                REG_DMA3);
       }
     }
     return (u32)offset >> 5;
@@ -1983,7 +1986,7 @@ UNUSED void RuntimeMemory_ReservedNoOp(void) {}
 // 0x10000): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
 // Iwram_TransformMatrix multiplies the matrix it is given into gTransform.
 
-#define MTX_DMA (DMA_ENABLE32 | DMA_32BIT | 12) // one matrix
+#define MTX_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | 12) // one matrix
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
@@ -2216,7 +2219,8 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 
   // Copy the dot product routine to the stack and call it there
   dot = (Dot3Fn)code;
-  Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 7, REG_DMA3);
+  Dma_Set(RelocatedQ16DotProduct, code, (DMA_ENABLE | DMA_32BIT) << 16 | 7,
+          REG_DMA3);
 
   // The view axis d, pointing from the target back to the eye, normalized
   dx = target[0] - eye[0];
@@ -2347,8 +2351,8 @@ s32 Render_ProjectPoint(const void *point, s32 *screen) {
 void Resource_DecompressHalfwords(const void *source, void *destination) {
   u32 words = (u32)Resource_DecompressHalfwordsCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(Resource_DecodeHalfwordLz, routine, words | DMA_ENABLE32 | DMA_32BIT,
-          REG_DMA3);
+  Dma_Set(Resource_DecodeHalfwordLz, routine,
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 
@@ -2387,8 +2391,8 @@ void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
                                    u32 bytes) {
   u32 words = (u32)ColorBuffer_BackupAndBrightenCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_BrightenKernel, routine, words | DMA_ENABLE32 | DMA_32BIT,
-          REG_DMA3);
+  Dma_Set(ColorBuffer_BrightenKernel, routine,
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2397,8 +2401,8 @@ void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup,
                                  u32 bytes) {
   u32 words = (u32)ColorBuffer_BackupAndDarkenCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_DarkenKernel, routine, words | DMA_ENABLE32 | DMA_32BIT,
-          REG_DMA3);
+  Dma_Set(ColorBuffer_DarkenKernel, routine,
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2408,7 +2412,7 @@ void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
   u32 words = (u32)ColorBuffer_BackupAndScaleThreeQuartersCodeSize >> 2;
   u32 routine[words];
   Dma_Set(ColorBuffer_ScaleThreeQuartersKernel, routine,
-          words | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -2416,8 +2420,8 @@ void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
 void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes) {
   u32 words = (u32)ColorBuffer_BackupAndHalveCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_HalveKernel, routine, words | DMA_ENABLE32 | DMA_32BIT,
-          REG_DMA3);
+  Dma_Set(ColorBuffer_HalveKernel, routine,
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -2427,7 +2431,7 @@ void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
   u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
   u32 routine[words];
   Dma_Set(ColorBuffer_BrightenPartialKernel, routine,
-          words | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2437,7 +2441,7 @@ void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
   u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;
   u32 routine[words];
   Dma_Set(ColorBuffer_DarkenPartialKernel, routine,
-          words | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2447,7 +2451,7 @@ void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
   u32 words = (u32)ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
   u32 routine[words];
   Dma_Set(ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine,
-          words | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -2456,7 +2460,7 @@ void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
   u32 words = (u32)ColorBuffer_BackupAndHalveNonzeroCodeSize >> 2;
   u32 routine[words];
   Dma_Set(ColorBuffer_HalveNonzeroKernel, routine,
-          words | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+          words | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -3078,7 +3082,7 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
     sum = 0;
     pkt[1] = recv ^ cur;
     *(u16 *)(pkt + 2) = sum;
-    Dma_Set(payload, pkt + 4, DMA_ENABLE32 | DMA_32BIT | 6, REG_DMA3);
+    Dma_Set(payload, pkt + 4, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
   }
   {
     u16 *pkt;

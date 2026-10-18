@@ -39,7 +39,7 @@ void BattlePres_ProcessPendingTileTransfer(void) {
     buf = Ram_HeapSlots->battleFxWork[1];
     switch (work->transferMode) {
     case 1: // Send it, then fill it with transferValue.
-      Dma_Set(buf, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x2000,
+      Dma_Set(buf, (void *)0x06003500, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000,
               REG_DMA3);
       /* FAKEMATCH: the fill goes through the inline wrapper
        * BattlePres_FillWords, as ☀️'s IWRAM call layer; called directly, the

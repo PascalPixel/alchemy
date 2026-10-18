@@ -30,8 +30,8 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
   }
   fill = v;
   Dma_Set((const void *)&fill, (void *)vram,
-          DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 7680, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 7680, REG_DMA3);
   fill = 0;
   Dma_Set((const void *)&fill, (void *)pal,
-          DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 64, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 }

@@ -193,7 +193,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
                                      (s32)Render_DecodeFrameCodeSize);
     Dma_Set(Render_DecodeFrame, code,
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
-                (DMA_ENABLE32 | DMA_32BIT),
+                (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
     decodeFrame =
         (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
@@ -5448,7 +5448,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   sourceTiles = decodedTile;
   quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
-    Dma_Set(sourceTiles, quarterCells, DMA_ENABLE32 | DMA_32BIT | 0x10,
+    Dma_Set(sourceTiles, quarterCells, (DMA_ENABLE | DMA_32BIT) << 16 | 0x10,
             REG_DMA3);
     sourceTiles += 32;
     quarterCells += 128;
@@ -5677,22 +5677,23 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   backdropColor = BG_PALETTE[0];
   Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
-  Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+  Dma_Set(buffer, BG_PALETTE, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   tiles = gBgTileBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resources[1]), tiles);
-  Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+  Dma_Set(tiles, BG_CHAR_BLOCK(2), (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
+          REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[2]),
                         Ram_BgTileBuffer + 0x2000);
   Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
-          DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[3]),
                         Ram_BgTileBuffer + 0x4000);
   Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3),
-          DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[4]),
                         Ram_BgTileBuffer + 0x6000);
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
-          DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
@@ -5985,7 +5986,7 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void) {
 void MapAnimation_PresentFrame(void) {
   Io_Write16(0x682, &REG_BG1CNT);
   Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-          DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
 }
 
 // Starts a full-screen BG1 animation on the world map: saves BG1's tiles,
@@ -5997,8 +5998,8 @@ void MapAnimation_Start(void) {
 
   perspective->animationActive = one;
   Scheduler_SuspendTasks(MapAnimation_Update);
-  Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800,
-          REG_DMA3);
+  Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   WaitFrames(1);
   Resource_RunCopiedDecoder((s32)frameWork->pages[gFrameCount & one],
                             (s32)gMapCellBuffer);
@@ -6028,7 +6029,7 @@ void Map_LoadAreaGraphics(void) {
   Resource_DecodeByteLz(Resource_GetTableEntry(graphicsResources[0]),
                         decodeBuffer);
   *(s16 *)decodeBuffer = backdropColor;
-  Dma_Set(decodeBuffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x70,
+  Dma_Set(decodeBuffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(graphicsResources[1]),
                         gBgTileBuffer);
@@ -6110,20 +6111,20 @@ void MapAnimation_Update(void) {
         if (sourceTileOrOpcode >= 0x600)
           Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * 32,
                   BG_CHAR_BLOCK(1) + destinationTile * 32,
-                  DMA_ENABLE32 | DMA_32BIT | tileCount * 8, REG_DMA3);
+                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 8, REG_DMA3);
         else
           Dma_Set(BG_CHAR_BLOCK(1) + sourceTileOrOpcode * 32,
                   BG_CHAR_BLOCK(1) + destinationTile * 32,
-                  DMA_ENABLE32 | DMA_32BIT | tileCount * 8, REG_DMA3);
+                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 8, REG_DMA3);
       } else {
         if (sourceTileOrOpcode >= 0x200)
           Dma_Set(Ram_MapBlocks + sourceTileOrOpcode * 64,
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
-                  DMA_ENABLE32 | DMA_32BIT | tileCount * 16, REG_DMA3);
+                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
         else
           Dma_Set(BG_CHAR_BLOCK(2) + sourceTileOrOpcode * 64,
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
-                  DMA_ENABLE32 | DMA_32BIT | tileCount * 16, REG_DMA3);
+                  (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
       }
       (mapState->anim + channelIndex)->cursor += 4;
       goto next;

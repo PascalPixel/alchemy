@@ -153,7 +153,8 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
     } while (--n >= 0);
     zero = 0;
     Dma_Set(&zero, work,
-            (DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32) | (sizeof(*work) / 4),
+            ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
+                (sizeof(*work) / 4),
             REG_DMA3);
   }
 }

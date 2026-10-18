@@ -55,7 +55,7 @@
 // The fragments' registers and modes are described at the top of
 // battle_effect_composite.s.
 
-#define DMA_COPY_WORDS(n) (DMA_ENABLE32 | DMA_32BIT | (n))
+#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
 
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)

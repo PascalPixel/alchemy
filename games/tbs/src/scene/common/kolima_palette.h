@@ -53,21 +53,21 @@ static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj) {
 
 static void KolimaPalette_SaveFirst(void) {
   Dma_Set(gPaletteBufferWork->palette, gKolimaPalette_First,
-          DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0, REG_DMA3);
 }
 
 static void KolimaPalette_SaveSecond(void) {
   Dma_Set(gPaletteBufferWork->palette, gKolimaPalette_Second,
-          DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0, REG_DMA3);
 }
 
 static void KolimaPalette_Capture(void) {
   u16 *buf = gPaletteBufferWork->palette;
 
-  Dma_Set((const void *)BG_PLTT, buf, DMA_ENABLE32 | DMA_32BIT | 0x70,
+  Dma_Set((const void *)BG_PLTT, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, buf + 0xe0, DMA_ENABLE32 | DMA_32BIT | 0x70,
-          REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, buf + 0xe0,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   Engine_ColorBufferApplySource(0x10000, 0);
 }
 
@@ -75,10 +75,10 @@ void KolimaPalette_Restore(s32 second) {
   u16 *buf = gPaletteBufferWork->palette;
 
   if (second)
-    Dma_Set(gKolimaPalette_Second, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0,
+    Dma_Set(gKolimaPalette_Second, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0,
             REG_DMA3);
   else
-    Dma_Set(gKolimaPalette_First, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0,
+    Dma_Set(gKolimaPalette_First, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0,
             REG_DMA3);
   Engine_ColorBufferApplyTarget(0x10000, 0);
   KolimaPalette_Capture();

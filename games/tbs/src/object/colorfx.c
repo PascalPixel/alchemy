@@ -103,7 +103,7 @@ void ReelGame_TransferCanvas(void) {
     buf = gBattleFxWork[1];
     switch (work->transferMode) {
     case 1: // then fill the canvas with transferValue
-      Dma_Set(buf, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x2000,
+      Dma_Set(buf, (void *)0x06003500, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000,
               REG_DMA3);
       Iwram_FillWords(buf, 0x8000, work->transferValue);
       break;
@@ -174,7 +174,7 @@ void Palette_StepTowardResource(s32 resource) {
   s32 i;
 
   Dma_Set(Resource_GetTableEntry(resource), dst,
-          DMA_ENABLE32 | DMA_32BIT | 0x20, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x20, REG_DMA3);
   for (i = 0; i != 64; i++, col++) {
     s32 r = *col & 0x1f;
     s32 g = (*col >> 5) & 0x1f;
@@ -197,7 +197,7 @@ void Palette_StepTowardResource(s32 resource) {
       b--;
     dst[i] = (b << 10) | (g << 5) | r;
   }
-  Dma_Set(dst + 1, (void *)&BG_PLTT[1], DMA_ENABLE32 | 63, REG_DMA3);
+  Dma_Set(dst + 1, (void *)&BG_PLTT[1], (DMA_ENABLE << 16) | 63, REG_DMA3);
 }
 
 // Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
@@ -869,7 +869,8 @@ void ReelGame_RunFrame(void) {
     sprite++;
   }
 
-  Dma_Set(work->obj, OAM, (sprite * 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+  Dma_Set(work->obj, OAM, (sprite * 2) | (DMA_ENABLE | DMA_32BIT) << 16,
+          REG_DMA3);
 }
 
 // Sets up the bouncing title letters of a win, the brightness wave of the
@@ -981,8 +982,8 @@ void ReelGame_Run(void) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsFramePicture);
-  Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0), DMA_ENABLE32 | DMA_32BIT | 8,
-          REG_DMA3);
+  Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   entry += 32;
   Resource_DecodeType01(entry, tiles);
   j = 0;
@@ -991,7 +992,7 @@ void ReelGame_Run(void) {
       if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
         Dma_Set(tiles + (k * 30 + i) * 32,
                 (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j),
-                DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
+                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         j += 32;
       }
     }
@@ -1039,19 +1040,19 @@ void ReelGame_Run(void) {
     work->frame = 0;
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
-            (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
+            (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 32, REG_DMA3);
     BG_PLTT_COLOR(4, 0) = 0x2f8b;
     BG_PLTT_COLOR(4, 1) = 0x5bf6;
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
-    Dma_Set(entry, (void *)OBJ_PLTT, DMA_ENABLE32 | DMA_32BIT | 480 / 4,
+    Dma_Set(entry, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 480 / 4,
             REG_DMA3);
     entry += 480;
     Resource_DecodeType01(entry, tiles);
-    Dma_Set(tiles, (void *)0x06010000, DMA_ENABLE32 | DMA_32BIT | 0x1b30,
+    Dma_Set(tiles, (void *)0x06010000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b30,
             REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpot);
-    Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_ENABLE32 | DMA_32BIT | 8,
-            REG_DMA3);
+    Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0),
+            (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
     entry += 32;
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)REEL_JACKPOT_TILES, REEL_JACKPOT_COPY, REG_DMA3);
@@ -1093,10 +1094,12 @@ void ReelGame_Run(void) {
     BattleEffect_LoadWorkFar(47, 8, 7, 3, 3);
     draw[1] = gWorkSlot[47];
     Iwram_FillWords(canvas, size, 0);
-    Dma_Set(canvas, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x8000 / 4,
+    Dma_Set(canvas, (void *)0x06003500,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x8000 / 4, REG_DMA3);
+    Dma_Set((void *)BG_PLTT, work, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
             REG_DMA3);
-    Dma_Set((void *)BG_PLTT, work, DMA_ENABLE32 | DMA_32BIT | 0x80, REG_DMA3);
-    Dma_Set((void *)OBJ_PLTT, shade, DMA_ENABLE32 | DMA_32BIT | 0x80, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+            REG_DMA3);
     Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
     Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |

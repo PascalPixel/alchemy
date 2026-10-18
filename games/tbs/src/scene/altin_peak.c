@@ -2260,7 +2260,7 @@ static void AltinPeak_StepPaletteAnim(void) {
     }
     gAltinPeak_PaletteHold = gAltinPeak_PaletteScript[gAltinPeak_PaletteStep++];
     palette += frame;
-    Dma_Set(palette, (void *)0x05000006, DMA_ENABLE32 | 9, REG_DMA3);
+    Dma_Set(palette, (void *)0x05000006, (DMA_ENABLE << 16) | 9, REG_DMA3);
   }
   gAltinPeak_PaletteHold--;
 }

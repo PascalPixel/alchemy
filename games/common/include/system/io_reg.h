@@ -165,13 +165,33 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)
 #define REG_RCNT (*(volatile u16 *)0x04000134)
 
+// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
+#define DMA_DEST_INC 0x0000
+#define DMA_DEST_DEC 0x0020
+#define DMA_DEST_FIXED 0x0040
+#define DMA_DEST_RELOAD 0x0060
+#define DMA_SRC_INC 0x0000
+#define DMA_SRC_DEC 0x0080
+#define DMA_SRC_FIXED 0x0100
+#define DMA_REPEAT 0x0200
+#define DMA_16BIT 0x0000
+#define DMA_32BIT 0x0400
+#define DMA_DREQ_ON 0x0800
+#define DMA_START_NOW 0x0000
+#define DMA_START_VBLANK 0x1000
+#define DMA_START_HBLANK 0x2000
+#define DMA_START_SPECIAL 0x3000
+#define DMA_INTR_ENABLE 0x4000
 #define DMA_ENABLE 0x8000
 // A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
 // and repeat (bit 9): the bits cleared before a channel is stopped.
-#define DMA_START_TIMING_DRQ_REPEAT 0x3a00
-#define DMA_32BIT 0x04000000
-#define DMA_SRC_FIXED32 0x01000000
-#define DMA_ENABLE32 0x80000000
+#define DMA_START_TIMING_DRQ_REPEAT                                            \
+  (DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT)
+
+// BIOS CpuSet control flags, above its count.
+#define CPU_SET_SRC_FIXED 0x01000000
+#define CPU_SET_32BIT 0x04000000
 
 #define OAM ((void *)0x07000000)
 enum KeyMask {

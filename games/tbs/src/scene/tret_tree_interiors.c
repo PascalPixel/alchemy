@@ -635,7 +635,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
 // Save background palettes 0 to 13 as the base for Tret's scene tint.
 static void TretPalette_SaveSceneColors(void) {
   Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
-          DMA_ENABLE32 | DMA_32BIT | 112, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
 }
 
 // Tint background colours 16 to 78 every thirty-two frames, leaving

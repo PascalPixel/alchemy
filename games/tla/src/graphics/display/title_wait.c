@@ -12,7 +12,7 @@
 extern char ResourceId_Data018;
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define DATA018_TILE_BYTES 0xa000
 #else
@@ -28,7 +28,7 @@ void Func_081a6030(void) {
 
   REG_DISPCNT = 0;
   source = Resource_GetTableEntry((s32)&ResourceId_Data018);
-  Dma_Set(source, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (0x200 / 4),
+  Dma_Set(source, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | (0x200 / 4),
           REG_DMA3);
   BG_PLTT[0] = 0;
   /* FAKEMATCH: a one-pass block loads the cell buffer's address before 0x200 is
@@ -39,7 +39,7 @@ void Func_081a6030(void) {
   } while (0);
   Resource_DecodeByteLzInRam(source + 0x200, cells);
   Dma_Set(cells, (void *)0x06000000,
-          DMA_ENABLE32 | DMA_32BIT | (DATA018_TILE_BYTES / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (DATA018_TILE_BYTES / 4), REG_DMA3);
 }
 
 s32 Title_WaitFramesOrPress(u32 frames) {

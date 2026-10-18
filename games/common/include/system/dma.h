@@ -1,6 +1,7 @@
 #ifndef GUARD_DMA_H
 #define GUARD_DMA_H
 
+#include "io_reg.h"
 #include "types.h"
 
 // DMA channel registers (DMAxSAD, DMAxDAD, DMAxCNT).
@@ -13,14 +14,16 @@ struct DmaRegisters {
 #define Dma_Fill16(value, destination, size)                                   \
   {                                                                            \
     volatile u16 fill_ = (value);                                              \
-    Dma_Set((const void *)&fill_, (destination), 0x81000000 | ((size) / 2),    \
+    Dma_Set((const void *)&fill_, (destination),                               \
+            (DMA_ENABLE | DMA_SRC_FIXED) << 16 | ((size) / 2),                 \
             (volatile u32 *)0x040000d4);                                       \
   }
 
 #define Dma_Fill32(value, destination, size)                                   \
   {                                                                            \
     volatile u32 fill_ = (value);                                              \
-    Dma_Set((const void *)&fill_, (destination), 0x85000000 | ((size) / 4),    \
+    Dma_Set((const void *)&fill_, (destination),                               \
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
             (volatile u32 *)0x040000d4);                                       \
   }
 
@@ -34,7 +37,8 @@ struct DmaRegisters {
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \
-    Dma_Set((const void *)&(cell), (destination), 0x85000000 | ((size) / 4),   \
+    Dma_Set((const void *)&(cell), (destination),                              \
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
             (volatile u32 *)0x040000d4);                                       \
   }
 
@@ -43,7 +47,7 @@ struct DmaRegisters {
   {                                                                            \
     volatile u32 fill_ = (value);                                              \
     Bios_CpuSet((const void *)&fill_, (destination),                           \
-                0x05000000 | ((size) / 4));                                    \
+                CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4));             \
   }
 
 /* Unpinning trials: an ordinary input-only channel stays in r4 across

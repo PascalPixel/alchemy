@@ -254,10 +254,12 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
   s32 result;
 
   Dma_Set(palette, saved,
-          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
+          REG_DMA3);
   result = Runtime_BlankDisplayAndRunFar(entrance);
   Dma_Set(saved, palette,
-          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
+          REG_DMA3);
   MemFree(saved);
   return result;
 }
@@ -269,10 +271,12 @@ static __inline__ s32 RunReelGame(s32 entrance) {
   s32 result;
 
   Dma_Set(palette, saved,
-          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
+          REG_DMA3);
   result = ReelGame_StartFar(entrance);
   Dma_Set(saved, palette,
-          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
+          REG_DMA3);
   MemFree(saved);
   return result;
 }
@@ -5330,9 +5334,9 @@ void BattlePalette_UpdateBlend(void) {
     u16 *packed = work->packed[work->page];
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
-                        DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2));
+                        (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2));
     IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + COLOR_HALF),
-                        DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2));
+                        (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2));
   }
 }
 
@@ -5375,7 +5379,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
     *dst++ = (mode & 0x001f) << 10;
-    Dma_Set(dst - 3, dst, (((colorCount - 1) * 6) >> 1) | DMA_ENABLE32,
+    Dma_Set(dst - 3, dst, (((colorCount - 1) * 6) >> 1) | (DMA_ENABLE << 16),
             REG_DMA3);
   } else if (mode < PALETTE_TRANSFORM_FLAGS) {
     switch (mode) {
@@ -5606,7 +5610,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     if (half == 2)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst,
-            ((colorCount * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+            ((colorCount * 6) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   }
 }
 
@@ -5618,9 +5622,9 @@ void BattleEffect_InitializeBuffers(void) {
   work = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   Dma_Set((void *)BG_PLTT, &work->palette[0],
-          DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
-          DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
   BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, work->palette, work->target, 0);
   Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
 }

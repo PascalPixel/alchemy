@@ -9693,12 +9693,12 @@ void Map_ShowWorldMap(s32 picture) {
   WaitFrames(1);
   blend = REG_BLDALPHA;
   graphics = Resource_GetTableEntry(resource);
-  Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4),
+  Dma_Set(graphics, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4),
           REG_DMA3);
   BG_PLTT[0] = 0;
   Resource_DecodeType01(graphics + 448, gMapCellBuffer);
   Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-          DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (240 * 160 / 4), REG_DMA3);
   Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
   Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                  DISPCNT_OBJ_1D_MAP,

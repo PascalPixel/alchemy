@@ -425,12 +425,10 @@ s32 NameEntry_EditOwnerName(s32 member) {
           u8 *dstSave = dst;
           u8 *srcSave = src;
 
-          /* FAKEMATCH: the split restores end the pointer setup's
-           * CSE blocks. They disappear, preserving destination/
-           * source/index in r2/r1/r0; removing the barrier alone
-           * changes them to r1/r0/r2 (14 instructions differ). A for loop
-           * copying name[i] = input[i], or walking the pointers,
-           * differs 14; the while form with i declared first, 12. */
+          /* FAKEMATCH(dead): saved pointers and restores that never change
+           * them end the pointer setup's CSE blocks and emit nothing, keeping
+           * destination, source and index in r2, r1 and r0; without them, 9
+           * of 506 instructions differ in tbs-en. */
           if (originalName)
             src = NULL;
           if (originalName)
@@ -725,12 +723,10 @@ s32 NameEntry_EditOwnerName(s32 member) {
           dst = originalName;
           src = editedName;
           i = 0;
-          /* FAKEMATCH: the split restores end the pointer setup's
-           * CSE blocks. They disappear, preserving destination/
-           * source/index in r1/r2/r0; removing the barrier alone
-           * changes them to r2/r0/r1 (14 instructions differ). A for loop
-           * copying name[i] = input[i] differs 18, one walking the
-           * pointers 14; the while form with i declared first, 12. */
+          /* FAKEMATCH(dead): saved pointers and restores that never change
+           * them end the pointer setup's CSE blocks and emit nothing, keeping
+           * destination, source and index in r1, r2 and r0; without them, 11
+           * of 663 instructions differ in tbs-ja. */
           dstSave = dst;
           srcSave = src;
           if (keyboardWindow->height)

@@ -481,13 +481,10 @@ s32 DebugMenu_BrowseEntryGlyphs(void) {
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
       {
-        /* FAKEMATCH: the word temporary is needed to match palette's
-         * r2 through the slot store; direct assignment chooses r3.
-         * 2026-10-13: slot assigned directly with 15 passed as a
-         * literal differs 4 of 179 (the 15 takes r3 after the slot
-         * store); so do the loaded temporary alone, the load
-         * written as an index and the assignment inside the
-         * argument list; pal alone, without loaded, differs 69. */
+        /* FAKEMATCH(temporary): the slot loaded through a word temporary and
+         * the palette in a local keep the palette in r2 through the slot
+         * store; as the slot assigned directly and 15 passed, 4 of 179
+         * instructions differ in tbs-en. */
         s32 palette;
         s32 loadedSlot = *(u16 *)((u8 *)work + slotOffset);
         palette = 15;

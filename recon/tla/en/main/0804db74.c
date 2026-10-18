@@ -1,3 +1,9 @@
+// Near miss, differ 2 of 107, 2026-10-18: picks a destination (primary and
+// secondary) in a row menu and travels there. Remaining: the native builds
+// secondary's stack address (movs r1, #10) before the offset load's zero and
+// adds sp after the ldrsh; this adds sp first. Read through a temporary behind
+// a second one-pass block, the add stays and the movs moves late (differ 2); a
+// pointer to secondary measures 27. Four permuter minutes found nothing.
 #include "types.h"
 #include "system.h"
 #include "tla_edition.h"
@@ -37,6 +43,10 @@ s16 Menu_RunSelection(void) {
 
   work = 0;
   mode = 0;
+  /* FAKEMATCH: the one-pass block issues gPartyState's pool load before
+     the offset of primary, as the native does (differ 4 without). */
+  do {
+  } while (0);
   primary = gPartyState.primary;
   secondary = gPartyState.secondary;
   work = UiWindow_Create(0, 7, 30, 5, 2);

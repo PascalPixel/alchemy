@@ -13,6 +13,13 @@
 #define SELECT_MENU_WIDTH 5
 #endif
 
+// The save-slot action menu's width.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+#define SAVE_SLOT_MENU_WIDTH 7
+#else
+#define SAVE_SLOT_MENU_WIDTH 4
+#endif
+
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 #define MENU_TEXT_X 74
 #define MENU_TEXT_Y 60

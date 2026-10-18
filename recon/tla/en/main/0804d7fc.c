@@ -1,13 +1,15 @@
-// Near miss, differ 6 of 147 (three reordered pairs), 2026-10-15: The
+// Near miss, differ 4 of 147 (two reordered pairs), 2026-10-18: The
 // Broken Seal's Menu_SelectResourceLayout with the mode reduced to its low
 // bit, callbacks at 0x476 and the English edition's windows. Messages 4472
 // ("Transfer Method") and 4473 ("Password Entry") are pool symbols the
 // catalogs must name before adoption (MsgTransferMethodX and
-// MsgPasswordEntryX here). Remaining: the native loads the message from the
-// pool before it forms the upper window's address and stores the window,
-// and in the transfer case loads the message before the two coordinates;
-// this does each load one or two rows later. Messages assigned after the
-// window store or tied to an empty asm measure the same.
+// MsgPasswordEntryX here). Remaining, in the password case: the native
+// forms the upper window's address (adds r6, r7) before it copies the new
+// window to r1, and moves the message to r0 before it stores the window;
+// this copies first and stores first. One-pass blocks after the message's
+// load (differ 4) or after the store (the store stays first) do not help.
+// Messages assigned after the window store or tied to an
+// empty asm measure the same.
 
 #include "battle.h"
 #include "debug.h"
@@ -69,6 +71,10 @@ s32 Func_0804d7fc(s32 mode) {
     window = UiWindow_Create(6, 0, 18, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
+    /* FAKEMATCH: the one-pass block issues the message's pool load ahead
+       of the two coordinates, as the native does (differ 6 without). */
+    do {
+    } while (0);
     UiText_DrawResource((s32)MsgTransferMethodX, (s32)window, 12, 4);
     work->lowerWindow = UiWindow_Create(5, 5, 21, 7, 2);
   }

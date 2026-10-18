@@ -1,0 +1,319 @@
+// Part of shop.c, the shop object, compiled only through it.
+// Selling: choosing a party member, the item grid and the sale.
+
+#include "../shop_internal.h"
+
+// Selects whose inventory to sell or repair, returning to the party list after
+// each operation.
+s32 Shop_PickUnit(void) {
+  struct ShopRuntime *shop = gMenuWork;
+  struct UiWindow *listWindow;
+  s32 memberIndex = 0;
+  s32 redraw = 1;
+  s32 unitId = 0;
+
+  shop->moneyWindow = UiWindow_CreateFar(0, 9, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
+  Shop_DrawMoney();
+  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
+  listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+  shop->cursor.anchor->active = 4;
+  shop->mode = 12;
+  PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
+
+  for (;;) {
+    if (redraw != 0) {
+      redraw = 0;
+      memberIndex =
+          (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+      unitId = shop->partyMemberIds[memberIndex];
+      Shop_PlaceCursor(listWindow, memberIndex * 24 - 12, 0);
+      shop->mode = 3;
+      Shop_DrawParty(listWindow, memberIndex, 0);
+      Shop_DrawUnitGrid(shop->itemWindow, unitId);
+    }
+
+    if ((gKeysPressed & KEY_A) != 0) {
+      WaitFrames(1);
+      if (Inventory_CountFar(unitId) == 0) {
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
+      } else {
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        if (shop->partyAction == SHOP_ACTION_SELL)
+          Shop_SelectSell(unitId);
+        else
+          Shop_SelectRepair(unitId);
+        shop->cursor.anchor->active = 4;
+        shop->mode = 12;
+        redraw = 1;
+      }
+      continue;
+    }
+
+    if ((gKeysPressed & KEY_B) != 0) {
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Menu_ReleaseEntryObjectsFar();
+      UiWork_FinalizeFar(listWindow, 2);
+      UiWork_FinalizeFar(shop->itemWindow, 2);
+      UiWork_FinalizeFar(shop->moneyWindow, 2);
+      WaitFrames(1);
+      return 0;
+    }
+
+    if ((gKeysRepeat & KEY_LEFT) != 0) {
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      memberIndex--;
+      redraw = 1;
+    }
+    if ((gKeysRepeat & KEY_RIGHT) != 0) {
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      memberIndex++;
+      redraw = 1;
+    }
+    WaitFrames(1);
+  }
+}
+
+// Selects an inventory slot and quantity to sell, repeating until cancelled or
+// the inventory is empty.
+// Shared previous/next-row inlines added four bytes to each sell, repair and
+// use picker in the English native build; the direct row arithmetic remains.
+s32 Shop_SelectSell(s32 unitId) {
+  struct UiWindow *descriptionWindow;
+  struct ShopRuntime *shop;
+  struct UiWindow *priceWindow;
+  struct BattleUnit *unit;
+  s32 slot;
+  s32 inventoryCount;
+  s32 redraw;
+  s32 result;
+  s32 itemId;
+  s32 quantity;
+  struct UiWindow *window;
+  s32 x;
+
+  shop = gMenuWork;
+  unit = UnitGetFar(unitId);
+  inventoryCount = 1;
+  priceWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+  slot = 0;
+
+  for (;;) {
+    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+    shop->cursor.anchor->active = 18;
+    shop->mode = 12;
+    redraw = 1;
+
+    while (1) {
+      if (redraw != 0) {
+        redraw = 0;
+        inventoryCount = Inventory_CountFar(unitId);
+        if (slot > inventoryCount - 1)
+          slot = inventoryCount - 1;
+        itemId = ITEM_ID_MASK & unit->inventory[slot];
+        window = shop->itemWindow;
+        x = slot % SHOP_INVENTORY_COLUMNS * 16;
+        Shop_PlaceCursor(window, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
+        shop->mode = 3;
+        Shop_DrawItemPrice(priceWindow, itemId,
+                           Shop_SalePrice(unit->inventory[slot]), 1);
+        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
+      }
+
+      if ((gKeysPressed & KEY_A) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        result = 0;
+        break;
+      }
+      if ((gKeysPressed & KEY_B) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        result = -1;
+        break;
+      }
+      if ((gKeysRepeat & KEY_LEFT) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        slot -= 1;
+        slot = (slot + inventoryCount) % inventoryCount;
+        redraw = 1;
+      }
+      if ((gKeysRepeat & KEY_RIGHT) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        slot += 1;
+        slot = (slot + inventoryCount) % inventoryCount;
+        redraw = 1;
+      }
+      if ((gKeysRepeat & KEY_UP) != 0) {
+        slot -= SHOP_INVENTORY_COLUMNS;
+        if (slot < 0)
+          slot += INVENTORY_SLOTS;
+        while (slot >= inventoryCount)
+          slot -= SHOP_INVENTORY_COLUMNS;
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        redraw = 1;
+      }
+      if ((gKeysRepeat & KEY_DOWN) != 0) {
+        slot += SHOP_INVENTORY_COLUMNS;
+        if (slot >= inventoryCount)
+          slot -= INVENTORY_SLOTS;
+        while (slot < 0)
+          slot += SHOP_INVENTORY_COLUMNS;
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        redraw = 1;
+      }
+      WaitFrames(1);
+    }
+
+    UiWork_FinalizeFar(descriptionWindow, 2);
+    WaitFrames(1);
+    if (result != 0)
+      break;
+
+    quantity = Shop_SelectSellNum(unitId, slot);
+    if (quantity != -1)
+      Shop_SellItem(unitId, slot, quantity);
+    UiMessage_ShowAndWait(MsgSellAnythingElse);
+    if (Inventory_CountFar(unitId) == 0)
+      break;
+  }
+
+  UiWork_FinalizeFar(priceWindow, 2);
+  return result;
+}
+
+// Draws all fifteen inventory slots in five columns, including any empty
+// positions.
+void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
+  struct BattleUnit *unit;
+  s32 x;
+  s32 y;
+  s32 slot;
+  struct RenderOutput *icon;
+
+  unit = UnitGetFar(unitId);
+  x = 8;
+  y = 0;
+  if (window != 0) {
+    RenderOutput_PrepareForRedrawFar(window);
+    if (Inventory_CountFar(unitId) == 0) {
+      UiText_DrawResourceFar(MsgNoItems, window, SHOP_EMPTY_GRID_X,
+                             SHOP_EMPTY_GRID_Y);
+    } else {
+      slot = 0;
+      do {
+        if (unit->inventory[slot] != 0) {
+          icon = RenderOutput_CreateLoadedFar(unit->inventory[slot], 27, window,
+                                              x, y);
+          icon->sentinel = 252;
+        }
+        x += 16;
+        if (slot == 4) {
+          x = 8;
+          y += 16;
+        }
+        if (slot == 9) {
+          x = 8;
+          y += 16;
+        }
+        slot++;
+      } while (slot <= 14);
+    }
+  }
+}
+
+// Asks how many to sell only for stacks larger than one, restoring the cursor
+// afterward.
+s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
+  s32 result;
+  s16 savedX;
+  s16 savedY;
+  s32 unitSalePrice;
+  s32 stackQuantity;
+  s32 quantityLimit;
+  struct ItemDefinition *item;
+  struct ShopRuntime *shop;
+  struct BattleUnit *unit;
+
+  shop = gMenuWork;
+  unit = UnitGetFar(unitId);
+  item = Item_GetDirectFar(unit->inventory[slot]);
+  result = 1;
+  unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
+  stackQuantity = Shop_GetSelectionState(unitId, slot);
+  quantityLimit = stackQuantity;
+  if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
+    UiMessage_ShowAndWait(MsgHowManyToSell);
+    savedX = shop->cursor.targetX;
+    savedY = shop->cursor.targetY;
+    shop->cursor.anchor->active = 4;
+    shop->mode = 0xc;
+    Shop_PlaceCursor(NULL, SHOP_QUANTITY_CURSOR_X, 0x30);
+    result = Shop_SelectQuantity(0, quantityLimit, unitSalePrice);
+    WaitFrames(1);
+    UiIcon_PrepareObjectFar(shop->cursor.anchor);
+    Shop_PlaceCursor(NULL, savedX, savedY);
+  }
+  return result;
+}
+
+// Checks the offer and restrictions, discards the chosen count, then credits
+// coins and redraws.
+void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
+  struct ShopRuntime *shop = gMenuWork;
+  struct BattleUnit *unit = UnitGetFar(unitId);
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
+  u8 rare = item->flags & 4;
+  s32 sellingReplacedItem = 0;
+  s32 total;
+  s32 message;
+  s32 soldCount;
+
+  if (count == -1) {
+    sellingReplacedItem = 1;
+    count = 1;
+  }
+  total = Shop_SalePrice(unit->inventory[slot]) * count;
+  if (total == 0) {
+    UiWork_PushValueSlotFar(itemId, 2);
+    UiMessage_ShowAndRestoreState(MsgWeDoNotBuy);
+    return;
+  }
+  if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
+      (item->flags & ITEM_CANNOT_UNEQUIP)) {
+    UiWork_PushValueSlotFar(itemId, 2);
+    UiMessage_ShowAndRestoreState(MsgCannotSellEquipped);
+    return;
+  }
+  if (sellingReplacedItem)
+    message = MsgOldItemSellOffer;
+  else if (unit->inventory[slot] & INVENTORY_BROKEN)
+    message = MsgDamagedSellOffer;
+  else if (count > 1)
+    message = MsgSellTotal;
+  else if (rare)
+    message = MsgRareSellOffer;
+  else
+    message = MsgSellOffer;
+  UiWork_PushValueSlotFar(itemId, 2);
+  UiWork_PushValueSlotFar(total, 5);
+  UiMessage_ShowAndRestoreState(message);
+  if (UiMessage_ShowChoice(0) != 0) {
+    if (rare || sellingReplacedItem)
+      message = MsgKeepIt;
+    else
+      message = MsgChangedMind;
+    UiMessage_ShowAndRestoreState(message);
+    return;
+  }
+  // Discard each item before crediting coins and rebuilding the inventory grid.
+  AudioCommand_PlayFar(SE_102);
+  for (soldCount = 0; soldCount < count; soldCount++)
+    Inventory_DiscardFar(unitId, slot);
+  Party_AdjustCoinsFar(total);
+  Shop_DrawMoney();
+  Shop_DrawUnitGrid(shop->itemWindow, unitId);
+  if (rare || sellingReplacedItem)
+    message = MsgSold;
+  else
+    message = MsgDeal;
+  UiMessage_ShowAndRestoreState(message);
+}

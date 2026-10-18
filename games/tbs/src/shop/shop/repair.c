@@ -1,0 +1,193 @@
+// Part of shop.c, the shop object, compiled only through it.
+// Repairing broken items.
+
+#include "../shop_internal.h"
+
+// Returns one quarter of the base price for broken items, or zero for intact
+// items.
+s32 Shop_RepairPrice(s32 inventoryEntry) {
+  s32 repairCost = Item_GetDirectFar(inventoryEntry)->price / 4;
+
+  if ((inventoryEntry & INVENTORY_BROKEN) == 0) {
+    repairCost = 0;
+  }
+  return repairCost;
+}
+
+// Preserves the original repair-owner wrapper and its zero result.
+s32 Shop_SelectUnit(void) {
+  Shop_PickUnit();
+  return 0;
+}
+
+// Selects an inventory slot for repair and repeats until cancelled or the
+// inventory is empty.
+s32 Shop_SelectRepair(s32 unitId) {
+  struct ShopRuntime *shop;
+  s32 inventoryCount;
+  struct UiWindow *descriptionWindow;
+  struct UiWindow *priceWindow;
+  struct BattleUnit *unit;
+  s32 slot;
+  s32 redraw;
+  s32 result;
+  s32 itemId;
+  s32 repairCost;
+  struct UiWindow *window;
+  s32 x;
+  s32 y;
+
+  shop = gMenuWork;
+  unit = UnitGetFar(unitId);
+  inventoryCount = 1;
+  priceWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+  slot = 0;
+
+  for (;;) {
+    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+    shop->cursor.anchor->active = 18;
+    shop->mode = 12;
+    redraw = 1;
+
+    while (1) {
+      if (redraw != 0) {
+        redraw = 0;
+        inventoryCount = Inventory_CountFar(unitId);
+        if (slot > inventoryCount - 1)
+          slot = inventoryCount - 1;
+        itemId = ITEM_ID_MASK & unit->inventory[slot];
+        window = shop->itemWindow;
+        x = slot % SHOP_INVENTORY_COLUMNS * 16;
+        y = slot / SHOP_INVENTORY_COLUMNS * 16 + 8;
+        Shop_PlaceCursor(window, x, y);
+        shop->mode = 3;
+        repairCost = Shop_RepairPrice(unit->inventory[slot]);
+        Shop_DrawItemPrice(priceWindow, itemId, repairCost, 2);
+        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
+      }
+      if ((gKeysPressed & KEY_A) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        result = 0;
+        break;
+      }
+      if ((gKeysPressed & KEY_B) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        result = -1;
+        break;
+      }
+      if ((gKeysRepeat & KEY_LEFT) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        slot -= 1;
+        slot = (slot + inventoryCount) % inventoryCount;
+        redraw = 1;
+      }
+      if ((gKeysRepeat & KEY_RIGHT) != 0) {
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        slot += 1;
+        slot = (slot + inventoryCount) % inventoryCount;
+        redraw = 1;
+      }
+      if ((gKeysRepeat & KEY_UP) != 0) {
+        slot -= SHOP_INVENTORY_COLUMNS;
+        if (slot < 0)
+          slot += INVENTORY_SLOTS;
+        while (slot >= inventoryCount)
+          slot -= SHOP_INVENTORY_COLUMNS;
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        redraw = 1;
+      }
+      if ((gKeysRepeat & KEY_DOWN) != 0) {
+        slot += SHOP_INVENTORY_COLUMNS;
+        if (slot >= inventoryCount)
+          slot -= INVENTORY_SLOTS;
+        while (slot < 0)
+          slot += SHOP_INVENTORY_COLUMNS;
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        redraw = 1;
+      }
+      WaitFrames(1);
+    }
+
+    UiWork_FinalizeFar(descriptionWindow, 2);
+    WaitFrames(1);
+    if (result != 0)
+      break;
+
+    Shop_RepairItem(unitId, slot);
+    UiMessage_ShowAndWait(MsgRepairAnythingElse);
+    if (Inventory_CountFar(unitId) == 0)
+      break;
+  }
+
+  UiWork_FinalizeFar(priceWindow, 2);
+  return result;
+}
+
+// Checks the repair, hides the item during the work sequence, restores it and
+// charges the fee.
+void Shop_RepairItem(s32 unitId, s32 slot) {
+  struct ShopRuntime *shop = gMenuWork;
+  struct BattleUnit *unit = UnitGetFar(unitId);
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
+  s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
+  u32 repairCost = Shop_RepairPrice(unit->inventory[slot]);
+  s32 messageBase;
+  u8 useType;
+  u32 savedEntry;
+
+  useType = item->useType;
+  if (useType != 2) {
+    UiWork_PushValueSlotFar(itemId, 2);
+    UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
+    return;
+  }
+  if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
+    UiWork_PushValueSlotFar(itemId, 2);
+    UiMessage_ShowAndRestoreState(MsgNotDamaged);
+    return;
+  }
+  if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
+    UiWork_PushValueSlotFar(itemId, 2);
+    UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
+    return;
+  }
+  if (repairCost > gGameState.coins) {
+    UiMessage_ShowAndRestoreState(MsgNotEnoughMoney);
+    return;
+  }
+  UiWork_PushValueSlotFar(itemId, 2);
+  UiWork_PushValueSlotFar(repairCost, 5);
+  messageBase = MsgShopRepairConfirm;
+  UiMessage_ShowAndRestoreState(messageBase);
+  if (UiMessage_ShowChoice(0) != 0) {
+    UiMessage_ShowAndRestoreState(messageBase + 1);
+    return;
+  }
+  // Hide the item during the work sequence without compacting its slot.
+  savedEntry = unit->inventory[slot];
+  unit->inventory[slot] = 0;
+  Shop_DrawUnitGrid(shop->itemWindow, unitId);
+  UiWork_PushValueSlotFar(itemId, 2);
+  UiMessage_ShowAndRestoreState(messageBase + 2);
+  UiWork_FinalizePendingCoreFar();
+  WaitFrames(10);
+  AudioCommand_PlayFar(SE_100);
+  WaitFrames(110);
+  AudioCommand_PlayFar(SE_100);
+  WaitFrames(110);
+  AudioCommand_PlayFar(SE_100);
+  WaitFrames(110);
+  AudioCommand_PlayFar(SE_MENU_CONFIRM);
+  WaitFrames(20);
+  // Restore the entry, repair it, charge the fee and offer equipment changes.
+  unit->inventory[slot] = savedEntry;
+  Inventory_RepairFar(unitId, slot);
+  Party_AdjustCoinsFar(-repairCost);
+  Shop_DrawMoney();
+  Shop_DrawUnitGrid(shop->itemWindow, unitId);
+  UiWork_PushValueSlotFar(itemId, 2);
+  UiMessage_ShowAndRestoreState(messageBase + 3);
+  if (Shop_ConfirmEquip(unitId, slot))
+    Shop_SellOld(unitId, equipped);
+}

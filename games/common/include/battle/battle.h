@@ -152,10 +152,6 @@ extern const s32 gBattleFx_LinkedObjectScript[];
 extern const s32 gBattleFx_MarkerParticleScript[];
 extern const s32 gBattleFx_ParticleEmitterScript[];
 extern const s32 gBattleFx_ParticleScript[];
-#ifndef OWN_BattleFx_PuffCells
-#endif
-#ifndef OWN_BattleFx_PuffSizes
-#endif
 extern u32 gBattleFx_PulseScales[];
 extern const s32 gBattleFx_SourceHoldScript[];
 extern s16 gBattleFx_TargetRangeByMode[];
@@ -202,8 +198,6 @@ extern u32 gRandomSeed;
 extern struct BattlePresentationTransition *gTransitionWork;
 #endif
 extern const u8 gObjectMotion_LinkedActionScript[];
-#ifndef OWN_ParticleStreams_CellOffsets
-#endif
 extern const s16 gParty_PairResolveRules[];
 extern const s32 gBattleFx_RisingPulseScript[];
 extern u16 gBattleUnit_WeaponAnimsClass0[];

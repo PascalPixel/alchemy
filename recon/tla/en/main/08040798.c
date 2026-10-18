@@ -1,7 +1,10 @@
-// Draft, differ 103 of 222, 2026-10-18: written from the listing; the
-// remaining differences are register choices (the redraw flag, the row count
-// and the window spilled differently) and the order of the input tests'
-// constants.
+// Near miss, differ 26 of 222, 2026-10-18: written from the listing. Rows
+// set before the redraw flag (differ 32 the other way) and the window's y
+// read into y first (differ 103 inline) bring it here. Remaining: the reload
+// registers of the spilled row count and slot constants (the native builds
+// the row count in r2 behind the flag's argument, this in r0 before it), and
+// the native's loads issued ahead of constants. Ten permuter minutes found
+// nothing lower.
 // The system menu's selection loop, as ☀️'s
 // Menu_RunWorkspaceSelectionLoop (games/tbs/src/window/window.c), starting
 // from `selected`; in debug mode L and R pick entries 20 and 21.
@@ -58,8 +61,8 @@ s32 Func_08040798(s32 selected) {
   s32 x;
   s32 y;
 
-  redraw = -1;
   rows = 3;
+  redraw = -1;
   settingsOnly = GameFlag_Test(0x17e);
   first = 0;
   Func_080405dc();
@@ -97,7 +100,8 @@ s32 Func_08040798(s32 selected) {
       }
       top = window->y;
       x = (s16)window->x * 8;
-      y = ((selected * 3) + (s16)top) * 8 + 16;
+      y = (s16)top;
+      y = (selected * 3 + y) * 8 + 16;
       if (-1 == redraw)
         Func_08108048(work->cursor, x, y);
       else

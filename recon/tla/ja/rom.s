@@ -512,7 +512,7 @@ UiWindow_ClearInteriorTiles:
 	.type UiText_QueueRenderEntries, %function
 	.thumb_func
 UiText_QueueRenderEntries:
-	.incbin "baserom.gba", 0x00039540, 0x00000154
+	.incbin "baserom.gba", 0x00039540, 0x000000b0
 	.section .rom.0003971e, "ax"
 	.incbin "baserom.gba", 0x0003971e, 0x0000002a
 	.section .rom.00039750, "ax"

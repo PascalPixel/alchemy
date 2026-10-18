@@ -919,7 +919,6 @@ main	rom_main_02	recon/tla/fr/rom	.rom.0003954c	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0003954c	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003954c	de
 main	rom_main_02	recon/tla/raw/0803954c	.text	en
-main	rom_main_02	recon/tla/raw/080395fc	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00039540	ja
 main	rom_main_02	games/tla/src/graphics/render/free	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003972a	it

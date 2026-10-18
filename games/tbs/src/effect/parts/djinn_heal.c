@@ -125,7 +125,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       EffectPosition_ProjectPoint(djinniPoint, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work, screen.x - 10, screen.y - 17, 20, 34);
+      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
     EFFECT_PRESENT_FRAME(work);
   }
@@ -148,7 +148,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
                target[2] + Trig_Sin(frame << 11) * 40);
     EffectPosition_ProjectPoint(point, &view);
     view.x >>= 1;
-    callbacks[0](canvas, work, view.x - 10, view.y - 17, 20, 34);
+    callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;

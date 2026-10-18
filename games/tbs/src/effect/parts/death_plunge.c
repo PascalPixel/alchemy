@@ -121,7 +121,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
     // Frames 54 and 55: one big flash on the user. Frames 56 to 67: 16
     // flashes in a ring that widens as it rises, through six images.
     if (frame == 54 || frame == 55)
-      draw[0](canvas, work, screen.x - 16, screen.y - 16, 32, 64);
+      draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);
     if (frame >= 56 && frame <= 67) {
       s32 i;
 
@@ -777,7 +777,8 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
     // Frame 51: load the flash images and a ramp of colours, and place 32
     // flashes at random in x 32 to 63, y 80 to 111.
     if (frame == 51) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet,
+                                 1, 0);
       for (i = 1; i != 64; i++) {
         s32 v;
 

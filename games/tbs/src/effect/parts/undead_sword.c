@@ -87,7 +87,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
           draw[0] = ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER]);
           ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER])(
-              canvas, work, x, 112 - height, 14, height);
+              canvas, work->sheet, x, 112 - height, 14, height);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
       }

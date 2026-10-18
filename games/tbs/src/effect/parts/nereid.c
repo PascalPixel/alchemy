@@ -47,7 +47,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work);
+  Resource_DecodeType01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + NEREID_COLUMN_IMAGE);
@@ -173,8 +173,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       // over the first 16 frames and drift right.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
-          draw[0](canvas, work, k * 32 + ((frame / 4) & 31) - 32, 120 - rise,
-                  32, 32);
+          draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
+                  120 - rise, 32, 32);
       }
 
       // Embers: 2 to 4 pixels by index, 2 more while falling, swelling to 10

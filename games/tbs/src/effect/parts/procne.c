@@ -74,7 +74,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
   Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
   resource += 0x80;
-  Resource_DecodeType01(resource, work);
+  Resource_DecodeType01(resource, work->sheet);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
 

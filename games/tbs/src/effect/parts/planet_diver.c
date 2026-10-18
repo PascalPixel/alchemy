@@ -66,7 +66,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work);
+  Resource_DecodeType01(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -99,8 +99,8 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
     // The flash: frames 2 and 3 on the user, frames 4 to 15 spreading in
     // 16 directions.
     if (frame >= 2 && frame <= 3)
-      draw[0](canvas, work, screenPosition.x - 16, screenPosition.y - 64, 32,
-              64);
+      draw[0](canvas, work->sheet, screenPosition.x - 16, screenPosition.y - 64,
+              32, 64);
     if (frame >= 4 && frame <= 15) {
       for (i = 0; i != 16; i++) {
         s32 x = screenPosition.x + (frame * Trig_Sin(i << 12) >> 16);
@@ -129,7 +129,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
       palette += 128;
-      Resource_DecodeType01(palette, work);
+      Resource_DecodeType01(palette, work->sheet);
       actor->verticalMotionStrength = 0;
       actor->velocityX = 0;
       actor->velocityY = 0;
@@ -144,12 +144,12 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
         actor->x += dx;
         actor->y -= 8 << 16;
         if (work->effect->side == 0) {
-          draw[0](canvas, work, screenPosition.x - 20, screenPosition.y - 52,
-                  40, 64);
+          draw[0](canvas, work->sheet, screenPosition.x - 20,
+                  screenPosition.y - 52, 40, 64);
           screenPosition.x -= 8;
         } else {
-          draw[1](canvas, work, screenPosition.x - 26, screenPosition.y - 52,
-                  40, 64);
+          draw[1](canvas, work->sheet, screenPosition.x - 26,
+                  screenPosition.y - 52, 40, 64);
           screenPosition.y += 8;
         }
       }
@@ -241,7 +241,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work);
+  Resource_DecodeType01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -354,7 +354,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   EFFECT_BEGIN_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  Resource_DecodeType01((u8 *)palette + 128, work);
+  Resource_DecodeType01((u8 *)palette + 128, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,

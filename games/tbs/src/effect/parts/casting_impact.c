@@ -1054,11 +1054,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       sway >>= 16;
       imageY = (targetScreen->y >> 16) + sway + 16;
       if (frame <= 3) {
-        blitters[0](canvas, work, CASTING_IMPACT_IMAGE_X(work->effect->side, 0),
+        blitters[0](canvas, work->sheet,
+                    CASTING_IMPACT_IMAGE_X(work->effect->side, 0),
                     imageY + gCastingImpact_ImageY[0], 57, 98);
       } else {
         if (frame <= 7) {
-          blitters[0](canvas, work,
+          blitters[0](canvas, work->sheet,
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 0),
                       imageY + gCastingImpact_ImageY[0], 57, 98);
         }

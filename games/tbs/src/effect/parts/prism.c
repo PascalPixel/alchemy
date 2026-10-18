@@ -108,7 +108,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
           }
         } else if (frame >= crystal->variant) {
           // A falling crystal (32x64).
-          draw[i & 1](canvas, work, Q_16_16_TO_INT(crystal->x) - 16,
+          draw[i & 1](canvas, work->sheet, Q_16_16_TO_INT(crystal->x) - 16,
                       Q_16_16_TO_INT(crystal->y), 32, 64);
           EffectStep_AdvanceWithGravity2D(crystal, 64, 0x10000);
           if (crystal->y > PRISM_GROUND_Y) {

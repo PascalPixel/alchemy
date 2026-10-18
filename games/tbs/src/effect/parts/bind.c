@@ -145,7 +145,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work);
+  Resource_DecodeType01(palette, work->sheet);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   Resource_DecodeType01(
@@ -245,8 +245,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         }
         // Then the rune, in two mirrored halves.
         if (tick > 63) {
-          draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
-          draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
+          draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
+          draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
         }
       }
     }
@@ -301,7 +301,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work);
+  Resource_DecodeType01(palette, work->sheet);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
@@ -384,8 +384,8 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
         }
         // Then the rune, in two mirrored halves.
         if (tick > 63) {
-          draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
-          draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
+          draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
+          draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
         }
       }
     }

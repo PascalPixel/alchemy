@@ -48,7 +48,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
-  Resource_DecodeType01(sheet, work);
+  Resource_DecodeType01(sheet, work->sheet);
   cells = Ram_MapCellBuffer;
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
@@ -158,13 +158,13 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       // The panel until frame 91; from frame 88 the burst: a white flash
       // over the whole canvas, then larger pieces two frames each.
       if (frame <= 87) {
-        draw[work->effect->side](canvas, work, CONDEMN_PANEL_X(panelColumn, 0),
-                                 CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57,
-                                 98);
+        draw[work->effect->side](
+            canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
+            CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
       } else {
         if (frame <= 91) {
           draw[work->effect->side](
-              canvas, work, CONDEMN_PANEL_X(panelColumn, 0),
+              canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
               CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
         }
         draw[work->effect->side](

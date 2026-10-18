@@ -175,7 +175,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // The starfield: load the flame sheet (and in mode 1 the bolt's palette),
   // fill the screen map, give palette entries 128 to 190 random bright
   // colours and scatter 256 random dots over the 128x128 canvas.
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
@@ -484,7 +484,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw = gWorkSlot[HEAP_SLOT_BLITTER];
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   for (i = 0; i != 32; i++) {
     struct EffectStep *mote = &work->particles[i];
 

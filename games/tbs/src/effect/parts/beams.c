@@ -86,18 +86,21 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   // palette, the others the crescent's. The sparks and the yellow orb
   // follow.
   if (kind == 4) {
-    Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == 3) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet,
+                               0, 0);
   } else {
     switch (kind) {
     case 0:
     case 1:
     case 5:
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
+                                 1);
       break;
     case 2:
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
+                                 1);
       break;
     }
   }

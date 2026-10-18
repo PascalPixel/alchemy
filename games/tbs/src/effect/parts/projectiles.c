@@ -63,7 +63,7 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   }
   palette = Resource_GetTableEntry(sheetId);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  Resource_DecodeType01(palette + 128, work);
+  Resource_DecodeType01(palette + 128, work->sheet);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (side == 1) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
@@ -496,23 +496,27 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   } else if (mode == 1) {
-    Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work->sheet, 1,
+                               1);
     REG_BLDCNT = 0;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == 2) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
-    Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage, work, 0,
-                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
+                               work->sheet, 0, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else if (mode == 3 || mode == 4 || mode == 11) {
-    Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work->sheet,
+                               1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else if (mode == 6) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work->sheet, 1,
+                               1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
+                               1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                work->sheet + PROJECTILE_VOLLEY_DJINNI_CELLS, 1,
                                0);

@@ -160,7 +160,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
         height = height - top - 24;
       }
       if (height > 0) {
-        blit[0](canvas, work, x - 32, top, 64, height);
+        blit[0](canvas, work->sheet, x - 32, top, 64, height);
       }
     }
 

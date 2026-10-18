@@ -62,15 +62,18 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, PARTICLES, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, Ram_MapCellBuffer,
+                               1, 1);
   } else if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, PARTICLES, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, Ram_MapCellBuffer,
+                               1, 1);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, PARTICLES, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
+                               1, 1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
                         0); // Clear to 0 each frame.
@@ -96,7 +99,7 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     else if (frame <= 7)
       draw[0](canvas, work->imageStorage + 0x3840, 0, 0, 120, 120);
     else if (frame <= 11)
-      draw[0](canvas, PARTICLES, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 15)
       draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
     if (frame >= 16 && frame <= 19)

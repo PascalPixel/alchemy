@@ -132,7 +132,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   zoom = 0x80000;
   minimumDepth = 0xffff;
   maximumDepth = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
+                             1);
   Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB,
                              work->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c,
@@ -381,12 +382,14 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       s32 r;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 36, top, 24, 64);
+      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet, 36, top, 24,
+                                           64);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 60, top, 24, 64);
+      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet, 60, top, 24,
+                                           64);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 
       n = (frame - 144) / 2;
@@ -854,7 +857,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 85) {
       // From frame 86 add the wave picture over the canvas.
-      draw[1](canvas, work, 0, 0, JUDGMENT_WAVE_SIZE, JUDGMENT_WAVE_SIZE);
+      draw[1](canvas, work->sheet, 0, 0, JUDGMENT_WAVE_SIZE,
+              JUDGMENT_WAVE_SIZE);
     }
 
     if (frame > 279) {

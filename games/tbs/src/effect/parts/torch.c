@@ -105,7 +105,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     pal[i] = ((u16 *)BG_PLTT)[i] = b << 10 | g << 5 | r;
   }
 
-  draw[0](canvas, work, 0, 0, 128, 128);
+  draw[0](canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);

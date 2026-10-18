@@ -173,23 +173,23 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
     if (frame > 53)
       REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 41, size,
-                                                     size);
+    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 33,
+                                                     41, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 64, 41, size,
-                                                     size);
+    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 64,
+                                                     41, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 72, size,
-                                                     size);
+    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 33,
+                                                     72, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 64, 72, size,
-                                                     size);
+    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 64,
+                                                     72, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_143);

@@ -106,10 +106,10 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
           s32 scroll = (frame * 16 + pillar * 25) % 104;
 
-          draw[pillar & 1](canvas, work, screen.x - 17, screen.y - scroll - 104,
-                           34, 104);
-          draw[pillar & 1](canvas, work, screen.x - 17, screen.y - scroll, 34,
-                           scroll);
+          draw[pillar & 1](canvas, work->sheet, screen.x - 17,
+                           screen.y - scroll - 104, 34, 104);
+          draw[pillar & 1](canvas, work->sheet, screen.x - 17,
+                           screen.y - scroll, 34, scroll);
           if (frame & 1) {
             draw[0](canvas, work->sheet + VOLCANO_FLAME_IMAGE_ODD,
                     screen.x - 20, screen.y - 24, 20, 37);

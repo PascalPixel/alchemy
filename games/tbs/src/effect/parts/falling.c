@@ -162,7 +162,8 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        draw[work->effect->variant == 2 ? 1 : 0](canvas, work, x, y, 32, 32);
+        draw[work->effect->variant == 2 ? 1 : 0](canvas, work->sheet, x, y, 32,
+                                                 32);
         if (shard->y <= FALLING_LAND_Y) { // above y 80
           if (work->effect->side == 0)
             shard->x -= 64;

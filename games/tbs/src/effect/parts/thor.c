@@ -395,8 +395,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     for (frame = 0; frame != THOR_LIGHTNING_FRAMES; frame++) {
       s32 stormFrame;
       if (frame == 20) {
-        Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB, work,
-                                   1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
+                                   work->sheet, 1, 0);
       }
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {

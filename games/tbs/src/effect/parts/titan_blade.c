@@ -234,8 +234,8 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
       s32 high = 104;
       s32 size = (phase - 256) % high;
 
-      blit(canvas, work, x, 4 - size, width, high);
-      blit(canvas, work, x, 108 - size, width, size);
+      blit(canvas, work->sheet, x, 4 - size, width, high);
+      blit(canvas, work->sheet, x, 108 - size, width, size);
     }
 
     // Until frame 71, move and draw the first 342 dust motes; they swell

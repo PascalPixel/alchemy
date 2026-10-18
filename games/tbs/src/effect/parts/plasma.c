@@ -104,8 +104,8 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
-          draw[0](canvas, work, PLASMA_COLUMN_X(work->effect->side, i) - 24, 0,
-                  48, 112);
+          draw[0](canvas, work->sheet,
+                  PLASMA_COLUMN_X(work->effect->side, i) - 24, 0, 48, 112);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + PLASMA_SECOND_IMAGE,
                   PLASMA_COLUMN_X(work->effect->side, i) - 24, 0, 48, 112);
@@ -372,14 +372,14 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 12;
       if (frame >= start && frame < start + 2) {
         if (work->effect->side == 1)
-          draw[0](canvas, work,
+          draw[0](canvas, work->sheet,
                   originX -
                       gPlasma_Shapes[work->effect->variant]
                                     [SPARK_GROUPS_OFFSET + i] +
                       12,
                   originY - 32, 32, 64);
         else
-          draw[0](canvas, work,
+          draw[0](canvas, work->sheet,
                   originX +
                       gPlasma_Shapes[work->effect->variant]
                                     [SPARK_GROUPS_OFFSET + i] -

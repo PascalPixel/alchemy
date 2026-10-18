@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "render_input.h"
+#include "edition.h"
 
 struct ShopUnit {
   u8 unk00[216];
@@ -60,10 +61,10 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price);
 s32 __udivsi3(s32, s32);
 extern u8 MsgHowManyToBuy[];
 
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_Y 120
-#elif defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) ||                    \
-    defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
+    (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_Y 104
 #else
 #define QUANTITY_CURSOR_Y 128

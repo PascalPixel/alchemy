@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
+#include "edition.h"
 
 void Func_02000038(void);
 void Func_02000060(void);
@@ -129,7 +130,7 @@ struct SceneEvent gSceneEvents[] = {
 };
 
 u32 gData_02005524[] = {
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     39, 14, 22, 26, 0, 23,
 #else
     39, 14, 22, 26, 0, 22,

@@ -7,6 +7,7 @@
 #include "mem.h"
 #include "ram_buffer.h"
 #include "resource.h"
+#include "edition.h"
 
 struct GroundParticle {
   u32 attributes[3];
@@ -30,8 +31,8 @@ struct GroundParticleWork {
 void Func_080d2c64(s32 sound);
 void Func_080d64f0(void);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190

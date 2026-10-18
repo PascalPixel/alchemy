@@ -1,8 +1,9 @@
 #include "runtime.h"
 #include "types.h"
 #include "input.h"
+#include "edition.h"
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
 void WaitFrames(s32 frames);
 
 void System_Halt(void) {

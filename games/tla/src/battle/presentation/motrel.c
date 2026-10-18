@@ -1,6 +1,7 @@
 #include "types.h"
 #include "motobj.h"
 #include "mem.h"
+#include "edition.h"
 
 struct Work0811e7dc {
   u8 unk00[0x2c];
@@ -16,7 +17,7 @@ struct Record0811e7dc {
 // Far call to Func_080219cc. Table order varies: English and Japanese use
 // the 0x08020370 slot; other editions use the slot named Func_08020340.
 // Both jump to Func_080219cc.
-#if defined(TLA_EDITION_EN) || defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
 void Func_08020370(void *record);
 #define Func_080219ccFar Func_08020370
 #else

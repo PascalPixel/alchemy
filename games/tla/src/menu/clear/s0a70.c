@@ -1,6 +1,7 @@
 #include "types.h"
+#include "edition.h"
 
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 // The character a cell of the password grid stands for, in the Japanese
 // font's codes: kana, the voiced ones with the dakuten mark in the high byte.
 void Func_02000a70(s32 cell, u16 *text) {

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void Func_02000044(void);
 void Func_02000270(void);
@@ -181,7 +182,7 @@ s32 gData_02002ac4[] = {
     0xe80000,
     0x14000,
     (s32)0xffff0072,
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     2,
     0x2280000,
     0,

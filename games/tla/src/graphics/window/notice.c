@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "scene.h"
+#include "edition.h"
 
 struct TimedNoticeWork {
   u8 unk000[0x21c];
@@ -19,7 +20,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 extern u8 MsgDebugEntryName;
 
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The Spanish and Italian far-call tables use different entry names for
 // Scene_GetAreaNameIndex.
 s32 Func_080c8638(s32 scene, s32 entrance);

@@ -5,6 +5,7 @@
 #include "frame.h"
 #include "system.h"
 #include "menu.h"
+#include "edition.h"
 
 struct SaveGameWords {
   u32 buildStamp;
@@ -112,7 +113,7 @@ s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 style);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
-#if defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH)
 #define ERASE_CONFIRM_X 4 // The French confirmation window is farther left.
 #else
 #define ERASE_CONFIRM_X 8

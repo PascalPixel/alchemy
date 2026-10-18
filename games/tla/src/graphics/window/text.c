@@ -59,13 +59,13 @@ void UiText_DrawStringInWindow(s32, s32, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
 // Edition-specific x positions of the level and coin labels, in pixels.
-#if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_SPANISH)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
-#elif defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_FRENCH)
 #define SUMMARY_LEVEL_X 59
 #define SUMMARY_COINS_X 56
-#elif defined(TLA_EDITION_DE) || defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define SUMMARY_COINS_X 56
 #else
 #define SUMMARY_COINS_X 48
@@ -85,8 +85,8 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
     UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
     UiText_DrawStringAtOffset(rec + 16, win, 0, 0);
     y = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
+    (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
     UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, win,
                               SUMMARY_LEVEL_X, 0);
 #else
@@ -94,7 +94,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
 #endif
     UiText_DrawNumberAtOffset(rec[28], 2, win, 80, y);
     UiText_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     y = 32;
     UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
     UiText_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
@@ -107,7 +107,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
         (s32)Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 40);
     y = 48;
     UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
-#if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_FRENCH)
     // French uses the singular form for zero or one coin.
     if (*(u32 *)(rec + 36) > 1)
       UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);

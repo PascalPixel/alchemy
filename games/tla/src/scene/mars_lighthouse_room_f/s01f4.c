@@ -1,4 +1,5 @@
 #include "room.h"
+#include "edition.h"
 
 extern s16 gData_02005b5c[];
 
@@ -31,7 +32,7 @@ void Func_0200025c(s32 unused, s32 id) {
     Func_020001f4(unused, 16);
   } else if (id == 10) {
     Object_GetById(10)->motionFlags = 3;
-#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
     Func_020002ec();
 #endif
   }
@@ -70,7 +71,7 @@ void Func_020002b8(s32 unused, s32 id) {
     Func_02005598(kind, 0, 0);
 }
 
-#if !defined(TLA_EDITION_JA) /* not in the Japanese edition */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
 void Func_020002ec(void) {
   struct ObjectRuntime *object;
   s32 id;

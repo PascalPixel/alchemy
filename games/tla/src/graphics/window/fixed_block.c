@@ -11,6 +11,7 @@
 #include "resource.h"
 #include "ram_buffer.h"
 #include "window.h"
+#include "edition.h"
 
 s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);
 
@@ -70,7 +71,7 @@ void Resource_CopyFixedBlockA(s32 slot) {
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
 }
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 UiText_SetRenderString(const u8 *str) {
   struct UiRenderWork *work;
   u16 *dst;

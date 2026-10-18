@@ -5,6 +5,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 extern s32 gData_020024b4;
 extern s32 gData_020024b0;
@@ -214,7 +215,7 @@ void Func_020006e4(void) {
   Call1((void (*)())Func_0200201c, (s32)MsgHoldOnTo);
   Call4((void (*)())Func_02001fcc, 4, 0x1d60000, 0x1880000, 0);
   Call4((void (*)())Func_020020b4, 6, 0, -24, 0x4000);
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   Call4((void (*)())Func_020020b4, 5, -16, -16, 0x2000);
 #else
   {

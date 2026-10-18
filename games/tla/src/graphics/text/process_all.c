@@ -9,9 +9,10 @@
 #include "system.h"
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 // Text-workspace tail: the Japanese edition's table is 0x200 bytes shorter.
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 #define TEXT_WORK_TAIL 0x1184
 #else
 #define TEXT_WORK_TAIL 0x1384
@@ -31,7 +32,7 @@ s32 UiWork_IsIdle(struct Work *work);
 // Spanish and Italian reach the owner and its screen position through far-call
 // slots two entries earlier, unnamed in their scaffolds: their copies stay on
 // the scaffold (S4)
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   u8 *base = Ram_HeapSlots->windowTiles;
   s32 release;

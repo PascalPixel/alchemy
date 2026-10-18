@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
+#include "edition.h"
 
 s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 
@@ -59,8 +60,8 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
         }
       } else {
         Func_0803c274(window, c, x, y, 0);
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else
         if ((u16)(c - 0xde) > 1)

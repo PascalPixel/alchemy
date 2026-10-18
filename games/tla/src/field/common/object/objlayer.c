@@ -6,6 +6,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "render_input.h"
+#include "edition.h"
 
 struct IconSprite {
   u8 unk00[4];
@@ -84,7 +85,7 @@ void Func_080237e8(u8 *object) {
 void Func_0802386c(void);
 void Func_08023e18(void);
 
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // Spanish and Italian builds use different names for these two far calls,
 // as in shop.c.
 void Func_080c8368(s32, s32);
@@ -96,7 +97,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 
   Scheduler_SuspendTasks(Func_0802386c);
   Scheduler_SuspendTasks(Func_08023e18);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368(0x10000, 1);
   BattleFx_ApplyColorToSourceBufferFar(1);
 #else

@@ -32,10 +32,6 @@
 #define LANGUAGE LANGUAGE_JAPANESE
 #endif
 
-// Older conditions still mix language, behavior and native compiler forms.
-// Their owners replace them with the appropriate language or patch selector.
-#define EDITION_INTERNATIONAL (LANGUAGE != LANGUAGE_JAPANESE)
-
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) ||                      \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)

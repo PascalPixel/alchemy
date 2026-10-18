@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
+#include "edition.h"
 
 // clang-format off
 u32 gData_02004aa4[] = {
@@ -37,7 +38,7 @@ s16 gData_02004b80[] = {
     6, 0x1000, 320, 6, 0x7fff, 6, -1,
 };
 
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define SHAMAN_GRAPHIC7_PALETTE (5 * 32)
 #else
 #define SHAMAN_GRAPHIC7_PALETTE (2 * 32)

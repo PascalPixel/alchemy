@@ -3,6 +3,7 @@
 #include "render_input.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 extern u8 MsgNoItems[];
 void RenderOutput_PrepareForRedrawFar(void *window);
@@ -15,7 +16,7 @@ void Shop_DrawItemCount(void *window, s32 item) {
     RenderOutput_PrepareForRedrawFar(window);
     Func_0810bf98(window, 8, 0, item);
     if (Inventory_CountFar(item) == 0)
-#if defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ITALIAN)
       UiText_DrawResourceFar((s32)MsgNoItems, window, 20, 12);
 #else
       UiText_DrawResourceFar((s32)MsgNoItems, window, 8, 20);
@@ -54,10 +55,10 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price);
 void WaitFrames(s32 frames);
 void UiIcon_PrepareObjectFar(struct RenderOutput *object);
 
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_X 120
-#elif defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) ||                    \
-    defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
+    (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_X 104
 #else
 #define QUANTITY_CURSOR_X 128

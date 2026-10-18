@@ -33,9 +33,9 @@ s32 Menu_SelectEntry11To14(s32 selection) {
   Menu_AppendResourceEntry(0x12);
   Menu_AppendResourceEntry(0x13);
   Menu_AppendResourceEntry(0x14);
-#if defined(TBS_EDITION_DE) || defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_GERMAN)
   Menu_CenterResourceEntries(17, 8, 0); // Name window width.
-#elif EDITION_INTERNATIONAL
+#elif (LANGUAGE != LANGUAGE_JAPANESE)
   Menu_CenterResourceEntries(17, 7, 0);
 #else
   Menu_CenterResourceEntries(17, 6, 0);
@@ -56,7 +56,7 @@ s32 Menu_SelectEntry19To1c(s32 selection) {
   Menu_AppendResourceEntry(0x1A);
   Menu_AppendResourceEntry(0x1B);
   Menu_AppendResourceEntry(0x1C);
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   Menu_CenterResourceEntries(17, 10, 0);
 #else
   Menu_CenterResourceEntries(17, 8, 0);
@@ -126,10 +126,10 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 //--------------------------------------------------------------------------
 
 // Name window width for each edition.
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PAIR_WIDTH 7
-#elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                    \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN) ||                    \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define PAIR_WIDTH 10
 #else
 #define PAIR_WIDTH 9

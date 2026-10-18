@@ -16,6 +16,7 @@
 #include "text/msg_ids.h"
 #include "battle_work.h"
 #include "iwram_call.h"
+#include "edition.h"
 
 s32 UpdateNameEntries(void) {
   u16 name_text[16];
@@ -49,8 +50,8 @@ s32 UpdateNameEntries(void) {
         }
       } while (name_text[i] != 0);
     }
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
     name_text[i] = ' ';
     len = i + 1;
 #else

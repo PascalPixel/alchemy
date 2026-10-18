@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void Func_020002d8(void);
 void Func_02000344(void);
@@ -19,15 +20,15 @@ void Func_02001388(void);
 // Edition-specific link handshake values (each word is four ASCII characters).
 // clang-format off
 u32 gLinkLobby_SlotValues[] = {
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     0x32674d43, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,
-#elif defined(TLA_EDITION_DE)
+#elif (LANGUAGE == LANGUAGE_GERMAN)
     0x47357343, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x43534747,
-#elif defined(TLA_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
     0x47733743, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x43535347,
-#elif defined(TLA_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
     0x32475363, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x4353474d,
-#elif defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
     0x31494773, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x53474943,
 #else
     0x43314773, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,

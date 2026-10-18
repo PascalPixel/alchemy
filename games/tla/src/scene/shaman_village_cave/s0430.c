@@ -4,6 +4,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "scene_ids.h"
+#include "edition.h"
 
 void FieldEvent_WaitFrames();
 void Func_02001080();
@@ -51,7 +52,7 @@ void Party_SetFields1f2And1f4();
 
 // The JA edition has its own form of this function; it stays on its listing in
 // recon/tla/raw/overlays (S4).
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_02000430(void) {
   s32 angle;
 

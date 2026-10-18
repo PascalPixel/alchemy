@@ -10,6 +10,7 @@
 #include "object_runtime.h"
 #include "objdisp.h"
 #include "field_sprite.h"
+#include "edition.h"
 
 struct ObjectRuntime *Object_GetById(u32);
 
@@ -83,7 +84,7 @@ void Func_080d390c(u32 id) {
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
 }
 
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void Func_080d3928(u32 id, s32 rotation) {
   struct ObjectRuntime *object = Object_GetById(id);
   struct FieldSprite *sprite = object->animation;

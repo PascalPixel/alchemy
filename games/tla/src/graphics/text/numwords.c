@@ -5,7 +5,7 @@
 // The German counted nouns, singular and plural, by kind.
 //--------------------------------------------------------------------------
 
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 extern const s8 gUiText_ArticleEmpty[];
 extern const u8 gUiText_NumberWord0[];
 extern const u8 gUiText_NumberWord1[];

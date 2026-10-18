@@ -4,6 +4,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "display_transition.h"
+#include "edition.h"
 
 void Func_080cf78c(void);
 void Func_080cf6fc(void);
@@ -11,7 +12,7 @@ void Func_080cf6fc(void);
 // The Spanish and Italian far-call tables reach this function under another
 // slot's name (Func_080d6b90); those two editions keep it on their scaffold
 // (S4).
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =
       Runtime_AllocateBlock(124, sizeof(*state));

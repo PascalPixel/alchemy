@@ -10,6 +10,7 @@
 #include "types.h"
 #include "mem.h"
 #include "text_render_runtime.h"
+#include "edition.h"
 
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 
@@ -31,7 +32,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   MemFree(buffer);
 }
 
-#if !defined(TLA_EDITION_JA) // The Japanese scaffold has no label for
+#if (LANGUAGE != LANGUAGE_JAPANESE) // The Japanese scaffold has no label for
                              // UiText_FormatNumber yet.
 
 // The number writers format the value in a 16-byte buffer and draw it with

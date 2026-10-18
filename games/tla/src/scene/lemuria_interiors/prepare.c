@@ -6,6 +6,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void FieldEvent_WaitFrames();
 void Func_0200282c();
@@ -39,7 +40,7 @@ void UiText_OpenMessageAtObject();
 s32 Func_02000284(void) {
   struct ObjectRuntime *object;
 
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
 #else
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;

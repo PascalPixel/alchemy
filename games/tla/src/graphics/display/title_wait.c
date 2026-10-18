@@ -7,12 +7,13 @@
 #include "input.h"
 #include "frame.h"
 #include "bg_scroll.h"
+#include "edition.h"
 
 extern char ResourceId_Data018;
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_ITALIAN)
 #define DATA018_TILE_BYTES 0xa000
 #else
 #define DATA018_TILE_BYTES 0x9c00

@@ -1,5 +1,6 @@
 #include "objcmd.h"
 #include "types.h"
+#include "edition.h"
 
 //--------------------------------------------------------------------------
 // Object motion scripts and the small tables between them. Most are The
@@ -16,7 +17,7 @@ s32 Object_ClearChildFlags();
 s32 Object_SetPriorityBit5();
 s32 ObjectMotion_MoveTowardTarget();
 s32 SceneActor_UpdateFacingTowardTarget();
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 s32 Func_080da908();
 #else
 s32 Func_080d4ab4();
@@ -247,7 +248,7 @@ const s32 gData_080f3750[] = {
 // Keep the leader's display layer. The Spanish and Italian scaffolds name
 // the function by the far-call slot that reaches it in the other editions.
 const s32 gData_080f3764[] = {
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
     SC_CALL(Func_080da908),
 #else
     SC_CALL(Func_080d4ab4),

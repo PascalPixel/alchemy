@@ -13,6 +13,7 @@
 #include "ram_buffer.h"
 #include "battle_system.h"
 #include "field_event.h"
+#include "edition.h"
 
 struct FieldEffectState {
   u8 padding0[0x1AC];
@@ -31,7 +32,7 @@ struct FieldObject {
 
 void Event_WaitTransitionFramesFar(void);
 void Event_StartScreenTransitionFar(void);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #endif
 
 void Inn_PlaySleep(s32 roomPrice) {
@@ -57,12 +58,12 @@ void Inn_PlaySleep(s32 roomPrice) {
   state->effect = 0x209;
   state->delay = 60;
   WaitFrames(20);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   BattleFx_SetPrimaryBufferValueFar();
 #else
   Event_FinishScreenTransitionFar();
 #endif
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Event_DelayEffectFramesFar();
 #else
   Event_WaitTransitionFramesFar();
@@ -70,12 +71,12 @@ void Inn_PlaySleep(s32 roomPrice) {
   Audio_PlayCue(86);
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   BattlePalette_StopBlendAndReleaseBufferFar();
 #else
   Event_StartScreenTransitionFar();
 #endif
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Event_DelayEffectFramesFar();
 #else
   Event_WaitTransitionFramesFar();

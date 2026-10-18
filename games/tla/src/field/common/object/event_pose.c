@@ -11,6 +11,7 @@
 #include "object_runtime.h"
 #include "system.h"
 #include "script_object_runtime.h"
+#include "edition.h"
 
 struct DispatchObject;
 
@@ -69,8 +70,8 @@ void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
     z = object->homeZ << 16;
   object->x = x;
   object->z = z;
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   object->y = object->terrainHeight = Func_08020190(0, x, z);
 #else
   object->y = object->terrainHeight = Map_GetTerrainHeightFar(0, x, z);

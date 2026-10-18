@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "edition.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -40,7 +41,7 @@ s32 ArcTan2(s32 y, s32 x);
 
 // The Spanish and Italian far-call tables reach this function under another
 // slot's name; those two editions keep it on their scaffold.
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 // Picks the object nearest object id, under 32 pixels away and 48 pixels in
 // height. Distances to ids above 63 count double and to objects with
 // collision flag 4 ten thirteenths; beyond 11 pixels the object must also lie

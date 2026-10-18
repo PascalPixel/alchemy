@@ -1,6 +1,7 @@
 #include "local.h"
 #include "call.h"
 #include "event_work.h"
+#include "edition.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -79,7 +80,7 @@ void Func_020030cc(void) {
     Call3(ObjectMotion_SetPositionAndReset, 5, 0x108, 0x89);
     Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
     Call1(FieldEvent_WaitFrames, 0x14);
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription + 3, 1);
 #else
     UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription + 2, 1);

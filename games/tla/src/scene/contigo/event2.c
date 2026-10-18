@@ -1,4 +1,5 @@
 #include "contigo.h"
+#include "edition.h"
 
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
@@ -34,7 +35,7 @@ void Func_0200102c(void) {
   UiText_ShowPositionedMessageAndWait(msg + 1, 1);
   UiText_ShowPositionedMessageAndWait(msg + 2, 1);
   UiText_ShowPositionedMessageAndWait(msg + 3, 1);
-#if !defined(TLA_EDITION_ES) /* The Spanish edition ends after four messages.  \
+#if (LANGUAGE != LANGUAGE_SPANISH) /* The Spanish edition ends after four messages.  \
                               */
   UiText_ShowPositionedMessageAndWait(msg + 4, 1);
 #endif

@@ -1,6 +1,7 @@
 // The Lucky Dice minigame's tables, after LuckyDice_Run in both games.
 
 // A table of signs nothing reads.
+#include "edition.h"
 const s32 gLuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
 
 // How many sprites each kind of result's lettering takes.
@@ -9,7 +10,7 @@ const u8 gLuckyDice_LabelCounts[] = {5, 4, 3, 3};
 // The first tile of each kind of result's lettering.
 const u8 gLuckyDice_LabelTiles[] = {
     28,  48,  64, 76,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     28,  248, 64,
     248, // never read
 #endif

@@ -1,4 +1,5 @@
 #include "local.h"
+#include "edition.h"
 
 void Func_02003c54(void) {
   if (GameFlag_Test_(0x210) == 0) {
@@ -77,7 +78,7 @@ void Func_02003c8c(void) {
     if (GameFlag_Test_(0x849) == 0)
       Func_0200482c();
   }
-#if !defined(TLA_EDITION_JA) /* not in the Japanese edition */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
   /* FAKEMATCH: as above, the barrier makes this test load the party state's
    * address again. */
   asm("" ::: "memory");

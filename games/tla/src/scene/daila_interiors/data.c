@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
+#include "edition.h"
 
 // clang-format off
 s16 gData_02000e04[] = {
@@ -8,7 +9,7 @@ s16 gData_02000e04[] = {
 
 s32 gData_02000e14[] = {
     22, 30,
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     131,
 #else
     129,
@@ -47,7 +48,7 @@ s32 gData_02000ecc[] = {
     0, 30, 22, 6, 0x80000, 0,
     30, 13, 0xffff, (s32)0xc0010000, 17, 22,
     30,
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     131,
 #else
     129,

@@ -2,6 +2,7 @@
 #define ALCHEMY_RAM_BUFFER_H
 
 #include "types.h"
+#include "version.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
@@ -20,7 +21,7 @@
 #define Ram_FrameWaitStackTop                                                  \
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b20, gVramBlockCache)
 /* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant

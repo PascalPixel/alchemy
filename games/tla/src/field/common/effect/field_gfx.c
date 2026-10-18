@@ -10,6 +10,7 @@
 #include "io_reg.h"
 #include "map.h"
 #include "resource.h"
+#include "edition.h"
 
 void Func_080d67e8(void);
 
@@ -45,8 +46,8 @@ struct DustWork {
 
 extern const u8 gData_080f38b2[];
 void Func_080d7034(void);
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // European far-call tables use a different name for the terrain height entry.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190

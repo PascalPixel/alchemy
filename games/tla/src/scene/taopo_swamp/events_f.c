@@ -1,4 +1,5 @@
 #include "local.h"
+#include "edition.h"
 
 void Func_02000f9c(s32 a, s32 id) {
   Object_SetModeById(id, 2);
@@ -48,7 +49,7 @@ void Func_02001038(s32 a, s32 id) {
   }
 }
 
-#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
 void Func_020010bc(void) { Func_02002948(); }
 #endif
 

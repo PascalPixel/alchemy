@@ -1,6 +1,7 @@
 #include "local.h"
+#include "edition.h"
 
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_0200061c(struct ObjectRuntime *object) {
   object->motionFlags = 3;
   do {

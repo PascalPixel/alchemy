@@ -3,6 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "palbuf.h"
+#include "edition.h"
 
 void BattleFx_ApplyColorToTargetBuffer(s32 colors, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
@@ -13,7 +14,7 @@ void GameFlag_SetBit(s32 flag);
 // The Spanish and Italian far-call tables reach this function under another
 // slot's name (BattleFx_GetObjectPriority); those two editions keep it on their scaffold
 // (S4).
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void Field_BeginColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;

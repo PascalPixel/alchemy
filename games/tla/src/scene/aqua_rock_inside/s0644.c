@@ -1,4 +1,5 @@
 #include "local.h"
+#include "edition.h"
 
 void Func_0200061c(struct ObjectRuntime *object);
 
@@ -9,7 +10,7 @@ void Func_02000644(s32 unused, s32 id) {
   if (id == 9) {
     x = object->x >> 20;
     if (x == 39) {
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       object->motionFlags = 3;
       WaitFrames(15);
       object->motionFlags = 0;

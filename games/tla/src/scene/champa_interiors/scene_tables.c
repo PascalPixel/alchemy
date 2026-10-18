@@ -12,6 +12,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_ids.h"
+#include "edition.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -52,7 +53,7 @@ const struct SceneEvent *Func_020000a4(void) {
 s32 Func_020000fc(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-#ifdef TLA_EDITION_JA
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   work->screenEffect = 0x201;
 #else
   work->screenEffect = 0x209;

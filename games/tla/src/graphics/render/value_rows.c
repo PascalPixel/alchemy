@@ -16,7 +16,7 @@
 #include "types.h"
 #include "battle_unit.h"
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 // The pixels the field allows each digit. The Latin font's digits are 7
 // pixels wide, so the digits themselves take a pixel less each.
 #define FIELD_PIXELS_PER_DIGIT 8
@@ -86,7 +86,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
   // compile differently.
   s16 value;
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   // The label at the left and a slash at 48. A current figure ends before
   // the slash, at 48, and a maximum at 88, each in a field as wide as its
   // digits.

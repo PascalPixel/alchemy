@@ -5,6 +5,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void GameFlag_SetBit();
 void GameFlag_ClearBit();
@@ -20,7 +21,7 @@ void Func_020025b0(void) {
   return;
 }
 
-#if !defined(TLA_EDITION_JA) /* The following six are absent from the Japanese \
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* The following six are absent from the Japanese \
                                 edition. */
 void Func_020025bc(void) {
   Call7((void (*)())Func_02003fec, 65, 0, 4, 4, 65, 10, 1);

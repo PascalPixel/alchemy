@@ -4,7 +4,7 @@
 #include "ram_buffer.h"
 #include "edition.h"
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 #define UI_PALETTE_OWNER_OFFSET 0x1360
 #else
 #define UI_PALETTE_OWNER_OFFSET 0x1160

@@ -274,10 +274,11 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
 
   work = gWindowWork[0];
   Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = 0x7fff;  // white
-  BG_PLTT_COLOR(15, 3) = 0;       // black
-  BG_PLTT_COLOR(15, 11) = 0x294a; // grey (10)
-  BG_PLTT_COLOR(15, 12) = 0x5294; // grey (20)
+  // Palette 15's white, black and two greys.
+  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(15, 3) = 0;
+  BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   ((struct UiRenderWork *)work)->mode = 0;
 }

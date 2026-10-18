@@ -53,13 +53,13 @@ void AudioEngine_Initialize(struct SoundWork *work) {
 
   // Stop repeat transfers before configuring the stereo FIFO outputs.
   work->lock = 0;
-  if (REG_DMA1CNT & 0x02000000)
-    REG_DMA1CNT = 0x84400004;
-  if (REG_DMA2CNT & 0x02000000)
-    REG_DMA2CNT = 0x84400004;
-  REG_DMA1CNT_H = 0x400;
-  REG_DMA2CNT_H = 0x400;
-  REG_SOUNDCNT_X = 0x8F;
+  if (REG_DMA1CNT & (DMA_REPEAT << 16))
+    REG_DMA1CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
+  if (REG_DMA2CNT & (DMA_REPEAT << 16))
+    REG_DMA2CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
+  REG_DMA1CNT_H = DMA_32BIT;
+  REG_DMA2CNT_H = DMA_32BIT;
+  REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
   REG_SOUNDCNT_H = 0xA90E;
   REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | 0x40;
   REG_DMA1SAD = (u32)work->buffers[0];
@@ -69,7 +69,7 @@ void AudioEngine_Initialize(struct SoundWork *work) {
   // Clear the complete work block, then install the PCM driver entries.
   SOUND_WORK = work;
   zero = 0;
-  Bios_CpuSet(&zero, work, 0x050003EC);
+  Bios_CpuSet(&zero, work, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x3EC);
   work->pcmNoteCount = 8;
   work->volume = 15;
   work->noteOn = MusicTrack_HandleNote;
@@ -103,9 +103,9 @@ void AudioEngine_SetPcmRate(u32 mode) {
   timer = &REG_TM0CNT_L;
   *timer = -__divsi3(0x44940, frameSamples);
   AudioEngine_ResumeDirectSound();
-  while (*(volatile u8 *)0x04000006 == 159)
+  while (*(volatile u8 *)&REG_VCOUNT == 159)
     ;
-  while (*(volatile u8 *)0x04000006 != 159)
+  while (*(volatile u8 *)&REG_VCOUNT != 159)
     ;
   REG_TM0CNT_H = 0x80;
 }
@@ -193,14 +193,14 @@ void AudioEngine_SuspendDirectSound(void) {
   if (work->lock - SOUND_LOCK > 1)
     return;
   work->lock += 10;
-  if (REG_DMA1CNT & 0x02000000)
-    REG_DMA1CNT = 0x84400004;
-  if (REG_DMA2CNT & 0x02000000)
-    REG_DMA2CNT = 0x84400004;
-  REG_DMA1CNT_H = 0x400;
-  REG_DMA2CNT_H = 0x400;
+  if (REG_DMA1CNT & (DMA_REPEAT << 16))
+    REG_DMA1CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
+  if (REG_DMA2CNT & (DMA_REPEAT << 16))
+    REG_DMA2CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
+  REG_DMA1CNT_H = DMA_32BIT;
+  REG_DMA2CNT_H = DMA_32BIT;
   zero = 0;
-  Bios_CpuSet(&zero, work->buffers, 0x05000318);
+  Bios_CpuSet(&zero, work->buffers, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x318);
 }
 
 // Restarts both FIFO transfers and releases the suspended-work lock.
@@ -210,8 +210,8 @@ void AudioEngine_ResumeDirectSound(void) {
 
   if (lock == SOUND_LOCK)
     return;
-  REG_DMA1CNT_H = 0xB600;
-  REG_DMA2CNT_H = 0xB600;
+  REG_DMA1CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
+  REG_DMA2CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
   work->transferCountdown = 0;
   work->lock = lock - 10;
 }

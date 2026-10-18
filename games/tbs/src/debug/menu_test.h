@@ -1,5 +1,5 @@
-#ifndef MENU_TEST_H
-#define MENU_TEST_H
+#ifndef ALCHEMY_DEBUG_MENU_TEST_H
+#define ALCHEMY_DEBUG_MENU_TEST_H
 
 #include "types.h"
 #include "keystate.h"

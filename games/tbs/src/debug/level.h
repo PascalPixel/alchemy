@@ -1,5 +1,5 @@
-#ifndef DEBUG_ITEM_LEVEL_LEVEL_H
-#define DEBUG_ITEM_LEVEL_LEVEL_H
+#ifndef ALCHEMY_DEBUG_LEVEL_H
+#define ALCHEMY_DEBUG_LEVEL_H
 
 #include "types.h"
 #include "owner_state.h"

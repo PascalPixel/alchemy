@@ -690,12 +690,8 @@ Func_0803a8fc:
 	.thumb_func
 UiText_RenderWideStringAtOffset:
 	.incbin "baserom.gba", 0x0003aa98, 0x000001f0
-	.section .rom.0003ada8, "ax"
-	.global UiText_FormatNumber
-	.type UiText_FormatNumber, %function
-	.thumb_func
-UiText_FormatNumber:
-	.incbin "baserom.gba", 0x0003ada8, 0x0000027c
+	.section .rom.0003ae6c, "ax"
+	.incbin "baserom.gba", 0x0003ae6c, 0x000001b8
 	.section .rom.0003b024, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function

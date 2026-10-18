@@ -565,7 +565,7 @@ UiText_RenderWideStringAtOffset:
 	.type UiText_RenderWideStringInWindow, %function
 	.thumb_func
 UiText_RenderWideStringInWindow:
-	.incbin "baserom.gba", 0x0003ac3c, 0x000001fc
+	.incbin "baserom.gba", 0x0003ac3c, 0x00000138
 	.section .rom.0003ae38, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function

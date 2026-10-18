@@ -1,8 +1,9 @@
-// Near miss, differ 36 of 89: order, and one constant's form. The native
-// stores the age's zero from movs r2, #0 where this loads a halfword 0
-// from the pool (ldr r2, =0); as u16 the same. The -33 and -13 masks'
-// copies and the 0x80004000 load sit a little differently. The group read
-// once into a local measured 36, read at each use 55.
+// Near miss, differ 15 of 89 with the age's zero through a temporary (36
+// without, when it loads a halfword 0 from the pool): the native adds the
+// group's offset to the work (adds r5, r3, r6) where this adds the work to
+// it, and copies the -33 mask before its AND; the rest is the pool offsets
+// those shift. The group read once into a local measured 36, read at each
+// use 55; &sprites[group][0] and a byte offset measured 15.
 // BattleFx_SpawnScaledArcObjects, ⚓️'s arc effect (heap slot 0xf8,
 // arc_effect.h). Sets up the current group's two 40-byte arc sprites from the
 // effect's tiles (16 by 16, attributes 0x80004000), shown, layer 0 and at the
@@ -44,6 +45,7 @@ void BattleFx_SpawnScaledArcObjects(struct ObjectRuntime *target) {
   s32 group = work->group;
   struct ArcSprite *sprite = work->sprites[group];
   s32 i;
+  s32 zero;
 
   for (i = 0; i < 2; i++, sprite++) {
     Func_080eaf98(sprite, 16, 16, 0x80004000, tiles);
@@ -51,7 +53,10 @@ void BattleFx_SpawnScaledArcObjects(struct ObjectRuntime *target) {
     sprite->layer = 0;
     sprite->priority = BattleFx_GetObjectPriority(target);
   }
-  work->age[group] = 0;
+  /* FAKEMATCH: the age's zero through a temporary, so it is a register
+     zero rather than a pool load (differ 36 without) */
+  zero = 0;
+  work->age[group] = zero;
   work->target = target;
   work->group ^= 1;
 }

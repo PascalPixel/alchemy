@@ -1,3 +1,9 @@
+// Draft of Func_0815f16c, decompiled from the listing: differ 8410 of 7666
+// (draft 7672), control flow and calls as the listing except one shared
+// FetchRectangleBlitters tail: jump2 merges kind 44 and 61 into later copies
+// (86 and 88) there but into kind 61 here, because the copies load action
+// through different registers (an allocation artifact, 516 vs 515 calls). The
+// dart and spark cell tables are read as writable, as the listing reloads them.
 #include "mem.h"
 #include "types.h"
 
@@ -149,13 +155,13 @@ extern const u8 gData_0819746d[];
 extern const u8 gData_08197473[];
 extern const u16 gData_0819747a[];
 extern const u16 gData_08197486[];
-extern const u8 gData_08197492[];
-extern const u8 gData_08197498[];
+extern u8 gData_08197492[];
+extern u8 gData_08197498[];
 extern const u8 gData_0819749e[];
 extern const u8 gData_081974ad[];
 extern const u16 gData_081974bc[];
-extern const u8 gData_0819750c[];
-extern const u8 gData_0819751a[];
+extern u8 gData_0819750c[];
+extern u8 gData_0819751a[];
 extern const u8 gData_081977f8[];
 extern const u8 gData_0819781a[];
 extern const u8 gData_08197826[];
@@ -166,8 +172,8 @@ extern const u8 gData_08198886[];
 extern const u16 gData_0819888a[];
 extern const u16 gData_0819889e[];
 extern const u16 gData_081988b2[];
-extern const u16 gData_081988c6[];
-extern const u16 gData_081988da[];
+extern u16 gData_081988c6[];
+extern u16 gData_081988da[];
 extern const u16 gData_081988ee[];
 extern const u16 gData_081988fc[];
 extern const u16 gData_0819890a[];
@@ -176,7 +182,7 @@ extern const u16 gData_08198926[];
 extern const u16 gData_08198934[];
 extern const u8 gData_0819893a[];
 extern const u8 gData_0819893d[];
-extern const u8 gData_08198940[][2];
+extern u8 gData_08198940[][2];
 extern const u16 gData_08198946[];
 extern const u8 gData_0819894e[];
 extern const u8 gData_08198952[];
@@ -196,12 +202,12 @@ extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
 s32 __divsi3(s32, s32);
-s32 Func_08002064(s32, s32);
+s32 __modsi3(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void Runtime_ReleaseHeapBlock(s32);
 void MemFree(void *);
-void *Func_08013300(s32);
+void *Resource_GetTableEntry(s32);
 void WaitFrames(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
@@ -214,7 +220,7 @@ void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
 void Transform_SetLookAt(void *, void *);
-void Func_08020090(struct BattleObject *, s32);
+void Object_SetMode(struct BattleObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
 s32 Battle_GetObjectTableValueFar(s32);
 void Func_08118088(s32, s32);
@@ -478,7 +484,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   case 94:
   case 97:
   case 98:
-    Dma_Set(Func_08013300((s32)&Value_00000184), PLTT, 0x84000020, DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&Value_00000184), PLTT, 0x84000020,
+            DMA3);
     if (action->unk1c == 1)
       Resource_LoadAndDecompress((s32)&Value_00000157, EWRAM_BUF + 0x3c56, 1,
                                  0);
@@ -505,7 +512,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1,
                                  1);
     else
-      Dma_Set(Func_08013300((s32)&Value_00000155), PLTT, 0x84000020, DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&Value_00000155), PLTT, 0x84000020,
+              DMA3);
     break;
   case 3:
   case 5:
@@ -530,7 +538,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Resource_LoadAndDecompress((s32)&Value_00000151, EWRAM_BUF + 0x3c56, 1,
                                  1);
     else
-      Dma_Set(Func_08013300((s32)&Value_00000151), PLTT, 0x84000020, DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&Value_00000151), PLTT, 0x84000020,
+              DMA3);
     break;
   case 1:
   case 6:
@@ -556,12 +565,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Resource_LoadAndDecompress((s32)&Value_00000153, EWRAM_BUF + 0x3c56, 1,
                                  1);
     else
-      Dma_Set(Func_08013300((s32)&Value_00000153), PLTT, 0x84000020, DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&Value_00000153), PLTT, 0x84000020,
+              DMA3);
     break;
   case 93:
   case 95:
   case 96:
-    Dma_Set(Func_08013300((s32)&Value_00000182), PLTT, 0x84000020, DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&Value_00000182), PLTT, 0x84000020,
+            DMA3);
     break;
   case 100:
     Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
@@ -708,7 +719,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Scheduler_RemoveCallback(Func_08143001);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
-    Func_08020090(object, 3);
+    Object_SetMode(object, 3);
     if (kind == 45)
       BattleFx_RunProjectileVolley(action, 9);
     if (kind == 54)
@@ -1229,7 +1240,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
         x = target[0] / 2;
-        m = Func_08002064(frame / 2, 3);
+        m = __modsi3(frame / 2, 3);
         drawFuncs.draw[0](screen, EWRAM_BUF + 0xc56 + m * 0xa00, x - 20, 16, 40,
                           32);
         drawFuncs.draw[0](screen, EWRAM_BUF + 0x2a56 + m * 0x500, x - 20, 48,
@@ -1658,7 +1669,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       } else {
         for (; i != 16; i++, p++) {
-          m = Func_08002064(i, 5) * 3 + Func_08002064(__divsi3(p->life, 96), 3);
+          m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->life, 96), 3);
           drawFuncs.draw[i <= 2](screen, EWRAM_BUF + 0x800 + gData_08197834[m],
                                  (p->x >> 16) - gData_0819781a[m] / 2,
                                  (p->y >> 16) - gData_08197826[m] / 2,
@@ -1706,7 +1717,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         REG_BG2X = (64 - x) << 8;
       } else {
         for (; i != 32; i++, p++) {
-          m = Func_08002064(i, 5) * 3 + Func_08002064(__divsi3(p->z, 96), 3);
+          m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->z, 96), 3);
           drawFuncs.draw[0](screen, EWRAM_BUF + 0x83c + gData_081974bc[m],
                             (p->x >> 16) - gData_0819749e[m] / 2,
                             (p->y >> 16) - gData_081974ad[m] / 2,
@@ -2056,7 +2067,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (p->life >= 0 && p->z > 0) {
-          m = Func_08002064(i, 3);
+          m = __modsi3(i, 3);
           x = point2[0] + ((p->z * Trig_Sin(p->x)) >> 16);
           y = point2[1] + ((p->z * Trig_Cos(p->x)) >> 16);
           p->z -= 4;
@@ -2118,7 +2129,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         REG_BLDALPHA = (64 - frame) | 0x1000;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
-        m = Func_08002064(i, 3);
+        m = __modsi3(i, 3);
         EffectPosition_ApplyBaseAndYOffset(p, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x240, point[0] - 12,

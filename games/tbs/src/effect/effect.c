@@ -10621,36 +10621,35 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
 UNUSED DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode4,
                           BattleFx_RunHealingMotes, 4)
 
-    // Abilities: Tonic (kind 208).
-    //
-    // Tonic (scattering style 5): sparkles twinkle around each target, turning
-    // on two axes, and go out one by one; mode 5 plays as mode 4 does.
-    DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
+// Abilities: Tonic (kind 208).
+//
+// Tonic (scattering style 5): sparkles twinkle around each target, turning
+// on two axes, and go out one by one; mode 5 plays as mode 4 does.
+DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
 
-    // Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
-    //
-    // Psy Crystal: healing motes gather around each target in the Mars Djinni
-    // palette; with a prelude, a Mars Djinni appears first.
-    DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
+// Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
+//
+// Psy Crystal: healing motes gather around each target in the Mars Djinni
+// palette; with a prelude, a Mars Djinni appears first.
+DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
 
 #define HEALING_MOTES 512 // motes in PARTICLES
 #define HEALING_SLOTS 64  // particles reserved for each target
 
-    // Healing sparkles: motes of light scattered around each target swirl in
-    // towards it, one target every 8 frames, with the recovery sound on each
-    // target's 20th frame and a tint on its 36th.
-    //
-    // effect: the targets. With prelude 1, a djinni (Mars in mode 6, Mercury
-    //         otherwise) appears first, sways and rises. variant picks the
-    //         motes per target (0: 32, 2: 128, others: 64) and, in modes 0,
-    //         1, 3, 4 and 5, the resource (0: ice shard, others: ice block).
-    // mode: how the motes scatter and turn. Only mode 0 shows the canvas at
-    //       its own width, centred on the first target. Modes 3, 4 and 5 put
-    //       the motes out one by one instead of drawing them in; modes 0, 3,
-    //       4 and 5 draw sparkle dots. Mode 6 takes the Mars resource, mode 2
-    //       the blast resource.
-    void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect,
-                                  u32 mode) {
+// Healing sparkles: motes of light scattered around each target swirl in
+// towards it, one target every 8 frames, with the recovery sound on each
+// target's 20th frame and a tint on its 36th.
+//
+// effect: the targets. With prelude 1, a djinni (Mars in mode 6, Mercury
+//         otherwise) appears first, sways and rises. variant picks the
+//         motes per target (0: 32, 2: 128, others: 64) and, in modes 0,
+//         1, 3, 4 and 5, the resource (0: ice shard, others: ice block).
+// mode: how the motes scatter and turn. Only mode 0 shows the canvas at
+//       its own width, centred on the first target. Modes 3, 4 and 5 put
+//       the motes out one by one instead of drawing them in; modes 0, 3,
+//       4 and 5 draw sparkle dots. Mode 6 takes the Mars resource, mode 2
+//       the blast resource.
+void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -11334,17 +11333,16 @@ UNUSED DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3,
 #define STAT_REDUCTION_SHARDS 24       // shards drawn for each target
 #define STAT_REDUCTION_SLOTS 32        // particles reserved for each target
 
-    // Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
-    // target, 4 frames apart, and then breaks into 24 shards that fly off and
-    // fade out through the darker copies. In each target's own frames the
-    // picture plays until about frame 24, then breaks with a sound; the shards
-    // darken from frame 29 and are gone after frame 60.
-    //
-    // effect: the targets.
-    // mode: 0 the dagger and the pink burst palette, 1 the shield and the
-    //       glow orb palette, 2 and 3 the shield and the pink burst palette.
-    void BattleFx_RunStatReduction(struct BattleEffectArgument *effect,
-                                   s32 mode) {
+// Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
+// target, 4 frames apart, and then breaks into 24 shards that fly off and
+// fade out through the darker copies. In each target's own frames the
+// picture plays until about frame 24, then breaks with a sound; the shards
+// darken from frame 29 and are gone after frame 60.
+//
+// effect: the targets.
+// mode: 0 the dagger and the pink burst palette, 1 the shield and the
+//       glow orb palette, 2 and 3 the shield and the pink burst palette.
+void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;

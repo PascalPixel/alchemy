@@ -910,7 +910,13 @@ Func_08040798:
 	.section .rom.000410bc, "ax"
 	.incbin "baserom.gba", 0x000410bc, 0x0000019c
 	.section .rom.000412e0, "ax"
-	.incbin "baserom.gba", 0x000412e0, 0x00000440
+	.global Func_0804128c
+	.type Func_0804128c, %function
+	.thumb_func
+Func_0804128c:
+	.incbin "baserom.gba", 0x000412e0, 0x000000c4
+	.section .rom.000415f4, "ax"
+	.incbin "baserom.gba", 0x000415f4, 0x0000012c
 	.section .rom.00041720, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function

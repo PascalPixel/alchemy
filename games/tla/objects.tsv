@@ -1331,28 +1331,33 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0004118c	ja
 main	rom_main_02	games/tla/src/menu/screene	.text
 main	rom_main_02	games/tla/src/graphics/text/ability_name	.text
 main	rom_main_02	recon/tla/it/rom	.rom.000412e4	it
+main	rom_main_02	recon/tla/fr/rom	.rom.000412d0	fr
+main	rom_main_02	recon/tla/es/rom	.rom.000412ec	es
+main	rom_main_02	recon/tla/de/rom	.rom.000412e0	de
+main	rom_main_02	recon/tla/raw/0804128c	.text	en
+main	rom_main_02	recon/tla/ja/rom	.rom.000413b0	ja
+main	rom_main_02	games/tla/src/menu/ability_grid	.text
+main	rom_main_02	recon/tla/it/rom	.rom.000415f8	it
 main	rom_main_02	recon/tla/it/rom	.rom.00041724	it
 main	rom_main_02	recon/tla/it/rom	.rom.00041b20	it
 main	rom_main_02	recon/tla/it/rom	.rom.00041bcc	it
-main	rom_main_02	recon/tla/fr/rom	.rom.000412d0	fr
+main	rom_main_02	recon/tla/fr/rom	.rom.000415e4	fr
 main	rom_main_02	recon/tla/fr/rom	.rom.00041710	fr
 main	rom_main_02	recon/tla/fr/rom	.rom.00041b0c	fr
 main	rom_main_02	recon/tla/fr/rom	.rom.00041bb8	fr
-main	rom_main_02	recon/tla/es/rom	.rom.000412ec	es
+main	rom_main_02	recon/tla/es/rom	.rom.00041600	es
 main	rom_main_02	recon/tla/es/rom	.rom.0004172c	es
 main	rom_main_02	recon/tla/es/rom	.rom.00041b28	es
 main	rom_main_02	recon/tla/es/rom	.rom.00041bd4	es
-main	rom_main_02	recon/tla/de/rom	.rom.000412e0	de
+main	rom_main_02	recon/tla/de/rom	.rom.000415f4	de
 main	rom_main_02	recon/tla/de/rom	.rom.00041720	de
 main	rom_main_02	recon/tla/de/rom	.rom.00041b10	de
 main	rom_main_02	recon/tla/de/rom	.rom.00041bbc	de
-main	rom_main_02	recon/tla/raw/0804128c	.text	en
-main	rom_main_02	recon/tla/raw/08041350	.text	en
 main	rom_main_02	recon/tla/raw/080415a0	.text	en
 main	rom_main_02	recon/tla/raw/080416cc	.text	en
 main	rom_main_02	recon/tla/raw/08041abc	.text	en
 main	rom_main_02	recon/tla/raw/08041b68	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.000413b0	ja
+main	rom_main_02	recon/tla/ja/rom	.rom.000416c4	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.000417f0	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.00041c00	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.00041cac	ja

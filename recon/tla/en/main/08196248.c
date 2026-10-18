@@ -1,15 +1,11 @@
-// Draft, differ 215 of 203 (draft 170 instructions, no device): an unused
-// wireframe renderer, written from the listing (no caller in the image; no
-// Broken Seal twin, twins12 0.43).
-// Left: the native holds every corner field it reads through its own
-// address register, formed once before the face loop: the three corners'
-// x at r6, r6 + 12 (r9) and r6 + 24 (r10), their y at r6 + 4 (r7), r6 + 16
-// (r11) and r6 + 28 (sp+4); the halfword loads then index those with 2.
-// Here only corners 1 and 2 get registers and the y fields are immediate
-// offsets, so the face loop is 33 instructions shorter. The vertex loop's
-// counter lives at sp+8 in the native (reused as the face counter), here
-// in r9. Next to try: separate pointers for the six fields, a halfword
-// union for the 16.16 values.
+// Near miss, differ 192 of 203 (draft 207 instructions, no device): an
+// unused wireframe renderer, written from the listing (no caller in the
+// image; no Broken Seal twin, twins12 0.43). The same calls and control
+// flow; each corner field it reads has its own pointer, as in the native.
+// Left: allocation. The native keeps the face pointer in r8 and the loop
+// counter at sp+8; here the face pointer spills. Forming the pointers
+// inside the face loop (hoisted past the guard, as the native places them)
+// scores differ 179 but adds a fifth instruction.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

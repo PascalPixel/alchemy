@@ -136,7 +136,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
                               s32 tile);
 void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind);
 void Graphics_SetBg1Priority3(void);
-void Graphics_ClearBg1ControlBit2(void);
+void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);
 struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
 s32 Ui_RunSelectionScreen(s32 mode);
@@ -195,7 +195,7 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection);
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectEntry20To21(s32 selection);
 
-void Scheduler_ScheduleCallbackCAfterFrames(void);
+void DebugMenu_ScheduleSceneSelector(void);
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second);
 #ifdef UBFIX
 void Menu_RunSelection(void);

@@ -96,7 +96,7 @@ s32 Ui_RunSelectionScreen(s32 mode) {
     } while (entryIndex < selectionUi->iconCount);
   }
   Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
-  Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
+  Runtime_SetIrqHandler(2, 136, Graphics_SetBg1Priority0);
 
   for (;;) {
     pulseScale = gUi_BounceScales[(gFrameCount * 2) & 31];

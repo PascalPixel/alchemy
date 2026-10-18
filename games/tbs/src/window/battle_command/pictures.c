@@ -468,7 +468,7 @@ void Graphics_SetBg1Priority3(void) {
 }
 
 // Restore BG1 priority 0; the VCount handler applies this below the strip.
-void Graphics_ClearBg1ControlBit2(void) {
+void Graphics_SetBg1Priority0(void) {
   u32 value = REG_BG1CNT;
 
   value &= ~BGCNT_PRIORITY(3);
@@ -485,7 +485,7 @@ void Graphics_InstallBg1VCountHandler(void) {
    * its load ahead of the handler index; as a plain assignment, 2 of 10
    * instructions differ in tbs-en. */
   do {
-    address = (u32)Graphics_ClearBg1ControlBit2;
+    address = (u32)Graphics_SetBg1Priority0;
   } while (0);
   Runtime_SetIrqHandler(2, 136, (InterruptHandler)address);
 }

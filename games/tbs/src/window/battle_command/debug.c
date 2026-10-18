@@ -3,9 +3,9 @@
 
 #include "../battle_command_internal.h"
 
-// Schedule the debug scene/entrance selector; 0xc80 is a scheduler order,
-// not a number of frames to wait.
-void Scheduler_ScheduleCallbackCAfterFrames(void) {
+// Schedules the debug scene and entrance selector; 0xc80 is a scheduler order,
+// not a number of frames to wait. Nothing in the game calls it.
+UNUSED void DebugMenu_ScheduleSceneSelector(void) {
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
 #else

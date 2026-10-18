@@ -1,7 +1,9 @@
-// Draft of BattleFx_RunWyrdCurse, decompiled from the listing: differ 513
-// of 568 (draft 545), the same 47 calls and control flow. Left: the glow's
-// mirror loop, where the native keeps six row pointers stepping by two
-// (23 instructions more), and a frame of 60 bytes for 68.
+// Draft of BattleFx_RunWyrdCurse, decompiled from the listing: differ 395
+// of 568 (draft 563), the same 47 calls and control flow. The glow's mirror
+// loop runs to size / 2 with its right-hand columns written from size, so
+// it keeps the native's six row pointers stepping by two; the last
+// particle is read in place.
+// Left: allocation, and a frame of 60 bytes for 68.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -143,18 +145,18 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
     s32 x;
 
     for (y = 0; y != size; y++) {
-      for (x = 0; x != 8; x++) {
+      for (x = 0; x != size / 2; x++) {
         u8 v = work->sheet[y * size / 2 + x];
 
         if (v != 0) {
           glow[y * 32 + x * 2] = v;
           glow[y * 32 + x * 2 + 1] = v;
-          glow[y * 32 + 30 - x * 2] = v;
-          glow[y * 32 + 31 - x * 2] = v;
-          glow[(31 - y) * 32 + x * 2] = v;
-          glow[(31 - y) * 32 + x * 2 + 1] = v;
-          glow[(31 - y) * 32 + 30 - x * 2] = v;
-          glow[(31 - y) * 32 + 31 - x * 2] = v;
+          glow[(y + 1) * size * 2 - 2 - x * 2] = v;
+          glow[(y + 1) * size * 2 - 1 - x * 2] = v;
+          glow[(size * 2 - 1 - y) * 32 + x * 2] = v;
+          glow[(size * 2 - 1 - y) * 32 + x * 2 + 1] = v;
+          glow[(size * 2 - 1 - y) * 32 + size * 2 - 2 - x * 2] = v;
+          glow[(size * 2 - 1 - y) * 32 + size * 2 - 1 - x * 2] = v;
         }
       }
     }
@@ -166,7 +168,6 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != WYRD_FRAMES; frame++) {
     struct RenderModel *model;
     void *vertices;
-    struct EffectStep *glow;
     s32 level;
 
     if (frame == 0) {
@@ -216,22 +217,22 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->shade = 0;
 
     // The glow gathers what the landed drops bring.
-    glow = &work->particles[63];
     for (i = 0, drop = work->particles; i != 8; i++, drop++) {
       if (drop->variant > 0) {
-        glow->variant += drop->velocityZ;
+        work->particles[63].variant += drop->velocityZ;
         drop->velocityZ /= 2;
       }
     }
-    level = glow->variant;
+    level = work->particles[63].variant;
     if (level > 0) {
       s32 scale = (level << 13) / 824;
 
       if (frame > 63) {
-        glow->variant = level - 24;
+        work->particles[63].variant = level - 24;
       }
       Render_ResetTransformState();
-      Func_08015160(glow->x - 0x400000, glow->y - 0x400000, 0);
+      Func_08015160(work->particles[63].x - 0x400000,
+                    work->particles[63].y - 0x400000, 0);
       Func_080151e4(scale * 2, scale, scale * 2);
       SceneTransform_ApplyPitch(-0x2000);
       Func_08196958(gData_08199210, vertices, 4);

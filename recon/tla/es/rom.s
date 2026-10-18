@@ -2685,12 +2685,8 @@ Encounter_SelectEnemyGroup:
 	.thumb_func
 BattleFx_SelectBattleCue:
 	.incbin "baserom.gba", 0x000d35d8, 0x000000cc
-	.section .rom.000d36a4, "ax"
-	.global Event_SelectSpawnObjectMode
-	.type Event_SelectSpawnObjectMode, %function
-	.thumb_func
-Event_SelectSpawnObjectMode:
-	.incbin "baserom.gba", 0x000d36a4, 0x00000044
+	.section .rom.000d36e4, "ax"
+	.incbin "baserom.gba", 0x000d36e4, 0x00000004
 	.section .rom.000d36e8, "ax"
 	.global Event_SpawnObjectTable
 	.type Event_SpawnObjectTable, %function

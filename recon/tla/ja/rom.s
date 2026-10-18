@@ -2410,7 +2410,7 @@ Encounter_SelectEnemyGroup:
 	.type BattleFx_SelectBattleCue, %function
 	.thumb_func
 BattleFx_SelectBattleCue:
-	.incbin "baserom.gba", 0x000ca5d8, 0x0000010c
+	.incbin "baserom.gba", 0x000ca5d8, 0x000000cc
 	.section .rom.000ca6e8, "ax"
 	.balign 4
 	.global Event_SpawnObjectTable

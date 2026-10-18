@@ -2798,20 +2798,20 @@ main	rom_main_04	recon/tla/raw/080ca4a8	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000ca4a8	ja
 main	rom_main_04	games/tla/src/game/party/is_active_owner	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000ca5d8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000ca6a4	it
+main	rom_main_04	games/tla/src/game/party/remap_character	.text	it
+main	rom_main_04	recon/tla/it/rom	.rom.000ca6e4	it
 main	rom_main_04	recon/tla/it/rom	.rom.000ca6e8	it
 main	rom_main_04	recon/tla/it/rom	.rom.000ca9cc	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000cf5d8	fr
-main	rom_main_04	recon/tla/fr/rom	.rom.000cf6a4	fr
 main	rom_main_04	recon/tla/es/rom	.rom.000d35d8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d36a4	es
+main	rom_main_04	games/tla/src/game/party/remap_character	.text	es
+main	rom_main_04	recon/tla/es/rom	.rom.000d36e4	es
 main	rom_main_04	recon/tla/es/rom	.rom.000d36e8	es
 main	rom_main_04	recon/tla/es/rom	.rom.000d39cc	es
 main	rom_main_04	recon/tla/de/rom	.rom.000d75d8	de
-main	rom_main_04	recon/tla/de/rom	.rom.000d76a4	de
 main	rom_main_04	recon/tla/raw/080ca5d8	.text	en
-main	rom_main_04	recon/tla/raw/080ca6a4	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000ca5d8	ja
+main	rom_main_04	games/tla/src/game/party/remap_character	.text	ja en de fr
 main	rom_main_04	games/tla/src/field/common/event/spawn	.text	ja en de fr
 main	rom_main_04	recon/tla/fr/rom	.rom.000cf6e8	fr
 main	rom_main_04	recon/tla/fr/rom	.rom.000cf9cc	fr

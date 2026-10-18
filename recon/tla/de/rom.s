@@ -1377,12 +1377,6 @@ Func_080ca3f4:
 	.thumb_func
 BattleFx_SelectBattleCue:
 	.incbin "baserom.gba", 0x000d75d8, 0x000000cc
-	.section .rom.000d76a4, "ax"
-	.global Func_080ca6a4
-	.type Func_080ca6a4, %function
-	.thumb_func
-Func_080ca6a4:
-	.incbin "baserom.gba", 0x000d76a4, 0x00000040
 	.section .rom.000d76e8, "ax"
 	.balign 4
 	.global Event_SpawnObjectTable

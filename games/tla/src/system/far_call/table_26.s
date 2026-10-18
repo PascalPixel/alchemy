@@ -5,10 +5,10 @@
 	.thumb_func
 Func_080c82a8:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Event_SelectSpawnObjectMode
+	overlay_veneer Party_RemapCharacterIdByFlags
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Event_SelectSpawnObjectMode
+	overlay_veneer Party_RemapCharacterIdByFlags
 .else
 	overlay_veneer Func_080d5bec
 .endif
@@ -20,7 +20,15 @@ Object_GetTriggerTileAheadOfCurrentFar:
 	.global Func_080c82b8
 	.thumb_func
 Func_080c82b8:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080ca6a4
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080ca6a4
+.else
+	overlay_veneer Party_RemapCharacterIdByFlags
+.endif
+.endif
 	.global Func_080c82c0
 	.thumb_func
 Func_080c82c0:

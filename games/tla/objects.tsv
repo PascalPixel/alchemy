@@ -3428,22 +3428,21 @@ main	rom_main_05	recon/tla/it/rom	.rom.000d69e8	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d6b84	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000db9e8	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000dbb84	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dbe4c	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dbf28	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000df9e8	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dfb84	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e39f4	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e3b90	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e3e58	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e3f34	de
 main	rom_main_05	recon/tla/raw/080d69f4	.text	en
 main	rom_main_05	recon/tla/raw/080d6b90	.text	en
 main	rom_main_05	recon/tla/raw/080d6c60	.text	en
-main	rom_main_05	recon/tla/raw/080d6e58	.text	en
-main	rom_main_05	recon/tla/raw/080d6f34	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d69d4	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d6b70	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6e38	ja
+main	rom_main_05	games/tla/src/field/common/effect/motes	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000d6f28	it
+main	rom_main_05	recon/tla/fr/rom	.rom.000dbf28	fr
+main	rom_main_05	recon/tla/es/rom	.rom.000dff28	es
+main	rom_main_05	recon/tla/de/rom	.rom.000e3f34	de
+main	rom_main_05	recon/tla/raw/080d6f34	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d6f14	ja
 main	rom_main_05	games/tla/src/field/common/effect/sparkoff	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d7028	it

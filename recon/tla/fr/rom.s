@@ -2245,13 +2245,12 @@ Func_080d67e8:
 	.type Func_080d6b90, %function
 	.thumb_func
 Func_080d6b90:
-	.incbin "baserom.gba", 0x000dbb84, 0x000002c8
-	.section .rom.000dbe4c, "ax"
-	.global Func_080d6e58
-	.type Func_080d6e58, %function
+	.incbin "baserom.gba", 0x000dbb84, 0x000000d0
+	.global Func_080d6c60
+	.type Func_080d6c60, %function
 	.thumb_func
-Func_080d6e58:
-	.incbin "baserom.gba", 0x000dbe4c, 0x000000dc
+Func_080d6c60:
+	.incbin "baserom.gba", 0x000dbc54, 0x000001f8
 	.section .rom.000dbf28, "ax"
 	.global Func_080d6f34
 	.type Func_080d6f34, %function

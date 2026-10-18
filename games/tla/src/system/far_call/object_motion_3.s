@@ -46,7 +46,7 @@ ObjectEffect_BeginContextEffect25Far:
 	.global Func_080c8910
 	.thumb_func
 Func_080c8910:
-	overlay_veneer Func_080d6e58
+	overlay_veneer FieldMotes_Start
 	.global Func_080c8918
 	.thumb_func
 Func_080c8918:

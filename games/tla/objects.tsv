@@ -3583,15 +3583,12 @@ main	rom_main_05	recon/tla/it/rom	.rom.000d9ac4	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d9afc	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d9b74	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d9d34	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000deaa4	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e2aa4	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e2ac4	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e2afc	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e2b74	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e2d34	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e6ab0	de
-main	rom_main_05	recon/tla/raw/080d9ab0	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d9a6c	ja
+main	rom_main_05	games/tla/src/field/common/work9c/f0d9ab0	.text	ja en de fr
 main	rom_main_05	games/tla/src/field/common/work9c/f0d9ad0	.text	ja en de fr
 main	rom_main_05	games/tla/src/field/common/worka0/f0d9b08	.text	ja en de fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000deb74	fr

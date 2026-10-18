@@ -1,5 +1,11 @@
-// Near miss: listing 91 instructions, draft 91, common 71, differ 40; the rest
-// differs in instruction order.
+// Near miss, differ 28 of 91 (2026-10-18; 40 before), Func_080dbf94's mirror:
+// moves the object from 16 pixels above the effect's main object to (x, y,
+// z), growing it from 0.25. The products written (x - start) * i and scaleX
+// stored first took it from 40. Left: the frame opens after mov r9, r3 in
+// the native; at the loop the native builds the zero for the scale in r2
+// and loads the spilled x into r1 before the divisor; the y and z loads
+// come one slot later. A one-pass block after the y store, or the scale
+// zeroed before z, measured the same; five minutes of permuter found nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -38,10 +44,10 @@ void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   start[2] = mainObject->z;
   scale = 0;
   do {
-    object->x = start[0] + i * (x - start[0]) / 10;
-    object->y = start[1] + i * (y - start[1]) / 10;
-    object->z = start[2] + i * (z - start[2]) / 10;
-    object->scaleX = object->scaleY = scale / 10 + 0x4000;
+    object->x = start[0] + (x - start[0]) * i / 10;
+    object->y = start[1] + (y - start[1]) * i / 10;
+    object->z = start[2] + (z - start[2]) * i / 10;
+    object->scaleY = object->scaleX = scale / 10 + 0x4000;
     WaitFrames(1);
     i++;
     scale += 0xc000;

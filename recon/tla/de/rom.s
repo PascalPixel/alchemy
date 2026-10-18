@@ -2084,13 +2084,6 @@ Func_080dd054:
 	.thumb_func
 BattleFx_StartItemBreak:
 	.incbin "baserom.gba", 0x000ea528, 0x00000114
-	.section .rom.000ea668, "ax"
-	.balign 4
-	.global UpdateRisingParticleBurst
-	.type UpdateRisingParticleBurst, %function
-	.thumb_func
-UpdateRisingParticleBurst:
-	.incbin "baserom.gba", 0x000ea668, 0x000000e0
 	.section .rom.000ea754, "ax"
 	.incbin "baserom.gba", 0x000ea754, 0x000000cc
 	.global Func_080dd820

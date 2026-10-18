@@ -1,9 +1,3 @@
-// Near miss, differ 4 of 95 (2026-10-15), ported from ☀️'s
-// UpdateRisingParticleBurst with ⚓️'s object 673 (☀️'s 285). Two loads come one
-// slot later than the listing's: the 0xfffff800 literal before the first
-// Audio_PlayCue argument, and the angle (ldrh r3, [r7, #6]) before the 0x2000
-// step is started. ☀️'s block-local 1.0 is still needed. Single and paired
-// barriers after each statement measured no better.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -16,19 +10,28 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
 void Object_Destroy(struct ObjectRuntime *object);
 
+// The object spins as it rises for 31 frames, shrinks, and bursts into 8
+// particles (object 673), as ☀️'s UpdateRisingParticleBurst.
 void UpdateRisingParticleBurst(void *object) {
   struct ObjectRuntime *src = object;
   struct ObjectRuntime *child;
   s32 i;
   s32 dist;
   u32 spread;
+  s32 shrink = -0x800;
 
+  /* FAKEMATCH: ⚓️ loads the hoisted shrink step before the cue's argument;
+   * as a constant it loads after the call (differ 2). */
+  asm volatile("" : "+r"(shrink));
   Audio_PlayCue(154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
-    src->angle += 0x2000;
-    src->scaleX += -0x800;
-    src->scaleY += -0x800;
+    /* FAKEMATCH: ⚓️ loads the angle before it builds the 1/8 turn; without
+     * the barrier, differ 2. */
+    asm volatile("");
+    src->angle += 0x2000; // 1/8 turn
+    src->scaleX += shrink;
+    src->scaleY += shrink;
     WaitFrames(1);
   }
   for (i = 7; i >= 0; i--) {

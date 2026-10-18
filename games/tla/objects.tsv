@@ -3819,12 +3819,7 @@ main	rom_main_05	recon/tla/raw/080dd528	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000dd4e2	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000dd4e4	ja
 main	rom_main_05	games/tla/src/battle/effect/snap_scale	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000dd65c	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000e265c	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000e665c	es
-main	rom_main_05	recon/tla/de/rom	.rom.000ea668	de
-main	rom_main_05	recon/tla/raw/080dd668	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000dd624	ja
+main	rom_main_05	games/tla/src/battle/effect/rising_burst	.text
 main	rom_main_05	games/tla/src/battle/effect/delay	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000dd748	it
 main	rom_main_05	recon/tla/it/rom	.rom.000dd944	it

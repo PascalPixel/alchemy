@@ -398,7 +398,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e290:
 	.4byte 0x04040404
 .L_0818e294:
-	.4byte Func_0818ddfc
+	.4byte BattleFx_ArmMeteorBlowPaletteDma
 .L_0818e298:
 	.4byte gBgScroll
 .L_0818e29c:
@@ -1156,7 +1156,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e854:
 	.4byte gInput
 .L_0818e858:
-	.4byte Func_0818ddfc
+	.4byte BattleFx_ArmMeteorBlowPaletteDma
 .L_0818e85c:
 	.4byte Func_08143174
 .L_0818e860:

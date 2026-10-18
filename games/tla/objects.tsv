@@ -6364,11 +6364,16 @@ main	rom_main_09	recon/tla/fr/rom	.rom.0018d5a8	fr
 main	rom_main_09	recon/tla/es/rom	.rom.0018d5a8	es
 main	rom_main_09	recon/tla/de/rom	.rom.0018d5a8	de
 main	rom_main_09	recon/tla/raw/0818d5a8	.text	en
-main	rom_main_09	recon/tla/raw/0818ddfc	.text	en
+main	rom_main_09	recon/tla/ja/rom	.rom.0018d5ac	ja
+main	rom_main_09	games/tla/src/battle/effect/meteor_blow_palette	.text
+main	rom_main_09	recon/tla/it/rom	.rom.0018de3c	it
+main	rom_main_09	recon/tla/fr/rom	.rom.0018de3c	fr
+main	rom_main_09	recon/tla/es/rom	.rom.0018de3c	es
+main	rom_main_09	recon/tla/de/rom	.rom.0018de3c	de
+main	rom_main_09	recon/tla/ja/rom	.rom.0018de40	ja
 main	rom_main_09	recon/tla/raw/0818de3c	.text	en
 main	rom_main_09	recon/tla/raw/0818df5c	.text	en
 main	rom_main_09	recon/tla/raw/0818eda4	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0018d5ac	ja
 main	rom_main_09	games/tla/src/battle/effect/canvas_modes	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0018f620	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0018f620	fr

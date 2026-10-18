@@ -4923,7 +4923,9 @@ BattleFx_RunTrident:
 	.balign 4
 	.global Func_0818d5a8
 Func_0818d5a8:
-	.incbin "baserom.gba", 0x0018d5ac, 0x000009b4
+	.incbin "baserom.gba", 0x0018d5ac, 0x00000854
+	.section .rom.0018de40, "ax"
+	.incbin "baserom.gba", 0x0018de40, 0x00000120
 	.global BattleFx_RunMeteorBlow
 	.type BattleFx_RunMeteorBlow, %function
 	.thumb_func

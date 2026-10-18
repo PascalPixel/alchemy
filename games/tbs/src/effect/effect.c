@@ -13,7 +13,8 @@
 // and its first ability. Functions here are BattleFx_ unless they act on one
 // thing the engine names elsewhere: those keep its prefix (Camera_,
 // Palette_, Graphics_, Resource_, EffectStep_, EffectPosition_,
-// ObjectGroup_), as their Lost Age twins do. The shared machinery:
+// ObjectGroup_), as their Lost Age twins do. A part's macros are its own;
+// one that two parts use is defined in this file. The shared machinery:
 //
 //   Entry points    dispatch.c: BattleFx_RunTableEffect,
 //                   BattleFx_RunSceneEffect; positions.c:
@@ -274,6 +275,10 @@ enum CanvasTransferMode {
 #define WINDOW_SPAN_EMPTY WINDOW_SPAN(1, 0)
 
 // Used for clipping canvas lines and comparing projectile travel distances.
+// The full-screen picture Graphics_ConvertBackgroundToBlueRamp (bind.c)
+// works on, which Condemn draws too.
+#define BLUE_RAMP_PIXELS Ram_MapCellBuffer
+
 #define EFFECT_ABS(v) ((v) < 0 ? -(v) : (v))
 
 // Caps a colour level at cap, and at 0 from below. Fades draw from darker

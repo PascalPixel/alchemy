@@ -23,9 +23,6 @@
 //
 // The blue-ramp helper also converts a full-screen tiled picture in place.
 
-// The full-screen picture the blue ramp works on.
-#define BLUE_RAMP_PIXELS Ram_MapCellBuffer
-
 #define CONDEMN_FRAMES 132       // frames in the effect
 #define CONDEMN_BREAK_FRAME 88   // the panel breaks in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces

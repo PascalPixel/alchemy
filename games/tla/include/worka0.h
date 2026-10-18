@@ -15,7 +15,10 @@ struct WorkA0Node {
 struct WorkA0Slot {
   s16 first;
   s16 second;
-  u8 unk04[16];
+  u8 unk04[4];
+  s32 amplitude; // the wobble's size, decaying each frame
+  u8 unk0c[4];
+  s32 angle;
   struct WorkA0Node *tail;
   struct WorkA0Node *head;
 };

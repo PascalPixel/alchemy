@@ -153,8 +153,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
           position.x = (pathX + 80 + column * 32) << 16;
           position.y = (64 - pathY + row * 32) << 16;
           Object_ApplyProjectedPlacementFar(work->objects[row * 3 + column],
-                                            &position,
-                                            &gStagedParticles_UnitScale, 0);
+                                            &position, &gAtalanta_UnitScale, 0);
         }
       }
     }

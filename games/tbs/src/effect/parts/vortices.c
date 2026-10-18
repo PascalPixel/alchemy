@@ -10,7 +10,7 @@
 // appears home in on the targets in turn; each that reaches the ground strikes
 // in a burst, flashing and knocking back its target, while the camera swings
 // round over frames 17 to 63. effect->variant picks the volley from
-// gFroth_Counts (motes and frames) and how hard the screen shakes.
+// gVortices_Counts (motes and frames) and how hard the screen shakes.
 void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct BattleEffectWork *work;
@@ -67,7 +67,8 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
                         75); // trails keep 3/4 a frame
   AudioCommand_PlayFar(SE_164);
 
-  for (frame = 0; frame != gFroth_Counts[work->effect->variant][FROTH_FRAMES];
+  for (frame = 0;
+       frame != gVortices_Counts[work->effect->variant][FROTH_FRAMES];
        frame++) {
     camera = WORK_SLOT(HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
@@ -76,10 +77,10 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
       work->cameraDelta = 0;
     // 16 frames before the end the battle shows the damage, with sound 132
     // on each hit.
-    if (frame == gFroth_Counts[work->effect->variant][FROTH_FRAMES] - 16)
+    if (frame == gVortices_Counts[work->effect->variant][FROTH_FRAMES] - 16)
       BattleEventRuntime_BeginPhaseFar(SE_132);
     EFFECT_VIEW_FROM_CAMERA(camera);
-    for (i = 0; i != gFroth_Counts[work->effect->variant][FROTH_MOTE_COUNT];
+    for (i = 0; i != gVortices_Counts[work->effect->variant][FROTH_MOTE_COUNT];
          i++) {
       point = &work->particles[i];
       if (frame > i * 2 && flags[i] == 0) {
@@ -148,7 +149,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 // sparkling with glints; the canvas flashes and the targets reel seven
 // times, 8 frames apart, from frame 16, and the battle shows the damage on
 // frame 32.
-// effect->variant picks the shape from gWhirlwind_Shapes: how many
+// effect->variant picks the shape from gVortices_Shapes: how many
 // tornadoes, how far they sway and how hard the screen shakes.
 void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   BlitterPair draw;
@@ -218,9 +219,9 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
     // Each tornado: three sections stacked, swaying about the sweep, a
     // quarter turn apart, with four glints.
     for (i = 0;
-         i != gWhirlwind_Shapes[work->effect->variant][WHIRLWIND_TORNADOES];
+         i != gVortices_Shapes[work->effect->variant][WHIRLWIND_TORNADOES];
          i++) {
-      x = ((gWhirlwind_Shapes[work->effect->variant][WHIRLWIND_SWAY] *
+      x = ((gVortices_Shapes[work->effect->variant][WHIRLWIND_SWAY] *
                 Trig_Sin((frame << 11) + i * 0x4000) +
             wave) >>
            16) +
@@ -260,9 +261,9 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       }
     }
     work->shakeFrames = 1;
-    Camera_ApplyShake(
-        gWhirlwind_Shapes[work->effect->variant][WHIRLWIND_SHAKE],
-        gWhirlwind_Shapes[work->effect->variant][WHIRLWIND_SHAKE] * 2);
+    Camera_ApplyShake(gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE],
+                      gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE] *
+                          2);
     EFFECT_END_FRAME(work);
   }
 

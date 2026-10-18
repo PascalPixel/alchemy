@@ -195,22 +195,22 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 1:
     for (i = 0; i != 12; i++) {
-      pos.x = (gFormation_TwelveX[i] << 16) + x - (16 << 16);
-      pos.y = (gFormation_TwelveZ[i] << 16) + z - (32 << 16);
+      pos.x = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
+      pos.y = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
-      pos.x = (gFormation_RightEightX[i] << 16) + x + (16 << 16);
-      pos.y = (gFormation_RightEightZ[i] << 16) + z;
+      pos.x = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
+      pos.y = (gHelmSplitter_RightEightZ[i] << 16) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
   case 3:
     for (i = 0; i != 8; i++) {
-      pos.x = (gFormation_SmallEightX[i] << 16) + x;
-      pos.y = (gFormation_SmallEightZ[i] << 16) + z;
+      pos.x = (gHelmSplitter_SmallEightX[i] << 16) + x;
+      pos.y = (gHelmSplitter_SmallEightZ[i] << 16) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &big, 0);
     }
     break;
@@ -316,15 +316,17 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         cell = 0;
       // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-      width = gImpactBurst_CellWidths[cell];
-      height = gImpactBurst_CellHeights[cell];
-      maxBlend(canvas, work->sheet + gImpactBurst_Cells[cell],
+      width = gHelmSplitter_ImpactBurstCellWidths[cell];
+      height = gHelmSplitter_ImpactBurstCellHeights[cell];
+      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstCells[cell],
                (x >> 16) - (width >> 1), (y >> 16) - (height >> 1), width,
                height);
 #else
-      maxBlend(canvas, work->sheet + gImpactBurst_Cells[cell],
-               (x >> 16) - ((width = gImpactBurst_CellWidths[cell]) >> 1),
-               (y >> 16) - ((height = gImpactBurst_CellHeights[cell]) >> 1),
+      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstCells[cell],
+               (x >> 16) -
+                   ((width = gHelmSplitter_ImpactBurstCellWidths[cell]) >> 1),
+               (y >> 16) -
+                   ((height = gHelmSplitter_ImpactBurstCellHeights[cell]) >> 1),
                width, height);
 #endif
     }

@@ -99,7 +99,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
             size = i % 3 + 1;
             EFFECT_DRAW_MOTE(draw, canvas, sheet, HI(shard->x), HI(shard->y),
                              size);
-            EffectStep_AdvanceWithGravity2D(shard, 62, gBreak_Gravities[i & 3]);
+            EffectStep_AdvanceWithGravity2D(shard, 62, gDrain_Gravities[i & 3]);
             shard->variant++;
             if (shard->velocityY > 0 && HI(shard->y) > 112)
               shard->variant = -1;

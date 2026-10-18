@@ -76,7 +76,7 @@ extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_YellowOrbSheet;
-// The strike's six cels: ☀️'s gBeamSequence_Cells and
+// The strike's six cels: ☀️'s gBeams_Cells and
 // gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
 extern u16 Data_0819886c[];
 extern u8 Data_08198878[];

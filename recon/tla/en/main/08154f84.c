@@ -54,14 +54,14 @@
 // small thorn at 0xf00 and the dust cels after them.
 extern char ResourceId_ThornSheet;
 
-// The Broken Seal's gThorn_Counts: thorns by strength.
+// The Broken Seal's gGrowth_Counts: thorns by strength.
 extern u8 Data_08198442[];
-// The Broken Seal's gThorn_X: each thorn's root.
+// The Broken Seal's gGrowth_X: each thorn's root.
 extern s8 Data_0819843a[];
-// The Broken Seal's gThorn_Kinds: 0-1 large, 2-3 small; odd ones
+// The Broken Seal's gGrowth_Kinds: 0-1 large, 2-3 small; odd ones
 // grow to the left.
 extern u8 Data_08198432[];
-// The Broken Seal's gThorn_PuffHeights, _PuffCells, _PuffWidths:
+// The Broken Seal's gGrowth_ThornPuffHeights, _PuffCells, _PuffWidths:
 // the seven dust cels.
 extern u8 Data_0819844c[];
 extern u16 Data_08198454[];

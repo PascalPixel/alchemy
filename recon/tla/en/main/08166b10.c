@@ -61,7 +61,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_BlastSheet;
 extern char ResourceId_Data188;
-extern u8 gData_08198a9e[];  // ☀️ gSparkGroups_FlashCells
+extern u8 gData_08198a9e[];  // ☀️ gPlasma_FlashCells
 extern s32 gData_08198aa4[]; // the dust's four gravities
 extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 

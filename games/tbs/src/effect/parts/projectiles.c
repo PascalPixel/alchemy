@@ -357,7 +357,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunBlizzard, BattleFx_RunVolleyWithAction, 9)
 // fireball trails from 512.
 #define VOLLEY_PARTICLE_COUNT 1024
 
-// The bytes of a gVolley_Modes row.
+// The bytes of a gProjectiles_Modes row.
 enum VolleyField {
   VOLLEY_SHOTS,   // shots at each target
   VOLLEY_STEPS,   // frames a shot takes to reach its target
@@ -366,8 +366,8 @@ enum VolleyField {
   VOLLEY_SPARKS   // sparks thrown on each hit
 };
 
-// The value of one field of this volley's gVolley_Modes row.
-#define VOLLEY_VALUE(field) (gVolley_Modes[mode][field])
+// The value of one field of this volley's gProjectiles_Modes row.
+#define VOLLEY_VALUE(field) (gProjectiles_Modes[mode][field])
 
 // Where the volley's pictures sit in the sheet.
 #define VOLLEY_COMET_CELLS 0x1000  // comets: the top half of each
@@ -764,8 +764,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
-                  screenPosition->y - gVolley_CometHeights[kind], 32,
-                  gVolley_CometHeights[kind]);
+                  screenPosition->y - gProjectiles_CometHeights[kind], 32,
+                  gProjectiles_CometHeights[kind]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               if (work->effect->side == 1)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -778,7 +778,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
-                  gVolley_CometHeights[kind]);
+                  gProjectiles_CometHeights[kind]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else if (mode == 1) {
               // Shurikens vanish once past their target.
@@ -787,7 +787,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                         screenPosition->x - 16, screenPosition->y - 12, 32, 24);
             } else if (mode == 7 || mode == 9 || mode == 10) {
               s32 cell = j & 3;
-              draw[0](canvas, work->sheet + gVolley_PelletOffsets[cell],
+              draw[0](canvas, work->sheet + gProjectiles_PelletOffsets[cell],
                       screenPosition->x - 4, screenPosition->y - 4, 8, 8);
             } else if (mode == 2) {
               draw[0](canvas, work->sheet + j % 6 * 128, screenPosition->x - 4,
@@ -822,42 +822,46 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gVolley_FlashOffsets[step],
-                  flash->x - gVolley_FlashWidths[step],
-                  flash->y - gVolley_FlashRises[step],
-                  gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
+                  canvas, work->sheet + gProjectiles_FlashOffsets[step],
+                  flash->x - gProjectiles_FlashWidths[step],
+                  flash->y - gProjectiles_FlashRises[step],
+                  gProjectiles_FlashWidths[step],
+                  gProjectiles_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gVolley_FlashOffsets[step], flash->x,
-                  flash->y + gVolley_FlashSteps[step] -
-                      gVolley_FlashRises[step],
-                  gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
+                  canvas, work->sheet + gProjectiles_FlashOffsets[step],
+                  flash->x,
+                  flash->y + gProjectiles_FlashSteps[step] -
+                      gProjectiles_FlashRises[step],
+                  gProjectiles_FlashWidths[step],
+                  gProjectiles_FlashHeights[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
-                  work->sheet + gVolley_FlashOffsets[step] +
+                  work->sheet + gProjectiles_FlashOffsets[step] +
                       VOLLEY_FLASH_TURNED,
-                  flash->x - gVolley_FlashRises[step],
-                  flash->y - gVolley_FlashWidths[step],
-                  gVolley_FlashHeights[step], gVolley_FlashWidths[step]);
+                  flash->x - gProjectiles_FlashRises[step],
+                  flash->y - gProjectiles_FlashWidths[step],
+                  gProjectiles_FlashHeights[step],
+                  gProjectiles_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
-                  work->sheet + gVolley_FlashOffsets[step] +
+                  work->sheet + gProjectiles_FlashOffsets[step] +
                       VOLLEY_FLASH_TURNED,
-                  flash->x + gVolley_FlashSteps[step] -
-                      gVolley_FlashRises[step],
-                  flash->y, gVolley_FlashHeights[step],
-                  gVolley_FlashWidths[step]);
+                  flash->x + gProjectiles_FlashSteps[step] -
+                      gProjectiles_FlashRises[step],
+                  flash->y, gProjectiles_FlashHeights[step],
+                  gProjectiles_FlashWidths[step]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             flash->z++;

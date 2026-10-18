@@ -54,7 +54,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define gSparkles ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The four corner sparks: their flips and their place around the target
-// (The Broken Seal's gCornerSparks_DrawFlags, _X and _Y).
+// (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
 extern u8 Data_081976da[];
 extern s8 Data_081976d2[];
 extern s8 Data_081976d6[];

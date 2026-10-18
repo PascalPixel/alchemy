@@ -69,8 +69,8 @@ typedef DrawRectangle BlitterPair[2];
 
 extern char ResourceId_PortalSheet;
 extern char ResourceId_VenusDjinnSmallSheet;
-// The chips: ☀️'s gGround_ChipFlips (a blitter's flags), and, by shape,
-// gGround_ChipCells, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
+// The chips: ☀️'s gHail_ChipFlips (a blitter's flags), and, by shape,
+// gHail_ChipCells, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
 extern const u8 Data_08198524[];
 extern const u16 Data_0819853a[];
 extern const u8 Data_0819854c[];

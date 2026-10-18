@@ -43,7 +43,7 @@ struct DropSplashBuffer {
 
 #define gDropSplashes ((struct DropSplashBuffer *)Ram_MapCellBuffer)
 
-// Four bytes for each variant (The Broken Seal's gFallingBolts_Counts).
+// Four bytes for each variant (The Broken Seal's gFalling_Counts).
 extern u8 Data_08197527[];
 #define DROP_COUNT(variant) Data_08197527[(variant) * 4]
 #define SPLASH_COUNT(variant) Data_08197527[(variant) * 4 + 1]

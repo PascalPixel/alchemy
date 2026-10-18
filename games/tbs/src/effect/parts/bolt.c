@@ -10,7 +10,7 @@
   ((DrawRectangle *)                                                           \
        gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
 
-// The columns of a gLightningBolts_Counts row.
+// The columns of a gBolt_Counts row.
 enum {
   LIGHTNING_BOLT_SPARKS,       // sparks thrown from each bolt's foot
   LIGHTNING_BOLT_GLINTS,       // glints a frame around each target
@@ -18,9 +18,8 @@ enum {
   LIGHTNING_BOLT_STRIKES       // bolts drawn over each other
 };
 
-// The value of one column of this effect's gLightningBolts_Counts row.
-#define LIGHTNING_BOLT_VALUE(field)                                            \
-  gLightningBolts_Counts[work->effect->variant][(field)]
+// The value of one column of this effect's gBolt_Counts row.
+#define LIGHTNING_BOLT_VALUE(field) gBolt_Counts[work->effect->variant][(field)]
 
 // The bolt pictures in the sheet, after the tornado.
 #define LIGHTNING_BOLT_CELLS 0xc56
@@ -35,7 +34,7 @@ enum {
 // flicker there for 22 frames; on frame 8i + 4 the target recoils. The
 // battle moves on to the results on frame 24.
 //
-// effect: the targets; variant picks the row of gLightningBolts_Counts
+// effect: the targets; variant picks the row of gBolt_Counts
 //         and the glints' blend.
 void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   void **slots;
@@ -136,11 +135,10 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
           x -= spread / 2;
           x -= (gBattleFx_GlintCellWidths[kind] >> 1);
 
-          EFFECT_LOAD_BLITTER(
-              HEAP_SLOT_BLITTER_ALTERNATE,
-              gLightningBolts_GlintFlips[Random16() & 3] | COMPOSITE_CLIP_X |
-                  COMPOSITE_CLIP_Y,
-              gLightningBolts_GlintModes[work->effect->variant]);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                              gBolt_GlintFlips[Random16() & 3] |
+                                  COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                              gBolt_GlintModes[work->effect->variant]);
           LIGHTNING_GLINT_BLITTER(canvas,
                                   work->sheet + gBattleFx_GlintCells[kind], x,
                                   y, gBattleFx_GlintCellWidths[kind],

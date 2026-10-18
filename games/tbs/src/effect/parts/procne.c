@@ -12,7 +12,7 @@
 //   256 to 329 : motes gather into the middle of the block;
 //   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
 //                ring of sparks, striking the targets on frames 334, 347,
-//                359 and 372 (gWhirlwindComets_Frames);
+//                359 and 372 (gProcne_Frames);
 //   395        : the targets fall back to the ground.
 // Pressing A or B skips to frame 160, or from there to frame 395. At the
 // end the battle shows the damage and the targets go back to their places.
@@ -171,7 +171,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 
         slot = 0;
         do {
-          if (frame == gWhirlwindComets_Frames[slot]) {
+          if (frame == gProcne_Frames[slot]) {
             object->velocityY = 0;
             ObjectGroup_UpdateMembers(work->effect->actors[index],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, index,
@@ -319,9 +319,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
       place.groundHeight = 0;
       index = 0;
       do {
-        place.x = (gWhirlwindComets_GridX[index] << 16) + wave.x + 0x280000;
+        place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
         place.height = 0xff0000 + index * 0x400000;
-        place.y = ((gWhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
+        place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
         Object_ApplyProjectedPlacementFar(work->objects[index], &place, &scale,
                                           0);
         index++;
@@ -385,7 +385,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
         // Each strike throws out 96 sparks.
         slot = 0;
         do {
-          if (frame == gWhirlwindComets_Frames[slot]) {
+          if (frame == gProcne_Frames[slot]) {
             s32 speed;
             s32 angle;
 
@@ -407,7 +407,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 
           // Every live spark is drawn and moved once per comet slot, so the
           // sparks step four times a frame; z moves by velocityY as y does.
-          if (frame >= gWhirlwindComets_Frames[0]) {
+          if (frame >= gProcne_Frames[0]) {
             spark = PARTICLES;
             index = 0;
             do {
@@ -465,10 +465,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
             size = (frame - threshold) / 2;
             if (size > 2)
               size = 2;
-            draw[1](canvas, work->sheet + gWhirlwindComets_Cells[size], mark->x,
-                    mark->y - gWhirlwindComets_CellBiasY[size],
-                    gWhirlwindComets_CellWidths[size],
-                    gWhirlwindComets_CellHeights[size]);
+            draw[1](canvas, work->sheet + gProcne_Cells[size], mark->x,
+                    mark->y - gProcne_CellBiasY[size], gProcne_CellWidths[size],
+                    gProcne_CellHeights[size]);
             mark->x -= 8;
             mark->y += 2;
 

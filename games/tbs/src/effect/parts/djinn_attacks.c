@@ -158,7 +158,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       for (i = 0; i != MERCURY_FLAMES; i++) {
         // Fire a flame on each launch frame; 6 frames later the targets flash
         // white in their damage pose for 6 frames, and motion 6.
-        if (frame == gMercury_LaunchFrames[i]) {
+        if (frame == gDjinnAttacks_LaunchFrames[i]) {
           struct EffectStep *shot = &work->particles[i];
 
           if (shot->variant == -1) {
@@ -169,7 +169,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
             break;
           }
         }
-        if (frame == gMercury_LaunchFrames[i] + 6) {
+        if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, 6);
           }

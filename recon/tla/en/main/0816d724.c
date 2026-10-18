@@ -58,7 +58,7 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_OrangePaletteB;
 
-// The Broken Seal's gEruptionEffect_PuffCells and gCybele_EmberSizes:
+// The Broken Seal's gEruption_PuffCells and gCybele_EmberSizes:
 // the spark pictures by stage.
 extern u16 Data_08198b5e[];
 extern u16 Data_08198b6c[];

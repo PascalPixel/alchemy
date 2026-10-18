@@ -50,9 +50,10 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 // shatter into puffs of sparkle, flashing and shaking each target as they land.
 // The canvas shows only inside a slanted band of window 0, so the shards stream
 // out of the sky above the targets. effect->variant picks the size of the
-// volley from gIce_Counts (shards and frames: 16 for 46 frames, 20 for 52, 32
-// for 80); variant 1 leaves longer trails and variant 2 draws additively.
-// effect->side is 1 when the targets are the party, 0 when they are enemies.
+// volley from gFalling_IceCounts (shards and frames: 16 for 46 frames, 20 for
+// 52, 32 for 80); variant 1 leaves longer trails and variant 2 draws
+// additively. effect->side is 1 when the targets are the party, 0 when they are
+// enemies.
 void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -144,16 +145,18 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
-  for (frame = 0; frame != gIce_Counts[work->effect->variant][ICE_FRAMES];
+  for (frame = 0;
+       frame != gFalling_IceCounts[work->effect->variant][ICE_FRAMES];
        frame++) {
     // 16 frames before the end, the battle shows the damage, with sound
     // 132 as each target is hit.
-    if (frame == gIce_Counts[work->effect->variant][ICE_FRAMES] - 16)
+    if (frame == gFalling_IceCounts[work->effect->variant][ICE_FRAMES] - 16)
       BattleEventRuntime_BeginPhaseFar(SE_132);
 
     // Shards: fall 8 pixels a frame down the slant; on landing, shatter
     // through five images, kicking up puffs in the middle of it.
-    for (i = 0; i != gIce_Counts[work->effect->variant][ICE_SHARD_COUNT]; i++) {
+    for (i = 0; i != gFalling_IceCounts[work->effect->variant][ICE_SHARD_COUNT];
+         i++) {
       shard = &work->particles[i];
       if (shard->variant == -1) {
         s32 x = shard->x / 8;
@@ -260,7 +263,7 @@ struct BoltSparkBuffer {
 // of the field, each bursting into a fountain of falling sparks where it
 // lands, while the targets flash. Like the falling shards, the canvas shows
 // only inside a slanted band of window 0.
-// effect->variant picks the volley from gFallingBolts_Counts: 6 bolts of 8
+// effect->variant picks the volley from gFalling_Counts: 6 bolts of 8
 // sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
 // frames; it also picks how the canvas fades (see below).
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
@@ -309,9 +312,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
     bolt = &work->particles[i];
     x = Random16() & 63;
-    y = -(
-        i * gFallingBolts_Counts[work->effect->variant][FALLING_BOLT_SPACING] +
-        16);
+    y = -(i * gFalling_Counts[work->effect->variant][FALLING_BOLT_SPACING] +
+          16);
     if (work->effect->side == 1)
       x = x + y / 2 - 48;
     else
@@ -350,20 +352,18 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
-       frame !=
-       gFallingBolts_Counts[work->effect->variant][FALLING_BOLT_DURATION];
+       frame != gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION];
        frame++) {
     // 64 frames before the end, the battle shows the damage, with sound
     // 132 as each target is hit.
     if (frame ==
-        gFallingBolts_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
+        gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
       BattleEventRuntime_BeginPhaseFar(SE_132);
 
     // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
     // burst and play a two-image flash.
     for (i = 0;
-         i !=
-         gFallingBolts_Counts[work->effect->variant][FALLING_BOLT_WAVE_COUNT];
+         i != gFalling_Counts[work->effect->variant][FALLING_BOLT_WAVE_COUNT];
          i++) {
       s32 x;
       s32 y;
@@ -383,14 +383,13 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
           // Landed: throw this bolt's sparks out from its tip, mostly
           // upwards, each living 16 to 31 frames.
           bolt->variant = 0;
-          for (k = 0; k != gFallingBolts_Counts[work->effect->variant]
-                                               [FALLING_BOLT_SPARKS_PER_BOLT];
+          for (k = 0; k != gFalling_Counts[work->effect->variant]
+                                          [FALLING_BOLT_SPARKS_PER_BOLT];
                k++) {
-            spark =
-                &FALLING_BOLT_SPARKS->sparks
-                     [i * gFallingBolts_Counts[work->effect->variant]
-                                              [FALLING_BOLT_SPARKS_PER_BOLT] +
-                      k];
+            spark = &FALLING_BOLT_SPARKS->sparks
+                         [i * gFalling_Counts[work->effect->variant]
+                                             [FALLING_BOLT_SPARKS_PER_BOLT] +
+                          k];
             spark->x = (x + 12) << 16;
             spark->y = y << 16;
             spark->velocityX = ((Random16() & 255) - 128) << 9;

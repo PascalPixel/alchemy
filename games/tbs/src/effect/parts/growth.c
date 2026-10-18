@@ -335,7 +335,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   column = work->particles;
   i = 0;
   do {
-    column[i].x = gVine_ColumnOffsets[i] + 64;
+    column[i].x = gGrowth_ColumnOffsets[i] + 64;
     i++;
   } while (i != VINE_COLUMNS);
   // Clear the canvas every frame.
@@ -390,7 +390,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 // the end, and the scene fades out over its last 16 frames.
 //
 // effect: the targets; variant picks the number of thorns
-//         (gThorn_Counts). gThorn_Kinds gives each
+//         (gGrowth_Counts). gGrowth_Kinds gives each
 //         thorn's size and direction.
 void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
@@ -431,7 +431,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
                   slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  frameCount = gThorn_Counts[work->effect->variant] * 8 + 56;
+  frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 
   for (i = 0; i != 1024; i++) {
     PARTICLES[i].variant = -1; // free
@@ -447,7 +447,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (frameCount - frame - 1) | 0x1000;
     }
 
-    for (i = 0; i != gThorn_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gGrowth_Counts[work->effect->variant]; i++) {
       start = i * 8 + 8;
       age = frame - (i * 8 + 8);
       if (frame > start) {
@@ -456,7 +456,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
 
         // Kinds 0 and 1 are big thorns (48 wide), 2 and 3 small ones (32 wide);
         // odd kinds are mirrored. A thorn leans sideways as it grows.
-        if (gThorn_Kinds[i] < 2) {
+        if (gGrowth_Kinds[i] < 2) {
           height = age * 16;
           lean = age * 6;
           if (height > 80) {
@@ -465,11 +465,11 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           if (lean > 30) {
             lean = 30;
           }
-          if (gThorn_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet, gThorn_X[i] - lean, 108 - height, 48,
+          if (gGrowth_Kinds[i] & 1) {
+            drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height, 48,
                      height);
           } else {
-            draw(canvas, work->sheet, gThorn_X[i] + lean, 108 - height, 48,
+            draw(canvas, work->sheet, gGrowth_X[i] + lean, 108 - height, 48,
                  height);
           }
         } else {
@@ -481,11 +481,11 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           if (age > 8) {
             lean = 8;
           }
-          if (gThorn_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet + 0xf00, gThorn_X[i] - lean,
+          if (gGrowth_Kinds[i] & 1) {
+            drawFlip(canvas, work->sheet + 0xf00, gGrowth_X[i] - lean,
                      108 - height, 32, height);
           } else {
-            draw(canvas, work->sheet + 0xf00, gThorn_X[i] + lean, 108 - height,
+            draw(canvas, work->sheet + 0xf00, gGrowth_X[i] + lean, 108 - height,
                  32, height);
           }
         }
@@ -500,7 +500,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           for (j = 0; j != 64; j++) {
             puff = &PARTICLES[j];
             if (puff->variant == -1) {
-              puff->x = gThorn_X[i] + (Random16() & 31) + 32;
+              puff->x = gGrowth_X[i] + (Random16() & 31) + 32;
               if (puff->x > 96) {
                 puff->x = 96;
               }
@@ -524,13 +524,14 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
         s32 cel = PARTICLES[i].variant / 2;
-        draw(canvas, work->sheet + gThorn_PuffCells[cel],
-             PARTICLES[i].x - gThorn_PuffWidths[cel],
-             PARTICLES[i].y - (s8)gThorn_PuffHeights[cel] / 2,
-             gThorn_PuffWidths[cel], (s8)gThorn_PuffHeights[cel]);
-        drawFlip(canvas, work->sheet + gThorn_PuffCells[cel], PARTICLES[i].x,
-                 PARTICLES[i].y - (s8)gThorn_PuffHeights[cel] / 2,
-                 gThorn_PuffWidths[cel], (s8)gThorn_PuffHeights[cel]);
+        draw(canvas, work->sheet + gGrowth_ThornPuffCells[cel],
+             PARTICLES[i].x - gGrowth_ThornPuffWidths[cel],
+             PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
+             gGrowth_ThornPuffWidths[cel], (s8)gGrowth_ThornPuffHeights[cel]);
+        drawFlip(
+            canvas, work->sheet + gGrowth_ThornPuffCells[cel], PARTICLES[i].x,
+            PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
+            gGrowth_ThornPuffWidths[cel], (s8)gGrowth_ThornPuffHeights[cel]);
         if (++PARTICLES[i].variant == 14) {
           PARTICLES[i].variant = -1;
         }

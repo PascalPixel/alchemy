@@ -122,7 +122,7 @@ extern char ResourceId_Data134; // the particle sheet
 extern char ResourceId_StagedParticlePath;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_EmberStreakSheet;
-extern s32 Data_081983cc[];  // gStagedParticles_UnitScale
+extern s32 Data_081983cc[];  // gAtalanta_UnitScale
 extern u16 gData_08197410[]; // gBattleFx_MoteCells
 extern u16 gData_0819747a[]; // gBattleFx_PuffArcCells
 extern u8 gData_08197467[];  // gBattleFx_PuffArcCellWidths

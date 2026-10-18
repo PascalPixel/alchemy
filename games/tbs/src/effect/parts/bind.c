@@ -361,7 +361,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(gTriangleStrike_Vertex,
+            EffectPosition_ApplyBaseAndYOffset(gBind_TriangleStrikeVertex,
                                                &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;

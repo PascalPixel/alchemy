@@ -59,7 +59,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
 extern char ResourceId_LimePalette;
-// The swirl's six cels: ☀️'s gSwirlSwipe_Cells, _CellX (six
+// The swirl's six cels: ☀️'s gSpiderWeb_Cells, _CellX (six
 // for each side), _CellWidths, _CellBiasY and _CellHeights.
 extern const u16 gData_081986d4[];
 extern const u8 gData_081986e0[];

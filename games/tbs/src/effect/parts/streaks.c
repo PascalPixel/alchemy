@@ -5,8 +5,8 @@
 // Streak volleys: three streaks of light fly from the user to each target in
 // turn, in one of five colours.
 
-// gStreakVolley_Records has four flags for each style.
-#define STREAK_VALUE(mode, n) gStreakVolley_Records[(mode)][(n)]
+// gStreaks_Records has four flags for each style.
+#define STREAK_VALUE(mode, n) gStreaks_Records[(mode)][(n)]
 #define STREAK_ANIMATE 0 // nonzero: the streak cycles through three images
 #define STREAK_HIT 1     // nonzero: play the hit sound and flash the target
 #define STREAK_MOTION 2  // the target's recoil motion on the hit (-1: none)
@@ -73,7 +73,7 @@ UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
 // A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
 // streak that wavers from side to side and leaves a fading trail.
 // mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
-//        cyan) and the row of gStreakVolley_Records that says how a hit looks.
+//        cyan) and the row of gStreaks_Records that says how a hit looks.
 void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   void **slots;
@@ -212,8 +212,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
                 GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
             struck->x +=
-                gStreakVolley_Tremble[(frame - k * STREAK_TARGET_DELAY - 30) %
-                                      8]
+                gStreaks_Tremble[(frame - k * STREAK_TARGET_DELAY - 30) % 8]
                 << 16;
             if (struck->x > 0)
               struck->x += 0x8000;

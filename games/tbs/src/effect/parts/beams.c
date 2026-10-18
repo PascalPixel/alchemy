@@ -194,18 +194,16 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
         s32 cell = frame / 3;
 
         if (work->effect->side == 0)
-          draw[1](
-              canvas, work->sheet + gBeamSequence_Cells[cell],
-              screenPosition.x + gBeamSequence_CellReaches[cell] + shake - 58,
-              screenPosition.y - gBeamSequence_CellHeights[cell] / 2,
-              gBeamSequence_CellWidths[cell], gBeamSequence_CellHeights[cell]);
+          draw[1](canvas, work->sheet + gBeams_Cells[cell],
+                  screenPosition.x + gBeams_CellReaches[cell] + shake - 58,
+                  screenPosition.y - gBeams_CellHeights[cell] / 2,
+                  gBeams_CellWidths[cell], gBeams_CellHeights[cell]);
         else
-          draw[1](canvas, work->sheet + gBeamSequence_Cells[cell],
-                  screenPosition.x - gBeamSequence_CellReaches[cell] + shake -
-                      gBeamSequence_CellWidths[cell] + 58,
-                  screenPosition.y - gBeamSequence_CellHeights[cell] / 2,
-                  gBeamSequence_CellWidths[cell],
-                  gBeamSequence_CellHeights[cell]);
+          draw[1](canvas, work->sheet + gBeams_Cells[cell],
+                  screenPosition.x - gBeams_CellReaches[cell] + shake -
+                      gBeams_CellWidths[cell] + 58,
+                  screenPosition.y - gBeams_CellHeights[cell] / 2,
+                  gBeams_CellWidths[cell], gBeams_CellHeights[cell]);
       }
     }
     // Frames 4 to 15: the yellow orb flashes over the target, six 40x48

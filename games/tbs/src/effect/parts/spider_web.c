@@ -75,15 +75,15 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     cell = frame / 4;
     if (cell <= 5) {
       if (cell <= 3)
-        draw[0](canvas, work->sheet + gSwirlSwipe_Cells[cell],
-                gSwirlSwipe_CellX[cell + work->effect->side * 6],
-                gSwirlSwipe_CellBiasY[cell] + 32, gSwirlSwipe_CellWidths[cell],
-                gSwirlSwipe_CellHeights[cell]);
+        draw[0](canvas, work->sheet + gSpiderWeb_Cells[cell],
+                gSpiderWeb_CellX[cell + work->effect->side * 6],
+                gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
+                gSpiderWeb_CellHeights[cell]);
       else
-        draw[0](canvas, Ram_MapCellBuffer + gSwirlSwipe_Cells[cell],
-                gSwirlSwipe_CellX[cell + work->effect->side * 6],
-                gSwirlSwipe_CellBiasY[cell] + 32, gSwirlSwipe_CellWidths[cell],
-                gSwirlSwipe_CellHeights[cell]);
+        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Cells[cell],
+                gSpiderWeb_CellX[cell + work->effect->side * 6],
+                gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
+                gSpiderWeb_CellHeights[cell]);
     }
     if (frame == 8) {
       if (mode == 0) {

@@ -56,16 +56,16 @@ enum {
 
 extern char ResourceId_IceChipSheet;
 extern char ResourceId_SparkleDots;
-extern u8 Data_08198348[];  // gRisingMotes_Timings
-extern u8 Data_08198322[];  // gRisingMotes_ColumnSpots
-extern u16 Data_08198362[]; // gRisingMotes_MoteCells
-extern u8 Data_08198351[];  // gRisingMotes_MoteWidths
-extern u8 Data_08198359[];  // gRisingMotes_MoteHeights
-extern u16 Data_08198372[]; // gRisingMotes_ColumnCells
-extern u8 Data_08198378[];  // gRisingMotes_ColumnHeights
-extern u16 Data_0819838c[]; // gRisingMotes_ChipCells
-extern u8 Data_0819837b[];  // gRisingMotes_ChipWidths
-extern u8 Data_08198383[];  // gRisingMotes_ChipHeights
+extern u8 Data_08198348[];  // gFrost_Timings
+extern u8 Data_08198322[];  // gFrost_ColumnSpots
+extern u16 Data_08198362[]; // gFrost_MoteCells
+extern u8 Data_08198351[];  // gFrost_MoteWidths
+extern u8 Data_08198359[];  // gFrost_MoteHeights
+extern u16 Data_08198372[]; // gFrost_ColumnCells
+extern u8 Data_08198378[];  // gFrost_ColumnHeights
+extern u16 Data_0819838c[]; // gFrost_ChipCells
+extern u8 Data_0819837b[];  // gFrost_ChipWidths
+extern u8 Data_08198383[];  // gFrost_ChipHeights
 extern u16 Data_0819744c[]; // gBattleFx_PuffCells
 extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 

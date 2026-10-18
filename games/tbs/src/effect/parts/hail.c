@@ -247,7 +247,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
         struct EffectStep *chip = &work->particles[32 + i];
 
         chip->velocityX = Random16() % 6 + 3;
-        chip->velocityY = gGround_ChipFlips[Random16() & 3];
+        chip->velocityY = gHail_ChipFlips[Random16() & 3];
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -266,13 +266,13 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           draw[0](canvas, work->sheet, x, y, 24, 48);
           // The rock's crust flickers between chips 1 and 2 every 2 frames.
           if ((frame & 3) <= 1)
-            draw[0](canvas, work->sheet + gGround_ChipCells[1],
-                    x + gGround_ChipX[1], y + gGround_ChipY[1],
-                    gGround_ChipWidths[1], gGround_ChipHeights[1]);
+            draw[0](canvas, work->sheet + gHail_ChipCells[1],
+                    x + gHail_ChipX[1], y + gHail_ChipY[1], gHail_ChipWidths[1],
+                    gHail_ChipHeights[1]);
           else
-            draw[0](canvas, work->sheet + gGround_ChipCells[2],
-                    x + gGround_ChipX[2], y + gGround_ChipY[2],
-                    gGround_ChipWidths[2], gGround_ChipHeights[2]);
+            draw[0](canvas, work->sheet + gHail_ChipCells[2],
+                    x + gHail_ChipX[2], y + gHail_ChipY[2], gHail_ChipWidths[2],
+                    gHail_ChipHeights[2]);
           // The four loose chips: each loads a blitter with its own flip,
           // and a flipped chip is placed from the rock's opposite edge so it
           // stays on the rock.
@@ -286,18 +286,18 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
             draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                           ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
             if (chip->velocityY & 4)
-              chipX = x - gGround_ChipWidths[chip->velocityX] -
-                      gGround_ChipX[chip->velocityX] + 24;
+              chipX = x - gHail_ChipWidths[chip->velocityX] -
+                      gHail_ChipX[chip->velocityX] + 24;
             else
-              chipX = x + gGround_ChipX[chip->velocityX];
+              chipX = x + gHail_ChipX[chip->velocityX];
             if (chip->velocityY & 8)
-              chipY = y - gGround_ChipHeights[chip->velocityX] -
-                      gGround_ChipY[chip->velocityX] + 48;
+              chipY = y - gHail_ChipHeights[chip->velocityX] -
+                      gHail_ChipY[chip->velocityX] + 48;
             else
-              chipY = y + gGround_ChipY[chip->velocityX];
-            draw[1](canvas, work->sheet + gGround_ChipCells[chip->velocityX],
-                    chipX, chipY, gGround_ChipWidths[chip->velocityX],
-                    gGround_ChipHeights[chip->velocityX]);
+              chipY = y + gHail_ChipY[chip->velocityX];
+            draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
+                    chipX, chipY, gHail_ChipWidths[chip->velocityX],
+                    gHail_ChipHeights[chip->velocityX]);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
           }
           rock->x += rock->velocityX;

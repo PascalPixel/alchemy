@@ -188,10 +188,10 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
         if (grain->variant == -1) {
           grain->x = ((Random16() & 255) - 32) << 16;
           grain->y = 112 << 16;
-          grain->velocityX =
-              ((Random16() & 127) + gPaletteParticles_DropSpeeds[i & 3]) << 9;
-          grain->velocityY =
-              -((Random16() & 127) + gPaletteParticles_DropSpeeds[i & 3]) << 11;
+          grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+                             << 9;
+          grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+                             << 11;
           grain->variant = 0;
           spawned++;
           if (spawned == limit)
@@ -287,8 +287,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       s32 size = 1;
 
       if (spark->variant >= 0) {
-        draw[1](canvas, gPaletteParticles_SparkPixels, HI(spark->x),
-                HI(spark->y) - size, size, size * 2);
+        draw[1](canvas, gTiamat_SparkPixels, HI(spark->x), HI(spark->y) - size,
+                size, size * 2);
         spark->x += spark->velocityX * dir;
         spark->y += spark->velocityY;
         spark->velocityY += -0x400;
@@ -306,7 +306,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
         struct EffectStep *grain = &PARTICLES[i];
 
         if (grain->variant >= 0) {
-          u8 size = gPaletteParticles_DropSizes[i & 3];
+          u8 size = gTiamat_DropSizes[i & 3];
           s32 height = size * 2;
 
           draw[0](canvas, sheet + gBattleFx_MoteCells[size - 1],
@@ -375,12 +375,11 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
             s32 cel = streak->variant / 2;
 
             draw[0](canvas,
-                    work->sheet + gPaletteParticles_StreakOffsets[cel] +
+                    work->sheet + gTiamat_StreakOffsets[cel] +
                         PALETTE_PARTICLES_STREAK_IMAGES,
-                    streak->x - gPaletteParticles_StreakWidths[cel] / 2,
-                    streak->y + gPaletteParticles_StreakDrops[cel],
-                    gPaletteParticles_StreakWidths[cel],
-                    gPaletteParticles_StreakHeights[cel]);
+                    streak->x - gTiamat_StreakWidths[cel] / 2,
+                    streak->y + gTiamat_StreakDrops[cel],
+                    gTiamat_StreakWidths[cel], gTiamat_StreakHeights[cel]);
           }
           streak->variant++;
           if (streak->variant == 12)

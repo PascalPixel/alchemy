@@ -71,10 +71,10 @@ extern char ResourceId_ParticleSpritesA;   // directory row 0x134
 extern char ResourceId_OrangePaletteB;     // directory row 0x148
 extern char ResourceId_LightningBoltSheet; // directory row 0x188
 
-// ☀️ gSparkGroups_Shapes, five halfwords for each variant: sparks in each
+// ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
 extern u16 Data_081979de[];
-extern u8 Data_08197a1a[];   // ☀️ gSparkGroups_FlashCells
+extern u8 Data_08197a1a[];   // ☀️ gPlasma_FlashCells
 extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 // The sparks live in the map cell buffer.

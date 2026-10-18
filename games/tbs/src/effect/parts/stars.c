@@ -117,8 +117,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale.z = scale.x;
           SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
           SceneTransform_ApplyRoll(j * 0x199a);
-          depth = EffectPosition_ApplyBaseAndYOffset(
-              &gAstralBlast_Points[j & 1], &screenPosition);
+          depth = EffectPosition_ApplyBaseAndYOffset(&gStars_Points[j & 1],
+                                                     &screenPosition);
           if (peak < depth)
             peak = depth;
           screenPosition.x >>= 1;
@@ -268,13 +268,13 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
                 trails[i * 10 + j].velocityX =
                     screenPosition.x +
                     ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
-                      gShiningStar_Radii[j & 1]) /
+                      gStars_Radii[j & 1]) /
                          2 >>
                      16);
                 trails[i * 10 + j].velocityY =
                     screenPosition.y -
                     (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
-                         gShiningStar_Radii[j & 1] >>
+                         gStars_Radii[j & 1] >>
                      16);
               }
               for (j = 0; j != 10; j++) {

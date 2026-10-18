@@ -63,9 +63,9 @@ extern char ResourceId_ShieldSheet;
 extern char ResourceId_PinkBurstSheet;
 extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_PaletteRampImage;
-extern u16 Data_081974dc[]; // gStatReduction_ShardCells
-extern u8 Data_081974f4[];  // gStatReduction_ShardWidths
-extern u8 Data_08197500[];  // gStatReduction_ShardHeights
+extern u16 Data_081974dc[]; // gStatChange_ShardCells
+extern u8 Data_081974f4[];  // gStatChange_ShardWidths
+extern u8 Data_08197500[];  // gStatChange_ShardHeights
 
 // A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
 // in turn, four frames apart, and breaks into shards that fly off and

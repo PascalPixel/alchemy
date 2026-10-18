@@ -1,16 +1,15 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Frost.
 
-// One row of gRisingMotes_Timings, for each variant.
+// One row of gFrost_Timings, for each variant.
 enum {
   RISE_MOTES,   // the rising motes
   RISE_COLUMNS, // the ice columns
   RISE_FRAME    // the frame the motes burst
 };
 
-// The value of one column of this effect's gRisingMotes_Timings row.
-#define RISING_MOTE_TIMING(field)                                              \
-  gRisingMotes_Timings[work->effect->variant][(field)]
+// The value of one column of this effect's gFrost_Timings row.
+#define RISING_MOTE_TIMING(field) gFrost_Timings[work->effect->variant][(field)]
 
 // Abilities: Frost, Tundra, Glacier (kind 6).
 //
@@ -21,7 +20,7 @@ enum {
 // frames after the burst, and the effect ends 75 frames after it.
 //
 // effect: the targets; variant picks the number of motes and columns and
-//         the burst frame (gRisingMotes_Timings).
+//         the burst frame (gFrost_Timings).
 void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -108,16 +107,15 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
             position->y = HI(position->y) + 60;
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gRisingMotes_MoteWidths[cel];
-            height = gRisingMotes_MoteHeights[cel];
-            draw[1](canvas, work->sheet + gRisingMotes_MoteCells[cel],
+            width = gFrost_MoteWidths[cel];
+            height = gFrost_MoteHeights[cel];
+            draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
                     position->x - (width >> 1), position->y - (height >> 1),
                     width, height);
 #else
-            draw[1](canvas, work->sheet + gRisingMotes_MoteCells[cel],
-                    position->x - ((width = gRisingMotes_MoteWidths[cel]) >> 1),
-                    position->y -
-                        ((height = gRisingMotes_MoteHeights[cel]) >> 1),
+            draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
+                    position->x - ((width = gFrost_MoteWidths[cel]) >> 1),
+                    position->y - ((height = gFrost_MoteHeights[cel]) >> 1),
                     width, height);
 #endif
           }
@@ -153,32 +151,30 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
           if (frame >= RISING_MOTE_TIMING(RISE_FRAME) - 7) {
 #ifdef UBFIX
-            height = gRisingMotes_ColumnHeights[cel];
-            draw[1](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
-                        height,
+            height = gFrost_ColumnHeights[cel];
+            draw[1](canvas, work->sheet + gFrost_ColumnCells[cel],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] - height,
                     32, height);
 #else
-            draw[1](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
-                        (height = gRisingMotes_ColumnHeights[cel]),
+            draw[1](canvas, work->sheet + gFrost_ColumnCells[cel],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
+                        (height = gFrost_ColumnHeights[cel]),
                     32, height);
 #endif
           } else {
 #ifdef UBFIX
-            height = gRisingMotes_ColumnHeights[cel];
-            pair[0](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
-                        height,
+            height = gFrost_ColumnHeights[cel];
+            pair[0](canvas, work->sheet + gFrost_ColumnCells[cel],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] - height,
                     32, height);
 #else
-            pair[0](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gRisingMotes_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
-                        (height = gRisingMotes_ColumnHeights[cel]),
+            pair[0](canvas, work->sheet + gFrost_ColumnCells[cel],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
+                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
+                        (height = gFrost_ColumnHeights[cel]),
                     32, height);
 #endif
           }
@@ -207,9 +203,8 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cel = i % 8;
 
-          draw[1](canvas, work->sheet + gRisingMotes_ChipCells[cel],
-                  HI(chip->x), HI(chip->y), gRisingMotes_ChipWidths[cel],
-                  gRisingMotes_ChipHeights[cel]);
+          draw[1](canvas, work->sheet + gFrost_ChipCells[cel], HI(chip->x),
+                  HI(chip->y), gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->variant--;

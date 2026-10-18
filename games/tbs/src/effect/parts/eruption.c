@@ -14,7 +14,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunSmokeBomb, BattleFx_RunEruption, 1)
 // targets and falls back, flashing each target and making it recoil.
 DEFINE_EFFECT_KIND(BattleFx_RunBlast, BattleFx_RunEruption, 0)
 
-// The columns of a gEruptionEffect_Counts row.
+// The columns of a gEruption_Counts row.
 enum {
   FIELD_MOTES, // motes thrown
   FIELD_PUFFS, // puffs of smoke thrown
@@ -103,20 +103,19 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  for (frame = 0; frame != gEruptionEffect_Counts[variant][FIELD_FRAMES];
-       frame++) {
+  for (frame = 0; frame != gEruption_Counts[variant][FIELD_FRAMES]; frame++) {
     struct BattleCamera *camera;
 
     camera = gCameraWork;
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       AudioCommand_PlayFar(SE_144);
-    if (frame == gEruptionEffect_Counts[variant][FIELD_FRAMES] - 48)
+    if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
       BattleEventRuntime_BeginPhaseFar(SE_133);
 
     // The motes still above the ground, sized 9 down to 1 over depths 160
     // to 799, alternating the two mote sets.
-    for (i = 0; i != gEruptionEffect_Counts[variant][FIELD_MOTES]; i++) {
+    for (i = 0; i != gEruption_Counts[variant][FIELD_MOTES]; i++) {
       struct EffectStep *mote = &PARTICLES[i];
 
       if (mote->y >= 0) {
@@ -138,7 +137,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     // The puffs, from frame 3: puff i starts once the frame passes i and
     // plays seven pictures, 3 frames each, while above the ground.
     if (frame > 2) {
-      for (i = 0; i != gEruptionEffect_Counts[variant][FIELD_PUFFS]; i++) {
+      for (i = 0; i != gEruption_Counts[variant][FIELD_PUFFS]; i++) {
         struct EffectStep *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
@@ -151,13 +150,13 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gEruptionEffect_PuffSizes[cel];
-            draw[0](canvas, work->sheet + gEruptionEffect_PuffCells[cel],
+            width = gEruption_PuffSizes[cel];
+            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
                     screen.x - (width >> 1), screen.y - (width >> 1), width,
                     width);
 #else
-            draw[0](canvas, work->sheet + gEruptionEffect_PuffCells[cel],
-                    screen.x - ((width = gEruptionEffect_PuffSizes[cel]) >> 1),
+            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
+                    screen.x - ((width = gEruption_PuffSizes[cel]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
           }

@@ -265,16 +265,16 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gBladeRain_CellWidths[cell];
-        height = gBladeRain_CellHeights[cell];
-        blit[(u32)drift >> 31](canvas, work->sheet + gBladeRain_Cells[cell],
+        width = gDeathPlunge_CellWidths[cell];
+        height = gDeathPlunge_CellHeights[cell];
+        blit[(u32)drift >> 31](canvas, work->sheet + gDeathPlunge_Cells[cell],
                                (blade->x >> 16) - (width >> 1),
                                (blade->y >> 16) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gBladeRain_Cells[cell],
-            (blade->x >> 16) - ((width = gBladeRain_CellWidths[cell]) >> 1),
-            (blade->y >> 16) - ((height = gBladeRain_CellHeights[cell]) >> 1),
+            canvas, work->sheet + gDeathPlunge_Cells[cell],
+            (blade->x >> 16) - ((width = gDeathPlunge_CellWidths[cell]) >> 1),
+            (blade->y >> 16) - ((height = gDeathPlunge_CellHeights[cell]) >> 1),
             width, height);
 #endif
         if (frame >= i * 4 + 16) {
@@ -286,17 +286,17 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
         u32 height;
 
 #ifdef UBFIX
-        width = gBladeRain_CellWidths[cell];
-        height = gBladeRain_CellHeights[cell];
-        blit[(u32)drift >> 31](canvas, work->sheet + gBladeRain_Cells[cell],
+        width = gDeathPlunge_CellWidths[cell];
+        height = gDeathPlunge_CellHeights[cell];
+        blit[(u32)drift >> 31](canvas, work->sheet + gDeathPlunge_Cells[cell],
                                (blade->x >> 16) - (width >> 1),
                                (blade->y >> 16) - (height >> 1), width,
                                height - 4);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gBladeRain_Cells[cell],
-            (blade->x >> 16) - ((width = gBladeRain_CellWidths[cell]) >> 1),
-            (blade->y >> 16) - ((height = gBladeRain_CellHeights[cell]) >> 1),
+            canvas, work->sheet + gDeathPlunge_Cells[cell],
+            (blade->x >> 16) - ((width = gDeathPlunge_CellWidths[cell]) >> 1),
+            (blade->y >> 16) - ((height = gDeathPlunge_CellHeights[cell]) >> 1),
             width, height - 4);
 #endif
       }
@@ -591,8 +591,8 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
   // there a frame.
-  startY = gTileAnimation_PieceStartY;
-  startX = gTileAnimation_PieceStartX;
+  startY = gDeathPlunge_PieceStartY;
+  startX = gDeathPlunge_PieceStartX;
   radius = 0;
   piece = work->particles;
   for (i = 0; i != OPENING_PIECES; i++) {
@@ -754,9 +754,9 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
     if (frame <= 50) {
       for (i = 0; i != OPENING_PIECES; i++) {
         piece = &work->particles[i];
-        draw[0](canvas, work->imageStorage + gTileAnimation_PieceCells[i],
-                HI(piece->x), HI(piece->y), gTileAnimation_PieceWidths[i],
-                gTileAnimation_PieceHeights[i]);
+        draw[0](canvas, work->imageStorage + gDeathPlunge_PieceCells[i],
+                HI(piece->x), HI(piece->y), gDeathPlunge_PieceWidths[i],
+                gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
           EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
       }
@@ -945,11 +945,11 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != 4; i++) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            gCornerSparks_DrawFlags[i] | EFFECT_CLIP_BOUNDS,
+                            gDeathPlunge_DrawFlags[i] | EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
         draw[1] = *slot;
-        draw[1](canvas, work->sheet + (picture << 10), gCornerSparks_X[i] + 32,
-                ground.y + gCornerSparks_Y[i] - 32, 32, 32);
+        draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
+                ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
     }

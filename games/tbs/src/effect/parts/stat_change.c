@@ -562,10 +562,10 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
             blitters[0](canvas,
                         work->sheet +
                             (level * STAT_REDUCTION_SHARD_BYTES +
-                             gStatReduction_ShardCells[cell]) +
+                             gStatChange_ShardCells[cell]) +
                             STAT_REDUCTION_SHARD_CELLS,
-                        x, y, gStatReduction_ShardWidths[cell],
-                        gStatReduction_ShardHeights[cell]);
+                        x, y, gStatChange_ShardWidths[cell],
+                        gStatChange_ShardHeights[cell]);
             EffectStep_AdvanceWithGravity3D(shard, 60, 0);
           }
         }

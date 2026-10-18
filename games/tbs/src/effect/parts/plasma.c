@@ -218,7 +218,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
 // One to three bursts, 8 frames apart: each flashes, rings itself with
 // twelve smaller flashes that fade, and throws out sparks that bounce on
 // the ground; every burst knocks the targets back.
-// effect->variant picks the shape from gSparkGroups_Shapes: sparks per
+// effect->variant picks the shape from gPlasma_Shapes: sparks per
 // burst, how many bursts, and each burst's offset across. Variant 2 also
 // scrolls the camera, and variant 3 flashes the whole canvas on frame 4.
 // kind : 0 at (60, 48), the battle shows the damage on frame 24;
@@ -287,8 +287,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   // before it shows (life index / 2 + 25) the later it comes; and its
   // sparks, thrown in every direction, twice as hard up and down as across,
   // at speeds of 32 to 1055, living 32 to 39 frames.
-  for (i = 0;
-       i != gSparkGroups_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS];
+  for (i = 0; i != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS];
        i++) {
     for (j = 0; j != SPARK_GROUPS_FLASHES; j++) {
       s32 radius;
@@ -301,29 +300,29 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
       point->y = -(Trig_Cos(angle) * radius);
       point->variant = j / 2 + 25;
     }
-    for (j = 0;
-         j != gSparkGroups_Shapes[work->effect->variant][SPARK_GROUPS_SPARKS];
+    for (j = 0; j != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_SPARKS];
          j++) {
       s32 speed;
       s32 angle;
 
-      spark = &sparks[i * gSparkGroups_Shapes[work->effect->variant]
-                                             [SPARK_GROUPS_SPARKS]] +
-              j;
+      spark =
+          &sparks[i *
+                  gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_SPARKS]] +
+          j;
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & 0xffff;
       if (work->effect->side == 1)
-        spark->x = (originX -
-                    gSparkGroups_Shapes[work->effect->variant]
-                                       [SPARK_GROUPS_OFFSET + i] +
-                    28)
-                   << 16;
+        spark->x =
+            (originX -
+             gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] +
+             28)
+            << 16;
       else
-        spark->x = (originX +
-                    gSparkGroups_Shapes[work->effect->variant]
-                                       [SPARK_GROUPS_OFFSET + i] -
-                    28)
-                   << 16;
+        spark->x =
+            (originX +
+             gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] -
+             28)
+            << 16;
       spark->y = originY << 16;
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
@@ -334,10 +333,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0;
-       frame !=
-       gSparkGroups_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS] *
-               SPARK_GROUPS_SPACING +
-           56;
+       frame != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS] *
+                        SPARK_GROUPS_SPACING +
+                    56;
        frame++) {
     struct CameraWork *camera =
         *(struct CameraWork **)(gWorkSlot + HEAP_SLOT_CAMERA);
@@ -365,8 +363,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
 
     // Burst i starts on frame 8i with a two-frame flash, then its ring and
     // sparks; the targets reel 6 frames in.
-    for (i = 0;
-         i != gSparkGroups_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS];
+    for (i = 0; i != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS];
          i++) {
       start = i * SPARK_GROUPS_SPACING;
       if (frame == start)
@@ -375,15 +372,15 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
         if (work->effect->side == 1)
           draw[0](canvas, work,
                   originX -
-                      gSparkGroups_Shapes[work->effect->variant]
-                                         [SPARK_GROUPS_OFFSET + i] +
+                      gPlasma_Shapes[work->effect->variant]
+                                    [SPARK_GROUPS_OFFSET + i] +
                       12,
                   originY - 32, 32, 64);
         else
           draw[0](canvas, work,
                   originX +
-                      gSparkGroups_Shapes[work->effect->variant]
-                                         [SPARK_GROUPS_OFFSET + i] -
+                      gPlasma_Shapes[work->effect->variant]
+                                    [SPARK_GROUPS_OFFSET + i] -
                       44,
                   originY - 32, 32, 64);
       }
@@ -396,18 +393,16 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
           y = HI(point->y) + originY;
           if (work->effect->side == 1)
             x = HI(point->x) + originX -
-                gSparkGroups_Shapes[work->effect->variant]
-                                   [SPARK_GROUPS_OFFSET + i] +
+                gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] +
                 28;
           else
             x = HI(point->x) + originX +
-                gSparkGroups_Shapes[work->effect->variant]
-                                   [SPARK_GROUPS_OFFSET + i] -
+                gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] -
                 28;
           if (point->variant >= 0 && point->variant < SPARK_FLASH_DRAWN)
             draw[0](canvas,
                     work->sheet +
-                        (gSparkGroups_FlashCells[point->variant / 3] << 11),
+                        (gPlasma_FlashCells[point->variant / 3] << 11),
                     x - 16, y - 32, 32, 64);
           if (point->variant > 0)
             point->variant--;
@@ -426,11 +421,10 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
         else
           gravity = 0x1000;
         for (j = 0;
-             j !=
-             gSparkGroups_Shapes[work->effect->variant][SPARK_GROUPS_SPARKS];
+             j != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_SPARKS];
              j++) {
-          spark = &sparks[i * gSparkGroups_Shapes[work->effect->variant]
-                                                 [SPARK_GROUPS_SPARKS]] +
+          spark = &sparks[i * gPlasma_Shapes[work->effect->variant]
+                                            [SPARK_GROUPS_SPARKS]] +
                   j;
           if (spark->variant > 0) {
             EffectStep_AdvanceWithGravity2D(spark, 60, gravity);

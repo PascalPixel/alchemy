@@ -32,8 +32,17 @@ jobs:
           test ! -e roms
           if find . -name '*.gba' -print | grep .; then exit 1; fi
 
-      - name: Install binutils and a current GCC (make modern)
-        run: sudo apt-get update && sudo apt-get install -y binutils-arm-none-eabi gcc-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
+      - name: Install build tools and clang-format 21
+        run: |
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/llvm-snapshot.asc" https://apt.llvm.org/llvm-snapshot.gpg.key
+          sudo install -m 644 "$RUNNER_TEMP/llvm-snapshot.asc" /usr/share/keyrings/llvm-snapshot.asc
+          echo 'deb [signed-by=/usr/share/keyrings/llvm-snapshot.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-21 main' | sudo tee /etc/apt/sources.list.d/llvm.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y binutils-arm-none-eabi gcc-arm-none-eabi pkg-config libpng-dev libutf8proc-dev clang-format-21
+          clang-format-21 --version
+
+      - name: Test the tools
+        run: make test CARGO=false CLANG_FORMAT=clang-format-21
 
       - name: Read the compiler pin
         id: pin
@@ -55,6 +64,3 @@ jobs:
 
       - name: Compile ☀️'s C with a current GCC (make modern)
         run: make -j"$(nproc)" modern
-
-      - name: Test the tools
-        run: make test CARGO=false

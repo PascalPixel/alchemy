@@ -43,6 +43,8 @@ To check a build against the original, run `make compare-tbs-en`. It ends with `
 
 Edit, run `make tbs-en` again, and play your version. A changed game no longer matches the original, so `compare` will report a difference. Please don't share built ROMs, original or modified.
 
+CI checks formatting with clang-format 21, available from [LLVM's packages](https://apt.llvm.org/). To use the same check locally, run `make format-check CLANG_FORMAT=clang-format-21`, or set `CLANG_FORMAT` to the path of your clang-format 21 executable.
+
 ## The Lost Age (optional)
 
 Dump your own cartridge and put the file in `roms/` as `tla-en.gba` (or `tla-ja.gba`, `tla-de.gba` and so on), then run `make tla-en`. Don't download ROMs; the build checks each one against `rom.sha1`.

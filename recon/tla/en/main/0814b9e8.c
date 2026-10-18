@@ -8,7 +8,7 @@
 // ☀️'s canvas skeleton: the canvas preparer Func_0815585c for modes 0 and
 // 1, a Djinn circling over the canvas when the effect has a prelude, and
 // sixteen textured 64x64 quads drawn through ⚓️'s render jobs
-// (Func_081969f8, Func_08196958, Func_08196a7c), whose job and texture
+// (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList), whose job and texture
 // layouts follow project_vertices.c.
 
 // The calls, constants and control flow follow the listing; the frame is
@@ -68,7 +68,7 @@ struct Texture {
   void *pixels;
 };
 
-// A render job (the first of Func_081969f8's entries).
+// A render job (the first of Render_AllocateModelList's entries).
 struct RenderJob {
   s32 kind;
   s32 next;
@@ -90,20 +90,20 @@ extern const s8 gData_08199210[];    // a quad's four corners, x y z for each
 extern const u8 gData_08199340[];    // the quad's face
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);               // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);               // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);               // ☀️ ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);          // ☀️ BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *anchor,
                    s32 *size); // the canvas preparer
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *pos);
-struct RenderJob *Func_081969f8(s32 count);
-void Func_08196958(const s8 *vertices, void *projected, s32 count);
-void Func_08196a7c(struct RenderJob *job);
+struct RenderJob *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const s8 *vertices, void *projected, s32 count);
+void Render_DrawModelList(struct RenderJob *job);
 void Func_08015160(s32 x, s32 y, s32 z); // translate
 void Func_080151e4(s32 x, s32 y, s32 z); // scale
 void Func_080150e4(s32 angle);           // roll
@@ -159,17 +159,17 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Centre the canvas on the anchor; a copy blitter, or an additive one for
   // side 1.
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - anchor[0]) << 8;
   if (effect->side == 0)
-    Func_081963ec(HEAP_BLITTER, BLITTER_COPY << 4 | COMPOSITE_CLIP_X |
+    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER_COPY << 4 | COMPOSITE_CLIP_X |
                                     COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   else
-    Func_081963ec(HEAP_BLITTER,
+    BattleFx_LoadBlitter(HEAP_BLITTER,
                   BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -235,7 +235,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 104;
     if (frame <= 63) {
       vertices = Runtime_BumpAllocateAlternatePool(32);
-      job = Func_081969f8(1);
+      job = Render_AllocateModelList(1);
       job->fade = frame > 55 ? (56 - frame) * 8 : 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
@@ -272,8 +272,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           Func_080150e4(quad->velocityZ);
           quad->velocityX += 0x400;
           quad->velocityZ += 0x400;
-          Func_08196958(gData_08199210, vertices, 4);
-          Func_08196a7c(job);
+          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_DrawModelList(job);
         }
       }
       MemFree(job);
@@ -281,13 +281,13 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     }
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

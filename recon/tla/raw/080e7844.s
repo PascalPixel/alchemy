@@ -919,7 +919,7 @@ Func_080e7844:
 	cmp r4, #2
 	bne .L_080e7f70
 	movs r0, #100
-	bl Func_080dc37c
+	bl BattleFx_FadeToSavedPalettes
 	b .L_080e7f74
 .L_080e7f70:
 	bl BattleFx_PrepareBufferInterpolation

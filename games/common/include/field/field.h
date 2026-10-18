@@ -371,7 +371,7 @@ void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
 s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
 void Func_080caa2c(u32 objectId);
 void Object_SetSquareSprite(u32 objectId);
-void Func_080e70f8(u32 objectId);
+void BattleFx_DropObjectAtAnchor(u32 objectId);
 void Func_081b83c4(void);
 void GameFlag_RefreshLureCapFar(void);
 void Map_ApplyWorkOriginAndSpanFar(void);

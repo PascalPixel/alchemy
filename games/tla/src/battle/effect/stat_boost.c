@@ -14,7 +14,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunGuard, Func_0814fab8, 1)
 // Abilities: Iron (kind 220).
 DEFINE_EFFECT_KIND(BattleFx_RunIron, Func_0814fab8, 6)
 
-DEFINE_EFFECT_KIND(Func_0814fa2c, Func_0814fab8, 7)
+DEFINE_EFFECT_KIND(BattleFx_RunStatBoostMode7, Func_0814fab8, 7)
 
 // Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
 // 215).
@@ -41,7 +41,9 @@ DEFINE_EFFECT_KIND(BattleFx_RunZephyr, Func_0814fab8, 4)
 // Abilities: Coal (kind 224).
 DEFINE_EFFECT_KIND(BattleFx_RunCoal, Func_0814fab8, 9)
 
-void Func_0814fa98(struct BattleEffectArgument *effect) {
+// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
+// lights), with no prelude Djinni and the fade step cleared.
+void BattleFx_RunStatBoostMode10(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 

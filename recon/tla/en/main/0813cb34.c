@@ -67,10 +67,10 @@ extern char ResourceId_EarthWallSheet;
 extern char ResourceId_GreenPalette;
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void);  // the canvas transfer callback
-void Func_08143488(void); // Palette_StepFadeTransfer
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -81,7 +81,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void SummonFx_RunCanvasMode1(void *effect);
 void WaitFrames(s32 frames);
 
@@ -133,9 +133,9 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
 
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.
-  Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(SLOT_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -148,7 +148,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Launch every mote from the user in 16.16 fixed point, with a speed and
   // a direction of its own. Slaver throws them up, faster, in a half-circle
@@ -253,21 +253,21 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (mode == POOL_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     ClearWords((void *)0x06004000, 0x3c00);
     ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     SummonFx_RunCanvasMode1(effect);
   } else {
-    Func_08143bb8();
+    BattleFx_EndCanvasLayer();
   }
 }

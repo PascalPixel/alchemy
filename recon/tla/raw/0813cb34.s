@@ -36,14 +36,14 @@ Func_0813cb34:
 .L_0813cb70:
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r2, [r5, #104]
 	movs r1, #27
 	movs r0, #188
 	str r2, [sp, #28]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r3, #0
@@ -439,7 +439,7 @@ Func_0813cb34:
 .L_0813ce94:
 	.4byte IwramCopyWords
 .L_0813ce98:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813ce9c:
 	.4byte gMapCellBuffer
 .L_0813cea0:
@@ -489,7 +489,7 @@ Func_0813cb34:
 	cmp r8, r3
 	bne .L_0813ceca
 .L_0813cefc:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #40]
 	lsls r4, r4, #7
@@ -532,7 +532,7 @@ Func_0813cb34:
 	bl SummonFx_RunCanvasMode1
 	b .L_0813cf60
 .L_0813cf5c:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 .L_0813cf60:
 	add sp, #68
 	pop {r3, r5, r6, r7}
@@ -543,10 +543,10 @@ Func_0813cb34:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0813cf70:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813cf74:
 	.4byte IwramClearWords
 .L_0813cf78:
 	.4byte 0x06004000
 .L_0813cf7c:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer

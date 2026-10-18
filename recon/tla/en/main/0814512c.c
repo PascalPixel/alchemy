@@ -47,10 +47,10 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
-void Func_08143488(void);         // Palette_StepFadeTransfer
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void Palette_StepFadeTransfer(void);         // Palette_StepFadeTransfer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
@@ -192,7 +192,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
   Audio_PlayCue(103);
 
@@ -296,12 +296,12 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
 
@@ -309,12 +309,12 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 3 || mode == 5) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     if (mode == 3)
       SummonFx_RunCanvasMode1(effect);
     else
       SummonFx_RunCanvasMode3(effect);
   } else {
-    Func_08143bb8();
+    BattleFx_EndCanvasLayer();
   }
 }

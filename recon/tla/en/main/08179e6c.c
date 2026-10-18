@@ -20,14 +20,14 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 
-void Func_0815b410(void);
+void Graphics_LoadGreyRamp(void);
 
 void Func_08179e6c(void) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 y;
   s32 x;
 
-  Func_0815b410();
+  Graphics_LoadGreyRamp();
   {
     register u16 control __asm__("r3") = 0x784;
 

@@ -11,7 +11,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 // Creates entryCount sprites of one resource in the effect work's object
 // slots, each showing its own animation at the given priority (The Broken
 // Seal's BattleFx_SpawnObjects).
-void Func_08152404(s32 entryCount, s32 kind, u32 variant) {
+void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   s32 entryIndex = 0;
@@ -37,7 +37,7 @@ void BattleFx_RunNoEffect(void) {}
 // Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 // table into BG2X, one word a line (The Broken Seal's
 // BattleFx_ArmBg2AffineHBlankDma).
-void Func_08152474(void) {
+void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
@@ -60,8 +60,8 @@ void Func_08152474(void) {
           (volatile u32 *)channel);
 }
 
-// Func_08152474 for BG1HOFS and BG1VOFS: the line table moves layer 1.
-void Func_081524b4(void) {
+// BattleFx_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table moves layer 1.
+void BattleFx_ArmBg1HBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
@@ -69,13 +69,13 @@ void Func_081524b4(void) {
   u32 io;
 
   /* FAKEMATCH: ⚓️ reads the control word before it starts the mask, as in
-   * Func_08152474 (differ 2 without) */
+   * BattleFx_ArmBg2AffineHBlankDma (differ 2 without) */
   asm volatile("");
   channel[5] = control & 0xc5ff;
   channel[5] &= 0x7fff;
   io = 0x80;
   /* FAKEMATCH: ⚓️ starts the I/O base before the dummy read, as in
-   * Func_08152474 (differ 2 without) */
+   * BattleFx_ArmBg2AffineHBlankDma (differ 2 without) */
   asm volatile("" : "+l"(io));
   (void)channel[5];
   Dma_Set(work->bg2X, (void *)((io << 19) + 0x14), 0xa6600001,

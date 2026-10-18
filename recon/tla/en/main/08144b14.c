@@ -48,10 +48,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
-void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
 void BattleFx_FetchRectangleBlitters(
@@ -147,7 +147,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = offsetX << 8;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != effect->count * 16 + 116; frame++) {
     s32 *camera = Ram_HeapSlots->cameraWork;
@@ -174,9 +174,9 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     }
-    Func_081963ec(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    Func_081963ec(HEAP_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw[1] = (DrawRectangle)heap->unkb8[1];
 
@@ -269,6 +269,6 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

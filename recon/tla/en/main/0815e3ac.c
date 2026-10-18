@@ -56,7 +56,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; Func_081963ec takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -109,12 +109,12 @@ void Func_0813ba50(void);
 // Sets up the canvas tile map on BG1.
 void Func_08143d80(void);
 // Marks the transition done and shows the battle view again.
-void Func_08143d04(void);
+void BattleFx_SetTransitionFlagAndDisplay(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 Func_081963ec(s32 slot, s32 modeFlags);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -152,31 +152,31 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                                COMPOSITE_FLIP_Y));
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_Y));
     } else {
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                                COMPOSITE_FLIP));
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP));
     }
   } else {
     if (effect->side == 0) {
-      Func_081963ec(HEAP_BLITTER, BLITTER(BLIT_ADDITIVE,
+      BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_ADDITIVE,
                                           COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     } else {
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                                COMPOSITE_FLIP_X));
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_X));
     }
@@ -219,7 +219,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   // Each transfer leaves half the last frame behind.
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
   REG_BG1CNT = 0x1f81;
@@ -351,9 +351,9 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   gBgScroll[1].y = 32;
-  Func_08143d04();
+  BattleFx_SetTransitionFlagAndDisplay();
 }

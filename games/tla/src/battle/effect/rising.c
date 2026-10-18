@@ -12,7 +12,7 @@ void Marker_MoveLeaderAwayFromEmitter(void);
 void Func_080cf350(struct ObjectRuntime *object);
 extern const u8 gData_080effd8[];
 
-void Func_080cf3b4(struct ObjectRuntime *object, s32 flags) {
+void EffectRuntime_RunRisingObjectSequence(struct ObjectRuntime *object, s32 flags) {
   struct ObjectRuntime *owner;
 
   if (object != 0) {
@@ -50,7 +50,7 @@ void Func_08038248(s32 item);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Object_Destroy(struct ObjectRuntime *object);
 
-void Func_080cf424(s32 item, s32 flags) {
+void BattleFx_StartEffectObject22(s32 item, s32 flags) {
   struct ObjectRuntime *owner =
       ObjectTable_Get(EventRuntime_GetControlledOwner());
   u8 *buffer = Runtime_AllocateHeapBlock(68, 0x608);

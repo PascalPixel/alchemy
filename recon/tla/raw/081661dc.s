@@ -172,12 +172,12 @@ BattleFx_RunAnnihilation:
 	bne .L_08166344
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816634c
 .L_08166344:
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816634c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -231,7 +231,7 @@ BattleFx_RunAnnihilation:
 	movs r0, #104
 	movs r1, #19
 	asrs r5, r3, #1
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -421,7 +421,7 @@ BattleFx_RunAnnihilation:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #240
 	ldr r3, [sp, #40]
 	lsls r0, r0, #7
@@ -445,7 +445,7 @@ BattleFx_RunAnnihilation:
 .L_08166562:
 	ldr r0, .L_0816658c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #88
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -463,7 +463,7 @@ BattleFx_RunAnnihilation:
 .L_08166588:
 	.4byte 0x00000134
 .L_0816658c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08166590:
 	.4byte 0xffffb600
 .L_08166594:

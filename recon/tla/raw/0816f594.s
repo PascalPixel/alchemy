@@ -28,7 +28,7 @@ BattleFx_RunRadiantFire:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #184
 	lsls r1, r1, #5
 	add r1, r9
@@ -210,7 +210,7 @@ BattleFx_RunRadiantFire:
 	ldr r0, [r2, #8]
 	movs r3, #80
 	movs r2, #8
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 .L_0816f750:
 	ldr r4, [sp, #20]
 	cmp r4, #8
@@ -310,7 +310,7 @@ BattleFx_RunRadiantFire:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r10, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0816f918
 	ldr r3, [sp, #28]
 	adds r6, r0, #0
@@ -371,9 +371,9 @@ BattleFx_RunRadiantFire:
 	ldr r0, .L_0816f924
 	mov r1, r10
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816f8a8:
 	movs r3, #1
 	add r8, r3
@@ -389,7 +389,7 @@ BattleFx_RunRadiantFire:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -409,7 +409,7 @@ BattleFx_RunRadiantFire:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #48
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -418,7 +418,7 @@ BattleFx_RunRadiantFire:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816f908:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816f90c:
 	.4byte gMapCellBuffer
 .L_0816f910:

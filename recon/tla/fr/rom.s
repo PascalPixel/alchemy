@@ -2730,18 +2730,18 @@ Func_080e4730:
 Func_080e9af4:
 	.incbin "baserom.gba", 0x000e9a28, 0x000012bc
 	.section .rom.000eace4, "ax"
-	.global Func_080e5cf0
-Func_080e5cf0:
+	.global BattleFx_SinkAndShrinkObject
+BattleFx_SinkAndShrinkObject:
 	.incbin "baserom.gba", 0x000eace4, 0x00000698
 	.section .rom.000eb37c, "ax"
-	.global Func_080e6388
-Func_080e6388:
+	.global BattleFx_UpdateGrowingParticleSprite
+BattleFx_UpdateGrowingParticleSprite:
 	.incbin "baserom.gba", 0x000eb37c, 0x00000d70
 	.section .rom.000ec0ec, "ax"
-	.global Func_080e70f8
-	.type Func_080e70f8, %function
+	.global BattleFx_DropObjectAtAnchor
+	.type BattleFx_DropObjectAtAnchor, %function
 	.thumb_func
-Func_080e70f8:
+BattleFx_DropObjectAtAnchor:
 	.incbin "baserom.gba", 0x000ec0ec, 0x00000140
 	.section .rom.000ec22c, "ax"
 	.global Func_080e7238
@@ -2787,8 +2787,8 @@ Func_080e8c9c:
 Func_080e8db0:
 	.incbin "baserom.gba", 0x000edda4, 0x000004a0
 	.section .rom.000ee244, "ax"
-	.global Func_080e9250
-Func_080e9250:
+	.global BattleFx_ShiftRowsDown
+BattleFx_ShiftRowsDown:
 	.incbin "baserom.gba", 0x000ee244, 0x00000578
 	.section .rom.000ee890, "ax"
 	.incbin "baserom.gba", 0x000ee890, 0x00000518

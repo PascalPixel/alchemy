@@ -26,7 +26,9 @@ s32 Trig_Sin(s32 angle);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct OrbitVector *position);
 
-void Func_080de818(struct SwayObject *object) {
+// Per-frame update: sways 4 pixels either side of the anchor, once every
+// 128 frames.
+void BattleFx_SwayParticle(struct SwayObject *object) {
   s16 *phase = &object->phase;
   s32 amplitude = 0x40000;
 

@@ -3,7 +3,7 @@
 // Effect kind 34. Twin: The Broken Seal's BattleFx_RunMemberOrbit, ported
 // call for call. The Lost Age's changes: the effect argument read directly,
 // the spiral sheet unpacked with its palette by Resource_LoadAndDecompress,
-// two blitters from Func_081963ec (max, then max clipped and flipped both
+// two blitters from BattleFx_LoadBlitter (max, then max clipped and flipped both
 // ways), both callbacks at 0xc80 and Func_0814cd48 for the members' timers.
 
 // Left: allocation. The instructions are the native's. The native keeps the
@@ -11,7 +11,7 @@
 // screen position's address inside the member loop (add r5, sp, #44, then
 // r11 for the four cels), in a 68-byte frame; here the screen address is
 // hoisted out of the frame loop and spilled (72 bytes) and the argument takes
-// r11. Tried: Func_081963ec returning s32 (123 -> 119); screen declared in
+// r11. Tried: BattleFx_LoadBlitter returning s32 (123 -> 119); screen declared in
 // the member block (no change); a greedy scan of the declaration order
 // (canvas before work, offsetX before member) 119 -> 101.
 
@@ -40,12 +40,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // ..ProcessPendingGraphicsTransfer
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // ..ProcessPendingGraphicsTransfer
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
-void Func_08152474(void);       // BattleFx_ArmBg2AffineHBlankDma
+void BattleFx_ArmBg2AffineHBlankDma(void);       // BattleFx_ArmBg2AffineHBlankDma
 
 extern char ResourceId_SpiralSheet;
 
@@ -73,15 +73,15 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
-  Func_081963ec(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+  BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // On the far side the background and the spirals move 112 pixels left.
   if (effect->side == 1) {
@@ -159,9 +159,9 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Scheduler_RemoveCallback(Func_08152474);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -11,7 +11,7 @@
 
 void Audio_PlayCue(s32 no);
 void FieldEffect_WatchLeaderDistance(void);
-void Func_080dd748(s32 value);
+void BattleFx_RunBusyWaitDelay(s32 value);
 void BattleFx_ApplyColorToTargetBuffer(u32 value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 value, s32 enabled);
 void BattleFx_StartBufferInterpolation(s32 frames);
@@ -40,7 +40,7 @@ void Func_080dd950(void) {
     zero = 0;
     *(s8 *)(state + 0xca4) = zero;
     *(s16 *)(state + 0xca6) = zero;
-    Func_080dd748(0);
+    BattleFx_RunBusyWaitDelay(0);
     BattleFx_ApplyColorToTargetBuffer(0x10000, 1);
     BattleFx_StartBufferInterpolation(1);
     BattleFx_ApplyColorToSourceBuffer(0, 0);

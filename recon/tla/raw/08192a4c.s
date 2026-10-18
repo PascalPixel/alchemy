@@ -115,7 +115,7 @@ Func_08192a4c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r1, #0
 	mov r2, r9
 	ldr r3, [sp, #36]
@@ -200,9 +200,9 @@ Func_08192a4c:
 	mov r1, r8
 	movs r2, #4
 	ldr r0, .L_08192c94
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	adds r0, r6, #0
 	bl MemFree
 	mov r0, r8

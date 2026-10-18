@@ -173,7 +173,7 @@ Func_080e0618:
 	orrs r3, r2
 	strh r3, [r5, #8]
 	adds r1, r7, #0
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	adds r0, r7, #0
 	movs r1, #63
 	ldr r2, .L_080e0794

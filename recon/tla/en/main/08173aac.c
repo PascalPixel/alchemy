@@ -29,10 +29,10 @@ struct RenderModel {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -40,9 +40,9 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -51,8 +51,8 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *out);
-void Func_08152404(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
@@ -77,7 +77,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Func_08178680(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 unit);
@@ -122,11 +122,11 @@ extern char ResourceId_Data154;
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase);
-void Func_08157530(s32 actor, s32 target, s32 frames, s32 percent);
-void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
+void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
-void Func_0815b410(void);
+void Graphics_LoadGreyRamp(void);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Palette_LoadBasicObjColors(void);
 void MemFree(void *buffer);
@@ -254,7 +254,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
     else
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x184), 128);
-    Func_08157530(effect->actor, effect->actors[0], 10, 80);
+    BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
     frames = 41;
   } else {
     if (mode == 2) {
@@ -273,23 +273,23 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   work->transferMode = 2;
   work->transferValue = 50;
   if (mode == 0 || mode == 6)
-    Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2 || mode == 7 || mode == 4) {
     if (effect->side == 0)
-      Func_081963ec(SLOT_BLITTER, 7);
+      BattleFx_LoadBlitter(SLOT_BLITTER, 7);
     else
-      Func_081963ec(SLOT_BLITTER, 3);
+      BattleFx_LoadBlitter(SLOT_BLITTER, 3);
   } else if (mode == 3 || mode == 5) {
     if (effect->side == 1)
-      Func_081963ec(SLOT_BLITTER, 7);
+      BattleFx_LoadBlitter(SLOT_BLITTER, 7);
     else
-      Func_081963ec(SLOT_BLITTER, 3);
+      BattleFx_LoadBlitter(SLOT_BLITTER, 3);
   } else {
     if (effect->side == 0)
-      Func_081963ec(SLOT_BLITTER, 23);
+      BattleFx_LoadBlitter(SLOT_BLITTER, 23);
     else
-      Func_081963ec(SLOT_BLITTER, 19);
+      BattleFx_LoadBlitter(SLOT_BLITTER, 19);
   }
   draw = Ram_HeapSlots->unk64[1];
 
@@ -521,7 +521,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     gCameraSceneParameters[4] = 104;
     verts = Runtime_BumpAllocateAlternatePool(0x400);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     model->texture = &texture;
     model->vertices = verts;
     if (mode == 0) {
@@ -567,8 +567,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
                         p->y, 0);
           Func_080151e4(size >> 1, size, size >> 1);
           SceneTransform_ApplyPitch(-0x4000);
-          Func_08196958(gData_08199210, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_DrawModelList(model);
         }
         p->variant++;
       }
@@ -605,9 +605,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Func_080150e4(spin + j * 5461);
             Func_08015160(0, 0x740000, 0);
             Func_080151e4(half, half, half);
-            Func_08196958(gData_08199210, verts, 4);
+            Render_TransformVertices(gData_08199210, verts, 4);
             Transform_Pop();
-            Func_08196a7c(model);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -630,8 +630,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyPitch(0x4000);
           SceneTransform_ApplyYaw(yaw - 0x1000);
           Func_080151e4(scale, scale, scale);
-          Func_08196958(gData_08199210, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_DrawModelList(model);
         }
       }
     } else if (mode == 5) {
@@ -675,8 +675,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Func_080150e4(p->x);
             Func_080151e4(Trig_Sin(p->variant * 682) * 3 + 0xc000, 0x20000,
                           0x10000);
-            Func_08196958(gData_081991b0, verts, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_081991b0, verts, 4);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -705,8 +705,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Func_080150e4((i << 14) + 0x2000);
             SceneTransform_ApplyPitch(-0x1000);
             Func_0801521c(scale);
-            Func_08196958(gData_08199210, verts, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08199210, verts, 4);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -738,8 +738,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
             SceneTransform_ApplyPitch(0xc000);
             Func_080151e4(scale, scale, scale);
-            Func_08196958(gData_08199210, verts, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08199210, verts, 4);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -838,8 +838,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Render_ResetTransformState();
           Func_08015160((ball->x / 2 - 64) << 16, (ball->y - 48) << 16, 0);
           Func_080151e4(scale / 4, scale, scale / 2);
-          Func_08196958(Data_081991e0, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_DrawModelList(model);
         }
       }
       if (frame == 10) {
@@ -896,8 +896,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->z);
           Func_0801521c(0x8000);
-          Func_08196958(Data_081991e0, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_DrawModelList(model);
           BattleFxKernels_IntegrateVector3(p, 60, 0);
         }
       }
@@ -947,8 +947,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->z);
           Func_0801521c(0x8000);
-          Func_08196958(Data_081991e0, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_DrawModelList(model);
           BattleFxKernels_IntegrateVector3(p, 60, 0);
         }
       }
@@ -1059,8 +1059,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           scale = 0x10000;
         if (scale > 0) {
           Func_080151e4(scale * 6, scale * 2, 0x10000);
-          Func_08196958(Data_081991d0, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991d0, verts, 4);
+          Render_DrawModelList(model);
           Transform_Pop();
         }
       }
@@ -1088,8 +1088,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
                           0);
             Func_080151e4(scale / 2, scale, scale / 2);
             Func_080150e4(0x2000);
-            Func_08196958(Data_081991e0, verts, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(Data_081991e0, verts, 4);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -1141,8 +1141,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyYaw(frame << 9);
           Func_080150e4(spin);
           Func_080151e4(0x10000, 0x8000, 0x10000);
-          Func_08196958(Data_08198cac, verts, 32);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_08198cac, verts, 32);
+          Render_DrawModelList(model);
         }
       }
     } else if (mode == 12) {
@@ -1161,8 +1161,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
         model->shade = 0;
         Func_080151e4(scale >> 1, scale, scale >> 1);
-        Func_08196958(Data_081991e0, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_DrawModelList(model);
       }
       Render_ResetTransformState();
       Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
@@ -1172,8 +1172,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet;
         Func_080151e4(scale / 2, scale, scale / 2);
         Func_080150e4((frame << 9) + 0x2000);
-        Func_08196958(Data_081991e0, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_DrawModelList(model);
       }
       if (frame == 0) {
         for (i = 0; i != 64; i++) {
@@ -1237,8 +1237,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Func_080151e4(scale / 2, scale, scale / 2);
           Func_080150e4((j << 14) + 0x2000);
           SceneTransform_ApplyPitch(-0x1000);
-          Func_08196958(gData_08199210, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_DrawModelList(model);
         }
       }
       Render_ResetTransformState();
@@ -1249,11 +1249,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet;
         Func_080151e4(scale / 2, scale, scale / 2);
         Func_080150e4((frame << 9) + 0x2000);
-        Func_08196958(Data_081991e0, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_DrawModelList(model);
       }
       if (frame == 0)
-        Func_0815b410();
+        Graphics_LoadGreyRamp();
       if (frame == 16) {
         Audio_PlayCue(212);
         Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
@@ -1299,15 +1299,15 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyYaw(-frame << 10);
         else
           SceneTransform_ApplyYaw(frame << 10);
-        Func_08196958(gData_08199210, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, verts, 4);
+        Render_DrawModelList(model);
       }
     }
     MemFree(model);
     MemFree(verts);
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     if (mode == 1)
       WAIT_TRANSFER(work) {}
     work->transferPending = 1;
@@ -1315,7 +1315,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (mode == 0 || mode == 6)
-    Scheduler_RemoveCallback(Func_08152474);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

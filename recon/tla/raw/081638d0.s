@@ -250,13 +250,13 @@ BattleFx_RunTorch:
 .L_08163aa0:
 	.4byte 0x00001000
 .L_08163aa4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08163aa8:
 	.4byte IwramFillWords + 0x74
 .L_08163aac:
 	.4byte Data_02010002
 .L_08163ab0:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_08163ab4:
 	.4byte 0x04000208
 .L_08163ab8:
@@ -381,7 +381,7 @@ BattleFx_RunTorch:
 	movs r5, #1
 	bl Func_08158ce0
 	add r8, r5
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #2
@@ -399,7 +399,7 @@ BattleFx_RunTorch:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -418,6 +418,6 @@ BattleFx_RunTorch:
 .L_08163bf4:
 	.4byte Data_02010002
 .L_08163bf8:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_08163bfc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

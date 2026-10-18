@@ -140,7 +140,7 @@ Func_080ce0ac:
 	cmp r3, r0
 	bge .L_080ce1de
 	bl EventRuntime_GetControlledOwner
-	bl Func_080cd91c
+	bl Field_FindNearbyTalkTarget
 	adds r5, r0, #0
 	bl EventRuntime_Begin
 	ldr r0, [r6, #8]

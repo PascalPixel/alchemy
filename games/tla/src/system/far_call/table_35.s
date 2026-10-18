@@ -57,12 +57,12 @@ Func_080c8888:
 	.thumb_func
 Func_080c8890:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080d1d54
+	overlay_veneer BattleFx_FillOverlayTiles
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080d1d54
+	overlay_veneer BattleFx_FillOverlayTiles
 	.else
-	overlay_veneer Func_080e70f8
+	overlay_veneer BattleFx_DropObjectAtAnchor
 	.endif
 	.endif
 	.global Func_080c8898
@@ -73,12 +73,12 @@ Func_080c8898:
 	.thumb_func
 Func_080c88a0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080d1df0
+	overlay_veneer BattleFx_DrawSpriteAtWorldPosition
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080d1df0
+	overlay_veneer BattleFx_DrawSpriteAtWorldPosition
 	.else
-	overlay_veneer Func_080d1d54
+	overlay_veneer BattleFx_FillOverlayTiles
 	.endif
 	.endif
 	.global Func_080c88a8
@@ -94,7 +94,7 @@ Func_080c88b0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer ObjectGroup_ApplyRandomChildValues
 	.else
-	overlay_veneer Func_080d1df0
+	overlay_veneer BattleFx_DrawSpriteAtWorldPosition
 	.endif
 	.endif
 	.global Func_080c88b8

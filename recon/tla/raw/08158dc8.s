@@ -185,7 +185,7 @@ BattleFx_RunThor:
 	strh r5, [r6]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -207,7 +207,7 @@ BattleFx_RunThor:
 .L_08158f60:
 	.4byte Func_0813baec
 .L_08158f64:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08158f68:
 	.4byte 0x00000074
 .L_08158f6c:
@@ -633,7 +633,7 @@ BattleFx_RunThor:
 	bgt .L_081592ec
 	movs r0, #188
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #192
 	lsls r0, r0, #18
 	adds r0, #188
@@ -670,7 +670,7 @@ BattleFx_RunThor:
 .L_081592ec:
 	movs r1, #19
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #192
 	lsls r1, r1, #18
 	adds r1, #188
@@ -855,7 +855,7 @@ BattleFx_RunThor:
 .L_08159452:
 	movs r1, #19
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r6, #96
 	movs r1, #32
 	str r1, [sp, #0]
@@ -880,7 +880,7 @@ BattleFx_RunThor:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r3, r8
 	str r3, [sp, #0]
 	str r6, [sp, #4]
@@ -966,13 +966,13 @@ BattleFx_RunThor:
 	adds r4, #240
 	adds r3, r2, r4
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #130
 	movs r0, #9
 	movs r2, #1
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	ldr r0, .L_081595d8
 	ldr r1, .L_081595dc
 	movs r2, #1
@@ -1366,7 +1366,7 @@ BattleFx_RunThor:
 	movs r1, #19
 	movs r0, #188
 	ands r5, r2
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #3
 	mov r0, r9
 	bl __modsi3
@@ -1615,7 +1615,7 @@ BattleFx_RunThor:
 .L_08159a60:
 	movs r0, #188
 	movs r1, #31
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -1835,7 +1835,7 @@ BattleFx_RunThor:
 	movs r1, #4
 	bl Func_08158ce0
 .L_08159c1a:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #112]
 	lsls r1, r1, #7
@@ -1875,7 +1875,7 @@ BattleFx_RunThor:
 	mov r1, r9
 	cmp r1, #9
 	bne .L_08159c62
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #324
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1902,4 +1902,4 @@ BattleFx_RunThor:
 .L_08159ca4:
 	.4byte gMapCellBuffer
 .L_08159ca8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

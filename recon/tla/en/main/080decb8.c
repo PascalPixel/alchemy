@@ -37,7 +37,7 @@ struct CloakEvent {
 };
 
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Func_080deba4(void);
+void FieldFx_CheckCloakTile(void);
 void Func_080debd8(void);
 void WaitFrames(s32 frames);
 
@@ -46,7 +46,7 @@ void WaitFrames(s32 frames);
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
 
-// What the ground check (Func_080deba4) requests when the caster does not
+// What the ground check (FieldFx_CheckCloakTile) requests when the caster does not
 // stand on a tile it can hide on.
 #define CLOAK_END 0x2092
 
@@ -79,7 +79,7 @@ void Func_080decb8(void) {
   sprite->blend = 2;
   entry->param = 0;
   sprite->dirty = 1;
-  check = Func_080deba4;
+  check = FieldFx_CheckCloakTile;
   Scheduler_AddOrUpdateCallback(check, 0x480);
   gPartyState.cloaked = 1;
   check();

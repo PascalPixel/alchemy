@@ -74,7 +74,7 @@ BattleFx_RunMeteorBlow:
 .L_0818dfec:
 	.4byte gMapCellBuffer
 .L_0818dff0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818dff4:
 	lsls r3, r3, #3
 	adds r1, r2, r3
@@ -107,7 +107,7 @@ BattleFx_RunMeteorBlow:
 	adds r0, r6, #0
 	mov lr, r5
 	.2byte 0xf800
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	ldr r2, .L_0818e0d0
 	movs r3, #240
 	str r3, [r2, #16]
@@ -128,13 +128,13 @@ BattleFx_RunMeteorBlow:
 	mov lr, r5
 	.2byte 0xf800
 	ldr r0, [r7]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #138
 	movs r0, #1
 	movs r2, #1
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r6, #128
 	movs r2, #128
 	ldr r3, .L_0818e0b8
@@ -228,7 +228,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e12c:
 	.4byte 0x00001010
 .L_0818e130:
-	.4byte Func_08143174
+	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_0818e134:
 	adds r4, #164
 	movs r0, #128
@@ -510,7 +510,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e364:
 	.4byte gInput
 .L_0818e368:
-	.4byte Func_08143174
+	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_0818e36c:
 	lsls r1, r1, #4
 	ldr r0, .L_0818e470
@@ -649,7 +649,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e46c:
 	.4byte 0x00000000
 .L_0818e470:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818e474:
 	.4byte gIoWriteQueue
 .L_0818e478:
@@ -709,7 +709,7 @@ BattleFx_RunMeteorBlow:
 	cmp r4, #115
 	ble .L_0818e5c8
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	adds r5, r0, #0
 	ldr r0, .L_0818e4fc
 	mov r6, r11
@@ -810,9 +810,9 @@ BattleFx_RunMeteorBlow:
 	movs r2, #32
 	ldr r0, [sp, #76]
 	ldr r1, [sp, #80]
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r2, #192
 	lsls r2, r2, #5
 	add r8, r2
@@ -1158,7 +1158,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e858:
 	.4byte BattleFx_ArmMeteorBlowPaletteDma
 .L_0818e85c:
-	.4byte Func_08143174
+	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_0818e860:
 	ldr r0, .L_0818e8bc
 	bl Scheduler_RemoveCallback
@@ -1205,7 +1205,7 @@ BattleFx_RunMeteorBlow:
 .L_0818e8b8:
 	.4byte 0x00000721
 .L_0818e8bc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818e8c0:
 	.4byte 0xfffff000
 .L_0818e8c4:
@@ -1219,7 +1219,7 @@ BattleFx_RunMeteorBlow:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1464,7 +1464,7 @@ BattleFx_RunMeteorBlow:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #28]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	mov r2, r9
 	str r2, [r0, #16]
 	ldr r3, [sp, #28]
@@ -1571,7 +1571,7 @@ BattleFx_RunMeteorBlow:
 	b .L_0818ebea
 	.2byte 0x0000
 .L_0818ebac:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818ebb0:
 	.4byte 0x00000134
 .L_0818ebb4:
@@ -1605,9 +1605,9 @@ BattleFx_RunMeteorBlow:
 	ldr r0, .L_0818ed80
 	ldr r1, [sp, #28]
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r8
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818ebfa:
 	movs r3, #128
 	lsls r3, r3, #6
@@ -1697,9 +1697,9 @@ BattleFx_RunMeteorBlow:
 	ldr r0, .L_0818ed94
 	ldr r1, [sp, #28]
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r8
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818ecb8:
 	adds r7, #1
 	adds r6, #5
@@ -1758,7 +1758,7 @@ BattleFx_RunMeteorBlow:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #96]
 	lsls r1, r1, #7
@@ -1786,7 +1786,7 @@ BattleFx_RunMeteorBlow:
 	adds r3, r4, r6
 	ldr r0, [r3]
 	bl ResourceObject_ReleaseFar
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #208
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1811,4 +1811,4 @@ BattleFx_RunMeteorBlow:
 .L_0818ed9c:
 	.4byte gMapCellBuffer
 .L_0818eda0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

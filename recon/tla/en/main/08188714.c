@@ -38,7 +38,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// Func_081963ec's packed argument: the mode in the high nibble.
+// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -52,8 +52,8 @@ struct ModelTexture {
   void *pixels;
 };
 
-// One entry of a model list, as Func_081969f8 allocates them and
-// Func_08196a7c draws them.
+// One entry of a model list, as Render_AllocateModelList allocates them and
+// Render_DrawModelList draws them.
 struct Model {
   s32 kind;
   s32 next;
@@ -76,7 +76,7 @@ struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 s32 Battle_GetObjectTableValueFar(s32 objectId);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void Func_081963ec(s32 slot, s32 packed);
+void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ApplyAlternateStepAndYOffset(
@@ -90,21 +90,21 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct Model *Func_081969f8(s32 count);
+struct Model *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Func_08196958(void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct Model *model);
+void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 
 // Death Plunge (effect kind 53): the user runs nine tenths of the way to the
 // target, and both leap; at frame 11 they turn upside down, lifted by their
@@ -153,18 +153,18 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
                     Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                     128);
     work->transferValue = 50;
-    Func_081963ec(HEAP_SLOT_BLITTER,
+    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     REG_BLDALPHA = 0x1010;
   } else {
     work->transferMode = 2;
     work->transferValue = 75;
-    Func_081963ec(HEAP_SLOT_BLITTER,
+    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
   }
   work->transferMode = 2;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   // The user runs nine tenths of the way to the target.
   first = GetBattleObjectSlotFar(effect->actor);
@@ -275,7 +275,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       // The jaw, twice, a quarter turn apart: it grows from frame 56 and
       // fades out from frame 64.
       vertices = Runtime_BumpAllocateAlternatePool(512);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       if (frame > 55) {
         s32 scale = ((frame - 56) << 13) + 0x4000;
         s32 alpha = 0;
@@ -299,8 +299,8 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
             Func_080151e4(scale, scale, scale);
             Func_080150e4(angle);
             SceneTransform_ApplyPitch(-0x1000);
-            Func_08196958(gData_08199210, vertices, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08199210, vertices, 4);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -333,7 +333,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

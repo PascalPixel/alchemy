@@ -457,7 +457,7 @@ BattleFx_RunFrost:
 	b .L_0815188c
 	.2byte 0x0000
 .L_0815183c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08151840:
 	.4byte 0xffff9000
 .L_08151844:
@@ -826,7 +826,7 @@ BattleFx_RunFrost:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08151b44
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -851,4 +851,4 @@ BattleFx_RunFrost:
 .L_08151b40:
 	.4byte Data_0819745e
 .L_08151b44:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

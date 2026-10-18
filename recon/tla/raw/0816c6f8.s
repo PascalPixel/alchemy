@@ -51,7 +51,7 @@ BattleFx_RunGeode:
 	bne .L_0816c76c
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816c774
 	.2byte 0x0000
 .L_0816c764:
@@ -61,7 +61,7 @@ BattleFx_RunGeode:
 .L_0816c76c:
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816c774:
 	movs r5, #192
 	lsls r5, r5, #18
@@ -101,7 +101,7 @@ BattleFx_RunGeode:
 .L_0816c7bc:
 	.4byte 0x00000000
 .L_0816c7c0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816c7c4:
 	adds r1, #255
 	ldr r0, .L_0816c924
@@ -474,9 +474,9 @@ BattleFx_RunGeode:
 .L_0816ca9c:
 	.4byte 0x04000208
 .L_0816caa0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816caa4:
-	.4byte Func_08143264
+	.4byte BattleFx_ProcessPendingBlock2Transfer
 .L_0816caa8:
 	.4byte IwramClearWords
 .L_0816caac:
@@ -687,9 +687,9 @@ BattleFx_RunGeode:
 .L_0816cc38:
 	.4byte Func_08143424
 .L_0816cc3c:
-	.4byte Func_08143264
+	.4byte BattleFx_ProcessPendingBlock2Transfer
 .L_0816cc40:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816cc44:
 	.4byte gIoWriteQueue
 .L_0816cc48:
@@ -976,7 +976,7 @@ BattleFx_RunGeode:
 	cmp r1, #16
 	bne .L_0816cdd0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0816d0fc
 	ldr r3, [sp, #96]
 	movs r1, #8
@@ -1033,9 +1033,9 @@ BattleFx_RunGeode:
 	ldr r0, [sp, #56]
 	ldr r1, [sp, #60]
 	lsls r2, r2, #1
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	adds r0, r5, #0
 	bl MemFree
 .L_0816cefa:
@@ -1066,7 +1066,7 @@ BattleFx_RunGeode:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0816d0fc
 	ldr r3, [sp, #88]
 	ldr r1, [sp, #80]
@@ -1169,9 +1169,9 @@ BattleFx_RunGeode:
 	ldr r0, .L_0816d124
 	mov r1, r8
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816d010:
 	adds r7, #1
 	cmp r7, #4
@@ -1253,7 +1253,7 @@ BattleFx_RunGeode:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0816d0ae:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #80]
 	lsls r1, r1, #7
@@ -1277,7 +1277,7 @@ BattleFx_RunGeode:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816d12c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1311,4 +1311,4 @@ BattleFx_RunGeode:
 .L_0816d128:
 	.4byte 0xfff84000
 .L_0816d12c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

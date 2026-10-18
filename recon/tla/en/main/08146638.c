@@ -5,11 +5,11 @@
 // read directly (the dispatcher stores work->effect), the rune palette and
 // resource 0x134 as in BattleFx_RunShiningStar, Object_SetMode for the caster where The
 // Broken Seal dispatches an argument to its children, one blitter from
-// Func_081963ec(104, MAX), the callback at 0xc80, and the target thrown with
+// BattleFx_LoadBlitter(104, MAX), the callback at 0xc80, and the target thrown with
 // Object_ResetMotion and Object_SetPosition. The tables are not const (see
 // BattleFx_RunShiningStar).
 
-// Func_081963ec is declared to return s32, as The Lost Age's LoadWork
+// BattleFx_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
 // returns its store-flag and The Broken Seal's returns s32: void it is 36.
 
 // Left: order only. Same frame, registers and instructions; at about fifteen
@@ -44,12 +44,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
@@ -117,12 +117,12 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Object_SetMode(caster, 2);
   ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)caster, 48);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;
   work->transferValue = 75;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The rings leave from above the caster and reach the target in twelve
   // frames; the second and third aim past it.
@@ -245,13 +245,13 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -321,7 +321,7 @@ BattleFx_RunUndeadSword:
 	movs r1, #16
 	bl Func_08158ce0
 .L_0816a9b8:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -342,7 +342,7 @@ BattleFx_RunUndeadSword:
 .L_0816a9e0:
 	ldr r0, .L_0816a9f8
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -351,7 +351,7 @@ BattleFx_RunUndeadSword:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816a9f8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816a9fc:
 	.4byte gData_08198afc
 .L_0816aa00:

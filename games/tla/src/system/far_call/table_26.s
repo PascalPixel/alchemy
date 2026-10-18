@@ -24,7 +24,7 @@ Func_080c82b8:
 	.global Func_080c82c0
 	.thumb_func
 Func_080c82c0:
-	overlay_veneer Func_080cd91c
+	overlay_veneer Field_FindNearbyTalkTarget
 	.global Func_080c82c8
 	.thumb_func
 Func_080c82c8:

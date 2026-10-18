@@ -36,7 +36,7 @@
 // a start variable for each column's delay, stepped
 // before i (the delay and angle take the native's slots)  46 -> 28
 // one empty asm in the prologue                             32
-// Func_081963ec returning s32, as LoadWork returns its
+// BattleFx_LoadBlitter returning s32, as LoadWork returns its
 // store-flag result (the r1-before-r0 rows close)         28 -> 24
 // alchemy permute, 5 and 8 minutes: 24, only by a false
 // u16 return type on the loader                           not kept
@@ -54,7 +54,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; Func_081963ec takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -78,14 +78,14 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 // Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 Func_081963ec(s32 slot, s32 modeFlags);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -124,10 +124,10 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   sheet = slots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                       COMPOSITE_FLIP_Y));
-  Func_081963ec(HEAP_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)slots->unk64[1];
   draw[1] = (DrawRectangle)slots->unkb8[1];
@@ -138,7 +138,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
                              work->sheet + 0x2f8, 1, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each column starts somewhere in the canvas's 64 pixels, on the ground.
   for (i = 0; i != 32; i++) {
@@ -213,7 +213,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     angle -= 0x800;
@@ -221,8 +221,8 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   } while (frame != 96);
 
   // Teardown.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

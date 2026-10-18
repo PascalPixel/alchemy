@@ -47,14 +47,14 @@ extern u8 gMapCellBuffer[];
 
 // Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
 // with the effect's three work blocks taken.
-void Func_0814c994(s32 *arg) {
+void BattleFx_RunSceneEffect(s32 *arg) {
   struct FxRunWork *work;
 
   Runtime_AllocateHeapBlock(100, 0x302);
   Runtime_AllocateHeapBlock(92, 0x7b7c);
   Runtime_AllocateHeapBlock(96, 0x4000);
   /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0
-   * offset is started, as in Func_0814cb60 (differ 2 without it). */
+   * offset is started, as in BattleFx_RunTableEffect (differ 2 without it). */
   do {
     work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   } while (0);
@@ -160,7 +160,7 @@ void Func_0814c994(s32 *arg) {
 
 // Runs one battle effect script: takes the effect's three work blocks, calls
 // the handler its first word selects, then gives the blocks back.
-void Func_0814cb60(s32 *script) {
+void BattleFx_RunTableEffect(s32 *script) {
   struct FxRunWork *work;
 
   Runtime_AllocateHeapBlock(100, 0x302);

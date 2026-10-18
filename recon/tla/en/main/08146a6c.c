@@ -4,12 +4,12 @@
 // here), ported call for call. The Lost Age's changes: the effect argument is
 // read directly (the dispatcher stores work->effect), resource 0x134 is
 // unpacked into the sheet slot where The Broken Seal decodes its particle
-// sprites, the one blitter comes from Func_081963ec(104, MAX) before the
+// sprites, the one blitter comes from BattleFx_LoadBlitter(104, MAX) before the
 // transfer settings, the callback runs at 0xc80, and the radii are bytes.
 // The two tables are not const: as const arrays loop.c hoists the cell offset
 // out of the draw loops and spills it (differ 182).
 
-// Func_081963ec is declared to return s32, as The Lost Age's LoadWork
+// BattleFx_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
 // returns its store-flag and The Broken Seal's returns s32: void it is 32
 // (alchemy permute, 12 minutes, found this and nothing else).
 
@@ -45,12 +45,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
-s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
@@ -100,12 +100,12 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
@@ -191,13 +191,13 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

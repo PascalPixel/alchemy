@@ -1,5 +1,5 @@
 @ Two hand-written ARM kernels, each copied into a heap block and run there:
-@ Data_081380ac (its size is Data_081380acCodeSize, which Func_0819690c
+@ Data_081380ac (its size is Data_081380acCodeSize, which RamCode_RunKernel0
 @ copies) and Data_0813847c after it.
 .syntax unified
 	.thumb

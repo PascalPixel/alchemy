@@ -9,7 +9,7 @@ void EventRuntime_PrepareCurrentObject(void);
 void WaitFrames(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
-void Func_080ed788(void) {
+void BattleFx_RunVisibilityTransition(void) {
   struct PartyState *party;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
@@ -29,4 +29,5 @@ void Func_080ed788(void) {
   }
 }
 
-const u8 *Func_080ed804(void) { return gData_080f1140; }
+// Returns the flag entry table, 20-byte entries ended by a zero flag.
+const u8 *FlagEntries_GetTable(void) { return gData_080f1140; }

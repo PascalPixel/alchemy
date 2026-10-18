@@ -81,9 +81,9 @@ extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 extern struct EffectStep gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
@@ -191,7 +191,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   for (frame = 0; frame != GROUP_COUNT * 8 + 40; frame++) {
     struct CameraWork *camera = Ram_HeapSlots->cameraWork;
@@ -295,14 +295,14 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

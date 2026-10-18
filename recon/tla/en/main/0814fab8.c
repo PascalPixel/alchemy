@@ -1,5 +1,5 @@
 // Draft of Func_0814fab8, the body behind the twelve wrappers of
-// s14fa08.c (17 effect kinds).
+// stat_boost.c (17 effect kinds).
 
 // Twin: The Broken Seal's BattleFx_RunStatBoost (effect.c), grown from six
 // modes to thirteen. The Lost Age:
@@ -62,9 +62,9 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
                    s32 mode); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -74,7 +74,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleFx_PrepareCanvasEffect
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
-void Func_0815b410(void);         // a grey ramp from color 1
+void Graphics_LoadGreyRamp(void);         // a grey ramp from color 1
 s32 Battle_GetObjectTableValueFar(s32 actor);
 
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
@@ -250,7 +250,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
   else if (mode == 12)
-    Func_0815b410();
+    Graphics_LoadGreyRamp();
   else if (mode == 2 || mode == 4)
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
@@ -284,7 +284,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   REG_BG2X = shift << 8;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   if (effect->side == 1)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
@@ -451,11 +451,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

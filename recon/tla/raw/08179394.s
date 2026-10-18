@@ -31,12 +31,12 @@ BattleFx_RunRagingHeat:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #7
 	str r3, [sp, #48]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r2, [r6, #20]
@@ -522,7 +522,7 @@ BattleFx_RunRagingHeat:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #28]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r2, #0
 	str r2, [sp, #24]
 	movs r2, #7
@@ -551,7 +551,7 @@ BattleFx_RunRagingHeat:
 .L_081797dc:
 	.4byte Data_02011000
 .L_081797e0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081797e4:
 	.4byte Data_02015018
 .L_081797e8:
@@ -700,9 +700,9 @@ BattleFx_RunRagingHeat:
 	ldr r0, .L_0817998c
 	ldr r1, [sp, #28]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08179914:
 	movs r0, #1
 	add r8, r0
@@ -716,7 +716,7 @@ BattleFx_RunRagingHeat:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #64]
 	lsls r4, r4, #7
@@ -739,7 +739,7 @@ BattleFx_RunRagingHeat:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #172
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -759,4 +759,4 @@ BattleFx_RunRagingHeat:
 .L_0817998c:
 	.4byte gData_08199210
 .L_08179990:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

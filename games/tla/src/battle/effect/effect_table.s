@@ -714,7 +714,7 @@ gData_08197aa0:
 	.4byte 0                               @ 178
 	.4byte 0                               @ 179
 	.4byte 0                               @ 180
-	.4byte Func_0814fa98                   @ 181
+	.4byte BattleFx_RunStatBoostMode10                   @ 181
 	.4byte BattleFx_RunHealingMotesMode13  @ 182
 	.4byte 0                               @ 183
 	.4byte 0                               @ 184
@@ -971,8 +971,8 @@ gData_08197aa0:
 	.4byte BattleFx_RunCage                @ 435
 	.4byte BattleFx_RunPhoenix             @ 436
 	.4byte BattleFx_RunHumanHunt           @ 437
-	.4byte Func_0813d034                   @ 438
-	.4byte Func_0813d040                   @ 439
+	.4byte BattleFx_RunTargetStrikeMode17                   @ 438
+	.4byte BattleFx_RunTargetStrikeMode18                   @ 439
 	.4byte BattleFx_RunPoisonTail          @ 440
 	.4byte BattleFx_RunKillSting           @ 441
 	.4byte BattleFx_RunProjectileVolleyMode15 @ 442
@@ -989,7 +989,7 @@ gData_08197aa0:
 	.4byte BattleFx_RunFormicAcid          @ 453
 	.4byte EffectStep_RunAnimationMode12   @ 454
 	.4byte BattleFx_RunBeatDance           @ 455
-	.4byte Func_0813d058                   @ 456
+	.4byte BattleFx_RunTargetStrikeMode20                   @ 456
 	.4byte BattleFx_RunLivingArmor         @ 457
 	.4byte BattleFx_RunHeatStun            @ 458
 	.4byte BattleFx_RunEarthForce          @ 459

@@ -17,7 +17,7 @@ struct DepthScene {
   s16 active;
 };
 
-void Func_080dba44(void);
+void BattleFx_DrawSceneSprite(void);
 
 void Func_080dbb40(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
@@ -26,7 +26,7 @@ void Func_080dbb40(void) {
   asm volatile("");
   if (scene->active != 0) {
     scene->active = 0;
-    Scheduler_RemoveCallback(Func_080dba44);
+    Scheduler_RemoveCallback(BattleFx_DrawSceneSprite);
     Resource_ResetEntry(scene->vramSlot);
   }
 }

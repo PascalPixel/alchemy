@@ -3,7 +3,7 @@
 // Twin: The Broken Seal's BattleFx_RunFlare (effect.c), call for call.
 // The Lost Age blends BG1 and BG2 at 16:16 where The Broken Seal has 14:16,
 // runs 60 frames instead of 80, reads the effect from its argument, loads
-// its blitter through Func_081963ec (BLIT_ADDITIVE is 0 where
+// its blitter through BattleFx_LoadBlitter (BLIT_ADDITIVE is 0 where
 // COMPOSITE_ADDITIVE is 3) and orders the callback 0xc80.
 
 // Left: seven swapped pairs, each the native issuing a load or a constant
@@ -32,15 +32,15 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 
-// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -83,7 +83,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  Func_081963ec(104,
+  BattleFx_LoadBlitter(104,
                 BLIT_MODE(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -114,7 +114,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(136);
   frame = 0;
   do {
@@ -152,12 +152,12 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
         Func_0814cd48(effect->actors[i], 10, 5, i, 12);
       i += 1;
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     frame += 1;
   } while (frame != 60);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

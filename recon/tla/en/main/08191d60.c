@@ -46,7 +46,7 @@ struct ModelTexture {
   const void *pixels;
 };
 
-// A model for the ARM renderer (Func_08196a7c).
+// A model for the ARM renderer (Render_DrawModelList).
 struct RenderModel {
   s32 kind;
   s32 unk04;
@@ -71,12 +71,12 @@ extern const u8 Data_08199f38[];
 extern const s8 Data_08199f3c[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
-void Func_08143000(void);
-void Func_0815b410(void);
-void Func_0814cc4c(struct BattleEffectArgument *effect);
-void Func_08152404(s32 count, s32 resource, s32 priority);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void Graphics_LoadGreyRamp(void);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 priority);
 void Func_0816442c(s32 formation, s32 x, s32 y);
 void Func_0816467c(s32 formation, s32 x, s32 y);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
@@ -84,7 +84,7 @@ void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_08158ce0(s32 randomMask, u32 range);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
@@ -94,13 +94,13 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-struct RenderModel *Func_081969f8(s32 count);
+struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
-void Func_08196958(const u8 *vertices, void *projected, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void ResourceObject_ReleaseFar(void *object);
 
 // Summon 16. A shower of 256 motes drifts down the screen and, from frame
@@ -139,15 +139,15 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x3000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Func_0815b410();
+  Graphics_LoadGreyRamp();
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   focus.x = 128 << 16;
   focus.y = 64 << 16;
-  Func_0814cc4c(work->effect);
+  BattleFx_SelectLivingTargets(work->effect);
   WaitFrames(1);
-  Func_08152404(12, 654, 2);
+  BattleFx_SpawnObjects(12, 654, 2);
 
   for (frame = 0; frame != SUMMON16_FRAMES; frame++) {
     if ((gInput.repeat & 3) && frame <= 231 && frame > 15) {
@@ -324,7 +324,7 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
     // fade out over eight frames.
     if (frame > 135) {
       projected = Runtime_BumpAllocateAlternatePool(1024);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet + 0x3000;
@@ -353,8 +353,8 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
         Func_080151e4(scale, scale, scale);
         SceneTransform_ApplyPitch(0xbb8);
         model->scrollU = ((frame + k * 5) & 7) << 4;
-        Func_08196958(Data_08198cac, projected, 32);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_08198cac, projected, 32);
+        Render_DrawModelList(model);
       }
       MemFree(model);
       MemFree(projected);
@@ -393,7 +393,7 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
       work->transferMode = 3;
       work->transferValue = 0x02020202;
-      Func_0815b410();
+      Graphics_LoadGreyRamp();
     } else if ((u32)(frame - 256) <= 15) {
       work->transferMode = 1;
       work->transferValue = 0x10101010;
@@ -403,16 +403,16 @@ void BattleFx_RunMoloch(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   Func_0816467c(5, focus.x, focus.y);
   for (i = 0; i != 12; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

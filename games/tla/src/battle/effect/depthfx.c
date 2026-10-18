@@ -28,6 +28,7 @@ struct DepthMap {
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Func_080eb01c(void *work);
 
-void Func_080dba44(void) {
+// Per-frame callback: draws the effect scene's sprite (effect work +0x7c8).
+void BattleFx_DrawSceneSprite(void) {
   Func_080eb01c((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }

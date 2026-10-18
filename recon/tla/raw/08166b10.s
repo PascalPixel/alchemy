@@ -42,12 +42,12 @@ Func_08166b10:
 	asrs r3, r3, #1
 	movs r0, #104
 	str r3, [sp, #16]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r6, [r5, #104]
 	movs r0, #188
 	movs r1, #35
 	str r6, [sp, #24]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r0, [sp, #44]
@@ -383,7 +383,7 @@ Func_08166b10:
 	subs r3, r0, #1
 	b .L_08166e30
 .L_08166e10:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08166e14:
 	.4byte Data_02010018
 .L_08166e18:
@@ -935,7 +935,7 @@ Func_08166b10:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #40]
 	lsls r1, r1, #7
@@ -958,7 +958,7 @@ Func_08166b10:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -975,4 +975,4 @@ Func_08166b10:
 .L_08167294:
 	.4byte 0x3f3f3f3f
 .L_08167298:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

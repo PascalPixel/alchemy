@@ -25,8 +25,8 @@ struct CanvasWork {
 extern u32 gCameraSceneParameters[];
 
 void Audio_PlayCue(s32 cue);
-void Func_081434d8(void);
-void Func_08143488(void);
+void BattleFx_ClearActorTimers(void);
+void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
@@ -56,12 +56,12 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   s32 col;
   s32 offset;
 
-  Func_081434d8();
+  BattleFx_ClearActorTimers();
   display->secondMode = 1;
   WaitFrames(1);
   {
     /* FAKEMATCH: the native loads the zero from the pool before it starts the
-     * register address, as in Func_08143bb8: pinned to the r3 it takes behind a
+     * register address, as in BattleFx_EndCanvasLayer: pinned to the r3 it takes behind a
      * barrier that holds r2. The plain store starts the address first (differ
      * 2), as does the pin without its barrier. */
     register u16 zero asm("r3") = 0;
@@ -97,7 +97,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143488, 0x480);
+  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
   WaitFrames(1);
   REG_BG2CNT = bgControl | 0x784;
@@ -189,7 +189,7 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control) {
 
 // Closes the effect canvas layer: BG1 back where it was, BG2 and its
 // characters cleared, then the background palette faded back in.
-void Func_08143bb8(void) {
+void BattleFx_EndCanvasLayer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
@@ -212,7 +212,7 @@ void Func_08143bb8(void) {
     REG_BG2CNT = control;
   }
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-  Scheduler_RemoveCallback(Func_08143488);
+  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   /* FAKEMATCH: the native loads the zero from the pool between the first two
@@ -238,7 +238,7 @@ void Func_08143bb8(void) {
 
 // Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
 // fades the background palette back and queues BG1's control word.
-void Func_08143d04(void) {
+void BattleFx_SetTransitionFlagAndDisplay(void) {
   struct BattleWork *battle;
   s32 *flag;
 

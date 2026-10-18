@@ -2318,10 +2318,10 @@ Func_080e3698:
 	.thumb_func
 Func_080e37e0:
 	.incbin "baserom.gba", 0x000f07e0, 0x0000051c
-	.global Func_080e3cfc
-	.type Func_080e3cfc, %function
+	.global BattleFx_CallEffect26
+	.type BattleFx_CallEffect26, %function
 	.thumb_func
-Func_080e3cfc:
+BattleFx_CallEffect26:
 	.incbin "baserom.gba", 0x000f0cfc, 0x00000008
 	.global Func_080e3d04
 	.type Func_080e3d04, %function
@@ -2345,20 +2345,20 @@ Func_080e4244:
 	.thumb_func
 Func_080e4730:
 	.incbin "baserom.gba", 0x000f1730, 0x000002fc
-	.global Func_080e4a2c
-	.type Func_080e4a2c, %function
+	.global BattleFx_CallEffect23
+	.type BattleFx_CallEffect23, %function
 	.thumb_func
-Func_080e4a2c:
+BattleFx_CallEffect23:
 	.incbin "baserom.gba", 0x000f1a2c, 0x00000008
 	.global Func_080e4a34
 	.type Func_080e4a34, %function
 	.thumb_func
 Func_080e4a34:
 	.incbin "baserom.gba", 0x000f1a34, 0x00000cf0
-	.global Func_080e5724
-	.type Func_080e5724, %function
+	.global BattleFx_CallEffect21
+	.type BattleFx_CallEffect21, %function
 	.thumb_func
-Func_080e5724:
+BattleFx_CallEffect21:
 	.incbin "baserom.gba", 0x000f2724, 0x00000008
 	.global Func_080e572c
 	.type Func_080e572c, %function
@@ -2367,10 +2367,10 @@ Func_080e572c:
 	.incbin "baserom.gba", 0x000f272c, 0x000005c4
 	.section .rom.000f2d54, "ax"
 	.balign 4
-	.global Func_080e5d54
-	.type Func_080e5d54, %function
+	.global BattleFx_CallEffect18
+	.type BattleFx_CallEffect18, %function
 	.thumb_func
-Func_080e5d54:
+BattleFx_CallEffect18:
 	.incbin "baserom.gba", 0x000f2d54, 0x00000008
 	.global Func_080e5d5c
 	.type Func_080e5d5c, %function
@@ -2380,10 +2380,10 @@ Func_080e5d5c:
 	.section .rom.000f3400, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000f3400, 0x000004c8
-	.global Func_080e68c8
-	.type Func_080e68c8, %function
+	.global BattleFx_CallEffect20
+	.type BattleFx_CallEffect20, %function
 	.thumb_func
-Func_080e68c8:
+BattleFx_CallEffect20:
 	.incbin "baserom.gba", 0x000f38c8, 0x00000008
 	.global Func_080e68d0
 	.type Func_080e68d0, %function
@@ -2417,13 +2417,13 @@ Func_080e7804:
 Func_080e7818:
 	.incbin "baserom.gba", 0x000f4818, 0x00000004
 	.section .rom.000f481c, "ax"
-	.global Func_080e781c
-Func_080e781c:
+	.global BattleFx_RunEffect30
+BattleFx_RunEffect30:
 	.incbin "baserom.gba", 0x000f481c, 0x00000020
-	.global Func_080e783c
-	.type Func_080e783c, %function
+	.global BattleFx_CallEffect22
+	.type BattleFx_CallEffect22, %function
 	.thumb_func
-Func_080e783c:
+BattleFx_CallEffect22:
 	.incbin "baserom.gba", 0x000f483c, 0x00000008
 	.global Func_080e7844
 	.type Func_080e7844, %function
@@ -2477,10 +2477,10 @@ Func_080e92b4:
 	.incbin "baserom.gba", 0x000f62b4, 0x00000514
 	.section .rom.000f689c, "ax"
 	.incbin "baserom.gba", 0x000f689c, 0x00000250
-	.global Func_080e9aec
-	.type Func_080e9aec, %function
+	.global BattleFx_CallEffect24
+	.type BattleFx_CallEffect24, %function
 	.thumb_func
-Func_080e9aec:
+BattleFx_CallEffect24:
 	.incbin "baserom.gba", 0x000f6aec, 0x00000008
 	.global Func_080e9af4
 	.type Func_080e9af4, %function

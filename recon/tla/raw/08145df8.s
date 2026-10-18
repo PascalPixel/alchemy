@@ -224,14 +224,14 @@ BattleFx_RunBind:
 .L_08145fbc:
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
 	movs r0, #188
 	movs r1, #23
 	str r3, [sp, #80]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -543,14 +543,14 @@ BattleFx_RunBind:
 .L_08146244:
 	ldr r0, .L_08146258
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	b .L_0814626c
 .L_08146250:
 	.4byte 0x00000152
 .L_08146254:
 	.4byte 0x04040404
 .L_08146258:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814625c:
 	.4byte 0x01010101
 .L_08146260:

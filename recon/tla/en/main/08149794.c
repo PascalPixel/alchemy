@@ -2,7 +2,7 @@
 
 // ☀️ twin: BattleFx_RunPlasma (games/tbs/src/effect/effect.c),
 // shape 0.846, structure 1.000. ⚓️'s changes: blitters from
-// Func_081963ec(104, 0x03) (additive, ⚓️ mode 0) and (188, 0x17) (max,
+// BattleFx_LoadBlitter(104, 0x03) (additive, ⚓️ mode 0) and (188, 0x17) (max,
 // mirrored); the effect runs count * 7 + 42 frames where ☀️ runs
 // count * 7 + 48; phase 134 begins at frame 24 where ☀️ begins it at 32;
 // the pillar's cue is 134; Func_08118088 moves the struck targets.
@@ -10,14 +10,14 @@
 // Same frame and instruction count; what is left is single-row order: the
 // native builds the sheet offset 0x700 (movs r7, #224; lsls) before
 // BattleFx_BeginCanvasLayer where agscc builds it after, the argument
-// registers of the two Func_081963ec calls in the other order, and pool
+// registers of the two BattleFx_LoadBlitter calls in the other order, and pool
 // offsets that move with them.
 
 // Tried (differ):
 // trial 1's port (effects trial, 2026-10-15)                          42
 // the heap slots as Ram_HeapSlots fields in place of heap[23..47]
-// with Func_081963ec returning void                                 46
-// the same with Func_081963ec returning s32 (plan 0c)                 42
+// with BattleFx_LoadBlitter returning void                                 46
+// the same with BattleFx_LoadBlitter returning s32 (plan 0c)                 42
 // the map cell buffer as the gMapCellBuffer symbol or as
 // Ram_MapCellBuffer                                                 42
 // greedy declaration-order scan, every local through every place     42
@@ -65,13 +65,13 @@ extern u16 Data_081979c0[];  // ☀️ gPlasma_Sparks: sparks, shake
 extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -103,10 +103,10 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y |
                                             COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -127,7 +127,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   sparks = (struct EffectStep *)Ram_MapCellBuffer;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   count = Data_081979da[effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
@@ -226,14 +226,14 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(8, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

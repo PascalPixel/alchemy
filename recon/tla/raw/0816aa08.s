@@ -55,7 +55,7 @@ BattleFx_RunPlumeEdge:
 .L_0816aa70:
 	.4byte 0x00001010
 .L_0816aa74:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816aa78:
 	movs r1, #156
 	ldr r0, [r0]
@@ -307,7 +307,7 @@ BattleFx_RunPlumeEdge:
 	ldrsh r1, [r3, r4]
 	movs r2, #8
 	movs r3, #80
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 .L_0816ac8a:
 	ldr r0, [sp, #28]
 	cmp r0, #21
@@ -463,7 +463,7 @@ BattleFx_RunPlumeEdge:
 	mov lr, r4
 	.2byte 0xf800
 .L_0816adbc:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -485,7 +485,7 @@ BattleFx_RunPlumeEdge:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816ae3c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -523,4 +523,4 @@ BattleFx_RunPlumeEdge:
 .L_0816ae38:
 	.4byte 0xffffe000
 .L_0816ae3c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -34,7 +34,7 @@ BattleFx_RunDaedalus:
 	bl Func_08179e6c
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r2, #239
 	lsls r2, r2, #7
@@ -91,7 +91,7 @@ BattleFx_RunDaedalus:
 .L_0817eb0c:
 	.4byte 0xffe30000
 .L_0817eb10:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817eb14:
 	.4byte gBgScroll
 .L_0817eb18:
@@ -2726,7 +2726,7 @@ BattleFx_RunDaedalus:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r7, r0, #0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_081802e4
 	ldr r3, [sp, #160]
 	movs r1, #7
@@ -2785,9 +2785,9 @@ BattleFx_RunDaedalus:
 	ldr r0, .L_081802fc
 	adds r1, r7, #0
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0817ffc0:
 	adds r0, r5, #0
 	bl MemFree
@@ -3698,7 +3698,7 @@ BattleFx_RunDaedalus:
 	subs r3, #1
 	str r3, [r4]
 .L_081806b4:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #232
@@ -3856,7 +3856,7 @@ BattleFx_RunDaedalus:
 .L_081807f8:
 	adds r1, #255
 	movs r0, #1
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r5, #238
 	ldr r6, .L_08180a6c
 	movs r2, #0
@@ -4385,7 +4385,7 @@ BattleFx_RunDaedalus:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -4421,7 +4421,7 @@ BattleFx_RunDaedalus:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #268
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -4435,4 +4435,4 @@ BattleFx_RunDaedalus:
 .L_08180c8c:
 	.4byte 0xffffe000
 .L_08180c90:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

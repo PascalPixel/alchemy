@@ -10,7 +10,7 @@ extern struct BattleFxDefinition gData_080f0308[];
 
 // Finds the battle effect definition of id among the first 243 entries; when
 // none matches it returns entry 243.
-struct BattleFxDefinition *Func_080d1e60(u32 id) {
+struct BattleFxDefinition *BattleFx_FindDefinition(u32 id) {
   struct BattleFxDefinition *entry = gData_080f0308;
   u32 index = 0;
 

@@ -529,7 +529,7 @@ BattleFx_RunRagnarok:
 .L_081669ac:
 	.4byte gMapCellBuffer
 .L_081669b0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081669b4:
 	.4byte 0x00000184
 .L_081669b8:
@@ -648,7 +648,7 @@ BattleFx_RunRagnarok:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	ldr r1, [sp, #52]
 	lsls r2, r2, #7
@@ -674,7 +674,7 @@ BattleFx_RunRagnarok:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -688,4 +688,4 @@ BattleFx_RunRagnarok:
 .L_08166af0:
 	.4byte gData_08197410
 .L_08166af4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

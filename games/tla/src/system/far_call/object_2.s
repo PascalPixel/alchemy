@@ -24,7 +24,7 @@ Func_080c8668:
 	.global Func_080c8670
 	.thumb_func
 Func_080c8670:
-	overlay_veneer Func_080d2084
+	overlay_veneer Event_WaitTwoSecondsOrPress
 	.global Func_080c8678
 	.thumb_func
 Func_080c8678:

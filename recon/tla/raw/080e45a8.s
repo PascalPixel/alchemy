@@ -99,7 +99,7 @@ Func_080e45a8:
 	str r3, [r7, #20]
 	str r3, [r7, #24]
 	mov r0, r10
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	ldrb r2, [r7, #9]
 	movs r3, #3
 	ands r0, r3
@@ -110,7 +110,7 @@ Func_080e45a8:
 	orrs r3, r0
 	strb r3, [r7, #9]
 	mov r0, r10
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	ldrb r3, [r7, #5]
 	movs r2, #32
 	orrs r3, r2

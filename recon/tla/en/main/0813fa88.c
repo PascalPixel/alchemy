@@ -1,12 +1,12 @@
 // Near miss, differ 2 of 280 (10 without its devices).
 
 // Twin: The Broken Seal's BattleFx_PrepareScene, the start of the
-// light-streak backdrop the scenes raise behind the battle (Func_0813fd40,
+// light-streak backdrop the scenes raise behind the battle (BattleFx_ScheduleCallbacksAndReleaseBlocks,
 // already C, takes it down; both are reached through the far-call table,
 // table_47.s). ⚓️ rebuilt it: instead of BattleFx_BeginCanvasLayer it sets
 // the BG2 canvas up step by step, a frame at a time, as 0813eb70 does; it
-// fades the battle background's colours over 24 frames (Func_0813fa44), and
-// the streaks are halved into VRAM each frame (Func_0813f89c) rather than
+// fades the battle background's colours over 24 frames (BattleFx_DimBackgroundStep), and
+// the streaks are halved into VRAM each frame (BattleFx_TransferHalvedCanvas) rather than
 // through the canvas transfer.
 
 // Left: one row in the prologue. The native stores the canvas pointer to its
@@ -53,7 +53,7 @@
 struct StreakSceneWork {
   s32 frame;        // the streaks' frame count (Func_0813f8d4)
   s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
-  s32 fadeFrames;   // frames of the background's fade left (Func_0813fa44)
+  s32 fadeFrames;   // frames of the background's fade left (BattleFx_DimBackgroundStep)
   s32 fadeStep;
 };
 
@@ -65,8 +65,8 @@ extern char ResourceId_DustPuffSheet;
 
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_0814355c(void); // the BG2 canvas's registers
-void Func_0813fa44(void); // fades the battle background
-void Func_0813f89c(void); // halves the canvas into VRAM
+void BattleFx_DimBackgroundStep(void); // fades the battle background
+void BattleFx_TransferHalvedCanvas(void); // halves the canvas into VRAM
 void Func_0813f8d4(void); // BattleFx_DrawStreaks
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
@@ -205,9 +205,9 @@ void Func_0813fa88(s32 kind) {
   // every frame.
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Func_0813fa44, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_DimBackgroundStep, 0x480);
   work->halvePending = 0;
-  Scheduler_AddOrUpdateCallback(Func_0813f89c, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_TransferHalvedCanvas, 0xc80);
   work->frame = 0;
   Scheduler_AddOrUpdateCallback(Func_0813f8d4, 0x480);
 }

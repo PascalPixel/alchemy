@@ -1,11 +1,11 @@
-// Draft, differ 126 of 1065: BattleFx_RunKirin, summon 3 (Func_0814c994's case 3,
+// Draft, differ 126 of 1065: BattleFx_RunKirin, summon 3 (BattleFx_RunSceneEffect's case 3,
 // actflags 0x8003), The Broken Seal's BattleFx_RunKirin.
 
 // Twin: ☀️ BattleFx_RunKirin (games/tbs/src/effect/effect.c), ported:
 // Func_0813ba50 sets the display, the second BG colour is 0x18, the formation
 // is resource 644, the projection's centre is gCameraSceneParameters[4], the
-// control is the heap slot at 0xb0, one blitter (Func_081963ec(104, 3)), the
-// effect stays an argument for the hit loops, callback Func_08143000 at
+// control is the heap slot at 0xb0, one blitter (BattleFx_LoadBlitter(104, 3)), the
+// effect stays an argument for the hit loops, callback BattleFx_ProcessPendingGraphicsTransfer at
 // 0xc80.
 
 // The objects' flag byte is or-ed as a byte (as a struct field the allocation
@@ -36,7 +36,7 @@
 // into Ram_HeapSlots (☀️ uses slot indices).
 #define HEAP_BLITTER 104
 
-// Func_081963ec's argument: The Lost Age's blitter mode (☀️'s counted down
+// BattleFx_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
 // from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_ADDITIVE 0
@@ -83,14 +83,14 @@ extern u32 gCameraSceneParameters[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value);
-void Func_0814cc4c(
+void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
-void Func_08152404(s32 count, s32 resource,
+void BattleFx_SpawnObjects(s32 count, s32 resource,
                    s32 priority); // BattleFx_SpawnObjects
 void ResourceObject_ReleaseFar(void *object);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);
@@ -103,10 +103,10 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0814cca8(void);         // BattleFx_SetupBlendedDisplay
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // Summon 3: the battlefield turns to forest; a row of nine riders gallops in
 // from the right over a ring of embers, trailing fire, while flames climb at
@@ -149,11 +149,11 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0x18;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Func_08163c2c(1, 0);
-  Func_08152404(9, 644, 1);
+  BattleFx_SpawnObjects(9, 644, 1);
   gCameraSceneParameters[4] = 240;
-  Func_0814cc4c(work->effect);
+  BattleFx_SelectLivingTargets(work->effect);
   REG_WININ = 0x2737;
   REG_WIN0H = 0xca;
   WaitFrames(1);
@@ -187,7 +187,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 64);
 
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BG2CNT = 0x786;
@@ -486,7 +486,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       }
 
       Func_08158ce0(8, 8);
-      Func_081434f8();
+      ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
       WaitFrames(1);
       frame++;
@@ -499,7 +499,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
     i++;
   } while (i != 9);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

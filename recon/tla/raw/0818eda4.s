@@ -389,7 +389,7 @@ BattleFx_RunLiquifier:
 .L_0818f0ac:
 	.4byte IwramCopyWords
 .L_0818f0b0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818f0b4:
 	.4byte Data_02010018
 .L_0818f0b8:
@@ -531,7 +531,7 @@ BattleFx_RunLiquifier:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #12]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r3, #6
 	adds r7, r0, #0
 	str r3, [r7]
@@ -613,9 +613,9 @@ BattleFx_RunLiquifier:
 	ldr r0, .L_0818f464
 	ldr r1, [sp, #12]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818f286:
 	movs r2, #1
 	add r8, r2
@@ -693,9 +693,9 @@ BattleFx_RunLiquifier:
 	ldr r0, .L_0818f478
 	ldr r1, [sp, #12]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818f330:
 	ldr r3, .L_0818f44c
 	movs r1, #1
@@ -784,9 +784,9 @@ BattleFx_RunLiquifier:
 	ldr r0, .L_0818f48c
 	ldr r1, [sp, #12]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818f3ee:
 	movs r3, #16
 	negs r3, r3
@@ -904,9 +904,9 @@ BattleFx_RunLiquifier:
 	ldr r0, .L_0818f5c0
 	ldr r1, [sp, #12]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818f4e8:
 	ldr r1, .L_0818f5c4
 	movs r2, #1
@@ -974,7 +974,7 @@ BattleFx_RunLiquifier:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #40]
 	lsls r1, r1, #7
@@ -997,7 +997,7 @@ BattleFx_RunLiquifier:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #92
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1013,4 +1013,4 @@ BattleFx_RunLiquifier:
 .L_0818f5c4:
 	.4byte 0xffff8000
 .L_0818f5c8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

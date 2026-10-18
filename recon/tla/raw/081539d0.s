@@ -285,7 +285,7 @@ Func_081539d0:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #52
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -298,6 +298,6 @@ Func_081539d0:
 .L_08153c24:
 	.4byte gMapCellBuffer
 .L_08153c28:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08153c2c:
 	.4byte gData_08197410

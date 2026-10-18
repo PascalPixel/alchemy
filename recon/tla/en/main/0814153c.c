@@ -29,10 +29,10 @@ struct RenderModel {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -40,9 +40,9 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -51,8 +51,8 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *out);
-void Func_08152404(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
@@ -77,7 +77,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Func_08178680(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 unit);
@@ -159,7 +159,7 @@ void Palette_LoadBasicObjColors(void);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
 void Func_081885f0(void *a, void *b, s32 count);
-void Func_0815b410(void);
+void Graphics_LoadGreyRamp(void);
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
                    s32 cellHeight);
 void MemFree(void *buffer);
@@ -213,7 +213,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 3200);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 3200);
   scroll = -80;
   for (frame = 0; frame != 52; frame++) {
     if (frame == 27) {
@@ -268,7 +268,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
   velY = 0;
   work->transferMode = 2;
   work->transferValue = 50;
-  Func_081963ec(SLOT_BLITTER, 19);
+  BattleFx_LoadBlitter(SLOT_BLITTER, 19);
   blit = Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x130), 128);
   radius = &work->particles[16].variant;
@@ -400,7 +400,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
         Resource_LoadAndDecompress(0xc9, work->sheet + 0x4000, 0, 0);
       }
       verts = Runtime_BumpAllocateAlternatePool(32);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       model->shade = 0;
       texture.logWidth = 5;
       texture.logHeight = 2;
@@ -420,8 +420,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->x);
           Func_080151e4(Trig_Sin(p->variant * 682) + 0x4000, 0x20000, 0x10000);
-          Func_08196958(gData_081991b0, verts, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_081991b0, verts, 4);
+          Render_DrawModelList(model);
         }
       }
       if (u <= 35) {
@@ -445,8 +445,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPitch(0x2000);
         Func_080150e4(0x2800);
         SceneTransform_ApplyYaw(-frame << 10);
-        Func_08196958(gData_08199210, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, verts, 4);
+        Render_DrawModelList(model);
       }
       if ((u32)(frame - 172) <= 48) {
         Render_ResetTransformState();
@@ -458,8 +458,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
         } else {
           Func_080151e4(0x80000, 0x20000, 0x10000);
         }
-        Func_08196958(Data_081991c0, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991c0, verts, 4);
+        Render_DrawModelList(model);
       }
       MemFree(model);
       MemFree(verts);
@@ -505,7 +505,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
   }
   Func_08020388();
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
-  Func_0814cc4c(work->effect);
+  BattleFx_SelectLivingTargets(work->effect);
   for (i = 0; i != effect->count; i++) {
     Func_0814cd48(effect->actors[i], 1, -1, -1, 0);
     Func_0814cd48(effect->actors[i], 0, -1, -1, 0);
@@ -560,7 +560,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
     }
     if (frame <= 109) {
       verts = Runtime_BumpAllocateAlternatePool(32);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture2.logWidth = 5;
       texture2.logHeight = 2;
       texture2.pixels = work->sheet + 0x3840;
@@ -589,8 +589,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
         Func_080151e4(0x8000, 0x10000, 0x8000);
         Func_080150e4(0x9800);
         Func_080151e4(0xdc500, 0x29c40, 0x8000);
-        Func_08196958(Data_081991c0, verts, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991c0, verts, 4);
+        Render_DrawModelList(model);
       }
       MemFree(model);
       MemFree(verts);
@@ -607,7 +607,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
       }
       Func_08158ce0(r, r);
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -679,7 +679,7 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
         p->variant--;
       }
     }
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     shade = 0;
     if (frame <= 31) {
       s32 s = 0x10000;
@@ -700,8 +700,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
       Func_080151e4(0x8000, 0x10000, 0x8000);
       Func_080150e4(0x9800);
       Func_080151e4(s, 0x20000, 0x8000);
-      Func_08196958(Data_081991c0, gMapCellBuffer, 4);
-      Func_08196a7c(model);
+      Render_TransformVertices(Data_081991c0, gMapCellBuffer, 4);
+      Render_DrawModelList(model);
     }
     if (frame == 0) {
       s32 angle = 0;
@@ -743,8 +743,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch(0x2000);
       SceneTransform_ApplyYaw(-frame << 10);
       Func_0801521c(s);
-      Func_08196958(Data_02010800, gMapCellBuffer, 128);
-      Func_08196a7c(model);
+      Render_TransformVertices(Data_02010800, gMapCellBuffer, 128);
+      Render_DrawModelList(model);
     }
     texture3.logHeight = 5;
     texture3.logWidth = 7;
@@ -780,8 +780,8 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyYaw(angle);
           Func_080151e4(0x10000, 0x60000, 0x10000);
           Func_08015160(0, Data_081977e8[i] << 16, 0);
-          Func_08196958(Data_02012000, gMapCellBuffer, 64);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_02012000, gMapCellBuffer, 64);
+          Render_DrawModelList(model);
         }
       }
     }
@@ -797,14 +797,14 @@ void BattleFx_RunEclipse(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   work->transferMode = 3;
   work->transferValue = 0x02020202;
-  Func_0815b410();
+  Graphics_LoadGreyRamp();
   Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
   Func_081180e8(134);
   for (frame = 0; frame != 32; frame++) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

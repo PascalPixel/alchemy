@@ -1,8 +1,8 @@
-// Draft, differ 44 of 430 (2026-10-15; 46 before Func_081963ec returned its
+// Draft, differ 44 of 430 (2026-10-15; 46 before BattleFx_LoadBlitter returned its
 // loader's s32, as nibble_pair.c now does): The Broken Seal's
 // BattleFx_RunImpactBurst with The Lost Age's blitter loads
-// (Func_081963ec(104, 19) and (188, 3), read back from the heap slots at 0x68
-// and 0xbc), its resources (0x134, 0x120, 0x121) and callback (Func_08143000 at
+// (BattleFx_LoadBlitter(104, 19) and (188, 3), read back from the heap slots at 0x68
+// and 0xbc), its resources (0x134, 0x120, 0x121) and callback (BattleFx_ProcessPendingGraphicsTransfer at
 // 0xc80). Everything matches but reordered rows, all of one kind: the native
 // puts a store, a load or a pool load before an independent constant (the
 // arguments' spills before 0x03000000, the spills of the heap reads, movs r1,
@@ -34,8 +34,8 @@ extern u8 gData_081989e2[];
 extern u8 gData_081989ea[];
 extern u16 gData_08197410[];
 
-void Func_08143000(void);
-s32 Func_081963ec(s32 slot, s32 kind);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+s32 BattleFx_LoadBlitter(s32 slot, s32 kind);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Audio_PlayCue(s32 cue);
@@ -69,9 +69,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
   }
   REG_BG2X = 0;
   REG_BLDCNT = 0x3f46;
-  Func_081963ec(104, 19);
+  BattleFx_LoadBlitter(104, 19);
   maxBlend = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(188, 3);
+  BattleFx_LoadBlitter(188, 3);
   additive = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
@@ -79,7 +79,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
                              0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (i = 0; i != 64; i++) {
     s32 speed = (Random16() & 255) + 256;
@@ -185,7 +185,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);

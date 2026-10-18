@@ -416,7 +416,7 @@ Func_080e4d9c:
 .L_080e5126:
 	adds r1, r6, #0
 	str r4, [sp, #0]
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 	adds r3, #1
@@ -975,7 +975,7 @@ Func_080e4d9c:
 .L_080e5596:
 	adds r1, r6, #0
 	str r4, [sp, #0]
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 	adds r3, #1

@@ -76,7 +76,7 @@ Func_080e1f2c:
 	mov r2, r11
 	strb r3, [r7, #9]
 	ldr r0, [r2, #16]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r1, #13
 	ldrb r2, [r7, #9]
 	negs r1, r1
@@ -90,7 +90,7 @@ Func_080e1f2c:
 	mov r2, r11
 	strb r3, [r7, #9]
 	ldr r0, [r2, #16]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	movs r3, #204
 	lsls r3, r3, #7
 	adds r3, #102
@@ -155,7 +155,7 @@ Func_080e1f2c:
 	strb r0, [r7, #9]
 	mov r8, r0
 	ldr r0, [r1, #16]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	ldrb r3, [r7, #9]
 	movs r2, #3
 	mov r1, r9
@@ -167,7 +167,7 @@ Func_080e1f2c:
 	mov r1, r11
 	strb r2, [r7, #9]
 	ldr r0, [r1, #16]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	movs r2, #0
 	adds r0, #2
 	strh r0, [r7, #30]
@@ -205,13 +205,13 @@ Func_080e1f2c:
 	adds r3, #240
 	ldr r0, [r1, #16]
 	ldr r5, [r3]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	adds r3, r5, #0
 	adds r3, #191
 	mov r2, r11
 	strb r0, [r3]
 	ldr r0, [r2, #16]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	adds r3, r5, #0
 	adds r0, #3
 	adds r3, #190
@@ -368,7 +368,7 @@ Func_080e1f2c:
 	ldr r0, [sp, #8]
 	bl Resource_ResetEntry
 	bl BattleFx_PrepareBufferInterpolation
-	bl Func_080eb930
+	bl BattleFx_EndCanvasSprite
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #32

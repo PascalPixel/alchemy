@@ -21,7 +21,7 @@ Event_FindFacingTrigger:
 	ldrh r0, [r0, #6]
 	mov r11, r0
 	bl EventRuntime_GetControlledOwner
-	bl Func_080cd91c
+	bl Field_FindNearbyTalkTarget
 	movs r3, #128
 	lsls r3, r3, #1
 	adds r3, #255

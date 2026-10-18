@@ -36,10 +36,10 @@ struct BattleObjectPosition {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -47,9 +47,9 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -126,14 +126,14 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
   REG_BLDALPHA = 0x100e;
   if (effect->side == 1) {
-    Func_081963ec(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+    BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   } else {
-    Func_081963ec(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+    BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   }
   draw = BLITTER;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   camera = Ram_HeapSlots->cameraWork;
   target = *GetBattleObjectSlotFar(effect->actors[0]);
 
@@ -209,7 +209,7 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
     gCameraSceneParameters[4] = 104;
     {
       void *vertices = Runtime_BumpAllocateAlternatePool(32);
-      struct RenderModel *model = Func_081969f8(1);
+      struct RenderModel *model = Render_AllocateModelList(1);
 
       model->kind = 6;
       model->mesh = gData_08199364;
@@ -229,19 +229,19 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
         Func_08015160((center[0] / 2 - 64) << 16, 0x280000, 0);
         Func_0801521c(scale >> 1);
         SceneTransform_ApplyYaw(frame << 9);
-        Func_08196958(gData_08199210, vertices, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_DrawModelList(model);
       }
       MemFree(model);
       MemFree(vertices);
     }
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

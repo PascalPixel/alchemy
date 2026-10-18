@@ -3,9 +3,9 @@
 
 // Twin: ☀️ BattleFx_RunAnnihilation (games/tbs/src/effect/effect.c),
 // ported: the effect stays an argument, the camera comes from its heap slot
-// (0x30), the blitters from Func_081963ec(104, 3, 7 or 19) and slot 0x68, the
+// (0x30), the blitters from BattleFx_LoadBlitter(104, 3, 7 or 19) and slot 0x68, the
 // canvas filled through IwramFillWords where ☀️ uses Dma_Fill32, callback
-// Func_08143000 at 0xc80.
+// BattleFx_ProcessPendingGraphicsTransfer at 0xc80.
 
 // frame declared before the sheet and camera gives the native's spill slots
 // (62 to 26).
@@ -39,7 +39,7 @@
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
-// Func_081963ec's argument: The Lost Age's blitter mode (☀️'s counted down
+// BattleFx_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
 // from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_ADDITIVE 0
@@ -70,10 +70,10 @@ struct EffectCamera {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Audio_PlayCue(s32 cue);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void BattleFx_FetchRectangleBlitters(
     s32 side,
@@ -87,8 +87,8 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // The user lunges, a streak of fire leaves them, and the target bursts into
 // flame, throwing 64 burning shards away from the user.
@@ -152,7 +152,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   } while (i != SHARD_COUNT);
 
   EffectPosition_ApplyStepAndYOffset(effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75;
 
@@ -166,11 +166,11 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     EffectPosition_ApplyStepAndYOffset(effect->actor, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
       if (effect->side == 0)
-        Func_081963ec(
+        BattleFx_LoadBlitter(
             HEAP_BLITTER,
             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       else
-        Func_081963ec(HEAP_BLITTER,
+        BattleFx_LoadBlitter(HEAP_BLITTER,
                       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
                                                  COMPOSITE_CLIP_Y |
                                                  COMPOSITE_FLIP_X));
@@ -191,7 +191,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       s32 step = (frame - BURST_FRAME) / 2;
       s32 strip;
 
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (step > 2)
@@ -244,11 +244,11 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == FLASH_FRAME)
       Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

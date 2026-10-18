@@ -17,7 +17,7 @@ struct StripQuad {
 
 // Builds count quads of a vertex strip two vertices apart, each width texels
 // wide and height texels tall, and ends the list with an empty triangle.
-void Func_08178680(struct StripQuad *quad, s32 width, s32 height, s32 count) {
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count) {
   s32 i;
 
   for (i = 0; i != count; i++) {

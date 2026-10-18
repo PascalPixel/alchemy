@@ -99,7 +99,7 @@ BattleFx_RunParticleStreams:
 .L_08164d88:
 	.4byte 0x00000000
 .L_08164d8c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08164d90:
 	cmp r3, #1
 	bne .L_08164de2
@@ -148,7 +148,7 @@ BattleFx_RunParticleStreams:
 	adds r1, #138
 	movs r0, #1
 	movs r2, #3
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 .L_08164df0:
 	ldr r2, [sp, #60]
 	movs r3, #224
@@ -328,7 +328,7 @@ BattleFx_RunParticleStreams:
 	adds r0, #240
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	ldr r1, [sp, #60]
 	movs r4, #238
 	ldr r2, [r1]
@@ -502,9 +502,9 @@ BattleFx_RunParticleStreams:
 .L_081650ac:
 	.4byte gCameraSceneParameters
 .L_081650b0:
-	.4byte Func_0813bb38
+	.4byte Camera_AdvanceBg2Reference
 .L_081650b4:
-	.4byte Func_08143174
+	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_081650b8:
 	.4byte gMapCellBuffer
 .L_081650bc:
@@ -695,7 +695,7 @@ BattleFx_RunParticleStreams:
 .L_08165214:
 	.4byte Data_02020202
 .L_08165218:
-	.4byte Func_08164bb4
+	.4byte BattleFx_ArmPaletteHBlankDma
 .L_0816521c:
 	.4byte gInput
 .L_08165220:
@@ -1146,7 +1146,7 @@ BattleFx_RunParticleStreams:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1166,11 +1166,11 @@ BattleFx_RunParticleStreams:
 .L_081655c0:
 	.4byte 0xfffb0000
 .L_081655c4:
-	.4byte Func_0813bb38
+	.4byte Camera_AdvanceBg2Reference
 .L_081655c8:
-	.4byte Func_08164bb4
+	.4byte BattleFx_ArmPaletteHBlankDma
 .L_081655cc:
-	.4byte Func_08143174
+	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_081655d0:
 	.4byte gBgScroll
 .L_081655d4:
@@ -1628,7 +1628,7 @@ BattleFx_RunParticleStreams:
 .L_0816596c:
 	.4byte 0x10101010
 .L_08165970:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08165974:
 	.4byte gData_08197410
 .L_08165978:
@@ -1775,7 +1775,7 @@ BattleFx_RunParticleStreams:
 	ldr r0, [r3]
 	bl ResourceObject_ReleaseFar
 .L_08165a9c:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #280
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1785,4 +1785,4 @@ BattleFx_RunParticleStreams:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08165ab0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

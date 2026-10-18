@@ -525,7 +525,7 @@ BattleFx_RunOceanFist:
 .L_0817d044:
 	.4byte IwramCopyWords
 .L_0817d048:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817d04c:
 	.4byte Data_02010018
 .L_0817d050:
@@ -635,7 +635,7 @@ BattleFx_RunOceanFist:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0817d11c:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #24]
 	lsls r4, r4, #7
@@ -661,7 +661,7 @@ BattleFx_RunOceanFist:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -673,4 +673,4 @@ BattleFx_RunOceanFist:
 .L_0817d16c:
 	.4byte Data_081994a8
 .L_0817d170:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -139,7 +139,7 @@ extern const u8 gUlysses_BeamSprite[];
 void BattleFx_BeginCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
-s32 Func_081963ec(s32, s32);
+s32 BattleFx_LoadBlitter(s32, s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
@@ -157,26 +157,26 @@ void Audio_PlayCue(s32);
 void Func_0815f0a0(s32);
 void BattleFxKernels_IntegrateVector2(Particle *, s32, s32);
 void BattleFxKernels_IntegrateVector3(Particle *, s32, s32);
-s32 *Func_081969f8(s32);
+s32 *Render_AllocateModelList(s32);
 void Render_ResetTransformState(void);
 void Func_08015160(s32, s32, s32);
 void Func_080150e4(s32);
 void SceneTransform_ApplyPitch(s32);
 void Func_0801521c(s32);
-void Func_08196958(const void *, void *, s32);
-void Func_08196a7c(s32 *);
+void Render_TransformVertices(const void *, void *, s32);
+void Render_DrawModelList(s32 *);
 void MemFree(void *);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
 s32 VramCache_AllocEntry(s32);
 void Palette_LoadBasicObjColors(void);
-void Func_08152404(s32, s32, s32);
+void BattleFx_SpawnObjects(s32, s32, s32);
 void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_08158ce0(s32, s32);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 void Func_0813baec(void);
 
 #define ALCHEMY_TYPES_H
@@ -235,10 +235,10 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   BattleFx_BeginCanvasLayer(0);
   Func_0813ba50();
   Func_08179e6c();
-  Func_081963ec(104, 3);
+  BattleFx_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   camera = 0;
   waveScroll = 0;
   shipY = -0x1d0000;
@@ -772,7 +772,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       void *buffer;
 
       buffer = Runtime_BumpAllocateAlternatePool(512);
-      beam = Func_081969f8(1);
+      beam = Render_AllocateModelList(1);
       bitmap.width = 7;
       bitmap.height = 7;
       bitmap.data = DECODE_BUFFER;
@@ -792,8 +792,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         Func_080150e4(0x4300);
         SceneTransform_ApplyPitch(-0x800);
         Func_0801521c((v << 14) + 0x4180);
-        Func_08196958(gUlysses_BeamPalette, buffer, 4);
-        Func_08196a7c(beam);
+        Render_TransformVertices(gUlysses_BeamPalette, buffer, 4);
+        Render_DrawModelList(beam);
       }
       MemFree(beam);
       MemFree(buffer);
@@ -950,7 +950,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     *(s32 *)0x030011f0 = 120 - v;
     if (work->shake > 0)
       work->shake--;
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -975,7 +975,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   *(vu16 *)0x04000052 = 0x1010;
   arg->actors[arg->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(arg->actors, 0);
-  Func_08152404(1, 663, 1);
+  BattleFx_SpawnObjects(1, 663, 1);
   for (i = 0; i != 15; i++) {
     work->sprites[1 + i] = Func_0815b3b0(32, 16, 0x80006000, 0);
     Iwram_Copy(work->sprites[1 + i], work->sprites[0], 24);
@@ -1076,14 +1076,14 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       }
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

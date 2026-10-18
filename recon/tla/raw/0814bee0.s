@@ -58,7 +58,7 @@ BattleFx_RunZagan:
 	adds r3, #240
 	add r3, r10
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #152
@@ -213,7 +213,7 @@ BattleFx_RunZagan:
 	adds r3, #240
 	add r3, r10
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #128
@@ -221,7 +221,7 @@ BattleFx_RunZagan:
 	adds r1, #146
 	movs r2, #1
 	movs r0, #12
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r2, #128
 	ldr r1, [sp, #16]
 	ldr r3, .L_0814c0d0
@@ -252,7 +252,7 @@ BattleFx_RunZagan:
 .L_0814c0d4:
 	.4byte gBgScroll
 .L_0814c0d8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814c0dc:
 	.4byte gCameraSceneParameters
 .L_0814c0e0:
@@ -1124,7 +1124,7 @@ BattleFx_RunZagan:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r11, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0814c8fc
 	ldr r3, [sp, #60]
 	movs r1, #7
@@ -1210,9 +1210,9 @@ BattleFx_RunZagan:
 	strb r3, [r6, #24]
 	mov r1, r11
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0814c812:
 	movs r2, #5
 	adds r7, #1
@@ -1269,7 +1269,7 @@ BattleFx_RunZagan:
 	str r3, [r2, #12]
 	str r3, [r2, #16]
 .L_0814c882:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #1
 	mov r3, r9
 	ands r3, r2
@@ -1314,7 +1314,7 @@ BattleFx_RunZagan:
 	bl ResourceObject_ReleaseFar
 	cmp r7, #12
 	bne .L_0814c8d6
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #100
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1347,4 +1347,4 @@ BattleFx_RunZagan:
 .L_0814c920:
 	.4byte gCameraSceneParameters
 .L_0814c924:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

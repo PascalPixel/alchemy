@@ -508,7 +508,7 @@ Func_080ccec8:
 	cmp r3, #131
 	beq .L_080cd300
 	adds r0, r6, #0
-	bl Func_080cf340
+	bl Object_DestroyIfPresent
 .L_080cd300:
 	mov r1, r8
 	cmp r1, #128

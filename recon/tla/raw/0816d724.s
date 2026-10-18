@@ -369,7 +369,7 @@ BattleFx_RunSoulShatter:
 .L_0816da0c:
 	.4byte IwramCopyWords
 .L_0816da10:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816da14:
 	movs r0, #104
 	movs r1, #7
@@ -618,7 +618,7 @@ BattleFx_RunSoulShatter:
 	movs r1, #16
 	bl Func_08158ce0
 .L_0816dc02:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -636,7 +636,7 @@ BattleFx_RunSoulShatter:
 .L_0816dc24:
 	ldr r0, .L_0816dc4c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -653,4 +653,4 @@ BattleFx_RunSoulShatter:
 .L_0816dc48:
 	.4byte gData_08197410
 .L_0816dc4c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

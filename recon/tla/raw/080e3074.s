@@ -755,7 +755,7 @@ Func_080e3074:
 	mov r2, r10
 	ldrh r3, [r1]
 	strh r3, [r2, #6]
-	bl Func_080eb930
+	bl BattleFx_EndCanvasSprite
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #56

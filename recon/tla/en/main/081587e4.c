@@ -53,7 +53,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; Func_081963ec takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -89,7 +89,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
 void Func_0815f0a0(s32 resource);
 // Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 Func_081963ec(s32 slot, s32 modeFlags);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleFx_LoadWork itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
@@ -101,11 +101,11 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);
 // Closes the canvas layer.
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
 // Flashes an actor in a palette for some frames.
@@ -136,11 +136,11 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   Func_0815585c(effect, PREPARE(0, effect->side, 2), screen, otherPoint);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 1)
-    Func_081963ec(HEAP_BLITTER,
+    BattleFx_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   else
-    Func_081963ec(HEAP_BLITTER,
+    BattleFx_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
@@ -148,7 +148,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
                              work->sheet + 0x65c0, 1, 1);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
@@ -183,12 +183,12 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       if (frame > 16)
         y = y - frame * 2 + 32;
       if (effect->side == 1)
-        Func_081963ec(HEAP_BLITTER_ALTERNATE,
+        BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
                                                  COMPOSITE_CLIP_Y |
                                                  COMPOSITE_FLIP_X));
       else
-        Func_081963ec(
+        BattleFx_LoadBlitter(
             HEAP_BLITTER_ALTERNATE,
             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       if (frame <= 3)
@@ -284,13 +284,13 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -14,7 +14,7 @@ extern u8 MsgFoundItem[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 PartyInventory_FindRoomFar(s32 item);
-void Func_080cf424(s32 item, s32 mode);
+void BattleFx_StartEffectObject22(s32 item, s32 mode);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
@@ -26,7 +26,7 @@ void GameFlag_SetBit(s32 flag);
 s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
   if (PartyInventory_FindRoomFar(item) < 0) {
     Object_GetById(actor)->scaleX = 0;
-    Func_080cf424(item, 3);
+    BattleFx_StartEffectObject22(item, 3);
     UiText_DrawQuantity(item, 2);
     UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem, 1);
     UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem + 4, 1);
@@ -36,7 +36,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     return -1;
   }
   ObjectMotion_SetHorizontalPositionWithTerrain(actor, 0, 0);
-  Func_080cf424(item, 3);
+  BattleFx_StartEffectObject22(item, 3);
   PartyInventory_GiveItem(item, 0);
   if (flag != -1)
     GameFlag_SetBit(flag);

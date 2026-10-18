@@ -181,7 +181,7 @@ Func_080d82e0:
 .L_080d8478:
 	.4byte 0x00019999
 .L_080d847c:
-	.4byte Func_080d81ec
+	.4byte BattleFx_UpdateRadialSpread
 .L_080d8480:
 	mov r0, r10
 	ldr r1, [r0, #8]

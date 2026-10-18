@@ -1,6 +1,7 @@
 #include "types.h"
 
-void Func_0815b410(void) {
+// Fills BG palette colours 1 to 63 with a grey ramp, each level i / 2.
+void Graphics_LoadGreyRamp(void) {
   s32 i = 0;
   u16 *color = (u16 *)0x05000002;
 

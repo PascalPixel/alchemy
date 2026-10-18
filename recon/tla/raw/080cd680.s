@@ -134,7 +134,7 @@ Func_080cd680:
 	lsls r2, r2, #2
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Func_080cd91c
+	bl Field_FindNearbyTalkTarget
 	movs r3, #1
 	negs r3, r3
 	adds r5, r0, #0

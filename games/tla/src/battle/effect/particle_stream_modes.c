@@ -8,7 +8,7 @@
 // The Broken Seal's BattleFx_ArmPaletteHBlankDma: stops DMA 0, then arms it
 // to copy one palette line from the battle effect work into the BG palette
 // at each horizontal blank.
-void Func_08164bb4(void) {
+void BattleFx_ArmPaletteHBlankDma(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
   u32 palette;

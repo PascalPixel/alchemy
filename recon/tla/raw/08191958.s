@@ -33,7 +33,7 @@ Func_08191958:
 	movs r0, #104
 	movs r1, #3
 	str r3, [sp, #4]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [sp, #4]
 	movs r1, #239
 	lsls r1, r1, #7

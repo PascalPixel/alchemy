@@ -2,9 +2,9 @@
 
 extern u8 gPartyState[];
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Func_080deba4(void);
+void FieldFx_CheckCloakTile(void);
 
-void Func_080dec8c(void) {
+void FieldFx_ResumeCloakCheck(void) {
   u8 *state;
   s8 *flag;
 
@@ -16,5 +16,5 @@ void Func_080dec8c(void) {
   } while (0);
   flag = (s8 *)state + 0x26d;
   if (*flag != 0)
-    Scheduler_AddOrUpdateCallback(Func_080deba4, 0x480);
+    Scheduler_AddOrUpdateCallback(FieldFx_CheckCloakTile, 0x480);
 }

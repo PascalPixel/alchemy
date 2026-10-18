@@ -948,7 +948,7 @@ BattleFx_RunHealingMotes:
 .L_0814f67c:
 	.4byte 0xffce0000
 .L_0814f680:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814f684:
 	.4byte 0x00000166
 .L_0814f688:
@@ -1370,7 +1370,7 @@ BattleFx_RunHealingMotes:
 	beq .L_0814f996
 	b .L_0814f5f4
 .L_0814f996:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #72]
 	lsls r5, r5, #7
@@ -1398,7 +1398,7 @@ BattleFx_RunHealingMotes:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #148
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1421,4 +1421,4 @@ BattleFx_RunHealingMotes:
 .L_0814fa00:
 	.4byte 0xfffff000
 .L_0814fa04:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -2,7 +2,9 @@
 #include "dma.h"
 #include "iwram_call.h"
 
-void Func_080e9250(u8 *base, s32 stride, s32 rows) {
+// Moves rows 1 to rows - 2 of a buffer down one row by DMA, dropping the
+// last, then clears row 0 (stride bytes per row).
+void BattleFx_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
   u8 *source = base + (rows - 2) * stride;
   u8 *destination = base + (rows - 1) * stride;
   s32 i;

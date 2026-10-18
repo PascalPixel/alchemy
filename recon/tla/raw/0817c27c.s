@@ -34,7 +34,7 @@ BattleFx_RunWhiplash:
 	movs r0, #104
 	movs r1, #23
 .L_0817c2b6:
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	str r5, [sp, #12]
 	ldr r1, [sp, #8]
@@ -470,7 +470,7 @@ BattleFx_RunWhiplash:
 .L_0817c620:
 	.4byte IwramCopyWords
 .L_0817c624:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817c628:
 	.4byte .L_0817c340
 .L_0817c62c:
@@ -505,7 +505,7 @@ BattleFx_RunWhiplash:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -525,7 +525,7 @@ BattleFx_RunWhiplash:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -534,4 +534,4 @@ BattleFx_RunWhiplash:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817c6a8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

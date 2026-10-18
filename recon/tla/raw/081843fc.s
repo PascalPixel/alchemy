@@ -51,7 +51,7 @@ BattleFx_RunCatastrophe:
 	strh r2, [r3]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r7, [sp, #164]
 	movs r0, #239
@@ -73,7 +73,7 @@ BattleFx_RunCatastrophe:
 .L_0818448c:
 	.4byte gBgScroll
 .L_08184490:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08184494:
 	movs r0, #0
 	movs r1, #0
@@ -566,7 +566,7 @@ BattleFx_RunCatastrophe:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]

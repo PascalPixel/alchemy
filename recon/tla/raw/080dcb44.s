@@ -72,7 +72,7 @@ Func_080dcb44:
 	strb r3, [r1]
 	cmp r3, #0
 	beq .L_080dcc0e
-	bl Func_080dce60
+	bl BattleFx_AdvanceHueCycle
 	movs r1, #199
 	lsls r1, r1, #1
 	adds r1, #255

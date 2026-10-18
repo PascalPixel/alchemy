@@ -1,4 +1,5 @@
 #include "types.h"
 #include "motobj.h"
 
-void Func_080d74e4(struct MotionObject *object) { object->angle += 0x2000; }
+// Per-frame update: spins an object 1/8 turn a frame.
+void ObjectMotion_AdvanceSpinAngle(struct MotionObject *object) { object->angle += 0x2000; }

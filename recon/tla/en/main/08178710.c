@@ -29,10 +29,10 @@ struct RenderModel {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -40,9 +40,9 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -51,8 +51,8 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *out);
-void Func_08152404(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
@@ -77,7 +77,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Func_08178680(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 unit);
@@ -145,10 +145,10 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(1);
   if (effect->side == 0) {
-    Func_081963ec(SLOT_BLITTER,
+    BattleFx_LoadBlitter(SLOT_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
-    Func_081963ec(SLOT_BLITTER,
+    BattleFx_LoadBlitter(SLOT_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   }
@@ -156,7 +156,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   endX[0] = 0;
   endX[1] = 0;
   endY[0] = 0;
@@ -174,7 +174,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   REG_BG2PA = 0x80;
-  Func_08178680(Data_02012000, 4, 32, 32);
+  Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
   for (frame = 0; frame != effect->variant * 10 + 60; frame++) {
     Render_ResetTransformState();
@@ -331,7 +331,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
         }
       }
 
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       model->kind = 6;
       model->scrollV = 0;
       model->texture = &texture;
@@ -360,8 +360,8 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
         }
         Func_080150e4(dragon * 14192 - 0x1000);
         Func_0801521c(0x40000);
-        Func_08196958(gMapCellBuffer + dragon * 264, Data_02011000, 66);
-        Func_08196a7c(model);
+        Render_TransformVertices(gMapCellBuffer + dragon * 264, Data_02011000, 66);
+        Render_DrawModelList(model);
         if (frame < dragon * 16 + 40) {
           texture.logWidth = 6;
           model->scrollU = 0;
@@ -371,19 +371,19 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
           Func_08015160(endX[dragon] << 16, endY[dragon] << 16, 0);
           Func_080150e4(0x3060 - (arcs[dragon * 2] << 5));
           Func_0801521c(20768);
-          Func_08196958(Data_081991e0, Data_02011000, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, Data_02011000, 4);
+          Render_DrawModelList(model);
         }
       }
       MemFree(model);
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     Func_08158ce0(2, 2);
     work->transferPending = 1;
     WaitFrames(1);
   }
   ObjectDispatch_ApplyValueToChildrenFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

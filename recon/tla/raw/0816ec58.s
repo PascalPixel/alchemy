@@ -376,7 +376,7 @@ BattleFx_RunCool:
 .L_0816ef30:
 	.4byte IwramCopyWords
 .L_0816ef34:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816ef38:
 	.4byte Data_08198bb0
 .L_0816ef3c:
@@ -505,7 +505,7 @@ BattleFx_RunCool:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -523,7 +523,7 @@ BattleFx_RunCool:
 .L_0816f058:
 	ldr r0, .L_0816f07c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -538,4 +538,4 @@ BattleFx_RunCool:
 .L_0816f078:
 	.4byte 0xffffe000
 .L_0816f07c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

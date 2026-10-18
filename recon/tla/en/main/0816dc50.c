@@ -29,10 +29,10 @@ struct RenderModel {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -40,9 +40,9 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -51,8 +51,8 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *out);
-void Func_08152404(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
@@ -77,7 +77,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Func_08178680(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 unit);
@@ -104,7 +104,7 @@ struct ProjectedPoint {
 };
 
 s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen);
-void Func_081969ac(const u8 *vertices, void *projected, s32 count);
+void Render_ProjectVertices(const u8 *vertices, void *projected, s32 count);
 
 extern char ResourceId_Data0C1;
 extern char ResourceId_DustBlobSheet;
@@ -173,7 +173,7 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(0, (void **)blitters);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CF, work->sheet + 0x400, 0,
@@ -263,7 +263,7 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
     }
 
     vertices = Runtime_BumpAllocateAlternatePool(0x400);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     savedScrollX = gCameraSceneParameters[3];
     savedScrollY = gCameraSceneParameters[4];
     gCameraSceneParameters[4] = savedScrollY - 16;
@@ -418,8 +418,8 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPitch(angle);
           Func_080150e4(angle);
           Func_0801521c(0x10000);
-          Func_081969ac(Data_081991a4, vertices, 3);
-          Func_08196a7c(model);
+          Render_ProjectVertices(Data_081991a4, vertices, 3);
+          Render_DrawModelList(model);
           Transform_Pop();
         }
       }
@@ -448,14 +448,14 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
       model->shade = 0;
       Func_08015160(target[2], -0x40000, target[4]);
       Func_080151e4(scale, scale, scale);
-      Func_081969ac(gMapCellBuffer, vertices, 64);
-      Func_08196a7c(model);
+      Render_ProjectVertices(gMapCellBuffer, vertices, 64);
+      Render_DrawModelList(model);
       model->kind = 7;
       model->scrollU = 0;
       model->shade = -32;
       model->scrollV = (frame / 2) & 31;
       model->unk04 = 2;
-      Func_08196a7c(model);
+      Render_DrawModelList(model);
       Transform_Pop();
 
       // Four rings of mist spread from its foot.
@@ -489,8 +489,8 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
         Func_08015160(target[2], Data_08198b92[k] << 16, target[4]);
         Func_080151e4(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
-        Func_081969ac(Data_08198cac, vertices, 32);
-        Func_08196a7c(model);
+        Render_ProjectVertices(Data_08198cac, vertices, 32);
+        Render_DrawModelList(model);
         Transform_Pop();
       }
     }
@@ -499,12 +499,12 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
     gCameraSceneParameters[3] = savedScrollX;
     gCameraSceneParameters[4] = savedScrollY;
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -207,7 +207,7 @@ Func_080e09c0:
 	ldr r1, [r2, #12]
 	subs r7, #1
 	ldr r2, [r2, #16]
-	bl Func_080dc044
+	bl BattleFx_SpawnScatterParticle
 	cmp r7, #0
 	bge .L_080e0b6a
 	movs r0, #1

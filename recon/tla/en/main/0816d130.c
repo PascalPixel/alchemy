@@ -35,10 +35,10 @@ extern char ResourceId_Data17F;
 extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 s32 Battle_GetObjectTableValueFar(s32 unit);
-void Func_081963ec(s32 slot, s32 kind);
+void BattleFx_LoadBlitter(s32 slot, s32 kind);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
@@ -48,7 +48,7 @@ void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32 angle);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 
 // A mote leaves the first target and is drawn as a ring of 24 sparks
 // turning about it while it is pulled back to the user.
@@ -82,11 +82,11 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
   orb->velocityY = 0;
   orb->velocityZ = 0;
   orb->variant = 0;
-  Func_081963ec(104, 19);
+  BattleFx_LoadBlitter(104, 19);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != 80; frame++) {
@@ -147,11 +147,11 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
           orb->variant = -1;
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

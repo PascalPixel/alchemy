@@ -11,7 +11,7 @@ void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 
 // The Spanish and Italian far-call tables reach this function under another
-// slot's name (Func_080db9c0); those two editions keep it on their scaffold
+// slot's name (BattleFx_GetObjectPriority); those two editions keep it on their scaffold
 // (S4).
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 void Field_BeginColorTransition(s32 frames, s32 color) {

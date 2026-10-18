@@ -103,11 +103,11 @@ BattleFx_RunSpiderWeb:
 .L_0815cc94:
 	.4byte 0x0000007c
 .L_0815cc98:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815cc9c:
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -126,7 +126,7 @@ BattleFx_RunSpiderWeb:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #39
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -145,7 +145,7 @@ BattleFx_RunSpiderWeb:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #43
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -164,7 +164,7 @@ BattleFx_RunSpiderWeb:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #47
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, r8
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -212,7 +212,7 @@ BattleFx_RunSpiderWeb:
 	cmp r5, r3
 	bne .L_0815cd5a
 .L_0815cd7e:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -254,10 +254,10 @@ BattleFx_RunSpiderWeb:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0815cdd8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815cddc:
 	.4byte IwramClearWords
 .L_0815cde0:
 	.4byte 0x06004000
 .L_0815cde4:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer

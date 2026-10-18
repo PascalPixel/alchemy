@@ -55,14 +55,14 @@ BattleFx_RunRay:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #7
 	movs r0, #188
 	str r3, [sp, #44]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r2, sp
@@ -459,7 +459,7 @@ BattleFx_RunRay:
 .L_08151ed4:
 	.4byte 0xffffc000
 .L_08151ed8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08151edc:
 	.4byte IwramFillWords
 .L_08151ee0:
@@ -548,7 +548,7 @@ BattleFx_RunRay:
 	movs r0, #2
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #36]
 	lsls r1, r1, #7
@@ -571,7 +571,7 @@ BattleFx_RunRay:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -584,4 +584,4 @@ BattleFx_RunRay:
 .L_08151fd0:
 	.4byte gData_08197410
 .L_08151fd4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

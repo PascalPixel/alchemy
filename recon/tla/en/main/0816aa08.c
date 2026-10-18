@@ -58,16 +58,16 @@ extern u16 gData_08197410[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void BattleFx_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
-void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
-void Func_08157530(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
 void EffectPosition_ApplyAlternateStepAndYOffset(
@@ -105,7 +105,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
@@ -172,7 +172,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
     if (frame >= 0 && frame < 24)
       target->y += 2 << 16;
     if (frame == 18)
-      Func_08157530(effect->actor, effect->actors[0], 8, 80);
+      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
     if (frame == 21)
       BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 12,
                                      8 << 16);
@@ -218,13 +218,13 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
               34, scroll);
     }
 
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(104);
   Runtime_ReleaseHeapBlock(188);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

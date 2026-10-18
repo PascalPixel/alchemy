@@ -37,12 +37,12 @@ BattleFx_RunWhirlwind:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #23
 	str r3, [sp, #44]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r0, sp
@@ -121,7 +121,7 @@ BattleFx_RunWhirlwind:
 .L_08148f90:
 	.4byte 0x00001000
 .L_08148f94:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08148f98:
 	.4byte IwramFillWords
 .L_08148f9c:
@@ -446,7 +446,7 @@ BattleFx_RunWhirlwind:
 	ldrb r0, [r1, r3]
 	lsls r1, r0, #1
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #240
 	ldr r2, [sp, #36]
 	lsls r0, r0, #7
@@ -469,7 +469,7 @@ BattleFx_RunWhirlwind:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08149264
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #52
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -486,4 +486,4 @@ BattleFx_RunWhirlwind:
 .L_08149260:
 	.4byte gData_08197498
 .L_08149264:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

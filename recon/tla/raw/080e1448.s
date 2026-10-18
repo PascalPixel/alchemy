@@ -56,7 +56,7 @@ BattleFx_SpawnScaledArcObjects:
 	ands r3, r2
 	strb r3, [r5, #9]
 	mov r0, r9
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13

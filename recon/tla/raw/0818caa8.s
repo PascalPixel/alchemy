@@ -22,7 +22,7 @@ Func_0818caa8:
 	movs r0, #188
 	movs r1, #19
 	mov r10, r3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	lsrs r5, r6, #31
 	adds r5, r6, r5
 	asrs r5, r5, #1
@@ -47,7 +47,7 @@ Func_0818caa8:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	str r5, [sp, #0]
 	str r6, [sp, #4]
 	mov r3, r8
@@ -62,7 +62,7 @@ Func_0818caa8:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #27
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	str r5, [sp, #0]
 	str r6, [sp, #4]
 	mov r3, r8
@@ -77,7 +77,7 @@ Func_0818caa8:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #31
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	str r5, [sp, #0]
 	str r6, [sp, #4]
 	mov r3, r8

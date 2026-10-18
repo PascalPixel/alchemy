@@ -9,7 +9,7 @@
 // Left:
 // - the native loads gMapCellBuffer into r6 before BattleFx_BeginTiledCanvas
 // (here after it).
-// - both Func_081963ec calls set r1 before r0 in the native; sched2 breaks
+// - both BattleFx_LoadBlitter calls set r1 before r0 in the native; sched2 breaks
 // the tie by RTL order here (the two moves are symmetric in the
 // dependence lists).
 // - the stores of the blitters' stack arguments and the side index's
@@ -75,16 +75,16 @@ s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void Func_081963ec(s32 slot, s32 blitter);
+void BattleFx_LoadBlitter(s32 slot, s32 blitter);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A great figure strikes. It sweeps down on the target from above the far
 // side, swaying on a small circle and fading in through the blend; its arm
@@ -124,14 +124,14 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
     REG_BG2PA = scale;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
-  Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
   draw[0] = (DrawRectangle)heap->unk64[1];
-  Func_081963ec(HEAP_SLOT_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLITTER_TRANSPARENT, CLIP_XY | FLIP_X));
   draw[1] = ((DrawRectangle *)heap)[47];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ApplyStepAndYOffset(effect->actors[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
@@ -250,15 +250,15 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)Func_08143000);
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

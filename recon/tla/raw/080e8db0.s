@@ -126,7 +126,7 @@ Func_080e8db0:
 .L_080e8eae:
 	movs r0, #1
 	bl Func_080e89e4
-	bl Func_080e8cfc
+	bl ViewMove_SaveNearbySprites
 	movs r0, #10
 	bl WaitFrames
 	movs r2, #1
@@ -347,7 +347,7 @@ Func_080e8db0:
 	strb r3, [r2, #25]
 .L_080e9052:
 	bl Func_080e8c9c
-	bl Func_080e8d80
+	bl ViewMove_RestoreNearbySprites
 	ldr r0, [sp, #36]
 	bl Resource_ResetEntry
 	bl BattleFx_PrepareBufferInterpolation

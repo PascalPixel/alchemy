@@ -28,7 +28,7 @@ BattleFx_RunHurricane:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r0, .L_0816f990
 	str r5, [sp, #8]
@@ -111,7 +111,7 @@ BattleFx_RunHurricane:
 	b .L_0816fa1c
 	.2byte 0x0000
 .L_0816fa00:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816fa04:
 	.4byte IwramClearWords
 .L_0816fa08:
@@ -377,7 +377,7 @@ BattleFx_RunHurricane:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -429,10 +429,10 @@ BattleFx_RunHurricane:
 .L_0816fc7c:
 	.4byte 0xffffc000
 .L_0816fc80:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816fc84:
 	.4byte IwramClearWords
 .L_0816fc88:
 	.4byte 0x06004000
 .L_0816fc8c:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer

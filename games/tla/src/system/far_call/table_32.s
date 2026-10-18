@@ -41,10 +41,10 @@ Func_080c86d8:
 	.thumb_func
 Func_080c86e0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080ed804
+	overlay_veneer FlagEntries_GetTable
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080ed804
+	overlay_veneer FlagEntries_GetTable
 	.else
 	overlay_veneer Func_080d9ab0
 	.endif
@@ -62,7 +62,7 @@ Func_080c86f0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080d9ab0
 	.else
-	overlay_veneer Func_080ed804
+	overlay_veneer FlagEntries_GetTable
 	.endif
 	.endif
 	.global Func_080c86f8

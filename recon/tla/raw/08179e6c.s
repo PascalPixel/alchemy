@@ -11,7 +11,7 @@ Func_08179e6c:
 	ldr r3, [r3, #96]
 	movs r7, #7
 	mov r8, r3
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	ldr r3, .L_08179eb0
 	movs r2, #128
 	lsls r2, r2, #19

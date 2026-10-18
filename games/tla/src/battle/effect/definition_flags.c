@@ -7,7 +7,7 @@ struct BattleFxDefinition {
   u8 flags;
 };
 
-struct BattleFxDefinition *Func_080d1e60(s32 id);
+struct BattleFxDefinition *BattleFx_FindDefinition(s32 id);
 
 s32 BattleFx_GetAnimationValue(void);
 
@@ -19,11 +19,11 @@ s32 Func_080d1eac(s32 id) {
    * built (one reordered row). */
   do {
   } while (0);
-  if (party->battleFxEnabled == 0 || (value = Func_080d1e60(id)->value) == 0xff)
+  if (party->battleFxEnabled == 0 || (value = BattleFx_FindDefinition(id)->value) == 0xff)
     return 0;
   return value + 0x100;
 }
 
 u8 BattleFx_GetFlags(void) {
-  return Func_080d1e60(BattleFx_GetAnimationValue())->flags;
+  return BattleFx_FindDefinition(BattleFx_GetAnimationValue())->flags;
 }

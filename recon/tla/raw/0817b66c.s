@@ -89,7 +89,7 @@ BattleFx_RunSabreDance:
 .L_0817b718:
 	.4byte 0x00000139
 .L_0817b71c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817b720:
 	bl Random16
 	movs r3, #63
@@ -215,7 +215,7 @@ BattleFx_RunSabreDance:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r3, #0
 	adds r6, r0, #0
 	str r3, [r6, #20]
@@ -290,9 +290,9 @@ BattleFx_RunSabreDance:
 	movs r2, #4
 	ldr r0, .L_0817b964
 	mov r1, r8
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	mov r2, r9
 	cmp r2, #79
 	ble .L_0817b8e0
@@ -322,7 +322,7 @@ BattleFx_RunSabreDance:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -340,7 +340,7 @@ BattleFx_RunSabreDance:
 .L_0817b930:
 	ldr r0, .L_0817b96c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -367,4 +367,4 @@ BattleFx_RunSabreDance:
 .L_0817b968:
 	.4byte 0xfffff000
 .L_0817b96c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

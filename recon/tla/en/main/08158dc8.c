@@ -12,7 +12,7 @@
 // with 18 bolts, not 30, the phase at frame 120, not 140, and draws the four
 // mirrored copies of the violet mote through Func_0818caa8. The strikes read
 // the effect from the argument; the blitters live in heap slots 104 and 188
-// (byte offsets), loaded through Func_081963ec, and the smoke's through
+// (byte offsets), loaded through BattleFx_LoadBlitter, and the smoke's through
 // Func_08196404; modes count down from 3 (BLIT_MODE).
 
 #include "types.h"
@@ -28,19 +28,19 @@
 #include "macros.h"
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleFx_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08163c2c(s32 page, s32 value);        // Func_08163c2c
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
                    s32 mode);     // BattleFx_LoadWork, five arguments
 void Func_0815f0a0(s32 resource); // the dusk palette step
 void Func_0814cca8(void);         // BattleFx_SetupBlendedDisplay
-void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_08152404(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -182,14 +182,14 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   work->scrollStepY = 0;
   view->busy = 1;
   Scheduler_AddOrUpdateCallback(Func_0813baec, 0xc80);
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 0;
   Func_08163c2c(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   gCameraSceneParameters[4] = 240;
   Func_08163c2c(0, 1);
   REG_BG2PA = 0x80;
-  Func_081963ec(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
+  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
   blit = BLITTER;
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
@@ -319,10 +319,10 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         level = 7;
       }
       if (frame <= 139) {
-        Func_081963ec(188, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
+        BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
         drawAlt = BLITTER_ALTERNATE;
       } else {
-        Func_081963ec(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
+        BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
         drawAlt = BLITTER_ALTERNATE;
       }
       dotCount = count;
@@ -367,11 +367,11 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       for (i = 0; i != beamHeight; i++) {
         blit(canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
       }
-      Func_081963ec(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
+      BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
       Runtime_ReleaseHeapBlock(188);
-      Func_081963ec(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
+      BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
       BLITTER_ALTERNATE(canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32,
                         96);
       Runtime_ReleaseHeapBlock(188);
@@ -384,8 +384,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   view->busy = 0;
   Scheduler_RemoveCallback(Func_0813baec);
   Func_0814cca8();
-  Func_0814cc4c(work->effect);
-  Func_08152404(9, 0x282, 1);
+  BattleFx_SelectLivingTargets(work->effect);
+  BattleFx_SpawnObjects(9, 0x282, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
@@ -489,7 +489,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
-              Func_081963ec(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
+              BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
               BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
                                 boltY, 72, 72);
               Runtime_ReleaseHeapBlock(188);
@@ -553,7 +553,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         }
       }
 
-      Func_081963ec(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP));
+      BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP));
       {
         DrawRectangle draw = BLITTER_ALTERNATE;
         struct EffectStep *spark;
@@ -610,17 +610,17 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       } else {
         Func_08158ce0(4, 4);
       }
-      Func_081434f8();
+      ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
       WaitFrames(1);
     }
 
     Runtime_ReleaseHeapBlock(104);
-    Scheduler_RemoveCallback(Func_08143000);
+    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     Func_0816467c(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

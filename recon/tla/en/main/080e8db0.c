@@ -139,7 +139,7 @@ void Func_080e8db0(void) {
                   targetSprite->width * targetSprite->height);
   }
   Func_080e89e4(VIEW_MOVE_X);
-  Func_080e8cfc();
+  ViewMove_SaveNearbySprites();
   WaitFrames(10);
 
   shown = -1;
@@ -220,7 +220,7 @@ void Func_080e8db0(void) {
     ((struct ObjectSprite *)target->animation)->unk19 = 1;
   }
   Func_080e8c9c();
-  Func_080e8d80();
+  ViewMove_RestoreNearbySprites();
   Resource_ResetEntry(tiles);
   BattleFx_PrepareBufferInterpolation();
 release:

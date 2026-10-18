@@ -50,8 +50,8 @@ extern u16 Data_0819744c[];  // ☀️ gBattleFx_PuffCells
 extern u8 Data_0819745e[];   // ☀️ gBattleFx_PuffSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void); // ☀️ ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void); // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleFx_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -116,7 +116,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // The Djinn travels from the caster to above the first target in 40
   // frames.
@@ -303,8 +303,8 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

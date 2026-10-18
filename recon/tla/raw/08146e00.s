@@ -407,7 +407,7 @@ BattleFx_RunProcne:
 .L_08147118:
 	.4byte 0x00000134
 .L_0814711c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08147120:
 	.4byte IwramFillWords + 0x74
 .L_08147124:
@@ -719,13 +719,13 @@ BattleFx_RunProcne:
 	adds r5, #240
 	adds r3, r2, r5
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r1, #128
 	lsls r1, r1, #2
 	movs r0, #9
 	adds r1, #134
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	ldr r6, [sp, #88]
 	movs r7, #244
 	lsls r7, r7, #6
@@ -1570,7 +1570,7 @@ BattleFx_RunProcne:
 .L_08147a14:
 	.4byte 0xfffff000
 .L_08147a18:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #88]
 	lsls r5, r5, #7
@@ -1645,7 +1645,7 @@ BattleFx_RunProcne:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #364
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1656,4 +1656,4 @@ BattleFx_RunProcne:
 .L_08147acc:
 	.4byte gCameraSceneParameters
 .L_08147ad0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

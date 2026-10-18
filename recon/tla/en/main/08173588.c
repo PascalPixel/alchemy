@@ -56,7 +56,7 @@ struct Texture {
   void *pixels;
 };
 
-// One model job for Func_08196a7c, the polygon kernel runner.
+// One model job for Render_DrawModelList, the polygon kernel runner.
 struct RenderModel {
   s32 kind;
   s32 unk04;
@@ -77,12 +77,12 @@ extern const u16 gData_08199210[]; // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081963ec(s32 slot, s32 blitter); // BattleFx_LoadWork, packed
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_LoadWork, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);   // ObjectGroup_UpdateMembers
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_0815585c(struct BattleEffectArgument *effect, s32 placement,
@@ -93,9 +93,9 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void MemFree(void *block);
 void Audio_PlayCue(s32 cue);
 
@@ -161,15 +161,15 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - center[0]) << 8;
   if (effect->side == 0)
-    Func_081963ec(104,
+    BattleFx_LoadBlitter(104,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP_X));
   else
-    Func_081963ec(104,
+    BattleFx_LoadBlitter(104,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -212,7 +212,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     gCameraSceneParameters[4] = 104;
     vertices = Runtime_BumpAllocateAlternatePool(32);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     texture.logWidth = 6;
     texture.logHeight = 6;
     model->kind = 6;
@@ -248,8 +248,8 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
             SceneTransform_ApplyYaw((frame << 9) - 0x4000);
         }
         Func_080151e4(scale >> 1, scale >> 1, scale >> 1);
-        Func_08196958(gData_08199210, vertices, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_DrawModelList(model);
       }
     } else {
       // Each of Haze's stars swells and shrinks over 16 frames, and every
@@ -269,8 +269,8 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyYaw(frame << 9);
           size = (size >> 8) / 2;
           Func_080151e4(size, size, size);
-          Func_08196958(gData_08199210, vertices, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_DrawModelList(model);
         }
         star->variant++;
       }
@@ -280,12 +280,12 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
 
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

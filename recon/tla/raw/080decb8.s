@@ -98,6 +98,6 @@ Func_080decb8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ded7c:
-	.4byte Func_080deba4
+	.4byte FieldFx_CheckCloakTile
 .L_080ded80:
 	.4byte gPartyState

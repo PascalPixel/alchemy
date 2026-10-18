@@ -17,7 +17,7 @@
 // one-pass block fixes it (the empty asm of f18284c.c instead moves the
 // halfword pool by four estimated bytes). Another one-pass block before
 // the heap loads puts effect's spill first, as the native does.
-// - the native sets Func_081963ec's 3 before its 104.
+// - the native sets BattleFx_LoadBlitter's 3 before its 104.
 // - in the frame-32 block the native schedules the 0x380 + r9 of the
 // burst loop between the divisions and loads target->x after the
 // division's 100 (each load comes one row later after a store).
@@ -69,19 +69,19 @@ s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void Func_081963ec(s32 slot, s32 blitter);
-void Func_0817b970(s32 id, s32 priority);
-void Func_08157530(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleFx_LoadBlitter(s32 slot, s32 blitter);
+void BattleObject_SetRecordPriority(s32 id, s32 priority);
+void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A pink star burst. Smoke puffs from the caster for its first 24 frames
 // while the caster stands just past the target; at frame 16 it leaps at
@@ -124,11 +124,11 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, CLIP_XY));
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, CLIP_XY));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   casterObject = GetBattleObjectSlotFar(effect->actor)->object;
   battle = (u8 *)Ram_HeapSlots->battleWork;
@@ -136,7 +136,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   stars = &work->particles[SMOKE_COUNT];
 
   for (frame = 0; frame != STAR_FRAMES; frame++) {
-    Func_0817b970(effect->actor, 3);
+    BattleObject_SetRecordPriority(effect->actor, 3);
 
     // The first frame sends the smoke out from the caster's feet.
     if (frame == 0) {
@@ -178,7 +178,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
     }
 
     if (frame == STAR_LEAP_FRAME) {
-      Func_08157530(effect->actor, effect->actors[0], 16, 120);
+      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
       casterObject->velocityY = 7 << 16;
     }
 
@@ -225,13 +225,13 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   battle[0x866] = 0;
-  Scheduler_RemoveCallback((s32)Func_08143000);
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

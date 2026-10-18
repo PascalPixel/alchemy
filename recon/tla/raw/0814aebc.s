@@ -44,7 +44,7 @@ BattleFx_RunSleep:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r4, [r5, #104]
 	movs r0, #188
 	movs r1, #47
@@ -56,7 +56,7 @@ BattleFx_RunSleep:
 .L_0814af24:
 	.4byte 0x000000e3
 .L_0814af28:
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r7, #0
@@ -316,7 +316,7 @@ BattleFx_RunSleep:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -330,7 +330,7 @@ BattleFx_RunSleep:
 .L_0814b150:
 	.4byte 0xffe00000
 .L_0814b154:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814b158:
 	.4byte 0x007fffff
 .L_0814b15c:

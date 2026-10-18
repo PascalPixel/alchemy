@@ -11,7 +11,9 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 extern const u8 Data_0813b9a0[];
 extern u8 Data_0813b9a0CodeSize[];
 
-void Func_08196958(s32 arg0, s32 arg1, s32 arg2) {
+// Copies the ARM vertex kernel into a heap block and runs it: count packed
+// s8 vertices through the current transform into screen coordinates.
+void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   void (*routine)(s32, s32, s32);
   u32 size;
 
@@ -27,7 +29,9 @@ void Func_08196958(s32 arg0, s32 arg1, s32 arg2) {
   MemFree(routine);
 }
 
-void Func_081969ac(s8 *vertices, s16 *screen, s32 count) {
+// Projects count packed s8 vertices (four bytes each) through
+// Render_ProjectPoint into screen coordinates, four halfwords each.
+void Render_ProjectVertices(s8 *vertices, s16 *screen, s32 count) {
   s32 point[3];
 
   for (; count != 0; count--) {
@@ -48,7 +52,8 @@ struct PoolEntry {
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 
-struct PoolEntry *Func_081969f8(s32 count) {
+// Allocates count model entries plus a cleared one that ends the list.
+struct PoolEntry *Render_AllocateModelList(s32 count) {
   struct PoolEntry *entries =
       Runtime_BumpAllocateAlternatePool((count + 1) * sizeof(struct PoolEntry));
   s32 i;
@@ -71,7 +76,9 @@ struct Texture {
 u32 Runtime_GetRemainingIwram(void);
 void *MemAlloc(s32 size);
 
-s32 Func_08196a28(struct Texture *source, struct Texture *copy) {
+// Copies a texture's pixels into a heap block when IWRAM has room for them;
+// returns 1 with copy set up, 0 when there is no room.
+s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   s32 size = (1 << source->logWidth) << source->logHeight;
   u32 pixels;
   s32 misalign;
@@ -96,7 +103,7 @@ s32 Func_08196a28(struct Texture *source, struct Texture *copy) {
   return 1;
 }
 
-// One entry of a model list. Func_081969f8 allocates the list with a cleared
+// One entry of a model list. Render_AllocateModelList allocates the list with a cleared
 // entry after the last.
 struct Model {
   s32 kind; // the rasterizer kernel that draws it; 0 ends the list
@@ -157,7 +164,7 @@ extern u8 Data_0813b2ecCodeWords[];
 #define COPY_TEXTURE()                                                         \
   {                                                                            \
     if (!(model->flags & MODEL_TEXTURE_IN_PLACE) &&                            \
-        Func_08196a28(texture, &copy))                                         \
+        Render_CopyTextureToIwram(texture, &copy))                                         \
       model->texture = &copy;                                                  \
   }
 
@@ -165,7 +172,7 @@ extern u8 Data_0813b2ecCodeWords[];
 // rasterizer into IWRAM once, and it is freed when the kind changes. Before
 // a textured model is drawn, its texture is copied into IWRAM where there is
 // room, and the copy is freed after the model is drawn.
-void Func_08196a7c(struct Model *model) {
+void Render_DrawModelList(struct Model *model) {
   ModelKernel code = NULL;
   s32 lastKind = 0;
   struct Texture copy;

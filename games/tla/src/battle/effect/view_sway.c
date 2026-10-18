@@ -34,7 +34,7 @@ void WaitFrames(s32 frames);
 // Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
 // holds for 10 frames, shrinks back to 2 and stops; then the map's view
 // bounds come back.
-void Func_080e97c8(void) {
+void BattleFx_RunViewSway(void) {
   struct EffectScene *scene;
   s32 phase;
   s32 amplitude;

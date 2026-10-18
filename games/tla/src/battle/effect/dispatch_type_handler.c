@@ -29,8 +29,8 @@ void Func_080de21c(void);
 void RunBattleEffect05(void);
 void RunBattleEffect14(void);
 void BattleFx_RunOrbitingParticles(void);
-void Func_080de9f8(void);
-void Func_080ddb3c(void);
+void RunBattleEffect03(void);
+void BattleFx_RunBurstParticles(void);
 void Func_080e03cc(void);
 void BattleFx_RunEffect15(void);
 void BattleFx_RunEffect16(void);
@@ -44,10 +44,10 @@ void Func_080e572c(void);
 void Func_080e5d5c(void);
 void Func_080e68d0(void);
 void Func_080e9090(void);
-void Func_080e97c8(void);
+void BattleFx_RunViewSway(void);
 void Func_080e9af4(void);
 void Func_080e4a34(void);
-void Func_080e781c(void);
+void BattleFx_RunEffect30(void);
 void Func_080e7844(void);
 void Func_080e82cc(void);
 void BattleFx_ResumeObject(s32 id);
@@ -55,7 +55,7 @@ s32 BattleFx_FindNearestObject(s32 self, s32 animation);
 s32 BattleFx_FilterObjectIdByFlags(s32 id);
 void *Func_080cce94(s32 id);
 void BattleFx_SetupObjectPair(s32 userId, s32 targetId);
-void Func_080e011c(s32 id);
+void BattleFx_MarkChildAndRunFallbackTransition(s32 id);
 void BattleEffect_PauseObject(s32 id);
 void Func_080e0134(void);
 void Func_080dd950(void);
@@ -63,25 +63,25 @@ void Func_080dc978(s32 sourceId, s32 targetId);
 void Func_080dd054(s32 targetId);
 void Func_080ddda0(s32 targetId);
 void Func_080df1fc(s32 targetId);
-void Func_080de214(s32 targetId);
+void BattleFx_CallEffect04(s32 targetId);
 void BattleFx_CallEffect05(s32 targetId);
 void BattleFx_StartOrbitingParticles(s32 targetId);
 void Func_080dda30(s32 targetId);
-void Func_080de9ec(s32 targetId);
+void BattleFx_CallEffect03AndStop(s32 targetId);
 void BattleFx_CallEffect14(s32 targetId);
-void Func_080e03c4(s32 targetId);
+void BattleFx_CallEffect13(s32 targetId);
 void Func_080e0978(s32 targetId);
-void Func_080e4a2c(s32 targetId);
-void Func_080e3cfc(s32 targetId);
+void BattleFx_CallEffect23(s32 targetId);
+void BattleFx_CallEffect26(s32 targetId);
 void BattleFx_CallSpinEffect(s32 targetId);
-void Func_080e68c8(s32 targetId);
+void BattleFx_CallEffect20(s32 targetId);
 void Func_080e8db0(s32 targetId);
 void Func_080e92b4(s32 targetId);
-void Func_080e9aec(s32 targetId);
+void BattleFx_CallEffect24(s32 targetId);
 void Func_080e7818(s32 targetId);
-void Func_080e783c(s32 targetId);
-void Func_080e5724(s32 targetId);
-void Func_080e5d54(s32 targetId);
+void BattleFx_CallEffect22(s32 targetId);
+void BattleFx_CallEffect21(s32 targetId);
+void BattleFx_CallEffect18(s32 targetId);
 
 //--------------------------------------------------------------------------
 // Runs the animation's handler for kind: 0 runs it with no target chosen, 1
@@ -102,8 +102,8 @@ void Field_DispatchTypeHandler(s32 kind) {
 // The Spanish and Italian scaffolds carry three of the handlers under other
 // names (Func_080dc978 as Func_080cdec8, the far-call slot that reaches it
 // there; their Func_080dd054 and Func_080decb8 label other functions), and
-// the French one has Func_080e4a2c and Func_080e4a34 under the names of
-// Func_080e9aec and Func_080e9af4. Until those names are sorted out, the
+// the French one has BattleFx_CallEffect23 and Func_080e4a34 under the names of
+// BattleFx_CallEffect24 and Func_080e9af4. Until those names are sorted out, the
 // three editions keep both dispatchers on their scaffold (S4).
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_FR) &&                    \
     !defined(TLA_EDITION_IT)
@@ -131,9 +131,9 @@ void BattleFx_Run(void) {
   else if (animation == 6)
     BattleFx_RunOrbitingParticles();
   else if (animation == 3)
-    Func_080de9f8();
+    RunBattleEffect03();
   else if (animation == 12)
-    Func_080ddb3c();
+    BattleFx_RunBurstParticles();
   else if (animation == 13)
     Func_080e03cc();
   else if (animation == 15)
@@ -161,13 +161,13 @@ void BattleFx_Run(void) {
   else if (animation == 19)
     Func_080e9090();
   else if (animation == 27)
-    Func_080e97c8();
+    BattleFx_RunViewSway();
   else if (animation == 24)
     Func_080e9af4();
   else if (animation == 23)
     Func_080e4a34();
   else if (animation == 30)
-    Func_080e781c();
+    BattleFx_RunEffect30();
   else if (animation == 22)
     Func_080e7844();
   else if (animation == 28)
@@ -193,7 +193,7 @@ void BattleFx_Run(void) {
     objectId = BattleFx_FilterObjectIdByFlags(objectId);
     if (Func_080cce94(objectId) != 0) {
       BattleFx_SetupObjectPair(scene->firstObjectId, objectId);
-      Func_080e011c(objectId);
+      BattleFx_MarkChildAndRunFallbackTransition(objectId);
       BattleEffect_PauseObject(objectId);
       party->pausedObject = objectId;
     } else {
@@ -223,7 +223,7 @@ void BattleFx_DispatchRequestKind(void) {
   else if (animation == 11)
     Func_080df1fc(targetId);
   else if (animation == 4)
-    Func_080de214(targetId);
+    BattleFx_CallEffect04(targetId);
   else if (animation == 5)
     BattleFx_CallEffect05(targetId);
   else if (animation == 6)
@@ -231,11 +231,11 @@ void BattleFx_DispatchRequestKind(void) {
   else if (animation == 12)
     Func_080dda30(targetId);
   else if (animation == 3)
-    Func_080de9ec(targetId);
+    BattleFx_CallEffect03AndStop(targetId);
   else if (animation == 14)
     BattleFx_CallEffect14(targetId);
   else if (animation == 13)
-    Func_080e03c4(targetId);
+    BattleFx_CallEffect13(targetId);
   else if (animation == 16)
     BattleFx_RunEffect16();
   else if (animation == 17)
@@ -247,27 +247,27 @@ void BattleFx_DispatchRequestKind(void) {
   else if (animation == 8)
     Func_080dd820();
   else if (animation == 23)
-    Func_080e4a2c(targetId);
+    BattleFx_CallEffect23(targetId);
   else if (animation == 26)
-    Func_080e3cfc(targetId);
+    BattleFx_CallEffect26(targetId);
   else if (animation == 25)
     BattleFx_CallSpinEffect(targetId);
   else if (animation == 20)
-    Func_080e68c8(targetId);
+    BattleFx_CallEffect20(targetId);
   else if (animation == 19)
     Func_080e8db0(targetId);
   else if (animation == 27)
     Func_080e92b4(targetId);
   else if (animation == 24)
-    Func_080e9aec(targetId);
+    BattleFx_CallEffect24(targetId);
   else if (animation == 30)
     Func_080e7818(targetId);
   else if (animation == 22)
-    Func_080e783c(targetId);
+    BattleFx_CallEffect22(targetId);
   else if (animation == 21)
-    Func_080e5724(targetId);
+    BattleFx_CallEffect21(targetId);
   else if (animation == 18)
-    Func_080e5d54(targetId);
+    BattleFx_CallEffect18(targetId);
   else if (animation == 28)
     Func_080e82cc();
   else if (animation == FIELD_FX_WAVE) {
@@ -297,7 +297,7 @@ void BattleFx_DispatchRequestKind(void) {
     }
     BattleEffect_PauseObject(targetId);
     party->pausedObject = targetId;
-    Func_080e011c(targetId);
+    BattleFx_MarkChildAndRunFallbackTransition(targetId);
   }
 }
 #endif

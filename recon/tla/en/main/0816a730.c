@@ -64,7 +64,7 @@ extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
 extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
@@ -80,8 +80,8 @@ void BattleFx_FetchRectangleBlitters(
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
@@ -139,7 +139,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
                              work->sheet + BLAST_SHEET_OFFSET, 1, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Slide the canvas so that its x = 64 is under the target.
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
@@ -224,11 +224,11 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
       Func_08158ce0(4, 4);
     else
       Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

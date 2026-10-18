@@ -310,9 +310,9 @@ BattleFx_RunVoidBeam:
 .L_08171008:
 	.4byte 0x00001000
 .L_0817100c:
-	.4byte Func_0814c928
+	.4byte Camera_ApplyPhasedDelta
 .L_08171010:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08171014:
 	.4byte 0xffffff00
 .L_08171018:
@@ -807,7 +807,7 @@ BattleFx_RunVoidBeam:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #72]
 	lsls r3, r3, #7
@@ -835,7 +835,7 @@ BattleFx_RunVoidBeam:
 	bl Scheduler_RemoveCallback
 	ldr r0, .L_0817142c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #248
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -846,6 +846,6 @@ BattleFx_RunVoidBeam:
 .L_08171424:
 	.4byte 0xfffffd80
 .L_08171428:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817142c:
-	.4byte Func_0814c928
+	.4byte Camera_ApplyPhasedDelta

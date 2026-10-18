@@ -71,7 +71,7 @@ Func_080e38c8:
 	ldr r2, [sp, #12]
 	ldr r0, [r2, #16]
 .L_080e394c:
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	strh r0, [r5, #30]
 	movs r3, #192
 	lsls r3, r3, #5
@@ -248,7 +248,7 @@ Func_080e38c8:
 	strh r3, [r5, #30]
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r3, [r6, #24]
 	movs r2, #192
 	adds r3, #1

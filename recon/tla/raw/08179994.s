@@ -493,7 +493,7 @@ BattleFx_RunJuggle:
 .L_08179d60:
 	.4byte IwramCopyWords
 .L_08179d64:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08179d68:
 	.4byte Data_02010018
 .L_08179d6c:
@@ -576,7 +576,7 @@ BattleFx_RunJuggle:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -603,7 +603,7 @@ BattleFx_RunJuggle:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08179e68
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -621,4 +621,4 @@ BattleFx_RunJuggle:
 .L_08179e64:
 	.4byte 0xffffc000
 .L_08179e68:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

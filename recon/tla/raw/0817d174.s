@@ -584,7 +584,7 @@ BattleFx_RunStarMine:
 .L_0817d608:
 	.4byte IwramCopyWords
 .L_0817d60c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817d610:
 	.4byte Data_02010018
 .L_0817d614:
@@ -637,7 +637,7 @@ BattleFx_RunStarMine:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #44]
 	lsls r5, r5, #7
@@ -660,7 +660,7 @@ BattleFx_RunStarMine:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -669,4 +669,4 @@ BattleFx_RunStarMine:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817d6c0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -4,7 +4,8 @@
 
 void Field_BeginPaletteTransition(s32 frames);
 
-void Func_080dc37c(s32 frames) { Field_BeginPaletteTransition(frames); }
+// Fades the palettes back to the saved ones over the given frames.
+void BattleFx_FadeToSavedPalettes(s32 frames) { Field_BeginPaletteTransition(frames); }
 
 void BattleFx_PrepareBufferInterpolation(void) {
   Field_BeginPaletteTransition(8);
@@ -46,7 +47,8 @@ struct BattleFxScene {
   u8 unk710[0xe4];
 };
 
-void Func_080dc3f0(void) {
+// Scheduler callback: updates the scene's 24 effect slots.
+void BattleFx_UpdateAllEffectSlots(void) {
   struct BattleFxScene *scene;
   struct EffectSlot *slot;
   s32 remainingSlots;

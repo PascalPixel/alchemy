@@ -47,7 +47,7 @@ struct Texture {
   void *pixels;
 };
 
-// One entry of the list Func_08196a7c draws; kind 7 is a textured mesh
+// One entry of the list Render_DrawModelList draws; kind 7 is a textured mesh
 // whose texture scrolls by scrollU and scrollV.
 struct RenderPrimitive {
   s32 kind;
@@ -100,20 +100,20 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct RenderPrimitive *Func_081969f8(s32 count);
+struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderPrimitive *list);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderPrimitive *list);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A geyser between the targets. A textured column, its texture scrolling
 // upward, stands on the floor at the targets' midpoint, and drops burst
@@ -151,7 +151,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   spawned = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   if (mode == 0) {
@@ -267,7 +267,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     // The column, for the first 40 frames.
     if (frame < GEYSER_DRAW_FRAMES) {
       vertices = Runtime_BumpAllocateAlternatePool(512);
-      column = Func_081969f8(1);
+      column = Render_AllocateModelList(1);
       texture.size = (texture.size & ~0xff) | 5;
       texture.size = (texture.size & ~0xff00) | 5 << 8;
       texture.pixels = work->sheet;
@@ -304,20 +304,20 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
       column->texture = &texture;
       column->vertices = vertices;
       Func_080151e4(scale * 2, 7 << 16, scale * 2);
-      Func_08196958(gData_08198c6c, vertices, 16);
-      Func_08196a7c(column);
+      Render_TransformVertices(gData_08198c6c, vertices, 16);
+      Render_DrawModelList(column);
       MemFree(column);
       MemFree(vertices);
     }
 
     Func_08158ce0(4, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

@@ -5,8 +5,8 @@
 // read directly (the dispatcher stores work->effect), the vortex sheet is
 // unpacked straight into the work with Resource_LoadAndDecompress where ☀️
 // copies its palette and decodes, two max blitters from
-// Func_081963ec(104, 0x13) and (188, 0x1f) (⚓️'s mode is 3 minus ☀️'s),
-// the camera callback Func_0814c928 and the transfer callback at order
+// BattleFx_LoadBlitter(104, 0x13) and (188, 0x1f) (⚓️'s mode is 3 minus ☀️'s),
+// the camera callback Camera_ApplyPhasedDelta and the transfer callback at order
 // 0xc80, phase 133 where ☀️ begins phase 132, the frame and mote counts from
 // the byte table gData_081979a8 (☀️ gFroth_Counts) and Func_08118088
 // for the struck target's motion.
@@ -21,12 +21,12 @@
 // Tried (differ):
 // the repository draft (local copy of the work struct)                24
 // the shared struct BattleEffectWork                                  24
-// Func_081963ec declared returning s32, as ☀️'s LoadWork returns s32
+// BattleFx_LoadBlitter declared returning s32, as ☀️'s LoadWork returns s32
 // and ⚓️'s Func_08196404 ends in a store-flag return (plan 0c)      22
 // the camera as struct BattleCamera (eye, pos)                        22
 // greedy declaration-order scan, every local through every place     22
 // earlier (repository header): the second argument of
-// Func_081963ec(104) pinned to r1 (22 before s32); the BLDALPHA
+// BattleFx_LoadBlitter(104) pinned to r1 (22 before s32); the BLDALPHA
 // value pinned behind a barrier, the second blitter read first, an
 // empty barrier after the second call (22-24); alchemy permute,
 // 6 minutes (no better)
@@ -63,14 +63,14 @@ extern char ResourceId_VortexSheet;
 extern u8 gData_081979a8[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_0814c928(void);                  // ☀️ Camera_ApplyPhasedDelta
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void Camera_ApplyPhasedDelta(void);                  // ☀️ Camera_ApplyPhasedDelta
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
@@ -102,10 +102,10 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
   REG_BLDALPHA = 0x0f0f;
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -136,10 +136,10 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Scheduler_AddOrUpdateCallback(Func_0814c928, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, CALLBACK_ORDER);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   Audio_PlayCue(164);
 
   for (frame = 0; frame != gData_081979a8[effect->variant * 2 + 1]; frame++) {
@@ -209,15 +209,15 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     Func_08158ce0(effect->variant * 2 + 2, effect->variant * 2 + 2);
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_0814c928);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

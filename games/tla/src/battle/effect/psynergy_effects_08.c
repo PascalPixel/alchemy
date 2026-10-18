@@ -27,9 +27,12 @@ void Func_080e7804(void) {
 
 void Func_080e7818(void) {}
 
-void Func_080e781c(void) {
+// Field Psynergy kind 30: looks up the controlled owner's object and sets
+// the event work's cue to 0xfc89.
+void BattleFx_RunEffect30(void) {
   ObjectTable_Get(EventRuntime_GetControlledOwner());
   ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
 }
 
-void Func_080e783c(void) { Func_080e7844(); }
+// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
+void BattleFx_CallEffect22(void) { Func_080e7844(); }

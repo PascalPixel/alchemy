@@ -47,21 +47,24 @@ void BattleFx_RunHeatStun(void *object) { Func_0813d098(object, 14); }
 // Abilities: Maneater (kind 421).
 void BattleFx_RunManeater(void *object) { Func_0813d098(object, 15); }
 
-void Func_0813d034(void *object) { Func_0813d098(object, 17); }
+// Effect kind 438: the target strike in style 17.
+void BattleFx_RunTargetStrikeMode17(void *object) { Func_0813d098(object, 17); }
 
-void Func_0813d040(void *object) { Func_0813d098(object, 18); }
+// Effect kind 439: the target strike in style 18.
+void BattleFx_RunTargetStrikeMode18(void *object) { Func_0813d098(object, 18); }
 
 // Abilities: Kill Sting (kind 441).
 void BattleFx_RunKillSting(void *object) { Func_0813d098(object, 19); }
 
-void Func_0813d058(void *object) { Func_0813d098(object, 20); }
+// Effect kind 456: the target strike in style 20.
+void BattleFx_RunTargetStrikeMode20(void *object) { Func_0813d098(object, 20); }
 
-void Func_08157530(s32 x, s32 y, s32 width, s32 height);
+void BattleFx_SetApproachMotion(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
 
 // Abilities: Mad Zephyr (kind 117).
 void BattleFx_RunMadZephyr(u8 *object) {
-  Func_08157530(*(s32 *)(object + 8), *(s16 *)(object + 36), 4, 20);
+  BattleFx_SetApproachMotion(*(s32 *)(object + 8), *(s16 *)(object + 36), 4, 20);
   WaitFrames(2);
   if (*(s32 *)(object + 24) == 0)
     Func_0813d098(object, 12);

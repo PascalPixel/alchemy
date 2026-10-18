@@ -152,7 +152,7 @@ BattleFx_RunNereid:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #197
@@ -160,7 +160,7 @@ BattleFx_RunNereid:
 	adds r1, #255
 	movs r0, #12
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r1, #0
 	mov r9, r1
 .L_081485a6:
@@ -511,7 +511,7 @@ BattleFx_RunNereid:
 .L_08148850:
 	.4byte 0x00000134
 .L_08148854:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08148858:
 	.4byte 0xfffc0000
 .L_0814885c:
@@ -758,7 +758,7 @@ BattleFx_RunNereid:
 	bl ResourceObject_ReleaseFar
 	cmp r7, #12
 	bne .L_08148a20
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -774,4 +774,4 @@ BattleFx_RunNereid:
 .L_08148a4c:
 	.4byte Data_08197998
 .L_08148a50:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

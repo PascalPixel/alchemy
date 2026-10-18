@@ -34,14 +34,14 @@ BattleFx_RunLegend:
 	bne .L_08189b5c
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08189b64
 .L_08189b58:
 	.4byte 0x00001010
 .L_08189b5c:
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08189b64:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -240,7 +240,7 @@ BattleFx_RunLegend:
 .L_08189ce8:
 	.4byte 0x000000c2
 .L_08189cec:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08189cf0:
 	.4byte Data_02014018
 .L_08189cf4:
@@ -474,7 +474,7 @@ BattleFx_RunLegend:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #20]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0818a048
 	ldr r3, [sp, #56]
 	movs r1, #7
@@ -581,9 +581,9 @@ BattleFx_RunLegend:
 	ldr r0, .L_0818a05c
 	ldr r1, [sp, #20]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08189fac:
 	ldr r2, .L_0818a060
 	ldr r3, [sp, #16]
@@ -690,9 +690,9 @@ BattleFx_RunLegend:
 	ldr r0, .L_0818a1d8
 	ldr r1, [sp, #20]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	ldr r4, [sp, #52]
 	ldr r0, [r4, #24]
 .L_0818a094:
@@ -789,9 +789,9 @@ BattleFx_RunLegend:
 	movs r2, #4
 	ldr r1, [sp, #20]
 	ldr r0, .L_0818a1e8
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r3, #1
 	movs r1, #128
 	movs r2, #128
@@ -811,7 +811,7 @@ BattleFx_RunLegend:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r6, #240
 	ldr r5, [sp, #48]
 	lsls r6, r6, #7
@@ -838,7 +838,7 @@ BattleFx_RunLegend:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #88
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -859,4 +859,4 @@ BattleFx_RunLegend:
 .L_0818a1e8:
 	.4byte Data_08199200
 .L_0818a1ec:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

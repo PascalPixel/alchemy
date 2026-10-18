@@ -4,7 +4,7 @@
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 
-void Func_08143488(void) {
+void Palette_StepFadeTransfer(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   s32 *framesLeft;
   u8 *battle;

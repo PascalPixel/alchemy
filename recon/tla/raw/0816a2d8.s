@@ -251,12 +251,12 @@ Func_0816a2d8:
 	bne .L_0816a4cc
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816a4d4
 .L_0816a4cc:
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816a4d4:
 	ldr r1, [sp, #16]
 	movs r3, #192
@@ -267,12 +267,12 @@ Func_0816a2d8:
 	bne .L_0816a4ec
 	movs r0, #188
 	movs r1, #15
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816a4f4
 .L_0816a4ec:
 	movs r0, #188
 	movs r1, #11
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816a4f4:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -471,7 +471,7 @@ Func_0816a2d8:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #8]
 	lsls r1, r1, #7
@@ -524,7 +524,7 @@ Func_0816a2d8:
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
 .L_0816a6e0:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 .L_0816a6e4:
 	add sp, #20
 	pop {r3, r5, r6, r7}
@@ -547,7 +547,7 @@ Func_0816a2d8:
 .L_0816a708:
 	.4byte 0x0000010e
 .L_0816a70c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816a710:
 	.4byte Data_02011c20
 .L_0816a714:
@@ -563,4 +563,4 @@ Func_0816a2d8:
 .L_0816a728:
 	.4byte 0x06004000
 .L_0816a72c:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer

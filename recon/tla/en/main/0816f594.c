@@ -2,7 +2,7 @@
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunUndeadSword 0.525, call order BattleFx_RunBreak
 // 0.551); the textured square goes through the ARM polygon kernels as in
-// the summons (Func_081969f8, Func_08196958, Func_08196a7c).
+// the summons (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList).
 
 // Listing 389 instructions, draft 392, differ 257.
 // Left: allocation. In the disc loop the native keeps the offset in r7,
@@ -54,7 +54,7 @@ struct Texture {
   void *pixels;
 };
 
-// One model job for Func_08196a7c, the polygon kernel runner.
+// One model job for Render_DrawModelList, the polygon kernel runner.
 struct RenderModel {
   s32 kind;
   s32 unk04;
@@ -72,16 +72,16 @@ extern const u16 Data_081991e0[];  // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081963ec(s32 slot, s32 blitter); // BattleFx_LoadWork, packed
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_LoadWork, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
-void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
-void Func_08157530(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void Func_0815b434(void *map, s32 size, s32 scale); // a shaded disc
 void Func_0818caa8(void *picture, s32 x, s32 y, s32 size);
 void Render_ResetTransformState(void);
@@ -91,9 +91,9 @@ void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 angle);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct RenderModel *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void MemFree(void *block);
 void Audio_PlayCue(s32 cue);
 
@@ -129,14 +129,14 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(104, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleFx_LoadBlitter(104, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x1000, 0,
                              0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
@@ -182,7 +182,7 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 0)
-      Func_08157530(effect->actor, effect->actors[0], 8, 80);
+      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
 
     // Frame 8: the canvas flashes white and the target is struck.
     if (frame == 8) {
@@ -217,7 +217,7 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
       // The square of flame turns over each burst for 24 frames, fading
       // over the last eight.
       vertices = Runtime_BumpAllocateAlternatePool(32);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet + 0x1000;
@@ -239,8 +239,8 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
           Func_080150e4(flame->velocityZ);
           SceneTransform_ApplyPitch(flame->velocityY);
           Func_0801521c(roll);
-          Func_08196958(Data_081991e0, vertices, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, vertices, 4);
+          Render_DrawModelList(model);
         }
       }
       MemFree(model);
@@ -248,12 +248,12 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

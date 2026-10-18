@@ -8,7 +8,7 @@
 // glint pointers).
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), the blitter loads through Func_081963ec
+// Age never stores work->effect), the blitter loads through BattleFx_LoadBlitter
 // with the Lost Age's mode numbers (max is 1), the glint blitter loads
 // through Func_08196404 (the twin's BattleFx_LoadWork), the callback
 // order is 0xc80.
@@ -63,11 +63,11 @@ extern u8 gData_08197498[];
 extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void);
-s32 Func_081963ec(s32 slot, s32 modeFlags);
+void BattleFx_EndCanvasLayer(void);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-s32 Func_08143000(void);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -80,7 +80,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *pos);
@@ -94,7 +94,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 #define CUE_THUNDER 138
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 
-// Func_081963ec(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_MAX (1 << 4)
 
 // The second blitter, loaded again for each glint.
@@ -118,7 +118,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(1);
-  Func_081963ec(104, BLITTER_MAX | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleFx_LoadBlitter(104, BLITTER_MAX | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
@@ -130,7 +130,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
     work->particles[j].variant = -1;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(CUE_THUNDER);
 
   for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
@@ -239,13 +239,13 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(2, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

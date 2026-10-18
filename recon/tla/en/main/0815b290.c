@@ -55,7 +55,7 @@ struct EffectSprite {
 
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-struct AnimationEntry *Func_0815b24c(void);
+struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
 struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
@@ -93,7 +93,7 @@ struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
   found->unk20 = 0x6000;
   entries = gResourceTableEntries;
   found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
-  sprite->entry = Func_0815b24c();
+  sprite->entry = AnimationObject_AllocateEmpty();
   sprite->unk0c = 0x10000;
   sprite->width = width;
   sprite->height = height;

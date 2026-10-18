@@ -1,5 +1,5 @@
 // The runner for the ARM kernel at Data_081380ac (relocated_kernel_0.s), the
-// same wrapper as Func_08196958 (project_vertices.c) and UiText_LookupMessage,
+// same wrapper as Render_TransformVertices (project_vertices.c) and UiText_LookupMessage,
 // with two arguments. Nothing in the image calls it.
 #include "types.h"
 #include "dma.h"
@@ -11,7 +11,7 @@ extern u8 Data_081380acCodeSize[];
 
 // Copies the ARM kernel at Data_081380ac into a heap block (DMA 3, words),
 // runs it there with the caller's two arguments and frees the block.
-void Func_0819690c(s32 arg0, s32 arg1) {
+void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32);
   u32 size;
 

@@ -47,8 +47,8 @@ struct DaggerTexture {
   void *pixels;
 };
 
-// One entry of the list Func_08196a7c draws; kind 9 is a textured quad.
-// Func_081969f8 allocates the list with an empty entry after it.
+// One entry of the list Render_DrawModelList draws; kind 9 is a textured quad.
+// Render_AllocateModelList allocates the list with an empty entry after it.
 struct RenderPrimitive {
   s32 kind;
   s32 unk04;
@@ -82,20 +82,20 @@ void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct RenderPrimitive *Func_081969f8(s32 count);
+struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void Func_080150e4(s32 angle);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderPrimitive *list);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderPrimitive *list);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // Crossed daggers. The canvas is moved over the target. Eight daggers rise
 // spinning from below it, and the target is struck eight times, six frames
@@ -121,7 +121,7 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   REG_BLDCNT = 0;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Centre the canvas's x 64 on the target.
   GetBattleObjectSlotFar(effect->actors[0]);
@@ -178,7 +178,7 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
 
     // One textured quad, drawn once for each dagger.
     vertices = Runtime_BumpAllocateAlternatePool(32);
-    quad = Func_081969f8(1);
+    quad = Render_AllocateModelList(1);
     quad->unk14 = 0;
     texture.size = (texture.size & ~0xff) | 5;
     texture.size = (texture.size & ~0xff00) | 5 << 8;
@@ -207,8 +207,8 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
       Func_08015160(dagger->x - (64 << 16), dagger->y - (64 << 16), 0);
       Func_0801521c(0x8000);
       Func_080150e4(dagger->z);
-      Func_08196958(gData_08199474, vertices, 4);
-      Func_08196a7c(quad);
+      Render_TransformVertices(gData_08199474, vertices, 4);
+      Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
         BattleFxKernels_IntegrateVector3(dagger, 64, 0);
       else
@@ -220,11 +220,11 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
     gCameraSceneParameters[4] = 120;
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

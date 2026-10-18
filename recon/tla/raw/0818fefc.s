@@ -73,9 +73,9 @@ BattleFx_RunMegiddo:
 .L_0818ff88:
 	.4byte 0x00000134
 .L_0818ff8c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818ff90:
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #204
 	ldr r0, [sp, #92]
 	movs r2, #212
@@ -104,12 +104,12 @@ BattleFx_RunMegiddo:
 	movs r3, #32
 	str r4, [sp, #36]
 	str r4, [sp, #32]
-	bl Func_08178680
+	bl Render_BuildQuadStrip
 	movs r1, #2
 	ldr r0, [sp, #48]
 	movs r2, #32
 	movs r3, #15
-	bl Func_08178680
+	bl Render_BuildQuadStrip
 	movs r1, #0
 	mov r11, r1
 	mov r10, r1
@@ -280,7 +280,7 @@ BattleFx_RunMegiddo:
 	movs r2, #1
 	movs r3, #0
 	bl Resource_LoadAndDecompress
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	movs r3, #128
 	ldr r2, .L_08190174
 	lsls r3, r3, #19
@@ -375,7 +375,7 @@ BattleFx_RunMegiddo:
 	ldr r1, .L_08190388
 	movs r2, #0
 	bl BattleBackground_LoadFar
-	bl Func_0817d6c4
+	bl BattleFx_BuildRepeatingTilemap
 	movs r0, #8
 	movs r1, #2
 	movs r2, #2
@@ -385,7 +385,7 @@ BattleFx_RunMegiddo:
 	movs r0, #1
 	adds r1, #255
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 .L_08190214:
 	ldr r2, [sp, #96]
 	ldr r1, [sp, #20]
@@ -866,7 +866,7 @@ BattleFx_RunMegiddo:
 	b .L_081906e8
 .L_081905ae:
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r1, .L_081907a4
 	add r6, sp, #108
 	adds r7, r0, #0
@@ -920,9 +920,9 @@ BattleFx_RunMegiddo:
 	ldr r1, .L_081907a4
 	movs r2, #66
 	ldr r0, .L_081907b4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r3, #5
 	strb r3, [r6]
 	strb r3, [r6, #1]
@@ -992,9 +992,9 @@ BattleFx_RunMegiddo:
 	ldr r1, .L_081907a4
 	ldr r0, [sp, #52]
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r1, #1
 	movs r0, #192
 	add r8, r1
@@ -1208,7 +1208,7 @@ BattleFx_RunMegiddo:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r11, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_08190b34
 	ldr r3, [sp, #100]
 	movs r1, #7
@@ -1302,9 +1302,9 @@ BattleFx_RunMegiddo:
 	ldr r0, .L_08190b50
 	mov r1, r11
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08190942:
 	movs r3, #1
 	add r8, r3
@@ -1462,9 +1462,9 @@ BattleFx_RunMegiddo:
 	ldr r0, .L_08190b6c
 	mov r1, r11
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08190a80:
 	movs r3, #1
 	add r8, r3
@@ -1490,7 +1490,7 @@ BattleFx_RunMegiddo:
 	ldr r3, [r2]
 	cmp r3, #1
 	bls .L_08190aa8
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #92]
 	lsls r4, r4, #7
@@ -1535,7 +1535,7 @@ BattleFx_RunMegiddo:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #220
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1579,4 +1579,4 @@ BattleFx_RunMegiddo:
 .L_08190b6c:
 	.4byte gData_081991f0
 .L_08190b70:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

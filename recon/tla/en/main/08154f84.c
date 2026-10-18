@@ -8,7 +8,7 @@
 // the lean's spelling.
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), blitters load through Func_081963ec with
+// Age never stores work->effect), blitters load through BattleFx_LoadBlitter with
 // the Lost Age's mode numbers, the callback order is 0xc80 and the cues are
 // 133 where the twin has 132.
 
@@ -68,9 +68,9 @@ extern u16 Data_08198454[];
 extern s8 Data_08198445[];
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void);
-s32 Func_081963ec(s32 slot, s32 modeFlags);
-s32 Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -80,7 +80,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
 #define THORN_INTERVAL 8
@@ -90,7 +90,7 @@ void WaitFrames(s32 frames);
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 #define CUE_THORN 133
 
-// Func_081963ec(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
 void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
@@ -125,14 +125,14 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  Func_081963ec(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleFx_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw = ((DrawRectangle *)heap)[26];
-  Func_081963ec(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+  BattleFx_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   drawFlip = ((DrawRectangle *)heap)[47];
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08198442[effect->variant] * THORN_INTERVAL + 56;
 
   for (i = 0; i != PUFF_COUNT; i++) {
@@ -250,14 +250,14 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

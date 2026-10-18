@@ -17,10 +17,10 @@ EventRuntime_ResolveAllPendingActionsFar:
 	.thumb_func
 EventRuntime_ResolvePendingActionsFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080dca50
+	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlock
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080dca50
+	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlock
 .else
 	overlay_veneer EventRuntime_ResolvePendingActions
 .endif
@@ -29,10 +29,10 @@ EventRuntime_ResolvePendingActionsFar:
 	.thumb_func
 Func_080c84e8:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080dca84
+	overlay_veneer Ui_FillBank15PaletteGrey
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080dca84
+	overlay_veneer Ui_FillBank15PaletteGrey
 .else
 	overlay_veneer Func_080dc978
 .endif
@@ -46,7 +46,7 @@ Func_080c84f0:
 .ifdef TLA_EDITION_IT
 	overlay_veneer Func_080dcadc
 .else
-	overlay_veneer Func_080dca50
+	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlock
 .endif
 .endif
 	.global Func_080c84f8
@@ -58,7 +58,7 @@ Func_080c84f8:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_HasMatchingEvent5
 .else
-	overlay_veneer Func_080dca84
+	overlay_veneer Ui_FillBank15PaletteGrey
 .endif
 .endif
 	.global Func_080c8500

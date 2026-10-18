@@ -193,7 +193,7 @@ Func_080e87c4:
 	orrs r3, r1
 	strh r3, [r5, #8]
 	adds r1, r6, #0
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	movs r2, #128
 	movs r1, #62
 	adds r0, r6, #0
@@ -247,7 +247,7 @@ Func_080e87c4:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	bl Resource_ResetEntry
-	bl Func_080eb930
+	bl BattleFx_EndCanvasSprite
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 .L_080e89d6:

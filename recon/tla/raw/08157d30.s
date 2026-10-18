@@ -30,10 +30,10 @@ BattleFx_RunVenus:
 	strh r3, [r2]
 	movs r1, #27
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #3
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	adds r5, #188
 	ldr r5, [r5]
@@ -361,7 +361,7 @@ BattleFx_RunVenus:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -387,7 +387,7 @@ BattleFx_RunVenus:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -398,7 +398,7 @@ BattleFx_RunVenus:
 .L_08158054:
 	.4byte 0x00000130
 .L_08158058:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815805c:
 	.4byte Data_02010018
 .L_08158060:

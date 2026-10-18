@@ -337,7 +337,7 @@ BattleFx_RunHaunt:
 	beq .L_081442f2
 	b .L_081441b2
 .L_081442f2:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #36]
 	lsls r1, r1, #7
@@ -366,7 +366,7 @@ BattleFx_RunHaunt:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -381,11 +381,11 @@ BattleFx_RunHaunt:
 .L_08144350:
 	.4byte IwramCopyWords
 .L_08144354:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_08144358:
 	.4byte 0x04040404
 .L_0814435c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08144360:
 	.4byte gMapCellBuffer
 .L_08144364:

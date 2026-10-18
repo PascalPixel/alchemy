@@ -430,7 +430,7 @@ Func_080ed2a4:
 	bne .L_080ed5f2
 	b .L_080ed498
 .L_080ed5f2:
-	bl Func_080ed804
+	bl FlagEntries_GetTable
 	mov r4, r11
 	movs r3, #18
 	ldrsh r2, [r4, r3]

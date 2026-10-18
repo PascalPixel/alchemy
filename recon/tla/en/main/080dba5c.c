@@ -39,7 +39,7 @@ struct DepthScene {
   s16 active;
 };
 
-void Func_080dba44(void);
+void BattleFx_DrawSceneSprite(void);
 void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles);
 void Camera_WorldToScreen(s32 *position);
 
@@ -77,7 +77,7 @@ void Func_080dba5c(void) {
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
-    Scheduler_AddOrUpdateCallback(Func_080dba44, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_DrawSceneSprite, 0x480);
   }
 }
 
@@ -86,7 +86,7 @@ void Func_080dbb40(void) {
 
   if (scene->active != 0) {
     scene->active = 0;
-    Scheduler_RemoveCallback(Func_080dba44);
+    Scheduler_RemoveCallback(BattleFx_DrawSceneSprite);
     Resource_ResetEntry(scene->vramSlot);
   }
 }

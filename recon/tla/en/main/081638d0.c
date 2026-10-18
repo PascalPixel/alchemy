@@ -75,14 +75,14 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
 void BattleFx_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // A disc of rings rises on BG2 over the target's side, its colour ramp
 // cycling outward one ring a frame while each scanline sways on a sine wave.
@@ -142,7 +142,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.
@@ -198,7 +198,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   // offsets move it.
   draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
 
   for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
     // Fade in, and the sway grows with the frame.
@@ -237,13 +237,13 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
                           0x8000003f);
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08152474);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

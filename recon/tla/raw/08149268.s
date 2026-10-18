@@ -480,7 +480,7 @@ BattleFx_RunPrism:
 	b .L_08149640
 	.2byte 0x0000
 .L_08149618:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814961c:
 	.4byte Data_081979b7
 .L_08149620:
@@ -518,7 +518,7 @@ BattleFx_RunPrism:
 	adds r1, #8
 	adds r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r7, #240
 	ldr r5, [sp, #28]
 	lsls r7, r7, #7
@@ -551,7 +551,7 @@ BattleFx_RunPrism:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -563,4 +563,4 @@ BattleFx_RunPrism:
 .L_081496c0:
 	.4byte Data_081979b7
 .L_081496c4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -12,7 +12,7 @@
 #include "animspr.h"
 #include "ram_buffer.h"
 
-struct AnimationEntry *Func_0815b24c(void);
+struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 s32 Animation_ApplyChildArgumentFar(void *, s32);
 
 struct EffectSprite {
@@ -48,7 +48,7 @@ struct EffectSprite *Func_0815b3b0(s32 kind, s32 value) {
     i++;
     sprite++;
   }
-  sprite->entry = Func_0815b24c();
+  sprite->entry = AnimationObject_AllocateEmpty();
   sprite->kind = kind;
   sprite->unk15 = value;
   sprite->unk0c = 0x10000;

@@ -43,7 +43,7 @@ Func_080d20fc:
 	adds r1, r5, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl Func_080d20a4
+	bl Tile_ClearLeftPixels
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, #4

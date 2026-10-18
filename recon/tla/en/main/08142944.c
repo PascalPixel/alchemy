@@ -4,7 +4,7 @@
 // far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
 // canvas skeleton of the scene effects (its own heap blocks, the work marked
 // active, the canvas transfer), and its pictures are textured models drawn
-// by the IWRAM renderer (Func_081969f8, Func_08196958, Func_08196a7c), as
+// by the IWRAM renderer (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList), as
 // 0813d098's star is.
 
 // Left: allocation. The native keeps the centre's address in r11 and the
@@ -97,10 +97,10 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_EffectPalette03;
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void);  // the canvas transfer callback
-void Func_08143488(void); // Palette_StepFadeTransfer
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -113,14 +113,14 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void Func_08118150(s32 kind);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size);
-struct ModelDraw *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *out, s32 count);
-void Func_08196a7c(struct ModelDraw *draw);
+struct ModelDraw *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *out, s32 count);
+void Render_DrawModelList(struct ModelDraw *draw);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 roll);
@@ -153,7 +153,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   work->framesSinceTransfer = 1;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -162,7 +162,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -285,7 +285,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       }
 
       corners = Runtime_BumpAllocateAlternatePool(0x200);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       model->depthBias = 0;
       texture.logWidth = 5;
       texture.logHeight = 2;
@@ -309,8 +309,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           Func_080150e4(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
                         0x10000);
-          Func_08196958(gData_081991b0, corners, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_081991b0, corners, 4);
+          Render_DrawModelList(model);
         }
       }
 
@@ -344,8 +344,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
               SceneTransform_ApplyYaw((i * 8 + frame) << 10);
             else
               SceneTransform_ApplyYaw((i * 8 - frame) << 10);
-            Func_08196958(gData_08199090, corners, 32);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08199090, corners, 32);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -354,12 +354,12 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
@@ -368,9 +368,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     gBgScroll[1].y = work->savedBg1Y;
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   } else {
-    Func_08143bb8();
+    BattleFx_EndCanvasLayer();
   }
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);

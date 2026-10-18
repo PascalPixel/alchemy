@@ -64,7 +64,7 @@ void BattleFx_PrepareBufferInterpolation(void);
 void Object_SetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
-void Func_080df174(void);
+void BattleFx_SpawnFallingParticles(void);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
@@ -138,7 +138,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   right->x = p->x - 0x100000;
   right->velocityX = 0;
   target->callback = ObjectGroup_ApplyRandomChildValues;
-  Scheduler_AddOrUpdateCallback((s32)Func_080df174, 0x480);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_SpawnFallingParticles, 0x480);
   Audio_PlayCue(130);
   target->flag = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
@@ -235,7 +235,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   }
   Object_SetMode(anchors[0], 4);
   Object_SetMode(anchors[1], 4);
-  Scheduler_RemoveCallback((u32)Func_080df174);
+  Scheduler_RemoveCallback((u32)BattleFx_SpawnFallingParticles);
   Audio_PlayCue(135);
   WaitFrames(15);
   Audio_PlayCue(135);

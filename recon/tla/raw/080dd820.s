@@ -14,7 +14,7 @@ Func_080dd820:
 	adds r3, #224
 	ldr r7, [r3]
 	movs r0, #6
-	bl Func_080dd748
+	bl BattleFx_RunBusyWaitDelay
 	movs r0, #8
 	ldr r6, [r5, #108]
 	bl DisplayTransition_InitializeBattleEffectState

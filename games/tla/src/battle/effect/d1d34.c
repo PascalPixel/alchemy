@@ -14,7 +14,9 @@ void *Runtime_AllocateHeapBlock();
 void Runtime_ReleaseHeapBlock();
 void VramCache_Load();
 
-void Func_080d1d54(s32 solid) {
+// Fills the overlay's 512 bytes of sprite tiles (VRAM cache slot 94) with
+// colour 1 when solid is set, else clears them.
+void BattleFx_FillOverlayTiles(s32 solid) {
   void *buffer = Runtime_AllocateHeapBlock(56, 0x400);
 
   if (solid == 0) {

@@ -88,11 +88,11 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A ring of small flames. The flames circle the caster in a ring that rises
 // over its head from frame 8, each turning its own way through four cels.
@@ -130,7 +130,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   lift = 0;
   {
     s32 *life = Data_02010018;
@@ -250,7 +250,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     spin += 256;
@@ -258,6 +258,6 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

@@ -11,7 +11,7 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 // BattleFx_StartActorMotion with fixed values: unless the unit is one of
 // four enemies, the actor steps 15 pixels further from x = 0 on its
 // anchor's side, its y velocity growing by 0x28000 while y is under 10.
-void Func_0817b5d4(s32 id) {
+void BattleFx_StartActorMotionOutward(s32 id) {
   struct BattleObj *slot;
   struct MotionObject *object;
   u32 enemy;

@@ -66,12 +66,12 @@ BattleFx_RunDouse:
 	strh r3, [r2]
 	movs r1, #18
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r0, [r5, #104]
 	movs r1, #2
 	str r0, [sp, #16]
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r3, .L_0813c164
@@ -604,7 +604,7 @@ BattleFx_RunDouse:
 	adds r5, #28
 	cmp r8, r0
 	bne .L_0813c4d8
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #32]
 	lsls r3, r3, #7
@@ -636,7 +636,7 @@ BattleFx_RunDouse:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	bl Func_0813ba50
 	add sp, #36
 	pop {r3, r5, r6, r7}
@@ -647,9 +647,9 @@ BattleFx_RunDouse:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0813c594:
-	.4byte Func_0813bba0
+	.4byte BattleFx_ArmWin0HBlankDma
 .L_0813c598:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813c59c:
 	.4byte Data_08197527
 .L_0813c5a0:

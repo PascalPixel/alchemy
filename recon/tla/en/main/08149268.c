@@ -56,9 +56,9 @@ extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
 extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);         // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);         // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);    // ☀️ BattleEventRuntime_BeginPhaseFar
 void BattleFx_FetchRectangleBlitters(
@@ -97,7 +97,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
@@ -190,14 +190,14 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(effect->variant * 2 + 4, effect->variant * 4 + 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

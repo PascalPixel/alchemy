@@ -14,11 +14,11 @@ Func_08138008:
 	.global BattleFx_RunSceneEffectFar
 	.thumb_func
 BattleFx_RunSceneEffectFar:
-	overlay_veneer Func_0814c994
+	overlay_veneer BattleFx_RunSceneEffect
 	.global Func_08138018
 	.thumb_func
 Func_08138018:
-	overlay_veneer Func_0814cb60
+	overlay_veneer BattleFx_RunTableEffect
 	.global Func_08138020
 	.thumb_func
 Func_08138020:
@@ -38,11 +38,11 @@ Func_08138038:
 	.global Func_08138040
 	.thumb_func
 Func_08138040:
-	overlay_veneer Func_0813fd40
+	overlay_veneer BattleFx_ScheduleCallbacksAndReleaseBlocks
 	.global Func_08138048
 	.thumb_func
 Func_08138048:
-	overlay_veneer Func_081963ec
+	overlay_veneer BattleFx_LoadBlitter
 	.global Func_08138050
 	.thumb_func
 Func_08138050:

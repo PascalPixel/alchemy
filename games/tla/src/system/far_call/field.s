@@ -53,10 +53,10 @@ Func_080c87b8:
 	.thumb_func
 Func_080c87c0:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080eb298
+	overlay_veneer EffectSprite_DrawAtWorldPosition
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080eb298
+	overlay_veneer EffectSprite_DrawAtWorldPosition
 .else
 	overlay_veneer Func_080eaf98
 .endif
@@ -82,7 +82,7 @@ Func_080c87d0:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_StepVector3
 .else
-	overlay_veneer Func_080eb298
+	overlay_veneer EffectSprite_DrawAtWorldPosition
 .endif
 .endif
 	.global BattleFx_StepVector2Far
@@ -112,7 +112,7 @@ BattleFx_StepVector3Far:
 	.global Func_080c87e8
 	.thumb_func
 Func_080c87e8:
-	overlay_veneer Func_080db9c0
+	overlay_veneer BattleFx_GetObjectPriority
 	.ifdef TLA_EDITION_ES
 	.global Field_BeginPaletteTransitionFar
 	.thumb_func
@@ -128,7 +128,7 @@ Field_BeginPaletteTransitionFar:
 	.global Func_080c87f0
 	.thumb_func
 Func_080c87f0:
-	overlay_veneer Func_080db9cc
+	overlay_veneer BattleFx_GetObjectDepth
 	.endif
 	.endif
 	.global Func_080c87f8

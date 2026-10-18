@@ -2772,8 +2772,8 @@ Func_080ccd78:
 Func_080d0520:
 	.incbin "baserom.gba", 0x000d5ec8, 0x000006bc
 	.section .rom.000d6584, "ax"
-	.global Func_080cd584
-Func_080cd584:
+	.global Scene_RunRaisedEvent
+Scene_RunRaisedEvent:
 	.incbin "baserom.gba", 0x000d6584, 0x00000398
 	.section .rom.000d691c, "ax"
 	.global Func_080cc54c
@@ -3479,10 +3479,10 @@ Func_080dbdf4:
 Func_080dbe80:
 	.incbin "baserom.gba", 0x000e4e74, 0x000001c4
 	.section .rom.000e51a4, "ax"
-	.global Func_080db9c0
-	.type Func_080db9c0, %function
+	.global BattleFx_GetObjectPriority
+	.type BattleFx_GetObjectPriority, %function
 	.thumb_func
-Func_080db9c0:
+BattleFx_GetObjectPriority:
 	.incbin "baserom.gba", 0x000e51a4, 0x00000094
 	.section .rom.000e5288, "ax"
 	.global BattleEffect_InitializeSharedScene
@@ -3592,10 +3592,10 @@ Func_080de8d0:
 Func_080debd8:
 	.incbin "baserom.gba", 0x000e7bcc, 0x000000b4
 	.section .rom.000e7cac, "ax"
-	.global Func_080cd91c
-	.type Func_080cd91c, %function
+	.global Field_FindNearbyTalkTarget
+	.type Field_FindNearbyTalkTarget, %function
 	.thumb_func
-Func_080cd91c:
+Field_FindNearbyTalkTarget:
 	.incbin "baserom.gba", 0x000e7cac, 0x000000cc
 	.section .rom.000e7ddc, "ax"
 	.global RunBattleEffect05

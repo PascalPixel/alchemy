@@ -1,6 +1,6 @@
 // Draft, differ 4 of 99 (no device): summon 25's rising pillar, a six-vertex
-// textured strip drawn through the ARM renderer (Func_08196958 projects the
-// vertices, Func_08196a7c draws the model), as Func_08192a4c draws its own
+// textured strip drawn through the ARM renderer (Render_TransformVertices projects the
+// vertices, Render_DrawModelList draws the model), as Func_08192a4c draws its own
 // model. The native frame matches: work at sp+4, the texture at sp+8, the
 // position at sp+16 and the vertices at sp+28.
 // Left: two reordered rows. The native loads the work pointer back from
@@ -26,7 +26,7 @@ struct ModelTexture {
   const void *pixels;
 };
 
-// A model for the ARM renderer (Func_08196a7c): its kind, its mesh of
+// A model for the ARM renderer (Render_DrawModelList): its kind, its mesh of
 // faces, its projected vertices and its texture.
 struct RenderModel {
   s32 kind;
@@ -53,12 +53,12 @@ struct Vector3 {
 extern const struct ModelVertex Data_08196f30[6];
 extern const u16 Data_08199f4c[];
 
-struct RenderModel *Func_081969f8(s32 count);
+struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(struct Vector3 *position);
-void Func_08196958(const struct ModelVertex *vertices, void *projected,
+void Render_TransformVertices(const struct ModelVertex *vertices, void *projected,
                    s32 count);
-void Func_08196a7c(struct RenderModel *model);
+void Render_DrawModelList(struct RenderModel *model);
 
 // Summon 25: draws one rising pillar, a textured strip of six vertices whose
 // two lower rows come from Data_08196f30 and whose top row is raised to
@@ -73,7 +73,7 @@ void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
   struct Vector3 position;
 
   projected = Runtime_BumpAllocateAlternatePool(48);
-  model = Func_081969f8(1);
+  model = Render_AllocateModelList(1);
   memcpy(vertices, Data_08196f30, sizeof(vertices));
 
   // A 16x16 texture at 0x302 into the sheet.
@@ -101,8 +101,8 @@ void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
   model->texture = &texture;
   model->mesh = Data_08199f4c;
   model->vertices = projected;
-  Func_08196958(vertices, projected, 6);
-  Func_08196a7c(model);
+  Render_TransformVertices(vertices, projected, 6);
+  Render_DrawModelList(model);
   MemFree(model);
   MemFree(projected);
 }

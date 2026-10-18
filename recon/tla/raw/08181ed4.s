@@ -68,7 +68,7 @@ Func_08181ed4:
 .L_08181f50:
 	.4byte 0x00001010
 .L_08181f54:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08181f58:
 	movs r2, #0
 	ldr r0, .L_0818229c
@@ -416,7 +416,7 @@ Func_08181ed4:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r6, r0, #0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_081822d8
 	ldr r3, [sp, #40]
 	movs r7, #224
@@ -558,9 +558,9 @@ Func_08181ed4:
 	adds r1, r6, #0
 	movs r2, #16
 	ldr r0, .L_08182388
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	adds r0, r5, #0
 	bl MemFree
 	adds r0, r6, #0
@@ -569,7 +569,7 @@ Func_08181ed4:
 	movs r1, #16
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r7, #240
 	ldr r5, [sp, #28]
 	lsls r7, r7, #7
@@ -592,7 +592,7 @@ Func_08181ed4:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0818238c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -606,4 +606,4 @@ Func_08181ed4:
 .L_08182388:
 	.4byte gData_08198c6c
 .L_0818238c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

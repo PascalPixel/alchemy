@@ -405,7 +405,7 @@ BattleFx_RunMercury:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -427,7 +427,7 @@ BattleFx_RunMercury:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -445,7 +445,7 @@ BattleFx_RunMercury:
 .L_081579bc:
 	.4byte 0x00000130
 .L_081579c0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081579c4:
 	.4byte Data_02010018
 .L_081579c8:

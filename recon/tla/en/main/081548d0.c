@@ -9,7 +9,7 @@
 // Listing 514 instructions, draft 515, differ 237.
 
 // Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), blitters load through Func_081963ec with
+// Age never stores work->effect), blitters load through BattleFx_LoadBlitter with
 // the Lost Age's mode numbers, the callback order is 0xc80 and the cue is
 // 133 where the twin has 132. The puff scan walks a plain pointer: the
 // twin's tagged reuse of length as the pointer is not the Lost Age's form.
@@ -68,9 +68,9 @@ extern s8 Data_08198405[];  // _PuffWidths
 extern u8 Data_0819840c[];  // _PuffHeights
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void);
-s32 Func_081963ec(s32 slot, s32 modeFlags);
-s32 Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -80,7 +80,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
 // A growing column, laid over struct EffectStep in work->particles.
@@ -100,7 +100,7 @@ struct DualColumn {
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
 #define CUE_COLUMN 133
 
-// Func_081963ec(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
 void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
@@ -148,9 +148,9 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
     REG_BG2X = -0x7000;
   }
   // Odd columns draw mirrored.
-  Func_081963ec(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleFx_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   rectangle[0] = Ram_HeapSlots->unk64[1];
-  Func_081963ec(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+  BattleFx_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   secondSlot = Ram_HeapSlots->unkb8[1];
   /* FAKEMATCH: the columns draw through a second pointer to the pair,
@@ -188,7 +188,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   frame = 0;
   if (duration != 0) {
@@ -319,15 +319,15 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
       } while (i != PUFF_COUNT);
 
       Func_08158ce0(4, 4);
-      Func_081434f8();
+      ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
       WaitFrames(1);
       frame++;
     } while (frame != duration);
   }
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

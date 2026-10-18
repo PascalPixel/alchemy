@@ -158,7 +158,7 @@ Func_0817e0c0:
 	ldrsh r1, [r5, r2]
 	ldr r0, [r5, #8]
 	movs r2, #10
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 	ldr r0, [r5, #8]
 	bl GetBattleObjectSlotFar
 	movs r1, #48
@@ -321,7 +321,7 @@ Func_0817e0c0:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0817e4f4
 	ldr r3, [sp, #44]
 	adds r5, r0, #0
@@ -385,9 +385,9 @@ Func_0817e0c0:
 	ldr r0, .L_0817e504
 	mov r1, r8
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0817e3dc:
 	ldr r7, [sp, #32]
 	subs r7, #8
@@ -471,9 +471,9 @@ Func_0817e0c0:
 	ldr r0, .L_0817e504
 	mov r1, r8
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0817e48a:
 	adds r0, r5, #0
 	bl MemFree
@@ -518,7 +518,7 @@ Func_0817e0c0:
 .L_0817e4e4:
 	.4byte IwramCopyWords
 .L_0817e4e8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817e4ec:
 	.4byte gData_02014000
 .L_0817e4f0:
@@ -666,7 +666,7 @@ Func_0817e0c0:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -688,7 +688,7 @@ Func_0817e0c0:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -704,4 +704,4 @@ Func_0817e0c0:
 .L_0817e660:
 	.4byte 0xfffffe00
 .L_0817e664:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

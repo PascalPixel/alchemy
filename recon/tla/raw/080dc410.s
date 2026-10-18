@@ -280,4 +280,4 @@ BattleFx_LoadActionEffectResources:
 .L_080dc624:
 	.4byte 0x0000010a
 .L_080dc628:
-	.4byte Func_080dc3f0
+	.4byte BattleFx_UpdateAllEffectSlots

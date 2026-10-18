@@ -240,7 +240,7 @@ Func_080e74d8:
 	bhi .L_080e7700
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	movs r3, #1
 	mov r2, r10
 	ands r3, r2

@@ -4,7 +4,7 @@
 // coloured streak effects. ⚓️ adds one thing: when each target's streaks
 // start, modes 1 to 4 play their own cry. The rest is the twin with ⚓️'s
 // calling conventions (the effect read from the argument, heap blocks as
-// Ram_HeapSlots fields, Func_081963ec with ⚓️'s mode numbers, callback
+// Ram_HeapSlots fields, BattleFx_LoadBlitter with ⚓️'s mode numbers, callback
 // order 0xc80, BattleFxKernels_IntegrateVector3 for
 // EffectStep_AdvanceWithGravity3D).
 
@@ -68,9 +68,9 @@ extern char ResourceId_RedPaletteB;
 extern char ResourceId_CyanPalette;
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -82,7 +82,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
@@ -122,14 +122,14 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
   if (effect->side == 0) {
-    Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
     drawUpper = heap->unk64[1];
-    Func_081963ec(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
     drawLower = heap->unkb8[1];
   } else {
-    Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
+    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
     drawUpper = heap->unk64[1];
-    Func_081963ec(SLOT_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     drawLower = heap->unkb8[1];
   }
@@ -157,7 +157,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;   // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(effect->actor)->object;
   {
@@ -274,14 +274,14 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       Func_08158ce0(8, 8);
-      Func_081434f8();
+      ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
       WaitFrames(1);
     }
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -3,7 +3,7 @@
 // Twin: The Broken Seal's BattleFx_RunRay (effect.c), call for
 // call, with The Lost Age's changes: on its own side the canvas begins
 // filled (BattleFx_BeginTiledCanvasFilled), with BG control 0x2001; the
-// blitters come through Func_081963ec (BLIT_MAX 1, BLIT_ADDITIVE 0); and
+// blitters come through BattleFx_LoadBlitter (BLIT_MAX 1, BLIT_ADDITIVE 0); and
 // outside variant 2 the bolts center on the midpoint of the targets
 // (Func_0815e22c), the canvas scrolled to it and clamped to 0-112, with
 // what the clamp leaves added to every x. Variant 2 reads the side through
@@ -14,7 +14,7 @@
 // Near miss: differ 53 of 519 (draft 520), order residue: the native
 // loads BG2PA's value before it builds the register's address in both
 // branches (so their common tail is merged differently and one more
-// instruction lands here), sets r1 before r0 for Func_081963ec, and
+// instruction lands here), sets r1 before r0 for BattleFx_LoadBlitter, and
 // issues the sheet offset and the work load one slot apart from agscc.
 
 // Tried (2026-10-15):
@@ -37,10 +37,10 @@
 // names where the twin is known.
 void BattleFx_BeginTiledCanvas(s32 bgControl);
 void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -49,7 +49,7 @@ void Func_0815e22c(struct EffectPosition *midpoint);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -98,9 +98,9 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
     REG_BG2PA = 0x80; // twice as wide
   else
     REG_BG2PA = 0x100;
-  Func_081963ec(104, BLIT_MODE(BLIT_MAX, CLIP));
+  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+  BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_SHEET, 1, 1);
@@ -143,7 +143,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(138);
 
   for (frame = 0; frame != 64; frame++) {
@@ -224,13 +224,13 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(2, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

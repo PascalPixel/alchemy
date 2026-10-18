@@ -133,7 +133,7 @@ BattleFx_RunQuake:
 .L_08150d6a:
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -450,7 +450,7 @@ BattleFx_RunQuake:
 	ldrb r1, [r2, r3]
 	adds r0, r1, #0
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #68]
 	lsls r4, r4, #7
@@ -477,7 +477,7 @@ BattleFx_RunQuake:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #112
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -489,7 +489,7 @@ BattleFx_RunQuake:
 .L_08151030:
 	.4byte 0xffff9000
 .L_08151034:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08151038:
 	.4byte Data_08196e1c
 .L_0815103c:

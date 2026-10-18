@@ -317,14 +317,14 @@ BattleFx_RunGaia:
 	bne .L_0815abf6
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #32]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, .L_0815ac84
 	movs r2, #128
 	lsls r2, r2, #19
@@ -369,7 +369,7 @@ BattleFx_RunGaia:
 .L_0815ac9c:
 	.4byte 0x00000134
 .L_0815aca0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815aca4:
 	movs r2, #140
 	lsls r2, r2, #1
@@ -1067,7 +1067,7 @@ BattleFx_RunGaia:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0815b1e6:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #48]
 	lsls r3, r3, #7
@@ -1102,7 +1102,7 @@ BattleFx_RunGaia:
 	bl ResourceObject_ReleaseFar
 	cmp r6, #11
 	bne .L_0815b228
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #80
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1112,4 +1112,4 @@ BattleFx_RunGaia:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0815b248:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

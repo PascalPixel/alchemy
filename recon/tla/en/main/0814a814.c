@@ -6,9 +6,9 @@
 // structure 0.907. ⚓️'s changes: the effect argument read directly; mode
 // 1 takes its palette from the Mars Djinn sheet (directory row 0x150) as
 // mode 7 does, where ☀️'s mode 1 takes the pink burst's; the blitters from
-// Func_081963ec(104, 0x03) (additive) and (188, 0x13) (max), and the
+// BattleFx_LoadBlitter(104, 0x03) (additive) and (188, 0x13) (max), and the
 // tornado's glints through Func_08196404(188, 7, 7, flags, 1) directly;
-// the affine wave's HBlank arm Func_08152474 and the transfer callback at
+// the affine wave's HBlank arm BattleFx_ArmBg2AffineHBlankDma and the transfer callback at
 // 0xc80. In mode 3's glint block the native ands the frame with the mode
 // register, CSE's reuse of the known mode 3 for the constant: the source
 // is frame & 3.
@@ -79,14 +79,14 @@ extern u8 gData_08197498[];  // ☀️ gBattleFx_GlintCellHeights
 extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_08152474(void);                  // ☀️ BattleFx_ArmBg2AffineHBlankDma
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void BattleFx_ArmBg2AffineHBlankDma(void);                  // ☀️ BattleFx_ArmBg2AffineHBlankDma
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_LoadWork
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // ☀️ BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -174,10 +174,10 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   else
     total = effect->count * 8 + 32;
   if (!(mode <= 1 || mode == 3))
-    Scheduler_AddOrUpdateCallback(Func_08152474, CALLBACK_ORDER);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, CALLBACK_ORDER);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != total; frame++) {
@@ -235,10 +235,10 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       // An additive and a max blitter for this target's motes.
-      Func_081963ec(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
+      BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
                                       COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Render_ResetTransformState();
@@ -317,14 +317,14 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   if (!(mode <= 1 || mode == 3))
-    Scheduler_RemoveCallback(Func_08152474);
-  Func_08143bb8();
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  BattleFx_EndCanvasLayer();
 }

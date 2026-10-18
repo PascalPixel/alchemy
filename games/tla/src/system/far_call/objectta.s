@@ -28,11 +28,11 @@ BattleFx_PlayCueAndStartEmitterOnTargetFar:
 	.global Func_080c83d8
 	.thumb_func
 Func_080c83d8:
-	overlay_veneer Func_080cf3b4
+	overlay_veneer EffectRuntime_RunRisingObjectSequence
 	.global Func_080c83e0
 	.thumb_func
 Func_080c83e0:
-	overlay_veneer Func_080cf424
+	overlay_veneer BattleFx_StartEffectObject22
 	.global ObjectEvent_GetObjectFar
 	.thumb_func
 ObjectEvent_GetObjectFar:
@@ -100,15 +100,15 @@ Func_080c8460:
 	.global Func_080c8468
 	.thumb_func
 Func_080c8468:
-	overlay_veneer Func_080d1a18
+	overlay_veneer BattleFx_StartFadeOverlay
 	.global Func_080c8470
 	.thumb_func
 Func_080c8470:
-	overlay_veneer Func_080d1ac4
+	overlay_veneer FadeOverlay_Suspend
 	.global Func_080c8478
 	.thumb_func
 Func_080c8478:
-	overlay_veneer Func_080d1ad4
+	overlay_veneer FadeOverlay_Resume
 	.global Func_080c8480
 	.thumb_func
 Func_080c8480:

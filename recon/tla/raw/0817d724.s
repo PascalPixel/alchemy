@@ -30,7 +30,7 @@ BattleFx_RunRisingDragonEnemy:
 	bl BattleFx_BeginCanvasLayer
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r2, #128
 	str r3, [sp, #64]
@@ -66,7 +66,7 @@ BattleFx_RunRisingDragonEnemy:
 .L_0817d7a0:
 	.4byte 0x00001010
 .L_0817d7a4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817d7a8:
 	str r5, [sp, #52]
 	movs r4, #54
@@ -133,7 +133,7 @@ BattleFx_RunRisingDragonEnemy:
 	movs r1, #4
 	movs r2, #32
 	movs r3, #32
-	bl Func_08178680
+	bl Render_BuildQuadStrip
 	movs r0, #0
 	mov r11, r0
 .L_0817d83e:
@@ -447,7 +447,7 @@ BattleFx_RunRisingDragonEnemy:
 	adds r4, #2
 	cmp r0, #128
 	bne .L_0817da62
-	bl Func_0817d6c4
+	bl BattleFx_BuildRepeatingTilemap
 	ldr r2, .L_0817db80
 	movs r3, #104
 	strh r3, [r2, #6]
@@ -707,7 +707,7 @@ BattleFx_RunRisingDragonEnemy:
 	bne .L_0817dc30
 	movs r3, #0
 	mov r10, r3
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r4, #6
 	adds r5, r0, #0
 	ldr r0, .L_0817dfa0
@@ -764,10 +764,10 @@ BattleFx_RunRisingDragonEnemy:
 	ldr r1, .L_0817dfa0
 	movs r2, #66
 	ldr r0, .L_0817df9c
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r7, r11
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	bl Transform_Pop
 	cmp r7, #133
 	bgt .L_0817dd80
@@ -811,9 +811,9 @@ BattleFx_RunRisingDragonEnemy:
 	ldr r0, .L_0817dfb0
 	ldr r1, .L_0817dfa0
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0817dd80:
 	adds r0, r5, #0
 	bl MemFree
@@ -1154,7 +1154,7 @@ BattleFx_RunRisingDragonEnemy:
 	cmp r8, r0
 	bne .L_0817df82
 .L_0817e020:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	mov r3, r11
 	subs r3, #32
 	cmp r3, #133
@@ -1183,7 +1183,7 @@ BattleFx_RunRisingDragonEnemy:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817e074
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1192,4 +1192,4 @@ BattleFx_RunRisingDragonEnemy:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817e074:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

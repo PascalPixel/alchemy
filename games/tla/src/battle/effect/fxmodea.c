@@ -17,4 +17,6 @@ void BattleFx_RunWarCry(void *object) { Func_0813c5f4(object, 4); }
 // Abilities: Wicked Howl (kind 305).
 void BattleFx_RunWickedHowl(void *object) { Func_0813c5f4(object, 3); }
 
-void Func_0813c5e8(void *object) { Func_0813c5f4(object, 1); }
+// The streak volley in lime (mode 1). UNUSED: no effect table entry
+// points here.
+void BattleFx_RunLimeStreaksAgain(void *object) { Func_0813c5f4(object, 1); }

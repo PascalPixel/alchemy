@@ -146,14 +146,14 @@ BattleFx_RunVengeance:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #40]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r4, [sp, #52]
 	movs r0, #239
 	movs r1, #238
@@ -246,7 +246,7 @@ BattleFx_RunVengeance:
 .L_081813a4:
 	.4byte 0x000000b0
 .L_081813a8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081813ac:
 	ldr r4, .L_0818146c
 	ldr r0, .L_08181470
@@ -922,7 +922,7 @@ BattleFx_RunVengeance:
 	mov lr, r4
 	.2byte 0xf800
 .L_081818a6:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #1
 	movs r1, #4
 	bl Func_08158ce0
@@ -955,14 +955,14 @@ BattleFx_RunVengeance:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	b .L_08181904
 	.2byte 0x0000
 .L_081818fc:
 	.4byte 0x00001088
 .L_08181900:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08181904:
 	pop {r3, r5, r6, r7}
 	mov r8, r3

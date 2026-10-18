@@ -81,14 +81,14 @@ BattleFx_RunOdyssey:
 	bne .L_08190c20
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08190c28
 .L_08190c1c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08190c20:
 	movs r0, #104
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08190c28:
 	movs r5, #192
 	lsls r5, r5, #18
@@ -146,7 +146,7 @@ BattleFx_RunOdyssey:
 	movs r3, #0
 	ldr r1, .L_08190cf8
 	bl Resource_LoadAndDecompress
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	ldr r3, .L_08190cd8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -205,7 +205,7 @@ BattleFx_RunOdyssey:
 	movs r0, #1
 	ldr r1, .L_08191040
 	bl BattleBackground_LoadFar
-	bl Func_0817d6c4
+	bl BattleFx_BuildRepeatingTilemap
 	movs r4, #160
 	lsls r4, r4, #19
 	movs r2, #0
@@ -308,7 +308,7 @@ BattleFx_RunOdyssey:
 	ldrsh r1, [r7, r2]
 	ldr r0, [r7, #8]
 	movs r2, #7
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 .L_08190dea:
 	mov r3, r11
 	cmp r3, #90
@@ -464,12 +464,12 @@ BattleFx_RunOdyssey:
 	bne .L_08190f2c
 	movs r0, #188
 	movs r1, #27
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08190f34
 .L_08190f2c:
 	movs r0, #188
 	movs r1, #31
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08190f34:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -762,12 +762,12 @@ BattleFx_RunOdyssey:
 	bne .L_08191170
 	movs r0, #188
 	movs r1, #27
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08191178
 .L_08191170:
 	movs r0, #188
 	movs r1, #31
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08191178:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -819,7 +819,7 @@ BattleFx_RunOdyssey:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_081914f8
 	ldr r3, [sp, #68]
 	movs r1, #7
@@ -902,9 +902,9 @@ BattleFx_RunOdyssey:
 	ldr r0, .L_08191510
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08191292:
 	mov r2, r8
 	lsls r5, r2, #3
@@ -985,9 +985,9 @@ BattleFx_RunOdyssey:
 	ldr r0, .L_08191510
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08191344:
 	mov r0, r8
 	lsls r3, r0, #4
@@ -1042,9 +1042,9 @@ BattleFx_RunOdyssey:
 	ldr r0, .L_08191510
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_081913c0:
 	ldr r6, [sp, #20]
 	movs r0, #1
@@ -1120,9 +1120,9 @@ BattleFx_RunOdyssey:
 	mov r1, r9
 	movs r2, #3
 	ldr r0, .L_08191524
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	adds r0, r5, #0
 	movs r1, #62
 	movs r2, #0
@@ -1139,8 +1139,8 @@ BattleFx_RunOdyssey:
 	mov r0, r9
 	bl MemFree
 	movs r0, #8
-	bl Func_08158d68
-	bl Func_081434f8
+	bl Camera_ApplyVerticalShake
+	bl ObjectGroup_TickMemberTimers
 	movs r6, #240
 	ldr r3, [sp, #56]
 	lsls r6, r6, #7
@@ -1179,7 +1179,7 @@ BattleFx_RunOdyssey:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #136
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1214,4 +1214,4 @@ BattleFx_RunOdyssey:
 .L_08191528:
 	.4byte gBgScroll
 .L_0819152c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -1,12 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-void Func_081963ec(s32 slot, s32 flags);
+void BattleFx_LoadBlitter(s32 slot, s32 flags);
 
 // The Broken Seal's BattleFx_FetchRectangleBlitters: builds the two usual
 // routines that draw onto the 128x128 canvas, clipped, mirrored when flip is
 // nonzero. out[0] keeps the higher colour index (heap slot 26), out[1] adds
-// the colours (slot 47). Func_081963ec takes each slot's heap offset and the
+// the colours (slot 47). BattleFx_LoadBlitter takes each slot's heap offset and the
 // blitter flags.
 void BattleFx_FetchRectangleBlitters(s32 flip, void **out) {
   /* FAKEMATCH: never read: the native frame keeps 4 bytes below the saved
@@ -24,9 +24,9 @@ void BattleFx_FetchRectangleBlitters(s32 flip, void **out) {
      * and the slot offset set, as the native does (differ 4 without it). */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
-    Func_081963ec(104, flags);
+    BattleFx_LoadBlitter(104, flags);
     out[0] = slots[26];
-    Func_081963ec(188, 3);
+    BattleFx_LoadBlitter(188, 3);
     out[1] = slots[47];
   } else {
     u32 heap = 0xc0;
@@ -36,9 +36,9 @@ void BattleFx_FetchRectangleBlitters(s32 flip, void **out) {
     /* FAKEMATCH: as in the unmirrored branch. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
-    Func_081963ec(104, flags);
+    BattleFx_LoadBlitter(104, flags);
     out[0] = slots[26];
-    Func_081963ec(188, 7);
+    BattleFx_LoadBlitter(188, 7);
     out[1] = slots[47];
   }
 }

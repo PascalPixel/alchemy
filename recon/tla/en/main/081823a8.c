@@ -49,7 +49,7 @@ extern char ResourceId_JupiterDjinnSheet;
 extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_081963ec(s32 slot, s32 blitter);
+void BattleFx_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -70,11 +70,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // Swarms of stars over the targets. Each target gets a swarm, eight frames
 // after the one before: its stars burst from a point that rises out of it,
@@ -103,7 +103,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
-  Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, 7));
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, 7));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 0)
     frames = effect->count * 8 + 38;
@@ -111,7 +111,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     frames = 72;
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != frames; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -250,12 +250,12 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(4, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)Func_08143000);
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

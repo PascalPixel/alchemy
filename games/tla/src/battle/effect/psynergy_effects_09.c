@@ -19,4 +19,5 @@ void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
-void Func_080e9aec(void) { Func_080e9af4(); }
+// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
+void BattleFx_CallEffect24(void) { Func_080e9af4(); }

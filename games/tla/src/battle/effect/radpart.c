@@ -42,7 +42,7 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 // Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 // circle and then close on the current owner, which turns and takes mode 28.
-void Func_080d7c04(s32 id) {
+void Djinn_RunJupiterJoinEffect(s32 id) {
   struct EffectVector position;
   struct MotionObject *object;
   struct BattleFxScene *scene;

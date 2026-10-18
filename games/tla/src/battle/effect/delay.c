@@ -1,6 +1,7 @@
 #include "types.h"
 
-void Func_080dd748(void) {
+// Burns 63 loop iterations and returns; callers pass an argument it ignores.
+void BattleFx_RunBusyWaitDelay(void) {
   s32 i = 63;
 
 loop:

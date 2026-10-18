@@ -8,7 +8,7 @@ static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as the scene layer does: called directly, CSE shares one 0x1000 in r6
-   * across the first call (differ 16); Func_08143000 called directly
+   * across the first call (differ 16); BattleFx_ProcessPendingGraphicsTransfer called directly
    * differs 58. */
   Iwram_CopyWords(destination, source, size);
 }
@@ -37,7 +37,7 @@ void ColorBuffer_Brighten(void *source, s32 amount, void *destination,
 
 // The frame callback that copies the effect canvas to BG character block 1
 // when a transfer is pending, in the way the transfer mode asks for.
-void Func_08143000(void) {
+void BattleFx_ProcessPendingGraphicsTransfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_HeapSlots->battleFxWork[1];
   u32 ime;
@@ -81,7 +81,9 @@ void Func_08143000(void) {
   }
 }
 
-void Func_08143114(void) {
+// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
+// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
+void BattleFx_ProcessPendingStampTransfer(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   u32 ime;
   s32 *pending;
@@ -100,7 +102,7 @@ void Func_08143114(void) {
 
 // The same callback for the 0x7800-byte canvas in the map cell buffer, copied
 // to BG character block 2.
-void Func_08143174(void) {
+void BattleFx_FlushPendingGraphicsTransfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_MapCellBuffer;
   u32 ime;
@@ -129,7 +131,7 @@ void Func_08143174(void) {
       break;
     }
     /* FAKEMATCH: the dead read before the counter is set to 1, as in
-     * Func_08143000. */
+     * BattleFx_ProcessPendingGraphicsTransfer. */
     (void)*(volatile s32 *)&work->framesSinceTransfer;
     work->framesSinceTransfer = 1;
   } else {
@@ -139,7 +141,7 @@ void Func_08143174(void) {
 }
 
 // The same for the canvas in the second effect work block.
-void Func_08143264(void) {
+void BattleFx_ProcessPendingBlock2Transfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source;
   u32 ime;
@@ -169,7 +171,7 @@ void Func_08143264(void) {
       break;
     }
     /* FAKEMATCH: the dead read before the counter is set to 1, as in
-     * Func_08143000. */
+     * BattleFx_ProcessPendingGraphicsTransfer. */
     (void)*(volatile s32 *)&work->framesSinceTransfer;
     work->framesSinceTransfer = 1;
   } else {

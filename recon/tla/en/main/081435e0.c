@@ -1,5 +1,5 @@
 // Near miss, differ 10 of 270: The Broken Seal's BattleFx_BeginCanvasLayer with
-// ⚓️'s Func_0813ba50 call, DISPCNT 0x1741, Func_08143488 at 0x480,
+// ⚓️'s Func_0813ba50 call, DISPCNT 0x1741, Palette_StepFadeTransfer at 0x480,
 // Func_0814355c for the display registers and one more work word cleared. The
 // BLDCNT and WININ rows take BattleFx_OpenCanvasLayer's devices (canvas.c),
 // which match there. Left: the last block, where the native loads gBgScroll's
@@ -36,8 +36,8 @@ static __inline__ s32 ClearWords_(void *destination, s32 size) {
 }
 
 void Func_0813ba50(void);
-void Func_081434d8(void);
-void Func_08143488(void);
+void BattleFx_ClearActorTimers(void);
+void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
@@ -54,7 +54,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   s32 offset;
 
   Func_0813ba50();
-  Func_081434d8();
+  BattleFx_ClearActorTimers();
   display->secondMode = 1;
   WaitFrames(1);
   {
@@ -86,7 +86,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143488, 0x480);
+  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   WaitFrames(1);

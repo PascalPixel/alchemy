@@ -292,7 +292,7 @@ BattleFx_RunEclipse:
 .L_0814178c:
 	.4byte gBgScroll
 .L_08141790:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08141794:
 	.4byte gCameraSceneParameters
 .L_08141798:
@@ -327,7 +327,7 @@ BattleFx_RunEclipse:
 	str r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -893,7 +893,7 @@ BattleFx_RunEclipse:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r2, #0
 	adds r6, r0, #0
 	str r2, [r6, #20]
@@ -981,9 +981,9 @@ BattleFx_RunEclipse:
 	ldr r0, .L_08141e7c
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08141ce6:
 	movs r4, #1
 	add r8, r4
@@ -1052,9 +1052,9 @@ BattleFx_RunEclipse:
 	ldr r0, .L_08141e90
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08141d80:
 	ldr r3, [sp, #84]
 	subs r3, #172
@@ -1104,9 +1104,9 @@ BattleFx_RunEclipse:
 	ldr r0, .L_08141e94
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08141df2:
 	adds r0, r6, #0
 	bl MemFree
@@ -1331,7 +1331,7 @@ BattleFx_RunEclipse:
 	adds r4, #240
 	adds r3, r2, r4
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	ldr r0, [sp, #104]
 	movs r7, #0
 	ldr r3, [r0, #20]
@@ -1612,7 +1612,7 @@ BattleFx_RunEclipse:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_08142304
 	ldr r3, [sp, #116]
 	adds r7, r0, #0
@@ -1715,9 +1715,9 @@ BattleFx_RunEclipse:
 	ldr r0, .L_08142324
 	mov r1, r8
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_081422d6:
 	adds r0, r7, #0
 	bl MemFree
@@ -1768,7 +1768,7 @@ BattleFx_RunEclipse:
 .L_08142330:
 	adds r0, r1, #0
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #96]
 	lsls r1, r1, #7
@@ -2028,7 +2028,7 @@ BattleFx_RunEclipse:
 	cmp r8, r0
 	bne .L_081424f2
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r3, [sp, #84]
 	mov r2, sp
 	movs r1, #0
@@ -2098,9 +2098,9 @@ BattleFx_RunEclipse:
 	ldr r0, .L_08142750
 	ldr r1, .L_08142748
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_081425e4:
 	ldr r7, [sp, #84]
 	cmp r7, #0
@@ -2226,9 +2226,9 @@ BattleFx_RunEclipse:
 	ldr r1, .L_08142748
 	movs r2, #128
 	ldr r0, .L_08142758
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r2, #7
 	strb r7, [r6, #1]
 	strb r2, [r6]
@@ -2374,9 +2374,9 @@ BattleFx_RunEclipse:
 	ldr r0, .L_0814291c
 	ldr r1, .L_0814290c
 	movs r2, #64
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r10
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08142826:
 	movs r1, #1
 	movs r7, #24
@@ -2447,7 +2447,7 @@ BattleFx_RunEclipse:
 	adds r1, #132
 	adds r2, r7, r1
 	str r3, [r2]
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	movs r1, #240
 	ldr r2, .L_08142924
 	ldr r0, [sp, #100]
@@ -2476,7 +2476,7 @@ BattleFx_RunEclipse:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #184
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2508,6 +2508,6 @@ BattleFx_RunEclipse:
 .L_08142934:
 	.4byte Data_02020202
 .L_08142938:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 	.4byte 0x00004770
 	.4byte 0x00004770

@@ -41,7 +41,7 @@ BattleFx_RunShiningStar:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	movs r0, #239
 	str r5, [sp, #32]
@@ -400,7 +400,7 @@ BattleFx_RunShiningStar:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #48]
 	lsls r5, r5, #7
@@ -423,7 +423,7 @@ BattleFx_RunShiningStar:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -439,7 +439,7 @@ BattleFx_RunShiningStar:
 .L_08146de8:
 	.4byte 0x00000134
 .L_08146dec:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08146df0:
 	.4byte gData_0819793c
 .L_08146df4:

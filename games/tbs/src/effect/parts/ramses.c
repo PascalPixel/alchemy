@@ -46,8 +46,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
 
   slots = &gBattleFxWork[1];
   canvas = slots[0];
-  work = slots[-1];
-  sheet = slots[1];
+  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();

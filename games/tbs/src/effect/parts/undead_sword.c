@@ -29,7 +29,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  sprites = slots[2];
+  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   BattleFx_BeginCanvasLayer(0);
   REG_BG2PA = Q_8_8(1); // Normal horizontal scale too
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);

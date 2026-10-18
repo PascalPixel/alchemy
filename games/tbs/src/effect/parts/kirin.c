@@ -48,8 +48,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
 
   cursor = &gBattleFxWork[1];
   canvas = cursor[0];
-  work = cursor[-1];
-  sheet = cursor[1];
+  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
@@ -77,7 +77,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   baseX = 0;
   grow = 0;
   savedX = gBgScroll[1].x;
-  control = cursor[4];
+  control = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
   shift = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   control->busy = 1;

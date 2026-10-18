@@ -247,7 +247,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   // Set up work and canvas; double BG2 horizontally and blend BG1 and BG2
   // over the layers below.
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = slots[2];
+  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   orgX = x;
   x += 40 << 16;
   x /= 2; // Canvas uses half the horizontal width.
@@ -256,10 +256,10 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  maxBlend = slots[7];
+  maxBlend = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  additive = slots[8];
+  additive = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage,

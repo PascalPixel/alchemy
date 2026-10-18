@@ -34,7 +34,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   // cursor points at WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS), the canvas.
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
-  work = cursor[-1]; // [39] the effect work
+  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   graphics = cursor[HEAP_SLOT_BATTLE_SHEET -
                     HEAP_SLOT_BATTLE_CANVAS]; // the particle images
   work->effect = effect;

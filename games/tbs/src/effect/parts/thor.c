@@ -93,9 +93,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
-  work = slots[-5];
-  canvas = slots[-4];
-  sprites = slots[-3];
+  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_BACKGROUND];
+  canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
+  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
   work->effect = effect;
   // Open the canvas and load the pictures. The light fan sheet is loaded
   // twice, to the same place; the second load changes nothing.

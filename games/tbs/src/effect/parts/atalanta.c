@@ -58,14 +58,13 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 row;
   s32 column;
 
-  // The background is work slot 44: the slots before it hold the effect
-  // work (-5), the canvas (-4) and the sheet (-3), the slots after it the
-  // blitters (2 and 3).
+  // The slots are read from the background's: the effect work, the canvas
+  // and the sheet come before it, the blitters after it.
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
-  canvas = slots[-4];
-  work = slots[-5];
-  sheet = slots[-3];
+  canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
+  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_BACKGROUND];
+  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
   scrollX = gBgScroll[1].x;
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0x2000);

@@ -44,7 +44,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   s32 i;
 
   EFFECT_GET_SLOTS(slots, slotCursor, work, canvas);
-  sheet = slots[2];
+  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
 
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -53,10 +53,10 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   canvasCenterX = screenPosition.x / 2;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  blitters[0] = slots[7];
+  blitters[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  blitters[1] = slots[8];
+  blitters[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
                              work->sheet + TITAN_BLADE_SWORD_IMAGE, 1, 1);

@@ -59,17 +59,20 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
 
   slots = &gBattleFxWork[1];
   canvas = slots[0];
-  camera = *(struct BattleCamera **)((u8 *)slots - 112);
-  work = slots[-1];
-  graphics = slots[1];
+  camera = *(
+      struct BattleCamera **)((u8 *)slots +
+                              (HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS) * 4);
+  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
 
   BattleFx_BeginCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)slots[6];
+  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)slots[7];
+  draw[1] = (DrawRectangle)
+      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
 
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
   Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);

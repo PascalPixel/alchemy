@@ -128,7 +128,7 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
 }
 
 // The same for the effects that draw a full-screen picture in
-// gMapCellBuffer instead of the canvas: copies its 0x7800 bytes to VRAM
+// Ram_MapCellBuffer instead of the canvas: copies its 0x7800 bytes to VRAM
 // 0x06008000 the way transferMode says (modes 0 to 3).
 void BattleFx_FlushPendingGraphicsTransfer(void) {
   // This switch stays apart from BattleFx_ProcessPendingGraphicsTransfer's:
@@ -474,7 +474,7 @@ void BattleFx_HideBg1AndRestoreBackdrop(void) {
 // (tiles 0x100 onwards, which at 64 bytes a tile start at character block
 // 1, where the canvas lives), with blank tile 0xff to the right, blended over
 // the rest inside the effect windows. Also clears the canvas. The beam
-// scenes use it; the full-screen gMapCellBuffer effects use
+// scenes use it; the full-screen Ram_MapCellBuffer effects use
 // BattleFx_FlushPendingGraphicsTransfer instead.
 void BattleFx_SetupCanvasTileMap(void) {
   // UB: indexing past gBattleWork reaches the work slots after it.

@@ -14,7 +14,7 @@
 // from gPrism_Counts (crystals and frames: 1 in 110, 4 in 134, 12 in 166); with
 // variant 2 the camera also swings round for the first 104 frames. The crystals
 // are particles[]: z is 1 once shattered, variant is the frame it starts to
-// fall. The shards are 16 per crystal in gMapCellBuffer: z is how fast it
+// fall. The shards are 16 per crystal in PARTICLES: z is how fast it
 // spins.
 void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;

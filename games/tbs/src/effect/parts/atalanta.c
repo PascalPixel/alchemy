@@ -228,6 +228,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             if (trail->x > 0) {
               Transform_Load(STAGED_PARTICLE_MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
+              // The Japanese release draws the blade trails 16 pixels higher;
+              // the later releases move them 16 pixels down.
 #if !TBS_PATCH_1
               {
                 /* FAKEMATCH: the named result pointer is a pseudo of its own,

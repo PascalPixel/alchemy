@@ -244,7 +244,8 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  // Set up work and canvas; double BG2 horizontally and blend BG1 with BG2.
+  // Set up work and canvas; double BG2 horizontally and blend BG1 and BG2
+  // over the layers below.
   EFFECT_GET_SLOTS(heap, cursor, work, canvas);
   sheet = heap[2];
   orgX = x;

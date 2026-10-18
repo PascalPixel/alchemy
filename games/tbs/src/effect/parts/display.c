@@ -55,8 +55,8 @@ void Camera_AdvanceBg2Reference(void) {
 }
 
 // Scheduler callback: restarts the HBlank DMA that copies one WIN0H value per
-// scanline from gMapCellBuffer, so window 0's edges follow the per-line table
-// the effect drew there (a slanted or shaped window).
+// scanline from Ram_MapCellBuffer, so window 0's edges follow the per-line
+// table the effect drew there (a slanted or shaped window).
 void BattleFx_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
   // Stop the preceding scanline transfer before replacing its source.

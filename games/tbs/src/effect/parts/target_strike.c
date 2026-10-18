@@ -25,7 +25,7 @@
 // Several steps consume random numbers, so their order within a frame is part
 // of the effect.
 
-// The strike sparks live after the motes in gMapCellBuffer.
+// The strike sparks live after the motes in PARTICLES.
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
 // gTargetStrike_Records has seven entries for each style.

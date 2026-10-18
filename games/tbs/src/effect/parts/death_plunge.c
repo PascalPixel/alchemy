@@ -477,7 +477,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
 }
 
 // Sets the pixel at (x, y) of the 256x120 8bpp tile picture in
-// gMapCellBuffer (32 tiles across) to colour 2.
+// Ram_MapCellBuffer (32 tiles across) to colour 2.
 #define PLOT_SHATTER_MASK_PIXEL(x, y)                                          \
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
@@ -609,7 +609,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
     piece++;
   }
 
-  // The disc's mask in gMapCellBuffer starts as colour 1 everywhere (the
+  // The disc's mask in Ram_MapCellBuffer starts as colour 1 everywhere (the
   // copy of the screen into it is overwritten at once), and background
   // palettes 6 to 13 turn white.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);

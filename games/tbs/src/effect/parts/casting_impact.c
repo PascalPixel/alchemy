@@ -23,8 +23,8 @@
 //
 // The particles are used twice: work->particles holds the gathering sparks
 // and then, from the impact, 32 scattering sparks (variant is their
-// lifetime); the 64 records at gMapCellBuffer + 0x4000 belong to the impact's
-// own animation.
+// lifetime); the 64 records at Ram_MapCellBuffer + 0x4000 belong to the
+// impact's own animation.
 //
 // A casting impact may hand off to another runner after removing its
 // prelude callbacks and releasing the blitters that runner will replace.
@@ -147,8 +147,8 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
 //
 // The trailing comments give each impact's own animation, drawn over the
 // target after the orb and sparks. Most animations use the 64 particles at
-// gMapCellBuffer + 0x4000, which start at the target; their pictures are in
-// gMapCellBuffer. "Smoke" is puffs of smoke rising from the target; "hands
+// Ram_MapCellBuffer + 0x4000, which start at the target; their pictures are in
+// Ram_MapCellBuffer. "Smoke" is puffs of smoke rising from the target; "hands
 // off" impacts stop after gathering and hand the canvas to another effect.
 enum CastingImpact {
   CASTING_IMPACT_BANE = 0,       // smoke
@@ -194,7 +194,7 @@ enum CastingImpact {
 #define CASTING_DJINNI_CELLS 0x3c56 // the Djinni pictures, in PARTICLES
 #define CASTING_GATHER_FRAMES 32    // frames the sparks gather
 #define CASTING_SPARKS 64           // sparks in work->particles
-// The impact pictures' particles, in gMapCellBuffer after the Djinni.
+// The impact pictures' particles, in Ram_MapCellBuffer after the Djinni.
 #define CASTING_IMPACT_PARTICLES                                               \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 #define CASTING_IMPACT_PARTICLE_COUNT 64
@@ -268,8 +268,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   // Graphics
   //   work->sheet: six 48x72 frames over the acting unit
   //   work->sheet + 0x5100: 20x48 impact orb, packed at half width
-  //   gMapCellBuffer: ability-specific impact graphics
-  //   gMapCellBuffer + 0x3c56: 20x40 Djinni graphics for each element
+  //   Ram_MapCellBuffer: ability-specific impact graphics
+  //   Ram_MapCellBuffer + 0x3c56: 20x40 Djinni graphics for each element
   //------------------------------------------------------------------
   CastingImpact_LoadResource(&ResourceId_ParticleSpritesA, sprites, 0, 0);
   CastingImpact_LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);

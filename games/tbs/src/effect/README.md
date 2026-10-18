@@ -23,10 +23,20 @@ A part opened on its own lacks the macros and declarations `effect.c` gives
 it before its include, so an editor may flag names in it; read and check a
 part as part of `effect.c`.
 
-In the ROM the effect code is one object: 150 KB of compiled code, one small
-block of constants, then the tables. Camelot's other C files are each followed
-by their own data, so the effects were very likely one large file, with the
-tables kept in a separate data file in step with it. `effect.c` stays that one
+In the ROM the effect code is one object of about 150 KB, linked as
+`games/tbs/objects.tsv` lists it:
+
+```
+effect                          .text .data   the code and its small constants
+battle_effect_composite                       the blitter fragments
+effect_table                    .data         the tables
+battle_effect_composite_color                 the colour fragments
+effect_bits                     .data         the blitter's bit operands
+```
+
+Camelot's other C files are each followed by their own data, so the effects
+were very likely one large file, with the tables kept in a separate data file
+in step with it. `effect.c` stays that one
 object; the split into parts is ours, cut where one family of effects ends and
 the next begins, and the order of its `#include` lines is the order of the
 code in the ROM. The tables are not `const`: as `const`, 52 of them change the
@@ -66,6 +76,23 @@ name over the runner and the mode it passes. The largest families:
 | `BattleFx_RunBurstScene` | `burst_scene.c` | a flurry of strikes on the first target |
 | `BattleFx_RunGrowingColumns` | `growth.c` | vines or green pillars growing from the ground |
 | `BattleFx_RunDjinnBeams` | `djinn_beams.c` | a Djinni appears, then columns of light fall on the targets |
+
+## Writing a handler's header
+
+Every handler opens the same way:
+
+```c
+// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
+//
+// What the player sees, frame by frame where the effect is long.
+//
+// effect: the user and targets, if the handler reads more than usual.
+// mode  : for a runner, what each mode changes.
+```
+
+A kind no ability uses says `Abilities: none (kind N).`, and a scene `(scene
+kind N)`. The description does not repeat the kind or the frame count a
+`*_FRAMES` constant already gives.
 
 ## Words used here
 
@@ -116,7 +143,7 @@ per particle.
 
 Two other paths use BG1. `BattleFx_SetupCanvasTileMap` shows the canvas
 on BG1 without stretching it (the beam scenes). Effects that draw a
-full-screen picture into `gMapCellBuffer` show it on BG1 too, flushed by
+full-screen picture into `Ram_MapCellBuffer` show it on BG1 too, flushed by
 `BattleFx_FlushPendingGraphicsTransfer` (the particle streams).
 
 ## Blitters
@@ -166,6 +193,19 @@ corner, centred on its position or standing on it, as each family chooses.
 Spawning stays with each runner: every family draws its own random ranges,
 and the order of those draws is part of the effect.
 
+## Picture format and units
+
+- A picture in a sheet is linear: one byte a pixel, row after row, `width`
+  bytes to a row. The canvas is tiled instead: 16x16 tiles of 8x8 pixels.
+- A pixel value is a level in the palette ramp the effect loads; level 0 is
+  transparent to the transparent blitters, as colour 0 is to the hardware.
+- Sizes given to `Iwram_CopyWords`, `Iwram_ClearWords` and `Iwram_FillWords`
+  are in bytes.
+- Positions and velocities are 16.16 fixed point; BG2's affine scale
+  (`REG_BG2PA`) is 8.8 and its reference point (`REG_BG2X`) 20.8. On the wide
+  canvas, which BG2 stretches to twice its width, an x on the screen is half
+  that x on the canvas.
+
 ## Pictures and colours
 
 An effect loads its pictures by resource id: `ResourceId_FirePillarSheetB` is
@@ -196,11 +236,14 @@ picture is drawn left of its centre line and then mirrored to the right.
 
    A mod changes the bytes on purpose, so it will not compare OK; keep the
    matching tree separate from your mod.
-3. Keep within the limits: the canvas is 128x128 pixels; `work->sheet`
-   holds 0x6980 bytes; the work block has 64 particles and `gMapCellBuffer`
-   about 1,750; there are two blitter slots, and each new picture size or
-   mode needs its own blitter. Steps that draw random numbers keep their
-   order, or every later random value changes.
+3. Keep within the limits: the canvas is 128x128 pixels; `work->sheet` holds
+   0x6980 bytes, and an effect that does not use the scanline table after it
+   (`bg2xLines`) may use up to 0x7080 (`imageStorage`); the work block has 64
+   particles and `PARTICLES` about 1,750; there are two blitter slots, and
+   each new picture size or mode needs its own blitter. An effect's particle
+   counts are named where it sets them up: raise one and its loops follow.
+   Steps that draw random numbers keep their order, or every later random
+   value changes.
 
 ## Parts of effect.c, in ROM order
 

@@ -77,7 +77,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
 
   // Colours 1 to 63: a fiery ramp that brightens to colour 31 and darkens
   // again, written to the background palette and to a copy in
-  // gMapCellBuffer that the frame loop rotates.
+  // Ram_MapCellBuffer that the frame loop rotates.
   pal = (u16 *)Ram_MapCellBuffer;
   for (i = 1; i != 64; i++) {
     if (i > 31)

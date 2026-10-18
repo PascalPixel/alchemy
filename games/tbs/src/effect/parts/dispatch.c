@@ -109,10 +109,10 @@ void BattleFx_RunTableEffect(struct BattleEffectArgument *effect) {
 
 // Scheduler callback: builds window 0's right edge for every scanline and
 // restarts the HBlank DMA that writes it to WIN0H each line.
-// gMapCellBuffer + 0    : the base right edge (u16)
-// gMapCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge in
-//                         (u8 x 128)
-// gMapCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
+// Ram_MapCellBuffer + 0    : the base right edge (u16)
+// Ram_MapCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge in
+//                            (u8 x 128)
+// Ram_MapCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
 // Lines outside 8 to 135 get 0xfff1, a left edge past the right, so nothing
 // of them is in the window.
 void BattleFx_BuildWindowEdgeTable(void) {

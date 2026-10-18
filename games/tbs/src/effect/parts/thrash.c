@@ -56,7 +56,7 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDCNT = 0;
 
   // Each pair of 120x120 frames fills the image storage before the particles.
-  // Frames 1-2 use the work buffer; frames 3-4 use gMapCellBuffer.
+  // Frames 1-2 use the work buffer; frames 3-4 use Ram_MapCellBuffer.
   if (mode == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);

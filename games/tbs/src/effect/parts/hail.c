@@ -18,7 +18,7 @@
 // first target and waves rise along the bottom of the screen; the canvas
 // fades out over the last 16 of its 64 frames. The 64 chips start together
 // and are let go four a frame from frame 4, alternately mirrored; the
-// battle shows the damage on frame 8. The chips live in gMapCellBuffer,
+// battle shows the damage on frame 8. The chips live in PARTICLES,
 // since work holds the waves' sheet.
 //
 // effect: the user and the targets; prelude 1 keeps the djinni circling.

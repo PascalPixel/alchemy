@@ -194,7 +194,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 // - A strike makes every target flash and recoil at once.
 //
 // The spark groups scene keeps its flashes in work->particles, sixteen per
-// burst (only the first twelve are drawn), and its sparks in gMapCellBuffer,
+// burst (only the first twelve are drawn), and its sparks in PARTICLES,
 // one run per burst.
 
 // Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind

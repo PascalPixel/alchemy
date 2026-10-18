@@ -44,7 +44,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The panel in work, the pieces of the burst in gMapCellBuffer.
+  // The panel in work, the pieces of the burst in PARTICLES.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;

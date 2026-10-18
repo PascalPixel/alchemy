@@ -134,7 +134,7 @@
 // edge or a scroll register.
 #define DMA_HBLANK_HALFWORD_PER_LINE 0xa2600001
 
-// The same a word at a time: BG2's affine reference point.
+// The same a word at a time: a BG2X value for each line.
 #define DMA_HBLANK_WORD_PER_LINE 0xa6600001
 
 // DMA control word that fills n words from one fixed source word.
@@ -262,7 +262,8 @@ enum CanvasTransferMode {
 
 // Shows the canvas: the effect display mode, BG2 stretched to twice its width
 // (the 128-pixel canvas shown 256 pixels wide) and blended over everything
-// below with `top` sixteenths of its colour.
+// below: `top` sixteenths of the canvas's colour are added to all of what
+// lies under it, so the canvas brightens what it covers.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
    REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
@@ -272,9 +273,10 @@ enum CanvasTransferMode {
 // right edge (exclusive) on one scanline.
 #define WINDOW_SPAN(left, right) (((left) << 8) | (right))
 
-// A WIN0H value whose left edge is past its right edge: nothing of the line
-// is inside the window.
-#define WINDOW_SPAN_EMPTY WINDOW_SPAN(1, 0)
+// A WIN0H value whose left edge is past its right edge. The hardware then
+// takes the right edge as 240, so the span is not empty in itself; the
+// effects write it only on lines outside window 0's vertical range.
+#define WINDOW_SPAN_INVERTED WINDOW_SPAN(1, 0)
 
 // Scheduler orders (Scheduler_AddOrUpdateCallback sorts the frame's callbacks
 // by them): every per-frame effect callback takes EFFECT_CALLBACK_ORDER, and

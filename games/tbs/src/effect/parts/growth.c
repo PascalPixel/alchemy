@@ -24,13 +24,15 @@ struct DualColumn {
 // Abilities: Growth, Mad Growth, Wild Growth (kind 4).
 //
 // Grow vines from the ground, scattering dust from each root.
-DEFINE_EFFECT_KIND(BattleFx_RunGrowth, BattleFx_RunGrowingColumns, 0)
-
+void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
+  BattleFx_RunGrowingColumns(effect, 0);
+}
 // Abilities: Punji, Punji Trap, Punji Strike (kind 56).
 //
 // Grow green pillars from the ground, scattering dust from each root.
-DEFINE_EFFECT_KIND(BattleFx_RunPunji, BattleFx_RunGrowingColumns, 1)
-
+void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
+  BattleFx_RunGrowingColumns(effect, 1);
+}
 // Vines (mode 0) or green pillars (mode 1) grow one every 4 frames,
 // alternately mirrored, each throwing up dust from its root.
 //

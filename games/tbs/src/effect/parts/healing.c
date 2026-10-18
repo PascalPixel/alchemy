@@ -25,21 +25,24 @@
 // the ice shard's or ice block's colours; the canvas is shown at its own
 // width, centred on the first target. Each entry below picks one mode of
 // BattleFx_RunHealingMotes.
-DEFINE_EFFECT_KIND(BattleFx_RunPly, BattleFx_RunHealingMotes, 0)
-
+void BattleFx_RunPly(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, 0);
+}
 // Abilities: Wish, Wish Well, Pure Wish (kind 23); Regenerate (kind 44);
 // Reflect (kind 45); Spritz (kind 206).
 //
 // Wish (scattering style 1): healing motes tumble in from all around each
 // target.
-DEFINE_EFFECT_KIND(BattleFx_RunWish, BattleFx_RunHealingMotes, 1)
-
+void BattleFx_RunWish(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, 1);
+}
 // Abilities: Cure, Cure Well, Potent Cure, Corn (kind 21); Worms (kind 352).
 //
 // Cure (mode 2): a ring of healing motes below each target closes in on
 // it, in the blast sheet's colours.
-DEFINE_EFFECT_KIND(BattleFx_RunCure, BattleFx_RunHealingMotes, 2)
-
+void BattleFx_RunCure(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, 2);
+}
 // Abilities: Cure Poison, Restore, Antidote, Elixir (kind 24).
 //
 // Cure Poison: sparkles twinkle around each target, four more a frame, and
@@ -56,21 +59,23 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
 // Healing sparkles with scattering style 4, sent out from each target, as
 // Cure Poison plays them for variants other than 0. No effect table entry
 // reaches this one.
-UNUSED DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode4,
-                          BattleFx_RunHealingMotes, 4)
-
+UNUSED void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, 4);
+}
 // Abilities: Tonic (kind 208).
 //
 // Tonic (scattering style 5): sparkles twinkle around each target, turning
 // on two axes, and go out one by one; mode 5 plays as mode 4 does.
-DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
-
+void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, 5);
+}
 // Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
 //
 // Psy Crystal: healing motes gather around each target in the Mars Djinni
 // palette; with a prelude, a Mars Djinni appears first.
-DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
-
+void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, 6);
+}
 #define HEALING_MOTES 512 // motes in PARTICLES
 #define HEALING_SLOTS 64  // particles reserved for each target
 

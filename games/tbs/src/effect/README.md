@@ -53,13 +53,14 @@ ability that reaches it. The handler table, `gBattleFx_EffectHandlers` in
 `effect_table.c`, names each kind's part and first ability:
 
 ```c
-BattleFx_RunQuake, // 1, quake.c: Quake
+[BATTLE_FX_QUAKE - 1] = BattleFx_RunQuake, // quake.c: Quake
 ```
 
 Kinds that no ability uses keep descriptive names. Many kinds are one family
-drawn by a shared runner with a mode, written as
-`DEFINE_EFFECT_KIND(BattleFx_RunCure, BattleFx_RunHealingMotes, 2)`: the move's
-name over the runner and the mode it passes. The largest families:
+drawn by a shared runner with a mode: the kind's handler is a two-line
+function named for the move that calls the runner with its mode, such as
+`BattleFx_RunCure`, which calls `BattleFx_RunHealingMotes(effect, 2)`.
+The largest families:
 
 | Runner | Part | What it draws |
 | --- | --- | --- |

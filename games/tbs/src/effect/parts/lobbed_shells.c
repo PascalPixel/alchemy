@@ -10,38 +10,45 @@
 // Abilities: Mad Spatter (kind 347).
 //
 // Gold shells that burst into shards.
-DEFINE_EFFECT_KIND(BattleFx_RunMadSpatter, BattleFx_RunLobbedShells, 4)
-
+void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 4);
+}
 // Abilities: Decompose (kind 350).
 //
 // Green shells that burst into smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunDecompose, BattleFx_RunLobbedShells, 5)
-
+void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 5);
+}
 // Abilities: Bone Chiller (kind 309).
 //
 // Blue shells that burst into smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunBoneChiller, BattleFx_RunLobbedShells, 0)
-
+void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 0);
+}
 // Abilities: Sticky Goo (kind 315).
 //
 // Shells in the spider web's colours that burst into smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunStickyGoo, BattleFx_RunLobbedShells, 1)
-
+void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 1);
+}
 // Abilities: Poison Ink (kind 340).
 //
 // Shells in Mars Djinn colours that burst into smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunPoisonInk, BattleFx_RunLobbedShells, 6)
-
+void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 6);
+}
 // Abilities: Sticky Poison (kind 322).
 //
 // Lime shells that burst into smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunStickyPoison, BattleFx_RunLobbedShells, 2)
-
+void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 2);
+}
 // Abilities: Rotten Blood (kind 330).
 //
 // Green shells that burst into shards.
-DEFINE_EFFECT_KIND(BattleFx_RunRottenBlood, BattleFx_RunLobbedShells, 3)
-
+void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 3);
+}
 // gLobbedShells_Records has two entries per style; the first is nonzero when
 // the shells burst into shards instead of smoke.
 

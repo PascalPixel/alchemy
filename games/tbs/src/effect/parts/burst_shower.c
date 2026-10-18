@@ -37,51 +37,51 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
 //
 // The user fires a stream of flash bursts at the targets, one a frame,
 // each towards a random point near a target.
-DEFINE_EFFECT_KIND(BattleFx_RunFireBlessing, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_FLASH)
-
+void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
+}
 // Abilities: Water Blessing (kind 401).
 //
 // The user fires a stream of bursts at the targets in the water-spray
 // palette.
-DEFINE_EFFECT_KIND(BattleFx_RunWaterBlessing, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_SPRAY)
-
+void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
+}
 // Abilities: Dark Blessing (kind 403).
 //
 // The user fires a stream of grey bursts at the targets, which turn solid
 // black and stay so.
-DEFINE_EFFECT_KIND(BattleFx_RunDarkBlessing, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_GREY)
-
+void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
+}
 // Abilities: Dark Blessing, Acid Blessing (kind 404).
 //
 // Fire pink bursts from 16 pixels below the normal origin.
-DEFINE_EFFECT_KIND(BattleFx_RunAcidBlessing, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_PINK)
-
+void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
+}
 // Abilities: Storm Blessing (kind 405).
 //
 // Show violet lightning between the user and targets instead of bursts: a
 // bolt flickers through three pictures in front of the user, and the
 // targets flash in turn without being knocked back.
-DEFINE_EFFECT_KIND(BattleFx_RunStormBlessing, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_LIGHTNING)
-
+void BattleFx_RunStormBlessing(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
+}
 // Abilities: Evil Blessing (kind 406).
 //
 // The user fires a stream of demon faces at the targets, from 16 pixels in
 // front of it.
-DEFINE_EFFECT_KIND(BattleFx_RunEvilBlessing, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_FACES)
-
+void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
+}
 // Abilities: Deadly Gas (kind 407).
 //
 // The user fires a stream of Mars-coloured bursts at the targets, from 28
 // pixels in front of it.
-DEFINE_EFFECT_KIND(BattleFx_RunDeadlyGas, BattleFx_RunBurstShower,
-                   BURST_SHOWER_MODE_DJINNI)
-
+void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
+}
 #define BURST_SHOWER_FRAMES 64
 
 // Burst shower: for 48 frames the user fires one burst a frame at a random

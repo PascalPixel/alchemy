@@ -30,23 +30,27 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 // Abilities: Bone Charge (kind 311).
 //
 // Rush the target and scatter sparks in the fire pillar palette.
-DEFINE_EFFECT_KIND(BattleFx_RunBoneCharge, BattleFx_RunRushingStrike, 0)
-
+void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
+  BattleFx_RunRushingStrike(effect, 0);
+}
 // Abilities: Brute Force (kind 314).
 //
 // Rush the target and scatter sparks in the ice-block palette.
-DEFINE_EFFECT_KIND(BattleFx_RunBruteForce, BattleFx_RunRushingStrike, 1)
-
+void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
+  BattleFx_RunRushingStrike(effect, 1);
+}
 // Abilities: Onslaught (kind 326).
 //
 // Rush the target and scatter sparks in the pink-burst palette.
-DEFINE_EFFECT_KIND(BattleFx_RunOnslaught, BattleFx_RunRushingStrike, 2)
-
+void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
+  BattleFx_RunRushingStrike(effect, 2);
+}
 // Abilities: Headbutt (kind 339).
 //
 // Rush the target and scatter sparks in the blast palette.
-DEFINE_EFFECT_KIND(BattleFx_RunHeadbutt, BattleFx_RunRushingStrike, 3)
-
+void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
+  BattleFx_RunRushingStrike(effect, 3);
+}
 #define RUSHING_STRIKE_FRAMES 60
 #define RUSHING_STRIKE_FRAME 10 // the user strikes
 

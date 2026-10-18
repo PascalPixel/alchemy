@@ -11,14 +11,16 @@
 // Abilities: Dragon Driver (kind 385).
 //
 // The rising embers from the user's side, in the LightningBolt colours.
-DEFINE_EFFECT_KIND(BattleFx_RunDragonDriver, BattleFx_RunPaletteParticles, 1)
-
+void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
+  BattleFx_RunPaletteParticles(effect, 1);
+}
 // Abilities: Tiamat (scene kind 7).
 //
 // The rising embers with a
 // formation of eight objects that sweeps in and explodes at the end.
-DEFINE_EFFECT_KIND(BattleFx_RunTiamat, BattleFx_RunPaletteParticles, 0)
-
+void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
+  BattleFx_RunPaletteParticles(effect, 0);
+}
 #define PALETTE_PARTICLES_FRAMES 208
 // Falling streaks, work->particles 24 to 39.
 #define PALETTE_PARTICLES_STREAKS 16

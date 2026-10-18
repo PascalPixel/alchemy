@@ -29,13 +29,15 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 //
 // The user leaps at the first target, four pictures flash across the effect
 // layer, then it fills with one colour as the target is struck.
-DEFINE_EFFECT_KIND(BattleFx_RunQuickStrike, BattleFx_RunFlashingStrike, 1)
-
+void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
+  BattleFx_RunFlashingStrike(effect, 1);
+}
 // Abilities: Vorpal Slash (kind 65).
 //
 // Flash the target using the first pair of reveal-mask resources.
-DEFINE_EFFECT_KIND(BattleFx_RunVorpalSlash, BattleFx_RunFlashingStrike, 2)
-
+void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
+  BattleFx_RunFlashingStrike(effect, 2);
+}
 // Shared runner of Quick Strike (mode 1) and Vorpal Slash (mode 2); no kind
 // uses mode 0. The user steps up to the first target over 16 frames, with a
 // hop in mode 1. Then four 120x120 pictures, chosen by mode, show for four

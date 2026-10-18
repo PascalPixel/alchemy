@@ -12,13 +12,15 @@
 //
 // With a Venus Djinni: beams of light, where motes drift down over each target
 // and a column of light falls on it.
-DEFINE_EFFECT_KIND(BattleFx_RunRevive, BattleFx_RunDjinnBeams, 0)
-
+void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
+  BattleFx_RunDjinnBeams(effect, 0);
+}
 // Abilities: Dew (kind 209).
 //
 // With a Mercury Djinni: the same beams of light as Revive.
-DEFINE_EFFECT_KIND(BattleFx_RunDew, BattleFx_RunDjinnBeams, 1)
-
+void BattleFx_RunDew(struct BattleEffectArgument *effect) {
+  BattleFx_RunDjinnBeams(effect, 1);
+}
 // When effect->prelude is 1, a Djinni appears, sways and then rises out of
 // sight. Over each target in turn, 16 frames apart, eight motes drift down,
 // and from 72 frames after its turn starts a column of light falls on it

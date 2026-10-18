@@ -202,14 +202,16 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 //
 // Bursts at (60, 48), the canvas behind the battle's
 // first layer (priority 1).
-DEFINE_EFFECT_KIND(BattleFx_RunNova, BattleFx_RunSparkGroups, 0)
-
+void BattleFx_RunNova(struct BattleEffectArgument *effect) {
+  BattleFx_RunSparkGroups(effect, 0);
+}
 // Abilities: Dynamite (kind 338).
 //
 // Orange bursts at (60, 64), the canvas in front
 // (priority 0).
-DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
-
+void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
+  BattleFx_RunSparkGroups(effect, 1);
+}
 #define SPARK_GROUPS_FLASHES 16     // flashes kept per burst
 #define SPARK_GROUPS_SPACING 8      // frames between bursts
 #define SPARK_GROUPS_RING 12        // of which drawn as the ring

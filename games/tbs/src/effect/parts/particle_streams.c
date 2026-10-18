@@ -39,15 +39,17 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 //
 // A formation rises out of a dissolving starfield and bursts into embers and
 // flashes: the particle stream in mode 0, with one spawned object rising.
-DEFINE_EFFECT_KIND(BattleFx_RunMeteor, BattleFx_RunParticleStreams, 0)
-
+void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
+  BattleFx_RunParticleStreams(effect, 0);
+}
 // Abilities: Outer Space (kind 384).
 //
 // The user leaps up, and two objects rise out of a dissolving starfield and
 // burst into embers and flashes: the particle stream in mode 1, in the
 // lightning bolt's colours.
-DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
-
+void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
+  BattleFx_RunParticleStreams(effect, 1);
+}
 #define PARTICLE_STREAMS_EMBERS (&PARTICLES[128])
 
 #define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise

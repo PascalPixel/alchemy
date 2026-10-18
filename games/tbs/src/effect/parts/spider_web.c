@@ -10,13 +10,15 @@
 // Abilities: Poison Beat (kind 382).
 //
 // A lime swipe that knocks the target back.
-DEFINE_EFFECT_KIND(BattleFx_RunPoisonBeat, BattleFx_RunSwirlSwipe, 0)
-
+void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
+  BattleFx_RunSwirlSwipe(effect, 0);
+}
 // Abilities: Spinning Beat (kind 383).
 //
 // A magenta swipe that throws the target into the air.
-DEFINE_EFFECT_KIND(BattleFx_RunSpinningBeat, BattleFx_RunSwirlSwipe, 1)
-
+void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
+  BattleFx_RunSwirlSwipe(effect, 1);
+}
 // A swirling swipe across the first target, six images four frames each,
 // from the user's side: the first four from the swirl sheet, the last two
 // from the tail sheet. The swipe lands on frame 8.

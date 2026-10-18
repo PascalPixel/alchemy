@@ -36,33 +36,39 @@ UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
 // Abilities: Delude, Confuse, Mist (kind 33).
 //
 // Cyan smoke that rises.
-DEFINE_EFFECT_KIND(BattleFx_RunDelude, BattleFx_RunTargetMotes, 2)
-
+void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 2);
+}
 // Abilities: Paralyze (kind 36).
 //
 // Rising smoke with glints.
-DEFINE_EFFECT_KIND(BattleFx_RunParalyze, BattleFx_RunTargetMotes, 3)
-
+void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 3);
+}
 // Abilities: Heartrender (kind 346); kind 35 is used by no ability.
 //
 // Hearts.
-DEFINE_EFFECT_KIND(BattleFx_RunHeartrender, BattleFx_RunTargetMotes, 4)
-
+void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 4);
+}
 // Abilities: Mystic Flame (kind 312).
 //
 // Glowing orbs.
-DEFINE_EFFECT_KIND(BattleFx_RunMysticFlame, BattleFx_RunTargetMotes, 5)
-
+void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 5);
+}
 // Abilities: Demon Fire (kind 64).
 //
 // Glowing orbs in Mars Djinn colours, and the user strikes.
-DEFINE_EFFECT_KIND(BattleFx_RunDemonFire, BattleFx_RunTargetMotes, 7)
-
+void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 7);
+}
 // Abilities: Drown (kind 66).
 //
 // Vortex motes.
-DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)
-
+void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, 6);
+}
 // Styles whose motes start in a wide ball and last 64 frames more.
 #define TARGET_MOTES_START_WIDE(mode)                                          \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)

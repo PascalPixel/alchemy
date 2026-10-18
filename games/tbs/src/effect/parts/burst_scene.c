@@ -22,23 +22,27 @@ void BattleFx_RunGust(struct BattleEffectArgument *effect) {
 // Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
 //
 // Play the first flurry style selected by the effect table.
-DEFINE_EFFECT_KIND(BattleFx_RunBearClaw, BattleFx_RunBurstScene, 0)
-
+void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstScene(effect, 0);
+}
 // Abilities: Ransack (kind 321); Mad Dash (kind 343).
 //
 // Use the same first flurry style for this alternate effect-table entry.
-DEFINE_EFFECT_KIND(BattleFx_RunRansack, BattleFx_RunBurstScene, 0)
-
+void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstScene(effect, 0);
+}
 // Abilities: Bacteria Rush (kind 328).
 //
 // Play the second flurry style selected by the effect table.
-DEFINE_EFFECT_KIND(BattleFx_RunBacteriaRush, BattleFx_RunBurstScene, 1)
-
+void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstScene(effect, 1);
+}
 // Abilities: Freebite Rush (kind 334).
 //
 // Play the third flurry style selected by the effect table.
-DEFINE_EFFECT_KIND(BattleFx_RunFreebiteRush, BattleFx_RunBurstScene, 2)
-
+void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
+  BattleFx_RunBurstScene(effect, 2);
+}
 // Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
 //
 // Choose flurry styles 3, 4 or 5 from the effect variant.

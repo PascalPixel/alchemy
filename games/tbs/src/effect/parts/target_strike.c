@@ -64,76 +64,77 @@ enum {
 // Abilities: Numbing Sting (kind 313).
 //
 // One slash with glints, lightning colours.
-DEFINE_EFFECT_KIND(BattleFx_RunNumbingSting, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH)
-
+void BattleFx_RunNumbingSting(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
+}
 // Abilities: Cannibal Fang (kind 316).
 //
 // Three ember columns that drain the target into the user.
-DEFINE_EFFECT_KIND(BattleFx_RunCannibalFang, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS)
-
+void BattleFx_RunCannibalFang(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
+}
 // Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
 //
 // One lime column with smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunPoisonousBite, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN)
-
+void BattleFx_RunPoisonousBite(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
+}
 // Abilities: Rabid Fang (kind 336).
 //
 // One column with smoke, Mars Djinn colours.
-DEFINE_EFFECT_KIND(BattleFx_RunRabidFang, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN)
-
+void BattleFx_RunRabidFang(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
+}
 // Abilities: Electric Bite (kind 324).
 //
 // Three lightning columns with glints.
-DEFINE_EFFECT_KIND(BattleFx_RunElectricBite, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS)
-
+void BattleFx_RunElectricBite(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
+}
 // Abilities: Poison Tail (kind 325).
 //
 // One lime slash with smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunPoisonTail, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH)
-
+void BattleFx_RunPoisonTail(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
+}
 // Abilities: Vampiric Fang (kind 327).
 //
 // Three columns that drain the target, Mars Djinn colours.
-DEFINE_EFFECT_KIND(BattleFx_RunVampiricFang, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS)
-
+void BattleFx_RunVampiricFang(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
+}
 // Abilities: Double Fang (kind 332).
 //
 // Two blue columns with sparks.
-DEFINE_EFFECT_KIND(BattleFx_RunDoubleFang, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS)
-
+void BattleFx_RunDoubleFang(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
+}
 // Abilities: Mortal Blow (kind 333).
 //
 // One heavy slash with sparks, Mars Djinn colours.
-DEFINE_EFFECT_KIND(BattleFx_RunMortalBlow, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
-
+void BattleFx_RunMortalBlow(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
+}
 // Abilities: Twin Beaks (kind 335).
 //
 // Two slashes with sparks, lightning colours.
-DEFINE_EFFECT_KIND(BattleFx_RunTwinBeaks, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES)
-
+void BattleFx_RunTwinBeaks(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
+}
 // Abilities: Acid Bite (kind 337).
 //
 // Three pink columns with smoke.
-DEFINE_EFFECT_KIND(BattleFx_RunAcidBite, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS)
-
+void BattleFx_RunAcidBite(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
+}
 // Abilities: Drain Fang (kind 386).
 //
 // Three additive columns that drain the target with large motes, Mars Djinn
 // colours.
-DEFINE_EFFECT_KIND(BattleFx_RunDrainFang, BattleFx_RunTargetStrike,
-                   TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS)
-
+void BattleFx_RunDrainFang(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect,
+                           TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS);
+}
 // Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
 // column of light, with the extras its flags choose, and lets the battle
 // show the damage on the hits.

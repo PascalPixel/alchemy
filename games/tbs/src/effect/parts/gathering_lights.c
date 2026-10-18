@@ -10,20 +10,23 @@
 //
 // Sixteen pink lights burst out of the user and are pulled into each target,
 // with the heavy impact sound.
-DEFINE_EFFECT_KIND(BattleFx_RunDemonNight, BattleFx_RunGatheringLights, 0)
-
+void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
+  BattleFx_RunGatheringLights(effect, 0);
+}
 // Abilities: Rumble (kind 308).
 //
 // Eight lights in Mars Djinn colours burst out of the user and are pulled into
 // each target.
-DEFINE_EFFECT_KIND(BattleFx_RunRumble, BattleFx_RunGatheringLights, 1)
-
+void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
+  BattleFx_RunGatheringLights(effect, 1);
+}
 // Abilities: Haunting (kind 351).
 //
 // Twelve lights in Mercury Djinn colours burst out of the user and are pulled
 // into each target.
-DEFINE_EFFECT_KIND(BattleFx_RunHaunting, BattleFx_RunGatheringLights, 2)
-
+void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
+  BattleFx_RunGatheringLights(effect, 2);
+}
 #define GATHERING_LIGHTS_SLOTS 128 // particles reserved for each target
 
 // For each target in turn, 20 frames apart, lights burst out of the user;

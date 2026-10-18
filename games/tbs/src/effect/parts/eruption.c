@@ -6,14 +6,16 @@
 // A fountain of grey motes and puffs of smoke bursts up beside the targets
 // and falls back, flashing each target. It always uses the second
 // count-table row.
-DEFINE_EFFECT_KIND(BattleFx_RunSmokeBomb, BattleFx_RunEruption, 1)
-
+void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
+  BattleFx_RunEruption(effect, 1);
+}
 // Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
 //
 // A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 // targets and falls back, flashing each target and making it recoil.
-DEFINE_EFFECT_KIND(BattleFx_RunBlast, BattleFx_RunEruption, 0)
-
+void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
+  BattleFx_RunEruption(effect, 0);
+}
 // The columns of a gEruption_Counts row.
 enum {
   ERUPTION_FIELD_MOTES, // motes thrown

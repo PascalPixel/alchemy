@@ -13,34 +13,40 @@
 // a picture (a dagger, a shield, a streak or a wisp) plays over it.
 // PARTICLES holds the gathering flares, 64 for each target.
 // One entry for each mode.
-DEFINE_EFFECT_KIND(BattleFx_RunImpact, BattleFx_RunStatBoost, 0)
-
+void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatBoost(effect, 0);
+}
 // Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
 //
 // Gather stat-boost light and display a shield in Mars colours.
-DEFINE_EFFECT_KIND(BattleFx_RunGuard, BattleFx_RunStatBoost, 1)
-
+void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatBoost(effect, 1);
+}
 // Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
 // 215).
 //
 // Gather stat-boost light and display a shield in Jupiter colours.
-DEFINE_EFFECT_KIND(BattleFx_RunWard, BattleFx_RunStatBoost, 2)
-
+void BattleFx_RunWard(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatBoost(effect, 2);
+}
 // Abilities: Granite (kind 200).
 //
 // Gather stat-boost light and display a violet streak in Venus colours.
-DEFINE_EFFECT_KIND(BattleFx_RunGranite, BattleFx_RunStatBoost, 3)
-
+void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatBoost(effect, 3);
+}
 // Abilities: Flash (kind 213).
 //
 // Gather stat-boost light and display a violet streak in Mars colours.
-DEFINE_EFFECT_KIND(BattleFx_RunFlash, BattleFx_RunStatBoost, 5)
-
+void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatBoost(effect, 5);
+}
 // Abilities: Zephyr (kind 216).
 //
 // Gather stat-boost light and display a wisp without replacing its palette.
-DEFINE_EFFECT_KIND(BattleFx_RunZephyr, BattleFx_RunStatBoost, 4)
-
+void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatBoost(effect, 4);
+}
 // Where each picture sits in the sheet.
 enum StatBoostSheet {
   STAT_BOOST_FLARES = 0x0000,  // flares (ParticleSpritesD)
@@ -386,25 +392,29 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // Abilities: Dull, Blunt (kind 27).
 //
 // Break the dagger picture into shards that fade through darker copies.
-DEFINE_EFFECT_KIND(BattleFx_RunDull, BattleFx_RunStatReduction, 0)
-
+void BattleFx_RunDull(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatReduction(effect, 0);
+}
 // Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
 //
 // A shield appears over each target and breaks into shards that fade
 // through darker copies, in the glow orb's colours (style 1).
-DEFINE_EFFECT_KIND(BattleFx_RunImpair, BattleFx_RunStatReduction, 1)
-
+void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatReduction(effect, 1);
+}
 // Abilities: Weaken, Enfeeble (kind 31).
 //
 // A shield appears over each target and breaks into fading shards, in the
 // pink burst's colours (style 2).
-DEFINE_EFFECT_KIND(BattleFx_RunWeaken, BattleFx_RunStatReduction, 2)
-
+void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatReduction(effect, 2);
+}
 // Break the shield picture into fading shards with style 3, which plays as
 // style 2 does. No effect table entry reaches it.
-UNUSED DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3,
-                          BattleFx_RunStatReduction, 3)
-
+UNUSED void
+BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatReduction(effect, 3);
+}
 // The shard picture in the sheet, followed by seven copies of it, each
 // with its colour levels capped 7 lower than the one before.
 #define STAT_REDUCTION_SHARD_CELLS 0x2580

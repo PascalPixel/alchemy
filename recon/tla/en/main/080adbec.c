@@ -1,40 +1,39 @@
-#include "scene.h"
-#include "inventory.h"
-#include "game_flags.h"
+// Near miss, differ 2 of 75 (one reordered pair), 2026-10-18:
+// GameFlag_RefreshLureCap, ported from The Broken Seal's function of the same
+// name (games/tbs/src/game/game.c). Remaining: after Item_GetDirect the
+// native restores the spilled slot and count (ldr r2, ldr r1) before it
+// copies the item (adds r5, r0, #0); this copies first.
 #include "types.h"
-#include "resource.h"
 #include "party_state.h"
+#include "owner_state.h"
+#include "item.h"
 
-struct ItemUses {
-  u8 unk00[24];
-  struct {
-    u8 kind;
-    u8 unk01[3];
-  } use[4];
-};
-
+void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-s32 GameFlag_SetBit(s32 flag);
 
 void GameFlag_RefreshLureCap(void) {
-  s32 count;
-  s32 n;
+  s32 partySize;
+  s32 partyIndex;
 
   GameFlag_ClearBit(0x167);
-  count = Party_CountActiveOwners();
-  for (n = 0; n < count; n++) {
-    struct OwnerInventoryState *owner;
-    s32 i;
+  partySize = Party_CountActiveOwners();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    struct OwnerInventoryState *unit;
+    s32 inventorySlot;
 
-    owner = UnitGet(gPartyState.activeOwners[n]);
-    for (i = 0; i < 15; i++) {
-      if (owner->inventory[i] & 0x200) {
-        struct ItemUses *uses;
-        s32 j;
+    unit = UnitGet(gPartyState.activeOwners[partyIndex]);
+    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
+      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
+        struct ItemEffect *effect;
+        s32 effectIndex;
 
-        uses = (struct ItemUses *)Item_GetDirect(owner->inventory[i]);
-        for (j = 0; j < 4; j++) {
-          if (uses->use[j].kind == 27) {
+        effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
+        for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+          u8 effectKind;
+
+          effectKind = effect->kind;
+          effect++;
+          if (effectKind == 27) {
             GameFlag_SetBit(0x167);
           }
         }

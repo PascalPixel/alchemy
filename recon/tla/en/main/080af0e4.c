@@ -1,35 +1,31 @@
-#include "types.h"
+// Near miss, differ 6 of 43 (two reordered pairs), 2026-10-18: empties an
+// inventory slot outright, closes the inventory up and recalculates the unit;
+// returns 2, as Inventory_Remove does for a last item, with The Broken Seal's
+// compaction. Remaining: the native loads both pooled halfword zeros earlier
+// (ldr r3 before adds r6, r0 and lsls r5; ldr r2 before adds r0, r3, r6).
+// A do-while tail behind an empty asm on the zero lays the loops out
+// otherwise (differ 42).
+#include "inventory.h"
 
-struct OwnerItems {
-  u8 unk00[216];
-  s16 items[15];
-};
-
-struct OwnerItems *UnitGet(s32 owner);
 void UnitCalc(s32 owner);
 
-s32 Func_080af0e4(s32 owner, s32 index) {
-  struct OwnerItems *state = UnitGet(owner);
-  s16 *items = state->items;
-  s16 *src;
-  s16 *dst;
-  s32 count;
-  s32 i;
+static inline void Inventory_CompactSlots(s16 *inventory) {
+  s32 usedSlots = 0;
+  s32 slot;
 
-  state->items[index] = 0;
-  src = items;
-  count = 0;
-  dst = items;
-  for (i = 0; i < 15; i++) {
-    s16 item = *src++;
-
-    if (item != 0) {
-      *dst++ = item;
-      count++;
-    }
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if (inventory[slot] != 0)
+      inventory[usedSlots++] = inventory[slot];
   }
-  for (i = count; i < 15; i++)
-    items[i] = 0;
+  for (; usedSlots < INVENTORY_SLOTS; usedSlots++)
+    inventory[usedSlots] = 0;
+}
+
+s32 Func_080af0e4(s32 owner, s32 slot) {
+  struct OwnerInventoryState *unit = UnitGet(owner);
+
+  unit->inventory[slot] = 0;
+  Inventory_CompactSlots((s16 *)unit->inventory);
   UnitCalc(owner);
   return 2;
 }

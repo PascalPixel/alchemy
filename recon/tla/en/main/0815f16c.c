@@ -2,8 +2,8 @@
 // (draft 7672), control flow and calls as the listing except one shared
 // FetchRectangleBlitters tail: jump2 merges kind 44 and 61 into later copies
 // (86 and 88) there but into kind 61 here, because the copies load action
-// through different registers (an allocation artifact, 516 vs 515 calls). The
-// dart and spark cell tables are read as writable, as the listing reloads them.
+// through different registers (an allocation artifact, 516 vs 515 calls). Seven
+// of its data tables are read as writable, as the listing reloads them.
 #include "mem.h"
 #include "types.h"
 

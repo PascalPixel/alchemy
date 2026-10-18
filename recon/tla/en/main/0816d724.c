@@ -81,7 +81,7 @@ void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void Func_081180e8(s32 phase);           // BattleEventRuntime_BeginPhaseFar
 s32 Battle_GetObjectTableValueFar(s32 actor);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *position);
+void Transform_SetLookAt(s32 *eye, s32 *position);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 actor, struct EffectPosition *position);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -256,7 +256,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
       userHalfHeight = Battle_GetObjectTableValueFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       mote = &work->particles[SPARKS * 2];
       for (i = 0; i != MOTES; i++, mote++) {
         if (mote->variant >= 0) {

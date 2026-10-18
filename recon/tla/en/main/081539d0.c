@@ -97,7 +97,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
-        Graphics_SaveTransferWorkOnce();
+        Transform_Push();
         switch (i & 3) {
         case 0:
           SceneTransform_ApplyYaw(frame * (i + 32) * 8);
@@ -115,7 +115,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
         }
         EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
         pos.x >>= 1;
-        Graphics_RestoreTransferWork();
+        Transform_Pop();
 
         // Depth 250-634 gives sizes 9 down to 3.
         if (pos.depth < 250)

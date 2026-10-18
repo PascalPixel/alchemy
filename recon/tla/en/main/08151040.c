@@ -142,7 +142,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
       Func_081180e8(133);
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     // The embers in flight, two more each frame.
     for (i = 0; i != Data_08198300[effect->variant]; i++) {

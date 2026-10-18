@@ -10,7 +10,7 @@
 // - the targets come from work->effect, which the dispatcher stored;
 // - after the giant, object palette 0's sixteen colors are copied into
 // background palette 5 by DMA and color 0x5e takes object color 0xf4
-// (Func_0814cca8, then PaletteDma_LoadBlock);
+// (Func_0814cca8, then Palette_LoadBasicObjColors);
 // - blitters through Func_081963ec, callbacks ordered 0xc80, the backdrop
 // ResourceId_VioletSkyBackdrop, the skip on gInput.repeat.
 // Resources not yet named in directory.s, by row and asset: 0xa6
@@ -65,10 +65,10 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
-void Func_08163c2c(s32 layer, s32 value);  // BattleFx_WipeCanvas
+void Func_08163c2c(s32 layer, s32 value);  // Func_08163c2c
 void Func_0814cc4c(struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *position,
                                        const s32 *scale, s32 mode);
@@ -236,7 +236,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
       Func_080150e4(Random16() & 0xffff);
       SceneTransform_ApplyPitch(Random16() & 0xffff);
       SceneTransform_ApplyYaw(Random16() & 0xffff);
-      Graphics_SaveTransferWork(MATRICES + (i * 24 + j) * 48);
+      Transform_Store(MATRICES + (i * 24 + j) * 48);
     }
   }
   work->transferMode = 2;
@@ -334,7 +334,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             struct EffectStep *trail = &TRAILS[i * 24 + j];
 
             if (trail->x > 0) {
-              Graphics_LoadTransferWork(MATRICES + (i * 24 + j) * 48);
+              Transform_Load(MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
               EffectPosition_ApplyBaseAndYOffset(point, &screen);
               screen.x = (screen.x >> 1) + x;
@@ -357,7 +357,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   presentation->active = 0;
   gBgScroll[1].x = scrollX;
   Func_0814cca8();
-  PaletteDma_LoadBlock();
+  Palette_LoadBasicObjColors();
   Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
           (volatile u32 *)0x040000d4);
   BG_PLTT[94] = OBJ_PLTT[244];

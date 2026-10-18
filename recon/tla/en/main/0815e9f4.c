@@ -91,14 +91,12 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ApplyStepAndYOffset(s32 actor,
                                         struct EffectPosition *position);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
 void Func_080150e4(s32 angle);
-void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
+void Transform_SetLookAt(void *camera, void *eye);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 // Sets up the canvas tile map on BG1.
@@ -151,8 +149,8 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     big = 0;
 
   // Setup, one step of the view's swing between each load.
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Func_08143d80();
   REG_BG1CNT = 0x1f80;
@@ -171,13 +169,13 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet,
                              Ram_MapCellBuffer, 1, 1);
@@ -185,12 +183,12 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   if (effect->actor > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
             (void *)BG_PLTT, 0x84000020, REG_DMA3);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   work->transferMode = 1;
   work->transferValue = 0;
@@ -231,7 +229,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     Audio_PlayCue(212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
-                                                  effect->unk000c, 130);
+                                                  effect->firstTarget, 130);
       // Spark i starts at frame i / 4, 16 to 79 pixels out, and moves in
       // 4 pixels a frame until it reaches the caster.
       for (i = 0; i != SPARK_COUNT; i++) {
@@ -325,7 +323,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     else if (frame <= 7)
       draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {

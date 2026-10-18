@@ -529,7 +529,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = gBlitter;
     Func_081963ec(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_ADDITIVE, CLIP));

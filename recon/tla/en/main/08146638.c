@@ -56,7 +56,7 @@ void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPosition(void *position);
-void Graphics_RestoreTransferWork(void);
+void Transform_Pop(void);
 
 // The camera's heading, as the camera work holds it.
 struct CameraView {
@@ -175,7 +175,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
         for (j = 0; j != RING_POINTS; j++) {
           s32 depth;
 
-          Graphics_SaveTransferWorkOnce();
+          Transform_Push();
           Func_080150e4((frame - start) << 10);
           SceneTransform_ApplyYaw(0x4000);
           scale[0] = ((frame - start) << 12) + 0x1000;
@@ -196,7 +196,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           ring[i * 10 + j].velocityY = pos.y + base.y;
           ring[i * 10 + j].velocityX = pos.x;
           ring[i * 10 + j].velocityY = pos.y;
-          Graphics_RestoreTransferWork();
+          Transform_Pop();
         }
         if (nearest <= FAR_DEPTH) {
           for (j = 0; j != RING_POINTS; j++) {

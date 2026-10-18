@@ -150,7 +150,7 @@ void Func_081434f8(void);
 void WaitFrames(s32 frames);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
                                                  struct EffectPosition *pos);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -485,7 +485,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
       // The shots.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       index = 0;
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *target =

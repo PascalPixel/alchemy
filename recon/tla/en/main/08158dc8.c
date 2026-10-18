@@ -33,7 +33,7 @@ void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleFx_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_08163c2c(s32 page, s32 value);        // BattleFx_WipeCanvas
+void Func_08163c2c(s32 page, s32 value);        // Func_08163c2c
 void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
                    s32 mode);     // BattleFx_LoadWork, five arguments

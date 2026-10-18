@@ -204,7 +204,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     }
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, (s32 *)((u8 *)camera + 12));
+    Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
 
     if (frame == 16)
       Audio_PlayCue(141);

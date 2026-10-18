@@ -200,7 +200,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     struct EffectStep *burst;
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
 
     // The shots: each starts four frames after the last, flies under
     // gravity and turns through ten pictures; at the ground it bursts.

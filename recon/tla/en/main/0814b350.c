@@ -62,7 +62,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Graphics_RestoreTransferWork(void);
+void Transform_Pop(void);
 void Audio_PlayCue(s32 cue);
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
@@ -138,7 +138,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
     if (frame == 80)
       Audio_PlayCue(142);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
       position[1] += delta[1];
@@ -160,7 +160,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       if (frame > i && spark->variant == 0) {
         s32 size;
 
-        Graphics_SaveTransferWorkOnce();
+        Transform_Push();
         switch (i & 3) {
         case 0:
           SceneTransform_ApplyYaw(frame * (i * 32 + 256));
@@ -178,7 +178,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
         }
         EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &screen);
         screen.x >>= 1;
-        Graphics_RestoreTransferWork();
+        Transform_Pop();
         if (screen.depth < 250)
           screen.depth = 250;
         if (screen.depth > 634)
@@ -229,7 +229,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
     // The Djinn sways over the targets, then rises away for the last 32
     // frames.
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= effect->count * 8 + 40)
       target[1] += 0x40000;
     point[0] = target[0];
@@ -247,7 +247,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       s32 start = member * 8;
 
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       position[0] = object->x;
       position[1] = 160 << 14;
       position[2] = object->z;

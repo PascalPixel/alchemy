@@ -156,7 +156,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(133);
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.

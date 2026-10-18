@@ -9,8 +9,9 @@
 // Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
 // each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
 // do); battle work byte 0x867 set; the object grid computed from i (no
-// ObjectX/Y tables); PaletteDma_LoadBlock and a Dma_Set of 16 palette words
-// after the first act; blitter modes 3 and 19 for The Broken Seal's 3 and 2.
+// ObjectX/Y tables); Palette_LoadBasicObjColors and a Dma_Set of 16 palette
+// words after the first act; blitter modes 3 and 19 for The Broken Seal's 3
+// and 2.
 
 // Left: allocation (spill slots, and the tile pointer the native holds in r8
 // from the start) and order.
@@ -102,7 +103,7 @@ extern u16 gData_08197410[];       // ☀️ gBattleFx_MoteCellOffsets
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value);        // BattleFx_WipeCanvas
+void Func_08163c2c(s32 mode, s32 value);        // Func_08163c2c
 void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
                                                 // 7, 7, flags, mode)
 void Func_0814cc4c(
@@ -120,7 +121,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
 void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
 void BattleFx_BuildWindowEdgeTable(void);
@@ -527,7 +528,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   transition[4] = 0;
   Runtime_SetIrqHandler(2, 0, 0);
   Func_0814cca8();
-  PaletteDma_LoadBlock();
+  Palette_LoadBasicObjColors();
   Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)0x050000bc = *(u16 *)0x050001e8;

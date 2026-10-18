@@ -1,4 +1,4 @@
-// Draft, differ 8 of 170: The Broken Seal's BattleFx_WipeCanvas with
+// Draft, differ 8 of 170: The Broken Seal's Func_08163c2c with
 // The Lost Age's third mode (3 wipes nothing) and its transfer flag at
 // 0x78e8 (BattleFxWork). The one-pass block around the canvas read fixes
 // the prologue's value store and the delay array's address (add r2, sp,
@@ -17,7 +17,7 @@
 #include "system.h"
 #include "battle_fx_work.h"
 
-void BattleFx_WipeCanvas(s32 mode, s32 value) {
+void Func_08163c2c(s32 mode, s32 value) {
   struct BattleFxWork *work;
   u8 *canvas;
   u8 delay[128];

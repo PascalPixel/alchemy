@@ -242,7 +242,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                     BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
       point[1] = 160 << 13;
       point[2] = object->z;

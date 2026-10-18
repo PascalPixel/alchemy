@@ -123,7 +123,7 @@ void Func_080e8db0(void) {
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ShakeTiles),
                         work->picture);
   tiles = Resource_FindFreeEntry();
-  tile = VramBlock_LoadCached(tiles, 64, work->picture);
+  tile = VramCache_Load(tiles, 64, work->picture);
   for (i = 0; i < SHAKE_SPRITE_COUNT; i++) {
     Func_080eaf98(&work->sprites[i], 4, 4, 0, tile + (i & 1));
     work->sprites[i].oam.palette256 = 0;

@@ -98,10 +98,8 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
+void Transform_SetLookAt(void *camera, void *eye);
 // Closes the canvas layer.
 void Func_08143bb8(void);
 // Copies the canvas to VRAM when a transfer is pending.
@@ -211,7 +209,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
     }
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     for (i = 0; i != ROCK_COUNT; i++) {
       struct EffectStep *rock = &work->particles[i];
 

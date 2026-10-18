@@ -141,7 +141,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       object = GetBattleObjectSlotFar(effect->actors[member])->object;
       if (tick >= 0 && tick < 96) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         vector[0] = object->x;
         vector[1] = object->y;
         vector[2] = object->z;

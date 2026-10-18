@@ -198,7 +198,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         frame = 160;
       }
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       if (frame == 178)
         Func_081180e8(134);
 

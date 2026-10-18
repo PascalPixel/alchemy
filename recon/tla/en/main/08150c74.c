@@ -145,7 +145,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != Data_081982f7[effect->variant][TIMING_FRAMES];
        frame++) {
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     // The results begin 16 frames before the end.
     if (frame == Data_081982f7[effect->variant][TIMING_FRAMES] - 16)
       Func_081180e8(133);

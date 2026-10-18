@@ -155,7 +155,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
 
     camera = Ram_HeapSlots->cameraWork;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
       Audio_PlayCue(144);
     if (frame == Data_081983a2[variant][FIELD_FRAMES] - 48)

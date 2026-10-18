@@ -85,7 +85,7 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
-void Graphics_RestoreTransferWork(void);
+void Transform_Pop(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer, s32 frames);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -287,7 +287,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     if (frame == 8)
       Audio_PlayCue(212);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {
       base[0] += step[0];
       base[1] += step[1];
@@ -308,7 +308,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
         if (frame >= i / 8 && spark->variant == 0) {
           s32 size;
 
-          Graphics_SaveTransferWorkOnce();
+          Transform_Push();
           switch (i & 3) {
           case 0:
             SceneTransform_ApplyYaw(frame * (i * 32 + 256));
@@ -326,7 +326,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
           }
           EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
           position.x >>= 1;
-          Graphics_RestoreTransferWork();
+          Transform_Pop();
           if (position.depth < 250)
             position.depth = 250;
           if (position.depth > 634)

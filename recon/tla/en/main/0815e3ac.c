@@ -101,7 +101,7 @@ void EffectPosition_ApplyAnimationAndYOffset(s32 actor,
                                              struct EffectPosition *position);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
+void Transform_SetLookAt(void *camera, void *eye);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 // Configures the battle display for an effect.
@@ -325,7 +325,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
               anchor.x - 16, anchor.y - 24, 40, 48);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {

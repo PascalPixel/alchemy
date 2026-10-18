@@ -114,7 +114,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Audio_PlayCue(s32 cue);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value); // BattleFx_WipeCanvas
+void Func_08163c2c(s32 mode, s32 value); // Func_08163c2c
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 void Func_08152404(s32 count, s32 resource,
                    s32 priority); // BattleFx_SpawnObjects
@@ -138,7 +138,7 @@ void Func_0814cca8(void); // BattleFx_SetupBlendedDisplay
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void BattleActor_CommitPlacementFar(void);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *position);
+void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
@@ -597,7 +597,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
     // The embers fountain up from the ground in front of the camera.
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     for (i = 0; i != 64; i++) {
       struct EffectStep *ember = &EMBERS[i];
 

@@ -221,7 +221,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
     if (effect->variant == 0) {
       // The flash, and the ring of flashes, at the user.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = user->x;
       point[1] = user->y;
       point[2] = user->z;

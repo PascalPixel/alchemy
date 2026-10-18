@@ -85,7 +85,7 @@ void Func_08157530(s32 actor, s32 target, s32 frames, s32 percent);
 void Func_0815b434(void *map, s32 size, s32 scale); // a shaded disc
 void Func_0818caa8(void *picture, s32 x, s32 y, s32 size);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *position);
+void Transform_SetLookAt(s32 *eye, s32 *position);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -159,7 +159,7 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       camera->yaw = savedYaw;
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       flame = work->particles;
       for (i = 0; i != FLAMES; i++, flame++) {
         s32 angle;

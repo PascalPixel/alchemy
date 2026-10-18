@@ -156,10 +156,8 @@ void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 height);
 void EffectPosition_ApplyStepAndYOffset(s32 actor,
                                         struct EffectPosition *position);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
+void Transform_SetLookAt(void *camera, void *eye);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -391,7 +389,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
 
     // The motes, until their life runs out, bouncing off the ground.
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     Func_081963ec(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     Func_081963ec(HEAP_BLITTER_ALTERNATE,

@@ -147,16 +147,16 @@ void Resource_LoadAndDecompress(s32, void *, s32, s32);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
-void Func_08013560(s32);
-void Func_0801314c(s32);
+void WaitFrames(s32);
+void Runtime_ReleaseHeapBlock(s32);
 void BattleFx_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
-s32 Func_08002090(s32);
-s32 Func_08002096(s32);
-void Func_081c0010(s32);
+s32 Trig_Cos(s32);
+s32 Trig_Sin(s32);
+void Audio_PlayCue(s32);
 void Func_0815f0a0(s32);
-void Func_08138086(Particle *, s32, s32);
-void Func_08138058(Particle *, s32, s32);
+void BattleFxKernels_IntegrateVector2(Particle *, s32, s32);
+void BattleFxKernels_IntegrateVector3(Particle *, s32, s32);
 s32 *Func_081969f8(s32);
 void Render_ResetTransformState(void);
 void Func_08015160(s32, s32, s32);
@@ -165,11 +165,11 @@ void SceneTransform_ApplyPitch(s32);
 void Func_0801521c(s32);
 void Func_08196958(const void *, void *, s32);
 void Func_08196a7c(s32 *);
-void Func_08013164(void *);
+void MemFree(void *);
 void Func_081434f8(void);
 void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
-s32 Func_080143e0(s32);
+s32 VramCache_AllocEntry(s32);
 void Palette_LoadBasicObjColors(void);
 void Func_08152404(s32, s32, s32);
 void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -375,10 +375,10 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     bgX += 4;
     *(s32 *)0x04000028 = bgX << 8;
     work->transferPending = 1;
-    Func_08013560(1);
+    WaitFrames(1);
   }
 
-  Func_0801314c(104);
+  Runtime_ReleaseHeapBlock(104);
   Iwram_Clear(dest, 0x3c00);
   Iwram_Clear((void *)0x06004000, 0x4000);
   *(vu16 *)0x0400000c = 0x786;
@@ -545,21 +545,21 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     bobX = 0;
     bobY = 0;
     if (frame > 537) {
-      swayX = Func_08002090(0x21a00) << 2;
-      swayY = Func_08002096(0x21a00) << 2;
+      swayX = Trig_Cos(0x21a00) << 2;
+      swayY = Trig_Sin(0x21a00) << 2;
       if (frame >= 542 && frame < 558) {
         v = (frame << 11) - 0x10f000;
-        bobX = Func_08002096(v) * 3;
-        bobY = Func_08002096(v) * 2;
+        bobX = Trig_Sin(v) * 3;
+        bobY = Trig_Sin(v) * 2;
       }
       if (frame >= 560 && frame < 576) {
         v = (frame << 11) - 0x118000;
-        bobX = Func_08002096(v) * 2;
-        bobY = Func_08002096(v) * 3;
+        bobX = Trig_Sin(v) * 2;
+        bobY = Trig_Sin(v) * 3;
       }
     } else {
-      swayX = Func_08002090(frame << 8) << 2;
-      swayY = Func_08002096(frame << 8) << 2;
+      swayX = Trig_Cos(frame << 8) << 2;
+      swayY = Trig_Sin(frame << 8) << 2;
     }
     if (swayY > 0)
       swayY = -swayY;
@@ -569,17 +569,17 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     for (i = 0; i != 5; i++) {
       if (frame == gUlysses_WaveCueFrames[i]) {
         work->shake = 23;
-        Func_081c0010(144);
+        Audio_PlayCue(144);
       }
     }
     if (frame == 510)
-      Func_081c0010(186);
+      Audio_PlayCue(186);
     if (frame == 568) {
       work->shake = 10;
-      Func_081c0010(145);
+      Audio_PlayCue(145);
     }
     if (frame == 578)
-      Func_081c0010(163);
+      Audio_PlayCue(163);
     for (i = 0; i != 16; i++) {
       p = &work->particles[32 + i];
       if (p->timer != 0) {
@@ -600,7 +600,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         q->vy = 0;
       }
       if (work->particles[20].timer == (i & 7) * 6 + 10) {
-        Func_081c0010(138);
+        Audio_PlayCue(138);
         p->timer = 1;
         p->x += swayX;
         p->y += swayY - (gUlysses_Shake[work->shake] << 16);
@@ -684,11 +684,11 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       if (p->timer > 9) {
         q = &PARTICLES[400 + (p->timer & 31)];
         q->timer = 0;
-        q->vx = -(Func_08002096(work->sprites[39]->rotation) * 2);
-        q->vy = Func_08002090(work->sprites[39]->rotation) * 2;
+        q->vx = -(Trig_Sin(work->sprites[39]->rotation) * 2);
+        q->vy = Trig_Cos(work->sprites[39]->rotation) * 2;
         q->x = (p->x + camera) / 2 -
-               ((Func_08002096(work->sprites[39]->rotation) * 27) >> 1);
-        q->y = p->y + Func_08002090(work->sprites[39]->rotation) * 27 - 0xc0000;
+               ((Trig_Sin(work->sprites[39]->rotation) * 27) >> 1);
+        q->y = p->y + Trig_Cos(work->sprites[39]->rotation) * 27 - 0xc0000;
       }
       if (((p->timer >= 50 && p->timer < 60) ||
            (p->timer >= 113 && p->timer < 200)) &&
@@ -739,7 +739,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         if ((u32)q->timer <= 5) {
           ((BlitFunc)blit[1])(dest, work->frames + q->timer * 288,
                               (q->x >> 16) - 2, (q->y >> 16) - 12, 12, 24);
-          Func_08138086(q, 64, 0);
+          BattleFxKernels_IntegrateVector2(q, 64, 0);
           q->timer++;
         }
       }
@@ -749,7 +749,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
           ((BlitFunc)blit[1])(dest, work->frames + 0x6c0 + (q->timer / 4 << 11),
                               (q->x >> 16) - 16, (q->y >> 16) - 32, 32, 64);
           q->vx += 0x1000;
-          Func_08138086(q, 64, 0);
+          BattleFxKernels_IntegrateVector2(q, 64, 0);
           q->timer++;
         }
       }
@@ -795,8 +795,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         Func_08196958(gUlysses_BeamPalette, buffer, 4);
         Func_08196a7c(beam);
       }
-      Func_08013164(beam);
-      Func_08013164(buffer);
+      MemFree(beam);
+      MemFree(buffer);
     }
     if (frame == 568) {
       work->particles[30].x = 0;
@@ -815,11 +815,11 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         p->vx = p->vx * 48 / 64;
         if (n <= 5) {
           for (j = 0; j != 32; j++) {
-            v = (radius * Func_08002096(j << 11) / 2 >> 16) +
+            v = (radius * Trig_Sin(j << 11) / 2 >> 16) +
                 gUlysses_SprayOffsets[i];
-            ((BlitFunc)blit[0])(
-                dest, work->frames + n * 288, v - 6,
-                (radius * Func_08002090(j << 11) * 2 >> 16) + 60, 12, 24);
+            ((BlitFunc)blit[0])(dest, work->frames + n * 288, v - 6,
+                                (radius * Trig_Cos(j << 11) * 2 >> 16) + 60, 12,
+                                24);
           }
         }
       }
@@ -952,7 +952,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       work->shake--;
     Func_081434f8();
     work->transferPending = 1;
-    Func_08013560(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(Func_0813baec);
@@ -961,7 +961,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
   Func_0814cca8();
   for (i = 0; i != 57; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);
-  bank[21] = Func_080143e0(128);
+  bank[21] = VramCache_AllocEntry(128);
   Palette_LoadBasicObjColors();
   Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010,
           (vu32 *)0x040000d4);
@@ -996,8 +996,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         Random16();
         p->ay = 0;
         p->z = z - p->ay * 40 - 0x800;
-        p->vx = -Func_08002090(p->z) * 8;
-        p->vy = -Func_08002096(p->z) * 8;
+        p->vx = -Trig_Cos(p->z) * 8;
+        p->vy = -Trig_Sin(p->z) * 8;
         p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;
         p->y = (((Random16() & 7) + 96) << 16) - p->vy * 24;
         work->sprites[i]->rotation = p->z;
@@ -1031,11 +1031,11 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
             q->x = p->x / 2;
             q->y = p->y;
             speed += 32;
-            q->vx = speed * Func_08002096(angle) >> 4;
-            q->vy = speed * Func_08002090(angle) >> 4;
+            q->vx = speed * Trig_Sin(angle) >> 4;
+            q->vy = speed * Trig_Cos(angle) >> 4;
             q->timer = 0;
           }
-          Func_081c0010(144);
+          Audio_PlayCue(144);
           for (j = 0; j < arg->count; j++) {
             BattleFx_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000, 100);
             Func_0814cd48(arg->actors[j], 7, 5, j, 7);
@@ -1050,9 +1050,9 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
           q->timer = 0;
         }
         work->sprites[i]->rotation = p->z;
-        Func_08138058(p, 64, 0);
-        p->vx = -Func_08002090(work->sprites[i]->rotation) * 8;
-        p->vy = -Func_08002096(work->sprites[i]->rotation) * 8;
+        BattleFxKernels_IntegrateVector3(p, 64, 0);
+        p->vx = -Trig_Cos(work->sprites[i]->rotation) * 8;
+        p->vy = -Trig_Sin(work->sprites[i]->rotation) * 8;
         work->sprites[i]->tile = work->sprites[0]->tile;
       }
     }
@@ -1071,19 +1071,19 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       if ((u32)q->timer <= 17) {
         ((BlitFunc)blit[i & 1])(dest, work->frames + (q->timer / 3 << 11),
                                 (q->x >> 16) - 16, (q->y >> 16) - 48, 32, 64);
-        Func_08138086(q, 56, -0x2000);
+        BattleFxKernels_IntegrateVector2(q, 56, -0x2000);
         q->timer++;
       }
     }
     Func_08158ce0(8, 8);
     Func_081434f8();
     work->transferPending = 1;
-    Func_08013560(1);
+    WaitFrames(1);
   }
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);
   Scheduler_RemoveCallback(Func_08143000);
-  Func_0801314c(188);
-  Func_0801314c(104);
+  Runtime_ReleaseHeapBlock(188);
+  Runtime_ReleaseHeapBlock(104);
   Func_08143bb8();
 }

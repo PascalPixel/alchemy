@@ -117,8 +117,6 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 u32 Random16(void);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct RenderPrimitive *Func_081969f8(s32 count);
@@ -132,7 +130,7 @@ void MemFree(void *buffer);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
@@ -327,7 +325,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectStep *spark;
 
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       spark = gData_02014000;
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;

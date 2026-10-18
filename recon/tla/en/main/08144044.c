@@ -122,7 +122,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       point[0] = target->x;
       point[1] = 20 << 16;
       point[2] = target->z;

@@ -20,7 +20,7 @@ void *MemAlloc(s32 size);
 void MemFree(void *block);
 s32 Resource_FindFreeEntry(void);
 void Resource_DecodeType01(const void *source, void *destination);
-s32 VramBlock_LoadCached(s32 slot, s32 size, void *tiles);
+s32 VramCache_Load(s32 slot, s32 size, void *tiles);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_080daab0(void);
 void Func_080dacb8(void);
@@ -49,13 +49,13 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     Resource_DecodeType01(Data_080f0c63, frames + FRAME_SIZE);
     Resource_DecodeType01(Data_080f0cb8, frames + 2 * FRAME_SIZE);
     Resource_DecodeType01(Data_080f0d07, frames + 3 * FRAME_SIZE);
-    VramBlock_LoadCached(work->vramEntry, size, frames);
+    VramCache_Load(work->vramEntry, size, frames);
   } else {
     Resource_DecodeType01(Data_080f0d5e, frames);
     Resource_DecodeType01(Data_080f0dbb, frames + FRAME_SIZE);
     Resource_DecodeType01(Data_080f0dbb, frames + 2 * FRAME_SIZE);
     Resource_DecodeType01(Data_080f0e00, frames + 3 * FRAME_SIZE);
-    VramBlock_LoadCached(work->vramEntry, size, frames);
+    VramCache_Load(work->vramEntry, size, frames);
   }
   Scheduler_AddOrUpdateCallback(Func_080daab0, 0x480);
   Scheduler_AddOrUpdateCallback(Func_080dacb8, 0x48f);

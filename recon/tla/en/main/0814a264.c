@@ -149,7 +149,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
     if (frame == 16)
       Func_081180e8(134);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     if (frame < 64) {
       for (pillar = 0; pillar != Data_08197a20[effect->variant]; pillar++) {

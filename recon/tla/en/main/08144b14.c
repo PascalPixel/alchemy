@@ -188,7 +188,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       s32 start = k * 16;
 
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       point[0] = target->x;
       point[1] = 0;
       point[2] = target->z;
@@ -230,7 +230,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
             GetBattleObjectSlotFar(effect->actors[i])->object;
 
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         if (frame == start + 72)
           Func_0814cd48(effect->actors[i], 1, -1, -1, 0);
         if (frame == start + 88)

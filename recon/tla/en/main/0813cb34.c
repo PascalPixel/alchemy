@@ -193,7 +193,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     frames = 128;
   for (frame = 0; frame != frames; frame++) {
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (mode == POOL_SLAVER && frame == 0)
       Audio_PlayCue(103);
 

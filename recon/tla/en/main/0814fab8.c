@@ -328,7 +328,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       if (frame == member * 8 + 80)
         Audio_PlayCue(212);
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       // The lights turn about two thirds of the target's height.
       point[0] = object->x;
       point[1] = height;

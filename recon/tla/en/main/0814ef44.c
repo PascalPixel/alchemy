@@ -377,7 +377,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 
       // The motes turn about a point 40 pixels above the target.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
       point[1] = 40 << 16;
       point[2] = object->z;

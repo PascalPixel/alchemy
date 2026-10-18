@@ -191,7 +191,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
         REG_BLDALPHA = (total - frame) | 0x1000;
 
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       for (k = 0; k != effect->count; k++) {
         // Each target's streaks set out with the mode's cry.
         if (frame == k * 32) {

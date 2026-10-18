@@ -319,7 +319,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     // Frames 18-83: the head, tilted by how fast it climbs or falls.
     if (frame >= 18 && frame <= 83) {

@@ -91,7 +91,7 @@ extern u16 gData_08197410[];          // ☀️ gBattleFx_MoteCellOffsets
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_08143000(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_WipeCanvas(s32 mode, s32 value);
+void Func_08163c2c(s32 mode, s32 value);
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
 void Func_08152404(s32 count, s32 resource,
@@ -155,7 +155,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-  BattleFx_WipeCanvas(1, 0);
+  Func_08163c2c(1, 0);
   Func_0814cc4c(work->effect);
   Func_08152404(FORMATION_SIZE, FORMATION, 2);
   for (i = 0; i != ROCK_COUNT; i++) {
@@ -181,7 +181,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
 
   // The desert, the dust and spark pictures, and the blend.
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
-  BattleFx_WipeCanvas(1, 1);
+  Func_08163c2c(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;

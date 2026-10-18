@@ -184,7 +184,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 64)
       Func_081180e8(133);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
       Func_0814cd48(effect->actor, 7, -1, -1, 0);
     if (frame == effect->count * 20 + 52)

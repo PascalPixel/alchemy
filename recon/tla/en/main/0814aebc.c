@@ -143,7 +143,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
       object = GetBattleObjectSlotFar(effect->actors[member])->object;
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       record[0] = object->x;
       record[1] = 160 << 14;
       record[2] = object->z;

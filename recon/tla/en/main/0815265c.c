@@ -722,7 +722,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       half = Battle_GetObjectTableValueFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != 24; i++) {
         struct EffectStep *mote = &MOTES[i];
 

@@ -200,7 +200,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     // The first 32 flecks turn 0x400, rise 5 pixels and widen 4 pixels a
     // frame.

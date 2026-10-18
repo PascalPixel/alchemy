@@ -177,12 +177,12 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
       if (time > 0) {
         // The picture stands 40 pixels above the target.
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+        Transform_SetLookAt(camera->eye, camera->pos);
         point[0] = object->x;
         point[1] = 160 << 13;
         point[2] = object->z;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+        Transform_SetLookAt(camera->eye, camera->pos);
         SceneTransform_ApplyPosition(point);
         origin[0] = 0;
         origin[1] = 0;

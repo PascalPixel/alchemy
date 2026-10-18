@@ -60,17 +60,15 @@ s32 Trig_Cos(s32 angle);
 void Func_0815f0a0(s32 resourceId);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SceneTransform_ApplyPosition(const s32 *position);
-void Graphics_SaveTransferWorkOnce(void);
-void Graphics_RestoreTransferWork(void);
+void Transform_Push(void);
+void Transform_Pop(void);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 void Func_08158ce0(s32 x, s32 y);
 void Func_081434f8(void);
 void WaitFrames(s32 frames);
@@ -192,7 +190,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
 
       // The swarm turns about its point, which rises from frame 4.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       if (frame >= start + 4 && start < 44)
         BattleFxKernels_IntegrateVector3(point, 64, 0);
       SceneTransform_ApplyPosition(&point->x);
@@ -203,7 +201,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         if (frame >= start + i / 8 && star->variant == 0) {
           s32 size;
 
-          Graphics_SaveTransferWorkOnce();
+          Transform_Push();
           switch ((member + i) & 3) {
           case 0:
             SceneTransform_ApplyYaw(frame * (i + 8) * 32);
@@ -221,7 +219,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
           }
           EffectPosition_ApplyBaseAndYOffset(&star->x, &screen);
           screen.x >>= 1;
-          Graphics_RestoreTransferWork();
+          Transform_Pop();
           if (screen.depth < 250)
             screen.depth = 250;
           if (screen.depth > 0x27a)

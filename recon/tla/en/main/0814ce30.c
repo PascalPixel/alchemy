@@ -199,7 +199,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     if (frame == 224)
       work->transferMode = 0;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 31) {
       work->shakeFrames = 8;
       Audio_PlayCue(157);

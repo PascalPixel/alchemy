@@ -97,7 +97,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void);                // ☀️ BattleFx_ConfigureEffectDisplay
 void Func_08143000(void);                // ☀️ ProcessPendingGraphicsTransfer
 void Func_08143bb8(void);                // ☀️ BattleFx_EndCanvasLayer
-void Func_08163c2c(s32 mode, s32 value); // ☀️ BattleFx_WipeCanvas
+void Func_08163c2c(s32 mode, s32 value); // ☀️ Func_08163c2c
 s32 Func_081963ec(s32 slot, s32 flags);  // ☀️ BattleFx_LoadWork
 void Func_0814cc4c(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets

@@ -89,6 +89,7 @@ Measured, and easy to repeat:
 - `do { ... } while (0)` is not neutral in agscc: it compiles as a one-pass block and can move code. A statement macro takes the shape its sites match with (S2).
 - agscc pads every struct to 4 bytes. A table read by columns is a two-dimensional array with an `enum` naming its columns (Notes).
 - Locals declared in an inner block change register allocation; a macro cannot take its caller's locals as its own (Notes).
+- Declare an object only where its struct type is complete. Declared earlier, through an incomplete type, it keeps a smaller alignment, and code that reads it compiles differently: moving one `struct SpriteScale` declaration ahead of its struct changed two German effects (2026-10-18).
 - Builds from another branch leave `out/*/deps.mk` and `out/*/objects.mk` that break this one: delete them. `tools/out` is shared across checkouts: after switching to a branch whose tools differ, run `rm -rf tools/out/obj tools/out/ags-* && make tools`.
 - A comment says what the code cannot: what the player sees, units, why a forced form is forced, the evidence for a name. It does not restate the code.
 

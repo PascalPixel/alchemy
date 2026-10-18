@@ -1,13 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Procne summon.
 
-extern u8 gWhirlwindComets_GridX[];
-extern u8 gWhirlwindComets_GridY[];
-extern u16 gWhirlwindComets_Frames[];
-extern u8 gWhirlwindComets_CellWidths[];
-extern u8 gWhirlwindComets_CellHeights[];
-extern u8 gWhirlwindComets_CellBiasY[];
-extern u16 gWhirlwindComets_CellOffsets[];
 
 // Abilities: Procne (scene kind 8).
 //

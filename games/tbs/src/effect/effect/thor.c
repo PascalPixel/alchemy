@@ -4,8 +4,6 @@
 // Storm and rock scenes, staged bursts and rising walls.
 // The final helpers advance particles and project battle units to the screen.
 
-extern u8 gThor_TargetPalettes[];
-extern u8 gThor_SmokeFlips[];
 
 // 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
 // before them.

@@ -351,15 +351,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunIceBlessing, BattleFx_RunProjectileVolley, 10)
 DEFINE_EFFECT_KIND(BattleFx_RunBlizzard, BattleFx_RunVolleyWithAction, 9)
 
 // Projectile volleys, and moving battlers about.
-extern u8 gVolley_CometHeights[];
 // Five bytes for each mode; see VolleyField.
-extern u8 gVolley_Modes[];
-extern u8 gVolley_FlashWidths[];
-extern u8 gVolley_FlashHeights[];
-extern u8 gVolley_FlashSteps[];
-extern u8 gVolley_FlashRises[];
-extern u16 gVolley_FlashOffsets[];
-extern u16 gVolley_PelletOffsets[];
 
 // PARTICLES holds the hit flashes from 0, the sparks from 100 and the
 // fireball trails from 512.
@@ -375,7 +367,7 @@ enum VolleyField {
 };
 
 // The value of one field of this volley's gVolley_Modes row.
-#define VOLLEY_VALUE(field) (gVolley_Modes[mode * 5 + (field)])
+#define VOLLEY_VALUE(field) (gVolley_Modes[mode][field])
 
 // Where the volley's pictures sit in the sheet.
 #define VOLLEY_COMET_CELLS 0x1000  // comets: the top half of each

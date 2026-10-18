@@ -34,9 +34,6 @@ struct ShockwaveWork {
   u8 ramp[8][770];
 };
 
-extern u16 gShockwaveScene_ShardCells[];
-extern u8 gShockwaveScene_ShardWidths[];
-extern u8 gShockwaveScene_ShardHeights[];
 
 #define SHOCKWAVE_SPARKS (&PARTICLES[128])
 

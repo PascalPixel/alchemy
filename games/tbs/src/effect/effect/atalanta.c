@@ -1,7 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Atalanta summon.
 
-extern struct SpriteScale gStagedParticles_UnitScale;
 
 // The trail particles' random rotations, 48 bytes each, after the 384
 // particles in PARTICLES.

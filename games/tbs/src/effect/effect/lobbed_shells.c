@@ -42,10 +42,6 @@ DEFINE_EFFECT_KIND(BattleFx_RunRottenBlood, BattleFx_RunLobbedShells, 3)
 
 // gLobbedShells_Records has two entries per style; the first is nonzero when
 // the shells burst into shards instead of smoke.
-extern s8 gLobbedShells_Records[];
-extern u8 gLobbedShells_ShardWidths[];
-extern u8 gLobbedShells_ShardHeights[];
-extern u16 gLobbedShells_ShardOffsets[];
 
 // The bursts live after the shells in gMapCellBuffer.
 #define SHELL_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))

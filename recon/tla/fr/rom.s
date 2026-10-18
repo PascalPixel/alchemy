@@ -273,17 +273,29 @@ Func_0802db64Far:
 Func_080219cc:
 	.incbin "baserom.gba", 0x000219cc, 0x00000644
 	.section .rom.00022010, "ax"
-	.global Func_0802254c
-	.type Func_0802254c, %function
+	.global Func_08022010
+	.type Func_08022010, %function
 	.thumb_func
-Func_0802254c:
+Func_08022010:
 	.incbin "baserom.gba", 0x00022010, 0x000000e0
 	.section .rom.000220f0, "ax"
 	.global Render_ApplyProjectedPlacement
 	.type Render_ApplyProjectedPlacement, %function
 	.thumb_func
 Render_ApplyProjectedPlacement:
-	.incbin "baserom.gba", 0x000220f0, 0x000006b0
+	.incbin "baserom.gba", 0x000220f0, 0x00000228
+	.section .rom.00022318, "ax"
+	.global Func_08022318
+	.type Func_08022318, %function
+	.thumb_func
+Func_08022318:
+	.incbin "baserom.gba", 0x00022318, 0x00000234
+	.section .rom.0002254c, "ax"
+	.global Func_0802254c
+	.type Func_0802254c, %function
+	.thumb_func
+Func_0802254c:
+	.incbin "baserom.gba", 0x0002254c, 0x00000254
 	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function
@@ -334,8 +346,6 @@ Animation_SetDisplayFlag:
 	.thumb_func
 Func_0802386c:
 	.incbin "baserom.gba", 0x0002386c, 0x00000510
-	.section .rom.00023d80, "ax"
-	.incbin "baserom.gba", 0x00023d80, 0x00000098
 	.section .rom.00023e18, "ax"
 	.global Func_08023e18
 	.type Func_08023e18, %function

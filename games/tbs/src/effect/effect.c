@@ -10531,37 +10531,39 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
 // Healing sparkles with scattering style 4, sent out from each target, as
 // Cure Poison plays them for variants other than 0. No effect table entry
 // reaches this one.
-UNUSED DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode4, BattleFx_RunHealingMotes, 4)
+UNUSED DEFINE_EFFECT_KIND(BattleFx_RunHealingMotesMode4,
+                          BattleFx_RunHealingMotes, 4)
 
-// Abilities: Tonic (kind 208).
-//
-// Tonic (scattering style 5): sparkles twinkle around each target, turning
-// on two axes, and go out one by one; mode 5 plays as mode 4 does.
-DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
+    // Abilities: Tonic (kind 208).
+    //
+    // Tonic (scattering style 5): sparkles twinkle around each target, turning
+    // on two axes, and go out one by one; mode 5 plays as mode 4 does.
+    DEFINE_EFFECT_KIND(BattleFx_RunTonic, BattleFx_RunHealingMotes, 5)
 
-// Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
-//
-// Psy Crystal: healing motes gather around each target in the Mars Djinni
-// palette; with a prelude, a Mars Djinni appears first.
-DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
+    // Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
+    //
+    // Psy Crystal: healing motes gather around each target in the Mars Djinni
+    // palette; with a prelude, a Mars Djinni appears first.
+    DEFINE_EFFECT_KIND(BattleFx_RunPsyCrystal, BattleFx_RunHealingMotes, 6)
 
 #define HEALING_MOTES 512 // motes in PARTICLES
 #define HEALING_SLOTS 64  // particles reserved for each target
 
-// Healing sparkles: motes of light scattered around each target swirl in
-// towards it, one target every 8 frames, with the recovery sound on each
-// target's 20th frame and a tint on its 36th.
-//
-// effect: the targets. With prelude 1, a djinni (Mars in mode 6, Mercury
-//         otherwise) appears first, sways and rises. variant picks the
-//         motes per target (0: 32, 2: 128, others: 64) and, in modes 0,
-//         1, 3, 4 and 5, the resource (0: ice shard, others: ice block).
-// mode: how the motes scatter and turn. Only mode 0 shows the canvas at
-//       its own width, centred on the first target. Modes 3, 4 and 5 put
-//       the motes out one by one instead of drawing them in; modes 0, 3,
-//       4 and 5 draw sparkle dots. Mode 6 takes the Mars resource, mode 2
-//       the blast resource.
-void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
+    // Healing sparkles: motes of light scattered around each target swirl in
+    // towards it, one target every 8 frames, with the recovery sound on each
+    // target's 20th frame and a tint on its 36th.
+    //
+    // effect: the targets. With prelude 1, a djinni (Mars in mode 6, Mercury
+    //         otherwise) appears first, sways and rises. variant picks the
+    //         motes per target (0: 32, 2: 128, others: 64) and, in modes 0,
+    //         1, 3, 4 and 5, the resource (0: ice shard, others: ice block).
+    // mode: how the motes scatter and turn. Only mode 0 shows the canvas at
+    //       its own width, centred on the first target. Modes 3, 4 and 5 put
+    //       the motes out one by one instead of drawing them in; modes 0, 3,
+    //       4 and 5 draw sparkle dots. Mode 6 takes the Mars resource, mode 2
+    //       the blast resource.
+    void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect,
+                                  u32 mode) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -11235,7 +11237,8 @@ DEFINE_EFFECT_KIND(BattleFx_RunWeaken, BattleFx_RunStatReduction, 2)
 
 // Break the shield picture into fading shards with style 3, which plays as
 // style 2 does. No effect table entry reaches it.
-UNUSED DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3, BattleFx_RunStatReduction, 3)
+UNUSED DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3,
+                          BattleFx_RunStatReduction, 3)
 
 // The shard picture in the sheet, followed by seven copies of it, each
 // with its colour levels capped 7 lower than the one before.
@@ -11244,16 +11247,17 @@ UNUSED DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3, BattleFx_RunStatReduct
 #define STAT_REDUCTION_SHARDS 24       // shards drawn for each target
 #define STAT_REDUCTION_SLOTS 32        // particles reserved for each target
 
-// Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
-// target, 4 frames apart, and then breaks into 24 shards that fly off and
-// fade out through the darker copies. In each target's own frames the
-// picture plays until about frame 24, then breaks with a sound; the shards
-// darken from frame 29 and are gone after frame 60.
-//
-// effect: the targets.
-// mode: 0 the dagger and the pink burst palette, 1 the shield and the
-//       glow orb palette, 2 and 3 the shield and the pink burst palette.
-void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
+    // Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
+    // target, 4 frames apart, and then breaks into 24 shards that fly off and
+    // fade out through the darker copies. In each target's own frames the
+    // picture plays until about frame 24, then breaks with a sound; the shards
+    // darken from frame 29 and are gone after frame 60.
+    //
+    // effect: the targets.
+    // mode: 0 the dagger and the pink burst palette, 1 the shield and the
+    //       glow orb palette, 2 and 3 the shield and the pink burst palette.
+    void BattleFx_RunStatReduction(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -16557,6 +16561,32 @@ extern u8 gThor_SmokeFlips[];
 #define STORM_LIGHTNING_FRAMES 192   // frames of the lightning part
 #define STORM_BOLTS 30               // violet bolts after the pillar
 
+// Launches up to max sparks from (px, py), 16.16, into the free slots
+// (variant 0) of STORM_PARTICLES, counting with index. Each flies at angle
+// at a random speed of 32 to 1054 and lives 32 to 39 frames.
+#define STORM_LAUNCH_SPARKS(index, px, py, angleExpr, max)                     \
+  {                                                                            \
+    s32 spawned = 0;                                                           \
+    for (index = 0, spark = STORM_PARTICLES; index != STORM_PARTICLE_COUNT;    \
+         index++, spark++) {                                                   \
+      if (spark->variant == 0) {                                               \
+        s32 speed = 0x3ff;                                                     \
+        s32 angle;                                                             \
+        speed &= Random16();                                                   \
+        angle = angleExpr;                                                     \
+        spark->x = px;                                                         \
+        spark->y = py;                                                         \
+        speed += 32;                                                           \
+        spark->velocityX = (Trig_Sin(angle) * speed) >> 7;                     \
+        spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;             \
+        spark->variant = (Random16() & 7) + 32;                                \
+        if (++spawned == (max)) {                                              \
+          break;                                                               \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+  }
+
 // Abilities: Thor (scene kind 12).
 //
 // The scene plays in two parts on the effect canvas. In the dusk part
@@ -16930,25 +16960,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            s32 spawned = 0;
-            for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
-                 i++, spark++) {
-              if (spark->variant == 0) {
-                s32 speed = 0x3ff;
-                s32 angle;
-                speed &= Random16();
-                angle = (Random16() & 0x7fff) - 0x4000;
-                spark->x = pillarX << 16;
-                spark->y = pillarY << 16;
-                speed += 32;
-                spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
-                spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
-                spark->variant = (Random16() & 7) + 32;
-                if (++spawned == 512) {
-                  break;
-                }
-              }
-            }
+            STORM_LAUNCH_SPARKS(i, pillarX << 16, pillarY << 16,
+                                (Random16() & 0x7fff) - 0x4000, 512);
             work->shakeFrames = 8;
           }
         }
@@ -16988,25 +17001,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             if (frame == i * 2 + 80) {
-              s32 spawned = 0;
-              for (j = 0, spark = STORM_PARTICLES; j != STORM_PARTICLE_COUNT;
-                   j++, spark++) {
-                if (spark->variant == 0) {
-                  s32 speed = 0x3ff;
-                  s32 angle;
-                  speed &= Random16();
-                  angle = Random16() & 0xffff;
-                  spark->x = 0x100000;
-                  spark->y = 0x500000;
-                  speed += 32;
-                  spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
-                  spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
-                  spark->variant = (Random16() & 7) + 32;
-                  if (++spawned == 16) {
-                    break;
-                  }
-                }
-              }
+              STORM_LAUNCH_SPARKS(j, 0x100000, 0x500000, Random16() & 0xffff,
+                                  16);
               work->shakeFrames = 8;
               EFFECT_FOR_EACH_TARGET(j, work->effect) {
                 ObjectGroup_UpdateMembers(work->effect->actors[j],

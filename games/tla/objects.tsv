@@ -40,12 +40,6 @@ main	iwram_runtime_00	games/tla/src/system/runtime_mix_render
 main	iwram_runtime_00	games/tla/src/system/runtime_mix_modes
 main	rom_main_00	games/tla/src/system/resource/decode_byte_lz
 main	rom_main_00	games/tla/src/graphics/render/build_oam_list
-main	rom_main_00	recon/tla/it/rom	.rom.000019f4	it
-main	rom_main_00	recon/tla/fr/rom	.rom.000019f4	fr
-main	rom_main_00	recon/tla/es/rom	.rom.000019f4	es
-main	rom_main_00	recon/tla/de/rom	.rom.000019f4	de
-main	rom_main_00	recon/tla/raw/080019f4		en
-main	rom_main_00	recon/tla/ja/rom	.rom.000019f4	ja
 main	rom_main_00	games/tla/src/graphics/palette/color_backup_kernels
 main	rom_main_00	games/tla/src/graphics/palette/color_brighten_kernel
 main	rom_main_00	games/tla/src/graphics/palette/color_backup_loaders

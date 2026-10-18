@@ -4,12 +4,6 @@
 	.thumb_func
 SoundDriver_EnterFrameUpdate:
 	.incbin "baserom.gba", 0x00000630, 0x00000088
-	.section .rom.000019f4, "ax"
-	.global Render_BuildOamList
-	.type Render_BuildOamList, %function
-	.thumb_func
-Render_BuildOamList:
-	.incbin "baserom.gba", 0x000019f4, 0x00000020
 	.section .rom.0001319c, "ax"
 	.global Func_0801319c
 	.type Func_0801319c, %function

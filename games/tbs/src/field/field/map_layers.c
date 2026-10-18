@@ -961,6 +961,8 @@ void Map_SetWorkFlagBits9To11(u32 layerFlags) {
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 flags = mapState->flags;
 
+  // A halfword mask: as ~(...) without the cast, the mask in the literal pool
+  // is 0xfffff1ff, where the ROM has 0xf1ff.
   flags =
       (flags & (u16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) | mask;
   mapState->flags = flags;

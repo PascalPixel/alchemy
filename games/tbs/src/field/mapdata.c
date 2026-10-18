@@ -3,10 +3,8 @@
 #include "field.h"
 #include "types.h"
 
-//--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind and the world map's terrain
 // behaviour.
-//--------------------------------------------------------------------------
 
 // Terrain height functions, chosen by the low four bits of a cell's first
 // collision byte and called with (the remaining samples, x within the cell,

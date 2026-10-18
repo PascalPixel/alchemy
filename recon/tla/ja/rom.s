@@ -2864,8 +2864,14 @@ Func_080d7034:
 	.thumb_func
 Func_080d7b04:
 	.incbin "baserom.gba", 0x000d7ac0, 0x00000100
-	.section .rom.000d7d4c, "ax"
-	.incbin "baserom.gba", 0x000d7d4c, 0x0000045c
+	.section .rom.000d7d78, "ax"
+	.global BattleEffect_UpdatePhasedRadialParticle
+	.type BattleEffect_UpdatePhasedRadialParticle, %function
+	.thumb_func
+BattleEffect_UpdatePhasedRadialParticle:
+	.incbin "baserom.gba", 0x000d7d78, 0x000001c4
+	.section .rom.000d8130, "ax"
+	.incbin "baserom.gba", 0x000d8130, 0x00000078
 	.section .rom.000d829c, "ax"
 	.incbin "baserom.gba", 0x000d829c, 0x0000042c
 	.section .rom.000d86fc, "ax"
@@ -2913,25 +2919,12 @@ Func_080d92d4:
 	.thumb_func
 Func_080d9710:
 	.incbin "baserom.gba", 0x000d96cc, 0x00000268
-	.section .rom.000d9a6c, "ax"
-	.balign 4
-	.global Func_080d9ab0
-	.type Func_080d9ab0, %function
-	.thumb_func
-Func_080d9ab0:
-	.incbin "baserom.gba", 0x000d9a6c, 0x00000020
 	.section .rom.000d9b3c, "ax"
 	.global Func_080d9b80
 	.type Func_080d9b80, %function
 	.thumb_func
 Func_080d9b80:
 	.incbin "baserom.gba", 0x000d9b3c, 0x000001c0
-	.section .rom.000d9cfc, "ax"
-	.global Func_080d9d40
-	.type Func_080d9d40, %function
-	.thumb_func
-Func_080d9d40:
-	.incbin "baserom.gba", 0x000d9cfc, 0x00000134
 	.section .rom.000d9e54, "ax"
 	.global Func_080d9e98
 	.type Func_080d9e98, %function

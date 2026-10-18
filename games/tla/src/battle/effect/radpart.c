@@ -136,3 +136,30 @@ void BattleFx_SpinUpAngle(void *obj) {
         (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);
   }
 }
+
+// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
+// its scale falls below 0x3000.
+void BattleFx_ShrinkObjectAndDestroySlow(void *obj) {
+  /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
+   * scales load, so its literal loads first, as the native's does; without
+   * the pin the registers rotate (differ 18) and without the asm the literal
+   * loads after scaleY (differ 2). */
+  register s32 step asm("r1") = 0xFFFFFE40;
+  s32 scaleY;
+  s32 scale;
+  s32 angle;
+
+  asm("" : : "l"(step));
+  scaleY = ((struct MotionObject *)obj)->scaleY + step;
+  scale = ((struct MotionObject *)obj)->scaleX;
+  ((struct MotionObject *)obj)->scaleY = scaleY;
+  angle = ((struct MotionObject *)obj)->angle;
+  /* FAKEMATCH: the barrier keeps the angle's load ahead of the second
+   * scale's add (differ 4 without it). */
+  asm volatile("" : "+l"(angle));
+  scale += step;
+  ((struct MotionObject *)obj)->angle = angle + 0x2000;
+  ((struct MotionObject *)obj)->scaleX = scale;
+  if (scale < 0x3000)
+    Object_Destroy(obj);
+}

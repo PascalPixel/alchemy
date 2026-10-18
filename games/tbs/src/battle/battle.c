@@ -86,6 +86,34 @@
 #include "unit/object/psynergy_effects.h"
 #include "macros.h"
 
+// DMA control words, as io_reg.h composes them: copy n words or halfwords
+// at once, or one halfword each HBlank to a register reloaded every line.
+#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
+#define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
+#define DMA_HBLANK_HALFWORD_PER_LINE                                           \
+  ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
+
+// The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
+// window 1 BG0, BG2, sprites and blending, and outside them only BG0 and
+// blending.
+#define BATTLE_WININ                                                           \
+  (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |         \
+   WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_BG2 | WININ_WIN1_OBJ |         \
+   WININ_WIN1_CLR)
+#define BATTLE_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
+
+// The battle background's colours: BG palettes 6 to 13, filled from
+// BattleWork.palette, darkened or not.
+#define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
+
+// The opening curtain's tiles: 4-bit tiles 128 to 136 of character block 1,
+// which BG1 shows from its map in screen block 12.
+#define CURTAIN_TILE(n) (BG_CHAR_BLOCK(1) + (128 + (n)) * TILE_SIZE_4BPP)
+
+// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
+#define BATTLE_BG1CNT                                                          \
+  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
+
 // The kinds of argument a message's placeholders take, for
 // UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
 // ability's, and a number.
@@ -167,14 +195,9 @@ s32 DebugParty_LoadPreset(s32 preset) {
       member->djinnAvailable[i] = 0;
       member->djinnActive[i] = 0;
     }
+    // The slot's first halfword, its encodedAction, stored through a cast:
+    // the zero comes from the literal pool, as in the ROM (README.md).
     for (i = 0; i < 32; i++)
-      /* FAKEMATCH: the halfword store through a u16 cast loads its zero from
-       * the literal pool, as the reference does. 2026-10-13: the field store
-       * member->actionSlots[i].encodedAction = 0, with or without a (u16) cast
-       * on the zero, differs 23 of 210: movs r3, #0 takes the place of the ldr
-       * of the zero and the literal pool moves to the function end; any store
-       * through a dereference (this cast, *&...encodedAction, ((u16
-       * *)member->actionSlots)[i * 2]) matches. */
       *(u16 *)&member->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_PartyPresets[row].abilities[i] != 0)
@@ -190,8 +213,9 @@ s32 DebugParty_LoadPreset(s32 preset) {
       }
     }
 
-    // Empty the inventory, then add and equip the row's items.
-    for (i = 0; i < INVENTORY_SLOTS + 1; i++) // slot 0, more times than needed
+    // Empty the inventory, removing slot 0 one time more than there are
+    // slots, then add and equip the row's items.
+    for (i = 0; i < INVENTORY_SLOTS + 1; i++)
       Inventory_RemoveFar(owner, 0);
     for (i = 0; i < 4; i++) {
       if (gDebug_PartyPresets[row].items[i] != 0)
@@ -230,8 +254,6 @@ s32 DebugParty_LoadPreset(s32 preset) {
 // The length of a unit's name, its terminator excluded.
 #define UNIT_NAME_LENGTH 14
 
-#define DEBUG_VIEWER_SONG 71
-
 // Debug: a message viewer that never returns. Names the first party member
 // "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
 // sample values and shows one message at a time, counted from the Babi
@@ -258,12 +280,12 @@ void DebugBattle_ViewMessages(void) {
   }
   unit->name[UNIT_NAME_LENGTH] = 0;
   UiWork_InitializeWithResourceCountersFar();
-  AudioCommand_PlayFar(DEBUG_VIEWER_SONG);
+  AudioCommand_PlayFar(MUS_071);
   for (;;) {
     index = 0;
     {
       s32 control = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
-                    DISPCNT_OBJ_1D_MAP | 1; // mode 1
+                    DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1;
 
       REG_DISPCNT = control;
     }
@@ -396,7 +418,7 @@ restart:
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetBitFar(FLAG_DJINN_TUTORIAL);
-      GameFlag_SetBitFar(354);
+      GameFlag_SetBitFar(0x162);
       Battle_RunEncounter(encounter);
       Ui_LoadWindowGraphics();
       DebugText_Clear();
@@ -405,7 +427,7 @@ restart:
       VramCache_Reset();
     }
   }
-  GameFlag_SetBitFar(354);
+  GameFlag_SetBitFar(0x162);
   Battle_RunEncounter(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }
@@ -580,8 +602,8 @@ done:
 // Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
 // 20 bytes from 0x0600028c.
 s32 BattlePresentation_InitializeTilePattern(void) {
-  Dma_Set((const void *)0x06000290, (void *)0x06000280, 0x80000008,
-          REG_DMA3); // eight halfwords
+  Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
+          REG_DMA3);
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
@@ -922,8 +944,8 @@ s32 LinkBattle_SendParty(void) {
   for (i = 0; i < count; i++) {
     Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
     ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_PARTY;
-    work->ownerSlots[owners[i]] =
-        i - FIRST_ENEMY_UNIT; // FIRST_ENEMY_UNIT + i in a byte
+    // FIRST_ENEMY_UNIT + i, in a byte.
+    work->ownerSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
     if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
@@ -942,12 +964,9 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_OFFER_BYTES;
   MemFree(buffer);
   buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-  /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy
-   * is emitted before the count's address as in the reference. 2026-10-13: the
-   * plain call differs 2 of 152 (adds r4, r6, #0 is scheduled after the count's
-   * load); list set before the copy differs 6; list as buffer + 8, list set in
-   * the for's initializer, and the offer state read into a local first differ
-   * the same 2. */
+  /* FAKEMATCH(one-pass): the copy in a one-pass loop, a scheduling barrier
+   * that keeps the list pointer's copy ahead of the count's load; as the plain
+   * call, 1 of 152 instructions differ in tbs-en. */
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
                     size);
@@ -1043,9 +1062,8 @@ s32 BattlePres_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  /* FAKEMATCH: never used: the reference's frame keeps twenty bytes that no
-   * instruction touches; without it 20 of 232 differ (no sub sp, #20, and the
-   * branches and literal offsets shift). */
+  /* FAKEMATCH(dead): an unused array for the twenty bytes of frame no
+   * instruction touches; without it, 8 of 232 instructions differ in tbs-en. */
   u16 spare[10];
 
   if (work->twoSided != 0) {
@@ -1159,8 +1177,8 @@ s32 BattleParty_AssignMemberSlots(void) {
 
   for (memberSlot = 0; memberSlot < partySize; memberSlot++) {
     unitId = activeMembers[memberSlot];
-    battleState->ownerSlots[unitId] =
-        memberSlot - FIRST_ENEMY_UNIT; // FIRST_ENEMY_UNIT + slot in a byte
+    // FIRST_ENEMY_UNIT + memberSlot, in a byte.
+    battleState->ownerSlots[unitId] = memberSlot - FIRST_ENEMY_UNIT;
   }
 }
 
@@ -1168,17 +1186,6 @@ s32 BattleParty_AssignMemberSlots(void) {
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }
-
-/* FAKEMATCH: the one-pass block keeps the seed store in place in
- * Battle_RunEncounter: the reference stores the zero held in r5 and only then
- * sets wait's zero in r5. 2026-10-13: as a plain assignment 4 of 645 differ
- * (the seed's address and wait's zero are scheduled around the store); the
- * store in the for's initializer, after a comma or chained with wait, differs
- * the same 4; wait = 0 set before it 18. */
-#define BattleRandom_ClearSeed()                                               \
-  do {                                                                         \
-    gBattleRandomSeed = 0;                                                     \
-  } while (0)
 
 // BattleWork.partyStatus: how the party status window draws, with the
 // Summon command offered or not.
@@ -1235,12 +1242,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   Runtime_AllocateBlock(11, 0x280);
   focus = camera->pos;
-  /* FAKEMATCH: needed to match: result starts at 0 and is never read before
-   * each exit sets it; CSE takes the setup zeros from its register, r7 as
-   * listed (without it 262). 2026-10-13: initialised at its declaration 130;
-   * set after Scheduler_ResetTaskTable 262; the zero in handle 20 (setup
-   * matches, handle and result swap r5/r7); in wait 120, pos 113, actor 121, i
-   * 323, count 363. */
+  /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
+   * CSE takes the setup's zeros from; without it, 122 of 645 instructions
+   * differ in tbs-en. */
   result = 0;
   Iwram_ClearWords(ownerStates, LINK_OWNER_STATES_SIZE);
   Scheduler_ResetTaskTable();
@@ -1249,7 +1253,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   transition->flag = 1;
   transition->unk18 = 0;
   transition->unk1c = 0;
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetBitFar(0x103);
   GameFlag_SetBitFar(0x169);
   Render_ResetTransformState();
@@ -1284,7 +1288,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     Battle_SetStart(4);
   }
   if (battle->twoSided != 0) {
-    BattleRandom_ClearSeed();
+    /* FAKEMATCH(one-pass): the seed's store in a one-pass block, which keeps
+     * it ahead of linkWaitFrames' zero; as a plain assignment, 7 of 645
+     * instructions differ in tbs-en. */
+    do {
+      gBattleRandomSeed = 0;
+    } while (0);
     for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
@@ -1310,12 +1319,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (cue != 0) {
     AudioCommand_PlayFar(cue);
     if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
-      AudioCommand_PlayFar(55);
+      AudioCommand_PlayFar(MUS_055);
       Sound_LoadPresetParameters(4);
     }
   } else {
-    AudioCommand_PlayFar(51);
-    AudioCommand_PlayFar(76);
+    AudioCommand_PlayFar(MUS_051);
+    AudioCommand_PlayFar(MUS_076);
   }
 
   // The units, the windows and the background.
@@ -1446,9 +1455,9 @@ won:
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0) {
     if (battle->twoSided != 0)
-      AudioCommand_PlayFar(58);
+      AudioCommand_PlayFar(MUS_058);
     if (battle->spoils.defeated != 0) {
-      AudioCommand_PlayFar(58);
+      AudioCommand_PlayFar(MUS_058);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
         BattleUnitSetFar(FIRST_ENEMY_UNIT,
                          battle->enemyClasses[battle->firstDefeated], 26);
@@ -1460,7 +1469,7 @@ won:
     }
     Battle_AwardSpoils();
   }
-  AudioCommand_PlayFar(17);
+  AudioCommand_PlayFar(MUS_017);
   Fade_ToBlack(30);
   Fade_Wait();
   result = battle->spoils.defeated;
@@ -1470,7 +1479,7 @@ aborted:
   // The link broke, or no actions could be gathered.
   Battle_ClearSerialTransferPayload();
   Scheduler_SuspendTasks(0);
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
   GameFlag_SetBitFar(0x3e8);
   goto finished;
@@ -1479,7 +1488,7 @@ party_lost:
   // "X goes down in defeat..." for a lone member, else "X's party has been
   // defeated!".
   Battle_ClearSerialTransferPayload();
-  AudioCommand_PlayFar(59);
+  AudioCommand_PlayFar(MUS_059);
   UiWork_ClearValueNameTablesFar();
   UiWork_PushValueSlotFar(gGameState.activeOwners[0], VALUE_UNIT_NAME);
   if (BattleParty_PrepareActiveOwners(0) == 1)
@@ -1487,14 +1496,14 @@ party_lost:
   else
     UiText_ShowMessageAndWaitCoreFar(MsgPartyDefeated);
   BattlePresentation_WaitForAdvance();
-  AudioCommand_PlayFar(17);
+  AudioCommand_PlayFar(MUS_017);
   Fade_ToBlack(30);
   result = ENCOUNTER_PARTY_LOST;
   Fade_Wait();
   goto finished;
 
 fled:
-  AudioCommand_PlayFar(17);
+  AudioCommand_PlayFar(MUS_017);
   Fade_ToBlack(30);
   Fade_Wait();
   result = ENCOUNTER_FLED;
@@ -1680,7 +1689,6 @@ s32 BattleParty_ListActorIds(s32 sideMask, u16 *unitIds) {
   return count;
 }
 
-// Battle: placing every unit's object
 // Readies the sprite of every unit in the battle (releasing those of units
 // that left) and sets each one's display mode and motion afresh.
 void BattleObjPut(void) {
@@ -1690,7 +1698,6 @@ void BattleObjPut(void) {
   BattleActor_SpawnObjectsForList(unitIds, 1);
 }
 
-// Battle: placing every unit's object
 // Readies the sprite of every unit in the battle (releasing those of units
 // that left), keeping their modes and motions.
 void BattleParty_ListAllUnitsAndSubmit(void) {
@@ -1745,11 +1752,9 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
   s32 needsSingleSlot = Summon_IsEntryFlagged(unit->classId);
-  /* FAKEMATCH: initializing the two halves preserves the word copy into pass,
-   * mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction
-   * differs). 2026-10-13: result as an s32 set to 0, with pass = result or pass
-   * = 0, differs 2 of 114; pass = result = 0 differs 6, result = pass = 0 19.
-   */
+  /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
+   * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 1 of
+   * 114 instructions differ in tbs-en. */
   union {
     s32 value;
     u16 halves[2];
@@ -1788,11 +1793,8 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
         return 0;
     }
 
-    /* FAKEMATCH: cancelling updates retain sprite's allocation
-     * priority; a self-assignment instead differs in 18 rows.
-     * 2026-10-13: without them 18 of 114 differ; the exit test written
-     * !(== || ==) or as a switch on sprite 18; the load's
-     * value as pass + sprite 16. */
+    /* FAKEMATCH(dead): two updates that cancel, raising sprite's priority in
+     * allocation; without them, 9 of 114 instructions differ in tbs-en. */
     sprite ^= 1;
     sprite ^= 1;
     if (spritePart == 0)
@@ -1844,9 +1846,9 @@ s32 Resource_FindFreeSlot(s32 itemId) {
   for (assignmentIndex = 0;; assignmentIndex++) {
     assignment = gResource_SlotAssignments[assignmentIndex];
     if (itemId == (assignment & WEAPON_ITEM_MASK)) {
-      /* FAKEMATCH: the volatile array member preserves the native second ldrh
-       * [table, index]. A scalar pointer needs an extra address add; a
-       * nonvolatile member reuses the first load. */
+      /* FAKEMATCH(volatile): the entry read again through a volatile view,
+       * a second ldrh as in the ROM; through the plain array the first load is
+       * reused, and 11 of 24 instructions differ in tbs-en. */
       reloadedAssignment =
           ((struct SlotAssignmentView *)gResource_SlotAssignments)
               ->entries[assignmentIndex];
@@ -2300,15 +2302,15 @@ void BattleUnit_RefreshPlacement(void) {
   }
 }
 
-// Battle: searching a list of unit ids
-// Returns 1 if the unit at place no is in list.
+// Returns 1 if the unit at place is in list.
 // list : unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
-// no   : the place (0 to 7 the party, 8 to 13 the enemies)
+// place: 0 to 7 the party, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 listIndex;
 
+  // An enemy's place to its unit id.
   if (place > 7)
-    place += FIRST_ENEMY_UNIT - 8; // enemy unit ids start at 128
+    place += FIRST_ENEMY_UNIT - 8;
   listIndex = 0;
   do {
     u16 unitId = *list++;
@@ -2320,8 +2322,6 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   } while (++listIndex < 14);
   return 0;
 }
-
-// Battle: the units' drawing priority, status icons and poses
 
 #define UNIT_MAX 14 // the party's and the enemies' units together
 
@@ -2366,7 +2366,8 @@ void BattleActor_UpdateSpritePriorities(void) {
             struct SpriteEntry *effect;
             s32 effectPriority = 0;
 
-            if (object->y != 0) // off the ground
+            // Off the ground.
+            if (object->y != 0)
               effectPriority = 9;
             effect = slot->effectEntry;
             if (effect->priority != effectPriority) {
@@ -2452,6 +2453,11 @@ void BattleActor_UpdateSpritePriorities(void) {
   }
 }
 
+// BattleUnit.poison: the poison takes a tenth of the maximum HP at the end of
+// each turn, deadly poison a fifth.
+#define POISON_NORMAL 1
+#define POISON_DEADLY 2
+
 // The status icons' bits in BattleObj.activeConditions
 #define ICON_POISON 0x01
 #define ICON_VENOM 0x02 // deadly poison
@@ -2470,17 +2476,19 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
   s8 poison = unit->poison;
   u32 flags = 0;
 
-  if (poison == 1) // poisoned
+  if (poison == POISON_NORMAL)
     flags = ICON_POISON;
-  if (poison == 2)   // deadly poison
-    flags |= poison; // ICON_VENOM
+  // Deadly poison: poison is ICON_VENOM.
+  if (poison == POISON_DEADLY)
+    flags |= poison;
   if (unit->delusion != 0)
     flags |= ICON_DELUSION;
   if (unit->stun != 0) {
     s32 classId;
     flags |= ICON_STUN;
     classId = unit->classId;
-    if (classId == 121 || classId == 148) // two classes never show it
+    // Two classes never show it.
+    if (classId == 121 || classId == 148)
       flags &= ~ICON_STUN;
   }
   if (unit->psySeal != 0)
@@ -2608,9 +2616,7 @@ s32 BattlePres_SetActorModeAndAction(s32 unitId) {
                                          (unitId & 3) + 14);
 }
 
-// Battle: releasing an object's sprites
-// Releases every sprite unit no's object holds and leaves it with none.
-// no : the unit id
+// Releases every sprite unitId's object holds and leaves it with none.
 void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
@@ -2758,7 +2764,7 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   }
 }
 
-// Returns unit objectId's battle object, through its place, or null for a
+// Returns unitId's battle object, through its place, or null for a
 // unit with no place.
 struct BattleObj *BattleObjGet(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
@@ -2815,7 +2821,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   }
 }
 
-// Frees the enemy sprite slots unit objectId holds and marks its object
+// Frees the enemy sprite slots unitId holds and marks its object
 // for release at the end of the round (BattleMotion_DestroyAllSlotObjects).
 s32 ActivateBattleObjectSlot(s32 unitId) {
   struct BattleObj *battleObject;
@@ -2848,7 +2854,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
   } while (placementIndex < UNIT_MAX);
 }
 
-// Writes the battlefield spot of place no (its anchor, on the ground) to
+// Writes the battlefield spot of place (its anchor, on the ground) to
 // out.
 s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
   struct BattleWork *battle = gBattleWork;
@@ -2863,7 +2869,7 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 s32 Camera_ApplyTransformByFlag(void) {
   struct BattleCamera *camera = gCameraWork;
   Render_ResetTransformState();
-  if (GameFlag_TestFar(0x16B) != 0) {
+  if (GameFlag_TestFar(0x16b) != 0) {
     Iwram_TransformMatrix((s32 *)gCamera_FlagTransformWork);
     Transform_ApplyLookAt(camera->eye, camera->pos);
   } else {
@@ -2925,7 +2931,7 @@ void Camera_InitDefaultTransform(void) {
 // MotionObject.targetX and targetZ while the object has no move target.
 #define NO_MOVE_TARGET 0x80000000
 
-// Sends unit slotId back to its spot, landing there, and turns it to face
+// Sends unitId back to its spot, landing there, and turns it to face
 // the centre.
 void ObjMotRst(s32 unitId) {
   s32 z;
@@ -2952,7 +2958,7 @@ void ObjMotRst(s32 unitId) {
   object->angle = ArcTan2(z >> 3, battleObject->anchorX) - 0x8000;
 }
 
-// Sends unit objectId running off its side of the battlefield, three times
+// Sends unitId running off its side of the battlefield, three times
 // as far out as its spot, with a hop.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObj *battleObject;
@@ -3015,7 +3021,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *battleObject) {
                           battleObject->anchorZ);
 }
 
-// Sends unit objectId hopping out to one and a half times its spot's
+// Sends unitId hopping out to one and a half times its spot's
 // distance from the centre.
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   u32 scaledX;
@@ -3204,9 +3210,8 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct AnimationObject *record = GetMotionRecord(object, 0);
   s32 projectionScale;
   s32 spriteScale;
-  /* FAKEMATCH: never used: the input position BattleMotion_ProjectPosition
-   * fills, unused here; it keeps the native's 12-byte frame. Without it 4 of 42
-   * differ (no sub sp, #12 and add sp, #12). */
+  /* FAKEMATCH(dead): an unused position for the frame's 12 bytes; without it,
+   * 2 of 42 instructions differ in tbs-en. */
   struct EffectPosition input;
 
   Camera_ApplyTransformByFlag();
@@ -3319,9 +3324,9 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
     for (pos = count - 1; pos > 0; pos--) {
       if ((s16)entries[pos].priority > (s16)entries[pos - 1].priority) {
-        Dma_Set(&entries[pos], &swap, 0x84000004, REG_DMA3);
-        Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004, REG_DMA3);
-        Dma_Set(&swap, &entries[pos - 1], 0x84000004, REG_DMA3);
+        Dma_Set(&entries[pos], &swap, DMA_COPY_WORDS(4), REG_DMA3);
+        Dma_Set(&entries[pos - 1], &entries[pos], DMA_COPY_WORDS(4), REG_DMA3);
+        Dma_Set(&swap, &entries[pos - 1], DMA_COPY_WORDS(4), REG_DMA3);
         swaps++;
       }
     }
@@ -3455,8 +3460,9 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   return 0;
 }
 
-// REG_BLDCNT: blend the targets' sprites over every layer, fading.
-#define BLEND_SPRITES_OVER_ALL 0x3f40
+// REG_BLDCNT: blend the semi-transparent sprites (OBJ mode 1) over every
+// layer, to fade them.
+#define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 // Auto battle: plays a Psynergy. The camera turns to the caster's side and
 // the caster raises its hand; the target side fades out, its living units
@@ -3678,10 +3684,9 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
       work.savedAnimationParameters[targetIndex][entryIndex] =
           animation->entries[entryIndex]->param;
   }
-  /* FAKEMATCH: needed to match: the one-pass stages force fresh work pointers
-   * in the reset loop and place the dispatch argument before the kind store. As
-   * plain statements the allocation changes from the side choice on: differ
-   * 103, also with the variant stored before the kind. */
+  /* FAKEMATCH(one-pass): the five effects in a one-pass block, which places
+   * each call's argument before its kind's store; as plain statements, 43 of
+   * 180 instructions differ in tbs-en. */
   do {
     work.effect.kind = 0;
     work.effect.variant = 0;
@@ -3806,8 +3811,8 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   return (s16)livingUnits[(Random16() * livingCount) >> 0x10];
 }
 
-// Background palettes 14 and 15 (BG palette RAM 0x05000000).
-#define BG_PALETTE_14 ((u16 *)0x050001C0)
+// Background palette 14, which takes palette 15 brightened.
+#define BG_PALETTE_14 ((u16 *)&BG_PLTT_COLOR(14, 0))
 
 // Pulses BG palette 14's colours: each takes the matching colour of
 // palette 15 brightened by up to twelve steps, rising and falling with the
@@ -4220,9 +4225,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 
   // Receives the header, then the other console's actions after ours.
   s32 BattleLink_ReceiveActions(void) {
-    /* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every
-     * read here is a load of its own. Measured on tbs-en: without the qualifier
-     * differ 116, 129 instructions for 131. */
+    // gSerialReceivedSize changes under the serial interrupt and is volatile
+    // (serial_runtime.h), so every read here loads it again.
     s32 timeout;
     s32 disconnected;
     s32 status = SerialRuntime_BeginReceive(state);
@@ -4325,7 +4329,6 @@ fail:
   return -1;
 }
 
-// Battle: building the turn's actions, and converting list places
 // Copies BG palette 15 to 14 and 5 to 4, brightened or darkened.
 // offset : added to each of the red, green and blue values (held in 0 to 31)
 void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
@@ -4347,7 +4350,7 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
       s32 adjustedColor;
 
       paletteIndex = sourceBank * 16 + colorIndex;
-      color = ((u16 *)0x05000000)[paletteIndex];
+      color = ((u16 *)BG_PLTT)[paletteIndex];
       blue = (color >> 10) & channelMask;
       green = (color >> 5) & channelMask;
       red = color & channelMask;
@@ -4369,8 +4372,8 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
       adjustedColor = blue << 10;
       adjustedColor |= green << 5;
       adjustedColor |= red;
-      ((s16 *)0x04ffffe0)[paletteIndex] =
-          adjustedColor; // into the palette before
+      // Into the palette before the source: 14 and 4.
+      ((s16 *)0x04ffffe0)[paletteIndex] = adjustedColor;
     }
     bankIndex++;
     sourceBank = 5;
@@ -4396,14 +4399,15 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
 
     for (actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY; actionIndex++) {
       record[actionIndex].unitId = BATTLE_UNIT_LIST_END;
-      record[actionIndex].priority = 0x8000; // the lowest priority
+      // The lowest priority.
+      record[actionIndex].priority = 0x8000;
     }
   }
 
   BattleUnit_ResetGuardLevels();
   Palette_CopyBanksWithBrightnessOffset(8);
   // Set while the commands are chosen.
-  GameFlag_SetBitFar(363);
+  GameFlag_SetBitFar(0x16b);
   encounterMode = &battle->encounterMode;
   Camera_ConfigureScene(0);
   UiWork_FinalizeSharedSlotFar();
@@ -4447,8 +4451,8 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
     do {
       if (action->command == CMD_DEFEND || action->command == CMD_DEFEND2) {
         unit = UnitGetFar(action->unitId);
-        unit->guardLevel =
-            action->command == CMD_DEFEND ? 1 : 2; // a half or a tenth
+        // Half the damage, or a tenth.
+        unit->guardLevel = action->command == CMD_DEFEND ? 1 : 2;
       }
       action++;
       remainingActions--;
@@ -4456,14 +4460,14 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   }
 
 finish:
-  GameFlag_ClearBitFar(363);
+  GameFlag_ClearBitFar(0x16b);
   Camera_InitDefaultTransform();
   gTransitionWork->targetYaw = YAW_PARTY_TURN;
   return count;
 }
 
 // Returns the unit id at a list place.
-// slot : the place in the low four bits; 0x80 set for the enemies' list
+// taggedPlace: the place in the low four bits; 0x80 set for the enemies' list
 s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
   struct BattleWork *battle = gBattleWork;
 
@@ -4474,7 +4478,7 @@ s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
 
 // Returns the list place of unit id, or -1 if it is in neither list: the
 // party's as 0x100 | place, the enemies' as 0x180 | place.
-// id : the unit id (0 to 7 the party, any other an enemy)
+// unitId: 0 to 7 the party, any other an enemy
 s32 Battle_FindTaggedSlotByValue(u32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 placeIndex;
@@ -4608,9 +4612,8 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
     ObjMotRst(unitIds[unitIndex]);
-  request->unitId = BATTLE_UNIT_LIST_END; // done
-// Selects the background mode and restores or darkens its palette, then
-// rebuilds the background tile lookup and map. unusedResource is not read.
+  // Done.
+  request->unitId = BATTLE_UNIT_LIST_END;
 finish:
   BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
   return fled;
@@ -4626,9 +4629,6 @@ finish:
 #define STAGING_SCENE 0x8000       // BattleFx_RunSceneEffectFar, actor's view
 #define STAGING_ON_DOWNED 0x10000  // shown on downed targets too (revivals)
 #define STAGING_OTHER_SIDE 0x20000 // played from the other side
-
-// The sound as a caster raises its hand.
-#define SOUND_CAST 0x9a
 
 // Fills an effect command from a plan: its kind and strength,
 // the actor and the targets still standing (or every target, for an effect
@@ -4680,11 +4680,9 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan) {
   struct BattlePresentationTransition *presentation =
       WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *scene = WORK_SLOT(HEAP_SLOT_BATTLE);
-  /* FAKEMATCH: the halfword initialization preserves the word copy into
-   * partyMode instead of folding it into an immediate zero (one instruction
-   * differs). 2026-10-13: completed as an s32 set to 0, with partyMode =
-   * completed or partyMode = 0, differs 2 of 105 (movs r2, #0 for adds r2, r7,
-   * #0). */
+  /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
+   * partyMode a copy of its register (adds r2, r7, #0); as an s32 set to 0, 1
+   * of 105 instructions differ in tbs-en. */
   union {
     s32 value;
     u16 halves[2];
@@ -4809,7 +4807,8 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
     }
   }
-  AudioCommand_PlayFar(SOUND_CAST);
+  // The sound of a cast, as the caster raises its hand.
+  AudioCommand_PlayFar(SE_154);
   BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 0, 0);
   if (mode & 1)
     BattlePres_SetActorRecordMode(actor, 1);
@@ -4894,7 +4893,6 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// Battle display: an action's effect on each of its targets
 // Clears the highlights, then applies the action to each target in turn and
 // plays its events; with no target, only waits for the player.
 // plan : the action and its targets
@@ -4940,10 +4938,9 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
   {
     struct BattlePlan *savedPlan = plan;
 
-    /* FAKEMATCH: the temporary null assignment and restoration end the
-     * native first CSE block, so the first plan read reloads its stack
-     * carrier. Both conditional arms disappear from the generated code.
-     * Without them, 288 of 289 instructions remain and 17 rows differ. */
+    /* FAKEMATCH(dead): plan cleared and restored under tests that emit
+     * nothing, ending a CSE block so the first read of plan reloads it;
+     * without them, 5 of 289 instructions differ in tbs-en. */
     if (transition)
       plan = NULL;
     if (transition)
@@ -4992,13 +4989,13 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
   else
     work.effect.side = 0;
 
-  REG_WIN0H = 0x00f0;
-  REG_WIN0V = 0x1088;
-  REG_WIN1H = 0x00f0;
-  REG_WIN1V = 0x1088;
-  REG_WININ = 0x3537;
-  REG_WINOUT = 0x3f21;
-  REG_DISPCNT |= 0x6000;
+  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0V = WIN_RANGE(16, 136);
+  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1V = WIN_RANGE(16, 136);
+  REG_WININ = BATTLE_WININ;
+  REG_WINOUT = BATTLE_WINOUT;
+  REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 
   if (missed != 0) {
     WaitFrames(10);
@@ -5267,12 +5264,9 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
   struct AnimationObject *record;
   struct AnimationEntry *child;
   struct AnimationEntry **children;
-  /* FAKEMATCH: the mask is a value and the first frame is read into a
-   * temporary: loop.c keeps 255 in sl across the call and the frame is or-ed
-   * with it, as the native. 2026-10-13: a constant (child->frame = 0xff, |=
-   * 0xff, |= -1, = -1) stores movs #255, 18 of 46 differ; child->frame |= mask
-   * or = child->frame | mask without the temporary, with a u8, s32 or u32 mask,
-   * differ 28 (registers and the order of the two stores). */
+  /* FAKEMATCH(temporary): the mask in a variable and the frame read into
+   * another, so 255 stays in a register across the calls and is or-ed in;
+   * as child->frame |= 0xff, 10 of 46 instructions differ in tbs-en. */
   u8 lastFrameMask = 0xff;
   u8 previousFrame;
 
@@ -5343,7 +5337,8 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
   ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
-  AudioCommand_PlayFar(SOUND_CAST);
+  // The sound of a cast, as the caster raises its hand.
+  AudioCommand_PlayFar(SE_154);
   if (mode & 2)
     BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 1, 0);
   else if (!isDjinni)
@@ -5404,7 +5399,7 @@ void BattleMotion_RunValueSequence(s32 unitId, s32 unused0, s32 unused1) {
   selected = selection;
   flashesRemaining = 1;
   do {
-    listTerminator = 0xff;
+    listTerminator = BATTLE_UNIT_LIST_END;
     selected[1] = listTerminator;
     selected[0] = unitId;
     BattleLayout_HighlightPartyPanelsFar(selected);
@@ -5422,10 +5417,8 @@ void BattleMotion_RunValueSequence(s32 unitId, s32 unused0, s32 unused1) {
   PartyStatusDrawFar(gBattleWork->partyStatus);
 }
 
-// Battle: removing a downed unit's sprite and places
 // Takes unit id out of the party's or the enemies' list and out of this
 // round's actions, and frees its place in the enemy count.
-// id : the unit id
 void BattleActor_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
@@ -5445,12 +5438,10 @@ void BattleActor_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  /* FAKEMATCH: the one-pass block around the enemy scan keeps the party loop's
-   * shape: its REMOVED constant loaded once ahead of it and the store inside
-   * it; without the block the party loop's first test is peeled ahead of it
-   * (differ 26 in tbs-en). The enemy scan is a label loop: as for (;;) left by
-   * return it walks a pointer and keeps 0xfe in r4 (differ 24), as a do-while
-   * on the end mark differ 51. */
+  /* FAKEMATCH(one-pass): the enemy scan in a one-pass block, which keeps the
+   * party loop's shape (its first test not peeled ahead of it); without the
+   * block, 12 of 53 instructions differ in tbs-en. The scan itself is a label
+   * loop, the form its branches match with. */
   do {
     enemyOrActionIndex = 0;
   again:
@@ -5465,8 +5456,8 @@ void BattleActor_RemoveFromLists(s32 unitId) {
     goto again;
   } while (0);
 
-// Releases the suffix bit belonging to an enemy's displayed name.
 removed:
+  // Free the letter that told the enemy apart from others of its class.
   EnemyCountRelease(unitId);
   for (enemyOrActionIndex = 0; enemyOrActionIndex < BATTLE_ACTION_CAPACITY;
        enemyOrActionIndex++) {
@@ -5478,7 +5469,6 @@ removed:
 // Shows a downed unit: a party member's sprite in animation 4, an enemy's in
 // 5; an enemy then leaves the lists after four frames and its sprite dissolves
 // a dot at a time.
-// id : the unit id
 void BattleMotion_InitializeActorRecords(s32 unitId) {
   void *records[4];
   struct BattleUnit *unit;
@@ -5509,7 +5499,8 @@ void BattleMotion_InitializeActorRecords(s32 unitId) {
     }
     WaitFrames(4);
     BattleActor_RemoveFromLists(unitId);
-    Map_RenderAllAnimatedTileFramesFar(records, recordCount); // a dot at a time
+    // A dot at a time.
+    Map_RenderAllAnimatedTileFramesFar(records, recordCount);
     ActivateBattleObjectSlot(unitId);
   }
 }
@@ -5567,10 +5558,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
   order = (struct SlotArray *)gBattleWork;
 
   if (requireLivingUnit != 0) {
-    /* FAKEMATCH: a loop that runs once, left by its closing break. Written
-     * plain, without the loop, the function differs 35 instructions in EN (85
-     * -> 84): the first branch's zero offset takes r2 for r1 and the else
-     * branch sets up its pointers in another order. */
+    /* FAKEMATCH(one-pass): a loop left by its closing break; without it, 14
+     * of 89 instructions differ in tbs-en. */
     for (;;) {
       index = 0;
       slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
@@ -5981,7 +5970,6 @@ scan_complete:
   return targetPositions[(Random16() * targetCount) >> 16];
 }
 
-// Battle: clearing a unit's states, and waiting for the player
 // Clears every ailment and stat change of unit id, recalculates its stats
 // and rebuilds its status icons; called when the unit goes down.
 s32 BattleActor_ResetRuntimeFields(s32 unitId) {
@@ -6063,7 +6051,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
     offset = gBattleDisplayWork->offset;
     QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
     QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     *(u32 *)&prompt->attr0 = 0xa400;
     *(u32 *)&prompt->attr2 = 0;
     tile = VramCache_Reload(tileSlot, frameTiles) & 0x3ff;
@@ -6106,7 +6094,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
   while (1) {
     QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
     QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((s32 *)prompt)[1] = MENU_SPRITE_SIZE_16;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, frameTiles);
@@ -6239,7 +6227,6 @@ u32 BattleEvPush(u32 opcode, u32 operand) {
   return opcode;
 }
 
-// Battle: an ability's effect on each of its targets
 // Returns 1 for an effect that still applies when the ability's damage has
 // just knocked its target out: the drains, which give the damage they dealt
 // back to the actor.
@@ -6284,11 +6271,6 @@ s32 BattleEffectDeadCheck(s32 effect) {
 // Flash cut it to a tenth.
 #define GUARD_DEFEND 1
 #define GUARD_TOTAL_DEFENSE 2
-
-// BattleUnit.poison: the poison takes a tenth of the maximum HP at the end of
-// each turn, deadly poison a fifth.
-#define POISON_NORMAL 1
-#define POISON_DEADLY 2
 
 // The rate BattlePowerCalc and BattleRecoveryCalc scale by: 256 is 1.
 #define FULL_RATE 256
@@ -6450,7 +6432,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
     chance = elementPower - target->element[plan->element].resistance;
     chance += 30;
-    chance *= 65536 / 100; // percent to a fraction of the 16-bit random range
+    // Percent to a fraction of the 16-bit random range.
+    chance *= 65536 / 100;
     if (chance > (BattleRandomFar() & 0xffff))
       BattleEvPush(BATTLE_EVENT_DJINN_BONUS, 5);
   }
@@ -7003,10 +6986,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       u16 *stat;
 #endif
 
-      /* FAKEMATCH: walking a pointer down from hp to maxHp reads each stat
-       * twice, unsigned and signed, as the ROM does; plain member reads,
-       * (u16)target->hp beside target->hp and the same for maxHp, share one
-       * load each (differ 116 in tbs-en). */
+      // UB: a pointer walks from hp down past it to maxHp, reading each stat
+      // twice, unsigned and signed, as the ROM does; the member reads behind
+      // UBFIX share one load each.
 #ifdef UBFIX
       oldHp = (u16)target->hp;
       newHp = target->hp;
@@ -7496,20 +7478,18 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
 #define ABILITY_PSY_DRAIN 126
 
-// Battle: whether an ability is Psynergy
 // Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 // none.
-// abilityId : the ability
 u32 Ability_CheckStatusOrSpecialId(s32 abilityId) {
   u8 pp;
 
   if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
   pp = BattleActGet(abilityId)->ppCost;
-  return (u32)((0 - pp) | pp) >> 31; // 1 if pp is not 0
+  // 1 if pp is not 0.
+  return (u32)((0 - pp) | pp) >> 31;
 }
 
-// Battle: choosing the enemies' actions, and playing the battle events
 #define ABILITY_ATTACK 1 // the ability "Attack"
 #define ALLY_MAX 7       // the last party member's unit id
 
@@ -7580,7 +7560,8 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   needsChoice = itemsAllowed = 1;
   failedChoices = 0;
   selection = -1U;
-  if (unit->classIndex != 0) // a party member chooses in the menu
+  // A party member chooses in the menu.
+  if (unit->classIndex != 0)
     return;
   if (retry != 0 && request->command != CMD_ABILITY)
     return;
@@ -7631,7 +7612,7 @@ select_again:
   abilityId = enemy->actions[selection];
   request->command = CMD_ABILITY;
   if (useItem != 0 && retry != 0) {
-    if (!(0x1ff & unit->inventory[0])) {
+    if (!(ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == 0) {
         request->command = CMD_ITEM;
@@ -7641,7 +7622,7 @@ select_again:
     }
     if (useItem != 0) {
       item = Item_GetDirectFar(unit->inventory[0]);
-      if (item->useType == 1) {
+      if (item->useType == ITEM_USE_CONSUMED) {
         itemAction = BattleActGet(item->actionId);
         abilityId = item->actionId;
         request->command = CMD_ITEM;
@@ -7668,15 +7649,15 @@ select_again:
     ability = BattleActGet(abilityId);
     effect = ability->effect;
     switch (effect) {
-    case 46:
+    case ABILITY_EFFECT_DEFEND:
       request->command = CMD_DEFEND;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
-    case 47:
+    case ABILITY_EFFECT_TOTAL_DEFENSE:
       request->command = CMD_DEFEND2;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
-    case 49:
+    case ABILITY_EFFECT_FLEE:
       request->command = CMD_FLEE;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
@@ -7719,8 +7700,8 @@ select_again:
     request->range = ability->range;
     targetMode = ability->targetMode;
     switch (targetMode) {
-    case 2:
-    case 4:
+    case TARGET_MODE_ALLIES:
+    case TARGET_MODE_SELF:
       allyTarget = BattleTarget_SelectForAction(request->unitId, ability);
       if (allyTarget == -2) {
         allyIsParty = 0;
@@ -7733,7 +7714,7 @@ select_again:
         needsChoice = 0;
       }
       break;
-    case 1:
+    case TARGET_MODE_FOES:
       opponentTarget = BattleTarget_SelectForAction(request->unitId, ability);
       if (opponentTarget == -2) {
         opponentIsParty = 0;
@@ -7774,9 +7755,9 @@ done:
 // Sets DMA3 three times over, stopping it, then calls the IRQ return
 // instruction's word as a routine.
 void Dma_StopAllThenRunHook(void) {
-  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
-  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
-  Dma_Set(0, 0, (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+  Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
+  Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
+  Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   _call_via_r0(IwramIrqModeWord);
 }
 
@@ -7808,7 +7789,8 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
   return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
 }
 
-// Battle event playback.
+// BattleEvent_Playback's waits, in BattleEventState.phase beside the phases
+// battle_event.h names.
 #define PLAY_MESSAGE 3      // Wait for message display.
 #define PLAY_ADVANCE 5      // Wait for the advance key.
 #define PLAY_HIT 10         // Flash the unit that was hit.
@@ -7879,12 +7861,14 @@ void BattleEvent_Playback(void) {
                                     VALUE_NUMBER);
             break;
           case BATTLE_EVENT_ITEM_NAME: // Item name inserted into the message.
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] & 0x1ff,
+            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
+                                        ITEM_ID_MASK,
                                     VALUE_ITEM_NAME);
             break;
           case BATTLE_EVENT_ABILITY_NAME: // Ability name inserted into the
                                           // message.
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] & 0x3fff,
+            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
+                                        OWNER_ACTION_ID_MASK,
                                     VALUE_ABILITY_NAME);
             break;
           case BATTLE_EVENT_MARK:
@@ -8020,13 +8004,13 @@ void BattleEvent_Playback(void) {
         if (events->timer & 2) {
           struct BattleObj *slot;
 
-          selection[0] = 0xff;
+          selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObjGet(events->actorId);
           BattleMotion_SetRecordChildValues(
               slot->object, BattleMotion_GetSlotPalette(events->actorId));
         } else {
           selection[0] = events->actorId;
-          selection[1] = 0xff;
+          selection[1] = BATTLE_UNIT_LIST_END;
           BattleMotion_SetRecordChildValues(
               BattleObjGet(events->actorId)->object, SPRITE_COLOR_WHITE);
         }
@@ -8049,7 +8033,7 @@ void BattleEvent_Playback(void) {
             kind--;
             if (kind < 0)
               kind = 0;
-            AudioCommand_PlayFar(kind + 146);
+            AudioCommand_PlayFar(SE_146 + kind);
           }
           events->timer = FELLED_FLASH;
         }
@@ -8059,7 +8043,7 @@ void BattleEvent_Playback(void) {
           s32 kind = Summon_GetLayoutKind(UnitGetFar(events->actorId)->classId);
 
           if (kind >= 0)
-            AudioCommand_PlayFar(kind + 146);
+            AudioCommand_PlayFar(SE_146 + kind);
         }
         if (events->timer >= FELLED_FLASH)
           frame = (events->timer - FELLED_FLASH) / 8 % 5 + 1;
@@ -8149,7 +8133,7 @@ u32 BattleEventRuntime_Reset(void) {
   events->eventIndex = 0;
   events->timer = 0;
   events->queue.targetIndex = 0;
-  events->pendingCue = 0x86;
+  events->pendingCue = SE_HEAVY_IMPACT;
   events->flags = 0;
 }
 
@@ -8174,9 +8158,8 @@ s32 BattleEventRuntime_WaitForReady(void) {
   return BattleEventRuntime_Reset();
 }
 
-// Battle: checks whether a unit is in the active formation.
 // Returns one when the unit is in its side's formation.
-// id: unit id; zero through seven are party members, the rest are enemies.
+// unitId: 0 to 7 a party member, any other an enemy.
 u32 BattleParty_IsUnitListed(u32 unitId) {
   u16 list[8];
   s32 side;
@@ -8243,7 +8226,6 @@ s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-// Battle: announces actions and plans targets and effects.
 // Djinni selector: element in bits 8..11, index in bits 0..7.
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
@@ -8276,9 +8258,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     s32 targetId;
 
     switch (ability->effect) {
-    case 5: // Revive.
-    case 56:
-    case 57:
+    case ABILITY_EFFECT_REVIVE:
+    case ABILITY_EFFECT_REVIVE_HALF:
+    case ABILITY_EFFECT_REVIVE_80:
       includeDowned = 1;
       break;
     }
@@ -8314,8 +8296,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         for (place = first; place <= last; place++) {
           if (place < 0)
             continue;
-          if (request->target & 128) // Enemy side.
-          {
+          // The enemies' side.
+          if (request->target & 128) {
             if (place >= enemyCount)
               continue;
             targetId = battle->enemyIds[place];
@@ -8444,7 +8426,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       UiText_ShowMessageAndWaitCoreFar(MsgActorRuns);
     }
     BattlePresentation_WaitForAdvance();
-    plan->outcome = 7;
+    plan->outcome = PLAN_SHOW_FLEE;
     return 0;
 
   case CMD_ATTACK:
@@ -8513,19 +8495,17 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(actor->inventory[request->parameter],
                             VALUE_ITEM_NAME);
-    if (item->useType == 2 || item->useType == 0) {
+    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == 0) {
       switch (item->type) {
       case 1:
       case 3:
       case 6:
       case 7:
       case 8:
-        UiText_ShowMessageAndWaitCoreFar(
-            MsgActorRaisesItem); // Raises the item.
+        UiText_ShowMessageAndWaitCoreFar(MsgActorRaisesItem);
         break;
       default:
-        UiText_ShowMessageAndWaitCoreFar(
-            MsgActorUsesBattleItem); // Uses the item.
+        UiText_ShowMessageAndWaitCoreFar(MsgActorUsesBattleItem);
         break;
       }
     } else {
@@ -8550,7 +8530,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       return -1;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-    if ((BattleActGet(abilityId)->flags & 15) == 6)
+    if ((BattleActGet(abilityId)->flags & ABILITY_KIND_MASK) ==
+        ABILITY_KIND_UNLEASHED_DAMAGE)
       message = MsgActorUnleashesAbility;
     else
       message = MsgActorUsesAbility;
@@ -8634,11 +8615,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
                      DJINN_ELEMENT(request->parameter) * 20 +
                          DJINN_INDEX(request->parameter) + 300);
-        BattleEvPush(BATTLE_EVENT_SOUND, 175);
+        BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
         BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
         BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
-        AudioCommand_PlayFar(212);
+        AudioCommand_PlayFar(SE_212);
         ObjectDispatch_ApplyArgumentToChildrenFar(
             BattleObjGet(request->unitId)->object, 3);
         ObjectDispatch_ApplyValueToChildrenFar(
@@ -8678,9 +8659,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     struct DjinnRecoveryList *list;
     s32 side;
     u8 counts[4];
-    /* FAKEMATCH: never read: the native frame keeps 8 bytes below counts,
-     * exactly this array; without it the frame is 40 bytes, not 48, and every
-     * slot above it moves (differ 28 in tbs-en). */
+    /* FAKEMATCH(dead): an unused array for the frame's 8 bytes below counts;
+     * without it, 34 of 1393 instructions differ in tbs-en. */
     u8 unused[8];
     s32 index;
 
@@ -8728,28 +8708,28 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
 
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
-    plan->outcome = 2;
-    if (actor->classIndex == 0) // Enemy.
-    {
+    plan->outcome = PLAN_SHOW_ATTACK;
+    // An enemy's attack effect comes from its class.
+    if (actor->classIndex == 0) {
       plan->presentationFlags =
-          Battle_GetSpriteFlagNibble(actor->classId) | 0x4000;
+          Battle_GetSpriteFlagNibble(actor->classId) | STAGING_BY_ID_RANGE;
     } else {
       plan->presentationFlags = 0;
       switch (actor->classId) {
       case ISAAC:
-        plan->presentationFlags = 0x4001;
+        plan->presentationFlags = STAGING_BY_ID_RANGE | 1;
         break;
       case GARET:
-        plan->presentationFlags = 0x4001;
+        plan->presentationFlags = STAGING_BY_ID_RANGE | 1;
         break;
       case IVAN:
-        plan->presentationFlags = 0x4004;
+        plan->presentationFlags = STAGING_BY_ID_RANGE | 4;
         break;
       case MIA:
-        plan->presentationFlags = 0x4004;
+        plan->presentationFlags = STAGING_BY_ID_RANGE | 4;
         break;
       case JENNA:
-        plan->presentationFlags = 0x4001;
+        plan->presentationFlags = STAGING_BY_ID_RANGE | 1;
         break;
       }
     }
@@ -8757,10 +8737,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
     // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
     // Attacks cannot miss a target that cannot move.
-    /* FAKEMATCH: the one-pass block places the body ahead of its five tests,
-     * reached by a backward beq from the last one, whose zero (r5) the first
-     * store reuses. As a plain if, with the tests negated or not, or as a while
-     * loop left by break, the tests come first (differ 105 in tbs-en). */
+    /* FAKEMATCH(one-pass): the rolls in a one-pass block left by break, which
+     * places them ahead of the five tests; as an if on the negated tests, 46
+     * of 1393 instructions differ in tbs-en. */
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)
@@ -8770,7 +8749,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if ((BattleRandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
-    if (GameFlag_TestFar(366))
+    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL))
       plan->targetMultiplier[0] = 0;
     // Critical hit: one chance in 32, or the equipment's chance.
     if (target->hp != 0) {
@@ -8791,21 +8770,27 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     plan->element = ability->element;
     plan->presentationFlags = 0;
     plan->abilityId = abilityId;
-    if (ability->effect == 65 || ability->effect == 41 ||
-        ability->effect == 42 || ability->effect == 43 ||
-        ability->effect == 44 || ability->effect == 68) {
+    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60) {
       // Chance to increase the damage multiplier.
       s32 chance;
       s32 amount;
 
-      if (ability->effect == 65 || ability->effect == 68)
+      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
+          ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60)
         chance = 153;
-      else if (ability->effect == 41 || ability->effect == 43)
+      else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+               ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8)
         chance = 32;
       else
         chance = 64;
-      if (ability->effect == 65 || ability->effect == 41 ||
-          ability->effect == 42)
+      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
+          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4)
         amount = 1;
       else
         amount = 2;
@@ -8815,7 +8800,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         for (index = 0; index < plan->targetCount; index++)
           plan->targetMultiplier[index] += amount;
       }
-    } else if (ability->effect >= 36 && ability->effect <= 40) {
+    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_1_IN_64 &&
+               ability->effect <= ABILITY_EFFECT_CRITICAL_1_IN_4) {
       // Critical-hit chance ranges from 1/64 to 1/4.
       s32 mask;
 
@@ -8843,8 +8829,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         for (index = 0; index < plan->targetCount; index++)
           plan->targetCritical[index] = 2;
       }
-    } else if (abilityId == 178) // Lethal technique: roll the hit first.
-    {
+    } else if (abilityId == 178) {
+      // Ability 178 rolls its hit now, as the plan is made.
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++)
@@ -8862,21 +8848,22 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         gBattle_ActionStatus[abilityId] != 0)
       plan->outcome = gBattle_ActionStatus[abilityId];
     else if (Ability_CheckStatusOrSpecialId(abilityId))
-      plan->outcome = 3;
+      plan->outcome = PLAN_SHOW_CAST;
     else if (plan->presentationFlags != 0) {
       if (actor->classIndex == 0)
-        plan->outcome = 8;
+        plan->outcome = PLAN_SHOW_ENEMY_CAST;
       else
-        plan->outcome = 3;
+        plan->outcome = PLAN_SHOW_CAST;
     } else
-      plan->outcome = 1;
+      plan->outcome = PLAN_SHOW_MESSAGES;
     if (Battle_IsReviveEffectFar(ability->effect))
-      plan->presentationFlags |= 0x10000;
+      plan->presentationFlags |= STAGING_ON_DOWNED;
     if (abilityId == 178 && plan->targetHit[0] != 0)
-      plan->presentationFlags |= 0x1000;
+      plan->presentationFlags |= 1 << STAGING_VARIANT_SHIFT;
   }
-  if (request->command == CMD_ITEM && plan->outcome != 5 && plan->outcome != 9)
-    plan->outcome = 4;
+  if (request->command == CMD_ITEM && plan->outcome != PLAN_SHOW_SUMMON &&
+      plan->outcome != PLAN_SHOW_FULL_SCREEN)
+    plan->outcome = PLAN_SHOW_ITEM;
   plan->command = request->command;
   return 0;
 }
@@ -9170,11 +9157,11 @@ s32 Battle_ProcessRoundEnd(void) {
             BattleEvPush(BATTLE_EVENT_ABILITY_NAME, expiredEntry->element * 20 +
                                                         expiredEntry->index +
                                                         300);
-            BattleEvPush(BATTLE_EVENT_SOUND, 175);
+            BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
             BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
             BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
-            AudioCommand_PlayFar(212);
+            AudioCommand_PlayFar(SE_212);
             ObjectDispatch_ApplyArgumentToChildrenFar(
                 BattleObjGet(unitId)->object, 3);
             ObjectDispatch_ApplyValueToChildrenFar(
@@ -9232,7 +9219,7 @@ s32 Battle_ProcessRoundEnd(void) {
             } else {
               UiText_ShowMessageAndWaitCoreFar(MsgHpRecover);
             }
-            AudioCommand_PlayFar(175);
+            AudioCommand_PlayFar(SE_175);
             BattlePresentation_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
@@ -9248,7 +9235,7 @@ s32 Battle_ProcessRoundEnd(void) {
             } else {
               UiText_ShowMessageAndWaitCoreFar(MsgPpRecover);
             }
-            AudioCommand_PlayFar(175);
+            AudioCommand_PlayFar(SE_175);
             BattlePresentation_WaitForAdvance();
           }
         }
@@ -9430,10 +9417,10 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEventRuntime_SchedulePhase(25);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
         BattleEvPush(BATTLE_EVENT_NUMBER, gain);
-        BattleEvPush(BATTLE_EVENT_SOUND, 175);
+        BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
-        AudioCommand_PlayFar(212);
+        AudioCommand_PlayFar(SE_212);
         ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(unitId)->object,
                                                   3);
         ObjectDispatch_ApplyValueToChildrenFar(
@@ -9479,7 +9466,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       if (*poison != 0) {
         state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = 133;
+        state->events.pendingCue = SE_133;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         s32 text;
@@ -9519,11 +9506,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
 // Fades to black while increasing mosaic size over sixteen frames; preserves
 // the four background controls and consumes four random draws each frame.
 s32 BattlePres_RunMosaicFadeOut(void) {
-  /* FAKEMATCH: volatile restores the form the bytes prove: the four saved
-   * BGxCNT values live at sp+6, 4, 2 and 0, each stored with strh and loaded
-   * again with ldrh for the write back (an 8-byte frame). Without all four
-   * differ 61, 83 instructions for 90 and no frame; without one alone, 27 to
-   * 45; as a u16 saved[4] array, in either order: differ 60. */
+  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
+   * stored and loaded again as in the ROM; without volatile, 28 of 90
+   * instructions differ in tbs-en. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;
@@ -9532,14 +9517,14 @@ s32 BattlePres_RunMosaicFadeOut(void) {
   volatile u16 *registerCursor;
 
   bg0cnt = REG_BG0CNT;
-  REG_BG0CNT = bg0cnt | 0x40;
+  REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
   registerCursor = &REG_BG0CNT;
   bg1cnt = *++registerCursor;
-  *registerCursor = bg1cnt | 0x40;
+  *registerCursor = bg1cnt | BGCNT_MOSAIC;
   bg2cnt = *++registerCursor;
-  *registerCursor = bg2cnt | 0x40;
+  *registerCursor = bg2cnt | BGCNT_MOSAIC;
   bg3cnt = *++registerCursor;
-  *registerCursor = bg3cnt | 0x40;
+  *registerCursor = bg3cnt | BGCNT_MOSAIC;
   registerCursor += 0x21;
   *registerCursor = 0x3eee;
 
@@ -9553,7 +9538,7 @@ s32 BattlePres_RunMosaicFadeOut(void) {
     WaitFrames(1);
   }
 
-  REG_DISPCNT = 1;
+  REG_DISPCNT = DISPCNT_MODE_1;
   WaitFrames(4);
   registerCursor = &REG_BG0CNT;
   *registerCursor++ = bg0cnt;
@@ -9621,8 +9606,10 @@ void BattlePres_UpdateHBlankScroll(void) {
     scanlines = WORK_SLOT(10);
     line = scanlines->lines[scanlines->page];
     Io_Write16(line[0], &REG_BG2CNT);
-    Dma_Set(line + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
-    Dma_Set(&scanlines->affine, (void *)0x04000020, 0x84000004, REG_DMA3);
+    Dma_Set(line + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
+            &REG_DMA0SAD);
+    Dma_Set(&scanlines->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4),
+            REG_DMA3);
   }
 }
 
@@ -9631,8 +9618,8 @@ void BattlePres_UpdateHBlankScroll(void) {
 void BattlePresentation_UploadTileVariant(void) {
   u32 variant = *gDisp - 1;
   if (variant <= 31)
-    Dma_Set(gBattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000,
-            0x84000008, REG_DMA3);
+    Dma_Set(gBattlePres_TileVariants + (variant >> 2) * 32, CURTAIN_TILE(0),
+            DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 // Advances the entry camera turn and curtain scroll, then settles at the normal
@@ -9684,7 +9671,7 @@ void BattlePres_DrawTransitionRows(void) {
     }
     tileRow = 13 - (alignedFrame >> 3);
     column = 0;
-    tilemap = (u16 *)((tileRow << 6) + 0x06006000);
+    tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
     do {
       column++;
       *tilemap = tileEntry;
@@ -9699,7 +9686,7 @@ void BattlePres_DrawTransitionRows(void) {
     tileRow = (alignedFrame >> 3) + 13;
     if (tileRow <= 20) {
       column = 0;
-      tilemap = (u16 *)((tileRow << 6) + 0x06006000);
+      tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
       do {
         column++;
         *tilemap = tileEntry;
@@ -9748,41 +9735,36 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
 
       volatile u32 *dma;
 
-      Dma_Set(gBattlePres_CurtainTiles, (void *)0x06005020, 0x84000008,
+      Dma_Set(gBattlePres_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
               REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 32, (void *)0x06005040, 0x84000008,
+      Dma_Set(gBattlePres_CurtainTiles + 32, CURTAIN_TILE(2), DMA_COPY_WORDS(8),
               REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 64, (void *)0x06005060, 0x84000008,
+      Dma_Set(gBattlePres_CurtainTiles + 64, CURTAIN_TILE(3), DMA_COPY_WORDS(8),
               REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 96, (void *)0x06005080, 0x84000008,
+      Dma_Set(gBattlePres_CurtainTiles + 96, CURTAIN_TILE(4), DMA_COPY_WORDS(8),
               REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 128, (void *)0x060050a0, 0x84000008,
-              REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 160, (void *)0x060050c0, 0x84000008,
-              REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 192, (void *)0x060050e0, 0x84000008,
-              REG_DMA3);
+      Dma_Set(gBattlePres_CurtainTiles + 128, CURTAIN_TILE(5),
+              DMA_COPY_WORDS(8), REG_DMA3);
+      Dma_Set(gBattlePres_CurtainTiles + 160, CURTAIN_TILE(6),
+              DMA_COPY_WORDS(8), REG_DMA3);
+      Dma_Set(gBattlePres_CurtainTiles + 192, CURTAIN_TILE(7),
+              DMA_COPY_WORDS(8), REG_DMA3);
       dma = REG_DMA3;
-      /* FAKEMATCH: introducing the pointer after the transfers avoids a
-       * preserved-register copy; the volatile output orders its subtraction
-       * before the control value, differing by two instructions without
-       * volatile. 2026-10-11: the native subs r3, #212 is reload_cse_move2add
-       * on a constant address that happened to land in r3; plain pointer
-       * arithmetic is CSE-reused by the later Dma_Sets (differ 45), REG_DISPCNT
-       * = 1 takes a pool constant (63), and a constant struct-field store gets
-       * r2 from local-alloc, so no move2add (31). */
+      /* FAKEMATCH(barrier): REG_DISPCNT reached from DMA3's address through an
+       * empty asm, as the ROM's subs r3, #212; without the barrier, 12 of 414
+       * instructions differ in tbs-en. */
       asm volatile("" : "+l"(dma));
       ((struct DisplayRegisters *)((u8 *)dma - 212))->control = 1;
     }
     background->secondMode = 1;
     background->mode = 1;
     background->busy = 0;
-    Dma_Fill32Cell(fill, 0x33333333, (void *)0x06005000, 0x20);
-    Dma_Fill32Cell(fill, 0, (void *)0x06005100, 0x20);
-    REG_BG1CNT = 0xc04;
-    REG_BG0CNT |= 2;
+    Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), 0x20);
+    Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), 0x20);
+    REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
+    REG_BG0CNT |= BGCNT_PRIORITY(2);
     background->mode = 2;
-    tilemap = (u16 *)0x06006000;
+    tilemap = (u16 *)BG_SCREEN_BLOCK(12);
     for (index = 0; index <= 31; index++) {
       if (index <= 20)
         tile = 0xf080;
@@ -9798,13 +9780,16 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       gBgScroll[1].y = 32;
       gBgScroll[1].x = 8;
       WaitFrames(1);
-      REG_WIN0H = 0xf0;
-      REG_WIN0V = 0x88;
-      REG_WIN1H = 0xf0;
-      REG_WIN1V = 0x88;
-      REG_WININ = 0x3537;
-      REG_WINOUT = 0x3f21;
-      QueueIoWriteDelay2(0x04000000, 0x7741);
+      REG_WIN0H = WIN_RANGE(0, 240);
+      REG_WIN0V = WIN_RANGE(0, 136);
+      REG_WIN1H = WIN_RANGE(0, 240);
+      REG_WIN1V = WIN_RANGE(0, 136);
+      REG_WININ = BATTLE_WININ;
+      REG_WINOUT = BATTLE_WINOUT;
+      QueueIoWriteDelay2((u32)&REG_DISPCNT,
+                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                             DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                             DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
       BattlePres_SetupTransitionScene(0, 0, 0, 180);
       *timer = start;
       Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 3200);
@@ -9814,8 +9799,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       WaitFrames(1);
       UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
       WaitFrames(20);
-      QueueIoWriteDelay10(0x04000008, 2);
-      QueueIoWriteDelay6(0x04000008, 0);
+      QueueIoWriteDelay10((u32)&REG_BG0CNT, 2);
+      QueueIoWriteDelay6((u32)&REG_BG0CNT, 0);
       BattleIntro_AnnounceEncounter(enemyCount);
       Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
       Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
@@ -9826,7 +9811,7 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     battle = WORK_SLOT(HEAP_SLOT_BATTLE);
     background->secondMode = 1;
     background->busy = 0;
-    count = BattleParty_ListActorIds(3, (u16 *)unitIds);
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)unitIds);
     for (index = 0; index != count; index++) {
       id = index + 120;
       if ((s32)index <= 7)
@@ -9835,15 +9820,19 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       if (UnitGetFar(id)->classId != 148)
         object->scale = 0xb333;
     }
-    IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |
+                            DISPCNT_WIN1_ON,
+                        0x20000);
     WaitFrames(1);
     {
       s32 start = 0;
 
       battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-      presentation.effect.count =
-          BattleParty_ListActorIds(2, presentation.effect.actors);
-      presentation.effect.actors[presentation.effect.count] = 0xff;
+      presentation.effect.count = BattleParty_ListActorIds(
+          BATTLE_SIDE_ENEMIES, presentation.effect.actors);
+      presentation.effect.actors[presentation.effect.count] =
+          BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForList(presentation.effect.actors, 0);
       BattleFx_RunShatteringOpeningFar(&presentation.effect);
       BattlePres_SetupTransitionScene(0, 0, 0, 100);
@@ -9853,18 +9842,20 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     WaitFrames(1);
     WaitFrames(20);
     UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
-    QueueIoWriteDelay10(0x04000008, 2);
-    QueueIoWriteDelay6(0x04000008, 0);
-    REG_BLDCNT = 0x3f40;
+    QueueIoWriteDelay10((u32)&REG_BG0CNT, 2);
+    QueueIoWriteDelay6((u32)&REG_BG0CNT, 0);
+    REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     visibleUnits = visibleUnitIds;
-    visibleCount = BattleParty_ListActorIds(3, (u16 *)visibleUnits);
-    visibleUnitIds[visibleCount] = 0xff;
+    visibleCount =
+        BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)visibleUnits);
+    visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForList(visibleUnits, 0);
-    visibleCount = BattleParty_ListActorIds(1, (u16 *)visibleUnits);
+    visibleCount =
+        BattleParty_ListActorIds(BATTLE_SIDE_PARTY, (u16 *)visibleUnits);
     for (index = 0; index != visibleCount; index++)
       BattlePres_SetActorRecordMode(visibleUnits[index], 1);
     for (index = 0; index != 16; index++) {
-      REG_BLDALPHA = index | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(index, 16);
       WaitFrames(1);
     }
     for (index = 0; index != visibleCount; index++)
@@ -9875,12 +9866,13 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     Runtime_SetIrqHandler(2, 0, 0);
   }
   Runtime_SetIrqHandler(2, 0, 0);
-  REG_BG1CNT = 0x1f83;
+  REG_BG1CNT = BATTLE_BG1CNT;
   WaitFrames(1);
-  REG_BG1CNT = 0x1f83;
-  REG_BG0CNT &= 0xfffd;
+  REG_BG1CNT = BATTLE_BG1CNT;
+  REG_BG0CNT &= ~BGCNT_PRIORITY(2);
   gBgScroll[1].x = 8;
-  REG_DISPCNT = 0x1541;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   Runtime_ReleaseHeapBlock(42);
 }
 
@@ -9892,12 +9884,9 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   u32 ime;
   u32 *savedInterruptEnable = &ime;
 
-  /* FAKEMATCH: needed to match: the one-pass block and the loop on a zero local
-   * keep the IME save through slot's register. As a plain block, also with a
-   * volatile register pointer, the save is stored sp-relative, ahead of the
-   * palette address: differ 8; as IRQ_LOCK(*slot) and IRQ_UNLOCK the save is
-   * stored sp-relative and the restore loads the register address first: differ
-   * 8; plain statements restoring REG_IME = *slot: differ 14. */
+  /* FAKEMATCH(one-pass): the IME save in a one-pass block and a loop on a zero
+   * local, which keep it in its pointer's register; as a plain block, 4 of 43
+   * instructions differ in tbs-en. */
   do {
     u16 *interruptEnable = (u16 *)0x04000208;
     s32 once = 0;
@@ -9909,9 +9898,9 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   } while (0);
 
   if (level == 0) {
-    Dma_Set(palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
+    Dma_Set(palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128), REG_DMA3);
   } else {
-    Graphics_ScaleRgb555Clamped(palette, (u16 *)0x050000c0,
+    Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness = 0x10000 - level * 1092,
                                 128);
   }
@@ -9922,6 +9911,8 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   }
 }
 
+// Selects the background mode and restores or darkens its palette, then
+// rebuilds the background tile lookup and map. unusedResource is not read.
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
                                              s32 fade) {
   struct BattleBackgroundView *transition =
@@ -9933,17 +9924,19 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
   transition->mode = mode;
 
   if (mode == 1) {
-    IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f83, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, 0x20000);
   }
 
-  Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  Dma_Set((void *)OBJ_PLTT, &BG_PLTT_COLOR(5, 0), DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
+  *(u16 *)&BG_PLTT_COLOR(5, 14) = *(u16 *)&BG_PLTT_COLOR(15, 4);
 
   if (fade == 0x80) {
-    Dma_Set(gBattleWork->palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
+    Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128),
+            REG_DMA3);
   } else if (fade != 0) {
     u16 *source = gBattleWork->palette;
-    u16 *destination = (u16 *)0x050000c0;
+    u16 *destination = BATTLE_BG_PALETTE;
     s32 colorIndex;
 
     for (colorIndex = 0; colorIndex != 128; colorIndex++) {
@@ -9970,8 +9963,8 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
     }
   }
 
-  Graphics_BuildSequentialTileTable((void *)0x06003800);
-  BattlePresentation_BuildTilemap((void *)0x0600f800);
+  Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
+  BattlePresentation_BuildTilemap(BG_SCREEN_BLOCK(31));
 }
 
 // Allocates and clears the affine scanline workspace and resets background
@@ -10003,38 +9996,34 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     u32 offset = 0x100;
     void *vram;
 
-    /* FAKEMATCH: conditional cancelling updates end CSE before the
-     * decoder arguments, keeping the VRAM load before the data add.
-     * They disappear from all 103 instructions in every edition;
-     * a reassignment or XOR pair instead differs by four rows.
-     * Plain, with data + 0x100 and the VRAM address as the call's
-     * arguments, the data add is scheduled first: differ 2; through
-     * the vram local alone: differ 4; through a decoder local:
-     * differ 79. */
+    /* FAKEMATCH(dead): two updates that cancel, under a test that emits
+     * nothing, end a CSE block so the VRAM address loads before the data's
+     * add; without them, 2 of 103 instructions differ in tbs-en. */
     if (battle) {
       offset++;
       offset--;
     }
-    vram = (void *)0x06008000;
+    vram = BG_CHAR_BLOCK(2);
     ((BitDecoder)WORK_SLOT(49))(backgroundData + offset, vram);
   }
   Runtime_ReleaseHeapBlock(49);
   palette = battle->palette;
-  Dma_Set(backgroundData, palette, 0x84000040, REG_DMA3);
+  Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
-    Graphics_ScaleRgb555Clamped(palette, (u16 *)0x050000c0,
+    Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness = 0x10000 - level * 1092,
                                 128);
-  Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
-  Graphics_BuildSequentialTileTable((void *)0x06003800);
-  BattlePresentation_BuildTilemap((void *)0x0600f800);
-  Iwram_ClearWords((void *)0x0600ffc0, 64);
+  Dma_Set((void *)OBJ_PLTT, &BG_PLTT_COLOR(5, 0), DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
+  *(u16 *)&BG_PLTT_COLOR(5, 14) = *(u16 *)&BG_PLTT_COLOR(15, 4);
+  Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
+  BattlePresentation_BuildTilemap(BG_SCREEN_BLOCK(31));
+  Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
   if (view->mode == 0)
     Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
   view->mode = mode;
   if (mode == 1)
-    REG_BG1CNT = 0x1f83;
+    REG_BG1CNT = BATTLE_BG1CNT;
 }
 
 // Builds the next affine background page from the view centre, offsets and
@@ -10190,9 +10179,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   Projection_Set(width, result, half * 4);
 }
 
-// Battle display: centers the camera between two actors.
 // Centers the camera at the two objects' midpoint in x and z.
-// a, b: object ids.
 // zoom: scale percentage.
 void BattlePres_SetupTransitionAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                               s32 zoom) {
@@ -10212,9 +10199,9 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
 void Graphics_FadeAlphaOut(void) {
   s32 alphaStep;
 
-  REG_BLDCNT = 0x2044;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   for (alphaStep = 1; alphaStep <= 16; alphaStep += 2) {
-    REG_BLDALPHA = 0x1010 - alphaStep;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16) - alphaStep;
     WaitFrames(1);
   }
 }
@@ -10223,9 +10210,9 @@ void Graphics_FadeAlphaOut(void) {
 void Graphics_FadeAlphaIn(void) {
   s32 step;
 
-  REG_BLDCNT = 0x2044;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   for (step = 1; step <= 16; step += 2) {
-    REG_BLDALPHA = step + 0x1000;
+    REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
     WaitFrames(1);
   }
 }
@@ -10238,7 +10225,9 @@ struct BattleTransitionEntry {
 };
 
 // Selects the battle overlay's blend targets.
-void Graphics_SetBlendControl(void) { REG_BLDCNT = 0xbf; }
+void Graphics_SetBlendControl(void) {
+  REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
+}
 
 // Resets the transform and adds the previous first value to the new first
 // value.
@@ -10268,13 +10257,13 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
   if (gKeysHeld & KEY_START) {
     for (;;) {
       battle = gBattleWork;
-      if (gKeysRepeat & 0x20)
+      if (gKeysRepeat & KEY_LEFT)
         battle->debugValue -= 1;
-      if (gKeysRepeat & 0x10)
+      if (gKeysRepeat & KEY_RIGHT)
         battle->debugValue += 1;
-      if (gKeysRepeat & 0x40)
+      if (gKeysRepeat & KEY_UP)
         battle->debugValue -= 100;
-      if (gKeysRepeat & 0x80)
+      if (gKeysRepeat & KEY_DOWN)
         battle->debugValue += 100;
       if (gKeysPressed & KEY_A)
         selectedValue = battle->debugValue;
@@ -10327,9 +10316,8 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   }
 }
 
-// Battle display: toggles translucent unit sprites.
 // Makes every unit sprite except the selected one translucent (OBJ mode one).
-// except: unit id left unchanged.
+// selectedUnitId: the unit left as it is.
 void BattlePres_SetOtherActorRecordModes(s32 selectedUnitId) {
   s16 unitIds[14];
   s32 unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
@@ -10360,8 +10348,8 @@ void Graphics_AdvancePaletteCycle(void) {
   s32 nextIndex;
 
   if (battle != NULL && battle->highlightMode != 0) {
-    REG_BLDCNT = 0x3f90;
-    REG_BLDALPHA = 0x10;
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
+    REG_BLDALPHA = BLEND_ALPHA(16, 0);
     blendRamp = gBattleFx_HighlightBlendRamp;
     REG_BLDY = blendRamp[battle->highlightStep];
     rampIndex = battle->highlightStep;
@@ -10385,15 +10373,15 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
     REG_BLDY = mode;
     BattlePres_ClearAllActorRecordModes();
     WaitFrames(1);
-    QueueIoWriteDelay2(0x04000050, 0);
+    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
   }
   if (battle != 0 && mode != 0) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
-    Io_Write16(16, &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
 
-    unitCount = BattleParty_ListActorIds(3, unitIds);
+    unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
     for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
       BattlePres_SetActorRecordMode(unitIds[unitIndex], mode & 1);
 
@@ -10401,18 +10389,18 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
       u32 unitId = *selectedUnits;
       unitIndex = 0;
       selectedUnits++;
-      if (unitId != 0xff) {
+      if (unitId != BATTLE_UNIT_LIST_END) {
         do {
           BattlePres_SetActorRecordMode(unitId, (mode & 1) ^ 1);
           unitIndex++;
           if (unitIndex > 13)
             break;
           unitId = *selectedUnits++;
-        } while (unitId != 0xff);
+        } while (unitId != BATTLE_UNIT_LIST_END);
       }
     }
     WaitFrames(1);
-    QueueIoWriteDelay2(0x04000050, 0);
+    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
     Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 0x480);
   }
 }
@@ -10561,8 +10549,7 @@ u32 Graphics_UploadVramBlock(void) {
   if (source != 0) {
     if (work->ready != 0) {
       work->ready = 0;
-      ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000,
-                                              0x4000);
+      ColorBuffer_BackupAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1), 0x4000);
     }
   }
 }
@@ -10584,18 +10571,16 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   s32 effectIndex;
   u8 *graphics;
   s32 zero;
-  /* FAKEMATCH: needed to match: an unused Spark, the 28 bytes the native frame
-   * reserves. */
+  /* FAKEMATCH(dead): an unused Spark for the frame's 28 bytes; without it, 2
+   * of 246 instructions differ in tbs-en. */
   struct Spark unused;
 
   ((s32 *)gTransitionWork)[2] = 1;
   work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-  /* FAKEMATCH: the empty loop ends a scheduling region, keeping the
-   * multiply routine's address load ahead of the spark cursor. Measured:
-   * without it the two swap (differ 2); the sparks indexed in place
-   * still differ 2, the cursor walked as a pointer 4, and the two heap
-   * allocations in the other order 12. */
+  /* FAKEMATCH(one-pass): an empty one-pass loop, a scheduling barrier that
+   * keeps the multiply routine's address ahead of the spark cursor; without
+   * it, 1 of 246 instructions differ in tbs-en. */
   do {
   } while (0);
   for (effectIndex = 0; effectIndex < 16; effectIndex++) {
@@ -10650,20 +10635,19 @@ s32 BattleFx_InitializeStarField(s32 mode) {
     graphics = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
     break;
   }
-  Dma_Set(graphics, BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 32, REG_DMA3);
-  /* FAKEMATCH: the one-pass block keeps the zero ahead of the BG2X
-   * address, which reload derives from the DMA register's. Measured:
-   * plain stores of 0, or of zero outside a block, load it after the
-   * address (differ 2); REG_BG2X = REG_BG2Y = 0 differs 13. */
+  Dma_Set(graphics, BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
+  /* FAKEMATCH(one-pass): the zero and its stores in a one-pass block, which
+   * keeps the zero ahead of BG2X's address; as plain stores of 0, 1 of 246
+   * instructions differ in tbs-en. */
   do {
     zero = 0;
     REG_BG2X = zero;
     REG_BG2Y = zero;
   } while (0);
-  Io_Write16(0x100, &REG_BG2PA);
+  Io_Write16(Q_8_8(1), &REG_BG2PA);
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
-  Io_Write16(0x100, &REG_BG2PD);
+  Io_Write16(Q_8_8(1), &REG_BG2PD);
   BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
   BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
   Scheduler_AddOrUpdateCallback(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
@@ -10673,12 +10657,13 @@ s32 BattleFx_InitializeStarField(s32 mode) {
 // Clears the effect tiles, releases its canvas and blitters and removes both
 // star-field callbacks.
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  REG_DISPCNT = 0x1341;
+  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   Scheduler_RemoveCallback(STAR_FIELD_UPLOAD_CALLBACK);
   return Scheduler_RemoveCallback(STAR_FIELD_UPDATE_CALLBACK);
 }
@@ -10725,18 +10710,17 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 // scene, a summon power burst or a Djinn-setting gathering burst.
 void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     s32 variant) {
-  /* FAKEMATCH: needed to match: an unread ten-word launch tail, the native
-   * frame's 40 extra bytes. */
+  /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
+   * of 249 instructions differ in tbs-en. */
   s32 spare[10];
   struct EffectPosition position;
   struct EffectPosition position2;
   struct BattlePresentationWork launch;
   struct BattlePresentationWork launch2;
-  /* FAKEMATCH: one variable, assigned twice, holds slot 12's address
-   * and later the IME address, as the bytes do; the session is slot 9,
-   * three words below. Measured: the session read as gWorkSlot[9] with
-   * ime set only in the loop differs 124 (247 instructions for 249);
-   * with IO_WRITE_QUEUE_PUSH in the loop as well, 140. */
+  /* FAKEMATCH(temporary): one variable holds work slot 12's address, from
+   * which the battle work three words below is read, and later IME's; as
+   * battle = gWorkSlot[9] with ime set only in the loop, 61 of 249
+   * instructions differ in tbs-en. */
   volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
   struct BattleWork *battle = *(struct BattleWork **)((u8 *)ime - 12);
   struct SparkWork *work;
@@ -10746,31 +10730,36 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
 
   WaitFrames(1);
   BattlePresentation_ConfigurePaletteFade(1, battle->background, 0);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
-  QueueIoWriteDelay2(0x04000000, 0x3741);
-  QueueIoWriteDelay2(0x0400000c, 0x784);
-  QueueIoWriteDelay2(0x04000050, 0x3f44);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  QueueIoWriteDelay2((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                                            DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                                            DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                                            DISPCNT_WIN0_ON);
+  QueueIoWriteDelay2((u32)&REG_BG2CNT, BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                                           BGCNT_SCREEN_BASE(7));
+  QueueIoWriteDelay2((u32)&REG_BLDCNT,
+                     BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   WaitFrames(1);
-  Io_Write16(240, &REG_WIN0H);
-  Io_Write16(0x1088, &REG_WIN0V);
-  Io_Write16(63, &REG_WININ);
-  Io_Write16(17, &REG_WINOUT);
+  Io_Write16(WIN_RANGE(0, 240), &REG_WIN0H);
+  Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
+  Io_Write16(WININ_WIN0_ALL, &REG_WININ);
+  Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == 0) {
-    QueueIoWriteDelay2(0x04000052, 0x100e);
+    QueueIoWriteDelay2((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
     BattleFx_InitializeStarField(element);
     for (frame = 0, projectedPosition = &position; frame <= 44; frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
       work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
       if (frame <= 24)
-        Graphics_ScaleRgb555Clamped(battle->palette, (u16 *)0x050000c0,
+        Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
                                     *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(
           unitId, EffectPosition_Coordinates(projectedPosition));
       work->canvasOrigin.x = (64U - (u32)projectedPosition->x) << 8;
       work->canvasOrigin.y = (64U - (u32)projectedPosition->y) << 8;
-      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->canvasOrigin.x,
-                              0x84000002);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->canvasOrigin.x,
+                              DMA_COPY_WORDS(2));
       work->canvasOrigin.unk_08 = 1;
       WaitFrames(1);
     }
@@ -10786,8 +10775,9 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
           unitId, EffectPosition_Coordinates(&position2));
       effectWork->trackedCanvas.origin.x = (64U - (u32)position2.x) << 8;
       effectWork->trackedCanvas.origin.y = (64U - (u32)position2.y) << 8;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (u32)&effectWork->trackedCanvas.origin.x,
-                          0x84000002);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
+                          (u32)&effectWork->trackedCanvas.origin.x,
+                          DMA_COPY_WORDS(2));
       effectWork->trackedCanvas.origin.unk_08 = 1;
       WaitFrames(1);
     }
@@ -10823,6 +10813,9 @@ void BattlePres_RunWithZeroArguments(void) {
 // Removes the battle transition's interrupt handler.
 void Runtime_RemoveIrqHandlerSlot2(void) { Runtime_SetIrqHandler(2, 0, 0); }
 
+// The rows of gBattleFormation_Records.
+#define FORMATION_COUNT 380
+
 // Returns the formation's average enemy level, or -1 for an empty minimum list,
 // -2 for an ineligible unseen enemy, or -3 when no member has a maximum count.
 s32 Party_ComputeEligibleMemberAverage(s32 recordId) {
@@ -10832,8 +10825,8 @@ s32 Party_ComputeEligibleMemberAverage(s32 recordId) {
   s32 enemyId;
   s32 levelTotal;
   s32 enemyCount;
-  /* FAKEMATCH: needed to match: an unread seven-word level table, the native
-   * frame's 28 bytes */
+  /* FAKEMATCH(dead): an unused array for the frame's 28 bytes; without it, 2
+   * of 94 instructions differ in tbs-en. */
   s32 levels[7];
 
   enemyCount = 0;
@@ -10852,8 +10845,8 @@ s32 Party_ComputeEligibleMemberAverage(s32 recordId) {
     enemy = Enemy_GetDefinitionFar(enemyId + 8);
     if (enemy == 0)
       continue;
-    if (enemy->level > 3 && !GameFlag_TestFar(372) &&
-        !GameFlag_TestFar(enemyId + 1544))
+    if (enemy->level > 3 && !GameFlag_TestFar(0x174) &&
+        !GameFlag_TestFar(enemyId + 0x608))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;
@@ -10912,7 +10905,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   }
 
   targetLevel = levelTotal / unitCount;
-  targetLevel += (s8)GameFlag_GetByteFar(1016);
+  targetLevel += (s8)GameFlag_GetByteFar(0x3f8);
   if (targetLevel <= 0)
     targetLevel = 1;
   if (targetLevel > 99)
@@ -10927,10 +10920,10 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     Enemy_GetDefinitionFar(
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]);
     GameFlag_ClearBitFar(
-        gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex] + 1536);
+        gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex] + 0x600);
   }
 
-  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 379;
+  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < FORMATION_COUNT;
        candidateOrUnitIndex++) {
     s32 score = Party_ComputeEligibleMemberAverage(candidateOrUnitIndex);
 
@@ -11121,9 +11114,9 @@ s32 EnemyCountClear(s32 classId) {
   enemyIndex = 0;
   firstSuffix = LIST_MARKER_CHAR;
   for (; enemyIndex <= 5; enemyIndex++) {
-    unit = UnitGetFar(enemyIndex + 0x80);
+    unit = UnitGetFar(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
-    if (nameByte != 1)
+    if (nameByte != BATTLE_UNIT_ENEMY)
       continue;
     if (unit->classId != classId)
       continue;
@@ -11160,7 +11153,7 @@ s32 BattleGroupRandom(s32 recordId) {
   s32 remainingMembers;
 
   choiceCount = 0;
-  if (recordId < 0 || recordId >= 380)
+  if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;
 
   choicesBase = choices;
@@ -11212,7 +11205,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   enemyClasses = listBuffer;
   if (GameFlag_TestFar(0x173))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
-  if (recordId < 0 || recordId >= 380)
+  if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;
   record = &gBattleFormation_Records[recordId];
   for (memberIndex = 0;
@@ -11328,7 +11321,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   enemyClasses[enemyCount] = 0;
   battle->firstDefeated = 6;
   battle->defeatState = 0;
-  for (memberOrEnemyIndex = 128; memberOrEnemyIndex <= 133;
+  for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
+       memberOrEnemyIndex < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE;
        memberOrEnemyIndex++)
     Iwram_ClearWords(UnitGetFar(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
@@ -11341,11 +11335,12 @@ assign_enemy:
 
     if (suffixCode & 0x8000)
       EnemyCountClear(enemyClasses[memberOrEnemyIndex]);
-    BattleUnitSetFar(memberOrEnemyIndex + 128, enemyClasses[memberOrEnemyIndex],
-                     suffixCode & 0x7fff);
-    UnitGetFar(memberOrEnemyIndex + 128);
+    BattleUnitSetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                     enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
+    UnitGetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     if (levelAdjustment != 0)
-      Owner_ApplyLevelGains(memberOrEnemyIndex + 128, levelAdjustment);
+      Owner_ApplyLevelGains(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                            levelAdjustment);
   }
   memberOrEnemyIndex++;
   if (memberOrEnemyIndex > 5)
@@ -11366,10 +11361,13 @@ u32 Summon_GetLayoutKind(s32 index) {
   return kind;
 }
 
+// The last class with a row in gSummon_EntryTable.
+#define ENEMY_CLASS_LAST 171
+
 // Returns the enemy-class sprite animation, using row zero for an invalid
 // class.
 s32 Summon_GetEntryValue(s32 index) {
-  if (index < 0 || index > 171)
+  if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].animation;
 }
@@ -11377,7 +11375,7 @@ s32 Summon_GetEntryValue(s32 index) {
 // Returns the enemy-class palette/layout bits. An invalid class returns row
 // zero's animation field.
 s32 Summon_GetEntryFlag1Field(s32 index) {
-  if (index < 0 || index > 171)
+  if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].layoutBits1;
 }
@@ -11387,7 +11385,7 @@ s32 Summon_GetEntryFlag1Field(s32 index) {
 s32 Summon_IsEntryFlagged(s32 index) {
   s32 result;
 
-  if (index < 0 || index > 171)
+  if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   result = 0;
   if (gSummon_EntryTable[index].spriteBit0)
@@ -11400,7 +11398,7 @@ s32 Summon_IsEntryFlagged(s32 index) {
 u32 Battle_GetSpriteFlagNibble(u32 index) {
   u16 value;
 
-  if (index > 171)
+  if (index > ENEMY_CLASS_LAST)
     return 1;
   value = gSummon_EntryTable[index].spriteBits1;
   return value ? value : 1;
@@ -11410,7 +11408,7 @@ u32 Battle_GetSpriteFlagNibble(u32 index) {
 u32 Battle_GetSpriteFlagHighBits(u32 index) {
   u16 value;
 
-  if (index > 171)
+  if (index > ENEMY_CLASS_LAST)
     return 0;
   value = gSummon_EntryTable[index].spriteBits5;
   return value ? value : 0;
@@ -11418,14 +11416,14 @@ u32 Battle_GetSpriteFlagHighBits(u32 index) {
 
 // Returns layout bit zero for an enemy class, or zero for an invalid class.
 s32 Summon_IsEntrySecondaryFlagged(s32 index) {
-  if (index < 0 || index > 171)
+  if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   return gSummon_EntryTable[index].layoutBit0;
 }
 
 // Returns the class's effect-height byte, or zero for an invalid class.
 s32 Summon_GetEntryByte4(s32 index) {
-  if (index < 0 || index > 171)
+  if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   return gSummon_EntryTable[index].unk04[0];
 }
@@ -11434,7 +11432,7 @@ s32 Summon_GetEntryByte4(s32 index) {
 // entry ranks zero.
 u32 Item_EncodeBankedId(u32 inventoryEntry) {
   u32 priority = 0;
-  u32 itemId = inventoryEntry & 0x1ff;
+  u32 itemId = inventoryEntry & ITEM_ID_MASK;
   if (itemId == 0)
     return 0;
   {
@@ -11619,7 +11617,7 @@ void Battle_AwardSpoils(void) {
     BattlePresentation_WaitForAdvance();
   }
   unitIds = units;
-  count = BattleParty_ListLivingUnits(1, unitIds);
+  count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   beforeLevelUp = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     unitId = unitIds[unitIndex];
@@ -11627,7 +11625,7 @@ void Battle_AwardSpoils(void) {
     unit->experience += spoils->experience;
     while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct BattleUnit)),
            Unit_TryLevelUpFar(unitId, &gains) != 0) {
-      AudioCommand_PlayFar(0x59);
+      AudioCommand_PlayFar(MUS_089);
       UiWork_ClearValueNameTablesFar();
       UiWork_PushValueSlotFar(unit->classIndex, VALUE_CLASS_NAME);
       UiWork_PushValueSlotFar(unitIds[unitIndex], VALUE_UNIT_NAME);
@@ -11648,7 +11646,7 @@ void Battle_AwardSpoils(void) {
             UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
             UiWork_PushValueSlotFar(encodedAbility & OWNER_ACTION_ID_MASK,
                                     VALUE_ABILITY_NAME);
-            AudioCommand_PlayFar(SOUND_CAST);
+            AudioCommand_PlayFar(SE_154);
             UiText_ShowMessageAndWaitCoreFar(MsgAbilityMastered);
             BattlePresentation_WaitForAdvance();
           }

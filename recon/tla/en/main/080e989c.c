@@ -1,15 +1,18 @@
-// Near miss, differ 4 of 76 (2026-10-15): the glow colour from a phase
-// counter and a level, ⚓️'s form of ☀️'s
+// Near miss, differ 2 of 76 (2026-10-18; 4 on 2026-10-15): the glow colour
+// from a phase counter and a level, ⚓️'s form of ☀️'s
 // GraphicsPalette_SetTintChannelsFromCounters returning RGB555 instead of
-// storing a tint. Two reordered pairs: after the first modulo the native
-// loads the table's address before it shifts the phase (ldr r2, =table;
-// lsls r5, r5, #18), and after the second it loads the red byte before it
-// starts the bias (ldrb r3; subs r6, #7); this does both the other way.
+// storing a tint. The red byte is read before the bias through an empty asm
+// taking the byte and the level (4 -> 2; an s32 byte swaps the add's
+// operands, 4). One reordered pair remains: after the first modulo the
+// native loads the table's address before it shifts the phase (ldr r2,
+// =table; lsls r5, r5, #18). sched2 ranks the shift one above the load (118
+// against 117: the load's only path to the call is the move to r8).
 // Measured: the bias after the red read (56), an s16 level (7), the table
 // in a local at three places (4 and 6), the modulo and the multiply split
 // around the table's load (4, the load then lands between the shifts), an
-// empty asm barrier after it (6), an asm reading the table (7); four
-// minutes of permuter found nothing better. Belongs between
+// empty asm barrier after it (6), an asm reading the table (7), a volatile
+// asm reading the table and the quotient (4), the table fixed in r8 (11);
+// four minutes of permuter found nothing better. Belongs between
 // BattleFx_RunViewSway and Func_080e9940.
 #include "types.h"
 
@@ -26,10 +29,15 @@ s32 Func_080e989c(s32 counter, s32 level) {
   s16 red;
   s16 green;
   s16 blue;
+  s16 byte;
 
   phase = (counter + 12) % 24 * 4;
+  byte = gData_080f0fe0[(s16)(phase % 96)];
+  /* FAKEMATCH: ⚓️ reads the red byte before it starts the bias; plainly the
+   * bias comes first (differ 4). */
+  asm("" : "+l"(level) : "l"(byte));
   bias = level - 7;
-  red = gData_080f0fe0[(s16)(phase % 96)] + bias;
+  red = byte + bias;
   green = gData_080f0fe0[(phase + 32) % 96] + bias;
   blue = gData_080f0fe0[(phase + 64) % 96] + bias;
   if (red < 0)

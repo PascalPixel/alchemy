@@ -1,9 +1,15 @@
-// Near miss, differ 8 of 155 (2026-10-15, written from the listing; ☀️ has no
-// twin). The sine is taken twice in each arm, as an ABS macro that reads its
-// argument twice gives. What remains is load order: the ROM loads the event
-// work before it copies the direction into r11, and loads each edge before it
-// builds the -1 it compares with (two pairs and a swapped pair). A switch on
-// the edge measured 29.
+// Near miss, differ 4 of 155 (2026-10-18; 8 on 2026-10-15, written from the
+// listing; ☀️ has no twin). The sine is taken twice in each arm, as an ABS
+// macro that reads its argument twice gives. Each edge is read into a local
+// behind an empty volatile asm, so it loads before the -1 (8 -> 4; the local
+// alone 8). What remains is one pair: the ROM loads the event work before it
+// copies the direction into r11 and starts the centre's offset (adds r7, r1;
+// ldr r1, [r2, #108]; mov fp, r0; movs r0, #230), where agscc ranks the copy
+// and the phase's copy equal and takes the direction's first. Measured: a
+// switch on the edge (29); the direction copied to a local behind a volatile
+// asm reading the event work (59); an asm "+r" on the direction reading the
+// event work (28; with the direction fixed in r11, 6); an asm "+l" on the
+// event work after its load (4, the phase's copy then moves down).
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -26,14 +32,19 @@ void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 x;
   s32 z;
+  s32 edge;
 
   if (*(s32 *)map->unk0fc != 0 || event->controlMode == 3)
     return;
 
   if (direction & VIEW_MOVE_X) {
-    if (work->edgeX == -1)
+    edge = work->edgeX;
+    /* FAKEMATCH: ⚓️ loads the edge before it builds the -1 it compares with;
+     * plainly the -1 comes first (differ 2 for each edge). */
+    asm volatile("" : : "l"(edge));
+    if (edge == -1)
       x = work->x + Iwram_MulQ16(ABS(Trig_Sin(phase << 12)), amplitude);
-    else if (work->edgeX == 1)
+    else if (edge == 1)
       x = work->x + Iwram_MulQ16(-ABS(Trig_Sin(phase << 12)), amplitude);
     else
       x = work->x + Iwram_MulQ16(ABS(Trig_Sin(phase << 12)), amplitude);
@@ -42,9 +53,12 @@ void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   }
 
   if (direction & VIEW_MOVE_Z) {
-    if (work->edgeZ == -1)
+    edge = work->edgeZ;
+    /* FAKEMATCH: as for edgeX above. */
+    asm volatile("" : : "l"(edge));
+    if (edge == -1)
       z = work->z + Iwram_MulQ16(ABS(Trig_Sin(phase << 12)), amplitude);
-    else if (work->edgeZ == 1)
+    else if (edge == 1)
       z = work->z + Iwram_MulQ16(-ABS(Trig_Sin(phase << 12)), amplitude);
     else
       z = work->z + Iwram_MulQ16(ABS(Trig_Sin(phase << 12)), amplitude);

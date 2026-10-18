@@ -1,0 +1,283 @@
+// Part of psynergy_effects.c, compiled only through it.
+// Mind Read: scanline waves, shifting colours and flowing particles.
+
+#include "../psynergy_effects_internal.h"
+
+// Work slot 22 of the wave effect, 0x298 bytes (RunSceneTransitionEffect).
+struct WaveFxWork {
+  u16 lines[2][162]; // each scanline's offset, two pages written in turn
+  u16 phase;         // the wave's phase
+  u8 page;           // the page being written
+  s8 red;            // the hue as a colour (red, green, blue, 4 to 11 each)
+  s8 green;
+  s8 blue;
+  u16 hue;      // hue, 0 to 359 degrees
+  u16 sourceId; // the caster
+  u16 targetId; // the target
+  u8 delay;     // frames before it starts
+  u8 counter;   // particle spawn cycle (0 to 60)
+};
+
+// Starts the wave effect (kind 2) of caster sourceId on target targetId:
+// fades the palettes toward a hue that shifts with the frame counter, and
+// starts its per-frame update (BattleFx_UpdateWaveScene) after 8 frames.
+void RunSceneTransitionEffect(s32 x, s32 y) {
+  struct WaveFxWork *work;
+
+  work = Runtime_AllocateBlock(22, 0x298);
+  BattleEffect_InitializeSharedScene();
+  Dma_Fill32(0, work, 0x298);
+  work->hue = ((u32)(gFrameCount << 1) % (u32)360);
+  BattleFx_AdvanceHueCycle();
+  BattleFx_ApplyColorToTargetBuffer(
+      RGB(work->red, work->green, work->blue) | 0x200000, 1);
+  BattleFx_StartBufferInterpolation(8);
+  work->sourceId = x;
+  work->targetId = y;
+  work->delay = 8;
+  Ui_FillBank15PaletteGrey();
+  Scheduler_AddOrUpdateCallback(BattleFx_UpdateWaveScene, 0xc80);
+}
+
+// Stops the wave effect: restores the caster's colours and the palettes and
+// releases the effect's work.
+void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
+  void *work;
+
+  work = *(void **)((u32)&gBattleBgFxWork);
+  Ui_SetBank15PaletteAndClearRenderMode();
+  Scheduler_RemoveCallback(BattleFx_UpdateWaveScene);
+  Animation_ApplyChildPalette(
+      Object_GetById(((struct WaveFxWork *)work)->sourceId), 1);
+  BattleFx_PrepareBufferInterpolation();
+  Runtime_ReleaseHeapBlock(22);
+}
+
+// Scheduler callback of the wave effect: once its delay has run out, writes
+// the next page of scanline offsets (a sine wave of 4 pixels either way),
+// steps the colour fade and the hue, keeps the caster's colours lit, and
+// every 60 frames sends three particles (object 281) from the target to the
+// caster, with sound 130.
+void BattleFx_UpdateWaveScene(void) {
+  struct WaveFxWork *work = gBattleBgFxWork;
+  u16 *line;
+  u32 scanline;
+  struct FieldActor *caster;
+  struct FieldActor *target;
+  struct FieldActor *particle;
+  struct WaveFxSprite *sprite;
+  struct EffectVector from;
+  struct EffectVector to;
+  struct AnimationMetadata *meta;
+
+  if (work->delay != 0) {
+    work->delay--;
+    return;
+  }
+
+  // The 160 scanlines' offsets, a sine wave of 4 pixels either way, on the
+  // hidden page; then show that page.
+  line = work->lines[work->page ^ 1];
+  for (scanline = 0; scanline < 160; scanline++)
+    *line++ =
+        Trig_Sin(((u32)((work->phase + scanline * 8) << 16) / (u32)160)) >> 14;
+  work->phase += 4;
+  work->page ^= 1;
+  if (work->page != 0) {
+    BattleFx_ApplyColorToTargetBuffer(
+        RGB(work->red, work->green, work->blue) | 0x200000, 1);
+    BattleFx_StartBufferInterpolation(1);
+    BattleFx_AdvanceHueCycle();
+  }
+  Animation_ApplyChildPalette(Object_GetById(work->sourceId), 0);
+
+  // At steps 0, 8 and 16 of the cycle, a particle from the target to the
+  // caster.
+  if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
+    caster = Object_GetById(work->sourceId);
+    target = Object_GetById(work->targetId);
+    if (caster != 0 && target != 0) {
+      // From 2 pixels below each one's sprite height (its metadata's boxX).
+      from.x = caster->x.fixed;
+      meta = Resource_GetMetadataRecordFar(
+          (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
+      from.y = caster->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
+      from.z = caster->z.fixed;
+      to.x = target->x.fixed;
+      meta = Resource_GetMetadataRecordFar(
+          (s16)Scene_FindActorPlacement(work->targetId)->sprite);
+      to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
+      to.z = target->z.fixed;
+      particle = Object_CreateFar(281, to.x, to.y, to.z);
+      if (particle != 0) {
+        sprite = particle->sprite;
+        particle->motionFlags = 0;
+        particle->speed = 0xa3d7; // 0.64 pixels a frame
+        particle->acceleration = 0xa3d7;
+        particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
+        particle->update = BattleFx_SetCallbackWhenTargetUnset;
+        sprite->palette = 0;
+        sprite->mode = 1;
+        Object_SetMoveTargetFar(particle, from.x, from.y, from.z);
+      }
+    }
+  }
+
+  if (work->counter == 0)
+    AudioCommand_PlayFar(SE_130);
+  if (++work->counter > 60)
+    work->counter = 0;
+}
+
+// What Mind Read's wave uses: BG0's scanline scroll, the hue cycle and BG
+// palette 15.
+
+#define GREY28 0x739c // grey: red, green and blue 28
+
+// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
+// scroll for each scanline from the wave's shown page.
+void BattleFx_ArmBg0HBlankDma(void) {
+  struct WaveFxWork *work = gBattleBgFxWork;
+  if (!work->delay) {
+    u16 *line = work->lines[work->page];
+    volatile u16 *dma = REG_DMA0;
+    dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+    dma[5] &= ~DMA_ENABLE;
+    (void)dma[5];
+    // One halfword at each HBlank (repeating, destination reloaded).
+    Dma_Set(line, REG_BG0HOFS, 0xa2600001, (volatile u32 *)dma);
+  }
+}
+
+// Moves the wave's hue on 4 degrees and works out its colour, each channel
+// 4 to 11.
+void BattleFx_AdvanceHueCycle(void) {
+  struct WaveFxWork *work = gBattleBgFxWork;
+  s32 r = 0;
+  s32 g = 0;
+  s32 b = 0;
+  s32 offset;
+  u8 *pr;
+  u8 *pg;
+  u8 *pb;
+
+  BattleFx_ComputeHueChannels(work->hue << 16, &r, &g, &b);
+
+  // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue (0x28b).
+  offset = 0x28b;
+  pr = (u8 *)work + offset;
+  *pr = (r >> 18) + 4;
+  offset += 1;
+  pg = (u8 *)work + offset;
+  *pg = (g >> 18) + 4;
+  offset += 1;
+  pb = (u8 *)work + offset;
+  *pb = (b >> 18) + 4;
+
+  work->hue += 4;
+
+  *pr &= 0x1f;
+  *pg &= 0x1f;
+  *pb &= 0x1f;
+
+  if (work->hue >= 360) {
+    work->hue = 0;
+  }
+}
+
+// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
+// (16.16).
+void BattleFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
+  *r = BattleFx_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
+  *g = BattleFx_HueChannelRamp(hue, 0, 31 << 16);
+  *b = BattleFx_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
+}
+
+// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
+// high from 60 to 180, falling from 180 to 240, low elsewhere.
+s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
+  angle = Fixed_Remainder(angle, 360 << 16);
+  if (angle < 60 << 16)
+    return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, angle));
+  if (angle >= 60 << 16 && angle < 180 << 16)
+    return high;
+  if (angle >= 180 << 16 && angle < 240 << 16)
+    return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, (240 << 16) - angle));
+  return low;
+}
+
+// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
+s32 Fixed_Remainder(s32 value, s32 divisor) {
+  s32 quot;
+
+  if (divisor == 0)
+    return 0;
+  if (divisor & 0xf0000000)
+    divisor = -divisor;
+  quot = Iwram_RatioMulQ14(divisor, value);
+  // Less the quotient's whole part times divisor.
+  return value - Iwram_MulQ16(quot & 0xffff0000, divisor);
+}
+
+// Per-frame update: once the object has arrived (no destination left), runs
+// the script for untargeted objects.
+void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
+  struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
+  s32 targetY;
+  s32 targetX;
+
+  targetX = object->targetX;
+  if (targetX == 0x80000000) // no destination
+  {
+    targetY = object->targetY;
+    if ((targetY == targetX) && (object->targetZ == targetY)) {
+      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+                                   gBattleFx_UntargetedObjectScript);
+    }
+  }
+}
+
+// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
+// scanline scroll (BattleFx_ArmBg0HBlankDma).
+void Ui_FillBank15PaletteGrey(void) {
+  volatile u16 *p;
+
+  ((struct UiRenderWork *)gWindowWork[0])->mode = 1;
+  p = &BG_PLTT_COLOR(15, 1);
+  *p = GREY28;
+  p += 2;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  p += 1;
+  *p = GREY28;
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
+}
+
+// Stops the BG0 scanline scroll and restores BG palette 15.
+void Ui_SetBank15PaletteAndClearRenderMode(void) {
+  void *work;
+
+  work = gWindowWork[0];
+  Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
+  BG_PLTT_COLOR(15, 1) = 0x7fff;  // white
+  BG_PLTT_COLOR(15, 3) = 0;       // black
+  BG_PLTT_COLOR(15, 11) = 0x294a; // grey (10)
+  BG_PLTT_COLOR(15, 12) = 0x5294; // grey (20)
+  PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+  ((struct UiRenderWork *)work)->mode = 0;
+}

@@ -3498,16 +3498,15 @@ main	rom_main_05	recon/tla/de/rom	.rom.000e4b04	de
 main	rom_main_05	recon/tla/raw/080d7b04	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d7ac0	ja
 main	rom_main_05	games/tla/src/battle/effect/radpart	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d7d84	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000dcd84	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000e0d84	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e4d90	de
-main	rom_main_05	recon/tla/raw/080d7d90	.text	en
+main	rom_main_05	recon/tla/it/rom	.rom.000d7db0	it
+main	rom_main_05	recon/tla/fr/rom	.rom.000dcdb0	fr
+main	rom_main_05	recon/tla/es/rom	.rom.000e0db0	es
+main	rom_main_05	recon/tla/de/rom	.rom.000e4dbc	de
 main	rom_main_05	recon/tla/raw/080d7dbc	.text	en
 main	rom_main_05	recon/tla/raw/080d7f80	.text	en
 main	rom_main_05	recon/tla/raw/080d8148	.text	en
 main	rom_main_05	recon/tla/raw/080d8174	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d7d4c	ja
+main	rom_main_05	recon/tla/ja/rom	.rom.000d7d78	ja
 main	rom_main_05	games/tla/src/battle/effect/radial_spread	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d82d4	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dd2d4	fr

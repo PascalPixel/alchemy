@@ -126,9 +126,9 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
       affinePc = MulQ16(widthScale, sinYaw) / 256;
       line->v = affinePc;
       affine->pc = affinePc;
-      /* FAKEMATCH: the centre is read through its own address, so the native
-       * single literal for it is built; member access loads gProjection and
-       * reads at offset 12 (differ 2). */
+      // Read through its own address, the native builds one literal for the
+      // centre; as gProjection.centerX it loads gProjection and reads at
+      // offset 12 (1 of 157 instructions differ in tbs-en).
       centerX = *&gProjection.centerX;
       // UB: affine coefficients can be negative. Multiplication by 256 is
       // representable for every signed halfword; retain native shifts below.
@@ -154,9 +154,9 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample
         // between each other's texels.
-        /* FAKEMATCH: one scratch variable holds the x sum and then u, as the
-         * native keeps both in r3; with separate values three instructions of
-         * affine->y come in another order (differ 6). */
+        /* FAKEMATCH(temporary): one variable holds the x sum and then u, both
+         * in r3 as native; as two plain expressions, 3 of 157 instructions
+         * differ in tbs-en. */
         s32 sampleOffset;
 
         sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;

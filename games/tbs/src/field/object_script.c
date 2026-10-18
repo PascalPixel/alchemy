@@ -5,10 +5,8 @@
 #include "objcmd.h"
 #include "types.h"
 
-//--------------------------------------------------------------------------
 // Field object scripts: the ones the engine starts itself, and the command
 // table.
-//--------------------------------------------------------------------------
 
 // Does nothing and returns to the idle script.
 const s32 gObjectDispatch_DefaultScript[] = {

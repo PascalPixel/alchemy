@@ -2,9 +2,7 @@
 #include "resource_ids.h"
 #include "types.h"
 
-//--------------------------------------------------------------------------
 // World map graphics: a palette and five tile sets for each of its two looks.
-//--------------------------------------------------------------------------
 
 // Each set is a palette and five tile sets; the loader takes the second set
 // when the cell it loads at has terrain kind 21. Not const: the loader reads

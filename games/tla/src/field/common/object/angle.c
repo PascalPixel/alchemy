@@ -71,7 +71,6 @@ void BattleFx_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
   Event_NoOp();
 }
 
-
 struct ObjectPairPosition {
   u8 unk00[6];
   s16 angle;

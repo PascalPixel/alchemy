@@ -66,7 +66,6 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   sprite->oam.palette = 0;
 }
 
-
 s32 Func_080237c8(u8 *object) {
   u8 *track = *(u8 **)(object + 0x50);
 

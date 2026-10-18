@@ -13,9 +13,8 @@ s32 UiWork_SetParamNibbleFar(s32 color);
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry) {
   s32 element = (entry & 0xe0) / 32;
 
-  UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnName + element * 20 +
-                                      (entry & 31),
-                                  window, x + 8, y);
+  UiText_DrawCharacterAtOffsetFar(
+      (s32)MsgDjinnName + element * 20 + (entry & 31), window, x + 8, y);
   UiWindow_SetTilemapEntryFar(window, element + 0x5001, x / 8, y / 8, 0);
   UiWork_SetParamNibbleFar(15);
 }

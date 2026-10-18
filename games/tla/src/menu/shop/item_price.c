@@ -44,7 +44,8 @@ draw:
     }
   }
   if (priceKind == 3)
-    UiText_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8, 8);
+    UiText_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8,
+                                    8);
   else
     goto show_price;
 }

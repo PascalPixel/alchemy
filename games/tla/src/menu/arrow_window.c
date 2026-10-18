@@ -16,8 +16,8 @@ extern char ResourceId_ShopUpArrowTiles, ResourceId_ShopDownArrowTiles;
 
 s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 mode);
-struct RenderOutput *UiIcon_CreateWithResourceVariant(struct RenderInput *window,
-                                                      s32 x, s32 y);
+struct RenderOutput *
+UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y);
 
 // Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 // hand cursor in it, hidden, and adds the up and down arrow icons at its right

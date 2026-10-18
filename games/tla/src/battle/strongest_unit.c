@@ -19,8 +19,7 @@ s32 Func_0811f5a4(u32 unitId) {
   if (unitId <= 7) {
     for (i = 0; (id = work->partyUnits[i]) != 255; i++) {
       if (id != 254 && UnitGet(id)->hp != 0) {
-        if (best == unitId ||
-            (id != unitId && UnitGet(id)->atk > bestAttack)) {
+        if (best == unitId || (id != unitId && UnitGet(id)->atk > bestAttack)) {
           best = id;
           bestAttack = UnitGet(best)->atk;
         }
@@ -29,8 +28,7 @@ s32 Func_0811f5a4(u32 unitId) {
   } else {
     for (i = 0; (id = work->enemyIds[i]) != 255; i++) {
       if (id != 254 && UnitGet(id)->hp != 0) {
-        if (best == unitId ||
-            (id != unitId && UnitGet(id)->atk > bestAttack)) {
+        if (best == unitId || (id != unitId && UnitGet(id)->atk > bestAttack)) {
           best = id;
           bestAttack = UnitGet(best)->atk;
         }

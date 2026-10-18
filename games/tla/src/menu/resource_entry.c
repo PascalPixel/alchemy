@@ -94,7 +94,6 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   return goal;
 }
 
-
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 

@@ -78,7 +78,7 @@ Func_080feb58:
 	adds r3, r3, r6
 	ldrh r0, [r7, r3]
 	mov r1, r9
-	bl Func_080fee40
+	bl Menu_CreateWindowAndEntryObjects
 	ldr r3, [sp, #0]
 	adds r0, r7, #0
 	lsls r3, r3, #1

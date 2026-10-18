@@ -4682,13 +4682,13 @@ main	rom_main_06	recon/tla/raw/080fecfc	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000fe2a8	ja
 main	rom_main_06	recon/tla/ja/rom	.rom.000fe5b4	ja
 main	rom_main_06	games/tla/src/menu/cursor_reset	.text
-main	rom_main_06	recon/tla/it/rom	.rom.000fef3c	it
-main	rom_main_06	recon/tla/fr/rom	.rom.00100f90	fr
-main	rom_main_06	recon/tla/es/rom	.rom.00104f74	es
-main	rom_main_06	recon/tla/de/rom	.rom.00108fec	de
-main	rom_main_06	recon/tla/raw/080fee40	.text	en
+main	rom_main_06	games/tla/src/menu/status_window	.text
+main	rom_main_06	recon/tla/it/rom	.rom.000fefbc	it
+main	rom_main_06	recon/tla/fr/rom	.rom.00101010	fr
+main	rom_main_06	recon/tla/es/rom	.rom.00104ff4	es
+main	rom_main_06	recon/tla/de/rom	.rom.0010906c	de
 main	rom_main_06	recon/tla/raw/080feec0	.text	en
-main	rom_main_06	recon/tla/ja/rom	.rom.000fee74	ja
+main	rom_main_06	recon/tla/ja/rom	.rom.000feef4	ja
 main	rom_main_06	games/tla/src/menu/cursor	.text
 main	rom_main_06	games/tla/src/menu/status_help	.text
 main	rom_main_06	recon/tla/it/rom	.rom.000ff46c	it

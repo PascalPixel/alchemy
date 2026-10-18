@@ -1,8 +1,3 @@
-// Matches, differ 0 of 59: creates the status window and its side object the
-// first time, spawns the icon entries in mode 3, then draws the status ailments
-// (with 0x100 when the window was just made). ☀️'s version also creates eight
-// entry objects; ⚓️'s listing does not, so that call is gone here. The work
-// block is ⚓️'s (window 0x28, object 0x170, mode 0x21c).
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -25,8 +20,12 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 void Menu_SpawnIconEntries(struct State080a8088 *state, s32 handle);
-void CharacterMenu_DrawStatusAilments(s32, s32, s32);
+void Func_080ff370(s32, s32, s32); // draws the status ailments
 
+// Creates the status window and its side object the first time, spawns the
+// icon entries in mode 3, then draws the status ailments (with 0x100 when the
+// window was just made). ☀️'s version also creates eight entry objects; ⚓️'s
+// does not. The work block is ⚓️'s (window 0x28, object 0x170, mode 0x21c).
 void Menu_CreateWindowAndEntryObjects(s32 resource) {
   s32 created;
   s32 handle;
@@ -46,8 +45,8 @@ void Menu_CreateWindowAndEntryObjects(s32 resource) {
     if ((((Object0f *)object)->field0f = 0xF0, state->mode) == 3) {
       Menu_SpawnIconEntries(state, handle);
     }
-    CharacterMenu_DrawStatusAilments(handle, resource, 0x100);
+    Func_080ff370(handle, resource, 0x100);
     return;
   }
-  CharacterMenu_DrawStatusAilments(handle, resource, 0);
+  Func_080ff370(handle, resource, 0);
 }

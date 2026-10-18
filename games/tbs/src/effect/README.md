@@ -267,6 +267,30 @@ picture is drawn left of its centre line and then mirrored to the right.
    Steps that draw random numbers keep their order, or every later random
    value changes.
 
+## Adding an effect
+
+An ability reaches its effect through its row of
+`games/tbs/src/battle/actflags.tsv`: the row number is the ability id, and
+the `ability` column names it (a label the build skips). The battle reads the
+row as one word, `effect` in its low half and `flags` above it
+(`STAGING_*` in `battle/battle.c`):
+
+- `effect` bits 0 to 11: the kind, an index into `gBattleFx_EffectHandlers`
+  (`enum BattleFxKind` names them).
+- `effect` bits 12 and 13: the variant, the ability's strength (Earthquake is
+  `0x1001`, kind 1 variant 1). A double or triple blow adds one or two.
+- `effect` bit 14: dispatched by id range (`BattleFx_DispatchByIdRange`);
+  bit 15: a scene effect (`BattleFx_RunSceneEffect`), not a table kind.
+- `flags`: the high half. Its bits 0 and 1 are `STAGING_ON_DOWNED` and
+  `STAGING_OTHER_SIDE`, which no row sets; the rows use only bits 2 and 3
+  (24 abilities), read outside the effects.
+
+To give an ability a new effect, write its handler in a part, name a free kind
+for it in `enum BattleFxKind` (`effect.h`; kinds without a handler are free),
+put the handler in that kind's row of `gBattleFx_EffectHandlers`, and set the
+ability's `effect` column to the kind. To reuse an effect, point the column at
+an existing kind and variant.
+
 ## Parts of effect.c, in ROM order
 
 | Part | What it holds |

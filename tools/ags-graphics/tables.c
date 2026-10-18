@@ -9,6 +9,8 @@
 
 /*
  * A final short record is allowed; once encountered, no later row may follow.
+ * A column named without a type is a label for people, such as a name, and
+ * writes nothing.
  */
 Buffer
 table(const Buffer *input)
@@ -29,7 +31,7 @@ table(const Buffer *input)
 		{
 			char *type = strrchr(columns.items[i], ':');
 			if (!type)
-				fail("table column needs NAME:TYPE");
+				continue;
 			type++;
 			bool sign = *type == 's';
 			if (!sign && *type != 'u')

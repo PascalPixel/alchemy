@@ -233,6 +233,13 @@ graphics(void)
 	uint8_t expected[] = {1, 2, 255, 255, 3, 4};
 	Buffer reference = {expected, sizeof(expected), 0};
 	equal(&plane, &reference, "blank map rows retain their position");
+	textFile("records.tsv", "kind:u8\tvalue:u16\tname\n1\t0x203\tQuake\n2\t4\tSpire\n");
+	RUN("graphics", true, "records.tsv", "records.table");
+	Buffer records = readFile("records.table");
+	uint8_t recordBytes[] = {1, 3, 2, 2, 4, 0};
+	Buffer recordReference = {recordBytes, sizeof(recordBytes), 0};
+	equal(&records, &recordReference, "a label column writes nothing");
+	free(records.data);
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");
 	Buffer preserved = readFile("tiles.4bpp");
 	equal(&tiles, &preserved, "invalid edits leave the previous output intact");

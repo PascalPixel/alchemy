@@ -3200,12 +3200,6 @@ main	rom_main_05	recon/tla/raw/080d260c	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d25ec	ja
 main	rom_main_05	games/tla/src/game/inventory/try_add_and_return_owner	.text
 main	rom_main_05	games/tla/src/game/inventory/invent	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d2834	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000d7834	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000db834	es
-main	rom_main_05	recon/tla/de/rom	.rom.000df840	de
-main	rom_main_05	recon/tla/raw/080d2840	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d2820	ja
 main	rom_main_05	games/tla/src/game/inventory/confirm	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d2960	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000d7960	fr

@@ -2677,12 +2677,6 @@ Func_080d20fc:
 	.thumb_func
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000d25ec, 0x000001e0
-	.section .rom.000d2820, "ax"
-	.global Event_AskYesNoWithActorAnimation
-	.type Event_AskYesNoWithActorAnimation, %function
-	.thumb_func
-Event_AskYesNoWithActorAnimation:
-	.incbin "baserom.gba", 0x000d2820, 0x0000011c
 	.section .rom.000d294c, "ax"
 	.balign 4
 	.global Func_080d296c

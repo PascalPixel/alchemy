@@ -2974,12 +2974,6 @@ Func_080d1ee8:
 	.incbin "baserom.gba", 0x000db0fc, 0x000000f8
 	.section .rom.000db60c, "ax"
 	.incbin "baserom.gba", 0x000db60c, 0x000001d4
-	.section .rom.000db834, "ax"
-	.global Event_AskYesNoWithActorAnimation
-	.type Event_AskYesNoWithActorAnimation, %function
-	.thumb_func
-Event_AskYesNoWithActorAnimation:
-	.incbin "baserom.gba", 0x000db834, 0x0000011c
 	.section .rom.000db960, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000db960, 0x000000a0

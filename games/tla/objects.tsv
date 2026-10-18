@@ -638,14 +638,13 @@ main	rom_main_01	recon/tla/raw/080292fc	.text	en
 main	rom_main_01	recon/tla/raw/08029570	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00027d9c	ja
 main	rom_main_01	games/tla/src/field/common/script/s29810	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00029838	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00029838	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00029838	es
-main	rom_main_01	recon/tla/de/rom	.rom.00029838	de
-main	rom_main_01	recon/tla/raw/08029838	.text	en
+main	rom_main_01	recon/tla/it/rom	.rom.000298c0	it
+main	rom_main_01	recon/tla/fr/rom	.rom.000298c0	fr
+main	rom_main_01	recon/tla/es/rom	.rom.000298c0	es
+main	rom_main_01	recon/tla/de/rom	.rom.000298c0	de
 main	rom_main_01	recon/tla/raw/080298c0	.text	en
 main	rom_main_01	recon/tla/raw/0802a124	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.000297b4	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.0002983c	ja
 main	rom_main_01	games/tla/src/field/common/remap_bytes	.text
 main	rom_main_01	games/tla/src/field/common/map/decode_staged_buffer	.text
 main	rom_main_01	games/tla/src/field/common/map/load_palette	.text

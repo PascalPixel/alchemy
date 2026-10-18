@@ -20,7 +20,8 @@ struct EventWork {
   u16 unk15a;
   u8 unk15c[8];
   u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
-  u8 unk166[4];
+  s16 unk166;
+  u8 unk168[2];
   u16 unk16a;
   u8 unk16c[0x18];
   s16 unk184;

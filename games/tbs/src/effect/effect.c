@@ -24,6 +24,27 @@
 // corner, centred on their position or standing on it, as each family
 // chooses. Spawning stays with each runner: every family draws its own
 // random ranges, and the order of those draws is part of the effect.
+//
+// Finding your way: the functions sit in the order they have in the ROM,
+// which mixes families, Djinn, summons and shared machinery, so search by
+// name rather than scrolling. The effect a move plays is BattleFx_Run and the
+// move's name (BattleFx_RunQuake, BattleFx_RunCure, BattleFx_RunThor), and
+// gBattleFx_EffectHandlers in effect_table.c lists every effect kind with the
+// abilities that use it. The shared machinery:
+//
+//   Entry points    BattleFx_RunTableEffect, BattleFx_RunSceneEffect,
+//                   BattleFx_DispatchByIdRange
+//   Canvas          BattleFx_BeginCanvasLayer, BattleFx_OpenCanvasLayer,
+//                   BattleFx_EndCanvasLayer, BattleFx_WipeCanvas,
+//                   BattleFx_ProcessPendingGraphicsTransfer
+//   Blitters        BattleFx_LoadWork, BattleFx_FetchRectangleBlitters
+//   Motion          EffectStep_AdvanceWithGravity2D and 3D,
+//                   BattleUnit_ProjectToScreen, Camera_ApplyShake
+//   Targets         BattleFx_SelectLivingTargets,
+//                   BattleFx_PlaceFormationObjects
+//
+// README.md in this folder explains the canvas, blitters, the frame loop and
+// particles in more detail.
 
 #include "unit/effect/effect_table.h"
 #include "unit/effect/effect.h"

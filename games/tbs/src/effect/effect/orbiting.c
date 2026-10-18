@@ -105,7 +105,7 @@ void BattleFx_RunOrbitingSkulls(void) {
   struct EffectPosition center;
   struct EffectPosition screen;
   s32 frame;
-  /* FAKEMATCH: needed to match: only draw[0] is used: the second word fills
+  /* FAKEMATCH: only draw[0] is used: the second word fills
    * four bytes of the frame */
   BlitterPair draw;
   s32 member;
@@ -134,7 +134,7 @@ void BattleFx_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH: needed to match: a one-pass loop is a sched2 barrier, so the
+  /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the
    * seed counter is set before its pointer 2026-10-11: without it differ 2
    * (movs r4, #0 falls behind the particle offset); i = 0 ahead of the store
    * differs 170. */
@@ -161,18 +161,16 @@ void BattleFx_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
-        /* Ordinary pointer differs 118 in EN (265 native, 269 built).
-         * A generic output barrier before filling differs 155 (272
-         * built); after filling it differs 118 (267 built). Keeping
-         * rec live after the call differs 179 (270 built). None keeps
-         * the native loop layout. loop.c's second pass hoists the
-         * invariant &point when 15 x savings x life 8 reaches the
-         * loop's insn count (about 100 after giv reduction). */
         /* FAKEMATCH: pins rec to r0 so the point is filled through r0 and
          * loop.c cannot hoist its address into fp, as native; plain differs 118
          * (hoisted into fp, frame 92), loads before stores 12, one-pass blocks
          * around the fill and the apply 2 (add r5, sp, #64 after the last
-         * store). */
+         * store). Ordinary pointer differs 118 in EN (265 native, 269 built). A
+         * generic output barrier before filling differs 155 (272 built); after
+         * filling it differs 118 (267 built). Keeping rec live after the call
+         * differs 179 (270 built). None keeps the native loop layout. loop.c's
+         * second pass hoists the invariant &point when 15 x savings x life 8
+         * reaches the loop's insn count (about 100 after giv reduction). */
         register s32 *rec asm("r0");
 
         // The object's projection is computed, but nothing reads it.
@@ -180,7 +178,7 @@ void BattleFx_RunOrbitingSkulls(void) {
         rec = point;
         SET_VECTOR(rec, object->x, object->y, object->z);
         EffectPosition_ApplyBaseAndYOffset(rec, &center);
-        /* FAKEMATCH: needed to match: sched2 barrier, so this store precedes
+        /* FAKEMATCH: sched2 barrier, so this store precedes
          * the spark counter as in the reference 2026-10-11: without it differ 2
          * (movs r4, #0 moves ahead of the store). */
         do {

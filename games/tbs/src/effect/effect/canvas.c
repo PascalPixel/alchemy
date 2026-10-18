@@ -10,15 +10,14 @@
 // the battler its own palette back when one runs out. The timers are indexed
 // like effect->actors, so timer n belongs to actor n.
 
-// A shared pixel-address helper changed registers at unchanged English
-// size 0x15c. Merging the nested bounds tests also changed native code;
-// keep the original address expressions and two tests.
 // Wipes the whole canvas to one colour with a ragged edge: each row (or
 // column) lags a random 0 to 63 pixels behind the front, which speeds up as
 // it goes. Returns when the wipe is done, a frame at a time.
 // mode  : 1 sweeps left to right; anything else sweeps top to bottom.
 // value : 0 wipes to colour 1, 1 wipes to colour 0 (clears the canvas).
 void BattleFx_WipeCanvas(s32 mode, s32 value) {
+  // The pixel addresses and both bounds tests stay written out: as a shared
+  // helper or one merged test they compile differently.
   struct BattleEffectWork *work;
   u8 *canvas;
   u8 delay[128];
@@ -128,13 +127,12 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
   *counter = nextCounter;
 }
 
-// Sharing the five-mode switch grows native English from 0xc0 to 0xd0 bytes.
-// Inline fade helpers (with either work or value parameters) keep the sizes
-// but move the source setup ahead of the destination and size setup.
 // The same for the effects that draw a full-screen picture in
 // gMapCellBuffer instead of the canvas: copies its 0x7800 bytes to VRAM
 // 0x06008000 the way transferMode says (modes 0 to 3).
 void BattleFx_FlushPendingGraphicsTransfer(void) {
+  // This switch stays apart from BattleFx_ProcessPendingGraphicsTransfer's:
+  // shared, both compile differently.
   void **slots;
   struct BattleEffectWork *work;
   void *source;
@@ -257,8 +255,6 @@ void ObjectGroup_TickMemberTimers(void) {
 //   0x1341 : BG0, BG1, sprites
 //   0x1541 : BG0, BG2, sprites
 
-// Sharing the tilemap loop shortened BeginCanvasLayer and OpenCanvasLayer
-// by four bytes each in the English trial; retain their original loop scopes.
 // Opens the canvas layer: starts the background palette fade, makes BG2 the
 // canvas, alpha-blended over the battle, inside the effect windows, and
 // clears the canvas. It also stops any shake and saves BG1's scroll, which
@@ -333,6 +329,8 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
 // a 24-frame fade. It neither saves BG1's scroll nor resets the shake.
 // bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleFx_OpenCanvasLayer(s32 bgControl) {
+  // The tile-map loop is written out here and in BattleFx_BeginCanvasLayer:
+  // shared, both compile 4 bytes shorter.
   struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
   void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
@@ -473,8 +471,7 @@ void BattleFx_SetTransitionFlagAndDisplay(void) {
 // 0x100 onwards beside blank tiles, BG1 blended over the rest, and the
 // effect windows. Also clears the canvas.
 void BattleFx_SetupCanvasTileMap(void) {
-  // UB: indexing past scalar gBattleWork reaches other work slots. Named
-  // slots add four bytes in the native EN trial (0x136 to 0x13a).
+  // UB: indexing past gBattleWork reaches the work slots after it.
 #ifdef UBFIX
   void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *screen = gBattleWork;

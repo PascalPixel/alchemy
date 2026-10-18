@@ -92,9 +92,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     do {
       if ((flame->variant >= 0) && (flame->variant <= 23)) {
         cell = flame->variant / 4;
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x284 bytes,
-// with different instructions. Preserve the original native calls.
+        // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gBattleFx_PuffArcCellWidths[cell];
         draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],

@@ -151,9 +151,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect,
             s32 cel = puff->variant / 3;
             u32 width;
 
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x444 bytes,
-// with different instructions. Preserve the original native calls.
+            // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gEruptionEffect_PuffSizes[cel];
             draw[0](canvas, work->sheet + gEruptionEffect_PuffCells[cel],

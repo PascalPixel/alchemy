@@ -184,7 +184,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
             BattleEventRuntime_BeginPhaseFar(133);
           }
-          /* FAKEMATCH: needed to match: restores the CSE block boundary after
+          /* FAKEMATCH: restores the CSE block boundary after
            * the hit block (k << 3 is recomputed). Without the block: differ
            * 449; without both of this function's empty blocks: differ 337. */
           do {
@@ -214,7 +214,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
               shot->y = 0;
               shot->variant = 1;
-              /* FAKEMATCH: needed to match: native loads the table address
+              /* FAKEMATCH: native loads the table address
                * before the row (r0, r1) 2026-10-11: gLobbedShells_Records[mode
                * * 2] in the test differs 135, as a conditional expression too.
                */
@@ -227,7 +227,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
                 struct EffectStep *burst;
                 s32 group = k * 4;
 
-                /* FAKEMATCH: needed to match: restores the CSE block boundary
+                /* FAKEMATCH: restores the CSE block boundary
                  * between group's set and group * 8. Without the block: differ
                  * 171; as SHELL_BURSTS + group * 8 + i without it: differ 177.
                  */

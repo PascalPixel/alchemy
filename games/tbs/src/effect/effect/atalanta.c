@@ -83,7 +83,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
-  /* FAKEMATCH: needed to match: the one-pass block keeps the table address
+  /* FAKEMATCH: the one-pass block keeps the table address
    * after the second read 2026-10-11: without the block differ 2 (mov r2, sp
    * moves ahead of the first store). */
   do {
@@ -294,9 +294,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             s32 cell = slash->variant / 4;
             u32 width;
 
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x944 bytes,
-// with different instructions. Preserve the original native calls.
+            // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gBattleFx_PuffArcCellWidths[cell];
             draw[i & 1](canvas,

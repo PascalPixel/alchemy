@@ -23,7 +23,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   struct MotionObject *object;
   struct EffectPosition position;
-  /* FAKEMATCH: needed to match: only draw[0] is used: the second word fills
+  /* FAKEMATCH: only draw[0] is used: the second word fills
    * four bytes of the frame */
   BlitterPair draw;
   s32 frames;
@@ -133,7 +133,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   register s32 frame __asm__("r9");
   s32 i;
 
-  /* FAKEMATCH: needed to match: size and transparent first hold the slot
+  /* FAKEMATCH: size and transparent first hold the slot
    * table and blend register addresses, sharing their registers 2026-10-11:
    * plain slot reads and REG_BLDALPHA differ 56; the reads alone 40, the
    * register alone 50. */

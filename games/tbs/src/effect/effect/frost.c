@@ -107,9 +107,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
             EffectPosition_ApplyBaseAndYOffset(xyz, position = &screen);
             position->x = (position->x >> 17) + 64;
             position->y = HI(position->y) + 60;
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: 0x6f0 to 0x6d4 bytes,
-// with different instructions. Preserve the original native calls.
+            // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gRisingMotes_MoteWidths[cel];
             height = gRisingMotes_MoteHeights[cel];

@@ -63,9 +63,9 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
   Iwram_CopyWords((u16 *)BG_PLTT, target, 128);
 }
 
-static __inline__ void CastingImpact_LoadResource(const void *id, void *dest,
+static inline void CastingImpact_LoadResource(const void *id, void *dest,
                                                   s32 skip, s32 copy) {
-  /* FAKEMATCH: needed to match: inline scope keeps each resource call's
+  /* FAKEMATCH: inline scope keeps each resource call's
    * arguments local; only BattleFx_RunCastingImpact loads through it: with its
    * 24 loads called directly it differs throughout and is 2 instructions longer
    * (tbs-en, 2026-10-14), and the same inline as a layer for the whole effect
@@ -74,48 +74,48 @@ static __inline__ void CastingImpact_LoadResource(const void *id, void *dest,
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
-// Pack the casting-impact picture rows through their measured scope.
-static __inline__ void CastingImpact_PackRows(void *src, void *dest, s32 width,
+// Packs a casting impact's picture rows (Graphics_PackTileRows).
+static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                               s32 height) {
-  /* FAKEMATCH: needed to match: keep packing arguments within their own inline
+  /* FAKEMATCH: keep packing arguments within their own inline
    * scope */
   Graphics_PackTileRows(src, dest, width, height);
 }
 
-// Draw one casting-impact image through its measured argument scope.
-static __inline__ void CastingImpact_DrawImage(void *canvas, const void *pixels,
+// Draws one casting impact image with the given blitter.
+static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
                                                s32 x, s32 y, s32 width,
                                                s32 height,
                                                DrawRectangle *draw) {
-  /* FAKEMATCH: needed to match: inline scope reloads each image address at its
+  /* FAKEMATCH: inline scope reloads each image address at its
    * drawing call */
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
 // Draw a casting-impact image whose height is twice its width.
-static __inline__ void CastingImpact_DrawTallImage(void *canvas,
+static inline void CastingImpact_DrawTallImage(void *canvas,
                                                    const void *pixels, s32 x,
                                                    s32 y, s32 width,
                                                    DrawRectangle *draw) {
-  /* FAKEMATCH: needed to match: derive height inside the inline scope so the
+  /* FAKEMATCH: derive height inside the inline scope so the
    * dimension stores reuse one register instead of keeping two argument
    * temporaries alive */
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
 // Draw only the unscrolled height of a casting-impact image.
-static __inline__ void CastingImpact_DrawScrolledImage(void *canvas,
+static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                        const void *pixels,
                                                        s32 x, s32 y, s32 width,
                                                        s32 height, s32 scroll,
                                                        DrawRectangle *draw) {
-  /* FAKEMATCH: needed to match: subtract the scrolled part inside the drawing
+  /* FAKEMATCH: subtract the scrolled part inside the drawing
    * scope */
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
 // Draw a casting-impact image cropped to 91 pixels high.
-static __inline__ void CastingImpact_DrawCroppedImage(void *canvas,
+static inline void CastingImpact_DrawCroppedImage(void *canvas,
                                                       const void *pixels, s32 x,
                                                       s32 y, s32 width,
                                                       DrawRectangle *draw) {
@@ -273,7 +273,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   CastingImpact_LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
   CastingImpact_LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1,
                              0);
-  /* FAKEMATCH: needed to match: local dimensions preserve the packing argument
+  /* FAKEMATCH: local dimensions preserve the packing argument
    * order 2026-10-11: literal 40 and 288 differ 4 (movs r2, #40 and the buffer
    * load move ahead of lsls r3). */
   {
@@ -381,7 +381,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     work->transferValue = 50;
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  /* FAKEMATCH: needed to match: retain each output pointer while preparing its
+  /* FAKEMATCH: retain each output pointer while preparing its
    * call 2026-10-11: the pointers set in statements before the calls differ 38,
    * after the calls 142. */
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0],
@@ -472,7 +472,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     EFFECT_PRESENT_FRAME(work);
     frame++;
   } while (frame != CASTING_GATHER_FRAMES);
-  /* FAKEMATCH: needed to match: restart the pointer's lifetime after gathering
+  /* FAKEMATCH: restart the pointer's lifetime after gathering
    * so the projection above uses the stack position directly 2026-10-11: direct
    * djinnPos stores above, with this as the only assignment, differ 114, as
    * does removing it. */
@@ -1220,7 +1220,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       s32 imageX;
       s32 imageY;
       if (frame <= 5) {
-        /* FAKEMATCH: needed to match: calculate each center before the shared
+        /* FAKEMATCH: calculate each center before the shared
          * centered draw 2026-10-11: targetScreen->x / 2 in each arm differs
          * 147; with offset set first 129; hoisted out of the arms 146. */
         if (work->effect->side == 0) {

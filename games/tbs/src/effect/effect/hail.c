@@ -95,9 +95,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
         s32 height;
 
         cell = (chip->z / 128) & 3;
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x3bc bytes,
-// with different instructions. Preserve the original native calls.
+        // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gHail_CellWidths[cell];
         height = gHail_CellHeights[cell];

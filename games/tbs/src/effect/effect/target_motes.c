@@ -440,7 +440,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: needed to match: the family's blitter pair: this effect loads
+  /* FAKEMATCH: the family's blitter pair: this effect loads
    * only one. A single blitter, as draw[1] or a plain pointer: differ 202. */
   BlitterPair draw;
   struct EffectStep *marker;

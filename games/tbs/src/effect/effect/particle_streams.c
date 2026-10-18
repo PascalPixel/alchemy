@@ -304,18 +304,17 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
        * it leaves the division temp canonical in cse, so the compare and +3 use
        * the temp as in the reference. */
       register s32 count asm("r2") = work->frame;
-      /* An ordinary base alone leaves 8 aligned differences in 1532
-       * instructions. Integer/word/halfword carriers, a typed inline
-       * line helper and general or early-clobber barrier outputs keep
-       * that residual. A two-minute exact-stack/branch search (seed
-       * 353, nested helpers ignored) found no improvement in 1241
-       * compiled candidates. Changing count alone differs 10, both
-       * count and base differ 74, and level alone differs 42. */
       /* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1.
        * 2026-10-11: plain `heat = work->frame / 4` with a plain line pointer
        * differs 69: combine merges count's copy, the 0x778c reload and work
        * swap r0/r1, and the halfword zero becomes a literal-pool load once its
-       * reload scratch moves. */
+       * reload scratch moves. An ordinary base alone leaves 8 aligned
+       * differences in 1532 instructions. Integer/word/halfword carriers, a
+       * typed inline line helper and general or early-clobber barrier outputs
+       * keep that residual. A two-minute exact-stack/branch search (seed 353,
+       * nested helpers ignored) found no improvement in 1241 compiled
+       * candidates. Changing count alone differs 10, both count and base differ
+       * 74, and level alone differs 42. */
       register u8 *base asm("r0") = (u8 *)work;
       s32 heat = count / 4;
       u16 *line;
@@ -365,18 +364,17 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
          * separate quotient coalesces with level; the explicit bias
          * keeps the native r3 copy and shift (four register rows). */
         s32 blue = green;
-        /* Ordinary level differs 42 in EN (1532 native/built).
-         * A generic output boundary after its sum reduces this to 26,
-         * retaining the quotient/level r2/r3 exchange. A blue input
-         * retains 26; also unbinding count differs 36, with either an
-         * input or output count operand on the existing base boundary.
-         * Reversing the sum or deriving green as blue - 48 retains 42. */
         /* FAKEMATCH: level in r2; unbinding it changes ten register/order rows.
          * 2026-10-11: the natural `level = green / 4 + heat` differs 18, a
          * level/blue r3/r2 swap only (local-alloc hands level r3 first); a use
          * of level after the first blue clamp matches, and moving green's
          * computation there differs 4; no plain statement survives to
-         * allocation there. */
+         * allocation there. Ordinary level differs 42 in EN (1532
+         * native/built). A generic output boundary after its sum reduces this
+         * to 26, retaining the quotient/level r2/r3 exchange. A blue input
+         * retains 26; also unbinding count differs 36, with either an input or
+         * output count operand on the existing base boundary. Reversing the sum
+         * or deriving green as blue - 48 retains 42. */
         register s32 level asm("r2");
 
         if (green < 0)

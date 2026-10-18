@@ -183,7 +183,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
               EffectPosition_ApplyBaseAndYOffset(spark, &view);
               view.x >>= 1;
               CLAMP(view.depth, 314, 634);
-              /* FAKEMATCH: needed to match: the size series A draws its sparks
+              /* FAKEMATCH: the size series A draws its sparks
                * at, kept from that effect and never used here. Without the dead
                * store: differ 479. */
               cel = 3 - (view.depth - 314) / 128;
@@ -213,8 +213,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 // the whole delta once, and half of it on the frames in between, so the
 // turn stays smooth whatever the effect's frame rate.
 void Camera_ApplyPhasedDelta(void) {
-  // Mixing the slot-table work read with a separate camera base grows native
-  // English from 0x58 to 0x5c bytes. Capture both owners from the same table.
+  // Both come from the one slot table; a separate camera base compiles 4
+  // bytes longer.
   void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   struct BattleEffectWork *work = slots[0];
   struct BattleCamera *camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);

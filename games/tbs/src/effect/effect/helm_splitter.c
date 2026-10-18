@@ -304,9 +304,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
       if (cell < 0)
         cell = 0;
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x3d0 bytes,
-// with different instructions. Preserve the original native calls.
+      // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
       width = gImpactBurst_CellWidths[cell];
       height = gImpactBurst_CellHeights[cell];

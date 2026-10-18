@@ -137,7 +137,7 @@
 // Stops a DMA channel: clears its repeat and start timing bits, then its
 // enable bit, and reads the control register back so the stop takes effect
 // before the channel is set up again.
-static __inline__ void Dma_Stop(volatile u16 *channel) {
+static inline void Dma_Stop(volatile u16 *channel) {
   channel[DMA_CONTROL_HALF] &= 0xc5ff;
   channel[DMA_CONTROL_HALF] &= 0x7fff;
   (void)channel[DMA_CONTROL_HALF];

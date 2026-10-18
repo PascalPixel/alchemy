@@ -50,7 +50,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   void *cells;
   BlitterPair draw;
   struct MotionObject *target;
-  /* FAKEMATCH: needed to match: the second position is never used: it gives the
+  /* FAKEMATCH: the second position is never used: it gives the
    * frame its native 76 bytes 2026-10-11: a single position shrinks only the
    * frame (differ 4). */
   struct EffectPosition pos[2];
@@ -62,7 +62,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   s32 frame;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  /* FAKEMATCH: needed to match: the zero is held in sl through the setup calls.
+  /* FAKEMATCH: the zero is held in sl through the setup calls.
    * Storing the literal 0 without the local: differ 66. */
   zero = 0;
   work->effect = object;
@@ -177,7 +177,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
         panelRow = 0;
       } else {
         panelColumn = 1;
-        /* FAKEMATCH: needed to match: i is 160 here, so this is 0: a literal 0
+        /* FAKEMATCH: i is 160 here, so this is 0: a literal 0
          * drops a stack slot and shrinks the frame (differ 452). */
         panelRow = i >> 31;
       }

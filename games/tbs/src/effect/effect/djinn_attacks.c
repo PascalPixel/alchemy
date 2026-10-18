@@ -561,9 +561,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 8;
           u32 width;
 
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x3c4 bytes,
-// with different instructions. Preserve the original native calls.
+          // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
           blitters[0](canvas,

@@ -84,7 +84,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct MotionObject *object;
   struct AnimationObject *info;
   s32 scale;
-  /* FAKEMATCH: needed to match: the unused 12-byte vector preserves both stack
+  /* FAKEMATCH: the unused 12-byte vector preserves both stack
    * adjustments and camera-load order. */
   s32 unused[3];
 

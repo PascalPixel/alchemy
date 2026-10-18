@@ -274,9 +274,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
         u32 width;
         u32 height;
 
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: 0x30c to 0x320 bytes,
-// with different instructions. Preserve the original native calls.
+        // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gBladeRain_CellWidths[cell];
         height = gBladeRain_CellHeights[cell];
@@ -517,7 +515,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
 // for 128 frames and allocates its own work, canvas and sheet.
 // effect : only effect->actors[0], the unit that flashes, is read.
 void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
-  /* FAKEMATCH: needed to match: never read: the native frame keeps 12 unused
+  /* FAKEMATCH: never read: the native frame keeps 12 unused
    * bytes at sp+44..55, exactly this struct 2026-10-11: without it only the
    * frame shrinks (differ 4). */
   struct EffectPosition position;

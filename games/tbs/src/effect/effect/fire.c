@@ -150,9 +150,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         u32 width;
 
         cel = ember->variant / 2;
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x4a8 bytes,
-// with different instructions. Preserve the original native calls.
+        // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gFire_FlareWidths[cel];
         draw[1](canvas, work->sheet + gFire_FlareCells[cel],

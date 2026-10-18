@@ -199,7 +199,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != SHOCKWAVE_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
-    /* FAKEMATCH: needed to match: the frame > 143 block calls through a pointer
+    /* FAKEMATCH: the frame > 143 block calls through a pointer
      * to the slot table (base kept at sp+56) 2026-10-11: set once before the
      * frame loop differs 22 (the preheader reload registers rotate); as a local
      * of the frame > 143 block 579; the slot table named at the uses 581. */

@@ -58,7 +58,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunHeadbutt, BattleFx_RunRushingStrike, 3)
 // variant: the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
 void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
                                s32 variant) {
-  /* FAKEMATCH: needed to match: the blitter/camera declarations and independent
+  /* FAKEMATCH: the blitter/camera declarations and independent
    * store order preserve spill slots and loop preheader order 2026-10-11: the
    * camera read is the plain slot now; Ram_MapCellBuffer at the two uses of
    * cells differs 2 (its load moves ahead of lsls r3 at the packing call). */

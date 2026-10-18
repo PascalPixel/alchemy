@@ -111,7 +111,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   secondSlot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-  /* FAKEMATCH: needed to match: the columns draw through a second pointer to
+  /* FAKEMATCH: the columns draw through a second pointer to
    * the pair, whose address the frame keeps in a stack slot 2026-10-11:
    * rectangle[side] at the columns differs 22 (the address slot of the pair
    * moves from sp+28 to sp+16). */
@@ -232,7 +232,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 
             // On frames 4 and 8, put a free puff of dust at the root.
             if ((frame == reactFrame) || (frame == (start + 8))) {
-              /* FAKEMATCH: needed to match: the scan reuses length as its puff
+              /* FAKEMATCH: the scan reuses length as its puff
                * pointer 2026-10-11: a block pointer of its own differs 48 (r5
                * and r6 swap); the puff pointer of the function 271. */
               length = (u32)gMapCellBuffer;

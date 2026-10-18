@@ -81,9 +81,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
           // Five shard shapes, each tumbling through three pictures; z is the
           // tumbling speed, slowing by one every other frame down to 1.
           cell = (j % 5) * 3 + shard->variant / 96 % 3;
-// Sequence dimensions before the call; assigning and reading them in
-// separate arguments was UB. Plain English trial: unchanged 0x3bc bytes,
-// with different instructions. Preserve the original native calls.
+          // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
           width = gSpire_ShardWidths[cell];
           height = gSpire_ShardHeights[cell];

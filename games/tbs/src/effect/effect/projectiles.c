@@ -308,7 +308,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunWingBeat, BattleFx_RunProjectileVolley, 4)
 
 // Puts the user into its action pose (2) and fires the volley in this mode
 // while its animation runs fast.
-static __inline__ void
+static inline void
 BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
   s32 user;
 

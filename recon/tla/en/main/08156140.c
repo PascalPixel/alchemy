@@ -22,7 +22,7 @@
 // Twin: The Broken Seal's BattleFx_RunProjectileVolley (effect.c), modes
 // 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
 // no longer opens the canvas differently for mode 10.
-// Listing 2278 instructions, draft 2281, differ 1169.
+// Listing 2278 instructions, draft 2282, differ 1002.
 
 // What remains: the control flow and the calls are the native's, block for
 // block, and the four positions sit at the native's frame slots (screen
@@ -35,7 +35,7 @@
 // spilled induction variables at sp+24..44 in its own order.
 // - the comet, crystal and glint draws (about 25 rows each): argument
 // order and the reuse of table bases.
-// - three instructions more than the native, in the comet halves.
+// - four instructions more than the native, in the comet halves.
 // - literal pools placed from these lengths, so most pool offsets after
 // the first differ by a few words.
 
@@ -65,6 +65,8 @@
 #include "iwram_call.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+
+#define ABS(v) ((v) < 0 ? -(v) : (v))
 
 // The particle buffer at the map cell buffer: flashes from 0, sparks from
 // 100, smoke from 512, the falling-streak particles from 960.
@@ -652,11 +654,12 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           } else if (mode == 14) {
             // Five crystals, each turning through three cels.
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
+            s32 width = gData_0819781a[cel];
+            s32 height = gData_08197826[cel];
 
             draw[0](canvas, work->sheet + 0x800 + gData_08197834[cel],
-                    pos->x - (gData_0819781a[cel] >> 1),
-                    pos->y - (gData_08197826[cel] >> 1), gData_0819781a[cel],
-                    gData_08197826[cel]);
+                    pos->x - (width >> 1), pos->y - (height >> 1), width,
+                    height);
           } else if (mode == 11) {
             draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29,
                     23);

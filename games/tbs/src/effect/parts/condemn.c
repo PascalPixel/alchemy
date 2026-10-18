@@ -85,10 +85,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
-  work->transferValue = zero;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                        zero); // redraw from blank each frame
   // curve is where the panel swings about, in 16.16 pixels: the first pass
   // high up on the near side.
   drawPanel = 1;

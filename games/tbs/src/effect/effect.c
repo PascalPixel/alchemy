@@ -216,7 +216,7 @@ enum CanvasTransferMode {
 #define EFFECT_START_TRANSFER(work, mode, value)                               \
   (EFFECT_SET_TRANSFER(work, mode, value),                                     \
    Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,      \
-                                 0x480))
+                                 EFFECT_CALLBACK_ORDER))
 
 // Ends a frame of a canvas effect: marks the canvas ready for the transfer
 // callback, then waits for the next frame. Nearly every effect loop ends so.

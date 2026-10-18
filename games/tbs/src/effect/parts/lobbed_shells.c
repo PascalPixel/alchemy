@@ -154,10 +154,8 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   }
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
   if (LOBBED_SHELLS_SHATTER(mode) == 0)
     total = work->effect->count * 8 + 72;
   else

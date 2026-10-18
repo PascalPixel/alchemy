@@ -51,10 +51,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
                  (Trig_Cos(heading) * speed) >> 5);
     spark->variant = 0;
   }
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
 
   // The swirl travels from the user's feet to 90 pixels above the first
   // target over frames 30 to 69.

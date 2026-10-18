@@ -64,10 +64,8 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
   AudioCommand_PlayFar(SE_164);
 
   for (frame = 0; frame != gFroth_Counts[work->effect->variant][FROTH_FRAMES];
@@ -194,10 +192,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
     point->y = (Random16() & 63) + 16;
     point->variant = -(Random16() & 15);
   }
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Trails keep half a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
   AudioCommand_PlayFar(SE_141);

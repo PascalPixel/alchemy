@@ -47,10 +47,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + NEREID_COLUMN_IMAGE);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
   {
     struct Point2D focus;
     struct Point2D velocity;

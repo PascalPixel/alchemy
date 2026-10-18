@@ -126,10 +126,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
 
   // Mode 1 mirrors everything when the user is on the right (side 1).
   if (mode == 0)

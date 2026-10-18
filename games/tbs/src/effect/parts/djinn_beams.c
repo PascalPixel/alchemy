@@ -87,10 +87,8 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       offsetX = 0;
   }
   REG_BG2X = offsetX << 8;
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        50); // trails keep half a frame
 
   for (frame = 0; frame != work->effect->count * 16 + 116; frame++) {
     struct BattleCamera *camera = gCameraWork;

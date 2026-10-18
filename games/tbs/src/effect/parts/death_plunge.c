@@ -208,10 +208,8 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1,
                              1);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                        0); // redraw from blank each frame
   // Scroll the canvas so its middle column sits on the first target.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
@@ -397,10 +395,8 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
    * The adjacent scheduling asm is unnecessary with these updates. */
   work++;
   work--;
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_ADDITIVE);
   draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
@@ -595,10 +591,8 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask,
                              work->imageStorage, 1, 1);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Redraw from blank each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_TRANSPARENT);
   slotTable = gWorkSlot;
@@ -930,10 +924,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
     work->particles[i].y = (Random16() & 31) + 16;
     work->particles[i].variant = (i & 15) + 16;
   }
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
   draw[0] =

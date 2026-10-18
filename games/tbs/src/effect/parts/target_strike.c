@@ -250,10 +250,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
 
   // Strike halfway between the target's middle and its feet.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPosition);

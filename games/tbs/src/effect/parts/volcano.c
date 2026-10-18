@@ -71,10 +71,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
       base->x = -x;
   }
 
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        50); // trails keep half a frame
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gCameraWork;

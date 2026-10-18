@@ -148,10 +148,8 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
     setup++;
   } while (i != 16);
 
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                        0); // clear the canvas every frame
 
   frame = 0;
   if (duration != 0) {
@@ -350,10 +348,8 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
     column[i].x = gVine_ColumnOffsets[i] + 64;
     i++;
   } while (i != VINE_COLUMNS);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Clear the canvas every frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   frame = 0;
   do {
     if (frame == 32) {

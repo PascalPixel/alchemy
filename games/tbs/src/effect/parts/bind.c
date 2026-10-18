@@ -147,10 +147,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + 0x2000);
-  work->transferMode = CANVAS_COPY_AND_DARKEN;
-  work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
+                        0x04040404); // 4 off every pixel each frame
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
@@ -301,10 +299,8 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
   Resource_DecodeType01(palette, work->sheet + 0x1000);
-  work->transferMode = CANVAS_COPY_AND_DARKEN;
-  work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // 4 off every pixel each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;

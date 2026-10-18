@@ -157,10 +157,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   WaitFrames(1);
 
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPos);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails, fading to 3/4
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails, fading to 3/4
 
   // Motes wait 25 pixels above the target, set to fly towards the middle
   // of the field.

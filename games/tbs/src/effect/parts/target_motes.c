@@ -167,10 +167,8 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   if (TARGET_MOTES_RIPPLE(mode))
     Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                   EFFECT_CALLBACK_ORDER);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
   AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != total; frame++) {
@@ -371,11 +369,9 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
     current->variant = Random16() & 255;
   }
   if (work->effect->side == 1)
-    REG_BG2X = -0x7000;                       // over the party's side
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+    REG_BG2X = -0x7000; // over the party's side
+  // Redraw from blank each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   AudioCommand_PlayFar(SE_142);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;

@@ -73,10 +73,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
 
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        50); // trails keep half a frame
 
   // wave is where the block of objects sways, drift a push from each comet.
   wave.x = 0x800000;

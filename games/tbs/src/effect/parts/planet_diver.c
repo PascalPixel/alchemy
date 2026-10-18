@@ -89,10 +89,8 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     IMPACT_CHIPS[i].life = 0;
@@ -272,10 +270,8 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  work->transferMode = CANVAS_COPY_AND_DARKEN;
-  work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // 4 off every pixel each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
 
   for (i = 0; i != HAUNT_SCATTERED; i++) {
     PARTICLES[i].x = ((Random16() & 255) - 127) << 15;
@@ -384,10 +380,8 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Trails keep half a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   // On the party's side the canvas is scrolled 104 pixels left.
   if (work->effect->side == 1) {
     REG_BG2X = -0x6800;

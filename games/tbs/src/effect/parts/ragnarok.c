@@ -116,10 +116,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
     col++;
   } while (col != RAGNAROK_SEEDED);
 
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75; // Reduce to 3/4 on each transfer for an afterimage.
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(
+      work, CANVAS_COPY_AND_FADE,
+      75); // Reduce to 3/4 on each transfer for an afterimage.
 
   frame = 0;
   do {

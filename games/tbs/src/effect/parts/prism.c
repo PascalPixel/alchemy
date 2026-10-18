@@ -41,10 +41,8 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        50); // trails keep half a frame
 
   // Line the crystals up above the screen, each starting 8 frames after
   // the last and drifting towards the middle as it falls.

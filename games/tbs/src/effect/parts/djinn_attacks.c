@@ -108,10 +108,8 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
   Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
   Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // each transfer fades the canvas to 3/4
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
   AudioCommand_PlayFar(SE_162);
@@ -240,10 +238,8 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                              work->sheet + 0x320, 1, 0);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Each transfer fades the canvas to 3/4.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // The flameballs start at x 64 to 127, y -80 to -17.
   for (i = 0; i != 32; i++) {

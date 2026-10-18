@@ -53,10 +53,8 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails keep 3/4 a frame
   object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
   // Line the canvas up so the swipe crosses the target.
@@ -153,10 +151,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   REG_BG2X = (64 - first.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Redraw from blank each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   AudioCommand_PlayFar(SE_143);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.

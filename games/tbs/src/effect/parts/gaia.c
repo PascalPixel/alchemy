@@ -139,10 +139,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails, fading to 3/4
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        75); // trails, fading to 3/4
 
   // Rocks: x is the column, y counts down from 128 by z, velocityX cycles
   // through 1 to 12, and variant is the wait before the rock appears.

@@ -87,10 +87,8 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_FOR_EACH_TARGET(member, work->effect)
     work->particles[member].variant = 0;      // 1 once the target has landed
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                        0); // each transfer clears the canvas
   heights = (*(const struct RockWallHeights *)&wallHeights);
   work->shakeFrames = 128;
   AudioCommand_PlayFar(SE_141);

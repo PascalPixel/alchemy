@@ -103,10 +103,8 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                       COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        50); // trails keep half a frame
 
   if (mode == 2) {
     work->shakeFrames = 0;

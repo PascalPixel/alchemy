@@ -73,10 +73,8 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, gMapCellBuffer, 1,
                                1);
   }
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // Clear to 0 each frame.
-  work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                        0); // Clear to 0 each frame.
 
   // Move the acting unit toward the target over 16 frames.
   if (mode == 1)

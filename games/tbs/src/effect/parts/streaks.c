@@ -137,10 +137,9 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = CANVAS_COPY_AND_FADE; // halve the canvas each frame
-  work->transferValue = 50;                  // so streaks leave a trail
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(
+      work, CANVAS_COPY_AND_FADE,
+      50); // halve the canvas each frame // so streaks leave a trail
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   {
@@ -322,10 +321,8 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   else
     resource = (s32)&ResourceId_EarthWallSheet;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Every mote starts 5 pixels above the user with a random direction and
   // speed, mostly upwards, and a life of 48 to 79 frames. Only the first 128

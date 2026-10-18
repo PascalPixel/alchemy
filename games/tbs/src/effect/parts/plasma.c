@@ -65,10 +65,8 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
     life += 7;
   }
   sparks = gMapCellBuffer;
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
-  work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                        50); // trails keep half a frame
   count = gPlasma_Counts[work->effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -325,10 +323,8 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
       spark->variant = (Random16() & 7) + 32;
     }
   }
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
-  work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0;
        frame !=

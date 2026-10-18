@@ -645,7 +645,8 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
       if (action->command == CMD_DEFEND || action->command == CMD_DEFEND2) {
         unit = UnitGetFar(action->unitId);
         // Half the damage, or a tenth.
-        unit->guardLevel = action->command == CMD_DEFEND ? 1 : 2;
+        unit->guardLevel =
+            action->command == CMD_DEFEND ? GUARD_DEFEND : GUARD_TOTAL_DEFENSE;
       }
       action++;
       remainingActions--;

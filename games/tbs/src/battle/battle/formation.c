@@ -6,6 +6,14 @@
 // The rows of gBattleFormation_Records.
 #define FORMATION_COUNT 380
 
+// How many name letters tell the enemies of one class apart: 26 in Japanese,
+// 9 in the localizations.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+#define ENEMY_NAME_SUFFIX_COUNT 9
+#else
+#define ENEMY_NAME_SUFFIX_COUNT 26
+#endif
+
 // Returns the formation's average enemy level, or -1 for an empty minimum list,
 // -2 for an ineligible unseen enemy, or -3 when no member has a maximum count.
 s32 Party_ComputeEligibleMemberAverage(s32 recordId) {
@@ -210,12 +218,6 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
   UnitCalcFar(owner);
   MemFree(base);
 }
-
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-#define ENEMY_NAME_SUFFIX_COUNT 9
-#else
-#define ENEMY_NAME_SUFFIX_COUNT 26
-#endif
 
 // Claims the next displayed name suffix for an enemy class. Bit 15 requests
 // a suffix for the first existing duplicate; a new class returns the

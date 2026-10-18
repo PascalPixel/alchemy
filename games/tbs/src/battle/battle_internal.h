@@ -256,7 +256,7 @@ enum BattlePlanStaging {
 // layer, to fade them.
 #define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-// The arrow that asks the player to go on
-#define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS) // the keys that go on
+// The keys that take the player on past a message: A, B, L and R.
+#define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
 #endif

@@ -4,6 +4,15 @@
 
 #include "../battle_internal.h"
 
+// The value Select picks in the debug value editor
+// (Runtime_AdjustDebugValueWithButtons), which the international editions
+// changed.
+#if TBS_PATCH_1
+#define DEBUG_SELECT_VALUE 0x18f
+#else
+#define DEBUG_SELECT_VALUE 480
+#endif
+
 // Uploads the saved battle palette, scaling its brightness unless the level is
 // zero. Preserves the interrupt-enable state around the update.
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
@@ -370,12 +379,6 @@ void BattlePresentation_InitializeTransitionEntries(
 
 // Divides a signed value by sixteen, rounding toward zero.
 s32 BattlePres_DivideBy16(s32 value) { return value / 16; }
-
-#if TBS_PATCH_1
-#define DEBUG_SELECT_VALUE 0x18f
-#else
-#define DEBUG_SELECT_VALUE 480
-#endif
 
 // While Start is held, edits the debug value with the d-pad and accepts it with
 // A. Select overrides the result with the edition's fixed debug selection.

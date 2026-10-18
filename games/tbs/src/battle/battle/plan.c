@@ -174,7 +174,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
         UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
         if (actor->guardLevel == 0)
-          actor->guardLevel = 1;
+          actor->guardLevel = GUARD_DEFEND;
         return -1;
       }
     }
@@ -332,7 +332,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
       if (actor->guardLevel == 0)
-        actor->guardLevel = 1;
+        actor->guardLevel = GUARD_DEFEND;
       return -1;
     }
     if (BattlePlan_SetTargets(abilityId) == -1)

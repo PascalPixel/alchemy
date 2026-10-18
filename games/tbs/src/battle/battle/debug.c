@@ -3,6 +3,25 @@
 
 #include "../battle_internal.h"
 
+// The window work's byte that marks a message window busy; it moved when the
+// international editions grew the work.
+#if TBS_PATCH_1
+#define WINDOW_WORK_MESSAGE_BUSY 0x12f8
+#else
+#define WINDOW_WORK_MESSAGE_BUSY 0x1188
+#endif
+
+// The first message of the viewer's second range: in Japanese, an earlier
+// copy of the first range's opening lines; the localizations moved it
+// elsewhere.
+#if (LANGUAGE == LANGUAGE_ENGLISH)
+#define DEBUG_SECOND_FORM MsgBecameCursed
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#define DEBUG_SECOND_FORM MsgEnd
+#else
+#define DEBUG_SECOND_FORM MsgDebugSecondForm
+#endif
+
 // One row of the debug party presets (presets.tsv): a party member, the
 // level to raise them to, the djinn of each element to give them, the items
 // to equip and up to two abilities to teach. A row whose owner is -1 ends a
@@ -106,25 +125,6 @@ s32 DebugParty_LoadPreset(s32 preset) {
   }
   return notFound;
 }
-
-// The window work's byte that marks a message window busy; it moved when the
-// international editions grew the work.
-#if TBS_PATCH_1
-#define WINDOW_WORK_MESSAGE_BUSY 0x12f8
-#else
-#define WINDOW_WORK_MESSAGE_BUSY 0x1188
-#endif
-
-// The first message of the viewer's second range: in Japanese, an earlier
-// copy of the first range's opening lines; the localizations moved it
-// elsewhere.
-#if (LANGUAGE == LANGUAGE_ENGLISH)
-#define DEBUG_SECOND_FORM MsgBecameCursed
-#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
-#define DEBUG_SECOND_FORM MsgEnd
-#else
-#define DEBUG_SECOND_FORM MsgDebugSecondForm
-#endif
 
 // The highest message index the viewer reaches.
 #define DEBUG_VIEW_LIMIT                                                       \

@@ -1,8 +1,100 @@
+This file is not for humans.
+
 # Alchemy
 
-Golden Sun: **The Broken Seal (TBS)** ☀️ and **The Lost Age (TLA)** ⚓️, rebuilt byte for byte from readable C, assembly and editable assets, in all twelve editions: each game in Japanese, English, German, Spanish, French and Italian. Japanese releases are the source editions; localizations are measured differences. Build IDs are `tbs` and `tla`, then the language: `tbs-ja`, `tla-en`.
+It instructs the agents that work on Alchemy; people read `README.md`, `INSTALL.md` and the source. The agents keep this file current, its wording included (Pascal, 2026-10-18). Essentials come first; the rules in full, by ID, follow under Reference.
 
-This file is the only place Alchemy's rules live. `README.md` is for fans. Every rule has an ID, and a rule a tool can enforce names its check. The agents working on Alchemy keep this file and its wording current (Pascal, 2026-10-18); Pascal decides compilers, what counts as DONE, and deleting anything that cannot be restored, and git history records when. Everything else goes ahead without asking him, including fixing a check that wrongly blocks honest work, as long as it still refuses everything it refused before.
+## What this is
+
+Alchemy rebuilds Golden Sun: **The Broken Seal** (TBS, ☀️) and **The Lost Age** (TLA, ⚓️) byte for byte from readable C, assembly and editable assets, in twelve editions: each game in Japanese, English, German, Spanish, French and Italian. Build IDs are the game, then the language: `tbs-ja`, `tla-en`. Japanese releases are the source editions; localizations are measured differences.
+
+- ☀️ is 100% matched (2026-10-14). The work there now is humanizing: making it read as modern C, as pret's games do (S3). `games/tbs/src/effect` is the model folder; the rest of the project is done the way it is.
+- ⚓️ is still being matched; most of its code is listings and drafts under `recon/tla`.
+- Every change keeps all twelve editions byte-identical. A readable form that changes a byte is wrong, not a trade-off (W8).
+
+## Commands
+
+Setup needs macOS or Linux with a C compiler, make, git, curl, patch, xz, the ARM binutils, pkg-config, libpng and utf8proc (`INSTALL.md`). ROMs go under `roms/` as `tla-ja.gba` and so on, checked against `rom.sha1`, never committed (L1).
+
+```sh
+git submodule update --init --recursive agscc
+make bootstrap         # the tools, the pinned compilers, GAS 2.10 and libgcc
+make -j8 compare-tbs   # the six ☀️ editions, which read no ROM
+make compare-tla-en    # one edition: tbs or tla, then ja, en, de, es, fr or it
+make compare-editions  # all twelve editions: required before every commit (W5)
+make tbs-en            # build one edition without comparing
+make modern            # the six ☀️ editions' C with a current GCC: no errors allowed
+make test              # the C build tools' tests
+```
+
+Matching and progress use the optional Psynergy submodule (Rust, Cargo):
+
+```sh
+git submodule update --init psynergy
+make psynergy          # optional Rust tools; CI uses Rust 1.98.1
+make test-psynergy     # reconstruction tests against this checkout
+git config core.hooksPath .hooks  # send verified measurements when pushing main
+make progress          # DONE code and data, per game and edition (C2)
+make land              # on main, before committing a landing (W2, C3)
+```
+
+The binary is `psynergy/target/release/psynergy`; it acts on the checkout it runs in (`ALCHEMY_ROOT` points a standalone checkout at this one).
+
+```sh
+psynergy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
+psynergy diff DRAFT.c --heat            # differing instructions per line, first divergence marked
+psynergy diff DRAFT.c --rtl             # the compiler's per-pass dumps for the draft
+psynergy permute DRAFT.c [ADDR] [--minutes N]   # rewrites toward differ 0, in out/permute
+psynergy progress                       # what make progress prints, and what make land sends
+```
+
+## Boundaries
+
+Always:
+- See `make compare-editions` print OK for all twelve editions before every commit (W5). Send its output to a log file; it is long.
+- Tag every compiler-steering device `/* FAKEMATCH: reason */` inside its function, with the measured difference without it (S2).
+- Name things only from evidence; an unknown keeps a neutral placeholder (`sub_08012345`, `unk_14`) (S3).
+- Commit each verified step on its own, attempts and near misses included (S4); a worker commits only verified work (W7).
+- Look at how pret does something before inventing, and never be stricter than pret (W3).
+
+Ask Pascal first:
+- Any compiler, option, routing or agscc change. The set is frozen (K1 to K3).
+- Anything that changes what counts as DONE (C2, W6).
+- Deleting anything that cannot be restored.
+- Pushing, pulling or fetching, and anything published outside this machine.
+
+Never:
+- Commit, upload or publish a ROM or any copy of the original game files (L1).
+- Use or open another project's Golden Sun work (L2).
+- Open, read, use or mention leaked Nintendo or Camelot code or SDKs, or anything derived from them, however it is presented (L3).
+- Let ROM bytes or the expected output steer the build or the count, beyond pret's `.incbin` scaffold under `recon/` (O1).
+- Write a function as inline assembly, patch compiler output, or give a function its own compiler option (S2, K1).
+- Treat old git history, deleted files or backups as evidence (O5).
+- Add JSON (A5), or Python, shell or TypeScript programs (W1).
+
+Everything else goes ahead without asking, including fixing a check that wrongly blocks honest work, as long as it still refuses everything it refused before.
+
+## Workflow
+
+1. Work in the main checkout on a branch; `main` is the only long-lived branch (W2). Pascal prefers no worktrees.
+2. Choose what to match by W4: first what other unfinished code calls, then the largest with nothing left to name.
+3. Draft in `recon/<game>/en/main/<address>.c` and check with `psynergy diff`. A near miss stays a draft, its remaining difference in its header (S4).
+4. Adopt a match into the module that holds its linker neighbours, in every edition whose bytes agree (C1, S4), and commit it.
+5. Humanize in passes (Goal): mechanical, then structure, then meaning, each byte-identical.
+6. Land on `main` with `make land` (W2, C3). Push only when Pascal asks.
+
+## Pitfalls
+
+Measured, and easy to repeat:
+- `do { ... } while (0)` is not neutral in agscc: it compiles as a one-pass block and can move code. A statement macro takes the shape its sites match with (S2).
+- agscc pads every struct to 4 bytes. A table read by columns is a two-dimensional array with an `enum` naming its columns (Notes).
+- Locals declared in an inner block change register allocation; a macro cannot take its caller's locals as its own (Notes).
+- Builds from another branch leave `out/*/deps.mk` and `out/*/objects.mk` that break this one: delete them. `tools/out` is shared across checkouts: after switching to a branch whose tools differ, run `rm -rf tools/out/obj tools/out/ags-* && make tools`.
+- A comment says what the code cannot: what the player sees, units, why a forced form is forced, the evidence for a name. It does not restate the code.
+
+---
+
+# Reference
 
 ## Goal
 
@@ -197,38 +289,3 @@ Not rules; what earlier work measured.
   - Every Thumb function starts on a 4-byte boundary, so the ROM cannot show where one object's code ends and the next begins. Data can: an object's data starts on a 4-byte boundary, while `u8` tables pack at any offset, so a gap no type alignment explains marks a boundary. All 21 gaps in ☀️'s effect tables are explained by the type that follows.
 - ⚓️ near misses (2026-10-18, 796 drafts under `recon/tla/en/main`): 22 matched in English (19 adopted, in every edition whose bytes agree, two already source, one waiting on a map id's name); 400 differ only in instruction order (306 by ten rows or fewer), 48 only in register choice, and 325 otherwise. In the order-only drafts the native most often issues a literal-pool load earlier than agscc (242 times in 132 drafts) and a constant, shift or ALU instruction later. This corpus is the evidence a K3 question about ⚓️'s scheduling would start from.
 
-## Commands
-
-Setup needs macOS or Linux with a C compiler, make, git, curl, patch, xz, the ARM binutils, pkg-config, libpng and utf8proc; nothing needs Rosetta (INSTALL.md). Put your own ROMs under `roms/` as `tla-ja.gba` and so on; each is checked against `rom.sha1` before use and none is ever committed (L1).
-
-```sh
-git submodule update --init --recursive agscc
-make bootstrap         # the tools, the pinned compilers, GAS 2.10 and libgcc
-make -j8 compare-tbs   # the six ☀️ editions, which read no ROM
-make compare-tla-en    # one edition: tbs or tla, then ja, en, de, es, fr or it
-make compare-editions  # all twelve editions (W5)
-make tbs-en            # build one edition without comparing
-make modern            # the six ☀️ editions' C with a current GCC (MODERN_CC): no errors
-make test              # the C build tools' tests
-```
-
-Matching, permutation and progress measurement use the optional Psynergy submodule and Rust with Cargo. For reconstruction work, install Rust, then:
-
-```sh
-git submodule update --init psynergy
-make psynergy          # optional Rust tools; CI uses Rust 1.98.1
-make test-psynergy     # reconstruction tests against this checkout
-git config core.hooksPath .hooks  # send verified measurements when pushing main
-make progress          # DONE code and data, per game and edition (C2)
-make land              # on main, before committing a landing (W2, C3)
-```
-
-The `psynergy` binary is `psynergy/target/release/psynergy`; it acts on the Alchemy checkout it runs in, and `psynergy --help` lists its commands. Add that directory to `PATH` or use the full path. A standalone Psynergy checkout can target this one with `ALCHEMY_ROOT=/path/to/alchemy`.
-
-```sh
-psynergy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
-psynergy diff DRAFT.c --heat            # differing instructions per line, first divergence marked; permute --heat aims there
-psynergy diff DRAFT.c --rtl             # the compiler's per-pass dumps for the draft
-psynergy permute DRAFT.c [ADDR] [--minutes N]   # rewrites and PERM_* choices toward differ 0, in out/permute
-psynergy progress                       # what make progress prints, and the measurement make land sends
-```

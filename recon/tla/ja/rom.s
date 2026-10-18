@@ -445,8 +445,6 @@ MapAnimation_Update:
 	.incbin "baserom.gba", 0x0002cc18, 0x000000b0
 	.section .rom.0002d004, "ax"
 	.incbin "baserom.gba", 0x0002d004, 0x000001b4
-	.section .rom.0002d2ea, "ax"
-	.incbin "baserom.gba", 0x0002d2ea, 0x00000002
 	.section .rom.0002d3d8, "ax"
 	.global Func_0802d45c
 	.type Func_0802d45c, %function

@@ -776,12 +776,6 @@ main	rom_main_01	recon/tla/raw/0802d088	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002d004	ja
 main	rom_main_01	games/tla/src/lib/curve	.text
 main	rom_main_01	games/tla/src/lib/sample	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002d36e	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002d36e	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002d36e	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002d36e	de
-main	rom_main_01	recon/tla/raw/0802d36e	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002d2ea	ja
 main	rom_main_01	games/tla/src/lib/step	.text
 main	rom_main_01	games/tla/src/lib/curve_row	.text
 main	rom_main_01	games/tla/src/lib/curve_lookup	.text

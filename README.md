@@ -41,6 +41,12 @@ The code is still being cleaned up for people. Names and comments are moving int
 | French   | `42f3b262c16cfc5bde1fa2b25016fb74046de1b3` | `f14855c0f8c87a95cc52189e8e3b2bd9df186322` |
 | Italian  | `ca45e04b26b2f040ac63e679a459d21869f5f28d` | `57f1d005666b81645e55412658427e27099c5907` |
 
+## Explore and mod it
+
+The source of each game is under `games/tbs` and `games/tla`, with what both share in `games/common`. The battle effects are the most finished part, and the model for the rest: [games/tbs/src/effect/README.md](games/tbs/src/effect/README.md) shows how to find the code a move plays, change it and give a move a new effect.
+
+To try a change, build one language, such as `make tbs-en`, and play `out/tbs-en/tbs-en.gba`. A mod changes the ROM on purpose, so it won't match the original, and it doesn't need to.
+
 ## Acknowledgements
 
 _Golden Sun_, its characters, music, art and original code were created by Camelot Software Planning and published by Nintendo. Alchemy is an unofficial fan project and is not affiliated with or endorsed by either company.

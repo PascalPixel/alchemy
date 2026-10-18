@@ -1,4 +1,4 @@
-// Draft of BattleFx_RunIris, decompiled from the listing: differ 5051 of 5364
+// Draft of BattleFx_RunIris, decompiled from the listing: differ 4932 of 5364
 // (draft 5319), the same 257 calls and control flow; allocation differs.
 
 #include "types.h"
@@ -359,18 +359,21 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
   u8 *canvas;
-  s32 pos[4];
 
   // The first spark slot with no life left, or -1.
   s32 FindFreeSpark(void) {
     s32 i;
+    s32 slot = 36;
 
-    for (i = 0; i != 36; i++)
-      if (sparks->life[i] == 0)
+    for (i = 0; i != 36; i++) {
+      if (sparks->life[i] == 0) {
+        slot = i;
         break;
-    if (i == 36)
-      i = -1;
-    return i;
+      }
+    }
+    if (slot == 36)
+      slot = -1;
+    return slot;
   }
 
   // Each live spark: placed at its size, moved, dropped when it leaves the
@@ -408,13 +411,17 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
   // The first free mote of 32, or -1.
   s32 FindFreeParticle(void) {
     s32 i;
+    s32 slot = 32;
 
-    for (i = 0; i != 32; i++)
-      if (work->particles[i].variant == 0)
+    for (i = 0; i != 32; i++) {
+      if (work->particles[i].variant == 0) {
+        slot = i;
         break;
-    if (i == 32)
-      i = -1;
-    return i;
+      }
+    }
+    if (slot == 32)
+      slot = -1;
+    return slot;
   }
 
   // The motes: a sheet cell, fading after 32 frames with bit 4, or a
@@ -454,7 +461,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
           offset = 0;
           age = frame - work->particles[i].z;
           if (age > 24)
-            offset = (age - 24) << 11;
+            offset = (age - 24) * 0x800;
           texture.logWidth = 5;
           texture.logHeight = 6;
           texture.pixels = work->sheet + 0x1810 + offset;
@@ -478,7 +485,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
           if (offset == 0x3800)
             work->particles[i].variant = 0;
         } else {
-          draw[0](canvas, work->sheet + gData_08197410[n - 1] + offset,
+          draw[0](canvas, work->sheet + (gData_08197410[n - 1] + offset),
                   px - n / 2, py - n, n, n * 2);
         }
         work->particles[i].x += work->particles[i].velocityX;
@@ -488,6 +495,7 @@ void BattleFx_RunIris(struct BattleEffectArgument *effect) {
   }
 
   u8 *sprites;
+  s32 pos[4];
   u8 *battle;
   u16 savedScroll;
   s16 *camera;

@@ -17,7 +17,10 @@
 // Devices, as ☀️'s twin has them (each tag gives its measured difference):
 // the mode test through direction, the frame count and work pinned in the
 // heat loop with their barrier, the r6 clobber around the first cue, and the
-// level pin. The helpers match as they are.
+// level pin. The two nested helpers, AddFlame (08164c0c) and AddMote
+// (08164c70), each differ 4 alone: the native puts ldr r2, [r1] between the
+// x28 index's lsls and subs, and ldr r3, [r2, #24] before movs r7, #1 (order
+// only; tried direct, offset and cast indexing, do-while, other counter types).
 
 // Left, 187 rows: the prologue's argument spill and heap reads in the other
 // order (the 0x03000000 base first here); the map cell buffer kept in r5

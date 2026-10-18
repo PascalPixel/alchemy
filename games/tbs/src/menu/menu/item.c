@@ -174,10 +174,9 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
 static __inline__ s32 Item_CopyWords(ItemWordCopyFn copy, void *dst,
                                      const void *src, s32 size) {
-  /* FAKEMATCH: needed to match: the copy routine as IwramIrqMain plus its
-   * offset, passed first; direct calls share the 332-byte size in r5 and move
-   * the routine to r6, and through Iwram_CopyWords the routine is loaded before
-   * the source and size (2 instructions reordered). */
+  /* FAKEMATCH(wrapper): the trade's unit copies call the routine through
+   * this helper, which takes its address first; through Iwram_CopyWords, 3 of
+   * 1269 instructions of ItemMenu_RunCommands differ in tbs-en. */
   return copy(dst, src, size);
 }
 
@@ -1475,11 +1474,10 @@ UNUSED void InventoryMenu_NoOp(void) {}
 // the preview, making room first if it is full, and target is restored after.
 // mode 1 redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
-  /* FAKEMATCH: Reusing the expired owner value for the saved unit keeps
-     owner in r8 and panelStyle in r10; a separate saved pointer swaps those
-     registers (44 aligned instructions differ). The type-6 buffer alias
-     preserves the native shared draw tail; without it the body adds
-     three instructions and seven aligned instructions differ. */
+  /* FAKEMATCH(temporary): the saved unit kept in owner once owner is no
+   * longer needed, and in Psynergy items' case also in buffer, which keeps
+   * owner in r8 and panelStyle in r10; as a separate void *saved in both
+   * cases, 22 of 172 instructions differ in tbs-en. */
   struct InventoryMenuState *menu = gMenuWork;
   s32 panelStyle = 0;
   struct BattleUnit *unit = UnitGetFar(owner);

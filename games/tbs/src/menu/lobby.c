@@ -135,9 +135,9 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   } else {
     Engine_GameFlagClear(0x303);
   }
-  /* FAKEMATCH: a loop that runs at most once places the test after the body as
-   * the ROM does. As an if around the body: differ 43; as an early return 0 on
-   * the failed test: differ 55. */
+  /* FAKEMATCH(one-pass): a loop left by break after its first pass, which
+   * places the test after the body as the ROM does; as an if around the body,
+   * 12 of 58 instructions differ in tbs-en. */
   while (serialPlayerId >= 0 && Engine_GameFlagIsSet(0x303)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
@@ -282,9 +282,9 @@ static s32 LinkLobby_ReportDisconnection(void) {
 // Receives three unit records and a recovery table; returns the occupied count
 // or the original transfer failure. All size checks observe fresh serial reads.
 static s32 LinkLobby_ReceivePartyRecords(void) {
-  /* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every
-   * read here is a load of its own. Measured on tbs-en: without the qualifier
-   * differ 69, 186 instructions for 189. */
+  /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial_runtime.h),
+   * so every read here is a load of its own; without the qualifier, 24 of 190
+   * instructions differ in tbs-en. */
   u16 namePrefix[24];
   u32 size;
   void *heap;
@@ -469,10 +469,9 @@ static s32 LinkLobby_SendPartyRecords(void) {
     slotMap[i] = 0;
   }
   for (i = 0; i < ownerCount; i++) {
-    /* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives
-     * the record copy's argument order; without it loop.c moves the failure out
-     * of the loop: differ 26 (all three of this function's blocks removed:
-     * differ 66). */
+    /* FAKEMATCH(one-pass): the record's send in a one-pass block, which keeps
+     * the send failure inside the loop and gives the copy's argument order;
+     * as a plain block, 3 of 255 instructions differ in tbs-en. */
     do {
       Iwram_CopyWords(heap, UnitGet(ownerIds[i]), size);
       heap[0x12a] = 2;
@@ -488,10 +487,9 @@ static s32 LinkLobby_SendPartyRecords(void) {
       Engine_TaskWait(1);
       if (--timeout < 0 ||
           (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        /* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1
-         * is reloaded here and jump2 merges it into the offer's; moved out of
-         * the loop, it shifts every later reload register: differ 59 without
-         * the block. */
+        /* FAKEMATCH(one-pass): the retry limit's test in a one-pass block,
+         * which keeps this failure inside the loop, its -1 loaded here;
+         * without the block, 11 of 255 instructions differ in tbs-en. */
         do {
           if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
             result = -1;
@@ -530,10 +528,9 @@ next:
   Runtime_BumpFree(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Runtime_BumpAllocateAlternatePool(size);
-  /* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and
-   * keeps the recoveryList base's copy first after the call; as a plain call:
-   * differ 6.
-   */
+  /* FAKEMATCH(one-pass): the recovery table's copy in a one-pass block, which
+   * gives the copy's argument order and keeps the list base's copy first after
+   * the call; as a plain call, 8 of 255 instructions differ in tbs-en. */
   do {
     Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -588,12 +585,9 @@ static s32 LinkLobby_ExchangePartyRecords(void) {
   s32 receivedOwnerCount;
   s32 receiveFirst;
 
-  /* FAKEMATCH: the one-pass block keeps result's zero in r6 ahead of the
-   * receiveFirst call, as the listing loads it. Plain before the call, with the
-   * store moved ahead of the call too, as the declaration's initializer, or as
-   * gLinkExchangeState = result = 0 after it, the zero is scheduled after the
-   * call: differ 4; storing 0 and setting result apart after the call:
-   * differ 36. */
+  /* FAKEMATCH(one-pass): result's zero in a one-pass block, which loads it
+   * into r6 ahead of the call as the ROM does; as a plain statement, 4 of 63
+   * instructions differ in tbs-en. */
   do {
     result = 0;
   } while (0);
@@ -1237,9 +1231,9 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(5);
     Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
-    /* FAKEMATCH: one scalar holds the row address, then its score. Reading
-     * linkTallies[3] twice, also through a u16 pointer local: differ 36;
-     * reading it once into score before the call: differ 10. */
+    /* FAKEMATCH(temporary): score holds the tally's address, then the tally;
+     * as gGameState.linkTallies[3] read at both uses, 19 of 393 instructions
+     * differ in tbs-en. */
     score = (u32)&gGameState.linkTallies[3];
     UiText_DrawQuantity(*(u16 *)score, 5);
     score = *(u16 *)score;
@@ -1279,8 +1273,9 @@ s32 LinkLobby_RunRoundResult(void) {
       gGameState.linkTallies[4]++;
       v = gGameState.linkTallies[7] + 1;
       gGameState.linkTallies[7] = v;
-      /* FAKEMATCH: reuse the other score branches' address slot. Through
-       * linkTallies[6] itself or a u16 pointer local: differ 8. */
+      /* FAKEMATCH(temporary): score holds the record's address, as in the
+       * other branches; as gGameState.linkTallies[6] at each use, 4 of 393
+       * instructions differ in tbs-en. */
       score = (u32)&gGameState.linkTallies[6];
       if (*(u16 *)score < (u16)v) {
         *(u16 *)score = v;

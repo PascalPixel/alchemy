@@ -261,12 +261,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, render, size);
           work =
               UiText_OpenMessageWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          /* FAKEMATCH: the one-pass block keeps the window copy before the
-           * cursor store, as native; plain, it is scheduled after the store
-           * (differ 8; all four plain 26). With all four plain: an inline
-           * save-and-open helper at both cases 84, the save and open as a
-           * statement macro 8, a cursor-store statement macro 12 at each of the
-           * two plain stores, so no layer. */
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
+           * keeps the window copy before it as the ROM does; as a plain
+           * statement, 11 of 1045 instructions differ in tbs-en. */
           do {
             menu->cursor->active = ICON_SHOWN;
           } while (0);
@@ -282,13 +279,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          /* FAKEMATCH: one-pass block keeps the step store before the cursor
-           * store, as native; plain it follows the cursor load (differ 4; all
-           * four plain 26). Save/open as a macro: UiWork_FinalizeFar to step
-           * matches, but case 11 has an extra WaitFrames there, so none serves
-           * both; around redraw, timer and step 10, step alone or from
-           * render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22.
-           */
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
+           * keeps the step's store before it as the ROM does; as a plain
+           * statement, 6 of 1045 instructions differ in tbs-en. */
           do {
             menu->cursor->active = ICON_HIDDEN;
           } while (0);
@@ -301,12 +294,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, render, size);
           work = UiText_OpenMessageWindowFar(MsgDjinnTutorialClassPsynergy, 8,
                                              0, 1);
-          /* FAKEMATCH: the one-pass block keeps the window copy before the
-           * cursor store, as native; plain, it is scheduled after the store
-           * (differ 10; all four plain 26). With all four plain: an inline
-           * save-and-open helper at both cases 84, the save and open as a
-           * statement macro 8, a cursor-store statement macro 12 at each of the
-           * two plain stores, so no layer. */
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
+           * keeps the window copy before it as the ROM does; as a plain
+           * statement, 13 of 1045 instructions differ in tbs-en. */
           do {
             menu->cursor->active = ICON_SHOWN;
           } while (0);
@@ -323,13 +313,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          /* FAKEMATCH: one-pass block keeps the step store before the cursor
-           * store, as native; plain it follows the cursor load (differ 4; all
-           * four plain 26). Save/open as a macro: UiWork_FinalizeFar to step
-           * matches, but case 11 has an extra WaitFrames there, so none serves
-           * both; around redraw, timer and step 10, step alone or from
-           * render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22.
-           */
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
+           * keeps the step's store before it as the ROM does; as a plain
+           * statement, 5 of 1045 instructions differ in tbs-en. */
           do {
             menu->cursor->active = ICON_HIDDEN;
           } while (0);

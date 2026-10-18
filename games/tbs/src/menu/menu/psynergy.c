@@ -141,12 +141,10 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMsg(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH: the redundant cancellation copy ends the CSE block, so the
-       * cancellation and done constants take the native registers; XOR equality
-       * keeps the copy into useResult. Plain forms measured 2026-10-13, each
-       * differ 12 (r2 and r3 exchanged): chosen == -1 setting useResult to -1
-       * or to chosen, with either store first, the call tested directly, and
-       * chosen == cancelled. */
+      /* FAKEMATCH(dead): a redundant copy of -1 into cancelled and a test of
+       * equality as an XOR, which end the CSE block so that -1 and done's 1
+       * take the ROM's registers; as if (chosen == -1) setting done and
+       * useResult to -1, 6 of 317 instructions differ in tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -168,12 +166,11 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         {
           struct PsynergyMenuState *savedWork = menu;
 
-          /* FAKEMATCH: the discarded conditional restoration puts labels
-           * between the psynergyCount and mode loads, so reload_cse_move2add
-           * builds the mode offset from its own constant (movs #154, lsls #2)
-           * as the bytes do; both arms disappear. Plain forms measured
-           * 2026-10-13: without the block move2add makes it adds r2, #80 from
-           * the count offset (differ 51). */
+          /* FAKEMATCH(dead): menu cleared and restored under a test that is
+           * never true here, which puts labels between the psynergyCount and
+           * mode loads, so that the mode's offset is built from its own
+           * constant (movs #154, lsls #2) as the bytes do; without the two
+           * tests, 2 of 317 instructions differ in tbs-en. */
           if (done)
             menu = NULL;
           if (done)
@@ -849,12 +846,9 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 // in the field; any other mode those first, then the rest.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode) {
-  /* FAKEMATCH: the doubled zero store through the byte-offset cursor makes
-   * loop.c replace the counter with the pointer (274 bytes); a single indexed
-   * clear keeps the counter (266). Measured 2026-10-13: a single store through
-   * a pointer walking down from actions + 31, through the byte offset, or as a
-   * pre-decrement do-while differs 31 to 33; actions[n] = 0 from 31 down
-   * differs 43. */
+  /* FAKEMATCH(dead): each entry cleared twice through the byte-offset
+   * pointer, which makes loop.c replace the counter with the pointer as the
+   * ROM does; with a single store, 15 of 129 instructions differ in tbs-en. */
   s32 clearOffset;
   s32 passCount;
   s32 actionCount;

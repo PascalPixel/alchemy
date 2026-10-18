@@ -74,11 +74,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   else
     target = UnitGetFar(0);
 
-  /* FAKEMATCH: the dead test loads effect->range ahead of the count
-   * guard, where the native keeps it for the first pass through the
-   * loop; it preserves the target-index and power-load registers.
-   * Measured: without it the load moves past the guard and the
-   * allocation shifts (485 instructions for 484, differ 49). */
+  /* FAKEMATCH(dead): a test that is never true (partyResultShown is still
+   * 0), which emits nothing but loads effect->range ahead of the loop's count
+   * guard; without it, 21 of 485 instructions differ in tbs-en. */
   if (effect->range == 0xff && partyResultShown != 0)
     messageOffset = 3;
 

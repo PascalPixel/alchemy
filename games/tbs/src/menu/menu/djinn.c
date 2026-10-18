@@ -132,11 +132,10 @@ s32 ItemMenu_Run(void) {
 }
 
 // Find the moved Djinni in the list and select its new position.
-/* FAKEMATCH: a statement macro local to DjinnMenu_RunScreen, used at its two
- * places, not a habit of the game (S2): the do { } while (0) wrapper ends the
- * selection store's scheduling region. As plain statements the two shifts of
- * found * DJINN_LIST_ROWS swap (differ 2); as an inline function with its own
- * counter, one more register is saved. */
+/* FAKEMATCH(one-pass): a statement macro of DjinnMenu_RunScreen's, used at
+ * its two places, whose do { } while (0) ends the selection store's
+ * scheduling region; as a plain { } block, 4 of 560 instructions differ in
+ * tbs-en. */
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \
     s32 column;                                                                \
@@ -1464,13 +1463,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairIndex[mode] = entry % 32;
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairOwner[mode] = DJINN_OWNER(entry);
-    // Plain, entry dies at the owner's AND, so reload ties the result to entry
-    // instead of the mask.
-    /* FAKEMATCH: the barrier keeps entry live through owner extraction and
-     * passes result through it, so the owner mask keeps its native register
-     * (ands r3, r2); plain differs 8 (ands r2, r3), an input-only barrier 2 (a
-     * sched2 tie swaps the final index shift and table-base copy), the fields
-     * stored in other orders 13-1106, entry as s32 or u16 1186 and 1165. */
+    /* FAKEMATCH(barrier): an empty asm that keeps entry live past the owner's
+     * extraction and passes result through it, so the owner mask keeps its
+     * register (ands r3, r2); without it, 48 of 2058 instructions differ in
+     * tbs-en. */
     asm("" : "+r"(result) : "r"(entry));
   }
   menu->selection[mode] = ownerColumn + djinnRow * 10;

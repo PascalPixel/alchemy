@@ -507,8 +507,9 @@ menu_top:;
       }
       UiWork_FinalizePendingCore();
       if (Clear_GetSaveRecoveryBlockMask() != 0) {
-        /* FAKEMATCH: MsgSaveRecoveryFailed as MsgSaveDataCorrupted + 2, the
-         * native adds 2 to the register holding message 4 (186 by name). */
+        // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
+        // adds 2 to the register holding the earlier message's number, and by
+        // name 108 of 921 instructions differ in tbs-en.
         UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
         goto menu_top;
       }
@@ -794,10 +795,10 @@ menu_top:;
           }
           for (v7 = pageIndex * PASSWORD_SYMBOLS_PER_PAGE, pageGlyphIndex = 0;
                v7 != v6; v7++, pageGlyphIndex++) {
-            /* FAKEMATCH: the loop note ends the CSE path, which otherwise
-             * carries the glyph address into both draw calls for gcse to hoist
-             * out of the loop; the native rebuilds sp + 24 at each call.
-             * Without the block differ 336 on tbs-en, 16 instructions more */
+            /* FAKEMATCH(one-pass): the glyph's decoding in a one-pass block,
+             * which ends the CSE path so that each draw call rebuilds the
+             * glyph's address as the ROM does; without the block, 98 of 921
+             * instructions differ in tbs-en. */
             do {
               Clear_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
                                        glyph);
@@ -814,9 +815,9 @@ menu_top:;
               s32 row;
 
               glyphColumn = (pageGlyphIndex % 10);
-              /* FAKEMATCH: an explicit libgcc call; written pageGlyphIndex / 10
-               * it differs 216 on tbs-en (220 on tbs-ja), 10 instructions more
-               */
+              /* FAKEMATCH(wrapper): the division written as a call to
+               * __divsi3; as pageGlyphIndex / 10, 45 of 921 instructions
+               * differ in tbs-en. */
               row = __divsi3(pageGlyphIndex, 10);
               UiText_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                                 (row << 4) + 2);
@@ -1074,8 +1075,9 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
             j = (owner->inventory[n] & 0xf800) >> 11;
           }
         }
-        /* FAKEMATCH: the unused 16-bitOffset copy leaves the shift hoisted
-         * above the sign test; without it 1095, used in both shifts 585. */
+        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads,
+         * which leaves the shift hoisted above the sign test; without it, 71
+         * of 485 instructions differ in tbs-en. */
         quantity = j;
         if (bitOffset < 0) {
           out[outputIndex] += (u16)j >> -bitOffset;

@@ -104,17 +104,9 @@ void FourObjectMotion_UpdateBottomRow(void) {
           (241u << 17) - ((u32)(s32)menu->verticalOrigins[objectIndex] << 16);
       s32 phase;
       s32 limit;
-      /* Ordinary s32/s16 locals, a direct field test, an earlier limit
-       * initializer and an inline sign/limit helper all differ 81 in
-       * EN (119 native, 118 built), changing the outer high-register
-       * allocation as well as this read. Plain locals take r3,
-       * local-alloc's first free register (REG_ALLOC_ORDER 3, 2, 1, 0),
-       * which costs limit its r3 preference. */
-      /* FAKEMATCH: pins the row's second read to r2, as native; plain locals
-       * take r3 and reshuffle the high registers (differ 81), reading rowY
-       * before clearing groundHeight puts it in r2 but emits ldrsh before
-       * the zero store (4 in all six editions), and with rowY plain the index
-       * as u8, s8 or u16 differs 130 to 140, as s16 82. */
+      /* FAKEMATCH(pin): rowY fixed in r2, where the row's second read goes;
+       * as a plain s32, which takes r3 and costs limit its register, 39 of
+       * 120 instructions differ in tbs-en. */
       register s32 rowY asm("r2");
 
       object->image.priority = 0;

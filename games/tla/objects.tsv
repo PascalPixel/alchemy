@@ -827,10 +827,15 @@ main	rom_main_01	recon/tla/de/rom	.rom.0002dd70	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002de8c	de
 main	rom_main_01	recon/tla/raw/0802dd70	.text	en
 main	rom_main_01	recon/tla/raw/0802de8c	.text	en
-main	rom_main_01	recon/tla/raw/0802e444	.text	en
-main	rom_main_01	recon/tla/raw/0802e4c8	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002dcec	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002de08	ja
+main	rom_main_01	games/tla/src/field/common/map/stops	.text
+main	rom_main_01	recon/tla/it/rom	.rom.0002e4c8	it
+main	rom_main_01	recon/tla/fr/rom	.rom.0002e4c8	fr
+main	rom_main_01	recon/tla/es/rom	.rom.0002e4c8	es
+main	rom_main_01	recon/tla/de/rom	.rom.0002e4c8	de
+main	rom_main_01	recon/tla/raw/0802e4c8	.text	en
+main	rom_main_01	recon/tla/ja/rom	.rom.0002e444	ja
 main	rom_main_01	games/tla/src/graphics/tile/grid	.text
 main	rom_main_01	games/tla/src/system/resource/animdata	.rodata
 main	rom_main_01	games/tla/src/field/common/object/objdata	.rodata

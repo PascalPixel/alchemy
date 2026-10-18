@@ -1987,12 +1987,6 @@ Func_080daecc:
 	.thumb_func
 Func_080db0b0:
 	.incbin "baserom.gba", 0x000e80b0, 0x00000394
-	.section .rom.000e8444, "ax"
-	.global Func_080db444
-	.type Func_080db444, %function
-	.thumb_func
-Func_080db444:
-	.incbin "baserom.gba", 0x000e8444, 0x00000048
 	.section .rom.000e89a6, "ax"
 	.incbin "baserom.gba", 0x000e89a6, 0x00000002
 	.section .rom.000e8a5c, "ax"

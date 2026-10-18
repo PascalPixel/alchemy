@@ -3645,19 +3645,16 @@ main	rom_main_05	recon/tla/it/rom	.rom.000db0a4	it
 main	rom_main_05	recon/tla/it/rom	.rom.000db438	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dfec0	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000e00a4	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000e0438	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e3ec0	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e40a4	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e4438	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e7ecc	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e80b0	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e8444	de
 main	rom_main_05	recon/tla/raw/080daecc	.text	en
 main	rom_main_05	recon/tla/raw/080db0b0	.text	en
-main	rom_main_05	recon/tla/raw/080db444	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000dae88	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000db06c	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000db400	ja
+main	rom_main_05	games/tla/src/field/common/worka0/f0db444	.text	ja en de fr
 main	rom_main_05	games/tla/src/battle/effect/dispatch_type_handler	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000db4aa	it
 main	rom_main_05	recon/tla/it/rom	.rom.000db4ac	it

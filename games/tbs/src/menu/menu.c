@@ -61,6 +61,7 @@
 #include "four_object_motion.h"
 #include "item_ids.h"
 #include "macros.h"
+#include "flags.h"
 
 extern u8 IwramCopyWords[];
 
@@ -88,8 +89,10 @@ s32 _call_via_r3(void *, void *, s32, void *);
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
   Scheduler_ResumeOverlayTasks();
   Map_DisableUpdateCallbackFar();
-  GameFlag_ClearBitFar(0x166); // meaning not known yet
-  GameFlag_ClearBitFar(0x152); // set, it stops BattlePalette_UpdateBlend
+  // Flag 0x166: its meaning is not known yet.
+  GameFlag_ClearBitFar(0x166);
+  // Flag 0x152, while set, stops BattlePalette_UpdateBlend.
+  GameFlag_ClearBitFar(0x152);
 }
 
 // Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:
@@ -392,7 +395,8 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
       break;
     }
   }
-  count++; // the leading digit
+  // The leading digit.
+  count++;
   return count;
 }
 
@@ -829,11 +833,6 @@ void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
   UiIcon_PrepareObject(icon);
 }
 
-//--------------------------------------------------------------------------
-// position_owner_entry.c
-// Item menu: place the inventory icons on their grid
-//--------------------------------------------------------------------------
-
 // Places the icon at slotIndex (0 above 15) in a columns-wide grid of
 // 24x16 cells starting at (originX, originY), and shows it.
 void ItemMenu_PosOwner(struct RenderOutput **slot, s32 slotIndex, s32 originX,
@@ -1001,11 +1000,6 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// copy_list_order.c
-// Menu: copy a sort order table
-//--------------------------------------------------------------------------
-
 // Copies the list order of mode 0 to 2 (any other mode: the default order)
 // into order, up to and including its LIST_ORDER_END and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
@@ -1062,7 +1056,8 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (count == 0)
     return result;
-  Link_DrawShiftedTilePairFar(0x06002500); // animate the page arrows
+  // Animate the page arrows.
+  Link_DrawShiftedTilePairFar(0x06002500);
   pages = count / pageSize;
   if (count % pageSize != 0)
     pages++;
@@ -1087,7 +1082,8 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
       if (*cursor > pageSize - 1)
         *cursor = pageSize - 1;
     }
-    Input_ResetKeyRepeat(); // restart the key repeat delay
+    // Restart the key repeat delay.
+    Input_ResetKeyRepeat();
     result = 1;
     return result;
   }
@@ -1132,13 +1128,15 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 // lightens its colour 4 by 9 steps in each channel: the highlight colour of
 // the menu's selected rows.
 void Palette_LightenBankHighlight(s32 bank) {
-  u16 *palette = (u16 *)(0x05000000 + (bank << 5));
+  u16 *palette = (u16 *)&BG_PLTT_COLOR(bank, 0);
   u32 red;
   u32 green;
   u32 blue;
 
-  Dma_Set((const void *)0x050001e0, palette, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_ENABLE << 16 | 16,
+          REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   blue = palette[4] >> 10;
   green = (palette[4] >> 5) & 31;
   red = palette[4] & 31;
@@ -1239,8 +1237,10 @@ void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
 // Copies the first sprite palette into background palette 14, then colour 4
 // of background palette 15 over its colour 14.
 void Palette_CopyObjectBankToBackground14(void) {
-  Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+          DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+          DMA_ENABLE << 16 | 1, REG_DMA3);
 }
 
 // Shows the item icons of one page of the item list: entries first to
@@ -1384,8 +1384,8 @@ s32 RunAssetSelectionScreen(void) {
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.
   Scheduler_EnableOverlayCallbacksWithFlags();
-  Iwram_CopyWords(backup, (void *)0x06004000, size);
-  Iwram_FillWords((void *)0x06004000, size, 0x33333333);
+  Iwram_CopyWords(backup, BG_CHAR_BLOCK(1), size);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), size, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
 
@@ -1413,7 +1413,7 @@ s32 RunAssetSelectionScreen(void) {
 #if TBS_PATCH_1
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
-  Iwram_CopyWords((void *)0x06004000, backup, size);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1), backup, size);
   ((struct UiRenderWork *)*process)->menuBusy = 0;
   MemFree(backup);
   WaitFrames(1);
@@ -1865,7 +1865,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & ITEM_CURSED) != 0) {
-            AudioCommand_PlayFar(103); // the curse sound
+            AudioCommand_PlayFar(SE_103); // the curse sound
             RenderOutput_ClearListFar(menu->infoWindow);
             InventoryMenu_ShowModalMessage(MsgEquippedIt +
                                                7, // "You were cursed!"
@@ -1993,7 +1993,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-              AudioCommand_PlayFar(103); // the curse sound
+              AudioCommand_PlayFar(SE_103); // the curse sound
               RenderOutput_ClearListFar(menu->infoWindow);
               InventoryMenu_ShowModalMessage(MsgEquippedIt +
                                                  7, // "You were cursed!"
@@ -2039,7 +2039,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & ITEM_CURSED) != 0) {
-        AudioCommand_PlayFar(103); // the curse sound
+        AudioCommand_PlayFar(SE_103); // the curse sound
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, // "You were cursed!"
                                        MODAL_SHORT_X, 8);
@@ -3033,10 +3033,10 @@ s32 ItemMenu_ChooseCmd(void) {
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          AudioCommand_PlayFar(174); // Use
+          AudioCommand_PlayFar(SE_174); // Use
           break;
         case ITEM_COMMAND_EQUIP:
-          AudioCommand_PlayFar(175); // Equip
+          AudioCommand_PlayFar(SE_175); // Equip
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
@@ -3044,7 +3044,7 @@ s32 ItemMenu_ChooseCmd(void) {
           AudioCommand_PlayFar(SE_MENU_CONFIRM);
           break;
         case ITEM_COMMAND_REMOVE:
-          AudioCommand_PlayFar(117); // Remove
+          AudioCommand_PlayFar(SE_117); // Remove
           break;
         default:
           AudioCommand_PlayFar(SE_MENU_CONFIRM);
@@ -3715,7 +3715,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         RenderOutput_RedrawSavedRectFar(window);
         UiText_DrawCharacterAtOffsetFar(MsgGiveHowMany, window, GIVE_ASK_X,
                                         GIVE_ASK_Y);
-        Dma_Set(gMenu_QuantityTiles, tiles, 0x84000040, REG_DMA3);
+        Dma_Set(gMenu_QuantityTiles, tiles,
+                (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
         Shop_FillSelectorFar(30, 14, tiles);
         Shop_FillSelectorFar(quantityRange + baseQuantity, 0, tiles);
         Shop_FillSelectorFar(baseQuantity + quantity + 1, 10, tiles);
@@ -3909,7 +3910,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gKeysPressed & KEY_A) {
-        AudioCommand_PlayFar(175); // the Equip sound
+        AudioCommand_PlayFar(SE_175); // the Equip sound
         break;
       }
       if (gKeysPressed & KEY_B) {
@@ -4161,7 +4162,8 @@ s32 ItemMenu_RunList(s32 paneIndex) {
                                   menu->paneOwner[paneIndex]);
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->active = 9; // animate the selected icon
+          // Animate the selected icon.
+          icon->active = 9;
           icon->animStep = 0;
           icon->sentinel = 250;
         }
@@ -4198,7 +4200,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
 
       if ((gKeysPressed & KEY_A) != 0 &&
           menu->items[state.selectedIndex] != 0) {
-        AudioCommand_PlayFar(173); // the item choice sound
+        AudioCommand_PlayFar(SE_173); // the item choice sound
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
@@ -4255,7 +4257,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
 }
 
 #if TBS_PATCH_2
-#define PROMPT_TILES ((void *)0x06004000)
+#define PROMPT_TILES BG_CHAR_BLOCK(1)
 #define PROMPT_TILES_SIZE 0x2000
 #endif
 
@@ -4664,7 +4666,8 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
       PsynergyMenu_CallIconRoutineWithValue(menu, ownerIds[selection]);
       for (i = 3; i >= 0; i--)
         menu->rowPositions[i] = 30;
-      menu->rowPositions[selection] = 26; // raise the chosen member
+      // Raise the chosen member.
+      menu->rowPositions[selection] = 26;
       if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
         RenderOutput_ClearListFar((void *)menu->infoWindow);
 #if TBS_PATCH_1
@@ -5384,7 +5387,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->cursorIcon->active = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->active = 9; // animate the selected icon
+          // Animate the selected icon.
+          icon->active = 9;
           icon->animStep = 0;
           icon->sentinel = 250;
         }
@@ -5421,7 +5425,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           if (ability->type0c == 0) {
             AudioCommand_PlayFar(SE_MENU_ERROR);
           } else {
-            AudioCommand_PlayFar(174); // the Use sound
+            AudioCommand_PlayFar(SE_174); // the Use sound
             shortcutHelp = 1;
             menu->flags |= PSYNERGY_MENU_SHORTCUT_HELP;
             UiWindow_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
@@ -5441,7 +5445,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       // and affordable.
       if ((gKeysPressed & KEY_A) != 0) {
         if (menu->mode != 0) {
-          AudioCommand_PlayFar(130); // the shortcut sound
+          AudioCommand_PlayFar(SE_130); // the shortcut sound
           result = menu->psynergies[state.selectedIndex];
           done = 1;
           break;
@@ -5457,7 +5461,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           if (ability->ppCost > owner->pp) {
             AudioCommand_PlayFar(SE_MENU_ERROR);
           } else {
-            AudioCommand_PlayFar(173); // the choice sound
+            AudioCommand_PlayFar(SE_173); // the choice sound
             result = menu->psynergies[state.selectedIndex];
             done = 1;
             break;
@@ -5510,7 +5514,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if (ability->type0c == 0) {
           AudioCommand_PlayFar(SE_MENU_ERROR);
         } else {
-          AudioCommand_PlayFar(130); // the shortcut sound
+          AudioCommand_PlayFar(SE_130); // the shortcut sound
           if (PsynergyMenu_SetShortcut(menu->ownerIds[paneIndex],
                                        menu->psynergies[state.selectedIndex],
                                        0) != 0) {
@@ -5531,7 +5535,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           if (PsynergyMenu_SetShortcut(menu->ownerIds[paneIndex],
                                        menu->psynergies[state.selectedIndex],
                                        1) != 0) {
-            AudioCommand_PlayFar(130); // the shortcut sound
+            AudioCommand_PlayFar(SE_130); // the shortcut sound
             result = menu->psynergies[state.selectedIndex];
             menu->mode = 2;
             done = 1;
@@ -5652,20 +5656,23 @@ s32 ActionMenu_Open(void) {
   state->page = 0;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
   Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
-  Iwram_CopyWords(palette, (void *)0x05000000, 64);
+  Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
-  Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
+  Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), SAVED_TILE_BYTES);
 #endif
   Palette_LightenBankHighlight(14);
   // The first sprite palette into background palettes 0 and 1, each with a
   // colour of palette 15 as its colour 14.
-  Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
-  Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
-  Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
-  Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
+          DMA_ENABLE << 16 | 1, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
+          REG_DMA3);
+  Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
+          DMA_ENABLE << 16 | 1, REG_DMA3);
 #if TBS_PATCH_1
-  Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
-  Iwram_FillWords((void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
+  Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), SAVED_TILE_BYTES);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), SAVED_TILE_BYTES, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
@@ -5696,8 +5703,8 @@ s32 ActionMenu_Open(void) {
   UiWork_SetAltFlagAndClearTableFar(0);
   WaitFrames(1);
 #endif
-  Iwram_CopyWords((void *)0x05000000, palette, 64);
-  Iwram_CopyWords((void *)0x06004000, tiles, SAVED_TILE_BYTES);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 64);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1), tiles, SAVED_TILE_BYTES);
   MemFree(tiles);
   MemFree(palette);
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 1;
@@ -5830,7 +5837,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
       s32 id = element * 20 + djinn;
 
       // Game flags 48 on: one per Djinn found, 20 to an element.
-      if (GameFlag_TestFar(48 + id)) {
+      if (GameFlag_TestFar(FLAG_DJINNI_0 + id)) {
         UiWindow_SetTilemapEntryFar(window, 0x1001 + element, element * 7 + 1,
                                     djinn + 3, 0);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnName + id, window,
@@ -5903,10 +5910,13 @@ s32 CharacterSelector_RunRearrange(void) {
   // The highlight palette, and the first sprite palette into background
   // palettes 0 and 1.
   Palette_LightenBankHighlight(14);
-  Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
-  Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
-  Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
-  Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
+          DMA_ENABLE << 16 | 1, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
+          REG_DMA3);
+  Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
+          DMA_ENABLE << 16 | 1, REG_DMA3);
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -5914,7 +5924,7 @@ s32 CharacterSelector_RunRearrange(void) {
       RenderOutput_RedrawSavedRectFar(menu->selectorWindow);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp, menu->selectorWindow, 0,
                                       0);
-      if (GameFlag_TestFar(48))
+      if (GameFlag_TestFar(FLAG_DJINNI_0))
         UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp, menu->selectorWindow,
                                         0, 16);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, // "A: Details"
@@ -5961,7 +5971,7 @@ s32 CharacterSelector_RunRearrange(void) {
         AudioCommand_PlayFar(SE_MENU_ERROR);
       }
       WaitFrames(1);
-    } else if ((gKeysPressed & KEY_SELECT) && GameFlag_TestFar(48)) {
+    } else if ((gKeysPressed & KEY_SELECT) && GameFlag_TestFar(FLAG_DJINNI_0)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
@@ -6712,9 +6722,9 @@ extern const struct TileMask gMenu_PatternRowMasks[];
 // set growing row by row and the second skipping its top row.
 void Menu_BuildPatternTiles(void) {
 #if TBS_PATCH_1
-  u32 *vram = (u32 *)0x06005000;
+  u32 *vram = (u32 *)(BG_CHAR_BLOCK(1) + 0x1000);
 #else
-  u32 *vram = (u32 *)0x06004000;
+  u32 *vram = (u32 *)BG_CHAR_BLOCK(1);
 #endif
   s32 set;
   s32 tileIndex;
@@ -7309,19 +7319,19 @@ s32 ItemMenu_SelectItem(void) {
         redraw = 0;
 
       if (gKeysPressed & KEY_A) {
-        AudioCommand_PlayFar(0x70);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         result = 1;
         done = 1;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        AudioCommand_PlayFar(0x71);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        AudioCommand_PlayFar(0x6f);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         ownerIndex = menu->paneIndex[0];
         menu->selectedIndexByOwner[menu->ownerIds[ownerIndex]] =
             state.selectedIndex;
@@ -8000,19 +8010,19 @@ void Ability_PlayUseAnimation(s32 action) {
   animationType = 0xf & actionDefinition->flags;
   switch (animationType) {
   case 1:
-    Audio_PlayCueReturnOne(0x7e);
+    Audio_PlayCueReturnOne(SE_RECOVERY);
 
   case 11:
-    Audio_PlayCueReturnOne(0x7e);
+    Audio_PlayCueReturnOne(SE_RECOVERY);
     return;
   default:
     targetType = actionDefinition->effect - 1;
     switch (targetType) {
     case 4:
-      Audio_PlayCueReturnOne(0x52);
+      Audio_PlayCueReturnOne(MUS_082);
       return;
     case 2:
-      Audio_PlayCueReturnOne(0x54);
+      Audio_PlayCueReturnOne(MUS_084);
       return;
     default:
     case 3:
@@ -8041,7 +8051,7 @@ void Ability_PlayUseAnimation(s32 action) {
     case 27:
     case 28:
     case 29:
-      Audio_PlayCueReturnOne(0x5b);
+      Audio_PlayCueReturnOne(MUS_091);
 
     case 0:
     case 1:
@@ -8096,7 +8106,7 @@ s32 ItemMenu_Run(void) {
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;
-  if (GameFlag_TestFar(0x16e)) {
+  if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL)) {
     if (!GameFlag_TestFar(0x16f)) {
       if (!GameFlag_TestFar(0x171))
         backdrop->tutorialStep = enabled;
@@ -8134,8 +8144,8 @@ s32 ItemMenu_Run(void) {
   gMenuCtrlWork->suspended = 0;
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
-  Iwram_CopyWords((void *)0x06004000, backdrop->tiles, 0x2000);
-  Iwram_CopyWords((void *)0x05000080, backdrop->palette, 128);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   WaitFrames(1);
   Scheduler_DisableOverlayCallbacksWithFlags();
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
@@ -8342,7 +8352,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case DJINN_STEP_APPLY_STANDBY:
-      AudioCommand_PlayFar(175);
+      AudioCommand_PlayFar(SE_175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
                           menu->pairIndex[0]);
       result = DjinnRecovery_AddStandbyFar(
@@ -8390,7 +8400,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case DJINN_STEP_APPLY_SET:
-      AudioCommand_PlayFar(139);
+      AudioCommand_PlayFar(SE_139);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
@@ -8409,15 +8419,9 @@ s32 DjinnMenu_RunScreen(void) {
   return menuResult;
 }
 
-//--------------------------------------------------------------------------
-// adjust_palette_bank.c
-// Create copies of background palettes with adjusted brightness.
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// Add brightnessDelta to the RGB channels of palettes 15, 5 and 7, clamping to
-// 0-31, and write palettes 14, 4 and 6. Palette 7 uses -12 instead of
-// brightnessDelta.
-//--------------------------------------------------------------------------
+// Writes copies of background palettes 15, 5 and 7, each brightnessDelta
+// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6.
+// Palette 7's copy is 12 darker instead.
 void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
   s32 bankIndex;
   s32 bank;
@@ -8437,7 +8441,7 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
       s32 adjustedColor;
 
       paletteIndex = bank * 16 + colorIndex;
-      color = ((u16 *)0x05000000)[paletteIndex];
+      color = ((u16 *)BG_PLTT)[paletteIndex];
       blue = (color >> 10) & mask;
       green = (color >> 5) & mask;
       red = color & mask;
@@ -8459,8 +8463,8 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
       adjustedColor = blue << 10;
       adjustedColor |= green << 5;
       adjustedColor |= red;
-      ((s16 *)0x04FFFFE0)[paletteIndex] =
-          adjustedColor; // 16 colors earlier: the preceding palette
+      // Into the palette before this one.
+      ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
     }
     if (bankIndex == 0) {
       bank = 5;
@@ -8493,11 +8497,11 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
-  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          REG_DMA3);
+  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_ENABLE << 16 | 16, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
-          0x80000010, REG_DMA3);
+          DMA_ENABLE << 16 | 16, REG_DMA3);
   Graphics_AdjustPaletteBank(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
@@ -9276,13 +9280,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         continue;
       }
       if (djinn & DJINN_ENTRY_IS_SET) {
-        AudioCommand_PlayFar(175);
+        AudioCommand_PlayFar(SE_175);
         Djinn_DeactivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn));
         DjinnRecovery_AddStandbyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                     DJINN_NUMBER(djinn));
       } else {
-        AudioCommand_PlayFar(139);
+        AudioCommand_PlayFar(SE_139);
         Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                           DJINN_NUMBER(djinn));
         DjinnRecovery_RemoveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
@@ -9351,9 +9355,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
-          AudioCommand_PlayFar(139);
+          AudioCommand_PlayFar(SE_139);
         else
-          AudioCommand_PlayFar(175);
+          AudioCommand_PlayFar(SE_175);
         for (i = 0; i < menu->ownerCount; i++) {
           for (j = 0; j < backdrop->list.counts[i]; j++) {
             u32 entry = backdrop->list.ids[i][j];
@@ -10886,7 +10890,7 @@ s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
   slot = Resource_FindFreeEntry();
   if (slot != 0x60) {
     UiIcon_LoadResourceIntoSlot(resourceId, slot);
-    RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
+    RenderOutput_CreateFar(slot, ICON_SPRITE_16X16, window, x, y);
   }
 }
 
@@ -10904,8 +10908,8 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[0];
   else
     resource = (u16)menu->resourceSlots[1];
-  object =
-      RenderOutput_CreateFar(resource, 0x40000000, targetWindow, targetX, y);
+  object = RenderOutput_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
+                                  targetX, y);
   if (object == 0) {
     /* FAKEMATCH: the redundant failure branch retains the argument
      * lifetimes through CSE; plain return -1 changes 16 aligned rows. */
@@ -10937,8 +10941,8 @@ s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[1];
     y -= 4;
   }
-  object =
-      RenderOutput_CreateFar(resource, 0x40000000, targetWindow, targetX, y);
+  object = RenderOutput_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
+                                  targetX, y);
   if (object == 0) {
     /* FAKEMATCH: the redundant failure branch retains the argument
      * lifetimes through CSE; plain return -1 changes 22 aligned rows. */

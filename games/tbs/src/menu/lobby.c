@@ -39,6 +39,7 @@
 #include "frame.h"
 #include "flags.h"
 #include "global_cells.h"
+#include "songs.h"
 
 // Link transfers use three unit records followed by one recovery-table record.
 #define LOBBY_UNIT_RECORD_BYTES 0x154
@@ -1102,7 +1103,7 @@ u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
 static s32 LinkLobby_SaveBattleResults(void) {
   struct UiWindow *window;
 
-  Engine_AudioPlayCue(85);
+  Engine_AudioPlayCue(MUS_085);
   window = UiText_OpenMessageWindow(MsgLobbySavingBattleResults, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);
@@ -1120,7 +1121,7 @@ static s32 LinkLobby_SaveBattleResults(void) {
 static s32 LinkLobby_SaveMonsterBattleResults(void) {
   struct UiWindow *window;
 
-  Engine_AudioPlayCue(85);
+  Engine_AudioPlayCue(MUS_085);
   window = UiText_OpenMessageWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);

@@ -153,11 +153,11 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
                                       s32 delay);
 s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
                                struct BattleEffectArgument *effect);
-s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
+s32 BattlePres_RunEscape(struct BattlePlan *plan);
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);
-s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
-s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags);
+s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode);
+s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags);
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
                        struct BattleActionRecord *selection);
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 palette);
@@ -245,9 +245,9 @@ void BattleFx_UpdateStarField(void);
 s32 BattleFx_UpdateStarField(void);
 #endif
 #ifdef UBFIX
-void Graphics_UploadVramBlock(void);
+void BattleFx_UploadStarField(void);
 #else
-u32 Graphics_UploadVramBlock(void);
+u32 BattleFx_UploadStarField(void);
 #endif
 s32 BattleFx_InitializeStarField(s32 mode);
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
@@ -259,10 +259,10 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     s32 variant);
 #endif
-void BattlePres_RunWithZeroArguments(void);
+void BattlePres_RestorePalette(void);
 void Runtime_RemoveIrqHandlerSlot2(void);
 
-s32 Party_ComputeEligibleMemberAverage(s32 recordId);
+s32 BattleFormation_AverageLevel(s32 recordId);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
 s32 EnemyCountDecrement(s32 classId, s32 unused);

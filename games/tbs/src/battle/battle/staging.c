@@ -53,7 +53,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
       BattlePres_RunActorEntries(&battle->plan, 0);
       break;
     case PLAN_SHOW_ATTACK:
-      RunBattlePresentation(&battle->plan, 0);
+      BattlePres_RunAttack(&battle->plan, 0);
       break;
     case PLAN_SHOW_SUMMON:
       BattlePresentation_RunUnitTransition(&battle->plan, 1);
@@ -74,7 +74,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
       BattlePres_RunItem(&battle->plan, 0, request);
       break;
     case PLAN_SHOW_FLEE:
-      if (BattlePresentation_RunEncounterOrUnitTrigger(&battle->plan) != 0)
+      if (BattlePres_RunEscape(&battle->plan) != 0)
         fled = 1;
       if (fled != 0)
         goto finish;
@@ -146,7 +146,7 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
 // struck first ("But there's no escape!"), each member able to move running
 // off in turn; an enemy gets away 7 times in 10 and leaves the battle.
 // Returns 1 when the party got away.
-s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan) {
+s32 BattlePres_RunEscape(struct BattlePlan *plan) {
   struct BattlePresentationTransition *presentation =
       WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *scene = WORK_SLOT(HEAP_SLOT_BATTLE);
@@ -294,7 +294,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
     }
     BattleEv_DispatchQueued();
-    BattlePres_RunWithZeroArguments();
+    BattlePres_RestorePalette();
   } else {
     kept = 0;
     for (i = 0; i < count; i++) {
@@ -386,7 +386,7 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
 // blow lands: a miss makes the target hop back ("nimbly dodges the
 // blow"); a hit plays its effect and the events, and a critical hit
 // zooms in on the pair with only those two shown. Both then return.
-s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
+s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct MotionObject *object;
   struct AnimationObject *animation;
@@ -530,10 +530,10 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// Plays a plain attack run: the attacker runs up to its first target and
-// the blow's effect and events play, or, with bit 1 of flags (a miss), the
+// Unused. Plays a plain attack run: the attacker runs up to its first target
+// and the blow's effect and events play, or, with bit 1 of flags (a miss), the
 // target hops back; both then return.
-s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
+UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
   struct BattlePresentationWork work;
   struct BattlePlan *savedInput;
   struct MotionObject *object;
@@ -825,7 +825,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
     }
     BattleEv_DispatchQueued();
-    BattlePres_RunWithZeroArguments();
+    BattlePres_RestorePalette();
   } else {
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (work.effect.kind) {
@@ -834,7 +834,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       else
         BattleFx_RunTableEffectFar(&work.effect);
     } else {
-      BattlePres_RunWithZeroArguments();
+      BattlePres_RestorePalette();
     }
     BattleEventRuntime_WaitForReady();
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);

@@ -16,7 +16,7 @@
 
 // Returns the formation's average enemy level, or -1 for an empty minimum list,
 // -2 for an ineligible unseen enemy, or -3 when no member has a maximum count.
-s32 Party_ComputeEligibleMemberAverage(s32 recordId) {
+s32 BattleFormation_AverageLevel(s32 recordId) {
   struct BattleFormationRecord *record;
   struct EnemyDefinition *enemy;
   u32 memberIndex;
@@ -123,7 +123,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < FORMATION_COUNT;
        candidateOrUnitIndex++) {
-    s32 score = Party_ComputeEligibleMemberAverage(candidateOrUnitIndex);
+    s32 score = BattleFormation_AverageLevel(candidateOrUnitIndex);
 
     if (score >= 0 && score <= targetLevel + 3) {
       s32 lowestIndex = -1;

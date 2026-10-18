@@ -137,9 +137,9 @@ s32 BattleFx_UpdateStarField(void) {
 // the native return register from r1 to r0 in tbs-en; matching builds keep the
 // old type.
 #ifdef UBFIX
-void Graphics_UploadVramBlock(void) {
+void BattleFx_UploadStarField(void) {
 #else
-u32 Graphics_UploadVramBlock(void) {
+u32 BattleFx_UploadStarField(void) {
 #endif
   void *source = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   struct SparkWork *work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
@@ -154,10 +154,10 @@ u32 Graphics_UploadVramBlock(void) {
 
 #ifdef UBFIX
 #define STAR_FIELD_UPDATE_CALLBACK BattleFx_UpdateStarField
-#define STAR_FIELD_UPLOAD_CALLBACK Graphics_UploadVramBlock
+#define STAR_FIELD_UPLOAD_CALLBACK BattleFx_UploadStarField
 #else
 #define STAR_FIELD_UPDATE_CALLBACK ((SchedulerCallback)BattleFx_UpdateStarField)
-#define STAR_FIELD_UPLOAD_CALLBACK ((SchedulerCallback)Graphics_UploadVramBlock)
+#define STAR_FIELD_UPLOAD_CALLBACK ((SchedulerCallback)BattleFx_UploadStarField)
 #endif
 
 // Initializes sixteen sparks and three rings, loads the element palette and
@@ -404,7 +404,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
 }
 
 // Restores the saved battle palette without dimming.
-void BattlePres_RunWithZeroArguments(void) {
+void BattlePres_RestorePalette(void) {
   BattlePresentation_SetPaletteLevel(0, 0);
 }
 

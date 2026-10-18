@@ -4,7 +4,7 @@
 #include "../field_internal.h"
 
 // A map cell's word, as the camera reads it.
-struct CameraTile {
+struct ObjectCameraTile {
   u32 block : 12;   // the block (metatile) number
   u32 layer : 2;    // if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; // if not 0, the priority of an object standing on it
@@ -12,7 +12,7 @@ struct CameraTile {
 };
 
 // A field object, as the camera reads it.
-struct CameraObject {
+struct ObjectCameraObject {
   u32 active;
   u16 unk04;
   u16 angle;
@@ -33,18 +33,18 @@ struct CameraObject {
   u8 unk5d[0x13];
 };
 
-struct CameraPoint {
+struct ObjectCameraPoint {
   s32 x;
   s32 y;
   s32 z;
 };
 
 // The fixed camera.
-struct FixedCamera {
-  struct CameraPoint eye;
-  struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    // when set, used as the eye
-  struct CameraPoint *targetOverride; // when set, used as the target
+struct ObjectCameraFixed {
+  struct ObjectCameraPoint eye;
+  struct ObjectCameraPoint target;
+  struct ObjectCameraPoint *eyeOverride;    // when set, used as the eye
+  struct ObjectCameraPoint *targetOverride; // when set, used as the target
 };
 
 // Each frame, with the scrolling camera: places every object's sprite on the
@@ -54,13 +54,13 @@ void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
    * in tbs-en. */
-  struct CameraPoint unusedPoints[3];
+  struct ObjectCameraPoint unusedPoints[3];
   s32 objectIndex;
   struct MapScrollWork *mapWork;
   s32 viewX;
   s32 viewZ;
   struct ObjectSystemWork *system;
-  struct CameraObject *object;
+  struct ObjectCameraObject *object;
   struct AnimationObject *sprite;
 #ifndef UBFIX
   s32 *viewCoordinates;
@@ -69,7 +69,7 @@ void ObjectSystem_UpdateCamera(void) {
   s32 dx;
   s32 dz;
   s32 screenTop;
-  struct CameraTile *tile;
+  struct ObjectCameraTile *tile;
   u32 priority;
   struct SpriteScale scale;
   struct SpritePlacement drawPosition;
@@ -100,7 +100,7 @@ void ObjectSystem_UpdateCamera(void) {
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
   system->used = 0;
-  object = (struct CameraObject *)gObjectSlots;
+  object = (struct ObjectCameraObject *)gObjectSlots;
   for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
     if (object->active == 0)
       continue;
@@ -124,7 +124,7 @@ void ObjectSystem_UpdateCamera(void) {
       if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
           screenTop < 0xe00000) {
         // The cell under the object.
-        tile = &((struct CameraTile *)mapWork->layers[object->layer]
+        tile = &((struct ObjectCameraTile *)mapWork->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
         if (object->flags & 1) {
           priority = tile->priority;
@@ -185,11 +185,11 @@ s32 ObjectCamera_ReturnTrue(void) { return 1; }
 // BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0 scale.
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 i;
-  struct FixedCamera *camera;
+  struct ObjectCameraFixed *camera;
   struct ObjectSystemWork *system;
-  struct CameraPoint *eye;
-  struct CameraPoint *target;
-  struct CameraObject *object;
+  struct ObjectCameraPoint *eye;
+  struct ObjectCameraPoint *target;
+  struct ObjectCameraObject *object;
   s32 angle;
   s32 spritesRemaining;
   s32 kind;
@@ -202,15 +202,15 @@ void ObjectSystem_UpdateCameraFixed(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * two points above the scales; without it, 2 of 181 instructions differ in
    * tbs-en. */
-  struct CameraPoint unusedPoints[2];
+  struct ObjectCameraPoint unusedPoints[2];
 
   // UB: camera and system work are separate globals, beyond gObjectSlots.
   // Reading their named slots adds four bytes in the forced EN build.
 #ifdef UBFIX
-  camera = (struct FixedCamera *)gCameraWork;
+  camera = (struct ObjectCameraFixed *)gCameraWork;
   system = gMenuCtrlWork;
 #else
-  camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+  camera = *(struct ObjectCameraFixed **)(((u8 *)&gObjectSlots) + 0x1c);
   system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
 #endif
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
@@ -231,7 +231,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   } else {
     Transform_SetLookAt(eye, target);
   }
-  object = (struct CameraObject *)gObjectSlots;
+  object = (struct ObjectCameraObject *)gObjectSlots;
   object += 63;
   fixedScale = 0x10000;
   for (i = 63; i >= 0; i--, object--) {

@@ -62,7 +62,7 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
 }
 
 // value squared.
-static __inline__ s32 Square(s32 value) { return value * value; }
+static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 
 // Advances all 64 field objects by one frame, as Object_UpdateAll does for
 // the eight script objects, with the field's extras: free flight in 3D,
@@ -149,7 +149,9 @@ void Object_UpdateAllThumb(void) {
           dx = (object->targetX - x) / 65536;
           dy = (object->targetY - y) / 65536;
           dz = (object->targetZ - z) / 65536;
-          distance = Iwram_Sqrt(Square(dx) + Square(dy) + Square(dz));
+          distance =
+              Iwram_Sqrt(ObjectMotion_Square(dx) + ObjectMotion_Square(dy) +
+                         ObjectMotion_Square(dz));
           if (distance == 0) {
             x = object->targetX;
             y = object->targetY;
@@ -194,7 +196,9 @@ void Object_UpdateAllThumb(void) {
         if (object->targetX != TARGET_UNSET) {
           dx = (object->targetX - x) / 65536;
           dz = (object->targetZ - z) / 65536;
-          distance = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
+          distance =
+              Iwram_Sqrt(ObjectMotion_Square(dx) + ObjectMotion_Square(dz))
+              << 16;
           if (distance <= 0x00ffffff) {
             dx = object->targetX - x;
             dz = object->targetZ - z;

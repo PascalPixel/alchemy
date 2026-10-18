@@ -295,7 +295,7 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
 
 // Defines name(object, value), which calls apply(sprite, value) on an
 // object's one sprite, or on each sprite of its group.
-#define DEFINE_APPLY_TO_CHILDREN(name, object_type, apply)                     \
+#define OBJECT_DISPATCH_DEFINE_APPLY(name, object_type, apply)                 \
   void name(object_type rawObject, s32 value) {                                \
     struct DispatchObject *object;                                             \
     void **sprites;                                                            \
@@ -323,13 +323,13 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
   }
 
 // Switches all of an object's sprites to animation value.
-DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyArgumentToChildren, void *,
-                         AnimationObjects_SelectAnimation)
+OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_ApplyArgumentToChildren, void *,
+                             AnimationObjects_SelectAnimation)
 
 // Sets the animation speed (timer step) of all of an object's sprites.
-DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren,
-                         struct DispatchObject *,
-                         AnimationObjects_SetActiveTimerSteps)
+OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_ApplyValueToChildren,
+                             struct DispatchObject *,
+                             AnimationObjects_SetActiveTimerSteps)
 
 // Both of the above: switches all of an object's sprites to animation and
 // sets their timer step to step.
@@ -515,3 +515,5 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
 
 // Returns 1.
 s32 ObjectDispatch_ReturnTrue(void) { return 1; }
+
+#undef OBJECT_DISPATCH_DEFINE_APPLY

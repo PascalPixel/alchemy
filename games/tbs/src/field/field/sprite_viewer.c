@@ -4,7 +4,7 @@
 #include "../field_internal.h"
 
 // One animation layer the sprite viewer edits.
-struct IconColumn {
+struct UiIconColumn {
   s16 number;    // sprite number
   s16 animation; // animation shown
   u8 on;         // layer shown
@@ -22,7 +22,7 @@ struct IconColumn {
 // ring when it is rebuilt with Start held. Select reloads the far-call
 // resources (the alternate set unless B is held) and starts over.
 void Ui_RunIconMonitor(void) {
-  struct IconColumn layers[4];
+  struct UiIconColumn layers[4];
   struct AnimationMetadata *spriteMetadata;
   struct AnimationObject *sprites;
   volatile s32 fillWord;
@@ -449,7 +449,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
 
 // Defines name(slot, value), which sets field of entry slot (0-3) in each of
 // the first ten sprites to value.
-#define DEFINE_SET_GRID_COLUMN(name, field)                                    \
+#define UI_DEFINE_SET_GRID_COLUMN(name, field)                                 \
   void name(s32 layerIndex, s32 value) {                                       \
     struct AnimationObject *spriteGroup = gSpriteObjects;                      \
     s32 spriteIndex;                                                           \
@@ -463,8 +463,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
 
 // Set the draw parameter or the priority of one layer of the viewer's ten
 // sprites.
-DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
-DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
+UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
+UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
 // Starts animationIndex on layerIndex of each of the viewer's ten sprites,
 // each one 16 timer units behind the last.
@@ -572,3 +572,5 @@ void Battle_PlaceActorsByFormationKind(void) {
       angle += pairedFacingStep;
   }
 }
+
+#undef UI_DEFINE_SET_GRID_COLUMN

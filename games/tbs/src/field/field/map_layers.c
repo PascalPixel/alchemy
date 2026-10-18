@@ -70,7 +70,7 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
   }
 }
 
-typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
+typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 
 // Gives each map cell whose block number is 0xfff (a placeholder) a number
 // of its own, counting up from 0 in map order.
@@ -99,7 +99,7 @@ void Graphics_RenumberFillerEntries(void) {
 // a saved copy of the staged buffer.
 void Tilemap_ConvertBuffer(void) {
   u8 *savedCells;
-  ConvertFn convertMap;
+  TilemapConvertFn convertMap;
   u32 savedBytes;
 
   savedBytes = 0x8000;
@@ -113,10 +113,10 @@ void Tilemap_ConvertBuffer(void) {
 
 // Copies one tile column of a block (metatile) into a BG map: its top and
 // bottom tile entries, choosing the left or right half with tileHalf.
-static __inline__ void CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
-                                              u32 screenRowOffset,
-                                              u32 screenColumnOffset,
-                                              u32 tileHalf) {
+static __inline__ void Map_CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
+                                                  u32 screenRowOffset,
+                                                  u32 screenColumnOffset,
+                                                  u32 tileHalf) {
   u16 *metatileEntry;
   u8 *screenTile;
   u32 index = ((*cell << 20) >> 18) + tileHalf;
@@ -133,9 +133,9 @@ static __inline__ void CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
 
 // Copies a whole block (metatile) into a BG map: its top two tile entries
 // and its bottom two, a map row (64 bytes) below.
-static __inline__ void CopyMetatileToScreen(u32 *cell, u8 *screenMap,
-                                            u32 screenRowOffset,
-                                            u32 screenColumnOffset) {
+static __inline__ void Map_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
+                                                u32 screenRowOffset,
+                                                u32 screenColumnOffset) {
   u32 *metatileRows;
   u8 *screenTile;
   u32 index = (*cell << 20) >> 19;
@@ -149,13 +149,13 @@ static __inline__ void CopyMetatileToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *metatileRows;
 }
 
-struct SceneEntry {
+struct LayeredSceneEntry {
   u16 resources[6];
 };
 
-extern struct SceneEntry gMap_LayeredScenes[];
+extern struct LayeredSceneEntry gMap_LayeredScenes[];
 
-struct SceneLayerSource {
+struct LayeredSceneLayer {
   u8 x;
   u8 y;
   s8 scrollX;
@@ -166,12 +166,12 @@ struct SceneLayerSource {
   u8 periodY;
 };
 
-struct SceneHeader {
+struct LayeredSceneHeader {
   u8 origin[4];
   u8 priority[3];
   u8 charBase[3];
   u16 unk0a;
-  struct SceneLayerSource layers[3];
+  struct LayeredSceneLayer layers[3];
   s32 tiles;
   s32 collision;
   s32 tilemap;
@@ -186,11 +186,11 @@ struct SceneHeader {
 // the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
 // loaded; and starts the layer scrolling. Returns 2.
 s32 Map_LoadLayeredScene(s32 index) {
-  struct SceneEntry *sceneResources;
+  struct LayeredSceneEntry *sceneResources;
   struct MapScrollWork *work;
-  struct SceneHeader *sceneHeader;
+  struct LayeredSceneHeader *sceneHeader;
   struct MapLayerScroll *mapLayer;
-  struct SceneLayerSource *layerSource;
+  struct LayeredSceneLayer *layerSource;
   s32 *viewX;
   s32 *viewY;
   s32 layerIndex;
@@ -205,7 +205,7 @@ s32 Map_LoadLayeredScene(s32 index) {
   sceneResources = &gMap_LayeredScenes[index];
   work = Runtime_AllocateBlock(HEAP_SLOT_MAP, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
-  sceneHeader = (struct SceneHeader *)Resource_GetTableEntry(
+  sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map001);
   encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
   Tilemap_DecodeStagedBuffer(
@@ -405,8 +405,8 @@ void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
     u32 *sourceCell = (u32 *)Ram_MapCellBuffer;
 
     sourceCell += sourceRow + sourceColumn;
-    CopyMetatileHalfColumn(sourceCell, screenMap, screenRowOffset,
-                           screenColumnOffset, tileHalf);
+    Map_CopyMetatileHalfColumn(sourceCell, screenMap, screenRowOffset,
+                               screenColumnOffset, tileHalf);
 
     sourceRow = (sourceRow + 128) & 0x3F80;
     screenRowOffset = (screenRowOffset + 64) & 0x3C0;
@@ -545,8 +545,8 @@ void Map_SetCameraCenter(s32 x, s32 y) {
         for (metatileColumn = 0; metatileColumn <= 15; metatileColumn++) {
           u32 *map = (u32 *)Ram_MapCellBuffer;
           map += sourceRow + sourceColumn;
-          CopyMetatileToScreen(map, screenMap, screenRowOffset,
-                               screenColumnOffset);
+          Map_CopyMetatileToScreen(map, screenMap, screenRowOffset,
+                                   screenColumnOffset);
           sourceColumn = (sourceColumn + 1) & 127;
           screenColumnOffset = (screenColumnOffset + 2) & 30;
         }
@@ -558,7 +558,7 @@ void Map_SetCameraCenter(s32 x, s32 y) {
 }
 
 // The top left of a layer's visible area, in cells.
-struct TilePos {
+struct MapTilePos {
   s32 x, y;
 };
 
@@ -573,9 +573,9 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
-  struct TilePos visibleLayers[3];
+  struct MapTilePos visibleLayers[3];
   s32 i;
-  struct TilePos *visibleLayer = visibleLayers;
+  struct MapTilePos *visibleLayer = visibleLayers;
   u32 y;
   u32 x;
 
@@ -719,9 +719,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[y * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-  struct TilePos visibleLayers[3];
+  struct MapTilePos visibleLayers[3];
   s32 i;
-  struct TilePos *visibleLayer = visibleLayers;
+  struct MapTilePos *visibleLayer = visibleLayers;
   s32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
@@ -867,9 +867,9 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
   struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-  struct TilePos visibleLayers[3];
+  struct MapTilePos visibleLayers[3];
   s32 i;
-  struct TilePos *visibleLayer = visibleLayers;
+  struct MapTilePos *visibleLayer = visibleLayers;
   s32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
@@ -965,3 +965,7 @@ void Map_SetWorkFlagBits9To11(u32 layerFlags) {
       (flags & (u16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) | mask;
   mapState->flags = flags;
 }
+
+#undef MAP_CELLS
+#undef MAP_CELL_TILE_MASK
+#undef MAP_CELL_ATTRIBUTE_MASK

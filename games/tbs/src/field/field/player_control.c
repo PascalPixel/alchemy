@@ -3,8 +3,20 @@
 
 #include "../field_internal.h"
 
+// What differs by edition. In mode 3, L and R raise their fixed triggers
+// while held in the Japanese release, and once for each press from the
+// English one on. The world map's probes for a step reach 8 pixels in
+// Japan and 7 from the English release on.
+#if TBS_PATCH_1
+#define FIELD_SHORTCUT_KEYS gKeysPressed
+#define WORLD_MAP_PROBE_RADIUS 0x70000
+#else
+#define FIELD_SHORTCUT_KEYS gKeysHeld
+#define WORLD_MAP_PROBE_RADIUS 0x80000
+#endif
+
 // Stores value as a halfword.
-static __inline__ void StoreHalfword(s16 *address, s32 value) {
+static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
@@ -15,14 +27,6 @@ void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   if (object != NULL)
     *(s32 *)object->unk6c = value;
 }
-
-#if TBS_PATCH_1
-
-#define ASSIGNED_KEYS gKeysPressed
-#else
-
-#define ASSIGNED_KEYS gKeysHeld
-#endif
 
 // Handles a shortcut key's assignment: its top two bits choose
 // what it requests (0 a Psynergy, 1 an item) and
@@ -35,20 +39,20 @@ u32 Field_StoreAssignedKeyValue(u32 encodedAssignment) {
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
 
   if (GameFlag_TestFar(0x107) != 0) {
-    StoreHalfword(&fieldWork->event, 0xFA);
+    Field_StoreHalfword(&fieldWork->event, 0xFA);
   } else if (fieldWork->mode == 3) {
-    if (ASSIGNED_KEYS & KEY_R) {
-      StoreHalfword(&fieldWork->event, 0xFC88);
-    } else if (ASSIGNED_KEYS & KEY_L) {
-      StoreHalfword(&fieldWork->event, 0xFC87);
+    if (FIELD_SHORTCUT_KEYS & KEY_R) {
+      Field_StoreHalfword(&fieldWork->event, 0xFC88);
+    } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
+      Field_StoreHalfword(&fieldWork->event, 0xFC87);
     }
   } else {
     switch (assignmentKind) {
     case 0:
-      StoreHalfword(&fieldWork->command, requestId);
+      Field_StoreHalfword(&fieldWork->command, requestId);
       break;
     case 1:
-      StoreHalfword(&fieldWork->item, requestId);
+      Field_StoreHalfword(&fieldWork->item, requestId);
       break;
     }
   }
@@ -451,12 +455,6 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-#if TBS_PATCH_1
-#define WORLD_PROBE_RADIUS 0x70000
-#else
-#define WORLD_PROBE_RADIUS 0x80000
-#endif
-
 // SC_WORLD: moves the player on the world map by the direction pad, as
 // SC_PLAYER does on the field, and turns the world map camera with the pad.
 // Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
@@ -513,7 +511,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
 #if TBS_PATCH_1
       if (CheckWorldMapCollisionRange((s32)object,
@@ -521,28 +519,28 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
                               &testPosition);
         if (CheckWorldMapCollisionRange(
                 (s32)object, (struct WorldPosition *)&testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000,
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
                                 &testPosition);
           if (CheckWorldMapCollisionRange(
                   (s32)object, (struct WorldPosition *)&testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
-            Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000,
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                                   &testPosition);
             if (CheckWorldMapCollisionRange(
                     (s32)object, (struct WorldPosition *)&testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
-              Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000,
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                                     &testPosition);
               if (CheckWorldMapCollisionRange(
                       (s32)object, (struct WorldPosition *)&testPosition) == 0)
@@ -565,14 +563,14 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         position.x = object->x;
         position.y = object->y;
         position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
         if (CheckWorldMapCollisionRange((s32)object,
                                         (struct WorldPosition *)&position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
                               &testPosition);
         if (CheckWorldMapCollisionRange(
                 (s32)object, (struct WorldPosition *)&testPosition) != 0)
@@ -580,7 +578,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
                               &testPosition);
         if (CheckWorldMapCollisionRange(
                 (s32)object, (struct WorldPosition *)&testPosition) != 0)
@@ -588,7 +586,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                               &testPosition);
         if (CheckWorldMapCollisionRange(
                 (s32)object, (struct WorldPosition *)&testPosition) != 0)
@@ -596,7 +594,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                               &testPosition);
         if (CheckWorldMapCollisionRange(
                 (s32)object, (struct WorldPosition *)&testPosition) != 0)
@@ -610,12 +608,12 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
-      Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555,
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1555,
                             &leftPosition);
       rightPosition.x = object->x;
       rightPosition.y = object->y;
       rightPosition.z = object->z;
-      Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555,
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
                             &rightPosition);
       if ((CheckWorldMapCollisionRange((s32)object,
                                        (struct WorldPosition *)&position) |
@@ -634,16 +632,16 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
           position.x = object->x;
           position.y = object->y;
           position.z = object->z;
-          Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
           leftPosition.x = object->x;
           leftPosition.y = object->y;
           leftPosition.z = object->z;
-          Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555,
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1555,
                                 &leftPosition);
           rightPosition.x = object->x;
           rightPosition.y = object->y;
           rightPosition.z = object->z;
-          Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555,
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
                                 &rightPosition);
           if ((CheckWorldMapCollisionRange((s32)object,
                                            (struct WorldPosition *)&position) |
@@ -847,3 +845,6 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   object->step++;
   return 1;
 }
+
+#undef FIELD_SHORTCUT_KEYS
+#undef WORLD_MAP_PROBE_RADIUS

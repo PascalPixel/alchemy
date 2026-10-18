@@ -6,8 +6,8 @@
 // Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
 // run from RAM) and uploads a finished buffer to sprite VRAM
 // (Tile_CopyStrided).
-typedef void (*DrawFn)(const void *src, void *dst, s32 param);
-typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
+typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
+typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 // Advances a sprite's animation layers by one frame, picks each layer's frame
 // for the facing dir, and when any frame changed redraws the sprite: the
@@ -18,7 +18,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemWork *system;
-  DrawFn decodeFrame;
+  SpriteDrawFn decodeFrame;
   s32 decoderWasLoaded;
   struct AnimationEntry *layer;
   void *code;
@@ -41,8 +41,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   system = (*(void *(*)[]) & gMenuCtrlWork)[0];
   decoderWasLoaded = 1;
   decodeFrame =
-      (DrawFn)(*(void *(*)[]) &
-               gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH - HEAP_SLOT_MENU_CONTROL];
+      (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                     HEAP_SLOT_MENU_CONTROL];
   if (decodeFrame == 0) {
     code = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH,
                                      (s32)Render_DecodeFrameCodeSize);
@@ -51,8 +51,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
     decodeFrame =
-        (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                 HEAP_SLOT_MENU_CONTROL];
+        (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                       HEAP_SLOT_MENU_CONTROL];
     decoderWasLoaded = 0;
   }
 
@@ -286,8 +286,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     tile = VramCache_Load(obj->slot, size, 0);
     {
       void *vram = (void *)(0x06010000 + (tile << 5));
-      ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
-                                                      obj->height, vram);
+      ((SpriteUploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
+                                                            obj->height, vram);
     }
     obj->image.tile = tile;
     obj->dirty = 0;

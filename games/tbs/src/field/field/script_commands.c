@@ -152,7 +152,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
 
 // Defines a flag command: stores the flag's current value in conditionResult,
 // then changes the flag with change.
-#define DEFINE_FLAG_AND_TEST(name, change)                                     \
+#define SCRIPT_DEFINE_FLAG_COMMAND(name, change)                               \
   s32 name(struct ScriptInterpreter *interpreter) {                            \
     s32 flagId;                                                                \
                                                                                \
@@ -164,8 +164,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   }
 
 // SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
-DEFINE_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
-DEFINE_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
+SCRIPT_DEFINE_FLAG_COMMAND(Script_SetFlagAndTest, GameFlag_SetBitFar)
+SCRIPT_DEFINE_FLAG_COMMAND(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
 // SC_FLAG_REV(f): tests game flag f, then flips it.
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
@@ -256,7 +256,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
 }
 
 // Reads three coordinate words and applies the selected positioning operation.
-static __inline__ s32 ApplyScriptPositionCommand(
+static __inline__ s32 Script_ApplyPositionCommand(
     struct ScriptInterpreter *interpreter,
     void (*applyPosition)(struct ObjectRuntime *object, s32 x, s32 y, s32 z)) {
   s32 x;
@@ -279,13 +279,13 @@ static __inline__ s32 ApplyScriptPositionCommand(
 
 // SC_POS(x, y, z): places the object at (x, y, z) and stops it.
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter) {
-  return ApplyScriptPositionCommand(interpreter,
-                                    Object_SetPositionAndResetMotion);
+  return Script_ApplyPositionCommand(interpreter,
+                                     Object_SetPositionAndResetMotion);
 }
 
 // SC_MOVE(x, y, z): sends the object towards (x, y, z).
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter) {
-  return ApplyScriptPositionCommand(interpreter, Object_SetMoveTarget);
+  return Script_ApplyPositionCommand(interpreter, Object_SetMoveTarget);
 }
 
 // SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
@@ -700,7 +700,7 @@ enum ScriptOperandOperation {
 
 // Defines the handler for a 32-bit work value: set it, add to it, or compare
 // it (into comparisonResult).
-#define DEFINE_OPERAND_WORD(name, field)                                       \
+#define SCRIPT_DEFINE_OPERAND_WORD(name, field)                                \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
       operands->field = value;                                                 \
@@ -714,7 +714,7 @@ enum ScriptOperandOperation {
   }
 
 // The same for an address: an add steps by value words (value * 4 bytes).
-#define DEFINE_OPERAND_ADDRESS(name, field)                                    \
+#define SCRIPT_DEFINE_OPERAND_ADDRESS(name, field)                             \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
       operands->field = value;                                                 \
@@ -728,7 +728,7 @@ enum ScriptOperandOperation {
   }
 
 // The same for an 8- or 16-bit value: a compare narrows value to its type.
-#define DEFINE_OPERAND_NARROW(name, field, type)                               \
+#define SCRIPT_DEFINE_OPERAND_NARROW(name, field, type)                        \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
       operands->field = value;                                                 \
@@ -742,7 +742,7 @@ enum ScriptOperandOperation {
 // The work value handlers, one for each entry of enum ScriptWork (see
 // gScript_OperandHandlerTable in operand.c); each names the object field it
 // sets, adds to or compares.
-DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
+SCRIPT_DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
 
 // Work value SW_CURSOR: sets, adds to or compares the script cursor.
 void Script_SetOrCompareCursor(struct ScriptOperands *operands, s32 operation,
@@ -756,11 +756,11 @@ void Script_SetOrCompareCursor(struct ScriptOperands *operands, s32 operation,
   }
 }
 
-DEFINE_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword, unsignedHalfword,
-                      u16)
-DEFINE_OPERAND_WORD(Script_SetOrCompareX, word08)
-DEFINE_OPERAND_WORD(Script_SetOrCompareY, word0c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word10)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword,
+                             unsignedHalfword, u16)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareX, word08)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareY, word0c)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word10)
 
 // Work value SW_RADIUS: sets, adds to or compares the object's radius.
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
@@ -776,30 +776,31 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = state->halfword20 == (s16)value;
 }
 
-DEFINE_OPERAND_WORD(Script_SetOrCompareScaleX, word18)
-DEFINE_OPERAND_WORD(Script_SetOrCompareScaleY, word1c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityX, word24)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityY, word28)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityZ, word2c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word30)
-DEFINE_OPERAND_WORD(Script_SetOrCompareAcceleration, word34)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTargetX, word38)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTargetY, word3c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTargetZ, word40)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word44)
-DEFINE_OPERAND_WORD(Script_SetOrCompareGravity, word48)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word14)
-DEFINE_OPERAND_WORD(Script_SetOrCompareWord4c, word4c)
-DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address50)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareByte54, byte54, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte55, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte56, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareComparisonResult, comparisonResult, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte58, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte59, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte5a, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte5b, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte5d, u8)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareScaleX, word18)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareScaleY, word1c)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityX, word24)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityY, word28)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityZ, word2c)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word30)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareAcceleration, word34)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareTargetX, word38)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareTargetY, word3c)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareTargetZ, word40)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word44)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareGravity, word48)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word14)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareWord4c, word4c)
+SCRIPT_DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address50)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte54, byte54, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte55, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte56, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareComparisonResult,
+                             comparisonResult, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte58, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte59, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte5a, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte5b, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte5d, u8)
 
 // Work value SW_WAIT: sets, adds to or compares the wait counter.
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
@@ -815,19 +816,19 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
   work->comparisonResult = (s16)work->halfword5e == (s16)value;
 }
 
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64, signedHalfword64,
-                      s16)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66, signedHalfword66,
-                      s16)
-DEFINE_OPERAND_WORD(Script_SetOrCompareWord68, word68)
-DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word6c)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte62, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte63, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64,
+                             signedHalfword64, s16)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66,
+                             signedHalfword66, s16)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareWord68, word68)
+SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word6c)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte62, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte63, u8)
 
 // Reads the two words after the command (a work value number and a value)
 // and passes operation to that value's handler.
-static __inline__ s32 ApplyScriptOperandCommand(struct ScriptOperands *operands,
-                                                s32 operation) {
+static __inline__ s32
+Script_ApplyOperandCommand(struct ScriptOperands *operands, s32 operation) {
   s16 commandCursor = operands->cursor;
   const s32 *arguments =
       (const s32 *)operands->scriptAddress + commandCursor + 1;
@@ -843,19 +844,24 @@ static __inline__ s32 ApplyScriptOperandCommand(struct ScriptOperands *operands,
 s32 Script_ApplyOperandSet(struct ScriptInterpreter *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
-  return ApplyScriptOperandCommand(operands, SCRIPT_OPERAND_SET);
+  return Script_ApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
 }
 
 // SC_ADD(w, v): adds v to work value w.
 s32 Script_ApplyOperandAdd(struct ScriptInterpreter *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
-  return ApplyScriptOperandCommand(operands, SCRIPT_OPERAND_ADD);
+  return Script_ApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
 }
 
 // SC_CMP(w, v): tests whether work value w equals v.
 s32 Script_ApplyOperandCompare(struct ScriptInterpreter *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
-  return ApplyScriptOperandCommand(operands, SCRIPT_OPERAND_COMPARE);
+  return Script_ApplyOperandCommand(operands, SCRIPT_OPERAND_COMPARE);
 }
+
+#undef SCRIPT_DEFINE_FLAG_COMMAND
+#undef SCRIPT_DEFINE_OPERAND_WORD
+#undef SCRIPT_DEFINE_OPERAND_ADDRESS
+#undef SCRIPT_DEFINE_OPERAND_NARROW

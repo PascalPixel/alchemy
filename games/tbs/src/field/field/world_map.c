@@ -9,17 +9,18 @@ static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
 // Writes a halfword register (register first).
 static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 
-typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
+typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
+                               void *out);
 
-struct WorldCell {
+struct WorldMapCell {
   u32 tile : 24;
   u32 kind : 7;
   u32 flag : 1;
 };
 
-#define BG_PALETTE ((s16 *)BG_PLTT)
+#define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
-#define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
+#define WORLD_MAP_CELLS ((struct WorldMapCell *)Ram_MapBlocks)
 
 // Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's block
 // buffer, decompressing it from the area's graphics, and with update set
@@ -193,8 +194,8 @@ s32 Map_InitializePerspectiveScene(void) {
       frameWork->scanlines);
   gScanlineAngle = 0;
   gScanlinePitch = perspective->pitch;
-  ((PlaneFn)gWorkSlot[46])(camera, cameraPosition, frameWork->scanlines,
-                           affinePages[gFrameCount & 1]);
+  ((WorldMapPlaneFn)gWorkSlot[46])(camera, cameraPosition, frameWork->scanlines,
+                                   affinePages[gFrameCount & 1]);
   SET_VECTOR(cameraPosition, 0, 0, 0);
   Render_ResetTransformState();
   Io_Put16(pitch, 0xe000);
@@ -274,15 +275,16 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   graphicsSet = 0;
   buffer = MemAlloc(0x200);
   perspective = gMapWork[0];
-  if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind ==
-      21)
+  if (WORLD_MAP_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)]
+          .kind == 21)
     graphicsSet = 1;
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;
-  backdropColor = BG_PALETTE[0];
+  backdropColor = WORLD_MAP_BG_PALETTE[0];
   Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
-  Dma_Set(buffer, BG_PALETTE, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
+  Dma_Set(buffer, WORLD_MAP_BG_PALETTE, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
+          REG_DMA3);
   tiles = gBgTileBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resources[1]), tiles);
   Dma_Set(tiles, BG_CHAR_BLOCK(2), (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
@@ -378,7 +380,7 @@ void MapAnimation_ApplyAffineFrame(void) {
 }
 
 // Copies one world map cell's two tile entries (top and bottom) to a BG map.
-static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
+static __inline__ void WorldMap_CopyTileColumn(u8 *cellBytes, u8 *screenTile) {
   u32 metatileIndex = *(u16 *)cellBytes;
   u16 *metatileTiles = (u16 *)Ram_MapCellBuffer;
 
@@ -398,7 +400,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
   cellsCopied = 0;
   do {
-    CopyWorldMapTileColumn(sourceCell, screenTile);
+    WorldMap_CopyTileColumn(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 2;
     sourceCell += 4;
@@ -408,7 +410,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   sourceCell += 0xf80;
   cellsCopied = 0;
   do {
-    CopyWorldMapTileColumn(sourceCell, screenTile);
+    WorldMap_CopyTileColumn(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 2;
     sourceCell += 4;
@@ -425,7 +427,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
   cellsCopied = 0;
   do {
-    CopyWorldMapTileColumn(sourceCell, screenTile);
+    WorldMap_CopyTileColumn(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 128;
     sourceCell += 128;
@@ -676,3 +678,6 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
   Scheduler_ResumeTasks(MapAnimation_Update);
   WaitFrames(1);
 }
+
+#undef WORLD_MAP_BG_PALETTE
+#undef WORLD_MAP_CELLS

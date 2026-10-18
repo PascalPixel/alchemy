@@ -17,3 +17,5 @@ Render_DecodeFrameCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0
+	.global Render_DecodeFrameEnd
+Render_DecodeFrameEnd:

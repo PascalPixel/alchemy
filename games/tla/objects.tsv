@@ -514,14 +514,7 @@ main	rom_main_01	recon/tla/es/rom	.rom.0002386c	es
 main	rom_main_01	recon/tla/de/rom	.rom.0002386c	de
 main	rom_main_01	recon/tla/raw/0802386c	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002386c	ja
-main	rom_main_01	games/tla/src/field/common/object/camera_return_true	.text
 main	rom_main_01	games/tla/src/field/common/object/camera_fixed	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00023e18	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00023e18	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00023e18	es
-main	rom_main_01	recon/tla/de/rom	.rom.00023e18	de
-main	rom_main_01	recon/tla/raw/08023e18	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00023e18	ja
 main	rom_main_01	games/tla/src/field/common/script/script	.text
 main	rom_main_01	recon/tla/raw/08023f3a		en
 main	rom_main_01	games/tla/src/field/common/script/interpreter_wait_for_event_timeout	.text

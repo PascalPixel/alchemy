@@ -68,7 +68,7 @@ extern u16 gStatReduction_ShardCells[];
 extern u8 gStatReduction_ShardWidths[];
 extern u8 gStatReduction_ShardHeights[];
 extern u8 gQuake_Timings[][3];
-extern u8 gLightningBolts_Sparks[][2];
+extern u8 gRay_Sparks[][2];
 extern u16 gUnused_SheetCells6[];
 extern u16 gUnused_SheetCells[];
 extern u8 gUnused_SheetWidths[];

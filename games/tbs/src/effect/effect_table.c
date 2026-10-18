@@ -806,7 +806,7 @@ u16 gRisingMotes_ChipCells[] = {1792, 1900, 2060, 2158,
 
 // Closing bolt sparks by variant.
 // Sparks by variant; [1] is how many each bolt throws a frame.
-u8 gLightningBolts_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
+u8 gRay_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
 // Eruption counts and puff layouts.
 // Motes, puffs of smoke and frames, for each variant.

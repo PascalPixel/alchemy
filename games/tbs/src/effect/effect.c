@@ -12253,7 +12253,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 // effect: the targets. variant 2 shows the canvas at double width;
 //         variant 0 draws every bolt with the maximum blend, the others
 //         alternate it with additive. The variant also sets the sparks
-//         each bolt throws a frame (gLightningBolts_Sparks).
+//         each bolt throws a frame (gRay_Sparks).
 void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -12357,7 +12357,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
             thrown++;
-            if (thrown == gLightningBolts_Sparks[work->effect->variant][1])
+            if (thrown == gRay_Sparks[work->effect->variant][1])
               break;
           }
         }
@@ -21406,6 +21406,17 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
 #define DRAGON_CLOUD_FIRST_FLASH 48       // the first flash in work->particles
 #define DRAGON_CLOUD_TRAIL_CELLS 0x1680   // the trail picture in the sheet
 #define DRAGON_CLOUD_PUFF_CELLS 0x3c00    // the puff pictures in the sheet
+#define DRAGON_CLOUD_PUFFS 8              // puffs, particles 0 to 7
+#define DRAGON_CLOUD_EMBERS 40            // embers, from FIRST_EMBER
+#define DRAGON_CLOUD_FLASHES 16           // flashes, from FIRST_FLASH
+
+// Draws puff picture cell at (x, y) with blit, sized by the puff tables.
+#define DRAGON_CLOUD_DRAW_PUFF(blit, cell, x, y)                               \
+  blit(canvas,                                                                 \
+       &work->sheet[DRAGON_CLOUD_PUFF_CELLS] +                                 \
+           gBattleFx_PuffArcCellSourceOffsets[cell],                           \
+       x, y, gBattleFx_PuffArcCellWidths[cell],                                \
+       gBattleFx_PuffArcCellHeights[cell])
 
 // Abilities: Dragon Cloud (kind 49).
 //
@@ -21476,7 +21487,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
   // strike, and the eight puffs (0 to 7) on an arc, each starting two frames
   // after the last.
-  for (j = 0; j != 40; j++) {
+  for (j = 0; j != DRAGON_CLOUD_EMBERS; j++) {
     struct EffectStep *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
     if (work->effect->side == 0)
@@ -21489,7 +21500,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
                  ((Random16() & 63) - 32) << 14);
     ember->variant = 1;
   }
-  for (j = 0; j != 16; j++) {
+  for (j = 0; j != DRAGON_CLOUD_FLASHES; j++) {
     struct EffectStep *flash = &work->particles[DRAGON_CLOUD_FIRST_FLASH + j];
 
     if (work->effect->side == 0)
@@ -21502,7 +21513,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
                  ((Random16() & 63) - 32) << 14);
     flash->variant = 0;
   }
-  for (i = 0, j = -0x4000; i != 8; i++, j += 0x1000) {
+  for (i = 0, j = -0x4000; i != DRAGON_CLOUD_PUFFS; i++, j += 0x1000) {
     struct EffectStep *puff = &work->particles[i];
 
     if (work->effect->side == 1)
@@ -21533,18 +21544,10 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
     if (frame <= 17) {
       s32 cell = frame / 3;
 
-      draw[0](canvas,
-              &work->sheet[DRAGON_CLOUD_PUFF_CELLS] +
-                  gBattleFx_PuffArcCellSourceOffsets[cell],
-              48, gBattleFx_PuffArcCellBiasY[cell] + 60,
-              gBattleFx_PuffArcCellWidths[cell],
-              gBattleFx_PuffArcCellHeights[cell]);
-      draw[1](canvas,
-              &work->sheet[DRAGON_CLOUD_PUFF_CELLS] +
-                  gBattleFx_PuffArcCellSourceOffsets[cell],
-              56, gBattleFx_PuffArcCellBiasY[cell] + 60,
-              gBattleFx_PuffArcCellWidths[cell],
-              gBattleFx_PuffArcCellHeights[cell]);
+      DRAGON_CLOUD_DRAW_PUFF(draw[0], cell, 48,
+                             gBattleFx_PuffArcCellBiasY[cell] + 60);
+      DRAGON_CLOUD_DRAW_PUFF(draw[1], cell, 56,
+                             gBattleFx_PuffArcCellBiasY[cell] + 60);
     }
     // The path gives two 16-bit coordinates on frame 18, then a signed byte
     // step for each axis every frame through frame 58. From frame 78 the
@@ -21660,19 +21663,15 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
     // The puffs, mirrored, two frames a cell; each starts when its variant
     // counts up to zero.
     if (frame > 49) {
-      for (i = 0; i != 8; i++) {
+      for (i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
         struct EffectStep *puff = &work->particles[i];
 
         if (puff->variant >= 0 && puff->variant <= 11) {
           s32 cell = puff->variant / 2;
 
-          draw[1](canvas,
-                  &work->sheet[DRAGON_CLOUD_PUFF_CELLS] +
-                      gBattleFx_PuffArcCellSourceOffsets[cell],
-                  puff->x - gBattleFx_PuffArcCellWidths[cell] / 2,
-                  puff->y + gBattleFx_PuffArcCellBiasY[cell],
-                  gBattleFx_PuffArcCellWidths[cell],
-                  gBattleFx_PuffArcCellHeights[cell]);
+          DRAGON_CLOUD_DRAW_PUFF(
+              draw[1], cell, puff->x - gBattleFx_PuffArcCellWidths[cell] / 2,
+              puff->y + gBattleFx_PuffArcCellBiasY[cell]);
         }
         puff->variant++;
       }

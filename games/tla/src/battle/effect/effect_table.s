@@ -1210,7 +1210,7 @@ Data_08198383:
 	.global Data_0819838c
 Data_0819838c:
 	.2byte 1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500
-@ The Broken Seal's gLightningBolts_Sparks; read by BattleFx_RunRay
+@ The Broken Seal's gRay_Sparks; read by BattleFx_RunRay
 	.global Data_0819839c
 Data_0819839c:
 	.byte 2, 4, 2, 6, 4, 8

@@ -12,7 +12,7 @@
   ((struct EffectStep *)(Ram_MapCellBuffer +                                   \
                          TITAN_BLADE_DUST * sizeof(struct EffectStep)))
 
-#define TITAN_BLADE_FRAMES 102        // frames in the effect
+#define TITAN_BLADE_FRAMES 102
 #define TITAN_BLADE_SWORD_IMAGE 20000 // the sword picture in the sheet
 #define TITAN_BLADE_FLASHES 32        // flashes scattered
 #define TITAN_BLADE_RING 16           // of which drawn as the ring

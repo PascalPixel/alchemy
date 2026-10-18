@@ -3,7 +3,7 @@
 
 // Abilities: Procne (scene kind 8).
 //
-// Large battle effect 8 (BattleFx_RunSceneEffect), 400 frames:
+// 400 frames:
 //   0 to 159   : a whirlwind rises over the field and lifts the targets,
 //                spinning them round it and drawing them in, while dust
 //                spirals up;

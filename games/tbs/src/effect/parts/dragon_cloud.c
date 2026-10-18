@@ -1,7 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Dragon Cloud.
 
-#define DRAGON_CLOUD_FRAMES 150           // frames in the effect
+#define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83      // the flame strikes the first target
 #define DRAGON_CLOUD_TRAIL_CELL_BYTES 936 // bytes in each trail copy
 #define DRAGON_CLOUD_FIRST_EMBER 8        // the first ember in work->particles

@@ -15,10 +15,9 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 // Abilities: Neptune (scene kind 6).
 //
-// Large battle effect 6 (BattleFx_RunSceneEffect): over dusk clouds a
-// formation of objects flies in through rising spray, gathers a ring of
-// flares into a burst of light, then five blue flame columns drop onto the
-// targets, throwing sparks.
+// Over dusk clouds a formation of objects flies in through rising spray,
+// gathers a ring of flares into a burst of light, then five blue flame columns
+// drop onto the targets, throwing sparks.
 //
 // The scene runs in two stages. The first (244 frames; A or B ends it after
 // frame 16) places NEPTUNE_OBJECTS objects at one and a half times their

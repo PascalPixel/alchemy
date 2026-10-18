@@ -60,8 +60,8 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // attack removes its callbacks before returning. Sheet cell layouts select
 // the images.
 
-#define MERCURY_FRAMES 96 // frames in the effect
-#define MERCURY_FLAMES 5  // flames thrown
+#define MERCURY_FRAMES 96
+#define MERCURY_FLAMES 5 // flames thrown
 // The Djinn attacks share these: each flame, ball or column that lands
 // throws its motes into its own DJINN_MOTES_PER_FLAME slots of PARTICLES
 // (Venus's columns fill 16 of them), and the motes move through all
@@ -198,7 +198,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define JUPITER_FRAMES 96    // frames in the effect
+#define JUPITER_FRAMES 96
 #define JUPITER_FLAMEBALLS 8 // flameballs that fall
 #define JUPITER_GROUND_Y 95  // where the flameballs land
 
@@ -332,7 +332,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
   Resource_DecodeType01(data, dst);
 }
 
-#define VENUS_FRAMES 96  // frames in the effect
+#define VENUS_FRAMES 96
 #define VENUS_COLUMNS 10 // columns of flame that rise
 
 // Abilities: Venus (kind 250).
@@ -445,7 +445,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define MARS_FRAMES 112          // frames in the effect
+#define MARS_FRAMES 112
 #define MARS_STRIKE_FRAME 32     // the Djinni strikes the ground
 #define MARS_FLAMES 9            // flames along the arc
 #define MARS_EMBERS_PER_FLAME 16 // embers in each flame

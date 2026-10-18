@@ -30,18 +30,17 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
 
 // Abilities: Berserk (kind 353).
 //
-// Battle effect 353: the wall rises wide and shakes the screen hard.
+// The wall rises wide and shakes the screen hard.
 DEFINE_EFFECT_KIND(BattleFx_RunBerserk, BattleFx_RunMirroredWall, 1)
 
 // Abilities: Spasm (kind 348).
 //
-// Battle effect 348: the wall rises with a long gentle shake and the
-// recovery sound.
+// The wall rises with a long gentle shake and the recovery sound.
 DEFINE_EFFECT_KIND(BattleFx_RunSpasm, BattleFx_RunMirroredWall, 0)
 
 // Abilities: Recovery (kind 389).
 //
-// Battle effect 389: a wide wall of fire, without a shake.
+// A wide wall of fire, without a shake.
 DEFINE_EFFECT_KIND(BattleFx_RunRecovery, BattleFx_RunMirroredWall, 2)
 
 // Raises a symmetrical wall (the EarthWall images) at the first target's

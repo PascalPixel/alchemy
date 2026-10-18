@@ -8,20 +8,20 @@
 
 // Abilities: Demon Night (kind 50).
 //
-// Battle effect 50: sixteen pink lights burst out of the user and are pulled
-// into each target, with the heavy impact sound.
+// Sixteen pink lights burst out of the user and are pulled into each target,
+// with the heavy impact sound.
 DEFINE_EFFECT_KIND(BattleFx_RunDemonNight, BattleFx_RunGatheringLights, 0)
 
 // Abilities: Rumble (kind 308).
 //
-// Battle effect 308: eight lights in Mars Djinn colours burst out of the user
-// and are pulled into each target.
+// Eight lights in Mars Djinn colours burst out of the user and are pulled into
+// each target.
 DEFINE_EFFECT_KIND(BattleFx_RunRumble, BattleFx_RunGatheringLights, 1)
 
 // Abilities: Haunting (kind 351).
 //
-// Battle effect 351: twelve lights in Mercury Djinn colours burst out of the
-// user and are pulled into each target.
+// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
+// into each target.
 DEFINE_EFFECT_KIND(BattleFx_RunHaunting, BattleFx_RunGatheringLights, 2)
 
 #define GATHERING_LIGHTS_SLOTS 128 // particles reserved for each target

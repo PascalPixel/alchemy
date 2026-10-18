@@ -1,7 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Annihilation.
 
-#define ANNIHILATION_FRAMES 64 // frames in the effect
+#define ANNIHILATION_FRAMES 64
 
 // Abilities: Annihilation (kind 55).
 //

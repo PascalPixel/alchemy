@@ -9,10 +9,10 @@
 
 // Abilities: Astral Blast (kind 68).
 //
-// Battle effect 68: three star-shaped rings of light fly from 40 pixels
-// above the user at the first target, 12 frames apart, growing and
-// spinning as they go, while the camera swings round; each knocks the
-// target back on arrival, and the third lets the battle show the damage.
+// Three star-shaped rings of light fly from 40 pixels above the user at the
+// first target, 12 frames apart, growing and spinning as they go, while the
+// camera swings round; each knocks the target back on arrival, and the third
+// lets the battle show the damage.
 void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition base;
@@ -186,10 +186,10 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 
 // Abilities: Shining Star (kind 62).
 //
-// Battle effect 62: eight spinning star outlines fall from 120 pixels above
-// the user towards the first target, a few frames apart, and bounce off the
-// ground near it, each bounce shaking the screen and flashing the targets;
-// the battle shows the damage on frame 96. 128 frames.
+// Eight spinning star outlines fall from 120 pixels above the user towards the
+// first target, a few frames apart, and bounce off the ground near it, each
+// bounce shaking the screen and flashing the targets; the battle shows the
+// damage on frame 96. 128 frames.
 void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

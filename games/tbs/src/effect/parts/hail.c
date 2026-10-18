@@ -10,7 +10,7 @@
 #define REVEAL_CHIP_CELLS 0x400
 #define REVEAL_DJINNI_CELLS 0x65c0
 
-#define HAIL_FRAMES 64 // frames in the effect
+#define HAIL_FRAMES 64
 
 // Abilities: Hail (kind 207).
 //
@@ -148,7 +148,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 // The small Venus djinni in the rock toss's sheet.
 #define ROCK_TOSS_DJINNI_CELLS 0x65c0
 
-#define GROUND_FRAMES 96        // frames in the effect
+#define GROUND_FRAMES 96
 #define GROUND_LAUNCHED 8       // rocks launched
 #define GROUND_CHIPS 32         // chip slots
 #define GROUND_ROCKS 6          // rocks thrown

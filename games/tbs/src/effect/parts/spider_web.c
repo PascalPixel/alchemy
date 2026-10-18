@@ -9,12 +9,12 @@
 
 // Abilities: Poison Beat (kind 382).
 //
-// Battle effect 382: a lime swipe that knocks the target back.
+// A lime swipe that knocks the target back.
 DEFINE_EFFECT_KIND(BattleFx_RunPoisonBeat, BattleFx_RunSwirlSwipe, 0)
 
 // Abilities: Spinning Beat (kind 383).
 //
-// Battle effect 383: a magenta swipe that throws the target into the air.
+// A magenta swipe that throws the target into the air.
 DEFINE_EFFECT_KIND(BattleFx_RunSpinningBeat, BattleFx_RunSwirlSwipe, 1)
 
 // A swirling swipe across the first target, six images four frames each,
@@ -113,14 +113,14 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define SPIDER_WEB_FRAMES 63 // frames in the effect
+#define SPIDER_WEB_FRAMES 63
 
 // Abilities: Spider Web (kind 345).
 //
-// Battle effect 345: a spider web spreads over the targets, drawn as four
-// mirrored 32x32 quarters around the point between the first and last
-// target. It fades in over 8 frames; the targets flash on frame 10, the
-// battle shows the damage on frame 32, and it fades out from frame 54.
+// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
+// around the point between the first and last target. It fades in over 8
+// frames; the targets flash on frame 10, the battle shows the damage on frame
+// 32, and it fades out from frame 54.
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition first;
   struct EffectPosition last;

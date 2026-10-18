@@ -6,12 +6,11 @@
 
 // Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
 //
-// Battle effect 10: motes fly out of the top of the user, hang, and from 48
-// frames after each appears home in on the targets in turn; each that
-// reaches the ground strikes in a burst, flashing and knocking back its
-// target, while the camera swings round over frames 17 to 63.
-// effect->variant picks the volley from gFroth_Counts (motes and
-// frames) and how hard the screen shakes.
+// Motes fly out of the top of the user, hang, and from 48 frames after each
+// appears home in on the targets in turn; each that reaches the ground strikes
+// in a burst, flashing and knocking back its target, while the camera swings
+// round over frames 17 to 63. effect->variant picks the volley from
+// gFroth_Counts (motes and frames) and how hard the screen shakes.
 void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct BattleEffectWork *work;
@@ -145,7 +144,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 
 // Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
 //
-// Battle effect 20: tornadoes sweep across the targets for 80 frames,
+// Tornadoes sweep across the targets for 80 frames,
 // sparkling with glints; the canvas flashes and the targets reel seven
 // times, 8 frames apart, from frame 16, and the battle shows the damage on
 // frame 32.
@@ -173,7 +172,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;

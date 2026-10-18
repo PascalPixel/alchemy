@@ -7,7 +7,7 @@
 // goes out and its slot is lit again. The falling sword (Titan Blade) shares
 // these embers.
 
-#define NEREID_FRAMES 124 // frames in the effect
+#define NEREID_FRAMES 124
 
 #define NEREID_OBJECTS 12         // objects in the sweeping formation
 #define NEREID_COLUMNS 3          // wrapping columns of fire
@@ -16,7 +16,7 @@
 
 // Abilities: Nereid (scene kind 2).
 //
-// Large battle effect 2 (BattleFx_RunSceneEffect), 124 frames; pressing A
+// 124 frames; pressing A
 // or B during frames 33 to 97 skips to frame 98. A formation of twelve
 // objects sweeps in from the right; embers burst up on frame 28 and over
 // frames 32 to 79, fall back under gravity and from frame 80 rise away,
@@ -39,7 +39,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
                     HEAP_SLOT_BATTLE_CANVAS]; // the particle images
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleFx_FetchRectangleBlitters(0, draw);
 
   // The band along the bottom from WaterSpray, the columns from FirePillarA

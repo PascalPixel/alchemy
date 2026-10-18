@@ -13,9 +13,9 @@
 
 // Abilities: Kirin (scene kind 3).
 //
-// Large battle effect 3 (BattleFx_RunSceneEffect): over a scrolling forest a
-// row of objects rides in on a wave trailing fire, then sweeps across the
-// targets, each throwing a burst of motes as the row passes it.
+// Over a scrolling forest a row of objects rides in on a wave trailing fire,
+// then sweeps across the targets, each throwing a burst of motes as the row
+// passes it.
 //
 // The scene runs in two stages. In the sweep (120 frames; A or B ends it
 // after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the

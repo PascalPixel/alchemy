@@ -55,71 +55,71 @@ enum {
 
 // Abilities: Numbing Sting (kind 313).
 //
-// Battle effect 313: one slash with glints, lightning colours.
+// One slash with glints, lightning colours.
 DEFINE_EFFECT_KIND(BattleFx_RunNumbingSting, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_LIGHTNING_GLINT_SLASH)
 
 // Abilities: Cannibal Fang (kind 316).
 //
-// Battle effect 316: three ember columns that drain the target into the user.
+// Three ember columns that drain the target into the user.
 DEFINE_EFFECT_KIND(BattleFx_RunCannibalFang, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_EMBER_DRAIN_COLUMNS)
 
 // Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
 //
-// Battle effects 318 and 323: one lime column with smoke.
+// One lime column with smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunPoisonousBite, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_LIME_SMOKE_COLUMN)
 
 // Abilities: Rabid Fang (kind 336).
 //
-// Battle effect 336: one column with smoke, Mars Djinn colours.
+// One column with smoke, Mars Djinn colours.
 DEFINE_EFFECT_KIND(BattleFx_RunRabidFang, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_MARS_SMOKE_COLUMN)
 
 // Abilities: Electric Bite (kind 324).
 //
-// Battle effect 324: three lightning columns with glints.
+// Three lightning columns with glints.
 DEFINE_EFFECT_KIND(BattleFx_RunElectricBite, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS)
 
 // Abilities: Poison Tail (kind 325).
 //
-// Battle effect 325: one lime slash with smoke.
+// One lime slash with smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunPoisonTail, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_LIME_SMOKE_SLASH)
 
 // Abilities: Vampiric Fang (kind 327).
 //
-// Battle effect 327: three columns that drain the target, Mars Djinn colours.
+// Three columns that drain the target, Mars Djinn colours.
 DEFINE_EFFECT_KIND(BattleFx_RunVampiricFang, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_MARS_DRAIN_COLUMNS)
 
 // Abilities: Double Fang (kind 332).
 //
-// Battle effect 332: two blue columns with sparks.
+// Two blue columns with sparks.
 DEFINE_EFFECT_KIND(BattleFx_RunDoubleFang, BattleFx_RunTargetStrike,
                    STRIKE_STYLE_BLUE_SPARK_COLUMNS)
 
 // Abilities: Mortal Blow (kind 333).
 //
-// Battle effect 333: one heavy slash with sparks, Mars Djinn colours.
+// One heavy slash with sparks, Mars Djinn colours.
 DEFINE_EFFECT_KIND(BattleFx_RunMortalBlow, BattleFx_RunTargetStrike, 8)
 
 // Abilities: Twin Beaks (kind 335).
 //
-// Battle effect 335: two slashes with sparks, lightning colours.
+// Two slashes with sparks, lightning colours.
 DEFINE_EFFECT_KIND(BattleFx_RunTwinBeaks, BattleFx_RunTargetStrike, 7)
 
 // Abilities: Acid Bite (kind 337).
 //
-// Battle effect 337: three pink columns with smoke.
+// Three pink columns with smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunAcidBite, BattleFx_RunTargetStrike, 2)
 
 // Abilities: Drain Fang (kind 386).
 //
-// Battle effect 386: three additive columns that drain the target with large
-// motes, Mars Djinn colours.
+// Three additive columns that drain the target with large motes, Mars Djinn
+// colours.
 DEFINE_EFFECT_KIND(BattleFx_RunDrainFang, BattleFx_RunTargetStrike, 0xB)
 
 // Strikes the first target STRIKE_HITS times with a sideways slash or a
@@ -155,7 +155,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The images: glints at the start of the sheet, the slashes or the
   // columns at 0xc80, smoke at 0x3200, and the style's palette.

@@ -10,7 +10,7 @@
 //   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
 //   large sparks), small sparks PARTICLES.
 
-#define HELM_SPLITTER_FRAMES 70       // frames in the effect
+#define HELM_SPLITTER_FRAMES 70
 #define HELM_SPLITTER_STRIKE_FRAME 18 // the swirl strikes the target
 // The pink star animation, after the swirl.
 #define HELM_SPLITTER_STAR_CELLS 0x3e80
@@ -219,7 +219,7 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 #define IMPACT_SHARD_CELLS 0x59d8 // Fragment graphics: four 12x24 images
 
-#define IMPACT_BURST_FRAMES 72         // frames in the effect
+#define IMPACT_BURST_FRAMES 72
 #define IMPACT_BURST_FRAGMENTS 3       // fragments, work->particles 61 to 63
 #define IMPACT_BURST_DRAWN_LARGE 30    // large sparks drawn
 #define IMPACT_BURST_DRAWN_SMALL 60    // small sparks drawn

@@ -19,7 +19,7 @@
 
 // Abilities: Taint, Poison (kind 32).
 //
-// Battle effect 32: lime smoke (effect->variant 0) or pink smoke.
+// Lime smoke (effect->variant 0) or pink smoke.
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);
@@ -35,33 +35,32 @@ UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
 
 // Abilities: Delude, Confuse, Mist (kind 33).
 //
-// Battle effect 33: cyan smoke that rises.
+// Cyan smoke that rises.
 DEFINE_EFFECT_KIND(BattleFx_RunDelude, BattleFx_RunTargetMotes, 2)
 
 // Abilities: Paralyze (kind 36).
 //
-// Battle effect 36: rising smoke with glints.
+// Rising smoke with glints.
 DEFINE_EFFECT_KIND(BattleFx_RunParalyze, BattleFx_RunTargetMotes, 3)
 
 // Abilities: Heartrender (kind 346); kind 35 is used by no ability.
 //
-// Battle effects 35 and 346: hearts.
+// Hearts.
 DEFINE_EFFECT_KIND(BattleFx_RunHeartrender, BattleFx_RunTargetMotes, 4)
 
 // Abilities: Mystic Flame (kind 312).
 //
-// Battle effect 312: glowing orbs.
+// Glowing orbs.
 DEFINE_EFFECT_KIND(BattleFx_RunMysticFlame, BattleFx_RunTargetMotes, 5)
 
 // Abilities: Demon Fire (kind 64).
 //
-// Battle effect 64: glowing orbs in Mars Djinn colours, and the user
-// strikes.
+// Glowing orbs in Mars Djinn colours, and the user strikes.
 DEFINE_EFFECT_KIND(BattleFx_RunDemonFire, BattleFx_RunTargetMotes, 7)
 
 // Abilities: Drown (kind 66).
 //
-// Battle effect 66: vortex motes.
+// Vortex motes.
 DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)
 
 // Styles whose motes start in a wide ball and last 64 frames more.
@@ -319,13 +318,13 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
-#define SLEEP_FRAMES 148 // frames in the effect
-#define SLEEP_SEEDED 32  // particles cleared at the start
-#define SLEEP_SHEEP 12   // sheep dropped
+#define SLEEP_FRAMES 148
+#define SLEEP_SEEDED 32 // particles cleared at the start
+#define SLEEP_SHEEP 12  // sheep dropped
 
 // Abilities: Sleep (kind 37).
 //
-// Battle effect 37: twelve sheep drop onto the targets' side, one every 4
+// Twelve sheep drop onto the targets' side, one every 4
 // frames, tumbling through eight images (the last four mirrored both
 // ways); each target takes its damage pose in turn from frame 64, and the
 // battle shows the result on frame 80. 148 frames.
@@ -432,7 +431,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
 // Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
 //
-// Battle effects 41 and 354: a small flame burns above each target in
+// A small flame burns above each target in
 // turn, 16 frames apart, for 72 frames each, over a marker at its feet;
 // the battle shows the result on frame 32.
 void BattleFx_RunCurse(struct BattleEffectArgument *effect) {

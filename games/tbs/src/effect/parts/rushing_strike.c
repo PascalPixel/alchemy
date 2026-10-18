@@ -47,8 +47,8 @@ DEFINE_EFFECT_KIND(BattleFx_RunOnslaught, BattleFx_RunRushingStrike, 2)
 // Rush the target and scatter sparks in the blast palette.
 DEFINE_EFFECT_KIND(BattleFx_RunHeadbutt, BattleFx_RunRushingStrike, 3)
 
-#define RUSHING_STRIKE_FRAMES 60 // frames in the effect
-#define RUSHING_STRIKE_FRAME 10  // the user strikes
+#define RUSHING_STRIKE_FRAMES 60
+#define RUSHING_STRIKE_FRAME 10 // the user strikes
 
 // Rushing strike: the user rushes at the first target and strikes it on
 // frame 10; a ring flares where it hits and 64 sparks scatter, over 60

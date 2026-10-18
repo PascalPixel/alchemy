@@ -281,7 +281,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 #define VINE_COLUMNS 16 // columns that rise
-#define VINE_FRAMES 70  // frames in the effect
+#define VINE_FRAMES 70
 
 // Abilities: Vine (kind 202).
 //

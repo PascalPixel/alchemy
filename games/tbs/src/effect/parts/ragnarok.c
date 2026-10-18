@@ -12,7 +12,7 @@
 #define FLAME_BLADE_FLASH_CELLS                                                \
   (64 * 128) // Place flash graphics after the 64x128 sword image.
 
-#define RAGNAROK_FRAMES 80        // frames in the effect
+#define RAGNAROK_FRAMES 80
 #define RAGNAROK_COLUMNS 2        // columns that strike
 #define RAGNAROK_SEEDED 3         // columns given particles
 #define RAGNAROK_FLASHES 16       // flashes kept per column

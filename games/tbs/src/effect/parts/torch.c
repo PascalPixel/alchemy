@@ -6,7 +6,7 @@
 // BG2's affine reference while the palette cycles. Each pixel holds its
 // distance from the middle, so rotating the palette makes rings run outward.
 
-#define TORCH_FRAMES 96 // frames in the effect
+#define TORCH_FRAMES 96
 
 // Abilities: Torch (kind 214).
 //

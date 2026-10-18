@@ -7,7 +7,7 @@
 // - 16 to 63: chips, thrown on frame 128 (only 32 to 63 are drawn); from
 //   frame 128 the sparks, six per target from 16 on, share these slots.
 // - 0 on: embers, ten per target, from frame 302.
-#define CYBELE_FRAMES 366     // frames in the effect
+#define CYBELE_FRAMES 366
 #define CYBELE_CHIP_COUNT 48  // chips thrown by the thorns
 #define CYBELE_VINES 10       // vines drawn
 #define CYBELE_FIRST_SPARK 16 // the first spark in work->particles

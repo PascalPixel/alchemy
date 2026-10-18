@@ -9,38 +9,37 @@
 
 // Abilities: Mad Spatter (kind 347).
 //
-// Battle effect 347: gold shells that burst into shards.
+// Gold shells that burst into shards.
 DEFINE_EFFECT_KIND(BattleFx_RunMadSpatter, BattleFx_RunLobbedShells, 4)
 
 // Abilities: Decompose (kind 350).
 //
-// Battle effect 350: green shells that burst into smoke.
+// Green shells that burst into smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunDecompose, BattleFx_RunLobbedShells, 5)
 
 // Abilities: Bone Chiller (kind 309).
 //
-// Battle effect 309: blue shells that burst into smoke.
+// Blue shells that burst into smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunBoneChiller, BattleFx_RunLobbedShells, 0)
 
 // Abilities: Sticky Goo (kind 315).
 //
-// Battle effect 315: shells in the spider web's colours that burst into
-// smoke.
+// Shells in the spider web's colours that burst into smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunStickyGoo, BattleFx_RunLobbedShells, 1)
 
 // Abilities: Poison Ink (kind 340).
 //
-// Battle effect 340: shells in Mars Djinn colours that burst into smoke.
+// Shells in Mars Djinn colours that burst into smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunPoisonInk, BattleFx_RunLobbedShells, 6)
 
 // Abilities: Sticky Poison (kind 322).
 //
-// Battle effect 322: lime shells that burst into smoke.
+// Lime shells that burst into smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunStickyPoison, BattleFx_RunLobbedShells, 2)
 
 // Abilities: Rotten Blood (kind 330).
 //
-// Battle effect 330: green shells that burst into shards.
+// Green shells that burst into shards.
 DEFINE_EFFECT_KIND(BattleFx_RunRottenBlood, BattleFx_RunLobbedShells, 3)
 
 // gLobbedShells_Records has two entries per style; the first is nonzero when
@@ -82,7 +81,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The shell images, the smoke at 0x3e80 and the style's palette.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);

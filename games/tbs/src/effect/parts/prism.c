@@ -7,16 +7,15 @@
 
 // Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
 //
-// Battle effect 8: crystals drop out of the sky onto the targets' side, 8
-// frames apart, and shatter on the ground into 16 spinning shards each,
-// flashing the targets and shaking the screen; the battle shows the damage
-// 80 frames before the end, and the canvas darkens away over the last 8.
-// effect->variant picks the volley from gPrism_Counts (crystals and
-// frames: 1 in 110, 4 in 134, 12 in 166); with variant 2 the camera also
-// swings round for the first 104 frames.
-// The crystals are particles[]: z is 1 once shattered, variant is the frame
-// it starts to fall. The shards are 16 per crystal in gMapCellBuffer: z is
-// how fast it spins.
+// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
+// shatter on the ground into 16 spinning shards each, flashing the targets and
+// shaking the screen; the battle shows the damage 80 frames before the end, and
+// the canvas darkens away over the last 8. effect->variant picks the volley
+// from gPrism_Counts (crystals and frames: 1 in 110, 4 in 134, 12 in 166); with
+// variant 2 the camera also swings round for the first 104 frames. The crystals
+// are particles[]: z is 1 once shattered, variant is the frame it starts to
+// fall. The shards are 16 per crystal in gMapCellBuffer: z is how fast it
+// spins.
 void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
@@ -38,7 +37,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,

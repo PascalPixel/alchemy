@@ -82,7 +82,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunEvilBlessing, BattleFx_RunBurstShower,
 DEFINE_EFFECT_KIND(BattleFx_RunDeadlyGas, BattleFx_RunBurstShower,
                    BURST_SHOWER_MODE_DJINNI)
 
-#define BURST_SHOWER_FRAMES 64 // frames in the effect
+#define BURST_SHOWER_FRAMES 64
 
 // Burst shower: for 48 frames the user fires one burst a frame at a random
 // point near one of the targets, taking them in turn, and each target is

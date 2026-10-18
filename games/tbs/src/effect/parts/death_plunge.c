@@ -17,14 +17,13 @@
 // The two element runners allocate their own work, canvas and sheet instead
 // of using the shared ones.
 
-#define DEATH_PLUNGE_FRAMES 96 // frames in the effect
+#define DEATH_PLUNGE_FRAMES 96
 
 // Abilities: Death Plunge (kind 53).
 //
-// Battle effect 53: the user runs 9/10 of the way to the first target, then
-// both leap and turn upside down in the air; on frame 54 the target is hit
-// and both bounce back, while flashes burst from the user and rise in a
-// widening ring.
+// The user runs 9/10 of the way to the first target, then both leap and turn
+// upside down in the air; on frame 54 the target is hit and both bounce back,
+// while flashes burst from the user and rise in a widening ring.
 void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -161,7 +160,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define BLADE_RAIN_FRAMES 120 // frames in the effect
+#define BLADE_RAIN_FRAMES 120
 
 // Drop 16 swords, one every 4 frames, slanting in towards the first target
 // (the middle of the canvas, x 64) and sticking in the ground, where their
@@ -319,7 +318,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define ICE_FLECK_BURST_FRAMES 56 // frames in the effect
+#define ICE_FLECK_BURST_FRAMES 56
 
 // The glow of an element around a unit (BattleFx_PlayUnitElementEffect's
 // mode 2): a symmetrical pillar of light stands at the unit's feet while
@@ -489,7 +488,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   (PLOT_SHATTER_MASK_PIXEL(x2, y2), PLOT_SHATTER_MASK_PIXEL(x2, y1),           \
    PLOT_SHATTER_MASK_PIXEL(x1, y2), PLOT_SHATTER_MASK_PIXEL(x1, y1))
 
-#define OPENING_FRAMES 128 // frames in the effect
+#define OPENING_FRAMES 128
 #define OPENING_FLASHES 32 // flashes thrown as the picture breaks
 #define OPENING_PIECES 33  // pieces the picture breaks into
 #define OPENING_DISC_X 96  // the centre of the opening disc
@@ -1063,7 +1062,7 @@ void BattleFx_PrepareScene(s32 kind) {
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   switch (kind) {
   case 0:
     id = (s32)&ResourceId_YellowPaletteB;

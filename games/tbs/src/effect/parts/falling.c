@@ -46,13 +46,12 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 // Abilities: Ice, Ice Horn, Ice Missile (kind 7).
 //
-// Battle effect 7: ice shards rain down diagonally onto the targets' side of
-// the field and shatter into puffs of sparkle, flashing and shaking each
-// target as they land. The canvas shows only inside a slanted band of
-// window 0, so the shards stream out of the sky above the targets.
-// effect->variant picks the size of the volley from gIce_Counts
-// (shards and frames: 16 for 46 frames, 20 for 52, 32 for 80); variant 1
-// leaves longer trails and variant 2 draws additively.
+// Ice shards rain down diagonally onto the targets' side of the field and
+// shatter into puffs of sparkle, flashing and shaking each target as they land.
+// The canvas shows only inside a slanted band of window 0, so the shards stream
+// out of the sky above the targets. effect->variant picks the size of the
+// volley from gIce_Counts (shards and frames: 16 for 46 frames, 20 for 52, 32
+// for 80); variant 1 leaves longer trails and variant 2 draws additively.
 // effect->side is 1 when the targets are the party, 0 when they are enemies.
 void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
@@ -257,7 +256,7 @@ struct BoltSparkBuffer {
 
 // Abilities: Douse, Drench, Deluge (kind 9).
 //
-// Battle effect 9: blue bolts streak down diagonally onto the targets' side
+// Blue bolts streak down diagonally onto the targets' side
 // of the field, each bursting into a fountain of falling sparks where it
 // lands, while the targets flash. Like the falling shards, the canvas shows
 // only inside a slanted band of window 0.

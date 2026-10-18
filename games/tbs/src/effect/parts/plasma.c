@@ -22,13 +22,12 @@
 // Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
 // Thunderstorm (kind 18).
 //
-// Battle effect 18: pillars of lightning strike one every 8 frames, each
-// with a white flash, throwing sparks up from the ground and knocking the
-// targets back; the battle shows the damage on frame 32.
-// effect->variant picks how many pillars (gPlasma_Counts), how many
-// sparks each throws and how long the screen shakes (gPlasma_Sparks);
-// with variant 2 the camera also swings round for the first 64 frames.
-// effect->side picks the row of pillar positions.
+// Pillars of lightning strike one every 8 frames, each with a white flash,
+// throwing sparks up from the ground and knocking the targets back; the battle
+// shows the damage on frame 32. effect->variant picks how many pillars
+// (gPlasma_Counts), how many sparks each throws and how long the screen shakes
+// (gPlasma_Sparks); with variant 2 the camera also swings round for the first
+// 64 frames. effect->side picks the row of pillar positions.
 void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
@@ -51,7 +50,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
@@ -201,13 +200,13 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 // Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind
 // 15).
 //
-// Battle effect 15: bursts at (60, 48), the canvas behind the battle's
+// Bursts at (60, 48), the canvas behind the battle's
 // first layer (priority 1).
 DEFINE_EFFECT_KIND(BattleFx_RunNova, BattleFx_RunSparkGroups, 0)
 
 // Abilities: Dynamite (kind 338).
 //
-// Battle effect 338: orange bursts at (60, 64), the canvas in front
+// Orange bursts at (60, 64), the canvas in front
 // (priority 0).
 DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
 
@@ -263,7 +262,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;
   }
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,

@@ -8,8 +8,8 @@
 // - The target bursts flare up on each target while five puffs of smoke
 //   scatter around each flare; six particle slots per target.
 
-#define SWIRLING_STARS_FRAMES 160 // frames in the effect
-#define SWIRLING_STARS_COUNT 64   // stars that swirl
+#define SWIRLING_STARS_FRAMES 160
+#define SWIRLING_STARS_COUNT 64 // stars that swirl
 
 // Swirling stars: 64 stars scattered around a point 80 pixels up spin
 // about it, each on its own axis, appearing four a frame; 30 frames after
@@ -213,7 +213,7 @@ void BattleFx_RunOrbitingSkulls(void) {
 // The burst picture in the sheet, after the smoke.
 #define TARGET_BURST_CELLS 0x1b00
 
-#define TARGET_BURSTS_FRAMES 96 // frames in the effect
+#define TARGET_BURSTS_FRAMES 96
 
 // Target bursts: on each target in turn, 8 frames apart, a burst flares up
 // in the middle while five puffs of smoke scatter around it, for 40

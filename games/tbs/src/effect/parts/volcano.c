@@ -8,7 +8,7 @@
 // across, and bounce off y = 120; a spark's variant is its remaining life, 0
 // when idle.
 
-#define VOLCANO_FRAMES 96               // frames in the effect
+#define VOLCANO_FRAMES 96
 #define VOLCANO_ERUPTION 200            // sparks thrown as a pillar starts
 #define VOLCANO_TRICKLE 4               // and each frame after
 #define VOLCANO_SPARK_POOL 1024         // sparks in PARTICLES
@@ -18,12 +18,12 @@
 // Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 // Storm (kind 13).
 //
-// Battle effect 13: one, two or four columns of fire (gVolcano_Counts by
-// effect->variant) rise near the far edge on the targets' side, at the
-// depths of gVolcano_Depths, starting at gVolcano_StartFrames; each
-// erupts with a fountain of 200 sparks and keeps spitting more, and each
-// eruption knocks the targets back. The battle shows the damage on frame
-// 16. Variant 0 is red, 2 orange; variant 2 also swings the camera round.
+// One, two or four columns of fire (gVolcano_Counts by effect->variant) rise
+// near the far edge on the targets' side, at the depths of gVolcano_Depths,
+// starting at gVolcano_StartFrames; each erupts with a fountain of 200 sparks
+// and keeps spitting more, and each eruption knocks the targets back. The
+// battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant 2
+// also swings the camera round.
 void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -44,7 +44,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

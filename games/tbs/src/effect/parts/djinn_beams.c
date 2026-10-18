@@ -10,14 +10,13 @@
 
 // Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
 //
-// Battle effects 25 and 201, with a Venus Djinni: beams of light, where
-// motes drift down over each target and a column of light falls on it.
+// With a Venus Djinni: beams of light, where motes drift down over each target
+// and a column of light falls on it.
 DEFINE_EFFECT_KIND(BattleFx_RunRevive, BattleFx_RunDjinnBeams, 0)
 
 // Abilities: Dew (kind 209).
 //
-// Battle effect 209, with a Mercury Djinni: the same beams of light as
-// Revive.
+// With a Mercury Djinni: the same beams of light as Revive.
 DEFINE_EFFECT_KIND(BattleFx_RunDew, BattleFx_RunDjinnBeams, 1)
 
 // When effect->prelude is 1, a Djinni appears, sways and then rises out of

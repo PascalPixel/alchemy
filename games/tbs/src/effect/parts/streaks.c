@@ -24,38 +24,37 @@ enum StreakStyle {
 
 // Abilities: Sonic Wave (kind 300).
 //
-// Battle effect 300: ember streaks. Three streaks of ember light fly from
-// the user at each target in turn; each target flashes and recoils.
+// Ember streaks. Three streaks of ember light fly from the user at each target
+// in turn; each target flashes and recoils.
 DEFINE_EFFECT_KIND(BattleFx_RunSonicWave, BattleFx_RunStreakVolley,
                    STREAK_STYLE_EMBER)
 
 // Abilities: Shriek (kind 301).
 //
-// Battle effect 301: lime streaks. Three streaks of lime light fly from the
-// user at each target in turn; each target flashes and recoils.
+// Lime streaks. Three streaks of lime light fly from the user at each target in
+// turn; each target flashes and recoils.
 DEFINE_EFFECT_KIND(BattleFx_RunShriek, BattleFx_RunStreakVolley,
                    STREAK_STYLE_LIME)
 
 // Abilities: Banshee Howl (kind 302).
 //
-// Battle effect 302: violet streaks. Three streaks of violet light fly from
-// the user at each target in turn; each target flashes and trembles.
+// Violet streaks. Three streaks of violet light fly from the user at each
+// target in turn; each target flashes and trembles.
 DEFINE_EFFECT_KIND(BattleFx_RunBansheeHowl, BattleFx_RunStreakVolley,
                    STREAK_STYLE_VIOLET)
 
 // Abilities: War Cry (kind 304).
 //
-// Battle effect 304: cyan streaks. Three flickering cyan streaks, cycling
-// through three colour rows, fly from the user at each target in turn;
-// each target flashes and recoils.
+// Cyan streaks. Three flickering cyan streaks, cycling through three colour
+// rows, fly from the user at each target in turn; each target flashes and
+// recoils.
 DEFINE_EFFECT_KIND(BattleFx_RunWarCry, BattleFx_RunStreakVolley,
                    STREAK_STYLE_CYAN)
 
 // Abilities: Wicked Howl (kind 305).
 //
-// Battle effect 305: red streaks. Three flickering red streaks, cycling
-// through three colour rows, fly from the user at each target in turn;
-// each target flashes and trembles.
+// Red streaks. Three flickering red streaks, cycling through three colour rows,
+// fly from the user at each target in turn; each target flashes and trembles.
 DEFINE_EFFECT_KIND(BattleFx_RunWickedHowl, BattleFx_RunStreakVolley,
                    STREAK_STYLE_RED)
 
@@ -261,21 +260,21 @@ enum { MOTE_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
 // Abilities: Sleep Star (kind 349).
 //
-// Battle effect 349: rising motes that drift onto the targets and strike.
-// Motes burst out of the user and float up, wobbling, as they drift across
-// the field; each target flinches in turn.
+// Rising motes that drift onto the targets and strike.
+// Motes burst out of the user and float up, wobbling, as they drift across the
+// field; each target flinches in turn.
 DEFINE_EFFECT_KIND(BattleFx_RunSleepStar, BattleFx_RunMoteFountain,
                    MOTE_FOUNTAIN_DRIFTING)
 
 // Abilities: Soothing Star (kind 344).
 //
-// Battle effect 344: rising healing motes. Orange motes burst out of the
+// Rising healing motes. Orange motes burst out of the
 // user and float up close to it, and each target glows in turn with the
 // recovery sound.
 DEFINE_EFFECT_KIND(BattleFx_RunSoothingStar, BattleFx_RunMoteFountain,
                    MOTE_FOUNTAIN_HEALING)
 
-#define MOTE_FOUNTAIN_FRAMES 128 // frames in the effect
+#define MOTE_FOUNTAIN_FRAMES 128
 
 // Motes burst out of the user in every direction and float upwards,
 // wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each

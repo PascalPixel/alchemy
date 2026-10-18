@@ -1,7 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Condemn.
 
-#define CONDEMN_FRAMES 132       // frames in the effect
+#define CONDEMN_FRAMES 132
 #define CONDEMN_BREAK_FRAME 88   // the panel breaks in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces
 
@@ -11,11 +11,10 @@
 
 // Abilities: Condemn (kind 40).
 //
-// Battle effect 40: a tall panel (57x98) swings across the screen three
-// times, each pass fading out through a ripple, the last over the first
-// target; on frame 88 it shatters in a white flash into a burst of larger
-// pieces and the target is knocked back, bouncing on frame 120. The effect
-// layer ripples throughout. 132 frames.
+// A tall panel (57x98) swings across the screen three times, each pass fading
+// out through a ripple, the last over the first target; on frame 88 it shatters
+// in a white flash into a burst of larger pieces and the target is knocked
+// back, bouncing on frame 120. The effect layer ripples throughout. 132 frames.
 void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   void **slots;
   void **cursor;
@@ -43,7 +42,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   work->effect = object;
   BattleFx_BeginTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16); // an even mix
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The panel in work, the pieces of the burst in gMapCellBuffer.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);

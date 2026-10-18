@@ -378,7 +378,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
 
           if (alive > 0) {
             span = alive / 10 + 1;
-            draw[1](canvas, graphics + gBattleFx_MoteCellOffsets[span - 1],
+            draw[1](canvas, graphics + gBattleFx_MoteCells[span - 1],
                     (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                     span, span * 2);
           }
@@ -467,7 +467,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
             size = (frame - threshold) / 2;
             if (size > 2)
               size = 2;
-            draw[1](canvas, work->sheet + gWhirlwindComets_CellOffsets[size],
+            draw[1](canvas, work->sheet + gWhirlwindComets_Cells[size],
                     mark->x, mark->y - gWhirlwindComets_CellBiasY[size],
                     gWhirlwindComets_CellWidths[size],
                     gWhirlwindComets_CellHeights[size]);

@@ -103,7 +103,7 @@ extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // gBattleFx_MoteCells
 extern const u8 gData_08199364[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_081991f0[];

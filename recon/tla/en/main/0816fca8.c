@@ -104,7 +104,7 @@ extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_VioletPaletteC;
 extern u8 gMapCellBuffer[];
 extern struct EffectStep gData_02014000[]; // the sparks
-extern u16 gData_08197410[];               // gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[];               // gBattleFx_MoteCells
 extern const u16 gData_08197486[];         // the flashes' cells: offsets,
 extern const u8 gData_08197492[];          // widths
 extern const u8 gData_08197498[];          // and heights

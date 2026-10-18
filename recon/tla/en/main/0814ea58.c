@@ -81,7 +81,7 @@ extern char ResourceId_IceBlockSheet;
 extern char ResourceId_BlastSheet;
 extern char ResourceId_VioletPaletteC;
 extern u8 Data_081982f4[];   // the mote size by mode
-extern u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
 
 // Motes of light burst out of each target in turn, 20 frames apart, and
 // are drawn into the user.

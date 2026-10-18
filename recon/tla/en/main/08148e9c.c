@@ -52,7 +52,7 @@ extern char ResourceId_TornadoSheet;
 
 // ☀️ gWhirlwind_Shapes: funnels, sway radius and shake, for each variant.
 extern u8 gData_081979ae[];
-// ☀️ gBattleFx_GlintCellOffsets, Widths and Heights.
+// ☀️ gBattleFx_GlintCells, Widths and Heights.
 extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];

@@ -221,7 +221,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                               COMPOSITE_MAX);
           ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
               canvas,
-              work->sheet + gBattleFx_GlintCellOffsets[frame & 3] +
+              work->sheet + gBattleFx_GlintCells[frame & 3] +
                   TARGET_MOTE_GLINT_CELLS,
               x, y + 16, gBattleFx_GlintCellWidths[frame & 3],
               gBattleFx_GlintCellHeights[frame & 3]);

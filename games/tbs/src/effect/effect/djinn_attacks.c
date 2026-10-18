@@ -567,13 +567,13 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
           blitters[0](canvas,
-                      work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+                      work->sheet + gBattleFx_PuffArcCells[cell],
                       step->x - (width >> 1),
                       step->y + gBattleFx_PuffArcCellBiasY[cell], width,
                       gBattleFx_PuffArcCellHeights[cell]);
 #else
           blitters[0](
-              canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+              canvas, work->sheet + gBattleFx_PuffArcCells[cell],
               step->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
               step->y + gBattleFx_PuffArcCellBiasY[cell], width,
               gBattleFx_PuffArcCellHeights[cell]);
@@ -596,7 +596,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
 
         size = (index & 1) + 3;
         x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-        draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
+        draw[1](canvas, sheet + gBattleFx_MoteCells[size - 1],
                 x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
         EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
         angle = step->z;

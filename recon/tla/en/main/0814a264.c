@@ -60,7 +60,7 @@ extern char ResourceId_OrangePaletteB;   // directory row 0x148
 extern u8 Data_08197a20[];    // ☀️ gVolcano_Counts, for each variant
 extern s8 Data_08197a23[][4]; // ☀️ gVolcano_Depths
 extern u8 Data_08197a2f[];    // ☀️ gVolcano_StartFrames
-extern u16 gData_08197410[];  // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[];  // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer

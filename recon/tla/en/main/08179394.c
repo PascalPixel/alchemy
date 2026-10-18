@@ -106,7 +106,7 @@ extern char ResourceId_OrangePaletteB;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern struct EffectStep gData_02015000[]; // the embers
-extern const u16 gData_08197410[];         // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[];         // gBattleFx_MoteCells
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
 extern const u8 Data_08199400[][4];

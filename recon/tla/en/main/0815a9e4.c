@@ -100,7 +100,7 @@ extern char ResourceId_ParticleSpritesA;
 // ☀️'s gGaia_Bg2Shifts, by side and variant.
 extern s8 Data_08198648[][3];
 // The growing wall's nine rows: ☀️'s gGaia_RowWidths and
-// gGaia_RowSheetOffsets.
+// gGaia_RowCells.
 extern u8 Data_08198632[];
 extern u16 Data_08198620[];
 // The mound's three cels: ☀️'s gGaia_MoundWidths, _MoundHeights and

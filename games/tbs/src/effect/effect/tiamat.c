@@ -342,7 +342,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           u8 size = gPaletteParticles_DropSizes[i & 3];
           s32 height = size * 2;
 
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCells[size - 1],
                   HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
           grain->x += grain->velocityX * dir;
           grain->y += grain->velocityY;
@@ -425,7 +425,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
             AudioCommand_PlayFar(SE_136);
-          draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
+          draw[0](canvas, sheet + gBattleFx_MoteCells[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {
           streak->variant++;

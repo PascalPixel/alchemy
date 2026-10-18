@@ -71,7 +71,7 @@ enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 extern char ResourceId_BlastSheet;
 extern char ResourceId_FireStreakSheet;
 extern u8 Data_081983a2[][3]; // gEruptionEffect_Counts
-extern u16 gData_08197410[];  // gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[];  // gBattleFx_MoteCells
 extern u16 Data_081983ac[];   // gEruptionEffect_PuffCells
 extern u16 Data_081983ba[];   // gEruptionEffect_PuffSizes
 

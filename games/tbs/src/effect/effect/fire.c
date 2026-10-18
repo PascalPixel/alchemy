@@ -101,7 +101,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         CLAMP(screen.depth, 160, 799);
         size = 10 - (screen.depth - 160) / 64;
         draw[frame < launchFrame + 48 ? 1 : 0](
-            canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
+            canvas, sheet + gBattleFx_MoteCells[size - 1],
             screen.x - size / 2, screen.y - size, size, size * 2);
         ember->x += ember->velocityX;
         ember->y += ember->velocityY;

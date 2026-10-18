@@ -248,7 +248,7 @@ enum CanvasTransferMode {
 // `draw`, centred across x and standing on y: the motes, sparks and dust of
 // 32 effects, from the mote fountain to the summons.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
-  (draw)(canvas, (sheet) + gBattleFx_MoteCellOffsets[(size) - 1],              \
+  (draw)(canvas, (sheet) + gBattleFx_MoteCells[(size) - 1],              \
          (x) - (size) / 2, (y) - (size), size, (size) * 2)
 
 // Draws flare cell `size` of `sheet`, a square `size` pixels from its centre

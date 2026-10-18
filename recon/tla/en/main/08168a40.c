@@ -78,7 +78,7 @@ extern struct FxPair gData_08196e7c; // ☀️ gObjectRow_SweepPair
 extern struct FxPair gData_08196e84; // ☀️ gObjectRow_RisePair
 extern u8 gData_08198ada[];          // the row's x offsets
 extern u8 gData_08198ae3[];          // the row's heights
-extern u16 gData_08197410[];         // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[];         // ☀️ gBattleFx_MoteCells
 extern u32 gCameraSceneParameters[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);

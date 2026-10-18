@@ -57,7 +57,7 @@ extern char ResourceId_BlueFlameSheet;
 
 // The swirl's seven growth frames, cut from one sheet. Not const: the native
 // reloads them after every call.
-extern u16 gHelmSplitter_CellSourceOffsets[];
+extern u16 gHelmSplitter_Cells[];
 extern s8 gHelmSplitter_CellBiasX[];
 extern s8 gHelmSplitter_CellBiasY[];
 extern u8 gHelmSplitter_CellWidths[];
@@ -168,13 +168,13 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                   gHelmSplitter_CellBiasX[cell] + 30,
                   gHelmSplitter_CellBiasY[cell] + position.y - 60,
                   gHelmSplitter_CellWidths[cell],
                   gHelmSplitter_CellHeights[cell]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                   -gHelmSplitter_CellBiasX[cell] -
                       gHelmSplitter_CellWidths[cell] + 98,
                   gHelmSplitter_CellBiasY[cell] + position.y - 60,
@@ -190,13 +190,13 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                   position.x / 2 + gHelmSplitter_CellBiasX[cell] - 16,
                   gHelmSplitter_CellBiasY[cell] + position.y - 92,
                   gHelmSplitter_CellWidths[cell],
                   gHelmSplitter_CellHeights[cell]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                   position.x / 2 - gHelmSplitter_CellBiasX[cell] -
                       gHelmSplitter_CellWidths[cell] + 16,
                   gHelmSplitter_CellBiasY[cell] + position.y - 92,

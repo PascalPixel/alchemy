@@ -241,7 +241,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
         point = &work->particles[i * 4 + j];
         if (point->variant >= 0) {
           cell = point->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gBattleFx_GlintCellOffsets[cell],
+          draw[j & 1](canvas, work->sheet + gBattleFx_GlintCells[cell],
                       point->x + x, point->y + y,
                       gBattleFx_GlintCellWidths[cell],
                       gBattleFx_GlintCellHeights[cell]);

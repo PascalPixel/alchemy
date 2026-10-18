@@ -67,7 +67,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
      (y) / 8 * 2048) = 2)
 
 // The 33 pieces: each one's size, place in the sheet and starting point
-// (The Broken Seal's gBattlePieceWidth, Height, Offset, StartX and StartY).
+// (The Broken Seal's gTileAnimation_PieceWidths, Height, Offset, StartX and StartY).
 extern u8 Data_08197609[];
 extern u8 Data_0819762a[];
 extern u16 Data_0819764c[];

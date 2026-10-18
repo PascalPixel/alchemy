@@ -9,8 +9,8 @@
 // - The gathering, on the violet sky backdrop: a projected formation of
 //   sixteen objects moves forward while rotating motes shrink in on its
 //   centre. A burst then grows there, shards fly from it, and a ring of
-//   dimming motes spreads outward. It runs SHOCKWAVE_GATHER_FRAMES frames.
-// - The sweep, SHOCKWAVE_SWEEP_FRAMES frames: the formation gives way to
+//   dimming motes spreads outward. It runs JUDGMENT_GATHER_FRAMES frames.
+// - The sweep, JUDGMENT_SWEEP_FRAMES frames: the formation gives way to
 //   debris objects and the scene cuts to an aerial backdrop, then to beach
 //   and forest ones, swapping palettes, backdrop and debris on set frames.
 //   Meanwhile expanding elliptical rings are drawn into a wave picture that
@@ -22,40 +22,40 @@
 // (150, 214 or 280).
 //
 // Particle slots: the gathering's motes use PARTICLES 0 to 127 and its
-// sparks 128 to 255 (SHOCKWAVE_SPARKS). The sweep's debris use particles 0
+// sparks 128 to 255 (JUDGMENT_SPARKS). The sweep's debris use particles 0
 // to 15, one for each debris object.
 //
-// The work block is laid out as ShockwaveWork: the sheet's pixels first (the
+// The work block is laid out as JudgmentWork: the sheet's pixels first (the
 // sweep's wave picture is its first 120x120 bytes), then eight dimmed copies
 // of the mote sheet.
 
-struct ShockwaveWork {
+struct JudgmentWork {
   u8 sheet[0x2710];
   u8 ramp[8][770];
 };
 
-#define SHOCKWAVE_SPARKS (&PARTICLES[128])
+#define JUDGMENT_SPARKS (&PARTICLES[128])
 
-#define SHOCKWAVE_GATHER_FRAMES 160    // frames of the gathering
-#define SHOCKWAVE_SWEEP_FRAMES 320     // frames of the sweep
-#define SHOCKWAVE_SHEET_FLARE_B 0x4240 // the second flare picture in the sheet
-#define SHOCKWAVE_FORMATION_OBJECTS 16 // objects in the formation
-#define SHOCKWAVE_DEBRIS_OBJECTS 16    // debris objects of the sweep
-#define SHOCKWAVE_SHEET_BURST 0x600    // the burst pictures in the sheet
-#define SHOCKWAVE_SHEET_EXPLOSION 0x4000 // the explosion pictures in the sheet
-#define SHOCKWAVE_SHEET_FLARE_A 0x4000   // the first flare picture in the sheet
+#define JUDGMENT_GATHER_FRAMES 160    // frames of the gathering
+#define JUDGMENT_SWEEP_FRAMES 320     // frames of the sweep
+#define JUDGMENT_SHEET_FLARE_B 0x4240 // the second flare picture in the sheet
+#define JUDGMENT_FORMATION_OBJECTS 16 // objects in the formation
+#define JUDGMENT_DEBRIS_OBJECTS 16    // debris objects of the sweep
+#define JUDGMENT_SHEET_BURST 0x600    // the burst pictures in the sheet
+#define JUDGMENT_SHEET_EXPLOSION 0x4000 // the explosion pictures in the sheet
+#define JUDGMENT_SHEET_FLARE_A 0x4000   // the first flare picture in the sheet
 // The small flash picture in the sheet.
-#define SHOCKWAVE_SHEET_FLASH_SMALL 0x6000
+#define JUDGMENT_SHEET_FLASH_SMALL 0x6000
 // The large flash picture in the sheet.
-#define SHOCKWAVE_SHEET_FLASH_LARGE 0x6110
+#define JUDGMENT_SHEET_FLASH_LARGE 0x6110
 // The flash streak picture in the sheet.
-#define SHOCKWAVE_SHEET_FLASH_STREAK 0x64e8
-#define SHOCKWAVE_EXPLOSION_CELL_BYTES 1728 // bytes in each explosion picture
-#define SHOCKWAVE_WAVE_SIZE 120             // the wave picture is 120x120
-#define SHOCKWAVE_DMA_FILL_CANVAS                                              \
+#define JUDGMENT_SHEET_FLASH_STREAK 0x64e8
+#define JUDGMENT_EXPLOSION_CELL_BYTES 1728 // bytes in each explosion picture
+#define JUDGMENT_WAVE_SIZE 120             // the wave picture is 120x120
+#define JUDGMENT_DMA_FILL_CANVAS                                              \
   DMA_FILL_WORDS(0x1000) // DMA word that clears the canvas
 // DMA word that clears the wave picture.
-#define SHOCKWAVE_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
+#define JUDGMENT_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
 
 // Abilities: Judgment (scene kind 9).
 //
@@ -120,7 +120,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // Wipe the battle away, change the backdrop behind it, wipe back.
   BattleFx_WipeCanvas(0, 0);
   BattleFx_SelectLivingTargets(work->effect);
-  BattleFx_SpawnObjects(SHOCKWAVE_FORMATION_OBJECTS, 0x17e, 1);
+  BattleFx_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
@@ -134,7 +134,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   maximumDepth = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB,
-                             work->sheet + SHOCKWAVE_SHEET_BURST, 0, 0);
+                             work->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
@@ -147,7 +147,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     for (j = 0; j != 770; j++) {
       s32 v = *src++;
       EFFECT_CAP_LEVEL(v, 64 - i * 7);
-      ((struct ShockwaveWork *)work)->ramp[i][j] = v;
+      ((struct JudgmentWork *)work)->ramp[i][j] = v;
     }
   }
 
@@ -179,12 +179,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
      * 0 stored directly differs 138 of 2455; see amp for the forms set before
      * the loop. */
     s32 speed = 0;
-    SHOCKWAVE_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
-    SHOCKWAVE_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
-    SHOCKWAVE_SPARKS[i].y = ((Random16() & 63) + 32) << 16;
-    SHOCKWAVE_SPARKS[i].velocityX = speed;
-    SHOCKWAVE_SPARKS[i].velocityY = speed;
-    SHOCKWAVE_SPARKS[i].variant = angle;
+    JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
+    JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
+    JUDGMENT_SPARKS[i].y = ((Random16() & 63) + 32) << 16;
+    JUDGMENT_SPARKS[i].velocityX = speed;
+    JUDGMENT_SPARKS[i].velocityY = speed;
+    JUDGMENT_SPARKS[i].variant = angle;
   }
 
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
@@ -193,7 +193,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
   // The gathering. A or B ends it after frame 4; on frame 143 the whole
   // canvas flashes.
-  for (frame = 0; frame != SHOCKWAVE_GATHER_FRAMES &&
+  for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
     /* FAKEMATCH: the frame > 143 block calls through a pointer
@@ -216,8 +216,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 z;
         s32 size;
 
-        EffectStep_AdvanceWithGravity3D(&SHOCKWAVE_SPARKS[i], 60, -0x400);
-        EffectPosition_ApplyBaseAndYOffset(&SHOCKWAVE_SPARKS[i],
+        EffectStep_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -0x400);
+        EffectPosition_ApplyBaseAndYOffset(&JUDGMENT_SPARKS[i],
                                            &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
@@ -239,10 +239,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
                          projectedPosition.y, size);
         if (frame == 64) {
-          SHOCKWAVE_SPARKS[i].velocityX +=
-              (Trig_Sin(SHOCKWAVE_SPARKS[i].variant) * 255) >> 3;
-          SHOCKWAVE_SPARKS[i].velocityY +=
-              (Trig_Cos(SHOCKWAVE_SPARKS[i].variant) * 255) >> 3;
+          JUDGMENT_SPARKS[i].velocityX +=
+              (Trig_Sin(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
+          JUDGMENT_SPARKS[i].velocityY +=
+              (Trig_Cos(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
         }
       }
     }
@@ -293,7 +293,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     pair = unitScale;
     place.groundHeight = 0;
     place.height = 0;
-    for (i = 0; i != SHOCKWAVE_FORMATION_OBJECTS; i++) {
+    for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
       place.x = ((i % 4) << 21) + (152 << 15);
       place.y = ((i / 4) << 21) + depth;
       Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
@@ -314,12 +314,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 72) {
-      for (i = 0; i != SHOCKWAVE_FORMATION_OBJECTS; i++) {
+      for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
         AnimationObjects_SelectAnimationFar(work->objects[i], i + 16);
       }
     }
     if (frame == 76) {
-      for (i = 0; i != SHOCKWAVE_FORMATION_OBJECTS; i++) {
+      for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
         AnimationObjects_SelectAnimationFar(work->objects[i], i + 32);
       }
     }
@@ -336,8 +336,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       }
       // A shared load/draw/release helper grew this runner by eight bytes
       // in English (0x167c to0x1684); keep these four explicit draws.
-      high = gShockwaveScene_BurstHeights[n];
-      cell = gShockwaveScene_BurstCells[n] + SHOCKWAVE_SHEET_BURST;
+      high = gJudgment_BurstHeights[n];
+      cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                           COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -370,12 +370,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 k = i & 3;
         s32 angle = Random16() & 0xffff;
         s32 x =
-            ((Trig_Sin(angle) * 16) >> 16) - gShockwaveScene_ShardWidths[k] / 2;
+            ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
         s32 y = ((Trig_Cos(angle) * 16) >> 16) -
-                gShockwaveScene_ShardHeights[k] / 2;
-        draw[0](canvas, work->sheet + gShockwaveScene_ShardCells[k], x + 60,
-                y + 80, gShockwaveScene_ShardWidths[k],
-                gShockwaveScene_ShardHeights[k]);
+                gJudgment_ShardHeights[k] / 2;
+        draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60,
+                y + 80, gJudgment_ShardWidths[k],
+                gJudgment_ShardHeights[k]);
       }
     }
 
@@ -403,7 +403,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       r = frame * 10 - 1424;
       work->transferValue = 75;
       if (n <= 6) {
-        s32 cell = n * 770 + gBattleFx_MoteCellOffsets[7] + 0x2710;
+        s32 cell = n * 770 + gBattleFx_MoteCells[7] + 0x2710;
         /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp.
          * 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
         s32 high = 8;
@@ -427,11 +427,11 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // animations, load the crescent sheet and show the aerial view.
   Iwram_FillWords(canvas, 0x4000, 0);
 
-  for (i = 0; i != SHOCKWAVE_FORMATION_OBJECTS; i++) {
+  for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
 
-  for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
+  for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
     struct AnimationObject *obj = ResourceObject_CreateFar(0x186);
     work->objects[i] = obj;
     if (obj != 0) {
@@ -469,7 +469,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(7);
 
   fill = 0;
-  Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+  Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
 
   // The rings' centre in the wave picture (cx, cy), their width in eighths
   // (sx, which also scales them above the centre), their depth below it
@@ -485,13 +485,13 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   fill = shift;
-  Dma_Set(&fill, work, SHOCKWAVE_DMA_FILL_WAVE, REG_DMA3);
+  Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
 
   // The sweep, on its own frame clock: the impact on the aerial view (0 to
   // 149), the beach (150 to 213), the forest (214 to 279), and from 280 the
   // battle again, brightening a step every frame. On frame 300 the battle
   // shows the damage.
-  for (frame = 0; frame != SHOCKWAVE_SWEEP_FRAMES; frame++) {
+  for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
       AudioCommand_PlayFar(SE_145);
       AudioCommand_PlayFar(SE_141);
@@ -517,7 +517,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
         IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
-                                   work->sheet + SHOCKWAVE_SHEET_EXPLOSION, 1,
+                                   work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
                                    0);
       } else if (frame >= 155 && frame < 214) {
         frame = 214;
@@ -532,11 +532,11 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
       fill = 0;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
-                                 work->sheet + SHOCKWAVE_SHEET_EXPLOSION, 1, 0);
+                                 work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
-                                 work->sheet + SHOCKWAVE_SHEET_FLASH_SMALL, 0,
+                                 work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }
 
@@ -551,7 +551,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // Frames 69, 182 and 238 flash the whole canvas.
     if (frame == 69) {
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
     if (frame == 70) {
@@ -568,9 +568,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       fill = 0;
       rings = 4;
       squash = 8;
-      Dma_Set(&fill, work, SHOCKWAVE_DMA_FILL_WAVE, REG_DMA3);
+      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
 
@@ -578,11 +578,11 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // floor, those further right drawn smaller.
     if (frame == 214) {
       fill = 0;
-      Dma_Set(&fill, work, SHOCKWAVE_DMA_FILL_WAVE, REG_DMA3);
+      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-      for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
+      for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         particle->x = ((Random16() & 63) + 32) << 16;
         particle->y = ((Random16() & 31) + 96) << 16;
@@ -598,12 +598,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       // where the explosion front now scrolls back from.
       BattleFx_SetupBlendedDisplay();
       fill = 0;
-      Dma_Set(&fill, work, SHOCKWAVE_DMA_FILL_WAVE, REG_DMA3);
+      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x01010101;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       ctrl->active = 0;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
+      for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         particle->x = ((Random16() & 63) + 256) << 16;
         particle->y = ((Random16() & 31) + 96) << 16;
@@ -642,7 +642,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 182) {
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
     // Frames 0 to 63: a flare falls onto the aerial view, drawn as four
@@ -651,9 +651,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       u8 *sheet;
       s32 top = frame - 4;
       if ((frame & 7) < 4) {
-        sheet = work->sheet + SHOCKWAVE_SHEET_FLARE_A;
+        sheet = work->sheet + JUDGMENT_SHEET_FLARE_A;
       } else {
-        sheet = work->sheet + SHOCKWAVE_SHEET_FLARE_B;
+        sheet = work->sheet + JUDGMENT_SHEET_FLARE_B;
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                           COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -686,41 +686,41 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // Frames 64 to 85: the flash plays twice: a small picture, a large one,
     // then four streaks that close in (68 to 75) or spread out (82 to 85).
     if (frame >= 64 && frame < 66) {
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_SMALL, 52, 51, 16,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16,
               17);
     }
     if (frame >= 66 && frame < 68) {
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_LARGE, 48, 40, 24,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24,
               41);
     }
     if (frame >= 68 && frame < 76) {
       s32 d = 76 - frame;
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, 49 - d / 2,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
               38 - d, 22, 44);
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, 49 - d / 2,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
               d + 38, 22, 44);
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, d / 2 + 49,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
               38 - d, 22, 44);
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, d / 2 + 49,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
               d + 38, 22, 44);
     }
     if (frame >= 78 && frame < 80) {
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_SMALL, 52, 51, 16,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16,
               17);
     }
     if (frame >= 80 && frame < 82) {
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_LARGE, 48, 40, 24,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24,
               41);
     }
     if (frame >= 82 && frame < 86) {
       s32 d = frame * 2 - 164;
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, 49 - d / 4,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
               38 - d, 22, 44);
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, 49 - d / 4,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
               d + 38, 22, 44);
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, d / 4 + 49,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
               38 - d, 22, 44);
-      draw[0](canvas, work->sheet + SHOCKWAVE_SHEET_FLASH_STREAK, d / 4 + 49,
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
               d + 38, 22, 44);
     }
 
@@ -734,7 +734,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 angle = i << 8;
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
-        draw[0](canvas, ramp + gBattleFx_MoteCellOffsets[size - 1], x + 60,
+        draw[0](canvas, ramp + gBattleFx_MoteCells[size - 1], x + 60,
                 y + 50, size, size * 2);
       }
     }
@@ -784,10 +784,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             if (right > 119) {
               right = 119;
             }
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + left] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + left] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
             right = cx + half + 1;
             left = cx - half + 1;
             if (left < 0) {
@@ -796,10 +796,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             if (right > 119) {
               right = 119;
             }
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + left] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + left] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
 
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
@@ -825,10 +825,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             if (bottom > 119) {
               bottom = 119;
             }
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + left] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + left] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
             right = cx + halfSlope + 1;
             left = cx - halfSlope + 1;
             if (left < 0) {
@@ -837,10 +837,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             if (right > 119) {
               right = 119;
             }
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * SHOCKWAVE_WAVE_SIZE + left] = 20;
-            work->sheet[top * SHOCKWAVE_WAVE_SIZE + left] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
 
             err = err - slope * 2 - 1;
             if (err < 0) {
@@ -862,8 +862,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
         draw[0](canvas,
                 work->sheet +
-                    ((frame / 2 + i) % 4) * SHOCKWAVE_EXPLOSION_CELL_BYTES +
-                    SHOCKWAVE_SHEET_EXPLOSION,
+                    ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                    JUDGMENT_SHEET_EXPLOSION,
                 x + 44, y + 17, 32, 54);
       }
     }
@@ -874,7 +874,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 85) {
       // From frame 86 add the wave picture over the canvas.
-      draw[1](canvas, work, 0, 0, SHOCKWAVE_WAVE_SIZE, SHOCKWAVE_WAVE_SIZE);
+      draw[1](canvas, work, 0, 0, JUDGMENT_WAVE_SIZE, JUDGMENT_WAVE_SIZE);
     }
 
     if (frame > 279) {
@@ -892,7 +892,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 238) {
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, SHOCKWAVE_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
     // Frames 214 to 279: the forest scrolls 8 pixels a frame, and from 246
@@ -918,7 +918,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame > 213) {
       debrisPlace.groundHeight = 0;
       debrisPlace.height = 0;
-      for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
+      for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         if (particle->variant != 0) {
           scale.x = particle->z + (particle->y >> 7);
@@ -956,8 +956,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
           s32 y = (i / 2) * 32 - (Random16() & 15);
           draw[1](canvas,
                   work->sheet +
-                      ((frame / 2 + i) % 4) * SHOCKWAVE_EXPLOSION_CELL_BYTES +
-                      SHOCKWAVE_SHEET_EXPLOSION,
+                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                      JUDGMENT_SHEET_EXPLOSION,
                   x, y, 32, 54);
         }
       } else {
@@ -967,8 +967,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
           s32 y = (i / 2) * 32 - (Random16() & 15);
           draw[1](canvas,
                   work->sheet +
-                      ((frame / 2 + i) % 4) * SHOCKWAVE_EXPLOSION_CELL_BYTES +
-                      SHOCKWAVE_SHEET_EXPLOSION,
+                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                      JUDGMENT_SHEET_EXPLOSION,
                   x, y, 32, 54);
         }
       }
@@ -990,7 +990,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  for (i = 0; i != SHOCKWAVE_DEBRIS_OBJECTS; i++) {
+  for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
 

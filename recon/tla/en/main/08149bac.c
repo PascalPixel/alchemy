@@ -75,7 +75,7 @@ extern char ResourceId_LightningBoltSheet; // directory row 0x188
 // group, groups, and each group's x offset.
 extern u16 Data_081979de[];
 extern u8 Data_08197a1a[];   // ☀️ gSparkGroups_FlashCells
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 // The sparks live in the map cell buffer.
 extern struct EffectStep gMapCellBuffer[];

@@ -62,7 +62,7 @@
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
-extern const u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 struct EffectCamera {
   s32 eye[3];

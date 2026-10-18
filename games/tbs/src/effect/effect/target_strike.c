@@ -422,7 +422,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
-        (*lower)(canvas, work->sheet + gBattleFx_GlintCellOffsets[image], x, y,
+        (*lower)(canvas, work->sheet + gBattleFx_GlintCells[image], x, y,
                  gBattleFx_GlintCellWidths[image],
                  gBattleFx_GlintCellHeights[image]);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -471,7 +471,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0) {
             EffectPosition_ApplyBaseAndYOffset(step, &position);
             position.x >>= 1;
-            draw[1](canvas, particleSheet + gBattleFx_MoteCellOffsets[size - 1],
+            draw[1](canvas, particleSheet + gBattleFx_MoteCells[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             EffectStep_AdvanceWithGravity3D(step, 60, 0);

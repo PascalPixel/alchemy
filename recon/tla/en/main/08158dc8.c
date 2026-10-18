@@ -95,8 +95,8 @@ extern char ResourceId_VioletLightningSheetB;
 extern char ResourceId_VioletMoteSheet;
 extern u32 gCameraSceneParameters[];
 extern const s16 Data_08196e2c[6][2]; // the three lines' end points
-extern const u16 gData_08197410[];    // gBattleFx_MoteCellOffsets
-extern const u16 gData_08197486[];    // gBattleFx_GlintCellOffsets
+extern const u16 gData_08197410[];    // gBattleFx_MoteCells
+extern const u16 gData_08197486[];    // gBattleFx_GlintCells
 extern const u8 gData_08197492[];     // gBattleFx_GlintCellWidths
 extern const u8 gData_08197498[];     // gBattleFx_GlintCellHeights
 extern const u8 Data_0819855e[];      // gThor_TargetPalettes

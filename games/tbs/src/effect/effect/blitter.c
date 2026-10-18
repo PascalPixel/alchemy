@@ -304,7 +304,7 @@
 // Installs a canvas blitter in heap slot `slot`. widthShift and heightShift
 // are the cell's dimensions as powers of two; flags select clipping and
 // mirroring, and mode how source pixels combine with the destination.
-// Returns nonzero when the walk ended exactly at gBattleFx_MoteCellOffsets,
+// Returns nonzero when the walk ended exactly at gBattleFx_MoteCells,
 // the expected end of the template.
 s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                           u32 mode) {
@@ -392,7 +392,7 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 
   BLITTER_WALK();
 
-  codeEnd = (const u32 *)gBattleFx_MoteCellOffsets;
+  codeEnd = (const u32 *)gBattleFx_MoteCells;
   return templateWords == codeEnd;
 }
 

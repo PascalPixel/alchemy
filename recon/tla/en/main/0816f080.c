@@ -78,7 +78,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_Data0D8;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // gBattleFx_MoteCells
 extern const s8 Data_08198bea[];   // the drops' bounce speeds
 extern const u8 Data_08199244[];   // the glow's and the splashes' mesh
 extern const u8 gData_08199210[];  // its four corners

@@ -63,7 +63,7 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_Data188;
 extern u8 gData_08198a9e[];  // ☀️ gSparkGroups_FlashCells
 extern s32 gData_08198aa4[]; // the dust's four gravities
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer

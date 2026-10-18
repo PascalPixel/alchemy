@@ -64,7 +64,7 @@ extern char ResourceId_VioletPaletteB; // directory row 0x122
 extern u8 Data_081979da[];   // ☀️ gPlasma_Counts
 extern u8 Data_081979cc[];   // ☀️ gPlasma_Columns, 7 for each side
 extern u16 Data_081979c0[];  // ☀️ gPlasma_Sparks: sparks, shake
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer

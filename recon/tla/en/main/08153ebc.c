@@ -123,8 +123,8 @@ extern char ResourceId_StagedParticlePath;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_EmberStreakSheet;
 extern s32 Data_081983cc[];  // gStagedParticles_UnitScale
-extern u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
-extern u16 gData_0819747a[]; // gBattleFx_PuffArcCellSourceOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
+extern u16 gData_0819747a[]; // gBattleFx_PuffArcCells
 extern u8 gData_08197467[];  // gBattleFx_PuffArcCellWidths
 extern u8 gData_08197473[];  // gBattleFx_PuffArcCellBiasY
 extern u8 gData_0819746d[];  // gBattleFx_PuffArcCellHeights

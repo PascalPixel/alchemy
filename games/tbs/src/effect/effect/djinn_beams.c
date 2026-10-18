@@ -148,7 +148,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
               screenPosition.x += sway;
             draw[i & 1](canvas,
                         work->sheet +
-                            gMemberBeam_MotePictures[mote->variant / 8 & 7] *
+                            gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 576 +
                             DJINN_BEAM_MOTE_CELLS,
                         screenPosition.x - 12, screenPosition.y - 12, 24, 24);
@@ -190,14 +190,14 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
             pic = (pic & 1) + 1;
           // The glow at the target's feet.
           if (frame < start + 100) {
-            draw[0](canvas, work->sheet + gMemberBeam_HeadOffsets[pic],
-                    screenPosition.x - gMemberBeam_HeadWidths[pic],
-                    screenPosition.y - gMemberBeam_HeadHeights[pic] + 8,
-                    gMemberBeam_HeadWidths[pic], gMemberBeam_HeadHeights[pic]);
-            draw[1](canvas, work->sheet + gMemberBeam_HeadOffsets[pic],
+            draw[0](canvas, work->sheet + gDjinnBeams_HeadOffsets[pic],
+                    screenPosition.x - gDjinnBeams_HeadWidths[pic],
+                    screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
+                    gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
+            draw[1](canvas, work->sheet + gDjinnBeams_HeadOffsets[pic],
                     screenPosition.x,
-                    screenPosition.y - gMemberBeam_HeadHeights[pic] + 8,
-                    gMemberBeam_HeadWidths[pic], gMemberBeam_HeadHeights[pic]);
+                    screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
+                    gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
           // The column, a row at a time.
           for (k = 0; k != screenPosition.y; k++) {

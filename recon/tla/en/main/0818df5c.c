@@ -109,7 +109,7 @@ struct MeteorStar {
 
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010018[];         // the shards' variants, 28 bytes apart
-extern const u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // gBattleFx_MoteCells
 extern const s32 Data_08196f20[2];
 extern const u8 Data_08199e70[];
 extern const u8 Data_08199e77[];

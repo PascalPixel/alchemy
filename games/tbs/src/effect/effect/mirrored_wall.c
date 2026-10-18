@@ -139,11 +139,11 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
       if (cell > 2)
         cell = (cell & 1) + 1;
       if (frame <= 27) {
-        draw[0](canvas, work->sheet + gEarthWall_CellSourceOffsets[cell],
+        draw[0](canvas, work->sheet + gEarthWall_Cells[cell],
                 64 - gEarthWall_CellWidths[cell],
                 (screenPosition.y - gEarthWall_CellHeights[cell]) + 8,
                 gEarthWall_CellWidths[cell], gEarthWall_CellHeights[cell]);
-        draw[1](canvas, work->sheet + gEarthWall_CellSourceOffsets[cell], 64,
+        draw[1](canvas, work->sheet + gEarthWall_Cells[cell], 64,
                 (screenPosition.y - gEarthWall_CellHeights[cell]) + 8,
                 gEarthWall_CellWidths[cell], gEarthWall_CellHeights[cell]);
       }

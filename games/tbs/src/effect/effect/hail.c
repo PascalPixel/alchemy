@@ -101,12 +101,12 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
         height = gHail_CellHeights[cell];
         draw[i & 1](
             canvas,
-            work->sheet + REVEAL_CHIP_CELLS + gHail_CellSourceOffsets[cell],
+            work->sheet + REVEAL_CHIP_CELLS + gHail_Cells[cell],
             HI(chip->x) - width / 2, HI(chip->y) - height / 2, width, height);
 #else
         draw[i & 1](canvas,
                     work->sheet + REVEAL_CHIP_CELLS +
-                        gHail_CellSourceOffsets[cell],
+                        gHail_Cells[cell],
                     HI(chip->x) - (width = gHail_CellWidths[cell]) / 2,
                     HI(chip->y) - (height = gHail_CellHeights[cell]) / 2, width,
                     height);

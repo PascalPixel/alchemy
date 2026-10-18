@@ -186,11 +186,11 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
       if (cell > 2)
         cell = (cell & 1) + 1;
-      draw[0](canvas, work->sheet + gGaia_MoundSheetOffsets[cell],
+      draw[0](canvas, work->sheet + gGaia_MoundCells[cell],
               wallX - gGaia_MoundWidths[cell] + 64,
               116 - gGaia_MoundHeights[cell], gGaia_MoundWidths[cell],
               gGaia_MoundHeights[cell]);
-      draw[1](canvas, work->sheet + gGaia_MoundSheetOffsets[cell], wallX + 64,
+      draw[1](canvas, work->sheet + gGaia_MoundCells[cell], wallX + 64,
               116 - gGaia_MoundHeights[cell], gGaia_MoundWidths[cell],
               gGaia_MoundHeights[cell]);
     }
@@ -202,10 +202,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
+        draw[0](canvas, work->sheet + gGaia_RowCells[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowSheetOffsets[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
@@ -216,10 +216,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
+        draw[0](canvas, work->sheet + gGaia_RowCells[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowSheetOffsets[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }

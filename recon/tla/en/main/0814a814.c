@@ -73,7 +73,7 @@ extern char ResourceId_VortexSheet;
 extern char ResourceId_HeartSheet; // directory row 0x16e
 extern char ResourceId_TornadoSheet;
 
-extern u16 gData_08197486[]; // ☀️ gBattleFx_GlintCellOffsets
+extern u16 gData_08197486[]; // ☀️ gBattleFx_GlintCells
 extern u8 gData_08197492[];  // ☀️ gBattleFx_GlintCellWidths
 extern u8 gData_08197498[];  // ☀️ gBattleFx_GlintCellHeights
 extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips

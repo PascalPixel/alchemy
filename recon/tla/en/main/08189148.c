@@ -57,7 +57,7 @@ extern char ResourceId_DualStreamPath;
 extern u8 gBattleFx_PuffArcCellWidths[];
 extern u8 gBattleFx_PuffArcCellHeights[];
 extern u8 gBattleFx_PuffArcCellBiasY[];
-extern u16 gBattleFx_PuffArcCellSourceOffsets[];
+extern u16 gBattleFx_PuffArcCells[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
@@ -235,13 +235,13 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 cell = frame / 3;
 
       draw[0](canvas,
-              &work->sheet[0x3c00] + gBattleFx_PuffArcCellSourceOffsets[cell],
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCells[cell],
               56 - gBattleFx_PuffArcCellWidths[cell] / 2,
               gBattleFx_PuffArcCellBiasY[cell] + 60,
               gBattleFx_PuffArcCellWidths[cell],
               gBattleFx_PuffArcCellHeights[cell]);
       draw[1](canvas,
-              &work->sheet[0x3c00] + gBattleFx_PuffArcCellSourceOffsets[cell],
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCells[cell],
               64 - gBattleFx_PuffArcCellWidths[cell] / 2,
               gBattleFx_PuffArcCellBiasY[cell] + 60,
               gBattleFx_PuffArcCellWidths[cell],
@@ -454,7 +454,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
 
           draw[1](canvas,
                   &work->sheet[0x3c00] +
-                      gBattleFx_PuffArcCellSourceOffsets[cell],
+                      gBattleFx_PuffArcCells[cell],
                   step->x - gBattleFx_PuffArcCellWidths[cell] / 2,
                   step->y + gBattleFx_PuffArcCellBiasY[cell],
                   gBattleFx_PuffArcCellWidths[cell],

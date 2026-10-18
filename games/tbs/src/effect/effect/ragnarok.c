@@ -251,7 +251,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
                 // compositing.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cel = sheet + gBattleFx_MoteCellOffsets[size - 1];
+                cel = sheet + gBattleFx_MoteCells[size - 1];
                 px -= size / 2;
                 py -= size;
                 blit[lane](canvas, cel, px, py, size, size * 2);

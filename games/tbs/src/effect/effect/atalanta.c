@@ -241,7 +241,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
               screen.y = screen.y + y + 16;
 #endif
               trail->x -= 4;
-              draw[1](canvas, sheet + gBattleFx_MoteCellOffsets[4],
+              draw[1](canvas, sheet + gBattleFx_MoteCells[4],
                       screen.x - 2, screen.y - 5, 5, 10);
             }
           }
@@ -299,14 +299,14 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             width = gBattleFx_PuffArcCellWidths[cell];
             draw[i & 1](canvas,
                         Ram_MapCellBuffer +
-                            gBattleFx_PuffArcCellSourceOffsets[cell],
+                            gBattleFx_PuffArcCells[cell],
                         slash->x - (width >> 1) - 8,
                         slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,
                         gBattleFx_PuffArcCellHeights[cell]);
 #else
             draw[i & 1](
                 canvas,
-                Ram_MapCellBuffer + gBattleFx_PuffArcCellSourceOffsets[cell],
+                Ram_MapCellBuffer + gBattleFx_PuffArcCells[cell],
                 slash->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1) -
                     8,
                 slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,

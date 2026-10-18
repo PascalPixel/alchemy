@@ -334,7 +334,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = sheet + gBattleFx_MoteCellOffsets[size - 1];
+              cell = sheet + gBattleFx_MoteCells[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;

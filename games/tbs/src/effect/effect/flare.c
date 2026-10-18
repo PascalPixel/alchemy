@@ -96,12 +96,12 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gBattleFx_PuffArcCellWidths[cell];
-        draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+        draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
              flame->x - (width >> 1),
              flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
              gBattleFx_PuffArcCellHeights[cell]);
 #else
-        draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+        draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
              flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
              flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
              gBattleFx_PuffArcCellHeights[cell]);
@@ -109,12 +109,12 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
         if (work->effect->variant != 0) {
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
                flame->x - (width >> 1),
                (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 16, width,
                gBattleFx_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
                flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
                (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 16, width,
                gBattleFx_PuffArcCellHeights[cell]);
@@ -123,12 +123,12 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
         if (work->effect->variant == 2) {
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
                flame->x - (width >> 1),
                (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 32, width,
                gBattleFx_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleFx_PuffArcCellSourceOffsets[cell],
+          draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
                flame->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
                (flame->y + gBattleFx_PuffArcCellBiasY[cell]) - 32, width,
                gBattleFx_PuffArcCellHeights[cell]);

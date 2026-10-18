@@ -16,7 +16,7 @@
 #define DRAGON_CLOUD_DRAW_PUFF(blit, cell, x, y)                               \
   blit(canvas,                                                                 \
        &work->sheet[DRAGON_CLOUD_PUFF_CELLS] +                                 \
-           gBattleFx_PuffArcCellSourceOffsets[cell],                           \
+           gBattleFx_PuffArcCells[cell],                           \
        x, y, gBattleFx_PuffArcCellWidths[cell],                                \
        gBattleFx_PuffArcCellHeights[cell])
 

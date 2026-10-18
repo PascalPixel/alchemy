@@ -274,7 +274,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
         screen.x /= 2;
         size >>= 3;
         size++;
-        draw[(i / 2) & 1](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
+        draw[(i / 2) & 1](canvas, sprites + gBattleFx_MoteCells[size - 1],
                           screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
         if (mote->y < 0x80000)

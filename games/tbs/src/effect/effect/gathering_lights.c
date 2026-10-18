@@ -30,7 +30,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunHaunting, BattleFx_RunGatheringLights, 2)
 // frames after its turn starts, and the battle shows the damage at frame 80.
 // The effect layer ripples throughout.
 // mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
-//        gMemberBurst_Counts: lights per target and frames.
+//        gGatheringLights_Counts: lights per target and frames.
 void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
                                  s32 mode) {
   struct EffectPosition screenPosition;
@@ -87,8 +87,9 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
                                 EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_146);
 
-  for (frame = 0; frame != gMemberBurst_Counts[mode][GATHERING_LIGHTS_FRAMES] +
-                               work->effect->count * 20;
+  for (frame = 0;
+       frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
+                    work->effect->count * 20;
        frame++) {
     s32 *row;
 
@@ -120,7 +121,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
         ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, k, 26);
       if (frame > k * 20) {
-        for (i = 0; i != gMemberBurst_Counts[mode][GATHERING_LIGHTS_COUNT];
+        for (i = 0; i != gGatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];
              i++) {
           struct EffectStep *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 

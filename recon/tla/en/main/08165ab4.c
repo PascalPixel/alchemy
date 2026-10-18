@@ -86,7 +86,7 @@ extern u8 gData_08198a64[];           // ☀️ gRamses_ObjectColumns
 extern u8 gData_08198a6d[];           // ☀️ gRamses_ObjectRows
 extern u16 gData_08198a76[];          // ☀️ gEruptionEffect_PuffCells
 extern u16 gData_08198a84[];          // ☀️ gCybele_EmberSizes
-extern u16 gData_08197410[];          // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[];          // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay

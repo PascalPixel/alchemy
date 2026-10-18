@@ -140,7 +140,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
                   COMPOSITE_CLIP_Y,
               gLightningBolts_GlintModes[work->effect->variant]);
           LIGHTNING_GLINT_BLITTER(
-              canvas, work->sheet + gBattleFx_GlintCellOffsets[kind], x, y,
+              canvas, work->sheet + gBattleFx_GlintCells[kind], x, y,
               gBattleFx_GlintCellWidths[kind],
               gBattleFx_GlintCellHeights[kind]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);

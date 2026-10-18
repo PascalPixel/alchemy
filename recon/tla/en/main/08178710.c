@@ -105,7 +105,7 @@ extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // gBattleFx_MoteCells
 extern const u8 gData_08199340[];  // a head's mesh
 extern const u8 Data_081991e0[];   // its corners
 

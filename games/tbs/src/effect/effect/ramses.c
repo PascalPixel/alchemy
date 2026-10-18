@@ -223,7 +223,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
         if (puff->variant >= 0 && puff->variant <= 23) {
           s32 cell = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gRamses_PuffSheetOffsets[cell],
+          draw[0](canvas, work->sheet + gRamses_PuffCells[cell],
                   HI(puff->x) - gRamses_PuffSizes[cell] / 2,
                   HI(puff->y) - gRamses_PuffSizes[cell] / 2,
                   gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);

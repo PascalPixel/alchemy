@@ -281,12 +281,12 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
         width = gBladeRain_CellWidths[cell];
         height = gBladeRain_CellHeights[cell];
         blit[(u32)drift >> 31](canvas,
-                               work->sheet + gBladeRain_CellSourceOffsets[cell],
+                               work->sheet + gBladeRain_Cells[cell],
                                (blade->x >> 16) - (width >> 1),
                                (blade->y >> 16) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gBladeRain_CellSourceOffsets[cell],
+            canvas, work->sheet + gBladeRain_Cells[cell],
             (blade->x >> 16) - ((width = gBladeRain_CellWidths[cell]) >> 1),
             (blade->y >> 16) - ((height = gBladeRain_CellHeights[cell]) >> 1),
             width, height);
@@ -303,12 +303,12 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
         width = gBladeRain_CellWidths[cell];
         height = gBladeRain_CellHeights[cell];
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gBladeRain_CellSourceOffsets[cell],
+            canvas, work->sheet + gBladeRain_Cells[cell],
             (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
             width, height - 4);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gBladeRain_CellSourceOffsets[cell],
+            canvas, work->sheet + gBladeRain_Cells[cell],
             (blade->x >> 16) - ((width = gBladeRain_CellWidths[cell]) >> 1),
             (blade->y >> 16) - ((height = gBladeRain_CellHeights[cell]) >> 1),
             width, height - 4);
@@ -609,8 +609,8 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
   // there a frame.
-  startY = gBattlePieceStartY;
-  startX = gBattlePieceStartX;
+  startY = gTileAnimation_PieceStartY;
+  startX = gTileAnimation_PieceStartX;
   radius = 0;
   piece = work->particles;
   for (i = 0; i != OPENING_PIECES; i++) {
@@ -772,9 +772,9 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
     if (frame <= 50) {
       for (i = 0; i != OPENING_PIECES; i++) {
         piece = &work->particles[i];
-        draw[0](canvas, work->imageStorage + gBattlePieceOffset[i],
-                HI(piece->x), HI(piece->y), gBattlePieceWidth[i],
-                gBattlePieceHeight[i]);
+        draw[0](canvas, work->imageStorage + gTileAnimation_PieceCells[i],
+                HI(piece->x), HI(piece->y), gTileAnimation_PieceWidths[i],
+                gTileAnimation_PieceHeights[i]);
         if (frame > 3)
           EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
       }

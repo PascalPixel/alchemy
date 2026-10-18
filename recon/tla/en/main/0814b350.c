@@ -45,7 +45,7 @@ extern char ResourceId_MercuryDjinnSmallSheet; // directory row 0x155
 extern char ResourceId_ParticleSpritesA;       // directory row 0x134
 extern char ResourceId_SparkleDots;            // directory row 0x17e
 
-extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 extern u16 Data_0819744c[];  // ☀️ gBattleFx_PuffCells
 extern u8 Data_0819745e[];   // ☀️ gBattleFx_PuffSizes
 

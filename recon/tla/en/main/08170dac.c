@@ -113,7 +113,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_RuneSheet;
 extern char ResourceId_LightningBoltSheet;
 extern u8 gMapCellBuffer[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // gBattleFx_MoteCells
 extern const s8 Data_08196e9c[];   // the hexagon's corners (z, y)
 
 #define VOID_BEAM_FRAMES 88

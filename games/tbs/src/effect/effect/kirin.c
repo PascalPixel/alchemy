@@ -229,7 +229,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          blit(canvas, sheet + gBattleFx_MoteCellOffsets[size - 1], fire->x,
+          blit(canvas, sheet + gBattleFx_MoteCells[size - 1], fire->x,
                HI(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;

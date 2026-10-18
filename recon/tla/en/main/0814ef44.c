@@ -99,7 +99,7 @@ extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_JupiterDjinnSmallSheet;
-extern u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
 extern u16 Data_0819744c[];  // gBattleFx_PuffCells
 extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
 

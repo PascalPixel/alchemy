@@ -95,13 +95,13 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
       if (cell > 6)
         cell = 6;
       if (work->effect->side == 0) {
-        draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+        draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                 gHelmSplitter_CellBiasX[cell] + 30,
                 gHelmSplitter_CellBiasY[cell] + position.y - 60,
                 gHelmSplitter_CellWidths[cell],
                 gHelmSplitter_CellHeights[cell]);
       } else {
-        draw[0](canvas, work->sheet + gHelmSplitter_CellSourceOffsets[cell],
+        draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                 -gHelmSplitter_CellBiasX[cell] -
                     gHelmSplitter_CellWidths[cell] + 108,
                 gHelmSplitter_CellBiasY[cell] + position.y - 60,
@@ -308,11 +308,11 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 #ifdef UBFIX
       width = gImpactBurst_CellWidths[cell];
       height = gImpactBurst_CellHeights[cell];
-      maxBlend(canvas, work->sheet + gImpactBurst_CellSourceOffsets[cell],
+      maxBlend(canvas, work->sheet + gImpactBurst_Cells[cell],
                (x >> 16) - (width >> 1), (y >> 16) - (height >> 1), width,
                height);
 #else
-      maxBlend(canvas, work->sheet + gImpactBurst_CellSourceOffsets[cell],
+      maxBlend(canvas, work->sheet + gImpactBurst_Cells[cell],
                (x >> 16) - ((width = gImpactBurst_CellWidths[cell]) >> 1),
                (y >> 16) - ((height = gImpactBurst_CellHeights[cell]) >> 1),
                width, height);

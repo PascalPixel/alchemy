@@ -575,7 +575,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
              work->sheet +
-                 (gBattleFx_MoteCellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
+                 (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) + 0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
@@ -595,7 +595,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 size = rise + 3;
 
       draw(canvas,
-           work->sheet + (gBattleFx_MoteCellOffsets[size - 1] + (i & 1) * 770) +
+           work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
                0x3200,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
@@ -614,7 +614,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;
 
-          draw(canvas, work->sheet + gParticleStreams_FlashSheetOffsets[cell],
+          draw(canvas, work->sheet + gParticleStreams_FlashCells[cell],
                point.x - gParticleStreams_FlashSizes[cell] / 2,
                point.y - gParticleStreams_FlashSizes[cell] / 2,
                gParticleStreams_FlashSizes[cell],

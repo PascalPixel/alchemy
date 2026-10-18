@@ -82,7 +82,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_Data0C9;
 extern u8 gMapCellBuffer[];
-extern const u16 gData_08197410[];         // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[];         // gBattleFx_MoteCells
 extern const u8 Data_081995ec[];           // the seven strike frames
 extern const s32 Data_08196ee8[2];         // the summon's placement source
 extern const u8 Data_08199220[];           // the rings' mesh

@@ -134,7 +134,7 @@ extern char ResourceId_EmberStreakSheet;
 extern u8 Data_081985b3[];
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern const u16 gData_08197410[];
-// The glint's six cels: ☀️'s gBattleFx_GlintCellOffsets, _GlintCellWidths
+// The glint's six cels: ☀️'s gBattleFx_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
 extern const u16 gData_08197486[];
 extern const u8 gData_08197492[];

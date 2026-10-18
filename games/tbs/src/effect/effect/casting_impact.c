@@ -819,7 +819,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             s32 size = (i & 1) + 6;
             EffectPosition_ApplyBaseAndYOffset(step, &projected);
             projected.x >>= 1;
-            blitters[0](canvas, sprites + gBattleFx_MoteCellOffsets[size - 1],
+            blitters[0](canvas, sprites + gBattleFx_MoteCells[size - 1],
                         projected.x - (u32)size / 2, projected.y - size, size,
                         size * 2);
             EffectStep_AdvanceWithGravity3D(step, 62, 0);
@@ -879,7 +879,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                               COMPOSITE_MAX);
           ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[image],
+              canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[image],
               imageX, imageY + 56, gBattleFx_GlintCellWidths[image],
               gBattleFx_GlintCellHeights[image]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -1146,7 +1146,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           }
           blitters[mirrored](canvas,
                              Ram_MapCellBuffer +
-                                 gBattleFx_PuffArcCellSourceOffsets[image],
+                                 gBattleFx_PuffArcCells[image],
                              imageX, gBattleFx_PuffArcCellBiasY[image] + 48,
                              gBattleFx_PuffArcCellWidths[image],
                              gBattleFx_PuffArcCellHeights[image]);

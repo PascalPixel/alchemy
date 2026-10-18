@@ -3,7 +3,7 @@
 @ The Broken Seal's effect/effect_table.c. Cell offsets count bytes from the
 @ start of a sheet; widths and heights are pixels. Labels keep their
 @ placeholders: most readers are not C yet.
-@ The Broken Seal's gBattleFx_MoteCellOffsets; read by 84 functions
+@ The Broken Seal's gBattleFx_MoteCells; read by 84 functions
 	.global gData_08197410
 gData_08197410:
 	.2byte 0, 2, 10, 28, 60, 110, 182, 280
@@ -40,11 +40,11 @@ gData_0819746d:
 gData_08197473:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
-@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by 7 functions
+@ The Broken Seal's gBattleFx_PuffArcCells; read by 7 functions
 	.global gData_0819747a
 gData_0819747a:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
-@ The Broken Seal's gBattleFx_GlintCellOffsets; read by 14 functions
+@ The Broken Seal's gBattleFx_GlintCells; read by 14 functions
 	.global gData_08197486
 gData_08197486:
 	.2byte 0, 589, 1302, 2015, 2414, 2750
@@ -144,7 +144,7 @@ Data_08197600:
 	.global Data_08197605
 Data_08197605:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gBattlePieceWidth; read by Func_0813eb70
+@ The Broken Seal's gTileAnimation_PieceWidths; read by Func_0813eb70
 	.global Data_08197609
 Data_08197609:
 	.byte 21, 20, 24, 30, 35, 69, 19, 23, 9, 22, 33, 10, 18, 9, 7, 9
@@ -156,20 +156,20 @@ Data_0819762a:
 	.byte 23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12
 	.byte 13, 37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50, 21, 35, 12, 57
 	.byte 11, 0
-@ The Broken Seal's gBattlePieceOffset, byte for byte
+@ The Broken Seal's gTileAnimation_PieceCells, byte for byte
 	.global Data_0819764c
 Data_0819764c:
 	.2byte 0, 483, 1423, 2023, 3223, 3923, 7580, 8112, 8779, 8986, 9294
 	.2byte 10449, 10619, 10943, 11069, 11174, 11282, 11503, 13538, 14678, 15703, 18103
 	.2byte 19292, 19442, 20702, 21528, 21733, 22565, 23715, 24114, 25234, 25330, 27781
 	.2byte 27946
-@ The Broken Seal's gBattlePieceStartX; read by Func_0813eb70
+@ The Broken Seal's gTileAnimation_PieceStartX; read by Func_0813eb70
 	.global Data_08197690
 Data_08197690:
 	.byte 0, 21, 28, 46, 70, 51, 0, 13, 37, 77, 87, 19, 25, 35, 44, 45
 	.byte 48, 65, 0, 0, 0, 5, 33, 15, 36, 46, 47, 50, 53, 65, 72, 77
 	.byte 105
-@ The Broken Seal's gBattlePieceStartY; read by Func_0813eb70
+@ The Broken Seal's gTileAnimation_PieceStartY; read by Func_0813eb70
 	.global Data_081976b1
 Data_081976b1:
 	.byte 0, 0, 0, 0, 0, 0, 19, 17, 23, 28, 8, 36, 43, 43, 40, 47
@@ -326,11 +326,11 @@ gData_08197834:
 	.global Data_08197864
 Data_08197864:
 	.byte 16, 88, 8, 72, 12, 80, 16, 88
-@ The Broken Seal's gMemberBeam_MotePictures; read by Func_08144b14
+@ The Broken Seal's gDjinnBeams_MotePictures; read by Func_08144b14
 	.global Data_0819786c
 Data_0819786c:
 	.byte 2, 1, 0, 1, 2, 3, 4, 3
-@ The Broken Seal's gEarthWall_CellSourceOffsets; read by Func_08144b14
+@ The Broken Seal's gEarthWall_Cells; read by Func_08144b14
 	.global Data_08197874
 Data_08197874:
 	.2byte 2702, 3535, 4580
@@ -414,7 +414,7 @@ Data_0819795b:
 Data_0819795e:
 	.byte 8, 12, 17
 	.balign 2
-@ The Broken Seal's gWhirlwindComets_CellOffsets; read by BattleFx_RunProcne
+@ The Broken Seal's gWhirlwindComets_Cells; read by BattleFx_RunProcne
 	.global Data_08197962
 Data_08197962:
 	.2byte 13824, 14020, 14476
@@ -442,7 +442,7 @@ Data_08197978:
 	.global Data_0819797e
 Data_0819797e:
 	.byte 41, 32, 26, 11, 4, 2
-@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by Func_08147aec
+@ The Broken Seal's gBattleFx_PuffArcCells; read by Func_08147aec
 	.global Data_08197984
 Data_08197984:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
@@ -1162,7 +1162,7 @@ Data_08198309:
 Data_0819830f:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
-@ The Broken Seal's gBattleFx_PuffArcCellSourceOffsets; read by BattleFx_RunFire
+@ The Broken Seal's gBattleFx_PuffArcCells; read by BattleFx_RunFire
 	.global Data_08198316
 Data_08198316:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
@@ -1446,7 +1446,7 @@ Data_081985b3:
 	.global Data_0819861b
 Data_0819861b:
 	.byte 0, 4, 8, 12, 0
-@ The Broken Seal's gGaia_RowSheetOffsets; read by BattleFx_RunGaia
+@ The Broken Seal's gGaia_RowCells; read by BattleFx_RunGaia
 	.global Data_08198620
 Data_08198620:
 	.2byte 0, 160, 352, 640, 1024, 1504, 2080, 2752
@@ -1456,7 +1456,7 @@ Data_08198620:
 Data_08198632:
 	.byte 5, 6, 9, 12, 15, 18, 21, 32, 40
 	.balign 2
-@ The Broken Seal's gGaia_MoundSheetOffsets; read by BattleFx_RunGaia
+@ The Broken Seal's gGaia_MoundCells; read by BattleFx_RunGaia
 	.global Data_0819863c
 Data_0819863c:
 	.2byte 10672, 11505, 12550
@@ -1513,7 +1513,7 @@ gData_081986c8:
 	.global gData_081986ce
 gData_081986ce:
 	.byte 56, 80, 64, 64, 80, 88
-@ The Broken Seal's gSwirlSwipe_CellSourceOffsets; read by Func_0815c970
+@ The Broken Seal's gSwirlSwipe_Cells; read by Func_0815c970
 	.global gData_081986d4
 gData_081986d4:
 	.2byte 0, 2240, 11200, 18368, 0, 7040
@@ -1580,7 +1580,7 @@ Data_08198860:
 	.global Data_08198866
 Data_08198866:
 	.byte 7, 9, 11, 13, 13, 11
-@ The Broken Seal's gBeamSequence_CellSheetOffsets; read by Func_0815e3ac
+@ The Broken Seal's gBeamSequence_Cells; read by Func_0815e3ac
 	.global Data_0819886c
 Data_0819886c:
 	.2byte 0, 266, 752, 1533, 2495, 3496
@@ -1749,7 +1749,7 @@ gData_081989e2:
 	.global gData_081989ea
 gData_081989ea:
 	.byte 96, 96, 90, 74, 74, 62, 52, 12
-@ The Broken Seal's gImpactBurst_CellSourceOffsets; read by Func_0816467c
+@ The Broken Seal's gImpactBurst_Cells; read by Func_0816467c
 	.global gData_081989f2
 gData_081989f2:
 	.2byte 0, 4608, 9216, 13356, 16020, 18684, 20668, 22020
@@ -2686,7 +2686,7 @@ gData_08199d31:
 	.global gData_08199d38
 gData_08199d38:
 	.byte 11, 20, 37, 65, 65, 54, 39, 0
-@ The Broken Seal's gHelmSplitter_CellSourceOffsets; read by BattleFx_RunHelmSplitter
+@ The Broken Seal's gHelmSplitter_Cells; read by BattleFx_RunHelmSplitter
 	.global gData_08199d40
 gData_08199d40:
 	.2byte 0, 286, 1206, 3537, 8542, 12442, 14548

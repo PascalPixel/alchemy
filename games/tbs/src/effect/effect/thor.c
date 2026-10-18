@@ -292,7 +292,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         drawAlt(canvas,
                 work->sheet +
                     (level * STORM_DIMMED_DOT_BYTES +
-                     gBattleFx_MoteCellOffsets[dotSize - 1]) +
+                     gBattleFx_MoteCells[dotSize - 1]) +
                     dimmedOffset,
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
@@ -590,7 +590,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               3 | gThor_SmokeFlips[Random16() & 3], 2);
           gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[glint], x,
+              canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[glint], x,
               y + 56, gBattleFx_GlintCellWidths[glint],
               gBattleFx_GlintCellHeights[glint]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);

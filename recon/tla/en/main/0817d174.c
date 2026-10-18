@@ -93,7 +93,7 @@ extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_OrangePaletteB;
 extern u8 gMapCellBuffer[];
-extern const u16 gData_08197410[]; // gBattleFx_MoteCellOffsets
+extern const u16 gData_08197410[]; // gBattleFx_MoteCells
 extern const s32 Data_081994a8[4]; // the early drops' drags
 extern u8 gData_02014000[];        // the spray sheet
 

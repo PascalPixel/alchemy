@@ -58,7 +58,7 @@ enum { POOL_SOOTHE, POOL_SLEEP, POOL_SLAVER };
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The mote's cell for each size from 1 to 6 (The Broken Seal's
-// gBattleFx_MoteCellOffsets).
+// gBattleFx_MoteCells).
 extern u16 gData_08197410[];
 
 extern char ResourceId_Data134; // The Broken Seal's ParticleSpritesA

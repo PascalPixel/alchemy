@@ -107,9 +107,9 @@ extern char ResourceId_BlastSheet;
 extern s32 gCameraSceneParameters[];
 extern s16 Data_08198a02[][3]; // ☀️ gParticleStreams_OrbitPoints
 extern s16 Data_08198a2c[][2]; // ☀️ gParticleStreams_DropPoints
-extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashSheetOffsets
+extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashCells
 extern u16 Data_08198a56[];    // ☀️ gParticleStreams_FlashSizes
-extern u16 gData_08197410[];   // ☀️ gBattleFx_MoteCellOffsets
+extern u16 gData_08197410[];   // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,

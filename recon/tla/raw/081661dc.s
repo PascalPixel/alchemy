@@ -276,7 +276,7 @@ BattleFx_RunAnnihilation:
 	movs r0, #156
 	lsls r0, r0, #6
 	adds r0, #16
-	bl BattleFx_RunNoEffectFrames
+	bl BattleFx_CallNoEffect
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 .L_08166412:

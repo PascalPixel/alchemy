@@ -102,12 +102,12 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // Sets up the canvas tile map on BG1.
 void Func_08143d80(void);
 // Marks the transition done and shows the battle view again.
-void BattleFx_SetTransitionFlagAndDisplay(void);
+void BattleFx_HideBg1AndRestoreBackdrop(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Steps the background palette fade.
 void Palette_StepFadeTransfer(void);
-// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.
@@ -359,5 +359,5 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
     WaitFrames(1);
   }
-  BattleFx_SetTransitionFlagAndDisplay();
+  BattleFx_HideBg1AndRestoreBackdrop();
 }

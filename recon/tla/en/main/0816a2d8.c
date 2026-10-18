@@ -1,8 +1,8 @@
 // Draft, differ 342 of 469 (441 here): Func_0816a2d8, the body of five effect
 // kinds (variant_a.c's wrappers pass variants 1-5), The Broken Seal's
-// BattleFx_RunRevealColumn rebuilt.
+// BattleFx_RunFlashingStrike rebuilt.
 
-// Twin: ☀️ BattleFx_RunRevealColumn (games/tbs/src/effect/effect.c), a body of
+// Twin: ☀️ BattleFx_RunFlashingStrike (games/tbs/src/effect/effect.c), a body of
 // two kinds there; The Lost Age keeps its frame (the 120 x 120 picture in four
 // frames of four, the canvas flooded with colour 0x3f for four frames, the hit
 // at frame 20) and adds:
@@ -75,7 +75,7 @@ extern char ResourceId_RevealMaskF;
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                // 7, 7, flags, mode)
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,

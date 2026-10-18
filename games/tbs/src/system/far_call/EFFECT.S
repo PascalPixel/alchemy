@@ -4,7 +4,7 @@
 #include "stub.inc"
 	.global FarCall_EffectTable
 FarCall_EffectTable:
-	export BattleEffect_LoadWorkFar, BattleFx_LoadWork
+	export BattleEffect_LoadWorkFar, BattleFx_BuildBlitter
 	export BattleFx_DispatchByIdRangeFar, BattleFx_DispatchByIdRange
 	export BattleFx_RunSceneEffectFar, BattleFx_RunSceneEffect
 	export BattleFx_RunTableEffectFar, BattleFx_RunTableEffect

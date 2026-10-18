@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------
-// run_no_effect_frames.c
+// call_no_effect.c
 // Battle effects: repeat an empty effect.
 //--------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@
 // Call the empty BattleFx_RunNoEffect cnt times without waiting for frames.
 // cnt: call count.
 //--------------------------------------------------------------------------
-void BattleFx_RunNoEffectFrames(s32 cnt) {
+void BattleFx_CallNoEffect(s32 cnt) {
   s32 n;
 
   n = 0;

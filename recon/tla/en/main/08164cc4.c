@@ -127,8 +127,8 @@ void Camera_AdvanceBg2Reference(void);                 // Camera_AdvanceBg2Refer
 void BattleFx_FlushPendingGraphicsTransfer(void); // BattleFx_FlushPendingGraphicsTransfer
 void BattleFx_ArmPaletteHBlankDma(void); // BattleFx_ArmPaletteHBlankDma
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode);                   // BattleFx_LoadWork
-s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
+                  s32 mode);                   // BattleFx_BuildBlitter
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                // 7, 7, flags, mode)
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, struct Scale *scale,

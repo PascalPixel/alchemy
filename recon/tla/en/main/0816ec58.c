@@ -3,7 +3,7 @@
 // 0.772): the two columns became up to ten leaning ice columns, three
 // more for each level of the spell, each with its own start, height and
 // lean; the columns' blitters are loaded once a frame through
-// Func_08196404 (BattleFx_LoadWork) itself; and the sparks wait for
+// Func_08196404 (BattleFx_BuildBlitter) itself; and the sparks wait for
 // the columns.
 
 // Listing 471 instructions, draft 469, differ 164.
@@ -67,7 +67,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);                       // BattleFx_LoadWork
+                  u32 mode);                       // BattleFx_BuildBlitter
 void BattleFx_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,

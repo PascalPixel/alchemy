@@ -72,7 +72,7 @@ extern u16 gData_081974bc[];
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-s32 BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_LoadWork, packed
+s32 BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);          // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);                // ObjectGroup_TickMemberTimers

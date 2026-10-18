@@ -142,7 +142,7 @@ void BattleFx_BeginCanvasLayer(s32 control);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
 s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleFx_LoadWork
+                   s32 mode); // BattleFx_BuildBlitter
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);

@@ -72,7 +72,7 @@ extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
 void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
 void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
 void BattleFx_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects

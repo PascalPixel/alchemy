@@ -42,7 +42,7 @@ struct Point2D {
   s32 y;
 };
 
-// Effect renderer pair: BattleFx_LoadWork creates [0] in
+// Effect renderer pair: BattleFx_BuildBlitter creates [0] in
 // HEAP_SLOT_BLITTER and [1] in HEAP_SLOT_BLITTER_ALTERNATE.
 // Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
@@ -67,7 +67,7 @@ void BattleFx_RunShriek(struct BattleEffectArgument *effect);
 void BattleFx_RunBansheeHowl(struct BattleEffectArgument *effect);
 void BattleFx_RunWarCry(struct BattleEffectArgument *effect);
 void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect);
-void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect);
+void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect);
 void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunSleepStar(struct BattleEffectArgument *effect);
 void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect);
@@ -117,7 +117,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_OpenCanvasLayer(s32 bgControl);
 void BattleFx_BeginTiledCanvas(s32 bgControl);
 void BattleFx_EndCanvasLayer(void);
-void BattleFx_SetTransitionFlagAndDisplay(void);
+void BattleFx_HideBg1AndRestoreBackdrop(void);
 void BattleFx_SetupCanvasTileMap(void);
 void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
@@ -214,7 +214,7 @@ void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect);
 void Camera_ApplyPhasedDelta(void);
 
 // dispatch.c
-void BattleFx_RunNoEffectFrames(s32 count);
+void BattleFx_CallNoEffect(s32 count);
 void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect);
 void BattleFx_RunTableEffect(struct BattleEffectArgument *effect);
 void BattleFx_BuildWindowEdgeTable(void);
@@ -443,13 +443,13 @@ void BattleFx_RunThrash(struct BattleEffectArgument *effect);
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect);
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect);
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect);
-void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant);
+void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 variant);
 
 // undead_sword.c
 void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect);
 
 // blitter.c
-s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                       u32 mode);
 
 #endif

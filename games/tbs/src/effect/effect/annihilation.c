@@ -117,7 +117,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = 0x2580;
       blitters[0](canvas, Ram_MapCellBuffer + strip + step * 0xc80,
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
-      BattleFx_RunNoEffectFrames(10000);
+      BattleFx_CallNoEffect(10000);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
     if (frame == 8) {

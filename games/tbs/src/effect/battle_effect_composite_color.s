@@ -1,10 +1,10 @@
-@ The colour fragments BattleFx_LoadWork (effect/blitter.c) builds canvas
+@ The colour fragments BattleFx_BuildBlitter (effect/blitter.c) builds canvas
 @ blitters from, as it does the others in battle_effect_composite.s: each
 @ adds picture pixels (r1) to the canvas (r9) with sl as the cap mask, forward
 @ or reverse.
 @
 @ Why assembly:
-@ C2: BattleFx_LoadWork copies these 14-word fragments into generated ARM
+@ C2: BattleFx_BuildBlitter copies these 14-word fragments into generated ARM
 @ routines. r1/r5/r8/r9 are shared state and sl is the mask; r5/r8/r9
 @ change without callee saves, and neither fragment has a return.
 .syntax unified

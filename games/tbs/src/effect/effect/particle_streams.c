@@ -283,7 +283,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    BattleFx_LoadWork(HEAP_SLOT_BLITTER, 8, 7,
+    BattleFx_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN,

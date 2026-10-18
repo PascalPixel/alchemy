@@ -5835,7 +5835,7 @@ main	rom_main_09	recon/tla/raw/0814b9e8	.text	en
 main	rom_main_09	recon/tla/raw/0814bee0	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.0014b9e8	ja
 main	rom_main_09	games/tla/src/battle/effect/shake_step	.text
-main	rom_main_09	games/tla/src/battle/effect/run_no_effect_frames	.text
+main	rom_main_09	games/tla/src/battle/effect/call_no_effect	.text
 main	rom_main_09	games/tla/src/battle/effect/window_edge_table	.text
 main	rom_main_09	games/tla/src/battle/effect/spawn_living	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0014cca8	it

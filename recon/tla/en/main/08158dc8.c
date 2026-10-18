@@ -34,9 +34,9 @@ void Func_0813baec(void); // BattleFx_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08163c2c(s32 page, s32 value);        // Func_08163c2c
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
-                   s32 mode);     // BattleFx_LoadWork, five arguments
+                   s32 mode);     // BattleFx_BuildBlitter, five arguments
 void Func_0815f0a0(s32 resource); // the dusk palette step
 void Func_0814cca8(void);         // BattleFx_SetupBlendedDisplay
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets

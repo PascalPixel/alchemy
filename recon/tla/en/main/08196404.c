@@ -1,4 +1,4 @@
-// Draft of Func_08196404, The Lost Age's BattleFx_LoadWork: differ 241
+// Draft of Func_08196404, The Lost Age's BattleFx_BuildBlitter: differ 241
 // of 597 (tla-en, 2026-10-15; first written in the effects trial of the
 // same day), on The Broken Seal's step list. Blocked under S1 as written:
 // its copy helpers are inline asm, there only to measure the rest, and stay

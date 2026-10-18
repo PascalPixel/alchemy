@@ -242,7 +242,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
-  BattleFx_SetTransitionFlagAndDisplay();
+  BattleFx_HideBg1AndRestoreBackdrop();
 }
 
 // Play the selected ring-and-spark strike, restoring the user motion after
@@ -483,5 +483,5 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
     WaitFrames(1);
   }
-  BattleFx_SetTransitionFlagAndDisplay();
+  BattleFx_HideBg1AndRestoreBackdrop();
 }

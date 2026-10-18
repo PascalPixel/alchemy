@@ -165,10 +165,10 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
-// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleFx_LoadWork itself.
+// BattleFx_BuildBlitter itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
 // Closes the canvas layer.

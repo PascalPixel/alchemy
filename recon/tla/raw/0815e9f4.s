@@ -732,7 +732,7 @@ Func_0815e9f4:
 	mov r2, r9
 	cmp r2, #7
 	bne .L_0815efba
-	bl BattleFx_SetTransitionFlagAndDisplay
+	bl BattleFx_HideBg1AndRestoreBackdrop
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3

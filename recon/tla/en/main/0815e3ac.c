@@ -113,10 +113,10 @@ void Func_0813ba50(void);
 // Sets up the canvas tile map on BG1.
 void Func_08143d80(void);
 // Marks the transition done and shows the battle view again.
-void BattleFx_SetTransitionFlagAndDisplay(void);
+void BattleFx_HideBg1AndRestoreBackdrop(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleFx_ProcessPendingGraphicsTransfer(void);
-// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.
@@ -381,5 +381,5 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   gBgScroll[1].y = 32;
-  BattleFx_SetTransitionFlagAndDisplay();
+  BattleFx_HideBg1AndRestoreBackdrop();
 }

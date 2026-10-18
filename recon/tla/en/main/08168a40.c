@@ -90,7 +90,7 @@ void BattleFx_SelectLivingTargets(
 void BattleFx_SpawnObjects(s32 count, s32 resource,
                    s32 priority); // BattleFx_SpawnObjects
 void ResourceObject_ReleaseFar(void *object);
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);

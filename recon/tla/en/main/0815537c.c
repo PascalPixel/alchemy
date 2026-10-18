@@ -10,7 +10,7 @@
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), the blitter loads through BattleFx_LoadBlitter
 // with the Lost Age's mode numbers (max is 1), the glint blitter loads
-// through Func_08196404 (the twin's BattleFx_LoadWork), the callback
+// through Func_08196404 (the twin's BattleFx_BuildBlitter), the callback
 // order is 0xc80.
 
 // What remains:

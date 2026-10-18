@@ -98,7 +98,7 @@ void Func_0813ba50(void);                // ☀️ BattleFx_ConfigureEffectDispl
 void BattleFx_ProcessPendingGraphicsTransfer(void);                // ☀️ ProcessPendingGraphicsTransfer
 void BattleFx_EndCanvasLayer(void);                // ☀️ BattleFx_EndCanvasLayer
 void Func_08163c2c(s32 mode, s32 value); // ☀️ Func_08163c2c
-s32 BattleFx_LoadBlitter(s32 slot, s32 flags);  // ☀️ BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);  // ☀️ BattleFx_BuildBlitter
 void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
 void BattleFx_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects

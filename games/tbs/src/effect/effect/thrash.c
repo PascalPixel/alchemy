@@ -29,21 +29,20 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 //
 // The user leaps at the first target, four pictures flash across the effect
 // layer, then it fills with one colour as the target is struck.
-DEFINE_EFFECT_KIND(BattleFx_RunQuickStrike, BattleFx_RunRevealColumn, 1)
+DEFINE_EFFECT_KIND(BattleFx_RunQuickStrike, BattleFx_RunFlashingStrike, 1)
 
 // Abilities: Vorpal Slash (kind 65).
 //
 // Flash the target using the first pair of reveal-mask resources.
-DEFINE_EFFECT_KIND(BattleFx_RunVorpalSlash, BattleFx_RunRevealColumn, 2)
+DEFINE_EFFECT_KIND(BattleFx_RunVorpalSlash, BattleFx_RunFlashingStrike, 2)
 
 // Shared runner of Quick Strike (mode 1) and Vorpal Slash (mode 2); no kind
 // uses mode 0. The user steps up to the first target over 16 frames, with a
-// hop in mode 1. Then four 120x120 pictures, chosen by variant, show for four
+// hop in mode 1. Then four 120x120 pictures, chosen by mode, show for four
 // frames each (mirrored on side 1), the canvas fills with colour 0x3f on
 // frames 16 to 19, the battle shows the damage on frame 18, and on frame 20
 // the target reels and the screen shakes. 21 frames.
-void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
-                              s32 variant) {
+void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   void **heap;
   struct BattleEffectWork *work;
   void *canvas;
@@ -58,12 +57,12 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
 
   // Each pair of 120x120 frames fills the image storage before the particles.
   // Frames 1-2 use the work buffer; frames 3-4 use gMapCellBuffer.
-  if (variant == 0) {
+  if (mode == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, gMapCellBuffer, 1,
                                1);
-  } else if (variant == 1) {
+  } else if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
                                1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, gMapCellBuffer, 1,
@@ -79,7 +78,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
 
   // Move the acting unit toward the target over 16 frames.
-  if (variant == 1)
+  if (mode == 1)
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16,
                                    0x80000);
   else

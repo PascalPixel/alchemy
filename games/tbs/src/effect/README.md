@@ -118,7 +118,7 @@ full-screen picture into `gMapCellBuffer` show it on BG1 too, flushed by
 ## Blitters
 
 Drawing a picture onto the canvas goes through a blitter, a small ARM routine
-that `BattleFx_LoadWork` (`blitter.c`) assembles at run time from the
+that `BattleFx_BuildBlitter` (`blitter.c`) assembles at run time from the
 fragments in `battle_effect_composite.s`, for one cell size, one mirroring, one
 clip and one way of combining pixels (copy, additive, brightest wins and so
 on). A general routine that tested all of these for every pixel would be far
@@ -267,4 +267,4 @@ picture is drawn left of its centre line and then mirrored to the right.
 | `neptune.c` | The Neptune summon. |
 | `thrash.c` | Thrash, Quick Strike and Vorpal Slash. |
 | `undead_sword.c` | Undead Sword. |
-| `blitter.c` | The blitter builder, BattleFx_LoadWork. |
+| `blitter.c` | The blitter builder, BattleFx_BuildBlitter. |

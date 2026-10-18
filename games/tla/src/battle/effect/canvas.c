@@ -238,7 +238,7 @@ void BattleFx_EndCanvasLayer(void) {
 
 // Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
 // fades the background palette back and queues BG1's control word.
-void BattleFx_SetTransitionFlagAndDisplay(void) {
+void BattleFx_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 

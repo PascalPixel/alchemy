@@ -10,7 +10,10 @@
 // To find the effect a move plays, search for the move's English name: each
 // handler's "Abilities:" comment lists the abilities that reach it, and each
 // row of gBattleFx_EffectHandlers (effect_table.c) gives its kind, its part
-// and its first ability. The shared machinery:
+// and its first ability. Functions here are BattleFx_ unless they act on one
+// thing the engine names elsewhere: those keep its prefix (Camera_,
+// Palette_, Graphics_, Resource_, EffectStep_, EffectPosition_,
+// ObjectGroup_), as their Lost Age twins do. The shared machinery:
 //
 //   Entry points    dispatch.c: BattleFx_RunTableEffect,
 //                   BattleFx_RunSceneEffect; positions.c:
@@ -18,7 +21,7 @@
 //   Canvas          canvas.c: BattleFx_BeginCanvasLayer,
 //                   BattleFx_EndCanvasLayer, BattleFx_WipeCanvas,
 //                   BattleFx_ProcessPendingGraphicsTransfer
-//   Blitters        blitter.c: BattleFx_LoadWork; mirrored_wall.c:
+//   Blitters        blitter.c: BattleFx_BuildBlitter; mirrored_wall.c:
 //                   BattleFx_FetchRectangleBlitters
 //   Motion          positions.c: EffectStep_AdvanceWithGravity2D and 3D,
 //                   BattleUnit_ProjectToScreen; hail.c: Camera_ApplyShake
@@ -198,10 +201,10 @@ enum CanvasTransferMode {
   (BattleFx_BeginCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
 // Builds a blitter for the 128x128 canvas (1 << 7 pixels each way) in work
-// slot `slot`: BattleFx_LoadWork's drawing routine for one clip, mirror and
+// slot `slot`: BattleFx_BuildBlitter's drawing routine for one clip, mirror and
 // blend mode. Every canvas effect draws through one or two of these.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
-  BattleFx_LoadWork(slot, 7, 7, flags, mode)
+  BattleFx_BuildBlitter(slot, 7, 7, flags, mode)
 
 // Sets how the canvas transfer treats what is left in the canvas after each
 // copy: `mode` with `value` (see enum CanvasTransferMode).

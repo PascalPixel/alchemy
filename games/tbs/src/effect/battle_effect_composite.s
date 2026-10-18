@@ -1,4 +1,4 @@
-@ The pieces BattleFx_LoadWork (effect/blitter.c) builds canvas blitters from.
+@ The pieces BattleFx_BuildBlitter (effect/blitter.c) builds canvas blitters from.
 @ None of this code runs where it is: the builder copies its words into a
 @ heap block, one routine per cell size, mirroring, clip and mode.
 @

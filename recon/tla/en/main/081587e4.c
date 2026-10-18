@@ -22,7 +22,7 @@
 // Port of The Broken Seal's BattleFx_RunGround (kind 203 there
 // too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
 // callback order, no work->effect store, the canvas preparer's packed
-// arguments, and the chips' blitter built by BattleFx_LoadWork
+// arguments, and the chips' blitter built by BattleFx_BuildBlitter
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
 
@@ -87,10 +87,10 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 // Steps the background colours one shade toward a resource's palette.
 void Func_0815f0a0(s32 resource);
-// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
-// BattleFx_LoadWork itself.
+// BattleFx_BuildBlitter itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,

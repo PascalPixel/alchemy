@@ -60,7 +60,7 @@ void Func_0813baec(void); // BattleFx_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
 void Func_0814cca8(void); // BattleFx_SetupBlendedDisplay
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar

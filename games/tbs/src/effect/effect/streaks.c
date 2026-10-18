@@ -60,7 +60,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunWickedHowl, BattleFx_RunStreakVolley,
                    STREAK_STYLE_RED)
 
 // The streak volley in lime. UNUSED: no effect table entry points here.
-UNUSED void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect) {
+UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
 }
 

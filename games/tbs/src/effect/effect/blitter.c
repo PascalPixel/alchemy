@@ -1,5 +1,5 @@
 // Part of effect.c, the battle effect object, compiled only through it.
-// The blitter builder, BattleFx_LoadWork.
+// The blitter builder, BattleFx_BuildBlitter.
 
 // Build specialized canvas blitters from the resident ARM kernels.
 //
@@ -37,7 +37,7 @@
 //
 // Where the template offers alternatives, the cursor always moves past all of
 // them, whichever is written; so the walk ends at the template's last word
-// for every combination, and BattleFx_LoadWork checks that it does. In each
+// for every combination, and BattleFx_BuildBlitter checks that it does. In each
 // partial run and the full-cell loop the template keeps four words where the
 // generated routine has its mode's fragment; those four are skipped too.
 //
@@ -94,7 +94,7 @@
     break;                                                                     \
   }
 
-// The template walk itself, written once. BattleFx_LoadWork expands it
+// The template walk itself, written once. BattleFx_BuildBlitter expands it
 // twice under two definitions of PUT, COPY, COPY_FROM, COPY_TWICE,
 // PUT_BRANCH, MARK and PATCH: first to count the words, then to write them.
 // It uses the caller's templateWords, flags, mode, widthShift, heightShift,
@@ -306,7 +306,7 @@
 // mirroring, and mode how source pixels combine with the destination.
 // Returns nonzero when the walk ended exactly at gBattleFx_MoteCellOffsets,
 // the expected end of the template.
-s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                       u32 mode) {
   const u32 *templateWords;
   u32 *codeWords;

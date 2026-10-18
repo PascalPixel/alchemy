@@ -33,7 +33,7 @@ enum {
   COMPOSITE_ADDITIVE
 };
 #if GAME_TLA
-s32 BattleFx_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
+s32 BattleFx_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
                       u32 mode);
 #endif
 

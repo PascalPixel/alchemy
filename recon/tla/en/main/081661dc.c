@@ -73,13 +73,13 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Audio_PlayCue(s32 cue);
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork(slot,
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleFx_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void BattleFx_RunNoEffectFrames(s32 frames);
+void BattleFx_CallNoEffect(s32 frames);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08118088(s32 actor,
@@ -202,7 +202,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = BURST_STRIP_BYTES;
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_FRAME_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
-      BattleFx_RunNoEffectFrames(10000);
+      BattleFx_CallNoEffect(10000);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)

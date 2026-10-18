@@ -4,7 +4,7 @@
 // Calls the empty BattleFx_RunNoEffect count times, without waiting for a
 // frame.
 // count : how many calls
-void BattleFx_RunNoEffectFrames(s32 count) {
+void BattleFx_CallNoEffect(s32 count) {
   s32 callIndex;
 
   callIndex = 0;

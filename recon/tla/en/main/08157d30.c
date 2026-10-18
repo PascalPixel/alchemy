@@ -83,7 +83,7 @@ void BattleFx_EndCanvasLayer(void);
 void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
-// Builds a blitter in a heap slot: BattleFx_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.

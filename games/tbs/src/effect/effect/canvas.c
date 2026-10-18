@@ -451,7 +451,7 @@ void BattleFx_EndCanvasLayer(void) {
 }
 
 // Hides BG1 and the windows and starts bringing the backdrop's palette back.
-void BattleFx_SetTransitionFlagAndDisplay(void) {
+void BattleFx_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 

@@ -2207,12 +2207,6 @@ Func_080d53b8:
 	.thumb_func
 Func_080d5d70:
 	.incbin "baserom.gba", 0x000dad64, 0x00000070
-	.section .rom.000dadd4, "ax"
-	.global ObjectEffect_PrepareContextEffect
-	.type ObjectEffect_PrepareContextEffect, %function
-	.thumb_func
-ObjectEffect_PrepareContextEffect:
-	.incbin "baserom.gba", 0x000dadd4, 0x00000070
 	.section .rom.000dae6c, "ax"
 	.balign 4
 	.global ObjectEffect_EndContextEffect

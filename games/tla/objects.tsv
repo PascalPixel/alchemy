@@ -3379,22 +3379,16 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000d5398	ja
 main	rom_main_05	games/tla/src/field/common/object/screen_position	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d5c64	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d5d64	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d5dd4	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dac64	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000dad64	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dadd4	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000dec64	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ded64	es
-main	rom_main_05	recon/tla/es/rom	.rom.000dedd4	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e2c70	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e2d70	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e2de0	de
 main	rom_main_05	recon/tla/raw/080d5c70	.text	en
 main	rom_main_05	recon/tla/raw/080d5d70	.text	en
-main	rom_main_05	recon/tla/raw/080d5de0	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d5c50	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d5d50	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d5dc0	ja
 main	rom_main_05	games/tla/src/field/common/object/context_start	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d5e6c	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dae6c	fr

@@ -20045,7 +20045,7 @@ msgctxt "message"
 msgid "04935"
 msgstr "dipendono dal livello."
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04936"
 msgstr "Liv. personaggi"
 

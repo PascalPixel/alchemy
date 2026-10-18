@@ -1,9 +1,3 @@
-// Draft of Menu_DrawModeLabel: differ 0 of 97 (tla-en, 2026-10-18), ready to
-// adopt. Its ☀️ twin is games/tbs/src/window/battle_command.c's function
-// of the same name: when the selected mode changes, it clears the lower
-// window's label area and writes the mode's lines of text. The Lost Age's
-// area is 128 wide at x 8, and a mode past 2 draws nothing.
-// The listing's message 0x117c (4476) is MsgPasswordLevel in en.po.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -22,6 +16,9 @@ void UiWindow_ClearInteriorTiles(void *window, s32 x, s32 y, s32 right,
                                  s32 bottom);
 void UiText_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 
+// ☀️'s function of the same name: when the selected mode changes, it clears
+// the lower window's label area and writes the mode's lines of text. The Lost
+// Age's area is 128 wide at x 8, and a mode past 2 draws nothing.
 void Menu_DrawModeLabel(void) {
   struct MenuModeLabelState *state = Ram_HeapSlots->menuSelectWork;
 

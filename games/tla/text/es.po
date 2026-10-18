@@ -20059,7 +20059,7 @@ msgctxt "message"
 msgid "04935"
 msgstr "la contraseña:"
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04936"
 msgstr "Niveles"
 

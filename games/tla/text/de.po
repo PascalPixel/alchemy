@@ -20157,7 +20157,7 @@ msgctxt "message"
 msgid "04939"
 msgstr "Passwort-Eingabe."
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04940"
 msgstr "Level"
 

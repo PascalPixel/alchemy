@@ -1,5 +1,5 @@
-#ifndef GUARD_EFFECT_INTERNAL_H
-#define GUARD_EFFECT_INTERNAL_H
+#ifndef ALCHEMY_EFFECT_INTERNAL_H
+#define ALCHEMY_EFFECT_INTERNAL_H
 
 // What every part of the battle effect object shares: its includes, macros
 // and frame-loop helpers. effect.c includes it before the parts, and each
@@ -306,4 +306,4 @@ enum CanvasTransferMode {
     *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
   }
 
-#endif // GUARD_EFFECT_INTERNAL_H
+#endif // ALCHEMY_EFFECT_INTERNAL_H

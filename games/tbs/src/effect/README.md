@@ -12,7 +12,7 @@ frames and returns when the effect is over.
 | --- | --- |
 | `effect.c` | the guide; it includes `effect_internal.h`, then the parts below in ROM order |
 | `effect_internal.h` | the includes, macros and helpers every part shares; each part includes it too |
-| `parts/*.c` | the effects themselves, in 66 parts (index below); never compiled on their own |
+| `parts/*.c` | the effects themselves, in 66 parts; never compiled on their own |
 | `effect_table.c` | the effects' tables: picture cells, sizes, offsets and frame lists, in the order the code uses them, and the handler table |
 | `effect_bits.c` | the bit operands the blitter builder adds to its widths |
 | `battle_effect_composite.s`, `battle_effect_composite_color.s` | the ARM fragments blitters are built from |
@@ -23,16 +23,9 @@ functions and `effect_table.h` for the tables.
 Each part includes `effect_internal.h`, so a part opened on its own resolves
 in an editor; it is still compiled only as part of `effect.c`.
 
-In the ROM the effect code is one object of about 150 KB, linked as
-`games/tbs/objects.tsv` lists it:
-
-```
-effect                          .text .data   the code and its small constants
-battle_effect_composite                       the blitter fragments
-effect_table                    .data         the tables
-battle_effect_composite_color                 the colour fragments
-effect_bits                     .data         the blitter's bit operands
-```
+In the ROM the effect code is one object of about 150 KB; its rows of
+`games/tbs/objects.tsv` (from `effect`) give it, the blitter fragments, the
+tables and the bit operands in link order.
 
 Camelot's other C files are each followed by their own data, so the effects
 were very likely one large file, with the tables kept in a separate data file
@@ -125,12 +118,24 @@ The same locals carry the same names in every handler:
 - `frame`: the frame counter; `cell`: a picture's index or offset.
 - `unk_<offset>`: a field whose meaning is not known yet.
 
+Names and spellings the parts share:
+
+- Functions are `BattleFx_` unless they act on one thing the engine names
+  elsewhere, which keep its prefix as their Lost Age twins do: `Camera_`,
+  `Palette_`, `Graphics_`, `Resource_`, `EffectStep_`, `EffectPosition_`,
+  `ObjectGroup_`.
+- A work slot is read as `WORK_SLOT(n)` or `gWorkSlot[n]`, through a base
+  pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and as a
+  blitter as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gWorkSlot[n]`; each site
+  keeps the one it matches with, as these can compile differently.
+
 Two comment markers are fixed:
 
 - `// DEAD: why`: code the ROM keeps that can never change the result, such
-  as a test that is always true; taking it out changes the bytes.
-- `/* FAKEMATCH: the form kept; the plain form and how much it differs */`:
-  a device that steers the compiler (AGENTS.md, S2).
+  as a test that is always true, whose own compare, branch or loop is in the
+  ROM.
+- `/* FAKEMATCH(kind): the form kept; as the plain form, N of M instructions
+  differ in tbs-en. */`: a device that steers the compiler (AGENTS.md, S2).
 
 ## Entry points
 
@@ -291,73 +296,7 @@ put the handler in that kind's row of `gBattleFx_EffectHandlers`, and set the
 ability's `effect` column to the kind. To reuse an effect, point the column at
 an existing kind and variant.
 
-## Parts of effect.c, in ROM order
+## Parts of effect.c
 
-| Part | What it holds |
-| --- | --- |
-| `display.c` | Display, scroll and window HBlank DMA helpers. |
-| `falling.c` | Ice and Douse: shards and bolts falling on the targets' side. |
-| `streaks.c` | Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep Star, Soothing Star). |
-| `target_strike.c` | Monster bites, fangs and slashes on one target. |
-| `death_plunge.c` | Death Plunge, the blade rain, the element pillar, the element burst and the shattering picture. |
-| `spider_web.c` | Poison Beat, Spinning Beat and Spider Web. |
-| `canvas.c` | The canvas layer: transfers, opening and closing, tile maps, lines. |
-| `planet_diver.c` | Planet Diver, Haunt and the orbiting spirals. |
-| `gathering_lights.c` | Demon Night, Rumble and Haunting. |
-| `mirrored_wall.c` | The walls of Berserk, Spasm and Recovery. |
-| `djinn_beams.c` | Revive, Water of Life, Quartz and Dew. |
-| `lobbed_shells.c` | Lobbed shells (Mad Spatter, Decompose, Bone Chiller ...). |
-| `condemn.c` | Condemn. |
-| `bind.c` | Bind and Triangle Strike. |
-| `stars.c` | Astral Blast and Shining Star. |
-| `procne.c` | The Procne summon. |
-| `tiamat.c` | Dragon Driver and the Tiamat summon. |
-| `nereid.c` | The Nereid summon. |
-| `vortices.c` | Froth and Whirlwind. |
-| `prism.c` | Prism. |
-| `plasma.c` | Plasma, and the spark groups of Blast and Dynamite. |
-| `volcano.c` | Volcano. |
-| `target_motes.c` | Status motes: Taint, Delude, Paralyze, Sleep, Curse .... |
-| `djinn_heal.c` | Djinn healing. |
-| `dispatch.c` | Running scene and table effects, and shared target helpers. |
-| `cybele.c` | The Cybele summon. |
-| `boreas.c` | The Boreas summon. |
-| `drain.c` | Break and Drain. |
-| `healing.c` | Healing motes: Ply, Wish, Cure, Cure Poison. |
-| `stat_change.c` | Stat boosts and reductions (Impact, Guard, Ward, Dull, Weaken ...). |
-| `flare.c` | Flare. |
-| `quake.c` | Quake. |
-| `fire.c` | Fire. |
-| `frost.c` | Frost. |
-| `ray.c` | Ray. |
-| `eruption.c` | Smoke Bomb and Blast. |
-| `burst_shower.c` | The blessings' burst showers. |
-| `orbiting.c` | Swirling stars, orbiting skulls and target bursts. |
-| `atalanta.c` | The Atalanta summon. |
-| `growth.c` | Growth, Punji, Vine and Thorn. |
-| `bolt.c` | Bolt. |
-| `projectiles.c` | Projectile volleys (Slash, Shuriken, Wing Flutter, Blizzard ...). |
-| `rushing_strike.c` | Rushing strikes (Bone Charge, Brute Force, Onslaught, Headbutt). |
-| `djinn_attacks.c` | The Mercury, Jupiter, Venus and Mars Djinn attacks. |
-| `hail.c` | Hail and Ground. |
-| `thor.c` | The Thor summon. |
-| `spire.c` | Spire. |
-| `burst_scene.c` | Gust, Flying Attack and the rush bursts. |
-| `gaia.c` | Gaia. |
-| `positions.c` | Effect positions, projection and id dispatch helpers. |
-| `beams.c` | Beam sequences and the ring and spark scene. |
-| `casting_impact.c` | The casting impact scene and its image helpers. |
-| `torch.c` | Torch and Kite. |
-| `helm_splitter.c` | Helm Splitter, formations and the impact burst. |
-| `particle_streams.c` | Meteor and Outer Space. |
-| `ramses.c` | The Ramses summon. |
-| `dragon_cloud.c` | Dragon Cloud. |
-| `annihilation.c` | Annihilation. |
-| `ragnarok.c` | Ragnarok. |
-| `titan_blade.c` | Titan Blade. |
-| `judgment.c` | The Judgment summon. |
-| `kirin.c` | The Kirin summon. |
-| `neptune.c` | The Neptune summon. |
-| `thrash.c` | Thrash, Quick Strike and Vorpal Slash. |
-| `undead_sword.c` | Undead Sword. |
-| `blitter.c` | The blitter builder, BattleFx_BuildBlitter. |
+`effect.c` includes the parts in ROM order, and each part's first lines say
+what it holds: `head -3 parts/*.c` lists them all.

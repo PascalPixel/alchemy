@@ -64,37 +64,32 @@ main	rom_main_00	games/tla/src/system/resource/decode_2_loop
 main	rom_main_00	games/tla/src/system/resource/execute_transfer
 main	rom_main_00	games/tla/src/system/resource/patch_thumb_branch
 main	rom_main_00	games/tla/src/system/memory/release_heap_block
-main	rom_main_00	recon/tla/it/rom	.rom.00013164	it
+main	rom_main_00	games/tla/src/system/memory/heap_free
 main	rom_main_00	recon/tla/it/rom	.rom.0001319c	it
 main	rom_main_00	recon/tla/it/rom	.rom.000132e4	it
 main	rom_main_00	recon/tla/it/rom	.rom.000132e8	it
 main	rom_main_00	recon/tla/it/rom	.rom.000132ec	it
 main	rom_main_00	recon/tla/it/rom	.rom.000132f0	it
 main	rom_main_00	recon/tla/it/rom	.rom.000132f4	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00013164	fr
 main	rom_main_00	recon/tla/fr/rom	.rom.0001319c	fr
 main	rom_main_00	recon/tla/fr/rom	.rom.000132e4	fr
 main	rom_main_00	recon/tla/fr/rom	.rom.000132e8	fr
 main	rom_main_00	recon/tla/fr/rom	.rom.000132ec	fr
 main	rom_main_00	recon/tla/fr/rom	.rom.000132f0	fr
 main	rom_main_00	recon/tla/fr/rom	.rom.000132f4	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00013164	es
 main	rom_main_00	recon/tla/es/rom	.rom.0001319c	es
 main	rom_main_00	recon/tla/es/rom	.rom.000132e4	es
 main	rom_main_00	recon/tla/es/rom	.rom.000132e8	es
 main	rom_main_00	recon/tla/es/rom	.rom.000132ec	es
 main	rom_main_00	recon/tla/es/rom	.rom.000132f0	es
 main	rom_main_00	recon/tla/es/rom	.rom.000132f4	es
-main	rom_main_00	recon/tla/de/rom	.rom.00013164	de
 main	rom_main_00	recon/tla/de/rom	.rom.0001319c	de
 main	rom_main_00	recon/tla/de/rom	.rom.000132e4	de
 main	rom_main_00	recon/tla/de/rom	.rom.000132e8	de
 main	rom_main_00	recon/tla/de/rom	.rom.000132ec	de
 main	rom_main_00	recon/tla/de/rom	.rom.000132f0	de
 main	rom_main_00	recon/tla/de/rom	.rom.000132f4	de
-main	rom_main_00	recon/tla/raw/08013164	.text	en
 main	rom_main_00	recon/tla/raw/0801319c	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.00013164	ja
 main	rom_main_00	recon/tla/ja/rom	.rom.0001319c	ja
 main	rom_main_00	games/tla/src/system/constant_zero_result	.text
 main	rom_main_00	games/tla/src/system/resource/resource	.text

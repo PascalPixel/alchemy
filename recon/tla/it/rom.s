@@ -10,12 +10,6 @@ SoundDriver_EnterFrameUpdate:
 	.thumb_func
 Render_BuildOamList:
 	.incbin "baserom.gba", 0x000019f4, 0x00000020
-	.section .rom.00013164, "ax"
-	.global MemFree
-	.type MemFree, %function
-	.thumb_func
-MemFree:
-	.incbin "baserom.gba", 0x00013164, 0x00000038
 	.section .rom.0001319c, "ax"
 	.global Func_0801319c
 	.type Func_0801319c, %function

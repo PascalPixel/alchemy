@@ -99,3 +99,5 @@ AlchemyUncreditedEnd_0803843a:
 	pop	{r5, r6}
 	bx	lr
 	.4byte	Text_MessageContexts
+	.global Text_DecodeSymbolEnd
+Text_DecodeSymbolEnd:

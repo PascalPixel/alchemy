@@ -1063,12 +1063,7 @@ main	rom_main_02	recon/tla/raw/0803c548	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003c4c4	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003c600	ja
 main	rom_main_02	games/tla/src/graphics/window/adjust_value_without_limit	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003ca20	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0003ca0c	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0003ca28	es
-main	rom_main_02	recon/tla/de/rom	.rom.0003ca1c	de
-main	rom_main_02	recon/tla/raw/0803ca20	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0003cad8	ja
+main	rom_main_02	games/tla/src/graphics/text/decode_message	.text
 main	rom_main_02	games/tla/src/system/memory/clear_word_if_set	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003cb72	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003cb5e	fr

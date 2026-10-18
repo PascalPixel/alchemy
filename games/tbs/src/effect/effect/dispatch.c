@@ -37,40 +37,40 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
     BattleFx_RunMeteor(effect);
   } else {
     switch (effect->kind) {
-    case 1:
+    case SCENE_EFFECT_RAMSES:
       BattleFx_RunRamses(effect);
       break;
-    case 2:
+    case SCENE_EFFECT_NEREID:
       BattleFx_RunNereid(effect);
       break;
-    case 3:
+    case SCENE_EFFECT_KIRIN:
       BattleFx_RunKirin(effect);
       break;
-    case 4:
+    case SCENE_EFFECT_ATALANTA:
       BattleFx_RunAtalanta(effect);
       break;
-    case 5:
+    case SCENE_EFFECT_CYBELE:
       BattleFx_RunCybele(effect);
       break;
-    case 6:
+    case SCENE_EFFECT_NEPTUNE:
       BattleFx_RunNeptune(effect);
       break;
-    case 7:
+    case SCENE_EFFECT_TIAMAT:
       BattleFx_RunTiamat(effect);
       break;
-    case 8:
+    case SCENE_EFFECT_PROCNE:
       BattleFx_RunProcne(effect);
       break;
-    case 9:
+    case SCENE_EFFECT_JUDGMENT:
       BattleFx_RunJudgment(effect);
       break;
-    case 10:
+    case SCENE_EFFECT_BOREAS:
       BattleFx_RunBoreas(effect);
       break;
-    case 11:
+    case SCENE_EFFECT_METEOR:
       BattleFx_RunMeteor(effect);
       break;
-    case 12:
+    case SCENE_EFFECT_THOR:
       BattleFx_RunThor(effect);
       break;
     }

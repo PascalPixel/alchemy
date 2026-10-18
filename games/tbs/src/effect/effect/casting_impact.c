@@ -11,14 +11,15 @@
 //   7) show their Djinni 80 pixels over the caster once the first sparks have
 //   gone out.
 // - Background: BG2 is placed so the impact sits over the target. Impacts 15,
-//   17, 24, 26 and 35 stop here and hand the canvas to another effect.
+//   17, 24, 26 and 35 (Severe Blow) stop here and hand the canvas to another
+//   effect.
 // - Impact: for 20 to 80 frames, depending on the impact, the caster's
 //   overlay, an orb, sparks and the impact's own animation are drawn while
 //   the background palette steps toward the impact's palette. A Djinni flies
 //   to the target over the first six frames, and the target is hit on
 //   frame 6.
-// - Finish: the canvas and its callbacks are released, or impact 21 hands
-//   them to the stat reduction.
+// - Finish: the canvas and its callbacks are released, or impact 21 (Meltdown)
+//   hands them to the stat reduction.
 //
 // The particles are used twice: work->particles holds the gathering sparks
 // and then, from the impact, 32 scattering sparks (variant is their
@@ -198,9 +199,8 @@ enum CastingImpact {
 #define CASTING_IMAGE_X(side, image) gCastingImpact_ImageX[(side) * 7 + (image)]
 
 // Gather sparks around the acting unit, launch the Djinni and draw its impact.
-// Kinds 15, 17, 24, 26 and 35 hand off to another effect after gathering.
-// command: effect arguments
-// kind: ability (effect number minus 100)
+// Impacts 15, 17, 24, 26 and 35 (Severe Blow) hand off to another effect after
+// gathering. command: effect arguments kind: ability (effect number minus 100)
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   void **slots;
   void **slot;

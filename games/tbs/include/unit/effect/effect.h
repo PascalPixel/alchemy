@@ -10,6 +10,23 @@ struct BattleEffectArgument;
 struct EffectPosition;
 struct EffectStep;
 
+// The large effects BattleFx_RunSceneEffect runs, by kind: the summons, and
+// Meteor's scene (kind 0 runs it too).
+enum SceneEffectKind {
+  SCENE_EFFECT_RAMSES = 1,
+  SCENE_EFFECT_NEREID,
+  SCENE_EFFECT_KIRIN,
+  SCENE_EFFECT_ATALANTA,
+  SCENE_EFFECT_CYBELE,
+  SCENE_EFFECT_NEPTUNE,
+  SCENE_EFFECT_TIAMAT,
+  SCENE_EFFECT_PROCNE,
+  SCENE_EFFECT_JUDGMENT,
+  SCENE_EFFECT_BOREAS,
+  SCENE_EFFECT_METEOR,
+  SCENE_EFFECT_THOR
+};
+
 typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
 extern BattleFxHandler gBattleFx_EffectHandlers[];
 

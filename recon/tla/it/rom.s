@@ -5737,12 +5737,9 @@ Func_081c1014:
 	.incbin "baserom.gba", 0x001c1014, 0x00000144
 	.section .rom.001c342a, "ax"
 	.incbin "baserom.gba", 0x001c342a, 0x00000002
-	.section .rom.001c342c, "ax"
-	.global Audio_EmptyCallback
-	.type Audio_EmptyCallback, %function
-	.thumb_func
-Audio_EmptyCallback:
-	.incbin "baserom.gba", 0x001c342c, 0x00000010
+	.section .rom.001c3430, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001c3430, 0x0000000c
 	.section .rom.0088fec5, "ax"
 	.incbin "baserom.gba", 0x0088fec5, 0x00000003
 	.section .rom.008ab681, "ax"

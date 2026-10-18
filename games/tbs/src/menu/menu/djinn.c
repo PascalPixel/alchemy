@@ -96,7 +96,7 @@ s32 ItemMenu_Run(void) {
   }
   Scheduler_EnableOverlayCallbacksWithFlags();
   UiWork_SetAltFlagAndClearTableFar(1);
-  Link_DrawShiftedTilePairFar((void *)0x06002500);
+  Link_DrawShiftedTilePairFar(0x06002500);
   menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Init(0, 3, 0, 7);
@@ -109,7 +109,7 @@ s32 ItemMenu_Run(void) {
   menu->selectedColumn[1] = zero;
   menu->selection[0] = 0;
   menu->selection[1] = 0;
-  FourObjectMotion_InitializeBottomRow(menu->helpWindow, 0);
+  FourObjectMotion_InitializeBottomRow((s32)menu->helpWindow, 0);
   DjinnMenu_RunScreen();
   FourObjectMotion_ClearSlotsAndScheduleAlt();
   Menu_ResetTwoResourceEntries();
@@ -321,7 +321,7 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(SE_175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
                           menu->pairIndex[0]);
-      result = DjinnRecovery_AddStandbyFar(
+      result = (s32)DjinnRecovery_AddStandbyFar(
           menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
       menu->cursor->active = ICON_HIDDEN;
@@ -460,11 +460,11 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
   Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
-  Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
+  Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 0x1000));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
-  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((const void *)Palette_GetBasicObjColors(),
+          (void *)&BG_PLTT_COLOR(5, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);

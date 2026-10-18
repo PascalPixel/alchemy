@@ -1418,9 +1418,9 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
   UiText_DrawCharacterAtOffsetFar(owner->classIndex + MsgClassName, window, 0,
                                   32);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
-  UiText_DrawStringAtOffsetFar(&gMenu_LvString, (void *)window, 0, 48);
+  UiText_DrawStringAtOffsetFar(gMenu_LvString, (void *)window, 0, 48);
 #else
-  UiText_DrawStringInWindowFar(&gMenu_LvString, window, 0, 48);
+  UiText_DrawStringInWindowFar(gMenu_LvString, window, 0, 48);
 #endif
   UiText_DrawNumberInWindowFar(owner->level, 2, window, 24, 48);
 
@@ -1459,7 +1459,7 @@ s32 PsynergyMenu_SelectAction(void) {
     }
   }
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
-  Menu_SpawnIconEntries(menu, menu->messageWindow);
+  Menu_SpawnIconEntries((struct InventoryMenuState *)menu, menu->messageWindow);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, menu->statusWindow,
                                   SWITCH_HELP_X, -24);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2,
@@ -1671,7 +1671,7 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
       } while (rowCount > rowIndex);
     }
   }
-  UiText_DrawStringAtOffsetFar((s32)unit->name, window, 40, 0);
+  UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   message = MsgStatLabel;
   UiText_DrawCharacterAtOffsetFar(message, window, 32, 16);
   UiText_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
@@ -1719,7 +1719,7 @@ s32 ItemMenu_SelectItem(void) {
                                   menu->statusWindow, 0, -24);
   ItemMenu_PosCategory();
   WaitFrames(1);
-  Menu_SpawnIconEntries(menu, menu->messageWindow);
+  Menu_SpawnIconEntries((struct InventoryMenuState *)menu, menu->messageWindow);
 
   done = 0;
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {

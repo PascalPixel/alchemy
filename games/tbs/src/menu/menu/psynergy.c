@@ -652,7 +652,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
-          UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+          UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+              ->name,
           window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 0, 0);
@@ -670,9 +671,10 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
         gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK, 4);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.secondShortcut >>
-                                              PSYNERGY_SHORTCUT_OWNER_SHIFT),
-                                   window, 80, 8);
+      UiText_DrawStringAtOffsetFar(
+          UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+              ->name,
+          window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 0, 8);
@@ -717,7 +719,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 0);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+        UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+            ->name,
         window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 24, 0);
@@ -747,7 +750,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 8);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+        UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+            ->name,
         window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {

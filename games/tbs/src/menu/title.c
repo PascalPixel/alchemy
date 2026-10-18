@@ -36,8 +36,8 @@
 #include "ram_buffer.h"
 #include "field_scene.h"
 #include "map_scroll.h"
+#include "songs.h"
 
-// Forward declarations
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
@@ -63,7 +63,7 @@ s32 Title_Run(void) {
   // Play the logo entrance until input or the one-minute timeout.
   if (gGameState.entrance == 10) {
     Object_GetById(gGameState.selectedActor)->motionFlags = 0;
-    Engine_AudioPlayCue(75);
+    Engine_AudioPlayCue(MUS_075);
     Title_RevealScreen(0);
     Engine_TaskWait(120);
     waitFrames = 0;
@@ -79,13 +79,13 @@ s32 Title_Run(void) {
   }
   // Finish the completion presentation before entering the clear overlay.
   if (gGameState.entrance == 9) {
-    Engine_AudioPlayCue(67);
+    Engine_AudioPlayCue(MUS_067);
     ScrollFar_Entry00(0);
-    Engine_AudioPlayCue(17);
+    Engine_AudioPlayCue(MUS_017);
     Fade_ToBlack(60);
     Fade_Wait();
     Engine_EventWait(240);
-    Engine_AudioPlayCue(19);
+    Engine_AudioPlayCue(MUS_019);
     Event_SetDestination((s32)&SceneId_Clear, 2);
     return 0;
   }
@@ -93,13 +93,13 @@ s32 Title_Run(void) {
   // Returning from the logo may repeat the splash and save-selection flow.
   if (gGameState.entrance == 2) {
     for (;;) {
-      Engine_AudioPlayCue(19);
+      Engine_AudioPlayCue(MUS_019);
       Title_ShowSplashScreen(0);
       PaletteFar_Entry20(0);
       if (SaveState_ScanRecordFlags() > 0) {
-        Engine_AudioPlayCue(70);
+        Engine_AudioPlayCue(MUS_070);
         if (PaletteFar_Entry00(1) == 0) {
-          Engine_AudioPlayCue(17);
+          Engine_AudioPlayCue(MUS_017);
           Fade_ToBlack(30);
           Fade_Wait();
           waitFrames = 0;
@@ -117,17 +117,17 @@ s32 Title_Run(void) {
     }
     Event_SetDestination((s32)&SceneId_Clear, 1);
   } else {
-    Engine_AudioPlayCue(64);
+    Engine_AudioPlayCue(MUS_064);
     PaletteFar_Entry00(0);
     Party_EndChildhood();
     Event_SetDestination((s32)&SceneId_Vale, 16);
-    Engine_AudioPlayCue(17);
+    Engine_AudioPlayCue(MUS_017);
   }
-  Engine_AudioPlayCue(17);
+  Engine_AudioPlayCue(MUS_017);
   Fade_ToBlack(30);
   Fade_Wait();
   Engine_EventWait(60);
-  Engine_AudioPlayCue(19);
+  Engine_AudioPlayCue(MUS_019);
   return 0;
 }
 
@@ -144,7 +144,8 @@ static void Title_LoadSprites(s32 unused) {
   encodedGraphics = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = Resource_FindFreeEntry();
-  Dma_Set(encodedGraphics, (void *)0x05000200, 0x84000070, REG_DMA3);
+  Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
   FieldResource_DecodeType01(encodedGraphics, decodedSprites);
   Vram_Load(gTitleVramBlock, 0x1e00, decodedSprites + 0x7800);
@@ -154,7 +155,8 @@ static void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = Resource_FindFreeEntry();
   FieldResource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), decodedSprites);
-  Dma_Set(decodedSprites, (void *)0x050003e0, 0x84000008, REG_DMA3);
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gTitleVramBlock, 0x500, decodedSprites + 32);
 #endif
   // Wait for the final DMA transfer before releasing the decode buffer.
@@ -242,14 +244,24 @@ static void Title_RevealScreen(s32 unused) {
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   FieldScheduler_AddCallback(Title_UpdateSpriteReveal, 0xc80);
-  IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000050, 0x2fce, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000052, 0x1010, 0x20000);
+  // Show BG0, BG2 and the sprites, with BG1 to BG3 darkened to black over
+  // the other layers and the backdrop.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
+                          DISPCNT_OBJ_ON,
+                      0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                          BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG0 |
+                          BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
+                          BLDCNT_TGT2_BD,
+                      0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), 0x20000);
   Engine_EventWait(120);
-  // Remove the brightness reduction in three-frame steps.
+  // Remove the darkening in three-frame steps.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
-    IO_WRITE_QUEUE_PUSH(0x4000054, 16 - brightnessStep, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, 0x20000);
     Engine_TaskWait(3);
   }
   // Open immediately here and restore the normal transition duration.
@@ -273,17 +285,19 @@ static void Title_LoadBackground(void) {
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
   Fade_ToBlack(0);
-  REG_BG2CNT = 0x681;
+  REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
-  blankTile = 0x1ff;
+  blankTile = LOGO_BLANK_TILE;
   encodedGraphics = Resource_GetTableEntry(resourceId);
-  Dma_Set(encodedGraphics, (void *)0x05000000, 0x84000070, REG_DMA3);
+  Dma_Set(encodedGraphics, (void *)BG_PLTT,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
   FieldResource_DecodeType01(encodedGraphics, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
+  Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Fill the visible 30 columns and pad each 32-entry tilemap row.
-  tilemap = (u16 *)0x06003000;
-  tileIndex = 0x1a0;
+  tilemap = LOGO_MAP;
+  tileIndex = LOGO_FIRST_TILE;
   for (screenY = 0; screenY <= 19; screenY++) {
     for (screenX = 0; screenX <= 29; screenX++)
       *tilemap++ = tileIndex++;
@@ -297,7 +311,7 @@ static void Title_LoadBackground(void) {
     bgScroll->x = 0;
     bgScroll++;
   }
-  Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   ((struct MapScrollWork *)gMapWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }

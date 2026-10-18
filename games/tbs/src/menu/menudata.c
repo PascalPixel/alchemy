@@ -3,11 +3,9 @@
 #include "edition.h"
 #include "types.h"
 
-//--------------------------------------------------------------------------
-// Menu tables: cursor bobbing, sort orders, highlight widths and resource
-// ids.
-//--------------------------------------------------------------------------
-
+// The menu tables: cursor bobbing, sort orders, highlight widths and
+// resource ids.
+//
 // None of these is const: the code that reads them declares them without it.
 
 // The hand cursor's bobbing offsets, indexed by (gFrameCount >> 1) & 7.

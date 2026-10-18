@@ -42,6 +42,7 @@
 #include "frame.h"
 #include "map_scroll.h"
 #include "flags.h"
+#include "title.h"
 
 // Edition-specific text and window layout values.
 #if TBS_PATCH_1
@@ -145,17 +146,19 @@ static void Clear_LoadBackground(void) {
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
   Engine_BlendSetDarkenTarget16(0);
-  REG_BG2CNT = 0x681;
+  REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
-  blankTile = 0x1ff;
+  blankTile = LOGO_BLANK_TILE;
   resource = Engine_ResourceGetTableEntry(resourceId);
-  Dma_Set(resource, (void *)0x05000000, 0x84000070, REG_DMA3);
+  Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
+          REG_DMA3);
   resource += 0x1c0;
   FieldResource_DecodeType01(resource, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
+  Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Build the visible 30-column logo map, padding to the 32-cell screen stride.
-  tilemap = (u16 *)0x06003000;
-  tile = 0x1a0;
+  tilemap = LOGO_MAP;
+  tile = LOGO_FIRST_TILE;
   for (y = 0; y < 20; y++) {
     for (x = 0; x < 30; x++)
       *tilemap++ = tile++;
@@ -168,8 +171,9 @@ static void Clear_LoadBackground(void) {
     scroll->x = 0;
     scroll++;
   }
-  Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
-  ((struct MapScrollWork *)gMapWork[0])->flags = 0x1400;
+  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  ((struct MapScrollWork *)gMapWork[0])->flags =
+      DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   {
     struct FieldActor *leader;
 
@@ -186,9 +190,15 @@ static void Clear_UpdateBlend(void) {
   frame = *(u16 *)&gClear_BlendFrame + 1;
   *(u16 *)&gClear_BlendFrame = frame;
   level = (u16)frame >> 1;
-  IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level,
+  // Blend BG0 and the sprites over the other layers, level sixteenths of
+  // the way in.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
+                          BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
+                          BLDCNT_TGT2_BD,
                       0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      BLEND_ALPHA((u16)level, 16 - (u16)level), 0x20000);
   if ((u16)level > 15)
     Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
@@ -229,7 +239,7 @@ static void Clear_CheckButtonCodes(void) {
         if (CLEAR_SEQUENCE_KEYS(gClear_CodeSequence)[gClear_CodeProgress] ==
             0) {
           gClear_CodeUnlocked = 1;
-          Engine_AudioPlayCue(110);
+          Engine_AudioPlayCue(SE_110);
         }
       } else {
         gClear_CodeProgress = 0;
@@ -249,7 +259,7 @@ static void Clear_CheckButtonCodes(void) {
         if (CLEAR_SEQUENCE_KEYS(
                 gClear_ExtraCodeSequence)[gClear_ExtraCodeProgress] == 0) {
           gClear_ExtraCodeUnlocked = 1;
-          Engine_AudioPlayCue(110);
+          Engine_AudioPlayCue(SE_110);
         }
       } else {
         gClear_ExtraCodeProgress = 0;
@@ -403,7 +413,7 @@ s32 SaveMenu_Run(void) {
     }
     Engine_EventWait(60);
     Engine_EventCloseScreen();
-    Engine_AudioPlayCue(17);
+    Engine_AudioPlayCue(MUS_017);
     Engine_EventWait(0x12c);
     Event_SetDestination((s32)&SceneId_WorldMap, 72);
     return 0;
@@ -823,7 +833,7 @@ menu_top:;
 leave:;
   gEventWork->requestedExit = 0x3e7;
   Engine_EventWait(30);
-  Engine_AudioPlayCue(17);
+  Engine_AudioPlayCue(MUS_017);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(60);

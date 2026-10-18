@@ -21,7 +21,7 @@ static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
 }
 
 // Stores value in the word that the object's unk6c points at.
-void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
+UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 
   if (object != NULL)

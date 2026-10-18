@@ -461,7 +461,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
 }
 
 // Copies Object_UpdateAll (ARM code) to the heap, runs it once and frees it.
-void Object_RunUpdateAllFromHeap(void) {
+UNUSED void Object_RunUpdateAllFromHeap(void) {
   void (*updateObjects)(void);
 
   RamCode_Load(updateObjects, Object_UpdateAll, Object_UpdateAllCodeSize);

@@ -177,7 +177,7 @@ void ObjectSystem_UpdateCamera(void) {
 }
 
 // Returns 1.
-s32 ObjectCamera_ReturnTrue(void) { return 1; }
+UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
 // Each frame, with the fixed camera: places every object's sprite, from the
 // 64th object down, facing them by the angle from the eye to the target.

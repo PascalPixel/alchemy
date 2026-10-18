@@ -378,7 +378,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
 }
 
 // Returns the top two bits of the block word of the cell at pixel (x, y).
-s32 Map_GetCellHighFlags(s32 x, s32 y) {
+UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
   struct MapCell *mapCell =

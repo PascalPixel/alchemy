@@ -500,17 +500,11 @@ main	rom_main_01	recon/tla/ja/rom	.rom.00023680	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.000236a8	ja
 main	rom_main_01	games/tla/src/field/common/object/priority	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002372a	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002372c	it
 main	rom_main_01	recon/tla/fr/rom	.rom.0002372a	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002372c	fr
 main	rom_main_01	recon/tla/es/rom	.rom.0002372a	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002372c	es
 main	rom_main_01	recon/tla/de/rom	.rom.0002372a	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002372c	de
 main	rom_main_01	recon/tla/raw/0802372a	.text	en
-main	rom_main_01	recon/tla/raw/0802372c	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002372a	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.0002372c	ja
 main	rom_main_01	games/tla/src/field/common/object/objlayer	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002386c	it
 main	rom_main_01	recon/tla/fr/rom	.rom.0002386c	fr

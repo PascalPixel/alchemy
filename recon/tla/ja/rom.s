@@ -200,12 +200,6 @@ Animation_SetDisplayFlag:
 	.incbin "baserom.gba", 0x000236a8, 0x00000028
 	.section .rom.0002372a, "ax"
 	.incbin "baserom.gba", 0x0002372a, 0x00000002
-	.section .rom.0002372c, "ax"
-	.global Func_0802372c
-	.type Func_0802372c, %function
-	.thumb_func
-Func_0802372c:
-	.incbin "baserom.gba", 0x0002372c, 0x0000009c
 	.section .rom.0002386c, "ax"
 	.global Func_0802386c
 	.type Func_0802386c, %function

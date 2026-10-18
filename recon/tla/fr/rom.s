@@ -3523,7 +3523,7 @@ Func_08126e00:
 	.incbin "baserom.gba", 0x00127320, 0x00000264
 	.section .rom.001275a0, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x001275a0, 0x00000554
+	.incbin "baserom.gba", 0x001275a0, 0x00000484
 	.section .rom.00127af4, "ax"
 	.global EnemyCountDecrement
 	.type EnemyCountDecrement, %function

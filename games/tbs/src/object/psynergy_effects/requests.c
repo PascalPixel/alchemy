@@ -87,3 +87,6 @@ void BattleFx_PlayQueuedSound(void) {
   if (soundId != -1)
     AudioCommand_PlayFar(soundId);
 }
+
+#undef AERIE
+#undef DJINN_NO_HOP

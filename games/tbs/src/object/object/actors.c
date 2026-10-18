@@ -261,10 +261,8 @@ UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
   return (u8 *)gEventWork + 0x14 + actorIndex * sizeof(void *);
 }
 
-//--------------------------------------------------------------------------
 // Actors and the view: placement conditions from the map's view bounds, and
 // clearing placed actors.
-//--------------------------------------------------------------------------
 
 #define FLAG_IN_VIEW 0x164     // kept clear, so a placement using it appears
 #define FLAG_OUT_OF_VIEW 0x165 // kept set, so a placement using it does not
@@ -527,3 +525,8 @@ void ObjectTable_Restore(void) {
     actorIndex = *indices++;
   }
 }
+
+#undef MAP_CELLS
+#undef FLAG_IN_VIEW
+#undef FLAG_OUT_OF_VIEW
+#undef PLACED_MAX

@@ -50,7 +50,7 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   BattleFx_InitializeFallingFragment(fragment);
 }
 
-#define CELL_MASK 0xfff00000 // a 16-pixel tile
+#define MOVE_CELL_MASK 0xfff00000 // a 16-pixel tile
 
 // Move (kind 1): puts the pushing hand beside the target and pushes the
 // target 16 pixels the way the d-pad points, for as long as the player
@@ -162,16 +162,17 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       // The push runs into the caster: if the caster stands on the tile the
       // target would move to, it cannot be pushed; if the caster stands on the
       // tile 32 pixels on, the caster moves along when the tile beyond is free.
-      cellX = user->x.fixed & CELL_MASK;
-      cellZ = user->z.fixed & CELL_MASK;
-      if (cellX == (candidate->x & CELL_MASK) &&
-          cellZ == (candidate->z & CELL_MASK)) {
+      cellX = user->x.fixed & MOVE_CELL_MASK;
+      cellZ = user->z.fixed & MOVE_CELL_MASK;
+      if (cellX == (candidate->x & MOVE_CELL_MASK) &&
+          cellZ == (candidate->z & MOVE_CELL_MASK)) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      if (cellX == (beyond.x & CELL_MASK) && cellZ == (beyond.z & CELL_MASK)) {
+      if (cellX == (beyond.x & MOVE_CELL_MASK) &&
+          cellZ == (beyond.z & MOVE_CELL_MASK)) {
         if (Map_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
                                              beyond.z) != 0) {
           ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
@@ -415,3 +416,5 @@ void UpdateRisingParticleBurst(void *object) {
   AudioCommand_PlayFar(SE_131);
   ObjectDispatch_ReleaseFar(src);
 }
+
+#undef MOVE_CELL_MASK

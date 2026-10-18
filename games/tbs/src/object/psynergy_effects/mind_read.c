@@ -132,7 +132,7 @@ void BattleFx_UpdateWaveScene(void) {
 // What Mind Read's wave uses: BG0's scanline scroll, the hue cycle and BG
 // palette 15.
 
-#define GREY28 0x739c // grey: red, green and blue 28
+#define MIND_READ_GREY RGB(28, 28, 28)
 
 // Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
 // scroll for each scanline from the wave's shown page.
@@ -244,27 +244,27 @@ void Ui_FillBank15PaletteGrey(void) {
 
   ((struct UiRenderWork *)gWindowWork[0])->mode = 1;
   p = &BG_PLTT_COLOR(15, 1);
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 2;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
 }
 
@@ -281,3 +281,5 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   ((struct UiRenderWork *)work)->mode = 0;
 }
+
+#undef MIND_READ_GREY

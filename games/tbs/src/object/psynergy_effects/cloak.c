@@ -157,3 +157,6 @@ void FieldFx_StartCloak(void) {
     field->command = n;
   }
 }
+
+#undef CLOAK_TILE
+#undef CLOAK_END

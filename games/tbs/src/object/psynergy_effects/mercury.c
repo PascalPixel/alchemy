@@ -3,7 +3,8 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define AFTERIMAGE_MAX 8 // afterimages of the rising Djinni
+#define MERCURY_PARTICLE_MAX 24  // droplets (one an effect slot)
+#define MERCURY_AFTERIMAGE_MAX 8 // afterimages of the rising Djinni
 // A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 // bounces twice and hops three times ever higher, then rises 120 pixels out
 // of sight trailing eight afterimages. The leader turns to the camera and
@@ -22,7 +23,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   s32 kind;
   s32 remaining;
   s32 resourceId;
-  struct FieldActor *copies[AFTERIMAGE_MAX];
+  struct FieldActor *copies[MERCURY_AFTERIMAGE_MAX];
   struct EffectVector position;
 
   djinni = Object_GetById(djinniId);
@@ -56,7 +57,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   resource = NULL;
   previous = djinni;
   cursor = copies;
-  for (remaining = AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
+  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
     copy = (struct FieldActor *)Object_CreateFar(
         kind, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
     *cursor++ = copy;
@@ -88,7 +89,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   }
   ObjectDispatch_ReleaseFar(djinni);
   list = copies;
-  for (remaining = AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
+  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
     ObjectDispatch_ReleaseFar(*list++);
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
@@ -107,7 +108,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   slot = effectScene->slots;
-  remaining = PARTICLE_MAX - 1;
+  remaining = MERCURY_PARTICLE_MAX - 1;
   do {
     EffectSlot_Initialize(slot, 240, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRandomTargetParticle);
@@ -129,7 +130,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
     slotState = (s8 *)effectScene;
     slotState += offsetof(struct BattleFxScene, slots) +
                  offsetof(struct EffectSlot, state);
-    remaining = PARTICLE_MAX - 1;
+    remaining = MERCURY_PARTICLE_MAX - 1;
     do {
       if (slotState[5] != 0) // active
         slotState[0] = nextState;
@@ -143,3 +144,6 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   Shop_InitEffectFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
+
+#undef MERCURY_PARTICLE_MAX
+#undef MERCURY_AFTERIMAGE_MAX

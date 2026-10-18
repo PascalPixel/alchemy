@@ -37,18 +37,18 @@ s32 Field_UsePsynergy(u32 code) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
-  if (work->mode == MODE_WORLD_MAP && abilityId == PSYNERGY_REVEAL) {
-    PSYNERGY_MESSAGE(userId, PSYNERGY_REVEAL, MsgNothingHappened);
+  if (work->mode == MODE_WORLD_MAP && abilityId == ABILITY_REVEAL) {
+    PSYNERGY_MESSAGE(userId, ABILITY_REVEAL, MsgNothingHappened);
     return 0;
   }
 
   // Retreat: ask, then go back to where the party entered this place.
-  if (abilityId == PSYNERGY_RETREAT) {
+  if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
-      PSYNERGY_MESSAGE(userId, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
+      PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
-    UiWork_PushValueSlotFar(PSYNERGY_RETREAT, 4);
+    UiWork_PushValueSlotFar(ABILITY_RETREAT, 4);
     UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
     declined = Menu_AskYesNo(1); // 0 is yes
     UiWork_FinalizePendingCoreFar();

@@ -8,7 +8,7 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
   BattleFx_MoveAfterimageHalfway(fieldObject);
 }
 
-#define CLONE_MAX 8 // afterimages of the leaping Djinni
+#define DJINNI_CLONE_MAX 8 // afterimages of the leaping Djinni
 
 // A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 // the leader, hops back 16 pixels three times, then leaps 64 pixels at the
@@ -24,7 +24,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   s32 sprite;
   s32 tint;
   s32 i;
-  struct FieldActor *copies[CLONE_MAX];
+  struct FieldActor *copies[DJINNI_CLONE_MAX];
 
   // The way the leader faces, to the nearest quarter turn.
   djinni = Object_GetById(djinniId);
@@ -75,7 +75,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     tint = 9;
   sharedSprite = NULL;
   prev = djinni;
-  for (i = 0; i < CLONE_MAX; i++) {
+  for (i = 0; i < DJINNI_CLONE_MAX; i++) {
     copy = (struct FieldActor *)Object_CreateFar(
         sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
     copies[i] = copy;
@@ -338,3 +338,5 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   particle->x = position.x;
   particle->z = position.z;
 }
+
+#undef DJINNI_CLONE_MAX

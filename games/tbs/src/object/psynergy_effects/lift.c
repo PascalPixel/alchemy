@@ -62,9 +62,6 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-// Shards scattered.
-#define ANCHOR_SHARD_MAX 24
-
 // Effect 7 cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect07, BattleFx_SpawnItemBreakMode3)
 

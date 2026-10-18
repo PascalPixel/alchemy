@@ -449,3 +449,5 @@ void Battle_ClearObjectFlag5bWhenMode3(void) {
     work->camera->movementState = 0;
   }
 }
+
+#undef STEP_FLAG_DOUBLE_SPEED

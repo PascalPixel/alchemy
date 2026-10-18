@@ -421,3 +421,9 @@ void FieldEffect_SpawnNearbyMarkers(void) {
     }
   }
 }
+
+#undef EFFECT_OBJECT_COUNT
+#undef EFFECT_OBJECT_POOL
+#undef SPARKLE_OBJECT_ID
+#undef PARTICLES_PAUSE_FOR_MENU
+#undef MENU_OPEN_OFFSET

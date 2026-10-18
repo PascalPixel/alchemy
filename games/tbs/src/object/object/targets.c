@@ -239,13 +239,13 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   }
 }
 
-// Clears the field's busy flag and, while Reveal is active, ends it: 0x2090
-// is Reveal (144) with ACT_PACKED, which runs its ending events.
+// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
+// used with ACT_PACKED runs its ending events.
 void Battle_ResetEffectCounter(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
   work->busy = 0;
   if (work->revealActive != 0) {
-    Field_RunPsynergyEvents(0x2090);
+    Field_RunPsynergyEvents(ABILITY_REVEAL | ACT_PACKED);
   }
 }

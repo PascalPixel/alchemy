@@ -106,8 +106,8 @@ void RunBattleEffect08(void) {
   Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
 }
 
-#define PSYNERGY_EV_4 0x40000005 // Psynergy event, stage 4
-#define FX_REVEAL 8              // the Reveal effect
+#define REVEAL_END_EVENT 0x40000005 // Psynergy event, stage 4
+#define REVEAL_FIELD_KIND 8         // the Reveal effect
 
 // Ends Reveal if it is running: stops its watch, brings the colours back
 // from black over 30 frames and runs stage 4 of the Psynergy event.
@@ -145,7 +145,8 @@ void ResetSceneTransitionEffect(void) {
     BattleFx_StartBufferInterpolation(30);
     WaitFrames(1);
 
-    event = BattleFx_FindMatchingEvent(PSYNERGY_EV_4, FX_REVEAL, &eventTarget);
+    event = BattleFx_FindMatchingEvent(REVEAL_END_EVENT, REVEAL_FIELD_KIND,
+                                       &eventTarget);
     if (event != NULL)
       BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
 
@@ -157,3 +158,6 @@ void ResetSceneTransitionEffect(void) {
     }
   }
 }
+
+#undef REVEAL_END_EVENT
+#undef REVEAL_FIELD_KIND

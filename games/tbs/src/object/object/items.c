@@ -136,7 +136,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
       GameFlag_ClearBitFar(0x142);
 
-      if (actionId == PSYNERGY_RETREAT && !GameFlag_TestFar(0x144)) {
+      if (actionId == ABILITY_RETREAT && !GameFlag_TestFar(0x144)) {
         UiWork_PushValueSlotFar(itemId, 2);
         UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
         /* FAKEMATCH(temporary): the answer kept in partyIndex, which ranks it

@@ -93,6 +93,7 @@
 #include "field_effect.h"
 #include "fixed_point_position.h"
 #include "macros.h"
+#include "ability_ids.h"
 
 // Field_RunScene's result when the scene was not left (scene.c, run_scene.c).
 #define EXIT_NONE 999
@@ -124,9 +125,6 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define ACT_PACKED 0x2000              // use it without paying PP
 #define UNIT_NONE 15
 #define ALLY_MAX 7 // the last party member
-
-#define PSYNERGY_REVEAL 144
-#define PSYNERGY_RETREAT 149
 
 #define EXIT_RETREAT 999 // the exit Retreat takes
 

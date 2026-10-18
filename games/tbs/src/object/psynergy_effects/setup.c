@@ -99,7 +99,7 @@ void EffectRuntime_StopCurrentObject(void) {
   WaitFrames(1);
 }
 
-#define BATTLE_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
+#define SETUP_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
 
 // Ends a Psynergy effect: frees the effect slots still in use and, unless
 // another effect is being resolved, waits (at most 30 frames) for the
@@ -143,7 +143,7 @@ void BattleEffect_CleanupSceneObjects(void) {
     s32 active;
 
     do {
-      struct ScriptMotionObject *slot = BATTLE_OBJECT_SLOTS;
+      struct ScriptMotionObject *slot = SETUP_OBJECT_SLOTS;
 
       active = 0;
       remaining = 0;
@@ -326,3 +326,5 @@ void Camera_WorldToScreen(struct EffectVector *position) {
 }
 
 // From here on positions are passed in each function's own structures.
+
+#undef SETUP_OBJECT_SLOTS

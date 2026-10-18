@@ -3,9 +3,10 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define PARTICLE_OBJ 284 // particle object
-#define FALL_OBJ 217     // falling object
-#define FALL_LAST 4      // five falling objects, 0 to 4
+#define GROWTH_PARTICLE_MAX 24     // particles round the target
+#define GROWTH_PARTICLE_OBJECT 284 // particle object
+#define GROWTH_FALL_OBJECT 217     // falling object
+#define GROWTH_FALL_LAST 4         // five falling objects, 0 to 4
 
 struct BurstParticleVector {
   s32 values[3]; // x, y, z
@@ -68,7 +69,7 @@ void BattleFx_RunBurstParticles(void) {
   BattleEffect_SpawnBurstParticleField();
   AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   p = &pos;
-  remainingObjects = FALL_LAST;
+  remainingObjects = GROWTH_FALL_LAST;
   do {
     struct FieldActor *particle;
     s32 radius;
@@ -78,7 +79,8 @@ void BattleFx_RunBurstParticles(void) {
     radius = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = work->y;
-    particle = Object_Spawn(FALL_OBJ, p->values[0], p->values[1], p->values[2]);
+    particle = Object_Spawn(GROWTH_FALL_OBJECT, p->values[0], p->values[1],
+                            p->values[2]);
     if (particle != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_BurstParticleObjectScript);
@@ -104,7 +106,8 @@ void BattleEffect_SpawnBurstParticleField(void) {
   caster = work->mainObject;
   BattleEffect_InitializeSharedScene();
 
-  for (particleIndex = 0; particleIndex < PARTICLE_MAX; particleIndex++) {
+  for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
+       particleIndex++) {
     struct FieldActor *particle;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
@@ -123,7 +126,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
     }
 
     // Copy the flip, shape and palette to the child sprite.
-    particle = Object_Spawn(PARTICLE_OBJ, pos[0], pos[1], pos[2]);
+    particle = Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
     child->flip = visual->flip;
@@ -157,3 +160,8 @@ void BattleEffect_SpawnBurstParticleField(void) {
   }
   WaitFrames(8);
 }
+
+#undef GROWTH_PARTICLE_MAX
+#undef GROWTH_PARTICLE_OBJECT
+#undef GROWTH_FALL_OBJECT
+#undef GROWTH_FALL_LAST

@@ -452,3 +452,10 @@ void BattleFx_RunVisibilityTransition(void) {
     Scheduler_ResumeOverlayTasks();
   }
 }
+
+#undef FLAG_NOT_ON_MAP
+#undef WORLD_MAP_MARKER_TILE_BYTES
+#undef WORLD_MAP_MARKER_ALLOCATION_SIZE
+#undef WORLD_MAP_CURSOR_SNAPS
+#undef WORLD_MAP_NAME_RANGE
+#undef WORLD_MAP_NAME_LEFT

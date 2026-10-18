@@ -242,3 +242,7 @@ failure:
   FieldEvent_End();
   return -1;
 }
+
+#undef TILE_CELLS
+#undef TILE_CELLS_SOUTH
+#undef TILE_CELLS_NORTH

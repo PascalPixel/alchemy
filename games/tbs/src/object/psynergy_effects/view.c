@@ -286,3 +286,5 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
     SPRITE_ATTR2_HIGH(visual) = mask;
   }
 }
+
+#undef SPRITE_ATTR2_HIGH

@@ -338,3 +338,11 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
 // Starts the current scene's field music, chosen by
 // Scene_ResolveInteractionResult.
 void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
+
+#undef EXIT_SCENE_MASK
+#undef EXIT_ENTRANCE
+#undef EXIT_KIND
+#undef EXIT_HAS_FLAG
+#undef EXIT_TABLE_END
+#undef EXIT_KIND_ANY
+#undef SCENE_RECORD

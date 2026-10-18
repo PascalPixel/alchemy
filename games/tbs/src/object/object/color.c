@@ -426,3 +426,8 @@ s32 BattleFx_ClampRgb555Component(s32 value) {
     value = 31744;
   return value;
 }
+
+#undef HEAP_SLOT_PALBUF
+#undef COLOR_MAX
+#undef COLOR_HALF
+#undef COLOR_CHANNEL_COUNT

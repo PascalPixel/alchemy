@@ -473,3 +473,6 @@ void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   state->exit = request;
 }
+
+#undef GIFT_RECEIVED_MESSAGE
+#undef GIFT_RECEIVED_MESSAGE_MODE

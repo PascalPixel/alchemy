@@ -93,6 +93,7 @@
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "macros.h"
+#include "ability_ids.h"
 
 // The effect slots of a Psynergy effect's scene (gEffectWork->slots).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
@@ -196,8 +197,6 @@ struct CaptureObject {
     }                                                                          \
   }
 
-#define PARTICLE_MAX 24 // droplets (one an effect slot)
-
 #define HEAP_SLOT_FX                                                           \
   56 // the Psynergy effect's work (gWorkSlot[56], gEffectWork)
 
@@ -211,9 +210,6 @@ struct WaveFxSprite {
   u8 palette;
 };
 
-//--------------------------------------------------------------------------
-// The item break effect: the main fragment's motion.
-//--------------------------------------------------------------------------
 // A FieldActor seen with the halfword at 0x5e (its lifetime), which
 // FieldActor does not name.
 struct ItemBreakFragmentObject {
@@ -240,11 +236,12 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
   }
 }
 
-//--------------------------------------------------------------------------
+// The shards DEFINE_ITEM_BREAK_EFFECT's effects scatter.
+#define ITEM_BREAK_SHARD_MAX 24
+
 // Defines an effect cast with no target: spawn makes an object 16 pixels
 // above the effect's position and 32 pixels to either side; each moves 24
 // pixels its way, then 24 shards scatter 8 to 32 pixels.
-//--------------------------------------------------------------------------
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct BattleFxScene *work;                                                \
@@ -273,7 +270,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
                                                                                \
     FieldObject_WaitForMoveFar(pair[0]);                                       \
     AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                     \
-    for (n = 0; n < ANCHOR_SHARD_MAX; n++) {                                   \
+    for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = work->x;                                                         \
       pos.y = work->y + 0x100000;                                              \
       pos.z = work->z;                                                         \

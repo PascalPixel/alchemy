@@ -3,7 +3,6 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define PSYNERGY_AVOID 150      // Avoid
 #define ITEM_SACRED_FEATHER 236 // Sacred Feather
 
 // End of the effect: switches the caster's display flags between 3 and 1 on
@@ -54,7 +53,7 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
 void FieldEvent_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
-    UiWork_PushValueSlotFar(PSYNERGY_AVOID, 4);
+    UiWork_PushValueSlotFar(ABILITY_AVOID, 4);
     UiText_ShowPositionedMessageAndWaitFar(MsgAbilityWoreOff, 1);
     return;
   }
@@ -123,3 +122,5 @@ void RunBattleEffect16(void) {
   Resource_ResetEntry(scene->arcTileSlot);
   UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }
+
+#undef ITEM_SACRED_FEATHER

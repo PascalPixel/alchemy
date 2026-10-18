@@ -25,7 +25,7 @@ void BattleFx_SpawnFallingParticles(void) {
   BattleFx_InitializeFallingFragment(fragment);
 }
 
-#define SHARD_MAX 20 // shards
+#define CARRY_SHARD_MAX 20 // shards
 
 // Tests the target's move with its terrain reference raised 16 pixels.
 // Restore the reference before returning the collision result.
@@ -47,7 +47,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   struct BattleFxScene *work;
   struct FieldActor *src;
   struct FieldActor *target;
-  struct FieldActor *shards[SHARD_MAX];
+  struct FieldActor *shards[CARRY_SHARD_MAX];
   struct EffectVector pos;
   struct FieldActor *hands[2];
   struct FieldActor *obj;
@@ -214,7 +214,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     struct FieldActor **walk = shards;
 
     // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
-    for (i = 0; i < SHARD_MAX; i++) {
+    for (i = 0; i < CARRY_SHARD_MAX; i++) {
       obj = Object_Spawn(0x11d, p->x, p->y, p->z);
       *walk++ = obj;
       if (obj != NULL) {
@@ -294,3 +294,5 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   }
   return fragment;
 }
+
+#undef CARRY_SHARD_MAX

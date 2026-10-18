@@ -1,3 +1,7 @@
+// The Battle Arena overlay: the lobby where linked and monster battles
+// start, the exchange of the two parties, the attendant and the records of
+// wins.
+
 #include "unit/import.h"
 #include "unit/menu/lobby.h"
 #include "unit/object/object.h"

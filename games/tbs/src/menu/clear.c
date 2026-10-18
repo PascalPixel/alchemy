@@ -1,3 +1,7 @@
+// The file select overlay: the Golden Sun logo, the start menu (new game,
+// continue, copy and delete), the door to the Battle Arena and the transfer of
+// a save's data, by link or as a password.
+
 #include "scene_ids.h"
 #include "unit/menu/clear.h"
 #include "unit/object/object.h"

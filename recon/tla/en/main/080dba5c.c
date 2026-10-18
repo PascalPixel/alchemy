@@ -1,8 +1,8 @@
 // Near miss, differ 20 of 103 (2026-10-18; 46 before, counted with
-// Func_080dbb40, adopted as depthend.c and now dropped here). Order only. The native
-// builds the frame's zero in r2 after VramCache_Load (movs r2, #0; mov sl,
-// r2); a plain zero local is set at the top of the block instead, and behind
-// an empty asm (volatile or not) it measured 22. Also: the active flag's
+// Func_080dbb40, adopted as depthend.c and now dropped here). Order only. The
+// native builds the frame's zero in r2 after VramCache_Load (movs r2, #0; mov
+// sl, r2); a plain zero local is set at the top of the block instead, and
+// behind an empty asm (volatile or not) it measured 22. Also: the active flag's
 // address before the size, the fill's arguments, the frame store before
 // the bitfield loads and the last pair round the callback's literal.
 #include "types.h"

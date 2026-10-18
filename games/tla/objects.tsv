@@ -2937,9 +2937,12 @@ main	rom_main_04	games/tla/src/battle/effect/run_descriptor_handler	.text	ja en 
 main	rom_main_04	recon/tla/fr/rom	.rom.000d25bc	fr
 main	rom_main_04	recon/tla/de/rom	.rom.000da5bc	de
 main	rom_main_04	recon/tla/raw/080cd5bc	.text	en
-main	rom_main_04	recon/tla/raw/080cd680	.text	en
-main	rom_main_04	recon/tla/raw/080cd808	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000cd5b4	ja
+main	rom_main_04	games/tla/src/field/common/event/push_keys	.text	ja en de fr
+main	rom_main_04	recon/tla/fr/rom	.rom.000d2808	fr
+main	rom_main_04	recon/tla/de/rom	.rom.000da808	de
+main	rom_main_04	recon/tla/raw/080cd808	.text	en
+main	rom_main_04	recon/tla/ja/rom	.rom.000cd800	ja
 main	rom_main_04	games/tla/src/battle/effect/find_descriptor_entry	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000cda84	it
 main	rom_main_04	recon/tla/it/rom	.rom.000cdac0	it

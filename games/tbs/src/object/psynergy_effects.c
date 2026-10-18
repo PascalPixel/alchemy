@@ -11,6 +11,9 @@
 //
 // A field Psynergy reaches its effect through its field kind, the type column
 // of games/tbs/src/game/actions.tsv; dispatch.c runs the kind's handlers.
+//
+// README.md in this folder gives the words, prefixes and spellings the parts
+// share.
 
 #include "psynergy_effects_internal.h"
 

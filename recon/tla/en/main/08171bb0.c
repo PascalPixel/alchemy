@@ -1,5 +1,5 @@
-// Draft of Func_08171bb0, decompiled from the listing: differ 1787 of 1748
-// (draft 1665), the same 109 calls and control flow; allocation differs.
+// Draft of Func_08171bb0, decompiled from the listing: differ 1664 of 1748
+// (draft 1748), the same 109 calls and control flow; allocation differs.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -122,7 +122,6 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   s32 frames;
   DrawRectangle blit;
   s32 *target;
-  struct EffectStep *saved;
   struct EffectStep *p;
   struct RenderModel *model;
   struct ModelTexture texture;
@@ -191,12 +190,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(Func_08143000, 3200);
   target = *GetBattleObjectSlotFar(effect->actors[0]);
-  saved = &work->particles[63];
-  saved->x = target[2];
-  saved->y = target[3];
-  saved->z = target[4];
-  saved->velocityX = target[6];
-  saved->velocityY = target[7];
+  work->particles[63].x = target[2];
+  work->particles[63].y = target[3];
+  work->particles[63].z = target[4];
+  work->particles[63].velocityX = target[6];
+  work->particles[63].velocityY = target[7];
   if (mode == 2 || mode == 4) {
     Resource_LoadAndDecompress(0xd2, work->sheet, 0, 0);
   } else {
@@ -223,11 +221,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
         Audio_PlayCue(206);
       }
       if (frame == 0) {
-        target[2] = saved->x;
-        target[3] = saved->y;
-        target[4] = saved->z;
-        target[6] = saved->velocityX;
-        target[7] = saved->velocityY;
+        target[2] = work->particles[63].x;
+        target[3] = work->particles[63].y;
+        target[4] = work->particles[63].z;
+        target[6] = work->particles[63].velocityX;
+        target[7] = work->particles[63].velocityY;
         if (mode == 0) {
           p = work->particles;
           for (i = 0; i != 63; i++, p++) {
@@ -283,22 +281,22 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             } else {
               work->shakeFrames = 8;
               Func_081180e8(134);
-              target[6] = saved->velocityX;
-              target[7] = saved->velocityY;
+              target[6] = work->particles[63].velocityX;
+              target[7] = work->particles[63].velocityY;
               BattleFx_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
                                         0x40000, 150);
             }
           } else if (frame <= 19) {
             target[18] = mode;
-            target[2] += (pos[0] - saved->x) / 128;
-            target[3] += (pos[1] - saved->y) / 128;
-            target[4] += (pos[2] - saved->z) / 128;
+            target[2] += (pos[0] - work->particles[63].x) / 128;
+            target[3] += (pos[1] - work->particles[63].y) / 128;
+            target[4] += (pos[2] - work->particles[63].z) / 128;
           } else if (frame <= 31 && (effect->variant == 1 || frame <= 23)) {
-            target[2] += (pos[0] - saved->x) / 16;
-            target[3] += (pos[1] - saved->y) / 16;
-            target[4] += (pos[2] - saved->z) / 16;
-            target[6] += (0x4000 - saved->velocityX) / 16;
-            target[7] += (0x4000 - saved->velocityY) / 16;
+            target[2] += (pos[0] - work->particles[63].x) / 16;
+            target[3] += (pos[1] - work->particles[63].y) / 16;
+            target[4] += (pos[2] - work->particles[63].z) / 16;
+            target[6] += (0x4000 - work->particles[63].velocityX) / 16;
+            target[7] += (0x4000 - work->particles[63].velocityY) / 16;
           }
         } else if (mode == 1) {
           target[18] = 0;
@@ -583,11 +581,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   }
 
   if (unit[0x129] && mode == 0 && effect->variant == 1) {
-    target[2] = saved->x;
-    target[3] = saved->y;
-    target[4] = saved->z;
-    target[6] = saved->velocityX;
-    target[7] = saved->velocityY;
+    target[2] = work->particles[63].x;
+    target[3] = work->particles[63].y;
+    target[4] = work->particles[63].z;
+    target[6] = work->particles[63].velocityX;
+    target[7] = work->particles[63].velocityY;
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   Scheduler_RemoveCallback(Func_08143000);

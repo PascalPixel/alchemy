@@ -1,8 +1,10 @@
-// Near miss, differ 8 of 109, instruction order only: the native stores
-// each zero velocity right after its target (str r2, [r6, #36] between the
-// x and y copies) and copies the zero to r8 later; here the y and z
-// velocities follow the flag byte's load. Targets first and velocities
-// after measured the same.
+// Near miss, differ 4 of 109, instruction order only. The one-pass block
+// round the six target and velocity stores keeps the y and z velocities
+// ahead of the sound byte's load (differ 8 without). Left: the native stores
+// the x velocity between the y load and its store (str r2, [r6, #36]) and
+// copies the zero to r8 after the sound byte's load; here the copy comes
+// first. A zero local set after the block, empty asm barriers between the
+// pairs and volatile asm after them measured 4, 10 and 73 (2026-10-18).
 // Finishes an effect object's run (heap slot 0xe0 effect work): the
 // object takes mode 20 and holds still where it is; with the work's sound
 // byte set it plays cue 212 and ticks in mode 1. When the quantity byte is
@@ -44,12 +46,15 @@ void Func_080dc6d8(void) {
   s32 quantity = work->quantity;
 
   Object_SetMode(object, 20);
-  object->targetX = object->x;
-  object->velocityX = 0;
-  object->targetY = object->y;
-  object->velocityY = 0;
-  object->targetZ = object->z;
-  object->velocityZ = 0;
+  /* FAKEMATCH: the one-pass block ends the stores before the sound test. */
+  do {
+    object->targetX = object->x;
+    object->velocityX = 0;
+    object->targetY = object->y;
+    object->velocityY = 0;
+    object->targetZ = object->z;
+    object->velocityZ = 0;
+  } while (0);
   if (work->sound != 0) {
     Audio_PlayCue(212);
     BattleFx_SetObjectTickMode(object, 1);

@@ -1,9 +1,11 @@
-// Near miss of Func_080dc978, differ 6 of 92, written from the listing with the
-// wave work as a struct (with byte offsets it is differ 47). Left: the native
-// loads the halfword zero for unk295 (ldr r1, =0) before the offset's shift
-// (lsls r2, r2, #1), here after it; and the native's literal pool sits two
-// instructions earlier (b before movs r3, #0; ldrsb), which is the four
-// estimated bytes of one empty asm.
+// Near miss of Func_080dc978, differ 2 of 92, written from the listing with the
+// wave work as a struct (with byte offsets it is differ 47). The empty asm
+// after the zero store places the literal pool where the native has it (its
+// four estimated bytes; differ 6 without). Left: the native loads the
+// halfword zero for unk295 (ldr r1, =0) before the offset's shift (lsls r2,
+// r2, #1), here after it; the asm before the store, or the store in a
+// one-pass block, measured differ 6 (2026-10-18; four minutes of permuter
+// found nothing nearer).
 #include "types.h"
 #include "callback_scheduler.h"
 #include "mem.h"
@@ -44,6 +46,8 @@ void Func_080dc978(s32 id, s32 value) {
   work->value = value;
   work->steps = 8;
   work->unk295 = 0;
+  /* FAKEMATCH: four estimated bytes that place the literal pool. */
+  asm("");
   BattleEffect_InitializeSharedScene();
   BattleFx_AdvanceHueCycle();
   BattleFx_ApplyColorToTargetBuffer(

@@ -7360,6 +7360,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
 #define PRISM_SHARD_START_X(shard) gPrism_ShardStarts[(shard) * 2]
 #define PRISM_SHARD_START_Y(shard) gPrism_ShardStarts[(shard) * 2 + 1]
 
+#define PRISM_GROUND_Y 0x380000 // y 56, where the crystals shatter
+
 // Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
 //
 // Battle effect 8: crystals drop out of the sky onto the targets' side, 8
@@ -7464,10 +7466,10 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
           draw[i & 1](canvas, work, HI(crystal->x) - 16, HI(crystal->y), 32,
                       64);
           EffectStep_AdvanceWithGravity2D(crystal, 64, 0x10000);
-          if (crystal->y > 0x380000) {
+          if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground (y 56).
             crystal->z = 1;
-            crystal->y = 0x380000;
+            crystal->y = PRISM_GROUND_Y;
             for (j = 0; j != 16; j++) {
               shard = &shards[i * 16 + j];
               shard->x = ((PRISM_SHARD_START_X(j) - 40) << 16) + crystal->x;
@@ -8239,6 +8241,10 @@ DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)
 #define TARGET_MOTES_CLOSE_IN(mode)                                            \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
+// Modes other than 0, 1 and 3 ripple the canvas: BG2's x is set line by
+// line from work->bg2X (BattleFx_ArmBg2AffineHBlankDma).
+#define TARGET_MOTES_RIPPLE(mode) (!((mode) <= 1 || (mode) == 3))
+
 // Where mode 3 keeps its glint images in work->sheet.
 enum { TARGET_MOTE_GLINT_CELLS = 0x2580 };
 
@@ -8328,7 +8334,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     total = work->effect->count * 8 + 64;
   else
     total = work->effect->count * 8 + 32;
-  if (!(mode <= 1 || mode == 3))
+  if (TARGET_MOTES_RIPPLE(mode))
     Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
@@ -8478,7 +8484,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   }
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  if (!(mode <= 1 || mode == 3))
+  if (TARGET_MOTES_RIPPLE(mode))
     Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   BattleFx_EndCanvasLayer();
 }
@@ -12636,6 +12642,8 @@ void BattleFx_RunNoEffect(void) {}
 
 // The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_IMAGE (work->sheet + 0xC56)
+#define BURST_SHOWER_BURSTS 48     // one fired a frame from frame 0
+#define BURST_SHOWER_BURST_LIFE 24 // frames each burst lives
 
 // The burst shower's styles, its mode argument.
 enum BurstShowerMode {
@@ -12881,7 +12889,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       // random numbers.
       aim[0] = (targetSpots[target].x + (Random16() & 31)) - 16;
       aim[1] = (targetSpots[target].y + (Random16() & 63)) - 16;
-      if (frame <= 47) {
+      if (frame <= BURST_SHOWER_BURSTS - 1) {
         // The canvas is half the screen's width, so x is halved. The burst
         // reaches its point in 32 frames.
         work->particles[frame].x = origin.x << 15;
@@ -12921,7 +12929,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
         spark->x += spark->velocityX;
         spark->y += spark->velocityY;
         spark->variant += 1;
-        if (spark->variant == 24) {
+        if (spark->variant == BURST_SHOWER_BURST_LIFE) {
           spark->variant = -1;
         }
       }

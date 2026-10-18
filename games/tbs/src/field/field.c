@@ -64,6 +64,8 @@
 #include "unit/field/vertices.h"
 #include "unit/field/curve_data.h"
 #include "unit/field/griddata.h"
+#include "objcmd.h"
+#include "songs.h"
 #include "macros.h"
 
 // Decompresses an LZ stream from source into destination and returns
@@ -95,11 +97,13 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   base = literal;
   start = destination;
   command++;
-  control |= 0x100; // a marker bit, shifted down as the flags are read
+  // A marker bit, shifted down as the flags are read.
+  control |= 0x100;
   // Consume literals or copy runs until the zero token ends the stream.
   for (;;) {
     if ((control & 1) != 0) {
-      if (control != 1) // only the marker is left: read the next command
+      // Only the marker left means: read the next command byte.
+      if (control != 1)
         *destination++ = *literal++;
     } else {
       token = *command++ << 8;
@@ -1107,7 +1111,8 @@ void ObjectSystem_Configure(s32 mode) {
   Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
   VramCache_Load(93, 128, gObject_ShadowTiles);
-  RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
+  RamCode_LoadSlot(HEAP_SLOT_FRAME_UPLOADER, Tile_CopyStrided,
+                   Tile_CopyStridedCodeSize);
 }
 
 // Takes a free animation layer record and starts it on animation id's first
@@ -1589,7 +1594,8 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     object->actionFlags = 1;
     actor->riseBaseY = 0;
     object->angle = 0x4000;
-    scripted->homeX = x / 65536; // its home position, in pixels
+    // Its home position, in pixels.
+    scripted->homeX = x / 65536;
     scripted->homeZ = z / 65536;
   }
   return object;
@@ -1762,13 +1768,13 @@ void ObjectDispatch_WaitForValue16(void *rawObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;
-  if (interpreter->script[interpreter->cursor] != 0x10) {
+  if (interpreter->script[interpreter->cursor] != SC_END) {
     do {
       WaitFrames(1);
       waitedFrames++;
       if (waitedFrames > 299)
         break;
-    } while (interpreter->script[interpreter->cursor] != 0x10);
+    } while (interpreter->script[interpreter->cursor] != SC_END);
   }
 }
 
@@ -1814,14 +1820,17 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleFx_StartBufferInterpolationFar(1);
   WaitFrames(1);
-  REG_DISPCNT = (REG_DISPCNT & 0xf1ff) | DISPCNT_OBJ_ON;
+  REG_DISPCNT =
+      (REG_DISPCNT & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
+      DISPCNT_OBJ_ON;
 }
 
 // Resumes the object camera updates and hides BG1-3 and the sprites.
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
   Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
-  REG_DISPCNT &= 0xe1ff;
+  REG_DISPCNT &=
+      ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }
 
 // Returns 1.
@@ -1997,7 +2006,7 @@ void ObjectSystem_UpdateCamera(void) {
       }
     }
   }
-  Runtime_ReleaseHeapBlock(52);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
 }
 
 // Returns 1.
@@ -2094,7 +2103,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
       break;
     }
   }
-  Runtime_ReleaseHeapBlock(52);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
 }
 
 // Object script commands that move the cursor and set byte54.
@@ -2793,7 +2802,7 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   arguments = &interpreter->script[interpreter->cursor + 1];
   repeatLimit = *arguments++;
   jumpKey = *arguments;
-  if (repeatLimit == 0xFFFF) {
+  if (repeatLimit == SC_FOREVER) {
     interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
   } else {
     repeatCount = &interpreter->repeatCount;
@@ -2943,9 +2952,9 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   return 0;
 }
 
-struct ScriptObjectEntry *
 // Returns the first solid object that an object at position values would
 // overlap, as ScriptObject_CheckOverlap tests, or NULL.
+struct ScriptObjectEntry *
 ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values) {
   s32 objectIndex;
@@ -3714,7 +3723,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         freeBlocks++;
     }
     if (freeBlocks - 136 < 0)
-      AudioCommand_PlayFar(135);
+      AudioCommand_PlayFar(SE_135);
   }
   /* FAKEMATCH: the volatile read puts gDebugMode's address in r5 here and at
    * the test before it, as the bytes do; read plainly both take r3 (differ 12,
@@ -4628,7 +4637,7 @@ s32 Map_LoadLayeredScene(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
   sceneResources = &gMap_LayeredScenes[index];
-  work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
+  work = Runtime_AllocateBlock(HEAP_SLOT_MAP, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct SceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map001);
@@ -5392,13 +5401,15 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-// Sets bits 9-11 of the map's flags from v, keeping the others.
+// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
+// REG_DISPCNT) from layerFlags, keeping its other flags.
 void Map_SetWorkFlagBits9To11(u32 layerFlags) {
   struct MapState *mapState = gMapWork[0];
-  u32 mask = layerFlags & 0xe00;
+  u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 flags = mapState->flags;
 
-  flags = (flags & 0xf1ff) | mask;
+  flags =
+      (flags & (u16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) | mask;
   mapState->flags = flags;
 }
 
@@ -5503,7 +5514,8 @@ s32 Map_InitializePerspectiveScene(void) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
-  perspective = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
+  perspective =
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MAP, sizeof(struct PerspectiveWork));
   Dma_Fill32Cell(fill, 0, perspective, sizeof(struct PerspectiveWork));
   perspective->viewX = 0;
   perspective->viewY = 0;
@@ -5518,8 +5530,10 @@ s32 Map_InitializePerspectiveScene(void) {
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation),
       Ram_MapCollision + 0x1000);
   MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
-  Io_Set16(0x3f9e, &REG_BLDCNT);
-  Io_Set16(0x1010, &REG_BLDALPHA);
+  Io_Set16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+               BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+           &REG_BLDCNT);
+  Io_Set16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
@@ -5529,9 +5543,13 @@ s32 Map_InitializePerspectiveScene(void) {
       Ram_MapCollision);
   perspective->fade = 0x1f00;
   perspective->fadeStep = 0x80;
-  Io_Set16(0xa80a, &REG_BG3CNT);
-  Io_Set16(0xaa0e, &REG_BG2CNT);
-  Io_Set16(0x0501, &REG_BG1CNT);
+  Io_Set16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+               BGCNT_WRAP | BGCNT_SIZE(2),
+           &REG_BG3CNT);
+  Io_Set16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+               BGCNT_WRAP | BGCNT_SIZE(2),
+           &REG_BG2CNT);
+  Io_Set16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
@@ -5603,7 +5621,7 @@ s32 Map_InitializePerspectiveScene(void) {
   eyeOffset.z = *distance + 0x10000;
   Iwram_TransformVector(&eyeOffset, camera->eye);
   REG_MOSAIC = 0;
-  Io_Write16(0x42, &REG_DISPCNT);
+  Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   gBgScroll[2].x = 0;
@@ -5725,15 +5743,15 @@ void MapAnimation_ApplyAffineFrame(void) {
       ((struct MapFrameWork *)WORK_SLOT(7))->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
-  struct PerspectiveWork *perspective = WORK_SLOT(8);
+  struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
   volatile u16 *dma0 = REG_DMA0;
   u32 *affineSource;
   u32 mode;
   u32 windowTop;
   u32 nextDisplayControl;
 
-  dma0[5] &= 0xc5ff;
-  dma0[5] &= 0x7fff;
+  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[5] &= ~DMA_ENABLE;
   (void)dma0[5];
   if (affinePages != NULL) {
     affineSource = (u32 *)affinePages[gFrameCount & 1];
@@ -5745,7 +5763,12 @@ void MapAnimation_ApplyAffineFrame(void) {
     *affineRegisters++ = *affineSource++;
     *affineRegisters++ = *affineSource++;
     *affineRegisters = *affineSource++;
-    Dma_Set(affineSource, (void *)&REG_BG2PA, 0xa6600008, (volatile u32 *)dma0);
+    Dma_Set(affineSource, (void *)&REG_BG2PA,
+            (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_32BIT |
+             DMA_DEST_RELOAD)
+                    << 16 |
+                8,
+            (volatile u32 *)dma0);
   }
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
@@ -5785,7 +5808,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   u32 cellsCopied;
 
   sourceCell = Ram_MapBlocks + ((((s32)tileRow / 2) & 31) << 7);
-  screenTile = (u8 *)(0x06004000 + ((tileRow & 62) << 6));
+  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
   cellsCopied = 0;
   do {
     CopyWorldMapTileColumn(sourceCell, screenTile);
@@ -5812,7 +5835,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   u32 cellsCopied;
 
   sourceCell = Ram_MapBlocks + ((((s32)tileColumn / 2) & 31) << 2);
-  screenTile = (u8 *)(0x06004000 + (tileColumn & 62));
+  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
   cellsCopied = 0;
   do {
     CopyWorldMapTileColumn(sourceCell, screenTile);
@@ -5828,7 +5851,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
 void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   struct MapFrameWork *frameWork = WORK_SLOT(7);
-  struct PerspectiveWork *perspective = WORK_SLOT(8);
+  struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
   s32 *cameraPosition = camera->pos;
   s32 *followedPosition = perspective->origin;
   struct MapAffinePair(*affinePages)[160] = frameWork->pages;
@@ -5984,7 +6007,8 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void) {
 
 // VBlank: shows BG1 and copies the decoded frame's tiles into VRAM.
 void MapAnimation_PresentFrame(void) {
-  Io_Write16(0x682, &REG_BG1CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+             &REG_BG1CNT);
   Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
 }
@@ -5993,7 +6017,7 @@ void MapAnimation_PresentFrame(void) {
 // decodes the first frame and hands the window and VBlank to it.
 void MapAnimation_Start(void) {
   struct MapFrameWork *frameWork = WORK_SLOT(7);
-  struct PerspectiveWork *perspective = WORK_SLOT(8);
+  struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
   s32 one = 1;
 
   perspective->animationActive = one;
@@ -6010,8 +6034,9 @@ void MapAnimation_Start(void) {
 
 // VBlank: shows BG1 and copies the area's tiles back into VRAM.
 void Map_ShowBg1FromBuffer(void) {
-  Io_Write16(0x501, &REG_BG1CNT);
-  Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
+  Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000, REG_DMA3);
 }
 
 // Reloads the world map area's palette and tiles after a BG1 animation, puts
@@ -6056,7 +6081,7 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
   struct PerspectiveWork *perspective = gMapWork[0];
   gVBlankHook = Map_ShowBg1FromBuffer;
   perspective->windowTop = 0;
-  perspective->windowBottom = 0x9f;
+  perspective->windowBottom = 159;
   WaitFrames(1);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
@@ -6259,7 +6284,8 @@ void DisplayBlend_StartScript(u16 *script) {
   hasScript = 0;
   zero = 0;
   blend = &((struct MapState *)gMapWork[0])->blend;
-  Dma_Set((const void *)&zero, blend, 0x85000003, REG_DMA3);
+  Dma_Set((const void *)&zero, blend,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   if (*script != 0xffff) {
     blend->script = script;
     blend->cursor = script;
@@ -6328,7 +6354,8 @@ s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
   cycle->count = colorCount16;
   cycle->source = paletteColors;
   cycle->delay = delay;
-  Dma_Set(paletteColors, cycle->colors, 0x80000000 | colorCount16, REG_DMA3);
+  Dma_Set(paletteColors, cycle->colors, DMA_ENABLE << 16 | colorCount16,
+          REG_DMA3);
   paletteQueue->count++;
   return 0;
 }
@@ -6336,7 +6363,7 @@ s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
 // Stops the palette cycles and frees their queue (heap slot 28).
 void Runtime_ScheduleCallbackAndReleaseBlock28(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
-  Runtime_ReleaseHeapBlock(0x1C);
+  Runtime_ReleaseHeapBlock(28);
 }
 
 // Starts running the palette cycles each frame.
@@ -6367,7 +6394,8 @@ void PaletteQueue_StepCycles(void) {
       for (colorIndex = 0; colorIndex < colorCount - rotationOffset;
            colorIndex++)
         rotatedColors[colorIndex] = *savedColors++;
-      Dma_Set(rotatedColors, paletteColors, 0x80000000 | colorCount, REG_DMA3);
+      Dma_Set(rotatedColors, paletteColors, DMA_ENABLE << 16 | colorCount,
+              REG_DMA3);
       rotationOffset++;
       if (rotationOffset >= colorCount)
         rotationOffset = 0;
@@ -7093,9 +7121,9 @@ void Ui_RunIconMonitor(void) {
   }
   layers[0].on = 1;
   gDebugMode = 2;
-  REG_BLDCNT = 0x3F42;
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   PLTT_BACKDROP = 0x01E0;
-  REG_DISPCNT = 0x1140;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   Fade_FromBlack(1);
 
 restart:

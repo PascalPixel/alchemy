@@ -20,13 +20,14 @@
 #include "call.h"
 #include "frame.h"
 #include "oambuf.h"
+#include "songs.h"
 #include "macros.h"
 
-// Starts the Lucky Dice minigame: leaves only the backdrop on screen, sends
-// sound command 9 and plays until the player quits. Returns 0.
+// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
+// song MUS_009 and plays until the player quits. Returns 0.
 s32 Runtime_BlankDisplayAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  AudioCommand_PlayFar(9);
+  AudioCommand_PlayFar(MUS_009);
   LuckyDice_Run();
   return 0;
 }
@@ -247,8 +248,8 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows
-  s32 numbers[DICE_RESULT_COUNT]; // the two faces, then the two rows the dice
-                                  // stopped in
+  // The two faces, then the two rows the dice stopped in.
+  s32 numbers[DICE_RESULT_COUNT];
   s32 groundPoint[3];
   s32 screen[3];
   /* FAKEMATCH: unused local; the native frame keeps 32 unused bytes at
@@ -327,15 +328,17 @@ void LuckyDice_Run(void) {
   index = 0;
   for (tileY = 0; tileY != 20; tileY++) {
     for (tileX = 0; tileX != 32; tileX++) {
-      *(volatile u16 *)(0x06003000 + index) = tileX + tileY * 30;
+      *(volatile u16 *)(BG_SCREEN_BLOCK(6) + index) = tileX + tileY * 30;
       index += 2;
     }
   }
 
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-  Dma_Set((void *)resourceAddress, (void *)0x05000000, 0x84000070, REG_DMA3);
-  Dma_Set((void *)0x05000000, bgPalette, 0x84000080, REG_DMA3);
+  Dma_Set((void *)resourceAddress, (void *)BG_PLTT,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
+  Dma_Set((void *)BG_PLTT, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+          REG_DMA3);
   resourceAddress += 0x1c0;
   // UB: Value2 passes integers to the decoder's two pointer parameters.
   // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
@@ -344,39 +347,48 @@ void LuckyDice_Run(void) {
 #else
   Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer, BG_SCREEN_BLOCK(8),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-  Dma_Set((void *)resourceAddress, spritePalette, 0x84000080, REG_DMA3);
-  Dma_Set((void *)resourceAddress, (void *)0x05000200, 0x84000080, REG_DMA3);
+  Dma_Set((void *)resourceAddress, spritePalette,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
+  Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
   Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
 #else
   Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, REG_DMA3);
-  Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
-  Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
+  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
+  Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
   // Show the board on BG1, sprites and windows, with the board blended.
-  REG_BG1CNT = 0x0686;
-  REG_WININ = 0x3737;
-  REG_WINOUT = 0x2723;
+  REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_CLR |
+               WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 |
+               WINOUT_WINOBJ_CLR;
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                 DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
-  REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x0810;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 8);
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   REG_BG1HOFS = 0;
   REG_BG1VOFS = 0xff60;
   REG_BG2HOFS = 0;
   REG_BG2VOFS = 0xff60;
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0xa0;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0xa0;
+  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0V = WIN_RANGE(0, 160);
+  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1V = WIN_RANGE(0, 160);
 
   // Start aiming with both dice at the throwing line and two lucky numbers.
   state = LUCKY_DICE_AIM;
@@ -428,10 +440,9 @@ void LuckyDice_Run(void) {
     resetDice = 0;
     // Fade in over the first 16 frames.
     if (frame <= 16) {
-      Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
+      Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
                                  256);
-      Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
-                                 256);
+      Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
@@ -464,7 +475,7 @@ void LuckyDice_Run(void) {
     if (state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
       for (index = 0; index != DICE_RESULT_COUNT; index++) {
         if (resultTimer == index * 5) {
-          AudioCommand_PlayFar(0x12f);
+          AudioCommand_PlayFar(SE_303);
         }
         if (resultTimer >= index * 5) {
           sprites->obj[spriteCount].attr01 =
@@ -596,7 +607,7 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gKeysRepeat & KEY_A) {
-        AudioCommand_PlayFar(0x12e);
+        AudioCommand_PlayFar(SE_302);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
@@ -873,7 +884,7 @@ void LuckyDice_Run(void) {
           }
           UiText_DrawNumberInWindowFar(gGameState.coins, 6,
                                        sprites->coinsWindow, 0, 0);
-          AudioCommand_PlayFar(93);
+          AudioCommand_PlayFar(MUS_093);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -897,7 +908,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            AudioCommand_PlayFar(91);
+            AudioCommand_PlayFar(MUS_091);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -905,7 +916,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            AudioCommand_PlayFar(92);
+            AudioCommand_PlayFar(MUS_092);
           }
         }
       }
@@ -930,7 +941,8 @@ void LuckyDice_Run(void) {
       sprites->obj[index * 4 + 3].attr2 |= affineD << 16;
     }
 
-    Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, REG_DMA3);
+    Dma_Set(sprites->obj, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+            REG_DMA3);
     WaitFrames(1);
     frame++;
   }
@@ -938,8 +950,8 @@ void LuckyDice_Run(void) {
   // Fade out over 17 frames and free the work blocks.
   for (index = 0; index != 17; index++) {
     scale = 0x10000 - (index << 12);
-    Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
-    Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
+    Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
+    Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_CAMERA);

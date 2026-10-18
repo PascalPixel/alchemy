@@ -397,14 +397,13 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     if (frame > 27) {
       DrawRectangle draw = blit[1];
       for (i = 0; i != NEPTUNE_PARTICLES; i++) {
-        s32 m = 3;
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
           EFFECT_DRAW_MOTE(draw, canvas, particleSheet,
                            Q_16_16_TO_INT(PARTICLES[i].x),
                            Q_16_16_TO_INT(PARTICLES[i].y), k);
           EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62,
-                                          gNeptune_Gravity[i & m]);
+                                          gNeptune_Gravity[i & 3]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 &&
               Q_16_16_TO_INT(PARTICLES[i].y) > 104) {
@@ -488,6 +487,9 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           }
           for (j = 0; j != NEPTUNE_PARTICLES; j++) {
             if (PARTICLES[j].variant == 0) {
+              /* FAKEMATCH: the mask set before the call that it masks; as
+               * Random16() & 0x3ff, in either order, 5 lines of tbs-en effect.s
+               * differ (2026-10-18). */
               s32 r = 0x3ff;
               s32 a;
               r &= Random16();

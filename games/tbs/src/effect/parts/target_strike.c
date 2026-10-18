@@ -210,6 +210,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   // Park every particle, idle, where it will start: smoke at the target's
   // feet, motes and sparks 20 pixels up its body, each with a random
   // velocity.
+  // DEAD: runs once, for the first target only; the ROM keeps the loop.
   for (k = 0; k != 1; k++) {
     target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
     for (i = 0; i != 64; i++) {
@@ -461,6 +462,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;
+    // DEAD: runs once, for the user only; the ROM keeps the loop.
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->effect->actor)->object;
       // Smoke puffs rise and spread through six images over 24 frames.

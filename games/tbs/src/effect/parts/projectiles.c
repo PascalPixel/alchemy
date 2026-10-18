@@ -481,18 +481,14 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                  1);
     if (mode == 5) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      {
-        Iwram_CopyWords((void *)BG_PLTT, pal, 128);
-      }
+      Iwram_CopyWords((void *)BG_PLTT, pal, 128);
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
                                work->sheet + PROJECTILE_VOLLEY_STREAK_CELLS, 1,
                                0);
     if (mode == 5) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      {
-        Iwram_CopyWords((void *)BG_PLTT, pal, 128);
-      }
+      Iwram_CopyWords((void *)BG_PLTT, pal, 128);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   } else if (mode == 1) {

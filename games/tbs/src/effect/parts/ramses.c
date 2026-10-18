@@ -241,6 +241,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       }
       work->shakeFrames = 8;
     }
+    // The ROM tests the strike frame again here.
     if (frame == RAMSES_STRIKE_FRAME) {
       // Throw the sparks from (32, 92) at random angles and speeds, twice as
       // hard up and down as across, each living 32 to 47 frames.
@@ -249,6 +250,9 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
         s32 speed;
         s32 angle;
 
+        /* FAKEMATCH: the mask set before the Random16() call it masks; as
+         * Random16() & 0x3ff, 5 lines of tbs-en effect.s differ (2026-10-18).
+         */
         speed = 0x3ff;
         speed &= Random16();
         angle = Random16() & 0xffff;

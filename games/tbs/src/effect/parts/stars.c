@@ -15,7 +15,9 @@
 // lets the battle show the damage.
 void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
+#ifndef UBFIX
   struct EffectPosition base;
+#endif
   struct Vector3 scale;
   struct BattleEffectWork *work;
   void *canvas;
@@ -122,10 +124,12 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           if (peak < depth)
             peak = depth;
           screenPosition.x >>= 1;
-          // These first stores read base, which is never set; the next
-          // two overwrite them.
+#ifndef UBFIX
+          // These first stores read base, which is never set; the next two
+          // overwrite them. UBFIX leaves them out.
           trails[i * 10 + j].velocityX = screenPosition.x + base.x;
           trails[i * 10 + j].velocityY = screenPosition.y + base.y;
+#endif
           trails[i * 10 + j].velocityX = screenPosition.x;
           trails[i * 10 + j].velocityY = screenPosition.y;
           Transform_Pop();

@@ -332,6 +332,8 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
 
     mote = &PARTICLES[i];
 
+    /* FAKEMATCH: the mask set before the Random16() call it masks; as
+     * Random16() & 0x3ff, 5 lines of tbs-en effect.s differ (2026-10-18). */
     speed = 0x3ff;
     speed &= Random16();
     angle = Random16() & 0xffff;

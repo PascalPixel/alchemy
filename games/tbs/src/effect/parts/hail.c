@@ -332,44 +332,25 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
 // rangeY: the vertical range, a power of two; both offsets are centred on
 //         half of it.
 void Camera_ApplyShake(s32 rangeX, u32 rangeY) {
-  s32 displayY;
-  s32 offsetX;
-  s32 *remainingFrames;
-  s32 restoredPosition;
-  struct BattleEffectWork *work;
-  s32 offsetY;
-  s32 halfRange;
-  s32 randomX;
-  struct BgScroll *displayPosition;
-  struct Projection *displayCenter;
-  struct BgScroll *restoredScroll;
-  struct Projection *restoredCenter;
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  remainingFrames = &work->shakeFrames;
-  if (*remainingFrames > 0) {
-    randomX = (rangeX - 1) & Random16();
-    halfRange = (s32)(rangeY + (rangeY >> 0x1F)) >> 1;
-    offsetY = ((rangeY - 1) & Random16()) - halfRange;
-    displayPosition = gBgScroll;
-    offsetX = randomX - halfRange;
-    displayY = offsetY + 0x20;
-    displayPosition[1].x = offsetX;
-    displayPosition[1].y = displayY;
-    displayCenter = &gProjection;
-    displayCenter->centerX = 0x78 - offsetX;
-    displayCenter->centerY = 0x78 - offsetY;
-    *remainingFrames -= 1;
+  if (work->shakeFrames > 0) {
+    s32 randomX = (rangeX - 1) & Random16();
+    s32 halfRange = (s32)rangeY / 2;
+    s32 offsetY = ((rangeY - 1) & Random16()) - halfRange;
+    s32 offsetX = randomX - halfRange;
+
+    gBgScroll[1].x = offsetX;
+    gBgScroll[1].y = offsetY + 32;
+    gProjection.centerX = 120 - offsetX;
+    gProjection.centerY = 120 - offsetY;
+    work->shakeFrames--;
     return;
   }
-  restoredPosition = work->savedBg1X;
-  restoredScroll = gBgScroll;
-  restoredScroll[1].x = restoredPosition;
-  restoredPosition = work->savedBg1Y;
-  restoredScroll[1].y = restoredPosition;
-  restoredCenter = &gProjection;
-  restoredCenter->centerX = 0x78;
-  restoredCenter->centerY = 0x78;
+  gBgScroll[1].x = work->savedBg1X;
+  gBgScroll[1].y = work->savedBg1Y;
+  gProjection.centerX = 120;
+  gProjection.centerY = 120;
 }
 
 #undef HAIL_CHIP_COUNT

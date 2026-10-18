@@ -125,6 +125,13 @@ The same locals carry the same names in every handler:
 - `frame`: the frame counter; `cell`: a picture's index or offset.
 - `unk_<offset>`: a field whose meaning is not known yet.
 
+Two comment markers are fixed:
+
+- `// DEAD: why`: code the ROM keeps that can never change the result, such
+  as a test that is always true; taking it out changes the bytes.
+- `/* FAKEMATCH: the form kept; the plain form and how much it differs */`:
+  a device that steers the compiler (AGENTS.md, S2).
+
 ## Entry points
 
 The battle starts an effect through one of three functions, each of which

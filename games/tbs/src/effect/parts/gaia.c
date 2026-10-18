@@ -287,6 +287,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
           position.height = 0x2000000 - (rock->y << 16);
           position.y = 0x2000000;
           slot = (frame / 2 + k) % GAIA_ROCKS;
+          // DEAD: always true, as slot is a remainder of a positive count; the
+          // ROM keeps the test.
           if (slot != -1)
             Object_ApplyProjectedPlacementFar(work->objects[slot], &position,
                                               &scale, 0);

@@ -130,6 +130,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     if (shift > 24) {
       shift = 24;
     }
+    // DEAD: always true, as the loop ends at frame 120; the ROM keeps the test.
     if (frame <= 135) {
       gBgScroll[1].x -= shift;
       grow += shift;
@@ -138,6 +139,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     // From frame 8 the row bobs on a sine wave (32 pixels high, 96 after
     // frame 104) and shakes the screen every 32 frames; after frame 103 it
     // lifts away to the left.
+    // DEAD: always true, as the loop ends at frame 120; the ROM keeps the test.
     if (frame <= 149) {
       struct SpriteScale pair = sweepScale;
       s32 lift;

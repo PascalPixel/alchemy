@@ -291,6 +291,17 @@ enum CanvasTransferMode {
 // Used for clipping canvas lines and comparing projectile travel distances.
 #define EFFECT_ABS(v) ((v) < 0 ? -(v) : (v))
 
+// Caps a colour level at cap, and at 0 from below. Fades draw from darker
+// copies of a picture built before the first frame, copy i capped at
+// 64 - 7i.
+#define EFFECT_CAP_LEVEL(level, cap)                                           \
+  {                                                                            \
+    if ((level) > (cap))                                                       \
+      (level) = (cap);                                                         \
+    if ((level) < 0)                                                           \
+      (level) = 0;                                                             \
+  }
+
 // Closing bolts and lightning columns use the same 24x120 picture cells.
 #define LIGHTNING_BOLT_CELL_BYTES 2880
 
@@ -11296,10 +11307,7 @@ UNUSED DEFINE_EFFECT_KIND(BattleFx_RunStatReductionMode3,
     for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
       s32 level = work->sheet[STAT_REDUCTION_SHARD_CELLS + j];
 
-      if (level > 64 - i * 7)
-        level = 64 - i * 7;
-      if (level < 0)
-        level = 0;
+      EFFECT_CAP_LEVEL(level, 64 - i * 7);
       work->sheet[STAT_REDUCTION_SHARD_CELLS + i * STAT_REDUCTION_SHARD_BYTES +
                   j] = level;
     }
@@ -16651,12 +16659,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       for (j = 0, src = sprites; j != STORM_DIMMED_DOT_BYTES; j++) {
         s32 v = *src++;
 
-        if (v > 64 - i * 7) {
-          v = 64 - i * 7;
-        }
-        if (v < 0) {
-          v = 0;
-        }
+        EFFECT_CAP_LEVEL(v, 64 - i * 7);
         (work->sheet + STORM_DIMMED_DOTS)[offset + j] = v;
       }
       offset += j;
@@ -22638,20 +22641,14 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-  // Eight dimmed copies of the mote sheet, each capped 7 levels lower than
-  // the last; the ring of motes from frame 144 steps through them.
   // Eight ever darker copies of the particle sprites, for fading: copy i
-  // caps every colour level at 64 - 7i.
+  // caps every colour level at 64 - 7i, and the ring of motes from frame 144
+  // steps through them.
   for (i = 0; i != 8; i++) {
     u8 *src = ramp;
     for (j = 0; j != 770; j++) {
       s32 v = *src++;
-      if (v > 64 - i * 7) {
-        v = 64 - i * 7;
-      }
-      if (v < 0) {
-        v = 0;
-      }
+      EFFECT_CAP_LEVEL(v, 64 - i * 7);
       ((struct ShockwaveWork *)work)->ramp[i][j] = v;
     }
   }

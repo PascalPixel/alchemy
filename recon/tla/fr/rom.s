@@ -3067,9 +3067,8 @@ Func_08101a04:
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x00103c38, 0x00000144
-	.section .rom.00103db0, "ax"
-	.incbin "baserom.gba", 0x00103db0, 0x0000003c
 	.section .rom.00103dec, "ax"
+	.balign 4
 	.global Func_08101c7c
 	.type Func_08101c7c, %function
 	.thumb_func

@@ -923,7 +923,13 @@ Func_08040798:
 	.section .rom.000410c8, "ax"
 	.incbin "baserom.gba", 0x000410c8, 0x0000019c
 	.section .rom.000412ec, "ax"
-	.incbin "baserom.gba", 0x000412ec, 0x00000440
+	.global Func_0804128c
+	.type Func_0804128c, %function
+	.thumb_func
+Func_0804128c:
+	.incbin "baserom.gba", 0x000412ec, 0x000000c4
+	.section .rom.00041600, "ax"
+	.incbin "baserom.gba", 0x00041600, 0x0000012c
 	.section .rom.0004172c, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function
@@ -974,12 +980,6 @@ UiText_DrawStringAtOffset:
 	.thumb_func
 UiText_DrawPrefixedNumberAtOffset:
 	.incbin "baserom.gba", 0x000422e0, 0x000000a0
-	.section .rom.00042380, "ax"
-	.global RenderOutput_Create
-	.type RenderOutput_Create, %function
-	.thumb_func
-RenderOutput_Create:
-	.incbin "baserom.gba", 0x00042380, 0x00000088
 	.section .rom.00042574, "ax"
 	.balign 4
 	.global Ui_LoadCharacterEntryForSlot

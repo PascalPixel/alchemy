@@ -250,7 +250,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   do {
     target = frame % work->effect->count;
     if (frame == 4) {
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {

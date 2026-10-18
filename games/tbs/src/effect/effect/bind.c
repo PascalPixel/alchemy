@@ -153,7 +153,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     if (frame == 64)
@@ -306,7 +306,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     if (frame == 64)

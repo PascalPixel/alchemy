@@ -64,9 +64,9 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
     struct BattleCamera *camera = gCameraWork;
     if (frame == 8)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 80)
-      AudioCommand_PlayFar(142);
+      AudioCommand_PlayFar(SE_142);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
@@ -161,7 +161,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
       // it glows from 40 to 64; its 64 sparkles spiral in, sparkle i from
       // frame i / 2 + 1 of the turn, centred 40 pixels above it.
       if (frame == start + 30)
-        AudioCommand_PlayFar(SOUND_RECOVERY);
+        AudioCommand_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, -1, 0);

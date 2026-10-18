@@ -85,7 +85,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
         BattleEventRuntime_BeginPhaseFar(133);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
       } else {
-        AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
       }
@@ -99,7 +99,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == 65) {
         work->shakeFrames = 4;
-        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       }
     }
     Camera_ApplyShake(8, 8);
@@ -155,7 +155,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  AudioCommand_PlayFar(143);
+  AudioCommand_PlayFar(SE_143);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
   frame = 0;

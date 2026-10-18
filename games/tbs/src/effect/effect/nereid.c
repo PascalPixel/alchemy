@@ -88,7 +88,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
-        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       if (frame <= 15)
         rise += 2;
 
@@ -143,11 +143,11 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        AudioCommand_PlayFar(164);
+        AudioCommand_PlayFar(SE_164);
       if (frame == 32)
-        AudioCommand_PlayFar(145);
+        AudioCommand_PlayFar(SE_145);
       if (frame == 80)
-        AudioCommand_PlayFar(144);
+        AudioCommand_PlayFar(SE_144);
 
       // The columns: a 104-pixel image scrolling up 16 pixels a frame,
       // drawn twice to wrap round.

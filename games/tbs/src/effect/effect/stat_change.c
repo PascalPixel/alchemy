@@ -183,7 +183,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
     drawFlags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
     drawFlags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 8 + 108; frame++) {
     struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
@@ -220,7 +220,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           Battle_GetObjectTableValueFar(work->effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
-        AudioCommand_PlayFar(212);
+        AudioCommand_PlayFar(SE_212);
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
       SET_VECTOR(point, object->x, height, object->z);
@@ -536,7 +536,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
                     y - 20, 40, 40);
         }
         if (targetFrame == 24)
-          AudioCommand_PlayFar(143);
+          AudioCommand_PlayFar(SE_143);
         // From frame 24 the picture breaks; the shards darken one copy
         // every 4 frames after frame 28.
         if (targetFrame >= 24 && targetFrame <= 60) {

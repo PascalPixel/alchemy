@@ -13,7 +13,7 @@
 #include "resource_menu.h"
 #include "ram_buffer.h"
 
-// The menu sounds, as The Broken Seal's sound_ids.h names them.
+// The menu sounds, as The Broken Seal's songs.h names them (SE_MENU_*).
 #define SOUND_MENU_CURSOR_MOVE 111
 #define SOUND_MENU_CONFIRM 112
 

@@ -61,7 +61,7 @@
 #include "vram_block.h"
 #include "select.h"
 #include "text/msg_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "static_assert.h"
 #include "field_event.h"
 #include "b5_context.h"
@@ -5962,10 +5962,10 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
 
     if (mode != SELECTION_FIXED) {
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Menu_StepRight(screen);
       } else if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Menu_StepLeft(screen);
       }
 
@@ -5973,18 +5973,18 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
         result = screen->top + screen->cursorIndex;
         if (screen->head->kind == NODE_KIND_YES_NO) {
           if (result == 0)
-            AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+            AudioCommand_PlayFar(SE_MENU_CONFIRM);
           else
-            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SE_MENU_CANCEL);
         } else {
-          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+          AudioCommand_PlayFar(SE_MENU_CONFIRM);
         }
         return result;
       }
     }
 
     if (mode != 0 && (gKeysPressed & KEY_B)) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
   }
@@ -6926,7 +6926,7 @@ void Debug_SelectAbilityPair(void) {
       }
       WaitFrames(1);
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
           second--;
         else
@@ -6934,7 +6934,7 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
           second++;
         else
@@ -6942,21 +6942,21 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         row--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         row++;
         redraw = 1;
       }
       if (gKeysPressed & KEY_A)
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
       else if (gKeysPressed & KEY_B)
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
       else if (gKeysPressed & KEY_START)
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
       else
         continue;
       /* FAKEMATCH: the unread flag forces fresh zeros for both entries and the
@@ -7595,7 +7595,7 @@ s32 Menu_RunWorkspaceOptions(void) {
     WaitFrames(1);
 
     if (gKeysPressed & KEY_SELECT) {
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
       if (work->preset > 5)
@@ -7606,30 +7606,30 @@ s32 Menu_RunWorkspaceOptions(void) {
     }
     if (gKeysPressed & (KEY_A | KEY_START)) {
       result = 0;
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (gKeysPressed & KEY_B) {
       result = -1;
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption--;
       redraw = 1;
     } else if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption++;
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]++;
         redraw = 1;
       }
@@ -7841,17 +7841,17 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
     } else if (gKeysPressed & (KEY_B | KEY_START)) {
       result = -1;
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
     } else {
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedEntry -= 1;
         redraw = 1;
       } else if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedEntry += 1;
         redraw = 1;
       }

@@ -83,7 +83,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  AudioCommand_PlayFar(146);
+  AudioCommand_PlayFar(SE_146);
 
   for (frame = 0; frame != gMemberBurst_Counts[mode][GATHERING_LIGHTS_FRAMES] +
                                work->effect->count * 20;
@@ -92,7 +92,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 
     if (frame == 80) {
       if (mode == 0)
-        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       else
         BattleEventRuntime_BeginPhaseFar(133);
     }
@@ -110,9 +110,9 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 
       if (frame == k * 20 + 71) {
         if (mode == 0)
-          AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+          AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         else
-          AudioCommand_PlayFar(133);
+          AudioCommand_PlayFar(SE_133);
       }
       if (frame == k * 20 + 70)
         ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,

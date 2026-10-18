@@ -169,7 +169,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
           // Landed: every fourth shard plays the impact sound, and every
           // target flashes blue in its damage pose for 8 frames.
           if ((i & 3) == 0)
-            AudioCommand_PlayFar(115);
+            AudioCommand_PlayFar(SE_115);
           work->shakeFrames = 2;
           shard->variant = 0;
           EFFECT_FOR_EACH_TARGET(k, work->effect)
@@ -400,7 +400,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
           // Every fourth bolt plays the hit sound, and every target
           // flashes white in its damage pose for 2 frames.
           if ((i & 3) == 0)
-            AudioCommand_PlayFar(132);
+            AudioCommand_PlayFar(SE_132);
           EFFECT_FOR_EACH_TARGET(k, work->effect)
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);

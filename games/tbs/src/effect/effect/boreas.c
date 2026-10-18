@@ -109,7 +109,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     rockPoints[i][1] = BOREAS_POINT_Y(i);
   }
 
-  AudioCommand_PlayFar(141);
+  AudioCommand_PlayFar(SE_141);
 
   //------------------------------------------------------------------
   // First half: the rocks, the big ice block and the spray (A or B skips
@@ -224,19 +224,19 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 32) {
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 64) {
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 104) {
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 176) {
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 226) {
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     }
     Render_ResetTransformState();
 
@@ -362,7 +362,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   // stagger the smoke puffs, each i / 2 frames after the first.
   BattleFx_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  AudioCommand_PlayFar(289);
+  AudioCommand_PlayFar(SE_289);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
@@ -394,10 +394,10 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0) {
-      AudioCommand_PlayFar(132);
+      AudioCommand_PlayFar(SE_132);
     }
     if (frame == 72) {
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     }
     // A 40x80 block falls diagonally from the top right.
     if (frame > 64) {

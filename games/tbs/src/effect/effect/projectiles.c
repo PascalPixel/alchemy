@@ -124,7 +124,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     if (frame > 75)
       REG_BLDALPHA = (168 - frame * 2) | 0x1000;
     if (frame == 8)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 6 && frame <= 45) {
       center[0] += step[0];
@@ -592,7 +592,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         soundCooldown--;
       if (mode == 6) {
         if (frame == 4)
-          AudioCommand_PlayFar(136);
+          AudioCommand_PlayFar(SE_136);
         if (frame == 32)
           BattleEventRuntime_BeginPhaseFar(134);
       } else if (mode == 7) {
@@ -701,7 +701,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   BattleEventRuntime_BeginPhaseFar(134);
                 } else if (mode != 6 && soundCooldown == 0) {
                   soundCooldown = 8;
-                  AudioCommand_PlayFar(132);
+                  AudioCommand_PlayFar(SE_132);
                 }
                 if (mode == 2) {
                   // Pellets bounce back, up or down at random.

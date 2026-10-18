@@ -33,7 +33,7 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "objcmd.h"
 
 #if !TBS_PATCH_3
@@ -479,7 +479,7 @@ static void Village_EnterDoor(void) {
     Map_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
     Engine_EventWait(4);
   } else {
-    Event_PlayCue(SOUND_DOOR_OPEN);
+    Event_PlayCue(SE_DOOR_OPEN);
     if (doorIndex == DOOR_WITH_WINDOW) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
@@ -515,7 +515,7 @@ static void Village_WalkThroughDoorway(void) {
   work = gEventWork;
   Engine_EventBegin();
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Event_PlayCue(SOUND_MAP_EXIT);
+  Event_PlayCue(SE_MAP_EXIT);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Engine_EventRequestExit(work->touchedTrigger);
   Engine_EventCloseScreen();

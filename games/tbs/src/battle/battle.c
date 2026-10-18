@@ -76,7 +76,7 @@
 #include "irq.h"
 #include "vram_block.h"
 #include "owner_value.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "ramcode.h"
 #include "map_scroll.h"
 #include "iowrite.h"
@@ -6087,7 +6087,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
       break;
     WaitFrames(1);
   }
-  AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+  AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
   Resource_ResetEntry(tileSlot);
   WaitFrames(1);
 }
@@ -8012,7 +8012,7 @@ void BattleEvent_Playback(void) {
       if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
           ((u32)(gFrameTick - events->timer) > 10 &&
            (BATTLE_OPTIONS & KEY_ADVANCE))) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;
       } else {
@@ -8656,7 +8656,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       // Recovering.
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-      AudioCommand_PlayFar(SOUND_MENU_ERROR);
+      AudioCommand_PlayFar(SE_MENU_ERROR);
       UiText_ShowMessageAndWaitCoreFar(MsgDjinnInRecovery);
       WaitFrames(60);
       return -1;
@@ -9482,7 +9482,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
       if (*poison != 0) {
-        state->events.pendingCue = SOUND_HEAVY_IMPACT;
+        state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
         state->events.pendingCue = 133;
       }

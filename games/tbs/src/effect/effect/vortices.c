@@ -67,7 +67,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  AudioCommand_PlayFar(164);
+  AudioCommand_PlayFar(SE_164);
 
   for (frame = 0; frame != gFroth_Counts[work->effect->variant][FROTH_FRAMES];
        frame++) {
@@ -120,7 +120,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
           BattleMotion_ApplyVariantMotionFar(
               work->effect->actors[i % work->effect->count], 0);
           work->shakeFrames = 4;
-          AudioCommand_PlayFar(132);
+          AudioCommand_PlayFar(SE_132);
         }
       }
       // The burst where a mote struck: two mirrored halves cycling three
@@ -198,7 +198,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
-  AudioCommand_PlayFar(141);
+  AudioCommand_PlayFar(SE_141);
 
   for (frame = 0; frame != 80; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);

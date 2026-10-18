@@ -157,9 +157,9 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       ObjectDispatch_ApplyArgumentToChildrenFar(user, 0);
     }
     if (frame == 54) // the battle shows the damage, with a heavy impact
-      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     if (frame == 0) {
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
       work->shakeFrames = 6;
     }
     if (frame == 53)
@@ -242,7 +242,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
     blade->velocityY = 8 << 16;
     blade->x <<= 16;
   }
-  AudioCommand_PlayFar(212);
+  AudioCommand_PlayFar(SE_212);
   for (frame = 0; frame != BLADE_RAIN_FRAMES; frame++) {
     // Fade in over the first 16 frames and out over the last 16.
     if (frame <= 16) {
@@ -322,7 +322,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
                                 POSE_DAMAGE, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
-        AudioCommand_PlayFar(133);
+        AudioCommand_PlayFar(SE_133);
     }
     Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);
@@ -406,7 +406,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
     work->effect->variant = 1;
   if (work->effect->variant > 4)
     work->effect->variant = 4;
-  AudioCommand_PlayFar(212);
+  AudioCommand_PlayFar(SE_212);
 
   for (frame = 0; frame != ICE_FLECK_BURST_FRAMES; frame++) {
     // Keep the canvas centred on the unit's feet, fade out over the last 6
@@ -637,21 +637,21 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       0x20000);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
-  AudioCommand_PlayFar(212);
+  AudioCommand_PlayFar(SE_212);
   ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE, 3, 0,
                             30);
 
   for (frame = 0; frame != OPENING_FRAMES; frame++) {
     if (frame == 2)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 3)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 28)
       ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
     if (frame == 32)
-      AudioCommand_PlayFar(149);
+      AudioCommand_PlayFar(SE_149);
     if (frame == 5)
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     // Frame 5: bring the battle backdrop back on BG1.
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
@@ -933,7 +933,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-  AudioCommand_PlayFar(140);
+  AudioCommand_PlayFar(SE_140);
 
   for (frame = 0; frame != 56; frame++) {
     // Follow the unit, fade out over the last 6 frames, and on frame 26
@@ -943,7 +943,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
     if (frame > 49)
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
     if (frame == 26) {
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE, -1,
                                 0, 20);
     }

@@ -292,9 +292,9 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
-      AudioCommand_PlayFar(154);
+      AudioCommand_PlayFar(SE_154);
     if (frame == 32)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
 
     // Flash: advance the image every five frames starting at frame 8.
     if (frame <= 47) {

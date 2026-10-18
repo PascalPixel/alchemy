@@ -169,7 +169,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = gCameraWork;
@@ -181,7 +181,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
         BattleMotion_ApproachTargetFar(work->effect->actor,
                                        work->effect->actors[0], 16, 0);
       if (frame == total - 32) {
-        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
         work->shakeFrames = 8;
       }
@@ -373,7 +373,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
 
@@ -483,7 +483,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
       do {
         start = i << 4;
         if (frame == start) {
-          AudioCommand_PlayFar(143);
+          AudioCommand_PlayFar(SE_143);
         }
         if (frame >= start && frame < start + 72) {
           EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],

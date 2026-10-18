@@ -53,7 +53,7 @@
 #include "iowrite.h"
 #include "battle_unit.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "macros.h"
 
 #if TBS_PATCH_1
@@ -1696,7 +1696,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 // Replace the party's bottle with Hermes water and show the obtained item.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventBegin();
-  Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
+  Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   Engine_ItemShowFound(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   UiWork_PushValueSlot(PartyInventory_FindOwner(ITEM_HERMES_WATER), 1);

@@ -115,7 +115,7 @@ s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "heap_state.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
@@ -521,7 +521,7 @@ void LuckyDice_Run(void) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gKeysRepeat & KEY_A)) {
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = LUCKY_DICE_PAYOUT;
           payoutTimer = 0;
@@ -591,7 +591,7 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gKeysRepeat & KEY_B) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         break;
       }

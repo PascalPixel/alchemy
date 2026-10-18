@@ -83,7 +83,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
         camera->yaw += speed;
     }
     if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 80)
-      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
       // Darken the canvas away over the last 8 frames.
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x06060606);
@@ -133,7 +133,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
               shard->variant = 0;
             }
             work->shakeFrames = 8;
-            AudioCommand_PlayFar(144);
+            AudioCommand_PlayFar(SE_144);
             EFFECT_FOR_EACH_TARGET(j, work->effect)
               ObjectGroup_UpdateMembers(work->effect->actors[j],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);

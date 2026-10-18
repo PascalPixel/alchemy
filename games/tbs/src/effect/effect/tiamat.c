@@ -262,9 +262,9 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
     if (frame == 48)
-      AudioCommand_PlayFar(141);
+      AudioCommand_PlayFar(SE_141);
     if (frame == 128)
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     // Flashes: one a frame, thrown across.
     if (frame >= 129 && frame <= 175) {
       s32 spawned = 0;
@@ -423,7 +423,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           streak->x -= dir * 6;
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
-            AudioCommand_PlayFar(136);
+            AudioCommand_PlayFar(SE_136);
           draw[0](canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {

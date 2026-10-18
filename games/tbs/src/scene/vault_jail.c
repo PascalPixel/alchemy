@@ -17,7 +17,7 @@
 #include "field_scene.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "text/msg_ids.h"
 
 enum JailEntrance {
@@ -169,7 +169,7 @@ static void EV10_PSYNERGY(void) {
 
 // Plays the map-exit sound before returning to Vault.
 static void EV01_TOUCH(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 

@@ -28,7 +28,7 @@
 #include "keystate.h"
 #include "node_chain.h"
 #include "game_state.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "item.h"
 #include "item_ids.h"
 #include "vram_tab.h"
@@ -725,12 +725,12 @@ next_page:
     }
     if ((gKeysPressed & KEY_A) != 0) {
       selected = selectionIndex;
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       selectionResult = 0;
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
@@ -739,7 +739,7 @@ next_page:
       selectionIndex--;
       selectionIndex = (selectionIndex + stockCount) % stockCount;
       if (previousIndex != selectionIndex) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
@@ -748,7 +748,7 @@ next_page:
       selectionIndex++;
       selectionIndex = (selectionIndex + stockCount) % stockCount;
       if (previousIndex != selectionIndex) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
@@ -813,7 +813,7 @@ next_page:
       // Probe capacity with the original add/remove before checking funds.
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         UiWork_PushValueSlotFar(unitId, 1);
         UiWork_PushValueSlotFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
@@ -824,7 +824,7 @@ next_page:
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u32)selectedDefinition->price > gGameState.coins) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         UiMessage_ShowAndRestoreState(MsgBuyNotEnoughMoney);
         selectionResult = -1;
         break;
@@ -837,7 +837,7 @@ next_page:
           continue;
         }
       }
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       WaitFrames(1);
       quantity = Shop_SelectBuyNum(unitId, shop->selectedItem);
       repromptRecipient = 1;
@@ -849,17 +849,17 @@ next_page:
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionIndex++;
       redraw = 1;
     }
@@ -1286,22 +1286,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       quantitySprite->oam.index += 4;
       for (;;) {
         if (gKeysPressed & KEY_A) {
-          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+          AudioCommand_PlayFar(SE_MENU_CONFIRM);
           selectedQuantity = quantityIndex + 1;
           break;
         }
         if (gKeysPressed & KEY_B) {
-          AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+          AudioCommand_PlayFar(SE_MENU_CANCEL);
           selectedQuantity = -1;
           break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
           quantityIndex--;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
           quantityIndex++;
         }
@@ -1355,7 +1355,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   // Keep each inventory addition, coin debit and shop-credit increment in
   // order.
-  AudioCommand_PlayFar(SOUND_SHOP_PURCHASE);
+  AudioCommand_PlayFar(SE_SHOP_PURCHASE);
   if (lastAddedSlot < remainingQuantity) {
     do {
       lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -1489,9 +1489,9 @@ s32 Shop_PickUnit(void) {
     if ((gKeysPressed & KEY_A) != 0) {
       WaitFrames(1);
       if (Inventory_CountFar(unitId) == 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
       } else {
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         if (shop->partyAction == SHOP_ACTION_SELL)
           Shop_SelectSell(unitId);
         else
@@ -1504,7 +1504,7 @@ s32 Shop_PickUnit(void) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       Menu_ReleaseEntryObjectsFar();
       UiWork_FinalizeFar(listWindow, 2);
       UiWork_FinalizeFar(shop->itemWindow, 2);
@@ -1514,12 +1514,12 @@ s32 Shop_PickUnit(void) {
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -1574,23 +1574,23 @@ s32 Shop_SelectSell(s32 unitId) {
       }
 
       if ((gKeysPressed & KEY_A) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         slot -= 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         slot += 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
@@ -1601,7 +1601,7 @@ s32 Shop_SelectSell(s32 unitId) {
           slot += INVENTORY_SLOTS;
         while (slot >= inventoryCount)
           slot -= SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -1610,7 +1610,7 @@ s32 Shop_SelectSell(s32 unitId) {
           slot -= INVENTORY_SLOTS;
         while (slot < 0)
           slot += SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
@@ -1835,23 +1835,23 @@ s32 Shop_SelectRepair(s32 unitId) {
         Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         slot -= 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         slot += 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
@@ -1862,7 +1862,7 @@ s32 Shop_SelectRepair(s32 unitId) {
           slot += INVENTORY_SLOTS;
         while (slot >= inventoryCount)
           slot -= SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -1871,7 +1871,7 @@ s32 Shop_SelectRepair(s32 unitId) {
           slot -= INVENTORY_SLOTS;
         while (slot < 0)
           slot += SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
@@ -1947,7 +1947,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   WaitFrames(110);
   AudioCommand_PlayFar(100);
   WaitFrames(110);
-  AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+  AudioCommand_PlayFar(SE_MENU_CONFIRM);
   WaitFrames(20);
   // Restore the entry, repair it, charge the fee and offer equipment changes.
   unit->inventory[slot] = savedEntry;
@@ -2021,7 +2021,7 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
     if ((gKeysPressed & KEY_A) != 0) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         UiWork_PushValueSlotFar(unitId, 1);
         UiWork_PushValueSlotFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
@@ -2031,7 +2031,7 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      AudioCommand_PlayFar(SOUND_SHOP_PURCHASE);
+      AudioCommand_PlayFar(SE_SHOP_PURCHASE);
       UiMessage_ShowAndRestoreState(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
@@ -2040,16 +2040,16 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
     }
     if ((gKeysPressed & KEY_B) != 0) {
       UiMessage_ShowAndRestoreState(MsgDontWantIt);
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -2540,7 +2540,7 @@ s32 Sanctum_RunPartyService(void) {
       WaitFrames(1);
       donation = Shop_ServicePrice(unitId, serviceKind);
       if (Shop_CanServe(unitId, serviceKind) == 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       UiWork_PushValueSlotFar(unitId, 1);
@@ -2553,7 +2553,7 @@ s32 Sanctum_RunPartyService(void) {
         continue;
       }
       if (donation > (u32)gGameState.coins) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         UiMessage_ShowResolvedAndRestoreState(messageBase + 1);
         chooseAgain = 1;
         continue;
@@ -2575,16 +2575,16 @@ s32 Sanctum_RunPartyService(void) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex -= 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex += 1;
     }
@@ -2788,7 +2788,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   }
 
   WaitFrames(20);
-  AudioCommand_PlayFar(SOUND_RECOVERY);
+  AudioCommand_PlayFar(SE_RECOVERY);
   shop->burstMember = -1;
   ObjectGroup_SetChildValueUnlessFifteenFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
@@ -2980,11 +2980,11 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
     WaitFrames(1);
     if ((gKeysPressed & KEY_A) != 0) {
       if (Inventory_CountFar(unitId) == 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         continue;
       }
 
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       itemSlot = Shop_SelectUse(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->active = 4;
@@ -2999,7 +2999,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       *selectedUnit = -1;
       *selectedSlot = -1;
       result = -1;
@@ -3007,12 +3007,12 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -3103,7 +3103,7 @@ s32 Shop_SelectUse(s32 unitId) {
     if ((gKeysPressed & KEY_A) != 0) {
       discardStatus = Inventory_CheckDiscardFar(unitId, slot);
       if (discardStatus == 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         selectionResult = slot;
         break;
       }
@@ -3114,7 +3114,7 @@ s32 Shop_SelectUse(s32 unitId) {
                  -3) {
         UiText_OpenMessageWindowFar(MsgCannotRemoveIt, 8, 1, 2);
       }
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
       UiWork_FinalizePendingCoreFar();
@@ -3122,19 +3122,19 @@ s32 Shop_SelectUse(s32 unitId) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       slot -= 1;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       slot += 1;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
@@ -3145,7 +3145,7 @@ s32 Shop_SelectUse(s32 unitId) {
         slot += INVENTORY_SLOTS;
       while (slot >= inventoryCount)
         slot -= SHOP_INVENTORY_COLUMNS;
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -3154,7 +3154,7 @@ s32 Shop_SelectUse(s32 unitId) {
         slot -= INVENTORY_SLOTS;
       while (slot < 0)
         slot += SHOP_INVENTORY_COLUMNS;
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
   }

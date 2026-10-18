@@ -110,7 +110,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
     screenX = (swing[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swing[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
     if (frame == CONDEMN_BREAK_FRAME) {
-      AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     // Frame 32: the second pass, lower and further across; the panel skips
     // a frame while it moves.

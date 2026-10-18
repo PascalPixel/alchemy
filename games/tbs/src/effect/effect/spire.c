@@ -71,7 +71,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gSpire_DropFrames[i] + 18) {
-        AudioCommand_PlayFar(134);
+        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
       if (frame >= gSpire_DropFrames[i] + 18) {

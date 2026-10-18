@@ -38,7 +38,7 @@
 #include "field_effect.h"
 #include "heap_state.h"
 #include "ability_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
@@ -182,25 +182,25 @@ static void ValeBabi_CloseScreenAndExit(s32 exitId) {
 
 // Play the exit cue before leaving through trigger 1.
 static void ValeBabi_ExitNorthwestArea(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(1);
 }
 
 // Play the exit cue before leaving through trigger 2.
 static void ValeBabi_ExitNorthArea(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(2);
 }
 
 // Play the exit cue before leaving through trigger 3.
 static void ValeBabi_ExitNortheastArea(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(3);
 }
 
 // Play the exit cue before leaving through trigger 4.
 static void ValeBabi_ExitWestAreaSouth(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(4);
 }
 
@@ -212,7 +212,7 @@ static void ValeBabi_ExitWestAreaNorth(void) {
 
 // Play the exit cue before leaving through trigger 6.
 static void ValeBabi_ExitCenterAreaSouth(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(6);
 }
 
@@ -236,13 +236,13 @@ static void ValeBabi_ExitSouthAreaWest(void) {
 
 // Play the exit cue before leaving through trigger 10.
 static void ValeBabi_ExitSouthAreaSouth(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(10);
 }
 
 // Play the exit cue before leaving through trigger 11.
 static void ValeBabi_ExitSoutheastArea(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(11);
 }
 

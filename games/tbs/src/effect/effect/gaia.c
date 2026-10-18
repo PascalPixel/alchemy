@@ -171,11 +171,11 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   work->shakeFrames = 250;
   for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 40)
-      AudioCommand_PlayFar(141);
+      AudioCommand_PlayFar(SE_141);
     if (frame == 96)
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     if (frame == 120)
       BattleEventRuntime_BeginPhaseFar(134);
 

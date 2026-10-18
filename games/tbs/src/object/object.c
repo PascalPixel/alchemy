@@ -48,7 +48,7 @@
 #include "keystate.h"
 #include "owner_value.h"
 #include "party_state.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "fixed_math.h"
 #include "item_gift.h"
 #include "battle_calc.h"
@@ -1536,7 +1536,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
         fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
       work->exit = exitValue;
-      AudioCommand_PlayFar(SOUND_MAP_EXIT);
+      AudioCommand_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
@@ -1728,11 +1728,11 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
     BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleFx_StartBufferInterpolation(4);
     if (amount < -10)
-      AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     else
       AudioCommand_PlayFar(133);
   } else {
-    AudioCommand_PlayFar(SOUND_RECOVERY);
+    AudioCommand_PlayFar(SE_RECOVERY);
   }
 
   partyCount = Party_CountActiveOwnersFar();
@@ -2062,7 +2062,7 @@ s32 Field_RunScene(s32 entrance) {
           // The main menu (B + Select in debug mode opens the debug menu).
           UiTimedNotice_CloseIfActiveFar();
           Leader_StopMoving();
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Battle_SetObjectFlag5bWhenMode3();
           GameFlag_SetBitFar(0x106);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
@@ -2103,7 +2103,7 @@ s32 Field_RunScene(s32 entrance) {
         } else if (work->start != 0) {
           // The pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           Battle_SetObjectFlag5bWhenMode3();
           GameFlag_SetBitFar(0x106);
@@ -2764,7 +2764,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
       exitKind = exit->flags & 0x30;
       switch (exitKind) {
       case 0:
-        AudioCommand_PlayFar(SOUND_MAP_EXIT);
+        AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
       case 32:
         AudioCommand_PlayFar(128);
@@ -2890,12 +2890,12 @@ s32 Field_SearchTile(s32 tile) {
                 Marker_ShowOpened(tile);
               object = Marker_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+              AudioCommand_PlayFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
               BattleParty_ApplyDrain(999, 0);
               UiWindow_CreateWithLayoutBoundsFar(1);
-              AudioCommand_PlayFar(SOUND_RECOVERY);
+              AudioCommand_PlayFar(SE_RECOVERY);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);
               UiWork_FinalizeAndReleaseBlock16Far();
@@ -2932,7 +2932,7 @@ s32 Field_SearchTile(s32 tile) {
               if ((event->control & 0x1ff) == 19)
                 Marker_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+              AudioCommand_PlayFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
               Party_AdjustCoinsFar((u16)event->value);
@@ -2960,7 +2960,7 @@ s32 Field_SearchTile(s32 tile) {
                 if ((event->control & 0x1ff) == 19)
                   Marker_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
-                AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+                AudioCommand_PlayFar(MUS_TREASURE_FOUND);
                 UiWork_PushValueSlotFar(event->value & messageOffset, 2);
                 if (recipient == gGameState.selectedActor) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,

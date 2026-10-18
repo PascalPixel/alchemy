@@ -113,7 +113,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
-  AudioCommand_PlayFar(162);
+  AudioCommand_PlayFar(SE_162);
   frame = 0;
   do {
     if (frame == 56)
@@ -128,7 +128,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
-          AudioCommand_PlayFar(133);
+          AudioCommand_PlayFar(SE_133);
           work->shakeFrames = 4;
           // Each mote flies off in a random direction at a speed of 256 to
           // 767; its vertical speed is doubled, so the burst is twice as tall
@@ -250,7 +250,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     ball->y = (Random16() & 63) - 80;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
-  AudioCommand_PlayFar(171);
+  AudioCommand_PlayFar(SE_171);
   frame = 0;
   angle = 0x8000; // 180 degrees
   do {
@@ -290,7 +290,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
           }
-          AudioCommand_PlayFar(133);
+          AudioCommand_PlayFar(SE_133);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, 6);
@@ -385,7 +385,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
     column->y = 104;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
-  AudioCommand_PlayFar(141);
+  AudioCommand_PlayFar(SE_141);
   frame = 0;
   angle = 0x8000;
   do {
@@ -420,7 +420,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
             mote->variant = (Random16() & 15) + 32;
           }
           if (i & 1)
-            AudioCommand_PlayFar(133);
+            AudioCommand_PlayFar(SE_133);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, 6);
@@ -522,7 +522,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
     index++;
   } while (index != MARS_FLAMES);
 
-  AudioCommand_PlayFar(136);
+  AudioCommand_PlayFar(SE_136);
   frame = 0;
   diveY = -172;
   do {
@@ -546,7 +546,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
     }
     // At frame 32 it strikes: the screen shakes and the flames erupt.
     if (frame == MARS_STRIKE_FRAME) {
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);

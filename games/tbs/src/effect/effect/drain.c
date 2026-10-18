@@ -83,7 +83,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
       offset = member * ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
       if (frame == member * 20) {
-        AudioCommand_PlayFar(143);
+        AudioCommand_PlayFar(SE_143);
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member, 20);
       }
@@ -191,7 +191,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
                       COMPOSITE_MAX);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     struct MotionObject *user;

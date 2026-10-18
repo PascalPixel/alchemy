@@ -24,7 +24,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "global_cells.h"
@@ -1358,7 +1358,7 @@ static void FuchinTemple_EnterGrottoTrial(void) {
 
 // Play the map-exit cue and leave through the area's first exit.
 static void Xian_LeaveArea(void) {
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(1);
 }
 

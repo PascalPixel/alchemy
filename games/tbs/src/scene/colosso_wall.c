@@ -48,7 +48,7 @@
 #include "global_cells.h"
 #include "heap_state.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "macros.h"
 
 #define COLOSSO_WALL_FIRST_PLATFORM 22
@@ -1495,7 +1495,7 @@ ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
                            source->f10);
   effect->f55 = 0;
   Engine_ObjectSetScript(effect, gColossoWall_RaiseScript);
-  Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
+  Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   source->f64 = 0;
   return 0;
 }

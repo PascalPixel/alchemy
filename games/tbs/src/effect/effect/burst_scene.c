@@ -241,7 +241,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
           if (i & 1)
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 7);
           work->shakeFrames = 4;
-          AudioCommand_PlayFar(134);
+          AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != BURST_RECORD(BURST_MOTES); j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;

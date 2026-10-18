@@ -50,7 +50,7 @@
 #include "select.h"
 #include "node_chain.h"
 #include "text/msg_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "flags.h"
 #include "static_assert.h"
 #include "field_event.h"
@@ -2021,7 +2021,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     WaitFrames(1);
     // Up and down move to the previous or next file the mode allows.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile =
@@ -2036,7 +2036,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
                 (menuMode == SAVE_MENU_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile =
@@ -2051,11 +2051,11 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
                 (menuMode == SAVE_MENU_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     } else if (gKeysPressed & KEY_A) {
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       result = selectedFile;
       break;
     }
@@ -2527,7 +2527,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -2539,7 +2539,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -2551,7 +2551,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -2563,7 +2563,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -2574,13 +2574,13 @@ s32 NameEntry_EditOwnerName(s32 member) {
         keyColumn = 0;
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 5;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
@@ -2596,7 +2596,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+    AudioCommand_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         if (letterCount == 0) {
@@ -2789,7 +2789,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -2807,7 +2807,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -2825,7 +2825,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -2838,7 +2838,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -2853,13 +2853,13 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 10;
     }
     if (gKeysPressed & KEY_SELECT) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
     change_keyboard:
       keyboard ^= 1;
       if (keyboard)
@@ -2872,7 +2872,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       continue;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
@@ -2895,7 +2895,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+    AudioCommand_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 10) {
         if (letterCount == 0) {
@@ -2959,7 +2959,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         continue;
       dst = editedName + bytes;
       if (!NameEntry_AcceptsMark(letter, editedName[bytes - 1])) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       *dst = letter;
@@ -3043,26 +3043,26 @@ s32 PartyTalkMenu_Choose(s32 unused) {
     }
     ShopCursor_AdvanceFar(&cursor.cursor);
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       row--;
       moved = 1;
       if (row == -1)
         row = 2;
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       row++;
       moved = 1;
       if (row == 3)
         row = 0;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       row = -1;
       break;
     }
     if (gKeysRepeat & KEY_A) {
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       break;
     }
   }
@@ -4038,16 +4038,16 @@ s32 Ui_RunSelectionScreen(s32 mode) {
       break;
     }
     if (mode != 0 && (keys & KEY_B)) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       command = -1;
       break;
     }
     if (repeat & (KEY_DOWN | KEY_RIGHT)) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
     } else if (repeat & (KEY_UP | KEY_LEFT)) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
@@ -4630,7 +4630,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     UiWork_Finalize(navigation->work, 1);
     navigation->work = NULL;
   }
-  AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+  AudioCommand_PlayFar(SE_MENU_CONFIRM);
 
   for (i = 4; i >= 0; i--) {
     cursor.groupPositions[i] = 0;
@@ -4725,7 +4725,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         groupPosition = cursor.groupPositions[cursor.group];
         if ((keys & KEY_DOWN) != 0) {
           keys = 0;
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
@@ -4736,7 +4736,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           }
         } else if ((keys & KEY_UP) != 0) {
           keys = 0;
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
@@ -4747,7 +4747,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           }
         } else if ((keys & 0x31) != 0) {
           keys = 0;
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           // Toggle toward conditions; group3 is transient until reclassified.
           cursor.group ^= STATUS_CURSOR_CONDITIONS;
           if ((gKeysRepeat & KEY_A) != 0) {
@@ -4774,7 +4774,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
             cursor.group = STATUS_CURSOR_GENERAL;
             groupPosition = cursor.groupPositions[0];
           }
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if ((keys & KEY_LEFT) != 0) {
           keys = 0;
           groupPosition--;
@@ -4782,12 +4782,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
             cursor.group = STATUS_CURSOR_GENERAL;
             groupPosition = cursor.groupPositions[0];
           }
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if ((keys & 0xC1) != 0) {
           keys = 0;
           cursor.group = STATUS_CURSOR_GENERAL;
           groupPosition = cursor.groupPositions[0];
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         cursor.groupPositions[cursor.group] = (s8)groupPosition;
       }
@@ -5248,7 +5248,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
         owner = list[ownerIndex];
         redraw = 1;
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       } else if ((keys & KEY_L) != 0) {
         ownerIndex--;
         if (ownerIndex < 0) {
@@ -5256,7 +5256,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
         owner = list[ownerIndex];
         redraw = 1;
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
     WaitFrames(1);
@@ -5670,7 +5670,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     }
     navigation = gLinkCountdownWork;
     if (navigation->active == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
       break;
     }
@@ -5698,7 +5698,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                                    BATTLE_MENU_MESSAGE_CAPACITY);
           UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
-        AudioCommand_PlayFar(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SE_MENU_ERROR);
       } else {
         encodedDjinn = -1;
         break;
@@ -5707,7 +5707,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
 
     if (djinnCount != 0) {
       if (repeated & KEY_DOWN) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == djinnCount) {
@@ -5715,7 +5715,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         }
         preferredRow = selectedRow;
       } else if (repeated & KEY_UP) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry ==
@@ -5756,14 +5756,14 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
           if (previewPage != 0) {
             if (repeated & KEY_RIGHT) {
-              AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+              AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
               previewPage++;
               if (previewPage > previewPages) {
                 previewPage = 1;
               }
               redraw = 1;
             } else if (repeated & KEY_LEFT) {
-              AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+              AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
               previewPage--;
               if (previewPage <= 0) {
                 previewPage = previewPages;
@@ -5779,7 +5779,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         previewPage = 0;
         redraw = 1;
       } else if (repeated & KEY_RIGHT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
           if (firstEntry != 0) {
@@ -5798,7 +5798,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         }
       } else if (repeated & KEY_LEFT) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= BATTLE_LIST_ROWS;
@@ -6194,18 +6194,18 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       break;
     }
     if (gLinkCountdownWork->active == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeated & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow++;
       if (selectedRow == 4 || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
     } else if (repeated & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow--;
       if (selectedRow < 0) {
         if (firstEntry == ((count - 1) / 4) * 4)
@@ -6216,7 +6216,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       preferredRow = selectedRow;
     } else if (repeated & KEY_RIGHT) {
       // Next page, wrapping from last to first.
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry + 4 >= count) {
         if (firstEntry != 0) {
@@ -6234,7 +6234,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       }
     } else if (repeated & KEY_LEFT) {
       // Previous page, wrapping from first to last.
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {
         firstEntry -= 4;
@@ -6488,7 +6488,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
             break;
           }
         }
-        AudioCommand_PlayFar(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SE_MENU_ERROR);
         if (unusableReason == 2) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleItemUnavailable, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
@@ -6506,14 +6506,14 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         break;
       }
     } else if (navigation->active == 0 || (gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
       if ((gKeysRepeat & KEY_DOWN) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == count) {
@@ -6521,7 +6521,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         }
         preferredRow = selectedRow;
       } else if ((gKeysRepeat & KEY_UP) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
@@ -6532,7 +6532,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         }
         preferredRow = selectedRow;
       } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= count) {
           if (firstEntry != 0) {
@@ -6550,7 +6550,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
           }
         }
       } else if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= BATTLE_LIST_ROWS;
@@ -6784,14 +6784,14 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         break;
       }
     } else if (navigation->active == 0 || (gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
       if ((gKeysRepeat & KEY_DOWN) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == count) {
@@ -6799,7 +6799,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         }
         preferredRow = selectedRow;
       } else if ((gKeysRepeat & KEY_UP) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
@@ -6810,7 +6810,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         }
         preferredRow = selectedRow;
       } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= count) {
           if (firstEntry != 0) {
@@ -6828,7 +6828,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           }
         }
       } else if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           selectedRow = preferredRow;
@@ -7573,7 +7573,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = result;
     } else if (spread != ABILITY_RANGE_ALL) {
       if (repeated & (KEY_DOWN | KEY_RIGHT)) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex++;
           targetIndex %= candidateCount;
@@ -7581,7 +7581,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
       if (repeated & (KEY_UP | KEY_LEFT)) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
@@ -7590,7 +7590,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
     }
     if (gLinkCountdownWork->active == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
     }
@@ -7717,7 +7717,7 @@ void UpdateLinkSessionCountdown(void) {
     // Round remaining frames upward so zero appears only after time expires.
     seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+      AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->displayHandle != 0)
       UiText_DrawNumberInWindow(seconds, 2,
@@ -8056,7 +8056,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
                                      BATTLE_COMMAND_NAME_X, 0);
         state->entries[0].oam.f.x = 64;
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
@@ -8079,7 +8079,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 k;
         s32 entryValue;
 
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         MenuCell_SetCursor(mode, mode, mode);
       psynergy_menu:
@@ -8154,7 +8154,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                    0, 0);
         }
         command->range = cost;
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, cost,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
@@ -8178,7 +8178,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 j;
         s32 n;
 
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         MenuCell_SetCursor(0, 0, 0);
       djinn_menu:
         state->entries[0].oam.f.x = BATTLE_SUMMON_ICON_X;
@@ -8239,9 +8239,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
           }
         }
         if (ok != 0) {
-          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+          AudioCommand_PlayFar(SE_MENU_CONFIRM);
         } else {
-          AudioCommand_PlayFar(SOUND_MENU_ERROR);
+          AudioCommand_PlayFar(SE_MENU_ERROR);
         }
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, ability->range,
@@ -8271,7 +8271,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 element;
         s32 index;
 
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         MenuCell_SetCursor(0, 0, 0);
       summon_menu:
         state->entries[0].oam.f.x = 144;
@@ -8296,7 +8296,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                        commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
-          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+          AudioCommand_PlayFar(SE_MENU_CONFIRM);
           mode = BattleTarget_RunSelection(
               actorId, ability->targetMode, cost,
               Battle_ClassifyEntryKind((const struct BattleAct *)ability));
@@ -8326,7 +8326,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         UiWork_SetParamNibble(15);
         command->range = 1;
         WaitFrames(1);
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
@@ -8348,7 +8348,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 entryValue;
         s32 selection;
 
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         MenuCell_SetCursor(mode, mode, mode);
       item_menu:
@@ -8422,7 +8422,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                          MsgItemName,
                                      commandWindow, 24, 0);
         command->range = cost;
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, cost,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
@@ -8789,24 +8789,24 @@ redraw:
   for (;;) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+      AudioCommand_PlayFar(SE_MENU_CONFIRM);
       return work->selection;
     }
     if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      AudioCommand_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
     if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP)) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       work->selection--;
       if (work->selection < 0)
         work->selection = work->count - 1;
     } else if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN)) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       work->selection++;
       if (work->selection >= work->count)
         work->selection = 0;
@@ -8865,13 +8865,13 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
       break;
 
     state->selection += step;
-    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+    AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
     delay = 0;
     position += step;
   }
 
   WaitFrames(48);
-  AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+  AudioCommand_PlayFar(SE_MENU_CONFIRM);
   return goal;
 }
 

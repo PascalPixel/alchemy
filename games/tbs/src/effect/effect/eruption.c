@@ -110,7 +110,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     camera = gCameraWork;
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
-      AudioCommand_PlayFar(144);
+      AudioCommand_PlayFar(SE_144);
     if (frame == gEruptionEffect_Counts[variant][FIELD_FRAMES] - 48)
       BattleEventRuntime_BeginPhaseFar(133);
 

@@ -126,17 +126,17 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame == 16)
-      AudioCommand_PlayFar(141);
+      AudioCommand_PlayFar(SE_141);
     if (frame == 256)
-      AudioCommand_PlayFar(140);
+      AudioCommand_PlayFar(SE_140);
     if (frame == 334)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 347)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 359)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 372)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
 
     // The targets, from 16i frames: spin faster round the middle and close
     // in, rising quickly once near it, until frame 160; they keep turning
@@ -516,7 +516,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
     frame++;
   } while (frame != 400);
 
-  BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
 
   // Put the targets back.
   EFFECT_FOR_EACH_TARGET(index, work->effect) {

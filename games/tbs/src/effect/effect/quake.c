@@ -92,7 +92,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
   heights = (*(const struct RockWallHeights *)&wallHeights);
   work->shakeFrames = 128;
-  AudioCommand_PlayFar(141);
+  AudioCommand_PlayFar(SE_141);
 
   for (frame = 0; frame != gQuake_Timings[work->effect->variant][TIMING_FRAMES];
        frame++) {

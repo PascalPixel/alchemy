@@ -86,14 +86,14 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
         camera->scroll += speed;
     }
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
 
     // Pillar i strikes on frame 8i with a flash, shows its first image the
     // frame after and its second for two frames after that.
     for (i = 0; i != count; i++) {
       start = i * PLASMA_SPACING;
       if (frame == start) {
-        AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         Iwram_FillWords(canvas, 0x4000, 0x10101010);
       }
       if (frame >= start && frame < start + 9) {
@@ -353,9 +353,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
         BattleEventRuntime_BeginPhaseFar(145);
     } else {
       if (frame == 2)
-        AudioCommand_PlayFar(145);
+        AudioCommand_PlayFar(SE_145);
       if (frame == 24)
-        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     }
 
     // Burst i starts on frame 8i with a two-frame flash, then its ring and

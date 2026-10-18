@@ -137,16 +137,16 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   do {
     // The first stage.
     if (frame == 24) {
-      AudioCommand_PlayFar(162);
+      AudioCommand_PlayFar(SE_162);
     }
     if (frame == 76) {
-      AudioCommand_PlayFar(164);
+      AudioCommand_PlayFar(SE_164);
     }
     if (frame == 154) {
-      AudioCommand_PlayFar(142);
+      AudioCommand_PlayFar(SE_142);
     }
     if (frame == 222) {
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     }
     // Over the first 16 frames the window's right edge sweeps open by a
     // growing step, ragged by 128 random offsets: frame 1 starts the
@@ -459,7 +459,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++) {
       flameColumn = &work->particles[i];
       if (frame == i * 16 + 7) {
-        AudioCommand_PlayFar(154);
+        AudioCommand_PlayFar(SE_154);
       }
       // A column, a scrolling shaft over a head, falls 16 pixels a frame.
       // Once on the ground it counts its frames there, shakes the screen for

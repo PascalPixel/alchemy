@@ -113,13 +113,13 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != RAMSES_FRAMES && !(gKeysRepeat & (KEY_A | KEY_B));
        frame++) {
     if (frame == 94)
-      AudioCommand_PlayFar(156);
+      AudioCommand_PlayFar(SE_156);
     if (frame == 136)
-      AudioCommand_PlayFar(156);
+      AudioCommand_PlayFar(SE_156);
     if (frame == 178)
-      AudioCommand_PlayFar(156);
+      AudioCommand_PlayFar(SE_156);
     if (frame == RAMSES_STRIKE_FRAME)
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     scale = unitScale;
     if (frame >= 96 && frame <= 251)
       work->shakeFrames = 1;

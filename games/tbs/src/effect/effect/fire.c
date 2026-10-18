@@ -132,7 +132,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
           ember->variant = 0;
           ember->x = screen.x;
           ember->y = screen.y;
-          AudioCommand_PlayFar(136);
+          AudioCommand_PlayFar(SE_136);
           ObjectGroup_UpdateMembers(
               work->effect->actors[i % work->effect->count],
               SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->effect->count, 4);

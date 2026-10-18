@@ -146,14 +146,14 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     // flinch.
     if (frame == 31) {
       work->shakeFrames = 8;
-      AudioCommand_PlayFar(157);
+      AudioCommand_PlayFar(SE_GATE_MOVE);
       EFFECT_FOR_EACH_TARGET(i, work->effect)
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
     }
     if (frame == 72)
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     if (frame == 140)
-      AudioCommand_PlayFar(156);
+      AudioCommand_PlayFar(SE_156);
 
     // Drop the formation objects to a height of 64 pixels, and from frame
     // 48 to 96 wave objects 3 and 4 through three poses.
@@ -418,7 +418,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       if (frame == i * 5 + 302) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
-        AudioCommand_PlayFar(134);
+        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }
     }

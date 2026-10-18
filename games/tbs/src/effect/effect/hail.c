@@ -317,7 +317,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           if (rock->y < 0x140000) {
             work->shakeFrames = 8;
             rock->variant = 0;
-            AudioCommand_PlayFar(134);
+            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
             EFFECT_STRIKE_TARGET(work->effect, 0, 4, 4);
           }
         }

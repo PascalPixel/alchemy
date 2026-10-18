@@ -116,19 +116,19 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0) {
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     }
     if (frame == 26) {
-      AudioCommand_PlayFar(141);
+      AudioCommand_PlayFar(SE_141);
     }
     if (frame == 40) {
-      AudioCommand_PlayFar(154);
+      AudioCommand_PlayFar(SE_154);
     }
     if (frame == 72) {
-      AudioCommand_PlayFar(154);
+      AudioCommand_PlayFar(SE_154);
     }
     if (frame == 104) {
-      AudioCommand_PlayFar(154);
+      AudioCommand_PlayFar(SE_154);
     }
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
       break;
@@ -356,13 +356,13 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
 
       if (frame == 8) {
         work->shakeFrames = frame;
-        AudioCommand_PlayFar(145);
+        AudioCommand_PlayFar(SE_145);
       }
       if (frame == 11) {
-        AudioCommand_PlayFar(145);
+        AudioCommand_PlayFar(SE_145);
       }
       if (frame == 46) {
-        AudioCommand_PlayFar(137);
+        AudioCommand_PlayFar(SE_137);
       }
 
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
@@ -391,7 +391,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
               k++;
             } while (k != 32);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
-            AudioCommand_PlayFar(134);
+            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
           }
         }
       }
@@ -414,7 +414,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       } while (i != 192);
 
       if (frame == 48) {
-        AudioCommand_PlayFar(136);
+        AudioCommand_PlayFar(SE_136);
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
       // left 12 pixels a frame.

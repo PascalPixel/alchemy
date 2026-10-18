@@ -73,9 +73,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      AudioCommand_PlayFar(115);
+      AudioCommand_PlayFar(SE_115);
     if (frame == 85)
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 4 + 40)
         ObjectGroup_UpdateMembers(work->effect->actors[i],

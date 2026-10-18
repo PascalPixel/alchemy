@@ -168,13 +168,13 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      AudioCommand_PlayFar(140);
+      AudioCommand_PlayFar(SE_140);
     }
     if (frame == 132) {
-      AudioCommand_PlayFar(131);
+      AudioCommand_PlayFar(SE_131);
     }
     if (frame == 151) {
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     }
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       break;
@@ -388,7 +388,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       work->particles[i].variant = -(Random16() & 15);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-    AudioCommand_PlayFar(145);
+    AudioCommand_PlayFar(SE_145);
     pillarX = 60;
     pillarY = 112;
 
@@ -400,7 +400,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       }
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
-        AudioCommand_PlayFar(134);
+        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 140) {
         BattleEventRuntime_BeginPhaseFar(134);

@@ -74,7 +74,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(138);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)

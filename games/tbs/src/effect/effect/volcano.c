@@ -84,7 +84,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
         camera->yaw = (s16)camera->yaw - 192;
     }
     if (frame == 16)
-      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame < 64) {
@@ -94,7 +94,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
         screen.x /= 2;
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])
-          AudioCommand_PlayFar(145);
+          AudioCommand_PlayFar(SE_145);
         // From 4 frames after it starts: the column, scrolling up 16
         // pixels a frame, and a flickering flame at its foot.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {

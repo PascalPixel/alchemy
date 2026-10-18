@@ -132,9 +132,9 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)
       BattleEventRuntime_BeginPhaseFar(134);
     if (frame == 0)
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     if (frame == 50)
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     if (work->effect->side == 0) {
       if (frame <= 63)
         camera->yaw -= 0x100;

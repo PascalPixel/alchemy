@@ -169,7 +169,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
         s32 y = HI(slash->y);
 
         if (frame == i * 8 + 84)
-          AudioCommand_PlayFar(212);
+          AudioCommand_PlayFar(SE_212);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
@@ -337,7 +337,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
 
             slash->variant = 0;
             work->shakeFrames = 2;
-            AudioCommand_PlayFar(134);
+            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < work->effect->count) {
               ObjectGroup_UpdateMembers(work->effect->actors[member],

@@ -165,7 +165,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     object->velocityY = 0xa0000;
     object->verticalMotionStrength = 0x91eb;
     ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
-    AudioCommand_PlayFar(145);
+    AudioCommand_PlayFar(SE_145);
     direction = work->effect->side == 1 ? mode : -1;
   } else {
     direction = -1;
@@ -343,7 +343,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         /* FAKEMATCH: r6 is clobbered across the call. */
         asm("" : : : "r6");
         if (frame == 0)
-          AudioCommand_PlayFar(141);
+          AudioCommand_PlayFar(SE_141);
         /* FAKEMATCH: hold's use after the call. */
         asm("" : : "r"(hold));
       }
@@ -544,9 +544,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     if (elapsed > 19)
       Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
-      AudioCommand_PlayFar(156);
+      AudioCommand_PlayFar(SE_156);
     if (frame == 40)
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     if (frame == 48) {
       if (mode == 1) {
         ResourceObject_ReleaseFar(work->objects[0]);

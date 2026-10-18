@@ -416,7 +416,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   casterActor->verticalMotionStrength = 0;
   EffectPosition_ApplyStepAndYOffset(work->effect->actor, casterScreen);
   casterScreen->x = casterScreen->x / 2;
-  AudioCommand_PlayFar(212);
+  AudioCommand_PlayFar(SE_212);
 
   //------------------------------------------------------------------
   // Gather for 32 frames.
@@ -1187,7 +1187,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                         projected.x - 4, projected.y - 4, 8, 8);
             step->x -= 6;
             if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
-              AudioCommand_PlayFar(133);
+              AudioCommand_PlayFar(SE_133);
               ObjectGroup_UpdateMembers(work->effect->actors[0],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
             }
@@ -1298,7 +1298,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       BattleEventRuntime_BeginPhaseFar(-1);
     }
     if (frame == 4) {
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 6) {
       if (kind == CASTING_IMPACT_FLINT || kind == CASTING_IMPACT_SCORCH ||

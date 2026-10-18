@@ -95,7 +95,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     struct BattleCamera *camera = gCameraWork;
 
     if (frame == 64)
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     if (frame == 80)
       BattleEventRuntime_BeginPhaseFar(0);
 

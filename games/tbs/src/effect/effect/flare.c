@@ -78,7 +78,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     work->transferValue = 50;
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
-  AudioCommand_PlayFar(136);
+  AudioCommand_PlayFar(SE_136);
   frame = 0;
   do {
     // Frame 24 lets the battle show the damage.

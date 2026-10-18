@@ -450,7 +450,7 @@ static void Door_Enter(void) {
       placedActor->motionFlags = 0;
     }
   }
-  Event_PlayCue(SOUND_DOOR_OPEN);
+  Event_PlayCue(SE_DOOR_OPEN);
   doorIndex = fieldWork->action - TRIGGER_FIRST_HOME_DOOR;
   Map_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                    gLunpaDoors[doorIndex].y);
@@ -489,7 +489,7 @@ static void Fortress_Enter(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
-  Event_PlayCue(SOUND_DOOR_OPEN);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_CopyCells(53, 4, 2, 2, 41, 4);
   Engine_EventWait(10);
   Map_CopyCells(53, 6, 2, 2, 41, 4);
@@ -506,7 +506,7 @@ static void UNUSED Party_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 // Reveal's sound when it uncovers something.
 UNUSED static void Reveal_PlayTreasureCue(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
-    Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
+    Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   }
 }
 
@@ -520,7 +520,7 @@ static void HiddenSwitch_Press(void) {
   }
   // Open the passage over five map frames, then remember its final state.
   Actor_SetPosition(ACTOR_SWITCH_GLINT, 0, 0);
-  Event_PlayCue(SOUND_HIDDEN_PASSAGE_OPEN);
+  Event_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
   Engine_TaskWait(1);
   Lunpa_DrawHiddenPassageFrame(32, 45);
   Engine_TaskWait(10);
@@ -717,16 +717,16 @@ static void Party_ThrownOut(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
   FieldScheduler_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(1);
-  Event_PlayCue(SOUND_SCUFFLE);
+  Event_PlayCue(SE_SCUFFLE);
   Engine_EventWait(20);
   Engine_ActorSetSpritePriority(ACTOR_LEFT_GUARD, 3);
   Engine_ActorSetSpritePriority(ACTOR_RIGHT_GUARD, 3);
-  Event_PlayCue(SOUND_SCUFFLE);
+  Event_PlayCue(SE_SCUFFLE);
   Engine_EventWait(30);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Event_PlayCue(SOUND_SCUFFLE);
+  Event_PlayCue(SE_SCUFFLE);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
   Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
@@ -741,7 +741,7 @@ static void Party_ThrownOut(void) {
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
-  Event_PlayCue(SOUND_LANDING_THUD);
+  Event_PlayCue(SE_LANDING_THUD);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
   FieldScheduler_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(2);

@@ -132,13 +132,13 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 4) {
-      AudioCommand_PlayFar(212);
+      AudioCommand_PlayFar(SE_212);
     }
     if (frame == 32) {
-      AudioCommand_PlayFar(164);
+      AudioCommand_PlayFar(SE_164);
     }
     if (frame == 60) {
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
       BattleEventRuntime_BeginPhaseFar(134);
     }
 

@@ -295,9 +295,9 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         if (frame % (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 6) ==
             STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 4) {
           if (mode == 8) {
-            BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
+            BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
           } else {
-            AudioCommand_PlayFar(133);
+            AudioCommand_PlayFar(SE_133);
             BattleEventRuntime_BeginPhaseFar(133);
           }
           // A heavy hit lights every spark at once; otherwise the hit
@@ -376,7 +376,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
                         STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES))
           BattleEventRuntime_BeginPhaseFar(133);
         else
-          AudioCommand_PlayFar(133);
+          AudioCommand_PlayFar(SE_133);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step =
               &TARGET_STRIKE_SPARKS

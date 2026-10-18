@@ -109,10 +109,10 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
 
   if (mode == 2) {
     work->shakeFrames = 0;
-    AudioCommand_PlayFar(212);
+    AudioCommand_PlayFar(SE_212);
   } else if (mode == 1) {
     work->shakeFrames = 8;
-    AudioCommand_PlayFar(212);
+    AudioCommand_PlayFar(SE_212);
   } else {
     work->shakeFrames = 32;
   }
@@ -129,7 +129,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 24)
       BattleEventRuntime_BeginPhaseFar(0);
     if (frame == 8 && mode == 0)
-      AudioCommand_PlayFar(SOUND_RECOVERY);
+      AudioCommand_PlayFar(SE_RECOVERY);
 
     // Images 0, 1 and 2, four frames each, then 1 and 2 by turns, up to
     // frame 27, standing 8 pixels below the target's feet.

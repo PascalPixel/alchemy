@@ -161,7 +161,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     total = work->effect->count * 8 + 72;
   else
     total = work->effect->count * 8 + 56;
-  AudioCommand_PlayFar(103);
+  AudioCommand_PlayFar(SE_103);
 
   for (frame = 0; frame != total; frame++) {
     struct EffectStep *burst;

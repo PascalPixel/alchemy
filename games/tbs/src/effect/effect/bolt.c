@@ -66,7 +66,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(138);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
       BattleEventRuntime_BeginPhaseFar(133);

@@ -46,7 +46,7 @@
 #include "keystate.h"
 #include "owner_value.h"
 #include "party_state.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "fixed_math.h"
 #include "item_gift.h"
 #include "battle_calc.h"
@@ -6120,7 +6120,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     if (Map_CheckObjectStepFar(target, &position) > 0) {
       ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
     }
     hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
@@ -6128,7 +6128,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       if (hit != user) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          AudioCommand_PlayFar(SOUND_MENU_ERROR);
+          AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
       }
 
@@ -6141,7 +6141,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
           cellZ == (candidate->z & CELL_MASK)) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          AudioCommand_PlayFar(SOUND_MENU_ERROR);
+          AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
       }
       if (cellX == (beyond.x & CELL_MASK) && cellZ == (beyond.z & CELL_MASK)) {
@@ -6149,7 +6149,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
                                              beyond.z) != 0) {
           ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            AudioCommand_PlayFar(SOUND_MENU_ERROR);
+            AudioCommand_PlayFar(SE_MENU_ERROR);
           continue;
         }
         moved = 1;
@@ -6322,7 +6322,7 @@ void *BattleFx_StartItemBreak(void *object) {
           child, radius, ((jitter - Random16()) >> 3) + source->angle);
     }
   }
-  AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   return parent;
 }
 
@@ -6563,7 +6563,7 @@ void ResetSceneTransitionEffect(void) {
   void *event;
 
   if (state->revealActive != 0) {
-    AudioCommand_PlayFar(SOUND_SCENE_TRANSITION);
+    AudioCommand_PlayFar(SE_SCENE_TRANSITION);
     Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
     zero = 0;
@@ -6604,7 +6604,7 @@ void BattleFx_RunBurstParticleMainObject(s32 unused) {
     ObjectDispatch_SetSingleChildFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     WaitFrames(10);
-    AudioCommand_PlayFar(SOUND_RECOVERY);
+    AudioCommand_PlayFar(SE_RECOVERY);
     WaitFrames(40);
     BattleFx_PrepareBufferInterpolation();
   }
@@ -6619,7 +6619,7 @@ void BattleFx_RunBurstParticles(void) {
   s32 remainingObjects;
 
   BattleEffect_SpawnBurstParticleField();
-  AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   p = &pos;
   remainingObjects = FALL_LAST;
   do {
@@ -6808,7 +6808,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
     }                                                                          \
                                                                                \
     FieldObject_WaitForMoveFar(pair[0]);                                    \
-    AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);                                  \
+    AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                  \
     for (n = 0; n < ANCHOR_SHARD_MAX; n++) {                                   \
       pos.x = work->x;                                                         \
       pos.y = work->y + 0x100000;                                              \
@@ -6840,7 +6840,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   fragment = Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
@@ -6929,7 +6929,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *fragment;
   s32 fragmentIndex;
 
-  AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   pos.x = source->x;
   pos.y = source->y;
   pos.z = source->z;
@@ -8076,7 +8076,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
     }
     // The way is free: move the target there.
@@ -8185,7 +8185,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   fragment = Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
@@ -8539,13 +8539,13 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 
   WaitFrames(5);
   ObjectDispatch_ApplyArgumentToChildrenFar(orb, 1);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_HIGH);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_HIGH);
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.

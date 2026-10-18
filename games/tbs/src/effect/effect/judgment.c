@@ -202,10 +202,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     slots = (DrawRectangle *)gWorkSlot;
     if (frame == 143) {
       Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
     }
     if (frame == 80) {
-      AudioCommand_PlayFar(142);
+      AudioCommand_PlayFar(SE_142);
     }
 
     // Retain the disabled particle stage: this loop starts at frame zero.
@@ -492,17 +492,17 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // shows the damage.
   for (frame = 0; frame != SHOCKWAVE_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
-      AudioCommand_PlayFar(145);
-      AudioCommand_PlayFar(141);
+      AudioCommand_PlayFar(SE_145);
+      AudioCommand_PlayFar(SE_141);
     }
     if (frame == 155) {
-      AudioCommand_PlayFar(162);
+      AudioCommand_PlayFar(SE_162);
     }
     if (frame == 217) {
-      AudioCommand_PlayFar(156);
+      AudioCommand_PlayFar(SE_156);
     }
     if (frame == 280) {
-      AudioCommand_PlayFar(157);
+      AudioCommand_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
       BattleEventRuntime_BeginPhaseFar(145);

@@ -286,7 +286,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       SET_VECTOR(point, object->x, 40 << 16, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
-        AudioCommand_PlayFar(SOUND_RECOVERY);
+        AudioCommand_PlayFar(SE_RECOVERY);
       if (frame == start + 36)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member, 28);

@@ -368,7 +368,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
-    AudioCommand_PlayFar(212);
+    AudioCommand_PlayFar(SE_212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(
           work->effect->actor, work->effect->firstTarget, 130);

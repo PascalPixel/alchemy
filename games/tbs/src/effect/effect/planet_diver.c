@@ -140,7 +140,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
       ObjectDispatch_ApplyArgumentToChildrenFar(actor, 2);
       work->shakeFrames = frame;
-      AudioCommand_PlayFar(136);
+      AudioCommand_PlayFar(SE_136);
     }
     // Frame 16: switch to the fireball images and line the user up with
     // the target's depth.
@@ -279,7 +279,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  AudioCommand_PlayFar(142);
+  AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 32 + 96; frame++) {
     s32 *row;

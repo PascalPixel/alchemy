@@ -40,7 +40,7 @@
 #include "map_scroll.h"
 #include "field_runtime.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 // UB: passage offsets and dust directions can be negative. The callers use
 // bounded pixel offsets or directions -1..1, so these products fit s32.
@@ -291,7 +291,7 @@ static s32 VenusLighthouse_PulseChildEffect(union FieldObject *fieldObject) {
     ObjectGroup_SetChildValue(actor, 0);
 
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(SOUND_ITEM_BREAK);
+    Engine_AudioPlayCue(SE_ITEM_BREAK);
 #ifdef UBFIX
   return;
 #else
@@ -1436,7 +1436,7 @@ static void VenusLighthouse_OpenGateWithSunkenBlock(void) {
         Actor_SetActionScript(10, gVenusPushScript);
         Object_RefreshSelectorById(10);
         Engine_EventWait(30);
-        Engine_AudioPlayCue(SOUND_DOOR_OPEN);
+        Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapAnimateCells(gVenusPushCells, 110, 41);
         Map_CopyCellAttributes(46, 41, 1, 1, column, 42);
         Engine_GameFlagSet(0x301);
@@ -1561,7 +1561,7 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
     while (firstGateEffect->active != 0 || secondGateEffect->active != 0) {
       if (firstGateEffect->finished != 0 || secondGateEffect->finished != 0) {
         Engine_EventWait(30);
-        Engine_AudioPlayCue(SOUND_DOOR_OPEN);
+        Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapAnimateCells(gVenusSettleCells, 109, 37);
         Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
         if (Object_GetById(9)->x.fixed >> 20 == gVenusSwitchCells[0].x &&

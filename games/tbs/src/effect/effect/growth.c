@@ -218,7 +218,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
-                    AudioCommand_PlayFar(133);
+                    AudioCommand_PlayFar(SE_133);
                   }
                   ObjectGroup_UpdateMembers(work->effect->actors[n],
                                             SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
@@ -355,7 +355,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 32) {
-      AudioCommand_PlayFar(143);
+      AudioCommand_PlayFar(SE_143);
       EFFECT_FOR_EACH_TARGET(i, work->effect)
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 16);
@@ -524,7 +524,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       }
       EFFECT_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
-          AudioCommand_PlayFar(132);
+          AudioCommand_PlayFar(SE_132);
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 3);
         }

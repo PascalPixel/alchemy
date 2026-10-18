@@ -24,7 +24,7 @@
 #include "event.h"
 #include "field_event.h"
 #include "field_scene.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "create_configured_overlay_object.h"
 #include "battle.h"
 #include "debug.h"
@@ -2411,7 +2411,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Engine_ActorsRefresh();
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Event_PlayCue(SOUND_ITEM_BREAK);
+  Event_PlayCue(SE_ITEM_BREAK);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
   Engine_ActorSetAnimation(GARET, 18);
   Engine_ActorSetAnimation(IVAN, 18);

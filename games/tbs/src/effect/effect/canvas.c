@@ -466,10 +466,13 @@ void BattleFx_SetTransitionFlagAndDisplay(void) {
   WaitFrames(1);
 }
 
-// Sets up BG1, instead of BG2, as a 256-colour picture layer for the
-// effects that draw full screen into gMapCellBuffer: a 16-row map of tiles
-// 0x100 onwards beside blank tiles, BG1 blended over the rest, and the
-// effect windows. Also clears the canvas.
+// Shows the canvas on BG1 instead of BG2, at its own size: BG1 becomes a
+// 256-colour layer whose map points 16 rows of 16 tiles at the canvas
+// (tiles 0x100 onwards, which at 64 bytes a tile start at character block
+// 1, where the canvas lives), with blank tile 0xff to the right, blended over
+// the rest inside the effect windows. Also clears the canvas. The beam
+// scenes use it; the full-screen gMapCellBuffer effects use
+// BattleFx_FlushPendingGraphicsTransfer instead.
 void BattleFx_SetupCanvasTileMap(void) {
   // UB: indexing past gBattleWork reaches the work slots after it.
 #ifdef UBFIX

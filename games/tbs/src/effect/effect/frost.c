@@ -12,7 +12,6 @@ enum {
 #define RISING_MOTE_TIMING(field)                                              \
   (gRisingMotes_Timings[work->effect->variant * 3 + (field)])
 
-
 // Abilities: Frost, Tundra, Glacier (kind 6).
 //
 // Rising motes: motes spiral upwards while ice columns spring up one every

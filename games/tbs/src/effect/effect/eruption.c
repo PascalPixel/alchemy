@@ -35,8 +35,7 @@ enum {
 // mode: 0 burns (the fire streak palette, the effect's variant picks the
 //       counts, and the targets recoil); 1 is grey (a ramp of greys,
 //       variant 1's counts).
-void BattleFx_RunEruption(struct BattleEffectArgument *effect,
-                                   s32 mode) {
+void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -159,8 +158,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect,
                     width);
 #else
             draw[0](canvas, work->sheet + gEruptionEffect_PuffCells[cel],
-                    screen.x -
-                        ((width = gEruptionEffect_PuffSizes[cel]) >> 1),
+                    screen.x - ((width = gEruptionEffect_PuffSizes[cel]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
           }

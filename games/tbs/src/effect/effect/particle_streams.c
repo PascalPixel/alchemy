@@ -76,7 +76,6 @@ DEFINE_EFFECT_KIND(BattleFx_RunMeteor, BattleFx_RunParticleStreams, 0)
 // lightning bolt's colours.
 DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
 
-
 #define STREAM_EMBERS (&PARTICLES[128])
 
 #define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise

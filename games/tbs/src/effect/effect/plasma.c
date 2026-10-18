@@ -204,7 +204,6 @@ DEFINE_EFFECT_KIND(BattleFx_RunNova, BattleFx_RunSparkGroups, 0)
 // (priority 0).
 DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
 
-
 #define SPARK_GROUPS_FLASHES 16 // flashes kept per burst
 #define SPARK_GROUPS_SPACING 8  // frames between bursts
 #define SPARK_GROUPS_RING 12    // of which drawn as the ring

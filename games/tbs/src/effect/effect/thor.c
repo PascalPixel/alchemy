@@ -4,7 +4,6 @@
 // Storm and rock scenes, staged bursts and rising walls.
 // The final helpers advance particles and project battle units to the screen.
 
-
 // 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
 // before them.
 #define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
@@ -589,8 +588,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               3 | gThor_SmokeFlips[Random16() & 3], 2);
           gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[glint],
-              x, y + 56, gBattleFx_GlintCellWidths[glint],
+              canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[glint], x,
+              y + 56, gBattleFx_GlintCellWidths[glint],
               gBattleFx_GlintCellHeights[glint]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }

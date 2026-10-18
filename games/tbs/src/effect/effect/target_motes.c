@@ -347,7 +347,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0);
-  REG_BLDCNT = 0;    // drawn solid
+  REG_BLDCNT = 0; // drawn solid
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -456,7 +456,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   work = slot[-1];
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(1);
-  REG_BLDCNT = 0;    // drawn solid
+  REG_BLDCNT = 0; // drawn solid
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
   if (work->effect->side == 1) {

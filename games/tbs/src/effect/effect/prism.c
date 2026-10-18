@@ -3,8 +3,6 @@
 
 // Falling crystals.
 
-
-
 #define PRISM_GROUND_Y 0x380000 // y 56, where the crystals shatter
 
 // Abilities: Prism, Hail Prism, Freeze Prism (kind 8).

@@ -62,8 +62,8 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // attack removes its callbacks before returning. Sheet cell layouts select
 // the images.
 
-#define MERCURY_FRAMES 96          // frames in the effect
-#define MERCURY_FLAMES 5           // flames thrown
+#define MERCURY_FRAMES 96 // frames in the effect
+#define MERCURY_FLAMES 5  // flames thrown
 // The Djinn attacks share these: each flame, ball or column that lands
 // throws its motes into its own DJINN_MOTES_PER_FLAME slots of PARTICLES
 // (Venus's columns fill 16 of them), and the motes move through all

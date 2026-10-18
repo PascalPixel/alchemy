@@ -19,7 +19,6 @@
 #define CYBELE_FIRST_CHIP 16  // the first chip in work->particles
 #define CYBELE_EMBER_CELL 6   // the ember picture in gCybele_EmberOffsets
 
-
 // Abilities: Cybele (scene kind 5).
 //
 // Thorn vines: thorns fly in from the right, vines grow out of the ground

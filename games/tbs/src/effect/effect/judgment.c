@@ -34,7 +34,6 @@ struct ShockwaveWork {
   u8 ramp[8][770];
 };
 
-
 #define SHOCKWAVE_SPARKS (&PARTICLES[128])
 
 #define SHOCKWAVE_GATHER_FRAMES 160    // frames of the gathering

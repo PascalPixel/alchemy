@@ -1,7 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Procne summon.
 
-
 // Abilities: Procne (scene kind 8).
 //
 // Large battle effect 8 (BattleFx_RunSceneEffect), 400 frames:

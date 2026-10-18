@@ -17,7 +17,6 @@ struct RockWallHeights {
 // ground cut from the background.
 #define ROCK_WALL_CELLS 0x1e00
 
-
 // Abilities: Quake, Earthquake, Quake Sphere (kind 1).
 //
 // Rock wall: three rock pillars rise from the left, 4 frames apart, and
@@ -56,7 +55,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
-  REG_BLDCNT = 0;    // no blending
+  REG_BLDCNT = 0;       // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_WALL_CELLS, 1, 1);
 

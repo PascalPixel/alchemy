@@ -64,7 +64,7 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
 }
 
 static inline void CastingImpact_LoadResource(const void *id, void *dest,
-                                                  s32 skip, s32 copy) {
+                                              s32 skip, s32 copy) {
   /* FAKEMATCH: inline scope keeps each resource call's
    * arguments local; only BattleFx_RunCastingImpact loads through it: with its
    * 24 loads called directly it differs throughout and is 2 instructions longer
@@ -76,7 +76,7 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
 
 // Packs a casting impact's picture rows (Graphics_PackTileRows).
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
-                                              s32 height) {
+                                          s32 height) {
   /* FAKEMATCH: keep packing arguments within their own inline
    * scope */
   Graphics_PackTileRows(src, dest, width, height);
@@ -84,19 +84,17 @@ static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
 
 // Draws one casting impact image with the given blitter.
 static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
-                                               s32 x, s32 y, s32 width,
-                                               s32 height,
-                                               DrawRectangle *draw) {
+                                           s32 x, s32 y, s32 width, s32 height,
+                                           DrawRectangle *draw) {
   /* FAKEMATCH: inline scope reloads each image address at its
    * drawing call */
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
 // Draw a casting-impact image whose height is twice its width.
-static inline void CastingImpact_DrawTallImage(void *canvas,
-                                                   const void *pixels, s32 x,
-                                                   s32 y, s32 width,
-                                                   DrawRectangle *draw) {
+static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
+                                               s32 x, s32 y, s32 width,
+                                               DrawRectangle *draw) {
   /* FAKEMATCH: derive height inside the inline scope so the
    * dimension stores reuse one register instead of keeping two argument
    * temporaries alive */
@@ -105,10 +103,10 @@ static inline void CastingImpact_DrawTallImage(void *canvas,
 
 // Draw only the unscrolled height of a casting-impact image.
 static inline void CastingImpact_DrawScrolledImage(void *canvas,
-                                                       const void *pixels,
-                                                       s32 x, s32 y, s32 width,
-                                                       s32 height, s32 scroll,
-                                                       DrawRectangle *draw) {
+                                                   const void *pixels, s32 x,
+                                                   s32 y, s32 width, s32 height,
+                                                   s32 scroll,
+                                                   DrawRectangle *draw) {
   /* FAKEMATCH: subtract the scrolled part inside the drawing
    * scope */
   (*draw)(canvas, pixels, x, y, width, height - scroll);
@@ -116,9 +114,9 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
 
 // Draw a casting-impact image cropped to 91 pixels high.
 static inline void CastingImpact_DrawCroppedImage(void *canvas,
-                                                      const void *pixels, s32 x,
-                                                      s32 y, s32 width,
-                                                      DrawRectangle *draw) {
+                                                  const void *pixels, s32 x,
+                                                  s32 y, s32 width,
+                                                  DrawRectangle *draw) {
   /* FAKEMATCH: forwarding inline; the cropped height stays inside its scope.
    * Both calls made through the blitter directly with 91 differ 16 on tbs-en:
    * the stack arguments 128 and 91 go through r0 instead of r1 and the pixels

@@ -144,7 +144,6 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-
 // Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
 //
 // Battle effect 20: tornadoes sweep across the targets for 80 frames,

@@ -1,7 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Atalanta summon.
 
-
 // The trail particles' random rotations, 48 bytes each, after the 384
 // particles in PARTICLES.
 #define STAGED_PARTICLE_MATRICES (Ram_MapCellBuffer + 0x3800)

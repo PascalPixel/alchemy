@@ -122,7 +122,7 @@ void BattleFx_BuildWindowEdgeTable(void) {
   s32 scanline;
   s32 rightEdge;
 
-  baseRightEdge = (u16 *)gMapCellBuffer;
+  baseRightEdge = (u16 *)Ram_MapCellBuffer;
   scanlineEdges = (u16 *)(Ram_MapCellBuffer + 0x82);
   edgeOffsets = Ram_MapCellBuffer + 2;
   for (scanline = 0; scanline != 160; scanline++) {
@@ -138,7 +138,7 @@ void BattleFx_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
 
     Dma_Stop(channel);
-    Dma_Set((u8 *)gMapCellBuffer + 0x82, (void *)&REG_WIN0H,
+    Dma_Set(Ram_MapCellBuffer + 0x82, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

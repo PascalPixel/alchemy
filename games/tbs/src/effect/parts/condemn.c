@@ -203,23 +203,23 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
         }
         if ((frame - 92) <= 1U) {
           draw[work->effect->side](
-              canvas, (void *)gMapCellBuffer, CONDEMN_PANEL_X(panelColumn, 3),
+              canvas, Ram_MapCellBuffer, CONDEMN_PANEL_X(panelColumn, 3),
               CONDEMN_PANEL_Y(panelRow, 3) + screenY, 128, 91);
         }
         if ((frame - 94) <= 1U) {
-          draw[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x2d80,
+          draw[work->effect->side](canvas, Ram_MapCellBuffer + 0x2d80,
                                    CONDEMN_PANEL_X(panelColumn, 4),
                                    CONDEMN_PANEL_Y(panelRow, 4) + screenY, 128,
                                    59);
         }
         if ((frame - 96) <= 1U) {
-          draw[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x4b00,
+          draw[work->effect->side](canvas, Ram_MapCellBuffer + 0x4b00,
                                    CONDEMN_PANEL_X(panelColumn, 5),
                                    CONDEMN_PANEL_Y(panelRow, 5) + screenY, 122,
                                    29);
         }
         if ((frame - 98) <= 1U) {
-          draw[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x58d2,
+          draw[work->effect->side](canvas, Ram_MapCellBuffer + 0x58d2,
                                    CONDEMN_PANEL_X(panelColumn, 6),
                                    CONDEMN_PANEL_Y(panelRow, 6) + screenY, 76,
                                    25);

@@ -32,7 +32,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
 
-  shards = gMapCellBuffer;
+  shards = PARTICLES;
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   work = *cursor++;
   canvas = *cursor;

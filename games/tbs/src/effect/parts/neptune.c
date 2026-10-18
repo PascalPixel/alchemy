@@ -155,7 +155,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     if (frame >= 0 && frame < 16) {
       u16 *phase = (u16 *)Ram_MapCellBuffer;
       if (frame == 1) {
-        u8 *noise = (u8 *)gMapCellBuffer + 2;
+        u8 *noise = Ram_MapCellBuffer + 2;
         s32 k;
         for (k = 0; k != 128; k++) {
           noise[k] = Random16() & 63;

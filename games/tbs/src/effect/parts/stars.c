@@ -70,7 +70,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
     point++;
   }
 
-  trails = gMapCellBuffer;
+  trails = PARTICLES;
   for (frame = 0; frame != 60; frame++) {
     // Swing the camera round, slowing over frames 40 to 47.
     if (frame <= 47) {
@@ -129,9 +129,9 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
         if (peak <= 399999) {
           for (j = 0; j != 10; j++) {
             struct EffectStep *from =
-                &((struct EffectStep *)gMapCellBuffer)[j + i * 10];
+                &((struct EffectStep *)PARTICLES)[j + i * 10];
             struct EffectStep *to =
-                &((struct EffectStep *)gMapCellBuffer)[(j + 1) % 10 + i * 10];
+                &((struct EffectStep *)PARTICLES)[(j + 1) % 10 + i * 10];
 
             for (k = 0; k != 16; k++) {
               s32 x =
@@ -242,7 +242,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   }
 
   size = 2;
-  trails = gMapCellBuffer;
+  trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)

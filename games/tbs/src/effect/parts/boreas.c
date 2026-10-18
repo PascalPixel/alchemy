@@ -27,7 +27,7 @@
 // the targets into the air, and Spire's boulders drop and shatter.
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
-#define ICE_BLOCK_TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
+#define ICE_BLOCK_TRAILS ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
 #define BOREAS_FALLING_BLOCK_CELLS 0x14f9 // the diagonal 40x80 ice block
 
@@ -125,7 +125,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     // Open the window from the left: its right edge speeds up, and each line
     // lags 0 to 63 pixels behind it.
     if (frame >= 0 && frame < 16) {
-      u16 *edge = (u16 *)gMapCellBuffer;
+      u16 *edge = (u16 *)Ram_MapCellBuffer;
       if (frame == 1) {
         u8 *inset = Ram_MapCellBuffer + 2;
         s32 line;

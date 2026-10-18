@@ -59,12 +59,12 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   }
 
   // Every spark starts idle.
-  life = &((struct EffectStep *)gMapCellBuffer)->variant;
+  life = &((struct EffectStep *)PARTICLES)->variant;
   for (k = 0; k != LIGHTNING_PILLAR_SPARK_COUNT; k++) {
     *life = 0;
     life += 7;
   }
-  sparks = gMapCellBuffer;
+  sparks = PARTICLES;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                         50); // trails keep half a frame
   count = gPlasma_Counts[work->effect->variant];
@@ -273,7 +273,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   }
-  sparks = gMapCellBuffer;
+  sparks = PARTICLES;
 
   // For each burst: sixteen ring flashes (the first twelve are drawn) at
   // random angles, each lying further out (index * 2) and waiting longer

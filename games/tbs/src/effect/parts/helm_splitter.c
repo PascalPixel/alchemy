@@ -42,12 +42,12 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Clear the reusable spark pool before moving the user.
-  particleLife = &gMapCellBuffer->variant;
+  particleLife = &PARTICLES->variant;
   for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++) {
     *particleLife = 0;
     particleLife += 7;
   }
-  sparks = gMapCellBuffer;
+  sparks = PARTICLES;
 
   // The user leaps 80% of the way to the first target over 20 frames. The
   // distance is taken in 1/256 pixels so the squares fit in 32 bits.
@@ -283,11 +283,11 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
     s32 speed = (Random16() & 255) + 32;
     s32 angle = Random16() & 0xffff;
 
-    gMapCellBuffer[i].x = x;
-    gMapCellBuffer[i].y = y;
-    gMapCellBuffer[i].velocityX = (Trig_Sin(angle) * speed) >> 6;
-    gMapCellBuffer[i].velocityY = -((Trig_Cos(angle) * speed) >> 5);
-    gMapCellBuffer[i].variant = (Random16() & 15) + 20;
+    PARTICLES[i].x = x;
+    PARTICLES[i].y = y;
+    PARTICLES[i].velocityX = (Trig_Sin(angle) * speed) >> 6;
+    PARTICLES[i].velocityY = -((Trig_Cos(angle) * speed) >> 5);
+    PARTICLES[i].variant = (Random16() & 15) + 20;
   }
 
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
@@ -338,7 +338,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
     }
 
     // Small sparks start at frame 36.
-    for (i = 0, particle = gMapCellBuffer; i != IMPACT_BURST_DRAWN_SMALL;
+    for (i = 0, particle = PARTICLES; i != IMPACT_BURST_DRAWN_SMALL;
          i++, particle++) {
       if (frame > 35 && particle->variant > 0) {
         s32 size;

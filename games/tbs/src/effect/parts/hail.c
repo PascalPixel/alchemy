@@ -51,13 +51,13 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 
     angle = (Random16() & 0x7fff) + 0x4000;
     speed = (Random16() & 0x1ff) + 0x80;
-    gMapCellBuffer[i].x = ((origin.x / 2 + (Random16() & 0xf)) - 8) << 16;
-    gMapCellBuffer[i].y = (origin.y + 8) << 16;
-    gMapCellBuffer[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
-    gMapCellBuffer[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
-    gMapCellBuffer[i].z = Random16() & 0x7f;
-    gMapCellBuffer[i].velocityZ = Random16() & 0x7f;
-    gMapCellBuffer[i].variant = (Random16() & 0xf) + 32;
+    PARTICLES[i].x = ((origin.x / 2 + (Random16() & 0xf)) - 8) << 16;
+    PARTICLES[i].y = (origin.y + 8) << 16;
+    PARTICLES[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
+    PARTICLES[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
+    PARTICLES[i].z = Random16() & 0x7f;
+    PARTICLES[i].velocityZ = Random16() & 0x7f;
+    PARTICLES[i].variant = (Random16() & 0xf) + 32;
   }
 
   for (frame = 0; frame != HAIL_FRAMES; frame++) {
@@ -88,7 +88,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
         draw[1](canvas, work->sheet + REVEAL_DJINNI_CELLS, x, y, 20, 40);
     }
 
-    for (i = 0, chip = gMapCellBuffer; i != REVEAL_CHIP_COUNT; i++, chip++) {
+    for (i = 0, chip = PARTICLES; i != REVEAL_CHIP_COUNT; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 cell;
         s32 width;

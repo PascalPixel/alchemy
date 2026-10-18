@@ -187,7 +187,7 @@ enum CastingImpact {
 };
 
 #define CASTING_ORB_CELLS 0x5100    // the impact orb, packed at half width
-#define CASTING_DJINNI_CELLS 0x3c56 // the Djinni pictures, in gMapCellBuffer
+#define CASTING_DJINNI_CELLS 0x3c56 // the Djinni pictures, in PARTICLES
 #define CASTING_GATHER_FRAMES 32    // frames the sparks gather
 #define CASTING_SPARKS 64           // sparks in work->particles
 // The impact pictures' particles, in gMapCellBuffer after the Djinni.

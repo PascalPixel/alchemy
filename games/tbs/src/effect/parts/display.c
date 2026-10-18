@@ -61,6 +61,6 @@ void BattleFx_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
   // Stop the preceding scanline transfer before replacing its source.
   Dma_Stop(channel);
-  Dma_Set(gMapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(PARTICLES, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }

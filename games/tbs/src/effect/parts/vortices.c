@@ -29,7 +29,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   s32 i;
   s8 *flags;
 
-  flags = (s8 *)gMapCellBuffer; // nonzero once a mote has struck
+  flags = (s8 *)Ram_MapCellBuffer; // nonzero once a mote has struck
   work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
   canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;

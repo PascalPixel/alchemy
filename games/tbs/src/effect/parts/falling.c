@@ -126,11 +126,11 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   // Window 0's edges, one per scanline: a band slanting the way the shards
   // fall, then a fixed span down to line 135, and nothing below that.
   if (work->effect->side == 0) {
-    line = (u16 *)gMapCellBuffer;
+    line = (u16 *)Ram_MapCellBuffer;
     EFFECT_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
                                 WINDOW_SPAN(8, 136));
   } else {
-    line = (u16 *)gMapCellBuffer;
+    line = (u16 *)Ram_MapCellBuffer;
     EFFECT_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
                                 WINDOW_SPAN(120, 248));
   }
@@ -326,12 +326,12 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   // fall, then a fixed span down to line 135, and nothing below that.
 
   if (work->effect->side == 0) {
-    line = (u16 *)gMapCellBuffer;
+    line = (u16 *)Ram_MapCellBuffer;
     EFFECT_BUILD_SLANTED_WINDOW(line, i, 103,
                                 ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
                                 WINDOW_SPAN(0, 128));
   } else {
-    line = (u16 *)gMapCellBuffer;
+    line = (u16 *)Ram_MapCellBuffer;
     EFFECT_BUILD_SLANTED_WINDOW(line, i, 103,
                                 ((i / 2 + 60) << 8) | (i / 2 + 188),
                                 WINDOW_SPAN(112, 240));

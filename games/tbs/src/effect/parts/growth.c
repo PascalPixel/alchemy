@@ -121,7 +121,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   duration = gGrowth_ColumnCounts[work->effect->variant] * 4 + 56;
 
   // Mark all the dust free (variant -1).
-  variantCursor = (u8 *)gMapCellBuffer + offsetof(struct EffectStep, variant);
+  variantCursor = Ram_MapCellBuffer + offsetof(struct EffectStep, variant);
   i = 0;
   do {
     i++;
@@ -234,7 +234,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               /* FAKEMATCH: the scan reuses length as its puff
                * pointer 2026-10-11: a block pointer of its own differs 48 (r5
                * and r6 swap); the puff pointer of the function 271. */
-              length = (u32)gMapCellBuffer;
+              length = (u32)PARTICLES;
               n = 0;
               while (n != 512) {
                 if (((struct EffectStep *)length)->variant == -1) {
@@ -255,7 +255,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 
       // Dust: seven pictures, 2 frames each, drawn mirrored about the middle.
       i = 0;
-      puff = gMapCellBuffer;
+      puff = PARTICLES;
       do {
         puffAge = puff->variant;
         if (puffAge >= 0) {

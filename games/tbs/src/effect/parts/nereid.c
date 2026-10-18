@@ -73,12 +73,12 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
     }
-    life = &gMapCellBuffer->variant;
+    life = &PARTICLES->variant;
     for (k = 0; k != NEREID_EMBERS; k++) {
       *life = -1;
       life += 7; // sizeof(struct EffectStep) / 4
     }
-    sparks = gMapCellBuffer;
+    sparks = PARTICLES;
     BattleFx_SelectLivingTargets(work->effect);
     WaitFrames(1);
     BattleFx_SpawnObjects(NEREID_OBJECTS, 380, 2);

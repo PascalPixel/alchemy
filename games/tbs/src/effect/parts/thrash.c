@@ -60,17 +60,17 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, gMapCellBuffer, 1,
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, PARTICLES, 1,
                                1);
   } else if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, gMapCellBuffer, 1,
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, PARTICLES, 1,
                                1);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, gMapCellBuffer, 1,
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, PARTICLES, 1,
                                1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
@@ -99,9 +99,9 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     else if (frame <= 7)
       draw[0](canvas, work->imageStorage + 0x3840, 0, 0, 120, 120);
     else if (frame <= 11)
-      draw[0](canvas, gMapCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, PARTICLES, 0, 0, 120, 120);
     else if (frame <= 15)
-      draw[0](canvas, (u8 *)gMapCellBuffer + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
     if (frame >= 16 && frame <= 19)
       Iwram_FillWords(canvas, 0x4000,
                       0x3f3f3f3f); // Fill the entire canvas with color 0x3f.

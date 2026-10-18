@@ -39,7 +39,9 @@ typedef struct {
   s16 values[1];
 } BattleEffectIndexWindow;
 
-// Particle storage: reuse Ram_MapCellBuffer as an array of struct EffectStep.
+// The map cell buffer (gMapCellBuffer), which the effects borrow, has two
+// views here: Ram_MapCellBuffer as bytes, at its fixed address, and PARTICLES
+// as particles. The effects use these two, not gMapCellBuffer itself.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 #define EFFECT_CLIP_BOUNDS                                                     \

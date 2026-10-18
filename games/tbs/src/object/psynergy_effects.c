@@ -368,9 +368,10 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       // one.
       UnitGetFar(member);
       {
-        /* FAKEMATCH: the ROM loads the slot argument before the member. Only
-         * the English build, without the thirty-item check below, needs the
-         * copy; the direct call matches the rest. */
+        /* FAKEMATCH(temporary): the slot copied to a block local, so it loads
+         * before the member as the bytes have it; as
+         * Shop_GetSelectionState(member, slot), 2 of 181 instructions differ
+         * in tbs-en. */
         s32 selectedSlot = slot;
 
         discardQuantity = Shop_GetSelectionState(member, selectedSlot);
@@ -986,9 +987,9 @@ void Object_SetActionById(u32 objectId, s32 steps) {
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   struct ObjectRuntime *object;
   struct AnimationObject *sprite;
-  /* FAKEMATCH: volatile restores the form the bytes prove: saved lives in a
-   * 4-byte frame, stored once and loaded again for each compare. Without it
-   * differ 29, 26 instructions for 31 and no frame. */
+  /* FAKEMATCH(volatile): saved lives in a 4-byte frame, stored once and
+   * loaded again for each compare, as the bytes have it; as a plain s32, 29
+   * of 31 instructions differ in tbs-en. */
   volatile s32 saved;
   s32 elapsedFrames;
 
@@ -2180,9 +2181,9 @@ s32 BattleFx_StepRatioTransition(void) {
   delta = work->zoom - *from;
   step = &work->zoomTransitionStep;
   (*step)++;
-  /* FAKEMATCH: an explicit libgcc call, an ordinary call where the operator
-   * makes a libcall block. Plain form measured 2026-10-13: the same sum with
-   * the / operator differ 93 (84 instructions instead of 87). */
+  /* FAKEMATCH(wrapper): the division written as a call to __divsi3, an
+   * ordinary call where the operator makes a libcall block; as
+   * delta * *step / *frames, 93 of 87 instructions differ in tbs-en. */
   zoom = *from + __divsi3(delta * *step, *frames);
   work->distance = Iwram_MulQ16(work->farPlane, zoom);
   gScanlinePitch = work->pitch + 1;
@@ -2695,10 +2696,9 @@ s32 Field_ClimbDown(void) {
 
     if (TILE_CELLS[index].collisionCode ==
         TILE_CELLS_SOUTH[index].collisionCode) {
-      /* FAKEMATCH: frame local: the six-word probe keeps the native 24-byte
-       * frame though only its first three words are the position. Plain forms
-       * measured 2026-10-13: one struct FieldPosition or s32[3] differ 4 (a
-       * 12-byte frame); two FieldPositions match as well. */
+      /* FAKEMATCH(dead): a six-word probe, though only its first three words
+       * are the position, which keeps the native 24-byte frame; as one
+       * struct FieldPosition, 4 of 163 instructions differ in tbs-en. */
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
@@ -2768,10 +2768,9 @@ s32 Field_ClimbUp(void) {
 
     if (TILE_CELLS[index].collisionCode ==
         TILE_CELLS_NORTH[index].collisionCode) {
-      /* FAKEMATCH: frame local: the six-word probe keeps the native 24-byte
-       * frame though only its first three words are the position. Plain forms
-       * measured 2026-10-13: one struct FieldPosition or s32[3] differ 4 (a
-       * 12-byte frame); two FieldPositions match as well. */
+      /* FAKEMATCH(dead): a six-word probe, though only its first three words
+       * are the position, which keeps the native 24-byte frame; as one
+       * struct FieldPosition, 4 of 183 instructions differ in tbs-en. */
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
@@ -2838,10 +2837,9 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
 
   if (object == 0)
     return -1;
-  /* FAKEMATCH: the view position read as two adjacent words through one
-   * pointer, so both loads share one base. Plain forms measured 2026-10-13:
-   * viewX and viewY read through gMapWork[0], or through a struct MapScrollWork
-   * pointer, differ 28 (61 instructions instead of 59). */
+  /* FAKEMATCH(temporary): the view position read as two adjacent words
+   * through one pointer, so both loads share one base; as viewX and viewY
+   * through gMapWork[0], 28 of 59 instructions differ in tbs-en. */
   camera = &((struct MapScrollWork *)gMapWork[0])->viewX;
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
@@ -3242,12 +3240,10 @@ void FieldFx_StartGroundParticles(void) {
   u32 *words;
   u32 i;
 
-  /* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and
-   * each particle's cell cursor, all three in r6 as the native keeps them. A
-   * plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates
-   * the loop and drops a stack slot (differ 58). 2026-10-13: an inline
-   * allocate-then-clear helper (Runtime_AllocateBlock, then Dma_Fill32(0,
-   * block, size)) differs 22: the fill moves before the sound call. */
+  /* FAKEMATCH(temporary): one pointer, words, holds the fill's zero, the
+   * decode buffer and each particle's cell cursor, all in r6 as the bytes
+   * have them; as Dma_Fill32(0, work, ...), 4 of 93 instructions differ in
+   * tbs-en. */
   work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
   leader = ((struct MapScrollWork *)gMapWork[0])->origin;
   BattleFx_SetQueuedSoundAndPlay(SE_170);
@@ -3369,11 +3365,9 @@ void FieldMotes_Start(void) {
   size = 0x410;
   work = Runtime_AllocateBlock(29, size);
   mote = work->particles;
-  /* FAKEMATCH: reusing the allocation size for the cleared word keeps the zero
-   * in r1, the register size was passed in; a plain zero = 0 takes r3 (differ
-   * 4). 2026-10-13: an allocate-then-clear helper, as an inline function or a
-   * statement macro (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)),
-   * differs 10: the zero takes r3 and mote is formed after the fill. */
+  /* FAKEMATCH(temporary): size reused for the cleared word keeps the zero in
+   * r1, the register size was passed in; as Dma_Fill32(0, work, ...), 4 of
+   * 83 instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = Runtime_AllocateBlock(14, 0x400);
@@ -3383,12 +3377,9 @@ void FieldMotes_Start(void) {
   Runtime_ReleaseHeapBlock(14);
   for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
-    /* FAKEMATCH: reusing the integer field cursor for the height x argument
-     * keeps the stores in r1. A plain s32 * cursor with x of its own puts the
-     * cursor in r2 and the leader's base in r0 (differ 16). A real 8-byte
-     * attribute union with named word stores and separate x keeps 0xda bytes
-     * in native English but reorders the stores, replacing cursor stmias with
-     * offset strs and moving the height call two bytes earlier (2026-10-16). */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
+     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
+     * its own, 16 of 83 instructions differ in tbs-en. */
     u32 p = (u32)mote;
     s32 z;
     *(s32 *)p = 0;
@@ -3416,9 +3407,6 @@ void FieldMotes_Start(void) {
 // gFieldFx_SparkleFrames, flipping every other frame. No new bursts start
 // while the work's stopped is set; flag 0x166 freezes them.
 void FieldEffect_UpdateSparkles(void) {
-  /* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip
-   * stores together. The plain volatile read differs by 3: it splits the two
-   * bit-field stores. */
   struct GroundParticleWork *work;
   u32 spawned;
   u32 i;
@@ -3469,6 +3457,9 @@ void FieldEffect_UpdateSparkles(void) {
         sparkle->x = sx;
         sparkle->shape = 0;
         sparkle->size = 1;
+        /* FAKEMATCH(volatile): gFrameCount read through a cast that drops its
+         * volatile, which keeps the size and flip stores together; as
+         * gFrameCount, 3 of 235 instructions differ in tbs-en. */
         frames = *(unsigned long *)&gFrameCount;
         sparkle->y = sy;
         sparkle->affineIndex = ((frames >> 1) & 1) << 3;
@@ -3515,11 +3506,9 @@ void FieldEffect_InitSparkles(void) {
   u32 i;
   s32 clear;
 
-  /* FAKEMATCH: needed to match: reusing the allocation size for the fill word
-   * keeps zero in r1; a separate helper value differs by four instructions.
-   * 2026-10-13: an allocate-then-clear helper, as an inline function or a
-   * statement macro (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)),
-   * differs 10: the zero takes r3 and p is formed after the fill. */
+  /* FAKEMATCH(temporary): size reused for the fill word keeps the zero in r1,
+   * the register size was passed in; as Dma_Fill32(0, work, ...), 4 of 74
+   * instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = Runtime_AllocateBlock(14, 0x400);
@@ -3532,9 +3521,10 @@ void FieldEffect_InitSparkles(void) {
   do {
     struct MapScrollWork *view = gMapWork[0];
     s32 *leader;
-    /* FAKEMATCH: needed to match: an integer field cursor keeps the view load
-     * order; reusing it for the height x argument keeps the leader in r2.
-     * Separate temporaries differ by 14 instructions. */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
+     * the height's x keeps the view load order and the leader in r2; as a
+     * u32 * cursor and an x of its own, 14 of 74 instructions differ in
+     * tbs-en. */
     u32 attr;
     s32 z;
 
@@ -5041,10 +5031,9 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   s32 remainingParts;
   struct AnimationEntry **parts;
   struct AnimationEntry *spritePart;
-  /* FAKEMATCH: volatile, as gFrameCount is declared (frame.h): each *frameCount
-   * is a load of its own through the pointer local. A plain pointer differs 16;
-   * gFrameCount read directly in the loop differs 6; 46 instructions every way.
-   */
+  /* FAKEMATCH(temporary): a pointer local to gFrameCount, volatile as it is
+   * declared, read on each pass; as gFrameCount read in the loop, 6 of 46
+   * instructions differ in tbs-en. */
   volatile u32 *frameCount;
   s32 param;
 
@@ -6262,10 +6251,9 @@ void BattleFx_RunItemBreakSequence(void) {
   scene = gEffectWork;
   object = scene->mainObject;
 
-  /* FAKEMATCH: the one-pass block keeps the mainObject load below the
-   * frame's sub sp. Measured: plain, the scheduler lifts the load
-   * above it (differ 2). Initializing scene and object at declaration with
-   * a plain call also swaps that load and sub sp (2 instructions in EN). */
+  /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
+   * mainObject load below the frame's sub sp; as a plain call, 2 of 24
+   * instructions differ in tbs-en. */
   do {
     BattleEffect_InitializeSharedScene();
   } while (0);
@@ -6371,13 +6359,9 @@ void UpdateRisingParticleBurst(void *object) {
     child = Object_Spawn(285, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
-      /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps
-       * 0x10000 in one register that loop.c hoists for both uses.
-       * Measured: written as the constant at both uses, or with speed
-       * holding the call plus the constant, it stays unhoisted (89
-       * instructions for 93, differ 24); the acceleration stored before
-       * Random16() written inline hoists it but moves that store above
-       * the call (differ 4). */
+      /* FAKEMATCH(temporary): 1.0 in a block local set before the block's
+       * calls, which loop.c hoists for both uses; as the constant at both
+       * uses, 24 of 93 instructions differ in tbs-en. */
       s32 unit = 0x10000;
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
@@ -7467,10 +7451,10 @@ void RunBattleEffect03(void) {
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH: needed to match: the ROM keeps object as a second register
-       * copy of the spark (r5 beside r6); this redundant reassignment stops
-       * gcse copy-propagating object = target away, and loop then drops it
-       * (differ 1 without it). */
+      /* FAKEMATCH(temporary): a redundant copy that keeps object as a second
+       * register copy of the spark (r5 beside r6), which gcse would otherwise
+       * propagate away; without it, 129 of 177 instructions differ in
+       * tbs-en. */
       target = object;
       if (i & 3)
         Animation_ApplyChildValuesFar(object, 9);
@@ -7984,10 +7968,9 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
                                gBattleFx_SourceHoldScript);
 
   // The hands appear 32 pixels to either side and move to 16 pixels.
-  /* FAKEMATCH: the position is reached through this pointer everywhere
-   * but in the steering loop's first part, which names the position
-   * itself. Measured: the position named everywhere differs 10; the
-   * pointer everywhere differs 561 (514 instructions for 531). */
+  /* FAKEMATCH(temporary): the position reached through p everywhere but in
+   * the steering loop's first part, which names it; as pos named
+   * everywhere, 10 of 531 instructions differ in tbs-en. */
   p = &pos;
   SET_POSITION(p, work->x, work->y + (16 << 16), work->z);
   obj = BattleFx_SpawnItemBreakMode1(p->x + (32 << 16), p->y, p->z, 0x8000);
@@ -8068,12 +8051,9 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &pos);
     i = ScriptObject_CheckOverlapFar(target, &pos);
-    /* FAKEMATCH: entering the blocked path from both tests keeps it
-     * ahead of the drop path, as the ROM lays them out. Measured: the two
-     * tests as one || differ 407 (536 instructions for 531, the
-     * allocation changing from the prologue on), under for (;;) or
-     * while (1). Nested success tests with the blocked path at the loop tail
-     * grow native English 0x4f0 -> 0x500 (2026-10-16). */
+    // Both tests jump into the blocked path, which keeps it ahead of the drop
+    // path as the ROM lays them out; written as one || test, 407 of 531
+    // instructions differ in tbs-en.
     if (i != 0)
       goto blocked;
     if (BattleFx_CheckRaisedTargetCollision(target, p) > 0) {
@@ -9302,12 +9282,9 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   if (object != NULL)
     object->image.priority = 0;
   EffectSlot_SetPosition(effect, x, z);
-  /* FAKEMATCH: register choice only: 1.0 is held in a local set before
-     maxSpeed, so it lives beside 2.0 and takes r2, which lets sched2
-     load the object ahead of the three unit stores, as native. Plain
-     forms measured (2026-10-13): the chain with the constant, three
-     separate stores, or the chain before maxSpeed give 1.0 r3 and the
-     reload after the stores (differ 12). */
+  /* FAKEMATCH(temporary): 1.0 in a local set before maxSpeed takes r2 beside
+     2.0, which lets sched2 load the object ahead of the three stores; as the
+     constant in the chain, 12 of 74 instructions differ in tbs-en. */
   unit = 0x10000;
   effect->maxSpeed = 0x20000;
   effect->acceleration = effect->scaleY = effect->scaleX = unit;

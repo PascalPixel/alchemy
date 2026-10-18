@@ -1125,11 +1125,9 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
   GameFlag_ClearBitFar(FLAG_IN_VIEW);
   GameFlag_SetBitFar(FLAG_OUT_OF_VIEW);
   while (entry->sprite != -1) {
-    /* FAKEMATCH: the condition read through a u16 keeps loop.c to one hoisted
-     * bound address (view + 236; view + 244 is formed in the loop, as native).
-     * 2026-10-13: entry->condition == 0, directly or through an s16 local,
-     * hoists both bound addresses (differ 18); (u16)entry->condition == 0
-     * loads with ldrh (differ 23). */
+    /* FAKEMATCH(temporary): the condition read into a u16 local and then an
+     * s16 one, which keeps loop.c to one hoisted bound address; as
+     * entry->condition == 0, 18 of 57 instructions differ in tbs-en. */
     u16 rawCondition = entry->condition;
     s16 condition = rawCondition;
 
@@ -1560,9 +1558,10 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 // and hazardous ground, and wears Avoid off. When this hurts the party, the
 // leader flinches and characters who fall are listed in the field work.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: needed to match: the StepOwner read prefix preserves the
-   * party-load order and the 44-byte frame. Plain struct BattleUnit differs by
-   * 2: its alias set ties the poison store to the active-owner read. */
+  /* FAKEMATCH(wrapper): the party read through struct StepOwner, the prefix
+   * of struct BattleUnit this reads, whose own alias set keeps the party-load
+   * order and the 44-byte frame; as struct BattleUnit, 2 of 472 instructions
+   * differ in tbs-en. */
   struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
   struct MapState *map = WORK_SLOT(8);
   s32 leaderId = gGameState.selectedActor;
@@ -2116,11 +2115,9 @@ s32 Field_RunScene(s32 entrance) {
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             Menu_RunSelectionFar();
           }
-          /* FAKEMATCH: the volatile read loads gDebugMode again for this second
-             test, as the bytes do; read plainly in both tests, CSE reuses the
-             first load and Field_RunScene differs 48, 961 instructions for 965.
-             The other three reads of gDebugMode in this function need no
-             qualifier. */
+          /* FAKEMATCH(volatile): gDebugMode read through a volatile pointer,
+             so this second test loads it again; as gDebugMode, 48 of 965
+             instructions differ in tbs-en. */
           else if (*(volatile u8 *)&gDebugMode != 0 &&
                    (gKeysHeld & KEY_L) != 0) {
             Debug_RunPaletteEditor();
@@ -3414,9 +3411,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       if (actionId == PSYNERGY_RETREAT && !GameFlag_TestFar(0x144)) {
         UiWork_PushValueSlotFar(itemId, 2);
         UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
-        /* FAKEMATCH: needed to match: the owner index doubles as the declined
-         * flag, which ranks it above best in global allocation (r6, best r7). A
-         * declined local of its own: differ 109. */
+        /* FAKEMATCH(temporary): the answer kept in partyIndex, which ranks it
+         * higher in global allocation (r6, as the bytes have it); as a local
+         * of its own, 109 of 253 instructions differ in tbs-en. */
         partyIndex = Menu_AskYesNo(1);
         UiWork_FinalizePendingCoreFar();
         if (partyIndex != 0)
@@ -3434,10 +3431,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 #ifdef UBFIX
       BattleFx_LoadActionEffectResources(actionId, 0);
 #else
-      /* FAKEMATCH: called through a cast to the s32 call the bytes show: called
-       * as void by its prototype, the 0 is loaded before the action id (differ
-       * 2), also with actionId declared at function scope; with actionId read
-       * after runtime: differ 8. */
+      /* FAKEMATCH(wrapper): called through a cast to the s32 function the
+       * bytes show, which loads the action id before the 0; as a call by its
+       * void prototype, 2 of 253 instructions differ in tbs-en. */
       ((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(actionId, 0);
 #endif
       work->resolvingAction = 1;
@@ -4333,12 +4329,9 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           case 0x500000:
             if (entry->condition != -1 &&
                 GameFlag_TestFar(entry->condition) == 0) {
-              /* FAKEMATCH: the spawned object reuses the actor variable, so the
-               * one pseudo keeps ObjectTable_Get's result in r5 (adds r5, r0,
-               * #0) before the actorX and actorZ loads. 2026-10-13: a separate
-               * object variable, block-local or function-scope in any
-               * declaration position, differs 9 of 163: the copy into r5 is
-               * gone, the loads read r0 and three pool offsets move. */
+              /* FAKEMATCH(temporary): the spawned marker reuses actor, so the
+               * one pseudo keeps ObjectTable_Get's result in r5; as a variable
+               * of its own, 9 of 163 instructions differ in tbs-en. */
               actor = (struct ObjectRuntime *)Object_CreateFar(
                   22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
               if (actor != 0) {
@@ -5732,9 +5725,9 @@ void FadeOverlay_DrawMarks(void) {
   s32 height;
   s32 secondHeight;
   s32 screenRow;
-  /* FAKEMATCH: never used; nothing reads or writes these four bytes of the
-   * native frame. Without them the frame is 12 bytes, not 16 (differ 4: the sp
-   * adjustments), measured 2026-10-13. */
+  /* FAKEMATCH(dead): four frame bytes nothing reads or writes, which make the
+   * native 16-byte frame; without them, 4 of 200 instructions differ in
+   * tbs-en. */
   s16 unused[2];
 
   if (actor == 0)

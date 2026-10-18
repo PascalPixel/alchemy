@@ -4,10 +4,12 @@
 s32 Scheduler_SuspendTasks();
 void Func_080d1ae4();
 
+// Suspends the Func_080d1ae4 overlay task.
 void Func_080d1d34(void) { Scheduler_SuspendTasks(Func_080d1ae4); }
 
 s32 Scheduler_ResumeTasks();
 
+// Resumes the Func_080d1ae4 overlay task.
 void Func_080d1d44(void) { Scheduler_ResumeTasks(Func_080d1ae4); }
 
 void *Runtime_AllocateHeapBlock();

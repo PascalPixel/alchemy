@@ -9,4 +9,5 @@ void Object_DestroyIfPresent(struct ObjectRuntime *object) {
     Object_Destroy(object);
 }
 
+// An empty function; nothing in the image calls it.
 void Func_080cf34c(void) {}

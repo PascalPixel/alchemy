@@ -25,6 +25,9 @@ void *Runtime_AllocateBlock();
 void WaitFrames();
 void Func_08020268();
 
+// In control mode 3, marks the event work busy, shows its object and, when a
+// fade is pending, starts it at level 80 and waits 2 frames; then calls
+// Func_08020268.
 void Func_080cb82c(void) {
   struct FxWork *work = Runtime_AllocateBlock(108, 0xd50);
 

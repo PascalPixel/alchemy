@@ -19,12 +19,15 @@ void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
+// Runs Func_080e74d8, fades the palettes back to the saved ones and waits
+// 10 frames.
 void Func_080e7804(void) {
   Func_080e74d8();
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(10);
 }
 
+// Field Psynergy kind 30's targeted handler: does nothing.
 void Func_080e7818(void) {}
 
 // Field Psynergy kind 30: looks up the controlled owner's object and sets

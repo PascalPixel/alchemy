@@ -1,5 +1,5 @@
-// Draft of BattleFx_RunOceanFist, decompiled from the listing: differ 490 of
-// 598 (draft 598), the same 46 calls and control flow; allocation differs.
+// Draft of BattleFx_RunOceanFist, decompiled from the listing: differ 477 of
+// 598 (draft 597), the same 46 calls and control flow; allocation differs.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -84,9 +84,7 @@ extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
 extern const u16 gData_08197410[];         // gBattleFx_MoteCellOffsets
 extern const s32 Data_081994a8[4];         // the early drops' drags
-extern struct EffectStep gData_02014000[]; // the sparks
-extern const u8 gData_08199210[];          // its four corners
-extern u32 gCameraSceneParameters[];
+extern u8 gData_02014000[];                // the spray sheet
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };

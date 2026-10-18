@@ -33,6 +33,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "field_scene.h"
+#include "songs.h"
 
 void Engine_EventSetMessage(s16 message);
 
@@ -445,60 +446,60 @@ static void DebugMenu_GivePartyDjinn(void) {
 #endif
   // Add and set each element in separate passes, preserving recovery updates.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotDjinni, 1);
-  Djinn_AddToOwner(ISAAC, 0, 0);
-  Djinn_AddToOwner(ISAAC, 0, 1);
-  Djinn_AddToOwner(ISAAC, 0, 2);
-  Djinn_AddToOwner(ISAAC, 0, 3);
-  Djinn_AddToOwner(ISAAC, 0, 4);
-  Djinn_AddToOwner(ISAAC, 0, 5);
-  Djinn_AddToOwner(ISAAC, 0, 6);
-  Djinn_Activate(ISAAC, 0, 0);
-  Djinn_Activate(ISAAC, 0, 1);
-  Djinn_Activate(ISAAC, 0, 2);
-  Djinn_Activate(ISAAC, 0, 3);
-  Djinn_Activate(ISAAC, 0, 4);
-  Djinn_Activate(ISAAC, 0, 5);
-  Djinn_Activate(ISAAC, 0, 6);
-  Djinn_AddToOwner(GARET, 2, 0);
-  Djinn_AddToOwner(GARET, 2, 1);
-  Djinn_AddToOwner(GARET, 2, 2);
-  Djinn_AddToOwner(GARET, 2, 3);
-  Djinn_AddToOwner(GARET, 2, 4);
-  Djinn_AddToOwner(GARET, 2, 5);
-  Djinn_AddToOwner(GARET, 2, 6);
-  Djinn_Activate(GARET, 2, 0);
-  Djinn_Activate(GARET, 2, 1);
-  Djinn_Activate(GARET, 2, 2);
-  Djinn_Activate(GARET, 2, 3);
-  Djinn_Activate(GARET, 2, 4);
-  Djinn_Activate(GARET, 2, 5);
-  Djinn_Activate(GARET, 2, 6);
-  Djinn_AddToOwner(MIA, 1, 0);
-  Djinn_AddToOwner(MIA, 1, 1);
-  Djinn_AddToOwner(MIA, 1, 2);
-  Djinn_AddToOwner(MIA, 1, 3);
-  Djinn_AddToOwner(MIA, 1, 4);
-  Djinn_AddToOwner(MIA, 1, 5);
-  Djinn_AddToOwner(MIA, 1, 6);
-  Djinn_Activate(MIA, 1, 0);
-  Djinn_Activate(MIA, 1, 1);
-  Djinn_Activate(MIA, 1, 2);
-  Djinn_Activate(MIA, 1, 3);
-  Djinn_Activate(MIA, 1, 4);
-  Djinn_Activate(MIA, 1, 5);
-  Djinn_Activate(MIA, 1, 6);
-  Djinn_AddToOwner(IVAN, 3, 0);
-  Djinn_AddToOwner(IVAN, 3, 1);
-  Djinn_AddToOwner(IVAN, 3, 2);
-  Djinn_AddToOwner(IVAN, 3, 3);
-  Djinn_AddToOwner(IVAN, 3, 4);
-  Djinn_AddToOwner(IVAN, 3, 5);
-  Djinn_Activate(IVAN, 3, 0);
-  Djinn_Activate(IVAN, 3, 1);
-  Djinn_Activate(IVAN, 3, 2);
-  Djinn_Activate(IVAN, 3, 3);
-  Djinn_Activate(IVAN, 3, 4);
-  Djinn_Activate(IVAN, 3, 5);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 1);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 2);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 3);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 4);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 5);
+  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 6);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 1);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 2);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 3);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 4);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 5);
+  Djinn_Activate(ISAAC, ELEMENT_VENUS, 6);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 0);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 1);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 2);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 3);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 4);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 5);
+  Djinn_AddToOwner(GARET, ELEMENT_MARS, 6);
+  Djinn_Activate(GARET, ELEMENT_MARS, 0);
+  Djinn_Activate(GARET, ELEMENT_MARS, 1);
+  Djinn_Activate(GARET, ELEMENT_MARS, 2);
+  Djinn_Activate(GARET, ELEMENT_MARS, 3);
+  Djinn_Activate(GARET, ELEMENT_MARS, 4);
+  Djinn_Activate(GARET, ELEMENT_MARS, 5);
+  Djinn_Activate(GARET, ELEMENT_MARS, 6);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 0);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 1);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 2);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 3);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 4);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 5);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 6);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 0);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 1);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 2);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 3);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 4);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 5);
+  Djinn_Activate(MIA, ELEMENT_MERCURY, 6);
+  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 0);
+  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 1);
+  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 2);
+  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 3);
+  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 4);
+  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 5);
+  Djinn_Activate(IVAN, ELEMENT_JUPITER, 0);
+  Djinn_Activate(IVAN, ELEMENT_JUPITER, 1);
+  Djinn_Activate(IVAN, ELEMENT_JUPITER, 2);
+  Djinn_Activate(IVAN, ELEMENT_JUPITER, 3);
+  Djinn_Activate(IVAN, ELEMENT_JUPITER, 4);
+  Djinn_Activate(IVAN, ELEMENT_JUPITER, 5);
   DebugMenu_RecalculateParty();
 }
 
@@ -583,14 +584,16 @@ static void DebugMenu_SelectItem(void) {
   s32 itemCount;
 
   itemCount = DEBUG_ITEM_COUNT;
-  Engine_AudioPlayCue(112);
+  Engine_AudioPlayCue(SE_MENU_CONFIRM);
   window = Engine_DebugCreateWindow(0, 0, 30, 7, 2);
   details = Engine_DebugCreateWindow(0, 8, 13, 10, 2);
   selectedItemId = 1;
   redraw = 1;
   // Reuse the item palette for both debug windows.
-  Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+          DMA_ENABLE << 16 | 0x10, REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+          DMA_ENABLE << 16 | 1, REG_DMA3);
   Engine_TaskWait(1);
   while (1) {
     if (redraw) {
@@ -616,44 +619,44 @@ static void DebugMenu_SelectItem(void) {
     // These are independent tests: a single frame can add and move the cursor.
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Engine_AudioPlayCue(113);
+        Engine_AudioPlayCue(SE_MENU_CANCEL);
         break;
       }
-      Engine_AudioPlayCue(175);
+      Engine_AudioPlayCue(SE_175);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(113);
+      Engine_AudioPlayCue(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       selectedItemId--;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selectedItemId++;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       selectedItemId += DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       selectedItemId -= DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       selectedItemId += DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       selectedItemId -= DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     Engine_TaskWait(1);
   }
@@ -673,7 +676,7 @@ static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 static void DebugMenu_GiveTreasureTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
   // Isaac's test inventory.
-  Inventory_AddItem(ISAAC, 0xb8);
+  Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, 0xcc);
   Inventory_AddItem(ISAAC, 0xdc);
   Inventory_AddItem(ISAAC, 0xdd);
@@ -681,39 +684,39 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   Inventory_AddItem(ISAAC, 0xdf);
   Inventory_AddItem(ISAAC, 0xe0);
   // Garet's test inventory.
-  Inventory_AddItem(GARET, 0xe2);
-  Inventory_AddItem(GARET, 0xe3);
+  Inventory_AddItem(GARET, ITEM_SMOKE_BOMB);
+  Inventory_AddItem(GARET, ITEM_SLEEP_BOMB);
   Inventory_AddItem(GARET, 0xe6);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe4);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe5);
-  Inventory_AddItem(GARET, 0xe8);
-  Inventory_AddItem(GARET, 0xe7);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_GAME_TICKET);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
+  Inventory_AddItem(GARET, ITEM_ANCHOR_CHARM);
+  Inventory_AddItem(GARET, ITEM_BONE);
   Inventory_AddItem(GARET, 0xed);
   // Ivan's test inventory.
-  Inventory_AddItem(IVAN, 0xf2);
+  Inventory_AddItem(IVAN, ITEM_BLACK_ORB);
   Inventory_AddItem(IVAN, 0x102);
   Inventory_AddItem(IVAN, 0x10b);
   Inventory_AddItem(IVAN, 0x109);
   Inventory_AddItem(IVAN, 0xfc);
   // Mia's test inventory.
-  Inventory_AddItem(MIA, 0xbd);
+  Inventory_AddItem(MIA, ITEM_WATER_OF_LIFE);
   Inventory_AddItem(MIA, 0xc8);
   Inventory_AddItem(MIA, 0xc9);
   Inventory_AddItem(MIA, 0xca);

@@ -49,6 +49,7 @@
 #include "unit/runtime/math_table.h"
 #include "unit/runtime/numtext.h"
 #include "savedata.h"
+#include "songs.h"
 
 #if TBS_PATCH_2
 #define HALT_ON_GAMEPAK_IRQ 1
@@ -79,7 +80,7 @@ void System_Initialize(void) {
   System_CopyBuildStamp();
   Ui_LoadWindowGraphics();
   DebugText_Clear();
-  REG_DISPCNT = 0x140;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
 #if defined(HALT_ON_GAMEPAK_IRQ)
   Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, IwramHalt);
@@ -499,7 +500,7 @@ void WaitFrames(s32 frames) {
       savedBackdropColor = PLTT_BACKDROP;
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
-        Io_Write16(0x7fff, &PLTT_BACKDROP);
+        Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
         for (delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES; delayFrame++) {
           CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
@@ -1810,7 +1811,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
-  Io_Write16(0x400, &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 
 // Loads the window font and frame tiles into BG character block 0, the window
@@ -1818,23 +1819,25 @@ void DebugText_Clear(void) {
 // palettes.
 void Ui_LoadWindowGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          BG_CHAR_BLOCK(0), 0x84000800, REG_DMA3);
-  Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010,
-          REG_DMA3);
+          BG_CHAR_BLOCK(0), (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
+  Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0),
+          DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
-  Io_Write16(0x4180, &BG_PLTT_COLOR(15, 4));
-  Io_Write16(0x3960, &BG_PLTT_COLOR(15, 5));
-  Io_Write16(0x3140, &BG_PLTT_COLOR(15, 6));
-  Io_Write16(0x2920, &BG_PLTT_COLOR(15, 7));
-  Io_Write16(0x49a0, &BG_PLTT_COLOR(15, 8));
-  Io_Write16(0x51c0, &BG_PLTT_COLOR(15, 9));
-  Io_Write16(0x59e0, &BG_PLTT_COLOR(15, 10));
-  Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
+  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
+  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(15, 5));
+  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(15, 6));
+  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(15, 7));
+  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
+  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
+  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
+  Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
+          REG_DMA3);
 }
 
 // Loads the basic sprite palettes (palettes 0 to 13).
 void Palette_LoadBasicObjColors(void) {
-  Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
+  Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
+          REG_DMA3);
 }
 
 // The heap: two bump allocators, one in IWRAM up to Ram_IwramHeapEnd and one
@@ -2510,7 +2513,7 @@ s32 SaveState_InitializeWorkspace(void) {
     work->recordId[index] = SAVE_RECORD_NONE;
     work->sequence[index] = 0;
     status = SaveState_ReadSlotAndCheckChecksum(index);
-    START_DMA(&work->slot, &header, 0x84000004);
+    START_DMA(&work->slot, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 4);
     WAIT_DMA();
     slot = &header;
 
@@ -2603,7 +2606,7 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
 
   work = gSaveWorkspace;
   ReadFlash(index, 0, work->slot.bytes, sizeof(work->slot));
-  Dma_Set(&work->slot, &header, 0x84000004, REG_DMA3);
+  Dma_Set(&work->slot, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   WAIT_DMA();
   checksum = SaveState_ChecksumWorkspace();
   return (u16)checksum - header.checksum;
@@ -2635,14 +2638,16 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
     return 1;
 
   // Build the new sector before changing which old sector counts as current.
-  START_DMA(source, work->slot.record.payload, 0x840003fc);
+  START_DMA(source, work->slot.record.payload,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x3fc);
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
+  START_DMA(gSave_HeaderTemplate, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 2);
   WAIT_DMA();
   header.recordId = recordId;
   header.checksum = SaveState_ChecksumWorkspace();
   header.sequence = SaveState_GetLatestSequence(recordId) + 1;
-  START_DMA(&header, &work->slot.record.header, 0x84000004);
+  START_DMA(&header, &work->slot.record.header,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 4);
   WAIT_DMA();
 
   if (SaveState_WriteWorkspaceSlot(slot) != 0)
@@ -2653,7 +2658,8 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
   if (header.sequence > SAVE_SEQUENCE_LIMIT) {
     // Restart sequence numbering only after the replacement was written.
     header.sequence = 1;
-    START_DMA(&header, &work->slot.record.header, 0x84000004);
+    START_DMA(&header, &work->slot.record.header,
+              (DMA_ENABLE | DMA_32BIT) << 16 | 4);
     WAIT_DMA();
     if (SaveState_WriteWorkspaceSlot(current) != 0)
       return 1;
@@ -2679,7 +2685,8 @@ u32 SaveState_ReadRecordPayload(s32 recordId, void *destination) {
   if (index >= SAVE_SECTOR_COUNT)
     return 1;
   SaveState_ReadSlotAndCheckChecksum(index);
-  START_DMA(work->slot.record.payload, destination, 0x840003fc);
+  START_DMA(work->slot.record.payload, destination,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x3fc);
   WAIT_DMA();
   return 0;
 }
@@ -2754,11 +2761,12 @@ s32 SaveState_InvalidateSlot(s32 index) {
   work = gSaveWorkspace;
   Dma_Fill32(0, &header, sizeof(header));
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
+  START_DMA(gSave_HeaderTemplate, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 2);
   WAIT_DMA();
   header.recordId = SAVE_RECORD_NONE;
   header.sequence = 0;
-  START_DMA(&header, &work->slot.record.header, 0x84000004);
+  START_DMA(&header, &work->slot.record.header,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 4);
   WAIT_DMA();
   if (SaveState_WriteWorkspaceSlot(index) != 0)
     return 1;
@@ -2971,6 +2979,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
     }
     gSerialRuntime.phase = 1;
   }
+    // Fall through.
   case 1:
     SerialRuntime_CollectReceivedPayloads(receive);
     SerialRuntime_PrepareSendPacket(send);
@@ -3052,7 +3061,8 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   if (gSerialRuntime.mode == 8)
     status |= 0x80;
   result = SerialRuntime_AddParentFlag(status);
-  if (((control << 26) >> 30) > 1) // SIOCNT bits 4 and 5, the multiplayer id
+  // SIOCNT bits 4 and 5, the multiplayer id
+  if (((control << 26) >> 30) > 1)
     result |= 0x2000;
   return result;
 }
@@ -3142,7 +3152,8 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
       sum += packet[k];
     if (flags[i] == 1 && (s16)sum == -1) {
       Dma_Set(gSerialRuntime.pendingBuffer[i] + 2,
-              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, 0x84000006, REG_DMA3);
+              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES,
+              (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
       gSerialRuntime.currentMask |= 1 << i;
     }
     if ((s16)sum == -1)
@@ -3370,13 +3381,15 @@ void SerialRuntime_StepBlockTransfer(void) {
           own->active = 0;
           switch (peer->peerFlags) {
           case 1:
-            Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
+            Dma_Set(peer->payload, (void *)dest,
+                    (DMA_ENABLE | DMA_32BIT) << 16 | 5, REG_DMA3);
             *receive += SERIAL_BLOCK_BYTES;
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->status = (own->status + 1) | 0x80;
             break;
           case 2:
-            Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
+            Dma_Set(peer->payload, (void *)dest,
+                    (DMA_ENABLE | DMA_32BIT) << 16 | 5, REG_DMA3);
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->flags = 2;
             own->status = 0;
@@ -3414,7 +3427,8 @@ void SerialRuntime_StepBlockTransfer(void) {
           gSerialBlockSequence &= 0x7f;
         }
         if (gSerialSendSize != 0) {
-          Dma_Set((void *)*send, own->payload, 0x84000005, REG_DMA3);
+          Dma_Set((void *)*send, own->payload,
+                  (DMA_ENABLE | DMA_32BIT) << 16 | 5, REG_DMA3);
           gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
             own->peerFlags = 1;
@@ -3463,7 +3477,7 @@ void SerialTest_Run(void) {
   s32 n;
   s32 tick;
 
-  AudioCommand_PlayFar(3);
+  AudioCommand_PlayFar(MUS_003);
   SerialRuntime_Initialize();
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
@@ -3491,7 +3505,8 @@ restart:
       } while (tick >= 0);
     }
     if (gSerialReceiveDest == 0) {
-      Dma_Set(gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
+      Dma_Set(gMapCellBuffer, (void *)0x06001000,
+              (DMA_ENABLE | DMA_32BIT) << 16 | 0xa0, REG_DMA3);
       goto restart;
     }
     WaitFrames(1);

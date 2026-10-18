@@ -53,12 +53,12 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
 
   if (alternate == 0) {
     fillColor = 0x01010101;
-    tileDestination = (void *)0x06000000;
-    paletteDestination = (void *)0x05000000;
+    tileDestination = BG_CHAR_BLOCK(0);
+    paletteDestination = (void *)BG_PLTT;
   } else {
     fillColor = 0x81818181;
-    tileDestination = (void *)0x06008000;
-    paletteDestination = (void *)0x05000100;
+    tileDestination = BG_CHAR_BLOCK(2);
+    paletteDestination = (void *)&BG_PLTT[128];
   }
   Dma_Fill32Cell(dmaFill, fillColor, tileDestination, 0x7800);
   Dma_Fill32Cell(dmaFill, 0, paletteDestination, 0x100);
@@ -120,12 +120,12 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   resourceData = Resource_GetTableEntry(resourceId);
   if (alternate == 0) {
     paletteOffset = 0;
-    tileDestination = (void *)0x06000000;
-    paletteDestination = 0x05000000;
+    tileDestination = BG_CHAR_BLOCK(0);
+    paletteDestination = (u32)BG_PLTT;
   } else {
     paletteOffset = 0x80808080;
-    tileDestination = (void *)0x06008000;
-    paletteDestination = 0x05000100;
+    tileDestination = BG_CHAR_BLOCK(2);
+    paletteDestination = (u32)&BG_PLTT[128];
   }
   RamCode_LoadSlot(CREDITS_DECODER_HEAP_SLOT, BattleEffect_Expand,
                    BattleEffect_ExpandCodeSize);
@@ -133,7 +133,8 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
       resourceData + 256, tileDestination, paletteOffset);
   Runtime_ReleaseHeapBlock(CREDITS_DECODER_HEAP_SLOT);
 
-  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData, 0x84000040);
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData,
+                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x40);
 }
 
 // Builds the 512 tilemap words surrounding a sliding credits backdrop:
@@ -190,15 +191,22 @@ s32 DisplayScroll_RunSlideshow(void) {
   Scheduler_ResetTaskTable();
   Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames,
                                 0x480);
-  Io_Write16(0x40, &REG_DISPCNT);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+  DisplayScroll_BuildHblankWordTable((u32 *)BG_SCREEN_BLOCK(15));
+  DisplayScroll_BuildHblankWordTable((u32 *)BG_SCREEN_BLOCK(31));
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
-  Io_Write16(0x1f8a, &REG_BG2CNT);
-  Io_Write16(0x0f83, &REG_BG3CNT);
-  Io_Write16(0x1c40, &REG_DISPCNT);
-  Io_Write16(0x2844, &REG_BLDCNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(31),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+             &REG_BG3CNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                 DISPCNT_OBJ_ON,
+             &REG_DISPCNT);
+  Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
+                 BLDCNT_TGT2_BD,
+             &REG_BLDCNT);
   DisplayScroll_InitObjectTable();
   WaitFrames(300);
   for (slide = 0; slide < sizeof(gDisplayScroll_SlideResources) /
@@ -206,6 +214,8 @@ s32 DisplayScroll_RunSlideshow(void) {
        slide++) {
     Graphics_LoadCharacterBlockAndPalette(gDisplayScroll_SlideResources[slide],
                                           (slide & 1) ^ 1);
+    // The two weights are written out, bottom first: through BLEND_ALPHA
+    // the operands swap and the crossfade's registers change.
     for (alpha = 1; alpha <= 16; alpha++) {
       if (slide & 1)
         Io_Write16((alpha << 8) | (16 - alpha), &REG_BLDALPHA);
@@ -216,7 +226,7 @@ s32 DisplayScroll_RunSlideshow(void) {
     WaitFrames(267);
   }
   Io_Write16(0, &REG_BLDCNT);
-  Io_Write16(0x1040, &REG_DISPCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   gOamCopyEnabled = 1;
@@ -228,7 +238,8 @@ struct DisplayScrollObject {
   u32 attr2;
 };
 
-extern u16 gFlash_Handler3; // The credits reuse a flash-library work word.
+// The credits reuse a flash-library work word.
+extern u16 gFlash_Handler3;
 
 // 128 entries sent to OAM, also stored in flash-library work space.
 #define SCROLL_OBJECTS                                                         \
@@ -893,7 +904,8 @@ void DisplayScroll_UpdateObjects(void) {
         tileIndex = 0;
     }
   }
-  Dma_Set(SCROLL_OBJECTS, OAM, 0x84000100, REG_DMA3);
+  Dma_Set(SCROLL_OBJECTS, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+          REG_DMA3);
   if ((*(s16 *)&gFlash_Handler0) == 0 && (gFrameTick & 3) == 0)
     gFlash_Handler3++;
 }

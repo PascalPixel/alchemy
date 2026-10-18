@@ -40,6 +40,7 @@
 #include "field_runtime.h"
 #include "battle_calc.h"
 #include "field_obj.h"
+#include "heap_state.h"
 
 // English menu entries 48..51 establish the four shop actions.
 enum ShopAction {
@@ -160,7 +161,7 @@ void Shop_InitializeCursorWork(void) {
   struct ShopRuntime *shop;
   s32 resourceSlot;
 
-  shop = Runtime_AllocateHeapBlock(55, 0xa70);
+  shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
   Battle_ResetEffectCounterFar();
   Dma_Fill32(0, shop, 0x29c * 4);
   shop->mode = 12;
@@ -200,7 +201,7 @@ void Inn_Cleanup(void) {
   Resource_ResetEntry(state->gemIcon);
   Resource_ResetEntry(state->statUpIcon);
   Resource_ResetEntry(state->statDownIcon);
-  Runtime_ReleaseHeapBlock(0x37);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
 }
 
 // Runs the shop's buy, sell, artifacts and repair menu with the selected
@@ -283,12 +284,12 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   gGameState.coins = 0x30d40;
   gGameState.shopGifts = 0x1c;
-  Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
-  Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
-  Inventory_AddItemFar(2, 0xe7);
-  UnitGetFar(3)->poison = 1;
-  UnitGetFar(5)->poison = 1;
-  UnitGetFar(2)->haunt = 1;
+  Inventory_EquipFar(GARET, Inventory_AddItemFar(GARET, 0x48d));
+  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, 0x40b));
+  Inventory_AddItemFar(IVAN, ITEM_BONE);
+  UnitGetFar(MIA)->poison = 1;
+  UnitGetFar(JENNA)->poison = 1;
+  UnitGetFar(IVAN)->haunt = 1;
   Shop_Run(SHOP_DEBUG_STOCK_ROW, 0x1e);
   return 0;
 }
@@ -482,7 +483,8 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
 
   tileBuffer = Runtime_AllocateBlock(14, 0x400);
   priceSprite = 0;
-  Dma_Set(gShop_PriceTiles, tileBuffer, 0x84000040, REG_DMA3);
+  Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
+          REG_DMA3);
   Shop_CopyGlyphs(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
@@ -526,8 +528,10 @@ void Shop_RestoreSceneTiles(s32 layer) {
 #endif
   u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(savedPalette, eventBytes + 0x236, 0x84000150, REG_DMA3);
-  Dma_Set(savedPalette, paletteBuffers->current, 0x840002a0, REG_DMA3);
+  Dma_Set(savedPalette, eventBytes + 0x236,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
+  Dma_Set(savedPalette, paletteBuffers->current,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
   BattleFx_ApplyColorToTargetBufferFar(layer, 1);
   BattleFx_StartBufferInterpolationFar(16);
 }
@@ -1308,7 +1312,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
         if (redraw) {
           redraw = 0;
           quantityIndex = (quantityIndex + maximum) % maximum;
-          Dma_Set(gShop_QuantityTiles, tileBuffer, 0x84000040, REG_DMA3);
+          Dma_Set(gShop_QuantityTiles, tileBuffer,
+                  (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
           Shop_FillSelector(30, 14, tileBuffer);
           Shop_FillSelector(minimum + maximum, 0, tileBuffer);
           Shop_FillSelector(minimum + quantityIndex + 1, 10, tileBuffer);
@@ -1407,7 +1412,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawUnitGrid(itemWindow, unitId);
 
   if (definition->flags & ITEM_CURSED) {
-    AudioCommand_PlayFar(103);
+    AudioCommand_PlayFar(SE_103);
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
     while (UiWork_IsCompleteFar() == 0) {
@@ -1759,7 +1764,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     return;
   }
   // Discard each item before crediting coins and rebuilding the inventory grid.
-  AudioCommand_PlayFar(102);
+  AudioCommand_PlayFar(SE_102);
   for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);
@@ -1941,11 +1946,11 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
   WaitFrames(10);
-  AudioCommand_PlayFar(100);
+  AudioCommand_PlayFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(100);
+  AudioCommand_PlayFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(100);
+  AudioCommand_PlayFar(SE_100);
   WaitFrames(110);
   AudioCommand_PlayFar(SE_MENU_CONFIRM);
   WaitFrames(20);
@@ -2931,7 +2936,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  AudioCommand_PlayFar(86);
+  AudioCommand_PlayFar(MUS_086);
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
   Event_StartScreenTransitionFar();

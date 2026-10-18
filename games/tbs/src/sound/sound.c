@@ -15,6 +15,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
 #include "io_reg.h"
+#include "songs.h"
 
 enum {
   MUSIC_UNITY_SCALE = 0x100,
@@ -39,7 +40,7 @@ void AudioCommand_Play(s32 id) {
       return;
     MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
     gMusicFadeRequested++;
-    gAudioSecondaryState = 19;
+    gAudioSecondaryState = MUS_019;
   } else if (id == AUDIO_CUE_FADE_SLOT3) {
     gMusicPlayerVolumes[3] = 0;
     MusicPlayer_FadeOut(&gSound_Player3, 3);
@@ -70,7 +71,8 @@ void AudioCommand_Play(s32 id) {
     if (id == gAudioSecondaryState)
       return;
     gAudioSecondaryState = id;
-    Sound_LoadPresetParameters((id == 70 || id == 75 || id == 67) ? 3 : 2);
+    Sound_LoadPresetParameters(
+        (id == MUS_070 || id == MUS_075 || id == MUS_067) ? 3 : 2);
     Audio_PlaySound(id);
     if (flags & AUDIO_CUE_START_SILENT)
       gMusicVolume = 0;
@@ -176,7 +178,7 @@ void AudioTest_RunParameterController(void) {
     if (gKeysRepeat & KEY_A)
       AudioCommand_Play(cues[row]);
     if (gKeysRepeat & KEY_B)
-      AudioCommand_Play(19);
+      AudioCommand_Play(MUS_019);
     if (gKeysRepeat & KEY_START)
       AudioCommand_Play(AUDIO_CUE_FADE_BGM);
     if (gKeysRepeat & KEY_SELECT)
@@ -278,7 +280,7 @@ void AudioCommand_WaitForCompletion(void) {
 
 // Returns the mixer preset chosen by the cue dispatcher.
 s32 AudioCommand_GetWidth(s32 command) {
-  if (command == 70 || command == 75 || command == 67)
+  if (command == MUS_070 || command == MUS_075 || command == MUS_067)
     return 3;
   return 2;
 }

@@ -557,15 +557,19 @@ void GameState_InitDefaults(void) {
 
   // Clear the state header, scene work, flags and save metadata in DMA order.
   zero = 0;
-  START_DMA(&zero, &gGameState, 0x850000b0);
+  START_DMA(&zero, &gGameState,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
-  START_DMA(&zero, gSceneState, 0x850003e1);
+  START_DMA(&zero, gSceneState,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x3e1);
   WAIT_DMA();
   zero = 0;
-  START_DMA(&zero, gGameFlagBytes, 0x85000080);
+  START_DMA(&zero, gGameFlagBytes,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
   ((struct SceneStateTail *)gSceneState)->unk104 = 0xff;
   zero = 0;
-  START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
+  START_DMA(&zero, gSaveStamp + 0x1c,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitCharacters();
   gGameState.aKeys = KEY_A;
@@ -1716,7 +1720,8 @@ struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
 // Levels character `owner` up one level at a time until `targetLevel`, then
 // recomputes its stats.
 void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
-  struct LevelUpResult gains; // Each level's gains are discarded.
+  // Each level's gains are discarded.
+  struct LevelUpResult gains;
   s32 currentLevel = UnitGet(owner)->level;
 
   while (currentLevel < targetLevel) {

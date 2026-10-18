@@ -1,6 +1,9 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Lobbed shells (Mad Spatter, Decompose, Bone Chiller ...).
 
+// The shells take 16 slots of PARTICLES per target, of which the first
+// flies; the shell bursts reuse the map buffer as records of their own.
+
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
@@ -210,8 +213,8 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
               shot->y = 0;
               shot->variant = 1;
               /* FAKEMATCH: native loads the table address
-               * before the row (r0, r1) 2026-10-11: gLobbedShells_Records[mode
-               * * 2] in the test differs 135, as a conditional expression too.
+               * before the row (r0, r1). Reading gLobbedShells_Records[mode *
+               * 2] in the test differs 135, as a conditional expression too.
                */
               row = mode * 2;
               if (records[row] == 0)

@@ -36,12 +36,12 @@ struct JudgmentWork {
 
 #define JUDGMENT_SPARKS (&PARTICLES[128])
 
-#define JUDGMENT_GATHER_FRAMES 160    // frames of the gathering
-#define JUDGMENT_SWEEP_FRAMES 320     // frames of the sweep
-#define JUDGMENT_SHEET_FLARE_B 0x4240 // the second flare picture in the sheet
-#define JUDGMENT_FORMATION_OBJECTS 16 // objects in the formation
-#define JUDGMENT_DEBRIS_OBJECTS 16    // debris objects of the sweep
-#define JUDGMENT_SHEET_BURST 0x600    // the burst pictures in the sheet
+#define JUDGMENT_GATHER_FRAMES 160      // frames of the gathering
+#define JUDGMENT_SWEEP_FRAMES 320       // frames of the sweep
+#define JUDGMENT_SHEET_FLARE_B 0x4240   // the second flare picture in the sheet
+#define JUDGMENT_FORMATION_OBJECTS 16   // objects in the formation
+#define JUDGMENT_DEBRIS_OBJECTS 16      // debris objects of the sweep
+#define JUDGMENT_SHEET_BURST 0x600      // the burst pictures in the sheet
 #define JUDGMENT_SHEET_EXPLOSION 0x4000 // the explosion pictures in the sheet
 #define JUDGMENT_SHEET_FLARE_A 0x4000   // the first flare picture in the sheet
 // The small flash picture in the sheet.
@@ -52,7 +52,7 @@ struct JudgmentWork {
 #define JUDGMENT_SHEET_FLASH_STREAK 0x64e8
 #define JUDGMENT_EXPLOSION_CELL_BYTES 1728 // bytes in each explosion picture
 #define JUDGMENT_WAVE_SIZE 120             // the wave picture is 120x120
-#define JUDGMENT_DMA_FILL_CANVAS                                              \
+#define JUDGMENT_DMA_FILL_CANVAS                                               \
   DMA_FILL_WORDS(0x1000) // DMA word that clears the canvas
 // DMA word that clears the wave picture.
 #define JUDGMENT_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
@@ -369,13 +369,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
         s32 angle = Random16() & 0xffff;
-        s32 x =
-            ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
-        s32 y = ((Trig_Cos(angle) * 16) >> 16) -
-                gJudgment_ShardHeights[k] / 2;
-        draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60,
-                y + 80, gJudgment_ShardWidths[k],
-                gJudgment_ShardHeights[k]);
+        s32 x = ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
+        s32 y = ((Trig_Cos(angle) * 16) >> 16) - gJudgment_ShardHeights[k] / 2;
+        draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60, y + 80,
+                gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
       }
     }
 
@@ -686,12 +683,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // Frames 64 to 85: the flash plays twice: a small picture, a large one,
     // then four streaks that close in (68 to 75) or spread out (82 to 85).
     if (frame >= 64 && frame < 66) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16,
-              17);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
     }
     if (frame >= 66 && frame < 68) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24,
-              41);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
     }
     if (frame >= 68 && frame < 76) {
       s32 d = 76 - frame;
@@ -705,12 +700,10 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
               d + 38, 22, 44);
     }
     if (frame >= 78 && frame < 80) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16,
-              17);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
     }
     if (frame >= 80 && frame < 82) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24,
-              41);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
     }
     if (frame >= 82 && frame < 86) {
       s32 d = frame * 2 - 164;
@@ -734,8 +727,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 angle = i << 8;
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
-        draw[0](canvas, ramp + gBattleFx_MoteCells[size - 1], x + 60,
-                y + 50, size, size * 2);
+        draw[0](canvas, ramp + gBattleFx_MoteCells[size - 1], x + 60, y + 50,
+                size, size * 2);
       }
     }
 

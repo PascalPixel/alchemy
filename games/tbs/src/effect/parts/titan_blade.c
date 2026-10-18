@@ -1,6 +1,13 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Titan Blade.
 
+// Titan Blade raises embers from frame 28 while a pillar of fire scrolls over
+// the target. The sword then drops onto the target, a ring of flashes bursts
+// from frame 56, sparks fly from frame 60 and the embers swell as they clear.
+// The canvas is wiped at frames 9 and 60. The flashes live in work->particles
+// and the sword pictures in the work sheet; PARTICLES holds 684 embers and
+// then the sparks.
+
 #define FALLING_SWORD_SPARKS                                                   \
   ((struct EffectStep *)(Ram_MapCellBuffer +                                   \
                          TITAN_BLADE_DUST * sizeof(struct EffectStep)))

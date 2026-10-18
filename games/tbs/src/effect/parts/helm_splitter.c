@@ -1,6 +1,15 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Helm Splitter, formations and the impact burst.
 
+// - Helm Splitter's fire swirl charge leaps the user at the first target,
+//   plays the swirl over it and scatters bouncing sparks. The sparks live in
+//   PARTICLES, whose 1024 slots are cleared first.
+// - The impact burst plays a flash with large and small sparks and three
+//   fragments, while the effect's objects settle into one of the formations
+//   of BattleFx_PlaceFormationObjects. Large sparks and the fragments use
+//   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
+//   large sparks), small sparks PARTICLES.
+
 #define HELM_SPLITTER_FRAMES 70       // frames in the effect
 #define HELM_SPLITTER_STRIKE_FRAME 18 // the swirl strikes the target
 // The pink star animation, after the swirl.

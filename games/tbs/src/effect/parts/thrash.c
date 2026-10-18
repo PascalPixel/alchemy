@@ -60,18 +60,15 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, PARTICLES, 1,
-                               1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, PARTICLES, 1, 1);
   } else if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, PARTICLES, 1,
-                               1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, PARTICLES, 1, 1);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, PARTICLES, 1,
-                               1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, PARTICLES, 1, 1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
                         0); // Clear to 0 each frame.

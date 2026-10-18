@@ -1,10 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Cybele summon.
 
-// Vines, falling rock and ice, and particles drawn from the targets.
-// The family-specific scratch views describe trails, shards and gathering
-// motes in the shared particle buffer.
-
 // Cybele reuses work->particles over the scene:
 // - 0 to 15: vines (only the first ten are drawn).
 // - 32 to 47: thorns, until frame 127.

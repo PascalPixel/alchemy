@@ -1,32 +1,10 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The blessings' burst showers.
 
-// Burst showers, swirling stars, orbiting sparks, target bursts and staged
-// slashes.
-//
-// Each effect here is a frame loop over the shared effect canvas: it loads its
-// sheet, seeds its particles in work->particles (or in the larger shared pool,
-// PARTICLES), then draws and advances them every frame before presenting the
-// canvas.
-//
-// - The burst shower fires one burst a frame from the user at random points
-//   near the targets, and hits each target every 8 frames. One mode draws a
-//   lightning bolt instead. Each burst is one particle slot, its variant
-//   counting the 24 frames it lives (-1 when free).
-// - The swirling stars spin 64 stars about a point above the field, each on
-//   its own axis, then pull them back to the centre.
-// - The orbiting skulls (BattleFx_RunOrbitingSkulls) circle each target in
-//   turn, three to a target, their angles kept in the particles' velocityX.
-// - The target bursts flare up on each target while five puffs of smoke
-//   scatter around each flare; six particle slots per target.
-// - Atalanta's staged slashes run in two parts. In the gathering part a 3x3
-//   formation follows a stored path while sixteen blades draw their trail
-//   particles in, flash and fly off; each trail particle's random rotation
-//   matrix is stored after the particle records in the shared scratch buffer.
-//   In the falling part 24 blades drop onto the targets and burst into flame.
-//
-// The order of the steps within a frame matters: later steps draw over
-// earlier ones, and several of them consume random numbers.
+// The burst shower fires one burst a frame from the user at random points
+// near the targets, and hits each target every 8 frames. One mode draws a
+// lightning bolt instead. Each burst is one particle slot, its variant
+// counting the 24 frames it lives (-1 when free).
 
 // The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_IMAGE (work->sheet + 0xC56)

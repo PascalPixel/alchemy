@@ -163,7 +163,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
     flare->variant = 0;
   }
 
-  // With one target, canvasShiftX the canvas so that target is at its centre
+  // With one target, shift the canvas so that target is at its centre
   // (64).
   if (work->effect->count == 1) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &base);

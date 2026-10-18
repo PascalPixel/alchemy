@@ -1,6 +1,13 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Swirling stars, orbiting skulls and target bursts.
 
+// - The swirling stars spin 64 stars about a point above the field, each on
+//   its own axis, then pull them back to the centre.
+// - The orbiting skulls (BattleFx_RunOrbitingSkulls) circle each target in
+//   turn, three to a target, their angles kept in the particles' velocityX.
+// - The target bursts flare up on each target while five puffs of smoke
+//   scatter around each flare; six particle slots per target.
+
 #define SWIRLING_STARS_FRAMES 160 // frames in the effect
 #define SWIRLING_STARS_COUNT 64   // stars that swirl
 
@@ -74,8 +81,7 @@ void BattleFx_RunSwirlingStars(void *object) {
         CLAMP(screen.depth, 250, 0x27a);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
-                work->sheet +
-                    ((i & 3) * 770 + gBattleFx_MoteCells[size - 1]),
+                work->sheet + ((i & 3) * 770 + gBattleFx_MoteCells[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(star, 60, 0);
         if (frame > i / 4 + 30) {

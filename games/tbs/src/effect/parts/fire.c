@@ -48,7 +48,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The embers leave the bodyTop of the user's body in a random direction and
+  // The embers leave the top of the user's body in a random direction and
   // speed, rising at -16 to 111 sixty-fourths of a pixel a frame.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   bodyTop = user->y + Battle_GetObjectTableValueFar(work->effect->actor);
@@ -99,8 +99,8 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         CLAMP(screen.depth, 160, 799);
         size = 10 - (screen.depth - 160) / 64;
         draw[frame < launchFrame + 48 ? 1 : 0](
-            canvas, sheet + gBattleFx_MoteCells[size - 1],
-            screen.x - size / 2, screen.y - size, size, size * 2);
+            canvas, sheet + gBattleFx_MoteCells[size - 1], screen.x - size / 2,
+            screen.y - size, size, size * 2);
         ember->x += ember->velocityX;
         ember->y += ember->velocityY;
         ember->z += ember->velocityZ;

@@ -1,22 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Growth, Punji, Vine and Thorn.
 
-// Growing vines and pillars, lightning strikes and Djinni entrances.
-//
 // Growing columns and thorns spring up one after another on a fixed schedule,
 // each shaking the screen as it appears, throwing up puffs of dust from its
 // root and making the targets react a few frames later. The dust is a pool
 // of EffectSteps in PARTICLES, a free one marked by variant -1; each puff
 // plays seven pictures, drawn mirrored about its x. Both scenes fade out over
 // their last 16 frames.
-//
-// Lightning bolts (Bolt) strike the targets in turn, each throwing sparks and
-// glints from its foot. Sparks fall under gravity and bounce off the ground
-// at half speed.
-//
-// Variant rows supply the counts and sprite geometry. Every scene ends by
-// finishing the canvas it began. A Djinni entrance leaves the canvas cleared
-// for the effect that follows it.
 
 // Growing columns: vines or pillars spring from the ground one after
 // another, throwing up dust. PARTICLES holds the dust.

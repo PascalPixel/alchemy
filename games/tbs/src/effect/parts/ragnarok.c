@@ -1,26 +1,13 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Ragnarok.
 
-// The flame blade (Ragnarok) and the falling sword (Titan Blade): a huge
-// sword cuts or drops onto the targets amid flashes, sparks and dust.
-//
-// Both scenes draw a large sword picture onto the effect canvas and time
-// everything else by frame number: sounds, screen shakes, palette fades and
-// the targets' reactions each happen on a fixed frame.
-//
-// - Ragnarok swings a 64x128 blade down over 10 frames, pauses until frame
-//   20 and then creeps on until frame 39. Two columns of light strike at
-//   frames 16 and 24: each is a large flash, a ring of 12 small flashes and
-//   256 sparks that bounce on the ground. The targets recoil as each
-//   column's sparks fly.
-// - Titan Blade raises embers from frame 28 while a pillar of fire scrolls
-//   over the target. The sword then drops onto the target, a ring of
-//   flashes bursts from frame 56, sparks fly from frame 60 and the embers
-//   swell as they clear. The canvas is wiped at frames 9 and 60.
-//
-// Flashes live in work->particles and the sword pictures in the work sheet.
-// Sparks and embers share PARTICLES: Ragnarok keeps 340 sparks per column
-// there, Titan Blade 684 embers and then its sparks.
+// Ragnarok swings a 64x128 blade down over 10 frames, pauses until frame 20
+// and then creeps on until frame 39. Two columns of light strike at frames 16
+// and 24: each is a large flash, a ring of 12 small flashes and 256 sparks
+// that bounce on the ground. The targets recoil as each column's sparks fly.
+// Sounds, shakes, fades and reactions each happen on a fixed frame. The
+// flashes live in work->particles and the blade picture in the work sheet;
+// PARTICLES holds 340 sparks per column.
 
 #define FLAME_BLADE_FLASH_CELLS                                                \
   (64 * 128) // Place flash graphics after the 64x128 sword image.

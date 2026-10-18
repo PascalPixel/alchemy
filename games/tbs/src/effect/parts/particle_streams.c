@@ -35,34 +35,6 @@ void BattleFx_ArmPaletteHBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-// Multi-stage particle streams and circling object scenes.
-//
-// The particle stream runs in two halves. The rise dissolves the battle map
-// into a starfield, then for up to 192 frames lifts a formation of objects
-// while motes, orbiting sparks and falling drops are drawn into the map
-// buffer over a heat-tinted scanline palette. The burst then switches to a
-// blended half-scale canvas and throws embers, screen motes and growing
-// flashes from the origin for 54 shaking frames. The burst's flashes use the
-// first 128 shared particle records and its embers the 512 records after
-// them; the work's own particle slots hold the rising motes (0 to 31) and the
-// flames (32 to 47).
-//
-// The other three effects are one frame loop each:
-//
-// - The circling scene (Ramses), over the desert backdrop: a formation
-//   stands while an orb circles, drops three times throwing puffs, and flies
-//   off; six rocks fall and bounce, and the orb's flight ends in a burst of
-//   512 sparks from the shared particle records.
-// - The dual stream (Dragon Cloud): a flame leaves the user along a stored
-//   path with a fading trail of 19 copies behind it, then strikes the first
-//   target and bursts into embers and flashes.
-// - The fire burst shards (Annihilation): the user closes on the first
-//   target, a fire streak flares and a burst of 64 shards scatters from the
-//   target.
-//
-// Within a frame the order of the steps matters: later steps draw over
-// earlier ones, and several of them consume random numbers.
-
 // Abilities: Meteor (scene kind 11).
 //
 // A formation rises out of a dissolving starfield and bursts into embers and
@@ -575,8 +547,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           point.depth = 799;
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
-             work->sheet +
-                 (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) + 0x3200,
+             work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
+                 0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {

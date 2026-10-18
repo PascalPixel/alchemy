@@ -47,8 +47,6 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 //   throwing motes upwards.
 // - The Mars Djinni flares from a glowing orb, dives to the ground and sets
 //   nine flames erupting in an arc while embers rise.
-// - The Venus Djinni of the rock toss (Ground) throws six rocks from the
-//   user, shedding chips, which swirl and home in on the first target.
 //
 // Every attack sets up the canvas, its blitters and its particles, then runs
 // a fixed number of frames, each a list of steps run in a fixed order and
@@ -562,17 +560,16 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
-          blitters[0](canvas,
-                      work->sheet + gBattleFx_PuffArcCells[cell],
+          blitters[0](canvas, work->sheet + gBattleFx_PuffArcCells[cell],
                       step->x - (width >> 1),
                       step->y + gBattleFx_PuffArcCellBiasY[cell], width,
                       gBattleFx_PuffArcCellHeights[cell]);
 #else
-          blitters[0](
-              canvas, work->sheet + gBattleFx_PuffArcCells[cell],
-              step->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
-              step->y + gBattleFx_PuffArcCellBiasY[cell], width,
-              gBattleFx_PuffArcCellHeights[cell]);
+          blitters[0](canvas, work->sheet + gBattleFx_PuffArcCells[cell],
+                      step->x -
+                          ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1),
+                      step->y + gBattleFx_PuffArcCellBiasY[cell], width,
+                      gBattleFx_PuffArcCellHeights[cell]);
 #endif
         }
         index++;

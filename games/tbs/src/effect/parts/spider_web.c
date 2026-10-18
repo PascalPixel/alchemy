@@ -1,6 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Poison Beat, Spinning Beat and Spider Web.
 
+// - The swirl swipe (Poison Beat, Spinning Beat) sweeps a swirl across the
+//   first target; its two modes differ in colour, length and how the target
+//   reacts.
+// - The spider web spreads four mirrored quarters of a web over the targets
+//   and fades it in and out.
+
 // Abilities: Poison Beat (kind 382).
 //
 // Battle effect 382: a lime swipe that knocks the target back.

@@ -86,7 +86,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
                       COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_FOR_EACH_TARGET(member, work->effect)
-    work->particles[member].variant = 0;      // 1 once the target has landed
+    work->particles[member].variant = 0; // 1 once the target has landed
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
                         0); // each transfer clears the canvas
   heights = (*(const struct RockWallHeights *)&wallHeights);

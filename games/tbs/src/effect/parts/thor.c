@@ -1,9 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Thor summon.
 
-// Storm and rock scenes, staged bursts and rising walls.
-// The final helpers advance particles and project battle units to the screen.
-
 // 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
 // before them.
 #define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
@@ -324,10 +321,10 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         // loop.c matches this 32 with the smoke calls' 32 and hoists it out of
         // the frame loop, where it loses its register and later reloads rotate:
         // after an earlier move its threshold is 12, and savings 2 x life 19 x
-        // 12 = 456 reaches the loop'dotSize 448 insns.
-        /* FAKEMATCH: the barrier keeps fullWidth'dotSize 32 in this
-         * loop'dotSize preheader, as native, and its two codeless preheader
-         * insns lengthen i'dotSize life (1292), so dotCount (28 refs/106) ranks
+        // 12 = 456 reaches the loop's 448 insns.
+        /* FAKEMATCH: the barrier keeps fullWidth's 32 in this
+         * loop's preheader, as native, and its two codeless preheader
+         * insns lengthen i's life (1292), so dotCount (28 refs/106) ranks
          * before i (195 refs) and takes r9; sinkFrame 96 local before the ramp
          * loops also defeats the hoist (432 < 448) but lacks those insns, so i
          * takes r9 and sinkFrame slot appears at [sp, #60] (differ 699). */

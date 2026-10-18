@@ -465,8 +465,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
             size = (frame - threshold) / 2;
             if (size > 2)
               size = 2;
-            draw[1](canvas, work->sheet + gWhirlwindComets_Cells[size],
-                    mark->x, mark->y - gWhirlwindComets_CellBiasY[size],
+            draw[1](canvas, work->sheet + gWhirlwindComets_Cells[size], mark->x,
+                    mark->y - gWhirlwindComets_CellBiasY[size],
                     gWhirlwindComets_CellWidths[size],
                     gWhirlwindComets_CellHeights[size]);
             mark->x -= 8;

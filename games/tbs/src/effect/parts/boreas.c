@@ -1,30 +1,13 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Boreas summon.
 
-// Rock, ice and wall effects that raise or break the battlefield.
-//
-// Boreas, Break, Quake, Spire, Gaia and the mirrored wall
-// (BattleFx_RunMirroredWall) all draw onto the 128x128 effect canvas, which
-// the canvas layer shows on BG2, and run a fixed number of frames, presenting
-// the canvas at the end of each. Most throw pieces of debris about.
-//
-// Boreas, the rock and ice scene, is the longest. Its first half opens a
-// window on a field of rocks that crumble in three waves, throwing up chips,
-// while a big ice block drops in and bursts into spray trailed by smoke. Its
-// second half rains ice blocks on the targets while boulders rise and crumble
-// into chunks that bounce on the ground. Each half is a loop over frames
-// whose steps run in the order the original drew and moved things, since the
-// order of the random draws is part of the effect.
-//
-// Gaia, the rising wall, rebuilds its pictures from one decoded sheet: nine
-// one-line rows of the growing wall stretched to 32 lines, the top and the
-// foot of the standing wall and three frames of swelling ground. The ground
-// swells, the wall grows row by row, stands while rocks (animation objects)
-// tumble up its face, and sinks.
-//
-// The others are simpler: Break's ice shards burst from each target, the
-// mirrored wall rises at a target's feet, Quake's three rock pillars throw
-// the targets into the air, and Spire's boulders drop and shatter.
+// Boreas, the rock and ice scene, is the longest of the effects. Its first
+// half opens a window on a field of rocks that crumble in three waves,
+// throwing up chips, while a big ice block drops in and bursts into spray
+// trailed by smoke. Its second half rains ice blocks on the targets while
+// boulders rise and crumble into chunks that bounce on the ground. Each half
+// is a loop over frames whose steps run in the order the original drew and
+// moved things, since the order of the random draws is part of the effect.
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define ICE_BLOCK_TRAILS ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))

@@ -883,8 +883,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
                                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                               COMPOSITE_MAX);
           ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[image],
-              imageX, imageY + 56, gBattleFx_GlintCellWidths[image],
+              canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[image], imageX,
+              imageY + 56, gBattleFx_GlintCellWidths[image],
               gBattleFx_GlintCellHeights[image]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
           BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
@@ -1149,8 +1149,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
               mirrored = 1;
           }
           blitters[mirrored](canvas,
-                             Ram_MapCellBuffer +
-                                 gBattleFx_PuffArcCells[image],
+                             Ram_MapCellBuffer + gBattleFx_PuffArcCells[image],
                              imageX, gBattleFx_PuffArcCellBiasY[image] + 48,
                              gBattleFx_PuffArcCellWidths[image],
                              gBattleFx_PuffArcCellHeights[image]);

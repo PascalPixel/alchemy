@@ -15,8 +15,7 @@
 // Draws puff picture cell at (x, y) with blit, sized by the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, cell, x, y)                               \
   blit(canvas,                                                                 \
-       &work->sheet[DRAGON_CLOUD_PUFF_CELLS] +                                 \
-           gBattleFx_PuffArcCells[cell],                           \
+       &work->sheet[DRAGON_CLOUD_PUFF_CELLS] + gBattleFx_PuffArcCells[cell],   \
        x, y, gBattleFx_PuffArcCellWidths[cell],                                \
        gBattleFx_PuffArcCellHeights[cell])
 

@@ -1,25 +1,10 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Torch and Kite.
 
-// Formation placement, radial ripples, fire charges and impact bursts.
-//
-// Three canvas effects whose pictures are described the same way: each sheet
-// is a list of cells, given as widths, heights and byte offsets, and an
-// animation picks a cell by frame.
-//
-// - Torch's rippling disc builds a radial picture by computing one quadrant
-//   and mirroring it into the other three, then bends it line by line through
-//   BG2's affine reference while the palette cycles. Each pixel holds its
-//   distance from the middle, so rotating the palette makes rings run
-//   outward.
-// - Helm Splitter's fire swirl charge leaps the user at the first target,
-//   plays the swirl over it and scatters bouncing sparks. The sparks live in
-//   gMapCellBuffer, whose 1024 slots are cleared first.
-// - The impact burst plays a flash with large and small sparks and three
-//   fragments, while the effect's objects settle into one of the formations
-//   of BattleFx_PlaceFormationObjects. Large sparks and the fragments use
-//   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
-//   large sparks), small sparks gMapCellBuffer.
+// Torch's rippling disc builds a radial picture by computing one quadrant
+// and mirroring it into the other three, then bends it line by line through
+// BG2's affine reference while the palette cycles. Each pixel holds its
+// distance from the middle, so rotating the palette makes rings run outward.
 
 #define TORCH_FRAMES 96 // frames in the effect
 

@@ -1,6 +1,14 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Bind and Triangle Strike.
 
+// The triangle effects (Bind, Luff and BattleFx_RunTriangleStrike) spin a
+// shrinking triangle onto the first target for 64 frames and then stand a
+// rune there. The triangle is drawn as the ring and star effects draw their
+// outlines: its corners are projected onto the canvas and stored in the
+// velocity fields of EffectStep records, then each edge is sampled at evenly
+// spaced points and a flare is stamped at each. The blue-ramp helper here
+// also converts a full-screen tiled picture in place, for Condemn.
+
 // Turn the screen into shades of blue, top down, with a ragged edge. Works
 // on a copy of the screen in gMapCellBuffer. Each column starts up to 63
 // lines late, and the edge speeds up a little every frame; after at most 27

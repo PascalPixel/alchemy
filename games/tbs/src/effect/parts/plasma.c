@@ -1,6 +1,14 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Plasma, and the spark groups of Blast and Dynamite.
 
+// The lightning pillars strike every 8 frames with a white flash, showing two
+// pictures over three frames, and throw sparks up from each column's foot
+// into one pool of 1024 in PARTICLES, as Volcano's fire pillars do. A spark's
+// variant is its remaining life, 0 when idle. These sparks move in 16.16 fixed
+// point and bounce off the ground at y = 104; they differ from the shared
+// spark bursts in their fixed point, bounds and how fast they shrink, so they
+// keep their own loops.
+
 // Pillars of lightning and the sparks they throw up.
 
 #define LIGHTNING_PILLAR_SPARK_COUNT 1024 // sparks

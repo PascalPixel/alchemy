@@ -128,8 +128,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
-                work->sheet +
-                    (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
+                work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
                     FIELD_MOTE_CELLS,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);

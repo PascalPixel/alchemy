@@ -1,7 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Break and Drain.
 
-// Ice shards.
+// Break: ice shards burst from each target.
 #define ICE_SHARDS_PER_TARGET 128 // shards for each target
 
 // Abilities: Break (kind 43).

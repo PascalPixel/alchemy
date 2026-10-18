@@ -137,9 +137,8 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  EFFECT_START_TRANSFER(
-      work, CANVAS_COPY_AND_FADE,
-      50); // halve the canvas each frame // so streaks leave a trail
+  // Halve the canvas each frame, so streaks leave a trail.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   {

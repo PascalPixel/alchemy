@@ -1,9 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
-// Death Plunge and the scene helpers it uses.
+// Death Plunge, the blade rain, the element pillar, the gathering burst and
+// the shattering picture.
 
-// Somersault strikes, falling blades, element pillars and bursts, swirling
-// swipes, the spider web and a picture that shatters.
-//
 // - Death Plunge runs the user up to the first target; both leap, turn upside
 //   down, and on the hit bounce apart while a ring of flashes rises from the
 //   user.
@@ -14,18 +12,10 @@
 //   of light at a unit's feet while motes spiral up around it.
 // - The gathering burst flares sparks at four corners around a unit, draws
 //   motes spiralling in, then plays a burst of light over it.
-// - The swirl swipe (Poison Beat, Spinning Beat) sweeps a swirl across the
-//   first target; its two modes differ in colour, length and how the target
-//   reacts.
-// - The spider web spreads four mirrored quarters of a web over the targets
-//   and fades it in and out.
+// - BattleFx_RunTileAndPaletteAnimation shatters a picture into 33 pieces.
 //
-// Every runner sets up its canvas layer, pictures and particles, then runs a
-// fixed number of frames, each ending with a canvas present (or a plain frame
-// wait), and finally releases what the setup took. The two element runners
-// allocate their own work, canvas and sheet instead of using the shared ones.
-// Within a frame the order of the steps matters: later steps draw over
-// earlier ones and some consume random numbers.
+// The two element runners allocate their own work, canvas and sheet instead
+// of using the shared ones.
 
 #define DEATH_PLUNGE_FRAMES 96 // frames in the effect
 
@@ -278,8 +268,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
         width = gBladeRain_CellWidths[cell];
         height = gBladeRain_CellHeights[cell];
-        blit[(u32)drift >> 31](canvas,
-                               work->sheet + gBladeRain_Cells[cell],
+        blit[(u32)drift >> 31](canvas, work->sheet + gBladeRain_Cells[cell],
                                (blade->x >> 16) - (width >> 1),
                                (blade->y >> 16) - (height >> 1), width, height);
 #else
@@ -300,10 +289,10 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
         width = gBladeRain_CellWidths[cell];
         height = gBladeRain_CellHeights[cell];
-        blit[(u32)drift >> 31](
-            canvas, work->sheet + gBladeRain_Cells[cell],
-            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
-            width, height - 4);
+        blit[(u32)drift >> 31](canvas, work->sheet + gBladeRain_Cells[cell],
+                               (blade->x >> 16) - (width >> 1),
+                               (blade->y >> 16) - (height >> 1), width,
+                               height - 4);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gBladeRain_Cells[cell],

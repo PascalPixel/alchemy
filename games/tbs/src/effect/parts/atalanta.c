@@ -1,6 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Atalanta summon.
 
+// Atalanta's staged slashes run in two parts. In the gathering part a 3x3
+// formation follows a stored path while sixteen blades draw their trail
+// particles in, flash and fly off; each trail particle's random rotation
+// matrix is stored after the particle records in the shared scratch buffer.
+// In the falling part 24 blades drop onto the targets and burst into flame.
+
 // The trail particles' random rotations, 48 bytes each, after the 384
 // particles in PARTICLES.
 #define STAGED_PARTICLE_MATRICES (Ram_MapCellBuffer + 0x3800)
@@ -241,8 +247,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
               screen.y = screen.y + y + 16;
 #endif
               trail->x -= 4;
-              draw[1](canvas, sheet + gBattleFx_MoteCells[4],
-                      screen.x - 2, screen.y - 5, 5, 10);
+              draw[1](canvas, sheet + gBattleFx_MoteCells[4], screen.x - 2,
+                      screen.y - 5, 5, 10);
             }
           }
         }
@@ -298,15 +304,13 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
             width = gBattleFx_PuffArcCellWidths[cell];
             draw[i & 1](canvas,
-                        Ram_MapCellBuffer +
-                            gBattleFx_PuffArcCells[cell],
+                        Ram_MapCellBuffer + gBattleFx_PuffArcCells[cell],
                         slash->x - (width >> 1) - 8,
                         slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,
                         gBattleFx_PuffArcCellHeights[cell]);
 #else
             draw[i & 1](
-                canvas,
-                Ram_MapCellBuffer + gBattleFx_PuffArcCells[cell],
+                canvas, Ram_MapCellBuffer + gBattleFx_PuffArcCells[cell],
                 slash->x - ((width = gBattleFx_PuffArcCellWidths[cell]) >> 1) -
                     8,
                 slash->y + gBattleFx_PuffArcCellBiasY[cell] - 40, width,

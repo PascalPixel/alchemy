@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Bolt.
 
+// Bolt's sparks fall under gravity and bounce off the ground at half speed.
+
 // Lightning bolts: a bolt strikes each target, with sparks and glints.
 // PARTICLES holds the sparks, 128 for each target.
 // The second blitter, made anew for each glint.
@@ -139,10 +141,10 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
               gLightningBolts_GlintFlips[Random16() & 3] | COMPOSITE_CLIP_X |
                   COMPOSITE_CLIP_Y,
               gLightningBolts_GlintModes[work->effect->variant]);
-          LIGHTNING_GLINT_BLITTER(
-              canvas, work->sheet + gBattleFx_GlintCells[kind], x, y,
-              gBattleFx_GlintCellWidths[kind],
-              gBattleFx_GlintCellHeights[kind]);
+          LIGHTNING_GLINT_BLITTER(canvas,
+                                  work->sheet + gBattleFx_GlintCells[kind], x,
+                                  y, gBattleFx_GlintCellWidths[kind],
+                                  gBattleFx_GlintCellHeights[kind]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }

@@ -1,6 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Astral Blast and Shining Star.
 
+// Astral Blast flies three ten-pointed rings at the target, knocking it back;
+// Shining Star drops eight ten-pointed stars that bounce near the target.
+// Each outline is drawn from a handful of corner points projected onto the
+// canvas and stored in the velocity fields of EffectStep records; each edge
+// is sampled at evenly spaced points and a mote or flare is stamped at each.
+
 // Abilities: Astral Blast (kind 68).
 //
 // Battle effect 68: three star-shaped rings of light fly from 40 pixels

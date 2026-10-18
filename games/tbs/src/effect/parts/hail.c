@@ -1,6 +1,9 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Hail and Ground.
 
+// The rock toss (Ground): a Venus Djinni throws six rocks from the user,
+// shedding chips, which swirl and home in on the first target.
+
 #define REVEAL_CHIP_COUNT 64 // ice chips
 
 // Where the water burst's pictures sit in the sheet, after the waves.
@@ -99,14 +102,11 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
         width = gHail_CellWidths[cell];
         height = gHail_CellHeights[cell];
-        draw[i & 1](
-            canvas,
-            work->sheet + REVEAL_CHIP_CELLS + gHail_Cells[cell],
-            HI(chip->x) - width / 2, HI(chip->y) - height / 2, width, height);
+        draw[i & 1](canvas, work->sheet + REVEAL_CHIP_CELLS + gHail_Cells[cell],
+                    HI(chip->x) - width / 2, HI(chip->y) - height / 2, width,
+                    height);
 #else
-        draw[i & 1](canvas,
-                    work->sheet + REVEAL_CHIP_CELLS +
-                        gHail_Cells[cell],
+        draw[i & 1](canvas, work->sheet + REVEAL_CHIP_CELLS + gHail_Cells[cell],
                     HI(chip->x) - (width = gHail_CellWidths[cell]) / 2,
                     HI(chip->y) - (height = gHail_CellHeights[cell]) / 2, width,
                     height);

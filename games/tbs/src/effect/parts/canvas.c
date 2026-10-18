@@ -264,8 +264,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundView *display =
-      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundView *display = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -335,8 +334,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundView *display =
-      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundView *display = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;

@@ -1,10 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Monster bites, fangs and slashes on one target.
 
-// Target strikes, actor attacks and tiled scene transitions.
-// The runners coordinate their own drawing callbacks and release them
-// before returning their drawing buffers.
-
 // Target strikes: repeated slashes or columns of light on the first target.
 //
 // One runner, BattleFx_RunTargetStrike, plays all twelve strike styles. Each

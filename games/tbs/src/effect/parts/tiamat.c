@@ -1,42 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Dragon Driver and the Tiamat summon.
 
-// Embers, vortices, crystals and columns of lightning or fire.
-// Each family reads its counts and animation geometry from effect_table.c.
-//
-// Two scenes raise embers, small motes that drift upwards:
-//
-// - The palette particles scene raises embers from the user's side while
-//   flashes, sparks and falling streaks fly; in mode 0 a formation of eight
-//   objects sweeps in with them and explodes at the end. gMapCellBuffer holds
-//   512 embers, and work->particles hold 24 flashes, 16 streaks and 24
-//   sparks, in that order. An idle particle's variant is -1; a live one's
-//   counts its age up until it goes out.
-// - The ember columns scene draws three wrapping columns of fire over a band
-//   rising along the canvas floor. Its embers burst from one point, fall back
-//   under gravity, and from frame 80 rise away; one that falls below the band
-//   goes out and its slot is lit again.
-//
-// The ember columns' embers are shared with the falling sword (Titan Blade).
-//
-// The pillars of lightning (Plasma) and of fire (Volcano) strike columns one
-// after another, each on its own schedule, and throw sparks up from each
-// column's foot into one pool of 1024 in gMapCellBuffer. A spark's variant is
-// its remaining life, 0 when idle.
-//
-// - The lightning pillars strike every 8 frames with a white flash, showing
-//   two pictures over three frames. Their sparks move in 16.16 fixed point
-//   and bounce off the ground at y = 104.
-// - The fire pillars stand at random distances on the targets' side and
-//   scroll a column of fire up with a flickering flame at its foot. Each
-//   erupts with a fountain of 200 sparks and keeps spitting 4 a frame. Their
-//   sparks move in 24.8 fixed point, with z holding the speed across, and
-//   bounce off y = 120.
-//
-// These sparks differ from the shared spark bursts in their fixed point,
-// their bounds and how fast they shrink, so they keep their own loops.
-
-// Rising embers, and embers with three columns of fire.
+// The palette particles scene raises embers from the user's side while
+// flashes, sparks and falling streaks fly; in mode 0 a formation of eight
+// objects sweeps in with them and explodes at the end. PARTICLES holds 512
+// embers, and work->particles hold 24 flashes, 16 streaks and 24 sparks, in
+// that order. An idle particle's variant is -1; a live one's counts its age
+// up until it goes out.
 
 // Abilities: Dragon Driver (kind 385).
 //

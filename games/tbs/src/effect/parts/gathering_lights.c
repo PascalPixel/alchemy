@@ -1,6 +1,9 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Demon Night, Rumble and Haunting.
 
+// The lights take 128 slots of PARTICLES per target, and ripple the effect
+// layer throughout through the HBlank DMA of BG2's affine origin.
+
 // Lights that scatter from the user and gather into each target.
 
 // Abilities: Demon Night (kind 50).

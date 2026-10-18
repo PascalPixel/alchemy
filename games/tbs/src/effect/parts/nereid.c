@@ -1,6 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Nereid summon.
 
+// Nereid's ember columns draw three wrapping columns of fire over a band
+// rising along the canvas floor. Its embers burst from one point, fall back
+// under gravity, and from frame 80 rise away; one that falls below the band
+// goes out and its slot is lit again. The falling sword (Titan Blade) shares
+// these embers.
+
 #define NEREID_FRAMES 124 // frames in the effect
 
 #define NEREID_OBJECTS 12         // objects in the sweeping formation

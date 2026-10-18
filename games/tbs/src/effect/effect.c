@@ -250,8 +250,8 @@ enum CanvasTransferMode {
 // `draw`, centred across x and standing on y: the motes, sparks and dust of
 // 32 effects, from the mote fountain to the summons.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
-  (draw)(canvas, (sheet) + gBattleFx_MoteCells[(size) - 1],              \
-         (x) - (size) / 2, (y) - (size), size, (size) * 2)
+  (draw)(canvas, (sheet) + gBattleFx_MoteCells[(size) - 1], (x) - (size) / 2,  \
+         (y) - (size), size, (size) * 2)
 
 // Draws flare cell `size` of `sheet`, a square `size` pixels from its centre
 // to each edge, centred on (x, y): Douse's sparks and the glowing points of
@@ -276,7 +276,6 @@ enum CanvasTransferMode {
 // is inside the window.
 #define WINDOW_SPAN_EMPTY WINDOW_SPAN(1, 0)
 
-// Used for clipping canvas lines and comparing projectile travel distances.
 // Scheduler orders (Scheduler_AddOrUpdateCallback sorts the frame's callbacks
 // by them): every per-frame effect callback takes EFFECT_CALLBACK_ORDER, and
 // the palette fade EFFECT_FADE_ORDER, where the battle's own playback runs.
@@ -287,6 +286,7 @@ enum CanvasTransferMode {
 // works on, which Condemn draws too.
 #define BLUE_RAMP_PIXELS Ram_MapCellBuffer
 
+// Used for clipping canvas lines and comparing projectile travel distances.
 #define EFFECT_ABS(v) ((v) < 0 ? -(v) : (v))
 
 // Caps a colour level at cap, and at 0 from below. Fades draw from darker

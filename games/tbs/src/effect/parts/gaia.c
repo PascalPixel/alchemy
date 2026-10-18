@@ -1,6 +1,12 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Gaia.
 
+// Gaia, the rising wall, rebuilds its pictures from one decoded sheet: nine
+// one-line rows of the growing wall stretched to 32 lines, the top and the
+// foot of the standing wall and three frames of swelling ground. The ground
+// swells, the wall grows row by row, stands while rocks (animation objects)
+// tumble up its face, and sinks.
+
 // The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
 // in the rebuilt sheet.
 #define WALL_TOP_CELLS 0x13c0

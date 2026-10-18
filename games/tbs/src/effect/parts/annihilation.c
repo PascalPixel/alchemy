@@ -139,9 +139,9 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
           out.x >>= 1;
           out.y = out.y + origin.y - 112;
           size = (life >> 3) + 2;
-          blitters[(i / 2) & 1](
-              canvas, particleSheet + gBattleFx_MoteCells[size - 1],
-              out.x - size / 2, out.y - size, size, size * 2);
+          blitters[(i / 2) & 1](canvas,
+                                particleSheet + gBattleFx_MoteCells[size - 1],
+                                out.x - size / 2, out.y - size, size, size * 2);
           EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
           shard->variant--;
         }

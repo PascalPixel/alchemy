@@ -1,35 +1,18 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Planet Diver, Haunt and the orbiting spirals.
 
-// Things thrown or flown at the targets: the leaping fireball, closing skulls,
-// orbiting spirals, gathering lights and lobbed shells; and the mirrored
-// walls.
-//
-// Each runner loads its pictures and blitters, places its particles, then
-// plays a fixed number of frames. A frame resets the 3D transform to the
-// camera, moves and draws every live particle, hits the targets on their
-// scheduled frames and presents the canvas. The order of the steps within a
-// frame matters: later steps draw over earlier ones, and several of them draw
-// random numbers.
-//
 // - Planet Diver flashes the user, throws it into the air, turns it into a
 //   ball of fire that falls on the target and bursts into 256 chips that
-//   bounce on the ground.
+//   bounce on the ground. The impact chips reuse the map buffer that other
+//   effects address as an array of EffectStep records.
 // - The closing skulls (Haunt) gather around each target in turn, eight
 //   skulls scattered in 3D that step towards a point above the target while
-//   the group spins.
+//   the group spins. They take 64 slots of PARTICLES per target, of which 8
+//   are used.
 // - The orbiting spirals circle above each target in turn, four of them a
 //   quarter turn apart.
-// - The gathering lights burst out of the user and are pulled into each
-//   target until they reach it.
-// - The lobbed shells fly from the user to each target, tumbling, and burst
-//   into smoke or shards where they land.
 //
-// Particle slots: the skulls take 64 slots of PARTICLES per target, of which
-// 8 are used; the lights 128 per target; the shells 16 per target, of which
-// the first flies. The impact-chip and shell-burst views below reuse the map
-// buffer that other effects address as an array of EffectStep records. The
-// skulls, spirals and lights ripple the effect layer throughout, through the
+// The skulls and spirals ripple the effect layer throughout, through the
 // HBlank DMA of BG2's affine origin.
 
 // The leap that falls as a ball of fire.

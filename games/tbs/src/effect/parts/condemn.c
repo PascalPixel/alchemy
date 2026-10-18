@@ -1,28 +1,6 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Condemn.
 
-// Shattering panels, rotating shapes and whirlwind formations.
-//
-// The triangle, ring and star effects all draw an outline the same way: a
-// handful of corner points are projected onto the canvas and stored in the
-// velocity fields of EffectStep records, then each edge between neighbouring
-// corners is sampled at a fixed number of evenly spaced points and a mote or
-// flare is stamped at each sample.
-//
-// - The triangle effects (Bind, Luff and BattleFx_RunTriangleStrike) spin a
-//   shrinking triangle onto the first target for 64 frames and then stand a
-//   rune there.
-// - Astral Blast flies three ten-pointed rings at the target, knocking it
-//   back; Shining Star drops eight ten-pointed stars that bounce near the
-//   target.
-// - Procne's whirlwind of comets is a 400-frame scene in several phases: a
-//   whirlwind lifts and spins the targets while dust spirals up; at frame 160
-//   the sky turns violet and a block of nine objects appears and sways; motes
-//   gather into the block; four comets shoot out of it with rings of sparks;
-//   finally the targets fall and are put back.
-//
-// The blue-ramp helper also converts a full-screen tiled picture in place.
-
 #define CONDEMN_FRAMES 132       // frames in the effect
 #define CONDEMN_BREAK_FRAME 88   // the panel breaks in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces

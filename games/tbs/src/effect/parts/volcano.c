@@ -1,6 +1,13 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Volcano.
 
+// The fire pillars stand at random distances on the targets' side and scroll
+// a column of fire up with a flickering flame at its foot. Each erupts with a
+// fountain of 200 sparks and keeps spitting 4 a frame into one pool of 1024
+// in PARTICLES. The sparks move in 24.8 fixed point, with z holding the speed
+// across, and bounce off y = 120; a spark's variant is its remaining life, 0
+// when idle.
+
 #define VOLCANO_FRAMES 96               // frames in the effect
 #define VOLCANO_ERUPTION 200            // sparks thrown as a pillar starts
 #define VOLCANO_TRICKLE 4               // and each frame after

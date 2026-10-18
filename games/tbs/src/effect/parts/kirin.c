@@ -1,25 +1,13 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Kirin summon.
 
-// Object formations that sweep, rise or break into flares.
-//
-// These effects move a formation of the effect's animation objects
-// (work->objects, created by BattleFx_SpawnObjects) across the battlefield
-// while the canvas layer (BG2) draws particles behind and around them.
-//
-// The object row runs in two stages. In the sweep stage nine objects ride in
-// on a sine wave while the backdrop scrolls, a ring of motes opens around
-// them and a trail of fire follows. In the rise stage the row slides across
-// the targets; each target the row passes throws a burst of 32 motes and
-// plays its hit reaction, and the fire sheet slides off behind it.
-//
-// The formation sweep also runs in two stages. The first places eight objects
-// at one and a half times their size, opens the window with an edge table
-// built every frame, sprays particles under gravity, converges a ring of
-// flares, then breaks into a burst of light. During it a frame callback and
-// an H-blank interrupt change BG2's horizontal scale. The second stage drops
-// five blue flame columns onto the targets; each column throws sparks when it
-// reaches the ground.
+// Kirin's object row runs in two stages. In the sweep stage nine objects
+// ride in on a sine wave while the backdrop scrolls, a ring of motes opens
+// around them and a trail of fire follows. In the rise stage the row slides
+// across the targets; each target the row passes throws a burst of 32 motes
+// and plays its hit reaction, and the fire sheet slides off behind it. The
+// objects are the effect's animation objects (work->objects, created by
+// BattleFx_SpawnObjects).
 
 #define KIRIN_OBJECTS 9 // objects in the rows
 

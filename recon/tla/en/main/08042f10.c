@@ -1,59 +1,60 @@
-// Draft, differ 112 of 102: runs Func_08015ca4 with interrupts masked and all
-// four DMA channels stopped, queueing Func_08042dc4 as the serial command
-// around it, then restores IE and IME. The native writes 0x208 to IME (bit 0
-// clear, so it masks) from the low half of the register holding IME's own
-// address 0x04000208; the draft's constant 0x208 is built apart and held in
-// fp, which costs a fifth saved register and moves everything after it
-// (register choice and frame). The native also addresses DMA0 to DMA2 at
-// [rN, #10] from 0x040000b0 stepped by 12 where the draft folds the +10 into
-// the base. The two saved registers are stack slots re-read for the first
-// restore, so they are volatile locals here; the second IME restore in the
-// native uses the value just read. Tried: the store written as the address's
-// low half (folds to the same constant).
+// Draft, differ 42 of 102 (was 112 with volatile locals and IME written as
+// 0x208): runs Func_08015ca4 with interrupts masked and all four DMA channels
+// stopped, queueing Func_08042dc4 as the serial command around it, then
+// restores IE and IME. IME is masked by writing back the low half of its own
+// address, as irqlock.h's IME_DISABLE; the DMA controls are dma[5] from
+// 0x040000b0 stepped by 6 halfwords, which gives the native's [rN, #10]. The
+// two saved values live in a two-word stack array reached through pointers
+// kept in r10 (sp + 4, IME) and r9 (sp, IE), and the second IME restore
+// reuses the value just read, so they are not volatiles.
+// Left: the native builds the IME slot's pointer as movs r1, #4; add r1, sp
+// where the draft has add r1, sp, #4; the IE clear is movs r3, #0 there and a
+// pool load here; buffer takes r9 where the native keeps it in r11; and
+// several loads and ALU rows of the DMA stops sit one row apart. Measured:
+// two separate locals (differ 44, the first IME store to [sp, #4]); the IME
+// save in a one-pass block before the IE pointer is taken (differ 40 with
+// separate locals); the saves in static inline helpers taking the addresses
+// (differ 69, the slots purged into registers); the locals as volatiles
+// (differ 112).
 #include "types.h"
 #include "io_reg.h"
 
-#define REG_IE_ (*(volatile u16 *)0x04000200)
-#define REG_IME_ (*(volatile u16 *)0x04000208)
+void SerialRuntime_QueueCommand(u32 command);
+s32 Func_08015ca4(s32 slot, void *buffer);
+void Func_08042dc4(s32 step);
 
-// Stops a DMA channel: clears its start timing and repeat bits, then its
-// enable bit, and reads the control back, as ☀️ MapAnimation_ApplyAffineFrame.
-#define DMA_STOP(dma)                                                          \
-  {                                                                            \
-    (dma)[5] &= 0xc5ff;                                                        \
-    (dma)[5] &= 0x7fff;                                                        \
-    (void)(dma)[5];                                                            \
-  }
+// Stops DMA channel n: clears its start timing and repeat bits, then its
+// enable bit, and reads the control back.
+#define DMA_STOP(n)                                                            \
+  do {                                                                         \
+    volatile u16 *dma = REG_DMA0 + (n) * 6;                                    \
+    dma[5] &= 0xc5ff;                                                          \
+    dma[5] &= 0x7fff;                                                          \
+    dma[5];                                                                    \
+  } while (0)
 
-#define DMA_STOP_ALL()                                                         \
-  {                                                                            \
-    DMA_STOP(REG_DMA0);                                                        \
-    DMA_STOP(REG_DMA0 + 6);                                                    \
-    DMA_STOP(REG_DMA0 + 12);                                                   \
-    DMA_STOP((volatile u16 *)REG_DMA3);                                        \
-  }
-
-void SerialRuntime_QueueCommand(void (*command)(void));
-void Func_08042dc4(void);
-s32 Func_08015ca4(s32 a, s32 b);
-
-s32 Func_08042f10(s32 a, s32 b) {
-  volatile u32 ime;
-  volatile u32 ie;
+s32 Func_08042f10(s32 slot, void *buffer) {
+  volatile u16 *ime = &REG_IME;
+  u32 saved[2];
+  u32 *pIme = &saved[1];
+  u32 *pIe = &saved[0];
   s32 result;
 
-  ime = REG_IME_;
-  REG_IME_ = 0x208;
-  ie = REG_IE_;
-  REG_IE_ = 0;
-  DMA_STOP_ALL();
-  REG_IME_ = ime;
-  SerialRuntime_QueueCommand(Func_08042dc4);
-  result = Func_08015ca4(a, b);
-  SerialRuntime_QueueCommand(NULL);
-  ime = REG_IME_;
-  REG_IME_ = 0x208;
-  REG_IE_ = ie;
-  REG_IME_ = ime;
+  *pIme = *ime;
+  *ime = (u16)(u32)ime;
+  *pIe = REG_IE;
+  REG_IE = 0;
+  DMA_STOP(0);
+  DMA_STOP(1);
+  DMA_STOP(2);
+  DMA_STOP(3);
+  *ime = *pIme;
+  SerialRuntime_QueueCommand((u32)Func_08042dc4);
+  result = Func_08015ca4(slot, buffer);
+  SerialRuntime_QueueCommand(0);
+  *pIme = *ime;
+  *ime = (u16)(u32)ime;
+  REG_IE = *pIe;
+  *ime = *pIme;
   return result;
 }

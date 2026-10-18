@@ -2438,7 +2438,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
           blue++;
         else if (blue > goalBlue)
           blue--;
-        *color++ = (blue << 10) | (green << 5) | red;
+        *color++ = RGB(red, green, blue);
       }
     }
 
@@ -2453,7 +2453,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
 
       v = frame * 4 + 8;
       targetRadius = frame * 32;
-      BG_PLTT[2] = (v << 10) | (v << 5) | v;
+      BG_PLTT[2] = RGB(v, v, v);
       centreX = OPENING_DISC_X;
       centreY = OPENING_DISC_Y;
       for (; radius != targetRadius; radius++) {
@@ -2538,7 +2538,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
       v = frame - 8;
       if (v > 31)
         v = 31;
-      BG_PLTT[1] = (v << 10) | (v << 5) | v;
+      BG_PLTT[1] = RGB(v, v, v);
     }
 
     // Frame 51: load the flash images and a ramp of colours, and place 32
@@ -2551,7 +2551,7 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
         v = i / 2;
         if (v < 0)
           v = 0;
-        BG_PLTT[i] = (v << 10) | ((v / 2) << 5) | v;
+        BG_PLTT[i] = RGB(v, v / 2, v);
       }
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       for (i = 0; i != OPENING_FLASHES; i++) {
@@ -5227,7 +5227,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   do {
     s32 half;
     half = i / 2;
-    *palette++ = (i << 10) | (half << 5) | half;
+    *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
   delays = *(u8 **)&gWorkSlot[HEAP_SLOT_BATTLE_SHEET];
@@ -5282,7 +5282,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   do {
     s32 half;
     half = i / 2;
-    *palette++ = (i << 10) | (half << 5) | half;
+    *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
   i = 0;
@@ -5327,7 +5327,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
         screen.y -= 24;                                                        \
         /* The triangle: its three corners, turned a third of a circle apart   \
          * and shrinking as they spin, are projected into the particles'       \
-         * velocity fields; each side is 24 motes. */                          \
+         * velocity fields; each side is 24 flares. */                         \
         if (tick <= 67) {                                                      \
           for (j = 0; j != 3; j++) {                                           \
             point = &work->particles[member * 32 + j];                         \
@@ -7547,7 +7547,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     CLAMP(green, 0, 31);
     CLAMP(blue, 0, 31);
 
-    *output++ = (blue << 10) | (green << 5) | red;
+    *output++ = RGB(red, green, blue);
     index++;
   } while (index != 64);
 
@@ -9521,7 +9521,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           blue--;
         if (blue < grey)
           blue++;
-        *color++ = (blue << 10) | (green << 5) | red;
+        *color++ = RGB(red, green, blue);
       }
     }
 
@@ -12457,7 +12457,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
 
-      BG_PLTT[i] = (level << 10) | (level << 5) | level;
+      BG_PLTT[i] = RGB(level, level, level);
     }
     variant = 1;
   } else {
@@ -17658,7 +17658,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
       green = 0;
     if (red < 0)
       red = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 
   // Rebuild the pictures in work->sheet:
@@ -18588,7 +18588,7 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
       blue++;
     else if (blue > targetBlue)
       blue--;
-    target[i] = (blue << 10) | (green << 5) | red;
+    target[i] = RGB(red, green, blue);
   }
   Iwram_CopyWords((u16 *)BG_PLTT, target, 128);
 }
@@ -20466,7 +20466,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
       green = 31;
     if (red > 31)
       red = 31;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 }
 
@@ -20668,7 +20668,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = (blue << 10) | (green << 5) | red;
+    ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = RGB(red, green, blue);
   }
   fill = 0;
   Dma_Set((void *)&fill, canvas, DMA_FILL_WORDS(0x1000), REG_DMA3);
@@ -20807,34 +20807,34 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         *line++ = 0;
       for (; i != 135; i++) {
         s32 green = i - 16;
-        /* FAKEMATCH: reuse red for the biased signed quotient. A
+        /* FAKEMATCH: reuse blue for the biased signed quotient. A
          * separate quotient coalesces with level; the explicit bias
          * keeps the native r3 copy and shift (four register rows). */
-        s32 red = green;
+        s32 blue = green;
         /* Ordinary level differs 42 in EN (1532 native/built).
          * A generic output boundary after its sum reduces this to 26,
-         * retaining the quotient/level r2/r3 exchange. A red input
+         * retaining the quotient/level r2/r3 exchange. A blue input
          * retains 26; also unbinding count differs 36, with either an
          * input or output count operand on the existing base boundary.
-         * Reversing the sum or deriving green as red - 48 retains 42. */
+         * Reversing the sum or deriving green as blue - 48 retains 42. */
         /* FAKEMATCH: level in r2; unbinding it changes ten register/order rows.
          * 2026-10-11: the natural `level = green / 4 + heat` differs 18, a
-         * level/red r3/r2 swap only (local-alloc hands level r3 first); a use
-         * of level after the first red clamp matches, and moving green's
+         * level/blue r3/r2 swap only (local-alloc hands level r3 first); a use
+         * of level after the first blue clamp matches, and moving green's
          * computation there differs 4; no plain statement survives to
          * allocation there. */
         register s32 level asm("r2");
 
         if (green < 0)
-          red += 3;
-        red >>= 2;
-        level = red + heat;
-        red = level - 32;
+          blue += 3;
+        blue >>= 2;
+        level = blue + heat;
+        blue = level - 32;
         green = level - 80;
 
-        CLAMP(red, 0, 31);
+        CLAMP(blue, 0, 31);
         CLAMP(green, 0, 31);
-        *line++ = (red << 10) | (green << 5) | (green >> 1);
+        *line++ = RGB(green >> 1, green, blue);
       }
       for (; i != 160; i++)
         *line++ = 0;
@@ -23138,7 +23138,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         if (r > 31) {
           r = 31;
         }
-        *pal = (b << 10) | (g << 5) | r;
+        *pal = RGB(r, g, b);
       }
     }
 

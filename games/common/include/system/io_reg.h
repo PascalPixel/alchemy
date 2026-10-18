@@ -143,6 +143,10 @@ enum DisplayControl {
 #define OBJ_PLTT ((volatile u16 *)0x05000200)
 #define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
 
+// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
+// the palette stores it: blue in the high bits.
+#define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
 #define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
 #define TILE_SIZE_4BPP 32

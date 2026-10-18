@@ -974,12 +974,6 @@ UiText_DrawStringAtOffset:
 	.thumb_func
 UiText_DrawPrefixedNumberAtOffset:
 	.incbin "baserom.gba", 0x000422e0, 0x000000a0
-	.section .rom.00042380, "ax"
-	.global RenderOutput_Create
-	.type RenderOutput_Create, %function
-	.thumb_func
-RenderOutput_Create:
-	.incbin "baserom.gba", 0x00042380, 0x00000088
 	.section .rom.00042574, "ax"
 	.balign 4
 	.global Ui_LoadCharacterEntryForSlot

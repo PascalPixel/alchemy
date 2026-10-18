@@ -77,6 +77,7 @@
 #include "irq.h"
 #include "unit/effect/effect_bits.h"
 #include "call.h"
+#include "macros.h"
 
 // Display, palette and scanline effects.
 //
@@ -176,17 +177,6 @@ enum CanvasTransferMode {
   (Render_ResetTransformState(),                                               \
    Transform_SetLookAt((camera)->eye, (camera)->pos))
 
-// Sets the x, y (up) and z of a three-part vector: a battle position about
-// to be projected, a per-frame step or a scale.
-#define EFFECT_SET_VECTOR(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
-
-// Set the position or the velocity of a particle, a piece of debris or a
-// battle object in one statement, as effects do when they launch one.
-#define EFFECT_SET_POSITION(p, px, py, pz)                                     \
-  ((p)->x = (px), (p)->y = (py), (p)->z = (pz))
-#define EFFECT_SET_VELOCITY(p, vx, vy, vz)                                     \
-  ((p)->velocityX = (vx), (p)->velocityY = (vy), (p)->velocityZ = (vz))
-
 // Strikes target `i`: it flashes white in its damage pose for `frames`
 // frames and plays battle motion `motion` (BattleMotion_ApplyVariantMotionFar).
 #define EFFECT_STRIKE_TARGET(effect, i, frames, motion)                        \
@@ -276,17 +266,6 @@ enum CanvasTransferMode {
 // A WIN0H value whose left edge is past its right edge: nothing of the line
 // is inside the window.
 #define WINDOW_SPAN_EMPTY WINDOW_SPAN(1, 0)
-
-// Keeps `v` within low to high, the low bound tested first: a screen depth,
-// a colour level or a clipped coordinate. A plain block, as a do-while (0)
-// compiles differently at some of its sites.
-#define EFFECT_CLAMP(v, low, high)                                             \
-  {                                                                            \
-    if ((v) < (low))                                                           \
-      (v) = (low);                                                             \
-    if ((v) > (high))                                                          \
-      (v) = (high);                                                            \
-  }
 
 // Used for clipping canvas lines and comparing projectile travel distances.
 #define EFFECT_ABS(v) ((v) < 0 ? -(v) : (v))
@@ -962,10 +941,10 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
         struct EffectStep *streak = &work->particles[k * streaks + streakIndex];
 
-        EFFECT_SET_POSITION(streak, source->x, source->y + lift, source->z);
-        EFFECT_SET_VELOCITY(streak, (target->x - streak->x) / STREAK_FLIGHT,
-                            (target->y + lift - streak->y) / STREAK_FLIGHT,
-                            (target->z - streak->z) / STREAK_FLIGHT);
+        SET_POSITION(streak, source->x, source->y + lift, source->z);
+        SET_VELOCITY(streak, (target->x - streak->x) / STREAK_FLIGHT,
+                     (target->y + lift - streak->y) / STREAK_FLIGHT,
+                     (target->z - streak->z) / STREAK_FLIGHT);
         streak->variant = 0; // frames since the streak set off
       }
     }
@@ -1144,10 +1123,10 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     speed = 0x3ff;
     speed &= Random16();
     angle = Random16() & 0xffff;
-    EFFECT_SET_POSITION(mote, source->x, source->y + 0x50000, source->z);
-    EFFECT_SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,
-                        ((Random16() & 255) - 32) << 9,
-                        -(Trig_Cos(angle) * (speed + 32) << 1) >> 8);
+    SET_POSITION(mote, source->x, source->y + 0x50000, source->z);
+    SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,
+                 ((Random16() & 255) - 32) << 9,
+                 -(Trig_Cos(angle) * (speed + 32) << 1) >> 8);
     mote->variant = (Random16() & 31) + 48;
     if (mode == MOTE_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;
@@ -1164,9 +1143,9 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
 
         // Wobble sideways, project onto the half-width canvas and draw a
         // 1x2 to 6x12 mote, larger the nearer it is to the camera.
-        EFFECT_SET_VECTOR(
-            worldPoint, mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
-            mote->y, mote->z);
+        SET_VECTOR(worldPoint,
+                   mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
+                   mote->y, mote->z);
         EffectPosition_ApplyBaseAndYOffset(worldPoint, &position);
         position.x >>= 1;
         if (position.depth <= 313)
@@ -1417,18 +1396,18 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
       EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[k],
                                                   &ground);
-      EFFECT_SET_POSITION(step, (ground.x / 2) << 16, 0x500000, 0);
-      EFFECT_SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
-                          ((Random16() & 255) - 128) << 9, 0);
+      SET_POSITION(step, (ground.x / 2) << 16, 0x500000, 0);
+      SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
+                   ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
     }
     for (i = 0; i != 128; i++) {
       struct EffectStep *step = &PARTICLES[k * 128 + i];
 
-      EFFECT_SET_POSITION(step, target->x, 0x140000, target->z);
-      EFFECT_SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
-                          ((Random16() & 255) - 128) << 11,
-                          ((Random16() & 255) - 128) << 11);
+      SET_POSITION(step, target->x, 0x140000, target->z);
+      SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
+                   ((Random16() & 255) - 128) << 11,
+                   ((Random16() & 255) - 128) << 11);
       step->variant = -1;
     }
     for (i = 0; i != 512; i++) {
@@ -1852,7 +1831,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       Object_SetMoveTargetFar(user, 0, 0, user->z);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    EFFECT_SET_VECTOR(point, user->x, user->y, user->z);
+    SET_VECTOR(point, user->x, user->y, user->z);
     EffectPosition_ApplyBaseAndYOffset(point, &screen);
     screen.x >>= 1;
 
@@ -3590,8 +3569,8 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 tmp;
   u32 offset;
 
-  EFFECT_CLAMP(y0, 0, 127);
-  EFFECT_CLAMP(y1, 0, 127);
+  CLAMP(y0, 0, 127);
+  CLAMP(y1, 0, 127);
 
   if (EFFECT_ABS(dx) < EFFECT_ABS(dy)) {
     // Steep: step y a pixel at a time and follow x in fixed point.
@@ -3952,7 +3931,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
       // Centre on the point 20 pixels above the target and spin the group
       // about it.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(point, target->x, 20 << 16, target->z);
+      SET_VECTOR(point, target->x, 20 << 16, target->z);
       SceneTransform_ApplyPosition(point);
       if (frame > k * 32) {
         SceneTransform_ApplyPitch(frame << 9);
@@ -4076,7 +4055,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[member], 0,
                                       POSE_DAMAGE, -1, 0);
           }
-          EFFECT_SET_VECTOR(point, obj->x, 40 << 16, obj->z);
+          SET_VECTOR(point, obj->x, 40 << 16, obj->z);
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, through four images,
@@ -4175,10 +4154,10 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
       struct EffectStep *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
-      EFFECT_SET_POSITION(mote, src->x, height, src->z);
-      EFFECT_SET_VELOCITY(mote, ((Random16() & 255) - 128) << 10,
-                          ((Random16() & 255) - 128) << 10,
-                          ((Random16() & 255) - 128) << 10);
+      SET_POSITION(mote, src->x, height, src->z);
+      SET_VELOCITY(mote, ((Random16() & 255) - 128) << 10,
+                   ((Random16() & 255) - 128) << 10,
+                   ((Random16() & 255) - 128) << 10);
       mote->variant = 0;
     }
   }
@@ -4536,7 +4515,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       s32 start = k * 16;
 
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(point, target->x, 0, target->z);
+      SET_VECTOR(point, target->x, 0, target->z);
       SceneTransform_ApplyPosition(point);
       if (frame > start) {
         for (i = 0; i != 8; i++) {
@@ -4581,7 +4560,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
                                     -1, -1, 0);
         if (frame == start + 88)
           ObjectGroup_UpdateMembers(work->effect->actors[i], 0, -1, -1, 0);
-        EFFECT_SET_VECTOR(ground, target->x, 0, target->z);
+        SET_VECTOR(ground, target->x, 0, target->z);
         EffectPosition_ApplyBaseAndYOffset(ground, &screenPosition);
         screenPosition.x += offsetX;
         if (frame < start + 104) {
@@ -4741,9 +4720,9 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
       struct EffectStep *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
-      EFFECT_SET_POSITION(shot, source->x, height, source->z);
-      EFFECT_SET_VELOCITY(shot, (target->x - source->x) >> 4, 0x40000,
-                          (target->z - source->z) >> 4);
+      SET_POSITION(shot, source->x, height, source->z);
+      SET_VELOCITY(shot, (target->x - source->x) >> 4, 0x40000,
+                   (target->z - source->z) >> 4);
       shot->variant = 0;
     }
   }
@@ -4852,14 +4831,14 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
                 } while (0);
                 burst = &SHELL_BURSTS[group * 8 + i];
 
-                EFFECT_SET_POSITION(burst, shot->x, shot->y, shot->z);
+                SET_POSITION(burst, shot->x, shot->y, shot->z);
                 if (LOBBED_SHELLS_SHATTER(mode) == 0) {
-                  EFFECT_SET_VELOCITY(burst, ((Random16() & 63) - 32) << 11, 0,
-                                      ((Random16() & 63) - 32) << 11);
+                  SET_VELOCITY(burst, ((Random16() & 63) - 32) << 11, 0,
+                               ((Random16() & 63) - 32) << 11);
                 } else {
-                  EFFECT_SET_VELOCITY(burst, ((Random16() & 63) - 32) << 13,
-                                      ((Random16() & 31) + 32) << 12,
-                                      ((Random16() & 63) - 32) << 13);
+                  SET_VELOCITY(burst, ((Random16() & 63) - 32) << 13,
+                               ((Random16() & 31) + 32) << 12,
+                               ((Random16() & 63) - 32) << 13);
                 }
                 burst->variant = 0;
               }
@@ -5601,7 +5580,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   // Each ring reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
-    EFFECT_SET_POSITION(point, source->x, source->y + 0x280000, source->z);
+    SET_POSITION(point, source->x, source->y + 0x280000, source->z);
     if (i == 0)
       point->velocityX = (target->x - point->x) / 12;
     else
@@ -5770,7 +5749,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
-    EFFECT_SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
+    SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
     // The signed -64..63 pixel offset scales without a negative left shift.
     point->velocityX =
         (target->x + ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) / 12;
@@ -6250,7 +6229,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
               spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
               spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
               spark->velocityY = ((Random16() & 255) - 128) << 10;
-              EFFECT_SET_POSITION(spark, 0, 0, 0);
+              SET_POSITION(spark, 0, 0, 0);
               spark->variant = (Random16() & 15) + 64;
               index++;
             } while (index != 96);
@@ -7123,10 +7102,10 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
   for (i = 0; i != 30; i++) {
     point = &work->particles[i];
-    EFFECT_SET_POSITION(point, source->x, y, source->z);
-    EFFECT_SET_VELOCITY(point, ((s32)((Random16() & 255) - 127) << 16) >> 5,
-                        ((s32)((Random16() & 127) - 16) << 16) >> 6,
-                        ((s32)((Random16() & 255) - 127) << 16) >> 5);
+    SET_POSITION(point, source->x, y, source->z);
+    SET_VELOCITY(point, ((s32)((Random16() & 255) - 127) << 16) >> 5,
+                 ((s32)((Random16() & 127) - 16) << 16) >> 6,
+                 ((s32)((Random16() & 255) - 127) << 16) >> 5);
     point->variant = -1;
     flags[i] = 0;
   }
@@ -7134,7 +7113,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   EFFECT_FOR_EACH_TARGET(i, work->effect) {
     seat = &work->particles[FROTH_FIRST_TARGET + i];
     object = GetBattleObjectSlotFar(work->effect->actors[i])->object;
-    EFFECT_SET_POSITION(seat, object->x, 0, object->z);
+    SET_POSITION(seat, object->x, 0, object->z);
   }
   work->cameraDelta = 0;
   work->cameraPhase = 0;
@@ -7160,7 +7139,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
       if (frame > i * 2 && flags[i] == 0) {
         EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
         screenPosition.x >>= 1;
-        EFFECT_CLAMP(screenPosition.depth, 160, 0x31f);
+        CLAMP(screenPosition.depth, 160, 0x31f);
         draw[0](canvas, work->sheet + FROTH_MOTE_CELL, screenPosition.x - 6,
                 screenPosition.y - 12, 12, 24);
         point->x += point->velocityX;
@@ -7176,9 +7155,8 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
         if (frame < i * 2 + 85) {
-          EFFECT_SET_VELOCITY(point, point->velocityX * 60 / 64,
-                              point->velocityY * 60 / 64,
-                              point->velocityZ * 60 / 64);
+          SET_VELOCITY(point, point->velocityX * 60 / 64,
+                       point->velocityY * 60 / 64, point->velocityZ * 60 / 64);
         }
         if (point->y < 0) {
           flags[i] = 1;
@@ -7525,9 +7503,9 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     green = (index + greenOffset) / 2;
     blue = (index + blueOffset) / 2;
 
-    EFFECT_CLAMP(red, 0, 31);
-    EFFECT_CLAMP(green, 0, 31);
-    EFFECT_CLAMP(blue, 0, 31);
+    CLAMP(red, 0, 31);
+    CLAMP(green, 0, 31);
+    CLAMP(blue, 0, 31);
 
     *output++ = (blue << 10) | (green << 5) | red;
     index++;
@@ -8093,9 +8071,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - 0x4000;
-              EFFECT_SET_POSITION(spark, screen.x << 8,
-                                  (screen.y << 8) + 0x1000,
-                                  (Trig_Sin(angle) * speed) >> 15);
+              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
+                           (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;
               if (frame == gVolcano_StartFrames[pillar]) {
@@ -8300,13 +8277,13 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     struct EffectStep *mote = &PARTICLES[i];
 
     if (TARGET_MOTES_START_WIDE(mode)) {
-      EFFECT_SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0xff) - 127) << 14,
-                          ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 14,
+                   ((Random16() & 0xff) - 127) << 15);
     } else {
-      EFFECT_SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
-                          ((Random16() & 0xff) - 255) << 13,
-                          ((Random16() & 0xff) - 127) << 13);
+      SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
+                   ((Random16() & 0xff) - 255) << 13,
+                   ((Random16() & 0xff) - 127) << 13);
     }
     mote->variant = 0;
   }
@@ -8381,7 +8358,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                           COMPOSITE_MAX);
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(point, object->x, 160 << 13, object->z);
+      SET_VECTOR(point, object->x, 160 << 13, object->z);
       SceneTransform_ApplyPosition(point);
       // Turn the group; mote i joins i frames after the target's turn
       // starts and takes a new image every 4 frames.
@@ -8428,9 +8405,9 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                 if (TARGET_MOTES_CLOSE_IN(mode)) {
                   mote->variant = 0;
                 } else {
-                  EFFECT_SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
-                                      ((Random16() & 0xff) - 255) << 12,
-                                      ((Random16() & 0xff) - 127) << 13);
+                  SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
+                               ((Random16() & 0xff) - 255) << 12,
+                               ((Random16() & 0xff) - 127) << 13);
                 }
               }
             }
@@ -8524,7 +8501,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
       target =
           GetBattleObjectSlotFar(work->effect->actors[targetIndex])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(anchor, target->x, 160 << 14, target->z);
+      SET_VECTOR(anchor, target->x, 160 << 14, target->z);
       SceneTransform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
         ObjectGroup_UpdateMembers(work->effect->actors[targetIndex], 0,
@@ -8691,9 +8668,9 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     s32 heading = Random16() & 0xffff;
     s32 speed = (Random16() & 0xff) + 128;
 
-    EFFECT_SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
-    EFFECT_SET_VELOCITY(spark, (Trig_Sin(heading) * speed) >> 5, 0,
-                        (Trig_Cos(heading) * speed) >> 5);
+    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_VELOCITY(spark, (Trig_Sin(heading) * speed) >> 5, 0,
+                 (Trig_Cos(heading) * speed) >> 5);
     spark->variant = 0;
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
@@ -8702,11 +8679,10 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
   // The swirl travels from the user's feet to 90 pixels above the first
   // target over frames 30 to 69.
-  EFFECT_SET_VECTOR(position, actor->x, 0, actor->z);
-  EFFECT_SET_VECTOR(target, goal->x, 180 << 15, 0);
-  EFFECT_SET_VECTOR(delta, (target[0] - position[0]) / 40,
-                    (target[1] - position[1]) / 40,
-                    (target[2] - position[2]) / 40);
+  SET_VECTOR(position, actor->x, 0, actor->z);
+  SET_VECTOR(target, goal->x, 180 << 15, 0);
+  SET_VECTOR(delta, (target[0] - position[0]) / 40,
+             (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
     struct BattleCamera *camera = gCameraWork;
     if (frame == 8)
@@ -8750,7 +8726,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset(spark, &screen);
         screen.x >>= 1;
         Transform_Pop();
-        EFFECT_CLAMP(screen.depth, 250, 634);
+        CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
@@ -8767,7 +8743,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     }
     // The Djinni appears at the swirl's centre, bobbing.
     if (frame > 82) {
-      EFFECT_SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
+      SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       EffectPosition_ApplyBaseAndYOffset(djinniPoint, &screen);
       screen.x >>= 1;
       draw[1](canvas, work, screen.x - 10, screen.y - 17, 20, 34);
@@ -8777,9 +8753,9 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   // The healing: sparkles scattered round each target.
   for (i = 0; i != 512; i++) {
     struct EffectStep *spark = &PARTICLES[i];
-    EFFECT_SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                        ((Random16() & 0x7f) + 64) << 15,
-                        ((Random16() & 0xff) - 127) << 15);
+    SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                 ((Random16() & 0x7f) + 64) << 15,
+                 ((Random16() & 0xff) - 127) << 15);
     spark->variant = 0;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
@@ -8789,8 +8765,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     // The Djinni sways, and flies up and away for the last 32 frames.
     if (frame >= work->effect->count * 8 + 40)
       target[1] += 0x40000;
-    EFFECT_SET_VECTOR(point, target[0], target[1],
-                      target[2] + Trig_Sin(frame << 11) * 40);
+    SET_VECTOR(point, target[0], target[1],
+               target[2] + Trig_Sin(frame << 11) * 40);
     EffectPosition_ApplyBaseAndYOffset(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work, view.x - 10, view.y - 17, 20, 34);
@@ -8799,7 +8775,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(position, object->x, 160 << 14, object->z);
+      SET_VECTOR(position, object->x, 160 << 14, object->z);
       SceneTransform_ApplyPosition(position);
       if (frame == start + 30)
         AudioCommand_PlayFar(SOUND_RECOVERY);
@@ -8823,7 +8799,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
               EffectPosition_ApplyBaseAndYOffset(spark, &view);
               view.x >>= 1;
-              EFFECT_CLAMP(view.depth, 314, 634);
+              CLAMP(view.depth, 314, 634);
               /* FAKEMATCH: needed to match: the size series A draws its sparks
                * at, kept from that effect and never used here. Without the dead
                * store: differ 479. */
@@ -9013,7 +8989,7 @@ void BattleFx_BuildWindowEdgeTable(void) {
   for (scanline = 0; scanline != 160; scanline++) {
     if (scanline >= 8 && scanline <= 135) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
-      EFFECT_CLAMP(rightEdge, 0, 240);
+      CLAMP(rightEdge, 0, 240);
       scanlineEdges[scanline] = rightEdge;
     } else {
       scanlineEdges[scanline] = 0xfff1;
@@ -9446,7 +9422,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-        EFFECT_SET_VECTOR(point, object->x, object->y, object->z);
+        SET_VECTOR(point, object->x, object->y, object->z);
         EffectPosition_ApplyBaseAndYOffset(point, &screen);
         for (j = 0; j != 6; j++) {
           struct EffectStep *spark =
@@ -9565,10 +9541,10 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         for (j = 0; j != 10; j++) {
           struct EffectStep *ember = &work->particles[i * 10 + j];
 
-          EFFECT_SET_POSITION(ember, object->x, 20 << 16, object->z);
-          EFFECT_SET_VELOCITY(ember, (Trig_Sin(j * 0x3334) * 4),
-                              (Random16() & 0x7fff) + (1 << 16),
-                              (Trig_Cos(j * 0x3334) * 4));
+          SET_POSITION(ember, object->x, 20 << 16, object->z);
+          SET_VELOCITY(ember, (Trig_Sin(j * 0x3334) * 4),
+                       (Random16() & 0x7fff) + (1 << 16),
+                       (Trig_Cos(j * 0x3334) * 4));
           ember->variant = 0;
         }
       }
@@ -9583,7 +9559,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           struct MotionObject *object =
               GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-          EFFECT_SET_VECTOR(point, object->x, 0, object->z);
+          SET_VECTOR(point, object->x, 0, object->z);
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
           screen.x >>= 1;
           draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24,
@@ -10170,7 +10146,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
     offset = member * ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
     height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
-    EFFECT_SET_VECTOR(point, object->x, height, object->z);
+    SET_VECTOR(point, object->x, height, object->z);
     EffectPosition_ApplyBaseAndYOffset(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
@@ -10292,10 +10268,10 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
       struct EffectStep *mote =
           &PARTICLES[member * GATHERING_MOTES_PER_TARGET + i];
 
-      EFFECT_SET_POSITION(mote, object->x, object->y + halfHeight, object->z);
-      EFFECT_SET_VELOCITY(mote, ((Random16() & 0xff) - 128) << 10,
-                          ((Random16() & 0xff) - 128) << 10,
-                          ((Random16() & 0xff) - 128) << 10);
+      SET_POSITION(mote, object->x, object->y + halfHeight, object->z);
+      SET_VELOCITY(mote, ((Random16() & 0xff) - 128) << 10,
+                   ((Random16() & 0xff) - 128) << 10,
+                   ((Random16() & 0xff) - 128) << 10);
       mote->variant = 0;
     }
   }
@@ -10544,9 +10520,9 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
-      EFFECT_SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0x7f) + 64) << 15,
-                          ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0x7f) + 64) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = work->effect->count * 8 + 88;
@@ -10555,9 +10531,9 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
-      EFFECT_SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = work->effect->count * 8 + 88;
@@ -10568,8 +10544,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       s32 heading = Random16() & 0xffff;
       s32 radius = (Random16() & 63) + 32;
 
-      EFFECT_SET_POSITION(spark, Trig_Sin(heading) * radius, -50 << 16,
-                          Trig_Cos(heading) * radius);
+      SET_POSITION(spark, Trig_Sin(heading) * radius, -50 << 16,
+                   Trig_Cos(heading) * radius);
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
     }
@@ -10579,9 +10555,9 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
-      EFFECT_SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0xff) - 127) << 14,
-                          ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 14,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = work->effect->count * 8 + 72;
@@ -10590,9 +10566,9 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
-      EFFECT_SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0xff) - 127) << 15,
-                          ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = work->effect->count * 8 + 72;
@@ -10647,7 +10623,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 
       // Centre on the point 40 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(point, object->x, 40 << 16, object->z);
+      SET_VECTOR(point, object->x, 40 << 16, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
         AudioCommand_PlayFar(SOUND_RECOVERY);
@@ -10697,7 +10673,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 
               // Size 3 to 1 over depths 314 to 634 (mode 0 cycles through 9
               // sizes).
-              EFFECT_CLAMP(screen.depth, 314, 634);
+              CLAMP(screen.depth, 314, 634);
               size = 3 - (screen.depth - 314) / 128;
               if (mode == 0)
                 size = (i * 4 + frame) % 9;
@@ -10879,9 +10855,9 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   for (i = 0; i != STAT_BOOST_SCATTERED; i++) {
     struct EffectStep *flare = &PARTICLES[i];
 
-    EFFECT_SET_POSITION(flare, (Random16() % 200 - 100) << 14,
-                        (Random16() % 200 - 100) << 15,
-                        (Random16() % 200 - 100) << 14);
+    SET_POSITION(flare, (Random16() % 200 - 100) << 14,
+                 (Random16() % 200 - 100) << 15,
+                 (Random16() % 200 - 100) << 14);
     flare->variant = 0;
   }
 
@@ -10944,7 +10920,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         AudioCommand_PlayFar(212);
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
-      EFFECT_SET_VECTOR(point, object->x, height, object->z);
+      SET_VECTOR(point, object->x, height, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame == member * 8 + 48)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
@@ -10981,7 +10957,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
               // The size (half the width) runs 6 to 1 over depths 314 to 634.
               EffectPosition_ApplyBaseAndYOffset(flare, &screen);
               screen.x = screen.x * 4 / 5 + canvasShiftX;
-              EFFECT_CLAMP(screen.depth, 314, 634);
+              CLAMP(screen.depth, 314, 634);
               size = 6 - (screen.depth - 314) / 64;
               EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet, screen.x,
                                 screen.y, size);
@@ -10995,7 +10971,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       // The centre's position on screen.
-      EFFECT_SET_VECTOR(center, 0, 0, 0);
+      SET_VECTOR(center, 0, 0, 0);
       EffectPosition_ApplyBaseAndYOffset(center, &screen);
       screen.x = screen.x * 4 / 5 + canvasShiftX;
 
@@ -11232,10 +11208,10 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
       object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
       if (targetFrame > 0) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        EFFECT_SET_VECTOR(point, object->x, 160 << 13, object->z);
+        SET_VECTOR(point, object->x, 160 << 13, object->z);
         EFFECT_VIEW_FROM_CAMERA(camera);
         SceneTransform_ApplyPosition(point);
-        EFFECT_SET_VECTOR(origin, 0, 0, 0);
+        SET_VECTOR(origin, 0, 0, 0);
         EffectPosition_ApplyBaseAndYOffset(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
@@ -11598,7 +11574,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
           struct MotionObject *object;
 
           object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-          EFFECT_SET_VECTOR(point, object->x, object->y, object->z);
+          SET_VECTOR(point, object->x, object->y, object->z);
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * ROCK_PILLAR_WIDTH + 8 &&
@@ -11691,10 +11667,10 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
 
     angle = Random16();
     speed = (Random16() & 127) + 127;
-    EFFECT_SET_VELOCITY(ember, (Trig_Sin(angle) * speed) >> 6,
-                        (s32)(((Random16() & 127) - 16) << 16) >> 6,
-                        (Trig_Cos(angle) * speed) >> 6);
-    EFFECT_SET_POSITION(ember, user->x, bodyTop, user->z);
+    SET_VELOCITY(ember, (Trig_Sin(angle) * speed) >> 6,
+                 (s32)(((Random16() & 127) - 16) << 16) >> 6,
+                 (Trig_Cos(angle) * speed) >> 6);
+    SET_POSITION(ember, user->x, bodyTop, user->z);
     ember->variant = -1; // -1 in flight, then the frames of the impact flare
   }
 
@@ -11729,7 +11705,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         // frames, additive after.
         EffectPosition_ApplyBaseAndYOffset(ember, &screen);
         screen.x >>= 1;
-        EFFECT_CLAMP(screen.depth, 160, 799);
+        CLAMP(screen.depth, 160, 799);
         size = 10 - (screen.depth - 160) / 64;
         draw[frame < launchFrame + 48 ? 1 : 0](
             canvas, sheet + gBattleFx_MoteCellOffsets[size - 1],
@@ -11754,7 +11730,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
         if (frame < launchFrame + 85) {
-          EFFECT_SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
+          SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
         }
 
         // Below the ground it hits: keep its screen position for the impact
@@ -11883,7 +11859,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     highest = 0;
     if (frame == RISING_MOTE_TIMING(RISE_FRAME) + 11)
       BattleEventRuntime_BeginPhaseFar(132);
-    EFFECT_SET_VECTOR(point, 0, 0, 512 << 16);
+    SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
@@ -11914,8 +11890,8 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
             u32 width;
             u32 height;
 
-            EFFECT_SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
-                              mote->z * Trig_Cos(mote->x));
+            SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
+                       mote->z * Trig_Cos(mote->x));
             EffectPosition_ApplyBaseAndYOffset(xyz, position = &screen);
             position->x = (position->x >> 17) + 64;
             position->y = HI(position->y) + 60;
@@ -12001,9 +11977,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &PARTICLES[i];
 
-        EFFECT_SET_POSITION(chip, (Random16() & 127) << 16,
-                            ((Random16() & 15) + 80) << 16,
-                            ((Random16() & 63) - 32) << 12);
+        SET_POSITION(chip, (Random16() & 127) << 16,
+                     ((Random16() & 15) + 80) << 16,
+                     ((Random16() & 63) - 32) << 12);
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
       }
@@ -12153,7 +12129,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
     speed = (Random16() & 0x3ff) + 256;
     angle = (Random16() & 0x7fff) - 0x4000;
-    EFFECT_SET_POSITION(spark, 0x4000, 0x7000, (Trig_Sin(angle) * speed) >> 16);
+    SET_POSITION(spark, 0x4000, 0x7000, (Trig_Sin(angle) * speed) >> 16);
     spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
     spark->variant = 0;
   }
@@ -12321,9 +12297,9 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
       puff->x = -(200 << 14);
     puff->y = 0;
     puff->z = 0;
-    EFFECT_SET_VELOCITY(puff, ((Random16() & 63) - 32) << 13,
-                        ((Random16() & 63) + 16) << 12,
-                        ((Random16() & 63) - 32) << 13);
+    SET_VELOCITY(puff, ((Random16() & 63) - 32) << 13,
+                 ((Random16() & 63) + 16) << 12,
+                 ((Random16() & 63) - 32) << 13);
     puff->variant = 0;
   }
   for (i = 0; i != 1024; i++) {
@@ -12335,9 +12311,8 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
       mote->x = -(200 << 14);
     mote->y = 0;
     mote->z = 0;
-    EFFECT_SET_VELOCITY(mote, ((Random16() & 63) - 32) << 13,
-                        ((Random16() & 31) + 8) << 13,
-                        ((Random16() & 63) - 32) << 13);
+    SET_VELOCITY(mote, ((Random16() & 63) - 32) << 13,
+                 ((Random16() & 31) + 8) << 13, ((Random16() & 63) - 32) << 13);
     mote->variant = 0;
   }
 
@@ -12367,7 +12342,7 @@ void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
         EffectPosition_ApplyBaseAndYOffset(mote, &screen);
         screen.x >>= 1;
         screen.x += work->effect->side * 32 - 16;
-        EFFECT_CLAMP(screen.depth, 160, 799);
+        CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
                 work->sheet +
@@ -12835,14 +12810,14 @@ void BattleFx_RunSwirlingStars(void *object) {
   BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &PARTICLES[i];
-    EFFECT_SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
-                        ((Random16() & 0xff) - 127) << 16,
-                        ((Random16() & 0xff) - 127) << 16);
-    EFFECT_SET_VELOCITY(star, 0, 0, 0);
+    SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
+                 ((Random16() & 0xff) - 127) << 16,
+                 ((Random16() & 0xff) - 127) << 16);
+    SET_VELOCITY(star, 0, 0, 0);
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  EFFECT_SET_VECTOR(center, 0, 160 << 15, 0);
+  SET_VECTOR(center, 0, 160 << 15, 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera;
 
@@ -12873,7 +12848,7 @@ void BattleFx_RunSwirlingStars(void *object) {
         EffectPosition_ApplyBaseAndYOffset(star, &screen);
         screen.x >>= 1;
         Transform_Pop();
-        EFFECT_CLAMP(screen.depth, 250, 0x27a);
+        CLAMP(screen.depth, 250, 0x27a);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet +
@@ -12975,7 +12950,7 @@ void BattleFx_RunOrbitingSparks(void) {
 
         EFFECT_VIEW_FROM_CAMERA(camera);
         rec = point;
-        EFFECT_SET_VECTOR(rec, object->x, object->y, object->z);
+        SET_VECTOR(rec, object->x, object->y, object->z);
         EffectPosition_ApplyBaseAndYOffset(rec, &center);
         /* FAKEMATCH: needed to match: sched2 barrier, so this store precedes
          * the spark counter as in the reference 2026-10-11: without it differ 2
@@ -13050,7 +13025,7 @@ void BattleFx_RunTargetBursts(void *object) {
     puff = &work->particles[i];
     angle = Random16() & 0xffff;
     speed = Random16() & 0xff;
-    EFFECT_SET_POSITION(puff, 0, 0, 0);
+    SET_POSITION(puff, 0, 0, 0);
     if (i % 6 == 5) {
       puff->velocityX = 0;
       puff->velocityY = 0;
@@ -13074,7 +13049,7 @@ void BattleFx_RunTargetBursts(void *object) {
 
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_SET_VECTOR(point, object->x, 160 << 13, object->z);
+      SET_VECTOR(point, object->x, 160 << 13, object->z);
       SceneTransform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct EffectStep *puff;
@@ -14237,34 +14212,34 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 angle = Random16() & 0xffff;
     s32 speed = (Random16() & 255) + 128;
 
-    EFFECT_SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
-    EFFECT_SET_VELOCITY(spark, (Trig_Sin(angle) * speed) >> 5, 0,
-                        (Trig_Cos(angle) * speed) >> 5);
+    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_VELOCITY(spark, (Trig_Sin(angle) * speed) >> 5, 0,
+                 (Trig_Cos(angle) * speed) >> 5);
     spark->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
-  EFFECT_SET_VECTOR(center, user->x, 0, user->z);
+  SET_VECTOR(center, user->x, 0, user->z);
   switch (anchor) {
   case 0:
-    EFFECT_SET_VECTOR(goal, target->x, 0x3c0000, target->z);
+    SET_VECTOR(goal, target->x, 0x3c0000, target->z);
     break;
   case 1:
-    EFFECT_SET_VECTOR(goal, target->x, 0x3c0000, 0);
+    SET_VECTOR(goal, target->x, 0x3c0000, 0);
     break;
   case 2:
-    EFFECT_SET_VECTOR(goal, user->x, 0x3c0000, user->z);
+    SET_VECTOR(goal, user->x, 0x3c0000, user->z);
     break;
   case 3:
-    EFFECT_SET_VECTOR(goal, user->x, 0x3c0000, 0);
+    SET_VECTOR(goal, user->x, 0x3c0000, 0);
     break;
   case 4:
-    EFFECT_SET_VECTOR(goal, 0, 0x3c0000, 0);
+    SET_VECTOR(goal, 0, 0x3c0000, 0);
     break;
   }
-  EFFECT_SET_VECTOR(step, (goal[0] - center[0]) / 40,
-                    (goal[1] - center[1]) / 40, (goal[2] - center[2]) / 40);
+  SET_VECTOR(step, (goal[0] - center[0]) / 40, (goal[1] - center[1]) / 40,
+             (goal[2] - center[2]) / 40);
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
@@ -14311,7 +14286,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
         position.x >>= 1;
         Transform_Pop();
-        EFFECT_CLAMP(position.depth, 250, 634);
+        CLAMP(position.depth, 250, 634);
         size = 8 - (position.depth - 250) / 64;
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y, size);
         EffectStep_AdvanceWithGravity3D(spark, 60, 0);
@@ -14323,9 +14298,8 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
           spark->velocityX += pullX;
           spark->velocityY += pullY;
           spark->velocityZ += pullZ;
-          EFFECT_SET_VELOCITY(spark, spark->velocityX * 62 / 64,
-                              spark->velocityY * 62 / 64,
-                              spark->velocityZ * 62 / 64);
+          SET_VELOCITY(spark, spark->velocityX * 62 / 64,
+                       spark->velocityY * 62 / 64, spark->velocityZ * 62 / 64);
           if ((pullX > -2048 && pullX < 2048) &&
               (pullZ > -2048 && pullZ < 2048))
             spark->variant = -1;
@@ -14334,7 +14308,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     }
     // The djinni sways at the centre on frames 54 to 69.
     if (frame >= 54 && frame <= 69) {
-      EFFECT_SET_VECTOR(point, (Trig_Sin(frame << 10) * 4), 0, 0);
+      SET_VECTOR(point, (Trig_Sin(frame << 10) * 4), 0, 0);
       EffectPosition_ApplyBaseAndYOffset(point, &position);
       *outX = position.x;
       *outY = position.y;
@@ -14847,8 +14821,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   shot->velocityX = -shot->velocityX;
                 }
                 flash->variant = 1;
-                EFFECT_SET_POSITION(flash, screenPosition->x, screenPosition->y,
-                                    0);
+                SET_POSITION(flash, screenPosition->x, screenPosition->y, 0);
                 if (mode != 7)
                   work->shakeFrames = 2;
                 ObjectGroup_UpdateMembers(work->effect->actors[i],
@@ -15228,9 +15201,9 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
     newSpark->x = target->x;
     newSpark->y = target->y + 0xa0000; // 10 pixels up
     newSpark->z = target->z;
-    EFFECT_SET_VELOCITY(newSpark, (Random16() & 0x1ff) << 11,
-                        ((Random16() & 255) - 64) << 11,
-                        ((Random16() & 255) - 128) << 11);
+    SET_VELOCITY(newSpark, (Random16() & 0x1ff) << 11,
+                 ((Random16() & 255) - 64) << 11,
+                 ((Random16() & 255) - 128) << 11);
     if (newSpark->x > 0)
       newSpark->velocityX = -newSpark->velocityX;
     newSpark->variant = i / 2 + 16; // frames left
@@ -16086,10 +16059,10 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   for (i = 0; i != GROUND_LAUNCHED; i++) {
     struct EffectStep *rock = &work->particles[i];
 
-    EFFECT_SET_POSITION(rock, user->x, 0x420000, user->z);
-    EFFECT_SET_VELOCITY(rock, (i * 0x500000) >> 5,
-                        (s32)(((Random16() & 127) - 64) << 16) >> 6,
-                        (s32)(((Random16() & 255) - 127) << 16) >> 5);
+    SET_POSITION(rock, user->x, 0x420000, user->z);
+    SET_VELOCITY(rock, (i * 0x500000) >> 5,
+                 (s32)(((Random16() & 127) - 64) << 16) >> 6,
+                 (s32)(((Random16() & 255) - 127) << 16) >> 5);
     if (rock->x > 0)
       rock->velocityX = -rock->velocityX;
     rock->variant = 1;
@@ -16187,9 +16160,8 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           rock->velocityY += (0x140000 - rock->y) >> 8;
           rock->velocityZ += (target->z - rock->z) >> 8;
           if (frame < i * 2 + 85) {
-            EFFECT_SET_VELOCITY(rock, rock->velocityX * 60 / 64,
-                                rock->velocityY * 60 / 64,
-                                rock->velocityZ * 60 / 64);
+            SET_VELOCITY(rock, rock->velocityX * 60 / 64,
+                         rock->velocityY * 60 / 64, rock->velocityZ * 60 / 64);
           }
           if (rock->y < 0x140000) {
             work->shakeFrames = 8;
@@ -16424,7 +16396,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
-      EFFECT_SET_VECTOR(position, 0, -sinkFrame << 17, 0x2000000);
+      SET_VECTOR(position, 0, -sinkFrame << 17, 0x2000000);
       size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
@@ -16435,15 +16407,14 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch(0x8000);
       SceneTransform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
-        EFFECT_SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
+        SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
         size = 5;
       } else {
-        EFFECT_SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0],
-                          scale[0]);
+        SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
       SceneTransform_ApplyScale(scale);
     } else {
-      EFFECT_SET_VECTOR(position, 0, 0, 0x1000000);
+      SET_VECTOR(position, 0, 0, 0x1000000);
       SceneTransform_ApplyPosition(position);
       SceneTransform_ApplyPitch(-0x1000);
       SceneTransform_ApplyRoll(frame << 8);
@@ -16453,8 +16424,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        EFFECT_SET_VECTOR(point, (points[i][0] - 96) << 16, 0,
-                          (points[i][1] - 96) << 16);
+        SET_VECTOR(point, (points[i][0] - 96) << 16, 0,
+                   (points[i][1] - 96) << 16);
         EffectPosition_ApplyBaseAndYOffset(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -17139,10 +17110,10 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   for (i = 0; i != 768; i++) {
     struct EffectStep *mote = &PARTICLES[i];
 
-    EFFECT_SET_POSITION(mote, target->x, target->y + 0x190000, target->z);
-    EFFECT_SET_VELOCITY(mote, (Random16() & 255) << 12,
-                        ((Random16() & 255) - 127) << 12,
-                        ((Random16() & 255) - 127) << 12);
+    SET_POSITION(mote, target->x, target->y + 0x190000, target->z);
+    SET_VELOCITY(mote, (Random16() & 255) << 12,
+                 ((Random16() & 255) - 127) << 12,
+                 ((Random16() & 255) - 127) << 12);
     if (mote->x > 0)
       mote->velocityX = -mote->velocityX;
     mote->variant = -1; // frames left (negative: not out yet)
@@ -17407,9 +17378,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct EffectStep *rock = &work->particles[10 + i];
 
-    EFFECT_SET_POSITION(rock, (Random16() & 15) + 88, 128,
-                        (Random16() & 15) + 2);
-    EFFECT_SET_VELOCITY(rock, i, 1, 0x8000);
+    SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
+    SET_VELOCITY(rock, i, 1, 0x8000);
     rock->variant = 44 - i * 4;
   }
   for (i = 0; i != 6; i++)
@@ -17456,7 +17426,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     if (frame >= 12 && frame <= 87) {
       s32 row = (frame - 64) / 3;
 
-      EFFECT_CLAMP(row, 0, 7);
+      CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
@@ -17470,7 +17440,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     if (frame >= 160 && frame <= 183) {
       s32 row = 7 - (frame - 160) / 3;
 
-      EFFECT_CLAMP(row, 0, 7);
+      CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowSheetOffsets[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
@@ -17613,9 +17583,8 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
   step->y += step->velocityY;
   step->z += step->velocityZ;
   step->velocityY += gravity;
-  EFFECT_SET_VELOCITY(step, step->velocityX * damping / 64,
-                      step->velocityY * damping / 64,
-                      step->velocityZ * damping / 64);
+  SET_VELOCITY(step, step->velocityX * damping / 64,
+               step->velocityY * damping / 64, step->velocityZ * damping / 64);
 }
 
 // Moves a particle one frame on the screen: adds its velocity, then
@@ -17882,10 +17851,10 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &work->particles[i];
 
-    EFFECT_SET_POSITION(spark, target->x, target->y + half, target->z);
-    EFFECT_SET_VELOCITY(spark, (Random16() & 255) << 10,
-                        ((Random16() & 255) - 32) << 10,
-                        ((Random16() & 255) - 127) << 10);
+    SET_POSITION(spark, target->x, target->y + half, target->z);
+    SET_VELOCITY(spark, (Random16() & 255) << 10,
+                 ((Random16() & 255) - 32) << 10,
+                 ((Random16() & 255) - 127) << 10);
     if (spark->x > 0)
       spark->velocityX = -spark->velocityX;
     spark->velocityX = -spark->velocityX;
@@ -18060,9 +18029,9 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     for (i = 0; i != 64; i++) {
       struct EffectStep *mote = &work->particles[i];
 
-      EFFECT_SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
-      EFFECT_SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
-                          Random16() & 0xffff);
+      SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
+      SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
+                   Random16() & 0xffff);
     }
     ObjectDispatch_ApplyValueToChildrenFar(object, 0);
     velocityX = object->velocityX;
@@ -18070,7 +18039,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     velocityZ = object->velocityZ;
     strength = object->verticalMotionStrength;
     acceleration = object->acceleration;
-    EFFECT_SET_VELOCITY(object, 0, 0, 0);
+    SET_VELOCITY(object, 0, 0, 0);
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);
@@ -18097,7 +18066,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           EffectPosition_ApplyBaseAndYOffset(&mote->x, &point);
           point.x += 64;
           point.y = point.y + screenPosition.y + 24;
-          EFFECT_CLAMP(point.depth, -60, 60);
+          CLAMP(point.depth, -60, 60);
           point.depth += 60;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
           mote->x -= 4;
@@ -18107,7 +18076,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     }
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    EFFECT_SET_VELOCITY(object, velocityX, velocityY, velocityZ);
+    SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
     object->verticalMotionStrength = strength;
   }
@@ -18134,10 +18103,9 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &work->particles[i];
 
-    EFFECT_SET_POSITION(spark, target->x, target->y + half, target->z);
-    EFFECT_SET_VELOCITY(spark, (Random16() & 255) << 10,
-                        (Random16() & 255) << 10,
-                        ((Random16() & 255) - 127) << 10);
+    SET_POSITION(spark, target->x, target->y + half, target->z);
+    SET_VELOCITY(spark, (Random16() & 255) << 10, (Random16() & 255) << 10,
+                 ((Random16() & 255) - 127) << 10);
     if (spark->x > 0)
       spark->velocityX = -spark->velocityX;
     spark->variant = i + 16;
@@ -18561,22 +18529,22 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   {
     for (i = 0; i != CASTING_SPARKS; i++) {
       particle = &work->particles[i];
-      EFFECT_SET_POSITION(particle, (Random16() & 63) + 32, 0, 0);
-      EFFECT_SET_VELOCITY(particle, Random16() & 0xffff, Random16() & 0xffff,
-                          Random16() & 0xffff);
+      SET_POSITION(particle, (Random16() & 63) + 32, 0, 0);
+      SET_VELOCITY(particle, Random16() & 0xffff, Random16() & 0xffff,
+                   Random16() & 0xffff);
     }
   }
   // Stop the acting unit and place the Djinni 80 pixels overhead.
   ObjectDispatch_ApplyValueToChildrenFar(casterActor, 0);
   position = &djinnPos;
-  EFFECT_SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
-                      casterActor->z);
+  SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
+               casterActor->z);
   savedVelocityX = casterActor->velocityX;
   savedVelocityY = casterActor->velocityY;
   savedVelocityZ = casterActor->velocityZ;
   savedAcceleration = casterActor->acceleration;
   savedVerticalStrength = casterActor->verticalMotionStrength;
-  EFFECT_SET_VELOCITY(casterActor, 0, 0, 0);
+  SET_VELOCITY(casterActor, 0, 0, 0);
   casterActor->acceleration = 0;
   casterActor->verticalMotionStrength = 0;
   EffectPosition_ApplyStepAndYOffset(work->effect->actor, casterScreen);
@@ -18609,7 +18577,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
               sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
-            EFFECT_CLAMP(sparkScreen.depth, -60, 60);
+            CLAMP(sparkScreen.depth, -60, 60);
             sparkScreen.depth += 60; // 0〜120
             EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
                              sparkScreen.y, size);
@@ -18699,8 +18667,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     return;
   }
   ObjectDispatch_ApplyValueToChildrenFar(casterActor, 16);
-  EFFECT_SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY,
-                      savedVelocityZ);
+  SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;
   // Kind 35 clears the canvas and hands off to BattleFx_RunSparkGroups.
@@ -18714,9 +18681,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   // Djinni step: reach 30 pixels above the target in six frames.
   targetActor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   motion = &velocity;
-  EFFECT_SET_POSITION(motion, (targetActor->x - position->x) / 6,
-                      (targetActor->y - position->y + 0x1e0000) / 6,
-                      (targetActor->z - position->z) / 6);
+  SET_POSITION(motion, (targetActor->x - position->x) / 6,
+               (targetActor->y - position->y + 0x1e0000) / 6,
+               (targetActor->z - position->z) / 6);
   for (i = 0; i != CASTING_SPARKS; i++) {
     particle = &work->particles[i];
     particle->variant = 0;
@@ -18726,15 +18693,15 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     s32 height = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
     for (i = 0; i != 32; i++) {
       particle = &work->particles[i];
-      EFFECT_SET_POSITION(particle, targetActor->x, height, targetActor->z);
+      SET_POSITION(particle, targetActor->x, height, targetActor->z);
       if (kind == CASTING_IMPACT_PSYPHON_SEAL) {
-        EFFECT_SET_VELOCITY(particle, ((Random16() & 255) - 127) << 12,
-                            ((Random16() & 255) - 64) << 10,
-                            ((Random16() & 255) - 127) << 12);
+        SET_VELOCITY(particle, ((Random16() & 255) - 127) << 12,
+                     ((Random16() & 255) - 64) << 10,
+                     ((Random16() & 255) - 127) << 12);
       } else {
-        EFFECT_SET_VELOCITY(particle, ((Random16() & 255) - 127) << 12,
-                            ((Random16() & 255) - 64) << 12,
-                            ((Random16() & 255) - 127) << 12);
+        SET_VELOCITY(particle, ((Random16() & 255) - 127) << 12,
+                     ((Random16() & 255) - 64) << 12,
+                     ((Random16() & 255) - 127) << 12);
       }
       particle->variant = i / 2 + 32;
     }
@@ -18763,19 +18730,19 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       height = 0x140000;
     for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++) {
       particle = &CASTING_IMPACT_PARTICLES[i];
-      EFFECT_SET_POSITION(particle, targetActor->x, height, targetActor->z);
+      SET_POSITION(particle, targetActor->x, height, targetActor->z);
       if (kind == CASTING_IMPACT_SCORCH || kind == CASTING_IMPACT_BARRAGE) {
-        EFFECT_SET_VELOCITY(particle, ((Random16() & 255) - 127) << 11,
-                            (Random16() & 255) << 11,
-                            ((Random16() & 255) - 127) << 11);
+        SET_VELOCITY(particle, ((Random16() & 255) - 127) << 11,
+                     (Random16() & 255) << 11,
+                     ((Random16() & 255) - 127) << 11);
       } else if (kind == CASTING_IMPACT_ACID_BATH) {
-        EFFECT_SET_VELOCITY(particle, ((Random16() & 255) - 127) << 11,
-                            (Random16() & 127) << 10,
-                            ((Random16() & 255) - 127) << 11);
+        SET_VELOCITY(particle, ((Random16() & 255) - 127) << 11,
+                     (Random16() & 127) << 10,
+                     ((Random16() & 255) - 127) << 11);
       } else {
-        EFFECT_SET_VELOCITY(particle, ((Random16() & 255) - 127) << 10,
-                            (Random16() & 127) << 10,
-                            ((Random16() & 255) - 127) << 10);
+        SET_VELOCITY(particle, ((Random16() & 255) - 127) << 10,
+                     (Random16() & 127) << 10,
+                     ((Random16() & 255) - 127) << 10);
       }
       particle->variant = 0;
     }
@@ -18951,11 +18918,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       if (frame == 12) {
         particle = CASTING_IMPACT_PARTICLES;
         for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++, particle++) {
-          EFFECT_SET_POSITION(particle, targetActor->x, 0x140000,
-                              targetActor->z);
-          EFFECT_SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
-                              ((Random16() & 255) - 128) << 10,
-                              ((Random16() & 255) - 128) << 10);
+          SET_POSITION(particle, targetActor->x, 0x140000, targetActor->z);
+          SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
+                       ((Random16() & 255) - 128) << 10,
+                       ((Random16() & 255) - 128) << 10);
           particle->variant = 0;
         }
       }
@@ -19081,11 +19047,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           struct EffectStep *step;
           for (i = 0; i != CASTING_SPARKS; i++) {
             if ((step = &work->particles[i])->variant == 0) {
-              EFFECT_SET_POSITION(step, targetActor->x, 0x140000,
-                                  targetActor->z);
-              EFFECT_SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
-                                  ((Random16() & 255) - 64) << 10,
-                                  ((Random16() & 255) - 127) << 12);
+              SET_POSITION(step, targetActor->x, 0x140000, targetActor->z);
+              SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
+                           ((Random16() & 255) - 64) << 10,
+                           ((Random16() & 255) - 127) << 12);
               step->variant = i / 2 + 32;
               emitted++;
               if (emitted == 4)
@@ -19291,9 +19256,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       if (frame == 0) {
         for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT; i++) {
           particle = &CASTING_IMPACT_PARTICLES[i];
-          EFFECT_SET_POSITION(particle, (Random16() & 127) + 32, 0, 0);
-          EFFECT_SET_VELOCITY(particle, Random16() & 0xffff,
-                              Random16() & 0xffff, Random16() & 0xffff);
+          SET_POSITION(particle, (Random16() & 127) + 32, 0, 0);
+          SET_VELOCITY(particle, Random16() & 0xffff, Random16() & 0xffff,
+                       Random16() & 0xffff);
         }
         CASTING_IMPACT_PARTICLES[63].y = 159;
       }
@@ -20373,8 +20338,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         red = level - 32;
         green = level - 80;
 
-        EFFECT_CLAMP(red, 0, 31);
-        EFFECT_CLAMP(green, 0, 31);
+        CLAMP(red, 0, 31);
+        CLAMP(green, 0, 31);
         *line++ = (red << 10) | (green << 5) | (green >> 1);
       }
       for (; i != 160; i++)
@@ -20425,10 +20390,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       SceneTransform_ApplyRoll(0x800);
       SceneTransform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
-        EFFECT_SET_VECTOR(vector,
-                          (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
-                          (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
-                          (gParticleStreams_OrbitPoints[i][2] / 2) << 16);
+        SET_VECTOR(vector, (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
+                   (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
+                   (gParticleStreams_OrbitPoints[i][2] / 2) << 16);
         EffectPosition_ApplyBaseAndYOffset(vector, screenPosition = &spot);
         screenPosition->x = HI(screenPosition->x) + 128;
         screenPosition->y = HI(screenPosition->y) + 60;
@@ -20496,19 +20460,17 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   for (i = 0; i != 128; i++) {
     struct EffectStep *flash = &PARTICLES[i];
 
-    EFFECT_SET_POSITION(flash, 0, 0, 0);
-    EFFECT_SET_VELOCITY(flash, ((Random16() & 255) - 127) << 12,
-                        (Random16() & 255) << 11,
-                        ((Random16() & 255) - 127) << 12);
+    SET_POSITION(flash, 0, 0, 0);
+    SET_VELOCITY(flash, ((Random16() & 255) - 127) << 12,
+                 (Random16() & 255) << 11, ((Random16() & 255) - 127) << 12);
     flash->variant = 0;
   }
   for (i = 0; i != 512; i++) {
     struct EffectStep *ember = &STREAM_EMBERS[i];
 
-    EFFECT_SET_POSITION(ember, 0, 0, 0);
-    EFFECT_SET_VELOCITY(ember, ((Random16() & 255) - 128) << 13,
-                        (Random16() & 255) << 11,
-                        ((Random16() & 255) - 128) << 13);
+    SET_POSITION(ember, 0, 0, 0);
+    SET_VELOCITY(ember, ((Random16() & 255) - 128) << 13,
+                 (Random16() & 255) << 11, ((Random16() & 255) - 128) << 13);
     ember->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
@@ -20559,9 +20521,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           ember->x = 0;
           ember->z = 0;
           ember->y = 0x140000;
-          EFFECT_SET_VELOCITY(ember, ((Random16() & 63) - 32) << 15,
-                              (Random16() & 63) << 13,
-                              ((Random16() & 63) - 32) << 15);
+          SET_VELOCITY(ember, ((Random16() & 63) - 32) << 15,
+                       (Random16() & 63) << 13, ((Random16() & 63) - 32) << 15);
         }
       }
     }
@@ -20598,7 +20559,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           flash->y = 0x140000;
           flash->x = 0;
           flash->z = ((Random16() & 255) - 127) << 16;
-          EFFECT_SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
+          SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
           flash->variant = 0;
         } else {
           EffectStep_AdvanceWithGravity3D(flash, 64, 1);
@@ -20958,9 +20919,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       ember->x = 0x380000;
     ember->y = 0;
     ember->z = 0;
-    EFFECT_SET_VELOCITY(ember, ((Random16() & 63) - 32) << 14,
-                        (Random16() & 63) << 13,
-                        ((Random16() & 63) - 32) << 14);
+    SET_VELOCITY(ember, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 13,
+                 ((Random16() & 63) - 32) << 14);
     ember->variant = 1;
   }
   for (j = 0; j != 16; j++) {
@@ -20972,9 +20932,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       flash->x = 0x380000;
     flash->y = 0x140000;
     flash->z = 0;
-    EFFECT_SET_VELOCITY(flash, ((Random16() & 63) - 32) << 14,
-                        (Random16() & 63) << 12,
-                        ((Random16() & 63) - 32) << 14);
+    SET_VELOCITY(flash, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 12,
+                 ((Random16() & 63) - 32) << 14);
     flash->variant = 0;
   }
   for (i = 0, j = -0x4000; i != 8; i++, j += 0x1000) {
@@ -21202,11 +21161,10 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   do {
     struct EffectStep *seed = &work->particles[i];
 
-    EFFECT_SET_POSITION(seed, targetObject->x, targetObject->y,
-                        targetObject->z);
-    EFFECT_SET_VELOCITY(seed, (Random16() & 255) << 11,
-                        ((Random16() & 255) - 127) << 12,
-                        ((Random16() & 255) - 127) << 12);
+    SET_POSITION(seed, targetObject->x, targetObject->y, targetObject->z);
+    SET_VELOCITY(seed, (Random16() & 255) << 11,
+                 ((Random16() & 255) - 127) << 12,
+                 ((Random16() & 255) - 127) << 12);
     if (seed->x > 0)
       seed->velocityX = -seed->velocityX;
     seed->variant = i / 4 * 2 + 16;

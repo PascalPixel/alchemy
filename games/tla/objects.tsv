@@ -4461,19 +4461,19 @@ main	rom_main_06	recon/tla/de/rom	.rom.00102888	de
 main	rom_main_06	recon/tla/raw/080f8888	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000f8830	ja
 main	rom_main_06	games/tla/src/menu/call_icon_routine	.text
-main	rom_main_06	recon/tla/it/rom	.rom.000f88d0	it
+main	rom_main_06	games/tla/src/menu/arrow_window	.text
+main	rom_main_06	recon/tla/it/rom	.rom.000f89a4	it
 main	rom_main_06	recon/tla/it/rom	.rom.000f8ab4	it
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa8d0	fr
+main	rom_main_06	recon/tla/fr/rom	.rom.000fa9a4	fr
 main	rom_main_06	recon/tla/fr/rom	.rom.000faab4	fr
-main	rom_main_06	recon/tla/es/rom	.rom.000fe8c4	es
+main	rom_main_06	recon/tla/es/rom	.rom.000fe998	es
 main	rom_main_06	recon/tla/es/rom	.rom.000feaa8	es
-main	rom_main_06	recon/tla/de/rom	.rom.001028d0	de
+main	rom_main_06	recon/tla/de/rom	.rom.001029a4	de
 main	rom_main_06	recon/tla/de/rom	.rom.00102ab4	de
-main	rom_main_06	recon/tla/raw/080f88d0	.text	en
 main	rom_main_06	recon/tla/raw/080f89a4	.text	en
 main	rom_main_06	recon/tla/raw/080f8a44	.text	en
 main	rom_main_06	recon/tla/raw/080f8ab4	.text	en
-main	rom_main_06	recon/tla/ja/rom	.rom.000f8878	ja
+main	rom_main_06	recon/tla/ja/rom	.rom.000f894c	ja
 main	rom_main_06	recon/tla/ja/rom	.rom.000f8a5c	ja
 main	rom_main_06	games/tla/src/menu/owner_ref	.text
 main	rom_main_06	games/tla/src/menu/ability/refresh	.text

@@ -1,9 +1,3 @@
-// First draft of Func_080f88d0: opens the menu's top-left window (13 by 5
-// tiles) with a divider, puts the hand cursor in it, hidden, and adds two
-// arrow icons (resources 0x1fe and 0x1ff, loaded from the pool as linker
-// symbols) at its right edge when a VRAM entry is free. Returns the window.
-// The twin of ☀️'s UiMenu_CreateCursor (games/tbs/src/menu/menu.c), which
-// has no divider or arrows. Differ 0 of 92: matches as written.
 #include "types.h"
 #include "graphics.h"
 #include "resource.h"
@@ -18,13 +12,18 @@ struct OwnerMenuState {
   struct RenderOutput *arrows[2];
 };
 
-extern char ResourceId_1fe, ResourceId_1ff; // resource ids, linker symbols
+extern char ResourceId_ShopUpArrowTiles, ResourceId_ShopDownArrowTiles;
 
 s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 mode);
 struct RenderOutput *UiIcon_CreateWithResourceVariant(struct RenderInput *window,
                                                       s32 x, s32 y);
 
+// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
+// hand cursor in it, hidden, and adds the up and down arrow icons at its right
+// edge when a VRAM entry is free. Returns the window. The twin of ☀️'s
+// UiMenu_CreateCursor (games/tbs/src/menu/menu.c), which has no divider or
+// arrows.
 struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   struct RenderInput *window;
   struct RenderOutput *icon;
@@ -47,14 +46,14 @@ struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   work->cursors[1]->sentinel = sentinel;
   slot = Resource_FindFreeEntry();
   if (slot <= 95) {
-    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_1fe);
+    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = RenderOutput_CreateFar(slot, 0x40000000, window, 84, -4);
     icon->active = 13;
     work->arrows[0] = icon;
   }
   slot = Resource_FindFreeEntry();
   if (slot <= 95) {
-    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_1ff);
+    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = RenderOutput_CreateFar(slot, 0x40000000, window, 84, 8);
     icon->active = 13;
     work->arrows[1] = icon;

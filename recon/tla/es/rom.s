@@ -3945,12 +3945,13 @@ Menu_UpdateEntryObjectTransformsFar:
 	.thumb_func
 UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x000fe87c, 0x0000003c
-	.section .rom.000fe8c4, "ax"
-	.global Func_080f88d0
-	.type Func_080f88d0, %function
+	.section .rom.000fe998, "ax"
+	.balign 4
+	.global Func_080f89a4
+	.type Func_080f89a4, %function
 	.thumb_func
-Func_080f88d0:
-	.incbin "baserom.gba", 0x000fe8c4, 0x000001e4
+Func_080f89a4:
+	.incbin "baserom.gba", 0x000fe998, 0x00000110
 	.section .rom.000feaa8, "ax"
 	.global Func_080f8ab4
 	.type Func_080f8ab4, %function

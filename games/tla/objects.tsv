@@ -717,30 +717,29 @@ main	rom_main_01	recon/tla/ja/rom	.rom.0002b914	ja
 main	rom_main_01	games/tla/src/field/common/map/perspective	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002bdd0	it
 main	rom_main_01	recon/tla/it/rom	.rom.0002be4c	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002c240	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002c4d8	it
 main	rom_main_01	recon/tla/fr/rom	.rom.0002bdd0	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.0002be4c	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002c240	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002c4d8	fr
 main	rom_main_01	recon/tla/es/rom	.rom.0002bdd0	es
 main	rom_main_01	recon/tla/es/rom	.rom.0002be4c	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002c240	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002c4d8	es
 main	rom_main_01	recon/tla/de/rom	.rom.0002bdd0	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002be4c	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002c240	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002c4d8	de
 main	rom_main_01	recon/tla/raw/0802bdd0	.text	en
 main	rom_main_01	recon/tla/raw/0802be4c	.text	en
 main	rom_main_01	recon/tla/raw/0802c088	.text	en
-main	rom_main_01	recon/tla/raw/0802c174	.text	en
-main	rom_main_01	recon/tla/raw/0802c1f4	.text	en
+main	rom_main_01	recon/tla/ja/rom	.rom.0002bd4c	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.0002bdc8	ja
+main	rom_main_01	games/tla/src/field/common/map/palette_mapped	.text
+main	rom_main_01	recon/tla/it/rom	.rom.0002c240	it
+main	rom_main_01	recon/tla/it/rom	.rom.0002c4d8	it
+main	rom_main_01	recon/tla/fr/rom	.rom.0002c240	fr
+main	rom_main_01	recon/tla/fr/rom	.rom.0002c4d8	fr
+main	rom_main_01	recon/tla/es/rom	.rom.0002c240	es
+main	rom_main_01	recon/tla/es/rom	.rom.0002c4d8	es
+main	rom_main_01	recon/tla/de/rom	.rom.0002c240	de
+main	rom_main_01	recon/tla/de/rom	.rom.0002c4d8	de
 main	rom_main_01	recon/tla/raw/0802c240	.text	en
 main	rom_main_01	recon/tla/raw/0802c4d8	.text	en
 main	rom_main_01	recon/tla/raw/0802c58c	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002bd4c	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.0002bdc8	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002c1bc	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002c454	ja
 main	rom_main_01	games/tla/src/field/common/map/loadgfx	.text

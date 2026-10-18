@@ -416,7 +416,7 @@ Func_0802bdd0:
 	.type Func_0802be4c, %function
 	.thumb_func
 Func_0802be4c:
-	.incbin "baserom.gba", 0x0002bdc8, 0x000003f4
+	.incbin "baserom.gba", 0x0002bdc8, 0x00000328
 	.section .rom.0002c1bc, "ax"
 	.global Func_0802c240
 	.type Func_0802c240, %function

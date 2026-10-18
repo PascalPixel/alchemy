@@ -133,12 +133,12 @@ Func_0802c240:
 	bge .L_0802c348
 	adds r0, r4, #0
 	adds r0, #16
-	bl Func_0802c1f4
+	bl Map_RenderPaletteMappedColumn
 	b .L_0802c350
 .L_0802c348:
 	adds r0, r4, #0
 	subs r0, #16
-	bl Func_0802c1f4
+	bl Map_RenderPaletteMappedColumn
 .L_0802c350:
 	adds r5, r7, #0
 	adds r5, #232
@@ -156,12 +156,12 @@ Func_0802c240:
 	bge .L_0802c376
 	ldr r0, [sp, #12]
 	adds r0, #12
-	bl Func_0802c174
+	bl Map_RenderPaletteMappedRow
 	b .L_0802c37e
 .L_0802c376:
 	ldr r0, [sp, #12]
 	subs r0, #18
-	bl Func_0802c174
+	bl Map_RenderPaletteMappedRow
 .L_0802c37e:
 	ldr r1, [sp, #0]
 	mov r3, r8

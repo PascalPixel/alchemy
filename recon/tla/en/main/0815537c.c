@@ -82,7 +82,7 @@ void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *pos);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -146,7 +146,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->count; i++) {
       s32 start = i * BOLT_INTERVAL;
 
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[i], &pos);
+      EffectPosition_ProjectBattler(effect->actors[i], &pos);
       pos.x /= 2;
       if (frame == start + 1)
         work->shakeFrames = 4;

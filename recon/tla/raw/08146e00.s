@@ -609,7 +609,7 @@ BattleFx_RunProcne:
 	adds r1, r7, #0
 	str r3, [r5, #8]
 	adds r0, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r7]
 	ldr r0, .L_08147334
 	asrs r2, r3, #1
@@ -994,7 +994,7 @@ BattleFx_RunProcne:
 	add r7, sp, #148
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r7]
 	ldr r0, [sp, #68]
 	asrs r3, r3, #17
@@ -1447,7 +1447,7 @@ BattleFx_RunProcne:
 	mov r1, r10
 	adds r3, #2
 	str r3, [r5, #24]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	movs r1, #192
 	ldr r0, [sp, #48]
 	lsls r1, r1, #3

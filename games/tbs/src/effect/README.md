@@ -253,7 +253,7 @@ picture is drawn left of its centre line and then mirrored to the right.
 | `falling.c` | Ice and Douse: shards and bolts falling on the targets' side. |
 | `streaks.c` | Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep Star, Soothing Star). |
 | `target_strike.c` | Monster bites, fangs and slashes on one target. |
-| `death_plunge.c` | Death Plunge, the blade rain, the element pillar, the gathering burst and the shattering picture. |
+| `death_plunge.c` | Death Plunge, the blade rain, the element pillar, the element burst and the shattering picture. |
 | `spider_web.c` | Poison Beat, Spinning Beat and Spider Web. |
 | `canvas.c` | The canvas layer: transfers, opening and closing, tile maps, lines. |
 | `planet_diver.c` | Planet Diver, Haunt and the orbiting spirals. |

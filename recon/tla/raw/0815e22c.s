@@ -20,7 +20,7 @@ Func_0815e22c:
 	mov r8, r0
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [r5]
 	mov r5, sp
 	ldr r3, [r2, #20]
@@ -28,7 +28,7 @@ Func_0815e22c:
 	adds r3, #34
 	ldrsh r0, [r2, r3]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r1, [r6]
 	ldr r3, [r5]
 	add sp, #24

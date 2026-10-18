@@ -94,7 +94,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Centre BG2 on the first target.
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &pos);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
   REG_BG2X = (64 - pos.x) << 8;
 
   // Daggers start in columns 16 to 111; the further from the middle, the

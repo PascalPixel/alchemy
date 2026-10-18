@@ -38,8 +38,8 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_TRANSPARENT);
   blit = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
-  EffectPosition_ApplyStepAndYOffset(
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(
       work->effect->actors[work->effect->count - 1], &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;

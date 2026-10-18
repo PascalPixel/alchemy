@@ -247,7 +247,7 @@ Func_0818a220:
 	ldr r1, [sp, #84]
 	ldr r0, [r1, #8]
 	add r1, sp, #204
-	bl EffectPosition_ApplyAnimationAndYOffset
+	bl EffectPosition_ProjectSprite
 	ldr r4, [sp, #84]
 	movs r2, #0
 	ldr r3, [r4, #20]
@@ -260,7 +260,7 @@ Func_0818a220:
 	ldr r1, [sp, #84]
 	ldrsh r0, [r6, r1]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r4, [sp, #84]
 	movs r3, #1
 	add r8, r3
@@ -771,7 +771,7 @@ Func_0818a220:
 	add r5, sp, #96
 	ldrsh r0, [r4, r2]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r0, .L_0818ab8c
 	ldr r4, [sp, #20]
 	movs r3, #0

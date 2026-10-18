@@ -87,12 +87,12 @@ BattleFx_RunStoneJustice:
 	mov r3, r10
 	ldr r0, [r3, #8]
 	ldr r1, [sp, #8]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	mov r5, r10
 	ldr r1, [sp, #12]
 	movs r4, #36
 	ldrsh r0, [r5, r4]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	mov r1, r9
 	cmp r1, #0
 	bne .L_0816d4a2

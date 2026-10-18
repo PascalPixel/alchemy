@@ -67,7 +67,7 @@ extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
@@ -116,7 +116,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
   // Open the canvas on BG1 over the target and build the blitters.
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   centerX = target.x / 2;
 
   BattleFx_LoadBlitter(HEAP_BLITTER,

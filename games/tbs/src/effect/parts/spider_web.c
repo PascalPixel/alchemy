@@ -62,7 +62,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                         75); // trails keep 3/4 a frame
   object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &position);
   // Line the canvas up so the swipe crosses the target.
   if (work->effect->side == 0)
     REG_BG2X = (16 - position.x) << 8;
@@ -150,8 +150,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
-  EffectPosition_ApplyStepAndYOffset(
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(
       work->effect->actors[work->effect->count - 1], &last);
   first.x += (last.x - first.x) / 2; // centre the canvas between them
   REG_BG2X = (64 - first.x) << 8;

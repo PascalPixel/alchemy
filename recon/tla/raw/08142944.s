@@ -131,7 +131,7 @@ Func_08142944:
 	ldr r4, [sp, #56]
 	mov r1, r11
 	ldr r0, [r4, #8]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r0, [sp, #52]
 	cmp r0, #78
 	bne .L_08142a66

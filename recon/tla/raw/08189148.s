@@ -621,7 +621,7 @@ BattleFx_RunDragonCloud:
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [sp, #44]
 	cmp r2, #78
 	bne .L_0818963c
@@ -900,7 +900,7 @@ BattleFx_RunDragonCloud:
 	add r6, sp, #64
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r6]
 	asrs r3, r3, #1
 	str r3, [r6]
@@ -1021,7 +1021,7 @@ BattleFx_RunDragonCloud:
 	blt .L_0818996e
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r7]
 	mov r1, r8
 	asrs r5, r5, #3

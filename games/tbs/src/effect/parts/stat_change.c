@@ -92,14 +92,14 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   // where it appears.
   if (work->effect->prelude == 1) {
     if (mode == 3)
-      BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side ^ 1, 1,
-                                   &originX, &originY);
+      BattleFx_RunDjinniEntrance(effect, 0, work->effect->side ^ 1, 1, &originX,
+                                 &originY);
     else if (mode == 2 || mode == 4)
-      BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side ^ 1, 1,
-                                   &originX, &originY);
+      BattleFx_RunDjinniEntrance(effect, 3, work->effect->side ^ 1, 1, &originX,
+                                 &originY);
     else
-      BattleFx_PrepareCanvasEffect(effect, 2, work->effect->side ^ 1, 1,
-                                   &originX, &originY);
+      BattleFx_RunDjinniEntrance(effect, 2, work->effect->side ^ 1, 1, &originX,
+                                 &originY);
     originX = originX * 4 / 5;
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
@@ -166,7 +166,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   // With one target, shift the canvas so that target is at its centre
   // (64).
   if (work->effect->count == 1) {
-    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &base);
+    EffectPosition_ProjectScaledBattler(work->effect->actors[0], &base);
     canvasShiftX = -base.x * 4 / 5 + 64;
   } else {
     if (work->effect->side == 1)
@@ -262,7 +262,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
               s32 size;
 
               // The size (half the width) runs 6 to 1 over depths 314 to 634.
-              EffectPosition_ApplyBaseAndYOffset(flare, &screen);
+              EffectPosition_ProjectPoint(flare, &screen);
               screen.x = screen.x * 4 / 5 + canvasShiftX;
               CLAMP(screen.depth, 314, 634);
               size = 6 - (screen.depth - 314) / 64;
@@ -279,7 +279,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       // The centre's position on screen.
       SET_VECTOR(center, 0, 0, 0);
-      EffectPosition_ApplyBaseAndYOffset(center, &screen);
+      EffectPosition_ProjectPoint(center, &screen);
       screen.x = screen.x * 4 / 5 + canvasShiftX;
 
       // The burst: six frames of 4 frames each, from frame 52.
@@ -524,7 +524,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SceneTransform_ApplyPosition(point);
         SET_VECTOR(origin, 0, 0, 0);
-        EffectPosition_ApplyBaseAndYOffset(origin, &screen);
+        EffectPosition_ProjectPoint(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
         if (mode == 0) {
@@ -556,7 +556,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
             // Shard i takes shape i % 4, turning through its three frames
             // every 8 frames from a random start.
             cell = i % 4 * 3 + (shard->variant + targetFrame) / 8 % 3;
-            EffectPosition_ApplyBaseAndYOffset(shard, &screen);
+            EffectPosition_ProjectPoint(shard, &screen);
             x = screen.x + xOffset;
             y = screen.y;
             blitters[0](canvas,

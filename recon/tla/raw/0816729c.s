@@ -441,7 +441,7 @@ BattleFx_RunJudgment:
 	add r5, sp, #164
 	ldr r0, [sp, #12]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r0, [r5, #8]
 	movs r3, #60
 	negs r3, r3

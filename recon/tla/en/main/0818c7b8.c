@@ -65,7 +65,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
@@ -138,7 +138,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 0)
-      EffectPosition_ApplyAlternateStepAndYOffset(
+      EffectPosition_ProjectBattler(
           effect->actors[0], (struct EffectPosition *)position);
     if (frame == 8)
       Audio_PlayCue(212);

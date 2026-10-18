@@ -217,7 +217,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
             Func_080150e4(-frame * (i + 8) * 32);
             break;
           }
-          EffectPosition_ApplyBaseAndYOffset(&star->x, &screen);
+          EffectPosition_ProjectPoint(&star->x, &screen);
           screen.x >>= 1;
           Transform_Pop();
           if (screen.depth < 250)

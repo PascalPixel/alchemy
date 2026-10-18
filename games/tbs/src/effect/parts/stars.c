@@ -117,8 +117,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale.z = scale.x;
           SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
           SceneTransform_ApplyRoll(j * 0x199a);
-          depth = EffectPosition_ApplyBaseAndYOffset(&gStars_Points[j & 1],
-                                                     &screenPosition);
+          depth = EffectPosition_ProjectPoint(&gStars_Points[j & 1],
+                                              &screenPosition);
           if (peak < depth)
             peak = depth;
           screenPosition.x >>= 1;
@@ -257,7 +257,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
       step = &work->particles[i];
       if (frame >= step->variant) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        EffectPosition_ApplyBaseAndYOffset(step, &screenPosition);
+        EffectPosition_ProjectPoint(step, &screenPosition);
         screenPosition.x >>= 1;
         // On the canvas, draw the star: ten points, alternately near and
         // far, turning as it falls, joined by 12 motes each.

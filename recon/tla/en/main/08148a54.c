@@ -159,7 +159,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 
       // A mote leaves the caster two frames after the one before it.
       if (frame > i * 2 && landed[i] == 0) {
-        EffectPosition_ApplyBaseAndYOffset((s32 *)point, &pos);
+        EffectPosition_ProjectPoint((s32 *)point, &pos);
         pos.x >>= 1;
         if (pos.depth < 160)
           pos.depth = 160;

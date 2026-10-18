@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -146,7 +146,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
+  EffectPosition_ProjectBattler(effect->actors[0], &pos);
   centerX = pos.x / 2;
   BattleFx_LoadBlitter(SLOT_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -173,7 +173,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 63) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(effect->actors[0], &target);
     }
     if (frame == 20) {
       BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 60);

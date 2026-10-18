@@ -125,7 +125,7 @@ Func_08144b14:
 	movs r3, #36
 	ldrsh r0, [r2, r3]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r2, [r5]
 	movs r3, #64
 	subs r3, r3, r2
@@ -360,7 +360,7 @@ Func_08144b14:
 	add r5, sp, #92
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	ldr r0, [sp, #44]
 	adds r3, r3, r0
@@ -528,7 +528,7 @@ Func_08144b14:
 	adds r1, r7, #0
 	str r3, [r0, #8]
 	str r4, [sp, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r7]
 	ldr r5, [sp, #44]
 	ldr r4, [sp, #8]

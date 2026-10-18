@@ -38,7 +38,7 @@ Func_08138038:
 	.global Func_08138040
 	.thumb_func
 Func_08138040:
-	overlay_veneer BattleFx_ScheduleCallbacksAndReleaseBlocks
+	overlay_veneer BattleFx_EndElementStreaks
 	.global Func_08138048
 	.thumb_func
 Func_08138048:

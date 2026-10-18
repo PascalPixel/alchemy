@@ -111,7 +111,7 @@ void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 u32 Random16(void);
@@ -233,7 +233,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
   if (mode == BREATH_PIKE)
     BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &user);
+  EffectPosition_ProjectBattler(effect->actor, &user);
   if (mode == BREATH_BLAST) {
     if (effect->side == 0)
       user.x -= 32;
@@ -241,7 +241,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
       user.x += 32;
     user.y -= 8;
   }
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != Data_08199d97[mode]; frame++) {
     s32 mouthX;

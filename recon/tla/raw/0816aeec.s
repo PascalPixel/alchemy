@@ -794,7 +794,7 @@ Func_0816aeec:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	str r4, [sp, #16]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r4, [sp, #16]
 	cmp r0, #0
 	bne .L_0816b552
@@ -856,7 +856,7 @@ Func_0816aeec:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r7, [sp, #40]
 	add r0, sp, #100
 	movs r3, #6

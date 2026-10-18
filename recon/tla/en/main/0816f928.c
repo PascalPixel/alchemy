@@ -66,7 +66,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -107,7 +107,7 @@ void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
+  EffectPosition_ProjectBattler(effect->actors[0], &position);
   REG_BG2X = (64 - position.x) << 8;
 
   // The streak: one pixel of colour 24 a row, stepping a pixel sideways

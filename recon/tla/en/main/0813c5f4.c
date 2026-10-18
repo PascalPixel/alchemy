@@ -216,7 +216,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
               s32 step;
 
               // The picture changes every 8 frames, stopping at the sixth.
-              EffectPosition_ApplyBaseAndYOffset((s32 *)streak, &position);
+              EffectPosition_ProjectPoint((s32 *)streak, &position);
               position.x >>= 1;
               step = streak->variant / 8;
               if (step > 5)

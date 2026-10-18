@@ -40,8 +40,8 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
 
 // Projects a point in the current transform onto the screen, 16 pixels
 // higher, and returns the projection's scale.
-s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
-                                       struct EffectPosition *position) {
+s32 EffectPosition_ProjectPoint(const void *point,
+                                struct EffectPosition *position) {
   s32 result = Render_ProjectPoint(point, EffectPosition_Coordinates(position));
   position->y -= 16;
   return result;
@@ -49,24 +49,22 @@ s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
 
 // The screen position of a battler's sprite, at its scaled height, 16
 // pixels higher.
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
-                                             struct EffectPosition *position) {
+void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
   BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
   position->y -= 16;
 }
 
 // The screen position of a battler, scaled for the battle view, 16 pixels
 // higher.
-void EffectPosition_ApplyStepAndYOffset(s32 id,
-                                        struct EffectPosition *position) {
+void EffectPosition_ProjectScaledBattler(s32 id,
+                                         struct EffectPosition *position) {
   BattleMotion_ProjectScaledPositionFar(id,
                                         EffectPosition_Coordinates(position));
   position->y -= 16;
 }
 
 // The screen position of a battler, 16 pixels higher.
-void EffectPosition_ApplyAlternateStepAndYOffset(
-    s32 id, struct EffectPosition *position) {
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
   BattleMotion_ProjectPositionFar(id, EffectPosition_Coordinates(position));
   position->y -= 16;
 }

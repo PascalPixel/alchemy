@@ -98,7 +98,7 @@ BattleFx_RunBreak:
 	ldr r3, [r5, #16]
 	mov r0, r9
 	str r3, [r4, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r0, r10
 	ldr r3, [r0]
 	movs r1, #0

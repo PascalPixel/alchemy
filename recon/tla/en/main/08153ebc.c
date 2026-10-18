@@ -336,7 +336,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             if (trail->x > 0) {
               Transform_Load(MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
-              EffectPosition_ApplyBaseAndYOffset(point, &screen);
+              EffectPosition_ProjectPoint(point, &screen);
               screen.x = (screen.x >> 1) + x;
               screen.y = screen.y + y + 16;
               trail->x -= 4;
@@ -374,7 +374,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
     s32 member = i % 6;
 
     if (member < effect->count) {
-      EffectPosition_ApplyStepAndYOffset(effect->actors[member], &target);
+      EffectPosition_ProjectScaledBattler(effect->actors[member], &target);
       slash->y = -((Random16() & 31) + 40);
       slash->x = target.x / 2 + (80 - slash->y) / 2;
     } else {

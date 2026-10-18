@@ -387,7 +387,7 @@ BattleFx_RunTargetMotes:
 	add r5, sp, #84
 	ldrsh r0, [r1, r3]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r7, [sp, #64]
 	movs r4, #0
 	mov r0, r10
@@ -587,7 +587,7 @@ BattleFx_RunTargetMotes:
 	asrs r6, r1, #2
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	mov r0, r10
 	asrs r2, r3, #1

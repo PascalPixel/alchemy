@@ -296,7 +296,7 @@ Func_0814b350:
 	add r5, sp, #108
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
@@ -399,7 +399,7 @@ Func_0814b350:
 	str r0, [r6, #4]
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r5]
 	movs r1, #20
 	asrs r2, r2, #1
@@ -534,7 +534,7 @@ Func_0814b350:
 	add r2, sp, #84
 	adds r1, r2, #0
 	ldr r0, [sp, #16]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [sp, #84]
 	ldr r3, [sp, #88]
 	ldr r5, [sp, #68]
@@ -668,7 +668,7 @@ Func_0814b350:
 	add r2, sp, #84
 	adds r0, r6, #0
 	adds r1, r2, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [sp, #84]
 	movs r5, #58
 	asrs r3, r3, #1

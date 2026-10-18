@@ -486,7 +486,7 @@ BattleFx_RunThor:
 	lsls r3, r3, #16
 	str r3, [r6, #8]
 	str r2, [sp, #12]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	adds r7, #4
 	asrs r3, r3, #17
@@ -724,7 +724,7 @@ BattleFx_RunThor:
 	str r3, [r5, #8]
 	adds r1, r6, #0
 	mov r0, r10
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r6]
 	movs r0, #6
 	ldrsh r3, [r6, r0]

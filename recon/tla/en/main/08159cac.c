@@ -133,8 +133,8 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The canvas is centred between the first and the last target.
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &first);
-  EffectPosition_ApplyStepAndYOffset(effect->actors[effect->count - 1], &final);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(effect->actors[effect->count - 1], &final);
   first.x += (final.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   work->transferMode = 1;

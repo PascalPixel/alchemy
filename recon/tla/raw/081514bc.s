@@ -285,7 +285,7 @@ BattleFx_RunFrost:
 	muls r3, r0
 	mov r0, r11
 	str r3, [r0, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r1, r9
 	ldr r2, [r1]
 	movs r4, #6

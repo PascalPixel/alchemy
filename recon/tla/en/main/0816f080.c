@@ -53,7 +53,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -171,7 +171,7 @@ void BattleFx_RunWyrdCurse(struct BattleEffectArgument *effect) {
     s32 level;
 
     if (frame == 0) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &screen);
+      EffectPosition_ProjectBattler(effect->actors[0], &screen);
       for (i = 0, drop = work->particles; i != WYRD_DROPS; i++, drop++) {
         drop->x = (screen.x / 2 + (Random16() & 15) - 8) << 16;
         drop->y = -8;

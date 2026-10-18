@@ -66,7 +66,7 @@ extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
@@ -143,7 +143,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Slide the canvas so that its x = 64 is under the target.
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   REG_BG2X = (64 - target.x) << 8;
 
   // The sparks start together at the columns' foot and fly apart, upward

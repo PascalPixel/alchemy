@@ -36,27 +36,27 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
   step->velocityY = (vy + gravity) * damping / 64;
 }
 
-s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
+s32 EffectPosition_ProjectPoint(const void *point,
                                        struct EffectPosition *position) {
   s32 result = Render_ProjectPoint(point, EffectPosition_Coordinates(position));
   position->y -= 16;
   return result;
 }
 
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
+void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position) {
   BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
   position->y -= 16;
 }
 
-void EffectPosition_ApplyStepAndYOffset(s32 id,
+void EffectPosition_ProjectScaledBattler(s32 id,
                                         struct EffectPosition *position) {
   BattleMotion_ProjectScaledPositionFar(id,
                                         EffectPosition_Coordinates(position));
   position->y -= 16;
 }
 
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position) {
   BattleMotion_ProjectPositionFar(id, EffectPosition_Coordinates(position));
   position->y -= 16;

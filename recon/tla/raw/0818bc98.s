@@ -241,7 +241,7 @@ Func_0818bc98:
 	ldr r0, [r3, #8]
 	adds r1, r5, #0
 	str r5, [sp, #44]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r6, [sp, #64]
 	cmp r6, #3
 	bne .L_0818be9a
@@ -271,7 +271,7 @@ Func_0818bc98:
 	ldrsh r0, [r5, r3]
 	adds r1, r6, #0
 	str r6, [sp, #40]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	movs r0, #0
 	str r0, [sp, #52]
 	ldr r3, .L_0818c108

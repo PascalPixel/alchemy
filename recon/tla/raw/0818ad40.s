@@ -293,7 +293,7 @@ Func_0818ad40:
 	add r6, sp, #72
 	ldr r0, [r3, #8]
 	adds r1, r6, #0
-	bl EffectPosition_ApplyAnimationAndYOffset
+	bl EffectPosition_ProjectSprite
 	add r5, sp, #60
 	adds r0, r5, #0
 	bl Func_0815e22c

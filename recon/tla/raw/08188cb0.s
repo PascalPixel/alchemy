@@ -166,7 +166,7 @@ BattleFx_RunHelmSplitter:
 	bne .L_08188e94
 	ldr r0, [r1, #8]
 	mov r1, r9
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r2, r10
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -255,7 +255,7 @@ BattleFx_RunHelmSplitter:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	mov r1, r9
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [sp, #8]
 	cmp r3, #15
 	bhi .L_08188f3e
@@ -347,7 +347,7 @@ BattleFx_RunHelmSplitter:
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	mov r1, r9
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	movs r0, #134
 	bl Func_081180e8
 	mov r6, r10

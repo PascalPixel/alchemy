@@ -99,7 +99,7 @@ void BattleFx_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -179,7 +179,7 @@ void BattleFx_RunTripleChomp(struct BattleEffectArgument *effect) {
     // texture.
     vertices = Runtime_BumpAllocateAlternatePool(32);
     model = Render_AllocateModelList(1);
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
+    EffectPosition_ProjectBattler(effect->actors[0], &position);
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = Ram_MapCellBuffer;

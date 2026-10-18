@@ -61,7 +61,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -140,7 +140,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
 
     // The first frame sends the smoke out from the caster's feet.
     if (frame == 0) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &caster);
+      EffectPosition_ProjectBattler(effect->actor, &caster);
       for (i = 0, step = work->particles; i != SMOKE_COUNT; i++, step++) {
         s32 angle;
         s32 speed;
@@ -192,7 +192,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
       casterObject->x = targetObject->x * 120 / 100;
       targetObject->x = targetObject->x * 80 / 100;
       casterObject->angle = targetObject->angle;
-      EffectPosition_ApplyStepAndYOffset(effect->actors[0], &target);
+      EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
       for (i = 0, step = stars; i != STAR_COUNT; i++, step++) {
         s32 angle;
         s32 speed;

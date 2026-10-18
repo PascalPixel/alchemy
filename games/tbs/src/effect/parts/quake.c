@@ -132,7 +132,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
 
           object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
           SET_VECTOR(point, object->x, object->y, object->z);
-          EffectPosition_ApplyBaseAndYOffset(point, &screen);
+          EffectPosition_ProjectPoint(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * ROCK_PILLAR_WIDTH + 8 &&
               screen.x <= column * ROCK_PILLAR_WIDTH + 8 + ROCK_PILLAR_WIDTH &&

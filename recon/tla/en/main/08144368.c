@@ -133,7 +133,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
           point[0] = target->x;
           point[1] = 40 << 16;
           point[2] = target->z;
-          EffectPosition_ApplyBaseAndYOffset(point, &screen);
+          EffectPosition_ProjectPoint(point, &screen);
 
           // The four spirals, a quarter turn apart, each a 32 x 32 cel of
           // the sheet's four-frame animation.

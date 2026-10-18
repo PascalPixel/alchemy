@@ -187,7 +187,7 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
         origin[0] = 0;
         origin[1] = 0;
         origin[2] = 0;
-        EffectPosition_ApplyBaseAndYOffset(origin, &screen);
+        EffectPosition_ProjectPoint(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
         if (mode == 0 || mode == 3) {
@@ -217,7 +217,7 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
             s32 cell;
 
             cell = i % 4 * 3 + (shard->variant + time) / 8 % 3;
-            EffectPosition_ApplyBaseAndYOffset((s32 *)shard, &screen);
+            EffectPosition_ProjectPoint((s32 *)shard, &screen);
             x = screen.x + xOffset;
             y = screen.y;
             callbacks[0](canvas,

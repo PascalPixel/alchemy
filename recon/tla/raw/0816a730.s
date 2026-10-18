@@ -76,7 +76,7 @@ BattleFx_RunUndeadSword:
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [r5]
 	movs r1, #128
 	movs r3, #64

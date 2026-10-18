@@ -66,7 +66,7 @@ BattleFx_RunHail:
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r0, .L_081585a8
 	movs r4, #15
 	movs r1, #127

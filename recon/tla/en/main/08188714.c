@@ -79,7 +79,7 @@ void *Resource_GetTableEntry(s32 id);
 void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
@@ -176,7 +176,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   z = user->z + percent * (target->z - user->z) / 100;
   userHeight = Battle_GetObjectTableValueFar(effect->actor);
   targetHeight = Battle_GetObjectTableValueFar(effect->actors[0]);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &targetScreen);
+  EffectPosition_ProjectBattler(effect->actors[0], &targetScreen);
   Object_ResetMotion(user);
   Object_SetPosition(user, x, 0, z);
   Object_SetMode(user, 2);
@@ -225,7 +225,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       point[0] = user->x;
       point[1] = user->y;
       point[2] = user->z;
-      EffectPosition_ApplyBaseAndYOffset(point, &screen);
+      EffectPosition_ProjectPoint(point, &screen);
       screen.x >>= 1;
       if (frame == 54 || frame == 55)
         draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);

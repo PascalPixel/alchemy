@@ -344,7 +344,7 @@ Func_0813c5f4:
 	mov r8, r3
 	mov r0, r8
 	adds r1, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r6]
 	mov r4, r8
 	asrs r7, r3, #1

@@ -51,7 +51,7 @@ BattleFx_RunRagnarok:
 	movs r6, #36
 	ldrsh r0, [r1, r6]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r2, r11
 	ldr r3, [r2, #4]
 	b .L_0816661c

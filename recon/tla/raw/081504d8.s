@@ -363,7 +363,7 @@ SummonFx_RunCanvasEffect:
 	str r3, [r0, #4]
 	str r3, [r0, #8]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	ldr r0, [sp, #36]
 	ldr r1, [r5, #4]
@@ -525,7 +525,7 @@ SummonFx_RunCanvasEffect:
 	mov r1, r11
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r2, r11
 	ldr r3, [r2]
 	ldr r0, [sp, #36]

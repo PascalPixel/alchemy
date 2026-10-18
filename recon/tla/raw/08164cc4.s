@@ -502,7 +502,7 @@ BattleFx_RunParticleStreams:
 .L_081650ac:
 	.4byte gCameraSceneParameters
 .L_081650b0:
-	.4byte Camera_AdvanceBg2Reference
+	.4byte BattleFx_AdvanceBg2OnInterval
 .L_081650b4:
 	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_081650b8:
@@ -910,7 +910,7 @@ BattleFx_RunParticleStreams:
 	lsls r2, r2, #16
 	str r2, [r6, #8]
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	movs r0, #2
 	ldrsh r2, [r5, r0]
 	movs r0, #153
@@ -1166,7 +1166,7 @@ BattleFx_RunParticleStreams:
 .L_081655c0:
 	.4byte 0xfffb0000
 .L_081655c4:
-	.4byte Camera_AdvanceBg2Reference
+	.4byte BattleFx_AdvanceBg2OnInterval
 .L_081655c8:
 	.4byte BattleFx_ArmPaletteHBlankDma
 .L_081655cc:
@@ -1362,7 +1362,7 @@ BattleFx_RunParticleStreams:
 	add r6, sp, #96
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r6]
 	ldr r2, [r6, #8]
 	asrs r3, r3, #1
@@ -1538,7 +1538,7 @@ BattleFx_RunParticleStreams:
 	add r5, sp, #96
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	asrs r7, r3, #1
 	str r7, [r5]

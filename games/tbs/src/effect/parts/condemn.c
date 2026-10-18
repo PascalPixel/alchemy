@@ -106,7 +106,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
     }
     // Frame 64: the last pass, on the first target.
     if (frame == 64) {
-      EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], pos);
+      EffectPosition_ProjectScaledBattler(work->effect->actors[0], pos);
       if (work->effect->side == 1) {
         swing[0] = (pos[0].x - 128) << 16;
       } else {

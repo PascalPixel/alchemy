@@ -821,7 +821,7 @@ BattleFx_RunAtalanta:
 	adds r1, r6, #0
 	str r3, [r2]
 	ldr r0, [sp, #20]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r6]
 	movs r0, #5
 	asrs r3, r3, #1
@@ -984,7 +984,7 @@ BattleFx_RunAtalanta:
 	adds r3, #36
 	ldrsh r0, [r2, r3]
 	adds r1, r6, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	bl Random16
 	ands r0, r7
 	adds r0, #40

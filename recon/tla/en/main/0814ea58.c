@@ -205,7 +205,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
             u32 size = Data_081982f4[mode];
 
             // The canvas shows at twice the width: halve x.
-            EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+            EffectPosition_ProjectPoint((s32 *)mote, &screen);
             screen.x >>= 1;
             if (mode == 2) {
               draw(canvas, sheet, screen.x - size / 2, screen.y - size, size,

@@ -150,7 +150,7 @@ void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 u32 Random16(void);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor,
+void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -259,7 +259,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   for (k = 0; k != 1; k++) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
     target = GetBattleObjectSlotFar(effect->actors[k])->object;
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[k], &ground);
+    EffectPosition_ProjectBattler(effect->actors[k], &ground);
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
 
@@ -326,8 +326,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Aim at the middle of the first target.
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &targetPosition);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &alternate);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
+  EffectPosition_ProjectBattler(effect->actors[0], &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
   for (frame = 0; frame != RECORD(mode, RECORD_FRAMES); frame++) {
@@ -343,9 +343,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 
         if (frame % (RECORD(mode, RECORD_RATE) * 6) == 0 &&
             (u32)(mode - 12) <= 1) {
-          EffectPosition_ApplyStepAndYOffset(effect->actors[0],
+          EffectPosition_ProjectScaledBattler(effect->actors[0],
                                              &targetPosition);
-          EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0],
+          EffectPosition_ProjectBattler(effect->actors[0],
                                                       &alternate);
           targetPosition.y += (alternate.y - targetPosition.y) / 2;
           targetPosition.y += (Random16() & 15) - 8;
@@ -504,8 +504,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     if ((RECORD(mode, RECORD_FLAGS) & FLAG_GLINTS) && glint) {
       s32 image;
 
-      EffectPosition_ApplyStepAndYOffset(effect->actors[0], &center);
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0],
+      EffectPosition_ProjectScaledBattler(effect->actors[0], &center);
+      EffectPosition_ProjectBattler(effect->actors[0],
                                                   &alternate);
       center.y += (alternate.y - center.y) / 2;
       image = frame & 3;
@@ -581,7 +581,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *step = &gMotes[i];
 
           if (step->variant >= 0) {
-            EffectPosition_ApplyBaseAndYOffset((s32 *)step, &position);
+            EffectPosition_ProjectPoint((s32 *)step, &position);
             position.x >>= 1;
             draw[1](canvas, sheet + gData_08197410[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
@@ -611,7 +611,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           s32 size = step->variant;
 
           if (size >= 0) {
-            EffectPosition_ApplyBaseAndYOffset((s32 *)step, &position);
+            EffectPosition_ProjectPoint((s32 *)step, &position);
             position.x >>= 1;
             BattleFxKernels_IntegrateVector3(step, 60, 0);
             size >>= 3;

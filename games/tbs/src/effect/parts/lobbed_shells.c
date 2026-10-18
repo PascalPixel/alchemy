@@ -193,7 +193,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
             if (step > 9)
               step = 9;
-            EffectPosition_ApplyBaseAndYOffset(shot, &position);
+            EffectPosition_ProjectPoint(shot, &position);
             position.x >>= 1;
             if (step > 4)
               draw[0](canvas, work->sheet + step * 768, position.x - 16,
@@ -254,7 +254,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0, burst = SHELL_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
          burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
-        EffectPosition_ApplyBaseAndYOffset(burst, &position);
+        EffectPosition_ProjectPoint(burst, &position);
         position.x >>= 1;
         if (LOBBED_SHELLS_SHATTER(mode) == 0) {
           draw[1](canvas,

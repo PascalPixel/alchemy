@@ -46,9 +46,9 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   if (work->effect->prelude == 1)
-    BattleFx_PrepareCanvasEffect(effect, mode,
-                                 work->effect->side ^ work->effect->prelude, 0,
-                                 &djinnX, &djinnY);
+    BattleFx_RunDjinniEntrance(effect, mode,
+                               work->effect->side ^ work->effect->prelude, 0,
+                               &djinnX, &djinnY);
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -77,7 +77,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   // with several, the canvas covers the targets' side of the field.
   REG_BG2PA = Q_8_8(1);
   if (work->effect->count == 1) {
-    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &one);
+    EffectPosition_ProjectScaledBattler(work->effect->actors[0], &one);
     offsetX = 64 - one.x;
   } else {
     if (work->effect->side == 1)
@@ -136,7 +136,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
           if (frame > i * 8 + start && mote->y > 8 << 16) {
             s32 sway;
 
-            EffectPosition_ApplyBaseAndYOffset(mote, &screenPosition);
+            EffectPosition_ProjectPoint(mote, &screenPosition);
             screenPosition.x += offsetX;
             sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
             if (i & 1)
@@ -175,7 +175,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == start + 88)
           ObjectGroup_UpdateMembers(work->effect->actors[i], 0, -1, -1, 0);
         SET_VECTOR(ground, target->x, 0, target->z);
-        EffectPosition_ApplyBaseAndYOffset(ground, &screenPosition);
+        EffectPosition_ProjectPoint(ground, &screenPosition);
         screenPosition.x += offsetX;
         if (frame < start + 104) {
           s32 pic = frame / 4;

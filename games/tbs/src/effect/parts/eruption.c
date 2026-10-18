@@ -121,7 +121,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
       if (mote->y >= 0) {
         s32 size;
 
-        EffectPosition_ApplyBaseAndYOffset(mote, &screen);
+        EffectPosition_ProjectPoint(mote, &screen);
         screen.x >>= 1;
         screen.x += work->effect->side * 32 - 16;
         CLAMP(screen.depth, 160, 799);
@@ -141,7 +141,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectStep *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
-          EffectPosition_ApplyBaseAndYOffset(puff, &screen);
+          EffectPosition_ProjectPoint(puff, &screen);
           screen.x >>= 1;
           screen.x += work->effect->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
@@ -219,4 +219,4 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
 }
 
 // An effect that does nothing.
-void BattleFx_RunNoEffect(void) {}
+void BattleFx_DoNothing(void) {}

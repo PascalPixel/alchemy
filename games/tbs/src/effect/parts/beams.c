@@ -124,7 +124,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(31);
   // Scroll BG1 so the first target is on screen; shake is that scroll,
   // between -128 and 0, and anchor the target's scrolled position.
-  EffectPosition_ApplyAnimationAndYOffset(work->effect->actors[0], &anchor);
+  EffectPosition_ProjectSprite(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
     shake = 96 - anchor.x;
   else
@@ -169,7 +169,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     // on side 1: the wave's six 48x16 cells backwards and the arc's six
     // 48x72 cells, two frames each; the beam image grows through its six
     // cells, three frames each.
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     screenPosition.y += 16;
     if (kind == 4) {
       if (frame <= 11) {
@@ -359,7 +359,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     SET_VELOCITY(object, 0, 0, 0);
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     shake = 64 - screenPosition.x;
     gBgScroll[1].x = shake;
     gBgScroll[1].y = 80;
@@ -380,7 +380,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyRoll(mote->velocityZ);
           SceneTransform_ApplyPitch(mote->velocityX);
           SceneTransform_ApplyYaw(mote->velocityY);
-          EffectPosition_ApplyBaseAndYOffset(&mote->x, &point);
+          EffectPosition_ProjectPoint(&mote->x, &point);
           point.x += 64;
           point.y = point.y + screenPosition.y + 24;
           CLAMP(point.depth, -60, 60);
@@ -406,7 +406,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
     shake = 32 - anchor.x;
   else
@@ -436,7 +436,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     if (frame == 4)
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     screenPosition.y += 16;
     // The rings: two frames each of the two star burst cells, then of the
     // two crescent cells.
@@ -458,7 +458,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
         s32 size = spark->variant;
 
         if (size > 0) {
-          EffectPosition_ApplyBaseAndYOffset(&spark->x, &spot);
+          EffectPosition_ProjectPoint(&spark->x, &spot);
           spot.x += shake;
           size >>= 3;
           size += 2;

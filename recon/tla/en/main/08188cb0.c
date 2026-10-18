@@ -69,7 +69,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
@@ -157,7 +157,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 70; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.
     if (effect->variant == 0) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &position);
+      EffectPosition_ProjectBattler(effect->actor, &position);
       if (effect->side == 0)
         REG_BG2X = (80 - position.x) << 8;
       else
@@ -183,7 +183,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
         }
       }
     } else {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
+      EffectPosition_ProjectBattler(effect->actors[0], &position);
       if (frame >= 8 && frame <= 23) {
         s32 cell = (frame - 8) / 2;
 
@@ -209,7 +209,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     // Frame 18: the hit. The target flashes and reels, the screen shakes and
     // the swirl bursts into sparks.
     if (frame == 18) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
+      EffectPosition_ProjectBattler(effect->actors[0], &position);
       Func_081180e8(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       Func_08118088(effect->actors[0], 6);

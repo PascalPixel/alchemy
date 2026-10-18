@@ -1,17 +1,17 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Running scene and table effects, and shared target helpers.
 
-// Calls the empty BattleFx_RunNoEffect count times, without waiting for a
+// Calls the empty BattleFx_DoNothing count times, without waiting for a
 // frame.
 // count : how many calls
-void BattleFx_CallNoEffect(s32 count) {
+void BattleFx_CallDoNothing(s32 count) {
   s32 callIndex;
 
   callIndex = 0;
   if (count != 0) {
     do {
       callIndex += 1;
-      BattleFx_RunNoEffect();
+      BattleFx_DoNothing();
     } while (callIndex != count);
   }
 }

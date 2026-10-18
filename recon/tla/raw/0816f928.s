@@ -69,7 +69,7 @@ BattleFx_RunHurricane:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [r5]
 	movs r3, #64
 	subs r3, r3, r2

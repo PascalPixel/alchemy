@@ -180,7 +180,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
           point[0] = object->x;
           point[1] = object->y;
           point[2] = object->z;
-          EffectPosition_ApplyBaseAndYOffset(point, &screen);
+          EffectPosition_ProjectPoint(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * PILLAR_W + 8 &&
               screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {

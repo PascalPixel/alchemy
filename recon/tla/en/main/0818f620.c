@@ -47,7 +47,7 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
@@ -153,11 +153,11 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 
   ball = &work->particles[63];
   for (frame = 0; frame != frames; frame++) {
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &from);
+    EffectPosition_ProjectBattler(effect->actor, &from);
     if (mode == 3)
       Func_0815e22c(&to);
     else
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &to);
+      EffectPosition_ProjectBattler(effect->actors[0], &to);
     if (mode == 0 && frame == 0)
       Audio_PlayCue(140);
 

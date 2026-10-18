@@ -62,7 +62,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -116,7 +116,7 @@ void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &caster);
+    EffectPosition_ProjectBattler(effect->actor, &caster);
     if (effect->side == 0) {
       switch (frame / 6) {
       case 0:

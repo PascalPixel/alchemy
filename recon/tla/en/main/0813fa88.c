@@ -1,7 +1,7 @@
 // Near miss, differ 2 of 280 (10 without its devices).
 
-// Twin: The Broken Seal's BattleFx_PrepareScene, the start of the
-// light-streak backdrop the scenes raise behind the battle (BattleFx_ScheduleCallbacksAndReleaseBlocks,
+// Twin: The Broken Seal's BattleFx_StartElementStreaks, the start of the
+// light-streak backdrop the scenes raise behind the battle (BattleFx_EndElementStreaks,
 // already C, takes it down; both are reached through the far-call table,
 // table_47.s). ⚓️ rebuilt it: instead of BattleFx_BeginCanvasLayer it sets
 // the BG2 canvas up step by step, a frame at a time, as 0813eb70 does; it

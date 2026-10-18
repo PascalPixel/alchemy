@@ -120,13 +120,13 @@ BattleFx_RunOdyssey:
 	ldr r2, [sp, #60]
 	ldr r1, [sp, #32]
 	ldr r0, [r2, #8]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r6, [sp, #60]
 	ldr r1, [sp, #28]
 	movs r3, #36
 	ldrsh r0, [r6, r3]
 	mov r7, r11
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	cmp r7, #0
 	bne .L_08190cc8
 	movs r1, #240

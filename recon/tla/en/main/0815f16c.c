@@ -246,8 +246,8 @@ void BattleFx_RunProjectileVolley(struct SummonAction *, s32);
 s32 Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Func_08158ce0(s32, s32);
 void Func_0815b434(void *, s32, s32);
-void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
-void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
+void EffectPosition_ProjectPoint(void *, s32 *);
+void EffectPosition_ProjectScaledBattler(s32, s32 *);
 void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
@@ -587,8 +587,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   else
     work->unk7784 = 50;
   Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
-  EffectPosition_ApplyStepAndYOffset(action->actor, target);
-  EffectPosition_ApplyStepAndYOffset(action->target, base);
+  EffectPosition_ProjectScaledBattler(action->actor, target);
+  EffectPosition_ProjectScaledBattler(action->target, base);
   BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
   work->unk77b4 = 24;
   work->unk77b8 = 0;
@@ -615,7 +615,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   object->unk2c = 0;
   object->unk34 = 0;
   object->unk48 = 0;
-  EffectPosition_ApplyStepAndYOffset(action->target, base);
+  EffectPosition_ProjectScaledBattler(action->target, base);
   base[0] = base[0] / 2;
   Audio_PlayCue(212);
 
@@ -630,7 +630,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           Func_080150e4(p->vz);
           SceneTransform_ApplyPitch(p->vx);
           SceneTransform_ApplyYaw(p->vy);
-          EffectPosition_ApplyBaseAndYOffset(p, pos);
+          EffectPosition_ProjectPoint(p, pos);
           pos[0] = pos[0] / 2 + base[0];
           if (kind <= 37)
             pos[1] = pos[1] + base[1] - 8;
@@ -653,7 +653,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (kind <= 37 && count < 64) {
       Render_ResetTransformState();
       Transform_SetLookAt(bg, (u8 *)bg + 12);
-      EffectPosition_ApplyBaseAndYOffset(origin, pos);
+      EffectPosition_ProjectPoint(origin, pos);
       pos[0] = pos[0] / 2;
       drawFuncs.draw[0](screen, EWRAM_BUF + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                         40);
@@ -976,7 +976,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       break;
     }
     if (frame < 6) {
-      EffectPosition_ApplyStepAndYOffset(action->target, base);
+      EffectPosition_ProjectScaledBattler(action->target, base);
       base[0] = base[0] / 2;
       base[1] += 8;
     }
@@ -1006,7 +1006,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               n = (p->life >> 2) + 1;
               if (n > 10)
                 n = 10;
-              EffectPosition_ApplyBaseAndYOffset(p, point);
+              EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                 point[0] - n / 2, point[1] - n, n, n * 2);
@@ -1019,7 +1019,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             p = &work->particle[i / 2];
             if (p->life > 0) {
               n = __divsi3(p->life, 20) + 2;
-              EffectPosition_ApplyBaseAndYOffset(p, point);
+              EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[(i / 2) & 1](
                   screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2,
@@ -1067,7 +1067,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         for (i = 0; i != 32; i++, p++) {
           if (p->life >= 0) {
             n = (i & 1) + 6;
-            EffectPosition_ApplyBaseAndYOffset(p, point);
+            EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] >> 1;
             drawFuncs.draw[kind == 78](
                 screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2,
@@ -1094,7 +1094,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (frame >= i + 4 && p->life <= 23) {
-          EffectPosition_ApplyBaseAndYOffset(p, point);
+          EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, EWRAM_BUF, point[0] - 20, point[1] - 32, 40,
                             64);
@@ -1173,7 +1173,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame >= i + 4) {
           life = p->life;
           if (life <= 23) {
-            EffectPosition_ApplyBaseAndYOffset(p, point);
+            EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + 0x1809 + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
@@ -1255,7 +1255,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           if (frame >= i / 2 + 4) {
             life = p->life;
             if (life <= 11) {
-              EffectPosition_ApplyBaseAndYOffset(p, point);
+              EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, EWRAM_BUF + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
@@ -1389,7 +1389,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           if (frame >= i / 2 + 4) {
             life = p->life;
             if (life <= 9) {
-              EffectPosition_ApplyBaseAndYOffset(p, point);
+              EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, EWRAM_BUF + 0xd80 + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
@@ -1572,7 +1572,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           Render_ResetTransformState();
           SceneTransform_ApplyPitch(p->vx);
           SceneTransform_ApplyYaw(p->vy);
-          EffectPosition_ApplyBaseAndYOffset(p, point);
+          EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2 + target[0] / 2;
           point[1] = point[1] + target[1] + 32;
           drawFuncs.draw[1](screen, EWRAM_BUF + gData_08198946[m], point[0] - 4,
@@ -2062,7 +2062,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (EWRAM_BUF[0x400 + i] >> 1 == frame / 2)
           EWRAM_BUF[0x800 + i] = EWRAM_BUF[i];
       }
-      EffectPosition_ApplyStepAndYOffset(action->actor, point2);
+      EffectPosition_ProjectScaledBattler(action->actor, point2);
       point2[0] = point2[0] / 2;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
@@ -2087,7 +2087,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           m = 0;
           if (p->life > 11)
             m = (p->life - 12) / 2;
-          EffectPosition_ApplyBaseAndYOffset(p, point);
+          EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
           drawFuncs.draw[1](screen, EWRAM_BUF + m * 0x400, point[0] - 16,
                             point[1] - 16, 32, 32);
@@ -2112,7 +2112,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           m = 0;
           if (p->life > 11)
             m = __divsi3(p->life - 12, 3);
-          EffectPosition_ApplyBaseAndYOffset(p, point);
+          EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x800, point[0] - 16,
                             point[1] - 32, 32, 64);
@@ -2130,7 +2130,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         m = __modsi3(i, 3);
-        EffectPosition_ApplyBaseAndYOffset(p, point);
+        EffectPosition_ProjectPoint(p, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x240, point[0] - 12,
                               point[1] - 12, 24, 24);
@@ -2154,7 +2154,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame >= i / 2 + 4) {
           life = p->life;
           if (life <= 23) {
-            EffectPosition_ApplyBaseAndYOffset(p, point);
+            EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
@@ -2170,7 +2170,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame >= i + 4) {
           life = p->life;
           if (life <= 23) {
-            EffectPosition_ApplyBaseAndYOffset(p, point);
+            EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
             if (kind == 69 || kind == 74)
               drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480,
@@ -2189,7 +2189,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     }
 
     if (kind == 8 && frame < 44) {
-      EffectPosition_ApplyBaseAndYOffset(origin, point);
+      EffectPosition_ProjectPoint(origin, point);
       point[0] = point[0] / 2;
       drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4,
                         20, 40);
@@ -2231,7 +2231,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       }
     }
     if (kind <= 37 && frame <= 5) {
-      EffectPosition_ApplyBaseAndYOffset(origin, point);
+      EffectPosition_ProjectPoint(origin, point);
       point[0] = point[0] / 2;
       drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4,
                         20, 40);

@@ -146,7 +146,7 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
           cel = p->variant / 6;
           if (cel > 5)
             cel = 5;
-          EffectPosition_ApplyBaseAndYOffset((s32 *)p, &screen);
+          EffectPosition_ProjectPoint((s32 *)p, &screen);
           screen.x >>= 1;
           if (i == 5) {
             BattleFxKernels_IntegrateVector3(p, 62, 0x800);

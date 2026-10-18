@@ -159,7 +159,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
             xyz[0] = mote->z * Trig_Sin(mote->x);
             xyz[1] = mote->y;
             xyz[2] = mote->z * Trig_Cos(mote->x);
-            EffectPosition_ApplyBaseAndYOffset(xyz, pos = &screen);
+            EffectPosition_ProjectPoint(xyz, pos = &screen);
             pos->x = (pos->x >> 17) + 64;
             pos->y = HI(pos->y) + 60;
             draw[1](canvas, work->sheet + Data_08198362[cel],

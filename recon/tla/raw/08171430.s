@@ -335,7 +335,7 @@ BattleFx_RunLightSurge:
 	bhi .L_081717c2
 	ldr r1, [sp, #28]
 	mov r0, r8
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r0, [sp, #28]
 	asrs r5, r5, #1
 	ldr r3, [r0]
@@ -549,13 +549,13 @@ BattleFx_RunLightSurge:
 	ldr r7, [sp, #28]
 	adds r0, r6, #0
 	adds r1, r7, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	b .L_081718a8
 .L_0817189c:
 	ldr r7, [sp, #28]
 	adds r0, r5, #0
 	adds r1, r7, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	add r6, sp, #92
 .L_081718a8:
 	ldr r3, [r7]
@@ -660,7 +660,7 @@ BattleFx_RunLightSurge:
 .L_08171972:
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r7]
 	mov r0, r8
 	lsrs r2, r3, #31
@@ -701,7 +701,7 @@ BattleFx_RunLightSurge:
 	ldrsh r0, [r4, r3]
 	adds r1, #80
 	str r1, [sp, #20]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [sp, #16]
 	movs r2, #5
 	strb r2, [r3]

@@ -180,7 +180,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
 
               // Project the streak onto the half-width canvas; its image
               // changes every 8 frames and stays on the sixth.
-              EffectPosition_ApplyBaseAndYOffset(streak, &position);
+              EffectPosition_ProjectPoint(streak, &position);
               position.x >>= 1;
               step = streak->variant / 8;
               if (step > 5)
@@ -357,7 +357,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
         SET_VECTOR(worldPoint,
                    mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
                    mote->y, mote->z);
-        EffectPosition_ApplyBaseAndYOffset(worldPoint, &position);
+        EffectPosition_ProjectPoint(worldPoint, &position);
         position.x >>= 1;
         if (position.depth <= 313)
           position.depth = 314;

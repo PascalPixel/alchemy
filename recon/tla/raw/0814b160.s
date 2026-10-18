@@ -142,7 +142,7 @@ BattleFx_RunCurse:
 	add r5, sp, #28
 	ldrsh r0, [r3, r1]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	mov r2, r10
 	ldr r3, [r2, #4]
 	cmp r3, #1

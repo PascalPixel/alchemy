@@ -50,7 +50,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -165,8 +165,8 @@ void BattleFx_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   savedMode = victim[18];
   savedX = victim[2];
   savedZ = victim[4];
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &source);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &source);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -309,9 +309,9 @@ void BattleFx_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       victim[3] = (294 - height) << 16;
       victim[4] = -(Trig_Sin(frame << 10) << 3);
       if (frame == 60) {
-        EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &source);
+        EffectPosition_ProjectBattler(effect->actors[0], &source);
       }
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(effect->actors[0], &target);
     }
     if ((u32)(frame - 152) <= 15) {
       work->transferMode = 1;

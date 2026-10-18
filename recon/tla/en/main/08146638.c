@@ -185,7 +185,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale[2] = scale[0];
           Func_080151ac(scale);
           Func_080150e4(j * 0x199a);
-          depth = EffectPosition_ApplyBaseAndYOffset(
+          depth = EffectPosition_ProjectPoint(
               &gData_08197924[(j & 1) * 3], &pos);
           if (nearest < depth)
             nearest = depth;

@@ -55,7 +55,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -327,7 +327,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The Djinni.
-    EffectPosition_ApplyBaseAndYOffset((struct EffectStep *)focus, &screen);
+    EffectPosition_ProjectPoint((struct EffectStep *)focus, &screen);
     if (mode == 0) {
       if (frame <= 73) {
         blit(canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20, 20,
@@ -364,7 +364,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
       if (size < 0) {
         continue;
       }
-      EffectPosition_ApplyBaseAndYOffset(p, &debris);
+      EffectPosition_ProjectPoint(p, &debris);
       size = (size >> 3) + 2;
       blit(canvas, sprites + gData_08197410[size - 1], debris.x / 2 - size / 2,
            debris.y - size, size, size * 2);
@@ -382,7 +382,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
           continue;
         }
         picture = 5 - p->variant / 6;
-        EffectPosition_ApplyBaseAndYOffset(p, &debris);
+        EffectPosition_ProjectPoint(p, &debris);
         blit(canvas, work->sheet + 0x2000 + (picture << 11), debris.x / 2 - 16,
              debris.y - 32, 32, 64);
         BattleFxKernels_IntegrateVector3(p, 62, -0x400);

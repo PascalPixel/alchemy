@@ -223,7 +223,7 @@ Func_0815e9f4:
 	ldr r0, [r2, #8]
 	adds r1, r3, #0
 	str r3, [sp, #12]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r1, [sp, #12]
 	mov r2, r10
 	ldr r3, [r1]
@@ -288,7 +288,7 @@ Func_0815e9f4:
 	add r5, sp, #80
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	adds r3, #64
 	str r3, [r5]
@@ -408,7 +408,7 @@ Func_0815e9f4:
 	ldrsh r0, [r1, r5]
 	add r5, sp, #92
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	mov r2, r11
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -547,7 +547,7 @@ Func_0815e9f4:
 	mov r1, r11
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #12]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r2, [sp, #12]
 	ldr r3, [r2, #4]
 	adds r3, #16
@@ -642,7 +642,7 @@ Func_0815e9f4:
 	ble .L_0815ef66
 	mov r1, r8
 	adds r0, r7, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r3, r8
 	ldr r2, [r3]
 	ldr r1, [sp, #48]

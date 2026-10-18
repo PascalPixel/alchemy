@@ -4511,7 +4511,7 @@ BattleFx_RunCharon:
 	movs r7, #0
 	ldrsh r0, [r1, r7]
 	mov r1, r8
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	movs r0, #103
 	bl Audio_PlayCue
 	ldr r3, .L_081782a8

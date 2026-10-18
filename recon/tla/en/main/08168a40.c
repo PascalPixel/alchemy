@@ -96,7 +96,7 @@ void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
@@ -417,7 +417,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       // Each target the row passes is struck once, in a burst of sparks.
       for (i = 0; i != effect->count; i++) {
         if (hit[i] == 0) {
-          EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[i], &unit);
+          EffectPosition_ProjectBattler(effect->actors[i], &unit);
           if (unit.x > rowX) {
             s32 k;
 

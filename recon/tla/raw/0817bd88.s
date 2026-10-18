@@ -456,7 +456,7 @@ BattleFx_RunFirePuppet:
 	add r5, sp, #80
 	adds r1, r5, #0
 	ldr r0, [r2, #8]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	mov r3, r8
 	strb r3, [r6, #25]
 	ldr r0, [sp, #56]

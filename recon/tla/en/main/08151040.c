@@ -154,7 +154,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         s32 size;
 
         // Depth 160-799 gives sizes 10 down to 1.
-        EffectPosition_ApplyBaseAndYOffset((s32 *)ember, &screen);
+        EffectPosition_ProjectPoint((s32 *)ember, &screen);
         screen.x >>= 1;
         if (screen.depth < 160)
           screen.depth = 160;

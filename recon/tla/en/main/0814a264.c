@@ -153,7 +153,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 
     if (frame < 64) {
       for (pillar = 0; pillar != Data_08197a20[effect->variant]; pillar++) {
-        EffectPosition_ApplyBaseAndYOffset((s32 *)&work->particles[pillar],
+        EffectPosition_ProjectPoint((s32 *)&work->particles[pillar],
                                            &screen);
         screen.x /= 2;
         screen.y -= 8;

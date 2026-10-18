@@ -328,7 +328,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
         SET_VECTOR(point, object->x, object->y, object->z);
-        EffectPosition_ApplyBaseAndYOffset(point, &screen);
+        EffectPosition_ProjectPoint(point, &screen);
         for (j = 0; j != 6; j++) {
           struct EffectStep *spark =
               &work->particles[CYBELE_FIRST_SPARK + i * 6 + j];
@@ -470,7 +470,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
               GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
           SET_VECTOR(point, object->x, 0, object->z);
-          EffectPosition_ApplyBaseAndYOffset(point, &screen);
+          EffectPosition_ProjectPoint(point, &screen);
           screen.x >>= 1;
           draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24,
                   20, 24);
@@ -481,7 +481,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           for (j = 0; j != 5; j++) {
             struct EffectStep *ember = &work->particles[i * 10 + j];
 
-            EffectPosition_ApplyBaseAndYOffset(&ember->x, &screen);
+            EffectPosition_ProjectPoint(&ember->x, &screen);
             screen.x >>= 1;
             if (ember->variant >= 0 && ember->variant <= 26) {
               s32 cel = CYBELE_EMBER_CELL;

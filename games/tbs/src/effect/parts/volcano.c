@@ -96,7 +96,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
     if (frame < 64) {
       for (pillar = 0; pillar != gVolcano_Counts[work->effect->variant];
            pillar++) {
-        EffectPosition_ApplyBaseAndYOffset(&work->particles[pillar], &screen);
+        EffectPosition_ProjectPoint(&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])

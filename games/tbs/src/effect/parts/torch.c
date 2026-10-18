@@ -44,8 +44,8 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(heapCache, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
-  BattleFx_PrepareCanvasEffect(effect, 6, work->effect->side, 2, &screenX,
-                               &screenY);
+  BattleFx_RunDjinniEntrance(effect, 6, work->effect->side, 2, &screenX,
+                             &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -158,7 +158,7 @@ void BattleFx_RunKite(struct BattleEffectArgument *effect) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side ^ 1, 0, &originX,
-                               &originY);
+  BattleFx_RunDjinniEntrance(effect, 7, work->effect->side ^ 1, 0, &originX,
+                             &originY);
   BattleFx_EndCanvasLayer();
 }

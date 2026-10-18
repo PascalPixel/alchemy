@@ -260,7 +260,7 @@ void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
 void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleFxKernels_IntegrateVector2(struct Particle *, s32, s32);
-void EffectPosition_ApplyStepAndYOffset(s32, struct Particle *);
+void EffectPosition_ProjectScaledBattler(s32, struct Particle *);
 void Camera_ApplyVerticalShake(s32);
 void ObjectGroup_TickMemberTimers(void);
 void Scheduler_RemoveCallback(void *);
@@ -1542,7 +1542,7 @@ void BattleFx_RunCharon(struct BattleEffectArgument *arg) {
           }
           if (landed == 1) {
             member->timer = 0;
-            EffectPosition_ApplyStepAndYOffset(arg->actors[i], member);
+            EffectPosition_ProjectScaledBattler(arg->actors[i], member);
             Audio_PlayCue(103);
             for (j = 0; j != 16; j++) {
               s32 angle = Random16() & 0x7fff;

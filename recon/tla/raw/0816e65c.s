@@ -156,7 +156,7 @@ Func_0816e65c:
 	ldrsh r0, [r1, r3]
 	ldr r7, .L_0816ea34
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	movs r2, #0
 	mov r8, r2
 	mov r10, r5
@@ -243,12 +243,12 @@ Func_0816e65c:
 	ldr r1, [sp, #8]
 	mov r10, r0
 	ldr r0, [r3, #8]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [sp, #52]
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	ldr r1, [sp, #12]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r1, r10
 	movs r3, #9
 	str r3, [r1]

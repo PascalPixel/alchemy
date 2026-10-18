@@ -102,7 +102,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         }
-        EffectPosition_ApplyBaseAndYOffset(spark, &screen);
+        EffectPosition_ProjectPoint(spark, &screen);
         screen.x >>= 1;
         Transform_Pop();
         CLAMP(screen.depth, 250, 634);
@@ -123,7 +123,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     // The Djinni appears at the swirl's centre, bobbing.
     if (frame > 82) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
-      EffectPosition_ApplyBaseAndYOffset(djinniPoint, &screen);
+      EffectPosition_ProjectPoint(djinniPoint, &screen);
       screen.x >>= 1;
       draw[1](canvas, work, screen.x - 10, screen.y - 17, 20, 34);
     }
@@ -146,7 +146,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
       target[1] += 0x40000;
     SET_VECTOR(point, target[0], target[1],
                target[2] + Trig_Sin(frame << 11) * 40);
-    EffectPosition_ApplyBaseAndYOffset(point, &view);
+    EffectPosition_ProjectPoint(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work, view.x - 10, view.y - 17, 20, 34);
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
@@ -179,7 +179,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
             if (distance != 0) {
               s32 cel;
 
-              EffectPosition_ApplyBaseAndYOffset(spark, &view);
+              EffectPosition_ProjectPoint(spark, &view);
               view.x >>= 1;
               CLAMP(view.depth, 314, 634);
               /* FAKEMATCH: the size series A draws its sparks

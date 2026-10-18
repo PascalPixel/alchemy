@@ -194,7 +194,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     work->particles[i].variant = -1;
   }
 
-  EffectPosition_ApplyAnimationAndYOffset(work->effect->actor, &origin);
+  EffectPosition_ProjectSprite(work->effect->actor, &origin);
   if (mode == BURST_SHOWER_MODE_PINK) {
     origin.y -= 16;
   }
@@ -220,8 +220,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   // Where each target stands.
   i = 0;
   while (i != work->effect->count) {
-    EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],
-                                       &targetSpots[i]);
+    EffectPosition_ProjectScaledBattler(work->effect->actors[i],
+                                        &targetSpots[i]);
     i += 1;
   }
 

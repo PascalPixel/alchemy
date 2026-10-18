@@ -137,8 +137,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side, 0, &originX,
-                                 &originY);
+    BattleFx_RunDjinniEntrance(effect, 3, work->effect->side, 0, &originX,
+                               &originY);
   REG_BG2PA = Q_8_8(1);
 
   // The rune, the motes at 0x1000 and the Djinni at 0x2000.
@@ -156,7 +156,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x2000);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
                         0x04040404); // 4 off every pixel each frame
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   AudioCommand_PlayFar(SE_142);
@@ -203,7 +203,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         position.world.x = object->x;
         position.world.y = object->y;
         position.world.z = object->z;
-        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);
+        EffectPosition_ProjectPoint(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle: its three corners, turned a third of a circle apart and
@@ -222,8 +222,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(gBind_Vertex,
-                                               &position.projected);
+            EffectPosition_ProjectPoint(gBind_Vertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
           }
@@ -309,7 +308,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x1000);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   AudioCommand_PlayFar(SE_142);
@@ -342,7 +341,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
         position.world.x = object->x;
         position.world.y = object->y;
         position.world.z = object->z;
-        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);
+        EffectPosition_ProjectPoint(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle: its three corners, turned a third of a circle apart and
@@ -361,8 +360,8 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(gBind_TriangleStrikeVertex,
-                                               &position.projected);
+            EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,
+                                        &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
           }

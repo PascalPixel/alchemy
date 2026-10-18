@@ -113,7 +113,7 @@ void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Audio_PlayCue(s32 cue);
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
+void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void Func_0815f0a0(s32 resource);
 void Func_081180e8(s32 phase);
@@ -218,9 +218,9 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         work->particles[56 + i].variant = (Random16() & 3) + 2;
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;
-      EffectPosition_ApplyAnimationAndYOffset(effect->actor, &card);
+      EffectPosition_ProjectSprite(effect->actor, &card);
       for (i = 0; i != effect->count; i++)
-        EffectPosition_ApplyStepAndYOffset(effect->actors[i], &targets[i]);
+        EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
       REG_BLDCNT = 0;
       work->transferMode = 1;
       work->transferValue = 0;
@@ -355,7 +355,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
                                     0x10000, 100 + (frame - 68) * 3);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
           burst = 0;
-          EffectPosition_ApplyStepAndYOffset(effect->actors[i], &aim);
+          EffectPosition_ProjectScaledBattler(effect->actors[i], &aim);
           for (j = 0; j != 64; j++) {
             struct EffectStep *spark = &SPARKS[i * 64 + j];
 

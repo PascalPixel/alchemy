@@ -67,11 +67,11 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleFx_PrepareCanvasEffect
+                   s32 *target);  // BattleFx_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
+void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
 void SummonFx_RunCanvasMode3(struct BattleEffectArgument *effect);
@@ -408,9 +408,9 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     shots = 56;
 
   // Where the shots leave from, and where the targets are.
-  EffectPosition_ApplyAnimationAndYOffset(effect->actor, &user);
+  EffectPosition_ProjectSprite(effect->actor, &user);
   for (member = 0; member != effect->count; member++)
-    EffectPosition_ApplyStepAndYOffset(effect->actors[member],
+    EffectPosition_ProjectScaledBattler(effect->actors[member],
                                        &targets[member]);
   if (mode == 12 || mode == 15) {
     if (effect->side == 0)
@@ -729,7 +729,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         if (mote->variant >= 0) {
           s32 x;
 
-          EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+          EffectPosition_ProjectPoint((s32 *)mote, &screen);
           screen.x >>= 1;
           pair[0](canvas, sheet + gData_08197410[5], screen.x - 3, screen.y - 6,
                   6, 12);

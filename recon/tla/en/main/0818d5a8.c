@@ -76,7 +76,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Object_ResetMotion(struct MotionObject *object);
@@ -187,7 +187,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
       landed = 0;
     }
     if (frame > 17 || frame == 0) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &pos);
+      EffectPosition_ProjectBattler(effect->actor, &pos);
       pos.x /= 2;
     }
 

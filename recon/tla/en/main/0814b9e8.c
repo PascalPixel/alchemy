@@ -99,7 +99,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *anchor,
                    s32 *size); // the canvas preparer
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *pos);
 struct RenderJob *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const s8 *vertices, void *projected, s32 count);
@@ -152,7 +152,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
                                work->sheet + SHEET_TEXTURE, 1, 1);
   } else {
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
+    EffectPosition_ProjectBattler(effect->actors[0], &pos);
     anchor[0] = pos.x;
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
                                work->sheet + SHEET_TEXTURE, 1, 1);

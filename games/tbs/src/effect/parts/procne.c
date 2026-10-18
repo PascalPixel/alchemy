@@ -220,7 +220,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
           world.x = point[index].z * Trig_Sin(point[index].velocityY);
           world.y = point[index].y;
           world.z = point[index].z * Trig_Cos(point[index].velocityY);
-          EffectPosition_ApplyBaseAndYOffset(&world.x, &screen);
+          EffectPosition_ProjectPoint(&world.x, &screen);
           screen.x >>= 1;
           if (point[index].y <= 0x3fffff) {
             draw[0](canvas, work->sheet + 0x2400, screen.x - 12, screen.y - 12,
@@ -354,7 +354,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
             zz = (point->z >> 8) * (point->z >> 8);
             dist = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (dist != 0) {
-              EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
+              EffectPosition_ProjectPoint(&point->x, &screen);
               screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
               screen.y = (screen.y >> 16) + (wave.y >> 16) - 4;
               screen.depth >>= 16;
@@ -412,7 +412,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
             index = 0;
             do {
               if (spark[index].variant > 0) {
-                EffectPosition_ApplyBaseAndYOffset(&spark[index].x, &screen);
+                EffectPosition_ProjectPoint(&spark[index].x, &screen);
                 screen.x = (screen.x >> 17) + 32;
                 screen.y = (screen.y >> 16) + 56;
                 screen.depth >>= 16;
@@ -488,7 +488,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
                 world.y = step->variant * Trig_Cos(slot * 2340);
                 world.z = step->variant * Trig_Sin(slot * 2340);
                 step->variant += 2;
-                EffectPosition_ApplyBaseAndYOffset(&world.x, &screen);
+                EffectPosition_ProjectPoint(&world.x, &screen);
                 screen.x =
                     (screen.x >> 17) + work->particles[index + 60].velocityX;
                 screen.y =

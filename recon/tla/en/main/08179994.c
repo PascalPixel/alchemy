@@ -69,9 +69,9 @@ void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void Audio_PlayCue(s32 cue);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
+void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void Func_0815e22c(struct EffectPosition *midpoint);
 void Render_ResetTransformState(void);
@@ -149,7 +149,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
       lift = 0;
 
     // The ring rises over the caster, and follows it until it is thrown.
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &caster);
+    EffectPosition_ProjectBattler(effect->actor, &caster);
     if (frame >= RING_RISE_FRAME)
       lift += Data_0819940c[effect->variant][RING_LIFT_STEP];
     if (lift > Data_0819940c[effect->variant][RING_LIFT_MAX])
@@ -210,7 +210,7 @@ void BattleFx_RunJuggle(struct BattleEffectArgument *effect) {
       for (member = 0; member != effect->count; member++) {
         struct EffectStep *spark;
 
-        EffectPosition_ApplyAnimationAndYOffset(effect->actors[member],
+        EffectPosition_ProjectSprite(effect->actors[member],
                                                 &target);
         Func_08118088(effect->actors[member], 4);
         Func_0814cd48(effect->actors[member], 7, 5, member, 16);

@@ -388,7 +388,7 @@ BattleFx_RunVoidBeam:
 	str r3, [r7, #8]
 	adds r1, r5, #0
 	adds r0, r7, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	adds r6, #1
 	asrs r3, r3, #1
@@ -543,7 +543,7 @@ BattleFx_RunVoidBeam:
 	mov r0, r8
 	mov r1, r9
 	str r2, [r0, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r1, r9
 	ldr r3, [r1]
 	asrs r3, r3, #1
@@ -688,7 +688,7 @@ BattleFx_RunVoidBeam:
 	ldr r3, [r1, #16]
 	mov r1, r11
 	str r3, [r7, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r2, r11
 	ldr r3, [r2]
 	asrs r2, r3, #1

@@ -49,8 +49,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
-                                              &screenPosition);
+  EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,

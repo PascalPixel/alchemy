@@ -144,12 +144,12 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
       newSpark->velocityX = -newSpark->velocityX;
     newSpark->variant = i / 2 + 16; // frames left
   }
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
+  EffectPosition_ProjectBattler(work->effect->actors[0], &origin);
 
   for (frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
     // For 15 frames, draw the burst at the user in two halves.
     if (frame <= 14) {
-      EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &screen);
+      EffectPosition_ProjectBattler(work->effect->actor, &screen);
       draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
       draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
     }
@@ -176,7 +176,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
         spark = &work->particles[i];
         size = spark->variant;
         if (size > 0) {
-          EffectPosition_ApplyBaseAndYOffset(&spark->x, &sparkScreen);
+          EffectPosition_ProjectPoint(&spark->x, &sparkScreen);
           size >>= 4;
           size += 2;
           sparkScreen.x >>= 1;

@@ -154,7 +154,7 @@ BattleFx_RunDeathPlunge:
 	ldrsh r0, [r1, r4]
 	adds r1, r2, #0
 	str r2, [sp, #20]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r0, r9
 	bl Object_ResetMotion
 	adds r3, r5, #0
@@ -296,7 +296,7 @@ BattleFx_RunDeathPlunge:
 	ldr r3, [r1, #16]
 	mov r1, r10
 	str r3, [r0, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r4, r10
 	ldr r3, [r4]
 	asrs r2, r3, #1

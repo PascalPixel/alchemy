@@ -136,7 +136,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     work->fadeStep = 0;
   } else {
     BattleFx_BeginCanvasLayer(0);
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     originX = pos.x / 2;
     originY = pos.y + 48;
   }

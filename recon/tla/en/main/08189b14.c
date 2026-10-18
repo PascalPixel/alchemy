@@ -84,7 +84,7 @@ void BattleFx_LoadBlitter(s32 slot, s32 packed);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
@@ -172,7 +172,7 @@ void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
     // Frame 0: the swords set out from 80 pixels above and beside the
     // target, on the user's side, toward it.
     if (frame == 0) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(effect->actors[0], &target);
       if (effect->side == 0)
         start.x = target.x + 80;
       else

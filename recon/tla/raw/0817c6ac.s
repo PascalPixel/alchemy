@@ -64,7 +64,7 @@ BattleFx_RunFume:
 	adds r1, r4, #0
 	ldr r0, [r3, #8]
 	str r4, [sp, #36]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [sp, #80]
 	mov r3, sp
 	adds r3, #92
@@ -72,7 +72,7 @@ BattleFx_RunFume:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #32]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r4, [sp, #76]
 	movs r2, #224
 	lsls r2, r2, #3

@@ -208,7 +208,7 @@ BattleFx_RunOrbitingSpirals:
 	add r5, sp, #44
 	str r3, [r2, #8]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r3, r8
 	mov r11, r5
 	movs r7, #0

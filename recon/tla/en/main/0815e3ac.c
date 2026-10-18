@@ -99,9 +99,9 @@ s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
 s32 Battle_GetObjectTableValueFar(s32 actor);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void EffectPosition_ApplyStepAndYOffset(s32 actor,
+void EffectPosition_ProjectScaledBattler(s32 actor,
                                         struct EffectPosition *position);
-void EffectPosition_ApplyAnimationAndYOffset(s32 actor,
+void EffectPosition_ProjectSprite(s32 actor,
                                              struct EffectPosition *position);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Render_ResetTransformState(void);
@@ -249,7 +249,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
     } while (0);
     REG_BG1CNT = value;
   }
-  EffectPosition_ApplyAnimationAndYOffset(effect->actors[0], &anchor);
+  EffectPosition_ProjectSprite(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 96 - anchor.x;
   else
@@ -302,7 +302,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
       else
         Func_08118088(effect->actors[0], 0);
     }
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     pos.y += 16;
     if (kind == 6)
       pos.y += 16;

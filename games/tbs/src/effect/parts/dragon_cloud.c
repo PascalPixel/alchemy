@@ -232,7 +232,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (ember->y >= 0) {
           s32 size;
 
-          EffectPosition_ApplyBaseAndYOffset(&ember->x, &position);
+          EffectPosition_ProjectPoint(&ember->x, &position);
           position.x >>= 1;
           if (position.depth <= 159)
             position.depth = 160;

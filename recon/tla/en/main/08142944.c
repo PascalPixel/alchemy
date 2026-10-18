@@ -106,7 +106,7 @@ s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 u32 Random16(void);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor,
+void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -171,7 +171,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     frames = 76;
   for (frame = 0; frame != frames; frame++) {
     // The effect's centre, beside or above the user.
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &center);
+    EffectPosition_ProjectBattler(effect->actor, &center);
     if (kind == KIND_RIGHT) {
       center.x += 40;
       center.y -= 24;

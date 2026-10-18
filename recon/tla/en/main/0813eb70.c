@@ -1,6 +1,6 @@
 // Near miss, differ 378 of 1102 (two instructions short).
 
-// Twin: The Broken Seal's BattleFx_RunTileAndPaletteAnimation, reached
+// Twin: The Broken Seal's BattleFx_RunShatteringOpening, reached
 // from the scenes through the far-call table (table_47.s). It sets up its
 // own heap blocks (only the work and the canvas: the sheet block it releases
 // at the end is never taken), stores work->effect, marks the work active,

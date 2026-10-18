@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -213,7 +213,7 @@ void BattleFx_RunStarMine(struct BattleEffectArgument *effect) {
         continue;
       }
       picture = ((frame + i) / 2) & 1;
-      EffectPosition_ApplyBaseAndYOffset(star, &pos);
+      EffectPosition_ProjectPoint(star, &pos);
       pos.x >>= 1;
       blitters[0](canvas, work->sheet + 0x1200 + picture * 0x480, pos.x - 12,
                   pos.y - 24, 24, 48);

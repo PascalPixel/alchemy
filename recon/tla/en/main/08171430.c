@@ -51,7 +51,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -240,7 +240,7 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
       if ((u32)(size - 2) > 61) {
         continue;
       }
-      EffectPosition_ApplyBaseAndYOffset(ring, &screen);
+      EffectPosition_ProjectPoint(ring, &screen);
       x = screen.x / 2;
       y = screen.y;
       half = size >> 1;
@@ -301,9 +301,9 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
           glow->velocityX = (Random16() & 15) + 8;
           glow->variant = 0;
         }
-        EffectPosition_ApplyBaseAndYOffset(&head, &screen);
+        EffectPosition_ProjectPoint(&head, &screen);
       } else {
-        EffectPosition_ApplyBaseAndYOffset(bolt, &screen);
+        EffectPosition_ProjectPoint(bolt, &screen);
       }
       vertices[0] = screen.x / 2 - 2;
       vertices[1] = screen.y;
@@ -329,7 +329,7 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
         Func_08118088(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
       }
-      EffectPosition_ApplyBaseAndYOffset(&head, &screen);
+      EffectPosition_ProjectPoint(&head, &screen);
       vertices[8] = screen.x / 2 - 2;
       vertices[9] = screen.y;
       vertices[12] = screen.x / 2 + 2;
@@ -339,7 +339,7 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
 
     // The pillars.
     if ((u32)(frame - 16) <= 63) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &center);
+      EffectPosition_ProjectBattler(effect->actors[0], &center);
       texture.logWidth = 5;
       texture.logHeight = 5;
       texture.pixels = work->sheet + 0x1000;

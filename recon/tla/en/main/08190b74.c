@@ -82,7 +82,7 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *out);
+void EffectPosition_ProjectScaledBattler(s32 id, struct EffectPosition *out);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
@@ -162,8 +162,8 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
   savedScrollX = gBgScroll[1].x;
 
   for (frame = 0; frame != KIND125_FRAMES; frame++) {
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &from);
-    EffectPosition_ApplyStepAndYOffset(effect->actors[0], &to);
+    EffectPosition_ProjectScaledBattler(effect->actor, &from);
+    EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
 
     if (frame == 0) {
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);

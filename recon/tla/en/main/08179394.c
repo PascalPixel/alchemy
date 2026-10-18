@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -152,7 +152,7 @@ void BattleFx_RunRagingHeat(struct BattleEffectArgument *effect) {
                                            COMPOSITE_FLIP_X));
   blitFlipped = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   for (i = 0; i != effect->count; i++) {
-    EffectPosition_ApplyStepAndYOffset(effect->actors[i], &targets[i]);
+    EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
   }
   centerX = targets[0].x + (targets[effect->count - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;

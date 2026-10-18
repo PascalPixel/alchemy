@@ -390,7 +390,7 @@ BattleFx_RunMegiddo:
 	ldr r2, [sp, #96]
 	ldr r1, [sp, #20]
 	ldr r0, [r2, #8]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r3, [sp, #84]
 	cmp r3, #3
 	bne .L_0819022c

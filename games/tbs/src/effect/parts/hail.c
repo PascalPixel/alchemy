@@ -39,13 +39,13 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screenX,
-                               &screenY);
+  BattleFx_RunDjinniEntrance(effect, 1, work->effect->side, 2, &screenX,
+                             &screenY);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
+  EffectPosition_ProjectBattler(work->effect->actors[0], &origin);
 
   // The chips burst up from the first target.
   for (i = 0; i != REVEAL_CHIP_COUNT; i++) {
@@ -181,8 +181,8 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screenX,
-                               &screenY);
+  BattleFx_RunDjinniEntrance(effect, 0, work->effect->side, 2, &screenX,
+                             &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
@@ -259,7 +259,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           s32 x;
           s32 y;
 
-          EffectPosition_ApplyBaseAndYOffset(&rock->x, &position);
+          EffectPosition_ProjectPoint(&rock->x, &position);
           position.x >>= 1;
           x = position.x - 12;
           y = position.y - 24;
@@ -334,10 +334,10 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
 // out, BG1 returns to its saved position and the centre to (120, 120). It
 // takes two random numbers each shaking frame, x first.
 //
-// randomMask: the horizontal range, a power of two.
-// shakeRange: the vertical range, a power of two; both offsets are
-//             centred on half of it.
-void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
+// rangeX: the horizontal range, a power of two.
+// rangeY: the vertical range, a power of two; both offsets are centred on
+//         half of it.
+void Camera_ApplyShake(s32 rangeX, u32 rangeY) {
   s32 displayY;
   s32 offsetX;
   s32 *remainingFrames;
@@ -354,9 +354,9 @@ void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   remainingFrames = &work->shakeFrames;
   if (*remainingFrames > 0) {
-    randomX = (randomMask - 1) & Random16();
-    halfRange = (s32)(shakeRange + (shakeRange >> 0x1F)) >> 1;
-    offsetY = ((shakeRange - 1) & Random16()) - halfRange;
+    randomX = (rangeX - 1) & Random16();
+    halfRange = (s32)(rangeY + (rangeY >> 0x1F)) >> 1;
+    offsetY = ((rangeY - 1) & Random16()) - halfRange;
     displayPosition = gBgScroll;
     offsetX = randomX - halfRange;
     displayY = offsetY + 0x20;

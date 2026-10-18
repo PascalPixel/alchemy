@@ -152,7 +152,7 @@ void WaitFrames(s32 frames);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *pos);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -422,7 +422,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       PARTICLES[i].variant = 0;
 
     // The falling-streak particles start on the first target, held.
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &origin);
+    EffectPosition_ProjectBattler(effect->actors[0], &origin);
     for (i = 0; i != 64; i++) {
       struct EffectStep *p = &PARTICLES[PTCL_STREAKS + i];
 
@@ -504,7 +504,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
           // The screen position (the canvas is half as wide).
           pos = &position;
-          EffectPosition_ApplyBaseAndYOffset((s32 *)shot, pos);
+          EffectPosition_ProjectPoint((s32 *)shot, pos);
           pos->x >>= 1;
           shot->x += shot->velocityX;
           shot->y += shot->velocityY;

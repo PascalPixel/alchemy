@@ -160,7 +160,7 @@ BattleFx_RunBolt:
 	lsls r2, r2, #3
 	ldr r1, [sp, #20]
 	mov r8, r2
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [sp, #20]
 	ldr r4, [sp, #20]
 	ldr r3, [r2]

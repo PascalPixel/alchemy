@@ -111,7 +111,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
     point[0] = object->x;
     point[1] = height;
     point[2] = object->z;
-    EffectPosition_ApplyBaseAndYOffset(point, &screen);
+    EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
          i != SHARDS_PER_MEMBER; i++) {

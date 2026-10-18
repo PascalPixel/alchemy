@@ -154,7 +154,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 height);
-void EffectPosition_ApplyStepAndYOffset(s32 actor,
+void EffectPosition_ProjectScaledBattler(s32 actor,
                                         struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);
@@ -271,7 +271,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
   }
   WaitFrames(1);
 
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &targetPos);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
@@ -317,7 +317,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
     if (variant == 10 && frame == 8)
       Audio_PlayCue(221);
     blows = RECORD(RECORD_BLOWS);
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &actorPos);
+    EffectPosition_ProjectScaledBattler(effect->actor, &actorPos);
     actorPos.x /= 2;
 
     // The arcs and waves, mirrored on odd blows.
@@ -401,7 +401,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
       s32 size = mote->variant;
 
       if (size > 0) {
-        EffectPosition_ApplyBaseAndYOffset(&mote->x, &pos);
+        EffectPosition_ProjectPoint(&mote->x, &pos);
         pos.x /= 2;
         size >>= 3;
         size++;
@@ -422,7 +422,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
       if (RECORD(RECORD_EXTRA) == EXTRA_GLINTS && frame <= 31) {
         s32 cel;
 
-        EffectPosition_ApplyStepAndYOffset(effect->actors[0], &spot);
+        EffectPosition_ProjectScaledBattler(effect->actors[0], &spot);
         cel = frame & 3;
         for (i = 0; i != 3; i++) {
           s32 angle = Random16() & 0xffff;

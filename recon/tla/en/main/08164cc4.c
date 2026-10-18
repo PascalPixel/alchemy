@@ -123,7 +123,7 @@ void BattleFx_SpawnObjects(s32 count, s32 resource,
                    s32 priority); // BattleFx_SpawnObjects
 void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
-void Camera_AdvanceBg2Reference(void);                 // Camera_AdvanceBg2Reference
+void BattleFx_AdvanceBg2OnInterval(void);                 // BattleFx_AdvanceBg2OnInterval
 void BattleFx_FlushPendingGraphicsTransfer(void); // BattleFx_FlushPendingGraphicsTransfer
 void BattleFx_ArmPaletteHBlankDma(void); // BattleFx_ArmPaletteHBlankDma
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
@@ -299,7 +299,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Scheduler_AddOrUpdateCallback(Camera_AdvanceBg2Reference, 0xcff);
+  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceBg2OnInterval, 0xcff);
   Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer, 0xc80);
 
   // The ground dissolves: each column starts at its own random row, and the
@@ -479,7 +479,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         vector[0] = (Data_08198a02[i][0] / 2) << 16;
         vector[1] = (Data_08198a02[i][1] + frame) << 16;
         vector[2] = (Data_08198a02[i][2] / 2) << 16;
-        EffectPosition_ApplyBaseAndYOffset(vector, pos = &spot);
+        EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = HI(pos->x) + 128;
         pos->y = HI(pos->y) + 60;
         draw(Ram_MapCellBuffer, work->sheet + 0x1f40, pos->x - 4, pos->y - 4, 8,
@@ -523,7 +523,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (frame != STREAM_FRAMES);
     WaitFrames(1);
     transition->active = 0;
-    Scheduler_RemoveCallback(Camera_AdvanceBg2Reference);
+    Scheduler_RemoveCallback(BattleFx_AdvanceBg2OnInterval);
     Scheduler_RemoveCallback(BattleFx_ArmPaletteHBlankDma);
     Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
     gBgScroll[1].x = savedX;
@@ -607,7 +607,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       if (ember->y >= 0) {
         s32 size;
 
-        EffectPosition_ApplyBaseAndYOffset(&ember->x, &point);
+        EffectPosition_ProjectPoint(&ember->x, &point);
         point.x >>= 1;
         if (point.depth <= 159)
           point.depth = 160;
@@ -648,7 +648,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       struct EffectStep *flash = &FLASHES[i];
 
       if (i / 3 < elapsed && flash->y >= 0) {
-        EffectPosition_ApplyBaseAndYOffset(&flash->x, &point);
+        EffectPosition_ProjectPoint(&flash->x, &point);
         point.x >>= 1;
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;

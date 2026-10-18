@@ -90,14 +90,14 @@ BattleFx_RunCool:
 	adds r1, r5, #0
 	movs r4, #36
 	ldrsh r0, [r2, r4]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r1, r10
 	ldr r3, [r1, #20]
 	lsls r3, r3, #1
 	adds r3, #34
 	ldrsh r0, [r1, r3]
 	add r1, sp, #44
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r1, [r5]
 	ldr r3, [r5, #12]
 	movs r4, #54

@@ -79,7 +79,7 @@ void BattleFx_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void BattleFx_CallNoEffect(s32 frames);
+void BattleFx_CallDoNothing(s32 frames);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08118088(s32 actor,
@@ -151,7 +151,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     i++;
   } while (i != SHARD_COUNT);
 
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &origin);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &origin);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75;
@@ -163,7 +163,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       Audio_PlayCue(SE_HIT);
 
     // The streak, drawn from the user toward the target.
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &user);
+    EffectPosition_ProjectScaledBattler(effect->actor, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
       if (effect->side == 0)
         BattleFx_LoadBlitter(
@@ -202,7 +202,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = BURST_STRIP_BYTES;
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_FRAME_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
-      BattleFx_CallNoEffect(10000);
+      BattleFx_CallDoNothing(10000);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)
@@ -219,7 +219,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         shard = &work->particles[i];
         life = shard->variant;
         if (life > 0) {
-          EffectPosition_ApplyBaseAndYOffset((s32 *)shard, &screen);
+          EffectPosition_ProjectPoint((s32 *)shard, &screen);
           screen.x >>= 1;
           screen.y = screen.y + origin.y - 112;
           size = (life >> 3) + 2;

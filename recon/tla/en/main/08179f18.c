@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -700,7 +700,7 @@ void BattleFx_RunFlora(struct BattleEffectArgument *effect) {
         pos.x = rr * Trig_Sin(a + b) >> 16;
         pos.y = rr * Trig_Cos(a + b) >> 16;
         pos.depth = 0;
-        EffectPosition_ApplyBaseAndYOffset(&pos, &out);
+        EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
         blit2(canvas, sprites + gData_08197410[size - 1], out.x + 48 - size / 2,
               out.y + 92 - size, size, size * 2);
@@ -748,7 +748,7 @@ void BattleFx_RunFlora(struct BattleEffectArgument *effect) {
         pos2.x = inner * Trig_Sin(i << 9) >> 16;
         pos2.y = inner * Trig_Cos(i << 9) >> 16;
         pos2.depth = 0;
-        EffectPosition_ApplyBaseAndYOffset(&pos2, &out2);
+        EffectPosition_ProjectPoint(&pos2, &out2);
         out2.x >>= 1;
         x1 = out2.x + ox;
         y1 = out2.y + oy1;
@@ -776,7 +776,7 @@ void BattleFx_RunFlora(struct BattleEffectArgument *effect) {
           pos3.x = inner * Trig_Sin(i << 9) >> 16;
           pos3.y = inner * Trig_Cos(i << 9) >> 16;
           pos3.depth = 0;
-          EffectPosition_ApplyBaseAndYOffset(&pos3, &out3);
+          EffectPosition_ProjectPoint(&pos3, &out3);
           out3.x >>= 1;
           x1 = ox + out3.x;
           y1 = out3.y + oy1;

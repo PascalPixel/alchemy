@@ -12,7 +12,7 @@
 // shifts the first literal pool and every pc offset and branch across it
 // (about 30 of the rows). The rest are single rows where the native issues
 // a load or a constant one slot earlier, and the two calls' arguments to
-// EffectPosition_ApplyBaseAndYOffset set in the other order.
+// EffectPosition_ProjectPoint set in the other order.
 
 // Tried:
 // the twin with Slaver's mode added                         83
@@ -206,7 +206,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         point[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
         point[1] = mote->y;
         point[2] = mote->z;
-        EffectPosition_ApplyBaseAndYOffset(point, &position);
+        EffectPosition_ProjectPoint(point, &position);
         position.x >>= 1;
         if (position.depth <= 313)
           position.depth = 314;

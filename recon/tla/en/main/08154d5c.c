@@ -122,8 +122,8 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
                              1);
 
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &first);
-  EffectPosition_ApplyStepAndYOffset(effect->actors[effect->count - 1], &last);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(effect->actors[effect->count - 1], &last);
   middle = first.x;
   middle += (last.x - middle) / 2;
   first.x = middle;

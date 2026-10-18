@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -265,7 +265,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           pos[1] = pos[1] + (frame << 18) - 0x700000;
         }
         pos[2] = point[2];
-        EffectPosition_ApplyBaseAndYOffset(pos,
+        EffectPosition_ProjectPoint(pos,
                                            (struct EffectPosition *)screen);
         blit(canvas, work->sheet + 0x2000, screen[0] / 2 - 10, screen[1] - 20,
              20, 40);
@@ -330,7 +330,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             } else {
               BattleFxKernels_IntegrateVector3(p, 62, 1024);
             }
-            EffectPosition_ApplyBaseAndYOffset(p, &proj);
+            EffectPosition_ProjectPoint(p, &proj);
             blit(canvas, sprites + gData_08197410[n - 1], proj.x / 2 - n / 2,
                  proj.y - n, n, n * 2);
           }
@@ -416,7 +416,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
       model->vertices = Data_02011000;
       model->shade = shade;
       if (mode == 2 || mode == 4) {
-        EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &apos);
+        EffectPosition_ProjectBattler(effect->actors[0], &apos);
         if (frame == 16) {
           Func_081180e8(144);
           BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 0x70000, 100);
@@ -497,7 +497,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
       } else if (mode == 3) {
-        EffectPosition_ApplyStepAndYOffset(effect->actor, &spos);
+        EffectPosition_ProjectScaledBattler(effect->actor, &spos);
         if (frame == 8) {
           Audio_PlayCue(144);
         }

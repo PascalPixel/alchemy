@@ -5,7 +5,7 @@
 // BattleFx_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost
 // Age's changes are those of BattleFx_RunTriangleStrike, plus: the canvas is
 // prepared by Func_0815585c (kind 3 | side << 4, then two three-word arrays)
-// where The Broken Seal calls BattleFx_PrepareCanvasEffect(effect, 3, side, 0,
+// where The Broken Seal calls BattleFx_RunDjinniEntrance(effect, 3, side, 0,
 // &x, &y); the Djinn sheet is unpacked with its palette; and the prelude's
 // blitter pair comes from BattleFx_FetchRectangleBlitters.
 
@@ -55,7 +55,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 void BattleFx_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
+                   s32 *origin, s32 *size); // BattleFx_RunDjinniEntrance
 void Audio_PlayCue(s32 cue);
 
 extern char ResourceId_RuneSheet;
@@ -128,7 +128,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The background is shifted so that the target stands at x = 64.
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Audio_PlayCue(142);
@@ -175,7 +175,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         vector[0] = object->x;
         vector[1] = object->y;
         vector[2] = object->z;
-        EffectPosition_ApplyBaseAndYOffset(vector, &screen);
+        EffectPosition_ProjectPoint(vector, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
 
@@ -194,7 +194,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             Func_080150e4(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(Data_0819790c,
+            EffectPosition_ProjectPoint(Data_0819790c,
                                                (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
             point->velocityY = vector[1] + screen.y + 16;

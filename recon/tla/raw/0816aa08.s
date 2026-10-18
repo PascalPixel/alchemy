@@ -125,7 +125,7 @@ BattleFx_RunPlumeEdge:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	ldr r1, [sp, #8]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r0, [sp, #28]
 	cmp r0, #0
 	bne .L_0816abb0

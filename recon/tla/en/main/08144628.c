@@ -192,7 +192,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *mote = &PARTICLES[k * 128 + i];
 
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
-            EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &pos);
+            EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * MOTE_CELL, pos.x - 10,
                     pos.y - 16, 20, 32);

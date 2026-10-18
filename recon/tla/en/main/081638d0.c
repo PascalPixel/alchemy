@@ -73,7 +73,7 @@
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
-                   s32 *screenY); // BattleFx_PrepareCanvasEffect
+                   s32 *screenY); // BattleFx_RunDjinniEntrance
 void BattleFx_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *draw); // BattleFx_FetchRectangleBlitters

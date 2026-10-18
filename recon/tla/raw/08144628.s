@@ -358,7 +358,7 @@ Func_08144628:
 .L_081448e6:
 	mov r1, r8
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r1, r8
 	ldr r5, [r1]
 	adds r0, r7, #0

@@ -72,7 +72,7 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
@@ -139,8 +139,8 @@ void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &from);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &to);
+  EffectPosition_ProjectBattler(effect->actor, &from);
+  EffectPosition_ProjectBattler(effect->actors[0], &to);
 
   for (frame = 0; frame != KIND123_FRAMES; frame++) {
     if (frame == 0) {

@@ -73,7 +73,7 @@ typedef DrawRectangle BlitterPair[2];
 // display.c
 void BattleFx_ConfigureEffectDisplay(void);
 void BattleFx_AdvanceScrollOnInterval(void);
-void Camera_AdvanceBg2Reference(void);
+void BattleFx_AdvanceBg2OnInterval(void);
 void BattleFx_ArmWin0HBlankDma(void);
 
 // falling.c
@@ -110,12 +110,12 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode);
 // death_plunge.c
 void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect);
 void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
-void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect);
-void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect);
-void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect);
+void BattleFx_RunElementPillar(struct BattleEffectArgument *effect);
+void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect);
+void BattleFx_RunElementBurst(struct BattleEffectArgument *effect);
 void BattleFx_DrawStreaks(void);
-void BattleFx_PrepareScene(s32 kind);
-void BattleFx_ScheduleCallbacksAndReleaseBlocks(void);
+void BattleFx_StartElementStreaks(s32 kind);
+void BattleFx_EndElementStreaks(void);
 
 // spider_web.c
 void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect);
@@ -233,7 +233,7 @@ void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect);
 void Camera_ApplyPhasedDelta(void);
 
 // dispatch.c
-void BattleFx_CallNoEffect(s32 count);
+void BattleFx_CallDoNothing(s32 count);
 void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect);
 void BattleFx_RunTableEffect(struct BattleEffectArgument *effect);
 void BattleFx_BuildWindowEdgeTable(void);
@@ -299,7 +299,7 @@ void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect);
 void BattleFx_RunBlast(struct BattleEffectArgument *effect);
 void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattleFx_RunNoEffect(void);
+void BattleFx_DoNothing(void);
 
 // burst_shower.c
 void BattleFx_ArmBg2AffineHBlankDma(void);
@@ -331,8 +331,8 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect);
 void BattleFx_RunBolt(struct BattleEffectArgument *effect);
 
 // projectiles.c
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
-                                  s32 side, s32 anchor, s32 *outX, s32 *outY);
+void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 kind,
+                                s32 side, s32 anchor, s32 *outX, s32 *outY);
 void BattleFx_RunSlash(struct BattleEffectArgument *effect);
 void BattleFx_RunShuriken(struct BattleEffectArgument *effect);
 void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect);
@@ -370,7 +370,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect);
 // hail.c
 void BattleFx_RunHail(struct BattleEffectArgument *effect);
 void BattleFx_RunGround(struct BattleEffectArgument *effect);
-void Camera_ApplyShake(s32 randomMask, u32 shakeRange);
+void Camera_ApplyShake(s32 rangeX, u32 rangeY);
 
 // thor.c
 void BattleFx_RunThor(struct BattleEffectArgument *effect);
@@ -395,14 +395,12 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                                      s32 gravity);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
                                      s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
-                                       struct EffectPosition *position);
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
-                                             struct EffectPosition *position);
-void EffectPosition_ApplyStepAndYOffset(s32 id,
-                                        struct EffectPosition *position);
-void EffectPosition_ApplyAlternateStepAndYOffset(
-    s32 id, struct EffectPosition *position);
+s32 EffectPosition_ProjectPoint(const void *point,
+                                struct EffectPosition *position);
+void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectScaledBattler(s32 id,
+                                         struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 void BattleFx_ProbeKeysForExtendedActor(void);
 void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect);

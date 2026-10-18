@@ -307,7 +307,7 @@ BattleFx_RunStarMine:
 	asrs r5, r5, #1
 	mov r0, r8
 	ands r5, r3
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r6]
 	lsls r1, r5, #3
 	asrs r2, r2, #1

@@ -411,7 +411,7 @@ Func_081823a8:
 	add r5, sp, #72
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]

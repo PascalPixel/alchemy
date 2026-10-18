@@ -113,7 +113,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
           Func_080150e4(-frame * (i + 32) * 8);
           break;
         }
-        EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
+        EffectPosition_ProjectPoint((s32 *)star, &pos);
         pos.x >>= 1;
         Transform_Pop();
 

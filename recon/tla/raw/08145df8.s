@@ -105,7 +105,7 @@ BattleFx_RunBind:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #48]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r1, [sp, #48]
 	movs r3, #64
 	ldr r2, [r1]
@@ -300,7 +300,7 @@ BattleFx_RunBind:
 	mov r1, r9
 	str r3, [r5, #8]
 	adds r0, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r1, [sp, #48]
 	ldr r2, [sp, #52]
 	ldr r3, [r1]
@@ -356,7 +356,7 @@ BattleFx_RunBind:
 	add r2, sp, #112
 	adds r1, r2, #0
 	ldr r0, .L_08146260
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r1, r9
 	ldr r3, [r1]
 	ldr r2, [sp, #112]

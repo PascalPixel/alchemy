@@ -6,7 +6,7 @@
 // unpacked with its palette by Resource_LoadAndDecompress; the canvas
 // prepared by Func_0815585c (mode | (side ^ prelude) << 4, then two
 // three-word arrays) where The Broken Seal calls
-// BattleFx_PrepareCanvasEffect; BattleFx_FetchRectangleBlitters for the Djinn's
+// BattleFx_RunDjinniEntrance; BattleFx_FetchRectangleBlitters for the Djinn's
 // pair; the callback at 0xc80; the effect argument read directly; the camera
 // read each frame.
 
@@ -57,7 +57,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
 void BattleFx_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
+                   s32 *origin, s32 *size); // BattleFx_RunDjinniEntrance
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 
@@ -136,7 +136,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   // With one target, BG2 is shifted so that it stands at x = 64.
   REG_BG2PA = 0x100;
   if (effect->count == 1) {
-    EffectPosition_ApplyStepAndYOffset(effect->actors[0], &one);
+    EffectPosition_ProjectScaledBattler(effect->actors[0], &one);
     offsetX = 64 - one.x;
   } else {
     if (effect->side == 1)
@@ -200,7 +200,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
           if (frame > i * 8 + start && mote->y > 8 << 16) {
             s32 sway;
 
-            EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &pos);
+            EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x += offsetX;
             sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
             if (i & 1)
@@ -238,7 +238,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
         ground[0] = target->x;
         ground[1] = 0;
         ground[2] = target->z;
-        EffectPosition_ApplyBaseAndYOffset(ground, &pos);
+        EffectPosition_ProjectPoint(ground, &pos);
         pos.x += offsetX;
         if (frame < start + 104) {
           s32 pic = frame / 4;

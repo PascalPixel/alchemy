@@ -115,7 +115,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The background is shifted so that the target stands at x = 64.
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Audio_PlayCue(142);
@@ -145,7 +145,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
         vector[0] = object->x;
         vector[1] = object->y;
         vector[2] = object->z;
-        EffectPosition_ApplyBaseAndYOffset(vector, &screen);
+        EffectPosition_ProjectPoint(vector, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
 
@@ -164,7 +164,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             Func_080150e4(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(Data_08197918,
+            EffectPosition_ProjectPoint(Data_08197918,
                                                (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
             point->velocityY = vector[1] + screen.y + 16;

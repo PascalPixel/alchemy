@@ -175,7 +175,7 @@ Func_0817e0c0:
 	ldrsh r0, [r5, r1]
 	adds r1, r2, #0
 	str r2, [sp, #16]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r5, sp
 	mov r1, sp
 	movs r3, #0
@@ -316,7 +316,7 @@ Func_0817e0c0:
 	mov r2, r11
 	ldr r0, [r2, #8]
 	ldr r1, [sp, #8]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	movs r0, #32
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
@@ -565,7 +565,7 @@ Func_0817e0c0:
 	blt .L_0817e592
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r7]
 	asrs r5, r5, #4
 	adds r5, #2
@@ -625,7 +625,7 @@ Func_0817e0c0:
 .L_0817e5b8:
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	asrs r5, r5, #2
 	ldr r2, [r7]
 	lsls r5, r5, #11

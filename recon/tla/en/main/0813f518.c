@@ -1,6 +1,6 @@
 // Near miss, differ 40 of 380.
 
-// Twin: The Broken Seal's BattleFx_RunGatheringBurst, reached from the
+// Twin: The Broken Seal's BattleFx_RunElementBurst, reached from the
 // scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up
 // its own heap blocks, stores work->effect and marks the work active
 // itself, and reads the actors from the argument. The corner sparks' four
@@ -156,7 +156,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   Audio_PlayCue(140);
 
   for (frame = 0; frame != 56; frame++) {
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
+    EffectPosition_ProjectScaledBattler(effect->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;

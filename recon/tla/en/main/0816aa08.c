@@ -70,7 +70,7 @@ void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -122,7 +122,7 @@ void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
     PARTICLES[i].variant = -1;
 
   for (frame = 0; frame != 80; frame++) {
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
+    EffectPosition_ProjectBattler(effect->actors[0], &position);
 
     // Frame 0: 64 flashes fan out upward from the target, one more each
     // frame, and the target turns white and stops bouncing.

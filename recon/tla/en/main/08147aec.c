@@ -146,7 +146,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     else
       dir = 1;
     if (mode == 1) {
-      EffectPosition_ApplyStepAndYOffset(effect->actor, &origin);
+      EffectPosition_ProjectScaledBattler(effect->actor, &origin);
       origin.x /= 2;
       origin.y = 66;
       if (effect->side == 1)

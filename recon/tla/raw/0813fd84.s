@@ -105,7 +105,7 @@ BattleFx_RunCruelRuin:
 	ldr r0, [r3, #8]
 	adds r1, r7, #0
 	adds r5, #2
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	cmp r5, #96
 	ble .L_0813fe60
 	movs r5, #96

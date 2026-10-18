@@ -121,7 +121,7 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
         point[0] = 0;
         point[1] = 0;
         point[2] = 0;
-        EffectPosition_ApplyBaseAndYOffset(point, &out);
+        EffectPosition_ProjectPoint(point, &out);
         out.x >>= 1;
         Transform_Pop();
         blit(canvas, sheet + gData_08197410[size - 1], out.x - size / 2,

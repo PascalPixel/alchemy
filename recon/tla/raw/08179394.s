@@ -55,7 +55,7 @@ BattleFx_RunRagingHeat:
 	mov r1, r11
 	ldrsh r0, [r5, r1]
 	adds r1, r6, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	mov r4, r11
 	ldr r2, [r4, #20]
 	movs r3, #1

@@ -94,7 +94,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   // Play the swirl and impact, then let the sparks bounce and fade.
   for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
     // The canvas follows the user across the screen.
-    EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
+    EffectPosition_ProjectBattler(work->effect->actor, &position);
     REG_BG2X = (80 - position.x) << 8;
     // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
     // at the user's height, placed from the other edge on side 1.

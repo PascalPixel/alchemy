@@ -41,8 +41,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75); // 3/4 afterimage
 
   // Shift so that canvas x = 64 lines up with the target.
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
-                                              &screenPosition);
+  EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
   // Scatter sparks in all directions from (64, 112), then drift upward.

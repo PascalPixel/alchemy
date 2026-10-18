@@ -71,7 +71,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleFx_PrepareCanvasEffect
+                   s32 *target);  // BattleFx_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 void Graphics_LoadGreyRamp(void);         // a grey ramp from color 1
@@ -273,7 +273,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
   // A lone target is moved to the canvas's middle (64).
   if (effect->count == 1) {
-    EffectPosition_ApplyStepAndYOffset(effect->actors[0], &base);
+    EffectPosition_ProjectScaledBattler(effect->actors[0], &base);
     shift = -base.x * 4 / 5 + 64;
   } else {
     if (effect->side == 1)
@@ -367,7 +367,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
                 s32 size;
 
                 // Half the width: depth 314-634 gives 6 down to 1.
-                EffectPosition_ApplyBaseAndYOffset((s32 *)flare, &screen);
+                EffectPosition_ProjectPoint((s32 *)flare, &screen);
                 screen.x = screen.x * 4 / 5 + shift;
                 if (screen.depth < 314)
                   screen.depth = 314;
@@ -391,7 +391,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       center[0] = 0;
       center[1] = 0;
       center[2] = 0;
-      EffectPosition_ApplyBaseAndYOffset(center, &screen);
+      EffectPosition_ProjectPoint(center, &screen);
       screen.x = screen.x * 4 / 5 + shift;
 
       // The burst: from frame 52, six pictures four frames apart.

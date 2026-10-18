@@ -84,7 +84,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
          i++) {
       point = &work->particles[i];
       if (frame > i * 2 && flags[i] == 0) {
-        EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
+        EffectPosition_ProjectPoint(point, &screenPosition);
         screenPosition.x >>= 1;
         CLAMP(screenPosition.depth, 160, 0x31f);
         draw[0](canvas, work->sheet + FROTH_MOTE_CELL, screenPosition.x - 6,

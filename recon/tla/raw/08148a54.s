@@ -242,7 +242,7 @@ BattleFx_RunFroth:
 	add r5, sp, #20
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]

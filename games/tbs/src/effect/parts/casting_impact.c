@@ -387,10 +387,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   /* FAKEMATCH: retain each output pointer while preparing its
    * call 2026-10-11: the pointers set in statements before the calls differ 38,
    * after the calls 142. */
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0],
-                                     targetScreen = &targetPos);
-  EffectPosition_ApplyStepAndYOffset(work->effect->actor,
-                                     casterScreen = &casterPos);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0],
+                                      targetScreen = &targetPos);
+  EffectPosition_ProjectScaledBattler(work->effect->actor,
+                                      casterScreen = &casterPos);
   BattleFx_FetchRectangleBlitters(work->effect->side, drawPair = blitters);
   work->fadeFrames = 24;
   work->fadeStep = 0;
@@ -419,7 +419,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   SET_VELOCITY(casterActor, 0, 0, 0);
   casterActor->acceleration = 0;
   casterActor->verticalMotionStrength = 0;
-  EffectPosition_ApplyStepAndYOffset(work->effect->actor, casterScreen);
+  EffectPosition_ProjectScaledBattler(work->effect->actor, casterScreen);
   casterScreen->x = casterScreen->x / 2;
   AudioCommand_PlayFar(SE_212);
 
@@ -441,7 +441,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             SceneTransform_ApplyRoll(step->velocityZ);
             SceneTransform_ApplyPitch(step->velocityX);
             SceneTransform_ApplyYaw(step->velocityY);
-            EffectPosition_ApplyBaseAndYOffset(step, &sparkScreen);
+            EffectPosition_ProjectPoint(step, &sparkScreen);
             sparkScreen.x = sparkScreen.x / 2 + casterScreen->x;
             // Djinni kinds circle the caster's chest; the rest circle lower,
             // Severe Blow lowest.
@@ -465,7 +465,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       alive = n;
       if (alive <= 63) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        EffectPosition_ApplyBaseAndYOffset(&djinnPos, &sparkScreen);
+        EffectPosition_ProjectPoint(&djinnPos, &sparkScreen);
         sparkScreen.x /= 2;
         djinnX = sparkScreen.x;
         blitters[0](canvas, Ram_MapCellBuffer + CASTING_DJINNI_CELLS,
@@ -687,7 +687,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     // Refresh the acting unit position for the first three frames, 16 pixels
     // below.
     if (frame <= 2) {
-      EffectPosition_ApplyStepAndYOffset(work->effect->actor, casterScreen);
+      EffectPosition_ProjectScaledBattler(work->effect->actor, casterScreen);
       casterScreen->x = casterScreen->x / 2;
       casterScreen->y += 16;
     }
@@ -773,7 +773,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           struct EffectStep *step = &work->particles[index];
           s32 size = step->variant;
           if (size > 0) {
-            EffectPosition_ApplyBaseAndYOffset(step, &projected);
+            EffectPosition_ProjectPoint(step, &projected);
             size >>= 4;
             size++;
             projected.x /= 2;
@@ -821,7 +821,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         for (i = 0; i != 32; i++, step++) {
           if (step->variant >= 0) {
             s32 size = (i & 1) + 6;
-            EffectPosition_ApplyBaseAndYOffset(step, &projected);
+            EffectPosition_ProjectPoint(step, &projected);
             projected.x >>= 1;
             blitters[0](canvas, sprites + gBattleFx_MoteCells[size - 1],
                         projected.x - (u32)size / 2, projected.y - size, size,
@@ -1006,7 +1006,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           s32 age = step->variant;
           if (age <= 11) {
             s32 image = age / 2;
-            EffectPosition_ApplyBaseAndYOffset(step, &projected);
+            EffectPosition_ProjectPoint(step, &projected);
             projected.x /= 2;
             blitters[0](canvas, Ram_MapCellBuffer + (image << 11),
                         projected.x - 16, projected.y - 32, 32, 64);
@@ -1182,7 +1182,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
             Render_ResetTransformState();
             SceneTransform_ApplyPitch(step->velocityX);
             SceneTransform_ApplyYaw(step->velocityY);
-            EffectPosition_ApplyBaseAndYOffset(step, &projected);
+            EffectPosition_ProjectPoint(step, &projected);
             /* FAKEMATCH: the zero bias above; see there. */
             origin = (struct EffectPosition *)((u8 *)targetScreen + bias);
             projected.x = projected.x / 2 + origin->x / 2;
@@ -1254,7 +1254,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
         struct EffectStep *step = CASTING_IMPACT_PARTICLES;
         for (i = 0; i != 16; i++, step++) {
           s32 image = i % 3;
-          EffectPosition_ApplyBaseAndYOffset(step, &projected);
+          EffectPosition_ProjectPoint(step, &projected);
           projected.x /= 2;
           blitters[i & 1](canvas, Ram_MapCellBuffer + image * 576,
                           projected.x - 12, projected.y - 12, 24, 24);
@@ -1271,7 +1271,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
           s32 age = step->variant;
           if (age <= 23) {
             s32 image = age / 4;
-            EffectPosition_ApplyBaseAndYOffset(step, &projected);
+            EffectPosition_ProjectPoint(step, &projected);
             projected.x /= 2;
             blitters[i & 1](canvas, Ram_MapCellBuffer + image * 1152,
                             projected.x - 12, projected.y - 24, 24, 48);
@@ -1287,7 +1287,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     // Djinni kinds 0-7: fly to the target in six frames.
     if (kind <= 7) {
       if (frame <= 5) {
-        EffectPosition_ApplyBaseAndYOffset(position, &projected);
+        EffectPosition_ProjectPoint(position, &projected);
         projected.x /= 2;
         djinnX = projected.x;
         drawPair[1](canvas, Ram_MapCellBuffer + CASTING_DJINNI_CELLS,

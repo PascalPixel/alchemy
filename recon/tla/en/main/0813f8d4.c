@@ -36,7 +36,7 @@ void Render_ResetTransformState(void);
 void Func_080150e4(s32 roll);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
-void EffectPosition_ApplyBaseAndYOffset(s32 *point, struct StreakPoint *out);
+void EffectPosition_ProjectPoint(s32 *point, struct StreakPoint *out);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 void Func_0813f8d4(void) {
@@ -74,11 +74,11 @@ void Func_0813f8d4(void) {
       SceneTransform_ApplyPitch(streak->pitch);
       SceneTransform_ApplyYaw(streak->yaw);
       point.x = streak->head;
-      EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &head);
+      EffectPosition_ProjectPoint((s32 *)&point, &head);
       head.x += 64;
       head.y += 80;
       point.x = streak->tail;
-      EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &tail);
+      EffectPosition_ProjectPoint((s32 *)&point, &tail);
       tail.x += 64;
       tail.y += 80;
       streak->tail -= 4;

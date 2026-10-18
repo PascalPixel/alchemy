@@ -2161,7 +2161,7 @@ BattleFx_RunFlora:
 	str r6, [r5, #8]
 	ldr r0, [sp, #104]
 	mov r1, r11
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r6, r11
 	ldr r2, [r6]
 	ldr r0, .L_0817b02c
@@ -2318,7 +2318,7 @@ BattleFx_RunFlora:
 	str r3, [r5, #8]
 	mov r1, r8
 	mov r0, r11
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r6, r8
 	ldr r2, [r6]
 	asrs r2, r2, #1
@@ -2445,7 +2445,7 @@ BattleFx_RunFlora:
 	str r3, [r1, #8]
 	ldr r0, [sp, #72]
 	mov r1, r11
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r3, r11
 	ldr r2, [r3]
 	ldr r1, [r3, #4]

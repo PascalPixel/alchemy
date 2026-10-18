@@ -944,7 +944,7 @@ BattleFx_RunKirin:
 	mov r2, r9
 	ldrsh r0, [r2, r4]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [r5]
 	ldr r7, [sp, #28]
 	cmp r3, r7

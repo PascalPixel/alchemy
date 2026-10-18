@@ -127,7 +127,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
           struct EffectStep *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
-            EffectPosition_ApplyBaseAndYOffset(mote, &screenPosition);
+            EffectPosition_ProjectPoint(mote, &screenPosition);
             screenPosition.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * 640, screenPosition.x - 10,
                     screenPosition.y - 16, 20, 32);

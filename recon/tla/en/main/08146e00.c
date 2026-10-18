@@ -298,7 +298,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
           vector[0] = point[index].z * Trig_Sin(point[index].velocityY);
           vector[1] = point[index].y;
           vector[2] = point[index].z * Trig_Cos(point[index].velocityY);
-          EffectPosition_ApplyBaseAndYOffset(vector, &screen);
+          EffectPosition_ProjectPoint(vector, &screen);
           screen.x >>= 1;
           if (point[index].y <= 0x3fffff)
             draw[0](canvas, work->sheet + DUST_SHEET, screen.x - 12,
@@ -423,7 +423,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
             zz = (point->z >> 8) * (point->z >> 8);
             dist = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (dist != 0) {
-              EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
+              EffectPosition_ProjectPoint(&point->x, &screen);
               screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
               screen.y = HI(screen.y) + (wave.y >> 16) - 4;
               screen.depth = HI(screen.depth);
@@ -551,7 +551,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
                 vector[1] = ring->variant * Trig_Cos(slot * 2340);
                 vector[2] = ring->variant * Trig_Sin(slot * 2340);
                 ring->variant += 2;
-                EffectPosition_ApplyBaseAndYOffset(vector, &screen);
+                EffectPosition_ProjectPoint(vector, &screen);
                 screen.x =
                     (screen.x >> 17) + work->particles[index + 60].velocityX;
                 screen.y = HI(screen.y) + work->particles[index + 60].velocityY;

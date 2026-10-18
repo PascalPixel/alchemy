@@ -887,7 +887,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r0, [r3, #8]
 	adds r1, r5, #0
 	str r5, [sp, #60]
-	bl EffectPosition_ApplyAnimationAndYOffset
+	bl EffectPosition_ProjectSprite
 	ldr r0, [sp, #84]
 	movs r6, #0
 	ldr r3, [r0, #20]
@@ -900,7 +900,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r1, [sp, #84]
 	ldrsh r0, [r6, r1]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r0, [sp, #84]
 	movs r3, #1
 	add r9, r3
@@ -2416,7 +2416,7 @@ BattleFx_RunProjectileVolleyB:
 	blt .L_08153906
 	adds r1, r6, #0
 	adds r0, r5, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r6]
 	ldr r3, .L_081539bc
 	asrs r2, r2, #1

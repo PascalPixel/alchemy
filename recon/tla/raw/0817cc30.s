@@ -97,7 +97,7 @@ BattleFx_RunOceanFist:
 	ldrsh r0, [r1, r4]
 	adds r1, r2, #0
 	str r2, [sp, #12]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	movs r3, #0
 	str r3, [sp, #8]
 	mov r11, r3

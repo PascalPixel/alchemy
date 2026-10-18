@@ -144,7 +144,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
             s32 dist = Iwram_Sqrt(x + y + z) >> 8;
 
             if (dist != 0) {
-              EffectPosition_ApplyBaseAndYOffset((s32 *)skull, &pos);
+              EffectPosition_ProjectPoint((s32 *)skull, &pos);
               pos.x >>= 1;
               draw[0](canvas, work->sheet + i % 3 * SKULL_CELL,
                       pos.x - SKULL_SIZE / 2, pos.y - SKULL_SIZE / 2,

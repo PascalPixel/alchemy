@@ -139,7 +139,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
         // join each point to the next with a row of dots.
         Render_ResetTransformState();
         Transform_SetLookAt(camera, camera + 3);
-        EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
+        EffectPosition_ProjectPoint((s32 *)star, &pos);
         pos.x >>= 1;
         if (pos.x >= -8 && pos.x <= 127) {
           if (pos.y <= 127) {

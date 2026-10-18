@@ -68,7 +68,7 @@ void BattleFx_FetchRectangleBlitters(
     DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
 void Func_0815f0a0(s32 resourceId); // BattleFx_StepPaletteToResource
@@ -117,7 +117,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(effect->side, draw);
   Object_SetMode(user, 2);
   ObjectDispatch_ApplyValueToChildrenFar(user, 48);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   if (effect->side == 0)
     baseX = target.x / 2 - 24;
   else

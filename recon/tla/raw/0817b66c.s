@@ -54,7 +54,7 @@ BattleFx_RunSabreDance:
 	movs r3, #36
 	ldrsh r0, [r1, r3]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, .L_0817b714
 	movs r2, #128
 	lsls r2, r2, #19

@@ -217,8 +217,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         s32 size;
 
         EffectStep_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -0x400);
-        EffectPosition_ApplyBaseAndYOffset(&JUDGMENT_SPARKS[i],
-                                           &projectedPosition);
+        EffectPosition_ProjectPoint(&JUDGMENT_SPARKS[i], &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
         if (projectedPosition.depth < 100) {
@@ -270,7 +269,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         if (PARTICLES[i].x < 0) {
           PARTICLES[i].x = 0;
         }
-        EffectPosition_ApplyBaseAndYOffset(anchor, &projectedPosition);
+        EffectPosition_ProjectPoint(anchor, &projectedPosition);
         if (projectedPosition.depth < -60) {
           projectedPosition.depth = -60;
         }

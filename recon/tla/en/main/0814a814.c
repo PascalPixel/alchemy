@@ -209,7 +209,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
       if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
-        EffectPosition_ApplyStepAndYOffset(effect->actors[member], &base);
+        EffectPosition_ProjectScaledBattler(effect->actors[member], &base);
         for (i = 0; i != 2; i++) {
           s32 angle;
           s32 radius;
@@ -266,7 +266,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
             if (distance != 0 && mote->variant <= 23) {
               s32 cel = mote->variant / 4;
 
-              EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+              EffectPosition_ProjectPoint((s32 *)mote, &screen);
               screen.x >>= 1;
               if (mode == 5 || mode == 7)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,

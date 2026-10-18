@@ -170,7 +170,7 @@ Func_0818f620:
 	ldr r5, [sp, #60]
 	ldr r1, [sp, #12]
 	ldr r0, [r5, #8]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r6, [sp, #56]
 	cmp r6, #3
 	bne .L_0818f77e
@@ -182,7 +182,7 @@ Func_0818f620:
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	ldr r1, [sp, #16]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 .L_0818f78a:
 	ldr r2, [sp, #56]
 	cmp r2, #0

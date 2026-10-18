@@ -334,7 +334,7 @@ BattleFx_RunQuake:
 	str r3, [r6, #4]
 	ldr r3, [r5, #16]
 	str r3, [r6, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r2, r9
 	ldr r3, [r2]
 	ldr r0, [sp, #44]

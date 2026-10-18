@@ -142,8 +142,8 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(user, 48);
 
   for (frame = 0; frame != 107; frame++) {
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &userPosition);
-    EffectPosition_ApplyStepAndYOffset(effect->actors[0], &targetPosition);
+    EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
+    EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
     if (frame == 0)
       Audio_PlayCue(157);
     if (frame == 64)

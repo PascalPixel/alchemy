@@ -109,7 +109,7 @@ Func_0814b9e8:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r3, sp
 	adds r3, #76
 	str r3, [sp, #16]

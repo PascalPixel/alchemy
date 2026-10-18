@@ -3,7 +3,7 @@
 // the listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleFx_RunUndeadSword 0.470, call order
 // BattleFx_RunDragonCloud 0.456). Func_0815585c, the canvas
-// preparer (The Broken Seal's BattleFx_PrepareCanvasEffect, reworked),
+// preparer (The Broken Seal's BattleFx_RunDjinniEntrance, reworked),
 // fills the centre and base points; its prototype here is read from the
 // calls.
 
@@ -86,7 +86,7 @@ void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_0815585c(struct BattleEffectArgument *effect, s32 placement,
-                   s32 *center, s32 *base); // BattleFx_PrepareCanvasEffect
+                   s32 *center, s32 *base); // BattleFx_RunDjinniEntrance
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);

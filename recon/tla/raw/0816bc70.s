@@ -33,7 +33,7 @@ BattleFx_RunDiamondBerg:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [r5]
 	movs r1, #19
 	lsrs r2, r3, #31
@@ -144,7 +144,7 @@ BattleFx_RunDiamondBerg:
 	add r1, sp, #52
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 .L_0816bd98:
 	mov r4, r9
 	cmp r4, #20

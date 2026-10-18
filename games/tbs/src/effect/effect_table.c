@@ -123,7 +123,7 @@ u8 gDeathPlunge_PieceStartY[] = {0,  0,  0,  0,  0,  0,  19, 17, 23,  28, 8,
                                  62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
 
 // death_plunge.c and spider_web.c: Canvas corner sparks and two-resource
-// picture cells. The gathering burst's corner sparks: offsets and flips.
+// picture cells. The element burst's corner sparks: offsets and flips.
 s8 gDeathPlunge_X[] = {0, 32, 0, 32};
 s8 gDeathPlunge_Y[] = {0, 0, 32, 32};
 u8 gDeathPlunge_DrawFlags[] = {0, COMPOSITE_FLIP_X, COMPOSITE_FLIP_Y,

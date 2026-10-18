@@ -175,7 +175,7 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
         if (frame >= i * 2 + 48) {
           s32 width;
 
-          EffectPosition_ApplyBaseAndYOffset(&shard->x, &screen);
+          EffectPosition_ProjectPoint(&shard->x, &screen);
           screen.x >>= 1;
           width = shard->velocityZ;
           width += width * Trig_Sin(shard->velocityX) / 0x20000;

@@ -1,4 +1,4 @@
-// Draft of Func_0815585c, The Broken Seal's BattleFx_PrepareCanvasEffect
+// Draft of Func_0815585c, The Broken Seal's BattleFx_RunDjinniEntrance
 // (games/tbs/src/effect/effect.c): differ 165 of 818 (tla-en,
 // 2026-10-15). The Lost Age reworked it: the kind, the side and the anchor
 // come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
@@ -324,7 +324,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
             Func_080150e4(-frame * (i * 32 + 256));
             break;
           }
-          EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
+          EffectPosition_ProjectPoint(&spark->x, &position);
           position.x >>= 1;
           Transform_Pop();
           if (position.depth < 250)
@@ -362,7 +362,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
       world[0] = goal[0] + (Trig_Sin(frame << 10) << 2);
       world[1] = goal[1];
       world[2] = goal[2];
-      EffectPosition_ApplyBaseAndYOffset(point, &position);
+      EffectPosition_ProjectPoint(point, &position);
       screen[0] = position.x;
       screen[1] = position.y;
       position.x >>= 1;

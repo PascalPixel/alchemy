@@ -15,7 +15,7 @@ struct AffineStepWork {
 
 // Scheduler callback: every period frames, writes the BG2 reference point to
 // the hardware, then moves it by (stepX, stepY).
-void Camera_AdvanceBg2Reference(void) {
+void BattleFx_AdvanceBg2OnInterval(void) {
   struct AffineStepWork *work;
 
   /* FAKEMATCH: the one-pass block loads the effect work before the counter

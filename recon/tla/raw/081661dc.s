@@ -112,7 +112,7 @@ BattleFx_RunAnnihilation:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #20]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0816658c
@@ -161,7 +161,7 @@ BattleFx_RunAnnihilation:
 	mov r1, r9
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #16]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r3, [sp, #32]
 	subs r3, #6
 	cmp r3, #5
@@ -276,7 +276,7 @@ BattleFx_RunAnnihilation:
 	movs r0, #156
 	lsls r0, r0, #6
 	adds r0, #16
-	bl BattleFx_CallNoEffect
+	bl BattleFx_CallDoNothing
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 .L_08166412:
@@ -316,7 +316,7 @@ BattleFx_RunAnnihilation:
 	ble .L_081664bc
 	mov r1, r8
 	adds r0, r7, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r0, r8
 	ldr r2, [r0]
 	ldr r3, [r0, #4]

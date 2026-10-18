@@ -77,7 +77,7 @@ Func_0813e114:
 	adds r1, r5, #0
 	movs r6, #36
 	ldrsh r0, [r2, r6]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r2, [r5]
 	movs r1, #128
 	movs r3, #64

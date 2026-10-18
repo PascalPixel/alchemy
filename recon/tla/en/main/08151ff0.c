@@ -182,7 +182,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
       if (mote->y >= 0) {
         s32 size;
 
-        EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+        EffectPosition_ProjectPoint((s32 *)mote, &screen);
         screen.x >>= 1;
         screen.x += effect->side * 32 - 16;
         if (screen.depth < 160)
@@ -204,7 +204,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectStep *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
-          EffectPosition_ApplyBaseAndYOffset((s32 *)puff, &screen);
+          EffectPosition_ProjectPoint((s32 *)puff, &screen);
           screen.x >>= 1;
           screen.x += effect->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {

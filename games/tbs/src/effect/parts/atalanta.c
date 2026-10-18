@@ -238,12 +238,12 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
                  * gives a 120-byte frame and j in r9 (tbs-ja differ 372). */
                 struct EffectPosition *out = &screen;
 
-                EffectPosition_ApplyBaseAndYOffset(point, out);
+                EffectPosition_ProjectPoint(point, out);
               }
               screen.x = (screen.x >> 1) + x;
               screen.y = screen.y + y;
 #else
-              EffectPosition_ApplyBaseAndYOffset(point, &screen);
+              EffectPosition_ProjectPoint(point, &screen);
               screen.x = (screen.x >> 1) + x;
               screen.y = screen.y + y + 16;
 #endif
@@ -277,7 +277,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
     s32 member = i % 6;
 
     if (member < work->effect->count) {
-      EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &target);
+      EffectPosition_ProjectScaledBattler(work->effect->actors[member],
+                                          &target);
       slash->y = -((Random16() & 31) + 40);
       slash->x = target.x / 2 + (80 - slash->y) / 2;
     } else {

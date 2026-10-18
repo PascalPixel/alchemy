@@ -53,7 +53,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
     height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
     SET_VECTOR(point, object->x, height, object->z);
-    EffectPosition_ApplyBaseAndYOffset(point, &screen);
+    EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
          i != ICE_SHARDS_PER_TARGET; i++) {
@@ -220,7 +220,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
             s32 size;
 
             // The canvas is shown at double width, so halve x.
-            EffectPosition_ApplyBaseAndYOffset(mote, &screen);
+            EffectPosition_ProjectPoint(mote, &screen);
             screen.x >>= 1;
             size = 6;
             EFFECT_DRAW_MOTE(draw, canvas, sheet, screen.x, screen.y, size);

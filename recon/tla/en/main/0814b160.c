@@ -107,7 +107,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
         }
         if (frame >= start && frame < start + MARKER_FRAMES) {
           // The post under the target, then the star, six frames a cel.
-          EffectPosition_ApplyStepAndYOffset(effect->actors[i], &pos);
+          EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
           if (effect->side == 1) {
             pos.x -= 112;
           }

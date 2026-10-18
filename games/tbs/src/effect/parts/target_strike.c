@@ -201,8 +201,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
 
-      EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[k],
-                                                  &ground);
+      EffectPosition_ProjectBattler(work->effect->actors[k], &ground);
       SET_POSITION(step, (ground.x / 2) << 16, 0x500000, 0);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
                    ((Random16() & 255) - 128) << 9, 0);
@@ -250,9 +249,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
                         75); // trails keep 3/4 a frame
 
   // Strike halfway between the target's middle and its feet.
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPosition);
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
-                                              &alternate);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &targetPosition);
+  EffectPosition_ProjectBattler(work->effect->actors[0], &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
   for (frame = 0; frame != STRIKE_VALUE(mode, STRIKE_FRAMES); frame++) {
@@ -463,7 +461,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *step = &PARTICLES[i];
 
           if (step->variant >= 0) {
-            EffectPosition_ApplyBaseAndYOffset(step, &position);
+            EffectPosition_ProjectPoint(step, &position);
             position.x >>= 1;
             draw[1](canvas, particleSheet + gBattleFx_MoteCells[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
@@ -492,7 +490,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           s32 size = step->variant;
 
           if (size >= 0) {
-            EffectPosition_ApplyBaseAndYOffset(step, &position);
+            EffectPosition_ProjectPoint(step, &position);
             position.x >>= 1;
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
             size >>= 3;

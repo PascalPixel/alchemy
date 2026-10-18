@@ -112,8 +112,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->prelude == 1)
-    BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screenX,
-                                 &screenY);
+    BattleFx_RunDjinniEntrance(effect, 7, work->effect->side, 2, &screenX,
+                               &screenY);
 
   // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -156,7 +156,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   WaitFrames(1);
 
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPos);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &targetPos);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                         75); // trails, fading to 3/4
 
@@ -180,7 +180,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   for (frame = 0; frame != BURST_RECORD(BURST_FRAMES); frame++) {
     s32 bursts = BURST_RECORD(BURST_STRIKES);
 
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &actorPos);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &actorPos);
     actorPos.x /= 2;
 
     // Arcs and waves; odd strikes are drawn flipped.
@@ -268,7 +268,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
       s32 size = mote->variant;
 
       if (size > 0) {
-        EffectPosition_ApplyBaseAndYOffset(&mote->x, &screen);
+        EffectPosition_ProjectPoint(&mote->x, &screen);
         screen.x /= 2;
         size >>= 3;
         size++;

@@ -189,13 +189,13 @@ Func_0816fca8:
 	add r5, sp, #72
 	ldr r0, [r3, #8]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r1, [sp, #60]
 	add r6, sp, #84
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	adds r1, r6, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [sp, #56]
 	cmp r2, #0
 	bne .L_0816fe44

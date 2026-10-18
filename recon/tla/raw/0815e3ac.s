@@ -217,7 +217,7 @@ Func_0815e3ac:
 	ldrsh r0, [r6, r5]
 	adds r1, #76
 	str r1, [sp, #16]
-	bl EffectPosition_ApplyAnimationAndYOffset
+	bl EffectPosition_ProjectSprite
 	ldr r3, [r6, #4]
 	cmp r3, #0
 	bne .L_0815e5b8
@@ -419,7 +419,7 @@ Func_0815e3ac:
 	add r2, sp, #88
 	ldr r0, [r6, #8]
 	adds r1, r2, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r3, [sp, #92]
 	ldr r5, [sp, #28]
 	adds r3, #16

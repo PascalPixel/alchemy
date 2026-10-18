@@ -120,18 +120,18 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     s32 kind = mode == 6 ? 2 : 1;
 
     if (mode == 6 || mode == 0)
-      BattleFx_PrepareCanvasEffect(effect, kind, work->effect->side, 0,
-                                   &originX, &originY);
+      BattleFx_RunDjinniEntrance(effect, kind, work->effect->side, 0, &originX,
+                                 &originY);
     else
-      BattleFx_PrepareCanvasEffect(effect, kind, work->effect->side, 1,
-                                   &originX, &originY);
+      BattleFx_RunDjinniEntrance(effect, kind, work->effect->side, 1, &originX,
+                                 &originY);
     work->effect->variant = 0;
   }
 
   // Mode 0 shows the canvas at its own width, shifted so the first target
   // is at its centre (64); the others keep it at double width.
   if (mode == 0) {
-    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &base);
+    EffectPosition_ProjectScaledBattler(work->effect->actors[0], &base);
     canvasShiftX = 64 - base.x;
     REG_BG2X = canvasShiftX << 8;
     REG_BG2PA = Q_8_8(1);
@@ -325,7 +325,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
             if (distance != 0) {
               s32 size;
 
-              EffectPosition_ApplyBaseAndYOffset(spark, &screen);
+              EffectPosition_ProjectPoint(spark, &screen);
               if (mode == 0)
                 screen.x += canvasShiftX;
               else

@@ -202,7 +202,7 @@ Func_0818d5a8:
 	ldr r1, [sp, #68]
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #16]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, [sp, #16]
 	ldr r4, [sp, #16]
 	ldr r3, [r2]

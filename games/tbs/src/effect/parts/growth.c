@@ -309,7 +309,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleFx_PrepareCanvasEffect(effect, 4, effect->side, 4, &originX, &originY);
+  BattleFx_RunDjinniEntrance(effect, 4, effect->side, 4, &originX, &originY);
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
@@ -318,8 +318,8 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 
   // Put the point halfway between the first and last targets at canvas x
   // 64.
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
-  EffectPosition_ApplyStepAndYOffset(
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(
       work->effect->actors[work->effect->count - 1], &last);
   middle = first.x;
   middle += (last.x - middle) / 2;

@@ -102,7 +102,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
             SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
                        mote->z * Trig_Cos(mote->x));
-            EffectPosition_ApplyBaseAndYOffset(xyz, position = &screen);
+            EffectPosition_ProjectPoint(xyz, position = &screen);
             position->x = (position->x >> 17) + 64;
             position->y = HI(position->y) + 60;
             // UB: width is assigned in one argument and read in another.

@@ -91,7 +91,7 @@ BattleFx_RunRisingDragon:
 	ldr r0, [r3, #8]
 	adds r1, r4, #0
 	str r4, [sp, #48]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r1, [sp, #84]
 	mov r2, sp
 	adds r2, #124
@@ -99,7 +99,7 @@ BattleFx_RunRisingDragon:
 	ldrsh r0, [r1, r7]
 	adds r1, r2, #0
 	str r2, [sp, #44]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [sp, #80]
 	movs r4, #224
 	lsls r4, r4, #3
@@ -224,7 +224,7 @@ BattleFx_RunRisingDragon:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r7, [sp, #80]
 	movs r3, #0
 	mov r9, r3

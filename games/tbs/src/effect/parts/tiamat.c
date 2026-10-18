@@ -106,7 +106,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   else
     dir = 1;
   if (mode == 1) {
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &origin);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &origin);
     origin.x /= 2;
     origin.y = 66;
     if (work->effect->side == 1)

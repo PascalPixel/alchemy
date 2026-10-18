@@ -115,7 +115,7 @@ s32 Scheduler_RemoveCallback(s32 callback);
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -212,7 +212,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   ObjectDispatch_ApplyValueToChildrenFar(
       GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != LUNGE_FRAMES; frame++) {
     // The first frame readies the sparks and mode 5's bursts at the
@@ -255,7 +255,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The streak, on the caster for its first 15 frames.
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &caster);
+    EffectPosition_ProjectBattler(effect->actor, &caster);
     vertices = Runtime_BumpAllocateAlternatePool(32);
     quad = Render_AllocateModelList(1);
     TEXTURE_SIZE(texture, 5, 6);
@@ -333,7 +333,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
         if (life >= 0) {
           s32 size = (life >> 4) + 2;
 
-          EffectPosition_ApplyBaseAndYOffset(&spark->x, &screen);
+          EffectPosition_ProjectPoint(&spark->x, &screen);
           screen.x >>= 1;
           draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
                       screen.x - size / 2, screen.y - size, size, size * 2);
@@ -352,7 +352,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
           if (life >= 0 && life < 24) {
             s32 cel = life / 4;
 
-            EffectPosition_ApplyBaseAndYOffset(&burst->x, &screen);
+            EffectPosition_ProjectPoint(&burst->x, &screen);
             screen.x >>= 1;
             draw[0](canvas, work->sheet + 0x800 + (cel << 11), screen.x - 16,
                     screen.y - 32, 32, 64);

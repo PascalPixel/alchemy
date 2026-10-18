@@ -75,7 +75,7 @@ void BattleFx_RunSwirlingStars(void *object) {
           SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         }
-        EffectPosition_ApplyBaseAndYOffset(star, &screen);
+        EffectPosition_ProjectPoint(star, &screen);
         screen.x >>= 1;
         Transform_Pop();
         CLAMP(screen.depth, 250, 0x27a);
@@ -163,7 +163,8 @@ void BattleFx_RunOrbitingSkulls(void) {
       u32 memberFrame;
 
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-      EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &screen);
+      EffectPosition_ProjectScaledBattler(work->effect->actors[member],
+                                          &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
@@ -184,7 +185,7 @@ void BattleFx_RunOrbitingSkulls(void) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         rec = point;
         SET_VECTOR(rec, object->x, object->y, object->z);
-        EffectPosition_ApplyBaseAndYOffset(rec, &center);
+        EffectPosition_ProjectPoint(rec, &center);
         /* FAKEMATCH: sched2 barrier, so this store precedes
          * the spark counter as in the reference 2026-10-11: without it differ 2
          * (movs r4, #0 moves ahead of the store). */
@@ -297,7 +298,7 @@ void BattleFx_RunTargetBursts(void *object) {
           cel = puff->variant / 6;
           if (cel > 5)
             cel = 5;
-          EffectPosition_ApplyBaseAndYOffset(puff, &screen);
+          EffectPosition_ProjectPoint(puff, &screen);
           screen.x >>= 1;
           if (i == 5) {
             EffectStep_AdvanceWithGravity3D(puff, 62, 0x800);

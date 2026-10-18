@@ -1469,7 +1469,7 @@ BattleFx_RunNeptune:
 	ldr r1, [sp, #68]
 	ldrsh r0, [r7, r1]
 	adds r1, r6, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r3, [r6]
 	adds r7, #2
 	lsrs r2, r3, #31

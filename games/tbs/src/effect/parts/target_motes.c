@@ -199,7 +199,8 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       // Mode 3: two glints a frame, 4 to 35 pixels from the target in a
       // random direction, each mirrored at random.
       if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
-        EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &base);
+        EffectPosition_ProjectScaledBattler(work->effect->actors[member],
+                                            &base);
         for (i = 0; i != 2; i++) {
           s32 angle;
           s32 radius;
@@ -254,7 +255,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
             if (distance != 0 && mote->variant <= 23) {
               s32 cel = mote->variant / 4;
 
-              EffectPosition_ApplyBaseAndYOffset(mote, &screen);
+              EffectPosition_ProjectPoint(mote, &screen);
               screen.x >>= 1;
               // Orbs 40x40, vortex motes 12x24, a heart 22x42, smoke 24x48;
               // smoke draws one mote in four additively. A mote that has
@@ -485,8 +486,8 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
           AudioCommand_PlayFar(SE_143);
         }
         if (frame >= start && frame < start + 72) {
-          EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],
-                                             &screenPosition);
+          EffectPosition_ProjectScaledBattler(work->effect->actors[i],
+                                              &screenPosition);
           if (work->effect->side == 1) {
             screenPosition.x -= 112;
           }

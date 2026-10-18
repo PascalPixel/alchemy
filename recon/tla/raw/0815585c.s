@@ -596,7 +596,7 @@ Func_0815585c:
 	add r5, sp, #60
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
@@ -761,7 +761,7 @@ Func_0815585c:
 	adds r0, r6, #0
 	ldr r3, [r2, #8]
 	str r3, [r4, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r5]
 	ldr r7, [sp, #52]
 	movs r1, #20

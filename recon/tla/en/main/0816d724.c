@@ -82,7 +82,7 @@ void Func_081180e8(s32 phase);           // BattleEventRuntime_BeginPhaseFar
 s32 Battle_GetObjectTableValueFar(s32 actor);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *position);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -130,7 +130,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
+  EffectPosition_ProjectBattler(effect->actors[0], &position);
   position.x /= 2;
   work->shakeFrames = 8;
 
@@ -264,7 +264,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
           s32 userX;
           s32 moteX;
 
-          EffectPosition_ApplyBaseAndYOffset(&mote->x, &screen);
+          EffectPosition_ProjectPoint(&mote->x, &screen);
           draw[0](canvas, sheet + gData_08197410[size - 1],
                   (screen.x >> 1) - size / 2, screen.y - size, size, size * 2);
           BattleFxKernels_IntegrateVector3(mote, 62, 0);

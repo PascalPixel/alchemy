@@ -108,7 +108,7 @@ BattleFx_RunLiquifier:
 	ldr r0, [r1, #8]
 	adds r1, r2, #0
 	str r2, [sp, #24]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r1, [sp, #48]
 	mov r2, sp
 	adds r2, #68
@@ -116,7 +116,7 @@ BattleFx_RunLiquifier:
 	ldrsh r0, [r1, r3]
 	adds r1, r2, #0
 	str r2, [sp, #20]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r0, sp
 	movs r3, #0
 	adds r0, #52

@@ -89,7 +89,7 @@ Func_0813f8d4:
 	adds r1, r4, #0
 	mov r0, r9
 	str r4, [sp, #4]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r4, [sp, #4]
 	mov r1, r8
 	ldr r3, [r4]
@@ -104,7 +104,7 @@ Func_0813f8d4:
 	ldr r3, [r1, #4]
 	adds r1, r7, #0
 	str r3, [r2]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r3, [r7]
 	mov r1, r8
 	adds r3, #64

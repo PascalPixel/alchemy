@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -164,8 +164,8 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   caster = *GetBattleObjectSlotFar(effect->actor);
   ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
   Object_SetMode(caster, 2);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &source);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actor, &source);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -194,7 +194,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
       if (frame != dragon * 10 + 28) {
         continue;
       }
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &hit);
+      EffectPosition_ProjectBattler(effect->actors[0], &hit);
       for (i = 0, spark = &work->particles[dragon * 32]; i != 32;
            i++, spark++) {
         s32 angle;

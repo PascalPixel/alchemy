@@ -255,7 +255,7 @@ enum CanvasTransferMode {
 
 // Draws flare cell `size` of `sheet`, a square `size` pixels from its centre
 // to each edge, centred on (x, y): Douse's sparks and the glowing points of
-// the ice fleck and gathering bursts, stat boosts, beams and rings.
+// the element pillar and burst, stat boosts, beams and rings.
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
   (draw)(canvas, (sheet) + gBattleFx_FlareCells[(size) - 1], (x) - (size),     \
          (y) - (size), (size) * 2, (size) * 2)

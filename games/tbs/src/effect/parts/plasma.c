@@ -258,7 +258,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     originY = 64;
   } else {
     BattleFx_BeginCanvasLayer(0);
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;
   }

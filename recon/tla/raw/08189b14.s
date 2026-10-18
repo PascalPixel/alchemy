@@ -127,7 +127,7 @@ BattleFx_RunLegend:
 	ldrsh r0, [r6, r5]
 	add r1, sp
 	mov r10, r1
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [r6, #4]
 	mov r5, r10
 	cmp r3, #0

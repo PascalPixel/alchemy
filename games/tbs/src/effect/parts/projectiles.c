@@ -14,8 +14,8 @@
 //         first target's x at depth 0, 2 over the user, 3 at the user's x
 //         at depth 0, 4 in the centre of the field.
 // outX, outY: receive the djinni's last screen position.
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
-                                  s32 side, s32 anchor, s32 *outX, s32 *outY) {
+void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 kind,
+                                s32 side, s32 anchor, s32 *outX, s32 *outY) {
   s32 center[3];
   s32 goal[3];
   s32 step[3];
@@ -164,7 +164,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
           SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         }
-        EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
+        EffectPosition_ProjectPoint(&spark->x, &position);
         position.x >>= 1;
         Transform_Pop();
         CLAMP(position.depth, 250, 634);
@@ -190,7 +190,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     // The djinni sways at the centre on frames 54 to 69.
     if (frame >= 54 && frame <= 69) {
       SET_VECTOR(point, (Trig_Sin(frame << 10) * 4), 0, 0);
-      EffectPosition_ApplyBaseAndYOffset(point, &position);
+      EffectPosition_ProjectPoint(point, &position);
       *outX = position.x;
       *outY = position.y;
       position.x >>= 1;
@@ -429,8 +429,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   else
     BattleFx_BeginCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screenX,
-                                 &screenY);
+    BattleFx_RunDjinniEntrance(effect, 1, work->effect->side, 2, &screenX,
+                               &screenY);
 
   // 128x128 drawing, mirrored on side 1.
   if (mode == 5) {
@@ -639,7 +639,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             struct EffectPosition *screenPosition = &position;
 
             // The screen position (half across, on the canvas).
-            EffectPosition_ApplyBaseAndYOffset(shot, screenPosition);
+            EffectPosition_ProjectPoint(shot, screenPosition);
             screenPosition->x >>= 1;
             shot->x += shot->velocityX;
             shot->y += shot->velocityY;

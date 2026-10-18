@@ -103,7 +103,7 @@ BattleFx_RunBackstab:
 	add r5, sp, #48
 	ldr r0, [r3, #8]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	movs r4, #0
 	mov r8, r4
 	mov r10, r5
@@ -289,7 +289,7 @@ BattleFx_RunBackstab:
 	adds r1, r5, #0
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	movs r0, #0
 	mov r8, r0
 	mov r10, r5

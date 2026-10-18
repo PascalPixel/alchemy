@@ -247,12 +247,12 @@ BattleFx_RunGeode:
 	ldr r1, [sp, #84]
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #24]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r3, [sp, #84]
 	ldr r1, [sp, #28]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r1, r11
 	cmp r1, #11
 	bgt .L_0816c9b2

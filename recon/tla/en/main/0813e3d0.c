@@ -1,6 +1,6 @@
 // Near miss, differ 42 of 456.
 
-// Twin: The Broken Seal's BattleFx_RunIceFleckBurst, reached from the
+// Twin: The Broken Seal's BattleFx_RunElementPillar, reached from the
 // scenes through the far-call table (table_47.s). It sets up its own heap
 // blocks, so unlike a dispatched effect it stores work->effect and marks
 // the work active (framesSinceTransfer = 1) itself. ⚓️ drops the twin's
@@ -81,7 +81,7 @@ s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 u32 Random16(void);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor,
+void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -162,7 +162,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   Audio_PlayCue(212);
 
   for (frame = 0; frame != 56; frame++) {
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &ground);
+    EffectPosition_ProjectBattler(effect->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = (112 - frame * 2) | 0x1000;
@@ -215,7 +215,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
         fleck->x += 0x400;
         fleck->y += 5 << 16;
         fleck->z += 64;
-        EffectPosition_ApplyBaseAndYOffset(point, &pos);
+        EffectPosition_ProjectPoint(point, &pos);
         pos.x /= 2;
         size = (i & 1) + effect->variant;
         draw[0](canvas, sheet + Data_08197424[size - 1], pos.x - size,

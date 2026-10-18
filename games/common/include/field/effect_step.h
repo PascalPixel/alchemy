@@ -68,10 +68,10 @@ static inline s32 *EffectPosition_Coordinates(struct EffectPosition *position) {
 #if GAME_TLA
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                                      s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
-                                       struct EffectPosition *position);
-void EffectPosition_ApplyStepAndYOffset(s32 id,
-                                        struct EffectPosition *position);
+s32 EffectPosition_ProjectPoint(const void *point,
+                                struct EffectPosition *position);
+void EffectPosition_ProjectScaledBattler(s32 id,
+                                         struct EffectPosition *position);
 #endif
 
 STATIC_ASSERT(offsetof(struct EffectStep, x) == 0x00);

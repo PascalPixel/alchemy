@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -337,8 +337,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectPosition from;
       struct EffectPosition to;
 
-      EffectPosition_ApplyStepAndYOffset(effect->actor, &from);
-      EffectPosition_ApplyStepAndYOffset(effect->actors[0], &to);
+      EffectPosition_ProjectScaledBattler(effect->actor, &from);
+      EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
       from.x /= 2;
       to.x /= 2;
       if ((u32)(frame - 32) <= 8) {
@@ -434,7 +434,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       {
         struct EffectPosition target;
 
-        EffectPosition_ApplyStepAndYOffset(effect->actors[0], &target);
+        EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
         for (i = 0; i != 48; i++) {
           struct EffectStep *p = &work->particles[i];
 
@@ -488,7 +488,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       }
       Render_ResetTransformState();
       Transform_SetLookAt(camera, camera + 3);
-      EffectPosition_ApplyBaseAndYOffset(&ball->velocityX, &pos);
+      EffectPosition_ProjectPoint(&ball->velocityX, &pos);
       pos.x >>= 1;
       ball->x = pos.x;
       ball->y = pos.y;
@@ -624,7 +624,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectPosition pos;
 
         for (i = 0; i != effect->count; i++) {
-          EffectPosition_ApplyStepAndYOffset(effect->actors[i], &pos);
+          EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
           Render_ResetTransformState();
           Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
           SceneTransform_ApplyPitch(0x4000);
@@ -680,7 +680,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
+      EffectPosition_ProjectBattler(effect->actors[0], &pos);
       texture.logWidth = 7;
       texture.logHeight = 7;
       model->kind = 7;
@@ -725,7 +725,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         model->mesh = gData_08199340;
         model->kind = 7;
         texture.pixels = work->sheet;
-        EffectPosition_ApplyStepAndYOffset(effect->actors[0], &pos);
+        EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
         scale = 0x10000 - t * 4592;
         for (j = 0; j != 2; j++, scale += 0x4000) {
           if (scale > 0) {
@@ -750,13 +750,13 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     } else if (mode == 9) {
       struct EffectPosition from;
 
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &from);
+      EffectPosition_ProjectBattler(effect->actor, &from);
       if (frame == 0) {
         struct EffectPosition to;
         struct EffectStep *ball = &work->particles[63];
         struct EffectStep *q;
 
-        EffectPosition_ApplyStepAndYOffset(effect->actors[0], &to);
+        EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
         ball->x = to.x;
         ball->y = to.y;
         for (i = 0; i != 32; i++)
@@ -853,7 +853,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 0) {
         struct EffectPosition pos;
 
-        EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
+        EffectPosition_ProjectBattler(effect->actors[0], &pos);
         for (i = 0; i != 32; i++) {
           struct EffectStep *p = &work->particles[i];
           s32 s = Random16() & 255;
@@ -906,7 +906,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 0) {
         struct EffectPosition pos;
 
-        EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &pos);
+        EffectPosition_ProjectBattler(effect->actor, &pos);
         for (i = 0; i != 32; i++) {
           struct EffectStep *p = &work->particles[i];
           s32 s = Random16() & 255;
@@ -979,7 +979,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectStep *q;
 
         if (frame == 28) {
-          EffectPosition_ApplyStepAndYOffset(effect->actors[0], &pos);
+          EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
           for (i = 0, q = gData_02014000; i != 128; i++, q++) {
             s32 s = Random16() & 511;
             s32 a = Random16();
@@ -1009,7 +1009,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       texture.logWidth = 5;
       model->texture = &texture;
       model->mesh = gData_08199268;
@@ -1076,7 +1076,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       work->transferMode = 1;
       work->transferValue = 0;
       texture.pixels = work->sheet;
-      EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       if (frame <= 15) {
         for (j = 0; j != 2; j++) {
           s32 scale = Trig_Sin(frame << 11) * 5;
@@ -1109,7 +1109,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
       if (frame == 0)
         Audio_PlayCue(104);
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
+      EffectPosition_ProjectBattler(effect->actors[0], &pos);
       shade = frame * 4 - 64;
       if (shade >= -16)
         shade = -16;
@@ -1153,7 +1153,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = gData_08199364;
       model->kind = 6;
       texture.pixels = gMapCellBuffer;
-      EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       Render_ResetTransformState();
       Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
       if (frame <= 15) {
@@ -1221,7 +1221,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 7;
       texture.pixels = gMapCellBuffer;
       model->kind = 6;
-      EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       for (j = 0; j != 2; j++) {
         s32 t = frame - j * 8;
 
@@ -1288,9 +1288,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectPosition pos;
 
         if (mode == 2 || mode == 7)
-          EffectPosition_ApplyStepAndYOffset(effect->actors[0], &pos);
+          EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
         else
-          EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+          EffectPosition_ProjectScaledBattler(effect->actor, &pos);
         Render_ResetTransformState();
         Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
         SceneTransform_ApplyPitch(0x4000);

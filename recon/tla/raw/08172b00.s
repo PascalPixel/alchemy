@@ -787,7 +787,7 @@ Func_08172b00:
 .L_08173118:
 	ldr r0, [sp, #60]
 	ldr r1, [sp, #64]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r4, [sp, #92]
 	cmp r4, #0
 	bne .L_0817319a
@@ -950,7 +950,7 @@ Func_08172b00:
 	blt .L_081732b2
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	asrs r5, r5, #3
 	adds r5, #2
 	ldr r2, .L_08173358
@@ -1023,7 +1023,7 @@ Func_08172b00:
 	subs r5, r5, r0
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r7]
 	lsls r5, r5, #11
 	lsrs r3, r2, #31

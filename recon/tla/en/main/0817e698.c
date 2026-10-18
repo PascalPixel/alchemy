@@ -97,7 +97,7 @@ void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
@@ -158,7 +158,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
                     128);
 
   // Centre the canvas's x 64 on the target.
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - target.x) << 8;
   BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));

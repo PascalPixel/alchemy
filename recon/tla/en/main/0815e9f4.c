@@ -89,7 +89,7 @@ void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
 s32 Battle_GetObjectTableValueFar(s32 actor);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
-void EffectPosition_ApplyStepAndYOffset(s32 actor,
+void EffectPosition_ProjectScaledBattler(s32 actor,
                                         struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -219,7 +219,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     object->velocityZ = 0;
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     shake = 64 - pos.x;
     gBgScroll[1].x = shake;
     gBgScroll[1].y = 80;
@@ -242,7 +242,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
           Func_080150e4(mote->velocityZ);
           SceneTransform_ApplyPitch(mote->velocityX);
           SceneTransform_ApplyYaw(mote->velocityY);
-          EffectPosition_ApplyBaseAndYOffset(&mote->x, &point);
+          EffectPosition_ProjectPoint(&mote->x, &point);
           point.x += 64;
           point.y = point.y + pos.y + 24;
           if (point.depth < -60)
@@ -274,7 +274,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   REG_BG1CNT = 0x1f81;
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 32 - anchor.x;
   else
@@ -311,7 +311,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
     if (frame == 4)
       Func_08118088(effect->actors[0], 0);
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     pos.y += 16;
     // The flash: four cels, two frames each.
     if (frame <= 1)
@@ -333,7 +333,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
         s32 size = spark->variant;
 
         if (size > 0) {
-          EffectPosition_ApplyBaseAndYOffset(&spark->x, &spot);
+          EffectPosition_ProjectPoint(&spark->x, &spot);
           spot.x += shake;
           size >>= 3;
           size += 2;

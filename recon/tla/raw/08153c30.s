@@ -194,7 +194,7 @@ Func_08153c30:
 .L_08153dbc:
 	adds r0, r6, #0
 	mov r1, r11
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	mov r2, r11
 	ldr r3, [r2]
 	asrs r3, r3, #1

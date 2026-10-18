@@ -157,7 +157,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       visible = 1;
     }
     if (frame == 48) {
-      EffectPosition_ApplyStepAndYOffset(effect->actors[0], pos);
+      EffectPosition_ProjectScaledBattler(effect->actors[0], pos);
       if (effect->side == 1)
         curve[0] = (pos[0].x - 128) << 16;
       else

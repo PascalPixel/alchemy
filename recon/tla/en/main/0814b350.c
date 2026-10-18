@@ -176,7 +176,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
           Func_080150e4(-frame * (i * 32 + 256));
           break;
         }
-        EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &screen);
+        EffectPosition_ProjectPoint((s32 *)spark, &screen);
         screen.x >>= 1;
         Transform_Pop();
         if (screen.depth < 250)
@@ -204,7 +204,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       rider[0] = 0;
       rider[1] = Trig_Sin(frame << 10) << 2;
       rider[2] = 0;
-      EffectPosition_ApplyBaseAndYOffset(rider, &screen);
+      EffectPosition_ProjectPoint(rider, &screen);
       screen.x >>= 1;
       draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
@@ -235,7 +235,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
     point[0] = target[0];
     point[1] = target[1];
     point[2] = target[2] + Trig_Sin(frame << 11) * 40;
-    EffectPosition_ApplyBaseAndYOffset(point, &view);
+    EffectPosition_ProjectPoint(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
 
@@ -272,7 +272,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
             if (distance != 0) {
               s32 cel;
 
-              EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &view);
+              EffectPosition_ProjectPoint((s32 *)spark, &view);
               view.x >>= 1;
               if (view.depth < 314)
                 view.depth = 314;

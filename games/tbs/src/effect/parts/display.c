@@ -37,7 +37,7 @@ void BattleFx_AdvanceScrollOnInterval(void) {
 // Scheduler callback: every scrollInterval frames, writes the effect's
 // background 2 reference point to the hardware and then moves it by
 // (scrollStepX, scrollStepY), so the affine layer slides in steps.
-void Camera_AdvanceBg2Reference(void) {
+void BattleFx_AdvanceBg2OnInterval(void) {
   s32 timer;
   struct BattleEffectWork *work;
 

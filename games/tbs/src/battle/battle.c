@@ -3690,13 +3690,13 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   do {
     work.effect.kind = 0;
     work.effect.variant = 0;
-    BattleFx_RunIceFleckBurstFar(&work.effect);
+    BattleFx_RunElementPillarFar(&work.effect);
     work.effect.kind = 1;
-    BattleFx_RunIceFleckBurstFar(&work.effect);
+    BattleFx_RunElementPillarFar(&work.effect);
     work.effect.kind = 2;
-    BattleFx_RunIceFleckBurstFar(&work.effect);
+    BattleFx_RunElementPillarFar(&work.effect);
     work.effect.kind = 3;
-    BattleFx_RunIceFleckBurstFar(&work.effect);
+    BattleFx_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
     BattleFx_RunTableEffectFar(&work.effect);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
@@ -9850,7 +9850,7 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
           BattleParty_ListActorIds(2, presentation.effect.actors);
       presentation.effect.actors[presentation.effect.count] = 0xff;
       BattleActor_SpawnObjectsForList(presentation.effect.actors, 0);
-      BattleEffect_RunTileAndPaletteAnimationFar(&presentation.effect);
+      BattleFx_RunShatteringOpeningFar(&presentation.effect);
       BattlePres_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }
@@ -10784,7 +10784,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     struct BattleEffectWork *effectWork;
 
     // The scene uses its image area to stage the tracked canvas origin.
-    BattlePresentation_PrepareSceneFar(element);
+    BattleFx_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
       effectWork = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
       BattleMotion_ProjectScaledPosition(
@@ -10796,7 +10796,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
       effectWork->trackedCanvas.origin.unk08 = 1;
       WaitFrames(1);
     }
-    BattleFx_ScheduleCallbacksAndReleaseBlocksFar();
+    BattleFx_EndElementStreaksFar();
   } else if (mode == 2) {
     launch.effect.prelude = 0;
     launch.effect.kind = element;
@@ -10806,7 +10806,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     launch.effect.firstTarget = unitId;
     launch.effect.count = 1;
     launch.effect.range = 1;
-    BattleFx_RunIceFleckBurstFar(&launch.effect);
+    BattleFx_RunElementPillarFar(&launch.effect);
   } else {
     launch2.effect.kind = element;
     launch2.effect.prelude = 0;
@@ -10816,7 +10816,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     launch2.effect.firstTarget = unitId;
     launch2.effect.count = 1;
     launch2.effect.range = 1;
-    BattleFx_RunGatheringBurstFar(&launch2.effect);
+    BattleFx_RunElementBurstFar(&launch2.effect);
   }
 }
 

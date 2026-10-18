@@ -76,7 +76,7 @@ void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMem
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -122,8 +122,8 @@ void BattleFx_RunCool(struct BattleEffectArgument *effect) {
   sinkFrame = stagger + 32;
 
   // Centre the canvas between the first and the last target.
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &ends[0]);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[effect->count - 1],
+  EffectPosition_ProjectBattler(effect->actors[0], &ends[0]);
+  EffectPosition_ProjectBattler(effect->actors[effect->count - 1],
                                               &ends[1]);
   ends[0].x += (ends[1].x - ends[0].x) / 2;
   REG_BG2X = (64 - ends[0].x) << 8;

@@ -68,7 +68,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 64);
 
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &origin);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &origin);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -78,7 +78,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       BattleEventRuntime_BeginPhaseFar(0x86);
     if (work->effect->variant != 0 && frame == 8)
       AudioCommand_PlayFar(0xd4);
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &position);
+    EffectPosition_ProjectScaledBattler(work->effect->actor, &position);
     // The fire streak, one picture a frame in front of the user, drawn
     // additively and mirrored for side 1 with a blitter made for this one
     // drawing.
@@ -118,7 +118,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = 0x2580;
       blitters[0](canvas, Ram_MapCellBuffer + strip + step * 0xc80,
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
-      BattleFx_CallNoEffect(10000);
+      BattleFx_CallDoNothing(10000);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
     if (frame == 8) {
@@ -135,7 +135,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
         shard = &work->particles[i];
         life = shard->variant;
         if (life > 0) {
-          EffectPosition_ApplyBaseAndYOffset(shard, &out);
+          EffectPosition_ProjectPoint(shard, &out);
           out.x >>= 1;
           out.y = out.y + origin.y - 112;
           size = (life >> 3) + 2;

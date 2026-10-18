@@ -439,8 +439,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     work->particles[i].variant = 0;
   }
   EFFECT_FOR_EACH_TARGET(i, work->effect) {
-    EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],
-                                       &targetPosition);
+    EffectPosition_ProjectScaledBattler(work->effect->actors[i],
+                                        &targetPosition);
     work->particles[i].x = targetPosition.x / 2;
   }
   // The second stage raises blue flames and emits sparks as they reach the

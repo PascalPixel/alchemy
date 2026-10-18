@@ -134,7 +134,7 @@ Func_08147aec:
 	add r5, sp, #76
 	ldr r0, [r1, #8]
 	adds r1, r5, #0
-	bl EffectPosition_ApplyStepAndYOffset
+	bl EffectPosition_ProjectScaledBattler
 	ldr r3, [r5]
 	lsrs r2, r3, #31
 	adds r3, r3, r2

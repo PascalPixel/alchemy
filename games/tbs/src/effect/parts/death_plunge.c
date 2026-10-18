@@ -1,5 +1,5 @@
 // Part of effect.c, the battle effect object, compiled only through it.
-// Death Plunge, the blade rain, the element pillar, the gathering burst and
+// Death Plunge, the blade rain, the element pillar, the element burst and
 // the shattering picture.
 
 // - Death Plunge runs the user up to the first target; both leap, turn upside
@@ -8,11 +8,12 @@
 // - The blade rain drops 16 swords, one every 4 frames, slanting in on the
 //   first target and sticking in the ground. No effect table entry points at
 //   it.
-// - The element pillar (BattleFx_RunIceFleckBurst) stands a mirrored pillar
+// - The element pillar (BattleFx_RunElementPillar) stands a mirrored pillar
 //   of light at a unit's feet while motes spiral up around it.
-// - The gathering burst flares sparks at four corners around a unit, draws
+// - The element burst (BattleFx_RunElementBurst) flares sparks at four corners
+// around a unit, draws
 //   motes spiralling in, then plays a burst of light over it.
-// - BattleFx_RunTileAndPaletteAnimation shatters a picture into 33 pieces.
+// - BattleFx_RunShatteringOpening shatters a picture into 33 pieces.
 //
 // The two element runners allocate their own work, canvas and sheet instead
 // of using the shared ones.
@@ -115,7 +116,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     SET_VECTOR(point, user->x, user->y, user->z);
-    EffectPosition_ApplyBaseAndYOffset(point, &screen);
+    EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
 
     // Frames 54 and 55: one big flash on the user. Frames 56 to 67: 16
@@ -200,7 +201,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
                         0); // redraw from blank each frame
   // Scroll the canvas so its middle column sits on the first target.
-  EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &screenPosition);
+  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
   // Each sword starts at a random x from 16 to 111, above the canvas, and
@@ -327,7 +328,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 // effect->kind    : the element, which picks the palette: 0 Venus yellow,
 //                   1 Mercury blue, 2 Mars red, others Jupiter violet.
 // effect->variant : the mote size less one, kept to 1 to 4 after adding 1.
-void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
+void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct EffectPosition screenPosition;
   s32 point[3];
@@ -398,7 +399,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != ICE_FLECK_BURST_FRAMES; frame++) {
     // Keep the canvas centred on the unit's feet, fade out over the last 6
     // frames, and flash the first target from frame 16 for 20 frames.
-    EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &ground);
+    EffectPosition_ProjectBattler(work->effect->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = (112 - frame * 2) | 0x1000;
@@ -451,7 +452,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
         fleck->x += 0x400;
         fleck->y += 5 << 16;
         fleck->z += 64;
-        EffectPosition_ApplyBaseAndYOffset(point, &screenPosition);
+        EffectPosition_ProjectPoint(point, &screenPosition);
         screenPosition.x /= 2;
         size = (i & 1) + work->effect->variant;
         EFFECT_DRAW_FLARE(draw[0], canvas, sheet, screenPosition.x,
@@ -501,7 +502,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
 // the battle backdrop's colours, and from frame 51 32 flashes rise. Runs
 // for 128 frames and allocates its own work, canvas and sheet.
 // effect : only effect->actors[0], the unit that flashes, is read.
-void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
+void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   /* FAKEMATCH: never read: the native frame keeps 12 unused
    * bytes at sp+44..55, exactly this struct 2026-10-11: without it only the
    * frame shrinks (differ 4). */
@@ -858,7 +859,7 @@ struct Streak {
 // and sheet.
 // effect->kind : the element, which picks the palette: 0 Venus yellow,
 //                1 Mercury blue, 2 Mars red, others Jupiter violet.
-void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
+void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct BattleEffectWork *work;
   void *canvas;
@@ -923,7 +924,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 56; frame++) {
     // Follow the unit, fade out over the last 6 frames, and on frame 26
     // flash the first target for 20 frames.
-    EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
+    EffectPosition_ProjectScaledBattler(effect->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
@@ -1021,11 +1022,11 @@ void BattleFx_DrawStreaks(void) {
       SceneTransform_ApplyPitch(streak->pitch);
       SceneTransform_ApplyYaw(streak->yaw);
       point.x = streak->head;
-      EffectPosition_ApplyBaseAndYOffset(&point, &head);
+      EffectPosition_ProjectPoint(&point, &head);
       head.x += 64;
       head.y += 80;
       point.x = streak->tail;
-      EffectPosition_ApplyBaseAndYOffset(&point, &tail);
+      EffectPosition_ProjectPoint(&point, &tail);
       tail.x += 64;
       tail.y += 80;
       streak->tail -= 4;
@@ -1049,10 +1050,10 @@ void BattleFx_DrawStreaks(void) {
 // and returns at once: opens the canvas and schedules
 // BattleFx_DrawStreaks with a canvas that darkens each frame.
 // The caller keeps the canvas on its unit and ends the burst with
-// BattleFx_ScheduleCallbacksAndReleaseBlocks.
+// BattleFx_EndElementStreaks.
 // kind : the element, which picks the palette: 0 Venus yellow, 1 Mercury
 //        blue, 2 Mars red, 3 Jupiter violet, others a dusty grey.
-void BattleFx_PrepareScene(s32 kind) {
+void BattleFx_StartElementStreaks(s32 kind) {
   struct BattleEffectWork *work;
   void *palette;
   s32 id;
@@ -1091,10 +1092,10 @@ void BattleFx_PrepareScene(s32 kind) {
                                 EFFECT_CALLBACK_ORDER);
 }
 
-// Ends the element streak burst that BattleFx_PrepareScene
+// Ends the element streak burst that BattleFx_StartElementStreaks
 // started: stops its callbacks and the background palette fade, clears the
 // canvas in VRAM and frees the work and the canvas.
-void BattleFx_ScheduleCallbacksAndReleaseBlocks(void) {
+void BattleFx_EndElementStreaks(void) {
   Scheduler_RemoveCallback(BattleFx_DrawStreaks);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   {

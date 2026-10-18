@@ -132,7 +132,7 @@ void BattleFx_RunHeartbreak(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
-  EffectPosition_ApplyStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
     // It starts 100 pixels above the canvas and to the target's far side,

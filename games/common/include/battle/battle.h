@@ -47,7 +47,7 @@ s8 BattleFx_GetResourceGroup(s32 effect_index);
 #endif
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
-void BattleFx_RunNoEffect(void);
+void BattleFx_DoNothing(void);
 void BattleFx_RunOrbitingParticles(void);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode);

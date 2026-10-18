@@ -94,7 +94,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
 
         // Size 10 to 1 over depths 160 to 799; maximum blend for the first 48
         // frames, additive after.
-        EffectPosition_ApplyBaseAndYOffset(ember, &screen);
+        EffectPosition_ProjectPoint(ember, &screen);
         screen.x >>= 1;
         CLAMP(screen.depth, 160, 799);
         size = 10 - (screen.depth - 160) / 64;

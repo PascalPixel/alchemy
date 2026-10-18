@@ -101,7 +101,7 @@ void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Audio_PlayCue(s32 cue);
-void EffectPosition_ApplyAnimationAndYOffset(s32 id,
+void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void Func_0815e22c(struct EffectPosition *middle);
 void Func_0815f0a0(s32 resource);
@@ -247,7 +247,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     // pixels toward the user), and scroll the background to the user.
     if (frame == 0) {
       Audio_PlayCue(190);
-      EffectPosition_ApplyAnimationAndYOffset(effect->actor, &card);
+      EffectPosition_ProjectSprite(effect->actor, &card);
       Func_0815e22c(&middle);
       if (mode == CARD_DEATH) {
         if (effect->side == 0)

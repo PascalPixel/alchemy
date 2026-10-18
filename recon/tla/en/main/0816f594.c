@@ -171,7 +171,7 @@ void BattleFx_RunRadiantFire(struct BattleEffectArgument *effect) {
         flame->x = target->x + Trig_Sin(angle) * radius * 2;
         flame->y = target->y + Trig_Cos(angle) * radius + (48 << 16);
         flame->z = target->z;
-        EffectPosition_ApplyBaseAndYOffset(&flame->x, &screen);
+        EffectPosition_ProjectPoint(&flame->x, &screen);
         flame->x = screen.x / 2;
         flame->y = screen.y;
         Random16();

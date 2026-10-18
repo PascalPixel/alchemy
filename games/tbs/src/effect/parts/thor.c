@@ -228,7 +228,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       for (i = 0; i != 6; i++) {
         SET_VECTOR(point, (points[i][0] - 96) << 16, 0,
                    (points[i][1] - 96) << 16);
-        EffectPosition_ApplyBaseAndYOffset(point, &screen[i]);
+        EffectPosition_ProjectPoint(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
       }
@@ -283,7 +283,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         s32 dotSize = size + 1;
         point[0] = Trig_Sin(i << 9) * 96;
         point[2] = -(Trig_Cos(i << 9) * 96);
-        EffectPosition_ApplyBaseAndYOffset(point, &screen[0]);
+        EffectPosition_ProjectPoint(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
         screen[0].y = (screen[0].y >> 16) + 60;
         drawAlt(canvas,

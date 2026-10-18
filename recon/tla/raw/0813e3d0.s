@@ -208,7 +208,7 @@ Func_0813e3d0:
 	ldr r1, [sp, #32]
 	ldr r0, [r1, #8]
 	mov r1, r11
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	mov r4, r11
 	ldr r3, [r4]
 	movs r2, #128
@@ -433,7 +433,7 @@ Func_0813e3d0:
 	ldr r3, [r5, #8]
 	adds r3, #64
 	str r3, [r5, #8]
-	bl EffectPosition_ApplyBaseAndYOffset
+	bl EffectPosition_ProjectPoint
 	ldr r2, [r6]
 	mov r1, r8
 	lsrs r3, r2, #31

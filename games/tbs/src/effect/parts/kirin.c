@@ -358,8 +358,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         // A target the row passes for the first time throws a burst of 32
         // motes and plays its hit reaction.
         if (hit[i] == 0) {
-          EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i],
-                                                      &unit);
+          EffectPosition_ProjectBattler(work->effect->actors[i], &unit);
           if (unit.x > rowX) {
             s32 k;
 

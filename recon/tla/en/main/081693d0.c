@@ -544,7 +544,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     work->particles[i].variant = 0;
   }
   for (i = 0; i != effect->count; i++) {
-    EffectPosition_ApplyStepAndYOffset(effect->actors[i],
+    EffectPosition_ProjectScaledBattler(effect->actors[i],
                                        (struct EffectPosition *)target);
     work->particles[i].x = target[0] / 2;
   }

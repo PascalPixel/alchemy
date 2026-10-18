@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -251,7 +251,7 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
 
         point[1] = (Data_08196e9c[corner * 2 + 1] << 16) + 0x1e0000;
         point[2] = (Data_08196e9c[corner * 2] << 16) + caster->z;
-        EffectPosition_ApplyBaseAndYOffset(point, &corners[i]);
+        EffectPosition_ProjectPoint(point, &corners[i]);
         corners[i].x >>= 1;
       }
       for (i = 0; i != 6; i++) {
@@ -285,7 +285,7 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
 
       point[1] = caster->y - Trig_Cos(angle) * 40 + 0x200000;
       point[2] = caster->z + Trig_Sin(angle) * 40;
-      EffectPosition_ApplyBaseAndYOffset(point, &ring);
+      EffectPosition_ProjectPoint(point, &ring);
       ring.x >>= 1;
       if (ring.depth <= 159) {
         ring.depth = 160;
@@ -320,7 +320,7 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
         point[0] = work->particles[0].x + i * work->particles[0].velocityX;
         point[1] = 0x1e0000;
         point[2] = caster->z;
-        EffectPosition_ApplyBaseAndYOffset(point, &segment);
+        EffectPosition_ProjectPoint(point, &segment);
         segment.x >>= 1;
         if (effect->side == 0) {
           segment.x -= 32;

@@ -80,8 +80,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // Scroll BG2 so the canvas's x 64 is on the target.
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
-                                              &screenPosition);
+  EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   if (mode == 0) {
     REG_BG2PA = Q_8_8(1);
     x = 64 - screenPosition.x;

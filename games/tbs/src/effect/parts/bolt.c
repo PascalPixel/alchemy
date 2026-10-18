@@ -78,8 +78,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       s32 start = i * 8;
 
-      EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i],
-                                                  &screen);
+      EffectPosition_ProjectBattler(work->effect->actors[i], &screen);
       screen.x /= 2;
       if (frame == start + 1)
         work->shakeFrames = 4;

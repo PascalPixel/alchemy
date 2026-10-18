@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -1379,7 +1379,7 @@ void BattleFx_RunCatastrophe(struct BattleEffectArgument *effect) {
         BattleFx_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                   0x40000, 150);
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);
-        EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[i], &pos);
+        EffectPosition_ProjectBattler(effect->actors[i], &pos);
         q = &Data_02016d00[64 + base];
         for (j = 0; j != 16; j++, q++) {
           s32 angle;

@@ -78,7 +78,7 @@ s32 Trig_Cos(s32 angle);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -295,7 +295,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
     if (frame >= 78 && frame <= 118) {
-      EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(effect->actors[0], &target);
       if (frame == 78) {
         x = target.x / 2;
         y = 48;
@@ -372,7 +372,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (step->y >= 0) {
           s32 size;
 
-          EffectPosition_ApplyBaseAndYOffset(&step->x, &position);
+          EffectPosition_ProjectPoint(&step->x, &position);
           position.x >>= 1;
           if (position.depth <= 159)
             position.depth = 160;
@@ -407,7 +407,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
           if (step->variant >= 0) {
             s32 size;
 
-            EffectPosition_ApplyBaseAndYOffset(&step->x, &position);
+            EffectPosition_ProjectPoint(&step->x, &position);
             size = (step->variant >> 3) + 1;
             position.x >>= 1;
             draw[i & 1](canvas, graphics + gData_08197410[size - 1],

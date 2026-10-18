@@ -220,7 +220,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           s32 x;
           s32 y;
 
-          EffectPosition_ApplyBaseAndYOffset(&rock->x, &position);
+          EffectPosition_ProjectPoint(&rock->x, &position);
           position.x >>= 1;
           x = position.x - 12;
           y = position.y - 24;

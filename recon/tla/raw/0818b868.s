@@ -121,7 +121,7 @@ BattleFx_RunTripleChomp:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	ldr r1, [sp, #20]
-	bl EffectPosition_ApplyAlternateStepAndYOffset
+	bl EffectPosition_ProjectBattler
 	ldr r2, .L_0818bc38
 	ldr r3, [sp, #64]
 	movs r0, #7

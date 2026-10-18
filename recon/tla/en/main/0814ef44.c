@@ -67,7 +67,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleFx_PrepareCanvasEffect
+                   s32 *target);  // BattleFx_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 
@@ -166,7 +166,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   // Modes 0, 8 and 9 show the canvas at full width, the first target at
   // the middle (64); the rest keep it twice as wide (narrow).
   if (mode == 0 || mode == 8 || mode == 9) {
-    EffectPosition_ApplyStepAndYOffset(effect->actors[0], &base);
+    EffectPosition_ProjectScaledBattler(effect->actors[0], &base);
     shift = 64 - base.x;
     REG_BG2X = shift << 8;
     REG_BG2PA = 0x100;
@@ -436,7 +436,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
             if (distance != 0) {
               s32 size;
 
-              EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &screen);
+              EffectPosition_ProjectPoint((s32 *)spark, &screen);
               if (mode == 0 || mode == 8 || mode == 9)
                 screen.x += shift;
               else

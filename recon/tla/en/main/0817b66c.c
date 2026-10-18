@@ -72,7 +72,7 @@ void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void *GetBattleObjectSlotFar(s32 id);
-void EffectPosition_ApplyAlternateStepAndYOffset(
+void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void Render_ResetTransformState(void);
@@ -125,7 +125,7 @@ void BattleFx_RunSabreDance(struct BattleEffectArgument *effect) {
 
   // Centre the canvas's x 64 on the target.
   GetBattleObjectSlotFar(effect->actors[0]);
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
   {
     /* FAKEMATCH: the native loads BG2PA's 0x100 from the pool before it
      * starts the register's address; the pinned halfword behind a one-pass

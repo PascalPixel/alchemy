@@ -49,7 +49,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id,
+void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -612,7 +612,7 @@ void BattleFx_RunCoatlicue(struct BattleEffectArgument *effect) {
         if (p->variant < 0) {
           continue;
         }
-        EffectPosition_ApplyBaseAndYOffset(p, &pos);
+        EffectPosition_ProjectPoint(p, &pos);
         pos.depth = HALF_HI(pos.depth) - 228;
         n = pos.depth * 6 / 50 + Data_08199742[p->variant];
         if (n < 0) {

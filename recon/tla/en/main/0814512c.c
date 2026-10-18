@@ -58,7 +58,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
 void BattleFx_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
+                   s32 *origin, s32 *size); // BattleFx_RunDjinniEntrance
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SummonFx_RunCanvasMode1(void *action);
@@ -220,7 +220,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
             if (step > 9)
               step = 9;
-            EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
+            EffectPosition_ProjectPoint((s32 *)shot, &position);
             position.x >>= 1;
             position.y -= 8;
             if (step > 4)
@@ -269,7 +269,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     // tumble, facing the way they move. Each lives 45 frames.
     for (i = 0, burst = BURSTS; i != 256; burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
-        EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
+        EffectPosition_ProjectPoint((s32 *)burst, &position);
         position.x >>= 1;
         if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
           draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + SMOKE_SHEET,

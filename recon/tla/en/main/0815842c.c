@@ -91,7 +91,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, s32 *position);
+void EffectPosition_ProjectBattler(s32 id, s32 *position);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -124,7 +124,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 
   // The chips start in a 16-pixel spread at the first target and fly up
   // at random, each to live 32 to 47 frames.
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], spawn);
+  EffectPosition_ProjectBattler(effect->actors[0], spawn);
   for (i = 0; i != CHIP_COUNT; i++) {
     s32 angle;
     s32 speed;

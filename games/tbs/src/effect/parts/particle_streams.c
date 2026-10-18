@@ -213,7 +213,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Scheduler_AddOrUpdateCallback(Camera_AdvanceBg2Reference, 0x4ff);
+  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceBg2OnInterval, 0x4ff);
   Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   for (i = 0; i != 128; i++)
@@ -415,7 +415,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         SET_VECTOR(vector, (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
                    (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
                    (gParticleStreams_OrbitPoints[i][2] / 2) << 16);
-        EffectPosition_ApplyBaseAndYOffset(vector, screenPosition = &spot);
+        EffectPosition_ProjectPoint(vector, screenPosition = &spot);
         screenPosition->x = HI(screenPosition->x) + 128;
         screenPosition->y = HI(screenPosition->y) + 60;
         draw(Ram_MapCellBuffer, work->sheet + 0x1f40, screenPosition->x - 4,
@@ -459,7 +459,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
     WaitFrames(1);
     presentation->active = 0;
-    Scheduler_RemoveCallback(Camera_AdvanceBg2Reference);
+    Scheduler_RemoveCallback(BattleFx_AdvanceBg2OnInterval);
     Scheduler_RemoveCallback(BattleFx_ArmPaletteHBlankDma);
     Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
     gBgScroll[1].x = savedX;
@@ -539,7 +539,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       if (ember->y >= 0) {
         s32 size;
 
-        EffectPosition_ApplyBaseAndYOffset(&ember->x, &point);
+        EffectPosition_ProjectPoint(&ember->x, &point);
         point.x >>= 1;
         if (point.depth <= 159)
           point.depth = 160;
@@ -582,7 +582,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       struct EffectStep *flash = &PARTICLES[i];
 
       if (i / 3 < elapsed && flash->y >= 0) {
-        EffectPosition_ApplyBaseAndYOffset(&flash->x, &point);
+        EffectPosition_ProjectPoint(&flash->x, &point);
         point.x >>= 1;
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;

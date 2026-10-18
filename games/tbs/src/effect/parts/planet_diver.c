@@ -92,8 +92,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
     // The user's screen position is taken on frame 0 and from frame 18 on,
     // and held in between.
     if (frame > 17 || frame == 0) {
-      EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor,
-                                                  &screenPosition);
+      EffectPosition_ProjectBattler(work->effect->actor, &screenPosition);
       screenPosition.x /= 2;
     }
 
@@ -306,7 +305,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
             s32 dist = Iwram_Sqrt(x + y + z) >> 8;
 
             if (dist != 0) {
-              EffectPosition_ApplyBaseAndYOffset(skull, &screenPosition);
+              EffectPosition_ProjectPoint(skull, &screenPosition);
               screenPosition.x >>= 1;
               draw[0](canvas, work->sheet + i % 3 * 576, screenPosition.x - 12,
                       screenPosition.y - 12, 24, 24);
@@ -412,7 +411,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
                                       POSE_DAMAGE, -1, 0);
           }
           SET_VECTOR(point, obj->x, 40 << 16, obj->z);
-          EffectPosition_ApplyBaseAndYOffset(point, &screen);
+          EffectPosition_ProjectPoint(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, through four images,
           // turned upside down every other 16 frames.

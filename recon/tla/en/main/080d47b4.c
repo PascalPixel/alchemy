@@ -1,9 +1,10 @@
-// Near miss of Func_080d47b4, differ 8 of 78 (was 28): The Broken Seal's
+// Near miss of Func_080d47b4, differ 6 of 78 (was 28): The Broken Seal's
 // BattleFx_SpawnLinked with this game's object kind (488), the visual's byte at
 // 26 and the object returned. Left, instruction order: the native loads the
-// visual (ldr r0, [r5, #80]) before it starts the 0x100 mask, stores the
-// resource before the visual's byte, and in the copy branch reads the new
-// object's flags before the source's.
+// visual (ldr r0, [r5, #80]) before it starts the 0x100 mask, and in the copy
+// branch reads the new object's flags before the source's and starts the 12
+// after both. The resource is stored before the visual's byte (permute,
+// 2026-10-18: 8 to 6).
 #include "objdisp.h"
 
 struct BattleEffectVisual {
@@ -63,8 +64,8 @@ struct BattleEffectLinkedObject *BattleFx_SpawnLinked(s32 resourceId, s32 flags,
       object->counter = 0;
       object->resourceId = resourceId;
       object->callback = BattleFx_CopyLinkedObjectPosition;
-      object->visual->value26 = 0;
       object->resource = resource;
+      object->visual->value26 = 0;
 
       if ((flags & 0x100) != 0) {
         s32 mask = 13;

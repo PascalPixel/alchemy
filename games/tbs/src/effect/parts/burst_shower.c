@@ -7,7 +7,7 @@
 // counting the 24 frames it lives (-1 when free).
 
 // The burst shower's second picture in the sheet, after the tornado.
-#define BURST_SHOWER_IMAGE (work->sheet + 0xC56)
+#define BURST_SHOWER_CELLS 0xC56
 #define BURST_SHOWER_BURSTS 48     // one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 // frames each burst lives
 
@@ -140,13 +140,13 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
-                               BURST_SHOWER_IMAGE, 1, 1);
+                               (work->sheet + BURST_SHOWER_CELLS), 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FACES) {
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
-                               BURST_SHOWER_IMAGE, 1, 1);
+                               (work->sheet + BURST_SHOWER_CELLS), 1, 1);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               BURST_SHOWER_IMAGE, 1, 1);
+                               (work->sheet + BURST_SHOWER_CELLS), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
     // The grey mode: a ramp of 16 greys, four entries each, with blending
@@ -245,10 +245,12 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     // a frame for 48 frames at a random point near a target.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->effect->side == 1) {
-        draw[0](canvas, BURST_SHOWER_IMAGE + ((frame / 3 % 3 * 9) << 9),
+        draw[0](canvas,
+                (work->sheet + BURST_SHOWER_CELLS) + ((frame / 3 % 3 * 9) << 9),
                 origin.x - 2, origin.y - 32, 72, 62);
       } else {
-        draw[0](canvas, BURST_SHOWER_IMAGE + ((frame / 3 % 3 * 9) << 9),
+        draw[0](canvas,
+                (work->sheet + BURST_SHOWER_CELLS) + ((frame / 3 % 3 * 9) << 9),
                 origin.x - 70, origin.y - 32, 72, 62);
       }
     } else {
@@ -278,19 +280,26 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
-            draw[work->effect->side](canvas, BURST_SHOWER_IMAGE,
-                                     HI(spark->x) - 16, HI(spark->y) - 32,
-                                     width, height);
+            draw[work->effect->side](canvas, (work->sheet + BURST_SHOWER_CELLS),
+                                     Q_16_16_TO_INT(spark->x) - 16,
+                                     Q_16_16_TO_INT(spark->y) - 32, width,
+                                     height);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
-            draw[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
-                    HI(spark->x) - 16, HI(spark->y) - 32, width, height);
+            draw[0](canvas,
+                    (work->sheet + BURST_SHOWER_CELLS) +
+                        ((spark->variant / 4) << 11),
+                    Q_16_16_TO_INT(spark->x) - 16,
+                    Q_16_16_TO_INT(spark->y) - 32, width, height);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (spark->variant > 1) {
-            draw[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
-                    HI(spark->x) - 16, HI(spark->y) - 32, width, height);
+            draw[0](canvas,
+                    (work->sheet + BURST_SHOWER_CELLS) +
+                        ((spark->variant / 4) << 11),
+                    Q_16_16_TO_INT(spark->x) - 16,
+                    Q_16_16_TO_INT(spark->y) - 32, width, height);
           }
         }
         spark->x += spark->velocityX;
@@ -345,3 +354,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef BURST_SHOWER_CELLS
+#undef BURST_SHOWER_BURSTS
+#undef BURST_SHOWER_BURST_LIFE
+#undef BURST_SHOWER_FRAMES

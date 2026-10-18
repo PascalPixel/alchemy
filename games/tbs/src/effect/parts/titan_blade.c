@@ -8,7 +8,7 @@
 // and the sword pictures in the work sheet; PARTICLES holds 684 embers and
 // then the sparks.
 
-#define FALLING_SWORD_SPARKS                                                   \
+#define TITAN_BLADE_SWORD_SPARKS                                               \
   ((struct EffectStep *)(Ram_MapCellBuffer +                                   \
                          TITAN_BLADE_DUST * sizeof(struct EffectStep)))
 
@@ -94,7 +94,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   // across as Ragnarok's.
   sparkOriginX = canvasCenterX << 16;
   do {
-    struct EffectStep *spark = &FALLING_SWORD_SPARKS[i];
+    struct EffectStep *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
     s32 mag;
     s32 ang;
@@ -158,8 +158,8 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
         s32 life;
         s32 y;
 
-        y = HI(flash->y);
-        x = HI(flash->x) + canvasCenterX;
+        y = Q_16_16_TO_INT(flash->y);
+        x = Q_16_16_TO_INT(flash->x) + canvasCenterX;
         life = flash->variant;
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
@@ -269,8 +269,8 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
           if (frame > 76) {
             size = 10;
           }
-          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, HI(dust->x), HI(dust->y),
-                           size);
+          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, Q_16_16_TO_INT(dust->x),
+                           Q_16_16_TO_INT(dust->y), size);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -282,7 +282,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
           dust->velocityX = dust->velocityX * 62 / 64;
           dust->velocityY = dust->velocityY * 62 / 64;
           dust->variant++;
-          if (dust->velocityY > 0 && HI(dust->y) > 108) {
+          if (dust->velocityY > 0 && Q_16_16_TO_INT(dust->y) > 108) {
             dust->variant = -1;
           }
         }
@@ -322,7 +322,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     if (frame > 59) {
       i = 0;
       do {
-        struct EffectStep *spark = &FALLING_SWORD_SPARKS[i];
+        struct EffectStep *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
         if (spark->variant > 0) {
           s32 x;
@@ -377,3 +377,13 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef TITAN_BLADE_SWORD_SPARKS
+#undef TITAN_BLADE_FRAMES
+#undef TITAN_BLADE_SWORD_IMAGE
+#undef TITAN_BLADE_FLASHES
+#undef TITAN_BLADE_RING
+#undef TITAN_BLADE_DUST
+#undef TITAN_BLADE_FIRST_DUST
+#undef TITAN_BLADE_DRAWN_DUST
+#undef TITAN_BLADE_SPARKS

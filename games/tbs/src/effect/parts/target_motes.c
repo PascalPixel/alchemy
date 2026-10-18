@@ -75,11 +75,11 @@ DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)
 #define TARGET_MOTES_RIPPLE(mode) (!((mode) <= 1 || (mode) == 3))
 
 // Where mode 3 keeps its glint images in work->sheet.
-enum { TARGET_MOTE_GLINT_CELLS = 0x2580 };
+enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 
-#define TARGET_MOTES 512     // motes scattered at the start
-#define TARGET_MOTE_SLOTS 64 // particles reserved for each target
-#define TARGET_MOTE_CYCLE 24 // frames of a mote's image cycle
+#define TARGET_MOTES 512      // motes scattered at the start
+#define TARGET_MOTES_SLOTS 64 // particles reserved for each target
+#define TARGET_MOTES_CYCLE 24 // frames of a mote's image cycle
 
 // Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
 // turn about a point 20 pixels up, either closing in on it or rising, and
@@ -139,7 +139,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == 3)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                               work->sheet + TARGET_MOTE_GLINT_CELLS, 1, 0);
+                               work->sheet + TARGET_MOTES_GLINT_CELLS, 1, 0);
 
   // Wide styles scatter the motes within 64 pixels across and in depth and
   // 32 up or down; the others within 16 across and in depth and up to 32
@@ -220,7 +220,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
           ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
               canvas,
               work->sheet + gBattleFx_GlintCells[frame & 3] +
-                  TARGET_MOTE_GLINT_CELLS,
+                  TARGET_MOTES_GLINT_CELLS,
               x, y + 16, gBattleFx_GlintCellWidths[frame & 3],
               gBattleFx_GlintCellHeights[frame & 3]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -243,7 +243,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
         if (mode <= 1 || mode == 4)
           SceneTransform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
-          struct EffectStep *mote = &PARTICLES[member * TARGET_MOTE_SLOTS + i];
+          struct EffectStep *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
           s32 distance;
 
           if (frame > member * 8 + i) {
@@ -283,7 +283,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                 mote->y += 0x10000;
               }
               mote->variant++;
-              if (mote->variant == TARGET_MOTE_CYCLE) {
+              if (mote->variant == TARGET_MOTES_CYCLE) {
                 if (TARGET_MOTES_CLOSE_IN(mode)) {
                   mote->variant = 0;
                 } else {
@@ -512,3 +512,14 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef TARGET_MOTES_START_WIDE
+#undef TARGET_MOTES_CLOSE_IN
+#undef TARGET_MOTES_RIPPLE
+#undef TARGET_MOTES
+#undef TARGET_MOTES_SLOTS
+#undef TARGET_MOTES_CYCLE
+#undef SLEEP_FRAMES
+#undef SLEEP_SEEDED
+#undef SLEEP_SHEEP
+#undef CURSE_MARKER_CELLS

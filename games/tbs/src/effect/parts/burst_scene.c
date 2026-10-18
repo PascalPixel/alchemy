@@ -57,18 +57,19 @@ void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
 // Flurries of strikes, and the rising rock wall.
 // The bytes of a gBurstScene_Records row.
 enum BurstField {
-  BURST_ARC_SHEET, // 0: blue arc A, else B; 1 also draws every strike as an arc
-  BURST_PALETTE,   // the palette's resource (0 to 3)
-  BURST_STRIKES,   // the strikes
-  BURST_MOTES,     // motes thrown by each strike
-  BURST_INTERVAL,  // frames between strikes
-  BURST_FRAMES,    // frames in the whole effect
-  BURST_FLASH      // 1 fills the canvas on each hit
+  BURST_SCENE_ARC_SHEET, // 0: blue arc A, else B; 1 also draws every strike as
+                         // an arc
+  BURST_SCENE_PALETTE,   // the palette's resource (0 to 3)
+  BURST_SCENE_STRIKES,   // the strikes
+  BURST_SCENE_MOTES,     // motes thrown by each strike
+  BURST_SCENE_INTERVAL,  // frames between strikes
+  BURST_SCENE_FRAMES,    // frames in the whole effect
+  BURST_SCENE_FLASH      // 1 fills the canvas on each hit
 };
 
 // The packed flash pictures and the waves.
-#define BURST_FLASH_CELLS 0x5100
-#define BURST_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
+#define BURST_SCENE_FLASH_CELLS 0x5100
+#define BURST_SCENE_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
 
 // Flurry: the user closes on the first target and strikes it again and
 // again; each strike shows an arc (or, in rows with arc sheet 0, a wave
@@ -115,27 +116,27 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // Pack the flash (40x288) to half width at BURST_FLASH_CELLS, as the
+  // Pack the flash (40x288) to half width at BURST_SCENE_FLASH_CELLS, as the
   // canvas is shown at double width.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + BURST_FLASH_CELLS;
+      s32 dst = row * 20 + col / 2 + BURST_SCENE_FLASH_CELLS;
 
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (gBurstScene_Records[mode][BURST_ARC_SHEET] == 0)
+  if (gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] == 0)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
                                1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, BURST_WAVE_CELLS, 1,
-                             0);
-  switch (gBurstScene_Records[mode][BURST_PALETTE]) {
+  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, BURST_SCENE_WAVE_CELLS,
+                             1, 0);
+  switch (gBurstScene_Records[mode][BURST_SCENE_PALETTE]) {
   case 0:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
@@ -174,8 +175,9 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0],
                                  4, 0);
 
-  for (frame = 0; frame != gBurstScene_Records[mode][BURST_FRAMES]; frame++) {
-    s32 bursts = gBurstScene_Records[mode][BURST_STRIKES];
+  for (frame = 0; frame != gBurstScene_Records[mode][BURST_SCENE_FRAMES];
+       frame++) {
+    s32 bursts = gBurstScene_Records[mode][BURST_SCENE_STRIKES];
 
     EffectPosition_ProjectScaledBattler(work->effect->actor, &actorPos);
     actorPos.x /= 2;
@@ -200,12 +202,13 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (i = 0; i != bursts; i++) {
-      s32 start = i * gBurstScene_Records[mode][BURST_INTERVAL];
+      s32 start = i * gBurstScene_Records[mode][BURST_SCENE_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
-        if ((i & 3) <= 1 || gBurstScene_Records[mode][BURST_ARC_SHEET] == 1) {
+        if ((i & 3) <= 1 ||
+            gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] == 1) {
           // The arc: six 48x72 frames.
           if (work->effect->side == 0)
             draw[i & 1](canvas, work->sheet + step * 3456, targetPos.x / 2 - 16,
@@ -216,16 +219,16 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
         } else {
           // The wave: six 48x16 frames.
           if (work->effect->side == 0)
-            draw[i & 1](canvas, BURST_WAVE_CELLS + step * 768,
+            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * 768,
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, BURST_WAVE_CELLS + step * 768,
+            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * 768,
                         targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
-        if (gBurstScene_Records[mode][BURST_FLASH] == 1)
+        if (gBurstScene_Records[mode][BURST_SCENE_FLASH] == 1)
           Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
@@ -239,14 +242,14 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
           work->shakeFrames = 4;
           AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         }
-        for (j = 0; j != gBurstScene_Records[mode][BURST_MOTES]; j++)
+        for (j = 0; j != gBurstScene_Records[mode][BURST_SCENE_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
       // The flash: six 20x48 frames, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
                 work->sheet + ((frame - start - 2) / 2) * 960 +
-                    BURST_FLASH_CELLS,
+                    BURST_SCENE_FLASH_CELLS,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
     EFFECT_RELEASE_BLITTERS();
@@ -284,3 +287,6 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef BURST_SCENE_FLASH_CELLS
+#undef BURST_SCENE_WAVE_CELLS

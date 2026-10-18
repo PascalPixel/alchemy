@@ -200,7 +200,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
           if (frame > 76)
             size = 10;
           EFFECT_DRAW_MOTE(draw[spark->velocityY > 0], canvas, graphics,
-                           HI(spark->x), HI(spark->y), size);
+                           Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
+                           size);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
@@ -210,7 +211,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
           spark->velocityX = spark->velocityX * 62 / 64;
           spark->velocityY = spark->velocityY * 62 / 64;
           spark->variant++;
-          if (spark->velocityY > 0 && HI(spark->y) > 104)
+          if (spark->velocityY > 0 && Q_16_16_TO_INT(spark->y) > 104)
             spark->variant = -1;
         }
       }
@@ -248,3 +249,9 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   }
   BattleFx_EndCanvasLayer();
 }
+
+#undef NEREID_FRAMES
+#undef NEREID_OBJECTS
+#undef NEREID_COLUMNS
+#undef NEREID_EMBERS
+#undef NEREID_COLUMN_IMAGE

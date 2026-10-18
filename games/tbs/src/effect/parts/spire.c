@@ -2,7 +2,7 @@
 // Spire.
 
 // The shard pictures in the sheet, after the boulder.
-#define SHATTER_SHARD_CELLS 0x83c
+#define SPIRE_SHARD_CELLS 0x83c
 #define SPIRE_SHARDS 21 // shards per rock
 
 // Abilities: Spire, Clay Spire, Stone Spire (kind 2).
@@ -85,14 +85,16 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
           width = gSpire_ShardWidths[cell];
           height = gSpire_ShardHeights[cell];
           blit(canvas,
-               work->sheet + gSpire_ShardCells[cell] + SHATTER_SHARD_CELLS,
-               HI(shard->x) - (width >> 1), HI(shard->y) - (height >> 1), width,
-               height);
+               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_CELLS,
+               Q_16_16_TO_INT(shard->x) - (width >> 1),
+               Q_16_16_TO_INT(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
-               work->sheet + gSpire_ShardCells[cell] + SHATTER_SHARD_CELLS,
-               HI(shard->x) - ((width = gSpire_ShardWidths[cell]) >> 1),
-               HI(shard->y) - ((height = gSpire_ShardHeights[cell]) >> 1),
+               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_CELLS,
+               Q_16_16_TO_INT(shard->x) -
+                   ((width = gSpire_ShardWidths[cell]) >> 1),
+               Q_16_16_TO_INT(shard->y) -
+                   ((height = gSpire_ShardHeights[cell]) >> 1),
                width, height);
 #endif
           EffectStep_AdvanceWithGravity2D(shard, 64, 0x4000);
@@ -105,7 +107,8 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
       // lower than y 50.
       if (frame < gSpire_DropFrames[i] + 18) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
+          blit(canvas, work->sheet, gSpire_RockX[i] + 47,
+               Q_16_16_TO_INT(rock->y), 34, 62);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += 0x10000;
@@ -123,3 +126,6 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef SPIRE_SHARD_CELLS
+#undef SPIRE_SHARDS

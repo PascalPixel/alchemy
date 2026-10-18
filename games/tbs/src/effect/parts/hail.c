@@ -4,11 +4,11 @@
 // The rock toss (Ground): a Venus Djinni throws six rocks from the user,
 // shedding chips, which swirl and home in on the first target.
 
-#define REVEAL_CHIP_COUNT 64 // ice chips
+#define HAIL_CHIP_COUNT 64 // ice chips
 
 // Where the water burst's pictures sit in the sheet, after the waves.
-#define REVEAL_CHIP_CELLS 0x400
-#define REVEAL_DJINNI_CELLS 0x65c0
+#define HAIL_CHIP_CELLS 0x400
+#define HAIL_DJINNI_CELLS 0x65c0
 
 #define HAIL_FRAMES 64
 
@@ -48,7 +48,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectBattler(work->effect->actors[0], &origin);
 
   // The chips burst up from the first target.
-  for (i = 0; i != REVEAL_CHIP_COUNT; i++) {
+  for (i = 0; i != HAIL_CHIP_COUNT; i++) {
     s32 angle;
     s32 speed;
 
@@ -69,9 +69,9 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (64 - frame) | 0x1000;
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
-                                 work->sheet + REVEAL_CHIP_CELLS, 1, 1);
+                                 work->sheet + HAIL_CHIP_CELLS, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                                 work->sheet + REVEAL_DJINNI_CELLS, 1, 0);
+                                 work->sheet + HAIL_DJINNI_CELLS, 1, 0);
     }
 
     // Prelude: the small djinni circles.
@@ -86,12 +86,12 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
       // Never true: the effect ends after 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      draw[1](canvas, work->sheet + REVEAL_DJINNI_CELLS, x, y, 20, 40);
+      draw[1](canvas, work->sheet + HAIL_DJINNI_CELLS, x, y, 20, 40);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + REVEAL_DJINNI_CELLS, x, y, 20, 40);
+        draw[1](canvas, work->sheet + HAIL_DJINNI_CELLS, x, y, 20, 40);
     }
 
-    for (i = 0, chip = PARTICLES; i != REVEAL_CHIP_COUNT; i++, chip++) {
+    for (i = 0, chip = PARTICLES; i != HAIL_CHIP_COUNT; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 cell;
         s32 width;
@@ -102,14 +102,15 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
         width = gHail_CellWidths[cell];
         height = gHail_CellHeights[cell];
-        draw[i & 1](canvas, work->sheet + REVEAL_CHIP_CELLS + gHail_Cells[cell],
-                    HI(chip->x) - width / 2, HI(chip->y) - height / 2, width,
-                    height);
+        draw[i & 1](canvas, work->sheet + HAIL_CHIP_CELLS + gHail_Cells[cell],
+                    Q_16_16_TO_INT(chip->x) - width / 2,
+                    Q_16_16_TO_INT(chip->y) - height / 2, width, height);
 #else
-        draw[i & 1](canvas, work->sheet + REVEAL_CHIP_CELLS + gHail_Cells[cell],
-                    HI(chip->x) - (width = gHail_CellWidths[cell]) / 2,
-                    HI(chip->y) - (height = gHail_CellHeights[cell]) / 2, width,
-                    height);
+        draw[i & 1](
+            canvas, work->sheet + HAIL_CHIP_CELLS + gHail_Cells[cell],
+            Q_16_16_TO_INT(chip->x) - (width = gHail_CellWidths[cell]) / 2,
+            Q_16_16_TO_INT(chip->y) - (height = gHail_CellHeights[cell]) / 2,
+            width, height);
 #endif
         EffectStep_AdvanceWithGravity3D(chip, 63, 0x1000);
       }
@@ -146,7 +147,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 }
 
 // The small Venus djinni in the rock toss's sheet.
-#define ROCK_TOSS_DJINNI_CELLS 0x65c0
+#define GROUND_DJINNI_CELLS 0x65c0
 
 #define GROUND_FRAMES 96
 #define GROUND_LAUNCHED 8       // rocks launched
@@ -195,7 +196,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + ROCK_TOSS_DJINNI_CELLS, 1, 1);
+                             work->sheet + GROUND_DJINNI_CELLS, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -236,9 +237,9 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       if (frame <= 3)
         ((DrawRectangle)((union HeapState *)gWorkSlot)
              ->slots[HEAP_SLOT_BLITTER_ALTERNATE])(
-            canvas, work->sheet + ROCK_TOSS_DJINNI_CELLS, x, y, 20, 40);
+            canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      draw[0](canvas, work->sheet + ROCK_TOSS_DJINNI_CELLS, x, y, 20, 40);
+      draw[0](canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
     }
     // Every 2 frames each chip takes a random picture (velocityX) and
     // flip (velocityY).
@@ -377,3 +378,14 @@ void Camera_ApplyShake(s32 rangeX, u32 rangeY) {
   restoredCenter->centerX = 0x78;
   restoredCenter->centerY = 0x78;
 }
+
+#undef HAIL_CHIP_COUNT
+#undef HAIL_CHIP_CELLS
+#undef HAIL_DJINNI_CELLS
+#undef HAIL_FRAMES
+#undef GROUND_DJINNI_CELLS
+#undef GROUND_FRAMES
+#undef GROUND_LAUNCHED
+#undef GROUND_CHIPS
+#undef GROUND_ROCKS
+#undef GROUND_CHIPS_PER_ROCK

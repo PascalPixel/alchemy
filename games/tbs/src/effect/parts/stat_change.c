@@ -576,3 +576,11 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef STAT_BOOST_SCATTERED
+#undef STAT_BOOST_DRAWN
+#undef STAT_BOOST_SLOTS
+#undef STAT_REDUCTION_SHARD_CELLS
+#undef STAT_REDUCTION_SHARD_BYTES
+#undef STAT_REDUCTION_SHARDS
+#undef STAT_REDUCTION_SLOTS

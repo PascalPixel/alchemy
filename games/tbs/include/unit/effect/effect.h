@@ -50,9 +50,9 @@ typedef struct {
 // Extract signed 16.16 pixels without reading an s32 through an s16 alias.
 // The plain shift adds four bytes to native English effect.text overall.
 #ifdef UBFIX
-#define HI(v) ((s32)(v) >> 16)
+#define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 #else
-#define HI(v) (((s16 *)&(v))[1])
+#define Q_16_16_TO_INT(v) (((s16 *)&(v))[1])
 #endif
 
 // Two-dimensional {x, y} pair for position or velocity.

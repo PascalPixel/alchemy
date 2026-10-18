@@ -1,7 +1,7 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Flare.
 
-#define FLAME_ARC_COUNT 9 // flames on the arc
+#define FLARE_ARC_COUNT 9 // flames on the arc
 
 // Abilities: Flare, Flare Wall, Flare Storm (kind 11).
 //
@@ -69,7 +69,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     delay -= 4;
     i += 1;
     arcFlame++;
-  } while (i != FLAME_ARC_COUNT);
+  } while (i != FLARE_ARC_COUNT);
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == 2) {
@@ -138,7 +138,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
       i += 1;
       flame->variant += 1;
       flame++;
-    } while (i != FLAME_ARC_COUNT);
+    } while (i != FLARE_ARC_COUNT);
 
     i = 0;
     while (i != work->effect->count) {
@@ -181,3 +181,5 @@ UNUSED s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
   }
   return outputCount;
 }
+
+#undef FLARE_ARC_COUNT

@@ -29,77 +29,78 @@
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
 // gTargetStrike_Records has seven entries for each style.
-#define STRIKE_VALUE(mode, field) gTargetStrike_Records[(mode)][(field)]
+#define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Records[(mode)][(field)]
 enum {
-  STRIKE_KIND,         // STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
-  STRIKE_HITS,         // how many times the target is struck
-  STRIKE_FLAGS,        // STRIKE_SMOKE and so on
-  STRIKE_COLOUR,       // background palette, 0 to 5 (see below)
-  STRIKE_IMAGE_FRAMES, // frames each strike image is shown
-  STRIKE_COMPOSITE,    // how the columns are drawn (COMPOSITE_MAX or _ADDITIVE)
-  STRIKE_FRAMES        // length of the effect in frames
+  TARGET_STRIKE_KIND,         // STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
+  TARGET_STRIKE_HITS,         // how many times the target is struck
+  TARGET_STRIKE_FLAGS,        // STRIKE_SMOKE and so on
+  TARGET_STRIKE_COLOUR,       // background palette, 0 to 5 (see below)
+  TARGET_STRIKE_IMAGE_FRAMES, // frames each strike image is shown
+  TARGET_STRIKE_COMPOSITE,    // how the columns are drawn (COMPOSITE_MAX or
+                              // _ADDITIVE)
+  TARGET_STRIKE_FRAMES        // length of the effect in frames
 };
 // STRIKE_KIND_* and the STRIKE_SMOKE flags are in effect_table.h.
 
 // Rows of gTargetStrike_Records used by these effect entry points.
 enum {
-  STRIKE_STYLE_BLUE_SPARK_COLUMNS = 0,
-  STRIKE_STYLE_LIME_SMOKE_COLUMN = 1,
-  STRIKE_STYLE_EMBER_DRAIN_COLUMNS = 3,
-  STRIKE_STYLE_MARS_DRAIN_COLUMNS = 4,
-  STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS = 5,
-  STRIKE_STYLE_LIGHTNING_GLINT_SLASH = 6,
-  STRIKE_STYLE_LIME_SMOKE_SLASH = 9,
-  STRIKE_STYLE_MARS_SMOKE_COLUMN = 10
+  TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS = 0,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN = 1,
+  TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS = 3,
+  TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS = 4,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS = 5,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH = 6,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH = 9,
+  TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN = 10
 };
 
 // Abilities: Numbing Sting (kind 313).
 //
 // One slash with glints, lightning colours.
 DEFINE_EFFECT_KIND(BattleFx_RunNumbingSting, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_LIGHTNING_GLINT_SLASH)
+                   TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH)
 
 // Abilities: Cannibal Fang (kind 316).
 //
 // Three ember columns that drain the target into the user.
 DEFINE_EFFECT_KIND(BattleFx_RunCannibalFang, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_EMBER_DRAIN_COLUMNS)
+                   TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS)
 
 // Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
 //
 // One lime column with smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunPoisonousBite, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_LIME_SMOKE_COLUMN)
+                   TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN)
 
 // Abilities: Rabid Fang (kind 336).
 //
 // One column with smoke, Mars Djinn colours.
 DEFINE_EFFECT_KIND(BattleFx_RunRabidFang, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_MARS_SMOKE_COLUMN)
+                   TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN)
 
 // Abilities: Electric Bite (kind 324).
 //
 // Three lightning columns with glints.
 DEFINE_EFFECT_KIND(BattleFx_RunElectricBite, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS)
+                   TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS)
 
 // Abilities: Poison Tail (kind 325).
 //
 // One lime slash with smoke.
 DEFINE_EFFECT_KIND(BattleFx_RunPoisonTail, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_LIME_SMOKE_SLASH)
+                   TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH)
 
 // Abilities: Vampiric Fang (kind 327).
 //
 // Three columns that drain the target, Mars Djinn colours.
 DEFINE_EFFECT_KIND(BattleFx_RunVampiricFang, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_MARS_DRAIN_COLUMNS)
+                   TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS)
 
 // Abilities: Double Fang (kind 332).
 //
 // Two blue columns with sparks.
 DEFINE_EFFECT_KIND(BattleFx_RunDoubleFang, BattleFx_RunTargetStrike,
-                   STRIKE_STYLE_BLUE_SPARK_COLUMNS)
+                   TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS)
 
 // Abilities: Mortal Blow (kind 333).
 //
@@ -122,7 +123,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunAcidBite, BattleFx_RunTargetStrike, 2)
 // colours.
 DEFINE_EFFECT_KIND(BattleFx_RunDrainFang, BattleFx_RunTargetStrike, 0xB)
 
-// Strikes the first target STRIKE_HITS times with a sideways slash or a
+// Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
 // column of light, with the extras its flags choose, and lets the battle
 // show the damage on the hits.
 // mode : the style, 0 to 11, a row of gTargetStrike_Records.
@@ -162,13 +163,13 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-  if (STRIKE_VALUE(mode, STRIKE_KIND) == STRIKE_KIND_SLASH)
+  if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage,
                                work->sheet + 0xc80, 0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);
-  switch (STRIKE_VALUE(mode, STRIKE_COLOUR)) {
+  switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOUR)) {
   case 0:
     resource = (s32)&ResourceId_BlueBeamSheet;
     break;
@@ -220,12 +221,12 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       TARGET_STRIKE_SPARKS[i].x = target->x;
       TARGET_STRIKE_SPARKS[i].y = 0x140000;
       TARGET_STRIKE_SPARKS[i].z = target->z;
-      if (STRIKE_VALUE(mode, STRIKE_KIND) == STRIKE_KIND_COLUMN) {
+      if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_COLUMN) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityZ = ((Random16() & 255) - 128) << 11;
       } else {
-        if (STRIKE_VALUE(mode, STRIKE_FLAGS) & 16) {
+        if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & 16) {
           TARGET_STRIKE_SPARKS[i].velocityX = (Random16() & 0x1ff) << 11;
           TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 0x1ff) - 256)
                                               << 11;
@@ -253,17 +254,19 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   EffectPosition_ProjectBattler(work->effect->actors[0], &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
-  for (frame = 0; frame != STRIKE_VALUE(mode, STRIKE_FRAMES); frame++) {
-    s32 span = STRIKE_VALUE(mode, STRIKE_HITS) *
-               STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES);
+  for (frame = 0; frame != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FRAMES);
+       frame++) {
+    s32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
+               TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
     s32 length = span * 4;
     s32 glint = 0;
 
-    if (STRIKE_VALUE(mode, STRIKE_KIND) == STRIKE_KIND_SLASH) {
+    if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH) {
       // Slashes: six images sweep across the target from the user's side,
       // once per hit; the fifth image of each sweep is the hit.
       if (frame < span * 6) {
-        s32 picture = frame / STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) % 6;
+        s32 picture =
+            frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) % 6;
 
         if (work->effect->side == 1) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
@@ -285,8 +288,9 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         }
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-        if (frame % (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 6) ==
-            STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 4) {
+        if (frame %
+                (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 6) ==
+            TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) {
           if (mode == 8) {
             BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
           } else {
@@ -296,7 +300,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           // A heavy hit lights every spark at once; otherwise the hit
           // lights the next 32. Each hit also starts the next 8 smoke
           // puffs.
-          if (STRIKE_VALUE(mode, STRIKE_FLAGS) & STRIKE_HEAVY) {
+          if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
             EFFECT_STRIKE_TARGET(work->effect, 0, 12, 4);
             for (i = 0; i != 512; i++)
@@ -307,10 +311,13 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
             for (i = 0; i != 32; i++) {
               struct EffectStep *step =
-                  &TARGET_STRIKE_SPARKS
-                      [frame / (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 6) *
-                           32 +
-                       i];
+                  &TARGET_STRIKE_SPARKS[frame /
+                                            (TARGET_STRIKE_VALUE(
+                                                 mode,
+                                                 TARGET_STRIKE_IMAGE_FRAMES) *
+                                             6) *
+                                            32 +
+                                        i];
 
               step->variant = (Random16() & 15) + 7;
             }
@@ -318,7 +325,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           for (i = 0; i != 8; i++) {
             struct EffectStep *step =
                 &work->particles[frame /
-                                     (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) *
+                                     (TARGET_STRIKE_VALUE(
+                                          mode, TARGET_STRIKE_IMAGE_FRAMES) *
                                       6) *
                                      16 +
                                  i];
@@ -338,7 +346,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       s32 stage;
 
       if (frame < length) {
-        s32 picture = frame / STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES);
+        s32 picture =
+            frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
 
         while (picture > 4)
           picture -= 4;
@@ -347,47 +356,56 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         stage = 3;
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                          STRIKE_VALUE(mode, STRIKE_COMPOSITE));
+                          TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2 - 18, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                          STRIKE_VALUE(mode, STRIKE_COMPOSITE));
+                          TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-      if (frame % (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 4) ==
-          STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 3) {
+      if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==
+          TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 3) {
         // A hit: the target flashes; the last hit lets the battle show the
         // damage, the others only play the hit sound. Each hit lights the
         // next sparks, smoke puffs and motes.
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
-        if (frame > (STRIKE_VALUE(mode, STRIKE_HITS) * 4 - 4) *
-                        STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES))
+        if (frame > (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
+                        TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES))
           BattleEventRuntime_BeginPhaseFar(SE_133);
         else
           AudioCommand_PlayFar(SE_133);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step =
-              &TARGET_STRIKE_SPARKS
-                  [frame / (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 6) * 64 +
-                   i];
+              &TARGET_STRIKE_SPARKS[frame /
+                                        (TARGET_STRIKE_VALUE(
+                                             mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                                         6) *
+                                        64 +
+                                    i];
 
           step->variant = (Random16() & 15) + 7;
         }
         for (i = 0; i != 8; i++) {
           struct EffectStep *step =
-              &work->particles
-                   [frame / (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 6) * 16 +
-                    i];
+              &work->particles[frame /
+                                   (TARGET_STRIKE_VALUE(
+                                        mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                                    6) *
+                                   16 +
+                               i];
 
           step->variant = 0;
         }
         for (i = 0; i != 16; i++)
-          PARTICLES[frame / (STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES) * 6) * 16 +
+          PARTICLES[frame /
+                        (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                         6) *
+                        16 +
                     i]
               .variant = 0;
       }
@@ -397,7 +415,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
     // Glints: three a frame, scattered at random around the target in
     // random flips.
-    if ((STRIKE_VALUE(mode, STRIKE_FLAGS) & STRIKE_GLINTS) && glint) {
+    if ((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
+        glint) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
         s32 angle = Random16() & 0xffff;
@@ -430,7 +449,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->effect->actor)->object;
       // Smoke puffs rise and spread through six images over 24 frames.
-      if (STRIKE_VALUE(mode, STRIKE_FLAGS) & STRIKE_SMOKE) {
+      if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != 64; i++) {
           struct EffectStep *step = &work->particles[i];
 
@@ -438,7 +457,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
             s32 picture = step->variant / 4;
 
             draw[i & 1](canvas, work->sheet + picture * 1152 + wispSheet,
-                        HI(step->x) - 12, HI(step->y) - 24, 24, 48);
+                        Q_16_16_TO_INT(step->x) - 12,
+                        Q_16_16_TO_INT(step->y) - 24, 24, 48);
             EffectStep_AdvanceWithGravity2D(step, 62, -0x400);
             step->variant++;
           }
@@ -447,7 +467,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       // Motes burst out of the target, then after 10 frames are pulled
       // into the user, who glows from frame 55 to 90; a mote goes out when
       // it reaches the user.
-      if (STRIKE_VALUE(mode, STRIKE_FLAGS) & STRIKE_ABSORB) {
+      if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_ABSORB) {
         s32 size = 3;
 
         if (mode == 11)
@@ -484,7 +504,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       // Sparks fly out and shrink as their lives run out.
-      if (STRIKE_VALUE(mode, STRIKE_FLAGS) & STRIKE_SPARKS) {
+      if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SPARKS) {
         for (i = 0; i != 128; i++) {
           struct EffectStep *step = &TARGET_STRIKE_SPARKS[i];
           s32 size = step->variant;
@@ -503,7 +523,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    if (STRIKE_VALUE(mode, STRIKE_FLAGS) & STRIKE_HEAVY)
+    if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY)
       Camera_ApplyShake(8, 8);
     else
       Camera_ApplyShake(2, 4);
@@ -513,3 +533,6 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef TARGET_STRIKE_SPARKS
+#undef TARGET_STRIKE_VALUE

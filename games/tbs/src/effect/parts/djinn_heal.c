@@ -230,3 +230,6 @@ void Camera_ApplyPhasedDelta(void) {
       *phase = 2;
   }
 }
+
+#undef DJINN_HEAL_SWIRL_FRAMES
+#undef DJINN_HEAL_SWIRL_MOTES

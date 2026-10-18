@@ -156,3 +156,5 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   BattleFx_EndCanvasLayer();
 }
+
+#undef GATHERING_LIGHTS_SLOTS

@@ -218,7 +218,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
           s32 size = i % 3 + 1;
 
           blit(canvas, sheet + gBattleFx_MoteCells[size - 1], fire->x,
-               HI(fire->y) - size, size, size * 2);
+               Q_16_16_TO_INT(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
           fire->velocityY = fire->velocityY * 48 / 64;
@@ -392,8 +392,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         if (burst->variant > 0) {
           s32 size = 3;
 
-          EFFECT_DRAW_MOTE(blit, canvas, sheet, HI(burst->x), HI(burst->y),
-                           size);
+          EFFECT_DRAW_MOTE(blit, canvas, sheet, Q_16_16_TO_INT(burst->x),
+                           Q_16_16_TO_INT(burst->y), size);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
           burst->variant--;
@@ -445,3 +445,5 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   } while (i != KIRIN_OBJECTS);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef KIRIN_OBJECTS

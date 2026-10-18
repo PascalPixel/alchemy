@@ -604,3 +604,5 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
     }
   }
 }
+
+#undef CANVAS_FADE_STEP

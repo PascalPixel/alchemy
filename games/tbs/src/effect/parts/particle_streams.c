@@ -48,7 +48,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunMeteor, BattleFx_RunParticleStreams, 0)
 // lightning bolt's colours.
 DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
 
-#define STREAM_EMBERS (&PARTICLES[128])
+#define PARTICLE_STREAMS_EMBERS (&PARTICLES[128])
 
 #define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise
 #define PARTICLE_STREAMS_BURST_FRAMES 54 // frames of the burst
@@ -61,8 +61,8 @@ DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
 // flashes from the origin for PARTICLE_STREAMS_BURST_FRAMES shaking frames.
 //
 // Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
-// the 512 after them (STREAM_EMBERS); work->particles holds the rising motes
-// (0 to 31) and the flames (32 to 47).
+// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
+// rising motes (0 to 31) and the flames (32 to 47).
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                                  s32 mode) {
   volatile u32 fill;
@@ -416,8 +416,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                    (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
                    (gParticleStreams_OrbitPoints[i][2] / 2) << 16);
         EffectPosition_ProjectPoint(vector, screenPosition = &spot);
-        screenPosition->x = HI(screenPosition->x) + 128;
-        screenPosition->y = HI(screenPosition->y) + 60;
+        screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
+        screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
         draw(Ram_MapCellBuffer, work->sheet + 0x1f40, screenPosition->x - 4,
              screenPosition->y - 4, 8, 8);
       }
@@ -445,7 +445,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         // stream, then frees its slot.
         if (mote->variant >= 0) {
           draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
-               HI(mote->x) - 16, HI(mote->y) - 16, 32, 32);
+               Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
+               32);
           mote->x -= direction * 0x14000;
           mote->y -= 0x50000;
           mote->variant++;
@@ -495,7 +496,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     flash->variant = 0;
   }
   for (i = 0; i != 512; i++) {
-    struct EffectStep *ember = &STREAM_EMBERS[i];
+    struct EffectStep *ember = &PARTICLE_STREAMS_EMBERS[i];
 
     SET_POSITION(ember, 0, 0, 0);
     SET_VELOCITY(ember, ((Random16() & 255) - 128) << 13,
@@ -534,7 +535,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       // The first 64 embers, sized by depth and falling under gravity; one
       // that falls to height 20 restarts there with a new velocity.
-      struct EffectStep *ember = &STREAM_EMBERS[i];
+      struct EffectStep *ember = &PARTICLE_STREAMS_EMBERS[i];
 
       if (ember->y >= 0) {
         s32 size;
@@ -637,3 +638,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     ResourceObject_ReleaseFar(work->objects[0]);
   BattleFx_EndCanvasLayer();
 }
+
+#undef PARTICLE_STREAMS_EMBERS
+#undef PARTICLE_STREAMS_RISE_FRAMES
+#undef PARTICLE_STREAMS_BURST_FRAMES

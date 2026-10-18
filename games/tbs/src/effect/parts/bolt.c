@@ -6,23 +6,20 @@
 // Lightning bolts: a bolt strikes each target, with sparks and glints.
 // PARTICLES holds the sparks, 128 for each target.
 // The second blitter, made anew for each glint.
-#define LIGHTNING_GLINT_BLITTER                                                \
+#define BOLT_GLINT_BLITTER                                                     \
   ((DrawRectangle *)                                                           \
        gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
 
 // The columns of a gBolt_Counts row.
 enum {
-  LIGHTNING_BOLT_SPARKS,       // sparks thrown from each bolt's foot
-  LIGHTNING_BOLT_GLINTS,       // glints a frame around each target
-  LIGHTNING_BOLT_GLINT_SPREAD, // how high and wide the glints spread
-  LIGHTNING_BOLT_STRIKES       // bolts drawn over each other
+  BOLT_SPARKS,       // sparks thrown from each bolt's foot
+  BOLT_GLINTS,       // glints a frame around each target
+  BOLT_GLINT_SPREAD, // how high and wide the glints spread
+  BOLT_STRIKES       // bolts drawn over each other
 };
 
-// The value of one column of this effect's gBolt_Counts row.
-#define LIGHTNING_BOLT_VALUE(field) gBolt_Counts[work->effect->variant][(field)]
-
 // The bolt pictures in the sheet, after the tornado.
-#define LIGHTNING_BOLT_CELLS 0xc56
+#define BOLT_CELLS 0xc56
 
 // Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
 //
@@ -61,7 +58,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + LIGHTNING_BOLT_CELLS, 1, 1);
+                             work->sheet + BOLT_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
@@ -94,17 +91,19 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
 
         if (height > 104)
           height = 104;
-        for (j = 0; j != LIGHTNING_BOLT_VALUE(LIGHTNING_BOLT_STRIKES); j++) {
+        for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_STRIKES];
+             j++) {
           draw[0](canvas,
                   work->sheet +
                       (((i + frame + j) / 2) & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                      LIGHTNING_BOLT_CELLS,
+                      BOLT_CELLS,
                   screen.x - 12, 0, 24, height);
         }
 
         // Throw sparks upwards, within 90 degrees, from the foot (y = 104).
         if (frame == start + 2) {
-          for (j = 0; j != LIGHTNING_BOLT_VALUE(LIGHTNING_BOLT_SPARKS); j++) {
+          for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_SPARKS];
+               j++) {
             struct EffectStep *spark = &PARTICLES[i * 128 + j];
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - 0x4000;
@@ -120,12 +119,13 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
 
       // Glints: at random spots above the foot, flipped at random.
       if (frame >= start + 2 && frame < start + 24) {
-        for (j = 0; j != LIGHTNING_BOLT_VALUE(LIGHTNING_BOLT_GLINTS); j++) {
+        for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_GLINTS];
+             j++) {
           s32 kind = j & 3;
-          s32 drop =
-              Random16() % LIGHTNING_BOLT_VALUE(LIGHTNING_BOLT_GLINT_SPREAD);
+          s32 drop = Random16() %
+                     gBolt_Counts[work->effect->variant][BOLT_GLINT_SPREAD];
           s32 spread =
-              LIGHTNING_BOLT_VALUE(LIGHTNING_BOLT_GLINT_SPREAD) - drop + 1;
+              gBolt_Counts[work->effect->variant][BOLT_GLINT_SPREAD] - drop + 1;
           s32 y = screen.y - drop - (gBattleFx_GlintCellHeights[kind] >> 1) + 8;
           u32 random = Random16();
           s32 x = screen.x;
@@ -138,10 +138,9 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
                               gBolt_GlintFlips[Random16() & 3] |
                                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                               gBolt_GlintModes[work->effect->variant]);
-          LIGHTNING_GLINT_BLITTER(canvas,
-                                  work->sheet + gBattleFx_GlintCells[kind], x,
-                                  y, gBattleFx_GlintCellWidths[kind],
-                                  gBattleFx_GlintCellHeights[kind]);
+          BOLT_GLINT_BLITTER(canvas, work->sheet + gBattleFx_GlintCells[kind],
+                             x, y, gBattleFx_GlintCellWidths[kind],
+                             gBattleFx_GlintCellHeights[kind]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }
@@ -170,3 +169,6 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef BOLT_GLINT_BLITTER
+#undef BOLT_CELLS

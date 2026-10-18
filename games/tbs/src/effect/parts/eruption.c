@@ -16,13 +16,13 @@ DEFINE_EFFECT_KIND(BattleFx_RunBlast, BattleFx_RunEruption, 0)
 
 // The columns of a gEruption_Counts row.
 enum {
-  FIELD_MOTES, // motes thrown
-  FIELD_PUFFS, // puffs of smoke thrown
-  FIELD_FRAMES // frames in the whole effect
+  ERUPTION_FIELD_MOTES, // motes thrown
+  ERUPTION_FIELD_PUFFS, // puffs of smoke thrown
+  ERUPTION_FIELD_FRAMES // frames in the whole effect
 };
 
 // The mote pictures in the sheet: two sets of sizes, 770 bytes apart.
-#define FIELD_MOTE_CELLS 0x3200
+#define ERUPTION_FIELD_MOTE_CELLS 0x3200
 
 // Shared by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
 //
@@ -103,19 +103,20 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  for (frame = 0; frame != gEruption_Counts[variant][FIELD_FRAMES]; frame++) {
+  for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];
+       frame++) {
     struct BattleCamera *camera;
 
     camera = gCameraWork;
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       AudioCommand_PlayFar(SE_144);
-    if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
+    if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
       BattleEventRuntime_BeginPhaseFar(SE_133);
 
     // The motes still above the ground, sized 9 down to 1 over depths 160
     // to 799, alternating the two mote sets.
-    for (i = 0; i != gEruption_Counts[variant][FIELD_MOTES]; i++) {
+    for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct EffectStep *mote = &PARTICLES[i];
 
       if (mote->y >= 0) {
@@ -128,7 +129,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
                 work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
-                    FIELD_MOTE_CELLS,
+                    ERUPTION_FIELD_MOTE_CELLS,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
       }
@@ -137,7 +138,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     // The puffs, from frame 3: puff i starts once the frame passes i and
     // plays seven pictures, 3 frames each, while above the ground.
     if (frame > 2) {
-      for (i = 0; i != gEruption_Counts[variant][FIELD_PUFFS]; i++) {
+      for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_PUFFS]; i++) {
         struct EffectStep *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
@@ -220,3 +221,5 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
 
 // An effect that does nothing.
 void BattleFx_DoNothing(void) {}
+
+#undef ERUPTION_FIELD_MOTE_CELLS

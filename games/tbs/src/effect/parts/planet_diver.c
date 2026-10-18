@@ -29,7 +29,7 @@ struct ImpactChip {
   s32 life; // frames left
 };
 
-#define IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
+#define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
 
 #define PLANET_DIVER_FRAMES 88
 #define PLANET_DIVER_CLEARED_CHIPS 1024 // map-buffer chip slots cleared first
@@ -76,7 +76,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
                         75); // trails keep 3/4 a frame
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
-    IMPACT_CHIPS[i].life = 0;
+    PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
   actor = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   // The ball falls 15 pixels a frame towards the middle of the field.
@@ -156,7 +156,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       if (actor->y < 0) {
         actor->y = 0;
         for (i = 0; i != PLANET_DIVER_CHIPS; i++) {
-          struct ImpactChip *chip = &IMPACT_CHIPS[i];
+          struct ImpactChip *chip = &PLANET_DIVER_IMPACT_CHIPS[i];
           s32 speed;
           s32 angle;
 
@@ -180,7 +180,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
     // Chips: slow to 56/64 of their speed each frame, fall, and bounce at
     // half speed off y 112; only those on the canvas are drawn.
     for (i = 0; i != PLANET_DIVER_CHIPS; i++) {
-      struct ImpactChip *chip = &IMPACT_CHIPS[i];
+      struct ImpactChip *chip = &PLANET_DIVER_IMPACT_CHIPS[i];
       s32 y;
 
       if (chip->life > 0) {
@@ -439,3 +439,12 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   EFFECT_RELEASE_BLITTERS();
   BattleFx_EndCanvasLayer();
 }
+
+#undef PLANET_DIVER_IMPACT_CHIPS
+#undef PLANET_DIVER_FRAMES
+#undef PLANET_DIVER_CLEARED_CHIPS
+#undef PLANET_DIVER_CHIPS
+#undef HAUNT_SCATTERED
+#undef HAUNT_SKULLS
+#undef HAUNT_SLOTS
+#undef ORBITING_SPIRALS_LIFE

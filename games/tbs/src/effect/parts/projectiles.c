@@ -219,8 +219,8 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, HI(mote->x), HI(mote->y),
-                           size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                           Q_16_16_TO_INT(mote->y), size);
           EffectStep_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
         }
@@ -267,8 +267,8 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
 // strikes, a ring flares and 64 sparks scatter, over 60 frames in all.
 
 // Actor animation steps while firing and after the volley finishes.
-#define VOLLEY_ANIMATION_STEP_FAST 0x30
-#define VOLLEY_ANIMATION_STEP_NORMAL 0x10
+#define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 0x30
+#define PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL 0x10
 
 // Abilities: Slash, Wind Slash, Sonic Slash (kind 19).
 //
@@ -314,9 +314,11 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
 
   user = (s32)GetBattleObjectSlotFar(effect->actor)->object;
   ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(user, VOLLEY_ANIMATION_STEP_FAST);
+  ObjectDispatch_ApplyValueToChildrenFar(user,
+                                         PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleFx_RunProjectileVolley(effect, mode);
-  ObjectDispatch_ApplyValueToChildrenFar(user, VOLLEY_ANIMATION_STEP_NORMAL);
+  ObjectDispatch_ApplyValueToChildrenFar(
+      user, PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
 }
 
 // Abilities: Cutting Edge (kind 57).
@@ -355,27 +357,25 @@ DEFINE_EFFECT_KIND(BattleFx_RunBlizzard, BattleFx_RunVolleyWithAction, 9)
 
 // PARTICLES holds the hit flashes from 0, the sparks from 100 and the
 // fireball trails from 512.
-#define VOLLEY_PARTICLE_COUNT 1024
+#define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
 
 // The bytes of a gProjectiles_Modes row.
 enum VolleyField {
-  VOLLEY_SHOTS,   // shots at each target
-  VOLLEY_STEPS,   // frames a shot takes to reach its target
-  VOLLEY_STAGGER, // frames between shots
-  VOLLEY_DELAY,   // frames between targets
-  VOLLEY_SPARKS   // sparks thrown on each hit
+  PROJECTILE_VOLLEY_SHOTS,   // shots at each target
+  PROJECTILE_VOLLEY_STEPS,   // frames a shot takes to reach its target
+  PROJECTILE_VOLLEY_STAGGER, // frames between shots
+  PROJECTILE_VOLLEY_DELAY,   // frames between targets
+  PROJECTILE_VOLLEY_SPARKS   // sparks thrown on each hit
 };
 
-// The value of one field of this volley's gProjectiles_Modes row.
-#define VOLLEY_VALUE(field) (gProjectiles_Modes[mode][field])
-
 // Where the volley's pictures sit in the sheet.
-#define VOLLEY_COMET_CELLS 0x1000  // comets: the top half of each
-#define VOLLEY_STREAK_CELLS 0x2000 // wind streaks
-#define VOLLEY_FLASH_TURNED 0x128a // the hit flashes turned on their side
-#define VOLLEY_DJINNI_CELLS 0x65c0 // the small Mercury djinni
-#define VOLLEY_FIRST_SPARK 100     // the first spark in PARTICLES
-#define VOLLEY_FIRST_TRAIL 512     // the first trail in PARTICLES
+#define PROJECTILE_VOLLEY_COMET_CELLS 0x1000  // comets: the top half of each
+#define PROJECTILE_VOLLEY_STREAK_CELLS 0x2000 // wind streaks
+#define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
+  0x128a // the hit flashes turned on their side
+#define PROJECTILE_VOLLEY_DJINNI_CELLS 0x65c0 // the small Mercury djinni
+#define PROJECTILE_VOLLEY_FIRST_SPARK 100     // the first spark in PARTICLES
+#define PROJECTILE_VOLLEY_FIRST_TRAIL 512     // the first trail in PARTICLES
 
 // Projectile volley: shots fly from the user to each target and burst
 // into a flash and sparks when they pass it. The hit sound plays at most
@@ -459,13 +459,16 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       kind = 0;
     if (kind == 0)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
-                                 work->sheet + VOLLEY_COMET_CELLS, 1, 1);
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_CELLS, 1,
+                                 1);
     else if (kind == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
-                                 work->sheet + VOLLEY_COMET_CELLS, 1, 1);
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_CELLS, 1,
+                                 1);
     else
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
-                                 work->sheet + VOLLEY_COMET_CELLS, 1, 1);
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_CELLS, 1,
+                                 1);
     if (mode == 5) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       {
@@ -473,7 +476,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       }
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
-                               work->sheet + VOLLEY_STREAK_CELLS, 1, 0);
+                               work->sheet + PROJECTILE_VOLLEY_STREAK_CELLS, 1,
+                               0);
     if (mode == 5) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       {
@@ -500,7 +504,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               work->sheet + VOLLEY_DJINNI_CELLS, 1, 0);
+                               work->sheet + PROJECTILE_VOLLEY_DJINNI_CELLS, 1,
+                               0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
@@ -508,11 +513,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
-  shots = VOLLEY_VALUE(VOLLEY_SHOTS);
-  steps = VOLLEY_VALUE(VOLLEY_STEPS);
+  shots = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
+  steps = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
   {
-    s32 stagger = VOLLEY_VALUE(VOLLEY_STAGGER);
-    s32 delay = VOLLEY_VALUE(VOLLEY_DELAY);
+    s32 stagger = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
+    s32 delay = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
     s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
 
     if (work->effect->count * shots > 63) // keep within particles[64]
@@ -575,7 +580,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         shot->variant = 0;
       }
     }
-    for (i = 0; i != VOLLEY_PARTICLE_COUNT; i++)
+    for (i = 0; i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++)
       PARTICLES[i].variant = 0;
     // Every shot's flight, then 16 frames (32 for fireballs) for the last
     // hits to fade.
@@ -621,8 +626,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                               COMPOSITE_ADDITIVE);
         draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame <= 3)
-          draw[1](canvas, work->sheet + VOLLEY_DJINNI_CELLS, x, y, 20, 40);
-        draw[1](canvas, work->sheet + VOLLEY_DJINNI_CELLS, x, y, 20, 40);
+          draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_CELLS, x, y,
+                  20, 40);
+        draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_CELLS, x, y, 20,
+                40);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
 
@@ -647,7 +654,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             if (mode == 6) {
               // Leave two trail particles behind the fireball.
               trailsOrShift = 0;
-              for (k = VOLLEY_FIRST_TRAIL; k != VOLLEY_PARTICLE_COUNT; k++) {
+              for (k = PROJECTILE_VOLLEY_FIRST_TRAIL;
+                   k != PROJECTILE_VOLLEY_PARTICLE_COUNT; k++) {
                 struct EffectStep *particle = &PARTICLES[k];
 
                 if (particle->variant == 0) {
@@ -732,7 +740,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 }
                 // Sparks.
                 trailsOrShift = mode == 5 ? 12 : 11;
-                for (k = VOLLEY_FIRST_SPARK; k != VOLLEY_FIRST_TRAIL; k++) {
+                for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
+                     k != PROJECTILE_VOLLEY_FIRST_TRAIL; k++) {
                   struct EffectStep *particle = &PARTICLES[k];
 
                   if (particle->variant == 0) {
@@ -744,7 +753,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                           << trailsOrShift;
                     particle->variant = (Random16() & 7) + 16;
                     spawned++;
-                    if (spawned == VOLLEY_VALUE(VOLLEY_SPARKS))
+                    if (spawned ==
+                        (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_SPARKS]))
                       break;
                   }
                 }
@@ -762,7 +772,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                     EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + VOLLEY_COMET_CELLS,
+                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
                   screenPosition->y - gProjectiles_CometHeights[kind], 32,
                   gProjectiles_CometHeights[kind]);
@@ -776,7 +786,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                     COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + VOLLEY_COMET_CELLS,
+                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
                   gProjectiles_CometHeights[kind]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -845,7 +855,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
                   work->sheet + gProjectiles_FlashOffsets[step] +
-                      VOLLEY_FLASH_TURNED,
+                      PROJECTILE_VOLLEY_FLASH_TURNED,
                   flash->x - gProjectiles_FlashRises[step],
                   flash->y - gProjectiles_FlashWidths[step],
                   gProjectiles_FlashHeights[step],
@@ -857,7 +867,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas,
                   work->sheet + gProjectiles_FlashOffsets[step] +
-                      VOLLEY_FLASH_TURNED,
+                      PROJECTILE_VOLLEY_FLASH_TURNED,
                   flash->x + gProjectiles_FlashSteps[step] -
                       gProjectiles_FlashRises[step],
                   flash->y, gProjectiles_FlashHeights[step],
@@ -873,14 +883,15 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
       // Sparks fall and bounce off the bottom (y 112) at half speed,
       // shrinking as their frames run out.
-      for (i = VOLLEY_FIRST_SPARK; i != VOLLEY_FIRST_TRAIL; i++) {
+      for (i = PROJECTILE_VOLLEY_FIRST_SPARK;
+           i != PROJECTILE_VOLLEY_FIRST_TRAIL; i++) {
         struct EffectStep *particle = &PARTICLES[i];
 
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 3) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, HI(particle->x),
-                           HI(particle->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
+                           Q_16_16_TO_INT(particle->y), size);
           EffectStep_AdvanceWithGravity2D(particle, 60, 0x1000);
           if (particle->y > 0x700000)
             particle->velocityY = -particle->velocityY / 2;
@@ -889,14 +900,15 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       }
 
       // Fireball trails rise and shrink as they fade.
-      for (i = VOLLEY_FIRST_TRAIL; i != VOLLEY_PARTICLE_COUNT; i++) {
+      for (i = PROJECTILE_VOLLEY_FIRST_TRAIL;
+           i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++) {
         struct EffectStep *particle = &PARTICLES[i];
 
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 4) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, HI(particle->x),
-                           HI(particle->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
+                           Q_16_16_TO_INT(particle->y), size);
           EffectStep_AdvanceWithGravity2D(particle, 60, -0x4000);
           particle->variant--;
         }
@@ -966,3 +978,13 @@ void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   Object_SetMoveTargetFar(object, x, 0, z);
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 }
+
+#undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST
+#undef PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL
+#undef PROJECTILE_VOLLEY_PARTICLE_COUNT
+#undef PROJECTILE_VOLLEY_COMET_CELLS
+#undef PROJECTILE_VOLLEY_STREAK_CELLS
+#undef PROJECTILE_VOLLEY_FLASH_TURNED
+#undef PROJECTILE_VOLLEY_DJINNI_CELLS
+#undef PROJECTILE_VOLLEY_FIRST_SPARK
+#undef PROJECTILE_VOLLEY_FIRST_TRAIL

@@ -5,7 +5,7 @@
 // lines 8 to `last` take `slant`, an expression of the line `i`; the rest of
 // the battle view, down to line 135, takes the fixed `span`; and the lines
 // below it are empty. Every band the effects pass is 128 pixels wide.
-#define EFFECT_BUILD_SLANTED_WINDOW(line, i, last, slant, span)                \
+#define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
   for ((i) = 0; (i) != 160; (i)++) {                                           \
     if ((i) >= 8 && (i) <= (last))                                             \
       (line)[i] = (slant);                                                     \
@@ -127,12 +127,12 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   // fall, then a fixed span down to line 135, and nothing below that.
   if (work->effect->side == 0) {
     line = (u16 *)Ram_MapCellBuffer;
-    EFFECT_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
-                                WINDOW_SPAN(8, 136));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
+                                 WINDOW_SPAN(8, 136));
   } else {
     line = (u16 *)Ram_MapCellBuffer;
-    EFFECT_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
-                                WINDOW_SPAN(120, 248));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
+                                 WINDOW_SPAN(120, 248));
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
@@ -328,14 +328,14 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
   if (work->effect->side == 0) {
     line = (u16 *)Ram_MapCellBuffer;
-    EFFECT_BUILD_SLANTED_WINDOW(line, i, 103,
-                                ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
-                                WINDOW_SPAN(0, 128));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
+                                 ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
+                                 WINDOW_SPAN(0, 128));
   } else {
     line = (u16 *)Ram_MapCellBuffer;
-    EFFECT_BUILD_SLANTED_WINDOW(line, i, 103,
-                                ((i / 2 + 60) << 8) | (i / 2 + 188),
-                                WINDOW_SPAN(112, 240));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
+                                 ((i / 2 + 60) << 8) | (i / 2 + 188),
+                                 WINDOW_SPAN(112, 240));
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
@@ -426,8 +426,9 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
         if (size > 6)
           size = 6;
-        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet, HI(spark->x),
-                          HI(spark->y), size);
+        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet,
+                          Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
+                          size);
         EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
         spark->variant--;
       }
@@ -440,3 +441,10 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
   BattleFx_ConfigureEffectDisplay();
 }
+
+#undef FALLING_BUILD_SLANTED_WINDOW
+#undef FALLING_LAND_Y
+#undef FALLING_BOLT_SPARKS
+#undef DOUSE_FALLING_CELL
+#undef DOUSE_FLASH_CELL
+#undef DOUSE_BURST_CELL

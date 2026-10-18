@@ -175,7 +175,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
         if (frame >= i + 72 && thorn->y < (104 << 16)) {
           s32 cellIndex = (frame + i) / 4 % 5;
-          s32 x = HI(thorn->x);
+          s32 x = Q_16_16_TO_INT(thorn->x);
           s32 y = thorn->y >> 16;
           u8 *cell = work->sheet + gCybele_ThornOffsets[cellIndex];
           u32 width = gCybele_ThornWidths[cellIndex];
@@ -277,7 +277,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           s32 cellIndex = i % 5;
 
           draw[0](canvas, work->sheet + gCybele_ChipOffsets[cellIndex],
-                  HI(chip->x), HI(chip->y), gCybele_ChipWidths[cellIndex],
+                  Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
+                  gCybele_ChipWidths[cellIndex],
                   gCybele_ChipHeights[cellIndex]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
@@ -515,3 +516,11 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleFx_EndCanvasLayer();
 }
+
+#undef CYBELE_FRAMES
+#undef CYBELE_CHIP_COUNT
+#undef CYBELE_VINES
+#undef CYBELE_FIRST_SPARK
+#undef CYBELE_FIRST_THORN
+#undef CYBELE_FIRST_CHIP
+#undef CYBELE_EMBER_CELL

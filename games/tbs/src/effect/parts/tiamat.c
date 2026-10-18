@@ -270,7 +270,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
 
         if (flash->variant >= 0) {
           draw[0](canvas, work->sheet + ((flash->variant >> 2) << 11),
-                  HI(flash->x) - 16, HI(flash->y) - 32, 32, 64);
+                  Q_16_16_TO_INT(flash->x) - 16, Q_16_16_TO_INT(flash->y) - 32,
+                  32, 64);
           flash->x += flash->velocityX * dir;
           flash->y += flash->velocityY;
           flash->variant++;
@@ -287,8 +288,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       s32 size = 1;
 
       if (spark->variant >= 0) {
-        draw[1](canvas, gTiamat_SparkPixels, HI(spark->x), HI(spark->y) - size,
-                size, size * 2);
+        draw[1](canvas, gTiamat_SparkPixels, Q_16_16_TO_INT(spark->x),
+                Q_16_16_TO_INT(spark->y) - size, size, size * 2);
         spark->x += spark->velocityX * dir;
         spark->y += spark->velocityY;
         spark->velocityY += -0x400;
@@ -310,7 +311,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           s32 height = size * 2;
 
           draw[0](canvas, sheet + gBattleFx_MoteCells[size - 1],
-                  HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
+                  Q_16_16_TO_INT(grain->x) - size / 2,
+                  Q_16_16_TO_INT(grain->y) - size, size, height);
           grain->x += grain->velocityX * dir;
           grain->y += grain->velocityY;
           if (frame > 128) {
@@ -411,3 +413,12 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   }
   BattleFx_EndCanvasLayer();
 }
+
+#undef PALETTE_PARTICLES_FRAMES
+#undef PALETTE_PARTICLES_STREAKS
+#undef PALETTE_PARTICLES_FIRST_STREAK
+#undef PALETTE_PARTICLES_FIRST_SPARK
+#undef PALETTE_PARTICLES_EMBERS
+#undef PALETTE_PARTICLES_FLASHES
+#undef PALETTE_PARTICLES_SPARKS
+#undef PALETTE_PARTICLES_STREAK_IMAGES

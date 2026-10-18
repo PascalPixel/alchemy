@@ -165,3 +165,5 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef ANNIHILATION_FRAMES

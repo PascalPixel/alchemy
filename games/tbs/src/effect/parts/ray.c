@@ -4,10 +4,10 @@
 // Closing bolts: four lightning bolts that close in from around the
 // target, and the sparks they throw.
 
-#define CLOSING_BOLT_SPARK_COUNT 1024
+#define RAY_SPARK_COUNT 1024
 
-#define CLOSING_BOLT_CELLS 0x60e // the bolt pictures in the sheet
-#define CLOSING_BOLT_COUNT 4
+#define RAY_CELLS 0x60e // the bolt pictures in the sheet
+#define RAY_COUNT 4
 
 // Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
 //
@@ -48,7 +48,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + CLOSING_BOLT_CELLS, 1, 1);
+                             work->sheet + RAY_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (work->effect->variant == 2) {
     if (work->effect->side == 1)
@@ -61,7 +61,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   }
 
   // Set up the sparks.
-  for (i = 0; i != CLOSING_BOLT_SPARK_COUNT; i++) {
+  for (i = 0; i != RAY_SPARK_COUNT; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 speed;
     s32 angle;
@@ -83,7 +83,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       // Clear the canvas every 5 frames.
       if (frame % 5 == 2)
         Iwram_FillWords(canvas, 0x4000, 0x10101010);
-      for (bolt = 0; bolt != CLOSING_BOLT_COUNT; bolt++) {
+      for (bolt = 0; bolt != RAY_COUNT; bolt++) {
         s32 angle;
         s32 x;
         s32 y;
@@ -96,17 +96,17 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
         if (work->effect->variant == 0)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                      CLOSING_BOLT_CELLS,
+                      RAY_CELLS,
                   x + (Random16() & 7) - 16, y, 24, 120);
         else
           draw[bolt & 1](canvas,
                          work->sheet +
                              (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                             CLOSING_BOLT_CELLS,
+                             RAY_CELLS,
                          x + (Random16() & 7) - 16, y, 24, 120);
 
         // Throw sparks from the bolt's root.
-        for (i = 0; i != CLOSING_BOLT_SPARK_COUNT; i++) {
+        for (i = 0; i != RAY_SPARK_COUNT; i++) {
           struct EffectStep *spark = &PARTICLES[i];
 
           if (spark->variant == 0) {
@@ -130,7 +130,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
     }
 
     // Move the sparks, bouncing them off the bottom (y 120).
-    for (i = 0; i != CLOSING_BOLT_SPARK_COUNT; i++) {
+    for (i = 0; i != RAY_SPARK_COUNT; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
       if (spark->variant > 0) {
@@ -162,3 +162,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef RAY_SPARK_COUNT
+#undef RAY_CELLS
+#undef RAY_COUNT

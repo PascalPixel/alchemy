@@ -162,3 +162,5 @@ void BattleFx_RunKite(struct BattleEffectArgument *effect) {
                              &originY);
   BattleFx_EndCanvasLayer();
 }
+
+#undef TORCH_FRAMES

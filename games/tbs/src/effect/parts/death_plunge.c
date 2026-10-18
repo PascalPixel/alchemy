@@ -319,7 +319,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define ICE_FLECK_BURST_FRAMES 56
+#define ELEMENT_PILLAR_FRAMES 56
 
 // The glow of an element around a unit (BattleFx_PlayUnitElementEffect's
 // mode 2): a symmetrical pillar of light stands at the unit's feet while
@@ -396,7 +396,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
     work->effect->variant = 4;
   AudioCommand_PlayFar(SE_212);
 
-  for (frame = 0; frame != ICE_FLECK_BURST_FRAMES; frame++) {
+  for (frame = 0; frame != ELEMENT_PILLAR_FRAMES; frame++) {
     // Keep the canvas centred on the unit's feet, fade out over the last 6
     // frames, and flash the first target from frame 16 for 20 frames.
     EffectPosition_ProjectBattler(work->effect->actor, &ground);
@@ -479,21 +479,23 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 
 // Sets the pixel at (x, y) of the 256x120 8bpp tile picture in
 // Ram_MapCellBuffer (32 tiles across) to colour 2.
-#define PLOT_SHATTER_MASK_PIXEL(x, y)                                          \
+#define SHATTERING_OPENING_PLOT_PIXEL(x, y)                                    \
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
 
 // Plots the four corners (x1 or x2, y1 or y2): one point of the circle
 // mirrored into four octants.
-#define PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2)                              \
-  (PLOT_SHATTER_MASK_PIXEL(x2, y2), PLOT_SHATTER_MASK_PIXEL(x2, y1),           \
-   PLOT_SHATTER_MASK_PIXEL(x1, y2), PLOT_SHATTER_MASK_PIXEL(x1, y1))
+#define SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2)                        \
+  (SHATTERING_OPENING_PLOT_PIXEL(x2, y2),                                      \
+   SHATTERING_OPENING_PLOT_PIXEL(x2, y1),                                      \
+   SHATTERING_OPENING_PLOT_PIXEL(x1, y2),                                      \
+   SHATTERING_OPENING_PLOT_PIXEL(x1, y1))
 
-#define OPENING_FRAMES 128
-#define OPENING_FLASHES 32 // flashes thrown as the picture breaks
-#define OPENING_PIECES 33  // pieces the picture breaks into
-#define OPENING_DISC_X 96  // the centre of the opening disc
-#define OPENING_DISC_Y 60  // the centre of the opening disc
+#define SHATTERING_OPENING_FRAMES 128
+#define SHATTERING_OPENING_FLASHES 32 // flashes thrown as the picture breaks
+#define SHATTERING_OPENING_PIECES 33  // pieces the picture breaks into
+#define SHATTERING_OPENING_DISC_X 96  // the centre of the opening disc
+#define SHATTERING_OPENING_DISC_Y 60  // the centre of the opening disc
 
 // The shattering opening of the battle on the Venus aerie storm backdrop:
 // the screen turns white and a grey disc grows from (96, 60) by 32 pixels a
@@ -596,7 +598,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   startX = gDeathPlunge_PieceStartX;
   radius = 0;
   piece = work->particles;
-  for (i = 0; i != OPENING_PIECES; i++) {
+  for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
     s32 x, y, vx, vy;
 
     x = *startX++ << 16;
@@ -628,7 +630,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE, 3, 0,
                             30);
 
-  for (frame = 0; frame != OPENING_FRAMES; frame++) {
+  for (frame = 0; frame != SHATTERING_OPENING_FRAMES; frame++) {
     if (frame == 2)
       AudioCommand_PlayFar(SE_212);
     if (frame == 3)
@@ -687,8 +689,8 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
       v = frame * 4 + 8;
       targetRadius = frame * 32;
       BG_PLTT[2] = RGB(v, v, v);
-      centreX = OPENING_DISC_X;
-      centreY = OPENING_DISC_Y;
+      centreX = SHATTERING_OPENING_DISC_X;
+      centreY = SHATTERING_OPENING_DISC_Y;
       for (; radius != targetRadius; radius++) {
         // The midpoint circle algorithm: one point plots all eight
         // octants, and each is drawn twice, one pixel apart, to fill gaps.
@@ -709,14 +711,14 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
             x1 = 0;
           if (x2 > 255)
             x2 = 255;
-          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
+          SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
           x1 = leftX + 1;
-          x2 = octantX + OPENING_DISC_X + 1;
+          x2 = octantX + SHATTERING_OPENING_DISC_X + 1;
           if (x1 < 0)
             x1 = 0;
           if (x2 > 255)
             x2 = 255;
-          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
+          SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
 
           x2 = octantY + centreX;
           x1 = centreX - octantY;
@@ -731,14 +733,14 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
             y1 = 0;
           if (y2 > 119)
             y2 = 119;
-          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
+          SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
           x1 = innerLeftX + 1;
-          x2 = octantY + OPENING_DISC_X + 1;
+          x2 = octantY + SHATTERING_OPENING_DISC_X + 1;
           if (x1 < 0)
             x1 = 0;
           if (x2 > 255)
             x2 = 255;
-          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
+          SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
 
           error -= octantY * 2 + 1;
           if (error < 0) {
@@ -753,11 +755,11 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
 
     // Draw the pieces up to frame 50; they start to fall on frame 4.
     if (frame <= 50) {
-      for (i = 0; i != OPENING_PIECES; i++) {
+      for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &work->particles[i];
         draw[0](canvas, work->imageStorage + gDeathPlunge_PieceCells[i],
-                HI(piece->x), HI(piece->y), gDeathPlunge_PieceWidths[i],
-                gDeathPlunge_PieceHeights[i]);
+                Q_16_16_TO_INT(piece->x), Q_16_16_TO_INT(piece->y),
+                gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
           EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
       }
@@ -787,7 +789,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
         BG_PLTT[i] = RGB(v, v / 2, v);
       }
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      for (i = 0; i != OPENING_FLASHES; i++) {
+      for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
         piece->x = ((Random16() & 31) + 32) << 16;
         piece->y = ((Random16() & 31) + 80) << 16;
@@ -802,7 +804,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
     // Flashes: flash i appears at frame 52 + i / 4 and rises, changing
     // image every 4 frames, for 40 frames.
     if (frame > 52) {
-      for (i = 0; i != OPENING_FLASHES; i++) {
+      for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
         if (frame >= i / 4 + 52 && piece->variant <= 39) {
           s32 cell;
@@ -810,8 +812,9 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
           cell = piece->variant / 4;
           if (cell > 5)
             cell = 5;
-          draw[1](canvas, work->sheet + (cell << 11), HI(piece->x) - 16,
-                  HI(piece->y) - 32, 32, 64);
+          draw[1](canvas, work->sheet + (cell << 11),
+                  Q_16_16_TO_INT(piece->x) - 16, Q_16_16_TO_INT(piece->y) - 32,
+                  32, 64);
           EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
           piece->variant++;
         }
@@ -1105,3 +1108,14 @@ void BattleFx_EndElementStreaks(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
+
+#undef DEATH_PLUNGE_FRAMES
+#undef BLADE_RAIN_FRAMES
+#undef ELEMENT_PILLAR_FRAMES
+#undef SHATTERING_OPENING_PLOT_PIXEL
+#undef SHATTERING_OPENING_PLOT_CORNERS
+#undef SHATTERING_OPENING_FRAMES
+#undef SHATTERING_OPENING_FLASHES
+#undef SHATTERING_OPENING_PIECES
+#undef SHATTERING_OPENING_DISC_X
+#undef SHATTERING_OPENING_DISC_Y

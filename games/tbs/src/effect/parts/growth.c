@@ -543,3 +543,6 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef VINE_COLUMNS
+#undef VINE_FRAMES

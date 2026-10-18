@@ -46,7 +46,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunRottenBlood, BattleFx_RunLobbedShells, 3)
 // the shells burst into shards instead of smoke.
 
 // The bursts live after the shells in PARTICLES.
-#define SHELL_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
+#define LOBBED_SHELLS_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 #define LOBBED_SHELLS_SLOTS 16           // particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256    // burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 // the smoke pictures in the sheet
@@ -126,7 +126,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
       shot->variant = 0;
     }
   }
-  EFFECT_FREE_PARTICLES(i, SHELL_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
+  EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
@@ -226,11 +226,12 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
                 /* FAKEMATCH: restores the CSE block boundary
                  * between group's set and group * 8. Without the block: differ
-                 * 171; as SHELL_BURSTS + group * 8 + i without it: differ 177.
+                 * 171; as LOBBED_SHELLS_BURSTS + group * 8 + i without it:
+                 * differ 177.
                  */
                 do {
                 } while (0);
-                burst = &SHELL_BURSTS[group * 8 + i];
+                burst = &LOBBED_SHELLS_BURSTS[group * 8 + i];
 
                 SET_POSITION(burst, shot->x, shot->y, shot->z);
                 if (LOBBED_SHELLS_SHATTER(mode) == 0) {
@@ -251,7 +252,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     }
     // The bursts, for 45 frames: smoke through six images, or shards that
     // tumble through nine images, half of them from a second set.
-    for (i = 0, burst = SHELL_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
+    for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
          burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
         EffectPosition_ProjectPoint(burst, &position);
@@ -290,3 +291,9 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef LOBBED_SHELLS_BURSTS
+#undef LOBBED_SHELLS_SLOTS
+#undef LOBBED_SHELLS_BURST_SLOTS
+#undef LOBBED_SHELLS_SMOKE_CELLS
+#undef LOBBED_SHELLS_SHATTER

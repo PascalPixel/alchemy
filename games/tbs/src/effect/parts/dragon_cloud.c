@@ -12,12 +12,12 @@
 #define DRAGON_CLOUD_EMBERS 40            // embers, from FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16           // flashes, from FIRST_FLASH
 
-// Draws puff picture cell at (x, y) with blit, sized by the puff tables.
-#define DRAGON_CLOUD_DRAW_PUFF(blit, cell, x, y)                               \
+// Draws puff picture cell of sheet on canvas at (x, y) with blit, sized by
+// the puff tables.
+#define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, cell, x, y)                \
   blit(canvas,                                                                 \
-       &work->sheet[DRAGON_CLOUD_PUFF_CELLS] + gBattleFx_PuffArcCells[cell],   \
-       x, y, gBattleFx_PuffArcCellWidths[cell],                                \
-       gBattleFx_PuffArcCellHeights[cell])
+       &(sheet)[DRAGON_CLOUD_PUFF_CELLS] + gBattleFx_PuffArcCells[cell], x, y, \
+       gBattleFx_PuffArcCellWidths[cell], gBattleFx_PuffArcCellHeights[cell])
 
 // Abilities: Dragon Cloud (kind 49).
 //
@@ -145,9 +145,9 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
     if (frame <= 17) {
       s32 cell = frame / 3;
 
-      DRAGON_CLOUD_DRAW_PUFF(draw[0], cell, 48,
+      DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, work->sheet, cell, 48,
                              gBattleFx_PuffArcCellBiasY[cell] + 60);
-      DRAGON_CLOUD_DRAW_PUFF(draw[1], cell, 56,
+      DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, cell, 56,
                              gBattleFx_PuffArcCellBiasY[cell] + 60);
     }
     // The path gives two 16-bit coordinates on frame 18, then a signed byte
@@ -270,9 +270,10 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (puff->variant >= 0 && puff->variant <= 11) {
           s32 cell = puff->variant / 2;
 
-          DRAGON_CLOUD_DRAW_PUFF(
-              draw[1], cell, puff->x - gBattleFx_PuffArcCellWidths[cell] / 2,
-              puff->y + gBattleFx_PuffArcCellBiasY[cell]);
+          DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, cell,
+                                 puff->x -
+                                     gBattleFx_PuffArcCellWidths[cell] / 2,
+                                 puff->y + gBattleFx_PuffArcCellBiasY[cell]);
         }
         puff->variant++;
       }
@@ -283,3 +284,15 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef DRAGON_CLOUD_FRAMES
+#undef DRAGON_CLOUD_STRIKE_FRAME
+#undef DRAGON_CLOUD_TRAIL_CELL_BYTES
+#undef DRAGON_CLOUD_FIRST_EMBER
+#undef DRAGON_CLOUD_FIRST_FLASH
+#undef DRAGON_CLOUD_TRAIL_CELLS
+#undef DRAGON_CLOUD_PUFF_CELLS
+#undef DRAGON_CLOUD_PUFFS
+#undef DRAGON_CLOUD_EMBERS
+#undef DRAGON_CLOUD_FLASHES
+#undef DRAGON_CLOUD_DRAW_PUFF

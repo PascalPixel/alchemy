@@ -11,7 +11,7 @@
 
 // Pillars of lightning and the sparks they throw up.
 
-#define LIGHTNING_PILLAR_SPARK_COUNT 1024 // sparks
+#define PLASMA_SPARK_COUNT 1024 // sparks
 
 #define PLASMA_SPACING 8           // frames between pillars
 #define PLASMA_SECOND_IMAGE 0x1500 // the second picture in the sheet
@@ -67,7 +67,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 
   // Every spark starts idle.
   life = &((struct EffectStep *)PARTICLES)->variant;
-  for (k = 0; k != LIGHTNING_PILLAR_SPARK_COUNT; k++) {
+  for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
     *life = 0;
     life += 7;
   }
@@ -115,7 +115,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
         if (frame == start + 2) {
           s32 spawned = 0;
 
-          for (k = 0; k != LIGHTNING_PILLAR_SPARK_COUNT; k++) {
+          for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
             spark = &sparks[k];
             if (spark->variant == 0) {
               s32 speed;
@@ -151,7 +151,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 
     // Sparks: bounce off the ground at half speed, and shrink as their lives
     // run out; only those on the canvas are drawn.
-    for (k = 0; k != LIGHTNING_PILLAR_SPARK_COUNT; k++) {
+    for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
@@ -210,10 +210,10 @@ DEFINE_EFFECT_KIND(BattleFx_RunNova, BattleFx_RunSparkGroups, 0)
 // (priority 0).
 DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
 
-#define SPARK_GROUPS_FLASHES 16 // flashes kept per burst
-#define SPARK_GROUPS_SPACING 8  // frames between bursts
-#define SPARK_GROUPS_RING 12    // of which drawn as the ring
-#define SPARK_FLASH_DRAWN 18    // a flash is drawn for its last 18 frames
+#define SPARK_GROUPS_FLASHES 16     // flashes kept per burst
+#define SPARK_GROUPS_SPACING 8      // frames between bursts
+#define SPARK_GROUPS_RING 12        // of which drawn as the ring
+#define SPARK_GROUPS_FLASH_DRAWN 18 // a flash is drawn for its last 18 frames
 
 // One to three bursts, 8 frames apart: each flashes, rings itself with
 // twelve smaller flashes that fade, and throws out sparks that bounce on
@@ -390,16 +390,16 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
           s32 y;
 
           point = &work->particles[i * SPARK_GROUPS_FLASHES] + j;
-          y = HI(point->y) + originY;
+          y = Q_16_16_TO_INT(point->y) + originY;
           if (work->effect->side == 1)
-            x = HI(point->x) + originX -
+            x = Q_16_16_TO_INT(point->x) + originX -
                 gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] +
                 28;
           else
-            x = HI(point->x) + originX +
+            x = Q_16_16_TO_INT(point->x) + originX +
                 gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] -
                 28;
-          if (point->variant >= 0 && point->variant < SPARK_FLASH_DRAWN)
+          if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashCells[point->variant / 3] << 11),
@@ -455,3 +455,12 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef PLASMA_SPARK_COUNT
+#undef PLASMA_SPACING
+#undef PLASMA_SECOND_IMAGE
+#undef PLASMA_COLUMN_X
+#undef SPARK_GROUPS_FLASHES
+#undef SPARK_GROUPS_SPACING
+#undef SPARK_GROUPS_RING
+#undef SPARK_GROUPS_FLASH_DRAWN

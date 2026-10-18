@@ -9,8 +9,8 @@
 
 // The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
 // in the rebuilt sheet.
-#define WALL_TOP_CELLS 0x13c0
-#define WALL_FOOT_CELLS 0x25c0
+#define GAIA_WALL_TOP_CELLS 0x13c0
+#define GAIA_WALL_FOOT_CELLS 0x25c0
 #define GAIA_ROCKS 11 // rocks that tumble up the wall
 
 // Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
@@ -97,8 +97,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
   // Rebuild the pictures in work->sheet:
   //   the growing wall: nine one-line rows, each stretched to 32 lines;
-  //   the top of the wall (WALL_TOP_CELLS): 48x32 stretched to 48x96;
-  //   the foot of the wall (WALL_FOOT_CELLS): 48x21;
+  //   the top of the wall (GAIA_WALL_TOP_CELLS): 48x32 stretched to 48x96;
+  //   the foot of the wall (GAIA_WALL_FOOT_CELLS): 48x21;
   //   the swelling ground: three frames.
   src = Ram_MapCellBuffer;
   sheetIndex = 0;
@@ -232,10 +232,14 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     if (frame >= 88 && frame <= 159) {
       s32 width = 48;
 
-      draw[0](canvas, &work->sheet[WALL_TOP_CELLS], wallX + 16, 0, width, 96);
-      draw[1](canvas, &work->sheet[WALL_TOP_CELLS], wallX + 64, 0, width, 96);
-      draw[0](canvas, &work->sheet[WALL_FOOT_CELLS], wallX + 16, 96, width, 21);
-      draw[1](canvas, &work->sheet[WALL_FOOT_CELLS], wallX + 64, 96, width, 21);
+      draw[0](canvas, &work->sheet[GAIA_WALL_TOP_CELLS], wallX + 16, 0, width,
+              96);
+      draw[1](canvas, &work->sheet[GAIA_WALL_TOP_CELLS], wallX + 64, 0, width,
+              96);
+      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT_CELLS], wallX + 16, 96, width,
+              21);
+      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT_CELLS], wallX + 64, 96, width,
+              21);
     }
 
     // Dust (from frame 88): until frame 159, dust that leaves the top
@@ -247,8 +251,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, HI(dust->x), HI(dust->y),
-                           size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, Q_16_16_TO_INT(dust->x),
+                           Q_16_16_TO_INT(dust->y), size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
             dust->y = 0x600000;
@@ -342,3 +346,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleFx_EndCanvasLayer();
 }
+
+#undef GAIA_WALL_TOP_CELLS
+#undef GAIA_WALL_FOOT_CELLS
+#undef GAIA_ROCKS

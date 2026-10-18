@@ -9,24 +9,24 @@
 
 // The trail particles' random rotations, 48 bytes each, after the 384
 // particles in PARTICLES.
-#define STAGED_PARTICLE_MATRICES (Ram_MapCellBuffer + 0x3800)
+#define ATALANTA_MATRICES (Ram_MapCellBuffer + 0x3800)
 
 // The pictures in the slash sheet: five flash frames, then the slash in
 // three parts.
 enum SlashSheetCell {
-  SLASH_FLASH_1 = 0x0000,
-  SLASH_FLASH_2 = 0x0188,
-  SLASH_FLASH_3_TOP = 0x057c,
-  SLASH_FLASH_3_BOTTOM = 0x07d4,
-  SLASH_FLASH_4_TOP = 0x0aaa,
-  SLASH_FLASH_4_MIDDLE = 0x0c90,
-  SLASH_FLASH_4_BOTTOM = 0x0e74,
-  SLASH_FLASH_5_TOP = 0x1088,
-  SLASH_FLASH_5_MIDDLE = 0x11f8,
-  SLASH_FLASH_5_BOTTOM = 0x147c,
-  SLASH_TOP = 0x16ac,
-  SLASH_MIDDLE = 0x17fc,
-  SLASH_BOTTOM = 0x1bf3
+  ATALANTA_SLASH_FLASH_1 = 0x0000,
+  ATALANTA_SLASH_FLASH_2 = 0x0188,
+  ATALANTA_SLASH_FLASH_3_TOP = 0x057c,
+  ATALANTA_SLASH_FLASH_3_BOTTOM = 0x07d4,
+  ATALANTA_SLASH_FLASH_4_TOP = 0x0aaa,
+  ATALANTA_SLASH_FLASH_4_MIDDLE = 0x0c90,
+  ATALANTA_SLASH_FLASH_4_BOTTOM = 0x0e74,
+  ATALANTA_SLASH_FLASH_5_TOP = 0x1088,
+  ATALANTA_SLASH_FLASH_5_MIDDLE = 0x11f8,
+  ATALANTA_SLASH_FLASH_5_BOTTOM = 0x147c,
+  ATALANTA_SLASH_TOP = 0x16ac,
+  ATALANTA_SLASH_MIDDLE = 0x17fc,
+  ATALANTA_SLASH_BOTTOM = 0x1bf3
 };
 
 // Abilities: Atalanta (scene kind 4).
@@ -110,7 +110,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   pathX = 0;
   pathY = 0;
   // Each blade starts at a random spot with 24 trail particles, each on a
-  // random rotation kept in STAGED_PARTICLE_MATRICES.
+  // random rotation kept in ATALANTA_MATRICES.
   for (i = 0; i != 16; i++) {
     struct EffectStep *slash = &work->particles[i];
 
@@ -125,7 +125,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyRoll(Random16() & 0xffff);
       SceneTransform_ApplyPitch(Random16() & 0xffff);
       SceneTransform_ApplyYaw(Random16() & 0xffff);
-      Transform_Store(STAGED_PARTICLE_MATRICES + (i * 24 + j) * 48);
+      Transform_Store(ATALANTA_MATRICES + (i * 24 + j) * 48);
     }
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
@@ -172,8 +172,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
 
       if (frame >= start) {
         struct EffectStep *slash = &work->particles[i];
-        s32 x = HI(slash->x);
-        s32 y = HI(slash->y);
+        s32 x = Q_16_16_TO_INT(slash->x);
+        s32 y = Q_16_16_TO_INT(slash->y);
 
         if (frame == i * 8 + 84)
           AudioCommand_PlayFar(SE_212);
@@ -182,39 +182,43 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
           slash->y += slash->velocityY;
           slash->velocityX -= 0x10000;
           slash->velocityY += 0x20000;
-          draw[0](canvas, work->sheet + SLASH_TOP, x + 4, y - 40, 16, 21);
-          draw[0](canvas, work->sheet + SLASH_MIDDLE, x - 16, y - 19, 29, 35);
-          draw[0](canvas, work->sheet + SLASH_BOTTOM, x - 20, y + 16, 21, 24);
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, x + 4, y - 40, 16,
+                  21);
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, x - 16, y - 19,
+                  29, 35);
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, x - 20, y + 16,
+                  21, 24);
         } else if (frame >= i * 8 + 80) {
           switch (frame - start - 16) {
           case 0:
-            draw[0](canvas, work->sheet + SLASH_FLASH_1, x - 7, y - 14, 14, 28);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_1, x - 7, y - 14,
+                    14, 28);
             break;
           case 1:
-            draw[0](canvas, work->sheet + SLASH_FLASH_2, x - 11, y - 22, 23,
-                    44);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_2, x - 11,
+                    y - 22, 23, 44);
             break;
           case 2:
-            draw[0](canvas, work->sheet + SLASH_FLASH_3_TOP, x - 4, y - 31, 20,
-                    30);
-            draw[0](canvas, work->sheet + SLASH_FLASH_3_BOTTOM, x - 16, y - 1,
-                    22, 33);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_3_TOP, x - 4,
+                    y - 31, 20, 30);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_3_BOTTOM, x - 16,
+                    y - 1, 22, 33);
             break;
           case 3:
-            draw[0](canvas, work->sheet + SLASH_FLASH_4_TOP, x + 1, y - 38, 18,
-                    27);
-            draw[0](canvas, work->sheet + SLASH_FLASH_4_MIDDLE, x - 11, y - 11,
-                    22, 22);
-            draw[0](canvas, work->sheet + SLASH_FLASH_4_BOTTOM, x - 19, y + 11,
-                    19, 28);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_4_TOP, x + 1,
+                    y - 38, 18, 27);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_4_MIDDLE, x - 11,
+                    y - 11, 22, 22);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_4_BOTTOM, x - 19,
+                    y + 11, 19, 28);
             break;
           case 4:
-            draw[0](canvas, work->sheet + SLASH_FLASH_5_TOP, x + 4, y - 40, 16,
-                    23);
-            draw[0](canvas, work->sheet + SLASH_FLASH_5_MIDDLE, x - 10, y - 17,
-                    23, 28);
-            draw[0](canvas, work->sheet + SLASH_FLASH_5_BOTTOM, x - 20, y + 11,
-                    20, 28);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_5_TOP, x + 4,
+                    y - 40, 16, 23);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_5_MIDDLE, x - 10,
+                    y - 17, 23, 28);
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_5_BOTTOM, x - 20,
+                    y + 11, 20, 28);
             break;
           }
         } else {
@@ -225,7 +229,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             struct EffectStep *trail = &PARTICLES[i * 24 + j];
 
             if (trail->x > 0) {
-              Transform_Load(STAGED_PARTICLE_MATRICES + (i * 24 + j) * 48);
+              Transform_Load(ATALANTA_MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
               // The Japanese release draws the blade trails 16 pixels higher;
               // the later releases move them 16 pixels down.
@@ -319,10 +323,10 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
                 gBattleFx_PuffArcCellHeights[cell]);
 #endif
             if (slash->variant <= 11) {
-              draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4,
+              draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, slash->x + 4,
                       slash->y - 40, 16, 21);
-              draw[0](canvas, work->sheet + SLASH_MIDDLE, slash->x - 16,
-                      slash->y - 19, 29, 35);
+              draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE,
+                      slash->x - 16, slash->y - 19, 29, 35);
             }
           }
           slash->variant++;
@@ -331,12 +335,12 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
 
           if (slash->y > 56)
             height = height - slash->y + 56;
-          draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4, slash->y - 40,
-                  16, 21);
-          draw[0](canvas, work->sheet + SLASH_MIDDLE, slash->x - 16,
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, slash->x + 4,
+                  slash->y - 40, 16, 21);
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, slash->x - 16,
                   slash->y - 19, 29, 35);
           if (height > 0)
-            draw[0](canvas, work->sheet + SLASH_BOTTOM, slash->x - 20,
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, slash->x - 20,
                     slash->y + 16, 21, height);
           slash->x -= 6;
           slash->y += 12;
@@ -363,3 +367,5 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   }
   EFFECT_FINISH_CANVAS();
 }
+
+#undef ATALANTA_MATRICES

@@ -210,7 +210,7 @@ void BattleFx_RunOrbitingSkulls(void) {
 }
 
 // The burst picture in the sheet, after the smoke.
-#define TARGET_BURST_CELLS 0x1b00
+#define TARGET_BURSTS_CELLS 0x1b00
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -236,7 +236,7 @@ void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
-                             work->sheet + TARGET_BURST_CELLS, 0, 0);
+                             work->sheet + TARGET_BURSTS_CELLS, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
@@ -298,7 +298,7 @@ void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
           screen.x >>= 1;
           if (i == 5) {
             EffectStep_AdvanceWithGravity3D(puff, 62, 0x800);
-            drawBurst(canvas, work->sheet + cell * 0x480 + TARGET_BURST_CELLS,
+            drawBurst(canvas, work->sheet + cell * 0x480 + TARGET_BURSTS_CELLS,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
             EffectStep_AdvanceWithGravity3D(puff, 60, 0x200);
@@ -313,3 +313,8 @@ void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
   }
   EFFECT_FINISH_CANVAS();
 }
+
+#undef SWIRLING_STARS_FRAMES
+#undef SWIRLING_STARS_COUNT
+#undef TARGET_BURSTS_CELLS
+#undef TARGET_BURSTS_FRAMES

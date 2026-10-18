@@ -9,7 +9,7 @@
 // flashes live in work->particles and the blade picture in the work sheet;
 // PARTICLES holds 340 sparks per column.
 
-#define FLAME_BLADE_FLASH_CELLS                                                \
+#define RAGNAROK_FLASH_CELLS                                                   \
   (64 * 128) // Place flash graphics after the 64x128 sword image.
 
 #define RAGNAROK_FRAMES 80
@@ -61,7 +61,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + FLAME_BLADE_FLASH_CELLS, 1, 0);
+                             work->sheet + RAGNAROK_FLASH_CELLS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   //------------------------------------------------------------------
@@ -182,7 +182,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
       if (frame >= start) {
         // Large flash for the first two frames, then 12 small flashes.
         if (frame < start + 2) {
-          blit[0](canvas, work->sheet + FLAME_BLADE_FLASH_CELLS,
+          blit[0](canvas, work->sheet + RAGNAROK_FLASH_CELLS,
                   RAGNAROK_COLUMN_X(work->effect->side, col) - 16, 56, 32, 64);
         }
         i = 0;
@@ -194,13 +194,14 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
           s32 life;
           s32 y;
 
-          y = HI(flash->y);
-          x = HI(flash->x) + RAGNAROK_COLUMN_X(work->effect->side, col);
+          y = Q_16_16_TO_INT(flash->y);
+          x = Q_16_16_TO_INT(flash->x) +
+              RAGNAROK_COLUMN_X(work->effect->side, col);
           life = flash->variant;
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
                     work->sheet + (gRagnarok_FlashCells[life / 3] << 11) +
-                        FLAME_BLADE_FLASH_CELLS,
+                        RAGNAROK_FLASH_CELLS,
                     x - 16, y + 56, 32, 64);
           }
           life = flash->variant;
@@ -268,3 +269,13 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(user, 16);
   EFFECT_FINISH_CANVAS();
 }
+
+#undef RAGNAROK_FLASH_CELLS
+#undef RAGNAROK_FRAMES
+#undef RAGNAROK_COLUMNS
+#undef RAGNAROK_SEEDED
+#undef RAGNAROK_FLASHES
+#undef RAGNAROK_RING
+#undef RAGNAROK_SPARKS
+#undef RAGNAROK_DRAWN_SPARKS
+#undef RAGNAROK_COLUMN_X

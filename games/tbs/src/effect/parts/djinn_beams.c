@@ -5,8 +5,8 @@
 // light falls from the sky onto each target.
 
 // Images in work->sheet.
-#define DJINN_BEAM_MOTE_CELLS 0x2710   // the motes (CrescentMoonSheet, 24x24)
-#define DJINN_BEAM_DJINNI_CELLS 0x65c0 // the Djinni (40x40)
+#define DJINN_BEAMS_MOTE_CELLS 0x2710   // the motes (CrescentMoonSheet, 24x24)
+#define DJINN_BEAMS_DJINNI_CELLS 0x65c0 // the Djinni (40x40)
 
 // Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
 //
@@ -56,14 +56,14 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + DJINN_BEAM_MOTE_CELLS);
+  Resource_DecodeType01(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
   if (mode == 0)
     palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + DJINN_BEAM_DJINNI_CELLS);
+  Resource_DecodeType01(palette, work->sheet + DJINN_BEAMS_DJINNI_CELLS);
 
   // The motes start 80 pixels up, each at a random point of its sway.
   for (i = 0; i != 512; i++) {
@@ -108,9 +108,9 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       BattleFx_FetchRectangleBlitters(work->effect->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAM_DJINNI_CELLS, x, y, 40, 40);
+      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAM_DJINNI_CELLS, x, y, 40, 40);
+        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -147,7 +147,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
                         work->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 576 +
-                            DJINN_BEAM_MOTE_CELLS,
+                            DJINN_BEAMS_MOTE_CELLS,
                         screenPosition.x - 12, screenPosition.y - 12, 24, 24);
             mote->y -= 1 << 16;
             mote->variant++;
@@ -212,3 +212,6 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef DJINN_BEAMS_MOTE_CELLS
+#undef DJINN_BEAMS_DJINNI_CELLS

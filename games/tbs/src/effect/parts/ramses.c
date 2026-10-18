@@ -224,8 +224,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
           s32 cell = puff->variant / 6 + 3;
 
           draw[0](canvas, work->sheet + gRamses_PuffCells[cell],
-                  HI(puff->x) - gRamses_PuffSizes[cell] / 2,
-                  HI(puff->y) - gRamses_PuffSizes[cell] / 2,
+                  Q_16_16_TO_INT(puff->x) - gRamses_PuffSizes[cell] / 2,
+                  Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[cell] / 2,
                   gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
         }
         EffectStep_AdvanceWithGravity2D(puff, 60, -0x4000);
@@ -268,8 +268,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, HI(spark->x), HI(spark->y),
-                         size);
+        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, Q_16_16_TO_INT(spark->x),
+                         Q_16_16_TO_INT(spark->y), size);
         EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
         spark->variant--;
       }
@@ -284,3 +284,10 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   EFFECT_FINISH_CANVAS();
 }
+
+#undef RAMSES_FRAMES
+#undef RAMSES_STRIKE_FRAME
+#undef RAMSES_ROCKS
+#undef RAMSES_FIRST_PUFF
+#undef RAMSES_FIRST_ROCK_PUFF
+#undef RAMSES_SPARKS

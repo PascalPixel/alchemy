@@ -10,7 +10,8 @@
 // moved things, since the order of the random draws is part of the effect.
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
-#define ICE_BLOCK_TRAILS ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
+#define BOREAS_ICE_BLOCK_TRAILS                                                \
+  ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
 #define BOREAS_FALLING_BLOCK_CELLS 0x14f9 // the diagonal 40x80 ice block
 
@@ -267,8 +268,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
             cell = i & 3;
           }
           drawAlt(canvas, work->sheet + gBoreas_DebrisCells[cell],
-                  HI(PARTICLES[i].x), HI(PARTICLES[i].y),
-                  gBoreas_DebrisWidths[cell], gBoreas_DebrisHeights[cell]);
+                  Q_16_16_TO_INT(PARTICLES[i].x),
+                  Q_16_16_TO_INT(PARTICLES[i].y), gBoreas_DebrisWidths[cell],
+                  gBoreas_DebrisHeights[cell]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           PARTICLES[i].velocityY += 0x2000;
@@ -296,7 +298,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
           s32 cell = i % 3;
           if ((i & 1) == 0) {
             draw(canvas, work->sheet + gBoreas_SprayCells[cell],
-                 HI(PARTICLES[i].x), HI(PARTICLES[i].y),
+                 Q_16_16_TO_INT(PARTICLES[i].x), Q_16_16_TO_INT(PARTICLES[i].y),
                  gBoreas_SprayWidths[cell], gBoreas_SprayHeights[cell]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
@@ -311,19 +313,20 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       if (frame == 228) {
         for (i = 0; i != 128; i++) {
           spray = &PARTICLES[i];
-          trail = &ICE_BLOCK_TRAILS[i];
+          trail = &BOREAS_ICE_BLOCK_TRAILS[i];
           trail->x = spray->x;
           trail->y = spray->y;
           trail->variant = 0;
         }
       }
-      for (i = 0, trail = ICE_BLOCK_TRAILS, spray = PARTICLES; i != 128;
+      for (i = 0, trail = BOREAS_ICE_BLOCK_TRAILS, spray = PARTICLES; i != 128;
            i++, trail++, spray++) {
         if (frame >= i + 228) {
           s32 cell = trail->variant / 2 % 9;
           s32 size = gBattleFx_PuffSizes[cell];
           draw(canvas, puffSheet + gBattleFx_PuffCells[cell],
-               HI(trail->x) - size / 2, HI(trail->y) - size / 2, size, size);
+               Q_16_16_TO_INT(trail->x) - size / 2,
+               Q_16_16_TO_INT(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
             trail->x = spray->x;
             trail->y = spray->y;
@@ -420,14 +423,14 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != count; i++) {
         struct EffectStep *chip = &work->particles[i];
-        y = HI(chip->y);
+        y = Q_16_16_TO_INT(chip->y);
         if (y <= 135) {
           s32 cell = i % 3;
-          draw(canvas, work->sheet + gBoreas_FallCells[cell], HI(chip->x),
-               y - gBoreas_FallHeights[cell], gBoreas_FallWidths[cell],
-               gBoreas_FallHeights[cell]);
+          draw(canvas, work->sheet + gBoreas_FallCells[cell],
+               Q_16_16_TO_INT(chip->x), y - gBoreas_FallHeights[cell],
+               gBoreas_FallWidths[cell], gBoreas_FallHeights[cell]);
           EffectStep_AdvanceWithGravity2D(chip, 64, 1 << 16);
-          if (HI(chip->y) > 120 && chip->velocityY > 8 << 16) {
+          if (Q_16_16_TO_INT(chip->y) > 120 && chip->velocityY > 8 << 16) {
             chip->velocityY = -chip->velocityY / 4;
             chip->y = 120 << 16;
             work->shakeFrames = 1;
@@ -439,8 +442,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     // again at the top.
     if (frame <= 71) {
       for (i = 0; i != 64; i++) {
-        draw(canvas, work->sheet, HI(work->particles[i].x) - 12,
-             HI(work->particles[i].y) - 24, 24, 48);
+        draw(canvas, work->sheet, Q_16_16_TO_INT(work->particles[i].x) - 12,
+             Q_16_16_TO_INT(work->particles[i].y) - 24, 24, 48);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
         if ((work->particles[i].y >> 16) > 120 && frame <= 47) {
@@ -489,3 +492,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef BOREAS_ICE_BLOCK_TRAILS
+#undef BOREAS_BIG_BLOCK_CELLS
+#undef BOREAS_FALLING_BLOCK_CELLS
+#undef BOREAS_POINT_X
+#undef BOREAS_POINT_Y

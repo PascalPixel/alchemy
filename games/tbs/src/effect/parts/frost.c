@@ -3,13 +3,10 @@
 
 // One row of gFrost_Timings, for each variant.
 enum {
-  RISE_MOTES,   // the rising motes
-  RISE_COLUMNS, // the ice columns
-  RISE_FRAME    // the frame the motes burst
+  FROST_MOTES,   // the rising motes
+  FROST_COLUMNS, // the ice columns
+  FROST_FRAME    // the frame the motes burst
 };
-
-// The value of one column of this effect's gFrost_Timings row.
-#define RISING_MOTE_TIMING(field) gFrost_Timings[work->effect->variant][(field)]
 
 // Abilities: Frost, Tundra, Glacier (kind 6).
 //
@@ -63,10 +60,12 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1)
     REG_BG2X = -0x7000;
 
-  for (frame = 0; frame != RISING_MOTE_TIMING(RISE_FRAME) + 75; frame++) {
+  for (frame = 0;
+       frame != gFrost_Timings[work->effect->variant][FROST_FRAME] + 75;
+       frame++) {
     lowest = 120 << 16;
     highest = 0;
-    if (frame == RISING_MOTE_TIMING(RISE_FRAME) + 11)
+    if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME] + 11)
       BattleEventRuntime_BeginPhaseFar(SE_132);
     SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
@@ -85,11 +84,11 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     // closing in and rising 5 pixels a frame up to 48 pixels. After the
     // burst only the first 16 remain, spreading out and falling, and the
     // range of their heights is kept; none is drawn from 35 frames after it.
-    if (frame < RISING_MOTE_TIMING(RISE_FRAME))
-      count = RISING_MOTE_TIMING(RISE_MOTES);
+    if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME])
+      count = gFrost_Timings[work->effect->variant][FROST_MOTES];
     else
       count = 16;
-    if (frame < RISING_MOTE_TIMING(RISE_FRAME) + 35) {
+    if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME] + 35) {
       for (i = 0; i != count; i++) {
         if (frame > i) {
           s32 cell = i % 8;
@@ -104,7 +103,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
                        mote->z * Trig_Cos(mote->x));
             EffectPosition_ProjectPoint(xyz, position = &screen);
             position->x = (position->x >> 17) + 64;
-            position->y = HI(position->y) + 60;
+            position->y = Q_16_16_TO_INT(position->y) + 60;
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gFrost_MoteWidths[cell];
@@ -119,7 +118,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
                     width, height);
 #endif
           }
-          if (frame < RISING_MOTE_TIMING(RISE_FRAME)) {
+          if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME]) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
@@ -143,13 +142,14 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
     // Columns (32 wide): one more every 3 frames from frame 36; over the
     // last 7 frames before the burst they use the second blitter.
-    if (frame < RISING_MOTE_TIMING(RISE_FRAME)) {
-      for (i = 0; i != RISING_MOTE_TIMING(RISE_COLUMNS); i++) {
+    if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME]) {
+      for (i = 0; i != gFrost_Timings[work->effect->variant][FROST_COLUMNS];
+           i++) {
         if (i < (frame - 36) / 3) {
           s32 cell = i % 3;
           u32 height;
 
-          if (frame >= RISING_MOTE_TIMING(RISE_FRAME) - 7) {
+          if (frame >= gFrost_Timings[work->effect->variant][FROST_FRAME] - 7) {
 #ifdef UBFIX
             height = gFrost_ColumnHeights[cell];
             draw[1](canvas, work->sheet + gFrost_ColumnCells[cell],
@@ -183,7 +183,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     }
 
     // Chips: at the burst, 32 fly up from low down (24 of them are drawn).
-    if (frame == RISING_MOTE_TIMING(RISE_FRAME)) {
+    if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &PARTICLES[i];
 
@@ -194,7 +194,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
         chip->variant = (Random16() & 15) + 16;
       }
     }
-    if (frame >= RISING_MOTE_TIMING(RISE_FRAME)) {
+    if (frame >= gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       // The first 24 chips, drawn while they last; every one, live or not,
       // widens the range of heights the smoke rises over.
       for (i = 0; i != 24; i++) {
@@ -203,9 +203,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cell = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipCells[cell], HI(chip->x),
-                  HI(chip->y), gFrost_ChipWidths[cell],
-                  gFrost_ChipHeights[cell]);
+          draw[1](canvas, work->sheet + gFrost_ChipCells[cell],
+                  Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
+                  gFrost_ChipWidths[cell], gFrost_ChipHeights[cell]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->variant--;
@@ -223,7 +223,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 
     // Smoke: puffs appear over the heights of the motes and chips and rise
     // half a pixel a frame.
-    if (frame == RISING_MOTE_TIMING(RISE_FRAME)) {
+    if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *puff = &work->particles[i];
 
@@ -235,10 +235,11 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
         puff->variant = (Random16() & 15) + 20;
       }
     }
-    if (frame >= RISING_MOTE_TIMING(RISE_FRAME)) {
+    if (frame >= gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       // Each puff plays nine pictures, 2 frames each, and until 35 frames
       // after the burst starts again at a random spot when it goes out.
-      s32 rise = (frame - RISING_MOTE_TIMING(RISE_FRAME)) / 2;
+      s32 rise =
+          (frame - gFrost_Timings[work->effect->variant][FROST_FRAME]) / 2;
 
       for (i = 0; i != 32; i++) {
         struct EffectStep *puff = &work->particles[i];
@@ -250,18 +251,20 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
           size = gBattleFx_PuffSizes[cell];
           draw[1](canvas, puffSheet + gBattleFx_PuffCells[cell],
-                  HI(puff->velocityX) - (size >> 1),
-                  HI(puff->velocityY) - (size >> 1) - rise, size, size);
+                  Q_16_16_TO_INT(puff->velocityX) - (size >> 1),
+                  Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
+                  size);
 #else
           draw[1](canvas, puffSheet + gBattleFx_PuffCells[cell],
-                  HI(puff->velocityX) -
+                  Q_16_16_TO_INT(puff->velocityX) -
                       ((size = gBattleFx_PuffSizes[cell]) >> 1),
-                  HI(puff->velocityY) - (size >> 1) - rise, size, size);
+                  Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
+                  size);
 #endif
         }
         puff->variant--;
         if ((puff->variant == -1 || puff->variant == 17) &&
-            frame < RISING_MOTE_TIMING(RISE_FRAME) + 35) {
+            frame < gFrost_Timings[work->effect->variant][FROST_FRAME] + 35) {
           puff->variant = 17;
           puff->velocityX = (Random16() & 127) << 16;
           puff->velocityY = (Random16() % (highest - lowest) + lowest) << 16;

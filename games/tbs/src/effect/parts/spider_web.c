@@ -204,3 +204,5 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef SPIDER_WEB_FRAMES

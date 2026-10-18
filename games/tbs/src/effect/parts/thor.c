@@ -3,10 +3,10 @@
 
 // 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
 // before them.
-#define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
+#define THOR_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 
 // The violet mote in the second part's sheet.
-#define STORM_MOTE_CELLS 0x6000
+#define THOR_MOTE_CELLS 0x6000
 
 // Storm summons: a circle of light forms in the dusk sky and sends down a
 // beam; then a pillar of lightning and a storm of violet bolts strike the
@@ -14,20 +14,21 @@
 //
 // effect: the targets.
 
-#define STORM_PARTICLE_COUNT 910     // particles in STORM_PARTICLES
-#define STORM_DIMMED_DOTS 10000      // the darker copies of the dot pictures
-#define STORM_DIMMED_DOT_BYTES 0x302 // bytes in each darker copy
-#define STORM_DUSK_FRAMES 170        // frames, at most, of the dusk part
-#define STORM_LIGHTNING_FRAMES 192   // frames of the lightning part
-#define STORM_BOLTS 30               // violet bolts after the pillar
+#define THOR_PARTICLE_COUNT 910     // particles in THOR_PARTICLES
+#define THOR_DIMMED_DOTS 10000      // the darker copies of the dot pictures
+#define THOR_DIMMED_DOT_BYTES 0x302 // bytes in each darker copy
+#define THOR_DUSK_FRAMES 170        // frames, at most, of the dusk part
+#define THOR_LIGHTNING_FRAMES 192   // frames of the lightning part
+#define THOR_BOLTS 30               // violet bolts after the pillar
 
 // Launches up to max sparks from (px, py), 16.16, into the free slots
-// (variant 0) of STORM_PARTICLES, counting with index. Each flies at angle
+// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
+// index. Each flies at angle
 // at a random speed of 32 to 1054 and lives 32 to 39 frames.
-#define STORM_LAUNCH_SPARKS(index, px, py, angleExpr, max)                     \
+#define THOR_LAUNCH_SPARKS(spark, index, px, py, angleExpr, max)               \
   {                                                                            \
     s32 spawned = 0;                                                           \
-    for (index = 0, spark = STORM_PARTICLES; index != STORM_PARTICLE_COUNT;    \
+    for (index = 0, spark = THOR_PARTICLES; index != THOR_PARTICLE_COUNT;      \
          index++, spark++) {                                                   \
       if (spark->variant == 0) {                                               \
         s32 speed = 0x3ff;                                                     \
@@ -50,13 +51,13 @@
 // Abilities: Thor (scene kind 12).
 //
 // The scene plays in two parts on the effect canvas. In the dusk part
-// (STORM_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
+// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
 // lines across it form over scrolling dusk clouds; the circle turns, sinks
 // into the sky and a beam of light falls from it. In the lightning part
-// (STORM_LIGHTNING_FRAMES) a pillar of lightning strikes the formation and
-// throws sparks, STORM_BOLTS violet bolts follow while a violet mote sways
+// (THOR_LIGHTNING_FRAMES) a pillar of lightning strikes the formation and
+// throws sparks, THOR_BOLTS violet bolts follow while a violet mote sways
 // above, and the formation is pushed back in smoke until an impact burst ends
-// the effect. The sparks live in STORM_PARTICLES; a spark whose variant is 0
+// the effect. The sparks live in THOR_PARTICLES; a spark whose variant is 0
 // is free, and a positive variant counts the frames it has left.
 void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   static s16 points[6][2] = {
@@ -85,7 +86,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   s32 dotCount;
   struct EffectStep *spark;
   DrawRectangle *blitters; // the work slots read as blitters
-  s32 dimmedOffset = STORM_DIMMED_DOTS;
+  s32 dimmedOffset = THOR_DIMMED_DOTS;
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
@@ -108,11 +109,11 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     s32 offset;
     for (i = 0, offset = 0; i != 8; i++) {
       u8 *src;
-      for (j = 0, src = sprites; j != STORM_DIMMED_DOT_BYTES; j++) {
+      for (j = 0, src = sprites; j != THOR_DIMMED_DOT_BYTES; j++) {
         s32 v = *src++;
 
         EFFECT_CAP_LEVEL(v, 64 - i * 7);
-        (work->sheet + STORM_DIMMED_DOTS)[offset + j] = v;
+        (work->sheet + THOR_DIMMED_DOTS)[offset + j] = v;
       }
       offset += j;
     }
@@ -163,7 +164,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   // First part, 170 frames (A or B skips it): a circle of dots and
   // three lines across it form and turn over dusk clouds, the circle shrinks
   // into the sky, and a beam of light falls from it.
-  for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {
+  for (frame = 0; frame != THOR_DUSK_FRAMES; frame++) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
@@ -288,7 +289,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         screen[0].y = (screen[0].y >> 16) + 60;
         drawAlt(canvas,
                 work->sheet +
-                    (level * STORM_DIMMED_DOT_BYTES +
+                    (level * THOR_DIMMED_DOT_BYTES +
                      gBattleFx_MoteCells[dotSize - 1]) +
                     dimmedOffset,
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
@@ -361,7 +362,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
-                             work->sheet + STORM_MOTE_CELLS, 1, 0);
+                             work->sheet + THOR_MOTE_CELLS, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
@@ -378,8 +379,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     formationY = 0x400000;
     formationSpeedX = 0;
     formationSpeedY = 0;
-    for (i = 0; i != STORM_PARTICLE_COUNT; i++) {
-      STORM_PARTICLES[i].variant = 0;
+    for (i = 0; i != THOR_PARTICLE_COUNT; i++) {
+      THOR_PARTICLES[i].variant = 0;
     }
     for (i = 0; i != 16; i++) {
       work->particles[i].x = (Random16() & 31) - 16;
@@ -391,7 +392,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     pillarX = 60;
     pillarY = 112;
 
-    for (frame = 0; frame != STORM_LIGHTNING_FRAMES; frame++) {
+    for (frame = 0; frame != THOR_LIGHTNING_FRAMES; frame++) {
       s32 stormFrame;
       if (frame == 20) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB, work,
@@ -417,8 +418,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            STORM_LAUNCH_SPARKS(i, pillarX << 16, pillarY << 16,
-                                (Random16() & 0x7fff) - 0x4000, 512);
+            THOR_LAUNCH_SPARKS(spark, i, pillarX << 16, pillarY << 16,
+                               (Random16() & 0x7fff) - 0x4000, 512);
             work->shakeFrames = 8;
           }
         }
@@ -445,7 +446,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             Iwram_FillWords(canvas, 0x4000, 0x10101010);
           }
         }
-        for (i = 0; i != STORM_BOLTS; i++) {
+        for (i = 0; i != THOR_BOLTS; i++) {
           if (frame >= i * 2 + 80) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
@@ -458,8 +459,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             if (frame == i * 2 + 80) {
-              STORM_LAUNCH_SPARKS(j, 0x100000, 0x500000, Random16() & 0xffff,
-                                  16);
+              THOR_LAUNCH_SPARKS(spark, j, 0x100000, 0x500000,
+                                 Random16() & 0xffff, 16);
               work->shakeFrames = 8;
               EFFECT_FOR_EACH_TARGET(j, work->effect) {
                 ObjectGroup_UpdateMembers(work->effect->actors[j],
@@ -483,33 +484,32 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
-                                               work->sheet + STORM_MOTE_CELLS,
+                                               work->sheet + THOR_MOTE_CELLS,
                                                moteX + 60, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                 COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
-                                               work->sheet + STORM_MOTE_CELLS,
-                                               mirrorX, moteY - 24, 12, 24);
+        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+            canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                 COMPOSITE_FLIP_Y,
                             COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
-            canvas, work->sheet + STORM_MOTE_CELLS, moteX + 60, moteY, 12, 24);
+            canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                 COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
                             COMPOSITE_MAX);
         gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
-            canvas, work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 12, 24);
+            canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         j = 0;
-        for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
+        for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
              i++, spark++) {
           if (spark->variant == 0) {
             s32 speed = 63;
@@ -539,7 +539,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         // out.
         DrawRectangle draw = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
         struct EffectStep *spark;
-        for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
+        for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
              i++, spark++) {
           if (spark->variant > 0) {
             spark->variant--;
@@ -610,3 +610,13 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   }
   BattleFx_EndCanvasLayer();
 }
+
+#undef THOR_PARTICLES
+#undef THOR_MOTE_CELLS
+#undef THOR_PARTICLE_COUNT
+#undef THOR_DIMMED_DOTS
+#undef THOR_DIMMED_DOT_BYTES
+#undef THOR_DUSK_FRAMES
+#undef THOR_LIGHTNING_FRAMES
+#undef THOR_BOLTS
+#undef THOR_LAUNCH_SPARKS

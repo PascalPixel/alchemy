@@ -2,7 +2,7 @@
 // Break and Drain.
 
 // Break: ice shards burst from each target.
-#define ICE_SHARDS_PER_TARGET 128 // shards for each target
+#define DRAIN_ICE_SHARDS_PER_TARGET 128 // shards for each target
 
 // Abilities: Break (kind 43).
 //
@@ -37,7 +37,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
                       COMPOSITE_MAX);
   draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * ICE_SHARDS_PER_TARGET);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_ICE_SHARDS_PER_TARGET);
 
   EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -49,14 +49,14 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
     s32 height;
     struct EffectStep *shard;
 
-    offset = member * ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
+    offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
     height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
     SET_VECTOR(point, object->x, height, object->z);
     EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
-         i != ICE_SHARDS_PER_TARGET; i++) {
+         i != DRAIN_ICE_SHARDS_PER_TARGET; i++) {
       s32 radius;
       s32 angle;
       s32 lift;
@@ -81,7 +81,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
       s32 offset;
 
-      offset = member * ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
+      offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
       if (frame == member * 20) {
         AudioCommand_PlayFar(SE_143);
         ObjectGroup_UpdateMembers(work->effect->actors[member],
@@ -92,16 +92,16 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
         struct EffectStep *shard;
 
         for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
-             i != ICE_SHARDS_PER_TARGET; i++) {
+             i != DRAIN_ICE_SHARDS_PER_TARGET; i++) {
           if (shard->variant >= 0) {
             s32 size;
 
             size = i % 3 + 1;
-            EFFECT_DRAW_MOTE(draw, canvas, sheet, HI(shard->x), HI(shard->y),
-                             size);
+            EFFECT_DRAW_MOTE(draw, canvas, sheet, Q_16_16_TO_INT(shard->x),
+                             Q_16_16_TO_INT(shard->y), size);
             EffectStep_AdvanceWithGravity2D(shard, 62, gDrain_Gravities[i & 3]);
             shard->variant++;
-            if (shard->velocityY > 0 && HI(shard->y) > 112)
+            if (shard->velocityY > 0 && Q_16_16_TO_INT(shard->y) > 112)
               shard->variant = -1;
           }
           shard++;
@@ -117,8 +117,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 // Gathering motes: motes of light leave the targets and are drawn into the
 // user.
 
-#define GATHERING_MOTES_PER_TARGET 128 // motes for each target
-#define DRAIN_DRAWN 32                 // motes drawn for each target
+#define DRAIN_MOTES_PER_TARGET 128 // motes for each target
+#define DRAIN_DRAWN 32             // motes drawn for each target
 
 // Abilities: Drain, Psy Drain (kind 42).
 //
@@ -164,7 +164,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 
   // The motes fly out of the centre of each target's body at random speeds
   // of up to 2 pixels a frame on each axis.
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * GATHERING_MOTES_PER_TARGET);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
   EFFECT_FOR_EACH_TARGET(member, work->effect) {
     struct MotionObject *object;
@@ -173,9 +173,8 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
     halfHeight =
         Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
-    for (i = 0; i != GATHERING_MOTES_PER_TARGET; i++) {
-      struct EffectStep *mote =
-          &PARTICLES[member * GATHERING_MOTES_PER_TARGET + i];
+    for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
+      struct EffectStep *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
       SET_POSITION(mote, object->x, object->y + halfHeight, object->z);
       SET_VELOCITY(mote, ((Random16() & 0xff) - 128) << 10,
@@ -214,7 +213,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
       if (frame > member * 20) {
         for (i = 0; i != DRAIN_DRAWN; i++) {
           struct EffectStep *mote =
-              &PARTICLES[member * GATHERING_MOTES_PER_TARGET + i];
+              &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
           if (mote->variant >= 0) {
             s32 size;
@@ -253,3 +252,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef DRAIN_ICE_SHARDS_PER_TARGET
+#undef DRAIN_MOTES_PER_TARGET
+#undef DRAIN_DRAWN

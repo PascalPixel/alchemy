@@ -191,3 +191,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   }
   EFFECT_FINISH_CANVAS();
 }
+
+#undef RUSHING_STRIKE_SPARK_COUNT
+#undef RUSHING_STRIKE_RING_BYTES
+#undef RUSHING_STRIKE_FRAMES
+#undef RUSHING_STRIKE_FRAME

@@ -96,11 +96,11 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
           for (j = 0; j != 16; j++) {
             cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
             shard = &shards[i * 16 + j];
-            draw[j <= 2](canvas,
-                         work->sheet + gPrism_ShardOffsets[cell] + 0x800,
-                         HI(shard->x) - gPrism_ShardWidths[cell] / 2,
-                         HI(shard->y) - gPrism_ShardHeights[cell] / 2,
-                         gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
+            draw[j <= 2](
+                canvas, work->sheet + gPrism_ShardOffsets[cell] + 0x800,
+                Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[cell] / 2,
+                Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[cell] / 2,
+                gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             EffectStep_AdvanceWithGravity2D(shard, 64, 0x2000);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
@@ -108,8 +108,8 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
           }
         } else if (frame >= crystal->variant) {
           // A falling crystal (32x64).
-          draw[i & 1](canvas, work, HI(crystal->x) - 16, HI(crystal->y), 32,
-                      64);
+          draw[i & 1](canvas, work, Q_16_16_TO_INT(crystal->x) - 16,
+                      Q_16_16_TO_INT(crystal->y), 32, 64);
           EffectStep_AdvanceWithGravity2D(crystal, 64, 0x10000);
           if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground (y 56).
@@ -189,3 +189,5 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 
   Iwram_CopyWords((void *)&BG_PLTT[1], palette, sizeof(palette));
 }
+
+#undef PRISM_GROUND_Y

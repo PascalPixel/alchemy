@@ -200,3 +200,10 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef VOLCANO_FRAMES
+#undef VOLCANO_ERUPTION
+#undef VOLCANO_TRICKLE
+#undef VOLCANO_SPARK_POOL
+#undef VOLCANO_FLAME_IMAGE_ODD
+#undef VOLCANO_FLAME_IMAGE_EVEN

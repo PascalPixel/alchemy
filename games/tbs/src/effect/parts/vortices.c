@@ -271,3 +271,6 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef FROTH_MOTE_CELL
+#undef FROTH_FIRST_TARGET

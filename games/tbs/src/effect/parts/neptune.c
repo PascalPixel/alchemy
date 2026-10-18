@@ -243,8 +243,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     if (t >= 0 && t < 88) {
       for (i = 0, flare = work->particles; i != 32; i++, flare++) {
         if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
-          s32 fx = HI(flare->x) + 112;
-          s32 fy = HI(flare->y) + 62;
+          s32 fx = Q_16_16_TO_INT(flare->x) + 112;
+          s32 fy = Q_16_16_TO_INT(flare->y) + 62;
           s32 r = (i & 3) + 5;
           s = r * 2;
           blit[0](canvas,
@@ -401,12 +401,14 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
         s32 m = 3;
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
-          EFFECT_DRAW_MOTE(draw, canvas, particleSheet, HI(PARTICLES[i].x),
-                           HI(PARTICLES[i].y), k);
+          EFFECT_DRAW_MOTE(draw, canvas, particleSheet,
+                           Q_16_16_TO_INT(PARTICLES[i].x),
+                           Q_16_16_TO_INT(PARTICLES[i].y), k);
           EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62,
                                           gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
-          if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104) {
+          if (PARTICLES[i].velocityY > 0 &&
+              Q_16_16_TO_INT(PARTICLES[i].y) > 104) {
             PARTICLES[i].variant = -1;
           }
         }
@@ -540,3 +542,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   }
   EFFECT_FINISH_CANVAS();
 }
+
+#undef NEPTUNE_FLAME_GROUND
+#undef NEPTUNE_OBJECTS
+#undef NEPTUNE_PARTICLES
+#undef NEPTUNE_FLARE_SHEET

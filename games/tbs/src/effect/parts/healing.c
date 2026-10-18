@@ -366,3 +366,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef HEALING_DJINNI_CELLS
+#undef HEALING_MOTES
+#undef HEALING_SLOTS

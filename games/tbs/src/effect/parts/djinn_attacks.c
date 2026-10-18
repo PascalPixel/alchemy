@@ -63,11 +63,11 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define MERCURY_FRAMES 96
 #define MERCURY_FLAMES 5 // flames thrown
 // The Djinn attacks share these: each flame, ball or column that lands
-// throws its motes into its own DJINN_MOTES_PER_FLAME slots of PARTICLES
-// (Venus's columns fill 16 of them), and the motes move through all
-// DJINN_MOTE_SLOTS.
-#define DJINN_MOTES_PER_FLAME 32 // slots for each flame's motes
-#define DJINN_MOTE_SLOTS 512
+// throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
+// PARTICLES (Venus's columns fill 16 of them), and the motes move through all
+// DJINN_ATTACKS_MOTE_SLOTS.
+#define DJINN_ATTACKS_MOTES_PER_FLAME 32 // slots for each flame's motes
+#define DJINN_ATTACKS_MOTE_SLOTS 512
 
 // Abilities: Mercury (kind 251).
 //
@@ -109,7 +109,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                         75); // each transfer fades the canvas to 3/4
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
-  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   AudioCommand_PlayFar(SE_162);
   frame = 0;
   do {
@@ -130,11 +130,11 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
           // Each mote flies off in a random direction at a speed of 256 to
           // 767; its vertical speed is doubled, so the burst is twice as tall
           // as it is wide.
-          for (j = 0; j != DJINN_MOTES_PER_FLAME; j++) {
+          for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
             s32 angle;
             s32 speed;
 
-            mote = &PARTICLES[i * DJINN_MOTES_PER_FLAME + j];
+            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
             angle = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = flame->x << 16;
@@ -185,8 +185,8 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, HI(mote->x), HI(mote->y),
-                         size);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                         Q_16_16_TO_INT(mote->y), size);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
@@ -245,7 +245,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     ball->x = (Random16() & 63) + 64;
     ball->y = (Random16() & 63) - 80;
   }
-  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   AudioCommand_PlayFar(SE_171);
   frame = 0;
   angle = 0x8000; // 180 degrees
@@ -273,11 +273,11 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
         ball->x -= 6;
         ball->y += 12;
         if (ball->y > JUPITER_GROUND_Y) {
-          for (j = 0; j != DJINN_MOTES_PER_FLAME; j++) {
+          for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
             s32 direction;
             s32 speed;
 
-            mote = &PARTICLES[i * DJINN_MOTES_PER_FLAME + j];
+            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
             direction = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = ball->x << 16;
@@ -296,13 +296,13 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     }
 
     // Motes shrink as they age and slow as they fall.
-    for (i = 0; i != DJINN_MOTE_SLOTS; i++) {
+    for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 1;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, HI(mote->x), HI(mote->y),
-                         size);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                         Q_16_16_TO_INT(mote->y), size);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
@@ -380,7 +380,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
     column->x = Random16() & 63;
     column->y = 104;
   }
-  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   AudioCommand_PlayFar(SE_141);
   frame = 0;
   angle = 0x8000;
@@ -406,7 +406,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
             s32 direction;
             s32 speed;
 
-            mote = &PARTICLES[i * DJINN_MOTES_PER_FLAME + j];
+            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = column->x << 16;
@@ -426,13 +426,13 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
       }
     }
     // Motes shrink as they age and slow as they fall.
-    for (i = 0; i != DJINN_MOTE_SLOTS; i++) {
+    for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, HI(mote->x), HI(mote->y),
-                         size);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                         Q_16_16_TO_INT(mote->y), size);
         EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
@@ -588,9 +588,10 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
         s32 angle;
 
         size = (index & 1) + 3;
-        x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
+        x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
         draw[1](canvas, sheet + gBattleFx_MoteCells[size - 1],
-                x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
+                x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
+                size * 2);
         EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
         angle = step->z;
         step->z = angle + 0x800;
@@ -613,3 +614,17 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   } while (frame != MARS_FRAMES);
   EFFECT_FINISH_CANVAS();
 }
+
+#undef MERCURY_FRAMES
+#undef MERCURY_FLAMES
+#undef DJINN_ATTACKS_MOTES_PER_FLAME
+#undef DJINN_ATTACKS_MOTE_SLOTS
+#undef JUPITER_FRAMES
+#undef JUPITER_FLAMEBALLS
+#undef JUPITER_GROUND_Y
+#undef VENUS_FRAMES
+#undef VENUS_COLUMNS
+#undef MARS_FRAMES
+#undef MARS_STRIKE_FRAME
+#undef MARS_FLAMES
+#undef MARS_EMBERS_PER_FLAME

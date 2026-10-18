@@ -57,12 +57,12 @@ u8 gFalling_Counts[][4] = {
 
 // streaks.c: Falling streak timing and motion records.
 s8 gStreaks_Records[][4] = {
-    // STREAK_ANIMATE, STREAK_HIT, STREAK_MOTION, STREAK_SHAKE
-    {0, 1, 0, 0},  // STREAK_STYLE_EMBER
-    {0, 1, 4, 0},  // STREAK_STYLE_LIME
-    {0, 1, -1, 1}, // STREAK_STYLE_VIOLET
-    {1, 1, -1, 1}, // STREAK_STYLE_RED
-    {1, 1, 4, 0},  // STREAK_STYLE_CYAN
+    // STREAKS_ANIMATE, STREAKS_HIT, STREAKS_MOTION, STREAKS_SHAKE
+    {0, 1, 0, 0},  // STREAKS_STYLE_EMBER
+    {0, 1, 4, 0},  // STREAKS_STYLE_LIME
+    {0, 1, -1, 1}, // STREAKS_STYLE_VIOLET
+    {1, 1, -1, 1}, // STREAKS_STYLE_RED
+    {1, 1, 4, 0},  // STREAKS_STYLE_CYAN
 };
 // Pixels the target trembles by, frame by frame.
 s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
@@ -70,7 +70,7 @@ s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 // target_strike.c: Target strike timing, motion and picture cells.
 // clang-format off
 u8 gTargetStrike_Records[][7] = {
-    // STRIKE_KIND, _HITS, _FLAGS, _COLOUR, _IMAGE_FRAMES, _COMPOSITE, _FRAMES
+    // TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, IMAGE_FRAMES, COMPOSITE, FRAMES
     {STRIKE_KIND_COLUMN, 2, STRIKE_SPARKS, 0, 6, COMPOSITE_ADDITIVE, 70}, // 0
     {STRIKE_KIND_COLUMN, 1, STRIKE_SMOKE,  1, 6, COMPOSITE_MAX,      54}, // 1
     {STRIKE_KIND_COLUMN, 3, STRIKE_SMOKE,  2, 6, COMPOSITE_MAX,      96}, // 2
@@ -897,7 +897,7 @@ u8 gBolt_GlintModes[] = {2, 2, 3};
 // Comet picture heights, by comet kind.
 u8 gProjectiles_CometHeights[] = {24, 36, 48};
 u8 gProjectiles_Modes[][5] = {
-    // VOLLEY_SHOTS, _STEPS, _STAGGER, _DELAY, _SPARKS
+    // PROJECTILE_VOLLEY_: SHOTS, STEPS, STAGGER, DELAY, SPARKS
     {6, 10, 3, 32, 4},  // mode 0
     {4, 10, 5, 32, 8},  // mode 1
     {10, 32, 3, 32, 4}, // mode 2
@@ -968,16 +968,16 @@ u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
 
 // gaia.c and burst_scene.c: Burst scene records and rising wall geometry.
 u8 gBurstScene_Records[][7] = {
-    // BURST_ARC_SHEET, _PALETTE, _STRIKES, _MOTES, _INTERVAL, _FRAMES, _FLASH
-    {1, 0, 5, 16, 12, 80, 0},  // variant 0
-    {1, 1, 7, 16, 12, 104, 0}, // variant 1
-    {1, 2, 9, 16, 12, 128, 0}, // variant 2
-    {1, 3, 1, 16, 16, 36, 0},  // variant 3
-    {1, 3, 2, 20, 16, 52, 0},  // variant 4
-    {1, 3, 3, 24, 16, 68, 0},  // variant 5
-    {0, 2, 1, 32, 12, 28, 1},  // variant 6
-    {0, 2, 2, 32, 12, 40, 1},  // variant 7
-    {0, 2, 3, 32, 12, 52, 1},  // variant 8
+    // BURST_SCENE_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES, FLASH
+    {1, 0, 5, 16, 12, 80, 0},  // mode 0
+    {1, 1, 7, 16, 12, 104, 0}, // mode 1
+    {1, 2, 9, 16, 12, 128, 0}, // mode 2
+    {1, 3, 1, 16, 16, 36, 0},  // mode 3
+    {1, 3, 2, 20, 16, 52, 0},  // mode 4
+    {1, 3, 3, 24, 16, 68, 0},  // mode 5
+    {0, 2, 1, 32, 12, 28, 1},  // mode 6
+    {0, 2, 2, 32, 12, 40, 1},  // mode 7
+    {0, 2, 3, 32, 12, 52, 1},  // mode 8
 };
 // Rising wall: the nine rows of the growing wall in the rebuilt sheet.
 u16 gGaia_RowCells[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};

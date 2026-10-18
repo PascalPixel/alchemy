@@ -228,3 +228,9 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   EFFECT_RELEASE_BLITTERS();
   BattleFx_EndCanvasLayer();
 }
+
+#undef CONDEMN_FRAMES
+#undef CONDEMN_BREAK_FRAME
+#undef CONDEMN_BOUNCE_FRAME
+#undef CONDEMN_PANEL_X
+#undef CONDEMN_PANEL_Y

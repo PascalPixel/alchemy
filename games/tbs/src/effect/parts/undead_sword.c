@@ -104,8 +104,8 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
         s32 py;
 
         cell = particle->variant / 3;
-        px = HI(particle->x);
-        py = HI(particle->y);
+        px = Q_16_16_TO_INT(particle->x);
+        py = Q_16_16_TO_INT(particle->y);
         if (cell > 6)
           cell = 6;
         src = work->sheet + gUndeadSword_SparkCells[cell] + 0x460;

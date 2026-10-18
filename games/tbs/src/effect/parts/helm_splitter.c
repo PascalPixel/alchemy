@@ -217,7 +217,7 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   }
 }
 
-#define IMPACT_SHARD_CELLS 0x59d8 // Fragment graphics: four 12x24 images
+#define IMPACT_BURST_SHARD_CELLS 0x59d8 // Fragment graphics: four 12x24 images
 
 #define IMPACT_BURST_FRAMES 72
 #define IMPACT_BURST_FRAGMENTS 3       // fragments, work->particles 61 to 63
@@ -263,7 +263,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage,
-                             work->sheet + IMPACT_SHARD_CELLS, 0, 0);
+                             work->sheet + IMPACT_BURST_SHARD_CELLS, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Large sparks: speed 256-511, lifetime 16-31 frames; use the first 30.
@@ -343,8 +343,8 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         particle->variant--;
         EffectStep_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 3;
-        px = HI(particle->x);
-        py = HI(particle->y);
+        px = Q_16_16_TO_INT(particle->x);
+        py = Q_16_16_TO_INT(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
       }
     }
@@ -360,8 +360,8 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         particle->variant--;
         EffectStep_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 1;
-        px = HI(particle->x);
-        py = HI(particle->y);
+        px = Q_16_16_TO_INT(particle->x);
+        py = Q_16_16_TO_INT(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
       }
     }
@@ -378,9 +378,9 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
         EffectStep_AdvanceWithGravity2D(shard, 64, 0);
         cell = (frame - 36) / 7;
-        px = HI(shard->x);
-        py = HI(shard->y);
-        maxBlend(canvas, work->sheet + cell * 0x120 + IMPACT_SHARD_CELLS,
+        px = Q_16_16_TO_INT(shard->x);
+        py = Q_16_16_TO_INT(shard->y);
+        maxBlend(canvas, work->sheet + cell * 0x120 + IMPACT_BURST_SHARD_CELLS,
                  px - 6, py - 12, 12, 24);
       }
     }
@@ -395,3 +395,18 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   EFFECT_RELEASE_BLITTERS();
 }
+
+#undef HELM_SPLITTER_FRAMES
+#undef HELM_SPLITTER_STRIKE_FRAME
+#undef HELM_SPLITTER_STAR_CELLS
+#undef HELM_SPLITTER_CLEARED_SLOTS
+#undef HELM_SPLITTER_SPARKS
+#undef HELM_SPLITTER_SPARK_SLOTS
+#undef IMPACT_BURST_SHARD_CELLS
+#undef IMPACT_BURST_FRAMES
+#undef IMPACT_BURST_FRAGMENTS
+#undef IMPACT_BURST_DRAWN_LARGE
+#undef IMPACT_BURST_DRAWN_SMALL
+#undef IMPACT_BURST_LARGE_SPARKS
+#undef IMPACT_BURST_SMALL_SPARKS
+#undef IMPACT_BURST_FIRST_FRAGMENT

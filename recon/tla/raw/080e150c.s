@@ -75,7 +75,7 @@ BattleFx_UpdateArcEffect:
 	mov r1, r10
 	ldr r0, [r1]
 	str r2, [sp, #0]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	subs r0, #1
 	strh r0, [r5, #30]
 	b .L_080e15c2
@@ -83,7 +83,7 @@ BattleFx_UpdateArcEffect:
 	mov r3, r10
 	ldr r0, [r3]
 	str r2, [sp, #0]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	ldr r3, [r5, #16]
 	ldr r1, .L_080e15f8
 	adds r0, #1

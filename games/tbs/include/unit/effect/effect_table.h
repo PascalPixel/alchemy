@@ -2,102 +2,326 @@
 #define ALCHEMY_UNIT_EFFECT_EFFECT_TABLE_H
 
 #include "types.h"
+#include "render_placement.h"
+#include "vector3.h"
 
-extern const u8 gFallingShards_Counts[];
-extern const s8 gFiveMode_Tremble[];
-extern const u8 gTwelveMode_StrikeWidths[];
-extern const u8 gTwelveMode_StrikeHeights[];
-extern const u16 gTwelveMode_StrikeOffsets[];
-extern const u8 gTwelveMode_StrikeReach[];
-extern const u8 gTwelveMode_ColumnStages[];
-extern const u8 gTwelveMode_GlintDrawFlags[];
-extern const u8 gBladeRain_CellWidths[];
-extern const u8 gBladeRain_CellHeights[];
-extern const u16 gBladeRain_CellSourceOffsets[];
-extern const u8 gBattlePieceWidth[];
-extern const u8 gBattlePieceHeight[];
-extern const u16 gBattlePieceOffset[];
-extern const u8 gBattlePieceStartX[];
-extern const u8 gBattlePieceStartY[];
-extern const s8 gCornerSparks_X[];
-extern const s8 gCornerSparks_Y[];
-extern const u8 gCornerSparks_DrawFlags[];
-extern const u8 gVortexMotes_Counts[];
-extern const u8 gTornado_Shapes[];
-extern const u8 gCrystal_ShardStarts[];
-extern const u8 gCrystal_Counts[];
-extern const u8 gCrystal_ShardWidths[];
-extern const u8 gCrystal_ShardHeights[];
-extern const s32 gCrystal_ShardOffsets[];
-extern const u16 gLightningPillar_Sparks[];
-extern const u8 gLightningPillar_Columns[];
-extern const u8 gLightningPillar_Counts[];
-extern const u16 gSparkGroups_Shapes[];
-extern const u8 gSparkGroups_FlashCells[];
-extern const u8 gBattleFx10_Points[][2];
-extern const s8 gBattleFx10_ShakeOffsets[];
-extern const u16 gBattleFx10_RockCells[];
-extern const u8 gBattleFx10_RockWidths[];
-extern const u8 gBattleFx10_RockHeights[];
-extern const u8 gBattleFx10_Animations[];
-extern const u8 gBattleFx10_DebrisWidths[];
-extern const u8 gBattleFx10_DebrisHeights[];
-extern const u16 gBattleFx10_DebrisCells[];
-extern const u8 gBattleFx10_SprayWidths[];
-extern const u8 gBattleFx10_SprayHeights[];
-extern const u16 gBattleFx10_SprayCells[];
-extern const u16 gBattleFx10_BoulderCells[];
-extern const u8 gBattleFx10_BoulderWidths[];
-extern const u8 gBattleFx10_BoulderHeights[];
-extern const u8 gBattleFx10_FallWidths[];
-extern const u8 gBattleFx10_FallHeights[];
-extern const u16 gBattleFx10_FallCells[];
-extern const s32 gIceShardBursts_Gravities[];
-extern const u16 gPaletteRamp_ShardCells[];
-extern const u8 gPaletteRamp_ShardWidths[];
-extern const u8 gPaletteRamp_ShardHeights[];
-extern const u8 gRockWall_Timings[][3];
-extern const u8 gLightningBolts_Sparks[][2];
-extern const u16 gUnused_SheetCells6[];
-extern const u16 gUnused_SheetCells[];
-extern const u8 gUnused_SheetWidths[];
-extern const u8 gUnused_SheetHeights[];
-extern const s8 gRisingColumns_ColumnOffsets[];
-extern const u8 gMercuryDjinnFlames_LaunchFrames[];
-extern const u8 gParticleReveal_CellWidths[];
-extern const u8 gParticleReveal_CellHeights[];
-extern const u16 gParticleReveal_CellSourceOffsets[];
-extern const u8 gRockToss_ChipFlips[];
-extern const u8 gRockToss_ChipWidths[];
-extern const u8 gRockToss_ChipHeights[];
-extern const u16 gRockToss_ChipCells[];
-extern const u8 gRockToss_ChipX[];
-extern const u8 gRockToss_ChipY[];
-extern const u8 gBeamSequence_CellWidths[];
-extern const u8 gBeamSequence_CellHeights[];
-extern const u16 gBeamSequence_CellSheetOffsets[];
-extern const u8 gBeamSequence_CellReaches[];
-extern const u8 gFormation_TwelveX[];
-extern const u8 gFormation_TwelveZ[];
-extern const u8 gFormation_RightEightX[];
-extern const u8 gFormation_RightEightZ[];
-extern const u8 gFormation_SmallEightX[];
-extern const u8 gFormation_SmallEightZ[];
-extern const u8 gImpactBurst_CellWidths[];
-extern const u8 gImpactBurst_CellHeights[];
-extern const u16 gImpactBurst_CellSourceOffsets[];
-extern const u8 gFlameBlade_StrikeColumns[];
-extern const u8 gFlameBlade_FlashCells[];
-extern const u8 gFallingSword_FlashCells[];
-extern const s32 gFallingSword_DustGravity[];
-extern const u8 gShockwaveScene_BurstHeights[];
-extern const u16 gShockwaveScene_BurstCells[];
-extern const u8 gObjectRow_Columns[];
-extern const u8 gObjectRow_Rows[];
-extern const u8 gBattleFx6_ObjectX[];
-extern const u8 gBattleFx6_ObjectY[];
-extern const s32 gBattleFx6_Gravity[];
-extern const u16 gRisingBurst_SparkCells[];
-extern const u16 gRisingBurst_SparkSizes[];
+// The two kinds of target strike (gTargetStrike_Records).
+#define STRIKE_KIND_SLASH 0  // sideways slashes
+#define STRIKE_KIND_COLUMN 1 // columns of light
+
+// A target strike style's extras.
+#define STRIKE_SMOKE 1  // each hit raises smoke puffs from the target's feet
+#define STRIKE_ABSORB 2 // motes fly out of the target and back into the user
+#define STRIKE_GLINTS 4 // glints sparkle around the target
+#define STRIKE_SPARKS 8 // each hit scatters sparks
+#define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
+
+// Every table effect_table.c defines, in its order. A table read by columns
+// is a two-dimensional array, its columns named by the enum above it.
+extern u16 gBattleFx_MoteCells[];
+extern u16 gBattleFx_FlareCells[];
+extern u16 gBattleFx_PuffCells[];
+extern u8 gBattleFx_PuffSizes[];
+extern u8 gBattleFx_PuffArcCellWidths[];
+extern u8 gBattleFx_PuffArcCellHeights[];
+extern u8 gBattleFx_PuffArcCellBiasY[];
+extern u16 gBattleFx_PuffArcCells[];
+extern u16 gBattleFx_GlintCells[];
+extern u8 gBattleFx_GlintCellWidths[];
+extern u8 gBattleFx_GlintCellHeights[];
+
+// Each Ice variant: its shards and how many frames it runs.
+enum { ICE_SHARD_COUNT, ICE_FRAMES };
+extern u8 gFalling_IceCounts[][2];
+
+// Each Douse variant: its bolt waves, sparks per bolt, spacing and frames.
+enum {
+  FALLING_BOLT_WAVE_COUNT,
+  FALLING_BOLT_SPARKS_PER_BOLT,
+  FALLING_BOLT_SPACING,
+  FALLING_BOLT_DURATION
+};
+extern u8 gFalling_Counts[][4];
+
+extern s8 gStreaks_Records[][4];
+extern s8 gStreaks_Tremble[];
+extern u8 gTargetStrike_Records[][7];
+extern u8 gTargetStrike_Widths[];
+extern u8 gTargetStrike_Heights[];
+extern u16 gTargetStrike_Offsets[];
+extern u8 gTargetStrike_Reach[];
+extern u8 gTargetStrike_ColumnStages[];
+extern u8 gTargetStrike_GlintDrawFlags[];
+extern u8 gDeathPlunge_CellWidths[];
+extern u8 gDeathPlunge_CellHeights[];
+extern u16 gDeathPlunge_Cells[];
+extern u8 gDeathPlunge_PieceWidths[];
+extern u8 gDeathPlunge_PieceHeights[];
+extern u16 gDeathPlunge_PieceCells[];
+extern u8 gDeathPlunge_PieceStartX[];
+extern u8 gDeathPlunge_PieceStartY[];
+extern s8 gDeathPlunge_X[];
+extern s8 gDeathPlunge_Y[];
+extern u8 gDeathPlunge_DrawFlags[];
+extern u8 gSpiderWeb_CellWidths[];
+extern u8 gSpiderWeb_CellHeights[];
+extern u16 gSpiderWeb_Cells[];
+extern u8 gSpiderWeb_CellX[];
+extern s8 gSpiderWeb_CellBiasY[];
+
+// Each gathering-lights mode: the lights per target and the frames before the
+// targets' turns.
+enum { GATHERING_LIGHTS_COUNT, GATHERING_LIGHTS_FRAMES };
+extern u8 gGatheringLights_Counts[][2];
+
+extern u16 gMirroredWall_Cells[];
+extern u8 gMirroredWall_CellWidths[];
+extern u8 gMirroredWall_CellHeights[];
+extern u8 gDjinnBeams_MotePictures[];
+extern u16 gDjinnBeams_HeadOffsets[];
+extern u8 gDjinnBeams_HeadWidths[];
+extern u8 gDjinnBeams_HeadHeights[];
+extern s8 gLobbedShells_Records[];
+extern u8 gLobbedShells_ShardWidths[];
+extern u8 gLobbedShells_ShardHeights[];
+extern u16 gLobbedShells_ShardOffsets[];
+extern u8 gCondemn_PanelX[][7];
+extern u8 gCondemn_PanelY[][7];
+extern struct Vector3 gBind_Vertex[];
+extern struct Vector3 gBind_TriangleStrikeVertex[];
+extern struct Vector3 gStars_Points[];
+extern u8 gStars_Radii[];
+extern u8 gProcne_GridX[];
+extern u8 gProcne_GridY[];
+extern u16 gProcne_Frames[];
+extern u8 gProcne_CellWidths[];
+extern u8 gProcne_CellHeights[];
+extern u8 gProcne_CellBiasY[];
+extern u16 gProcne_Cells[];
+extern u8 gTiamat_DropSpeeds[];
+extern u8 gTiamat_SparkPixels[];
+extern u8 gTiamat_DropSizes[];
+extern u8 gTiamat_StreakWidths[];
+extern u8 gTiamat_StreakHeights[];
+extern u8 gTiamat_StreakDrops[];
+extern u16 gTiamat_StreakOffsets[];
+
+// The foot of each of Nereid's columns of fire.
+enum { NEREID_COLUMN_X, NEREID_COLUMN_Y };
+extern u8 gNereid_Columns[][2];
+
+extern s32 gNereid_Gravity[];
+
+// Each Froth variant: its motes and frames.
+enum { FROTH_MOTE_COUNT, FROTH_FRAMES };
+extern u8 gVortices_Counts[][2];
+
+// Each Whirlwind variant: its tornadoes, their sway and the screen shake.
+enum { WHIRLWIND_TORNADOES, WHIRLWIND_SWAY, WHIRLWIND_SHAKE };
+extern u8 gVortices_Shapes[][3];
+
+// Where each Prism shard starts in the crystal.
+enum { PRISM_SHARD_START_X, PRISM_SHARD_START_Y };
+extern u8 gPrism_ShardStarts[][2];
+
+// Each Prism variant: its crystals and frames.
+enum { PRISM_CRYSTAL_COUNT, PRISM_FRAMES };
+extern u8 gPrism_Counts[][2];
+
+extern u8 gPrism_ShardWidths[];
+extern u8 gPrism_ShardHeights[];
+extern s32 gPrism_ShardOffsets[];
+
+// Each Plasma variant: the sparks per pillar and the frames of shake.
+enum { PLASMA_SPARKS, PLASMA_SHAKE_FRAMES };
+extern u16 gPlasma_Sparks[][2];
+
+extern u8 gPlasma_Columns[][7];
+extern u8 gPlasma_Counts[];
+
+// Each spark group variant: sparks per burst, bursts, and from
+// SPARK_GROUPS_OFFSET each burst's offset across.
+enum { SPARK_GROUPS_SPARKS, SPARK_GROUPS_BURSTS, SPARK_GROUPS_OFFSET };
+extern u16 gPlasma_Shapes[][5];
+
+extern u8 gPlasma_FlashCells[];
+extern u8 gVolcano_Counts[];
+extern s8 gVolcano_Depths[][4];
+extern u8 gVolcano_StartFrames[];
+extern u8 gTargetMotes_GlintFlips[];
+
+// Cybele's waving poses: the animations of objects 3 and 4.
+enum { CYBELE_POSE_OBJECT3, CYBELE_POSE_OBJECT4 };
+extern u8 gCybele_ObjectPoses[][2];
+
+extern u16 gCybele_ThornOffsets[];
+extern u8 gCybele_ThornWidths[];
+extern u8 gCybele_ThornHeights[];
+extern u16 gCybele_LeafOffsets[];
+extern u8 gCybele_LeafSizes[];
+extern u16 gCybele_ChipOffsets[];
+extern u8 gCybele_ChipWidths[];
+extern u8 gCybele_ChipHeights[];
+extern u16 gCybele_SparkOffsets[];
+extern u8 gCybele_SparkSizes[];
+extern u16 gCybele_EmberOffsets[];
+extern u16 gCybele_EmberSizes[];
+extern u8 gBoreas_Points[][2];
+extern s8 gBoreas_ShakeOffsets[];
+extern u16 gBoreas_RockCells[];
+extern u8 gBoreas_RockWidths[];
+extern u8 gBoreas_RockHeights[];
+extern u8 gBoreas_Animations[];
+extern u8 gBoreas_DebrisWidths[];
+extern u8 gBoreas_DebrisHeights[];
+extern u16 gBoreas_DebrisCells[];
+extern u8 gBoreas_SprayWidths[];
+extern u8 gBoreas_SprayHeights[];
+extern u16 gBoreas_SprayCells[];
+extern u16 gBoreas_BoulderCells[];
+extern u8 gBoreas_BoulderWidths[];
+extern u8 gBoreas_BoulderHeights[];
+extern u8 gBoreas_FallWidths[];
+extern u8 gBoreas_FallHeights[];
+extern u16 gBoreas_FallCells[];
+extern s32 gDrain_Gravities[];
+extern u16 gStatChange_ShardCells[];
+extern u8 gStatChange_ShardWidths[];
+extern u8 gStatChange_ShardHeights[];
+extern u8 gQuake_Timings[][3];
+extern u8 gFire_Counts[];
+extern u8 gFire_FlareWidths[];
+extern u8 gFire_FlareHeights[];
+extern u8 gFire_FlareBiasY[];
+extern u16 gFire_FlareCells[];
+
+// Where each rising-motes ice column stands: x and the y of its foot.
+enum { RISING_MOTES_COLUMN_X, RISING_MOTES_COLUMN_FOOT };
+extern u8 gFrost_ColumnSpots[][2];
+
+extern u8 gFrost_Timings[][3];
+extern u8 gFrost_MoteWidths[];
+extern u8 gFrost_MoteHeights[];
+extern u16 gFrost_MoteCells[];
+extern u16 gFrost_ColumnCells[];
+extern u8 gFrost_ColumnHeights[];
+extern u8 gFrost_ChipWidths[];
+extern u8 gFrost_ChipHeights[];
+extern u16 gFrost_ChipCells[];
+extern u8 gRay_Sparks[][2];
+extern u8 gEruption_Counts[][3];
+extern u16 gEruption_PuffCells[];
+extern u16 gEruption_PuffSizes[];
+extern u16 gUnused_SheetCells6[];
+extern u16 gUnused_SheetCells[];
+extern u8 gUnused_SheetWidths[];
+extern u8 gUnused_SheetHeights[];
+extern struct SpriteScale gAtalanta_UnitScale;
+extern u8 gGrowth_VineWidths[];
+extern u8 gGrowth_HeightLimits[];
+extern u16 gGrowth_VineCells[];
+extern u8 gGrowth_PillarWidths[];
+extern u16 gGrowth_PillarCells[];
+extern u8 gGrowth_ColumnCounts[];
+extern u8 gGrowth_ColumnX[];
+extern s8 gGrowth_PillarHeights[];
+extern s8 gGrowth_PuffWidths[];
+extern u8 gGrowth_PuffHeights[];
+extern u16 gGrowth_PuffCells[];
+extern s8 gGrowth_ColumnOffsets[];
+extern u8 gGrowth_Kinds[];
+extern s8 gGrowth_X[];
+extern u8 gGrowth_Counts[];
+extern s8 gGrowth_ThornPuffWidths[];
+extern u8 gGrowth_ThornPuffHeights[];
+extern u16 gGrowth_ThornPuffCells[];
+extern u8 gBolt_Counts[][4];
+extern u8 gBolt_GlintFlips[];
+extern u8 gBolt_GlintModes[];
+extern u8 gProjectiles_CometHeights[];
+extern u8 gProjectiles_Modes[][5];
+extern u8 gProjectiles_FlashWidths[];
+extern u8 gProjectiles_FlashHeights[];
+extern u8 gProjectiles_FlashSteps[];
+extern u8 gProjectiles_FlashRises[];
+extern u16 gProjectiles_FlashOffsets[];
+extern u16 gProjectiles_PelletOffsets[];
+extern u8 gDjinnAttacks_LaunchFrames[];
+extern u8 gHail_CellWidths[];
+extern u8 gHail_CellHeights[];
+extern u16 gHail_Cells[];
+extern u8 gHail_ChipFlips[];
+extern u8 gHail_ChipWidths[];
+extern u8 gHail_ChipHeights[];
+extern u16 gHail_ChipCells[];
+extern u8 gHail_ChipX[];
+extern u8 gHail_ChipY[];
+extern u8 gThor_TargetPalettes[];
+extern u8 gThor_SmokeFlips[];
+
+// Where each Spire shard starts, before its rock's offset across.
+enum { SPIRE_SHARD_X, SPIRE_SHARD_Y };
+extern u8 gSpire_ShardOffsets[][2];
+
+extern s8 gSpire_RockX[];
+extern u8 gSpire_DropFrames[];
+extern u8 gSpire_RockCounts[];
+extern u8 gSpire_ShardWidths[];
+extern u8 gSpire_ShardHeights[];
+extern u16 gSpire_ShardCells[];
+extern u8 gBurstScene_Records[][7];
+extern u16 gGaia_RowCells[];
+extern u8 gGaia_RowWidths[];
+extern u16 gGaia_MoundCells[];
+extern u8 gGaia_MoundWidths[];
+extern u8 gGaia_MoundHeights[];
+extern s8 gGaia_Bg2Shifts[][3];
+extern u8 gGaia_LateRockColumns[];
+extern u8 gBeams_CellWidths[];
+extern u8 gBeams_CellHeights[];
+extern u16 gBeams_Cells[];
+extern u8 gBeams_CellReaches[];
+extern u8 gCastingImpact_GlintDrawFlags[];
+extern u8 gCastingImpact_ImageX[][7];
+extern u8 gCastingImpact_ImageY[];
+extern u16 gCastingImpact_IceChipCells[];
+extern u8 gHelmSplitter_CellWidths[];
+extern u8 gHelmSplitter_CellHeights[];
+extern u16 gHelmSplitter_Cells[];
+extern s8 gHelmSplitter_CellBiasX[];
+extern s8 gHelmSplitter_CellBiasY[];
+extern u8 gHelmSplitter_TwelveX[];
+extern u8 gHelmSplitter_TwelveZ[];
+extern u8 gHelmSplitter_RightEightX[];
+extern u8 gHelmSplitter_RightEightZ[];
+extern u8 gHelmSplitter_SmallEightX[];
+extern u8 gHelmSplitter_SmallEightZ[];
+extern u8 gHelmSplitter_ImpactBurstCellWidths[];
+extern u8 gHelmSplitter_ImpactBurstCellHeights[];
+extern u16 gHelmSplitter_ImpactBurstCells[];
+extern s16 gParticleStreams_OrbitPoints[][3];
+extern s16 gParticleStreams_DropPoints[][2];
+extern u16 gParticleStreams_FlashCells[];
+extern u16 gParticleStreams_FlashSizes[];
+extern u8 gRamses_ObjectColumns[];
+extern u8 gRamses_ObjectRows[];
+extern u16 gRamses_PuffCells[];
+extern u16 gRamses_PuffSizes[];
+extern u8 gRagnarok_StrikeColumns[][3];
+extern u8 gRagnarok_FlashCells[];
+extern u8 gTitanBlade_FlashCells[];
+extern s32 gTitanBlade_DustGravity[];
+extern u8 gJudgment_BurstHeights[];
+extern u16 gJudgment_BurstCells[];
+extern u16 gJudgment_ShardCells[];
+extern u8 gJudgment_ShardWidths[];
+extern u8 gJudgment_ShardHeights[];
+extern u8 gKirin_Columns[];
+extern u8 gKirin_Rows[];
+extern u8 gNeptune_ObjectX[];
+extern u8 gNeptune_ObjectY[];
+extern s32 gNeptune_Gravity[];
+extern u16 gUndeadSword_SparkCells[];
+extern u16 gUndeadSword_SparkSizes[];
 
 #endif

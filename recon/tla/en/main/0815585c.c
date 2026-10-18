@@ -13,7 +13,7 @@
 // What moved it: the three heap slots read before the packed word is
 // unpacked (562 to 546), packed as unsigned (lsrs), and the fade step's
 // zero through a variable of its own in the long branch (546 to 169, found
-// by alchemy permute; tagged below), and Func_081963ec
+// by alchemy permute; tagged below), and BattleFx_LoadBlitter
 // returning its loader's s32, as nibble_pair.c now does (169 to 165).
 
 // Left: allocation through the frame loop, from the prologue's first
@@ -65,19 +65,19 @@ extern u8 ResourceId_JupiterDjinnSmallSheet[];
 extern u8 ResourceId_VenusDjinnSmallSheet[];
 extern u8 ResourceId_Data134[];
 
-// The Broken Seal's gParticleStreams_CellOffsets: each spark size's cel.
+// The Broken Seal's gBattleFx_MoteCells: each spark size's cel.
 extern const u16 gData_08197410[];
 
 u8 *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Func_081963ec(s32 slot, s32 modeAndFlags);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags);
 struct BattleObj *GetBattleObjectSlotFar(s32 id);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
@@ -85,7 +85,7 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
-void Graphics_RestoreTransferWork(void);
+void Transform_Pop(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer, s32 frames);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -187,11 +187,11 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 
   // Additive and max blitters, clipped (flipped for side 1).
   if (side == 1) {
-    Func_081963ec(104, 0x07);
-    Func_081963ec(188, 0x17);
+    BattleFx_LoadBlitter(104, 0x07);
+    BattleFx_LoadBlitter(188, 0x17);
   } else {
-    Func_081963ec(104, 0x03);
-    Func_081963ec(188, 0x13);
+    BattleFx_LoadBlitter(104, 0x03);
+    BattleFx_LoadBlitter(188, 0x13);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -214,7 +214,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The spin's centre moves from the caster to the anchor over frames 6-45.
   base[0] = actor->x;
@@ -287,7 +287,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     if (frame == 8)
       Audio_PlayCue(212);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {
       base[0] += step[0];
       base[1] += step[1];
@@ -308,7 +308,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
         if (frame >= i / 8 && spark->variant == 0) {
           s32 size;
 
-          Graphics_SaveTransferWorkOnce();
+          Transform_Push();
           switch (i & 3) {
           case 0:
             SceneTransform_ApplyYaw(frame * (i * 32 + 256));
@@ -326,7 +326,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
           }
           EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
           position.x >>= 1;
-          Graphics_RestoreTransferWork();
+          Transform_Pop();
           if (position.depth < 250)
             position.depth = 250;
           if (position.depth > 634)
@@ -401,7 +401,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   Iwram_ClearWords((void *)0x06004000, 0x4000);

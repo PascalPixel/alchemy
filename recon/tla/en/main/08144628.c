@@ -1,17 +1,17 @@
 // Near miss, differ 70 of 511.
 
-// The body of four effect kinds (Func_081445f8 and the next three wrappers
-// pass modes 0 to 3). Twin: The Broken Seal's BattleFx_RunMemberBurst, whose
-// modes 0 to 2 these are; The Lost Age adds mode 3 and reworks the effect:
-// the picture unpacked by Resource_LoadAndDecompress, the palette for mode 0
-// or 3 the pink burst's, Func_0815b634 in mode 3, Func_08144aac for the
-// caster's side; the background's wave moves BG1 (Func_081524b4 arms its
-// HBlank DMA) by an amplitude that swells and dies over the effect; motes are
-// pulled twice as hard across (x and z) and freed once they cross their
-// target, not once they are near it; in mode 3 each arrival pushes the
-// target back (BattleFx_StartActorMotion) with a cue on every other mote.
-// The edition level is "struct": the other editions' scaffolds hold this
-// function in another shape; check them before adopting.
+// The body of four effect kinds (BattleFx_RunDemonNight and the next three
+// wrappers pass modes 0 to 3). Twin: The Broken Seal's BattleFx_RunMemberBurst,
+// whose modes 0 to 2 these are; The Lost Age adds mode 3 and reworks the
+// effect: the picture unpacked by Resource_LoadAndDecompress, the palette for
+// mode 0 or 3 the pink burst's, Func_0815b634 in mode 3,
+// BattleFx_FetchRectangleBlitters for the caster's side; the background's wave
+// moves BG1 (BattleFx_ArmBg1HBlankDma arms its HBlank DMA) by an amplitude that swells and
+// dies over the effect; motes are pulled twice as hard across (x and z) and
+// freed once they cross their target, not once they are near it; in mode 3 each
+// arrival pushes the target back (BattleFx_StartActorMotion) with a cue on
+// every other mote. The edition level is "struct": the other editions'
+// scaffolds hold this function in another shape; check them before adopting.
 
 // Left: order, and one form. The crossing test's first arm: the native
 // keeps target->x < 0 as a store-flag (lsrs #31, then cmp and bne); agscc
@@ -49,14 +49,15 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
-void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_081524b4(void); // arms the BG1 scroll's HBlank DMA
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Func_0815b634(void); // mode 3 only
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -111,7 +112,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
   if (mode == 3)
     Func_0815b634();
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
 
   // The motes start at the caster's body height and scatter every way at up
   // to two pixels a frame.
@@ -134,10 +135,10 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  Scheduler_AddOrUpdateCallback(Func_081524b4, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg1HBlankDma, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(146);
 
   for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
@@ -155,11 +156,11 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(133);
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
-    row = work->bg2X;
+    row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) /
                     (Data_08197864[mode * 2 + 1] + effect->count * 20)) *
                16 >>
@@ -237,14 +238,14 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(Func_081524b4);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ArmBg1HBlankDma);
+  BattleFx_EndCanvasLayer();
 }

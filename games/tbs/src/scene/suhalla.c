@@ -17,7 +17,7 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "item_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 // Suhalla, the town at the edge of the Suhalla Desert.
 
@@ -95,7 +95,7 @@ static void EnterDoor(void) {
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Event_PlayCue(SOUND_DOOR_OPEN);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   // Walk through the opening while the exit transition counts down.
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
@@ -110,7 +110,7 @@ static void EnterWideDoor(void) {
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Event_PlayCue(SOUND_DOOR_OPEN);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gEventWork->transitionFrames = 16;

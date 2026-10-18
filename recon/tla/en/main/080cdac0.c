@@ -2,7 +2,7 @@
 // Seal's Field_FindNearbyPsynergyTarget (object.c), taken out into a
 // function of its own: ⚓️'s BattleFx_FindNearestObject
 // (play_cue_and_start_emitter_on_target.c) calls it for each object, and
-// the per-animation limits come from a table (Func_080cda58) instead of ☀️'s
+// the per-animation limits come from a table (Field_GetPsynergyTargetRule) instead of ☀️'s
 // literals. Belongs after descriptor_range.c's Func_080cda84.
 // Left: one branch. In the footing test the native branches to the shared
 // -1 on "above" (bgt; b to the distance) where this branches to the
@@ -25,7 +25,7 @@ struct NearbyRule {
   s16 width;  // of the facing, in 1/65536 turns
 };
 
-struct NearbyRule *Func_080cda58(s32 animation);
+struct NearbyRule *Field_GetPsynergyTargetRule(s32 animation);
 s32 ArcTan2(s32 y, s32 x);
 
 // The Lift-style animation measures height by the object's footing, not y.
@@ -57,7 +57,7 @@ s32 Func_080cdac0(s32 animation, s32 selfId, s32 otherId) {
       return -1;
 
     // Height: within the rule's pixels above or below.
-    rule = Func_080cda58(animation);
+    rule = Field_GetPsynergyTargetRule(animation);
     height = rule->height << 16;
     if (animation == ANIMATION_MEASURES_FOOTING) {
       if (other->terrainHeight - self->terrainHeight >= 0) {

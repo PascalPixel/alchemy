@@ -28,6 +28,7 @@
 #include "fixed_math.h"
 #include "map_scroll.h"
 #include "heap_state.h"
+#include "macros.h"
 
 // Scene sequences and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
@@ -154,9 +155,7 @@ TolbiShipMast_ShrinkAndStopActor(struct ScriptInterpreter *interpreter) {
     actor->x.fixed = 0;
     actor->y.fixed = 0;
     actor->z.fixed = 0;
-    actor->velocityX = 0;
-    actor->velocityY = 0;
-    actor->velocityZ = 0;
+    SET_VELOCITY(actor, 0, 0, 0);
   }
   return 1;
 }
@@ -401,9 +400,7 @@ static inline void TolbiShipMast_StopDriftingActor(struct FieldActor *actor) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
-  actor->velocityX = 0;
-  actor->velocityY = 0;
-  actor->velocityZ = 0;
+  SET_VELOCITY(actor, 0, 0, 0);
   actor->riseBaseY = 0;
 }
 

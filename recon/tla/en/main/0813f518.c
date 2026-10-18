@@ -54,12 +54,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define gSparkles ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The four corner sparks: their flips and their place around the target
-// (The Broken Seal's gCornerSparks_DrawFlags, _X and _Y).
+// (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
 extern u8 Data_081976da[];
 extern s8 Data_081976d2[];
 extern s8 Data_081976d6[];
 
-// The mote's cell for each size from 1 to 6 (gBattleFx6_FlareCells).
+// The mote's cell for each size from 1 to 6 (gBattleFx_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_CyanSparkSheet;
@@ -70,11 +70,11 @@ extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleEffect_LoadWork
-s32 Func_08143000(void);      // the canvas transfer callback
+                   s32 mode); // BattleFx_BuildBlitter
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);      // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -82,7 +82,7 @@ void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // Light gathering on the user and bursting, for the scenes.
@@ -150,8 +150,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
-  Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Audio_PlayCue(140);
 
@@ -204,14 +204,14 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);

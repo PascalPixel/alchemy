@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void FieldEvent_WaitFrames();
 void Event_StartScreenTransition();
@@ -63,7 +64,7 @@ extern const u8 gData_0200161c[];
 
 // The JA edition has its own form of this function; it stays on its listing in
 // recon/tla/raw/overlays (S4).
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_02000a24(void) {
   s16 *target;
   s32 angle = 0xe000;

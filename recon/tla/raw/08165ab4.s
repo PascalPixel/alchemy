@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08165ab4
+@ Abilities: Ramses (scene kind 1).
+	.global BattleFx_RunRamses
 	.thumb_func
-Func_08165ab4:
+BattleFx_RunRamses:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -47,7 +48,7 @@ Func_08165ab4:
 	adds r3, #240
 	add r3, r11
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r1, #162
 	movs r2, #2
 	lsls r1, r1, #2
@@ -55,10 +56,10 @@ Func_08165ab4:
 .L_08165b20:
 	.4byte 0x00000000
 .L_08165b24:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08165b28:
 	movs r0, #9
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r2, #13
 	negs r2, r2
 	movs r7, #0
@@ -97,14 +98,14 @@ Func_08165ab4:
 	bne .L_08165b38
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #3
 	movs r0, #188
 	str r3, [sp, #72]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r6, sp
@@ -844,7 +845,7 @@ Func_08165ab4:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -888,7 +889,7 @@ Func_08165ab4:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -909,4 +910,4 @@ Func_08165ab4:
 .L_081661d4:
 	.4byte gInput
 .L_081661d8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

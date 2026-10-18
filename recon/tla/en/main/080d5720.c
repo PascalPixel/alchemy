@@ -1,0 +1,60 @@
+// Near miss, differ 4 of 87: the leader grabs the nearest workspace item
+// (Func_080d5670): with none it returns 0; otherwise cue 152, the leader is
+// moved onto the item and linked to it, its motion flags, sprite frame and
+// priority are saved, it is drawn at priority 1, and the render mode becomes 3.
+// Returns 1. No ☀️ twin found. Left: instruction order only: the native starts
+// the priority flags' address (adds r0, r5; adds r0, #35) one slot later. The
+// event work halfword and the saved priority byte are struct fields: through
+// cast pointers the halfword's zero comes from the pool and the byte store
+// forces sprite byte 9 to be read twice (differ 44).
+#include "types.h"
+#include "field_sprite.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+
+struct Work9cItemPosition {
+  u8 unk00[4];
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct Work9cItemPosition *Func_080d5670(s32 *position);
+void Audio_PlayCue(s32 cue);
+
+struct GrabSave {
+  u8 unk00[98];
+  u8 priority;
+};
+
+struct EventWorkGrab {
+  u8 unk000[388];
+  s16 grabState;
+};
+
+s32 Func_080d5720(void) {
+  struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
+  struct FieldSprite *sprite = leader->animation;
+  struct Work9cItemPosition *item = Func_080d5670(&leader->x);
+
+  ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
+  if (item == NULL)
+    return 0;
+  Audio_PlayCue(152);
+  leader->acceleration = 0x10000;
+  leader->speedLimit = 0x20000;
+  leader->velocityY = 0x40000;
+  leader->linkedObject = (struct ObjectRuntime *)item;
+  Object_SetMode(leader, 2);
+  Object_SetPosition(leader, item->x, item->y, item->z);
+  Object_CommitPosition(leader);
+  leader->action = leader->motionFlags;
+  leader->unk66 = sprite->nextFrame;
+  ((struct GrabSave *)leader)->priority = sprite->priority;
+  leader->priorityFlags &= ~1;
+  sprite->nextFrame = 0;
+  sprite->priority = 1;
+  gPartyState.renderMode = 3;
+  return 1;
+}

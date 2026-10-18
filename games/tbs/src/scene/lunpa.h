@@ -9,7 +9,7 @@
 #include "field_scene.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 enum LunpaEntrance {
   LUNPA_ENTRANCE_FROM_WORLD_MAP = 1,

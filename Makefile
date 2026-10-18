@@ -156,23 +156,21 @@ ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/t
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 
-# The object list: ☀️'s objects.tsv gives each edition its linker fragments
-# under $(BUILD)/ld; ⚓️'s scripts name their objects themselves.
-ifeq ($(GAME),tbs)
-LD_SCRIPT := games/tbs/main.ld
+# The object list: each game's objects.tsv gives each edition its linker
+# fragments under $(BUILD)/ld, which its one main.ld includes.
+LD_SCRIPT := games/$(GAME)/main.ld
 LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
+ifeq ($(GAME),tbs)
 OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/system/overlay/overlay.ld
 OVERLAY_SOURCE = $(wildcard games/tbs/src/system/overlay/ovl_$*.s)
 $(BUILD)/objects.mk: games/tbs/objects.tsv games/tbs/overlays.tsv $(OBJLIST)
 	$(OBJLIST) games/tbs/objects.tsv games/tbs/overlays.tsv $(LANG) $(BUILD)
 else
-LD_SCRIPT := $(if $(filter ja,$(LANG)),games/tla/main.ld,recon/tla/$(LANG)/main.ld)
-LDFLAGS := -T $(LD_SCRIPT)
 OVERLAY_SCRIPT = -T recon/tla/raw/overlays/resource_$*.ld
 OVERLAY_SOURCE = recon/tla/raw/overlays/resource_$*_overlay.s
 OVERLAY_ROM := $(BUILD)/baserom.gba
-$(BUILD)/objects.mk: $(LD_SCRIPT) $(wildcard recon/tla/raw/overlays/*.ld) $(OBJLIST)
-	$(OBJLIST) --scripts $(LD_SCRIPT) recon/tla/raw/overlays $(BUILD)
+$(BUILD)/objects.mk: games/tla/objects.tsv $(wildcard recon/tla/raw/overlays/*.ld) $(OBJLIST)
+	$(OBJLIST) games/tla/objects.tsv recon/tla/raw/overlays $(LANG) $(BUILD)
 endif
 include $(BUILD)/objects.mk
 
@@ -387,8 +385,18 @@ $(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 tools:
 	$(MAKE) -f tools/Makefile
 
-test: tools
+test: tools format-check
 	$(MAKE) -f tools/Makefile test
+
+# ☀️'s C and the shared C are as clang-format writes them (AGENTS.md S3).
+# Without clang-format installed the check says so and is skipped.
+CLANG_FORMAT ?= clang-format
+FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/common/*.c' 'games/common/*.h')
+.PHONY: format-check
+format-check:
+	@if command -v $(CLANG_FORMAT) >/dev/null; then \
+	  $(CLANG_FORMAT) --dry-run -Werror $(FORMATTED); \
+	else echo "format-check: $(CLANG_FORMAT) not found, skipped"; fi
 
 # Reconstruction work is optional. Normal builds use only the C tools above.
 CARGO ?= cargo

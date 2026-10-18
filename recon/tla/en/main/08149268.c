@@ -1,12 +1,13 @@
 // Near miss, differ 104 of 503 (effect kind 8, the falling crystals).
 
-// ☀️ twin: BattleFx_RunFallingCrystals (games/tbs/src/effect/effect.c),
+// ☀️ twin: BattleFx_RunPrism (games/tbs/src/effect/effect.c),
 // shape 0.800, structure 0.979. ⚓️'s changes: the counts table
 // Data_081979b7 holds three bytes for each variant (crystals, frames and the
 // frame that begins phase 134, where ☀️ begins it 80 frames before the
 // end); the boulder sheet is unpacked into the work before the crystal
 // sheet; the shard offsets gData_08197834 are words; the camera is
-// Ram_HeapSlots->cameraWork; Func_08144aac fetches the blitter pair.
+// Ram_HeapSlots->cameraWork; BattleFx_FetchRectangleBlitters fetches the
+// blitter pair.
 
 // Same frame and instruction count. What is left: the loop counters i and j
 // take r8 and r10 the other way round, which moves every row that uses
@@ -46,21 +47,22 @@
 extern char ResourceId_BoulderSheet; // directory row 0x14d
 extern char ResourceId_CrystalSheet; // directory row 0x193
 
-// ☀️ gCrystal_Counts, with a third byte: crystals, frames and the frame
+// ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
 // that begins phase 134, for each variant.
 extern u8 Data_081979b7[];
-extern u32 gData_08197834[]; // ☀️ gCrystal_ShardOffsets
-extern u8 gData_0819781a[];  // ☀️ gCrystal_ShardWidths
-extern u8 gData_08197826[];  // ☀️ gCrystal_ShardHeights
-extern u8 gData_081977f8[];  // ☀️ gCrystal_ShardStarts: x, y for each shard
+extern u32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
+extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
+extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
+extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);         // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);         // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);    // ☀️ BattleEventRuntime_BeginPhaseFar
-void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -70,7 +72,7 @@ void Audio_PlayCue(s32 cue);
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens
 // over the last eight frames.
-void Func_08149268(struct BattleEffectArgument *effect) {
+void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -92,10 +94,10 @@ void Func_08149268(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
@@ -188,14 +190,14 @@ void Func_08149268(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(effect->variant * 2 + 4, effect->variant * 4 + 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

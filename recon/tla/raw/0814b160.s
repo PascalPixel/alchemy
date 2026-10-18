@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814b160
+@ Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+	.global BattleFx_RunCurse
 	.thumb_func
-Func_0814b160:
+BattleFx_RunCurse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -58,7 +59,7 @@ Func_0814b160:
 .L_0814b1cc:
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r0, [sp, #20]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -237,7 +238,7 @@ Func_0814b160:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -247,4 +248,4 @@ Func_0814b160:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0814b34c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -45,12 +45,12 @@ Func_08153c30:
 	.2byte 0xf800
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #19
 	str r3, [sp, #28]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r4, #0
@@ -299,7 +299,7 @@ Func_08153c30:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -316,4 +316,4 @@ Func_08153c30:
 .L_08153eb4:
 	.4byte IwramCopyWords
 .L_08153eb8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

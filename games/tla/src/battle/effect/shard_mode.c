@@ -25,7 +25,7 @@ extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 void WaitFrames(s32 frames);
@@ -36,10 +36,12 @@ void Func_08108148(void);
 s32 Func_0810b378(s32 value);
 void Func_0810824c(void);
 
-void Func_0814ea3c(u8 *effect) {
+// Abilities: Drain, Psy Drain (kind 42).
+void BattleFx_RunDrain(u8 *effect) {
   s32 value = *(s32 *)(effect + 24);
 
   Func_0814ea58(effect, (u32)(-value | value) >> 31);
 }
 
-void Func_0814ea4c(u8 *effect) { Func_0814ea58(effect, 2); }
+// Abilities: True Collide (kind 451).
+void BattleFx_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }

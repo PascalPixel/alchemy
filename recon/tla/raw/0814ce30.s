@@ -1,9 +1,10 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_0814ce30
+@ Abilities: Cybele (scene kind 5).
+	.global BattleFx_RunCybele
 	.thumb_func
-Func_0814ce30:
+BattleFx_RunCybele:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +25,7 @@ Func_0814ce30:
 	movs r0, #8
 	movs r2, #1
 	str r3, [sp, #60]
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r1, #0
 	ldr r2, .L_0814cf08
 	mov r10, r1
@@ -95,14 +96,14 @@ Func_0814ce30:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #72]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0814cf10
 .L_0814cf00:
 	.4byte 0x00000100
@@ -247,7 +248,7 @@ Func_0814ce30:
 	adds r2, #240
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	ldr r3, .L_0814d250
 	movs r4, #0
 	str r3, [sp, #52]
@@ -518,7 +519,7 @@ Func_0814ce30:
 	b .L_0814d27e
 	.2byte 0x0000
 .L_0814d248:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814d24c:
 	.4byte 0xffffe000
 .L_0814d250:
@@ -1268,14 +1269,14 @@ Func_0814ce30:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #72]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -1322,7 +1323,7 @@ Func_0814ce30:
 .L_0814d850:
 	.4byte 0x00000184
 .L_0814d854:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814d858:
 	ldr r2, [r0, #20]
 	mov r10, r4
@@ -1598,7 +1599,7 @@ Func_0814ce30:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0814da76:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #64]
 	lsls r4, r4, #7
@@ -1645,7 +1646,7 @@ Func_0814ce30:
 	mov r1, r10
 	cmp r1, #8
 	bne .L_0814dad2
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1660,4 +1661,4 @@ Func_0814ce30:
 .L_0814dafc:
 	.4byte Data_08198252
 .L_0814db00:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

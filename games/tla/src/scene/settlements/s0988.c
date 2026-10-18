@@ -1,4 +1,5 @@
 #include "local.h"
+#include "edition.h"
 
 extern char SceneId_Ov690Room3;
 extern char SceneId_Ov690Room4;
@@ -40,7 +41,7 @@ s32 Func_02000988(void) {
     if (GameFlag_Test(0x205))
       Object_SetModeById(10, 2);
     Func_02000e04();
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     if (GameFlag_Test(0x204)) {
       Func_020020c0(9, 0, 0);
       Place(21, 0xb80000, 0xb80000);

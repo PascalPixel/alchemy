@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08151b48
+@ Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
+	.global BattleFx_RunRay
 	.thumb_func
-Func_08151b48:
+BattleFx_RunRay:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -54,14 +55,14 @@ Func_08151b48:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #7
 	movs r0, #188
 	str r3, [sp, #44]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r2, sp
@@ -458,7 +459,7 @@ Func_08151b48:
 .L_08151ed4:
 	.4byte 0xffffc000
 .L_08151ed8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08151edc:
 	.4byte IwramFillWords
 .L_08151ee0:
@@ -547,7 +548,7 @@ Func_08151b48:
 	movs r0, #2
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #36]
 	lsls r1, r1, #7
@@ -570,7 +571,7 @@ Func_08151b48:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -583,4 +584,4 @@ Func_08151b48:
 .L_08151fd0:
 	.4byte gData_08197410
 .L_08151fd4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

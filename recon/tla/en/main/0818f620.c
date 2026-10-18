@@ -2,7 +2,7 @@
 // of the canvas burst family (BattleFx_RunCanvasMode0,
 // BattleFx_RunCanvasModeByCount and BattleFx_RunCanvasMode3WithAction in
 // canvas_modes.c), written from the listing on The Broken Seal's canvas
-// skeleton (twins: BattleEffect_RunCirclingFallingScene 0.44, by call
+// skeleton (twins: BattleFx_RunRamses 0.44, by call
 // order BattleFx_RunSparkGroups 0.44).
 // Every call, table and branch of the four modes is in the native's order;
 // the four quarter blits of a disc reload the second blitter for each flip
@@ -37,10 +37,10 @@ extern u16 gData_08197410[];
 extern const u8 Data_08199ec5[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
-void Func_08143bb8(void);
-void Func_081963ec(s32 slot, s32 value);
-void Func_08143000(void);
-void Func_08143488(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_LoadBlitter(s32 slot, s32 value);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void Palette_StepFadeTransfer(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0815e22c(struct EffectPosition *position);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
@@ -59,7 +59,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
 void Func_08158ce0(s32 randomMask, u32 range);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
@@ -71,7 +71,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
 // each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
 #define DRAW_DISC_QUARTER(flags, left, top)                                    \
   do {                                                                         \
-    Func_081963ec(188, 1 << 4 | (flags));                                      \
+    BattleFx_LoadBlitter(188, 1 << 4 | (flags));                                      \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, gMapCellBuffer + *disc,   \
                                              (left), (top), half, size);       \
     Runtime_ReleaseHeapBlock(188);                                             \
@@ -116,7 +116,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   else
     BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(104, 1 << 4 | 3);
+  BattleFx_LoadBlitter(104, 1 << 4 | 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   discs = (s16 *)work->sheet;
   frames = 78;
@@ -127,7 +127,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
@@ -337,20 +337,20 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   if (mode == 0) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     SummonFx_RunCanvasMode1(effect);
   } else if (mode == 3) {
-    Func_08143bb8();
+    BattleFx_EndCanvasLayer();
   } else {
     // Back to the battle display: BG1's scroll, BG2 as before, the palette
     // fade off and the backgrounds on again.
@@ -361,7 +361,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
     WaitFrames(1);

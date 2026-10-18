@@ -1,9 +1,9 @@
 // Near miss, differ 132 of 1375 (summon 10, the ice and rock scene).
 
-// ☀️ twin: BattleFx_InitializeMode10 (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunBoreas (games/tbs/src/effect/effect.c), shape
 // 0.915, structure 1.000, ported line for line: the 21 tables are the same
 // data under ⚓️'s labels, a max and a transparent blitter from
-// Func_081963ec(104, 0x13) and (188, 0x23), formation 643, the
+// BattleFx_LoadBlitter(104, 0x13) and (188, 0x23), formation 643, the
 // Animation_ApplyChildArgumentFar, Render_ApplyProjectedPlacementFar and
 // BattleFxKernels_IntegrateVector2 routines, cue 390 where ☀️ plays 289,
 // callbacks at 0xc80, and the camera parameter word 4 through an unsized
@@ -16,7 +16,7 @@
 
 // Tried (differ):
 // trial 2's port (effects trial, 2026-10-15), heap[n] reads          136
-// Func_081963ec declared returning s32 (plan 0c)                     134
+// BattleFx_LoadBlitter declared returning s32 (plan 0c)                     134
 // the heap slots as Ram_HeapSlots fields                             132
 // the living targets selected from the effect argument in place of
 // work->effect (the native reads the work)                         272
@@ -71,37 +71,37 @@ extern u32 gCameraSceneParameters[];
 extern char ResourceId_IceBlockSheet;
 extern char ResourceId_SparkleDots; // directory row 0x17e
 extern char ResourceId_VioletSkyBackdrop;
-extern u8 Data_08198260[][2];      // ☀️ gBattleFx10_Points
-extern s8 Data_08198280[];         // ☀️ gBattleFx10_ShakeOffsets
-extern u16 Data_08198284[];        // ☀️ gBattleFx10_RockCells
-extern u8 Data_0819828a[];         // ☀️ gBattleFx10_RockWidths
-extern u8 Data_0819828d[];         // ☀️ gBattleFx10_RockHeights
-extern u8 Data_08198290[];         // ☀️ gBattleFx10_Animations
+extern u8 Data_08198260[][2];      // ☀️ gBoreas_Points
+extern s8 Data_08198280[];         // ☀️ gBoreas_ShakeOffsets
+extern u16 Data_08198284[];        // ☀️ gBoreas_RockCells
+extern u8 Data_0819828a[];         // ☀️ gBoreas_RockWidths
+extern u8 Data_0819828d[];         // ☀️ gBoreas_RockHeights
+extern u8 Data_08198290[];         // ☀️ gBoreas_Animations
 extern struct Scale Data_08196e14; // ☀️ gBattleFx10_UnitScale
-extern u16 Data_081982aa[];        // ☀️ gBattleFx10_DebrisCells
-extern u8 Data_08198294[];         // ☀️ gBattleFx10_DebrisWidths
-extern u8 Data_0819829f[];         // ☀️ gBattleFx10_DebrisHeights
-extern u16 Data_081982c6[];        // ☀️ gBattleFx10_SprayCells
-extern u8 Data_081982c0[];         // ☀️ gBattleFx10_SprayWidths
-extern u8 Data_081982c3[];         // ☀️ gBattleFx10_SprayHeights
+extern u16 Data_081982aa[];        // ☀️ gBoreas_DebrisCells
+extern u8 Data_08198294[];         // ☀️ gBoreas_DebrisWidths
+extern u8 Data_0819829f[];         // ☀️ gBoreas_DebrisHeights
+extern u16 Data_081982c6[];        // ☀️ gBoreas_SprayCells
+extern u8 Data_081982c0[];         // ☀️ gBoreas_SprayWidths
+extern u8 Data_081982c3[];         // ☀️ gBoreas_SprayHeights
 extern u8 Data_0819745e[];         // ☀️ gBattleFx_PuffSizes
 extern u16 Data_0819744c[];        // ☀️ gBattleFx_PuffCells
-extern u16 Data_081982cc[];        // ☀️ gBattleFx10_BoulderCells
-extern u8 Data_081982d2[];         // ☀️ gBattleFx10_BoulderWidths
-extern u8 Data_081982d5[];         // ☀️ gBattleFx10_BoulderHeights
-extern u16 Data_081982de[];        // ☀️ gBattleFx10_FallCells
-extern u8 Data_081982d8[];         // ☀️ gBattleFx10_FallWidths
-extern u8 Data_081982db[];         // ☀️ gBattleFx10_FallHeights
+extern u16 Data_081982cc[];        // ☀️ gBoreas_BoulderCells
+extern u8 Data_081982d2[];         // ☀️ gBoreas_BoulderWidths
+extern u8 Data_081982d5[];         // ☀️ gBoreas_BoulderHeights
+extern u16 Data_081982de[];        // ☀️ gBoreas_FallCells
+extern u8 Data_081982d8[];         // ☀️ gBoreas_FallWidths
+extern u8 Data_081982db[];         // ☀️ gBoreas_FallHeights
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void);                // ☀️ BattlePres_ConfigureEffectDisplay
-void Func_08143000(void);                // ☀️ ProcessPendingGraphicsTransfer
-void Func_08143bb8(void);                // ☀️ BattleFx_EndCanvasLayer
-void Func_08163c2c(s32 mode, s32 value); // ☀️ BattleEffect_WipeCanvas
-s32 Func_081963ec(s32 slot, s32 flags);  // ☀️ BattleEffect_LoadWork
-void Func_0814cc4c(
+void Func_0813ba50(void);                // ☀️ BattleFx_ConfigureEffectDisplay
+void BattleFx_ProcessPendingGraphicsTransfer(void);                // ☀️ ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void);                // ☀️ BattleFx_EndCanvasLayer
+void Func_08163c2c(s32 mode, s32 value); // ☀️ Func_08163c2c
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);  // ☀️ BattleFx_BuildBlitter
+void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
-void Func_08152404(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
+void BattleFx_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattleFx_BuildWindowEdgeTable(void);
 void Audio_PlayCue(s32 cue);
@@ -109,7 +109,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-void Func_0814cca8(void); // ☀️ BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void); // ☀️ BattleFx_SetupBlendedDisplay
 void Render_ResetTransformState(void);
 void Func_081180e8(s32 phase); // ☀️ BattleEventRuntime_BeginPhaseFar
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -123,7 +123,7 @@ void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
 // and spray (A or B skips to the second half). Then ice blocks rain on the
 // targets, boulders pile up and burst, and their pieces bounce on the
 // ground among puffs of smoke.
-void Func_0814db04(struct BattleEffectArgument *effect) {
+void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   s32 pts[32][2];
   s32 pos[4];
   void *canvas;
@@ -157,23 +157,23 @@ void Func_0814db04(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   drawAlt = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   gCameraSceneParameters[4] = 240;
-  Func_0814cc4c(work->effect);
+  BattleFx_SelectLivingTargets(work->effect);
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-  Func_08152404(9, FORMATION_ICE_BLOCKS, 1);
+  BattleFx_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
@@ -547,6 +547,6 @@ void Func_0814db04(struct BattleEffectArgument *effect) {
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

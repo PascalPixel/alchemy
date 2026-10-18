@@ -33,7 +33,7 @@ struct CloakCaster {
 };
 
 void Scheduler_RemoveCallback(void (*callback)(void));
-void Func_080deba4(void);
+void FieldFx_CheckCloakTile(void);
 void WaitFrames(s32 frames);
 
 #define SE_CLOAK_END 154
@@ -51,7 +51,7 @@ void Func_080debd8(void) {
   u32 i;
 
   Audio_PlayCue(SE_CLOAK_END);
-  Scheduler_RemoveCallback(Func_080deba4);
+  Scheduler_RemoveCallback(FieldFx_CheckCloakTile);
   Object_SetMode((struct ObjectRuntime *)caster, 0);
   caster->hook = 0;
 

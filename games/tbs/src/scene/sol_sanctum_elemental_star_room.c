@@ -45,8 +45,10 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void);
 static void SolSanctumElementalStarRoom_UnmaskFelix(void);
 static void SolSanctumElementalStarRoom_AlexTakesStars(void);
 static void SolSanctumElementalStarRoom_LineUpFollowers(void);
-static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker, s32 frames);
-static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y, s32 z);
+static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
+                                                           s32 frames);
+static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
+                                                   s32 z);
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void);
 
@@ -85,13 +87,19 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 #include "common/object_facing.h"
 
 // Return the Elemental Star room entrances.
-struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) { return gSolSanctumElementalStarRoom_Entrances; }
+struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
+  return gSolSanctumElementalStarRoom_Entrances;
+}
 
 // This room has no additional scene regions.
-struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void) { return NULL; }
+struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void) {
+  return NULL;
+}
 
 // Return the room's exits.
-u32 *SolSanctumElementalStarRoom_GetExits(void) { return gSolSanctumElementalStarRoom_Exits; }
+u32 *SolSanctumElementalStarRoom_GetExits(void) {
+  return gSolSanctumElementalStarRoom_Exits;
+}
 
 // Return the room's actor placements.
 struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
@@ -99,7 +107,9 @@ struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
 }
 
 // Return the star, dialogue, and boundary interactions.
-struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) { return gSolSanctumElementalStarRoom_Events; }
+struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) {
+  return gSolSanctumElementalStarRoom_Events;
+}
 
 // Bag the Venus Star and reveal its pedestal crossings.
 static void SolSanctumElementalStarRoom_CollectVenusStar(void) {
@@ -171,7 +181,8 @@ static void SolSanctumElementalStarRoom_CollectVenusStar(void) {
   Map_CopyCellsTo(0, 40, 43, 66, 3, 3);
   Engine_EventWait(20);
   // Present the collected star, then return to Kraden's explanation.
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(220, PIXELS(712), PIXELS(16), PIXELS(464));
+  itemOwner = SolSanctumElementalStarRoom_PresentStar(220, PIXELS(712),
+                                                      PIXELS(16), PIXELS(464));
   Engine_EventWait(40);
   UiWork_PushValueSlot(itemOwner, 1);
   message = MsgSolSanctumVenusStarBagged;
@@ -270,7 +281,8 @@ static void SolSanctumElementalStarRoom_CollectMercuryStar(void) {
   Map_CopyCellsTo(0, 40, 43, 46, 3, 3);
   Engine_EventWait(20);
   // Present the collected star, then return to Kraden's explanation.
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(221, PIXELS(712), PIXELS(16), PIXELS(144));
+  itemOwner = SolSanctumElementalStarRoom_PresentStar(221, PIXELS(712),
+                                                      PIXELS(16), PIXELS(144));
   Engine_EventWait(40);
   UiWork_PushValueSlot(itemOwner, 1);
   message = MsgSolSanctumPutMercuryStar;
@@ -300,7 +312,8 @@ static void SolSanctumElementalStarRoom_CollectMercuryStar(void) {
 }
 
 // Bag Jupiter, meet the intruders, and surrender the collected stars.
-static void SolSanctumElementalStarRoom_CollectJupiterStarAndMeetIntruders(void) {
+static void
+SolSanctumElementalStarRoom_CollectJupiterStarAndMeetIntruders(void) {
   Engine_EventBegin();
   SolSanctumElementalStarRoom_BagJupiterStar();
   SolSanctumElementalStarRoom_RevealSaturosAndMenardi();
@@ -380,7 +393,8 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 13, 66, 3, 3);
   Engine_EventWait(20);
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(223, PIXELS(232), PIXELS(16), PIXELS(464));
+  itemOwner = SolSanctumElementalStarRoom_PresentStar(223, PIXELS(232),
+                                                      PIXELS(16), PIXELS(464));
   Engine_EventWait(40);
   UiWork_PushValueSlot(itemOwner, 1);
   Engine_MessageShowCentered(MsgSolSanctumJupiterStarBagged, 1);
@@ -1145,7 +1159,8 @@ static void SolSanctumElementalStarRoom_CollectMarsStar(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
   Engine_EventWait(20);
-  itemOwner = SolSanctumElementalStarRoom_PresentStar(222, PIXELS(232), PIXELS(16), PIXELS(144));
+  itemOwner = SolSanctumElementalStarRoom_PresentStar(222, PIXELS(232),
+                                                      PIXELS(16), PIXELS(144));
   Engine_EventWait(40);
   UiWork_PushValueSlot(itemOwner, 1);
   Engine_MessageShowCentered(MsgSolSanctumMarsStarBagged, 1);
@@ -1263,7 +1278,8 @@ static void SolSanctumElementalStarRoom_TalkToAlex(void) {
 }
 
 // Have Kraden remind Isaac that the stars are inside this room.
-static void SolSanctumElementalStarRoom_PreventLeavingBeforeCollectingStars(void) {
+static void
+SolSanctumElementalStarRoom_PreventLeavingBeforeCollectingStars(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumNoStarsOutThere);
   SolSanctumElementalStarRoom_ShowMessageAndWait(9, 10);
@@ -1271,11 +1287,14 @@ static void SolSanctumElementalStarRoom_PreventLeavingBeforeCollectingStars(void
 }
 
 // Perform the ordinary interaction in front of the leader.
-static void SolSanctumElementalStarRoom_CheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
+static void SolSanctumElementalStarRoom_CheckLeaderAhead(void) {
+  Engine_LeaderCheckAhead();
+}
 
 // Show a pedestal while Kraden describes it, then return to the party.
-static inline void SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
-                                        s32 actorZ, s32 speaker) {
+static inline void
+SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
+                                         s32 actorZ, s32 speaker) {
   Camera_MoveTo(cameraX, -1, cameraZ, 1);
   Engine_CameraWaitForMove();
   Actor_SetPosition(ACTOR_KRADEN, actorX << 16, actorZ << 16);
@@ -1633,7 +1652,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorStop(GARET);
   Camera_SetSpeed(PIXELS(8), PIXELS(1));
   // Tour the four pedestals, returning the view to the party after each.
-  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(711), PIXELS(464), 589, 353, 0x1009);
+  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(711), PIXELS(464), 589, 353,
+                                           0x1009);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(10);
@@ -1641,7 +1661,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(711), PIXELS(147), 596, 238, 0x1009);
+  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(711), PIXELS(147), 596, 238,
+                                           0x1009);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(10);
@@ -1653,7 +1674,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(147), 308, 250, 0x2009);
+  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(147), 308, 250,
+                                           0x2009);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(10);
@@ -1665,7 +1687,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(464), 306, 362, 0x2009);
+  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(464), 306, 362,
+                                           0x2009);
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 4, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1994,13 +2017,15 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
 }
 
 // Show the current message and wait the requested number of frames.
-static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker, s32 frames) {
+static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
+                                                           s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
 // Animate a star's icon and replace its owner's mythril bag with the star.
-static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y, s32 z) {
+static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
+                                                   s32 z) {
   GlyphTransfer *glyph;
   struct FieldActor *actor;
   struct AnimationObject *sprite;

@@ -8889,7 +8889,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Blocca Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Selce"
 
@@ -20045,7 +20045,7 @@ msgctxt "message"
 msgid "04935"
 msgstr "dipendono dal livello."
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04936"
 msgstr "Liv. personaggi"
 
@@ -20813,11 +20813,11 @@ msgctxt "message"
 msgid "05127"
 msgstr "Non attivabile"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05128"
 msgstr "Non ne hai"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05129"
 msgstr "Ne hai {argument_signed_number}"
 

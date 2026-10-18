@@ -39,7 +39,7 @@ Func_08147aec:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #40]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_08147b60
@@ -233,7 +233,7 @@ Func_08147aec:
 	adds r3, #240
 	add r3, r10
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #196
@@ -241,7 +241,7 @@ Func_08147aec:
 	adds r1, #255
 	movs r0, #8
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 .L_08147ccc:
 	ldr r1, [sp, #52]
 	movs r0, #0
@@ -373,7 +373,7 @@ Func_08147aec:
 .L_08147dd0:
 	.4byte IwramCopyWords
 .L_08147dd4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08147dd8:
 	.4byte 0xffcc0000
 .L_08147ddc:
@@ -1142,7 +1142,7 @@ Func_08147aec:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -1196,7 +1196,7 @@ Func_08147aec:
 	cmp r7, #8
 	bne .L_0814841a
 .L_08148426:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #88
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1219,4 +1219,4 @@ Func_08147aec:
 .L_08148450:
 	.4byte gData_08197410
 .L_08148454:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

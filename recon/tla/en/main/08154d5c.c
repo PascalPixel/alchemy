@@ -1,7 +1,7 @@
-// Draft of Func_08154d5c, effect kind 202: sixteen green vines spring up
+// Draft of BattleFx_RunVine, effect kind 202: sixteen green vines spring up
 // around the middle of the targets, two frames apart, and sink back.
 
-// Twin: The Broken Seal's BattleEffect_RunRisingColumns (effect.c), the same
+// Twin: The Broken Seal's BattleFx_RunVine (effect.c), the same
 // kind; the Lost Age keeps its frame counts, cue and tables.
 // Listing 245 instructions, draft 245, differ 20 (28 without the tagged
 // BG2CNT pin).
@@ -10,7 +10,7 @@
 // effect sets BG2CNT itself; the canvas preparer takes its kind, side and
 // anchor packed into one word and fills two positions; the effect argument
 // is read directly, as the Lost Age never stores work->effect; blitters
-// load through Func_081963ec with the Lost Age's mode numbers (transparent
+// load through BattleFx_LoadBlitter with the Lost Age's mode numbers (transparent
 // is 2); the callback order is 0xc80.
 
 // What remains (all order, no allocation):
@@ -43,7 +43,7 @@
 // Directory row 0x16b, BattleFx_GreenVineSheet: five 32x32 vine cels.
 extern char ResourceId_GreenVineSheet;
 
-// The Broken Seal's gRisingColumns_ColumnOffsets: each vine's x about the
+// The Broken Seal's gGrowth_ColumnOffsets: each vine's x about the
 // middle of the targets.
 extern const s8 Data_08198422[];
 
@@ -52,10 +52,10 @@ void Audio_PlayCue(s32 cue);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
-void Func_08143bb8(void);
-void Func_08143000(void);
-void Func_081434f8(void);
-void Func_081963ec(s32 slot, s32 modeFlags);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void ObjectGroup_TickMemberTimers(void);
+void BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
@@ -75,10 +75,10 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 #define PREPARE_KIND 4
 #define PREPARE_ANCHOR 4
 
-// Func_081963ec(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleFx_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
-void Func_08154d5c(struct BattleEffectArgument *effect) {
+void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
@@ -130,9 +130,9 @@ void Func_08154d5c(struct BattleEffectArgument *effect) {
   REG_BG2X = (CANVAS_MIDDLE - first.x) << 8;
 
   // Odd vines draw mirrored.
-  Func_081963ec(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleFx_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)heap->unk64[1];
-  Func_081963ec(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+  BattleFx_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)heap->unkb8[1];
 
@@ -145,7 +145,7 @@ void Func_08154d5c(struct BattleEffectArgument *effect) {
 
   work->transferMode = 1; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each frame: vine i starts at frame i * 2 + 4, grows 4 pixels a frame up
   // to 32, and from frame i * 2 + 32 sinks 4 pixels a frame.
@@ -180,15 +180,15 @@ void Func_08154d5c(struct BattleEffectArgument *effect) {
       vine++;
     } while (i != VINE_COUNT);
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     frame++;
   } while (frame != VINE_FRAMES);
 
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

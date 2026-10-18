@@ -1,5 +1,20 @@
+// Draft of UiText_AppendArticleName: differ 26 of 203 (tla-en, 2026-10-18).
+// Its ☀️ twin is games/tbs/src/window/window.c's UiText_AppendArticleName:
+// it copies a name into the decoded text, with its article in front when the
+// count is one, and an English plural ending after it otherwise.
+//
+// Left: instruction order only (the position increments and the 0x1ff mask
+// build sit one or two places apart; the pool loads move with them).
+
 #include "types.h"
 #include "fixed_math.h"
+
+// The article strings by kind, as The Broken Seal's window.c has them.
+struct ArticleTable {
+  u8 *text[8];
+};
+
+extern const struct ArticleTable gUiText_ArticleTable;
 
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                              s32 plural, s32 *suffix) {
@@ -21,7 +36,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
   }
   if (no == 1 || (no == 3 && plural == 0)) {
     kind = 0;
-    table = Data_08033e40;
+    table = gUiText_ArticleTable;
     head = name[0];
     if (head == 29) {
       kind = name[1] - 1;

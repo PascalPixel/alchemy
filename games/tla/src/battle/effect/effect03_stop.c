@@ -3,13 +3,14 @@
 #include "object_runtime.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
+#include "macros.h"
 
 struct ResourceEntry {
   u8 unk00[0x10];
   u8 vramBlock;
 };
 
-void Func_080de9f8(void);
+void RunBattleEffect03(void);
 void EffectRuntime_StopCurrentObject();
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -24,14 +25,15 @@ s32 Resource_ResetEntry(u32 entry);
 void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
 void Func_080de8d0(struct ObjectRuntime *object);
 
-void Func_080de9ec(void) {
-  Func_080de9f8();
+// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
+void BattleFx_CallEffect03AndStop(void) {
+  RunBattleEffect03();
   EffectRuntime_StopCurrentObject();
 }
 
 // Eight particles spiral in on the main object, one a frame; then a centre
 // object flashes for 60 frames, emits sparks and flies off.
-void Func_080de9f8(void) {
+void RunBattleEffect03(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *target = scene->mainObject;
   struct ObjectRuntime *object;
@@ -65,9 +67,7 @@ void Func_080de9f8(void) {
   if (target != 0) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
-    target->x = scene->x;
-    target->y = scene->y + 0x100000;
-    target->z = scene->z;
+    SET_POSITION(target, scene->x, scene->y + 0x100000, scene->z);
     target->motionFlags = 4;
     Animation_ApplyChildValuesFar(target, 7);
   }

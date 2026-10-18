@@ -173,7 +173,7 @@ Func_0813e3d0:
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -256,7 +256,7 @@ Func_0813e3d0:
 .L_0813e5c8:
 	.4byte gMapCellBuffer
 .L_0813e5cc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813e5d0:
 	mov r2, r10
 	cmp r2, #55
@@ -276,7 +276,7 @@ Func_0813e3d0:
 	movs r1, #19
 	movs r0, #188
 	subs r5, r6, r3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	lsls r1, r5, #4
@@ -332,7 +332,7 @@ Func_0813e3d0:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #192
 	lsls r1, r1, #18
 	adds r1, #188
@@ -470,7 +470,7 @@ Func_0813e3d0:
 	adds r5, #28
 	cmp r2, #32
 	bne .L_0813e6f0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -490,7 +490,7 @@ Func_0813e3d0:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0813e7dc
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	movs r0, #100
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #96
@@ -510,4 +510,4 @@ Func_0813e3d0:
 .L_0813e7d8:
 	.4byte Data_08197424
 .L_0813e7dc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -52,15 +52,16 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08143488(void); // Palette_StepFadeTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                   s32 mode); // BattleEffect_LoadWork
+                   s32 mode); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -78,7 +79,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 actor);
 
-// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -124,14 +125,14 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_IceBlockSheet;
 extern char ResourceId_EffectPalette01;
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
-extern u16 gData_08197486[]; // gBattleFx_GlintCellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
+extern u16 gData_08197486[]; // gBattleFx_GlintCells
 extern u8 gData_08197492[];  // gBattleFx_GlintCellWidths
 extern u8 gData_08197498[];  // gBattleFx_GlintCellHeights
-extern u8 gData_0819749e[];  // gShatterRocks_ShardWidths
+extern u8 gData_0819749e[];  // gSpire_ShardWidths
 extern u8 gData_081974ad[];  // the shard heights
-extern u16 gData_081974bc[]; // gShatterRocks_ShardCells
-extern u8 Data_081983c8[];   // gTwelveMode_GlintDrawFlags
+extern u16 gData_081974bc[]; // gSpire_ShardCells
+extern u8 Data_081983c8[];   // gTargetStrike_GlintDrawFlags
 
 // A volley of shots flies from the user at the targets, one launched each
 // frame toward the next target.
@@ -206,29 +207,29 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (effect->prelude == 1) {
     if (effect->side == 0) {
-      Func_08144aac(0, draw = pair);
+      BattleFx_FetchRectangleBlitters(0, draw = pair);
     } else {
-      Func_081963ec(104, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+      BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      Func_081963ec(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+      BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
       draw = pair;
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     }
   } else if (mode == 20) {
-    Func_081963ec(104, BLIT_MODE(BLIT_TRANSPARENT, CLIP));
+    BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_TRANSPARENT, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    Func_081963ec(188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+    BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
     draw = pair;
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     REG_BLDALPHA = 0x310;
   } else if (mode == 7 || mode == 21) {
-    Func_081963ec(104, BLIT_MODE(BLIT_MAX, CLIP));
+    BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    Func_081963ec(188, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw = pair;
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   } else {
-    Func_08144aac(effect->side, draw = pair);
+    BattleFx_FetchRectangleBlitters(effect->side, draw = pair);
   }
 
   // The pictures and the colors.
@@ -394,7 +395,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   for (i = 0; i != 64; i++)
     work->particles[i].variant = -1;
   if (mode == 8 || mode == 11 || mode == 14)
@@ -665,7 +666,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                 canvas, work->sheet + gData_08197486[cel], x, y,
                 gData_08197492[cel], gData_08197498[cel]);
             Runtime_ReleaseHeapBlock(188);
-            Func_08144aac(effect->side, draw);
+            BattleFx_FetchRectangleBlitters(effect->side, draw);
           }
         }
       }
@@ -721,7 +722,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       half = Battle_GetObjectTableValueFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != 24; i++) {
         struct EffectStep *mote = &MOTES[i];
 
@@ -746,12 +747,12 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
     Func_08158ce0(4, 4);
     if (mode != 6)
-      Func_081434f8();
+      ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
   if (mode == 11 || mode == 14 || mode == 18) {
@@ -759,12 +760,12 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     effect->prelude = 0;
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     if (mode == 14)
       SummonFx_RunCanvasMode1(effect);
     else
       SummonFx_RunCanvasMode3(effect);
   } else {
-    Func_08143bb8();
+    BattleFx_EndCanvasLayer();
   }
 }

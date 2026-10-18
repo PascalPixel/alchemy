@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08188714
+@ Abilities: Death Plunge, Death Leap (kind 53).
+	.global BattleFx_RunDeathPlunge
 	.thumb_func
-Func_08188714:
+BattleFx_RunDeathPlunge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -55,7 +56,7 @@ Func_08188714:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r2, #128
 	ldr r3, .L_08188794
 	lsls r2, r2, #19
@@ -89,7 +90,7 @@ Func_08188714:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_081887cc:
 	ldr r5, [sp, #52]
 	movs r0, #239
@@ -483,7 +484,7 @@ Func_08188714:
 	b .L_08188afc
 	.2byte 0x0000
 .L_08188af0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08188af4:
 	.4byte 0xffffe000
 .L_08188af8:
@@ -497,7 +498,7 @@ Func_08188714:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r10, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	adds r5, r0, #0
 	ldr r0, [sp, #44]
 	cmp r0, #55
@@ -569,9 +570,9 @@ Func_08188714:
 	movs r2, #4
 	ldr r0, .L_08188ca8
 	mov r1, r10
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r3, #1
 	movs r2, #128
 	add r8, r3
@@ -676,7 +677,7 @@ Func_08188714:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -697,4 +698,4 @@ Func_08188714:
 .L_08188ca8:
 	.4byte gData_08199210
 .L_08188cac:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

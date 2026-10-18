@@ -1,12 +1,12 @@
 // Draft, differ 774 of 1493 (the draft has 1507).
 
-// Summon 8 (Func_0814c994's case 8). Twin: The Broken Seal's
-// BattleFx_RunWhirlwindComets, ported by trial 2 and rewritten here. The
-// Lost Age's changes: Func_08144aac for the pair; the whirlwind unpacked
-// with its palette by Resource_LoadAndDecompress into the work sheet, the
-// comets into work->sheet + 0x3600; frame / 4 % 3 written through
-// Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by 36
-// and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
+// Summon 8 (BattleFx_RunSceneEffect's case 8). Twin: The Broken Seal's
+// BattleFx_RunProcne, ported by trial 2 and rewritten here. The
+// Lost Age's changes: BattleFx_FetchRectangleBlitters for the pair; the
+// whirlwind unpacked with its palette by Resource_LoadAndDecompress into the
+// work sheet, the comets into work->sheet + 0x3600; frame / 4 % 3 written
+// through Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by
+// 36 and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
 // source makes: agscc emits __modsi3 and __divsi3 for the operators); HI()
 // reads of screen.y and screen.depth; Iwram_TransformVector at the comet
 // sparks; formation resource 646; the effect argument for the actor loops;
@@ -50,17 +50,18 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
-void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_0814cc4c(
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
-void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
+void Func_0814cca8(void);      // BattleFx_SetupBlendedDisplay
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -113,7 +114,7 @@ extern u16 gData_08197410[];       // dot sizes 1 to 10: cell offsets
 // in; a cloud of sparks gathers on its centre, and from frame 330 four
 // comets strike one after another, each with a burst of sparks, throwing
 // the enemies down. A or B skips frames 161 to 394.
-void Func_08146e00(struct BattleEffectArgument *effect) {
+void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   void *camera;
   struct BattleEffectWork *work;
   void *canvas;
@@ -152,13 +153,13 @@ void Func_08146e00(struct BattleEffectArgument *effect) {
   // Set up: the max and additive pair, the whirlwind with its palette, the
   // dots, and the transfer at half strength.
   BattleFx_BeginCanvasLayer(0);
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlwindSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   wave.x = 0x800000;
   wave.y = 0x280000;
   drift.x = 0;
@@ -203,7 +204,7 @@ void Func_08146e00(struct BattleEffectArgument *effect) {
     }
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, (s32 *)((u8 *)camera + 12));
+    Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
 
     if (frame == 16)
       Audio_PlayCue(141);
@@ -334,8 +335,8 @@ void Func_08146e00(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
       BattlePresentation_ConfigurePaletteFadeFar(
           1, (s32)&ResourceId_VioletSkyBackdrop, 8);
-      Func_0814cc4c(work->effect);
-      Func_08152404(COMETS, FORMATION_RESOURCE, 2);
+      BattleFx_SelectLivingTargets(work->effect);
+      BattleFx_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);
       Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,
                                  work->sheet + COMET_SHEET, 1, 1);
 
@@ -571,7 +572,7 @@ void Func_08146e00(struct BattleEffectArgument *effect) {
       }
     }
 
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     frame++;
@@ -597,8 +598,8 @@ void Func_08146e00(struct BattleEffectArgument *effect) {
     index++;
   } while (index != COMETS);
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

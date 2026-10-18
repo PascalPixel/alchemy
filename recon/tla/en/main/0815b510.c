@@ -1,20 +1,20 @@
-// Draft of Func_0815b510, decompiled from the listing: differ 16 of 142
-// (tla-en, 2026-10-15; was 210). The logic is Func_0815b434's mirrored in
+// Draft of Func_0815b510, decompiled from the listing: differ 10 of 142
+// (tla-en, 2026-10-18; was 210). The logic is Func_0815b434's mirrored in
 // four quarters. What moved it: center declared before last, as in
 // Func_0815b434 (the two allocate as the native's only together with the
 // rest), the map indices written out in each store instead of through top
 // and bottom temporaries (210 to 32: the temporaries spilled radius and
-// moved size and map to r8 and r10), and each row index multiplied by the
+// moved size and map to r8 and r10), each row index multiplied by the
 // size rather than the reverse (32 to 16: the native copies size and
-// multiplies by the row).
+// multiplies by the row), and the first quarter's four stores in a tagged
+// one-pass block (16 to 10, found by alchemy permute).
 
-// Left: order only, five places: the native copies last to r9 after the
-// size's sign bit, finishes cos * 63 after reloading scale, loads center
-// from the stack before the column's sign shift (twice), and pairs the two
-// mirrored stores of each quarter (both addresses, then both stores). The
+// Left: order only, four places: the native copies last to r9 after the
+// size's sign bit, finishes cos * 63 after reloading scale, and loads
+// center from the stack before the column's sign shift (twice). The
 // load-latency residue of this lane's other near misses. Earlier: alchemy
 // permute 6 minutes reached 34 through an inline multiply helper (not
-// kept).
+// kept); 5 more minutes on this draft found nothing below 10.
 
 #include "types.h"
 #include "fixed_math.h"
@@ -43,10 +43,15 @@ void Func_0815b510(u8 *map, s32 size, s32 scale) {
     while (x >= y) {
       col = center - x / 2;
       row = last - y;
-      map[row * size + col] = shade;
-      map[(size * 2 - row - 1) * size + col] = shade;
-      map[row * size + (size - col) - 1] = shade;
-      map[(size * 2 - row - 1) * size + (size - col) - 1] = shade;
+      /* FAKEMATCH: the one-pass block ends the first quarter's stores before
+       * the second column is started, as the native orders them (differ 16
+       * without it). */
+      do {
+        map[row * size + col] = shade;
+        map[(size * 2 - row - 1) * size + col] = shade;
+        map[row * size + (size - col) - 1] = shade;
+        map[(size * 2 - row - 1) * size + (size - col) - 1] = shade;
+      } while (0);
       col = center - y / 2;
       row = last - x;
       map[row * size + col] = shade;

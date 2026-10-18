@@ -1,5 +1,5 @@
-// Draft (tla-en): listing 464 instructions, draft 462, common 321, differ 284.
-// Written from the listing (☀️'s BattleFx_RunParticleFieldVariant is only
+// Draft (tla-en): listing 464 instructions, draft 461, differ 285.
+// Written from the listing (☀️'s BattleFx_RunRushingStrike is only
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
 // at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
 // from frame 18 on with sizes from gData_08197410.
@@ -9,9 +9,13 @@
 // in r11 and draw and sheet are spilled. Here the frame is 36 and canvas
 // is spilled.
 // - the heap slot base stays in r5 from the first loads to draw's load
-// after the Func_081963ec call, as through the "heap" pointer here.
-// - the native keeps one Func_081963ec call after the two argument pairs;
-// here each arm has its call.
+// after the BattleFx_LoadBlitter call, as through the "heap" pointer here.
+// - each arm loads the blitter after its BattleFx_LoadBlitter call, so the two
+// calls end alike and are merged into one, as in the native (with the
+// load after the if, the else arm's call keeps a USE and stays apart).
+// - the first switch's case 0 draws through r6 in the native, which keeps
+// its call apart; here it loads r4 and joins the shared draw (31 call
+// sites for 32).
 // - cross-jumping of the switch's draw calls: in the native side 0's case
 // 0 keeps its own call (its draw is reloaded into r6, the rest into r4),
 // cases 1 and 2 of both sides share one call and cases 3 and 4 share
@@ -19,7 +23,7 @@
 // Resources 308, 243 and 329 (BattleFx_EffectPalette02) need names in
 // system/resource/directory.s when this is adopted.
 // 2026-10-15 (lane N2): rewritten with the work struct, named cels and
-// constants and comments. The same differ 284; one Func_081963ec call with
+// constants and comments. The same differ 284; one BattleFx_LoadBlitter call with
 // the mode chosen by a conditional expression: 289 (the native's single
 // call is the two arms cross-jumped).
 #include "battle_effect.h"
@@ -66,22 +70,22 @@ s32 Trig_Cos(s32 angle);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void Func_081963ec(s32 slot, s32 blitter);
+void BattleFx_LoadBlitter(s32 slot, s32 blitter);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A swing. A five-cel slash sweeps across the caster's front, six frames a
 // cel, mirrored on the far side; at frame 18 the target is knocked back and
 // flashes, the result phase starts, and 256 sparks spray from the slash's
 // end toward the target, half of them falling and half rising as they burn
 // down.
-void Func_0817c27c(struct BattleEffectArgument *effect) {
+void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap = Ram_HeapSlots;
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)heap->battleFxWork[0];
@@ -94,11 +98,13 @@ void Func_0817c27c(struct BattleEffectArgument *effect) {
   s32 i;
 
   BattleFx_BeginCanvasLayer(1);
-  if (effect->side == 0)
-    Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
-  else
-    Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY | FLIP_X));
-  draw = (DrawRectangle)heap->unk64[1];
+  if (effect->side == 0) {
+    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
+    draw = (DrawRectangle)heap->unk64[1];
+  } else {
+    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY | FLIP_X));
+    draw = (DrawRectangle)heap->unk64[1];
+  }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -106,7 +112,7 @@ void Func_0817c27c(struct BattleEffectArgument *effect) {
                   128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.
@@ -199,12 +205,12 @@ void Func_0817c27c(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)Func_08143000);
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

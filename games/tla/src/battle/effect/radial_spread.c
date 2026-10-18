@@ -22,7 +22,7 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
 // Places a spark at random around the current owner and sends it 120 pixels
 // along angle 0xc000. Each time EffectSlot_HasPendingTarget returns 0, state 1
 // starts it over and state 2 clears its slot.
-void Func_080d81ec(struct EffectSlot *effect) {
+void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;
   /* FAKEMATCH: the state is pinned to r8, the register the native gives

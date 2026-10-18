@@ -14,6 +14,7 @@
 #include "mem.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
+#include "edition.h"
 
 struct Record_080b06c0 {
   u8 filler0[4];
@@ -103,7 +104,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   return sprite;
 }
 
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #else
 #endif
 
@@ -114,7 +115,7 @@ void Shop_RestoreSceneTiles(s32 layer) {
 
   Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
   Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368(layer, 1);
   BattleFx_ApplyColorToSourceBufferFar(16);
 #else
@@ -124,7 +125,7 @@ void Shop_RestoreSceneTiles(s32 layer) {
 }
 
 void Shop_InitEffect(void) {
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368((s32)Ram_HeapSlots->eventWork + 0x222, 1);
   BattleFx_ApplyColorToSourceBufferFar(16);
 #else

@@ -1,0 +1,67 @@
+// Near miss, differ 22 of 146: the leader lets go of a grabbed item
+// (Func_080d5720) toward the held direction: with no direction it returns 0; it
+// snaps to its cell's centre, and if the cell one step ahead is free it faces
+// that way, its saved motion flags, frame and priority come back, cue 152 plays
+// and it moves onto that cell, the render mode returning to 0. Returns 1 when
+// it moved. No ☀️ twin found. Left: instruction order only: the native
+// interleaves the vector's y and z copies with the polar offset's argument
+// setup, loads the table before starting the 15 mask, and moves three
+// address adds one slot. The event work halfword is a struct field: through
+// a cast pointer its zero comes from the pool and is shared with the render
+// mode's (differ 58).
+#include "types.h"
+#include "field_sprite.h"
+#include "input.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+
+void Audio_PlayCue(s32 cue);
+void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
+s32 Func_080201d0(s32 layer, s32 x, s32 z);
+s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
+
+extern const u16 Data_080f0890[];
+
+struct EventWorkGrab {
+  u8 unk000[388];
+  s16 grabState;
+};
+
+s32 Func_080d57e4(void) {
+  struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
+  struct FieldSprite *sprite = leader->animation;
+  s32 position[3];
+  u32 angle;
+
+  ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
+  angle = Data_080f0890[(gInput.held >> 4) & 15];
+  if (angle == 0xffff)
+    return 0;
+  leader->x = (leader->x & 0xfff00000) + 0x80000;
+  leader->z = (leader->z & 0xfff00000) + 0x80000;
+  position[0] = leader->x;
+  position[1] = leader->y;
+  position[2] = leader->z;
+  Vector_AddPolarOffset(0x100000, angle, position);
+  leader->terrainHeight = leader->y - 0x80000;
+  if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
+      Func_08020210(leader, position))
+    return 0;
+  leader->angle = angle;
+  leader->priorityFlags |= 1;
+  leader->motionFlags = leader->action;
+  leader->scaleX = 0x10000;
+  sprite->nextFrame = leader->unk66;
+  sprite->rotation = 0;
+  Audio_PlayCue(152);
+  leader->speedLimit = 0x20000;
+  leader->velocityY = 0x40000;
+  leader->acceleration = 0x10000;
+  Object_SetMode(leader, 2);
+  Object_SetPosition(leader, position[0], position[1], position[2]);
+  Object_CommitPosition(leader);
+  sprite->priority = ((u8 *)leader)[98];
+  gPartyState.renderMode = 0;
+  return 1;
+}

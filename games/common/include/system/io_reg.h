@@ -10,11 +10,21 @@
 #define REG_BG2CNT (*(volatile u16 *)0x0400000c)
 #define REG_BG3CNT (*(volatile u16 *)0x0400000e)
 
+#define BGCNT_PRIORITY(n) (n)
 #define BGCNT_CHAR_BASE(block) ((block) << 2)
-#define BGCNT_SCREEN_BASE(block) ((block) << 8)
+#define BGCNT_MOSAIC 0x0040
 #define BGCNT_256_COLORS 0x0080
+#define BGCNT_SCREEN_BASE(block) ((block) << 8)
+// Affine backgrounds only: wrap around instead of showing the backdrop.
+#define BGCNT_WRAP 0x2000
+// The background's size: for an affine one, 0 to 3 are 128, 256, 512 and 1024
+// pixels square.
+#define BGCNT_SIZE(n) ((n) << 14)
 
 enum DisplayControl {
+  DISPCNT_MODE_0 = 0x0000, // four text backgrounds
+  DISPCNT_MODE_1 = 0x0001, // BG0 and BG1 text, BG2 affine
+  DISPCNT_MODE_2 = 0x0002, // BG2 and BG3 affine
   DISPCNT_OBJ_1D_MAP = 0x0040,
   DISPCNT_BG0_ON = 0x0100,
   DISPCNT_BG1_ON = 0x0200,
@@ -30,6 +40,11 @@ enum DisplayControl {
 #define REG_BG2VOFS (*(volatile u16 *)0x0400001a)
 #define REG_BG3HOFS (*(volatile u16 *)0x0400001c)
 #define REG_BG3VOFS (*(volatile u16 *)0x0400001e)
+
+// The BG2/BG3 affine matrix entries are signed 8.8 fixed point: texels
+// stepped per screen pixel. Q_8_8(1) draws the layer at its own size and
+// Q_8_8(0.5) twice as large.
+#define Q_8_8(n) ((s16)((n) * 256))
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
 #define REG_BG2PB (*(volatile u16 *)0x04000022)
@@ -48,11 +63,73 @@ enum DisplayControl {
 #define REG_WIN1H (*(volatile u16 *)0x04000042)
 #define REG_WIN0V (*(volatile u16 *)0x04000044)
 #define REG_WIN1V (*(volatile u16 *)0x04000046)
+// A REG_WINxH or REG_WINxV value: the window covers start up to, but not
+// including, end.
+#define WIN_RANGE(start, end) (((start) << 8) | (end))
 #define REG_WININ (*(volatile u16 *)0x04000048)
 #define REG_WINOUT (*(volatile u16 *)0x0400004a)
+
+// REG_WININ: the layers shown inside window 0 (low byte) and window 1 (high
+// byte). CLR lets the colour effect of REG_BLDCNT apply there.
+#define WININ_WIN0_BG0 0x0001
+#define WININ_WIN0_BG1 0x0002
+#define WININ_WIN0_BG2 0x0004
+#define WININ_WIN0_BG3 0x0008
+#define WININ_WIN0_OBJ 0x0010
+#define WININ_WIN0_CLR 0x0020
+#define WININ_WIN0_ALL 0x003f
+#define WININ_WIN1_BG0 0x0100
+#define WININ_WIN1_BG1 0x0200
+#define WININ_WIN1_BG2 0x0400
+#define WININ_WIN1_BG3 0x0800
+#define WININ_WIN1_OBJ 0x1000
+#define WININ_WIN1_CLR 0x2000
+#define WININ_WIN1_ALL 0x3f00
+
+// REG_WINOUT: the layers shown outside both windows (low byte) and inside the
+// sprite window (high byte).
+#define WINOUT_WIN01_BG0 0x0001
+#define WINOUT_WIN01_BG1 0x0002
+#define WINOUT_WIN01_BG2 0x0004
+#define WINOUT_WIN01_BG3 0x0008
+#define WINOUT_WIN01_OBJ 0x0010
+#define WINOUT_WIN01_CLR 0x0020
+#define WINOUT_WIN01_ALL 0x003f
+#define WINOUT_WINOBJ_BG0 0x0100
+#define WINOUT_WINOBJ_BG1 0x0200
+#define WINOUT_WINOBJ_BG2 0x0400
+#define WINOUT_WINOBJ_BG3 0x0800
+#define WINOUT_WINOBJ_OBJ 0x1000
+#define WINOUT_WINOBJ_CLR 0x2000
+#define WINOUT_WINOBJ_ALL 0x3f00
+
 #define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
+
+// REG_BLDCNT: the first target layers, the colour effect, then the second
+// target layers that a blend mixes the first ones with.
+#define BLDCNT_TGT1_BG0 0x0001
+#define BLDCNT_TGT1_BG1 0x0002
+#define BLDCNT_TGT1_BG2 0x0004
+#define BLDCNT_TGT1_BG3 0x0008
+#define BLDCNT_TGT1_OBJ 0x0010
+#define BLDCNT_TGT1_BD 0x0020
+#define BLDCNT_TGT1_ALL 0x003f
+#define BLDCNT_EFFECT_NONE 0x0000
+#define BLDCNT_EFFECT_BLEND 0x0040   // weighted by REG_BLDALPHA
+#define BLDCNT_EFFECT_LIGHTEN 0x0080 // towards white by REG_BLDY
+#define BLDCNT_EFFECT_DARKEN 0x00c0  // towards black by REG_BLDY
+#define BLDCNT_TGT2_BG0 0x0100
+#define BLDCNT_TGT2_BG1 0x0200
+#define BLDCNT_TGT2_BG2 0x0400
+#define BLDCNT_TGT2_BG3 0x0800
+#define BLDCNT_TGT2_OBJ 0x1000
+#define BLDCNT_TGT2_BD 0x2000
+#define BLDCNT_TGT2_ALL 0x3f00
+
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
+// A REG_BLDALPHA value: top and bottom are the two targets' weights, out of 16.
+#define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054)
 
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
@@ -68,6 +145,10 @@ enum DisplayControl {
 #define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
 #define OBJ_PLTT ((volatile u16 *)0x05000200)
 #define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
+
+// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
+// the palette stores it: blue in the high bits.
+#define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
 
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
 #define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
@@ -85,7 +166,9 @@ enum DisplayControl {
 #define REG_RCNT (*(volatile u16 *)0x04000134)
 
 #define DMA_ENABLE 0x8000
-#define DMA_START_HBLANK_REPEAT 0x3a00
+// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
+// and repeat (bit 9): the bits cleared before a channel is stopped.
+#define DMA_START_TIMING_DRQ_REPEAT 0x3a00
 #define DMA_32BIT 0x04000000
 #define DMA_SRC_FIXED32 0x01000000
 #define DMA_ENABLE32 0x80000000

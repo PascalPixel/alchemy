@@ -70,14 +70,17 @@ STATIC_ASSERT(offsetof(struct UiRenderWork, entries) ==
               RENDER_ENTRY_TABLE_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, messageStart) ==
               (RENDER_ENTRY_COUNT_OFFSET + 2));
-STATIC_ASSERT(offsetof(struct UiRenderWork, count) == RENDER_ENTRY_COUNT_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, count) ==
+              RENDER_ENTRY_COUNT_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) ==
               RENDER_COUNTER_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, glyphTiles) ==
               (RENDER_COUNTER_OFFSET + 2));
-STATIC_ASSERT(offsetof(struct UiRenderWork, values) == RENDER_VALUE_TABLE_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, values) ==
+              RENDER_VALUE_TABLE_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, names) == RENDER_NAME_TABLE_OFFSET);
-STATIC_ASSERT(offsetof(struct UiRenderWork, resourceIds) == RENDER_SLOT_ID_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, resourceIds) ==
+              RENDER_SLOT_ID_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, outputIds) ==
               RENDER_SLOT_VALUE_OFFSET);
 STATIC_ASSERT(offsetof(struct UiRenderWork, speakerVoiceSound) ==

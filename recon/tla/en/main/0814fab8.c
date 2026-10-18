@@ -1,7 +1,7 @@
 // Draft of Func_0814fab8, the body behind the twelve wrappers of
-// s14fa08.c (17 effect kinds).
+// stat_boost.c (17 effect kinds).
 
-// Twin: The Broken Seal's BattleFx_RunSeriesB (effect.c), grown from six
+// Twin: The Broken Seal's BattleFx_RunStatBoost (effect.c), grown from six
 // modes to thirteen. The Lost Age:
 // - packs the prelude Djinni's element, side and anchor for
 // Func_0815585c (Venus for modes 3 and 6, Mercury for 7, 8 and 11,
@@ -11,7 +11,7 @@
 // - adds modes 6 and 11 (the palette stepping to a resource every four
 // frames), 8 and 12 (the violet streak; 12 draws a grey ramp for its
 // Djinni), 9 (the wisp in the Mars palette) and 7;
-// - calls BattleEffect_LoadWork (Func_08196404) itself, MAX as mode 1 and
+// - calls BattleFx_BuildBlitter (Func_08196404) itself, MAX as mode 1 and
 // ADDITIVE as 0, where The Broken Seal's modes are 2 and 3;
 // - plays the opening cue at frame 0 inside the loop.
 // Resources not yet named in directory.s, by row and asset: 0x137
@@ -62,11 +62,11 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                   s32 mode); // BattleEffect_LoadWork
+                   s32 mode); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -74,7 +74,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleFx_PrepareCanvasEffect
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
-void Func_0815b410(void);         // a grey ramp from color 1
+void Graphics_LoadGreyRamp(void);         // a grey ramp from color 1
 s32 Battle_GetObjectTableValueFar(s32 actor);
 
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
@@ -128,7 +128,7 @@ extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_MercuryDjinnSheet;
 extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
-extern u16 Data_08197424[]; // gBattleFx6_FlareCells
+extern u16 Data_08197424[]; // gBattleFx_FlareCells
 
 // Lights gather around each target in turn, eight frames apart, turning as
 // they close in; at the center they burst, and the mode's picture plays
@@ -250,7 +250,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
   else if (mode == 12)
-    Func_0815b410();
+    Graphics_LoadGreyRamp();
   else if (mode == 2 || mode == 4)
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
@@ -284,7 +284,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   REG_BG2X = shift << 8;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   if (effect->side == 1)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
@@ -328,7 +328,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       if (frame == member * 8 + 80)
         Audio_PlayCue(212);
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       // The lights turn about two thirds of the target's height.
       point[0] = object->x;
       point[1] = height;
@@ -451,11 +451,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

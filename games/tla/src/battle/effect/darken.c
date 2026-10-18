@@ -81,7 +81,7 @@ void Palette_DarkenSceneStep(void) {
       green = 0;
     if (red < 0)
       red = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
   color = (u16 *)0x05000202;
   for (i = 0; i != 239; i++) {
@@ -99,6 +99,6 @@ void Palette_DarkenSceneStep(void) {
       green = 0;
     if (red < 0)
       red = 0;
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
 }

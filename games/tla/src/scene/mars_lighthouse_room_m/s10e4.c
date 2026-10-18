@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "edition.h"
 
 s32 PartyInventory_FindOwner(s32 item);
 void Func_02003218(s32 a, s32 b);
@@ -145,7 +146,7 @@ void Func_020013a0(void) {
       Func_020031e8();
     }
   }
-#ifdef TLA_EDITION_JA
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   else {
 #else
   else if (Value1((s32 (*)())GameFlag_Test, 0xa30)) {

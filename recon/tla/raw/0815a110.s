@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattlePres_RunBurstScene
+	.global BattleFx_RunBurstScene
 	.thumb_func
-BattlePres_RunBurstScene:
+BattleFx_RunBurstScene:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -405,18 +405,18 @@ BattlePres_RunBurstScene:
 	bne .L_0815a44a
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #188
 	movs r1, #27
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0815a45a
 .L_0815a44a:
 	movs r1, #23
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #188
 	movs r1, #31
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0815a45a:
 	movs r1, #192
 	lsls r1, r1, #18
@@ -529,9 +529,9 @@ BattlePres_RunBurstScene:
 .L_0815a528:
 	.4byte IwramCopyWords
 .L_0815a52c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815a530:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_0815a534:
 	.4byte gMapCellBuffer
 .L_0815a538:
@@ -787,10 +787,10 @@ BattlePres_RunBurstScene:
 	bl Transform_SetLookAt
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #19
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #192
 	lsls r0, r0, #18
 	ldr r3, [r0, #104]
@@ -997,7 +997,7 @@ BattlePres_RunBurstScene:
 	bne .L_0815a94a
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #192
 	lsls r0, r0, #18
 	ldr r3, [r0, #104]
@@ -1054,7 +1054,7 @@ BattlePres_RunBurstScene:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #60]
 	lsls r5, r5, #7
@@ -1085,7 +1085,7 @@ BattlePres_RunBurstScene:
 .L_0815a98e:
 	ldr r0, .L_0815a9e0
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #152
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1121,6 +1121,6 @@ BattlePres_RunBurstScene:
 .L_0815a9d8:
 	.4byte 0xfffff000
 .L_0815a9dc:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_0815a9e0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

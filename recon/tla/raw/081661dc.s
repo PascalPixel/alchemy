@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081661dc
+@ Abilities: Annihilation (kind 55).
+	.global BattleFx_RunAnnihilation
 	.thumb_func
-Func_081661dc:
+BattleFx_RunAnnihilation:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -171,12 +172,12 @@ Func_081661dc:
 	bne .L_08166344
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816634c
 .L_08166344:
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816634c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -230,7 +231,7 @@ Func_081661dc:
 	movs r0, #104
 	movs r1, #19
 	asrs r5, r3, #1
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -275,7 +276,7 @@ Func_081661dc:
 	movs r0, #156
 	lsls r0, r0, #6
 	adds r0, #16
-	bl BattleFx_RunNoEffectFrames
+	bl BattleFx_CallNoEffect
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 .L_08166412:
@@ -302,7 +303,7 @@ Func_081661dc:
 	ldr r0, [r3, #4]
 	add r1, sp
 	mov r11, r1
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r3, #52
 	ldr r7, [sp, #40]
 	movs r2, #0
@@ -420,7 +421,7 @@ Func_081661dc:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #240
 	ldr r3, [sp, #40]
 	lsls r0, r0, #7
@@ -444,7 +445,7 @@ Func_081661dc:
 .L_08166562:
 	ldr r0, .L_0816658c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #88
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -462,7 +463,7 @@ Func_081661dc:
 .L_08166588:
 	.4byte 0x00000134
 .L_0816658c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08166590:
 	.4byte 0xffffb600
 .L_08166594:

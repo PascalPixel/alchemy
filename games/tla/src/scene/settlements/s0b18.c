@@ -1,4 +1,5 @@
 #include "local.h"
+#include "edition.h"
 
 extern char SceneId_Ov690Room1;
 extern char SceneId_Ov690Room9;
@@ -16,7 +17,7 @@ s32 Func_02000b18(void) {
       Func_02002018(12, 32, 11, 15, 1, 1);
       Func_02002018(77, 15, 75, 15, 1, 1);
     }
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     if (Flag_Test(0x205))
       Func_02002030(9, 11, 1, 1, 11, 11);
 #else

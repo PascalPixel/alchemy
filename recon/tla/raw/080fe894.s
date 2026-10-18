@@ -142,7 +142,7 @@ Func_080fe894:
 	add r3, r11
 	ldrh r0, [r7, r3]
 	mov r1, r10
-	bl Func_080fee40
+	bl Menu_CreateWindowAndEntryObjects
 	ldr r3, [sp, #4]
 	adds r0, r7, #0
 	lsls r3, r3, #1

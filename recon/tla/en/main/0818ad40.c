@@ -1,5 +1,5 @@
 // Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
-// (call order BattleFx_InitializeMode10 0.468): ⚓️'s own effect on ☀️'s frame, a
+// (call order BattleFx_RunBoreas 0.468): ⚓️'s own effect on ☀️'s frame, a
 // sibling of the four cards of Func_0818a220. The card itself scrolls on a
 // tiled background; its picture is a textured quad by ⚓️'s model kernels.
 // The native frame (84) holds effect at sp+48, the mode 44, canvas 40, the
@@ -31,7 +31,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// Func_081963ec's packed argument: the mode in the high nibble.
+// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -58,8 +58,8 @@ struct ModelTexture {
   void *pixels;
 };
 
-// One entry of a model list, as Func_081969f8 allocates them and
-// Func_08196a7c draws them.
+// One entry of a model list, as Render_AllocateModelList allocates them and
+// Render_DrawModelList draws them.
 struct Model {
   s32 kind;
   s32 next;
@@ -97,7 +97,7 @@ extern s32 Data_081991e0[];
 
 void BattleFx_BeginTiledCanvas(s32 bgControl);
 void BattleFx_BeginTiledCanvasFilled(s32 bgControl);
-void Func_081963ec(s32 slot, s32 packed);
+void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Audio_PlayCue(s32 cue);
@@ -115,7 +115,7 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct Model *Func_081969f8(s32 count);
+struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -123,16 +123,16 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
-void Func_08196958(void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct Model *model);
+void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
-void Func_08152474(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_ArmBg2AffineHBlankDma(void);
 
 // The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 // the user to above the targets' middle for 48 frames, spinning upright and
@@ -175,20 +175,20 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDALPHA = 0x210;
   if (mode == CARD_SWORD) {
     if (effect->side == 0)
-      Func_081963ec(
+      BattleFx_LoadBlitter(
           HEAP_SLOT_BLITTER,
           BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
     else
-      Func_081963ec(
+      BattleFx_LoadBlitter(
           HEAP_SLOT_BLITTER,
           BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                   BLIT_ADDITIVE));
   } else {
     if (effect->side == 0)
-      Func_081963ec(HEAP_SLOT_BLITTER,
+      BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
                     BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     else
-      Func_081963ec(
+      BattleFx_LoadBlitter(
           HEAP_SLOT_BLITTER,
           BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                   BLIT_MAX));
@@ -237,9 +237,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
   if (mode == CARD_BAFFLE)
-    Scheduler_AddOrUpdateCallback(Func_08152474, TRANSFER_CALLBACK_ORDER);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, TRANSFER_CALLBACK_ORDER);
   REG_BG2PA = 0x100;
 
   for (frame = 0; frame != length; frame++) {
@@ -293,7 +293,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     if (mode != CARD_SLEEP) {
       if (mode == CARD_BAFFLE) {
         // The screen waves, line by line.
-        s32 *line = work->bg2X;
+        s32 *line = work->bg2xLines;
 
         for (i = 0; i != 160; i++)
           *line++ =
@@ -330,7 +330,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     // The card, until its picture takes over.
     if (frame < (mode == CARD_SLEEP ? 120 : mode == CARD_SWORD ? 72 : 80)) {
       vertices = Runtime_BumpAllocateAlternatePool(32);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture.logWidth = 5;
       texture.logHeight = 6;
       model->vertices = vertices;
@@ -357,8 +357,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       SceneTransform_ApplyYaw(0x1770);
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);
-      Func_08196958(Data_081991e0, vertices, 4);
-      Func_08196a7c(model);
+      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_DrawModelList(model);
       MemFree(model);
       MemFree(vertices);
     }
@@ -529,14 +529,14 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   if (mode == CARD_BAFFLE)
-    Scheduler_RemoveCallback(Func_08152474);
-  Scheduler_RemoveCallback(Func_08143000);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

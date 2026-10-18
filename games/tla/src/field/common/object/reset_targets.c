@@ -1,4 +1,5 @@
 #include "object_runtime.h"
+#include "macros.h"
 
 void ObjectMotion_ResetTargetsAndVelocity(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -9,9 +10,7 @@ void ObjectMotion_ResetTargetsAndVelocity(u32 objectId) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
     object->targetZ = 0x80000000;
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    SET_VELOCITY(object, 0, 0, 0);
     object->unk56 = 0;
   }
 }

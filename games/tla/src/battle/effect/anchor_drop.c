@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 struct AnchorWork {
   u8 unk0000[0x1930];
@@ -15,7 +16,9 @@ struct ModeEvent {
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 
-void Func_080e70f8(s32 id) {
+// Puts object id at the effect's anchor (if any) and lets it fall under
+// gravity, waits 50 frames, then cues the event with id | 0x1000.
+void BattleFx_DropObjectAtAnchor(s32 id) {
   struct ModeEvent *event = Ram_HeapSlots->eventWork;
   s32 incoming = id;
   struct ObjectRuntime **slot;
@@ -34,9 +37,7 @@ void Func_080e70f8(s32 id) {
   object = Object_GetById(id);
 
   if (anchor != NULL) {
-    object->x = anchor->x;
-    object->y = anchor->y;
-    object->z = anchor->z;
+    SET_POSITION(object, anchor->x, anchor->y, anchor->z);
   }
   if (*((s8 *)event + 394) == 3) {
     object->motionFlags = 2;

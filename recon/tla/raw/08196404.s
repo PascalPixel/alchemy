@@ -459,25 +459,25 @@ Func_08196404:
 .L_0819674c:
 	.4byte BattleFx_PatchTemplateCode
 .L_08196750:
-	.4byte BattleEffect_Mask
+	.4byte BattleFx_Mask
 .L_08196754:
 	.4byte Data_081973f0
 .L_08196758:
-	.4byte BattleEffect_CopyReverse
+	.4byte BattleFx_CopyReverse
 .L_0819675c:
-	.4byte BattleEffect_CopyForward
+	.4byte BattleFx_CopyForward
 .L_08196760:
-	.4byte BattleEffect_TransparentReverse
+	.4byte BattleFx_TransparentReverse
 .L_08196764:
-	.4byte BattleEffect_TransparentForward
+	.4byte BattleFx_TransparentForward
 .L_08196768:
-	.4byte BattleEffect_MaxReverse
+	.4byte BattleFx_MaxReverse
 .L_0819676c:
-	.4byte BattleEffect_MaxForward
+	.4byte BattleFx_MaxForward
 .L_08196770:
-	.4byte BattleEffect_AdditiveReverse
+	.4byte BattleFx_AdditiveReverse
 .L_08196774:
-	.4byte BattleEffect_AdditiveForward
+	.4byte BattleFx_AdditiveForward
 .L_08196778:
 	.4byte 0x00ffffff
 .L_0819677c:
@@ -485,9 +485,9 @@ Func_08196404:
 .L_08196780:
 	.4byte BattleEffect_Copy8Forward
 .L_08196784:
-	.4byte BattleEffect_Transparent8Reverse
+	.4byte BattleFx_Transparent8Reverse
 .L_08196788:
-	.4byte BattleEffect_Transparent8Forward
+	.4byte BattleFx_Transparent8Forward
 .L_0819678c:
 	movs r3, #4
 	mov r1, r8
@@ -681,13 +681,13 @@ Func_08196404:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081968f4:
-	.4byte BattleEffect_Max4Reverse
+	.4byte BattleFx_Max4Reverse
 .L_081968f8:
-	.4byte BattleEffect_Max4Forward
+	.4byte BattleFx_Max4Forward
 .L_081968fc:
-	.4byte BattleEffect_ColorReverse
+	.4byte BattleFx_ColorReverse
 .L_08196900:
-	.4byte BattleEffect_ColorForward
+	.4byte BattleFx_ColorForward
 .L_08196904:
 	.4byte 0x00ffffff
 .L_08196908:

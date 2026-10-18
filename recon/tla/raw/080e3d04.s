@@ -433,11 +433,11 @@ Func_080e3d04:
 	adds r0, r5, #0
 	bl Func_080eaf98
 	ldr r0, [sp, #12]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	adds r0, #10
 	strh r0, [r5, #30]
 	ldr r0, [sp, #12]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	ldrb r1, [r5, #9]
 	movs r2, #13
 	movs r3, #3

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817d174
+@ Abilities: Star Mine (kind 452).
+	.global BattleFx_RunStarMine
 	.thumb_func
-Func_0817d174:
+BattleFx_RunStarMine:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -31,7 +32,7 @@ Func_0817d174:
 	strh r3, [r2]
 	add r1, sp, #56
 	movs r0, #0
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r2, [sp, #44]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -583,7 +584,7 @@ Func_0817d174:
 .L_0817d608:
 	.4byte IwramCopyWords
 .L_0817d60c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817d610:
 	.4byte Data_02010018
 .L_0817d614:
@@ -636,7 +637,7 @@ Func_0817d174:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #44]
 	lsls r5, r5, #7
@@ -659,7 +660,7 @@ Func_0817d174:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -668,4 +669,4 @@ Func_0817d174:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817d6c0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -118,7 +118,7 @@ Func_080e9f68:
 	movs r1, #128
 	adds r0, r7, #0
 	lsls r1, r1, #11
-	bl Func_080e9ee4
+	bl Motion_StepTowardTarget
 	ldr r3, [r7]
 	adds r0, r5, #0
 	str r3, [r5, #12]
@@ -136,7 +136,7 @@ Func_080e9f68:
 	movs r1, #192
 	adds r0, r7, #0
 	lsls r1, r1, #11
-	bl Func_080e9ee4
+	bl Motion_StepTowardTarget
 	ldr r3, [r7]
 	adds r0, r5, #0
 	str r3, [r5, #12]
@@ -167,7 +167,7 @@ Func_080e9f68:
 	movs r1, #192
 	adds r0, r7, #0
 	lsls r1, r1, #11
-	bl Func_080e9ee4
+	bl Motion_StepTowardTarget
 	ldr r3, [r7]
 	adds r0, r5, #0
 	str r3, [r5, #12]
@@ -215,7 +215,7 @@ Func_080e9f68:
 	orrs r3, r1
 	strh r3, [r5, #8]
 	adds r1, r7, #0
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	adds r0, r7, #0
 	movs r1, #63
 	ldr r2, .L_080ea12c

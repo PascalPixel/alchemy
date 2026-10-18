@@ -29,6 +29,7 @@
 #include "global_cells.h"
 #include "frame.h"
 #include "oambuf.h"
+#include "macros.h"
 
 // A sprite of the "Press Start" prompt, linked into a render slot each frame:
 // OAM attributes 0 to 2 with the position split out.
@@ -785,9 +786,9 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = Graphics_ClampRgb555Channel(red);
         green = Graphics_ClampRgb555Channel(green);
         blue = Graphics_ClampRgb555Channel(blue);
-        destination[0] = gPalette_ChannelCurveContrast[blue];
-        destination[1] = gPalette_ChannelCurveLight[green];
-        destination[2] = gPalette_ChannelCurve[red];
+        SET_VECTOR(destination, gPalette_ChannelCurveContrast[blue],
+                   gPalette_ChannelCurveLight[green],
+                   gPalette_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -834,9 +835,9 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = Graphics_ClampRgb555Channel(red);
         green = Graphics_ClampRgb555Channel(green);
         blue = Graphics_ClampRgb555Channel(blue);
-        destination[0] = gPalette_ChannelCurveContrast[blue];
-        destination[1] = gPalette_ChannelCurveContrast[green];
-        destination[2] = gPalette_ChannelCurveContrast[red];
+        SET_VECTOR(destination, gPalette_ChannelCurveContrast[blue],
+                   gPalette_ChannelCurveContrast[green],
+                   gPalette_ChannelCurveContrast[red]);
         destination += 3;
       }
       break;
@@ -850,9 +851,9 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = Graphics_ClampRgb555Channel(red);
         green -= green / 3;
         blue -= blue / 3;
-        destination[0] = gPalette_ChannelCurve[blue];
-        destination[1] = gPalette_ChannelCurve[green];
-        destination[2] = gPalette_ChannelCurveLight[red];
+        SET_VECTOR(destination, gPalette_ChannelCurve[blue],
+                   gPalette_ChannelCurve[green],
+                   gPalette_ChannelCurveLight[red]);
         destination += 3;
       }
       break;
@@ -870,9 +871,9 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = Graphics_ClampRgb555Channel(red);
         green = Graphics_ClampRgb555Channel(green);
         blue = Graphics_ClampRgb555Channel(blue);
-        destination[0] = gPalette_ChannelCurveContrast[blue];
-        destination[1] = gPalette_ChannelCurveLight[green];
-        destination[2] = gPalette_ChannelCurve[red];
+        SET_VECTOR(destination, gPalette_ChannelCurveContrast[blue],
+                   gPalette_ChannelCurveLight[green],
+                   gPalette_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -905,9 +906,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       red = Graphics_ClampRgb555Component(red);
       green = Graphics_ClampRgb555Component(green);
       blue = Graphics_ClampRgb555Component(blue);
-      destination[0] = blue;
-      destination[1] = green;
-      destination[2] = red;
+      SET_VECTOR(destination, blue, green, red);
       destination += 3;
     }
   } else if (mode & PALETTE_TRANSFORM_BLEND) {

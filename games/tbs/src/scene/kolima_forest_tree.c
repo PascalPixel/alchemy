@@ -34,6 +34,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 
 enum {
   ACTOR_TRET = 8,
@@ -849,9 +850,7 @@ static void KolimaForestTree_UpdateOrbitSpark(union FieldObject *fieldObject) {
   s32 heading;
 
   if (age <= 119) {
-    position[0] = spark->targetX;
-    position[1] = spark->targetY;
-    position[2] = spark->targetZ;
+    SET_VECTOR(position, spark->targetX, spark->targetY, spark->targetZ);
     heading = (s16)spark->work;
     Vector_AddPolarOffset(age * Q16_ONE, age * 768 + heading, position);
     spark->x.fixed = position[0];

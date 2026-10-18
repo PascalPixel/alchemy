@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08154d5c
+@ Abilities: Vine (kind 202).
+	.global BattleFx_RunVine
 	.thumb_func
-Func_08154d5c:
+BattleFx_RunVine:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -89,13 +90,13 @@ Func_08154d5c:
 	str r1, [r6]
 	str r3, [r2]
 	movs r1, #35
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, r8
 	ldr r3, [r2, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #16]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #188
 	add r8, r3
 	mov r0, r8
@@ -241,7 +242,7 @@ Func_08154d5c:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -259,7 +260,7 @@ Func_08154d5c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -271,4 +272,4 @@ Func_08154d5c:
 .L_08154f7c:
 	.4byte Data_08198422
 .L_08154f80:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

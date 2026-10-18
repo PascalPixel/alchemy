@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "edition.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -26,7 +27,7 @@ extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 void WaitFrames(s32 frames);
@@ -40,12 +41,12 @@ s32 ArcTan2(s32 y, s32 x);
 
 // The Spanish and Italian far-call tables reach this function under another
 // slot's name; those two editions keep it on their scaffold.
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 // Picks the object nearest object id, under 32 pixels away and 48 pixels in
 // height. Distances to ids above 63 count double and to objects with
 // collision flag 4 ten thirteenths; beyond 11 pixels the object must also lie
 // within 0x2fff of id's facing. Returns -1 when none qualifies.
-s32 Func_080cd91c(s32 id) {
+s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *src;
   struct ObjectRuntime *obj;
   s32 best;
@@ -114,7 +115,9 @@ s32 Func_080cd91c(s32 id) {
 }
 #endif
 
-struct DescriptorEntry *Func_080cda58(s32 id) {
+// Returns the row of gData_080eff28 for an animation: its range, height
+// and facing width. A row not found returns the -1 terminator.
+struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
   struct DescriptorEntry *entry = gData_080eff28;
 
   while (entry->id != -1 && id != entry->id)

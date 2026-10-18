@@ -8,7 +8,7 @@
 
 enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 enum { UI_TEXT_ENTRY_COUNT = 512 };
 #else
 enum { UI_TEXT_ENTRY_COUNT = 256 };
@@ -65,7 +65,7 @@ STATIC_ASSERT(offsetof(struct UiRenderWork, entries) == 0xf40);
 STATIC_ASSERT(offsetof(struct UiRenderWork, menuState) == 5);
 STATIC_ASSERT(offsetof(struct UiRenderWork, level) == 7);
 STATIC_ASSERT(offsetof(struct UiRenderWork, tileAttributes) == 0xe38);
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 STATIC_ASSERT(offsetof(struct UiRenderWork, count) == 0x1342);
 STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) == 0x1346);
 STATIC_ASSERT(offsetof(struct UiRenderWork, values) == 0x134c);

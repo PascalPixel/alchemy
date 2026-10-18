@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0818cb74
+@ Abilities: Trident (scene kind 27).
+	.global BattleFx_RunTrident
 	.thumb_func
-Func_0818cb74:
+BattleFx_RunTrident:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -34,12 +35,12 @@ Func_0818cb74:
 	ldr r4, [sp, #52]
 	adds r3, r4, r7
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r1, #166
 	lsls r1, r1, #2
 	movs r0, #4
 	movs r2, #1
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	ldr r3, .L_0818cbe0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -67,7 +68,7 @@ Func_0818cb74:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r0, [sp, #52]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -94,7 +95,7 @@ Func_0818cb74:
 .L_0818cc2c:
 	.4byte 0x00001088
 .L_0818cc30:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818cc34:
 	lsls r2, r2, #3
 	adds r7, #86
@@ -646,7 +647,7 @@ Func_0818cb74:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #24]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0818d2ec
 	ldr r3, [sp, #60]
 	adds r7, r0, #0
@@ -735,9 +736,9 @@ Func_0818cb74:
 	ldr r0, .L_0818d304
 	ldr r1, [sp, #24]
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818d14e:
 	movs r0, #1
 	add r9, r0
@@ -870,9 +871,9 @@ Func_0818cb74:
 	adds r0, r0, r3
 	ldr r1, [sp, #24]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818d260:
 	movs r4, #1
 	add r9, r4
@@ -1212,7 +1213,7 @@ Func_0818cb74:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #240
 	ldr r7, [sp, #52]
 	lsls r0, r0, #7
@@ -1247,7 +1248,7 @@ Func_0818cb74:
 	mov r0, r9
 	cmp r0, #4
 	bne .L_0818d54a
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1272,4 +1273,4 @@ Func_0818cb74:
 .L_0818d588:
 	.4byte gData_08197486
 .L_0818d58c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

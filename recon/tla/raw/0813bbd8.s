@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0813bbd8
+@ Abilities: Ice, Ice Horn, Ice Missile (kind 7).
+	.global BattleFx_RunIce
 	.thumb_func
-Func_0813bbd8:
+BattleFx_RunIce:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -130,18 +131,18 @@ Func_0813bbd8:
 	bne .L_0813bce6
 	movs r1, #18
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #188
 	movs r1, #2
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0813bcf6
 .L_0813bce6:
 	movs r1, #22
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #188
 	movs r1, #6
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0813bcf6:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -596,7 +597,7 @@ Func_0813bbd8:
 	adds r5, #28
 	cmp r2, #32
 	bne .L_0813bfc2
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
@@ -631,7 +632,7 @@ Func_0813bbd8:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	bl Func_0813ba50
 	add sp, #36
 	pop {r3, r5, r6, r7}
@@ -642,9 +643,9 @@ Func_0813bbd8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0813c0a4:
-	.4byte Func_0813bba0
+	.4byte BattleFx_ArmWin0HBlankDma
 .L_0813c0a8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813c0ac:
 	.4byte Data_08197521
 .L_0813c0b0:

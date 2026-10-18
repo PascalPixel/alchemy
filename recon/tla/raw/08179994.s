@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08179994
+@ Abilities: Juggle, Heat Juggle, Fiery Juggle (kind 78).
+	.global BattleFx_RunJuggle
 	.thumb_func
-Func_08179994:
+BattleFx_RunJuggle:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -68,7 +69,7 @@ Func_08179994:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #48]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r8
@@ -492,7 +493,7 @@ Func_08179994:
 .L_08179d60:
 	.4byte IwramCopyWords
 .L_08179d64:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08179d68:
 	.4byte Data_02010018
 .L_08179d6c:
@@ -575,7 +576,7 @@ Func_08179994:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -602,7 +603,7 @@ Func_08179994:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08179e68
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -620,4 +621,4 @@ Func_08179994:
 .L_08179e64:
 	.4byte 0xffffc000
 .L_08179e68:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

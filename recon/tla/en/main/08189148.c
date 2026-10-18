@@ -1,5 +1,5 @@
 // Draft: listing 1123 instructions, draft 1136, differ 855. ☀️ twin:
-// BattleEffect_RunDualParticleStream (effect.c, structure 0.725): the puff arc,
+// BattleFx_RunDragonCloud (effect.c, structure 0.725): the puff arc,
 // the faded copies of the pillar sheet, the head flying the path and its trail,
 // the camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
 // target, sends the head to the target before it dives, and added a second
@@ -54,10 +54,10 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_DualStreamPath;
 
 // The puff arc's six cells, cut from the ember streak sheet.
-extern u8 gPuffArc_CellWidths[];
-extern u8 gPuffArc_CellHeights[];
-extern u8 gPuffArc_CellBiasY[];
-extern u16 gPuffArc_CellSourceOffsets[];
+extern u8 gBattleFx_PuffArcCellWidths[];
+extern u8 gBattleFx_PuffArcCellHeights[];
+extern u8 gBattleFx_PuffArcCellBiasY[];
+extern u16 gBattleFx_PuffArcCells[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
@@ -69,7 +69,7 @@ extern u8 Data_08199d5c[];
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void Func_08144aac(s32 side, DrawRectangle *draw);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 u32 Random16(void);
@@ -89,11 +89,11 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
 // dragon's head flies the path from frame 18, trailing fading copies of
@@ -103,7 +103,7 @@ void Func_08143000(void);
 // Variant 1, ⚓️'s own, loads orange colours, throws 128 sparks up from the
 // user's side at the start, sheds four sparks a frame from the head and
 // throws 128 more from the target with the embers.
-void Func_08189148(struct BattleEffectArgument *effect) {
+void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition target;
   struct EffectPosition position;
@@ -156,10 +156,10 @@ void Func_08189148(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)0x05000000,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
@@ -234,12 +234,18 @@ void Func_08189148(struct BattleEffectArgument *effect) {
     if (frame <= 17) {
       s32 cell = frame / 3;
 
-      draw[0](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-              56 - gPuffArc_CellWidths[cell] / 2, gPuffArc_CellBiasY[cell] + 60,
-              gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
-      draw[1](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-              64 - gPuffArc_CellWidths[cell] / 2, gPuffArc_CellBiasY[cell] + 60,
-              gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
+      draw[0](canvas,
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCells[cell],
+              56 - gBattleFx_PuffArcCellWidths[cell] / 2,
+              gBattleFx_PuffArcCellBiasY[cell] + 60,
+              gBattleFx_PuffArcCellWidths[cell],
+              gBattleFx_PuffArcCellHeights[cell]);
+      draw[1](canvas,
+              &work->sheet[0x3c00] + gBattleFx_PuffArcCells[cell],
+              64 - gBattleFx_PuffArcCellWidths[cell] / 2,
+              gBattleFx_PuffArcCellBiasY[cell] + 60,
+              gBattleFx_PuffArcCellWidths[cell],
+              gBattleFx_PuffArcCellHeights[cell]);
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
@@ -313,7 +319,7 @@ void Func_08189148(struct BattleEffectArgument *effect) {
       }
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     // Frames 18-83: the head, tilted by how fast it climbs or falls.
     if (frame >= 18 && frame <= 83) {
@@ -447,22 +453,24 @@ void Func_08189148(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
-                  step->x - gPuffArc_CellWidths[cell] / 2,
-                  step->y + gPuffArc_CellBiasY[cell], gPuffArc_CellWidths[cell],
-                  gPuffArc_CellHeights[cell]);
+                  &work->sheet[0x3c00] +
+                      gBattleFx_PuffArcCells[cell],
+                  step->x - gBattleFx_PuffArcCellWidths[cell] / 2,
+                  step->y + gBattleFx_PuffArcCellBiasY[cell],
+                  gBattleFx_PuffArcCellWidths[cell],
+                  gBattleFx_PuffArcCellHeights[cell]);
         }
         step->variant++;
       }
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

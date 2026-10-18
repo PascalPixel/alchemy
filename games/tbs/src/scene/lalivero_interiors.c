@@ -24,7 +24,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "sound_ids.h"
+#include "songs.h"
 // Lalivero's buildings, on two maps. The first holds the shops, the
 // sanctum and the houses along the streets; the second holds Faran's house
 // and the inn, where the party reports to Faran after Venus Lighthouse and
@@ -264,7 +264,7 @@ static void LeaveBuilding(void) {
   s16 *trigger = (s16 *)&work->touchedTrigger;
 
   Engine_EventRequestExit(*trigger);
-  Engine_AudioPlayCue(SOUND_MAP_EXIT);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
 // What the party can talk to, touch and search on each map, before and

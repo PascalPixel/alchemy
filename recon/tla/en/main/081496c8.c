@@ -1,4 +1,4 @@
-// Near miss, differ 53 of 96 (2026-10-15; was 60): The Broken Seal's
+// Near miss, differ 47 of 96 (2026-10-18; was 53): The Broken Seal's
 // Graphics_UpdatePhasePalette with ⚓️'s levels (each scaled sine plus 16, times
 // the index, over 64) and its statement order (the first sine is scaled before
 // the second call, the other two after the third). Left: allocation. The native
@@ -11,6 +11,13 @@
 // 53; in place, green += 16: 65; every level in place: 69; red's too: 68). The
 // native still keeps the output pointer in r5 and the index in r4 (here r1 and
 // r5), and copies the first sine through r3, here r2.
+// 2026-10-18: palette[0] cleared after the levels (53 to 47): the final copy
+// now forms its own sp address as the native does, but red's level takes ip
+// (native r7) and the clear's zero and address come after the green and blue
+// shifts. Tried there: red's level after the others (71, 74), in place (63),
+// the index set before the output (47); alchemy permute 4 minutes on the
+// earlier form found blue_level reused as green's product (39 rows but 99
+// instructions, not kept).
 #include "types.h"
 #include "iwram_call.h"
 
@@ -33,10 +40,10 @@ void Func_081496c8(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase) {
   green = Trig_Sin(phase + green_phase);
   blue = Trig_Sin(phase + blue_phase);
 
-  palette[0] = 0;
   red_level = red + 16;
   green_level = ((green * 16) >> 15) + 16;
   blue_level = ((blue * 16) >> 15) + 16;
+  palette[0] = 0;
   index = 1;
   output = &palette[1];
   do {

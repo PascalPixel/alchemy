@@ -73,7 +73,8 @@ OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
 }
 
 // Follow the linked actor and alternate the light's animation parameter.
-static s32 MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
+static s32
+MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct FieldActor *leader;
   s32 targetZ;
@@ -233,7 +234,8 @@ void MercuryLighthouseEntrance_RaisePillar(void) {
 // Reset the published light count and start the attached actor's release
 // script.
 void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
-  struct MercuryLighthouseLights *state = *(struct MercuryLighthouseLights **)WORK_SLOT(35);
+  struct MercuryLighthouseLights *state =
+      *(struct MercuryLighthouseLights **)WORK_SLOT(35);
   struct FieldActor *target;
 
   if (state->levels == 0) {

@@ -1,4 +1,4 @@
-// Draft of BattlePres_RunBurstScene, the burst family's body (ten kinds
+// Draft of BattleFx_RunBurstScene, the burst family's body (ten kinds
 // through eight wrappers): blow after blow lands on the first target.
 
 // On screen: the caster closes in on the first target (kind variant 12
@@ -36,7 +36,7 @@
 // Teardown: the callbacks are removed and the canvas layer is closed; the
 // blitters are built and released every frame.
 
-// Port of The Broken Seal's BattlePres_RunBurstScene, reworked in The Lost
+// Port of The Broken Seal's BattleFx_RunBurstScene, reworked in The Lost
 // Age: an eighth record byte and its two extras, the orb packed into the
 // map cell buffer, 256 motes where ☀️ has 768, the approach by variant,
 // The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
@@ -86,7 +86,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; Func_081963ec takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -134,7 +134,7 @@ extern char ResourceId_EmberStreakSheet;
 extern u8 Data_081985b3[];
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern const u16 gData_08197410[];
-// The glint's six cels: ☀️'s gBattleFx_GlintCellOffsets, _GlintCellWidths
+// The glint's six cels: ☀️'s gBattleFx_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
 extern const u16 gData_08197486[];
 extern const u8 gData_08197492[];
@@ -156,10 +156,8 @@ void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 height);
 void EffectPosition_ApplyStepAndYOffset(s32 actor,
                                         struct EffectPosition *position);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
+void Transform_SetLookAt(void *camera, void *eye);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -167,20 +165,20 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 Func_081963ec(s32 slot, s32 modeFlags);
-// BattleEffect_LoadWork itself.
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
+// BattleFx_BuildBlitter itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
 // Closes the canvas layer.
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Arms the H-blank DMA of the work's line table into BG2X.
-void Func_08152474(void);
+void BattleFx_ArmBg2AffineHBlankDma(void);
 // Counts down the actors' flash timers.
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -191,7 +189,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 
-void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
+void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
                               s32 variant) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
@@ -277,9 +275,9 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
-    Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.
@@ -315,7 +313,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 
     // The ripple's line table: BG2 swings six pixels on a sine wave.
     for (i = 0; i != 160; i++)
-      work->bg2X[i] = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
+      work->bg2xLines[i] = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     if (variant == 10 && frame == 8)
       Audio_PlayCue(221);
     blows = RECORD(RECORD_BLOWS);
@@ -324,16 +322,16 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 
     // The arcs and waves, mirrored on odd blows.
     if (effect->side == 0) {
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_Y));
     } else {
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP_X));
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                           COMPOSITE_FLIP));
     }
@@ -391,10 +389,10 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 
     // The motes, until their life runs out, bouncing off the ground.
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
-    Func_081963ec(HEAP_BLITTER,
+    Transform_SetLookAt(camera, camera + 3);
+    BattleFx_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-    Func_081963ec(HEAP_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -447,7 +445,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
       // The smoke: sixteen puffs rise from the target's feet, six cels of
       // four frames each.
       if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE) {
-        Func_081963ec(
+        BattleFx_LoadBlitter(
             HEAP_BLITTER,
             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
         draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -465,14 +463,14 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
       }
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Teardown.
   if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
-    Scheduler_RemoveCallback(Func_08152474);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

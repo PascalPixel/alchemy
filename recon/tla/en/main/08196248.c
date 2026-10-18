@@ -1,15 +1,11 @@
-// Draft, differ 215 of 203 (draft 170 instructions, no device): an unused
-// wireframe renderer, written from the listing (no caller in the image; no
-// Broken Seal twin, twins12 0.43).
-// Left: the native holds every corner field it reads through its own
-// address register, formed once before the face loop: the three corners'
-// x at r6, r6 + 12 (r9) and r6 + 24 (r10), their y at r6 + 4 (r7), r6 + 16
-// (r11) and r6 + 28 (sp+4); the halfword loads then index those with 2.
-// Here only corners 1 and 2 get registers and the y fields are immediate
-// offsets, so the face loop is 33 instructions shorter. The vertex loop's
-// counter lives at sp+8 in the native (reused as the face counter), here
-// in r9. Next to try: separate pointers for the six fields, a halfword
-// union for the 16.16 values.
+// Near miss, differ 192 of 203 (draft 207 instructions, no device): an
+// unused wireframe renderer, written from the listing (no caller in the
+// image; no Broken Seal twin, twins12 0.43). The same calls and control
+// flow; each corner field it reads has its own pointer, as in the native.
+// Left: allocation. The native keeps the face pointer in r8 and the loop
+// counter at sp+8; here the face pointer spills. Forming the pointers
+// inside the face loop (hoisted past the guard, as the native places them)
+// scores differ 179 but adds a fifth instruction.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -45,7 +41,12 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, u8 color);
 void Func_08196248(s32 vertexCount, s32 faceCount) {
   s32 *vertices = Ram_HeapSlots->unk64[0];
   struct WireFace *face = (struct WireFace *)Ram_HeapSlots->battleFxWork[0];
-  struct WirePoint *corner;
+  s32 *x0;
+  s32 *y0;
+  s32 *x1;
+  s32 *y1;
+  s32 *x2;
+  s32 *y2;
   s32 words;
   s32 facing;
   s32 color;
@@ -56,30 +57,31 @@ void Func_08196248(s32 vertexCount, s32 faceCount) {
     Iwram_TransformVector(&vertices[i], &vertices[i]);
 
   // The three corners of each face are copied after the vertices.
-  corner = (struct WirePoint *)&vertices[words];
+  x0 = &vertices[words];
+  y0 = x0 + 1;
+  x1 = x0 + 3;
+  y1 = x0 + 4;
+  x2 = x0 + 6;
+  y2 = x0 + 7;
   for (i = 0; i != faceCount; i++) {
-    Dma_Set(&vertices[face->corner[0]], &corner[0], 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[face->corner[1]], &corner[1], 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[face->corner[2]], &corner[2], 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[face->corner[0]], x0, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[face->corner[1]], x1, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[face->corner[2]], x2, 0x84000003, REG_DMA3);
 
     // The z of the edges' cross product: negative for a face turned away.
     facing =
-        Iwram_MulQ16(corner[1].x - corner[0].x, corner[2].y - corner[0].y) -
-        Iwram_MulQ16(corner[2].x - corner[0].x, corner[1].y - corner[0].y);
+        Iwram_MulQ16(*x1 - *x0, *y2 - *y0) - Iwram_MulQ16(*x2 - *x0, *y1 - *y0);
     if (facing >= 0) {
       color = face->color;
-      corner[0].x += 64 << 16;
-      corner[0].y += 64 << 16;
-      corner[1].x += 64 << 16;
-      corner[1].y += 64 << 16;
-      corner[2].x += 64 << 16;
-      corner[2].y += 64 << 16;
-      Func_08143eb4(HI(corner[0].x), HI(corner[0].y), HI(corner[1].x),
-                    HI(corner[1].y), color);
-      Func_08143eb4(HI(corner[1].x), HI(corner[1].y), HI(corner[2].x),
-                    HI(corner[2].y), color);
-      Func_08143eb4(HI(corner[0].x), HI(corner[0].y), HI(corner[2].x),
-                    HI(corner[2].y), color);
+      *x0 += 64 << 16;
+      *y0 += 64 << 16;
+      *x1 += 64 << 16;
+      *y1 += 64 << 16;
+      *x2 += 64 << 16;
+      *y2 += 64 << 16;
+      Func_08143eb4(HI(*x0), HI(*y0), HI(*x1), HI(*y1), color);
+      Func_08143eb4(HI(*x1), HI(*y1), HI(*x2), HI(*y2), color);
+      Func_08143eb4(HI(*x0), HI(*y0), HI(*x2), HI(*y2), color);
     }
     face++;
   }

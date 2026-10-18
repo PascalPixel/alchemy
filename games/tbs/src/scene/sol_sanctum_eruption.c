@@ -33,6 +33,7 @@
 #include "vram_tab.h"
 #include "fixed_math.h"
 #include "palbuf.h"
+#include "macros.h"
 
 // Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
@@ -51,8 +52,9 @@ static void SolSanctumEruption_UpdateElementalArcs(void);
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z);
 static void SolSanctumEruption_RestoreCornerCellAttributes(void);
 static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
-                                               s32 waitFrames);
-static void SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor);
+                                                      s32 waitFrames);
+static void
+SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor);
 static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
@@ -90,7 +92,9 @@ struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
 }
 
 // Return the scene event table, which has no scripted interactions.
-struct SceneEvent *SolSanctumEruption_GetEvents(void) { return gSolSanctumEruption_Events; }
+struct SceneEvent *SolSanctumEruption_GetEvents(void) {
+  return gSolSanctumEruption_Events;
+}
 
 // Stage Saturos, Menardi, Alex and Felix around Jenna and Kraden.
 static inline void SolSanctumEruption_PlaceHostageGroup(void) {
@@ -583,9 +587,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     actor->x.fixed = 0;
     actor->y.fixed = 0;
     actor->z.fixed = 0;
-    actor->velocityX = 0;
-    actor->velocityY = 0;
-    actor->velocityZ = 0;
+    SET_VELOCITY(actor, 0, 0, 0);
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
@@ -644,9 +646,7 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->x.fixed = 0;
           landedEmber->y.fixed = 0;
           landedEmber->z.fixed = 0;
-          landedEmber->velocityX = 0;
-          landedEmber->velocityY = 0;
-          landedEmber->velocityZ = 0;
+          SET_VELOCITY(landedEmber, 0, 0, 0);
           landedEmber->targetX = ACTOR_NO_TARGET;
           landedEmber->targetY = ACTOR_NO_TARGET;
           landedEmber->targetZ = ACTOR_NO_TARGET;
@@ -1618,7 +1618,7 @@ static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 
 // Fade the object palette into or out of the materialization tint.
 static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
-                                               s32 waitFrames) {
+                                                      s32 waitFrames) {
   if (enabled == 1) {
     Engine_AudioPlayCue(0x134);
     Engine_ColorBufferApplyTarget(0x203a52, 1);
@@ -1633,7 +1633,8 @@ static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
 }
 
 // Flash the palette and spawn paired vertical effects every sixteen frames.
-static void SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor) {
+static void
+SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(actor, 7);
   } else {

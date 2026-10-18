@@ -109,7 +109,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 s32 SceneData_ReturnZero(void) { return 0; }
 
 // Return the shared exit table.
-u32 *SceneData_GetSceneTable(void) { return gCrossboneIslePlatformRooms_SceneTable; }
+u32 *SceneData_GetSceneTable(void) {
+  return gCrossboneIslePlatformRooms_SceneTable;
+}
 
 // Select actor placements for the current platform room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
@@ -134,11 +136,11 @@ static void Resource3b4_EmptyHookB(void) {}
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
-static void
-CrossboneIslePlatformRooms_FaceDjinniTowardLeader(union FieldObject *fieldObject) {
+static void CrossboneIslePlatformRooms_FaceDjinniTowardLeader(
+    union FieldObject *fieldObject) {
 #else
-static s32
-CrossboneIslePlatformRooms_FaceDjinniTowardLeader(union FieldObject *fieldObject) {
+static s32 CrossboneIslePlatformRooms_FaceDjinniTowardLeader(
+    union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = &fieldObject->actor;
   struct FieldActor *leader = Object_GetById(0);
@@ -223,8 +225,8 @@ static void CrossboneIslePlatformRooms_DjinniLongEscape(void) {
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
       ObjectDispatch_ApplyValueToChildren(spinningDjinni, 0);
-      Engine_ObjectSetScript(spinningDjinni,
-                             gCrossboneIslePlatformRooms_ActorFifteenMotionScript);
+      Engine_ObjectSetScript(
+          spinningDjinni, gCrossboneIslePlatformRooms_ActorFifteenMotionScript);
       Engine_EventEnd();
     }
   }
@@ -274,8 +276,8 @@ static void CrossboneIslePlatformRooms_DjinniFinalEscape(void) {
 #ifdef UBFIX
     djinni->update = CrossboneIslePlatformRooms_FaceDjinniTowardLeader;
 #else
-    djinni->update =
-        (void (*)(union FieldObject *))CrossboneIslePlatformRooms_FaceDjinniTowardLeader;
+    djinni->update = (void (*)(
+        union FieldObject *))CrossboneIslePlatformRooms_FaceDjinniTowardLeader;
 #endif
     Engine_EventEnd();
   }
@@ -472,8 +474,9 @@ static void CrossboneIslePlatformRooms_HideRedKey(void) {
 }
 
 // Collect the selected key, hide its actor and remember it was taken.
-static inline void CrossboneIslePlatformRooms_CollectKey(s32 actorId, s32 itemId,
-                                                s32 collectedFlag) {
+static inline void CrossboneIslePlatformRooms_CollectKey(s32 actorId,
+                                                         s32 itemId,
+                                                         s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_PartyGiveItem(itemId, 0);
@@ -1175,11 +1178,12 @@ static void CrossboneIslePlatformRooms_InitializeScene2(void) {
   Object_GetById(10)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(11)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(12)->scaleX = 7 * Q16_ONE / 10;
-  FieldScheduler_AddOrUpdateCallback(CrossboneIslePlatformRooms_CheckFifthPursuerTrigger,
-                                     0xc80);
+  FieldScheduler_AddOrUpdateCallback(
+      CrossboneIslePlatformRooms_CheckFifthPursuerTrigger, 0xc80);
   FieldScheduler_AddOrUpdateCallback(
       CrossboneIslePlatformRooms_CheckSecondPursuerTrigger, 0xc80);
-  FieldScheduler_AddCallback(CrossboneIslePlatformRooms_CheckFirstPursuerTrigger, 0xc80);
+  FieldScheduler_AddCallback(
+      CrossboneIslePlatformRooms_CheckFirstPursuerTrigger, 0xc80);
   Io_Write16(0x3f42, &REG_BLDCNT);
   Io_Write16(0x607, &REG_BLDALPHA);
 }
@@ -1190,9 +1194,10 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
 
   // Reattach the second block follower and rebuild all block support cells.
   Object_GetById(14)->motionFlags = 0;
-  FieldScheduler_AddOrUpdateCallback(CrossboneIslePlatformRooms_FollowSecondBlock,
-                                     0xc80);
-  FieldScheduler_AddCallback(CrossboneIslePlatformRooms_UpdateBlockPriorities, 0xc80);
+  FieldScheduler_AddOrUpdateCallback(
+      CrossboneIslePlatformRooms_FollowSecondBlock, 0xc80);
+  FieldScheduler_AddCallback(CrossboneIslePlatformRooms_UpdateBlockPriorities,
+                             0xc80);
   MapObject_SetPosition(107, 0, 0);
   if (GameFlag_IsSet(0xed9) != 0) {
     Engine_ActorSetAnimation(14, 2);
@@ -1221,8 +1226,8 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
 #ifdef UBFIX
       djinni->update = CrossboneIslePlatformRooms_FaceDjinniTowardLeader;
 #else
-      djinni->update = (void (*)(
-          union FieldObject *))CrossboneIslePlatformRooms_FaceDjinniTowardLeader;
+      djinni->update = (void (*)(union FieldObject *))
+          CrossboneIslePlatformRooms_FaceDjinniTowardLeader;
 #endif
     } else if (GameFlag_IsSet(0x9c9) != 0) {
       Actor_SetPosition(ACTOR_DJINNI, PIXELS(888), PIXELS(664));
@@ -1464,12 +1469,16 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents3[] = {
 #endif
     {0x202, 54, CONDITION_ALWAYS,
      EVENT_SCRIPT(CrossboneIslePlatformRooms_ChooseThirdBlockMotion)},
-    {0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePlatformRooms_UseLadder)},
+    {0x202, 60, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossboneIslePlatformRooms_UseLadder)},
     {0x202, 70, CONDITION_ALWAYS,
      EVENT_SCRIPT(CrossboneIslePlatformRooms_ChooseClimbOrPush)},
-    {EVENT_TOUCH, 20, 0x36, EVENT_SCRIPT(CrossboneIslePlatformRooms_DjinniFirstEscape)},
-    {EVENT_TOUCH, 21, 0x36, EVENT_SCRIPT(CrossboneIslePlatformRooms_DjinniLongEscape)},
-    {EVENT_TOUCH, 22, 0x36, EVENT_SCRIPT(CrossboneIslePlatformRooms_DjinniFinalEscape)},
+    {EVENT_TOUCH, 20, 0x36,
+     EVENT_SCRIPT(CrossboneIslePlatformRooms_DjinniFirstEscape)},
+    {EVENT_TOUCH, 21, 0x36,
+     EVENT_SCRIPT(CrossboneIslePlatformRooms_DjinniLongEscape)},
+    {EVENT_TOUCH, 22, 0x36,
+     EVENT_SCRIPT(CrossboneIslePlatformRooms_DjinniFinalEscape)},
     {EVENT_TOUCH, 30, 0x36,
      EVENT_SCRIPT(CrossboneIslePlatformRooms_MoveDjinniToTouchedTarget)},
     {EVENT_TOUCH, 31, 0x36,
@@ -1494,7 +1503,8 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents3[] = {
      EVENT_SCRIPT(CrossboneIslePlatformRooms_MoveDjinniToTouchedTarget)},
     {EVENT_TOUCH, 41, 0x36,
      EVENT_SCRIPT(CrossboneIslePlatformRooms_MoveDjinniToTouchedTarget)},
-    {0x7, 15, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePlatformRooms_JoinDjinni)},
+    {0x7, 15, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossboneIslePlatformRooms_JoinDjinni)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 15, CONDITION_ALWAYS,
      EVENT_SCRIPT(CrossboneIslePlatformRooms_HaltDjinni)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x200,

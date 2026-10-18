@@ -394,7 +394,7 @@ Func_080df1fc:
 .L_080df540:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080df544:
-	.4byte Func_080df174
+	.4byte BattleFx_SpawnFallingParticles
 .L_080df548:
 	.4byte gInput
 .L_080df54c:
@@ -589,6 +589,6 @@ Func_080df1fc:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080df6ec:
-	.4byte Func_080df174
+	.4byte BattleFx_SpawnFallingParticles
 .L_080df6f0:
 	.4byte gData_080f0e78

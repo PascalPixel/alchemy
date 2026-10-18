@@ -19,6 +19,7 @@
 #include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "iowrite.h"
+#include "macros.h"
 
 #define NULL ((void *)0)
 #include "field_obj.h"
@@ -73,7 +74,8 @@ MercuryLighthouseEntrance_PlayPathSound(struct ScriptInterpreter *interpreter) {
 static void
 MercuryLighthouseEntrance_UpdateDoorwayFacing(union FieldObject *fieldObject) {
 #else
-static s32 MercuryLighthouseEntrance_UpdateDoorwayFacing(union FieldObject *fieldObject) {
+static s32
+MercuryLighthouseEntrance_UpdateDoorwayFacing(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *object = (struct FieldActor *)fieldObject;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -103,7 +105,9 @@ static void MercuryLighthouseEntrance_ReleaseRaisedPillar(void) {
 }
 
 // Attempts one key-directed step, consuming a raised-pillar level if needed.
-static void MercuryLighthouseEntrance_TryPillarStep(void) { MercuryLighthouse_RunActorMove(); }
+static void MercuryLighthouseEntrance_TryPillarStep(void) {
+  MercuryLighthouse_RunActorMove();
+}
 
 // Raises the touched pillar to its highest level before allowing another step.
 static void MercuryLighthouseEntrance_RaiseTouchedPillar(void) {
@@ -111,16 +115,22 @@ static void MercuryLighthouseEntrance_RaiseTouchedPillar(void) {
 }
 
 // Supplies the entrance positions and camera bounds.
-void *SceneData_GetSceneTableA(void) { return gMercuryLighthouseEntrance_SceneTableA; }
+void *SceneData_GetSceneTableA(void) {
+  return gMercuryLighthouseEntrance_SceneTableA;
+}
 
 // This overlay supplies no auxiliary scene-data table.
 int SceneData_ReturnZero(void) { return 0; }
 
 // Supplies the packed exit destinations.
-void *SceneData_GetSceneTableB(void) { return gMercuryLighthouseEntrance_SceneTableB; }
+void *SceneData_GetSceneTableB(void) {
+  return gMercuryLighthouseEntrance_SceneTableB;
+}
 
 // Supplies the actors and pillar interaction points.
-void *SceneData_GetSceneTableC(void) { return gMercuryLighthouseEntrance_SceneTableC; }
+void *SceneData_GetSceneTableC(void) {
+  return gMercuryLighthouseEntrance_SceneTableC;
+}
 
 // Reads the inscription asking who honors the heart of the goddess.
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
@@ -149,7 +159,9 @@ static void MercuryLighthouseEntrance_RiseToMiddleLanding(void) {
 }
 
 // Supplies touch, search, dialogue and Psynergy events.
-void *SceneData_GetSceneTableD(void) { return gMercuryLighthouseEntrance_SceneTableD; }
+void *SceneData_GetSceneTableD(void) {
+  return gMercuryLighthouseEntrance_SceneTableD;
+}
 
 // Ply at the central mechanism starts the light-and-spark sequence and enables
 // the pillar routes. Casting it from any other map cell has no effect.
@@ -186,7 +198,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 
         effectData->type = effectType;
       }
-      effectData->script = (const s32 *)gMercuryLighthouseEntrance_SparkBurstScript;
+      effectData->script =
+          (const s32 *)gMercuryLighthouseEntrance_SparkBurstScript;
       Engine_AudioPlayCue(246);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
@@ -272,7 +285,8 @@ s32 MercuryLighthouseEntrance_ApplyEntryState(void) {
     REG_BLDALPHA = alpha;
   }
   // Restore persistent lighting and the Retreat destination first.
-  MercuryLighthouse_SpawnLightObjects(21, (struct MercuryLighthouseLights *)gSceneState);
+  MercuryLighthouse_SpawnLightObjects(
+      21, (struct MercuryLighthouseLights *)gSceneState);
   GameFlag_Set(0x111);
   gGameState.retreatEntrance = 11;
   gGameState.retreatScene = (s32)&SceneId_MercuryLighthouse4;
@@ -341,9 +355,7 @@ s32 MercuryLighthouseEntrance_ApplyEntryState(void) {
     options.palette = 7;
     for (sparkIndex = 0; sparkIndex <= 16; sparkIndex++) {
       angle = sparkIndex << 12;
-      velocity[0] = Engine_MathCos(angle);
-      velocity[1] = 0;
-      velocity[2] = Engine_MathSin(angle);
+      SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
       velocity[0] -= velocity[0] / 4;
       velocity[2] -= velocity[2] / 2;
       Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0],
@@ -469,8 +481,8 @@ static void MercuryLighthouseEntrance_CrossDoorway(void) {
 #ifdef UBFIX
   mirroredActor->update = MercuryLighthouseEntrance_UpdateDoorwayFacing;
 #else
-  mirroredActor->update =
-      (void (*)(union FieldObject *))MercuryLighthouseEntrance_UpdateDoorwayFacing;
+  mirroredActor->update = (void (*)(
+      union FieldObject *))MercuryLighthouseEntrance_UpdateDoorwayFacing;
 #endif
   // Follow the leader through the doorway and clear its collision cells.
   Engine_CameraMoveToActor(0, 1);

@@ -9,7 +9,7 @@
 #else
 // C89 permits repeated extern declarations of the same array. A false
 // condition gives it an invalid size; a true one emits no code or storage.
-#define STATIC_ASSERT(condition)                                              \
+#define STATIC_ASSERT(condition)                                               \
   extern char alchemyStaticAssertion[(condition) ? 1 : -1]
 #endif
 

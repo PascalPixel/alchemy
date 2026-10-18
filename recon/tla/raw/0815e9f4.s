@@ -47,10 +47,10 @@ Func_0815e9f4:
 	bne .L_0815ea64
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #188
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0815ea74
 	.2byte 0x0000
 .L_0815ea60:
@@ -58,10 +58,10 @@ Func_0815e9f4:
 .L_0815ea64:
 	movs r1, #7
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #188
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0815ea74:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -429,9 +429,9 @@ Func_0815e9f4:
 .L_0815ed74:
 	.4byte 0x00000137
 .L_0815ed78:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815ed7c:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer
 .L_0815ed80:
 	.4byte gBgScroll
 .L_0815ed84:
@@ -732,7 +732,7 @@ Func_0815e9f4:
 	mov r2, r9
 	cmp r2, #7
 	bne .L_0815efba
-	bl Func_08143d04
+	bl BattleFx_HideBg1AndRestoreBackdrop
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -752,4 +752,4 @@ Func_0815e9f4:
 .L_0815eff8:
 	.4byte 0xfffffc00
 .L_0815effc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

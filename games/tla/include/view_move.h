@@ -9,8 +9,8 @@ struct ObjectRuntime;
 // The view moves of the field Psynergy scenes (kinds 19 and 27). Their work
 // sits in heap slot 92 (battle_fx_work[0]): Func_080e89e4 opens the map's
 // view bounds and keeps the old ones, Func_080e8b44 swings the view centre
-// each frame, and Func_080e8c9c puts the bounds back. Func_080e8cfc gathers
-// the nearby objects whose sprites shake with the view, and Func_080e8d80
+// each frame, and Func_080e8c9c puts the bounds back. ViewMove_SaveNearbySprites gathers
+// the nearby objects whose sprites shake with the view, and ViewMove_RestoreNearbySprites
 // sets them back.
 
 #define HEAP_SLOT_VIEW_MOVE 92
@@ -41,7 +41,7 @@ STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 0x50);
 void Func_080e89e4(s32 direction);
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
 void Func_080e8c9c(void);
-void Func_080e8cfc(void);
-void Func_080e8d80(void);
+void ViewMove_SaveNearbySprites(void);
+void ViewMove_RestoreNearbySprites(void);
 
 #endif

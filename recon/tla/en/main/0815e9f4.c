@@ -19,7 +19,7 @@
 // caster is an enemy (actor 8 and up), the spark sheet, and the transfer
 // callback in copy mode.
 
-// Port of The Broken Seal's BattlePres_RunRingAndSparkScene, with The Lost
+// Port of The Broken Seal's BattleFx_RunRingAndSparkScene, with The Lost
 // Age's heap slots, blitter modes (3 minus ☀️'s) and callback orders (the
 // transfer at 0xc80, the fade at 0x480), no work->effect store, and these
 // changes: the palette goes by DMA, the canvases are cleared 0x3c00 bytes
@@ -58,7 +58,7 @@
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; Func_081963ec takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -91,27 +91,25 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ApplyStepAndYOffset(s32 actor,
                                         struct EffectPosition *position);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
 void Func_080150e4(s32 angle);
-void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
+void Transform_SetLookAt(void *camera, void *eye);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 // Sets up the canvas tile map on BG1.
 void Func_08143d80(void);
 // Marks the transition done and shows the battle view again.
-void Func_08143d04(void);
+void BattleFx_HideBg1AndRestoreBackdrop(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Steps the background palette fade.
-void Func_08143488(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+void Palette_StepFadeTransfer(void);
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 Func_081963ec(s32 slot, s32 modeFlags);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -151,33 +149,33 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     big = 0;
 
   // Setup, one step of the view's swing between each load.
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Func_08143d80();
   REG_BG1CNT = 0x1f80;
   if (effect->side == 0) {
-    Func_081963ec(HEAP_BLITTER,
+    BattleFx_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-    Func_081963ec(HEAP_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
-    Func_081963ec(HEAP_BLITTER,
+    BattleFx_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP_X));
-    Func_081963ec(HEAP_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet,
                              Ram_MapCellBuffer, 1, 1);
@@ -185,16 +183,16 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   if (effect->actor > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
             (void *)BG_PLTT, 0x84000020, REG_DMA3);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unk000c,
-                                              130);
+  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
+                                              effect->firstTarget, 130);
   WaitFrames(1);
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The gathering ring, for the larger kinds: the caster holds still while
   // 64 sparks spin in towards it on random axes.
@@ -227,11 +225,11 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback(Func_08143488, 0x480);
+    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
     Audio_PlayCue(212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
-                                                  effect->unk000c, 130);
+                                                  effect->firstTarget, 130);
       // Spark i starts at frame i / 4, 16 to 79 pixels out, and moves in
       // 4 pixels a frame until it reaches the caster.
       for (i = 0; i != SPARK_COUNT; i++) {
@@ -260,7 +258,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       WaitFrames(1);
     }
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
@@ -325,7 +323,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     else if (frame <= 7)
       draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {
@@ -352,7 +350,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
 
   // Teardown: the background palette steps back over seven frames.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   gBgScroll[1].y = 32;
@@ -361,5 +359,5 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
     WaitFrames(1);
   }
-  Func_08143d04();
+  BattleFx_HideBg1AndRestoreBackdrop();
 }

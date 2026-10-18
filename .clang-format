@@ -7,3 +7,13 @@ SortIncludes:
 # The integer types the games define, so that a cast such as (u32)&x is read
 # as a cast and not as a bitwise and.
 TypeNames: [s8, u8, s16, u16, s32, u32, s64, u64]
+# Loop macros, so that the statement after one is indented as a loop body,
+# written as calls, with no space before the parenthesis.
+ForEachMacros: [EFFECT_FOR_EACH_TARGET]
+# Macros that expand to a whole definition and take no semicolon, so that
+# the line after one, even after an UNUSED one, starts a new declaration.
+StatementMacros: [DEFINE_EFFECT_KIND]
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterForeachMacros: false

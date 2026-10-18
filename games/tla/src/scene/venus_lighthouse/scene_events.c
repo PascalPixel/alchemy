@@ -14,6 +14,7 @@
 #include "party_state.h"
 #include "tla_edition.h"
 #include "scene_ids.h"
+#include "edition.h"
 
 #define Object_SetPartAttribute                                                \
   ((void (*)(struct FieldActor *, s32))Object_SetPartAttribute)
@@ -48,7 +49,7 @@ struct AerieEventWork {
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gPartyState.entrance == ENTRANCE_OPENING) {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     // The international editions also save this scene and entrance 22.
     {
       s32 scene = (s32)&SceneId_VenusLighthouse;

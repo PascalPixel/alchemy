@@ -6,6 +6,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "edition.h"
 
 extern u8 MsgSaving;
 extern u8 MsgErasing;
@@ -19,7 +20,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 void Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
 void Audio_PlayCue(s32 cue);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // Spanish and Italian far-call tables name the entry to the same routine
 // differently.
 void Func_080c8688(void);
@@ -29,7 +30,7 @@ void Func_080c8698(void);
 #endif
 
 // Heading x coordinate: only French differs.
-#if defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH)
 #define SAVING_X 40
 #define ERASING_X 48
 #define COPYING_X 48

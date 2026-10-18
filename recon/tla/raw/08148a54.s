@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08148a54
+@ Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
+	.global BattleFx_RunFroth
 	.thumb_func
-Func_08148a54:
+BattleFx_RunFroth:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -28,12 +29,12 @@ Func_08148a54:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #31
 	movs r0, #188
 	str r3, [sp, #8]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, .L_08148ad0
 	movs r2, #128
@@ -492,7 +493,7 @@ Func_08148a54:
 	movs r3, #1
 	str r3, [r2]
 .L_08148e34:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	lsls r4, r4, #7
 	adds r4, #232
@@ -521,7 +522,7 @@ Func_08148a54:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -533,8 +534,8 @@ Func_08148a54:
 .L_08148e8c:
 	.4byte gMapCellBuffer
 .L_08148e90:
-	.4byte Func_0814c928
+	.4byte Camera_ApplyPhasedDelta
 .L_08148e94:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08148e98:
 	.4byte gData_081979a8

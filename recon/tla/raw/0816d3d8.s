@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816d3d8
+@ Abilities: Stone Justice (kind 100).
+	.global BattleFx_RunStoneJustice
 	.thumb_func
-Func_0816d3d8:
+BattleFx_RunStoneJustice:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -37,7 +38,7 @@ Func_0816d3d8:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	movs r2, #239
 	lsls r2, r2, #7
@@ -376,7 +377,7 @@ Func_0816d3d8:
 	movs r0, #2
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -399,7 +400,7 @@ Func_0816d3d8:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -408,7 +409,7 @@ Func_0816d3d8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816d710:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816d714:
 	.4byte gData_0819749e
 .L_0816d718:

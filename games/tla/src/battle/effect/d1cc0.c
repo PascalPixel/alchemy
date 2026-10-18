@@ -10,6 +10,9 @@ void Scheduler_AddOrUpdateCallback();
 s32 ObjectTable_Get();
 void Func_080d1ae4();
 
+// Like Func_080d1a18 (the fade overlay) with blank tiles and no blending:
+// loads 0x200 zeroed tiles to VRAM slot 94 and starts Func_080d1ae4 on
+// object (the controlled owner's when 0).
 void Func_080d1cc0(s32 object) {
   u8 *work = Runtime_AllocateBlock(144, 28);
   void *buffer = Runtime_AllocateHeapBlock(56, 0x400);

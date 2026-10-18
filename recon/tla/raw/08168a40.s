@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08168a40
+@ Abilities: Kirin (scene kind 3).
+	.global BattleFx_RunKirin
 	.thumb_func
-Func_08168a40:
+BattleFx_RunKirin:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -58,12 +59,12 @@ Func_08168a40:
 .L_08168ab0:
 	.4byte 0x00000018
 .L_08168ab4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08168ab8:
 	lsls r1, r1, #2
 	movs r0, #9
 	movs r2, #1
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	ldr r2, .L_08168b1c
 	movs r3, #240
 	str r3, [r2, #16]
@@ -73,7 +74,7 @@ Func_08168a40:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	ldr r3, .L_08168b14
 	movs r2, #128
 	lsls r2, r2, #19
@@ -195,7 +196,7 @@ Func_08168a40:
 	bne .L_08168b98
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -1164,7 +1165,7 @@ Func_08168a40:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #76]
 	lsls r1, r1, #7
@@ -1205,7 +1206,7 @@ Func_08168a40:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #180
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1224,4 +1225,4 @@ Func_08168a40:
 .L_081693a8:
 	.4byte gData_08197410
 .L_081693ac:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

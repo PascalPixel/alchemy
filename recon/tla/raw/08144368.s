@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_08144368
+@ Abilities: none; kind 34 is used by no ability. Named for The Broken Seal's
+@ twin.
+	.global BattleFx_RunOrbitingSpirals
 	.thumb_func
-Func_08144368:
+BattleFx_RunOrbitingSpirals:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -35,12 +37,12 @@ Func_08144368:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #31
 	movs r0, #188
 	str r3, [sp, #36]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r1, sp
@@ -310,7 +312,7 @@ Func_08144368:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -319,9 +321,9 @@ Func_08144368:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_081445e8:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_081445ec:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081445f0:
 	.4byte 0xffff9800
 .L_081445f4:

@@ -3,10 +3,11 @@
 #include "resource.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "edition.h"
 
 // The European editions' lettering sheet has one more palette row.
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_PALETTE_ROWS 6
 #else
 #define LETTERING_PALETTE_ROWS 5

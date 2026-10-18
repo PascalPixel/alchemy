@@ -4,6 +4,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "callback_scheduler.h"
+#include "edition.h"
 
 // The shop's work (heap slot 220), as far as these functions use it.
 struct ShopRuntime {
@@ -29,7 +30,7 @@ extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
 void Func_08108948(void *work);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The Spanish and Italian far-call tables reach it through the slot they name
 // BattleEffect_InitializeSharedSceneFar.
 void BattleEffect_InitializeSharedSceneFar(void);
@@ -55,7 +56,7 @@ void Func_08108148(void) {
   s32 slot;
 
   work = Runtime_AllocateHeapBlock(220, 0xcec);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   BattleEffect_InitializeSharedSceneFar();
 #else
   EventRuntime_ResolveAllPendingActionsFar();

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0818b868
+@ Abilities: Triple Chomp (kind 426).
+	.global BattleFx_RunTripleChomp
 	.thumb_func
-Func_0818b868:
+BattleFx_RunTripleChomp:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -54,14 +55,14 @@ Func_0818b868:
 .L_0818b8cc:
 	.4byte 0x00001010
 .L_0818b8d0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0818b8d4:
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 	movs r0, #8
 	bl WaitFrames
 	movs r1, #23
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r0, .L_0818bc20
 	ldr r1, .L_0818bc24
@@ -114,7 +115,7 @@ Func_0818b868:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #32]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, [sp, #60]
 	str r0, [sp, #28]
 	movs r1, #36
@@ -328,9 +329,9 @@ Func_0818b868:
 	ldr r0, .L_0818bc54
 	ldr r1, [sp, #32]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	ldr r0, [sp, #28]
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0818bb18:
 	ldr r1, [sp, #16]
 	movs r0, #28
@@ -429,7 +430,7 @@ Func_0818b868:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #240
 	ldr r3, [sp, #56]
 	lsls r0, r0, #7
@@ -450,7 +451,7 @@ Func_0818b868:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0818bc5c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #84
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -489,4 +490,4 @@ Func_0818b868:
 .L_0818bc58:
 	.4byte gData_08197410
 .L_0818bc5c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

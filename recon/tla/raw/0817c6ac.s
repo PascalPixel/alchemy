@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817c6ac
+@ Abilities: Fume, Serpent Fume, Dragon Fume (kind 72).
+	.global BattleFx_RunFume
 	.thumb_func
-Func_0817c6ac:
+BattleFx_RunFume:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -22,7 +23,7 @@ Func_0817c6ac:
 	bl BattleFx_BeginCanvasLayer
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, .L_0817c718
 	movs r2, #128
 	lsls r2, r2, #19
@@ -57,7 +58,7 @@ Func_0817c6ac:
 .L_0817c718:
 	.4byte 0x00001010
 .L_0817c71c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817c720:
 	adds r4, #104
 	adds r1, r4, #0
@@ -105,7 +106,7 @@ Func_0817c6ac:
 	movs r1, #4
 	movs r2, #32
 	movs r3, #32
-	bl Func_08178680
+	bl Render_BuildQuadStrip
 	movs r4, #0
 	str r4, [sp, #56]
 .L_0817c78e:
@@ -523,7 +524,7 @@ Func_0817c6ac:
 	b .L_0817cbd4
 .L_0817cab0:
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r4, #6
 	adds r6, r0, #0
 	mov r8, r4
@@ -591,9 +592,9 @@ Func_0817c6ac:
 	ldr r0, .L_0817cb6c
 	ldr r1, .L_0817cb70
 	movs r2, #66
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	ldr r0, [sp, #56]
 	cmp r0, #22
 	bgt .L_0817cbce
@@ -652,14 +653,14 @@ Func_0817c6ac:
 	ldr r0, .L_0817cc24
 	ldr r1, .L_0817cc28
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0817cbce:
 	adds r0, r6, #0
 	bl MemFree
 .L_0817cbd4:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	ldr r2, [sp, #80]
 	ldr r1, [r2, #24]
 	lsls r1, r1, #1
@@ -686,7 +687,7 @@ Func_0817c6ac:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817cc2c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -699,4 +700,4 @@ Func_0817c6ac:
 .L_0817cc28:
 	.4byte Data_02011000
 .L_0817cc2c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

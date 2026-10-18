@@ -38,7 +38,7 @@
 #include "game_state.h"
 #include "uiwindow.h"
 #include "text/msg_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "frame.h"
 #include "map_scroll.h"
 #include "flags.h"
@@ -589,7 +589,7 @@ menu_top:;
       }
       for (;;) {
         if ((gKeysPressed & KEY_B) != 0) {
-          Engine_AudioPlayCue(SOUND_MENU_CANCEL);
+          Engine_AudioPlayCue(SE_MENU_CANCEL);
           break;
         }
         if ((v5 & gLinkStatus) == v5) {
@@ -707,7 +707,7 @@ menu_top:;
       for (;;) {
         Link_DrawShiftedTilePair(0x6002500);
         if ((gKeysPressed & KEY_B) != 0) {
-          Engine_AudioPlayCue(SOUND_MENU_CANCEL);
+          Engine_AudioPlayCue(SE_MENU_CANCEL);
           RenderOutput_PrepareForRedraw(pageWindow);
           UiWork_Finalize(pageWindow, 2);
           UiWork_Finalize(helpWindow, 2);
@@ -718,7 +718,7 @@ menu_top:;
           pageIndex = (pageIndex + 1);
           v7 = 1;
           if (pageIndex == pageCount) {
-            Engine_AudioPlayCue(SOUND_MENU_CONFIRM);
+            Engine_AudioPlayCue(SE_MENU_CONFIRM);
             RenderOutput_PrepareForRedraw(pageWindow);
             UiWork_Finalize(pageWindow, 2);
             UiWork_Finalize(helpWindow, 2);
@@ -726,14 +726,14 @@ menu_top:;
             Engine_TaskWait(1);
             goto menu_top;
           }
-          Engine_AudioPlayCue(SOUND_MENU_CURSOR_MOVE);
+          Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
         } else {
           if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
-            Engine_AudioPlayCue(SOUND_MENU_CURSOR_MOVE);
+            Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;
             wrappedPage--;
           } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
-            Engine_AudioPlayCue(SOUND_MENU_CURSOR_MOVE);
+            Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;
             wrappedPage++;
           } else {

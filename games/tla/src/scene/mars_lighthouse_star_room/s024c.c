@@ -1,4 +1,5 @@
 #include "mars_lighthouse_star_room.h"
+#include "edition.h"
 
 void Func_02004404(s32 volume, s32 frames);
 void Func_02004414(s32 frames);
@@ -18,7 +19,7 @@ void Func_0200024c(s32 phase, s32 frame) {
     Func_02004414(60);
     Func_02000d88();
     Func_0200432c(10, 0, 0);
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     GameFlag_SetBit(0x238);
 #endif
     ((struct EventDelay *)Ram_HeapSlots->eventWork)->frames = 20;

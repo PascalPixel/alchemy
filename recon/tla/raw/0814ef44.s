@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global BattleFx_RunSeriesA
+	.global BattleFx_RunHealingMotes
 	.thumb_func
-BattleFx_RunSeriesA:
+BattleFx_RunHealingMotes:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -287,7 +287,7 @@ BattleFx_RunSeriesA:
 	ldr r0, [r1, #4]
 	adds r1, r2, #0
 	str r2, [sp, #40]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	cmp r7, #0
 	beq .L_0814f16a
 	cmp r7, #6
@@ -948,7 +948,7 @@ BattleFx_RunSeriesA:
 .L_0814f67c:
 	.4byte 0xffce0000
 .L_0814f680:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814f684:
 	.4byte 0x00000166
 .L_0814f688:
@@ -1370,7 +1370,7 @@ BattleFx_RunSeriesA:
 	beq .L_0814f996
 	b .L_0814f5f4
 .L_0814f996:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #72]
 	lsls r5, r5, #7
@@ -1398,7 +1398,7 @@ BattleFx_RunSeriesA:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #148
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1421,4 +1421,4 @@ BattleFx_RunSeriesA:
 .L_0814fa00:
 	.4byte 0xfffff000
 .L_0814fa04:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

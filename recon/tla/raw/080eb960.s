@@ -20,7 +20,7 @@ Func_080eb960:
 	adds r0, r5, #0
 	bl ObjectTable_Get
 	mov r8, r0
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	str r0, [sp, #12]
 	mov r1, r8
 	ldrh r1, [r1, #6]
@@ -66,10 +66,10 @@ Func_080eb960:
 	ands r3, r2
 	strb r3, [r5, #9]
 	mov r0, r8
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	strh r0, [r5, #30]
 	mov r0, r8
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13

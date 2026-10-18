@@ -1,16 +1,13 @@
 #include "types.h"
+#include "battle_effect_argument.h"
 
-struct BattleEffectArgument;
 void Func_08144b14(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_08144af0(struct BattleEffectArgument *effect) {
-  Func_08144b14(effect, 0);
-}
+// Abilities: Revive, Water of Life, Lich (kind 25); Quartz (kind 201).
+DEFINE_EFFECT_KIND(BattleFx_RunRevive, Func_08144b14, 0)
 
-void Func_08144afc(struct BattleEffectArgument *effect) {
-  Func_08144b14(effect, 1);
-}
+// Abilities: Dew (kind 209).
+DEFINE_EFFECT_KIND(BattleFx_RunDew, Func_08144b14, 1)
 
-void Func_08144b08(struct BattleEffectArgument *effect) {
-  Func_08144b14(effect, 2);
-}
+// Abilities: Spark (kind 255).
+DEFINE_EFFECT_KIND(BattleFx_RunSpark, Func_08144b14, 2)

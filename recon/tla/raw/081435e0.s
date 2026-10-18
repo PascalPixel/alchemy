@@ -24,7 +24,7 @@ BattleFx_BeginCanvasLayer:
 	ldr r3, [r3]
 	mov r11, r3
 	bl Func_0813ba50
-	bl Func_081434d8
+	bl BattleFx_ClearActorTimers
 	mov r2, r11
 	movs r3, #1
 	str r3, [r2, #12]
@@ -144,7 +144,7 @@ BattleFx_BeginCanvasLayer:
 .L_081436fc:
 	.4byte gBgScroll
 .L_08143700:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer
 .L_08143704:
 	lsls r3, r2, #1
 	adds r3, r3, r2

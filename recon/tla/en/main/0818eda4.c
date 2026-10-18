@@ -1,7 +1,7 @@
 // Draft, differ 809 of 895 (draft 874 instructions, no device): effect kind
 // 123, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleFx_RunFallingSword 0.46, by call order
-// BattleFx_RunJupiterDjinnFall 0.50), with the ARM model renderer for its
+// (twins: BattleFx_RunTitanBlade 0.46, by call order
+// BattleFx_RunJupiter 0.50), with the ARM model renderer for its
 // flashes, shards, splashes and rings.
 // Every call, cue and table read is in the native's order; what is left is
 // the frame. The native frame is 92 bytes: from at sp+80, to at sp+68, the
@@ -35,7 +35,7 @@ struct ModelTexture {
   const void *pixels;
 };
 
-// A model for the ARM renderer (Func_08196a7c).
+// A model for the ARM renderer (Render_DrawModelList).
 struct RenderModel {
   s32 kind;
   s32 unk04;
@@ -65,9 +65,9 @@ extern const u8 Data_081991e0[];
 extern const u8 gData_08199210[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
-void Func_08143bb8(void);
-void Func_08144aac(s32 flip, DrawRectangle *out);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -81,19 +81,19 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-struct RenderModel *Func_081969f8(s32 count);
+struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Func_08196958(const u8 *vertices, void *projected, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08158ce0(s32 randomMask, u32 range);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 
@@ -105,7 +105,7 @@ void Audio_PlayCue(s32 cue);
 //
 // The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
 // shard's roll); the map cell buffer is cleared but not drawn.
-void Func_0818eda4(struct BattleEffectArgument *effect) {
+void BattleFx_RunLiquifier(struct BattleEffectArgument *effect) {
   struct EffectPosition from;
   struct EffectPosition to;
   DrawRectangle draw[2];
@@ -126,7 +126,7 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02014000,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CB, work->sheet, 0, 0);
@@ -138,7 +138,7 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &from);
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &to);
 
@@ -243,7 +243,7 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
     }
 
     projected = Runtime_BumpAllocateAlternatePool(32);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
 
     // Eight flashes turn about the caster, each for 16 frames from its
     // start, swinging wider and back with a sine.
@@ -268,8 +268,8 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
         Func_080150e4((k << 12) - 0x3800);
         Func_080151e4(0x5555, Data_08199ebc[k] * Trig_Sin(age << 11) / 64 * 2,
                       0x8000);
-        Func_08196958(Data_08199ea4, projected, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_08199ea4, projected, 4);
+        Render_DrawModelList(model);
       }
     }
 
@@ -291,8 +291,8 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
         Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
         Func_080150e4(step->z);
         Func_080151e4(scale, 0x10000, 0x8000);
-        Func_08196958(Data_081991c0, projected, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991c0, projected, 4);
+        Render_DrawModelList(model);
       }
       step++;
     }
@@ -317,8 +317,8 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
         Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
         SceneTransform_ApplyPitch(0x3c00);
         Func_080151e4(age << 14, age << 14, age << 14);
-        Func_08196958(Data_081991e0, projected, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991e0, projected, 4);
+        Render_DrawModelList(model);
       }
       step++;
     }
@@ -338,8 +338,8 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
         Func_080151e4(scale * 2, scale * 2, scale);
         Func_080150e4(0x6000 - (k << 14));
         SceneTransform_ApplyPitch(-0x1000);
-        Func_08196958(gData_08199210, projected, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, projected, 4);
+        Render_DrawModelList(model);
       }
     }
 
@@ -359,13 +359,13 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
     MemFree(projected);
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -43,7 +43,7 @@ Func_0813e7e0:
 	str r5, [r3]
 	mov r0, r11
 	bl Func_08191530
-	bl Func_081434d8
+	bl BattleFx_ClearActorTimers
 	ldr r2, .L_0813e898
 	movs r3, #32
 	str r5, [r6, #12]
@@ -239,7 +239,7 @@ Func_0813e7e0:
 	bl Scheduler_AddOrUpdateCallback
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r1, #19
 	movs r0, #188
 	b .L_0813e9e4
@@ -257,9 +257,9 @@ Func_0813e7e0:
 .L_0813e9dc:
 	.4byte 0x04000208
 .L_0813e9e0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813e9e4:
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r2, #240
 	ldr r3, .L_0813eb48
 	ldr r1, .L_0813eb4c
@@ -323,7 +323,7 @@ Func_0813e7e0:
 	adds r1, r2, #0
 	bl Func_08164b2c
 .L_0813ea6a:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #232
@@ -442,7 +442,7 @@ Func_0813e7e0:
 .L_0813eb60:
 	.4byte gInput
 .L_0813eb64:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813eb68:
 	.4byte gIoWriteQueue
 .L_0813eb6c:

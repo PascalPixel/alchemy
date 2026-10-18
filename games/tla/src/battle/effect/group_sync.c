@@ -21,7 +21,7 @@ s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 // Gathers up to eight live objects, other than the scene's main object, for
 // which Func_080cdac0 measures a distance from the first object, with each
 // one's sprite value.
-void Func_080e8cfc(void) {
+void ViewMove_SaveNearbySprites(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
@@ -52,7 +52,8 @@ void Func_080e8cfc(void) {
   }
 }
 
-void Func_080e8d80(void) {
+// Writes each gathered object's saved sprite value back.
+void ViewMove_RestoreNearbySprites(void) {
   struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
   s32 i;
 

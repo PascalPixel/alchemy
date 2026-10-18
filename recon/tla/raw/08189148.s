@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08189148
+@ Abilities: Dragon Cloud, Epicenter (kind 49).
+	.global BattleFx_RunDragonCloud
 	.thumb_func
-Func_08189148:
+BattleFx_RunDragonCloud:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -128,7 +129,7 @@ Func_08189148:
 	ldr r0, [r5, #4]
 	adds r1, r7, #0
 	str r7, [sp, #20]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -358,7 +359,7 @@ Func_08189148:
 .L_08189418:
 	.4byte IwramCopyWords
 .L_0818941c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08189420:
 	.4byte Data_08199d5c
 .L_08189424:
@@ -1214,7 +1215,7 @@ Func_08189148:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -1236,7 +1237,7 @@ Func_08189148:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #248
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1267,4 +1268,4 @@ Func_08189148:
 .L_08189b0c:
 	.4byte gData_0819746d
 .L_08189b10:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

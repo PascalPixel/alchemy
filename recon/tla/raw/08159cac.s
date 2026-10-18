@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08159cac
+@ Abilities: Spire, Clay Spire, Stone Spire (kind 2).
+	.global BattleFx_RunSpire
 	.thumb_func
-Func_08159cac:
+BattleFx_RunSpire:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -38,7 +39,7 @@ Func_08159cac:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r6, [sp, #32]
 	str r5, [sp, #20]
@@ -410,7 +411,7 @@ Func_08159cac:
 	movs r1, #4
 	movs r0, #2
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #28]
 	lsls r4, r4, #7
@@ -434,7 +435,7 @@ Func_08159cac:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -444,7 +445,7 @@ Func_08159cac:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0815a01c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815a020:
 	.4byte Data_081985b0
 .L_0815a024:

@@ -2,7 +2,7 @@
 	.global Data_080eff22
 Data_080eff22:
 	.byte 2, 3, 13, 8, 30, 31
-@ 8-byte rows searched by ID by Func_080cda58; ID -1 terminates.
+@ 8-byte rows searched by ID by Field_GetPsynergyTargetRule; ID -1 terminates.
 	.global gData_080eff28
 gData_080eff28:
 	.incbin "games/tla/src/battle/effect/descent.table"

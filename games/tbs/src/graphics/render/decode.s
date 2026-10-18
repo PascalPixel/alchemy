@@ -140,11 +140,12 @@ AlchemyUncreditedEnd_render_decode_1:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
+	@ The table number last loaded, then the colour tables' address less
+	@ 224 bytes (unused) and less 256 bytes: table n is the 256 bytes at
+	@ that base + n * 256.
 	.4byte 0x00000000
-	.4byte 0
-	.reloc .-4, R_ARM_ABS32_NOI, Map_CheckObjectStepFar
-	.4byte 0
-	.reloc .-4, R_ARM_ABS32_NOI, Map_CopyMetatileCellsRectFar
+	.4byte gResourceSlot_ConversionTables - 0xe0
+	.4byte gResourceSlot_ConversionTables - 0x100
 	.global gRender_DecodeFrameBuffer
 gRender_DecodeFrameBuffer:
 	.space 224, 0

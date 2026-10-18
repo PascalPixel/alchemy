@@ -107,18 +107,18 @@ static const u8 sBlankLine[] = "";
 // start is found by counting these marks.
 #define CREDITS_SECTION_END ((const void *)255)
 
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define CREDITS_SUBTITLE "DIE VERGESSENE EPOCHE"
-#elif defined(TLA_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 #define CREDITS_SUBTITLE "LA EDAD PERDIDA"
-#elif defined(TLA_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
 #define CREDITS_SUBTITLE "L'\177GE PERDU" // L'ÂGE PERDU: the French font draws Â at 0x7f
-#elif defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
 #define CREDITS_SUBTITLE "L'ERA PERDUTA"
 #endif
 
 // The Spanish, French and Italian fonts draw í at '`'.
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define RODRIGUEZ "Rodriguez"
 #else
 #define RODRIGUEZ "Rodr`guez"
@@ -127,10 +127,10 @@ static const u8 sBlankLine[] = "";
 // The staff credits, one line each, ending in 0.
 const void *gDisplayScroll_LineTable[] = {
     sBlankLine,
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     "OUGON NO TAIYO STAFF",
     sBlankLine,
-#elif defined(TLA_EDITION_EN)
+#elif (LANGUAGE == LANGUAGE_ENGLISH)
     "GOLDEN SUN: THE LOST AGE",
     "STAFF",
 #else
@@ -189,7 +189,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Hiroyuki Ichikawa",
     "Akiko Sato",
     "Kenji Numaya",
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "P.E. Jareth Hein",
 #else
     "P.E.Jareth Hein",
@@ -200,7 +200,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlankLine,
     "Yutaka Yamamoto",
     CREDITS_SECTION_END,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "Graphic Art",
 #else
     "Graphic Arts",
@@ -287,7 +287,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Masanori Sato",
     sBlankLine,
     sBlankLine,
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     "Artwork Design",
     sBlankLine,
     "Nanako Kinoshita",
@@ -310,7 +310,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Kenichi Nishida",
     sBlankLine,
     sBlankLine,
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     "Special Thanks to",
     "Super Mario Club Staff",
     sBlankLine,
@@ -381,7 +381,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Tim Casey",
     "Jeffrey Storbo",
     sBlankLine,
-#if !defined(TLA_EDITION_EN)
+#if (LANGUAGE != LANGUAGE_ENGLISH)
     sBlankLine,
     "European Localization",
     sBlankLine,
@@ -394,7 +394,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Translation",
     sBlankLine,
     // Each edition names its own translator first.
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
     "German",
     "Micky Auer",
     sBlankLine,
@@ -408,7 +408,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Italian",
     "Christian Massi",
     sBlankLine,
-#elif defined(TLA_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
     "Spanish",
     "Carlos Montilla",
     RODRIGUEZ,
@@ -422,7 +422,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Italian",
     "Christian Massi",
     sBlankLine,
-#elif defined(TLA_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
     "French",
     "Zadia Messerli",
     sBlankLine,
@@ -468,7 +468,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Hiroshi Yamauchi",
     sBlankLine,
     sBlankLine,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "Copyrights of Game, Scenario,",
 #else
     "Copyrights of Game, Scenario",

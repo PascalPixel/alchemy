@@ -1,12 +1,11 @@
 #include "types.h"
+#include "battle_effect_argument.h"
 
-struct BattleEffectArgument;
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_08149b94(struct BattleEffectArgument *effect) {
-  BattleFx_RunSparkGroups(effect, 0);
-}
+// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind
+// 15).
+DEFINE_EFFECT_KIND(BattleFx_RunNova, BattleFx_RunSparkGroups, 0)
 
-void Func_08149ba0(struct BattleEffectArgument *effect) {
-  BattleFx_RunSparkGroups(effect, 1);
-}
+// Abilities: Dynamite, Angry Mine (kind 338).
+DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)

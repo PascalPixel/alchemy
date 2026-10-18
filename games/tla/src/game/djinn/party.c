@@ -10,6 +10,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 #include "types.h"
+#include "edition.h"
 
 s32 Party_SumDjinnCounts(s32 index) {
   u16 owners[16];
@@ -57,7 +58,7 @@ void Djinn_ActivateOfferedForParty(void) {
   }
 }
 
-#if !defined(TLA_EDITION_JA) /* the Japanese copy differs and stays on its     \
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* the Japanese copy differs and stays on its     \
                                 scaffold (S4) */
 s32 Func_080b106c(s32 id) {
   switch (id & 0x1ff) {

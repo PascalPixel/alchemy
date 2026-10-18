@@ -27,6 +27,7 @@
 #include "map_scroll.h"
 #include "fixed_math.h"
 #include "resource_37de_scene.h"
+#include "macros.h"
 
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
@@ -40,8 +41,9 @@
 // Forward declarations.
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 static void SolSanctumStatue_UpdateCenterStatue(void);
-static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn, s32 statueRow,
-                                 s32 leaderColumn, s32 leaderRow);
+static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
+                                        s32 statueRow, s32 leaderColumn,
+                                        s32 leaderRow);
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row);
 static void SolSanctumStatue_OpenNorthwestSeal(void);
 static void SolSanctumStatue_OpenNortheastSeal(void);
@@ -119,7 +121,9 @@ struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
 }
 
 // Return the movement triggers and statue interactions.
-struct SceneEvent *SolSanctumStatue_GetEvents(void) { return gSolSanctumStatue_Events; }
+struct SceneEvent *SolSanctumStatue_GetEvents(void) {
+  return gSolSanctumStatue_Events;
+}
 
 // Choose the next story scene from the saved state of the hall.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
@@ -513,9 +517,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
     Actor_FaceDirection(0, FACING_SOUTH, 0);
     Engine_EventWait(30);
     savedOrigin = map->origin;
-    cameraPosition[0] = leader->x.fixed;
-    cameraPosition[1] = leader->y.fixed;
-    cameraPosition[2] = leader->z.fixed;
+    SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
+               leader->z.fixed);
     map->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
       cameraPosition[2] += PIXELS(1);
@@ -527,9 +530,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
     Actor_WalkToAndWait(0, 577, 222);
     Actor_FaceDirection(0, FACING_NORTH, 0);
     Engine_EventWait(30);
-    cameraPosition[0] = leader->x.fixed;
-    cameraPosition[1] = leader->y.fixed;
-    cameraPosition[2] = leader->z.fixed;
+    SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
+               leader->z.fixed);
     savedOrigin = map->origin;
     map->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
@@ -799,7 +801,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   {
     s32 priority = 3200;
 
-    FieldScheduler_AddCallback(SolSanctumStatue_UpdateScrollingSprites, priority);
+    FieldScheduler_AddCallback(SolSanctumStatue_UpdateScrollingSprites,
+                               priority);
   }
 }
 
@@ -925,9 +928,7 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         statue->x.fixed = 0;
         statue->y.fixed = 0;
         statue->z.fixed = 0;
-        statue->velocityX = 0;
-        statue->velocityY = 0;
-        statue->velocityZ = 0;
+        SET_VELOCITY(statue, 0, 0, 0);
         Engine_ActorSetPosition(17, 0, 0);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);
@@ -1064,8 +1065,9 @@ static void SolSanctumStatue_PushRightBeamStatueNorth(void) {
 }
 
 // Move the leader and statue together to the centers of their target cells.
-static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn, s32 statueRow,
-                                 s32 leaderColumn, s32 leaderRow) {
+static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
+                                        s32 statueRow, s32 leaderColumn,
+                                        s32 leaderRow) {
   s32 statueX;
   s32 statueZ;
 
@@ -1495,8 +1497,10 @@ struct ScenePlacement gSolSanctumStatue_Placements[] = {
 struct SceneEvent gSolSanctumStatue_Events[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
-    {0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
+    {0x202, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
+    {0x202, 11, CONDITION_ALWAYS,
+     EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
     {PSYNERGY_ON_ACTOR(0x8c), 9, FLAG_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TryNorthwestSeal)},
     {PSYNERGY_ON_ACTOR(0x8c), 11, FLAG_NORTHEAST_SEAL_OPEN,

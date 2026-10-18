@@ -11,15 +11,16 @@
 #include "tla_edition.h"
 #include "party_state.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 #endif
 
 void UiText_DrawWorkValueWithLabel(s32 work) {
   UiText_DrawNumberAtOffsetFar(gPartyState.coins, 7, work, 8, 0);
   UiText_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   UiWindow_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif
 }

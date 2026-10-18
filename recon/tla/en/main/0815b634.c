@@ -5,7 +5,13 @@
 // saves no register. Tried: the arrays as one u16[2][64], as structs, in
 // the other declaration order (differ 33), &saved[0], pointer loops, the
 // final read as saved[64 - i], a one-pass block after or around the first
-// copy (differ 21 to 23).
+// copy (differ 21 to 23); flipped as &flipped[0], a cast or sizeof, the
+// flipped[0] store or the second copy in a one-pass block or after an empty
+// asm (21 to 23), the first copy direct through Iwram_CopyWordsEntry (21).
+// Passing flipped to the second copy through a pass-through inline helper
+// (permute's find) gives 14: the native also builds flipped's address anew
+// for that call (mov r1, sp) instead of reusing flipped[0]'s; not kept, a
+// wrapper device that does not reach a match.
 #include "types.h"
 #include "io_reg.h"
 #include "iwram_call.h"

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08149268
+@ Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
+	.global BattleFx_RunPrism
 	.thumb_func
-Func_08149268:
+BattleFx_RunPrism:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -46,7 +47,7 @@ Func_08149268:
 	ldr r0, [r3, #4]
 	adds r1, r4, #0
 	str r4, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r5, [sp, #28]
 	b .L_081492d8
 .L_081492cc:
@@ -479,7 +480,7 @@ Func_08149268:
 	b .L_08149640
 	.2byte 0x0000
 .L_08149618:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814961c:
 	.4byte Data_081979b7
 .L_08149620:
@@ -517,7 +518,7 @@ Func_08149268:
 	adds r1, #8
 	adds r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r7, #240
 	ldr r5, [sp, #28]
 	lsls r7, r7, #7
@@ -550,7 +551,7 @@ Func_08149268:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -562,4 +563,4 @@ Func_08149268:
 .L_081496c0:
 	.4byte Data_081979b7
 .L_081496c4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

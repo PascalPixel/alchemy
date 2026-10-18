@@ -48,7 +48,7 @@
 #include "keystate.h"
 #include "owner_value.h"
 #include "party_state.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "fixed_math.h"
 #include "item_gift.h"
 #include "battle_calc.h"
@@ -84,6 +84,7 @@
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
+#include "macros.h"
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
@@ -578,10 +579,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     // Each level (up to five) the party's average is above the zone's raises
     // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
-    if (level < 0)
-      level = 0;
-    if (level > 5)
-      level = 5;
+    CLAMP(level, 0, 5);
     if (level > 0 && gGameState.avoidDistance != 0)
       return 0;
     rate += level * 5;
@@ -1037,9 +1035,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   ObjectTable_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
-  entry->x = gGameState.x;
-  entry->y = 0;
-  entry->z = gGameState.z;
+  SET_POSITION(entry, gGameState.x, 0, gGameState.z);
   entry->facing = gGameState.heading;
   Event_SpawnObjectTable(entry, leader);
   Event_SpawnObjectTable(table, ACTOR_FIRST_PLACED);
@@ -1186,7 +1182,8 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
           u8 *removed = &actor->spriteStorageKind;
           u32 flags;
 
-          // Release the sprite's retained cache entry when destroying the actor.
+          // Release the sprite's retained cache entry when destroying the
+          // actor.
           *removed = 1;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
@@ -1540,7 +1537,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
         fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
       work->exit = exitValue;
-      AudioCommand_PlayFar(SOUND_MAP_EXIT);
+      AudioCommand_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
@@ -1732,11 +1729,11 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
     BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleFx_StartBufferInterpolation(4);
     if (amount < -10)
-      AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     else
       AudioCommand_PlayFar(133);
   } else {
-    AudioCommand_PlayFar(SOUND_RECOVERY);
+    AudioCommand_PlayFar(SE_RECOVERY);
   }
 
   partyCount = Party_CountActiveOwnersFar();
@@ -2066,7 +2063,7 @@ s32 Field_RunScene(s32 entrance) {
           // The main menu (B + Select in debug mode opens the debug menu).
           UiTimedNotice_CloseIfActiveFar();
           Leader_StopMoving();
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Battle_SetObjectFlag5bWhenMode3();
           GameFlag_SetBitFar(0x106);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
@@ -2107,7 +2104,7 @@ s32 Field_RunScene(s32 entrance) {
         } else if (work->start != 0) {
           // The pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           Battle_SetObjectFlag5bWhenMode3();
           GameFlag_SetBitFar(0x106);
@@ -2662,9 +2659,7 @@ s32 Scene_TalkToActor(s32 id) {
         leader->targetX = leader->x;
         leader->targetY = leader->y;
         leader->targetZ = leader->z;
-        leader->velocityX = 0;
-        leader->velocityY = 0;
-        leader->velocityZ = 0;
+        SET_VELOCITY(leader, 0, 0, 0);
         Object_LinkPair(id, gGameState.selectedActor, 0);
       }
     }
@@ -2770,7 +2765,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
       exitKind = exit->flags & 0x30;
       switch (exitKind) {
       case 0:
-        AudioCommand_PlayFar(SOUND_MAP_EXIT);
+        AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
       case 32:
         AudioCommand_PlayFar(128);
@@ -2896,12 +2891,12 @@ s32 Field_SearchTile(s32 tile) {
                 Marker_ShowOpened(tile);
               object = Marker_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+              AudioCommand_PlayFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
               BattleParty_ApplyDrain(999, 0);
               UiWindow_CreateWithLayoutBoundsFar(1);
-              AudioCommand_PlayFar(SOUND_RECOVERY);
+              AudioCommand_PlayFar(SE_RECOVERY);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);
               UiWork_FinalizeAndReleaseBlock16Far();
@@ -2938,7 +2933,7 @@ s32 Field_SearchTile(s32 tile) {
               if ((event->control & 0x1ff) == 19)
                 Marker_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+              AudioCommand_PlayFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
               Party_AdjustCoinsFar((u16)event->value);
@@ -2966,7 +2961,7 @@ s32 Field_SearchTile(s32 tile) {
                 if ((event->control & 0x1ff) == 19)
                   Marker_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
-                AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+                AudioCommand_PlayFar(MUS_TREASURE_FOUND);
                 UiWork_PushValueSlotFar(event->value & messageOffset, 2);
                 if (recipient == gGameState.selectedActor) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,
@@ -3232,7 +3227,8 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
       remainingParts = partCount;
       do {
         entry = *entrySlot++;
-        if (entry != 0 && entry->script != 0 && entry->param != 15)
+        if (entry != 0 && entry->script != 0 &&
+            entry->param != SPRITE_COLOR_HIDDEN)
           entry->param = replacement;
         remainingParts--;
       } while (remainingParts != 0);
@@ -3387,8 +3383,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 nearbyActor =
-          Field_FindNearbyTalkTarget(gGameState.selectedActor);
+      s32 nearbyActor = Field_FindNearbyTalkTarget(gGameState.selectedActor);
       FieldEvent_Begin();
       Event_SetMessageId(event->value);
       FieldEvent_ShowMessageAndWait(nearbyActor, 0);
@@ -3620,8 +3615,8 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gGameState.selectedActor,
-                                                   abilityGroup);
+    target =
+        Field_FindNearbyPsynergyTarget(gGameState.selectedActor, abilityGroup);
     if (after && (after->trigger & 0x400)) // the event plays the effect
     {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -5807,9 +5802,7 @@ void FadeOverlay_Suspend(void) {
 }
 
 // Resumes the fade overlay.
-void FadeOverlay_Resume(void) {
-  Scheduler_ResumeTasks(FadeOverlay_DrawMarks);
-}
+void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }
 
 // Returns the speaker definition of sprite id from gBattleFx_DefinitionTable,
 // or its last entry when there is none.

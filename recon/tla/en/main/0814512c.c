@@ -8,9 +8,9 @@
 // shots per target, each with its own start; mode 7 prepares a canvas with
 // Func_0815585c and sets BG2CNT; the shots' height by mode; the pictures and
 // palettes unpacked by Resource_LoadAndDecompress; the pair from
-// Func_08144aac; modes 4 and 7 clear the canvas each frame with blending
-// off; modes 3 and 5 clear both canvases and run a summon canvas effect
-// (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
+// BattleFx_FetchRectangleBlitters; modes 4 and 7 clear the canvas each frame
+// with blending off; modes 3 and 5 clear both canvases and run a summon canvas
+// effect (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
 
 // Left: the calls, their order, the loops and the tables are the native's;
 // the allocation is not. The native frame is 100 bytes, this one 108: the
@@ -47,15 +47,16 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
-void Func_08143488(void);         // Palette_StepFadeTransfer
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void Palette_StepFadeTransfer(void);         // Palette_StepFadeTransfer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -182,7 +183,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
   // each frame and turn blending off, the others fade it to three quarters.
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   if (mode == 4 || mode == 7) {
     work->transferMode = 1;
     work->transferValue = 0;
@@ -191,7 +192,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
   Audio_PlayCue(103);
 
@@ -199,7 +200,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     struct EffectStep *burst;
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
 
     // The shots: each starts four frames after the last, flies under
     // gravity and turns through ten pictures; at the ground it bursts.
@@ -295,12 +296,12 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
 
@@ -308,12 +309,12 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 3 || mode == 5) {
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
-    Scheduler_RemoveCallback(Func_08143488);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     if (mode == 3)
       SummonFx_RunCanvasMode1(effect);
     else
       SummonFx_RunCanvasMode3(effect);
   } else {
-    Func_08143bb8();
+    BattleFx_EndCanvasLayer();
   }
 }

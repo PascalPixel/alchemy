@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08191d60
+@ Abilities: Moloch (scene kind 16).
+	.global BattleFx_RunMoloch
 	.thumb_func
-Func_08191d60:
+BattleFx_RunMoloch:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -32,7 +33,7 @@ Func_08191d60:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_08191dcc
@@ -63,7 +64,7 @@ Func_08191d60:
 	movs r2, #0
 	movs r3, #0
 	bl Resource_LoadAndDecompress
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -90,7 +91,7 @@ Func_08191d60:
 	lsls r4, r4, #15
 	ldr r0, [r3]
 	str r4, [sp, #24]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #128
@@ -98,7 +99,7 @@ Func_08191d60:
 	movs r0, #12
 	adds r1, #142
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r0, #0
 	mov r9, r0
 .L_08191e36:
@@ -459,7 +460,7 @@ Func_08191d60:
 	b .L_0819211e
 	.2byte 0x0000
 .L_081920f4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081920f8:
 	.4byte gInput
 .L_081920fc:
@@ -669,7 +670,7 @@ Func_08191d60:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_08192510
 	ldr r3, [sp, #44]
 	movs r4, #7
@@ -758,9 +759,9 @@ Func_08191d60:
 	strb r3, [r6, #24]
 	mov r1, r8
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08192344:
 	movs r2, #1
 	add r10, r2
@@ -900,7 +901,7 @@ Func_08191d60:
 	adds r2, #132
 	add r2, r11
 	str r3, [r2]
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	b .L_08192492
 .L_0819245e:
 	ldr r3, .L_08192510
@@ -933,7 +934,7 @@ Func_08191d60:
 	movs r0, #4
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -974,7 +975,7 @@ Func_08191d60:
 	mov r3, r10
 	cmp r3, #12
 	bne .L_081924e6
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1007,4 +1008,4 @@ Func_08191d60:
 .L_08192534:
 	.4byte 0x3f3f3f3f
 .L_08192538:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

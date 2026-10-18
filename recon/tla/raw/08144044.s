@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08144044
+@ Abilities: Haunt (kind 39).
+	.global BattleFx_RunHaunt
 	.thumb_func
-Func_08144044:
+BattleFx_RunHaunt:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -41,7 +42,7 @@ Func_08144044:
 	.2byte 0xf800
 	movs r0, #0
 	add r1, sp, #44
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	adds r1, r5, #0
 	ldr r0, .L_08144354
 	bl Scheduler_AddOrUpdateCallback
@@ -336,7 +337,7 @@ Func_08144044:
 	beq .L_081442f2
 	b .L_081441b2
 .L_081442f2:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #36]
 	lsls r1, r1, #7
@@ -365,7 +366,7 @@ Func_08144044:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -380,11 +381,11 @@ Func_08144044:
 .L_08144350:
 	.4byte IwramCopyWords
 .L_08144354:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_08144358:
 	.4byte 0x04040404
 .L_0814435c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08144360:
 	.4byte gMapCellBuffer
 .L_08144364:

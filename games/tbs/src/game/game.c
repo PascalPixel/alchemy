@@ -45,6 +45,7 @@
 #include "flags.h"
 #include "character_ids.h"
 #include "ability_ids.h"
+#include "macros.h"
 
 // The running totals UnitCalc builds a unit's stats in.
 struct StatWork {
@@ -410,43 +411,16 @@ void UnitCalc(s32 owner) {
       stats->ppRegen += 4;
   }
 
-  if (stats->atk < 0)
-    stats->atk = 0;
-  if (stats->atk > 999)
-    stats->atk = 999;
-  if (stats->def < 0)
-    stats->def = 0;
-  if (stats->def > 999)
-    stats->def = 999;
-  if (stats->agi < 0)
-    stats->agi = 0;
-  if (stats->agi > 999)
-    stats->agi = 999;
-  if (stats->luck < 0)
-    stats->luck = 0;
-  if (stats->luck > 99)
-    stats->luck = 99;
-  if (stats->turns < 0)
-    stats->turns = 0;
-  if (stats->turns > 2)
-    stats->turns = 2;
-  if (stats->hpRegen < 0)
-    stats->hpRegen = 0;
-  if (stats->hpRegen > 10000)
-    stats->hpRegen = 10000;
-  if (stats->ppRegen < 0)
-    stats->ppRegen = 0;
-  if (stats->ppRegen > 200)
-    stats->ppRegen = 200;
+  CLAMP(stats->atk, 0, 999);
+  CLAMP(stats->def, 0, 999);
+  CLAMP(stats->agi, 0, 999);
+  CLAMP(stats->luck, 0, 99);
+  CLAMP(stats->turns, 0, 2);
+  CLAMP(stats->hpRegen, 0, 10000);
+  CLAMP(stats->ppRegen, 0, 200);
   for (index = 0; index < 4; index++) {
-    if (stats->element[index][0] < 0)
-      stats->element[index][0] = 0;
-    if (stats->element[index][0] > 200)
-      stats->element[index][0] = 200;
-    if (stats->element[index][1] < 0)
-      stats->element[index][1] = 0;
-    if (stats->element[index][1] > 200)
-      stats->element[index][1] = 200;
+    CLAMP(stats->element[index][0], 0, 200);
+    CLAMP(stats->element[index][1], 0, 200);
   }
 
   unit->atk = stats->atk;
@@ -466,34 +440,22 @@ void UnitCalc(s32 owner) {
     statLimit = 1999;
 
   previousMaximum = unit->maxHp;
-  if (stats->hp < 0)
-    stats->hp = 0;
-  if (stats->hp > statLimit)
-    stats->hp = statLimit;
+  CLAMP(stats->hp, 0, statLimit);
   unit->maxHp = stats->hp;
   if (previousMaximum != unit->maxHp) {
     value = stats->hp * unit->hpGauge / 0x4000;
-    if (value < 0)
-      value = 0;
-    if (value > statLimit)
-      value = statLimit;
+    CLAMP(value, 0, statLimit);
     if (unit->hp != 0 && value == 0)
       value = 1;
     unit->hp = value;
   }
 
   previousMaximum = unit->maxPp;
-  if (stats->pp < 0)
-    stats->pp = 0;
-  if (stats->pp > statLimit)
-    stats->pp = statLimit;
+  CLAMP(stats->pp, 0, statLimit);
   unit->maxPp = stats->pp;
   if (previousMaximum != unit->maxPp) {
     value = stats->pp * unit->ppGauge / 0x4000;
-    if (value < 0)
-      value = 0;
-    if (value > statLimit)
-      value = statLimit;
+    CLAMP(value, 0, statLimit);
     if (unit->pp != 0 && value == 0)
       value = 1;
     unit->pp = value;
@@ -1701,10 +1663,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
     // Keep one RNG draw per stat, in HP, PP, attack, defense, agility, luck
     // order.
     growthBand = gains->level / 20;
-    if (growthBand < 0)
-      growthBand = 0;
-    if (growthBand > 4)
-      growthBand = 4;
+    CLAMP(growthBand, 0, 4);
     growthDifference =
         work->growth->hp[growthBand + 1] - work->growth->hp[growthBand];
     gains->hp += ((Random16() * 20 >> 16) + growthDifference) / 20;

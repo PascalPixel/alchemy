@@ -1,5 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 extern const u8 gData_0200247c[];
 
@@ -16,9 +17,7 @@ void Func_02001188(void) {
   s32 position[3];
   struct ObjectRuntime *object;
 
-  position[0] = 0x1680000;
-  position[1] = 0x400000;
-  position[2] = 0x1a80000;
+  SET_VECTOR(position, 0x1680000, 0x400000, 0x1a80000);
   Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
   object = Func_02001f0c(0x2a2, position[0], position[1], position[2]);
   if (object != NULL) {

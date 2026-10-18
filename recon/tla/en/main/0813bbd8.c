@@ -1,10 +1,10 @@
 // Near miss, differ 41 of 558.
 
-// Twin: The Broken Seal's BattleEffect_RunFallingParticles (effect kind 7 in
+// Twin: The Broken Seal's BattleFx_RunIce (effect kind 7 in
 // both games), ported as is apart from ⚓️'s calling conventions: the effect is
 // read from the argument (⚓️ never stores work->effect), the heap blocks are
-// read as Ram_HeapSlots fields, the blitters go through Func_081963ec with
-// ⚓️'s mode numbers (3 - The Broken Seal's), Func_0813bba0 arms the WIN0
+// read as Ram_HeapSlots fields, the blitters go through BattleFx_LoadBlitter with
+// ⚓️'s mode numbers (3 - The Broken Seal's), BattleFx_ArmWin0HBlankDma arms the WIN0
 // HBlank DMA, the callbacks take order 0xc80 and the results phase is 133.
 
 // Left: the native stores draw[0] before it builds the pair's address, and
@@ -41,7 +41,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define PHASE_RESULTS 133
 
 // Shards and frames for each variant (The Broken Seal's
-// gFallingShards_Counts).
+// gFalling_IceCounts).
 extern u8 Data_08197521[];
 #define SHARD_COUNT(variant) Data_08197521[(variant) * 2]
 #define FRAME_COUNT(variant) Data_08197521[(variant) * 2 + 1]
@@ -56,11 +56,11 @@ extern char ResourceId_SparkleDots;
 extern u16 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void);  // the canvas transfer callback
-void Func_0813bba0(void); // arms WIN0's HBlank DMA
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+void BattleFx_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -70,7 +70,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
@@ -85,7 +85,7 @@ void WaitFrames(s32 frames);
 // Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
 // its age: -1 is a shard still falling or a free puff.
 
-void Func_0813bbd8(struct BattleEffectArgument *effect) {
+void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -136,13 +136,13 @@ void Func_0813bbd8(struct BattleEffectArgument *effect) {
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
   if (effect->side == 0) {
-    Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
-    Func_081963ec(SLOT_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
+    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
   } else {
-    Func_081963ec(SLOT_BLITTER,
+    BattleFx_LoadBlitter(SLOT_BLITTER,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
-    Func_081963ec(SLOT_BLITTER_ALTERNATE,
+    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -172,13 +172,13 @@ void Func_0813bbd8(struct BattleEffectArgument *effect) {
     }
   }
 
-  Scheduler_AddOrUpdateCallback(Func_0813bba0, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, CALLBACK_ORDER);
   work->transferMode = 2;
   if (effect->variant == 1)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 16)
@@ -256,16 +256,16 @@ void Func_0813bbd8(struct BattleEffectArgument *effect) {
       }
     }
 
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     Func_08158ce0(4, 4);
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Scheduler_RemoveCallback(Func_0813bba0);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
   Func_0813ba50();
 }

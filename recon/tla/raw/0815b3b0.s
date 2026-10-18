@@ -26,7 +26,7 @@ Func_0815b3b0:
 	bne .L_0815b3c8
 	adds r6, r5, #0
 .L_0815b3d8:
-	bl Func_0815b24c
+	bl AnimationObject_AllocateEmpty
 	mov r3, r8
 	strb r3, [r5, #21]
 	movs r3, #128

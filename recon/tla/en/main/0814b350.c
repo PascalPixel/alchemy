@@ -45,14 +45,15 @@ extern char ResourceId_MercuryDjinnSmallSheet; // directory row 0x155
 extern char ResourceId_ParticleSpritesA;       // directory row 0x134
 extern char ResourceId_SparkleDots;            // directory row 0x17e
 
-extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 extern u16 Data_0819744c[];  // ☀️ gBattleFx_PuffCells
 extern u8 Data_0819745e[];   // ☀️ gBattleFx_PuffSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void); // ☀️ ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleFx_EndCanvasLayer(void); // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
+void BattleFx_FetchRectangleBlitters(
+    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);       // ☀️ SceneTransform_ApplyRoll
@@ -61,7 +62,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Graphics_RestoreTransferWork(void);
+void Transform_Pop(void);
 void Audio_PlayCue(s32 cue);
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
@@ -95,7 +96,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Func_08144aac(effect->side ^ 1, draw = callbacks);
+  BattleFx_FetchRectangleBlitters(effect->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(effect->actor)->object;
   goal = GetBattleObjectSlotFar(effect->actors[0])->object;
 
@@ -115,7 +116,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // The Djinn travels from the caster to above the first target in 40
   // frames.
@@ -137,7 +138,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
     if (frame == 80)
       Audio_PlayCue(142);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
       position[1] += delta[1];
@@ -159,7 +160,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       if (frame > i && spark->variant == 0) {
         s32 size;
 
-        Graphics_SaveTransferWorkOnce();
+        Transform_Push();
         switch (i & 3) {
         case 0:
           SceneTransform_ApplyYaw(frame * (i * 32 + 256));
@@ -177,7 +178,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
         }
         EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &screen);
         screen.x >>= 1;
-        Graphics_RestoreTransferWork();
+        Transform_Pop();
         if (screen.depth < 250)
           screen.depth = 250;
         if (screen.depth > 634)
@@ -228,7 +229,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
     // The Djinn sways over the targets, then rises away for the last 32
     // frames.
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= effect->count * 8 + 40)
       target[1] += 0x40000;
     point[0] = target[0];
@@ -246,7 +247,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       s32 start = member * 8;
 
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       position[0] = object->x;
       position[1] = 160 << 14;
       position[2] = object->z;
@@ -302,8 +303,8 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

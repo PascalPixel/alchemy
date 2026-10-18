@@ -30,7 +30,7 @@ Func_080e9090:
 	bl BattleFx_SetObjectTickMode
 	movs r0, #1
 	bl Func_080e89e4
-	bl Func_080e8cfc
+	bl ViewMove_SaveNearbySprites
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #0
@@ -210,7 +210,7 @@ Func_080e9090:
 	b .L_080e90ea
 .L_080e9222:
 	bl Func_080e8c9c
-	bl Func_080e8d80
+	bl ViewMove_RestoreNearbySprites
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

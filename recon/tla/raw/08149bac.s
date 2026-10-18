@@ -83,7 +83,7 @@ BattleFx_RunSparkGroups:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #20]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r4, [sp, #48]
 	movs r5, #224
 	lsls r5, r5, #3
@@ -566,7 +566,7 @@ BattleFx_RunSparkGroups:
 .L_08149ffc:
 	.4byte gMapCellBuffer
 .L_0814a000:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814a004:
 	.4byte 0x1ffffffb
 .L_0814a008:
@@ -820,7 +820,7 @@ BattleFx_RunSparkGroups:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #48]
 	lsls r4, r4, #7
@@ -854,7 +854,7 @@ BattleFx_RunSparkGroups:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -876,4 +876,4 @@ BattleFx_RunSparkGroups:
 .L_0814a25c:
 	.4byte gData_08197410
 .L_0814a260:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

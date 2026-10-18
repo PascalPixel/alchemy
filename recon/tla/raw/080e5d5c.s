@@ -229,7 +229,7 @@ Func_080e5d5c:
 	adds r3, #240
 	ldr r0, [r2, #16]
 	ldr r7, [r3]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	adds r3, r7, #0
 	adds r3, #191
 	strb r0, [r3]
@@ -530,7 +530,7 @@ Func_080e5d5c:
 .L_080e61a0:
 	.4byte IwramMulQ16
 .L_080e61a4:
-	.4byte Func_080e5cf0
+	.4byte BattleFx_SinkAndShrinkObject
 .L_080e61a8:
 	movs r0, #1
 	bl WaitFrames
@@ -548,7 +548,7 @@ Func_080e5d5c:
 	ldr r1, [r4, #12]
 	ldr r0, [r4, #8]
 	ldr r2, [r4, #16]
-	bl Func_080dc044
+	bl BattleFx_SpawnScatterParticle
 	movs r0, #1
 	negs r0, r0
 	add r10, r0
@@ -668,7 +668,7 @@ Func_080e5d5c:
 	bl Resource_ResetEntry
 	ldr r0, [sp, #12]
 	bl Resource_ResetEntry
-	bl Func_080eb930
+	bl BattleFx_EndCanvasSprite
 .L_080e62d2:
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #92
@@ -682,6 +682,6 @@ Func_080e5d5c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e62ec:
-	.4byte Func_080e5cf0
+	.4byte BattleFx_SinkAndShrinkObject
 .L_080e62f0:
 	.4byte Func_080e5a64

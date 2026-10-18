@@ -1,6 +1,6 @@
 // Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
-// The body of effect kinds 348, 353, 389 and 431 (Func_0817e668 to
-// Func_0817e68c in variant_k.c pass modes 0 to 3). Written from the
+// The body of effect kinds 348, 353, 389 and 431 (BattleFx_RunSpasm to
+// BattleFx_RunSack in variant_k.c pass modes 0 to 3). Written from the
 // listing; ☀️'s BattleFx_RunFortyEightFrameEffect has the same frame count
 // and shape (0.55) but is not its twin.
 // The shape matches, including the three mirrored copies as indexed loops
@@ -67,7 +67,7 @@ struct BurstTexture {
   void *pixels;
 };
 
-// One entry of the list Func_08196a7c draws; kind 6 is a textured quad.
+// One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
 struct RenderPrimitive {
   s32 kind;
   s32 unk04;
@@ -102,21 +102,21 @@ void EffectPosition_ApplyAlternateStepAndYOffset(
 void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void Func_081963ec(s32 slot, s32 blitter);
+void BattleFx_LoadBlitter(s32 slot, s32 blitter);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-struct RenderPrimitive *Func_081969f8(s32 count);
+struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderPrimitive *list);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderPrimitive *list);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A symmetrical burst over the target. Three half-pictures of the earth
 // wall sheet are mirrored into three 64x64 cels; the burst grows through
@@ -161,10 +161,10 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - target.x) << 8;
-  Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
     Audio_PlayCue(212);
@@ -194,7 +194,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
         cel = (cel & 1) + 1;
       if (frame < BURST_DRAW_FRAMES) {
         vertices = Runtime_BumpAllocateAlternatePool(32);
-        quad = Func_081969f8(1);
+        quad = Render_AllocateModelList(1);
         texture.size = (texture.size & ~0xff) | 6;
         texture.size = (texture.size & ~0xff00) | 6 << 8;
         texture.pixels = work->sheet + cel * CEL_SIZE;
@@ -206,8 +206,8 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
         Render_ResetTransformState();
         Func_08015160(0, (target.y - 58) << 16, 0);
         Func_0801521c(gData_081994d0[mode] << 1);
-        Func_08196958(gData_081991f0, vertices, 4);
-        Func_08196a7c(quad);
+        Render_TransformVertices(gData_081991f0, vertices, 4);
+        Render_DrawModelList(quad);
         MemFree(quad);
         MemFree(vertices);
       }
@@ -217,12 +217,12 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(4, 4);
     else
       Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)Func_08143000);
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

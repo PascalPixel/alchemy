@@ -16,6 +16,7 @@
 #include "io_reg.h"
 #include "input.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 struct ShopRuntime {
   u8 unk000[0x4dc];
@@ -98,8 +99,8 @@ s32 Func_08108630(s32 arg0) {
   u8 saved = (*slot)->active;
 
   UiIcon_PrepareObjectFar(*slot);
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_ITALIAN)
   arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
 #else
   arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);

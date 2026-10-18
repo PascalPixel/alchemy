@@ -872,7 +872,7 @@ Func_0815f16c:
 	ldr r0, [r5, #4]
 	adds r1, r2, #0
 	str r2, [sp, #84]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r5, #238
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7
@@ -1162,7 +1162,7 @@ Func_0815f16c:
 .L_0815faf8:
 	.4byte 0x00000100
 .L_0815fafc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815fb00:
 	.4byte gData_08197410
 .L_0815fb04:
@@ -1403,7 +1403,7 @@ Func_0815f16c:
 	cmp r3, #54
 	bne .L_0815fccc
 	ldr r0, [sp, #128]
-	bl BattleFx_RenderMode5
+	bl BattleFx_RunMysticFlame
 .L_0815fccc:
 	ldr r5, [sp, #124]
 	cmp r5, #56
@@ -1589,9 +1589,9 @@ Func_0815f16c:
 .L_0815fe4c:
 	.4byte 0x06004000
 .L_0815fe50:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer
 .L_0815fe54:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815fe58:
 	bl Random16
 	ands r0, r6
@@ -2165,7 +2165,7 @@ Func_0815f16c:
 .L_081602a4:
 	.4byte Data_02016000
 .L_081602a8:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_081602ac:
 	ldr r2, [sp, #124]
 	cmp r2, #41
@@ -3415,7 +3415,7 @@ Func_0815f16c:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r0, #1
 	add r11, r0
 	mov r1, r11
@@ -3519,7 +3519,7 @@ Func_0815f16c:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #84]
 	add r11, r5
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	mov r0, r11
 	cmp r0, #3
 	bne .L_08160d26
@@ -3654,7 +3654,7 @@ Func_0815f16c:
 .L_08160ee2:
 	movs r1, #19
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #8
 	negs r5, r5
 	add r5, r9
@@ -3793,7 +3793,7 @@ Func_0815f16c:
 	movs r1, #19
 	mov r10, r2
 	adds r5, r5, r3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r6, #24
 	mov r0, r10
 	str r0, [sp, #4]
@@ -3815,7 +3815,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #23
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r1, r10
 	str r1, [sp, #4]
 	str r6, [sp, #0]
@@ -4274,7 +4274,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	movs r1, #35
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -4503,7 +4503,7 @@ Func_0815f16c:
 	ldr r2, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r2, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	bl .L_0816342a
 .L_0816157e:
 	ldr r3, [sp, #124]
@@ -4533,7 +4533,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [sp, #12]
 	lsls r5, r6, #3
 	ldr r2, [r3]
@@ -4566,7 +4566,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #7
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, sp
 	adds r2, #240
 	str r2, [sp, #12]
@@ -4589,7 +4589,7 @@ Func_0815f16c:
 	ldr r1, [sp, #128]
 	ldr r0, [r1, #4]
 	ldr r1, [sp, #84]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 .L_0816162e:
 	ldr r3, [sp, #124]
 	subs r3, #97
@@ -4703,7 +4703,7 @@ Func_0815f16c:
 	bne .L_08161744
 	movs r0, #104
 	movs r1, #35
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816174c
 .L_08161714:
 	.4byte gMapCellBuffer
@@ -4732,7 +4732,7 @@ Func_0815f16c:
 .L_08161744:
 	movs r0, #104
 	movs r1, #39
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816174c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -4890,7 +4890,7 @@ Func_0815f16c:
 	ldr r5, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r5, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	bl .L_0816342a
 .L_0816187c:
 	ldr r0, [sp, #124]
@@ -4944,7 +4944,7 @@ Func_0815f16c:
 	bne .L_08161904
 	movs r0, #104
 	movs r1, #35
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816190c
 	.2byte 0x0000
 .L_081618ec:
@@ -4962,7 +4962,7 @@ Func_0815f16c:
 .L_08161904:
 	movs r0, #104
 	movs r1, #39
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816190c:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -5188,7 +5188,7 @@ Func_0815f16c:
 	ldr r3, [sp, #128]
 	ldr r1, [sp, #84]
 	ldr r0, [r3, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	bl .L_0816342a
 	.2byte 0x0000
 .L_08161ac4:
@@ -6630,7 +6630,7 @@ Func_0815f16c:
 	ldr r0, [r3, #4]
 	ldr r1, [sp, #84]
 	add r11, r5
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	mov r0, r11
 	cmp r0, #3
 	bne .L_08162526
@@ -6644,7 +6644,7 @@ Func_0815f16c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r10, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0816273c
 	ldr r3, [sp, #164]
 	adds r5, r0, #0
@@ -6736,9 +6736,9 @@ Func_0815f16c:
 	ldr r0, .L_0816274c
 	mov r1, r10
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r5, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_081626c0:
 	movs r3, #1
 	add r11, r3
@@ -6767,7 +6767,7 @@ Func_0815f16c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, [sp, #112]
 	adds r6, r0, #0
 	movs r7, #0
@@ -6897,9 +6897,9 @@ Func_0815f16c:
 	mov r1, r8
 	adds r0, r5, #0
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	ldr r0, [sp, #124]
 	cmp r0, #82
 	beq .L_0816283c
@@ -6913,9 +6913,9 @@ Func_0815f16c:
 	adds r0, r5, #0
 	mov r1, r8
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816283c:
 	adds r0, r6, #0
 	bl MemFree
@@ -6973,7 +6973,7 @@ Func_0815f16c:
 	bl Func_0818caa8
 	movs r0, #188
 	movs r1, #15
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	bl .L_0816342a
 .L_081628ba:
 	ldr r3, [sp, #124]
@@ -6992,7 +6992,7 @@ Func_0815f16c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_08162a30
 	ldr r3, [sp, #148]
 	movs r1, #7
@@ -7077,9 +7077,9 @@ Func_0815f16c:
 	ldr r0, .L_08162a48
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08162998:
 	movs r2, #1
 	add r11, r2
@@ -7149,9 +7149,9 @@ Func_0815f16c:
 	ldr r0, .L_08162a48
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	b .L_08162ad0
 .L_08162a30:
 	.4byte 0xffffff00
@@ -7216,9 +7216,9 @@ Func_0815f16c:
 	ldr r0, .L_08162d74
 	mov r1, r9
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08162ac0:
 	ldr r2, .L_08162d78
 	movs r3, #1
@@ -7365,7 +7365,7 @@ Func_0815f16c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_08162d84
 	ldr r3, [sp, #140]
 	movs r1, #7
@@ -7430,9 +7430,9 @@ Func_0815f16c:
 	ldr r0, .L_08162d74
 	mov r1, r8
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08162c74:
 	movs r3, #7
 	strb r3, [r5]
@@ -7531,9 +7531,9 @@ Func_0815f16c:
 	ldr r0, .L_08162da8
 	mov r1, r8
 	movs r2, #16
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08162d42:
 	movs r5, #1
 	add r11, r5
@@ -7598,7 +7598,7 @@ Func_0815f16c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r10, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r3, #6
 	add r2, sp, #132
 	strb r3, [r2]
@@ -7720,9 +7720,9 @@ Func_0815f16c:
 	ldr r0, .L_081630d8
 	mov r1, r10
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_08162ec2:
 	movs r0, #1
 	add r11, r0
@@ -8893,7 +8893,7 @@ Func_0815f16c:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7
@@ -9014,7 +9014,7 @@ Func_0815f16c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 .L_081638ac:
 	add sp, #264
 	pop {r3, r5, r6, r7}
@@ -9029,8 +9029,8 @@ Func_0815f16c:
 .L_081638c0:
 	.4byte 0x06004000
 .L_081638c4:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer
 .L_081638c8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081638cc:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma

@@ -58,7 +58,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 
-// Seven bytes for each mode (The Broken Seal's gTwelveMode_Records, grown
+// Seven bytes for each mode (The Broken Seal's gTargetStrike_Records, grown
 // from 12 modes to 21).
 extern u8 Data_0819754f[];
 #define RECORD(mode, field) Data_0819754f[(mode) * 7 + (field)]
@@ -78,8 +78,8 @@ extern u8 Data_0819754f[];
 #define FLAG_FLASH 32 // as heavy, with flash pictures for wisps
 #define FLAG_STAR 64  // a star model swells on the target
 
-// The strike pictures (gTwelveMode_StrikeWidths, Heights, Offsets, Reach)
-// and the column stages (gTwelveMode_ColumnStages).
+// The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
+// and the column stages (gTargetStrike_ColumnStages).
 extern u8 Data_081975e2[];
 extern u8 Data_081975e8[];
 extern u16 Data_081975ee[];
@@ -87,13 +87,13 @@ extern u8 Data_081975fa[];
 extern u8 Data_08197600[];
 
 // The glint pictures (gBattleFx_GlintCellWidths, Heights, Offsets) and
-// their flips (gTwelveMode_GlintDrawFlags).
+// their flips (gTargetStrike_GlintDrawFlags).
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern u16 gData_08197486[];
 extern u8 Data_08197605[];
 
-// The mote's cell for each size (gParticleStreams_CellOffsets).
+// The mote's cell for each size (gBattleFx_MoteCells).
 extern u16 gData_08197410[];
 
 // The star model and its four projected corners.
@@ -139,11 +139,10 @@ struct ModelDraw {
 };
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleEffect_LoadWork
-s32 Func_08143000(void);      // the canvas transfer callback
+                   s32 mode); // BattleFx_BuildBlitter
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -160,10 +159,10 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
-struct ModelDraw *Func_081969f8(s32 count);
-void Func_08196958(const void *corners, void *out, s32 count);
-void Func_08196a7c(struct ModelDraw *draw);
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
+struct ModelDraw *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *out, s32 count);
+void Render_DrawModelList(struct ModelDraw *draw);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 pitch);
@@ -324,7 +323,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     work->transferValue = 50;
   else
     work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Aim at the middle of the first target.
   EffectPosition_ApplyStepAndYOffset(effect->actors[0], &targetPosition);
@@ -352,7 +351,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           targetPosition.y += (Random16() & 15) - 8;
         }
         if (effect->side == 1) {
-          Func_081963ec(SLOT_BLITTER,
+          BattleFx_LoadBlitter(SLOT_BLITTER,
                         BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
           gBlitter(canvas, work->sheet + Data_081975ee[picture],
                    targetPosition.x / 2 - (Data_081975fa[picture] / 2) -
@@ -360,7 +359,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
                    targetPosition.y - (Data_081975e8[picture] / 2),
                    Data_081975e2[picture], Data_081975e8[picture]);
         } else {
-          Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+          BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
           gBlitter(canvas, work->sheet + Data_081975ee[picture],
                    targetPosition.x / 2 + (Data_081975fa[picture] / 2) - 8,
                    targetPosition.y - (Data_081975e8[picture] / 2),
@@ -529,10 +528,10 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-    Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    Transform_SetLookAt(camera->eye, camera->pos);
+    BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = gBlitter;
-    Func_081963ec(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_ADDITIVE, CLIP));
+    BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_ADDITIVE, CLIP));
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(effect->actor)->object;
@@ -631,7 +630,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     // over the target's middle (the canvas is cleared to colour 0x3f first).
     if (RECORD(mode, RECORD_FLAGS) & FLAG_STAR) {
       void *corners = Runtime_BumpAllocateAlternatePool(32);
-      struct ModelDraw *model = Func_081969f8(1);
+      struct ModelDraw *model = Render_AllocateModelList(1);
 
       model->unk14 = 0;
       texture.logWidth = 6;
@@ -652,8 +651,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         SceneTransform_ApplyPitch(0x4000);
         SceneTransform_ApplyYaw(0x2000);
         Func_080151e4(scale, scale / 2, scale / 2);
-        Func_08196958(gData_08199210, corners, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, corners, 4);
+        Render_DrawModelList(model);
       }
       MemFree(model);
       MemFree(corners);
@@ -663,11 +662,11 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(8, 8);
     else
       Func_08158ce0(2, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

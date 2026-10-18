@@ -5,6 +5,7 @@
 #include "iwram_call.h"
 #include "mulq16.h"
 #include "script_motion.h"
+#include "macros.h"
 
 #define OBJECT_SLOTS 8 // script-driven objects updated each frame
 #define TARGET_UNSET ((s32)0x80000000) // no movement target
@@ -208,9 +209,7 @@ void Object_UpdateAll(void) {
       object->targetZ = TARGET_UNSET;
       object->arrivalAxis = 0;
     }
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
 
     // Turn to face the direction of travel.
     if (object->steeringFlags & 1) {

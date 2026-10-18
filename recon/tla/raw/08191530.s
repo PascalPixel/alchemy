@@ -73,7 +73,7 @@ Func_08191530:
 	movs r3, #50
 	add r2, r10
 	str r3, [r2]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r0, .L_0819191c
 	str r5, [sp, #20]
@@ -491,7 +491,7 @@ Func_08191530:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #28
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -507,9 +507,9 @@ Func_08191530:
 .L_08191924:
 	.4byte 0x00000178
 .L_08191928:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0819192c:
-	.4byte Func_08143174
+	.4byte BattleFx_FlushPendingGraphicsTransfer
 .L_08191930:
 	.4byte gMapCellBuffer
 .L_08191934:

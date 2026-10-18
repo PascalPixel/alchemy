@@ -85,8 +85,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 // Change a floor tile on first touch, then collapse it on a later touch.
-static void TretTreeInteriors_TouchCollapsingFloor(s32 floorFlag, s32 sourceColumn,
-                                               s32 sourceRow, s32 entrance) {
+static void TretTreeInteriors_TouchCollapsingFloor(s32 floorFlag,
+                                                   s32 sourceColumn,
+                                                   s32 sourceRow,
+                                                   s32 entrance) {
   s32 destinationColumn;
   s32 destinationRow;
   s32 selectedActorId;
@@ -246,7 +248,9 @@ static void TretTreeInteriors_ResetFloorTouchLatchWhenClear(void) {
 }
 
 // Return the floor, story, Reveal and search event bindings.
-const struct SceneEvent *Scene_GetEvents(void) { return gTretTreeInteriorsEvents; }
+const struct SceneEvent *Scene_GetEvents(void) {
+  return gTretTreeInteriorsEvents;
+}
 
 // Stage the party's confrontation with Tret and start the battle.
 static void TretTreeInteriors_StartTretBattle(void) {
@@ -491,7 +495,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Event_ShowMessageAndWait(0x8009, 0, 10);
   TretTreeInteriors_PlayGesture(0);
   Event_ShowMessage(0x8009, 0);
-  Actor_RunActionScriptAndWait(TRET_FACE_ACTOR, gTretTreeInteriors_ActionTable1);
+  Actor_RunActionScriptAndWait(TRET_FACE_ACTOR,
+                               gTretTreeInteriors_ActionTable1);
   Engine_EventWait(40);
   Actor_ShowEmote(GARET, 0x102, 60);
   Event_ShowMessage(0x8001, 0);
@@ -698,7 +703,8 @@ static void TretPalette_UpdateSceneTint(void) {
     *destinationColors++ = (blue << 10) | (green << 5) | red;
   }
   gTretTreeInteriors_TintIndex += (Engine_RandomNext() & 7) * 3;
-  if (gTretTreeInteriors_TintSteps[gTretTreeInteriors_TintIndex] == TRET_TINT_END)
+  if (gTretTreeInteriors_TintSteps[gTretTreeInteriors_TintIndex] ==
+      TRET_TINT_END)
     gTretTreeInteriors_TintIndex = 0;
 }
 
@@ -1297,7 +1303,8 @@ struct SceneEvent gTretTreeInteriorsEvents[] = {
      EVENT_SCRIPT(TretTreeInteriors_TouchFloorToLowerMiddleSouth)},
     {EVENT_TOUCH, 59, CONDITION_ALWAYS,
      EVENT_SCRIPT(TretTreeInteriors_TouchFloorToLowerMiddleSoutheast)},
-    {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(TretTreeInteriors_StartTretBattle)},
+    {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED,
+     EVENT_SCRIPT(TretTreeInteriors_StartTretBattle)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
      EVENT_SCRIPT(TretTreeInteriors_StopTintForReveal)},
     {SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(0x109)},

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0815537c
+@ Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
+	.global BattleFx_RunBolt
 	.thumb_func
-Func_0815537c:
+BattleFx_RunBolt:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -24,7 +25,7 @@ Func_0815537c:
 	bl BattleFx_BeginCanvasLayer
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [sp, #48]
 	ldr r5, [r5, #104]
 	movs r4, #224
@@ -351,7 +352,7 @@ Func_0815537c:
 .L_0815562c:
 	.4byte Data_02010018
 .L_08155630:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08155634:
 	.4byte IwramFillWords
 .L_08155638:
@@ -569,7 +570,7 @@ Func_0815537c:
 	movs r1, #8
 	movs r0, #2
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #48]
 	lsls r4, r4, #7
@@ -595,7 +596,7 @@ Func_0815537c:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -623,4 +624,4 @@ Func_0815537c:
 .L_08155854:
 	.4byte gData_08197410
 .L_08155858:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

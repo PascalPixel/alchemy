@@ -1,21 +1,25 @@
-// Near miss of Func_08153c30, an unused effect (no caller): differ 20 of
-// 291 (draft 291).
+// Near miss of Func_08153c30, an unused effect (no caller): differ 16 of
+// 291 (draft 291, 2026-10-18).
 
 // Twin: The Broken Seal's BattleFx_RunTargetBursts (effect.c), call for
-// call. The Lost Age loads its two blitters through Func_081963ec into heap
+// call. The Lost Age loads its two blitters through BattleFx_LoadBlitter into heap
 // slots 104 and 188 (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal
 // has 3 and 2), reads the effect from its argument and orders the callback
 // 0xc80. Resources not yet named in directory.s, by row and asset: 0x161
 // BattleFx_SmokeSheet, 0x12d BattleFx_TargetBurstImage and 0x17f
 // BattleFx_PinkBurstSheet.
 
-// Left: ten rows, each a pair the native issues in the other order: the
-// effect argument's spill before the RAM base, r1 before r0 for the first
-// Func_081963ec, the record's address after the camera word, object->z
-// before its store, the cell's 9x before the frame word.
+// Left: eight rows, each a pair the native issues in the other order: the
+// particle cursor's setup before the loop counters, the record's address
+// after the camera word, object->z before its store, the cell's 9x before
+// the frame word.
 
 // Tried (2026-10-15): the lane's rewrite (named modes, the burst offset as
 // a constant): 22 -> 20.
+// Tried (2026-10-18): BattleFx_LoadBlitter returning s32, as defined: 20 ->
+// 18; an empty asm before the heap reads (tagged): 18 -> 16; alchemy permute
+// 5 minutes (from 18): 16 only by one block around the whole body (not
+// kept).
 
 #include "types.h"
 #include "battle_display.h"
@@ -37,13 +41,13 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -73,6 +77,10 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
   struct EffectPosition screen;
   s32 record[3];
 
+  /* FAKEMATCH: stores the argument before the 0x03000000 base is started; the
+   * native's first instruction after sub sp is the argument's store (differ
+   * 18 without it). */
+  __asm__("");
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);
@@ -81,9 +89,9 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)0x05000000, palette, 128);
-  Func_081963ec(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
+  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
   rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(188, BLIT_MODE(BLIT_MAX, CLIP));
+  BattleFx_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP));
   rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   for (i = 0; i != 64; i++) {
@@ -109,7 +117,7 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != 96; frame++) {
     s32 member;
@@ -156,8 +164,8 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

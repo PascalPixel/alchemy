@@ -12,6 +12,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource_menu.h"
+#include "edition.h"
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
@@ -95,7 +96,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
 }
 
 // The Japanese function differs and remains scaffolded (S4).
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
   UiWindow_OpenMode1AndWaitFrame();
   AffineEffect_InitializeWork();

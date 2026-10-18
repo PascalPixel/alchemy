@@ -268,7 +268,7 @@ Func_080e92b4:
 	cmp r1, #0
 	beq .L_080e9502
 	adds r0, r1, #0
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13
@@ -285,12 +285,12 @@ Func_080e92b4:
 	cmp r7, r2
 	bgt .L_080e94f8
 	ldr r0, [sp, #76]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	adds r0, #15
 	b .L_080e9500
 .L_080e94f8:
 	ldr r0, [sp, #76]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	subs r0, #15
 .L_080e9500:
 	strh r0, [r5, #30]
@@ -434,7 +434,7 @@ Func_080e92b4:
 	adds r1, r6, #0
 	str r2, [sp, #8]
 	str r4, [sp, #4]
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #4]
 	adds r3, #1
@@ -478,7 +478,7 @@ Func_080e92b4:
 	ldrb r1, [r2, #20]
 	ldr r0, [sp, #20]
 	ldrb r2, [r2, #21]
-	bl Func_080e9250
+	bl BattleFx_ShiftRowsDown
 .L_080e966e:
 	ldr r3, [sp, #56]
 	mov r0, r11

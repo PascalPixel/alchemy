@@ -12,7 +12,7 @@ void BattleFx_PrepareBufferInterpolation(void);
 void Func_080dcadc(void);
 void Func_080dcb44(void);
 
-void Func_080dca50(void) {
+void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];
 
   Func_080dcadc();
@@ -26,10 +26,10 @@ void Func_080dca50(void) {
   (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
 #define GREY28 0x739c
 
-void Func_080dcdc8(void);
+void BattleFx_ArmBg0HBlankDma(void);
 
 // Gray BG palette 15 colors 1 and 3-12, then start scanline scrolling.
-void Func_080dca84(void) {
+void Ui_FillBank15PaletteGrey(void) {
   volatile u16 *p;
 
   Ram_HeapSlots->windowTiles[4] = 1;
@@ -55,5 +55,5 @@ void Func_080dca84(void) {
   *p = GREY28;
   p += 1;
   *p = GREY28;
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_080dcdc8, 0xc6c);
+  Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_ArmBg0HBlankDma, 0xc6c);
 }

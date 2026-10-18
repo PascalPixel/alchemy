@@ -2,14 +2,20 @@
 
 void Func_0817e0c0(s32 a0, s32 a1);
 
-void Func_0817e078(s32 a0) { Func_0817e0c0(a0, 4); }
+// Abilities: Bone Charge (kind 311).
+void BattleFx_RunBoneCharge(s32 a0) { Func_0817e0c0(a0, 4); }
 
-void Func_0817e084(s32 a0) { Func_0817e0c0(a0, 1); }
+// Abilities: Brute Force, Troll (kind 314).
+void BattleFx_RunBruteForce(s32 a0) { Func_0817e0c0(a0, 1); }
 
-void Func_0817e090(s32 a0) { Func_0817e0c0(a0, 2); }
+// Abilities: Onslaught (kind 326).
+void BattleFx_RunOnslaught(s32 a0) { Func_0817e0c0(a0, 2); }
 
-void Func_0817e09c(s32 a0) { Func_0817e0c0(a0, 3); }
+// Abilities: Headbutt (kind 339).
+void BattleFx_RunHeadbutt(s32 a0) { Func_0817e0c0(a0, 3); }
 
-void Func_0817e0a8(s32 a0) { Func_0817e0c0(a0, 4); }
+// Abilities: Stun Muscle (kind 433).
+void BattleFx_RunStunMuscle(s32 a0) { Func_0817e0c0(a0, 4); }
 
-void Func_0817e0b4(s32 a0) { Func_0817e0c0(a0, 5); }
+// Abilities: Living Armor, Minotaur, Power Crush (kind 457).
+void BattleFx_RunLivingArmor(s32 a0) { Func_0817e0c0(a0, 5); }

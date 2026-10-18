@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 struct StatusOwner {
   u8 unk000[15];
@@ -8,8 +9,8 @@ struct StatusOwner {
   s32 experience;
 };
 
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define HELP_LENGTH 80
 #else
 #define HELP_LENGTH 64

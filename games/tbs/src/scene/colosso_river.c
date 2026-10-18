@@ -50,6 +50,7 @@
 #include "heap_state.h"
 #include "fixed_math.h"
 #include "colosso_gauge.h"
+#include "macros.h"
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
@@ -1206,9 +1207,7 @@ static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
     s32 radius;
     s32 angle;
 
-    position[0] = actor->x.fixed;
-    position[1] = actor->y.fixed;
-    position[2] = actor->z.fixed;
+    SET_VECTOR(position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     radius = Engine_RandomNext();
     angle = Engine_RandomNext();
     Vector_AddPolarOffset(radius << 4, angle, position);

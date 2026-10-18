@@ -1,7 +1,7 @@
 // Draft, differ 188 of 468 (no device): the cloud swirl that
 // Func_0813e7e0 runs after setting up the effect blocks, written from the
 // listing (twins: BattleFx_BeginCanvasLayer 0.45 by shape,
-// BattleFx_RunOrbitingSparks 0.60 by call order). The rotation goes
+// BattleFx_RunOrbitingSkulls 0.60 by call order). The rotation goes
 // through six IO_WRITE_QUEUE_PUSH writes a frame, in the queue's order
 // (value, address, control), as the native's inline pushes are.
 // Left: allocation. The native holds canvas in r9 and work in r10, keeps
@@ -32,11 +32,11 @@ extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
-void Func_08143bb8(void);
-void Func_081963ec(s32 slot, s32 value);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_LoadBlitter(s32 slot, s32 value);
 s32 Func_08196404(s32 slot, s32 width, s32 height, s32 flags, s32 mode);
-void Func_08143000(void);
-void Func_08143174(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_FlushPendingGraphicsTransfer(void);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_0815f0a0(s32 resource);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
@@ -83,7 +83,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
 
   // The cloud sheet, recoloured to palette entries 96 on, drawn into the
   // canvas through the copy blitter.
-  Func_081963ec(104, 1 << 4 | 3);
+  BattleFx_LoadBlitter(104, 1 << 4 | 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
@@ -92,11 +92,11 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   draw(canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
   WaitFrames(1);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
 
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
@@ -108,7 +108,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   }
   Func_08196404(104, 8, 7, 3, 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Scheduler_AddOrUpdateCallback(Func_08143174, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer, 0xc80);
   transition->active = 1;
   draw(gMapCellBuffer, canvas, 0, 0, 128, 128);
   draw(gMapCellBuffer, canvas, 128, 0, 128, 128);
@@ -152,7 +152,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
 
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
-  Scheduler_RemoveCallback(Func_08143174);
+  Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

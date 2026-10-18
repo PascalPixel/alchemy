@@ -1,3 +1,5 @@
+// Adopted since (2026-10-18): Scheduler_RunCallbacksByKey is C in
+// games/tla/src/system/scheduler/disable_callbacks.c; this trial remains.
 // Pin-free trial (tla-en): listing 22 instructions, draft 22, common 20,
 // differ 4. Earlier register-allocation notes describe the prior pinned form.
 
@@ -17,7 +19,7 @@ void Scheduler_RunCallbacksByKey(s32 arg) {
   u32 cursor = (u32)gSchedulerTaskTable;
   struct SchedulerTask *task;
   s32 i;
-  u8 *status = &gSchedulerTaskCount;
+  u8 *status = &gSchedulerReady;
 
   /* FAKEMATCH: retain the native address/key/status order. */
   asm("" : "=r"(held), "+r"(status) : "0"(arg));

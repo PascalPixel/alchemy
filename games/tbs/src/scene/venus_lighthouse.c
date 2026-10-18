@@ -9,6 +9,7 @@
 #include "unit/runtime/runtime.h"
 #include "iowrite.h"
 #include "object_effect.h"
+#include "macros.h"
 
 #define NULL ((void *)0)
 #include "global_cells.h"
@@ -39,7 +40,7 @@
 #include "map_scroll.h"
 #include "field_runtime.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 // UB: passage offsets and dust directions can be negative. The callers use
 // bounded pixel offsets or directions -1..1, so these products fit s32.
@@ -177,9 +178,8 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
-  targetPosition[0] = block->x.value;
-  targetPosition[1] = block->y + 0x100000;
-  targetPosition[2] = block->z.value;
+  SET_VECTOR(targetPosition, block->x.value, block->y + 0x100000,
+             block->z.value);
   blockingActor = SceneData_FindSlotAtPosition(targetPosition, block);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
@@ -291,7 +291,7 @@ static s32 VenusLighthouse_PulseChildEffect(union FieldObject *fieldObject) {
     ObjectGroup_SetChildValue(actor, 0);
 
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(SOUND_ITEM_BREAK);
+    Engine_AudioPlayCue(SE_ITEM_BREAK);
 #ifdef UBFIX
   return;
 #else
@@ -495,9 +495,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
     s32 velocity[3];
 
     angle = particleIndex << 12;
-    velocity[0] = Engine_MathCos(angle);
-    velocity[1] = 0;
-    velocity[2] = Engine_MathSin(angle);
+    SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
     velocity[0] += velocity[0] / 2;
     Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0],
                  velocity[1], velocity[2], 0x1090001, &options);
@@ -1438,7 +1436,7 @@ static void VenusLighthouse_OpenGateWithSunkenBlock(void) {
         Actor_SetActionScript(10, gVenusPushScript);
         Object_RefreshSelectorById(10);
         Engine_EventWait(30);
-        Engine_AudioPlayCue(SOUND_DOOR_OPEN);
+        Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapAnimateCells(gVenusPushCells, 110, 41);
         Map_CopyCellAttributes(46, 41, 1, 1, column, 42);
         Engine_GameFlagSet(0x301);
@@ -1563,7 +1561,7 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
     while (firstGateEffect->active != 0 || secondGateEffect->active != 0) {
       if (firstGateEffect->finished != 0 || secondGateEffect->finished != 0) {
         Engine_EventWait(30);
-        Engine_AudioPlayCue(SOUND_DOOR_OPEN);
+        Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapAnimateCells(gVenusSettleCells, 109, 37);
         Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
         if (Object_GetById(9)->x.fixed >> 20 == gVenusSwitchCells[0].x &&
@@ -2740,11 +2738,11 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
     viewCenter = event->viewCenter;
   }
   actor = Object_GetById(actorId);
-  nextPosition[0] =
-      actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
-  nextPosition[1] = actor->y.fixed;
-  nextPosition[2] =
-      actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
+  SET_VECTOR(
+      nextPosition,
+      actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15),
+      actor->y.fixed,
+      actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15));
   collision = FieldObject_CheckMovementCollision(actor, nextPosition);
   framePhase = gFrameCount & 4;
   if (framePhase == 0) {
@@ -2773,29 +2771,27 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
     Engine_TaskWait(3);
     return;
   }
-  nextPosition[0] =
-      actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x, 19);
-  nextPosition[1] = actor->y.fixed;
-  nextPosition[2] =
-      actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z, 19);
+  SET_VECTOR(nextPosition,
+             actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x, 19),
+             actor->y.fixed,
+             actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z, 19));
   collision = FieldObject_CheckMovementCollision(actor, nextPosition);
   if (collision > 0) {
     return;
   }
-  nextPosition[0] =
-      actor->x.fixed + direction->x * 0x5b333 - direction->z * 0x5b333;
-  nextPosition[1] = actor->y.fixed;
-  nextPosition[2] =
-      actor->z.fixed + direction->z * 0x5b333 - direction->x * 0x5b333;
+  SET_VECTOR(nextPosition,
+             actor->x.fixed + direction->x * 0x5b333 - direction->z * 0x5b333,
+             actor->y.fixed,
+             actor->z.fixed + direction->z * 0x5b333 - direction->x * 0x5b333);
   collision = FieldObject_CheckMovementCollision(actor, nextPosition);
   if (collision > 0) {
     actor->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
     actor->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
     return;
   }
-  nextPosition[0] = (direction->x + direction->z) * 0x5b333 + actor->x.fixed;
-  nextPosition[1] = actor->y.fixed;
-  nextPosition[2] = (direction->x + direction->z) * 0x5b333 + actor->z.fixed;
+  SET_VECTOR(
+      nextPosition, (direction->x + direction->z) * 0x5b333 + actor->x.fixed,
+      actor->y.fixed, (direction->x + direction->z) * 0x5b333 + actor->z.fixed);
   collision = FieldObject_CheckMovementCollision(actor, nextPosition);
   if (collision > 0) {
     actor->x.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
@@ -3156,9 +3152,8 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
   s32 shapeIndex;
   const u8 *shapeCursor;
 
-  supportPosition[0] = block->x.fixed;
-  supportPosition[1] = block->y.fixed - 0x100000;
-  supportPosition[2] = block->z.fixed;
+  SET_VECTOR(supportPosition, block->x.fixed, block->y.fixed - 0x100000,
+             block->z.fixed);
   support = SceneData_FindSlotAtPosition(supportPosition, 0);
   sprite = (struct TrackSprite *)support->sprite;
   // Require a compatible support shape before selecting a socket-specific

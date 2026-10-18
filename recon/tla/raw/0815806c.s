@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0815806c
+@ Abilities: Mars (kind 282).
+	.global BattleFx_RunMars
 	.thumb_func
-Func_0815806c:
+BattleFx_RunMars:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -27,7 +28,7 @@ Func_0815806c:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #12]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_081583f4
 	ldr r1, [sp, #16]
 	movs r2, #0
@@ -414,7 +415,7 @@ Func_0815806c:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -438,7 +439,7 @@ Func_0815806c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -454,7 +455,7 @@ Func_0815806c:
 .L_081583fc:
 	.4byte 0x0000017b
 .L_08158400:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08158404:
 	.4byte gMapCellBuffer
 .L_08158408:

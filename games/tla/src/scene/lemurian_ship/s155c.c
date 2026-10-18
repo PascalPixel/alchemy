@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "macros.h"
 
 void Func_0200155c(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -24,9 +25,7 @@ void Func_020015c8(void) {
   s32 position[3];
   struct LemurianShipObject *object;
 
-  position[0] = 0x3280000;
-  position[1] = 0x80000;
-  position[2] = 0x8c0000;
+  SET_VECTOR(position, 0x3280000, 0x80000, 0x8c0000);
   Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
   object = Func_02002c00(0x2a2, position[0], position[1], position[2]);
   if (object != NULL) {

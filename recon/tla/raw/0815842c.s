@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0815842c
+@ Abilities: Hail (kind 207).
+	.global BattleFx_RunHail
 	.thumb_func
-Func_0815842c:
+BattleFx_RunHail:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -37,7 +38,7 @@ Func_0815842c:
 	ldr r0, [r4, #4]
 	adds r1, #24
 	str r1, [sp, #8]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_081585a0
@@ -180,7 +181,7 @@ Func_0815842c:
 .L_081585a0:
 	.4byte 0x0000012f
 .L_081585a4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081585a8:
 	.4byte gMapCellBuffer
 .L_081585ac:
@@ -429,7 +430,7 @@ Func_0815842c:
 	movs r1, #8
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -451,7 +452,7 @@ Func_0815842c:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -469,4 +470,4 @@ Func_0815842c:
 .L_081587dc:
 	.4byte Data_08198517
 .L_081587e0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_08149794
+@ Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
+@ Thunderhead (kind 18).
+	.global BattleFx_RunPlasma
 	.thumb_func
-Func_08149794:
+BattleFx_RunPlasma:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -31,12 +33,12 @@ Func_08149794:
 	strh r3, [r2]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #40]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r4, sp
@@ -463,7 +465,7 @@ Func_08149794:
 	movs r0, #8
 	movs r1, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #36]
 	lsls r4, r4, #7
@@ -489,7 +491,7 @@ Func_08149794:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #48
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -504,7 +506,7 @@ Func_08149794:
 .L_08149b6c:
 	.4byte Data_02010018
 .L_08149b70:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08149b74:
 	.4byte Data_081979da
 .L_08149b78:

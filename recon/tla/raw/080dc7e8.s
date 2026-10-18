@@ -186,4 +186,4 @@ BattleEffect_CleanupSceneObjects:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080dc950:
-	.4byte Func_080dc3f0
+	.4byte BattleFx_UpdateAllEffectSlots

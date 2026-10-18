@@ -1,8 +1,8 @@
 // Draft (tla-en): listing 601 instructions, draft 600, common 528, differ 145.
 // The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
-// Func_0817e078 to Func_0817e0b4 pass modes 4, 1, 2, 3, 4 and 5). Written
+// BattleFx_RunBoneCharge to BattleFx_RunLivingArmor pass modes 4, 1, 2, 3, 4 and 5). Written
 // from the listing on ☀️'s skeleton; its nearest ☀️ shape is
-// BattleFx_RunParticleFieldVariant (0.54), which is no twin.
+// BattleFx_RunRushingStrike (0.54), which is no twin.
 // Written 2026-10-15 (lane N2). The frame matches (texture sp+44, the
 // blitter pair sp+52, screen sp+60, caster sp+72, target sp+84; mode,
 // canvas, frame, camera and the spark cels spilled at sp+40 down to sp+24).
@@ -68,7 +68,7 @@ struct Texture {
     *(u32 *)&(texture) = (*(u32 *)&(texture) & ~0xff00) | (logHeight) << 8;    \
   } while (0)
 
-// One entry of the list Func_08196a7c draws; kinds 6 and 7 are textured
+// One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
 // quads.
 struct RenderPrimitive {
   s32 kind;
@@ -108,39 +108,37 @@ extern const s32 Data_081994b8[];
 extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08144aac(s32 side, DrawRectangle *pair);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void Func_08157530(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
-                                       struct EffectPosition *position);
 u32 Random16(void);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct RenderPrimitive *Func_081969f8(s32 count);
+struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderPrimitive *list);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderPrimitive *list);
 void MemFree(void *buffer);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A lunge. The caster runs 80 percent of the way to the target in ten
 // frames behind a glowing streak (a 32x32 flare and its reflection); on
@@ -174,7 +172,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
 
@@ -207,10 +205,10 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The caster lunges at the target.
-  Func_08157530(effect->actor, effect->actors[0], 10, 80);
+  BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
   ObjectDispatch_ApplyValueToChildrenFar(
       GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
@@ -259,7 +257,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     // The streak, on the caster for its first 15 frames.
     EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &caster);
     vertices = Runtime_BumpAllocateAlternatePool(32);
-    quad = Func_081969f8(1);
+    quad = Render_AllocateModelList(1);
     TEXTURE_SIZE(texture, 5, 6);
     texture.pixels = work->sheet;
     quad->texture = &texture;
@@ -275,8 +273,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
                     Data_081994b8[mode]);
       if (effect->side == 1)
         SceneTransform_ApplyYaw(0x8000);
-      Func_08196958(Data_081991e0, vertices, 4);
-      Func_08196a7c(quad);
+      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_DrawModelList(quad);
     }
 
     // The flash at the target grows for twelve frames from the hit and
@@ -304,8 +302,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       else
         Func_08015160((target.x - 112) << 16, (target.y - 84) << 16, 0);
       Func_080151e4(scale, scale << 2, scale);
-      Func_08196958(Data_081991e0, vertices, 4);
-      Func_08196a7c(quad);
+      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_DrawModelList(quad);
     }
     MemFree(quad);
     MemFree(vertices);
@@ -327,7 +325,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectStep *spark;
 
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       spark = gData_02014000;
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
@@ -366,13 +364,13 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback((s32)Func_08143000);
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

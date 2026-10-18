@@ -1,5 +1,16 @@
+// Misfiled draft (tla-en, 2026-10-18): the listing at 0x0803b094 is
+// UiText_BuildRenderEntries (831 instructions), which this file only
+// declares. It holds the text writers after it instead: UiText_DrawResource,
+// UiText_DrawString (since adopted, games/tla/src/graphics/text/draw_string.c),
+// UiText_DrawStringAtOffset, UiText_DrawStringInWindow and the number writers
+// (adopted, games/tla/src/graphics/text/render.c), and
+// UiText_DrawPrefixedNumberAtOffset (listing 0x08042274). psynergy diff
+// against the listing reports differ 1071, which measures nothing.
+
 #include "mem.h"
 #include "text_render_runtime.h"
+#include "ram_buffer.h"
+#include "window.h"
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
 u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
@@ -8,17 +19,17 @@ void UiText_DrawWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
 s32 UiText_RenderTileRow(void *text, s32 source, s32 destination, s32 phase);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-  u8 *base = TEXT_IWRAM->work;
-  u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFFSET);
+  u8 *base = (u8 *)Ram_HeapSlots->windowTiles;
+  u16 *counter = (u16 *)(base + offsetof(struct UiRenderWork, count));
   s32 offset;
   s32 zero = 0;
 
   *counter = zero;
   UiText_BuildRenderEntries(arg0, 1);
-  offset = *counter * 2 + RENDER_ENTRY_TABLE_OFFSET;
+  offset = *counter * 2 + offsetof(struct UiRenderWork, entries);
   *(u16 *)(base + offset) = zero;
-  *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-  UiText_DrawWideString(base + RENDER_ENTRY_TABLE_OFFSET, arg1, arg2, arg3);
+  *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+  UiText_DrawWideString(base + offsetof(struct UiRenderWork, entries), arg1, arg2, arg3);
 }
 
 void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
@@ -53,7 +64,7 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   s32 phase;
 
   buffer = Runtime_BumpAllocateAlternatePool(0x200);
-  base = TEXT_IWRAM->work;
+  base = (u8 *)Ram_HeapSlots->windowTiles;
   output = buffer;
   if (*text != 0) {
     do {
@@ -128,7 +139,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
   s32 dst;
   s32 phase;
 
-  base = TEXT_IWRAM->work;
+  base = (u8 *)Ram_HeapSlots->windowTiles;
   text = Text_FormatNumber(formatted, value, 4);
   if (variant == 0) {
     output[0] = 0xf01d;

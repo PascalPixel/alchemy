@@ -3,7 +3,8 @@
 
 void WaitFrames(s32 frames);
 
-void Func_080d2084(void) {
+// Waits up to 120 frames, stopping early when a button is pressed.
+void Event_WaitTwoSecondsOrPress(void) {
   u32 i;
 
   for (i = 0; i <= 119; i++) {

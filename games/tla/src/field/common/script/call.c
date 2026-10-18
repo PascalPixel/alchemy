@@ -9,6 +9,7 @@
 #include "system.h"
 #include "script.h"
 #include "field_event.h"
+#include "edition.h"
 
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter) {
   Audio_PlayCue(interpreter->script[interpreter->cursor + 1]);
@@ -16,7 +17,7 @@ s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 
 s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter) {
   Func_080c88c8(interpreter, interpreter->script[interpreter->cursor + 1]);

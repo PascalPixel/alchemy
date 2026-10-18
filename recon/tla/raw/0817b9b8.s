@@ -1,9 +1,10 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_0817b9b8
+@ Abilities: Backstab (kind 77).
+	.global BattleFx_RunBackstab
 	.thumb_func
-Func_0817b9b8:
+BattleFx_RunBackstab:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -42,7 +43,7 @@ Func_0817b9b8:
 	bl Resource_LoadAndDecompress
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r2, [r5, #104]
 	movs r3, #2
 	str r2, [sp, #16]
@@ -94,7 +95,7 @@ Func_0817b9b8:
 	ldr r1, [sp, #32]
 	ldr r0, [r1, #8]
 	movs r1, #3
-	bl Func_0817b970
+	bl BattleObject_SetRecordPriority
 	ldr r2, [sp, #24]
 	cmp r2, #0
 	bne .L_0817baec
@@ -236,7 +237,7 @@ Func_0817b9b8:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #16
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 	ldr r4, [sp, #12]
 	movs r3, #224
 	lsls r3, r3, #11
@@ -430,7 +431,7 @@ Func_0817b9b8:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -457,7 +458,7 @@ Func_0817b9b8:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -466,7 +467,7 @@ Func_0817b9b8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0817bd78:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817bd7c:
 	.4byte 0xffffe000
 .L_0817bd80:

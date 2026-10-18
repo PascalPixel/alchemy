@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816dc50
+@ Abilities: Serac (kind 254).
+	.global BattleFx_RunSerac
 	.thumb_func
-Func_0816dc50:
+BattleFx_RunSerac:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -68,7 +69,7 @@ Func_0816dc50:
 	adds r1, r3, #0
 	movs r0, #0
 	str r3, [sp, #48]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r4, [sp, #56]
 	movs r0, #239
 	movs r1, #238
@@ -377,7 +378,7 @@ Func_0816dc50:
 	b .L_0816df80
 	.2byte 0x0000
 .L_0816df34:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816df38:
 	.4byte 0x000000c1
 .L_0816df3c:
@@ -421,7 +422,7 @@ Func_0816dc50:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r11, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r5, .L_0816e334
 	mov r9, r0
 	ldr r4, [r5, #12]
@@ -963,9 +964,9 @@ Func_0816dc50:
 	ldr r0, .L_0816e608
 	mov r1, r11
 	movs r2, #3
-	bl Func_081969ac
+	bl Render_ProjectVertices
 	mov r0, r9
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	bl Transform_Pop
 .L_0816e3f8:
 	movs r0, #1
@@ -1057,9 +1058,9 @@ Func_0816dc50:
 	mov r1, r11
 	movs r2, #64
 	ldr r0, .L_0816e620
-	bl Func_081969ac
+	bl Render_ProjectVertices
 	mov r0, r9
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r2, #32
 	mov r3, r9
 	movs r4, #7
@@ -1079,7 +1080,7 @@ Func_0816dc50:
 	movs r3, #2
 	str r3, [r1, #4]
 	mov r0, r9
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	bl Transform_Pop
 	ldr r4, .L_0816e624
 	movs r2, #7
@@ -1160,9 +1161,9 @@ Func_0816dc50:
 	mov r1, r11
 	ldr r0, .L_0816e638
 	movs r2, #32
-	bl Func_081969ac
+	bl Render_ProjectVertices
 	mov r0, r9
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	bl Transform_Pop
 .L_0816e58c:
 	movs r1, #1
@@ -1184,7 +1185,7 @@ Func_0816dc50:
 	movs r0, #8
 	str r5, [r3, #16]
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #240
 	ldr r6, [sp, #56]
 	lsls r0, r0, #7
@@ -1207,7 +1208,7 @@ Func_0816dc50:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #160
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1248,4 +1249,4 @@ Func_0816dc50:
 .L_0816e63c:
 	.4byte gCameraSceneParameters
 .L_0816e640:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

@@ -16,7 +16,7 @@
 #include "battle_display.h"
 #include "bg_scroll.h"
 
-void Func_081434d8(void);
+void BattleFx_ClearActorTimers(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 
@@ -37,7 +37,7 @@ void BattleFx_SetupCanvasTileMap(void) {
   s32 col;
   s32 off;
 
-  Func_081434d8();
+  BattleFx_ClearActorTimers();
   BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;

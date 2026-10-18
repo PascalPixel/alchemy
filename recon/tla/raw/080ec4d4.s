@@ -31,7 +31,7 @@ Func_080ec4d4:
 	str r3, [sp, #36]
 	str r4, [sp, #32]
 	str r4, [sp, #28]
-	bl Func_080ed804
+	bl FlagEntries_GetTable
 	ldr r5, .L_080ec794
 	str r0, [sp, #8]
 	movs r0, #198

@@ -5,7 +5,8 @@
 #include "io_reg.h"
 #include "scene.h"
 #include "system.h"
-#include "layout_guard.h"
+#include "types.h"
+#include "static_assert.h"
 
 #define SELECTION_FIXED 999
 
@@ -40,11 +41,9 @@ struct SelectionScreen {
   u16 status;
 };
 
-LAYOUT_OFFSET_GUARD(SelectionScreen_DownArrow, struct SelectionScreen,
-                    downArrow, 0x3e);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Node, struct SelectionScreen, node, 0x348);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Status, struct SelectionScreen, status,
-                    0x3a2);
+STATIC_ASSERT(offsetof(struct SelectionScreen, downArrow) == 0x3e);
+STATIC_ASSERT(offsetof(struct SelectionScreen, node) == 0x348);
+STATIC_ASSERT(offsetof(struct SelectionScreen, status) == 0x3a2);
 
 extern struct SelectionScreen *gResQueueWork;
 extern u32 gKeyState;

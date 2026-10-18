@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
+#include "macros.h"
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -17,10 +18,10 @@ void Func_02000720(struct ObjectRuntime *object) {
   s32 sine;
   s32 y;
 
-  object->x =
-      Iwram_MulQ16(Math_Cosine(angle), object->speedLimit) + (214 << 16);
-  object->y = (height * 3 << 16) + 0x80000;
-  object->z = 170 << 18;
+  SET_POSITION(object,
+               Iwram_MulQ16(Math_Cosine(angle), object->speedLimit) +
+                   (214 << 16),
+               (height * 3 << 16) + 0x80000, 170 << 18);
   if ((s16)object->unk66 == 0)
     Func_020021b4(object, 7);
   /* FAKEMATCH: the one-pass block loads the height before the limit is built,

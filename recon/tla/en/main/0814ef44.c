@@ -1,7 +1,7 @@
-// Draft of BattleFx_RunSeriesA, the body behind the eleven wrappers of
+// Draft of BattleFx_RunHealingMotes, the body behind the eleven wrappers of
 // series_a.c (18 effect kinds).
 
-// Twin: The Broken Seal's BattleFx_RunSeriesA (effect.c), grown from seven
+// Twin: The Broken Seal's BattleFx_RunHealingMotes (effect.c), grown from seven
 // modes to fourteen. The Lost Age adds:
 // - a Djinni of any element for the prelude (Func_0815585c takes the
 // element, the side and the anchor packed into one word: Venus for
@@ -57,11 +57,12 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -98,7 +99,7 @@ extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_JupiterDjinnSmallSheet;
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
 extern u16 Data_0819744c[];  // gBattleFx_PuffCells
 extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
 
@@ -113,7 +114,7 @@ extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
 // 40 pixels above it, turn about it by the mode's axes, and close in two
 // pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
 // The variant chooses 32, 64 or 128 motes a target.
-void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
+void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 total;
@@ -218,7 +219,8 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
   }
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + DJINNI_SHEET);
-  Func_08144aac(effect->side, draw = blit); // [0] MAX, [1] ADDITIVE
+  BattleFx_FetchRectangleBlitters(effect->side,
+                                  draw = blit); // [0] MAX, [1] ADDITIVE
 
   // Scatter the motes; the mode decides how, and how long the effect is.
   if (mode == 0 || mode == 6 || mode == 8 || mode == 9 || mode == 10) {
@@ -334,7 +336,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
     limit = 16;
   work->transferMode = 2;   // each transfer fades the canvas: a trail
   work->transferValue = 75; // to 3/4
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -375,7 +377,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
 
       // The motes turn about a point 40 pixels above the target.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
       point[1] = 40 << 16;
       point[2] = object->z;
@@ -488,13 +490,13 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -1,5 +1,5 @@
 // Draft, differ 57 of 96 (2026-10-15): the midpoint circle, eight
-// BattleFx_PlotHalfCanvasPixel calls per step; belongs after Func_080eb318
+// BattleFx_PlotHalfCanvasPixel calls per step; belongs after BattleFx_DrawHalfCanvasLine
 // in plot_canvas_pixel.c. Every instruction is the native's except the
 // registers: global allocation ranks x (18 weighted refs) above color (17,
 // same live length), so x takes r7 and color r10, where the native has

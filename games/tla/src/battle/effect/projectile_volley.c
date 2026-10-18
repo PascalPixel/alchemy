@@ -15,31 +15,19 @@
 #define ObjectDispatch_ApplyValueToChildrenFar                                 \
   ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-void BattleFx_RunMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSlash, BattleFx_RunProjectileVolley, 0)
 
-void BattleFx_RunMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 1);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunShuriken, BattleFx_RunProjectileVolley, 1)
 
-void BattleFx_RunMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunCrazyVoice, BattleFx_RunProjectileVolley, 2)
 
-void BattleFx_RunMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWingFlutter, BattleFx_RunProjectileVolley, 3)
 
-void BattleFx_RunMode11(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 11);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWingStroke, BattleFx_RunProjectileVolley, 11)
 
-void BattleFx_RunMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunWingBeat, BattleFx_RunProjectileVolley, 4)
 
-void BattleEffect_RunMode5WithAction(struct BattleEffectArgument *effect) {
+void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
@@ -49,7 +37,7 @@ void BattleEffect_RunMode5WithAction(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
-void BattleFx_RunMode6WithAction(struct BattleEffectArgument *effect) {
+void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
@@ -59,11 +47,9 @@ void BattleFx_RunMode6WithAction(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
-void BattleFx_RunMode7(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunSleet, BattleFx_RunProjectileVolley, 7)
 
-void BattleFx_RunMode9WithAction(struct BattleEffectArgument *effect) {
+void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
@@ -73,7 +59,8 @@ void BattleFx_RunMode9WithAction(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
-void BattleFx_RunMode12WithAction(struct BattleEffectArgument *effect) {
+void BattleFx_RunProjectileVolleyMode12WithAction(
+    struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
@@ -83,7 +70,8 @@ void BattleFx_RunMode12WithAction(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
-void BattleFx_RunMode13WithAction(struct BattleEffectArgument *effect) {
+void BattleFx_RunProjectileVolleyMode13WithAction(
+    struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
@@ -93,7 +81,8 @@ void BattleFx_RunMode13WithAction(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
-void BattleFx_RunMode14WithAction(struct BattleEffectArgument *effect) {
+void BattleFx_RunProjectileVolleyMode14WithAction(
+    struct BattleEffectArgument *effect) {
   struct FieldActor *object;
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
@@ -103,22 +92,18 @@ void BattleFx_RunMode14WithAction(struct BattleEffectArgument *effect) {
   ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
-void BattleFx_RunMode15(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 15);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode15,
+                   BattleFx_RunProjectileVolley, 15)
 
-void BattleFx_RunMode16(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 16);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode16,
+                   BattleFx_RunProjectileVolley, 16)
 
-void BattleFx_RunMode17(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 17);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode17,
+                   BattleFx_RunProjectileVolley, 17)
 
-void BattleFx_RunMode10(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 10);
-}
+// Named, as The Broken Seal names it, for Ice Blessing; here kind 402 is Ice
+// Breath and Blue Dragon.
+DEFINE_EFFECT_KIND(BattleFx_RunIceBlessing, BattleFx_RunProjectileVolley, 10)
 
-void BattleFx_RunMode18(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 18);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode18,
+                   BattleFx_RunProjectileVolley, 18)

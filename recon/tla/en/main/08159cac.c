@@ -1,4 +1,4 @@
-// Draft of Func_08159cac, effect kind 2: shattering rocks.
+// Draft of BattleFx_RunSpire, effect kind 2: shattering rocks.
 
 // On screen: boulders drop out of the sky onto the targets, one after
 // another, from the variant's row of drop frames. Each falls faster every
@@ -18,7 +18,7 @@
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunShatteringRocks (kind 2 there
+// Port of The Broken Seal's BattleFx_RunSpire (kind 2 there
 // too), with The Lost Age's heap slots, blitter mode (3 minus ☀️'s) and
 // callback order, no work->effect store, and The Lost Age's timing: the
 // effect runs 65 frames past the last drop, not 80, and the first crash
@@ -32,7 +32,7 @@
 
 // Tried:
 // ☀️'s body with The Lost Age's names                       34
-// Func_081963ec returning s32 (LoadWork returns its
+// BattleFx_LoadBlitter returning s32 (LoadWork returns its
 // store-flag result)                                      34 -> 32
 // an empty asm at the top fixes the first row; the call
 // argument against the canvas load cannot be reached by
@@ -52,7 +52,7 @@
 #define HEAP_BLITTER 104
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; Func_081963ec takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleFx_LoadBlitter takes mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -66,14 +66,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define HI(v) (((s16 *)&(v))[1])
 
 extern char ResourceId_BoulderSheet;
-// ☀️'s gShatterRocks_RockCounts, by variant.
+// ☀️'s gSpire_RockCounts, by variant.
 extern u8 Data_081985b0[];
-// ☀️'s gShatterRocks_ShardOffsets: x, y in the boulder for each shard.
+// ☀️'s gSpire_ShardOffsets: x, y in the boulder for each shard.
 extern u8 Data_08198566[];
-// ☀️'s gShatterRocks_RockX and gShatterRocks_DropFrames, by boulder.
+// ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
 extern s8 Data_081985a6[];
 extern u8 Data_081985ab[];
-// The shard cels: ☀️'s gShatterRocks_ShardCells, _ShardWidths and
+// The shard cels: ☀️'s gSpire_ShardCells, _ShardWidths and
 // _ShardHeights.
 extern u16 gData_081974bc[];
 extern u8 gData_0819749e[];
@@ -81,12 +81,12 @@ extern u8 gData_081974ad[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
-void Func_08143bb8(void);
-// Builds a blitter in a heap slot: BattleEffect_LoadWork(slot, 7, 7,
+void BattleFx_EndCanvasLayer(void);
+// Builds a blitter in a heap slot: BattleFx_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
-s32 Func_081963ec(s32 slot, s32 modeFlags);
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.
-s32 Func_08143000(void);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -102,10 +102,10 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, s32 shakeRange);
 // Counts down the actors' flash timers.
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
-void Func_08159cac(struct BattleEffectArgument *effect) {
+void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -128,7 +128,7 @@ void Func_08159cac(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -139,7 +139,7 @@ void Func_08159cac(struct BattleEffectArgument *effect) {
   REG_BG2X = (64 - first.x) << 8;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
@@ -210,13 +210,13 @@ void Func_08159cac(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(2, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Teardown.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

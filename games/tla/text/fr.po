@@ -8897,7 +8897,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Stop Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Silex"
 
@@ -20843,11 +20843,11 @@ msgctxt "message"
 msgid "05127"
 msgstr "Non utilisable"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05128"
 msgstr "Rupture de stock"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05129"
 msgstr "Vous en avez {argument_signed_number}"
 

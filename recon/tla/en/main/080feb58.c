@@ -37,7 +37,7 @@ extern u8 MsgChooseCharacter[];
 void *UnitGet(s32 owner);
 void RenderOutput_RedrawSavedRectFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-void Func_080fee40(s32 owner, s32 page);
+void Menu_CreateWindowAndEntryObjects(s32 owner, s32 page);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
 s32 Func_080fd6f0(void *unit, u16 *list, s32 mode);
 void Func_080fd6b0(u16 *list);
@@ -71,7 +71,7 @@ s32 Func_080feb58(void) {
       selection = (selection + count) % count;
       UnitGet(menu->ownerIds[selection]);
       page = (page + 3) % 3;
-      Func_080fee40(menu->ownerIds[selection], page);
+      Menu_CreateWindowAndEntryObjects(menu->ownerIds[selection], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
       menu->psynergyCount = Func_080fd6f0(UnitGet(menu->ownerIds[selection]),
                                           menu->psynergies, 0);

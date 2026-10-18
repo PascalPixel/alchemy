@@ -12,6 +12,9 @@
 // through sched2's ranking, a store costing 2 cycles instead of 1 gives
 // the outer preheader's native order (the spilled width then ties 4 *
 // height and wins on insn order), and a load costing 3 the inner one's.
+// 2026-10-18: the strides as (width * 2), a w2 local, 2 * width, the four
+// stores reordered, unsigned sizes, y < height, alchemy permute 4 minutes
+// (6 to 77; none below 6).
 #include "types.h"
 
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height) {

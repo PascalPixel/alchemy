@@ -3,6 +3,7 @@
 #include "call.h"
 #include "flag_call.h"
 #include "yallam_interiors.h"
+#include "edition.h"
 
 void Func_02000a60(s32 id, s32 a);
 
@@ -29,7 +30,7 @@ s32 Func_0200086c(void) {
       Call3((void (*)())Func_020009f8, 14, 0x2580000, 0x1680000);
       Call3((void (*)())Func_020009f8, 16, 0x2780000, 0x15a0000);
       Call3((void (*)())ObjectMotion_ArmCallback, 16, 0x4000, 0);
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       Call3((void (*)())Func_020009f8, 17, 0, 0);
 #endif
     } else {

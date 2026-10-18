@@ -2,7 +2,8 @@
 // listing loads the count (ldrh r3, [r0]) before it copies the end row
 // (mov r2, sl); this draft copies first. A u16 count temporary with a barrier
 // changes nothing, and a u32 one moves the allocation (differ 75).
-#include "layout_guard.h"
+#include "types.h"
+#include "static_assert.h"
 
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
@@ -33,11 +34,9 @@ struct SelectionScreen {
   u16 status;
 };
 
-LAYOUT_OFFSET_GUARD(SelectionScreen_DownArrow, struct SelectionScreen,
-                    downArrow, 0x3e);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Node, struct SelectionScreen, node, 0x348);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Status, struct SelectionScreen, status,
-                    0x3a2);
+STATIC_ASSERT(offsetof(struct SelectionScreen, downArrow) == 0x3e);
+STATIC_ASSERT(offsetof(struct SelectionScreen, node) == 0x348);
+STATIC_ASSERT(offsetof(struct SelectionScreen, status) == 0x3a2);
 
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);

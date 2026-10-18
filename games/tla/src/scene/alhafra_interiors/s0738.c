@@ -7,6 +7,7 @@
        ->v)
 
 #include "call.h"
+#include "edition.h"
 s32 GameFlag_Test();
 s32 GameFlag_SetBit();
 s32 Func_02000a94();
@@ -46,7 +47,7 @@ void Func_02000738(void) {
   t0 = Value1(GameFlag_Test, 0x903);
   if (t0 != 0) {
   } else {
-#if !defined(TLA_EDITION_JA) /* The Japanese edition does not check 0x200. */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* The Japanese edition does not check 0x200. */
     t1 = Value1(GameFlag_Test, 0x200);
     if (t1 == 0) {
     } else

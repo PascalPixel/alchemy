@@ -278,7 +278,7 @@ Func_080d7524:
 .L_080d7770:
 	.4byte gPartyState
 .L_080d7774:
-	.4byte Func_080d74e4
+	.4byte ObjectMotion_AdvanceSpinAngle
 .L_080d7778:
 	.4byte 0x0004cccc
 .L_080d777c:

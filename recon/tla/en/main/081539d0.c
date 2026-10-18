@@ -32,10 +32,11 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair);                // BattleFx_FetchRectangleBlitters
 void Func_080150e4(s32 angle);           // SceneTransform_ApplyRoll
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -43,7 +44,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 #define STARS ((struct EffectStep *)Ram_MapCellBuffer)
 
 extern char ResourceId_StarDotSheet;
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
 
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
@@ -66,7 +67,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  Func_08144aac(effect->side ^ 1, draw);
+  BattleFx_FetchRectangleBlitters(effect->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
     star->x = ((Random16() & 0xff) - 127) << 16;
@@ -79,7 +80,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
@@ -96,7 +97,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
-        Graphics_SaveTransferWorkOnce();
+        Transform_Push();
         switch (i & 3) {
         case 0:
           SceneTransform_ApplyYaw(frame * (i + 32) * 8);
@@ -114,7 +115,7 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
         }
         EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
         pos.x >>= 1;
-        Graphics_RestoreTransferWork();
+        Transform_Pop();
 
         // Depth 250-634 gives sizes 9 down to 3.
         if (pos.depth < 250)
@@ -142,8 +143,8 @@ void Func_081539d0(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -1,7 +1,7 @@
-// Draft of Func_0814ea58, the body behind Func_0814ea3c (mode 0, or 1 when
-// the variant is not 0) and Func_0814ea4c (mode 2).
+// Draft of Func_0814ea58, the body behind BattleFx_RunDrain (mode 0, or 1 when
+// the variant is not 0) and BattleFx_RunTrueCollide (mode 2).
 
-// Twin: The Broken Seal's BattleFx_RunGatheringMotes (effect.c), rebuilt
+// Twin: The Broken Seal's BattleFx_RunDrain (effect.c), rebuilt
 // around a mode. Mode 0 is The Broken Seal's variant 0 (the ice palette)
 // and mode 1 its other variants (the blast palette). Mode 2 is new: it
 // draws a 10-pixel disc (Func_0815b510) instead of the particle sheet,
@@ -56,10 +56,10 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -68,7 +68,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 actor);
 
-// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -81,7 +81,7 @@ extern char ResourceId_IceBlockSheet;
 extern char ResourceId_BlastSheet;
 extern char ResourceId_VioletPaletteC;
 extern u8 Data_081982f4[];   // the mote size by mode
-extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
+extern u16 gData_08197410[]; // gBattleFx_MoteCells
 
 // Motes of light burst out of each target in turn, 20 frames apart, and
 // are drawn into the user.
@@ -155,7 +155,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  Func_081963ec(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
@@ -172,7 +172,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 3;
     work->transferValue = 0x04040404;
   }
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
@@ -184,7 +184,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 64)
       Func_081180e8(133);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
       Func_0814cd48(effect->actor, 7, -1, -1, 0);
     if (frame == effect->count * 20 + 52)
@@ -237,12 +237,12 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

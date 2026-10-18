@@ -1,6 +1,7 @@
 #include "types.h"
+#include "edition.h"
 
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // Spanish and Italian builds use a different name for this far call,
 // as in shop.c.
 s32 Func_080c8638(s32 scene, s32 entrance);
@@ -15,7 +16,7 @@ extern const u8 gMenu_ColonString[];
 extern u8 MsgDebugEntryName[];
 extern u8 MsgDebugCategoryName[];
 
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 #define SELROW_TEXT_X 100
 #define SELROW_LABEL_X 110
 #else
@@ -25,7 +26,7 @@ extern u8 MsgDebugCategoryName[];
 
 void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second) {
   s16 selected = first;
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   s32 label = Func_080c8638(selected, *second) + (s32)MsgDebugEntryName;
 #else
   s32 label =

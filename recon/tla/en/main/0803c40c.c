@@ -1,7 +1,25 @@
+// Draft of RenderOutput_UpdateScaleAnimation: differ 8 of 146 (tla-en,
+// 2026-10-18). Its ☀️ twin is games/tbs/src/window/window.c's function of
+// the same name: it steps a window output's bounce or grow scale and builds
+// the sprite's affine matrix for it.
+//
+// Left: instruction order only (a byte store, an and and a 256 build each sit
+// one place apart).
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
-#include "affine.h"
+
+// games/tla/include/affine.h's transform, written out: the stale affine.h
+// beside these drafts would shadow it.
+struct AffineTransform {
+  u16 scaleX;
+  u16 scaleY;
+  u16 angle;
+  u16 unk06;
+};
+
+s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
 struct OutputSprite {
   u32 link;

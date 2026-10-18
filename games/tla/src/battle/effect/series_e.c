@@ -1,12 +1,10 @@
 #include "types.h"
+#include "battle_effect_argument.h"
 
-struct BattleEffectArgument;
 void Func_08147aec(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_08147ad4(struct BattleEffectArgument *effect) {
-  Func_08147aec(effect, 1);
-}
+// Abilities: Dragon Driver (kind 385).
+DEFINE_EFFECT_KIND(BattleFx_RunDragonDriver, Func_08147aec, 1)
 
-void Func_08147ae0(struct BattleEffectArgument *effect) {
-  Func_08147aec(effect, 0);
-}
+// Abilities: Tiamat (scene kind 7).
+DEFINE_EFFECT_KIND(BattleFx_RunTiamat, Func_08147aec, 0)

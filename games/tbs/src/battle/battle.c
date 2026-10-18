@@ -76,7 +76,7 @@
 #include "irq.h"
 #include "vram_block.h"
 #include "owner_value.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "ramcode.h"
 #include "map_scroll.h"
 #include "iowrite.h"
@@ -84,6 +84,7 @@
 #include "b5_context.h"
 #include "frame.h"
 #include "unit/object/psynergy_effects.h"
+#include "macros.h"
 
 // The kinds of argument a message's placeholders take, for
 // UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
@@ -1269,12 +1270,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     UiWork_InitializeFar(0);
 
   // The camera's starting view, and the enemies.
-  focus[0] = 0;
-  focus[1] = 0x400000;
-  focus[2] = 0;
-  camera->eye[0] = 0;
-  camera->eye[1] = 0xb40000;
-  camera->eye[2] = 0x400000;
+  SET_VECTOR(focus, 0, 0x400000, 0);
+  SET_VECTOR(camera->eye, 0, 0xb40000, 0x400000);
   camera->yaw = 0x2800;
   camera->pitch = 0x5000;
   camera->distance = 0x1000000;
@@ -2587,12 +2584,6 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
   }
 }
 
-// The battle poses BattlePres_SetActorModeAndAction picks.
-#define POSE_ENEMY_HELD 0
-#define POSE_STANDING 1
-#define POSE_PARTY_HELD 4 // asleep, stunned or held; also a downed member
-#define POSE_ENEMY_DOWN 5
-
 // Sets unit id's pose to match its state: held (asleep, stunned or unable
 // to move) or down, else standing; then gives its sprites their palette
 // row, 14 to 17 by unit.
@@ -2867,9 +2858,8 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
 s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
   struct BattleWork *battle = gBattleWork;
 
-  position->x = battle->slots[place].anchorX;
-  position->y = 0;
-  position->z = battle->slots[place].anchorZ;
+  SET_POSITION(position, battle->slots[place].anchorX, 0,
+               battle->slots[place].anchorZ);
   return 0;
 }
 
@@ -2894,9 +2884,7 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   s32 projectionScale;
 
   Camera_ApplyTransformByFlag();
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  SET_VECTOR(position, object->x, object->y, object->z);
   projectionScale = Render_ProjectPoint(position, projected);
   (void)Iwram_MulQ16(projectionScale, record->scale);
   return 0;
@@ -2924,9 +2912,7 @@ void Camera_InitDefaultTransform(void) {
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;
   camera->distance = 255 << 17;
-  camera->pos[0] = 0;
-  camera->pos[1] = 0;
-  camera->pos[2] = 0;
+  SET_VECTOR(camera->pos, 0, 0, 0);
   camera->followPos = 0;
   camera->unk18 = 0;
 
@@ -3476,7 +3462,6 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
 
 // REG_BLDCNT: blend the targets' sprites over every layer, fading.
 #define BLEND_SPRITES_OVER_ALL 0x3f40
-#define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 
 // Auto battle: plays a Psynergy. The camera turns to the caster's side and
 // the caster raises its hand; the target side fades out, its living units
@@ -3572,7 +3557,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   } else {
     context.effect.side = 0;
   }
-  BattleFx_InitializeModeFar(&context.effect);
+  BattleFx_RunSceneEffectFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -3713,7 +3698,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
     work.effect.kind = 3;
     BattleFx_RunIceFleckBurstFar(&work.effect);
     work.effect.kind = 0;
-    BattleFx_DispatchModeFar(&work.effect);
+    BattleFx_RunTableEffectFar(&work.effect);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
@@ -4643,7 +4628,7 @@ finish:
 #define STAGING_VARIANT_MASK 0x3000
 #define STAGING_VARIANT_SHIFT 12
 #define STAGING_BY_ID_RANGE 0x4000 // BattleFx_DispatchByIdRangeFar
-#define STAGING_SCENE 0x8000       // BattleFx_InitializeModeFar, actor's view
+#define STAGING_SCENE 0x8000       // BattleFx_RunSceneEffectFar, actor's view
 #define STAGING_ON_DOWNED 0x10000  // shown on downed targets too (revivals)
 #define STAGING_OTHER_SIDE 0x20000 // played from the other side
 
@@ -4887,11 +4872,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       work.effect.side ^= 1;
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (plan->presentationFlags & STAGING_SCENE)
-      BattleFx_InitializeModeFar(&work.effect);
+      BattleFx_RunSceneEffectFar(&work.effect);
     else if (plan->presentationFlags & STAGING_BY_ID_RANGE)
       BattleFx_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_DispatchModeFar(&work.effect);
+      BattleFx_RunTableEffectFar(&work.effect);
     BattleEventRuntime_WaitForReady();
   }
   BattleObjPut();
@@ -5069,7 +5054,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
         BattleFx_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_DispatchModeFar(&work.effect);
+        BattleFx_RunTableEffectFar(&work.effect);
     }
     BattleEventRuntime_WaitForReady();
     if (critical != 0) {
@@ -5160,7 +5145,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
 #define ITEM_USE_MAY_BREAK 2 // breaks one time in eight
 #define ITEM_USE_EMPTIES 4   // Hermes' Water leaves an Empty Bottle
 
-
 // Inventory_RemoveFar's result when the last one left its slot, and the
 // slots after it moved up.
 #define ITEM_REMOVED_SLOT_GONE 2
@@ -5232,7 +5216,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     if (plan->presentationFlags & STAGING_BY_ID_RANGE)
       BattleFx_DispatchByIdRangeFar(&work.effect);
     else
-      BattleFx_DispatchModeFar(&work.effect);
+      BattleFx_RunTableEffectFar(&work.effect);
   } else {
     WaitFrames(60);
   }
@@ -5398,7 +5382,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
         BattleFx_DispatchByIdRangeFar(&work.effect);
       else
-        BattleFx_DispatchModeFar(&work.effect);
+        BattleFx_RunTableEffectFar(&work.effect);
     } else {
       BattlePres_RunWithZeroArguments();
     }
@@ -6103,7 +6087,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
       break;
     WaitFrames(1);
   }
-  AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+  AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
   Resource_ResetEntry(tileSlot);
   WaitFrames(1);
 }
@@ -7836,9 +7820,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 #define PLAY_FELLED 11      // Remove a defeated enemy.
 #define PLAY_MESSAGE_ADD 13 // Continue the message without waiting for a key.
 
-#define POSE_DAMAGE 5 // Pose when taking damage.
-#define PAL_HIT 7     // Flash colour.
-
 #define FELLED_FLASH 0x400 // Timer base while changing colour.
 
 #define OBJ_VRAM 0x06010000
@@ -8031,7 +8012,7 @@ void BattleEvent_Playback(void) {
       if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
           ((u32)(gFrameTick - events->timer) > 10 &&
            (BATTLE_OPTIONS & KEY_ADVANCE))) {
-        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;
       } else {
@@ -8052,7 +8033,7 @@ void BattleEvent_Playback(void) {
           selection[0] = events->actorId;
           selection[1] = 0xff;
           BattleMotion_SetRecordChildValues(
-              BattleObjGet(events->actorId)->object, PAL_HIT);
+              BattleObjGet(events->actorId)->object, SPRITE_COLOR_WHITE);
         }
         BattleLayout_HighlightPartyPanelsFar(selection);
       }
@@ -8511,10 +8492,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->failure = 0;
       actor->pp -= ability->ppCost;
       UnitRatioFar(request->unitId);
-      if (actor->pp < 0)
-        actor->pp = 0;
-      if (actor->pp > actor->maxPp)
-        actor->pp = actor->maxPp;
+      CLAMP(actor->pp, 0, actor->maxPp);
     }
   } break;
 
@@ -8678,7 +8656,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       // Recovering.
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-      AudioCommand_PlayFar(SOUND_MENU_ERROR);
+      AudioCommand_PlayFar(SE_MENU_ERROR);
       UiText_ShowMessageAndWaitCoreFar(MsgDjinnInRecovery);
       WaitFrames(60);
       return -1;
@@ -9504,7 +9482,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
       if (*poison != 0) {
-        state->events.pendingCue = SOUND_HEAVY_IMPACT;
+        state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
         state->events.pendingCue = 133;
       }
@@ -10142,9 +10120,7 @@ UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   s32 width;
   u32 result;
 
-  focus[0] = x;
-  focus[1] = depth;
-  focus[2] = y;
+  SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
   alpha = 0xc000;
   sourceBounds[1] = 0;
@@ -10189,9 +10165,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 width;
   u32 result;
 
-  focus[0] = x;
-  focus[1] = depth;
-  focus[2] = y;
+  SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
   alpha = 0xc000;
   sourceBounds[1] = 0;
@@ -11017,58 +10991,40 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
   value = unit->baseHp;
   value += levels * 97 / 10;
   minimumStat = base->baseHp * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 9999)
-    value = 9999;
+  CLAMP(value, minimumStat, 9999);
   unit->baseHp = value;
 
   value = unit->basePp;
   value += levels * 15 / 10;
   minimumStat = base->basePp * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 9999)
-    value = 9999;
+  CLAMP(value, minimumStat, 9999);
   unit->basePp = value;
 
   minimumStat = levels * 123 / 10;
   value = unit->baseAttack;
   value += minimumStat;
   minimumStat = base->baseAttack * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 999)
-    value = 999;
+  CLAMP(value, minimumStat, 999);
   unit->baseAttack = value;
 
   minimumStat = levels * 33 / 10;
   value = unit->baseDefense;
   value += minimumStat;
   minimumStat = base->baseDefense * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 999)
-    value = 999;
+  CLAMP(value, minimumStat, 999);
   unit->baseDefense = value;
 
   minimumStat = levels * 51 / 10;
   value = unit->baseAgility;
   value += minimumStat;
   minimumStat = base->baseAgility * 7 / 10;
-  if (value < minimumStat)
-    value = minimumStat;
-  if (value > 999)
-    value = 999;
+  CLAMP(value, minimumStat, 999);
   unit->baseAgility = value;
 
   for (element = 0; element < 4; element++) {
     value = unit->baseElement[element].power + levels * 15;
     minimumStat = base->element[element].power * 7 / 10;
-    if (value < minimumStat)
-      value = minimumStat;
-    if (value > 200)
-      value = 200;
+    CLAMP(value, minimumStat, 200);
     unit->baseElement[element].power = value;
   }
 

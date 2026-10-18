@@ -64,7 +64,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The flecks live in the map cell buffer.
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The fleck's cell for each size from 1 to 6 (gBattleFx6_FlareCells).
+// The fleck's cell for each size from 1 to 6 (gBattleFx_FlareCells).
 extern u16 Data_08197424[];
 
 extern char ResourceId_IceTileSheet;
@@ -74,9 +74,8 @@ extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -86,7 +85,7 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor,
                                                  struct EffectPosition *out);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
@@ -152,8 +151,8 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;   // each transfer leaves 3/4 of the old picture,
   work->transferValue = 75; // a trail
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
-  Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   effect->variant++;
   if (effect->variant <= 0)
@@ -176,7 +175,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       s32 n;
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
-      Func_081963ec(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+      BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
       /* FAKEMATCH: the native works out the pillar's and the glow's
        * pictures again for the mirrored half. The one-pass block ends CSE's
        * block, so they are not carried over (differ 259 without it, 42 with
@@ -189,7 +188,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
               43);
       Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
-      Func_081963ec(SLOT_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       n = frame / 2 % 4;
@@ -200,7 +199,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     // The first 32 flecks turn 0x400, rise 5 pixels and widen 4 pixels a
     // frame.
@@ -224,14 +223,14 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       }
       fleck->variant++;
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_EFFECT);

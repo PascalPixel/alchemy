@@ -25,7 +25,6 @@ s32 BattleMotion_ProjectScaledPositionFar(s32 id,
 s32 GameFlag_Test(s32 flag);
 void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *screen);
-s32 AffineMatrix_BuildForEffect(void *matrix);
 s32 VramCache_Load(s32 slot, s32 size, void *source);
 void Func_0803e488(struct SelectionScreen *state, s32 index);
 
@@ -112,10 +111,10 @@ void MenuSelection_DrawFrame(void) {
     te->x = node->x - 4;
     te->y = node->y + (gMenu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
     if (transfer->scale != transfer->scaleEnd) {
-      state->matrix[0] = transfer->scale;
-      state->matrix[1] = transfer->scale;
-      state->matrix[2] = 0;
-      te->param = AffineMatrix_BuildForEffect(state->matrix);
+      state->transform.scaleX = transfer->scale;
+      state->transform.scaleY = transfer->scale;
+      state->transform.angle = 0;
+      te->param = AffineMatrix_BuildForEffect(&state->transform);
       te->affine = 3;
       te->x = te->x + 0xfff0;
       te->y = te->y + 0xf0;
@@ -141,10 +140,10 @@ void MenuSelection_DrawFrame(void) {
     e->y = node->y;
     if (node->scale != node->scaleEnd) {
       node->scale = node->scale + node->scaleStep;
-      state->matrix[0] = node->scale;
-      state->matrix[1] = node->scale;
-      state->matrix[2] = 0;
-      e->param = AffineMatrix_BuildForEffect(state->matrix);
+      state->transform.scaleX = node->scale;
+      state->transform.scaleY = node->scale;
+      state->transform.angle = 0;
+      e->param = AffineMatrix_BuildForEffect(&state->transform);
       e->affine = 3;
       e->x = e->x + 0xfff8;
       e->y = e->y + 0xf8;

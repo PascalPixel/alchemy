@@ -43,7 +43,7 @@ Func_0813eb70:
 	adds r3, r1, r5
 	movs r5, #1
 	str r5, [r3]
-	bl Func_081434d8
+	bl BattleFx_ClearActorTimers
 	ldr r2, .L_0813ec28
 	mov r7, r8
 	movs r3, #32
@@ -266,14 +266,14 @@ Func_0813eb70:
 	bl Scheduler_AddOrUpdateCallback
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r0, [r5, #104]
 	movs r1, #19
 	str r0, [sp, #32]
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	movs r1, #0
@@ -465,7 +465,7 @@ Func_0813eb70:
 .L_0813ef0c:
 	.4byte 0x0000001f
 .L_0813ef10:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813ef14:
 	.4byte 0xffe00000
 .L_0813ef18:
@@ -1174,7 +1174,7 @@ Func_0813eb70:
 	cmp r6, #32
 	bne .L_0813f3d0
 .L_0813f438:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r7, #240
 	ldr r5, [sp, #48]
 	lsls r7, r7, #7
@@ -1270,7 +1270,7 @@ Func_0813eb70:
 .L_0813f504:
 	.4byte 0xfffff000
 .L_0813f508:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0813f50c:
 	.4byte gBgScroll
 .L_0813f510:

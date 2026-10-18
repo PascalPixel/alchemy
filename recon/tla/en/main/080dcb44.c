@@ -6,7 +6,7 @@
 // builds &from in sl first and copies it back (one instruction more, 291
 // against 290), and the orientation tests take r1 and r2 where the native
 // takes r0 and r1. Belongs between Func_080dcadc and hue.c's
-// Func_080dcdc8.
+// BattleFx_ArmBg0HBlankDma.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -53,7 +53,7 @@ struct WaveFxMetadata {
 };
 
 s32 Trig_Sin(s32 angle);
-void Func_080dce60(void);
+void BattleFx_AdvanceHueCycle(void);
 void BattleFx_ApplyColorToTargetBuffer(u32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -91,7 +91,7 @@ void Func_080dcb44(void) {
   work->phase += 4;
   work->page ^= 1;
   if (work->page != 0) {
-    Func_080dce60();
+    BattleFx_AdvanceHueCycle();
     BattleFx_ApplyColorToTargetBuffer(
         (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
     BattleFx_StartBufferInterpolation(1);

@@ -1,8 +1,13 @@
+// Draft of Func_0815f16c, decompiled from the listing: differ 8410 of 7666
+// (draft 7672), control flow and calls as the listing except one shared
+// FetchRectangleBlitters tail: jump2 merges kind 44 and 61 into later copies
+// (86 and 88) there but into kind 61 here, because the copies load action
+// through different registers (an allocation artifact, 516 vs 515 calls). Seven
+// of its data tables are read as writable, as the listing reloads them.
 #include "mem.h"
 #include "types.h"
 
-#define ALCHEMY_TYPES_H
-#include "../../../../games/tbs/include/dma.h"
+#include "dma.h"
 
 struct Particle {
   s32 x;
@@ -150,13 +155,13 @@ extern const u8 gData_0819746d[];
 extern const u8 gData_08197473[];
 extern const u16 gData_0819747a[];
 extern const u16 gData_08197486[];
-extern const u8 gData_08197492[];
-extern const u8 gData_08197498[];
+extern u8 gData_08197492[];
+extern u8 gData_08197498[];
 extern const u8 gData_0819749e[];
 extern const u8 gData_081974ad[];
 extern const u16 gData_081974bc[];
-extern const u8 gData_0819750c[];
-extern const u8 gData_0819751a[];
+extern u8 gData_0819750c[];
+extern u8 gData_0819751a[];
 extern const u8 gData_081977f8[];
 extern const u8 gData_0819781a[];
 extern const u8 gData_08197826[];
@@ -167,8 +172,8 @@ extern const u8 gData_08198886[];
 extern const u16 gData_0819888a[];
 extern const u16 gData_0819889e[];
 extern const u16 gData_081988b2[];
-extern const u16 gData_081988c6[];
-extern const u16 gData_081988da[];
+extern u16 gData_081988c6[];
+extern u16 gData_081988da[];
 extern const u16 gData_081988ee[];
 extern const u16 gData_081988fc[];
 extern const u16 gData_0819890a[];
@@ -177,7 +182,7 @@ extern const u16 gData_08198926[];
 extern const u16 gData_08198934[];
 extern const u8 gData_0819893a[];
 extern const u8 gData_0819893d[];
-extern const u8 gData_08198940[][2];
+extern u8 gData_08198940[][2];
 extern const u16 gData_08198946[];
 extern const u8 gData_0819894e[];
 extern const u8 gData_08198952[];
@@ -197,13 +202,13 @@ extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
 s32 __divsi3(s32, s32);
-s32 Func_08002064(s32, s32);
-s32 Func_08002090(s32);
-s32 Func_08002096(s32);
-void Func_0801314c(s32);
-void Func_08013164(void *);
-void *Func_08013300(s32);
-void Func_08013560(s32);
+s32 __modsi3(s32, s32);
+s32 Trig_Cos(s32);
+s32 Trig_Sin(s32);
+void Runtime_ReleaseHeapBlock(s32);
+void MemFree(void *);
+void *Resource_GetTableEntry(s32);
+void WaitFrames(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
@@ -215,23 +220,23 @@ void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
 void Transform_SetLookAt(void *, void *);
-void Func_08020090(struct BattleObject *, s32);
+void Object_SetMode(struct BattleObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
 s32 Battle_GetObjectTableValueFar(s32);
 void Func_08118088(s32, s32);
-struct BattleObject **Func_08118098(s32);
+struct BattleObject **GetBattleObjectSlotFar(s32);
 void Func_081180e8(s32);
-void Func_08138058(struct Particle *, s32, s32);
-void Func_08138086(struct Particle *, s32, s32);
+void BattleFxKernels_IntegrateVector3(struct Particle *, s32, s32);
+void BattleFxKernels_IntegrateVector2(struct Particle *, s32, s32);
 void Func_08143001(void);
 void Func_08143489(void);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_BeginTiledCanvas(s32);
-void Func_08143bb8(void);
-void Func_08144aac(s32, struct DrawFuncs *);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_FetchRectangleBlitters(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
-void BattleFx_RenderMode5(struct SummonAction *);
+void BattleFx_RunMysticFlame(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void SummonFx_RunCanvasMode3(struct SummonAction *);
 void SummonFx_RunCanvasMode1(struct SummonAction *);
@@ -247,12 +252,12 @@ void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
-void Func_081963ec(s32, s32);
+void BattleFx_LoadBlitter(s32, s32);
 void Func_08196404(s32, s32, s32, s32, s32);
-void Func_08196958(const void *, void *, s32);
-struct Model *Func_081969f8(s32);
-void Func_08196a7c(struct Model *);
-void Func_081c0010(s32);
+void Render_TransformVertices(const void *, void *, s32);
+struct Model *Render_AllocateModelList(s32);
+void Render_DrawModelList(struct Model *);
+void Audio_PlayCue(s32);
 
 struct IoRegisters {
   u8 unk00[0x20];
@@ -479,7 +484,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   case 94:
   case 97:
   case 98:
-    Dma_Set(Func_08013300((s32)&Value_00000184), PLTT, 0x84000020, DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&Value_00000184), PLTT, 0x84000020,
+            DMA3);
     if (action->unk1c == 1)
       Resource_LoadAndDecompress((s32)&Value_00000157, EWRAM_BUF + 0x3c56, 1,
                                  0);
@@ -506,7 +512,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1,
                                  1);
     else
-      Dma_Set(Func_08013300((s32)&Value_00000155), PLTT, 0x84000020, DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&Value_00000155), PLTT, 0x84000020,
+              DMA3);
     break;
   case 3:
   case 5:
@@ -531,7 +538,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Resource_LoadAndDecompress((s32)&Value_00000151, EWRAM_BUF + 0x3c56, 1,
                                  1);
     else
-      Dma_Set(Func_08013300((s32)&Value_00000151), PLTT, 0x84000020, DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&Value_00000151), PLTT, 0x84000020,
+              DMA3);
     break;
   case 1:
   case 6:
@@ -557,12 +565,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Resource_LoadAndDecompress((s32)&Value_00000153, EWRAM_BUF + 0x3c56, 1,
                                  1);
     else
-      Dma_Set(Func_08013300((s32)&Value_00000153), PLTT, 0x84000020, DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&Value_00000153), PLTT, 0x84000020,
+              DMA3);
     break;
   case 93:
   case 95:
   case 96:
-    Dma_Set(Func_08013300((s32)&Value_00000182), PLTT, 0x84000020, DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&Value_00000182), PLTT, 0x84000020,
+            DMA3);
     break;
   case 100:
     Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
@@ -579,10 +589,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
   EffectPosition_ApplyStepAndYOffset(action->actor, target);
   EffectPosition_ApplyStepAndYOffset(action->target, base);
-  Func_08144aac(action->side, &drawFuncs);
+  BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
   work->unk77b4 = 24;
   work->unk77b8 = 0;
-  object = *Func_08118098(action->target);
+  object = *GetBattleObjectSlotFar(action->target);
   for (i = 0; i != 64; i++) {
     work->particle[i].x = (Random16() & 63) + 32;
     work->particle[i].y = 0;
@@ -607,7 +617,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   object->unk48 = 0;
   EffectPosition_ApplyStepAndYOffset(action->target, base);
   base[0] = base[0] / 2;
-  Func_081c0010(212);
+  Audio_PlayCue(212);
 
   for (frame = 0; frame != 32; frame++) {
     count = 0;
@@ -649,7 +659,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                         40);
     }
     work->unk78e8 = 1;
-    Func_08013560(1);
+    WaitFrames(1);
   }
 
   if (kind == 41) {
@@ -707,13 +717,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     action->unk1c = 0;
     Scheduler_RemoveCallback(Func_08143489);
     Scheduler_RemoveCallback(Func_08143001);
-    Func_0801314c(188);
-    Func_0801314c(104);
-    Func_08020090(object, 3);
+    Runtime_ReleaseHeapBlock(188);
+    Runtime_ReleaseHeapBlock(104);
+    Object_SetMode(object, 3);
     if (kind == 45)
       BattleFx_RunProjectileVolley(action, 9);
     if (kind == 54)
-      BattleFx_RenderMode5(action);
+      BattleFx_RunMysticFlame(action);
     if (kind == 56)
       BattleFx_RunProjectileVolley(action, 8);
     return;
@@ -730,8 +740,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     action->unk1c = 0;
     Scheduler_RemoveCallback(Func_08143489);
     Scheduler_RemoveCallback(Func_08143001);
-    Func_0801314c(188);
-    Func_0801314c(104);
+    Runtime_ReleaseHeapBlock(188);
+    Runtime_ReleaseHeapBlock(104);
     action->unk18 = 3;
     BattleFx_RunSparkGroups(action, 2);
     return;
@@ -740,11 +750,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   CLEAR(BG_VRAM, 0x3c00);
   if (kind == 79) {
     for (i = 1; i != 64; i++) {
-      v = 31 - ((Func_08002090(i << 8) << 5) >> 16);
+      v = 31 - ((Trig_Cos(i << 8) << 5) >> 16);
       PLTT_U16[i] = (v << 10) | (v << 5) | v;
     }
   }
-  object2 = *Func_08118098(action->actor);
+  object2 = *GetBattleObjectSlotFar(action->actor);
   center[0] = __divsi3(object2->x - origin[0], 6);
   center[1] = __divsi3(object2->y - origin[1] + 0x1e0000, 6);
   center[2] = __divsi3(object2->z - origin[2], 6);
@@ -884,7 +894,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         kind != 88) {
       for (i = 0; i != 160; i++)
         work->wave[i] =
-            (0x40000 - (Func_08002096((frame << 12) + (i << 11)) << 2)) >> 10;
+            (0x40000 - (Trig_Sin((frame << 12) + (i << 11)) << 2)) >> 10;
     }
     switch (kind) {
     case 10:
@@ -1000,7 +1010,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                 point[0] - n / 2, point[1] - n, n, n * 2);
-              Func_08138058(p, 62, kind == 89 ? 0 : -0x800);
+              BattleFxKernels_IntegrateVector3(p, 62, kind == 89 ? 0 : -0x800);
               p->life -= 2;
             }
           }
@@ -1014,7 +1024,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               drawFuncs.draw[(i / 2) & 1](
                   screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2,
                   point[1] - n, n, n * 2);
-              Func_08138058(p, 62, -0x800);
+              BattleFxKernels_IntegrateVector3(p, 62, -0x800);
               p->life--;
             }
           }
@@ -1026,7 +1036,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         kind == 78 || kind == 49 || kind == 12 || kind == 82) {
       start = 12;
       if (frame == 12)
-        Func_081c0010(142);
+        Audio_PlayCue(142);
       if (kind == 78)
         start = 0;
       if (frame == 50)
@@ -1052,7 +1062,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       }
       if (frame >= start) {
         p = SPARKS;
-        object3 = *Func_08118098(action->target);
+        object3 = *GetBattleObjectSlotFar(action->target);
         half = Battle_GetObjectTableValueFar(action->target) / 2;
         for (i = 0; i != 32; i++, p++) {
           if (p->life >= 0) {
@@ -1062,7 +1072,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             drawFuncs.draw[kind == 78](
                 screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2,
                 point[1] - n, n, n * 2);
-            Func_08138058(p, 62, 0);
+            BattleFxKernels_IntegrateVector3(p, 62, 0);
             if (frame > i + 22) {
               dx = (object3->x - p->x) >> 8;
               dy = (object3->y + half - p->y) >> 8;
@@ -1088,7 +1098,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, EWRAM_BUF, point[0] - 20, point[1] - 32, 40,
                             64);
-          Func_08138058(p, 64, 0);
+          BattleFxKernels_IntegrateVector3(p, 64, 0);
           p->life++;
         }
       }
@@ -1099,7 +1109,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame == 4)
           work->unk77a8 = 12;
         if (frame == 8)
-          Func_081c0010(221);
+          Audio_PlayCue(221);
       }
       if (kind == 6 || kind == 57) {
         if (frame >= 6 && frame < 20) {
@@ -1112,8 +1122,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         for (i = 0; i != 4; i++) {
           angle = frame * 1848 + i * 0x4000;
           m = ((frame + i * 3) / 2) & 3;
-          x = target[0] / 2 + ((Func_08002096(angle) << 5) >> 16);
-          Func_08002090(angle);
+          x = target[0] / 2 + ((Trig_Sin(angle) << 5) >> 16);
+          Trig_Cos(angle);
           drawFuncs.draw[0](screen, EWRAM_BUF + 0xc56 + m * 2880, x - 8, 0, 24,
                             104);
         }
@@ -1129,17 +1139,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         for (i = 0; i != 3; i++) {
           m = i & 3;
           angle = Random16() & 0xffff;
-          x = ((Func_08002096(angle) << 3) >> 16) + target[0] / 2 -
+          x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
-          y = ((amp * Func_08002090(angle)) >> 16) + off -
-              gData_08197498[m] / 2;
-          Func_0801314c(188);
-          Func_0801314c(104);
+          y = ((amp * Trig_Cos(angle)) >> 16) + off - gData_08197498[m] / 2;
+          Runtime_ReleaseHeapBlock(188);
+          Runtime_ReleaseHeapBlock(104);
           Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
-          Func_0801314c(188);
-          Func_08144aac(action->side, &drawFuncs);
+          Runtime_ReleaseHeapBlock(188);
+          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
     } else if (kind == 68) {
@@ -1147,16 +1156,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         for (i = 0; i != 3; i++) {
           angle = Random16() & 0xffff;
           m = i & 3;
-          x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 -
+          x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
-          y = ((Func_08002090(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          Func_0801314c(188);
-          Func_0801314c(104);
+          y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
+          Runtime_ReleaseHeapBlock(188);
+          Runtime_ReleaseHeapBlock(104);
           Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
-          Func_0801314c(188);
-          Func_08144aac(action->side, &drawFuncs);
+          Runtime_ReleaseHeapBlock(188);
+          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       p = SPARKS;
@@ -1168,16 +1177,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + 0x1809 + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
-            Func_08138058(p, 60, 0x1000);
+            BattleFxKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;
           }
         }
       }
       if (frame == 6)
-        Func_081c0010(221);
+        Audio_PlayCue(221);
     } else if (kind == 44) {
-      Func_0801314c(188);
-      Func_0801314c(104);
+      Runtime_ReleaseHeapBlock(188);
+      Runtime_ReleaseHeapBlock(104);
       if (frame >= 0 && frame < 24) {
         x = target[0] / 2;
         top = frame * 32 - 232;
@@ -1186,11 +1195,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           top = 0;
         while (scroll > 104)
           scroll -= 104;
-        Func_081963ec(188, 19);
+        BattleFx_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll - 104, 17, 104);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll, 17, 104 - scroll);
         IWRAM_SLOT_BC(screen, EWRAM_BUF + 0x6e8, x - 17, top + 47, 34, 65);
-        Func_0801314c(188);
+        Runtime_ReleaseHeapBlock(188);
         if (frame == 8)
           work->unk77a8 = 8;
         if (frame > 1) {
@@ -1212,26 +1221,26 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 61) {
-      Func_0801314c(188);
-      Func_0801314c(104);
+      Runtime_ReleaseHeapBlock(188);
+      Runtime_ReleaseHeapBlock(104);
       if (frame >= 4 && frame < 24) {
         x = target[0] / 2;
-        Func_081963ec(188, 19);
+        BattleFx_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 24, 48, 24, 48);
-        Func_0801314c(188);
-        Func_081963ec(188, 23);
+        Runtime_ReleaseHeapBlock(188);
+        BattleFx_LoadBlitter(188, 23);
         IWRAM_SLOT_BC(screen, EWRAM_BUF, x, 48, 24, 48);
-        Func_0801314c(188);
+        Runtime_ReleaseHeapBlock(188);
       }
-      Func_08144aac(action->side, &drawFuncs);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 60) {
       if (frame > 15)
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
         x = target[0] / 2;
-        m = Func_08002064(frame / 2, 3);
+        m = __modsi3(frame / 2, 3);
         drawFuncs.draw[0](screen, EWRAM_BUF + 0xc56 + m * 0xa00, x - 20, 16, 40,
                           32);
         drawFuncs.draw[0](screen, EWRAM_BUF + 0x2a56 + m * 0x500, x - 20, 48,
@@ -1250,7 +1259,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, EWRAM_BUF + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
-              Func_08138058(p, 60, 0x1000);
+              BattleFxKernels_IntegrateVector3(p, 60, 0x1000);
               p->life++;
             }
           }
@@ -1259,7 +1268,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     } else if (kind == 4) {
     } else if (kind == 8) {
     } else if (kind == 41) {
-      y = ((Func_08002090(frame << 9) << 2) >> 16) + ((s16 *)target)[3] + 16;
+      y = ((Trig_Cos(frame << 9) << 2) >> 16) + ((s16 *)target)[3] + 16;
       if (frame < 4) {
         drawFuncs.draw[0](screen, work->frames,
                           gData_0819750c[action->side * 7],
@@ -1299,9 +1308,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       REG_BLDCNT = 0;
       work->unk7780 = 1;
       work->unk7784 = 0;
-      Func_0801314c(188);
-      Func_0801314c(104);
-      Func_081963ec(104, 35);
+      Runtime_ReleaseHeapBlock(188);
+      Runtime_ReleaseHeapBlock(104);
+      BattleFx_LoadBlitter(104, 35);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       if (frame == 0) {
         for (i = 0; i != 1104; i++)
@@ -1351,24 +1360,24 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           break;
         }
       }
-      Func_0801314c(104);
-      Func_08144aac(action->side, &drawFuncs);
+      Runtime_ReleaseHeapBlock(104);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 96 || kind == 97 || kind == 98) {
       if (frame < 20) {
         if (frame < 8)
           m = gData_08198886[frame / 2];
         else
           m = 3;
-        Func_0801314c(188);
-        Func_0801314c(104);
-        Func_081963ec(104, 3);
+        Runtime_ReleaseHeapBlock(188);
+        Runtime_ReleaseHeapBlock(104);
+        BattleFx_LoadBlitter(104, 3);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2 - 18, 56, 18,
                       48);
-        Func_0801314c(104);
-        Func_081963ec(104, 7);
+        Runtime_ReleaseHeapBlock(104);
+        BattleFx_LoadBlitter(104, 7);
         IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x6c0, target[0] / 2, 56, 18, 48);
-        Func_0801314c(104);
-        Func_08144aac(action->side, &drawFuncs);
+        Runtime_ReleaseHeapBlock(104);
+        BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
       }
       if ((kind == 97 || kind == 98) && frame < 24) {
         if (kind == 97)
@@ -1384,7 +1393,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, EWRAM_BUF + 0xd80 + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
-              Func_08138058(p, 64, 0x1000);
+              BattleFxKernels_IntegrateVector3(p, 64, 0x1000);
               p->life++;
             }
           }
@@ -1393,12 +1402,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     } else if (kind == 86) {
       work->unk7780 = 1;
       work->unk7784 = 0;
-      Func_0801314c(188);
-      Func_0801314c(104);
+      Runtime_ReleaseHeapBlock(188);
+      Runtime_ReleaseHeapBlock(104);
       if (action->side == 0)
-        Func_081963ec(104, 35);
+        BattleFx_LoadBlitter(104, 35);
       else
-        Func_081963ec(104, 39);
+        BattleFx_LoadBlitter(104, 39);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       scrollA += scrollB;
       if (frame > 6)
@@ -1427,25 +1436,25 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             gData_081988da[m], gData_0819889e[m],
                             gData_081988b2[m]);
       }
-      Func_0801314c(104);
-      Func_08144aac(action->side, &drawFuncs);
+      Runtime_ReleaseHeapBlock(104);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 88) {
       work->unk7780 = 1;
       work->unk7784 = 0;
       if (frame == 7) {
         work->unk77a8 = 16;
-        Func_081c0010(134);
+        Audio_PlayCue(134);
       }
       if (frame == 11)
-        Func_081c0010(134);
+        Audio_PlayCue(134);
       if (frame == 15)
-        Func_081c0010(134);
-      Func_0801314c(188);
-      Func_0801314c(104);
+        Audio_PlayCue(134);
+      Runtime_ReleaseHeapBlock(188);
+      Runtime_ReleaseHeapBlock(104);
       if (action->side == 0)
-        Func_081963ec(104, 35);
+        BattleFx_LoadBlitter(104, 35);
       else
-        Func_081963ec(104, 39);
+        BattleFx_LoadBlitter(104, 39);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       scrollA += scrollB;
       if (frame == 5)
@@ -1488,8 +1497,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                               gData_0819893a[m], gData_0819893d[m]);
         }
       }
-      Func_0801314c(104);
-      Func_08144aac(action->side, &drawFuncs);
+      Runtime_ReleaseHeapBlock(104);
+      BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 62) {
       scrollA += scrollB;
       if (frame > 6)
@@ -1570,7 +1579,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             point[1] - 4, 8, 8);
           p->x -= 6;
           if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
-            Func_081c0010(133);
+            Audio_PlayCue(133);
             Func_0814cd48(action->actor, 7, 5, 0, 4);
           }
         }
@@ -1611,14 +1620,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         drawFuncs.draw[1](screen, EWRAM_BUF + 0x800, (p->x >> 16) - 24,
                           (p->y >> 16) - 96, 48, 96);
         if (frame < 12)
-          Func_08138086(SPARKS, 64, 0);
+          BattleFxKernels_IntegrateVector2(SPARKS, 64, 0);
         else if (frame == 12)
           p->vy = __divsi3(-p->vy, 3);
         else if (frame < 13 || frame > 18)
-          Func_08138086(SPARKS, 64, 0x4000);
+          BattleFxKernels_IntegrateVector2(SPARKS, 64, 0x4000);
       }
       if (frame == 11) {
-        Func_081c0010(144);
+        Audio_PlayCue(144);
         work->unk77a8 = 16;
       }
     } else if (kind == 63 || kind == 64) {
@@ -1643,7 +1652,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         y = target[1] - (14 - frame) * 12 + 24;
         drawFuncs.draw[1](screen, EWRAM_BUF, x - 16, y - 32, 32, 64);
         if (frame == 13) {
-          Func_081c0010(134);
+          Audio_PlayCue(134);
           work->unk77a8 = 8;
           BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
                                     150);
@@ -1660,12 +1669,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       } else {
         for (; i != 16; i++, p++) {
-          m = Func_08002064(i, 5) * 3 + Func_08002064(__divsi3(p->life, 96), 3);
+          m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->life, 96), 3);
           drawFuncs.draw[i <= 2](screen, EWRAM_BUF + 0x800 + gData_08197834[m],
                                  (p->x >> 16) - gData_0819781a[m] / 2,
                                  (p->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          Func_08138086(p, 64, 0x2000);
+          BattleFxKernels_IntegrateVector2(p, 64, 0x2000);
           p->life += p->z;
           if (p->z > 1 && (frame & 1))
             p->z--;
@@ -1693,7 +1702,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 14) {
         BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
                                   150);
-        Func_081c0010(134);
+        Audio_PlayCue(134);
         work->unk77a8 = 8;
       }
       i = 0;
@@ -1708,12 +1717,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         REG_BG2X = (64 - x) << 8;
       } else {
         for (; i != 32; i++, p++) {
-          m = Func_08002064(i, 5) * 3 + Func_08002064(__divsi3(p->z, 96), 3);
+          m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->z, 96), 3);
           drawFuncs.draw[0](screen, EWRAM_BUF + 0x83c + gData_081974bc[m],
                             (p->x >> 16) - gData_0819749e[m] / 2,
                             (p->y >> 16) - gData_081974ad[m] / 2,
                             gData_0819749e[m], gData_081974ad[m]);
-          Func_08138086(p, 63, 0x8000);
+          BattleFxKernels_IntegrateVector2(p, 63, 0x8000);
           p->z += p->vz;
           if ((frame & 1) && p->vz > 0)
             p->vz--;
@@ -1733,28 +1742,28 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 4)
         work->unk77a8 = 8;
       if (frame == 6)
-        Func_081c0010(221);
+        Audio_PlayCue(221);
       if (frame == 24)
-        Func_081c0010(390);
+        Audio_PlayCue(390);
       if (frame >= 8 && frame < 24) {
         for (i = 0; i != 3; i++) {
           angle = Random16() & 0xffff;
           m = i & 3;
-          x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 -
+          x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
-          y = ((Func_08002090(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          Func_0801314c(188);
-          Func_0801314c(104);
+          y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
+          Runtime_ReleaseHeapBlock(188);
+          Runtime_ReleaseHeapBlock(104);
           Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
-          Func_0801314c(188);
-          Func_08144aac(action->side, &drawFuncs);
+          Runtime_ReleaseHeapBlock(188);
+          BattleFx_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       if (frame > 3) {
         matrix = Runtime_BumpAllocateAlternatePool(32);
-        model = Func_081969f8(1);
+        model = Render_AllocateModelList(1);
         texture164.width = 5;
         texture164.height = 7;
         model->kind = 6;
@@ -1778,16 +1787,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             Func_080150e4(p->z);
             p->z += p->vz;
             Func_080151e4(0x40000, 0x10000, 0x10000);
-            Func_08196958(gData_081991b0, matrix, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_081991b0, matrix, 4);
+            Render_DrawModelList(model);
           }
         }
-        Func_08013164(model);
-        Func_08013164(matrix);
+        MemFree(model);
+        MemFree(matrix);
       }
     } else if (kind == 71 || kind == 80 || kind == 82) {
       matrix = Runtime_BumpAllocateAlternatePool(0x200);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       fade = 0;
       if (frame > 39)
         fade = (40 - frame) * 4;
@@ -1805,7 +1814,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
       Func_080151e4(0x8000, 0x10000, 0x8000);
       if (frame == 8)
-        Func_081c0010(104);
+        Audio_PlayCue(104);
       if (fade >= -63) {
         angle = frame << 12;
         if (kind == 82) {
@@ -1817,17 +1826,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           SceneTransform_ApplyYaw(frame << 11);
         }
         Func_0801521c(angle);
-        Func_08196958(gData_08199210, matrix, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(gData_08199210, matrix, 4);
+        Render_DrawModelList(model);
         if (kind != 82) {
           SceneTransform_ApplyYaw(-frame << 12);
           Func_0801521c(0x8000);
-          Func_08196958(gData_08199210, matrix, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_08199210, matrix, 4);
+          Render_DrawModelList(model);
         }
       }
-      Func_08013164(model);
-      Func_08013164(matrix);
+      MemFree(model);
+      MemFree(matrix);
       if (kind == 82) {
         m = frame / 4;
         size = 0x10000;
@@ -1835,14 +1844,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           size = 0x38000 - (frame << 12);
         if (m * 2 > 1 && size > 0) {
           Func_0815b434(work->frames, m * 4, size);
-          Func_0801314c(188);
+          Runtime_ReleaseHeapBlock(188);
           Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
-          Func_081963ec(188, 15);
+          BattleFx_LoadBlitter(188, 15);
         }
       }
     } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
       matrix = Runtime_BumpAllocateAlternatePool(0x200);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture148.width = 7;
       texture148.height = 7;
       texture148.pixels = EWRAM_BUF;
@@ -1867,8 +1876,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               Func_080150e4((i << 14) + 0x2000);
               SceneTransform_ApplyPitch(-0x1000);
               Func_0801521c(angle >> 1);
-              Func_08196958(gData_08199210, matrix, 4);
-              Func_08196a7c(model);
+              Render_TransformVertices(gData_08199210, matrix, 4);
+              Render_DrawModelList(model);
             }
           }
         }
@@ -1887,8 +1896,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             Func_080151e4(0x8000, 0x10000, 0x8000);
             SceneTransform_ApplyPitch(0x4000);
             Func_0801521c(angle);
-            Func_08196958(gData_08199210, matrix, 4);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08199210, matrix, 4);
+            Render_DrawModelList(model);
           }
         }
       } else {
@@ -1907,14 +1916,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               Func_080150e4((i << 14) + 0x2000);
               SceneTransform_ApplyPitch(-0x1000);
               Func_0801521c(t * 3 << 12);
-              Func_08196958(gData_08199210, matrix, 4);
-              Func_08196a7c(model);
+              Render_TransformVertices(gData_08199210, matrix, 4);
+              Render_DrawModelList(model);
             }
           }
         }
       }
-      Func_08013164(model);
-      Func_08013164(matrix);
+      MemFree(model);
+      MemFree(matrix);
       if (kind != 92 && kind != 93) {
         if (frame == 4) {
           p = SPARKS;
@@ -1930,8 +1939,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             for (k = 0; k != 12; k++) {
               r = (p->y >> 16) - k * 2;
               if (r >= 0) {
-                x = target[0] / 2 + ((r * Func_08002096(p->x)) >> 16);
-                y = target[1] + ((r * Func_08002090(p->x)) >> 16);
+                x = target[0] / 2 + ((r * Trig_Sin(p->x)) >> 16);
+                y = target[1] + ((r * Trig_Cos(p->x)) >> 16);
                 n = 2 - k / 8;
                 drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                   x - n / 2, y - n, n, n * 2);
@@ -1944,7 +1953,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       }
     } else if (kind == 91) {
       matrix = Runtime_BumpAllocateAlternatePool(0x200);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture140.width = 7;
       texture140.height = 7;
       texture140.pixels = EWRAM_BUF;
@@ -1965,8 +1974,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           Func_080151e4(0x8000, 0x10000, 0x8000);
           SceneTransform_ApplyPitch(1000);
           Func_0801521c(angle);
-          Func_08196958(gData_08199210, matrix, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(gData_08199210, matrix, 4);
+          Render_DrawModelList(model);
         }
       }
       texture140.width = 7;
@@ -1991,18 +2000,18 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               SceneTransform_ApplyYaw((i * 2 + frame) << 12);
             else
               SceneTransform_ApplyYaw((i * 2 - frame) << 12);
-            Func_08196958(gData_08198c6c, matrix, 16);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08198c6c, matrix, 16);
+            Render_DrawModelList(model);
           }
         }
       }
-      Func_08013164(model);
-      Func_08013164(matrix);
+      MemFree(model);
+      MemFree(matrix);
       if (frame == 4)
         work->unk77a8 = 8;
     } else if (kind == 90) {
       matrix = Runtime_BumpAllocateAlternatePool(0x200);
-      model = Func_081969f8(1);
+      model = Render_AllocateModelList(1);
       texture132.width = 6;
       texture132.height = 6;
       texture132.pixels = EWRAM_BUF;
@@ -2014,7 +2023,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         start = gData_0819895e[i] + 4;
         model->frame = (frame * 8 + i * 32) & 127;
         if (frame == start + 4)
-          Func_081c0010(104);
+          Audio_PlayCue(104);
         if (frame > start) {
           fade = (start - frame) * 8 + 56;
           if (fade > -16)
@@ -2030,13 +2039,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               SceneTransform_ApplyYaw((i * 8 + frame) << 10);
             else
               SceneTransform_ApplyYaw((i * 8 - frame) << 10);
-            Func_08196958(gData_08199090, matrix, 32);
-            Func_08196a7c(model);
+            Render_TransformVertices(gData_08199090, matrix, 32);
+            Render_DrawModelList(model);
           }
         }
       }
-      Func_08013164(model);
-      Func_08013164(matrix);
+      MemFree(model);
+      MemFree(matrix);
       if (frame == 4)
         work->unk77a8 = 20;
     } else if (kind == 15) {
@@ -2058,9 +2067,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (p->life >= 0 && p->z > 0) {
-          m = Func_08002064(i, 3);
-          x = point2[0] + ((p->z * Func_08002096(p->x)) >> 16);
-          y = point2[1] + ((p->z * Func_08002090(p->x)) >> 16);
+          m = __modsi3(i, 3);
+          x = point2[0] + ((p->z * Trig_Sin(p->x)) >> 16);
+          y = point2[1] + ((p->z * Trig_Cos(p->x)) >> 16);
           p->z -= 4;
           p->x += p->vx;
           if (kind == 16)
@@ -2082,15 +2091,15 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           point[0] = point[0] / 2;
           drawFuncs.draw[1](screen, EWRAM_BUF + m * 0x400, point[0] - 16,
                             point[1] - 16, 32, 32);
-          Func_08138058(p, 62, 0x800);
-          Func_08138058(p, 62, 0x800);
+          BattleFxKernels_IntegrateVector3(p, 62, 0x800);
+          BattleFxKernels_IntegrateVector3(p, 62, 0x800);
           p->life++;
         }
       }
       if (frame == 4)
         work->unk77a8 = 12;
       if (frame == 8)
-        Func_081c0010(103);
+        Audio_PlayCue(103);
     } else if (kind == 10) {
       if (frame == 0) {
         work->unk7780 = 1;
@@ -2107,39 +2116,39 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x800, point[0] - 16,
                             point[1] - 32, 32, 64);
-          Func_08138058(p, 58, 0x1000);
+          BattleFxKernels_IntegrateVector3(p, 58, 0x1000);
           p->life++;
         }
       }
       if (frame == 4)
         work->unk77a8 = 12;
       if (frame == 8)
-        Func_081c0010(103);
+        Audio_PlayCue(103);
     } else if (kind == 42) {
       if (frame > 47)
         REG_BLDALPHA = (64 - frame) | 0x1000;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
-        m = Func_08002064(i, 3);
+        m = __modsi3(i, 3);
         EffectPosition_ApplyBaseAndYOffset(p, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x240, point[0] - 12,
                               point[1] - 12, 24, 24);
-        Func_08138058(p, 60, 1 << ((i & 3) + 11));
+        BattleFxKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
         p->life++;
       }
     } else if (kind == 76) {
       if (frame == 18)
-        Func_081c0010(390);
+        Audio_PlayCue(390);
       for (i = 0; i != 3; i++) {
         if (frame == i * 3 + 3) {
-          Func_081c0010(212);
+          Audio_PlayCue(212);
           ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x2f2f2f2f);
         }
       }
     } else if (kind == 74) {
       if (frame == 8)
-        Func_081c0010(103);
+        Audio_PlayCue(103);
       p = SPARKS;
       for (i = 0; i != 32; i++, p++) {
         if (frame >= i / 2 + 4) {
@@ -2149,8 +2158,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
-            Func_08138058(p, 62, 0x800);
-            Func_08138058(p, 62, 0x800);
+            BattleFxKernels_IntegrateVector3(p, 62, 0x800);
+            BattleFxKernels_IntegrateVector3(p, 62, 0x800);
             p->life++;
           }
         }
@@ -2170,9 +2179,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
               drawFuncs.draw[i & 1](screen, EWRAM_BUF + (life / 4) * 0x480,
                                     point[0] - 12, point[1] - 24, 24, 48);
             if (kind == 55)
-              Func_08138058(p, 60, 0x400);
+              BattleFxKernels_IntegrateVector3(p, 60, 0x400);
             else
-              Func_08138058(p, 60, 0x1000);
+              BattleFxKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;
           }
         }
@@ -2185,7 +2194,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4,
                         20, 40);
       if (frame == 23)
-        (*Func_08118098(action->target))->unk28 = 0x30000;
+        (*GetBattleObjectSlotFar(action->target))->unk28 = 0x30000;
       if (frame > 19)
         origin[1] += 0x40000;
       if (frame == 23) {
@@ -2217,7 +2226,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame == i * 4 + 8) {
           Func_0814cd48(action->actor, 7, 5, 0, 2);
           work->unk77a8 = 2;
-          Func_081c0010(133);
+          Audio_PlayCue(133);
         }
       }
     }
@@ -2234,11 +2243,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Func_081180e8(-1);
     if (frame == 4) {
       if (kind == 91)
-        Func_081c0010(145);
+        Audio_PlayCue(145);
       else if (kind == 78 || kind == 81 || kind == 98)
-        Func_081c0010(144);
+        Audio_PlayCue(144);
       else
-        Func_081c0010(134);
+        Audio_PlayCue(134);
     }
     if (frame == 6) {
       if (kind == 4 || kind == 5 || kind == 7 || kind == 43 || kind == 48 ||
@@ -2266,9 +2275,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (frame == 14)
       Func_0814cd48(action->actor, 7, 5, 0, 4);
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->unk78e8 = 1;
-    Func_08013560(1);
+    WaitFrames(1);
   }
 
   if (kind == 51 || kind == 67 || kind == 9 || kind == 10 || kind == 11 ||
@@ -2278,8 +2287,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     action->unk1c = 0;
     Scheduler_RemoveCallback(Func_08143489);
     Scheduler_RemoveCallback(Func_08143001);
-    Func_0801314c(188);
-    Func_0801314c(104);
+    Runtime_ReleaseHeapBlock(188);
+    Runtime_ReleaseHeapBlock(104);
     if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
       SummonFx_RunCanvasMode1(action);
     else if (kind == 9 || kind == 67)
@@ -2292,7 +2301,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       kind == 72 || kind == 58 || kind == 59 || kind == 69 || kind == 89)
     Scheduler_RemoveCallback(Func_08152475);
   Scheduler_RemoveCallback(Func_08143001);
-  Func_0801314c(188);
-  Func_0801314c(104);
-  Func_08143bb8();
+  Runtime_ReleaseHeapBlock(188);
+  Runtime_ReleaseHeapBlock(104);
+  BattleFx_EndCanvasLayer();
 }

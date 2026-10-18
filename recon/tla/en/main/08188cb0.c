@@ -1,5 +1,5 @@
 // Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:
-// BattleFx_RunFireSwirlCharge (effect.c, structure 0.800): the same swirl and
+// BattleFx_RunHelmSplitter (effect.c, structure 0.800): the same swirl and
 // spark burst, with a second variant ⚓️ added at the target.
 // Statements, allocation and frame all match (effect r10, work r11, canvas at
 // sp+16, the two blitters at sp+20, the position at sp+28 and its address in
@@ -12,7 +12,7 @@
 // load sooner than agscc's arm9tdmi costs rank it. Measured: the BLDALPHA and
 // BG2PA stores take f18284c.c's blend pin (each differ 2 without); the timer
 // clear through &sparks->variant, i before the pixel pointer, the pixels
-// indexed and the sparks as &sparks[i] (as in BattleFx_RunFireSwirlCharge) are
+// indexed and the sparks as &sparks[i] (as in BattleFx_RunHelmSplitter) are
 // the source's forms (38 to 22); a one-pass block on y fixes the height test
 // but moves the IntegrateVector2 arguments (18); an asm barrier on y relays out
 // the function (105). 2026-10-15 (fx-n3): rewritten for reading on struct
@@ -57,17 +57,17 @@ extern char ResourceId_BlueFlameSheet;
 
 // The swirl's seven growth frames, cut from one sheet. Not const: the native
 // reloads them after every call.
-extern u16 gFireSwirl_CellSourceOffsets[];
-extern s8 gFireSwirl_CellBiasX[];
-extern s8 gFireSwirl_CellBiasY[];
-extern u8 gFireSwirl_CellWidths[];
-extern u8 gFireSwirl_CellHeights[];
+extern u16 gHelmSplitter_Cells[];
+extern s8 gHelmSplitter_CellBiasX[];
+extern s8 gHelmSplitter_CellBiasY[];
+extern u8 gHelmSplitter_CellWidths[];
+extern u8 gHelmSplitter_CellHeights[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_08144aac(s32 side, DrawRectangle *draw);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
@@ -81,18 +81,18 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 
 // Effect kind 51: the caster dashes at the target while a swirl of flame grows
 // over seven frames, then bursts into sparks that fall and bounce on the
 // ground. Variant 0 is ☀️'s: the swirl rises at the caster and throws pink
 // stars. Variant 1 is ⚓️'s own: the swirl, recoloured into the blue flame's
 // palette, rises at the target and throws 32 skulls.
-void Func_08188cb0(struct BattleEffectArgument *effect) {
+void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -141,8 +141,8 @@ void Func_08188cb0(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
   }
   work->transferMode = 2;
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
-  Func_08144aac(effect->side, draw);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
 
   // No spark is alive yet.
   for (i = 0, life = &work->particles[0].variant; i != 64; i++) {
@@ -168,16 +168,18 @@ void Func_08188cb0(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  gFireSwirl_CellBiasX[cell] + 30,
-                  gFireSwirl_CellBiasY[cell] + position.y - 60,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
+                  gHelmSplitter_CellBiasX[cell] + 30,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         } else {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  -gFireSwirl_CellBiasX[cell] - gFireSwirl_CellWidths[cell] +
-                      98,
-                  gFireSwirl_CellBiasY[cell] + position.y - 60,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
+                  -gHelmSplitter_CellBiasX[cell] -
+                      gHelmSplitter_CellWidths[cell] + 98,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         }
       }
     } else {
@@ -188,16 +190,18 @@ void Func_08188cb0(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  position.x / 2 + gFireSwirl_CellBiasX[cell] - 16,
-                  gFireSwirl_CellBiasY[cell] + position.y - 92,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
+                  position.x / 2 + gHelmSplitter_CellBiasX[cell] - 16,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         } else {
-          draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
-                  position.x / 2 - gFireSwirl_CellBiasX[cell] -
-                      gFireSwirl_CellWidths[cell] + 16,
-                  gFireSwirl_CellBiasY[cell] + position.y - 92,
-                  gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
+                  position.x / 2 - gHelmSplitter_CellBiasX[cell] -
+                      gHelmSplitter_CellWidths[cell] + 16,
+                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
+                  gHelmSplitter_CellWidths[cell],
+                  gHelmSplitter_CellHeights[cell]);
         }
       }
     }
@@ -249,13 +253,13 @@ void Func_08188cb0(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -1,11 +1,11 @@
-// Draft, differ 26 of 427: Func_081661dc, effect kind 55, The Broken Seal's
-// BattleFx_RunFireBurstShards.
+// Draft, differ 26 of 427: BattleFx_RunAnnihilation, effect kind 55, The Broken Seal's
+// BattleFx_RunAnnihilation.
 
-// Twin: ☀️ BattleFx_RunFireBurstShards (games/tbs/src/effect/effect.c),
+// Twin: ☀️ BattleFx_RunAnnihilation (games/tbs/src/effect/effect.c),
 // ported: the effect stays an argument, the camera comes from its heap slot
-// (0x30), the blitters from Func_081963ec(104, 3, 7 or 19) and slot 0x68, the
+// (0x30), the blitters from BattleFx_LoadBlitter(104, 3, 7 or 19) and slot 0x68, the
 // canvas filled through IwramFillWords where ☀️ uses Dma_Fill32, callback
-// Func_08143000 at 0xc80.
+// BattleFx_ProcessPendingGraphicsTransfer at 0xc80.
 
 // frame declared before the sheet and camera gives the native's spill slots
 // (62 to 26).
@@ -39,7 +39,7 @@
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
-// Func_081963ec's argument: The Lost Age's blitter mode (☀️'s counted down
+// BattleFx_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
 // from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_ADDITIVE 0
@@ -62,7 +62,7 @@
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
-extern const u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
+extern const u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 struct EffectCamera {
   s32 eye[3];
@@ -70,15 +70,16 @@ struct EffectCamera {
 };
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Audio_PlayCue(s32 cue);
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void BattleFx_RunNoEffectFrames(s32 frames);
+void BattleFx_CallNoEffect(s32 frames);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08118088(s32 actor,
@@ -86,8 +87,8 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // The user lunges, a streak of fire leaves them, and the target bursts into
 // flame, throwing 64 burning shards away from the user.
@@ -100,7 +101,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // knocked back); the burst's three pictures (two frames each, then held) on
 // the target from frame 16 to 47; from frame 4 the shards in 3D, their
 // picture shrinking with their life.
-void Func_081661dc(struct BattleEffectArgument *effect) {
+void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -151,7 +152,7 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
   } while (i != SHARD_COUNT);
 
   EffectPosition_ApplyStepAndYOffset(effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 2;
   work->transferValue = 75;
 
@@ -165,11 +166,11 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
     EffectPosition_ApplyStepAndYOffset(effect->actor, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
       if (effect->side == 0)
-        Func_081963ec(
+        BattleFx_LoadBlitter(
             HEAP_BLITTER,
             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       else
-        Func_081963ec(HEAP_BLITTER,
+        BattleFx_LoadBlitter(HEAP_BLITTER,
                       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
                                                  COMPOSITE_CLIP_Y |
                                                  COMPOSITE_FLIP_X));
@@ -190,7 +191,7 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
       s32 step = (frame - BURST_FRAME) / 2;
       s32 strip;
 
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (step > 2)
@@ -201,7 +202,7 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
         strip = BURST_STRIP_BYTES;
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_FRAME_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
-      BattleFx_RunNoEffectFrames(10000);
+      BattleFx_CallNoEffect(10000);
       Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)
@@ -211,7 +212,7 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
     Render_ResetTransformState();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame > 3) {
-      Func_08144aac(effect->side, draw);
+      BattleFx_FetchRectangleBlitters(effect->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 
@@ -243,11 +244,11 @@ void Func_081661dc(struct BattleEffectArgument *effect) {
     if (frame == FLASH_FRAME)
       Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

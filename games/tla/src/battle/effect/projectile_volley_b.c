@@ -15,93 +15,49 @@
 #define ObjectDispatch_ApplyValueToChildrenFar                                 \
   ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-void BattleFx_RunVolleyBMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 0);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode0, BattleFx_RunProjectileVolleyB, 0)
 
-void BattleFx_RunVolleyBMode12(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 12);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode12, BattleFx_RunProjectileVolleyB, 12)
 
-void BattleFx_RunVolleyBMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 2);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode2, BattleFx_RunProjectileVolleyB, 2)
 
-void BattleFx_RunVolleyBMode6(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 6);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode6, BattleFx_RunProjectileVolleyB, 6)
 
-void BattleFx_RunVolleyBMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 3);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode3, BattleFx_RunProjectileVolleyB, 3)
 
-void BattleFx_RunVolleyBMode5(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 5);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode5, BattleFx_RunProjectileVolleyB, 5)
 
-void BattleFx_RunVolleyBMode23(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 23);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode23, BattleFx_RunProjectileVolleyB, 23)
 
-void BattleFx_RunVolleyBMode7(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 7);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode7, BattleFx_RunProjectileVolleyB, 7)
 
-void BattleFx_RunVolleyBMode21(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 21);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode21, BattleFx_RunProjectileVolleyB, 21)
 
-void BattleFx_RunVolleyBMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 4);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode4, BattleFx_RunProjectileVolleyB, 4)
 
-void BattleFx_RunVolleyBMode8(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 8);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode8, BattleFx_RunProjectileVolleyB, 8)
 
-void BattleFx_RunVolleyBMode24(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 24);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode24, BattleFx_RunProjectileVolleyB, 24)
 
-void BattleFx_RunVolleyBMode22(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 22);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode22, BattleFx_RunProjectileVolleyB, 22)
 
-void BattleFx_RunVolleyBMode9(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 9);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode9, BattleFx_RunProjectileVolleyB, 9)
 
-void BattleFx_RunVolleyBMode13(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 13);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode13, BattleFx_RunProjectileVolleyB, 13)
 
-void BattleFx_RunVolleyBMode14(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 14);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode14, BattleFx_RunProjectileVolleyB, 14)
 
-void BattleFx_RunVolleyBMode15(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 15);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode15, BattleFx_RunProjectileVolleyB, 15)
 
-void BattleFx_RunVolleyBMode16(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 16);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode16, BattleFx_RunProjectileVolleyB, 16)
 
-void BattleFx_RunVolleyBMode17(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 17);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode17, BattleFx_RunProjectileVolleyB, 17)
 
-void BattleFx_RunVolleyBMode18(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 18);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode18, BattleFx_RunProjectileVolleyB, 18)
 
-void BattleFx_RunVolleyBMode19(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 19);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode19, BattleFx_RunProjectileVolleyB, 19)
 
-void BattleFx_RunVolleyBMode20(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolleyB(effect, 20);
-}
+DEFINE_EFFECT_KIND(BattleFx_RunVolleyBMode20, BattleFx_RunProjectileVolleyB, 20)
 
 void BattleFx_RunVolleyBMode10WithAction(struct BattleEffectArgument *effect) {
   struct FieldActor *object;

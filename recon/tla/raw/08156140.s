@@ -62,14 +62,14 @@ BattleFx_RunProjectileVolley:
 	bne .L_081561c0
 	movs r0, #104
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_081561e4
 .L_081561bc:
 	.4byte 0x00001010
 .L_081561c0:
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_081561e4
 .L_081561ca:
 	ldr r0, [sp, #148]
@@ -78,12 +78,12 @@ BattleFx_RunProjectileVolley:
 	bne .L_081561dc
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_081561e4
 .L_081561dc:
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_081561e4:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -814,7 +814,7 @@ BattleFx_RunProjectileVolley:
 .L_08156774:
 	.4byte 0x00000155
 .L_08156778:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815677c:
 	.4byte Data_08198478
 .L_08156780:
@@ -1203,12 +1203,12 @@ BattleFx_RunProjectileVolley:
 	bne .L_08156a6c
 	movs r0, #188
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08156a74
 .L_08156a6c:
 	movs r0, #188
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08156a74:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1668,12 +1668,12 @@ BattleFx_RunProjectileVolley:
 	bne .L_08156df0
 	movs r0, #188
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08156df8
 .L_08156df0:
 	movs r0, #188
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08156df8:
 	ldr r4, [sp, #100]
 	ldr r3, .L_08157024
@@ -1704,12 +1704,12 @@ BattleFx_RunProjectileVolley:
 	bne .L_08156e3a
 	movs r0, #188
 	movs r1, #31
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08156e42
 .L_08156e3a:
 	movs r0, #188
 	movs r1, #27
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08156e42:
 	movs r1, #32
 	ldr r2, [r6]
@@ -2067,7 +2067,7 @@ BattleFx_RunProjectileVolley:
 	bne .L_0815716a
 	movs r1, #19
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r4, .L_0815737c
 	lsls r5, r6, #1
 	ldrh r1, [r4, r5]
@@ -2099,7 +2099,7 @@ BattleFx_RunProjectileVolley:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #31
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r2, .L_0815737c
 	ldr r3, [sp, #144]
 	ldrh r1, [r2, r5]
@@ -2134,7 +2134,7 @@ BattleFx_RunProjectileVolley:
 .L_0815716a:
 	movs r1, #19
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r0, .L_0815737c
 	lsls r5, r6, #1
 	ldrh r1, [r0, r5]
@@ -2169,7 +2169,7 @@ BattleFx_RunProjectileVolley:
 	bl Runtime_ReleaseHeapBlock
 	movs r1, #31
 	movs r0, #188
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r2, .L_0815737c
 	ldr r3, [sp, #144]
 	ldrh r1, [r2, r5]
@@ -2529,7 +2529,7 @@ BattleFx_RunProjectileVolley:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #144]
 	lsls r4, r4, #7
@@ -2551,7 +2551,7 @@ BattleFx_RunProjectileVolley:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #200
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2571,4 +2571,4 @@ BattleFx_RunProjectileVolley:
 .L_081574d8:
 	.4byte gData_08197486
 .L_081574dc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

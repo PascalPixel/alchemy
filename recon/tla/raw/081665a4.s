@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081665a4
+@ Abilities: Ragnarok (kind 58).
+	.global BattleFx_RunRagnarok
 	.thumb_func
-Func_081665a4:
+BattleFx_RunRagnarok:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -38,7 +39,7 @@ Func_081665a4:
 	ldr r0, [r3, #4]
 	adds r1, r5, #0
 	str r5, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r1, #2
 	ldr r0, [sp, #36]
 	bl Object_SetMode
@@ -528,7 +529,7 @@ Func_081665a4:
 .L_081669ac:
 	.4byte gMapCellBuffer
 .L_081669b0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081669b4:
 	.4byte 0x00000184
 .L_081669b8:
@@ -647,7 +648,7 @@ Func_081665a4:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	ldr r1, [sp, #52]
 	lsls r2, r2, #7
@@ -673,7 +674,7 @@ Func_081665a4:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -687,4 +688,4 @@ Func_081665a4:
 .L_08166af0:
 	.4byte gData_08197410
 .L_08166af4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

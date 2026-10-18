@@ -1,4 +1,5 @@
 #include "shrine_of_the_sea_god.h"
+#include "macros.h"
 
 extern const u8 gData_02003cbc[];
 
@@ -137,9 +138,7 @@ void Func_020011a0(void) {
   struct ShrineOfTheSeaGodObject *first = Object_GetById(8);
   struct ShrineOfTheSeaGodObject *second = Object_GetById(9);
 
-  second->x = first->x;
-  second->y = 0x140000;
-  second->z = first->z;
+  SET_POSITION(second, first->x, 0x140000, first->z);
 }
 
 void Func_020011c0(void) {

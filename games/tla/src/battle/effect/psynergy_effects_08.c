@@ -19,17 +19,23 @@ void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
+// Runs Func_080e74d8, fades the palettes back to the saved ones and waits
+// 10 frames.
 void Func_080e7804(void) {
   Func_080e74d8();
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(10);
 }
 
+// Field Psynergy kind 30's targeted handler: does nothing.
 void Func_080e7818(void) {}
 
-void Func_080e781c(void) {
+// Field Psynergy kind 30: looks up the controlled owner's object and sets
+// the event work's cue to 0xfc89.
+void BattleFx_RunEffect30(void) {
   ObjectTable_Get(EventRuntime_GetControlledOwner());
   ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
 }
 
-void Func_080e783c(void) { Func_080e7844(); }
+// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
+void BattleFx_CallEffect22(void) { Func_080e7844(); }

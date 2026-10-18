@@ -31,7 +31,7 @@ s32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone, s32 group);
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
-#define ENCOUNTER_STEPS (*(s32 *)&party->unknown_258[0])
+#define ENCOUNTER_STEPS (party->encounterSteps)
 
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct EncounterWork *work;

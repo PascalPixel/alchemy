@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816bc70
+@ Abilities: Diamond Berg (kind 84).
+	.global BattleFx_RunDiamondBerg
 	.thumb_func
-Func_0816bc70:
+BattleFx_RunDiamondBerg:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -40,7 +41,7 @@ Func_0816bc70:
 	asrs r3, r3, #1
 	movs r0, #104
 	str r3, [sp, #20]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r2, [sp, #36]
 	ldr r6, [r6, #104]
 	movs r3, #224
@@ -154,7 +155,7 @@ Func_0816bc70:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #8
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 .L_0816bdae:
 	mov r3, r9
 	cmp r3, #2
@@ -216,7 +217,7 @@ Func_0816bc70:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #16
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 	b .L_0816be64
 	.2byte 0x0000
 .L_0816be28:
@@ -232,7 +233,7 @@ Func_0816bc70:
 .L_0816be3c:
 	.4byte 0x000000c2
 .L_0816be40:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816be44:
 	ldr r4, [sp, #40]
 	movs r1, #4
@@ -480,7 +481,7 @@ Func_0816bc70:
 	bl Runtime_BumpAllocateAlternatePool
 	str r0, [sp, #8]
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0816c1f4
 	ldr r3, [sp, #44]
 	adds r6, r0, #0
@@ -569,9 +570,9 @@ Func_0816bc70:
 	ldr r0, .L_0816c210
 	ldr r1, [sp, #8]
 	movs r2, #32
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816c0f2:
 	movs r0, #1
 	add r8, r0
@@ -667,9 +668,9 @@ Func_0816bc70:
 	ldr r0, .L_0816c220
 	ldr r1, [sp, #8]
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816c1c2:
 	movs r3, #1
 	add r8, r3
@@ -722,7 +723,7 @@ Func_0816bc70:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #36]
 	lsls r1, r1, #7
@@ -743,7 +744,7 @@ Func_0816bc70:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #76
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -753,4 +754,4 @@ Func_0816bc70:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0816c270:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

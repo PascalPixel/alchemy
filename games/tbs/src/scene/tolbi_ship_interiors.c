@@ -1,5 +1,6 @@
 #include "script.h"
 #include "flags.h"
+#include "macros.h"
 // Below the decks of the ship across the Karagol Sea: the captain's cabin,
 // the passengers' hold and the rowing deck. Under sail the party chooses which
 // passenger rows at each open seat; flags 0x929 to 0x92b number the seat being
@@ -124,9 +125,7 @@ TolbiShipInteriors_ResetActor(struct ScriptInterpreter *interpreter) {
   actor->x.fixed = 0;
   actor->y.fixed = 0;
   actor->z.fixed = 0;
-  actor->velocityX = 0;
-  actor->velocityY = 0;
-  actor->velocityZ = 0;
+  SET_VELOCITY(actor, 0, 0, 0);
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetX = ACTOR_NO_TARGET;
   return 0;
@@ -526,7 +525,8 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
   } else if (GameFlag_IsSet(0x921) != 0) {
     Engine_EventSetMessage(MsgTolbiShipBadLuckLosingMyLucky);
     Event_ShowMessage(8, 0);
-    if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
+    if (GameFlag_IsSet(0x925) == 0 &&
+        GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
       gEventWork->unk172 = 1;
     }
   } else {
@@ -2177,7 +2177,8 @@ static void SceneState_RunFlagGatedSetupCascade(void) {
     return;
   }
 
-  if (Engine_GameFlagIsSet(0x911) != 0 && Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+  if (Engine_GameFlagIsSet(0x911) != 0 &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_ACTORS_13_AND_14, 0, 0);
     Engine_ActorSetPosition(12, 0, 0);
   }

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081514bc
+@ Abilities: Frost, Tundra, Glacier (kind 6).
+	.global BattleFx_RunFrost
 	.thumb_func
-Func_081514bc:
+BattleFx_RunFrost:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -47,7 +48,7 @@ Func_081514bc:
 	movs r0, #0
 	adds r1, r4, #0
 	str r4, [sp, #28]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r5, [sp, #44]
 	b .L_08151530
 	.2byte 0x0000
@@ -456,7 +457,7 @@ Func_081514bc:
 	b .L_0815188c
 	.2byte 0x0000
 .L_0815183c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08151840:
 	.4byte 0xffff9000
 .L_08151844:
@@ -825,7 +826,7 @@ Func_081514bc:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08151b44
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #96
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -850,4 +851,4 @@ Func_081514bc:
 .L_08151b40:
 	.4byte Data_0819745e
 .L_08151b44:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

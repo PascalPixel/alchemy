@@ -30,6 +30,7 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 #include "map_scroll.h"
+#include "macros.h"
 
 // Board placement, repainting and push helpers.
 struct IcePlacement;
@@ -486,9 +487,8 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs) {
   moved = 0;
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   facing = (actor->facing + 0x2000) & 0xc000;
-  point[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
-  point[1] = actor->y.fixed;
-  point[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
+  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x100000, facing, point);
   run = SceneData_FindTileRunAt(runs, point[0] / 0x100000, point[2] / 0x100000);
   if (run == 0)
@@ -513,9 +513,8 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs) {
   }
   if (moved == 0)
     return;
-  point[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
-  point[1] = actor->y.fixed;
-  point[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
+  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x80000, facing, point);
   actor = run->object;
   quarter = facing / 0x4000;

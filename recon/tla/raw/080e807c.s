@@ -226,7 +226,7 @@ Func_080e807c:
 	adds r0, r4, #0
 	adds r3, r3, r2
 	str r3, [r7, #8]
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r5, [r6, #24]
 	b .L_080e8258
 .L_080e8248:

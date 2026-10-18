@@ -19,7 +19,7 @@
 #include "iwram_call.h"
 #include "resource.h"
 #include "io_reg.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "mem.h"
 #include "fixed_math.h"
 #include "effect_step.h"
@@ -362,7 +362,7 @@ void ReelGame_RunFrame(void) {
   Random16();
 
   dma = REG_DMA0;
-  dma[5] &= ~DMA_START_HBLANK_REPEAT;
+  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
   dma[5];
   Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY, 0xa2600001,
@@ -402,17 +402,17 @@ void ReelGame_RunFrame(void) {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
             work->bet++;
-            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SE_MENU_CANCEL);
           }
         }
         if (work->pressed & KEY_DOWN) {
           if (work->bet > 1) {
             work->bet--;
-            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SE_MENU_CANCEL);
           }
         }
         REG_BLDCNT = 0x3fd0;
@@ -456,16 +456,16 @@ void ReelGame_RunFrame(void) {
             work->reels[i].stop = -1;
           work->spins++;
         } else {
-          AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+          AudioCommand_PlayFar(SE_MENU_CANCEL);
         }
       } else {
         if (work->direction & KEY_RIGHT) {
           work->cursor = (work->cursor + 1) % 6;
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         if (work->direction & KEY_LEFT) {
           work->cursor = (work->cursor + 5) % 6;
-          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
@@ -553,7 +553,7 @@ void ReelGame_RunFrame(void) {
       objMode = 0;
       if (work->pressed & KEY_A) {
         work->state = REEL_DONE;
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
       }
     } else if (work->state == REEL_NO_WIN) {
 #if TBS_PATCH_1
@@ -567,7 +567,7 @@ void ReelGame_RunFrame(void) {
 #if TBS_PATCH_1
         work->phase = 0;
 #endif
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         UiWork_FinalizeFar(work->window, 1);
       }
     } else if (work->state == REEL_OUT_OF_SPINS) {

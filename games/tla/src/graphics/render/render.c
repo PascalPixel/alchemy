@@ -22,6 +22,7 @@
 #include "io_reg.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
+#include "macros.h"
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
@@ -118,9 +119,7 @@ void SceneTransform_ApplyRotation(s32 *ang) {
   cy = COS(ang[1]);
   sz = Trig_Sin(ang[2]);
   cz = COS(ang[2]);
-  m[0] = Iwram_MulQ16(cy, cz);
-  m[1] = Iwram_MulQ16(cy, sz);
-  m[2] = -sy;
+  SET_VECTOR(m, Iwram_MulQ16(cy, cz), Iwram_MulQ16(cy, sz), -sy);
   m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
   m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
   m[5] = Iwram_MulQ16(sx, cy);
@@ -295,9 +294,7 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   cy = COS(ang[1]);
   sz = Trig_Sin(ang[2]);
   cz = COS(ang[2]);
-  m[0] = Iwram_MulQ16(cy, cz);
-  m[1] = Iwram_MulQ16(cy, sz);
-  m[2] = -sy;
+  SET_VECTOR(m, Iwram_MulQ16(cy, cz), Iwram_MulQ16(cy, sz), -sy);
   m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
   m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
   m[5] = Iwram_MulQ16(sx, cy);
@@ -336,9 +333,8 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   sz = Trig_Sin(ang[2]);
   cz = COS(ang[2]);
   s = scale[0];
-  m[0] = Iwram_MulQ16(s, Iwram_MulQ16(cy, cz));
-  m[1] = Iwram_MulQ16(s, Iwram_MulQ16(cy, sz));
-  m[2] = Iwram_MulQ16(s, -sy);
+  SET_VECTOR(m, Iwram_MulQ16(s, Iwram_MulQ16(cy, cz)),
+             Iwram_MulQ16(s, Iwram_MulQ16(cy, sz)), Iwram_MulQ16(s, -sy));
   s = scale[1];
   m[3] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) -
                              Iwram_MulQ16(cx, sz));

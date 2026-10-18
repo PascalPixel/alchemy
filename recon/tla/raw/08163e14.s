@@ -33,7 +33,7 @@ Func_08163e14:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #32]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_08163e7c
 	bl Resource_GetTableEntry
 	movs r3, #128
@@ -163,7 +163,7 @@ Func_08163e14:
 	adds r2, #240
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #197
@@ -171,7 +171,7 @@ Func_08163e14:
 	adds r1, #255
 	movs r0, #12
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	movs r3, #0
 	mov r9, r3
 .L_08163f7e:
@@ -511,7 +511,7 @@ Func_08163e14:
 .L_08164214:
 	.4byte 0x00000134
 .L_08164218:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816421c:
 	.4byte 0xfff00000
 .L_08164220:
@@ -768,7 +768,7 @@ Func_08163e14:
 	bl ResourceObject_ReleaseFar
 	cmp r7, #12
 	bne .L_081643fa
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -783,4 +783,4 @@ Func_08163e14:
 .L_08164424:
 	.4byte gData_08198974
 .L_08164428:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

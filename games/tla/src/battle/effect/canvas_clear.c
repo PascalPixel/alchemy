@@ -2,13 +2,16 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
-void Func_081434d8(void) {
+// Clears every target's flash timer.
+void BattleFx_ClearActorTimers(void) {
   Iwram_ClearWords(Ram_HeapSlots->battleFxWork[0] + 0x78dc, 8);
 }
 
 void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
 
-void Func_081434f8(void) {
+// Counts down each target's flash timer; when one runs out, the target gets
+// its own palette back.
+void ObjectGroup_TickMemberTimers(void) {
   u8 *base;
   s32 i;
   s32 index;

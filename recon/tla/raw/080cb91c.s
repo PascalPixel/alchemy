@@ -283,7 +283,7 @@ Func_080cb91c:
 .L_080cbb6c:
 	.4byte gMapCellBuffer
 .L_080cbb70:
-	bl Func_080dec8c
+	bl FieldFx_ResumeCloakCheck
 	movs r1, #240
 	lsls r1, r1, #1
 	adds r3, r6, r1
@@ -833,7 +833,7 @@ Func_080cb91c:
 	cmp r0, r2
 	bne .L_080cbfea
 	bl EventRuntime_PrepareCurrentObject
-	bl Func_080ed788
+	bl BattleFx_RunVisibilityTransition
 	b .L_080cc0b6
 .L_080cbfea:
 	ldr r3, .L_080cc120
@@ -938,7 +938,7 @@ Func_080cb91c:
 	strh r2, [r3]
 	b .L_080cc0b6
 .L_080cc0b2:
-	bl Func_080cd584
+	bl Scene_RunRaisedEvent
 .L_080cc0b6:
 	movs r3, #192
 	lsls r3, r3, #4
@@ -1074,7 +1074,7 @@ Func_080cb91c:
 .L_080cc1be:
 	movs r0, #8
 .L_080cc1c0:
-	bl Func_080cd91c
+	bl Field_FindNearbyTalkTarget
 	adds r5, r0, #0
 	movs r3, #1
 	negs r3, r3

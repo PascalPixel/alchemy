@@ -3,14 +3,11 @@
 
 void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_08181eb0(struct BattleEffectArgument *effect) {
-  Func_08181ed4(effect, 0);
-}
+// Abilities: Purgatory (kind 114).
+DEFINE_EFFECT_KIND(BattleFx_RunPurgatory, Func_08181ed4, 0)
 
-void Func_08181ebc(struct BattleEffectArgument *effect) {
-  Func_08181ed4(effect, 2);
-}
+// Abilities: Djinn Blast (kind 461).
+DEFINE_EFFECT_KIND(BattleFx_RunDjinnBlast, Func_08181ed4, 2)
 
-void Func_08181ec8(struct BattleEffectArgument *effect) {
-  Func_08181ed4(effect, 1);
-}
+// Abilities: Djinn Storm (kind 462).
+DEFINE_EFFECT_KIND(BattleFx_RunDjinnStorm, Func_08181ed4, 1)

@@ -344,7 +344,7 @@ s32 BattleFx_SelectBattleCue(s32 row, s32 column);
 void BattleFx_SetupObjectPair(s32 actor, s32 target);
 s32 BattleFx_StartBufferInterpolationFar(s32);
 void BattleMotion_ProjectScaledPositionFar(s32, s32 *);
-void BattlePres_RunBurstScene(struct EffectStep *, s32);
+void BattleFx_RunBurstScene(struct EffectStep *, s32);
 void EffectRuntime_StopCurrentObject(void);
 s32 Event_SpawnObjectTable(s32 event_id, s32 state);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
@@ -371,7 +371,7 @@ void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
 s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
 void Func_080caa2c(u32 objectId);
 void Object_SetSquareSprite(u32 objectId);
-void Func_080e70f8(u32 objectId);
+void BattleFx_DropObjectAtAnchor(u32 objectId);
 void Func_081b83c4(void);
 void GameFlag_RefreshLureCapFar(void);
 void Map_ApplyWorkOriginAndSpanFar(void);

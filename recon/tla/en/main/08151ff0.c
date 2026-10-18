@@ -1,26 +1,30 @@
 // Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
-// Func_08151fe4) and 380 (mode 1, through Func_08151fd8).
+// BattleFx_RunBlast) and 380 (mode 1, through BattleFx_RunSmokeBomb).
 
-// Twin: The Broken Seal's BattleFx_RunParticleField (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunEruption (effect.c), call for
 // call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its
 // argument, takes its heap blocks as Ram_HeapSlots fields, loads its
-// blitter through Func_081963ec (BLIT_MAX 1 where COMPOSITE_MAX is 2),
+// blitter through BattleFx_LoadBlitter (BLIT_MAX 1 where COMPOSITE_MAX is 2),
 // orders the callback 0xc80 and keeps the puff sizes as halfwords.
 // ResourceId_BlastSheet and ResourceId_FireStreakSheet are rows 0x184 and
 // 0x159 of directory.s (assets BattleFx_BlastSheet and
 // BattleFx_FireStreakSheet), not yet named there.
 
-// Near miss: differ 22 of 464 (draft 464), all order residue: nine pairs
-// where the native issues a pool load or a constant one slot earlier
-// than agscc (the RAM base before the mode's spill, the BLDALPHA value,
-// the mote buffer before its counter, the cell offset table, r0 before
-// r1 for Func_081963ec, the actor offset before the cue arguments).
+// Near miss: differ 18 of 464 (draft 464, 2026-10-18), all order residue:
+// pairs where the native issues a pool load or a constant one slot earlier
+// than agscc (the RAM base before the mode's spill, the mote buffer before
+// its counter, the cell offset table, the actor offset before the cue
+// arguments).
 
 // Tried (2026-10-15):
 // - The Broken Seal's body ported call for call: differ 40, every frame
 // offset four bytes off (frame 52 for 56).
 // - the blitter as a pair, as The Broken Seal's twin (tagged): 22.
 // - greedy declaration-order sweep, two passes: no gain.
+// Tried (2026-10-18): BattleFx_LoadBlitter returning s32, as defined (22 ->
+// 20); the BLDALPHA halfword pinned in a one-pass block (20 -> 18); an
+// empty asm before the heap reads (20: the effect's copy to sl moves too);
+// alchemy permute 5 minutes (nothing below 20).
 
 #include "types.h"
 #include "battle_display.h"
@@ -41,10 +45,10 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_081434f8(void); // ObjectGroup_TickMemberTimers
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
@@ -53,7 +57,7 @@ void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -66,10 +70,10 @@ enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
 extern char ResourceId_BlastSheet;
 extern char ResourceId_FireStreakSheet;
-extern u8 Data_081983a2[][3]; // gParticleField_Counts
-extern u16 gData_08197410[];  // gParticleStreams_CellOffsets
-extern u16 Data_081983ac[];   // gParticleField_PuffCells
-extern u16 Data_081983ba[];   // gParticleField_PuffSizes
+extern u8 Data_081983a2[][3]; // gEruption_Counts
+extern u16 gData_08197410[];  // gBattleFx_MoteCells
+extern u16 Data_081983ac[];   // gEruption_PuffCells
+extern u16 Data_081983ba[];   // gEruption_PuffSizes
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.
@@ -98,7 +102,17 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  {
+    /* FAKEMATCH: the native loads the BLDALPHA halfword from the pool before
+     * it starts the register's address; pinned to r3 in a one-pass block it
+     * does (differ 20 without it). */
+    register u16 value __asm__("r3");
+
+    do {
+      value = 0x1010;
+    } while (0);
+    REG_BLDALPHA = value;
+  }
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   if (mode == 1) {
     for (i = 0; i != 64; i++) {
@@ -144,18 +158,18 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  Func_081963ec(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   for (frame = 0; frame != Data_081983a2[variant][FIELD_FRAMES]; frame++) {
     struct BattleCamera *camera;
 
     camera = Ram_HeapSlots->cameraWork;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
       Audio_PlayCue(144);
     if (frame == Data_081983a2[variant][FIELD_FRAMES] - 48)
@@ -225,12 +239,12 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       work->shakeFrames = 6;
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

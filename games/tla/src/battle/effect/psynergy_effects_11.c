@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
+#include "macros.h"
 
 struct EffectSprite {
   u8 unk00[4];
@@ -57,7 +58,10 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 s32 Trig_Sin(s32 angle);
 
-void Func_080e6388(struct EffectSprite *sprite, struct EffectParticle *particle,
+// Animates a particle's sprite through 8 tiles (4 ticks each), grows its
+// scale by 0.1 a frame up to 1.0, draws it at the particle's projected
+// position and advances the particle.
+void BattleFx_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct EffectParticle *particle,
                    s32 tiles) {
   s32 position[3];
   s32 scale;
@@ -71,9 +75,7 @@ void Func_080e6388(struct EffectSprite *sprite, struct EffectParticle *particle,
     scale = 0x10000;
   sprite->scaleX = scale;
   sprite->scaleY = scale;
-  position[0] = particle->x;
-  position[1] = particle->y;
-  position[2] = particle->z;
+  SET_VECTOR(position, particle->x, particle->y, particle->z);
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];

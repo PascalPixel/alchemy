@@ -46,12 +46,12 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object);
 s8 BattleFx_GetResourceGroup(s32 effect_index);
 #endif
 void BattleFx_PrepareBufferInterpolation(void);
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
+void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_RunNoEffect(void);
 void BattleFx_RunOrbitingParticles(void);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode);
-void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
+void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode);
 void *BattleFx_StartItemBreak(void *object);
 s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
@@ -126,12 +126,6 @@ struct CameraWork {
   u8 unk00[0x36];
   u16 scroll;
 };
-struct BgScrollWords {
-  u16 unk00;
-  u16 unk02;
-  u16 unk04;
-  u16 unk06;
-};
 struct EffectVector {
   s32 x;
   s32 y;
@@ -154,30 +148,14 @@ extern u8 gBattleCommand_SelectionWeights[3][8];
 extern const u8 gBattleFx_ArcSparkTiles[];
 extern const s32 gBattleFx_BurstParticleObjectScript[];
 extern struct BattleEffectEntry gBattleFx_DefinitionTable[];
-extern u8 gBattleFx_GlintCellHeights[];
-extern u16 gBattleFx_GlintCellOffsets[];
-extern u8 gBattleFx_GlintCellWidths[];
 extern const s32 gBattleFx_LinkedObjectScript[];
 extern const s32 gBattleFx_MarkerParticleScript[];
 extern const s32 gBattleFx_ParticleEmitterScript[];
 extern const s32 gBattleFx_ParticleScript[];
-#ifndef OWN_BattleFx_PuffCells
-extern u16 gBattleFx_PuffCells[];
-#endif
-#ifndef OWN_BattleFx_PuffSizes
-extern u8 gBattleFx_PuffSizes[];
-#endif
 extern u32 gBattleFx_PulseScales[];
 extern const s32 gBattleFx_SourceHoldScript[];
 extern s16 gBattleFx_TargetRangeByMode[];
 extern const s32 gBattleFx_UntargetedObjectScript[];
-extern u16 gBattleFx6_FlareCells[];
-extern u8 gBattleFxPillar_Counts[];
-extern u8 gBattleFxPillar_Kinds[];
-extern u16 gBattleFxPillar_PuffCells[];
-extern u8 gBattleFxPillar_PuffHeights[];
-extern s8 gBattleFxPillar_PuffWidths[];
-extern s8 gBattleFxPillar_X[];
 extern s32 gBattleMotion_VariantAcceleration[];
 extern s32 gBattleMotion_VariantDistancePercent[];
 extern s32 gBattleMotion_VariantSpeedLimit[];
@@ -193,18 +171,7 @@ extern u16 gBattleUnit_WeaponAnimsClass2[];
 extern u16 gBattleUnit_WeaponAnimsClass3[];
 extern u16 gBattleUnit_WeaponAnimsClass5[];
 extern u8 BitDecoder_Size[];
-extern u8 gBurstScene_Records[];
 extern u8 gCamera_FlagTransformWork[];
-extern u8 gCastingImpact_GlintDrawFlags[];
-extern u8 gCastingImpact_ImageX[];
-extern u8 gCastingImpact_ImageY[];
-extern u16 gCastingImpact_OrbitCells[];
-extern u8 gCirclingScene_ObjectColumns[];
-extern u8 gCirclingScene_ObjectRows[];
-extern u16 gCirclingScene_PuffSheetOffsets[];
-extern u16 gCirclingScene_PuffSizes[];
-extern u8 gCounterReveal_PanelX[];
-extern u8 gCounterReveal_PanelY[];
 extern const u8 gBattleFx_SparkTiles[];
 extern const u8 gBattleFx_QuadrantModes[];
 extern const s32 gBattleFx_TargetColors[];
@@ -212,35 +179,9 @@ extern s32 gBattleFx_StarWorkOffsets[];
 extern u8 gBattleFx_StarSizes[];
 extern s32 gBattleFx_RingFrameOffsets[];
 extern s8 gBattleFx_HighlightBlendRamp[];
-extern u8 gDualTable_ColumnCounts[];
-extern u8 gDualTable_ColumnX[];
-extern u8 gDualTable_HeightLimits[];
-extern u16 gDualTable_PillarCells[];
-extern s8 gDualTable_PillarHeights[];
-extern u8 gDualTable_PillarWidths[];
-extern u16 gDualTable_PuffCells[];
-extern u8 gDualTable_PuffHeights[];
-extern s8 gDualTable_PuffWidths[];
-extern u16 gDualTable_VineCells[];
-extern u8 gDualTable_VineWidths[];
-extern u8 gEarthWall_CellHeights[];
-extern u16 gEarthWall_CellSourceOffsets[];
-extern u8 gEarthWall_CellWidths[];
-extern u8 gEmberColumns_Columns[];
-extern s32 gEmberColumns_Gravity[];
 extern u16 gEncounter_EnemyGroupTable[];
-extern u8 gFallingBolts_Counts[];
 extern s16 gFieldFx_GroundParticleFrames[];
 extern const u8 gFieldFx_GroundParticleTiles[];
-extern u8 gFirePillars_Counts[];
-extern s8 gFirePillars_Depths[][4];
-extern u8 gFirePillars_StartFrames[];
-extern s8 gFireSwirl_CellBiasX[];
-extern s8 gFireSwirl_CellBiasY[];
-extern u8 gFireSwirl_CellHeights[];
-extern u16 gFireSwirl_CellSourceOffsets[];
-extern u8 gFireSwirl_CellWidths[];
-extern s8 gFiveMode_Records[];
 #ifndef OWN_gBattleBgFxWork
 extern struct WaveFxWork *gBattleBgFxWork;
 #endif
@@ -256,93 +197,13 @@ extern u32 gRandomSeed;
 #ifndef OWN_gTransitionWork
 extern struct BattlePresentationTransition *gTransitionWork;
 #endif
-extern u8 gHomingEmbers_Counts[];
-extern u8 gHomingEmbers_FlareBiasY[];
-extern u16 gHomingEmbers_FlareCells[];
-extern u8 gHomingEmbers_FlareHeights[];
-extern u8 gHomingEmbers_FlareWidths[];
-extern u8 gLightningBolts_Counts[];
-extern u8 gLightningBolts_GlintModes[];
-extern u8 gLightningBolts_GlintPalettes[];
-extern u8 gMemberBeam_HeadHeights[];
-extern u16 gMemberBeam_HeadOffsets[];
-extern u8 gMemberBeam_HeadWidths[];
-extern u8 gMemberBeam_MotePictures[];
-extern u8 gMemberBurst_Counts[];
 extern const u8 gObjectMotion_LinkedActionScript[];
-extern const struct SpriteScale gObjectRow_RisePair;
-extern const struct SpriteScale gObjectRow_SweepPair;
-extern u8 gPaletteParticles_DropSizes[];
-extern u8 gPaletteParticles_DropSpeeds[];
-extern u8 gPaletteParticles_SparkPixels[];
-extern u8 gPaletteParticles_StreakDrops[];
-extern u8 gPaletteParticles_StreakHeights[];
-extern u16 gPaletteParticles_StreakOffsets[];
-extern u8 gPaletteParticles_StreakWidths[];
-extern u8 gParticleField_Counts[][3];
-extern u16 gParticleField_PuffCells[];
-extern u16 gParticleField_PuffSizes[];
-#ifndef OWN_ParticleStreams_CellOffsets
-extern u16 gParticleStreams_CellOffsets[];
-#endif
 extern const s16 gParty_PairResolveRules[];
-extern u8 gPuffArc_CellBiasY[];
-extern u8 gPuffArc_CellHeights[];
-extern u16 gPuffArc_CellSourceOffsets[];
-extern u8 gPuffArc_CellWidths[];
-extern u8 gRenderMode_GlintFlips[];
-extern struct Vector3 gRingBolts_Points[];
-extern u16 gRisingMotes_ColumnCells[];
-extern u8 gRisingMotes_ColumnHeights[];
-extern u8 gRisingMotes_ColumnSpots[];
-extern u16 gRisingMotes_EmberCells[];
-extern u8 gRisingMotes_EmberHeights[];
-extern u8 gRisingMotes_EmberWidths[];
-extern u16 gRisingMotes_MoteCells[];
-extern u8 gRisingMotes_MoteHeights[];
-extern u8 gRisingMotes_MoteWidths[];
-extern u8 gRisingMotes_Timings[];
-extern s8 gRisingWall_Bg2Shifts[][3];
-extern u8 gRisingWall_LateRockColumns[];
-extern u8 gRisingWall_MoundHeights[];
-extern u16 gRisingWall_MoundSheetOffsets[];
-extern u8 gRisingWall_MoundWidths[];
-extern u16 gRisingWall_RowSheetOffsets[];
-extern u8 gRisingWall_RowWidths[];
 extern const s32 gBattleFx_RisingPulseScript[];
 extern u16 gBattleUnit_WeaponAnimsClass0[];
 extern u16 gBattleFormation_LevelMatchedEnemies[];
 extern s32 gBattle_BackdropScenes[];
-extern const u32 BattleEffect_Composite[];
-extern u8 gShatterRocks_DropFrames[];
-extern u8 gShatterRocks_RockCounts[];
-extern s8 gShatterRocks_RockX[];
-extern u16 gShatterRocks_ShardCells[];
-extern u8 gShatterRocks_ShardHeights[];
-extern u8 gShatterRocks_ShardOffsets[];
-extern u8 gShatterRocks_ShardWidths[];
-extern u8 gSpinningStars_Radii[];
-extern struct Vector3 gSpinningTriangle_Vertex[];
-extern u8 gThornVines_ChipHeights[];
-extern u16 gThornVines_ChipOffsets[];
-extern u8 gThornVines_ChipWidths[];
-extern u16 gThornVines_EmberOffsets[];
-extern u16 gThornVines_EmberSizes[];
-extern u16 gThornVines_LeafOffsets[];
-extern u8 gThornVines_LeafSizes[];
-extern u8 gThornVines_ObjectPoses[];
-extern u16 gThornVines_SparkOffsets[];
-extern u8 gThornVines_SparkSizes[];
-extern u8 gThornVines_ThornHeights[];
-extern u16 gThornVines_ThornOffsets[];
-extern u8 gThornVines_ThornWidths[];
-extern struct Vector3 gTriangleStrike_Vertex[];
-extern u8 gTwelveMode_Records[];
-extern s8 gTwoResource_CellBiasY[];
-extern u8 gTwoResource_CellHeights[];
-extern u16 gTwoResource_CellSourceOffsets[];
-extern u8 gTwoResource_CellWidths[];
-extern u8 gTwoResource_CellX[];
+extern const u32 BattleFx_Composite[];
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
@@ -452,5 +313,15 @@ void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 void PartyStatusDrawFar(s32 mode);
 #endif
+
+// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+// that the battle code picks by name.
+enum BattlePose {
+  POSE_ENEMY_HELD = 0, // an enemy asleep, stunned or held
+  POSE_STANDING = 1,
+  POSE_PARTY_HELD = 4, // asleep, stunned or held; also a downed member
+  POSE_DAMAGE = 5,     // taking damage
+  POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
+};
 
 #endif

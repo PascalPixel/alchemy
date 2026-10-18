@@ -3,18 +3,14 @@
 
 void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_0818ad10(struct BattleEffectArgument *effect) {
-  Func_0818ad40(effect, 0);
-}
+// Abilities: Sleep Card (kind 92).
+DEFINE_EFFECT_KIND(BattleFx_RunSleepCard, Func_0818ad40, 0)
 
-void Func_0818ad1c(struct BattleEffectArgument *effect) {
-  Func_0818ad40(effect, 1);
-}
+// Abilities: Baffle Card (kind 90).
+DEFINE_EFFECT_KIND(BattleFx_RunBaffleCard, Func_0818ad40, 1)
 
-void Func_0818ad28(struct BattleEffectArgument *effect) {
-  Func_0818ad40(effect, 2);
-}
+// Abilities: Death Card (kind 93).
+DEFINE_EFFECT_KIND(BattleFx_RunDeathCard, Func_0818ad40, 2)
 
-void Func_0818ad34(struct BattleEffectArgument *effect) {
-  Func_0818ad40(effect, 3);
-}
+// Abilities: Sword Card (kind 91).
+DEFINE_EFFECT_KIND(BattleFx_RunSwordCard, Func_0818ad40, 3)

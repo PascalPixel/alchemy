@@ -7,7 +7,7 @@
 // height bytes, halved unless the attributes ask for 256 colours (0x2000),
 // and adds them to the object system's tile count.
 
-// Found so far: the cache entry is loaded (VramBlock_LoadCached(entry, 0,
+// Found so far: the cache entry is loaded (VramCache_Load(entry, 0,
 // 0)) before any store; the first three words are written through a word
 // cursor (stmia r3!); the halfword clear comes before the byte clears, so
 // the bytes share a halfword zero, which the native loads from the pool
@@ -54,8 +54,8 @@ struct EffectSprite {
 };
 
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-struct AnimationEntry *Func_0815b24c(void);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
+struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
 struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
@@ -77,7 +77,7 @@ struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
     i++;
     sprite++;
   }
-  tile = VramBlock_LoadCached(vramEntry, 0, 0);
+  tile = VramCache_Load(vramEntry, 0, 0);
   found->vramEntry = vramEntry;
   found->unk12 = 0;
   found->unk1a = 0;
@@ -93,7 +93,7 @@ struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
   found->unk20 = 0x6000;
   entries = gResourceTableEntries;
   found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
-  sprite->entry = Func_0815b24c();
+  sprite->entry = AnimationObject_AllocateEmpty();
   sprite->unk0c = 0x10000;
   sprite->width = width;
   sprite->height = height;
@@ -107,7 +107,7 @@ struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
   size = sprite->width * sprite->height;
   if (!(attributes & 0x2000))
     size = (u32)size >> 1;
-  VramBlock_LoadCached(sprite->vramEntry, size, 0);
+  VramCache_Load(sprite->vramEntry, size, 0);
   *tilesUsed += size;
   sprite->oam.tile = (sprite->oam.tile & 0xfc00) |
                      (entries[sprite->vramEntry].offset >> 5 & 0x3ff);

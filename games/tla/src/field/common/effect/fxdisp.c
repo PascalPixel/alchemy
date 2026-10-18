@@ -5,6 +5,7 @@
 #include "mem.h"
 #include "motobj.h"
 #include "iwram_call.h"
+#include "edition.h"
 
 struct BattleFxWorkTail {
   u8 unk0000[0x78e4];
@@ -24,8 +25,8 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 // Battle_GetObjectTableValueFar under that name (Japanese names another slot,
 // the other two keep the slot unnamed on their scaffold); those three editions
 // keep this function on their scaffold (S4).
-#if !defined(TLA_EDITION_JA) && !defined(TLA_EDITION_FR) &&                    \
-    !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_JAPANESE) && (LANGUAGE != LANGUAGE_FRENCH) &&                    \
+    (LANGUAGE != LANGUAGE_ITALIAN)
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   u8 *camera;
   s32 *object;

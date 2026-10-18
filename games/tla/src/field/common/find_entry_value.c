@@ -9,11 +9,11 @@ struct FlagEntry {
   u8 unk10[4];
 };
 
-struct FlagEntry *Func_080ed804(void);
+struct FlagEntry *FlagEntries_GetTable(void);
 void GameFlag_SetBit(s32 flag);
 
 void Func_080c9de0(s32 id, s32 variant) {
-  struct FlagEntry *entry = Func_080ed804();
+  struct FlagEntry *entry = FlagEntries_GetTable();
 
   for (; entry->flag != 0; entry++) {
     if (entry->id != id)
@@ -26,7 +26,7 @@ void Func_080c9de0(s32 id, s32 variant) {
 }
 
 s32 Func_080c9e1c(s32 flag) {
-  struct FlagEntry *entry = Func_080ed804();
+  struct FlagEntry *entry = FlagEntries_GetTable();
 
   while (entry->flag != 0) {
     if (entry->flag == flag && entry->value != 0)

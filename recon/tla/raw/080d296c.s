@@ -18,7 +18,7 @@ Func_080d296c:
 	str r3, [r0, #24]
 	movs r1, #3
 	adds r0, r5, #0
-	bl Func_080cf424
+	bl BattleFx_StartEffectObject22
 	adds r0, r5, #0
 	movs r1, #2
 	bl UiText_DrawQuantity
@@ -55,7 +55,7 @@ Func_080d296c:
 	bl ObjectMotion_SetHorizontalPositionWithTerrain
 	adds r0, r5, #0
 	movs r1, #3
-	bl Func_080cf424
+	bl BattleFx_StartEffectObject22
 	adds r0, r5, #0
 	movs r1, #0
 	bl PartyInventory_GiveItem

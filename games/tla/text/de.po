@@ -2486,7 +2486,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "Glühend roter Ball aus Vulkangestein"
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 
@@ -8890,7 +8890,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Konterkraft"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Kiesel"
 
@@ -20157,7 +20157,7 @@ msgctxt "message"
 msgid "04939"
 msgstr "Passwort-Eingabe."
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04940"
 msgstr "Level"
 
@@ -21065,7 +21065,7 @@ msgctxt "MsgYourCoins"
 msgid "05166"
 msgstr "Vermögen:"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "05167"
 msgstr "Preis"
 
@@ -21081,11 +21081,11 @@ msgctxt "message"
 msgid "05170"
 msgstr "Nicht anlegbar"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05171"
 msgstr "Du hast 0"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05172"
 msgstr "Du hast {argument_signed_number}"
 
@@ -21093,11 +21093,11 @@ msgctxt "MsgNoItems"
 msgid "05173"
 msgstr "Keine Items"
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "05174"
 msgstr "Nicht verkäuflich."
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "05175"
 msgstr "Nicht beschädigt."
 
@@ -21133,7 +21133,7 @@ msgctxt "message"
 msgid "05183"
 msgstr "GLK"
 
-msgctxt "message"
+msgctxt "MsgItemCondition"
 msgid "05184"
 msgstr "----------"
 

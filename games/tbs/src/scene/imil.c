@@ -36,6 +36,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "map.h"
+#include "macros.h"
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
@@ -878,9 +879,7 @@ UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   actor->timer++;
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
-    pos[0] = actor->x.fixed;
-    pos[1] = actor->y.fixed + PIXELS(2);
-    pos[2] = actor->z.fixed;
+    SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + PIXELS(2), actor->z.fixed);
     radius = Engine_RandomNext();
     Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
     spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);

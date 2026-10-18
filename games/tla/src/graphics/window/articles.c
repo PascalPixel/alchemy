@@ -8,7 +8,7 @@
 // (s8 *text[kinds]); each table's words come just before it.
 //--------------------------------------------------------------------------
 
-#if !EDITION_INTERNATIONAL || defined(TLA_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
 // clang-format off
 const u16 gUiText_MarkGlyphCodes[] = {
     TEXT_MARK_NONE,
@@ -20,7 +20,7 @@ const u16 gUiText_MarkGlyphCodes[] = {
 
 const u32 gData_0805c0e8[2] = {0x1999999a, 0x1999999a};
 
-#if defined(TLA_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -64,7 +64,7 @@ const s8 *const gUiText_ItemPossessives[4] = {
     gUiText_ArticleEmpty,
 };
 
-#elif defined(TLA_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -105,7 +105,7 @@ const s8 *const gUiText_ItemPossessives[2] = {
     sPossessiveTus,
 };
 
-#elif defined(TLA_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
 
 static const s8 sArticleDeElided[] = "d'";
 static const s8 sArticleDe[] = "de ";
@@ -140,7 +140,7 @@ const s8 *const gUiText_ArticleTable[8] = {
 
 const s8 gUiText_ItemPronoun[] = "vous ";
 
-#elif defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -181,7 +181,7 @@ const s8 *const gUiText_ItemPossessives[4] = {
     gUiText_ArticleEmpty,
 };
 
-#elif defined(TLA_EDITION_EN)
+#elif (LANGUAGE == LANGUAGE_ENGLISH)
 
 const s8 gUiText_ArticleEmpty[] = "";
 

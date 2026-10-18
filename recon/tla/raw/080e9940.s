@@ -165,7 +165,7 @@ Func_080e9940:
 	ands r3, r1
 	orrs r3, r2
 	strh r3, [r6, #8]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	ldrb r2, [r6, #9]
 	movs r3, #3
 	ands r0, r3
@@ -176,7 +176,7 @@ Func_080e9940:
 	orrs r3, r0
 	strb r3, [r6, #9]
 	mov r0, r10
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	subs r0, #1
 	strh r0, [r6, #30]
 	mov r2, r10

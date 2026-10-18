@@ -15,7 +15,7 @@ Func_080ec2b8:
 	str r2, [sp, #12]
 	str r0, [sp, #20]
 	bl EventRuntime_GetControlledOwner
-	bl Func_080ed804
+	bl FlagEntries_GetTable
 	mov r11, r0
 	movs r0, #128
 	lsls r0, r0, #19

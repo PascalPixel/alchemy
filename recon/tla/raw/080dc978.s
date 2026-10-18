@@ -57,7 +57,7 @@ Func_080dc978:
 	adds r3, r5, r2
 	strb r1, [r3]
 	bl BattleEffect_InitializeSharedScene
-	bl Func_080dce60
+	bl BattleFx_AdvanceHueCycle
 	movs r2, #199
 	lsls r2, r2, #1
 	adds r2, #255
@@ -93,7 +93,7 @@ Func_080dc978:
 	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #8
 	bl BattleFx_StartBufferInterpolation
-	bl Func_080dca84
+	bl Ui_FillBank15PaletteGrey
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080dca4c

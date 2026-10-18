@@ -18,7 +18,7 @@
 #include "far_runtime.h"
 
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 void RenderOutput_ClearListFar();
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 #endif
@@ -29,7 +29,7 @@ void RenderOutput_ClearListFar();
 //--------------------------------------------------------------------------
 void Shop_DrawMsg(s32 win, s32 message) {
   if (win != 0) {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     RenderOutput_RedrawSavedRectFar(win);
     UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else

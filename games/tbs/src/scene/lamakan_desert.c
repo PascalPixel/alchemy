@@ -39,7 +39,7 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 // Lamakan Desert, four maps of sand between Altin and the world map east.
 //
@@ -182,7 +182,7 @@ static void LeaveForTheWorldMap(void) {
       GameFlag_Set(0x8b2);
     }
   }
-  Event_PlayCue(SOUND_MAP_EXIT);
+  Event_PlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(3);
   Engine_EventEnd();
 }

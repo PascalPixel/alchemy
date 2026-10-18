@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08179f18
+@ Abilities: Flora (scene kind 15).
+	.global BattleFx_RunFlora
 	.thumb_func
-Func_08179f18:
+BattleFx_RunFlora:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -63,7 +64,7 @@ Func_08179f18:
 	adds r4, #240
 	adds r3, r2, r4
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	ldr r1, .L_0817a0f8
 	movs r2, #0
@@ -232,7 +233,7 @@ Func_08179f18:
 .L_0817a0ec:
 	.4byte gData_02014000
 .L_0817a0f0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817a0f4:
 	.4byte gCameraSceneParameters
 .L_0817a0f8:
@@ -503,7 +504,7 @@ Func_08179f18:
 	str r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -563,7 +564,7 @@ Func_08179f18:
 	lsls r2, r2, #19
 	adds r2, #32
 	strh r3, [r2]
-	bl Func_0815b410
+	bl Graphics_LoadGreyRamp
 	b .L_0817a3a8
 	.2byte 0x0000
 .L_0817a388:
@@ -1883,7 +1884,7 @@ Func_08179f18:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0817b004
 	ldr r3, [sp, #184]
 	movs r1, #7
@@ -1964,9 +1965,9 @@ Func_08179f18:
 	ldr r0, .L_0817b024
 	mov r1, r8
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0817ae1a:
 	movs r0, #1
 	add r10, r0
@@ -2050,7 +2051,7 @@ Func_08179f18:
 	movs r1, #3
 	movs r0, #188
 	str r6, [sp, #128]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -2917,7 +2918,7 @@ Func_08179f18:
 	movs r0, #2
 	movs r1, #2
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r6, #240
 	ldr r5, [sp, #172]
 	lsls r6, r6, #7
@@ -2938,7 +2939,7 @@ Func_08179f18:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #292
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2952,4 +2953,4 @@ Func_08179f18:
 .L_0817b5cc:
 	.4byte 0xfffff000
 .L_0817b5d0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

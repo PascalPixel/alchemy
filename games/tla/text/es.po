@@ -8892,7 +8892,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Contra-Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Sílex"
 
@@ -20059,7 +20059,7 @@ msgctxt "message"
 msgid "04935"
 msgstr "la contraseña:"
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04936"
 msgstr "Niveles"
 
@@ -20855,11 +20855,11 @@ msgctxt "message"
 msgid "05134"
 msgstr "No equipable."
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05135"
 msgstr "No tiene."
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05136"
 msgstr "Tiene {argument_signed_number}."
 

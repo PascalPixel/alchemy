@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814db04
+@ Abilities: Boreas (scene kind 10).
+	.global BattleFx_RunBoreas
 	.thumb_func
-Func_0814db04:
+BattleFx_RunBoreas:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -62,7 +63,7 @@ Func_0814db04:
 .L_0814db7c:
 	.4byte 0x0000f0f0
 .L_0814db80:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814db84:
 	strh r3, [r2]
 	ldr r2, [sp, #44]
@@ -80,12 +81,12 @@ Func_0814db04:
 	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r4, [r5, #104]
 	movs r1, #35
 	movs r0, #188
 	str r4, [sp, #36]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r2, .L_0814dc3c
 	ldr r5, [r5]
@@ -98,7 +99,7 @@ Func_0814db04:
 	adds r7, #240
 	adds r3, r5, r7
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_0814dc40
@@ -110,7 +111,7 @@ Func_0814db04:
 	adds r1, #255
 	movs r0, #9
 	movs r2, #1
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 	ldr r3, .L_0814dc24
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1571,7 +1572,7 @@ Func_0814db04:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814e740
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #336
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1580,4 +1581,4 @@ Func_0814db04:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0814e740:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

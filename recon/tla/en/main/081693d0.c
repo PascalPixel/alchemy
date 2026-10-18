@@ -1,16 +1,17 @@
-// Draft, differ 360 of 1632 (1628 here): Func_081693d0, summon 6
-// (Func_0814c994's case 6, actflags 0x8006), The Broken Seal's
-// BattleFx_InitializeMode6 as The Lost Age reworked it.
+// Draft, differ 360 of 1632 (1628 here): BattleFx_RunNeptune, summon 6
+// (BattleFx_RunSceneEffect's case 6, actflags 0x8006), The Broken Seal's
+// BattleFx_RunNeptune as The Lost Age reworked it.
 
-// Twin: ☀️ BattleFx_InitializeMode6 (games/tbs/src/effect/effect.c), with The
+// Twin: ☀️ BattleFx_RunNeptune (games/tbs/src/effect/effect.c), with The
 // Lost Age's changes: no BattleFx_SpawnObjects; instead its own object build
 // (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
 // Resource_DecodeType01 into the map cell buffer, eight
 // Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
 // each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
 // do); battle work byte 0x867 set; the object grid computed from i (no
-// ObjectX/Y tables); PaletteDma_LoadBlock and a Dma_Set of 16 palette words
-// after the first act; blitter modes 3 and 19 for The Broken Seal's 3 and 2.
+// ObjectX/Y tables); Palette_LoadBasicObjColors and a Dma_Set of 16 palette
+// words after the first act; blitter modes 3 and 19 for The Broken Seal's 3
+// and 2.
 
 // Left: allocation (spill slots, and the tile pointer the native holds in r8
 // from the start) and order.
@@ -97,30 +98,30 @@ extern u32 gCameraSceneParameters[];
 extern struct Scale Data_08196e8c; // the serpent's scale
 extern u16 Data_08197424[];        // the sparkle cells by size
 extern s32 Data_08198aec[];        // the spray's four gravities
-extern u16 gData_08197410[];       // ☀️ gParticleStreams_CellOffsets
+extern u16 gData_08197410[];       // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value);        // BattleEffect_WipeCanvas
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork(slot,
+void Func_0813ba50(void); // BattleFx_ConfigureEffectDisplay
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void Func_08163c2c(s32 mode, s32 value);        // Func_08163c2c
+void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
-void Func_0814cc4c(
+void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // BattleFx_SelectLivingTargets
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
                                    u32 mode);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
                    s32 width); // BattleFx_DrawClippedCanvasLine
-void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void);      // BattleFx_SetupBlendedDisplay
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
-void PaletteDma_LoadBlock(void);
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
+void Palette_LoadBasicObjColors(void);
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
 void BattleFx_BuildWindowEdgeTable(void);
@@ -144,7 +145,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 // a ring of sparks; the sea rolls along the bottom all the while. Act two
 // (144 frames): a flame pillar falls on each target 16 frames apart, splashing
 // sparks where it lands and striking that target; results at frame 96.
-void Func_081693d0(struct BattleEffectArgument *effect) {
+void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   s32 position[4];
   s32 target[3];
   void *canvas;
@@ -188,11 +189,11 @@ void Func_081693d0(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0xc80);
   Runtime_SetIrqHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
-  Func_0814cc4c(work->effect);
+  BattleFx_SelectLivingTargets(work->effect);
   // Build the serpent: its palette, its tiles, and eight sprites.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
@@ -235,9 +236,9 @@ void Func_081693d0(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   transition[4] = 1;
-  Func_081963ec(104, 3);
+  BattleFx_LoadBlitter(104, 3);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(188, 19);
+  BattleFx_LoadBlitter(188, 19);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BG2CNT = 0x784;
 
@@ -527,7 +528,7 @@ void Func_081693d0(struct BattleEffectArgument *effect) {
   transition[4] = 0;
   Runtime_SetIrqHandler(2, 0, 0);
   Func_0814cca8();
-  PaletteDma_LoadBlock();
+  Palette_LoadBasicObjColors();
   Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)0x050000bc = *(u16 *)0x050001e8;
@@ -626,15 +627,15 @@ void Func_081693d0(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(4, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   } while (++frame != 144);
 
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

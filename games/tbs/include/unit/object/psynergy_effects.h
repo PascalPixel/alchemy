@@ -240,8 +240,9 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
 s32 ResourceTable_CountFreeBlocks(void);
-struct AnimationObject *Sprite_ShareVramCache(
-    struct AnimationObject *sourceSprite, struct AnimationObject *sharedSprite);
+struct AnimationObject *
+Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
+                      struct AnimationObject *sharedSprite);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value);

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081693d0
+@ Abilities: Neptune (scene kind 6).
+	.global BattleFx_RunNeptune
 	.thumb_func
-Func_081693d0:
+BattleFx_RunNeptune:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -65,7 +66,7 @@ Func_081693d0:
 .L_08169450:
 	.4byte Graphics_SetBg2AffineScaleHalf
 .L_08169454:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08169458:
 	strh r3, [r2]
 	movs r0, #1
@@ -82,7 +83,7 @@ Func_081693d0:
 	adds r1, #240
 	adds r3, r0, r1
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	ldr r3, [r5, #36]
 	movs r2, #237
 	lsls r2, r2, #3
@@ -276,12 +277,12 @@ Func_081693d0:
 	str r0, [r1, #16]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #19
 	movs r0, #188
 	str r3, [sp, #80]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r2, sp
@@ -1807,7 +1808,7 @@ Func_081693d0:
 	movs r0, #4
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #60]
 	lsls r4, r4, #7
@@ -1845,7 +1846,7 @@ Func_081693d0:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #116
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1860,4 +1861,4 @@ Func_081693d0:
 .L_0816a210:
 	.4byte gData_08197410
 .L_0816a214:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

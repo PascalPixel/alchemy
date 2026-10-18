@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08170364
+@ Abilities: Megaera (scene kind 14).
+	.global BattleFx_RunMegaera
 	.thumb_func
-Func_08170364:
+BattleFx_RunMegaera:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -36,7 +37,7 @@ Func_08170364:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #68]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #80]
 	ldr r0, .L_081703dc
 	adds r1, r3, r6
@@ -211,7 +212,7 @@ Func_08170364:
 	adds r0, #240
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl Func_0814cc4c
+	bl BattleFx_SelectLivingTargets
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #0
@@ -262,7 +263,7 @@ Func_08170364:
 	movs r2, #2
 	str r3, [sp, #52]
 	str r6, [sp, #56]
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 .L_0817058a:
 	ldr r7, [sp, #76]
 	cmp r7, #108
@@ -285,7 +286,7 @@ Func_08170364:
 	movs r0, #11
 	lsls r1, r1, #2
 	movs r2, #2
-	bl Func_08152404
+	bl BattleFx_SpawnObjects
 .L_081705bc:
 	ldr r7, [sp, #76]
 	cmp r7, #107
@@ -370,7 +371,7 @@ Func_08170364:
 .L_08170654:
 	.4byte 0x0000017e
 .L_08170658:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817065c:
 	.4byte Data_02010018
 .L_08170660:
@@ -1142,7 +1143,7 @@ Func_08170364:
 .L_08170c54:
 	movs r0, #188
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #188
@@ -1221,7 +1222,7 @@ Func_08170364:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r7, #240
 	ldr r6, [sp, #80]
 	lsls r7, r7, #7
@@ -1287,7 +1288,7 @@ Func_08170364:
 .L_08170d80:
 	.4byte gData_08197410
 .L_08170d84:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08170d88:
 	ldmia r5!, {r0}
 	bl ResourceObject_ReleaseFar
@@ -1296,7 +1297,7 @@ Func_08170364:
 	mov r6, r9
 	cmp r6, #11
 	bne .L_08170d88
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #124
 	pop {r3, r5, r6, r7}
 	mov r8, r3

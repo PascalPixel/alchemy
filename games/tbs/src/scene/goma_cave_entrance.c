@@ -30,6 +30,7 @@
 #include "objcmd.h"
 #include "global_cells.h"
 #include "ability_ids.h"
+#include "macros.h"
 
 // Private scene actions used by the reunion sequence.
 static void GomaCaveEntrance_RunWhirlwindEffect(void);
@@ -89,7 +90,9 @@ static void GomaCaveEntrance_ShowActorMessageAndWait(s32 actorId, s32 frames) {
 }
 
 // Returns the cave entrance's entrance table.
-void *GomaCaveEntrance_GetEntrances(void) { return gGomaCaveEntrance_SceneTableA; }
+void *GomaCaveEntrance_GetEntrances(void) {
+  return gGomaCaveEntrance_SceneTableA;
+}
 
 // No exit-region table is used here.
 int SceneData_ReturnZero(void) { return 0; }
@@ -98,7 +101,9 @@ int SceneData_ReturnZero(void) { return 0; }
 void *GomaCaveEntrance_GetExits(void) { return gGomaCaveEntrance_SceneTableB; }
 
 // Returns the obstacles, companions and temporary effect actors.
-void *GomaCaveEntrance_GetPlacements(void) { return gGomaCaveEntrance_SceneTableC; }
+void *GomaCaveEntrance_GetPlacements(void) {
+  return gGomaCaveEntrance_SceneTableC;
+}
 
 // Records the moved object's column and restores the cells underneath it.
 static void GomaCaveEntrance_UpdateMovableObjectTiles(void) {
@@ -473,7 +478,8 @@ static void GomaCaveEntrance_RunWhirlwindEffect(void) {
 }
 
 // The leaping object's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveEntrance_RotateLeapingObject(union FieldObject *fieldObject) {
+static void
+GomaCaveEntrance_RotateLeapingObject(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct AnimationObject *state = obj->sprite;
   s32 v = state->rotation - 0x800;
@@ -518,9 +524,7 @@ static void GomaCaveEntrance_RunSpinningLeap(s32 id) {
   Map_SetShake(-1, -1, 0xe666);
   for (i = 0; i <= 16; i++) {
     v = &dir;
-    v->x = Engine_MathCos(i << 12);
-    v->y = 0;
-    v->z = Engine_MathSin(i << 12);
+    SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
     Effect_Spawn(actor->x, actor->y, actor->z, v->x, v->y, v->z, 0, NULL);

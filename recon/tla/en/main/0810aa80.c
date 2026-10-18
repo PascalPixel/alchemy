@@ -1,22 +1,64 @@
+// Near miss, differ 4 of 153: the sanctum's service loop. It opens the priest's
+// window (his face resource from the actor's sprite, or a plain window), the
+// cursor and the coins window, then offers the party service until the menu is
+// cancelled. ☀️'s Shop_ConfirmAct in games/tbs/src/shop/shop.c, written with
+// ⚓️'s calls (Func_08108148 for the cursor work, Func_080380f8 for the
+// side-object window, Func_08108aa8 to place the cursor, Func_0810a9ac to show
+// a message, Func_0810a8ec to count the downed, Func_0810abf0 for the service,
+// Func_0810824c to clean up), its work-block offsets and numbered messages.
+// Instruction order only: the work pointer's load against the action offset's
+// first move, and the keeper resource's reload against the window call's x
+// argument.
+#include "types.h"
 #include "render_input.h"
-extern struct ShopRuntime *gMenuWork;
-extern u8 gData_03001f2c[];
-extern u8 MsgSanctumWelcome[];
-extern u8 MsgSanctumMoreAid[];
-extern u8 MsgSanctumFarewell[];
+#include "ram_buffer.h"
 
-s32 Object_GetByIdFar(s32 unitId);
-s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
+struct ShopCursor {
+  struct RenderOutput *anchor;
+  u16 x;
+  u16 y;
+  s16 targetX;
+  s16 targetY;
+  s8 active;
+  s8 kind;
+};
+
+// The shop work block, as this function reads it.
+struct ShopRuntime {
+  u8 unk000[0x0c];
+  s32 moneyWindow;
+  u8 unk010[0x4cc];
+  struct ShopCursor cursor;
+  u16 cursorResource;
+  u8 unk4ee[0x0c];
+  u16 keeperResource;
+  u8 unk4fc[0x0b];
+  u8 partyAction;
+};
+
+struct ShopCursorAnchor {
+  u8 unk00[5];
+  u8 kind;
+};
+
+extern u8 Msg04818[]; // "Welcome, weary ..." (MsgSanctumWelcome)
+extern u8 Msg04819[]; // "Do you wish for ..." (MsgSanctumMoreAid)
+extern u8 Msg04820[]; // "Visit us again anytime ..." (MsgSanctumFarewell)
+extern u8 Msg04821[]; // "Hmm, you were downed ...", then "Fear not ..."
+
+void Func_08108148(void);
+void *Object_GetByIdFar(s32 unitId);
+s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 targetX,
-                                     s32 targetY);
-void UiMessage_ShowResolvedAndWait(s32 message);
-void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
-s32 Shop_CountUnits(void);
-void Sanctum_RunPartyService(void);
+void Func_08108aa8(struct ShopCursor *cursor, s32 targetX, s32 targetY);
+void Func_0810a9ac(s32 message);
+void Func_08109188(void);
+s32 Func_0810a8ec(void);
+void Func_0810abf0(void);
 s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWork_FinalizeFar(s32 window, s32 style);
+void Func_0810824c(void);
 
 s32 Shop_ConfirmAct(s32 unitId) {
   s32 partyAction = 0;
@@ -24,37 +66,32 @@ s32 Shop_ConfirmAct(s32 unitId) {
   struct ShopRuntime *shop;
   struct ShopCursorAnchor *cursorAnchor;
 
-  Shop_InitializeCursorWork();
-  shop = gMenuWork;
+  Func_08108148();
+  shop = Ram_HeapSlots->menuRuntime;
   shop->partyAction = listWindow;
 
-  {
-    s32 shown =
-        *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Object_GetByIdFar(unitId) + 80) + 40));
-    *(u16 *)((u8 *)shop + 0x3a4) = shown;
-  }
+  shop->keeperResource =
+      **(u16 **)(*(u8 **)((u8 *)Object_GetByIdFar(unitId) + 80) + 40);
 
-  listWindow =
-      UiWindow_CreateWithSideObjectFar(*(u16 *)((u8 *)shop + 0x3a4), 0, 0, 0);
+  listWindow = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
     listWindow = UiWindow_CreateFar(-5, 0, 5, 5, 2);
-  }
-  if (listWindow == 0) {
-    listWindow = UiWindow_CreateFar(0, 0, 5, 5, 2);
-    SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
+    if (listWindow == 0) {
+      listWindow = UiWindow_CreateFar(0, 0, 5, 5, 2);
+      SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
+    }
   }
 
   cursorAnchor = (struct ShopCursorAnchor *)RenderOutput_CreateFar(
-      *(u16 *)((u8 *)shop + 0x390), 0x40000000,
-      (struct RenderInput *)listWindow, 0, 0);
+      shop->cursorResource, 0x40000000, (struct RenderInput *)listWindow, 0, 0);
   cursorAnchor->kind = 1;
   cursorAnchor->unk00[4] = 0;
-  ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-  shop->cursor.anchor = cursorAnchor;
-  UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
+  Func_08108aa8(&shop->cursor, -32, 112);
+  shop->cursor.anchor = (struct RenderOutput *)cursorAnchor;
+  Func_0810a9ac((s32)Msg04818);
 
   shop->moneyWindow = UiWindow_CreateFar(16, 11, 12, 4, 2);
-  Shop_DrawMoney();
+  Func_08109188();
 
   for (;;) {
     partyAction = Menu_SelectEntry19To1cFar(partyAction);
@@ -62,26 +99,20 @@ s32 Shop_ConfirmAct(s32 unitId) {
     if (partyAction == -1)
       break;
 
-    {
-      s32 base = 0xd24;
-      s32 message = base;
-
-      base = 0;
-      UiMessage_ShowResolvedAndWait(message);
-      if (Shop_CountUnits() == 0) {
-        UiMessage_ShowResolvedAndWait(message + 1);
-      } else {
-        Sanctum_RunPartyService();
-      }
+    Func_0810a9ac((s32)Msg04821);
+    if (Func_0810a8ec() == 0) {
+      Func_0810a9ac((s32)Msg04821 + 1);
+    } else {
+      Func_0810abf0();
     }
     shop->partyAction = 0;
-    ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-    UiMessage_ShowResolvedAndWait((s32)MsgSanctumMoreAid);
+    Func_08108aa8(&shop->cursor, -32, 112);
+    Func_0810a9ac((s32)Msg04819);
   }
 
-  UiMessage_ShowResolvedAndWait((s32)MsgSanctumFarewell);
+  Func_0810a9ac((s32)Msg04820);
   UiWork_FinalizeFar(shop->moneyWindow, 2);
   UiWork_FinalizeFar(listWindow, 2);
-  Inn_Cleanup();
+  Func_0810824c();
   return 0;
 }

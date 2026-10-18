@@ -1,10 +1,20 @@
+// Draft of DisplayTransition_Finish: differ 194 of 208 (tla-en, 2026-10-18).
+// The Broken Seal's function of the same name
+// (games/tbs/src/object/object.c), ported unchanged: it fades the screen out
+// over frames frames, by the kind in the mode's high byte.
+//
+// Left: other. The Lost Age's transition state is larger (its fields from
+// 0x528, allocated by Func_080d019c), the window kind also sets a halfword
+// from REG_WINOUT's high byte with 1, its scanline callbacks are
+// Func_080cf78c and Func_080cf6fc at other keys (0x480, 0xc76), and its
+// pool constants differ; the stores and calls shift with them.
+
 #include "types.h"
 #include "callback_scheduler.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
 #include "scene.h"
-#include "global_cells.h"
 #include "ram_buffer.h"
 #include "display_transition.h"
 #define QUEUE_DISPLAY_CONTROL(value)

@@ -20,6 +20,7 @@
 #include "call.h"
 #include "frame.h"
 #include "oambuf.h"
+#include "macros.h"
 
 // Starts the Lucky Dice minigame: leaves only the backdrop on screen, sends
 // sound command 9 and plays until the player quits. Returns 0.
@@ -41,9 +42,7 @@ void Camera_ResetSceneDefaults(void) {
 
   camera->pitch = 152 << 8;
   camera->distance = 255 << 17;
-  camera->pos[0] = 0;
-  camera->pos[1] = 0;
-  camera->pos[2] = 0;
+  SET_VECTOR(camera->pos, 0, 0, 0);
   camera->yaw = 0;
   camera->followPos = 0;
   gProjection.centerX = 0;
@@ -56,9 +55,7 @@ void Camera_ResetSceneDefaults(void) {
   SceneTransform_ApplyYaw((s16)camera->yaw);
   SceneTransform_ApplyPitch((s16)camera->pitch);
 
-  offset[0] = 0;
-  offset[1] = 0;
-  offset[2] = camera->distance;
+  SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
 
   focalLength = 250;
@@ -118,7 +115,7 @@ s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "heap_state.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
@@ -524,7 +521,7 @@ void LuckyDice_Run(void) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gKeysRepeat & KEY_A)) {
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = LUCKY_DICE_PAYOUT;
           payoutTimer = 0;
@@ -594,7 +591,7 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gKeysRepeat & KEY_B) {
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SE_MENU_CANCEL);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         break;
       }
@@ -615,10 +612,9 @@ void LuckyDice_Run(void) {
             rollingDie->z = -0xb40000;
             rollingDie->y = 0x600000;
           }
-          rollingDie->velocityX = ((Random16() & 127) - 64) << 12;
-          rollingDie->velocityY = ((Random16() & 15) + 48) << 13;
-          rollingDie->velocityZ =
-              (((Random16() & 63) + 140) << 12) + rollingDie->y / 6;
+          SET_VELOCITY(rollingDie, ((Random16() & 127) - 64) << 12,
+                       ((Random16() & 15) + 48) << 13,
+                       (((Random16() & 63) + 140) << 12) + rollingDie->y / 6);
           rollingDie->variant = Random16() % 0x4800;
           spinRate[index] = 300;
         }
@@ -705,9 +701,8 @@ void LuckyDice_Run(void) {
       s32 shadowY;
 
       // Each die's shadow on the board below it.
-      groundPoint[0] = diceWork->particles[index].x;
-      groundPoint[1] = 0;
-      groundPoint[2] = diceWork->particles[index].z;
+      SET_VECTOR(groundPoint, diceWork->particles[index].x, 0,
+                 diceWork->particles[index].z);
       Render_ProjectPoint(groundPoint, screen);
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
@@ -815,9 +810,7 @@ void LuckyDice_Run(void) {
             spinRate[index] -= 20;
           }
           if (rollingDie->velocityY < 0x30000) {
-            rollingDie->velocityX = 0;
-            rollingDie->velocityY = 0;
-            rollingDie->velocityZ = 0;
+            SET_VELOCITY(rollingDie, 0, 0, 0);
             spinRate[index] = 0;
             rollAngle = rollingDie->variant;
             faceTile = rollAngle / 1024 % 3;
@@ -828,9 +821,9 @@ void LuckyDice_Run(void) {
             }
           }
         }
-        rollingDie->velocityX = rollingDie->velocityX * 63 / 64;
-        rollingDie->velocityY = rollingDie->velocityY * 63 / 64;
-        rollingDie->velocityZ = rollingDie->velocityZ * 63 / 64;
+        SET_VELOCITY(rollingDie, rollingDie->velocityX * 63 / 64,
+                     rollingDie->velocityY * 63 / 64,
+                     rollingDie->velocityZ * 63 / 64);
         rollingDie->variant += spinRate[index];
         if (rollingDie->variant > 0x47ff) {
           rollingDie->variant -= 0x4800;

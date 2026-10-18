@@ -1,5 +1,20 @@
+// Near miss, differ 8 of 157: the item menu's command availability (use,
+// equip, give, drop, trade, remove) for the selected item, ☀️'s
+// ItemMenu_BuildCmd in games/tbs/src/menu/menu.c. Instruction order only:
+// four loads and stores (the selected item's halfword, the -1 store to the
+// drop slot, the 0x1ff mask's first move) sit one or two slots apart.
 #include "types.h"
 #include "item.h"
+#include "ram_buffer.h"
+
+// The item menu work block, as this function reads it.
+struct InventoryMenuState {
+  u8 unk000[0x16c];
+  u16 selectedItem;
+  u8 unk16e[0xa7];
+  u8 partyCount;
+  u8 itemOwner;
+};
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
@@ -11,7 +26,7 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
 
-  menu = gMenuWork;
+  menu = Ram_HeapSlots->menuRuntime;
   item = Item_Get(0x1ff & menu->selectedItem);
 
   if (item->type == 0) {

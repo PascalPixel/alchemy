@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "macros.h"
 
 s32 GetWorldMapCollisionFar(s32 *position);
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
@@ -11,9 +12,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
   if (*(s8 *)(event + 394) == 3) {
     s32 position[3];
 
-    position[0] = column;
-    position[1] = 0;
-    position[2] = z;
+    SET_VECTOR(position, column, 0, z);
     column = (u32)(GetWorldMapCollisionFar(position) - 5) <= 1;
   } else {
     s32 code = Func_080dbb78(column, z, 2)->collisionCode;

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 struct BattleAct {
   u8 targetMode;
@@ -15,7 +16,7 @@ struct PsynergyMenuState {
 };
 
 struct BattleAct *BattleActGet(s32 action);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The Spanish and Italian far-call tables reach BattleFx_HasMatchingEvent5
 // through this stub (as selrow.c).
 s32 Func_080c84f8(s32 type);
@@ -41,7 +42,7 @@ s32 Func_080fcf14(void) {
   action = menu->paneAction[0];
   asm volatile("");
   psynergy = BattleActGet(0x3fff & action);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   if (Func_080c84f8(psynergy->type) != 0)
 #else
   if (BattleFx_HasMatchingEvent5Far(psynergy->type) != 0)

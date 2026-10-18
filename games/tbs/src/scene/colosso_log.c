@@ -52,6 +52,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "colosso_gauge.h"
+#include "macros.h"
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
@@ -445,9 +446,8 @@ static void ColossoLog_RollFinalLog(void) {
   steps = 0;
   angle = gColossoEarlySequenceData[rider->facing >> 13];
   actor = gGameState.selectedActor;
-  ahead[0] = (rider->x.fixed & -0x100000) + PIXELS(8);
-  ahead[1] = rider->y.fixed;
-  ahead[2] = (rider->z.fixed & -0x100000) + PIXELS(8);
+  SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
+             (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
   x = log->x.fixed;
   z = log->z.fixed;
@@ -1846,9 +1846,7 @@ ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
     s32 angle;
     s32 radius;
 
-    position[0] = source->x;
-    position[1] = source->y;
-    position[2] = source->z;
+    SET_VECTOR(position, source->x, source->y, source->z);
     angle = Engine_RandomNext();
     radius = Engine_RandomNext();
     Vector_AddPolarOffset(angle << 4, radius, position);

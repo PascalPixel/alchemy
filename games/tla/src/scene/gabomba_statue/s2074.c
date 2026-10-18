@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
+#include "macros.h"
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
@@ -21,10 +22,7 @@ void Func_02002074(void) {
   s32 level = object->z;
 
   level = (level - 0xe80000) >> 19;
-  if (level < 0)
-    level = 0;
-  if (level > 16)
-    level = 16;
+  CLAMP(level, 0, 16);
   blend = ((16 - level) << 8) + level;
   REG_BLDALPHA->value = blend;
 }

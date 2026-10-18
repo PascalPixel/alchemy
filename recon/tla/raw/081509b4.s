@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081509b4
+@ Abilities: Flare, Flare Wall, Flare Storm (kind 11).
+	.global BattleFx_RunFlare
 	.thumb_func
-Func_081509b4:
+BattleFx_RunFlare:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -37,7 +38,7 @@ Func_081509b4:
 	bl Resource_LoadAndDecompress
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r4, [sp, #20]
 	str r5, [sp, #8]
@@ -272,7 +273,7 @@ Func_081509b4:
 	cmp r8, r3
 	bne .L_08150b98
 .L_08150bc0:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -292,7 +293,7 @@ Func_081509b4:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08150c04
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #24
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -303,7 +304,7 @@ Func_081509b4:
 .L_08150c00:
 	.4byte 0xffffc000
 .L_08150c04:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08150c08:
 	.4byte gData_0819747a
 .L_08150c0c:

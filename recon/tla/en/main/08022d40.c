@@ -1,4 +1,14 @@
-// ported from games/common/src/system/resource/resource_obj.c
+// Draft of ResourceObject_Create: differ 160 of 154 (tla-en, 2026-10-18).
+// The Broken Seal's function as it stands (ported from
+// games/common/src/system/resource/resource_obj.c): it finds a free sprite
+// object, loads the resource into the VRAM cache and writes the object's two
+// sprite attribute sets by the metadata's size.
+//
+// Left: other. The Lost Age's object list is a pointer at 0x03000010 and its
+// object keeps the width at +20 and the slot at +16 (the layout of
+// ResourceObjectWork above), where this draft still uses The Broken Seal's
+// AnimationObject (width at +32, slot at +28); the loop and the fields shift
+// with it.
 #include "edition.h"
 #include "resource.h"
 #include "dma.h"
@@ -27,8 +37,6 @@ typedef char
 
 void ResourceMetadata_ClearRecord(void *destination);
 
-#if !GAME_TLA
-// The Lost Age keeps its own version, 0x08022d40, as a listing for now.
 #include "metadata_lookup.h"
 #include "vram_tab.h"
 
@@ -103,13 +111,13 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
     shape = 0;
     break;
   }
-  word = (u32 *)found->part;
+  word = (u32 *)&found->image;
   *word++ = 0;
   *word++ = shape | 0x2000;
   *word++ = tile | 0x800;
   *word++ = 0;
   *word++ = 0x6000;
-  *word = (gVramBlockCache[93].offset >> 5) | 0x800;
+  *word = (gResourceTableEntries[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(entry, id) == -1) {
     /* FAKEMATCH: native dead -1 after Register (movs/negs); empty arm
        after a same-byte reload keeps the carrier (differ 32 -> 0). */

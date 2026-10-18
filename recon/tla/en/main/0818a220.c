@@ -1,7 +1,7 @@
 // Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
-// (call order BattleFx_RunFallingSword 0.459): ⚓️'s own effect on ☀️'s frame,
+// (call order BattleFx_RunTitanBlade 0.459): ⚓️'s own effect on ☀️'s frame,
 // its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
-// in Triple Chomp (Func_0818b868) and Legend (Func_08189b14). The native frame
+// in Triple Chomp (BattleFx_RunTripleChomp) and Legend (BattleFx_RunLegend). The native frame
 // (216) holds effect at sp+84, work 80, canvas 76, frame 72, the blitter 64,
 // graphics 60, the card's scale 56, the card's position's address 52, the hit's
 // speed 48, the texture's address 32, the member's actor offset 28, the
@@ -31,7 +31,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// Func_081963ec's packed argument: the mode in the high nibble.
+// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -58,8 +58,8 @@ struct ModelTexture {
   void *pixels;
 };
 
-// One entry of a model list, as Func_081969f8 allocates them and
-// Func_08196a7c draws them.
+// One entry of a model list, as Render_AllocateModelList allocates them and
+// Render_DrawModelList draws them.
 struct Model {
   s32 kind;
   s32 next;
@@ -109,7 +109,7 @@ extern s32 Data_081991c0[];
 extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_081963ec(s32 slot, s32 packed);
+void BattleFx_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Audio_PlayCue(s32 cue);
@@ -126,7 +126,7 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct Model *Func_081969f8(s32 count);
+struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -134,15 +134,15 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
-void Func_08196958(void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct Model *model);
+void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 
 // The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 // the user, spinning and growing, for 48 frames, then shows its picture.
@@ -176,7 +176,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   // card's picture and its extras.
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(HEAP_SLOT_BLITTER,
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
                 BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   scale = 0;
@@ -205,7 +205,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDCNT = 0;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   for (frame = 0; frame != Data_08199d60[mode]; frame++) {
     // Frame 0: clear the particles, give each member a strike countdown, and
@@ -384,7 +384,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
     // This frame's models: the card, then the pictures.
     vertices = Runtime_BumpAllocateAlternatePool(32);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     texture.logWidth = 5;
     texture.logHeight = 6;
     texture.pixels = work->sheet;
@@ -408,11 +408,11 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       Func_080150e4(frame << 10);
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);
-      Func_08196958(Data_081991e0, vertices, 4);
-      Func_08196a7c(model);
+      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
         Func_0801521c(0x4000);
-        Func_08196958(Data_081991e0, vertices, 4);
+        Render_TransformVertices(Data_081991e0, vertices, 4);
       }
     }
 
@@ -481,8 +481,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         } else {
           Func_080151e4(0x20000, 0x20000, 0x10000);
         }
-        Func_08196958(Data_081991c0, vertices, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991c0, vertices, 4);
+        Render_DrawModelList(model);
       }
     }
     MemFree(model);
@@ -512,12 +512,12 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

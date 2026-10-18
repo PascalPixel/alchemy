@@ -1,10 +1,10 @@
 // Draft (tla-en): listing 225 instructions, draft 225, common 221, differ 8.
 // Written from the listing; called only by Func_0818284c (f18284c.c), which
 // opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
-// shapes are BattleFx_RunPuffArc (0.55) and BattleFx_RunFallingCrystals.
+// shapes are BattleFx_RunFlare (0.55) and BattleFx_RunPrism.
 // Statements, registers, stores and the frame (canvas sp+20, the blitter pair
 // sp+12/sp+16, frame sp+8) all match; four places are left where the native
-// loads first and this build does not: Func_08143000's address before work
+// loads first and this build does not: BattleFx_ProcessPendingGraphicsTransfer's address before work
 // in the prologue, the particle base before the reload pair that clears i in
 // both loop preheaders (after the hoisted heights in the second), and the
 // spilled frame before i * 8 is built. sched2 ties each on priority and takes
@@ -55,10 +55,10 @@ extern u8 gData_0819966f[];
 extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_081963ec(s32 slot, s32 blitter);
+void BattleFx_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -66,10 +66,10 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A column of bubbles. On the first frame 256 glowing ovals of random size
 // appear over the bottom left of the canvas; for 60 frames they float up
@@ -89,10 +89,10 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   struct EffectStep *bubble;
 
   // Each frame the transfer callback copies the canvas and clears it.
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 2;
   work->transferValue = 50;
-  Func_081963ec(HEAP_SLOT_BLITTER,
+  BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
                 BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -152,12 +152,12 @@ void Func_08182898(struct BattleEffectArgument *effect) {
       }
     }
 
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

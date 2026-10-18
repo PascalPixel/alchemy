@@ -78,7 +78,7 @@ enum { FLAG_SKIP_SCENE_MUSIC = 0x11a };
 #define ACTOR_SPRITE(actor)                                                    \
   ((struct AnimationObject *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n)                                                 \
-  ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                              \
+  ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                        \
             : (ACTOR_SPRITE(actor)->shadow.priority = 1))
 
 s32 Math_DivideUnsigned();
@@ -737,7 +737,7 @@ void DisplayScroll_ArmHBlankDma(void) {
 
   dma0 = REG_DMA0;
   destination = (volatile u32 *)&REG_BG3HOFS;
-  dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma0[5] &= ~DMA_ENABLE;
   dma0[5];
 
@@ -791,7 +791,7 @@ static void Ripple_Stop(void) {
   Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
   Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
   reg = REG_DMA0;
-  reg[5] = ~DMA_START_HBLANK_REPEAT & reg[5];
+  reg[5] = ~DMA_START_TIMING_DRQ_REPEAT & reg[5];
   reg[5] = ~DMA_ENABLE & reg[5];
   reg[5];
 }

@@ -1,5 +1,5 @@
 	.section .rodata
-@ A 64x32 bar with a rounded end and no palette of its own: Func_0813fd84
+@ A 64x32 bar with a rounded end and no palette of its own: BattleFx_RunCruelRuin
 @ maps it as a 64 by 32 texture and shows it in a grey ramp it writes in
 @ code; the PNG carries BattleFx_CornerRuneASheet's palette, the one 64-colour
 @ palette that effect loads

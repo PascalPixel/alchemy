@@ -20,7 +20,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 // Lalivero, the desert town below Babi Lighthouse.
 //
@@ -65,7 +65,7 @@ enum {
 // The door at trigger 6 is a gate two cells wide.
 enum { GATE_TRIGGER = 6 };
 
-// Played as a door shuts, after SOUND_DOOR_OPEN.
+// Played as a door shuts, after SE_DOOR_OPEN.
 enum { SOUND_DOOR_CLOSE = 159 };
 
 enum {
@@ -152,7 +152,7 @@ static void EnterDoor(void) {
   s32 y = gLaliveroDoorCells[door][1];
 
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
-  Engine_AudioPlayCue(SOUND_DOOR_OPEN);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   if (door == GATE_TRIGGER) {
     Map_AnimateCells(gLaliveroGateOpenSteps, (u16)x, (u16)y);
     Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
@@ -433,7 +433,7 @@ static void ReceiveBlackOrb(void) {
   Object_GetById(IODEM)->motionFlags = ACTOR_FALLS;
   Engine_ActorSetSpritePriority(IODEM, 2);
   Map_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Event_PlayCue(SOUND_DOOR_OPEN);
+  Event_PlayCue(SE_DOOR_OPEN);
   Engine_EventWait(20);
   Actor_SetPosition(IODEM, PIXELS(72), PIXELS(312));
 #if TBS_PATCH_2
@@ -605,7 +605,7 @@ static void ReceiveBlackOrb(void) {
   Actor_FaceDirection(IODEM, FACING_NORTH, 0);
   Engine_EventWait(20);
   Map_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Event_PlayCue(SOUND_DOOR_OPEN);
+  Event_PlayCue(SE_DOOR_OPEN);
   Engine_EventWait(10);
   Actor_WalkByAndWait(IODEM, 0, -16);
   Actor_SetPosition(IODEM, 0, 0);
@@ -766,8 +766,7 @@ s32 Scene_Initialize(void) {
   sprite->image.palette = 0;
   icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
   Engine_ItemLoadIcon(ITEM_BLACK_ORB);
-  Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES,
-                  &icon[ITEM_ICON_TILES]);
+  Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
   Engine_HeapRelease(HEAP_ITEM_ICON);
 
   if (GameFlag_IsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {

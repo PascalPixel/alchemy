@@ -17,7 +17,7 @@ void *Object_Spawn(s32 id, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(void *object, u32 script);
 void BattleFx_PrepareBufferInterpolation(void);
 
-void Func_080ddb3c(void) {
+void BattleFx_RunBurstParticles(void) {
   u8 *state = Ram_HeapSlots->effectWork;
   struct BurstParticleVector position;
   struct BurstParticleVector *p;

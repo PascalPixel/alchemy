@@ -31,7 +31,7 @@ void Palette_LightenBankHighlight(s32 bank) {
   red += 9;
   if (red > 31)
     red = 31;
-  palette[4] = (blue << 10) | (green << 5) | red;
+  palette[4] = RGB(red, green, blue);
 }
 
 #define PAGE_LABEL_FIRST 49

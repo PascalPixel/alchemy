@@ -23,6 +23,8 @@
 // IwramFillWords address before 0x4000. alchemy permute (10 min, 2 jobs,
 // 7,474 candidates): nothing below 16 (its weighted best differs 24). The
 // crescent's second half as cells + 0x4000 or the fixed 0x02014000: 16.
+// 2026-10-18: psynergy permute (6 min, 2 jobs, seed 31): no candidate below
+// the draft.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -69,11 +71,11 @@ void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 
 // The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
 // mode 1). The caster closes in on the target; from frame 8 a crescent is cut
@@ -129,7 +131,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 75;
   }
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, 0x40000);
@@ -202,12 +204,12 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

@@ -32,7 +32,7 @@ Func_081539d0:
 	eors r0, r3
 	add r1, sp, #20
 	ldr r5, .L_08153c24
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r3, #255
 	movs r7, #0
 	mov r8, r3
@@ -285,7 +285,7 @@ Func_081539d0:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #52
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -298,6 +298,6 @@ Func_081539d0:
 .L_08153c24:
 	.4byte gMapCellBuffer
 .L_08153c28:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08153c2c:
 	.4byte gData_08197410

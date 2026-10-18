@@ -1,5 +1,6 @@
 #include "local.h"
 #include "io_reg.h"
+#include "edition.h"
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_02005398(void);
@@ -75,7 +76,7 @@ void Func_0200290c(void) {
 
 void Func_02002a5c(void) {
   Func_02005338(0);
-#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
   if (gPartyState.entrance == 1)
     GameFlag_ClearBit(0x12f);
 #endif

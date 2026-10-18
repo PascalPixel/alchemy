@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
+#include "edition.h"
 
 u32 gData_02002410[] = {
     0x40004,
@@ -9,7 +10,7 @@ u32 gData_02002410[] = {
 // clang-format off
 u16 gData_02002418[] = {
     64, 128, 64, 128, 32, 16, 32, 16,
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     64, 16, 128, 32, 64, 4, 0,
 #else
     64, 16, 128, 32, 64, 4, 0, 0,
@@ -21,7 +22,7 @@ u16 gData_02002438[] = {
 };
 
 // Alphabet table, absent in Japanese ("ABCDE FGHJK LMNPQ R" ...).
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 u32 gData_02002440[] = {
     0x44434241, 0x47462045, 0x204b4a48, 0x504e4d4c, 0x522051,
 };

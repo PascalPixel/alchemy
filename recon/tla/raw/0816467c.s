@@ -46,12 +46,12 @@ Func_0816467c:
 	strh r3, [r2]
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r1, [r5, #104]
 	movs r0, #188
 	str r1, [sp, #16]
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r5, [r5]
 	ldr r1, [sp, #12]
@@ -465,7 +465,7 @@ Func_0816467c:
 .L_08164a28:
 	.4byte 0x00000121
 .L_08164a2c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08164a30:
 	.4byte gMapCellBuffer
 .L_08164a34:

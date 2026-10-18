@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "object_runtime.h"
+#include "edition.h"
 
 void Func_02002d40(void);
 
@@ -41,7 +42,7 @@ void Func_020035d8(void) {
     GameFlag_SetBit(0xa2a);
     GameFlag_ClearBit(0xa2b);
   }
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   else if (gPartyState.entrance == 4) {
     if (GameFlag_Test(0xa29)) {
       /* FAKEMATCH: each one-pass block ends a scheduling block after the scene

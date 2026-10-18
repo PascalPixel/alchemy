@@ -124,15 +124,15 @@ main	rom_main_07	games/tbs/src/battle/battle_data
 main	rom_main_07	games/tbs/src/battle/advarrow
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
-main	rom_main_08	games/tbs/src/effect/effect	.text .rodata
+main	rom_main_08	games/tbs/src/effect/effect	.text .data
 main	rom_main_08	games/tbs/src/effect/battle_effect_composite
-main	rom_main_08	games/tbs/src/effect/effect_table	.rodata
+main	rom_main_08	games/tbs/src/effect/effect_table	.data
 main	rom_main_08	games/tbs/src/effect/battle_effect_composite_color
-main	rom_main_08	games/tbs/src/effect/effect_bits	.rodata
+main	rom_main_08	games/tbs/src/effect/effect_bits	.data
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
-main	rom_main_09	games/tbs/src/effect/battle_effect_dot_product
-main	rom_main_09	games/tbs/src/effect/battle_effect_expand	.rodata
-main	rom_main_09	games/tbs/src/effect/battle_effect_expand	.text .data .text.battle_effect_expand_commands
+main	rom_main_09	games/tbs/src/graphics/tile/dot_product
+main	rom_main_09	games/tbs/src/graphics/tile/expand	.rodata
+main	rom_main_09	games/tbs/src/graphics/tile/expand	.text .data .text.battle_effect_expand_commands
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.text
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.data

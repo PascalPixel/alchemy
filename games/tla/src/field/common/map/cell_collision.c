@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "edition.h"
 
 extern u8 gMapCellBuffer[];
 extern u8 gMapShapeGrid[];
@@ -68,7 +69,7 @@ void Func_0802d600(s32 x, s32 z, s32 layer, s32 value) {
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (x >> 20) + ((z >> 20) << 7);
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   *shape = Func_080c8720(layer, 0, value);
 #else
   *shape = Func_080c8730(layer, 0, value);

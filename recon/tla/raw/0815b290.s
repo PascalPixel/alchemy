@@ -86,7 +86,7 @@ Func_0815b290:
 	lsrs r3, r3, #5
 	orrs r3, r2
 	str r3, [r1, #36]
-	bl Func_0815b24c
+	bl AnimationObject_AllocateEmpty
 	mov r2, sp
 	ldrb r2, [r2]
 	movs r3, #128

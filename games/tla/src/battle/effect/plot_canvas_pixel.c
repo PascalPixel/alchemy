@@ -25,7 +25,7 @@ void BattleFx_PlotCanvasPixel(s32 x, s32 y, s32 color) {
 
 // Draws a line of half canvas pixels from x0, y0 to x1, y1, Bresenham's
 // way: one pixel per step along the longer axis.
-void Func_080eb318(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
+void BattleFx_DrawHalfCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy;
   s32 sx;

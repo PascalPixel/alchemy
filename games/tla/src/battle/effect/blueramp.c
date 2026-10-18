@@ -1,5 +1,6 @@
 #include "types.h"
 #include "system.h"
+#include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
@@ -29,7 +30,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
     s32 half;
 
     half = i / 2;
-    *palette++ = (i << 10) | (half << 5) | half;
+    *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
   delays = Ram_HeapSlots->unk64[0];
@@ -81,7 +82,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
     s32 half;
 
     half = i / 2;
-    *palette++ = (i << 10) | (half << 5) | half;
+    *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
   {

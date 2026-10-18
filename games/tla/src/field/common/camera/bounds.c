@@ -8,6 +8,7 @@
 #include "mem.h"
 #include "iwram_call.h"
 #include "callback_scheduler.h"
+#include "macros.h"
 
 void WaitFrames(s32);
 void Camera_MoveWithinMapBounds(s32 requested_x, s32 requested_y,
@@ -47,9 +48,7 @@ void Func_080d4580(struct ObjectRuntime *target, s32 keepCurrentPosition) {
     ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
     object->linkedObject = target;
     if (keepCurrentPosition == 0) {
-      object->x = target->x;
-      object->y = target->y;
-      object->z = target->z;
+      SET_POSITION(object, target->x, target->y, target->z);
     }
   }
 }

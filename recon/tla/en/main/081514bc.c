@@ -1,6 +1,6 @@
-// Draft of Func_081514bc, effect kind 6.
+// Draft of BattleFx_RunFrost, effect kind 6.
 
-// Twin: The Broken Seal's BattleFx_RunRisingMotes (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunFrost (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
 // blocks as Ram_HeapSlots fields, orders the callback 0xc80, ends 50
 // frames after the burst (The Broken Seal: 75) and begins the results
@@ -34,10 +34,11 @@
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *pair); // BattleFx_FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
@@ -55,16 +56,16 @@ enum {
 
 extern char ResourceId_IceChipSheet;
 extern char ResourceId_SparkleDots;
-extern u8 Data_08198348[];  // gRisingMotes_Timings
-extern u8 Data_08198322[];  // gRisingMotes_ColumnSpots
-extern u16 Data_08198362[]; // gRisingMotes_MoteCells
-extern u8 Data_08198351[];  // gRisingMotes_MoteWidths
-extern u8 Data_08198359[];  // gRisingMotes_MoteHeights
-extern u16 Data_08198372[]; // gRisingMotes_ColumnCells
-extern u8 Data_08198378[];  // gRisingMotes_ColumnHeights
-extern u16 Data_0819838c[]; // gRisingMotes_EmberCells
-extern u8 Data_0819837b[];  // gRisingMotes_EmberWidths
-extern u8 Data_08198383[];  // gRisingMotes_EmberHeights
+extern u8 Data_08198348[];  // gFrost_Timings
+extern u8 Data_08198322[];  // gFrost_ColumnSpots
+extern u16 Data_08198362[]; // gFrost_MoteCells
+extern u8 Data_08198351[];  // gFrost_MoteWidths
+extern u8 Data_08198359[];  // gFrost_MoteHeights
+extern u16 Data_08198372[]; // gFrost_ColumnCells
+extern u8 Data_08198378[];  // gFrost_ColumnHeights
+extern u16 Data_0819838c[]; // gFrost_ChipCells
+extern u8 Data_0819837b[];  // gFrost_ChipWidths
+extern u8 Data_08198383[];  // gFrost_ChipHeights
 extern u16 Data_0819744c[]; // gBattleFx_PuffCells
 extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 
@@ -78,7 +79,7 @@ extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 // from below, and smoke rises half a pixel a frame through the height the
 // motes and chips cover. The variant chooses the number of motes and
 // pillars and the frame of the burst.
-void Func_081514bc(struct BattleEffectArgument *effect) {
+void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -101,7 +102,7 @@ void Func_081514bc(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
-  Func_08144aac(0, draw = pair);
+  BattleFx_FetchRectangleBlitters(0, draw = pair);
 
   // A mote: x holds its angle, z its radius, y its height.
   for (i = 0; i != 64; i++) {
@@ -114,7 +115,7 @@ void Func_081514bc(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   if (effect->side == 1)
     REG_BG2X = -0x7000;
 
@@ -290,6 +291,6 @@ void Func_081514bc(struct BattleEffectArgument *effect) {
 
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

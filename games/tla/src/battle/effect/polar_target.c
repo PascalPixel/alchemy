@@ -5,6 +5,7 @@
 #include "fx_scene.h"
 #include "ram_buffer.h"
 #include "party_state.h"
+#include "macros.h"
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
@@ -26,7 +27,7 @@ void Func_080e4730(void);
 void Func_080e9db4(void);
 void Func_080e87c4(void);
 
-void Func_080dca50(void);
+void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
 // unk26a from party_state.h.
 struct PartyPauseView {
@@ -40,7 +41,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
   if (scene->animation == 2) {
     struct PartyPauseView *party;
 
-    Func_080dca50();
+    BattleFx_FinishSceneAndReleaseHeapBlock();
     party = (struct PartyPauseView *)&gPartyState;
     /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field
      * offset; read as a plain field the offset's first half is scheduled ahead
@@ -113,9 +114,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
   s32 values[3];
 
   if (object != 0) {
-    values[0] = object->x;
-    values[1] = object->y;
-    values[2] = object->z;
+    SET_VECTOR(values, object->x, object->y, object->z);
     Vector_AddPolarOffset(magnitude, angle, values);
     Object_SetPosition(object, values[0], values[1], values[2]);
   }

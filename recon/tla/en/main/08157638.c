@@ -1,4 +1,4 @@
-// Draft of Func_08157638, effect kind 281: the Mercury Djinn's flames.
+// Draft of BattleFx_RunMercury, effect kind 281: the Mercury Djinn's flames.
 
 // On screen: a small Mercury Djinn circles over the targets, one turn every
 // 32 frames, on a radius of 64 - 2 x frame pixels (half that across) that
@@ -18,7 +18,7 @@
 // Teardown: the callback and both blitters are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleFx_RunMercuryDjinnFlames (kind 251
+// Port of The Broken Seal's BattleFx_RunMercury (kind 251
 // there), with The Lost Age's heap slots and callback order and no
 // work->effect store.
 
@@ -54,7 +54,7 @@ extern char ResourceId_ParticleSpritesA;
 extern char ResourceId_MercuryDjinnSmallSheet;
 extern char ResourceId_BlueFlameSheet;
 // The frames the Djinn throws its five flames on (☀️'s
-// gMercuryDjinnFlames_LaunchFrames).
+// gDjinnAttacks_LaunchFrames).
 extern const u8 Data_0819850e[];
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern const u16 gData_08197410[];
@@ -64,13 +64,13 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
-void Func_08143bb8(void);
+void BattleFx_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void Func_08143000(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 // Fetches the max and additive blitters, flipped or not.
-void Func_08144aac(s32 flip, DrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 width, s32 height);
 // BattleEventRuntime_BeginPhase through its far call.
 void Func_081180e8(s32 hitCue);
@@ -89,7 +89,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
-void Func_08157638(struct BattleEffectArgument *effect) {
+void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -110,7 +110,7 @@ void Func_08157638(struct BattleEffectArgument *effect) {
   sheet = slots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   draw = blit;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
 
   // The flame picture is the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
@@ -123,7 +123,7 @@ void Func_08157638(struct BattleEffectArgument *effect) {
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // No flame and no dot is alive yet.
   for (i = 0; i != 8; i++)
@@ -210,15 +210,15 @@ void Func_08157638(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     frame++;
   } while (frame != 96);
 
   // Teardown.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

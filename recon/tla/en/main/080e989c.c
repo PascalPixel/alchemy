@@ -10,7 +10,7 @@
 // around the table's load (4, the load then lands between the shifts), an
 // empty asm barrier after it (6), an asm reading the table (7); four
 // minutes of permuter found nothing better. Belongs between
-// Func_080e97c8 and Func_080e9940.
+// BattleFx_RunViewSway and Func_080e9940.
 #include "types.h"
 
 // A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),

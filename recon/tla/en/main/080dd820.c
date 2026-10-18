@@ -25,7 +25,7 @@ struct RevealEvent {
   s16 centreY;
 };
 
-void Func_080dd748(s32 value);
+void BattleFx_RunBusyWaitDelay(s32 value);
 void DisplayTransition_InitializeBattleEffectState(s32 mode);
 void BattleFx_ApplyColorToSourceBuffer(u32 value, s32 enabled);
 void BattleFx_ApplyColorToTargetBuffer(u32 value, s32 enabled);
@@ -53,7 +53,7 @@ void Func_080dd820(void) {
   void *pending;
   s32 frame;
 
-  Func_080dd748(6);
+  BattleFx_RunBusyWaitDelay(6);
   event = Ram_HeapSlots->eventWork;
   DisplayTransition_InitializeBattleEffectState(FIELD_FX_REVEAL);
   transition = Ram_HeapSlots->displayTransition;

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
+#include "edition.h"
 
 extern u8 gData_02004aa4[];
 extern u8 gData_02004ae0[];
@@ -133,12 +134,12 @@ s16 gData_02005158[] = {
 };
 
 // Scale for each edition.
-#if defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH)
 #define SHAMAN_GRAPHIC1_SCALE 384
 #define SHAMAN_GRAPHIC4_START_SCALE 512
 #define SHAMAN_GRAPHIC4_SMALL_SCALE 384
 #define SHAMAN_GRAPHIC4_LARGE_SCALE 512
-#elif defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define SHAMAN_GRAPHIC1_SCALE 256
 #define SHAMAN_GRAPHIC4_START_SCALE 384
 #define SHAMAN_GRAPHIC4_SMALL_SCALE 256

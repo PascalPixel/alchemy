@@ -36,7 +36,7 @@ Func_080dd950:
 	strh r2, [r3]
 	movs r0, #0
 	lsls r5, r5, #9
-	bl Func_080dd748
+	bl BattleFx_RunBusyWaitDelay
 	movs r1, #1
 	adds r0, r5, #0
 	bl BattleFx_ApplyColorToTargetBuffer

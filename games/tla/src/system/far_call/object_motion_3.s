@@ -6,12 +6,6 @@
 Func_080c88c8:
 	ldr r4, [pc, #0]
 	bx r4
-	.ifndef TLA_EDITION_ES
-	.ifndef TLA_EDITION_IT
-	.global BattleFx_DecodeFrameTranslationBase
-BattleFx_DecodeFrameTranslationBase:
-	.endif
-	.endif
 	.4byte Func_080d2d08
 	.global Func_080c88d0
 	.thumb_func
@@ -22,14 +16,6 @@ Func_080c88d0:
 Func_080c88d8:
 	ldr r4, [pc, #0]
 	bx r4
-	.ifdef TLA_EDITION_ES
-	.global BattleFx_DecodeFrameUnusedBase
-BattleFx_DecodeFrameUnusedBase:
-	.endif
-	.ifdef TLA_EDITION_IT
-	.global BattleFx_DecodeFrameUnusedBase
-BattleFx_DecodeFrameUnusedBase:
-	.endif
 	.4byte Func_080e7238
 	.global Func_080c88e0
 	.thumb_func
@@ -40,12 +26,6 @@ Func_080c88e0:
 Func_080c88e8:
 	ldr r4, [pc, #0]
 	bx r4
-	.ifndef TLA_EDITION_ES
-	.ifndef TLA_EDITION_IT
-	.global BattleFx_DecodeFrameUnusedBase
-BattleFx_DecodeFrameUnusedBase:
-	.endif
-	.endif
 	.4byte Func_080e74d8
 	.global Func_080c88f0
 	.thumb_func

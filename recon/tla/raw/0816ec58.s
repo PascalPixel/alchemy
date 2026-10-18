@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816ec58
+@ Abilities: Cool, Supercool, Megacool (kind 75).
+	.global BattleFx_RunCool
 	.thumb_func
-Func_0816ec58:
+BattleFx_RunCool:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -375,7 +376,7 @@ Func_0816ec58:
 .L_0816ef30:
 	.4byte IwramCopyWords
 .L_0816ef34:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816ef38:
 	.4byte Data_08198bb0
 .L_0816ef3c:
@@ -423,7 +424,7 @@ Func_0816ec58:
 	mov r4, r10
 	ldr r0, [r4, #4]
 	ldr r1, [sp, #8]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	mov r3, r10
 	ldr r2, [r3, #24]
 	movs r4, #8
@@ -504,7 +505,7 @@ Func_0816ec58:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -522,7 +523,7 @@ Func_0816ec58:
 .L_0816f058:
 	ldr r0, .L_0816f07c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -537,4 +538,4 @@ Func_0816ec58:
 .L_0816f078:
 	.4byte 0xffffe000
 .L_0816f07c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

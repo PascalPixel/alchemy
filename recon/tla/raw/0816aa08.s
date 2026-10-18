@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816aa08
+@ Abilities: Plume Edge (kind 85).
+	.global BattleFx_RunPlumeEdge
 	.thumb_func
-Func_0816aa08:
+BattleFx_RunPlumeEdge:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -29,7 +30,7 @@ Func_0816aa08:
 	add r1, sp, #36
 	strh r3, [r2]
 	movs r0, #0
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r9
@@ -54,7 +55,7 @@ Func_0816aa08:
 .L_0816aa70:
 	.4byte 0x00001010
 .L_0816aa74:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816aa78:
 	movs r1, #156
 	ldr r0, [r0]
@@ -306,7 +307,7 @@ Func_0816aa08:
 	ldrsh r1, [r3, r4]
 	movs r2, #8
 	movs r3, #80
-	bl Func_08157530
+	bl BattleFx_SetApproachMotion
 .L_0816ac8a:
 	ldr r0, [sp, #28]
 	cmp r0, #21
@@ -462,7 +463,7 @@ Func_0816aa08:
 	mov lr, r4
 	.2byte 0xf800
 .L_0816adbc:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -484,7 +485,7 @@ Func_0816aa08:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816ae3c
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -522,4 +523,4 @@ Func_0816aa08:
 .L_0816ae38:
 	.4byte 0xffffe000
 .L_0816ae3c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

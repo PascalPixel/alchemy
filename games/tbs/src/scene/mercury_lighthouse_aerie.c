@@ -28,6 +28,7 @@
 #include "map_scroll.h"
 #include "text/msg_ids.h"
 #include "field_obj.h"
+#include "macros.h"
 
 // Forward declarations.
 static void FieldScene_RunFourActorPresentation(void);
@@ -79,7 +80,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gMercuryLighthouseAeriePlacements;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gMercuryLighthouseAerieEvents; }
+const struct SceneEvent *Scene_GetEvents(void) {
+  return gMercuryLighthouseAerieEvents;
+}
 
 s32 Scene_Initialize(void) {
   u32 i;
@@ -259,9 +262,8 @@ static void SceneActor_InitializeMotion(void) {
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   angle = (actor->facing + 0x1000) & 0xe000;
   flags = actor->motionFlags;
-  position[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
-  position[1] = actor->y.fixed;
-  position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
+  SET_VECTOR(position, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, position);
   if (FieldObject_CheckMovementCollision(actor, position) == 0) {
     Engine_GameFlagClear(592);
@@ -1444,8 +1446,8 @@ static void MercuryLighthouseAerie_RiseActorPair(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
-// MercuryLighthouseAerie_LowerCollectedActors passes its lift as a third argument,
-// which this function does not take.
+// MercuryLighthouseAerie_LowerCollectedActors passes its lift as a third
+// argument, which this function does not take.
 static void MercuryLighthouseAerie_CollectBandSlots(s32 *out, s32 y) {
   struct ActorTable *table;
   u32 slot;
@@ -1480,7 +1482,8 @@ static void MercuryLighthouseAerie_LowerCollectedActors(void) {
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
   // the lift goes as a third argument, as the bytes show: the cast keeps it
-  ((void (*)())MercuryLighthouseAerie_CollectBandSlots)(ids, lift->offsetY, lift);
+  ((void (*)())MercuryLighthouseAerie_CollectBandSlots)(ids, lift->offsetY,
+                                                        lift);
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;
@@ -1626,7 +1629,8 @@ static void MercuryLighthouseAerie_FlickerActorEight(void) {
     return;
   }
   sprite = spark->sprite;
-  Engine_ObjectSetScript((struct FieldActor *)spark, gMercuryLighthouseAerie_SparkScript);
+  Engine_ObjectSetScript((struct FieldActor *)spark,
+                         gMercuryLighthouseAerie_SparkScript);
   ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
   spark->motionFlags = tick;
   angle = Engine_RandomNext() & 0x0ffff000;

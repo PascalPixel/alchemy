@@ -48,6 +48,6 @@ void Object_ReturnHome(s32 mode, u32 objectId, s32 flag) {
       Object_SetSquareSprite(objectId);
     object->x = object->homeX << 16;
     object->z = object->homeZ << 16;
-    Func_080e70f8(objectId);
+    BattleFx_DropObjectAtAnchor(objectId);
   }
 }

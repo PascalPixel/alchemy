@@ -2,14 +2,21 @@
 
 void Func_0813c5f4(void *object, s32 mode);
 
-void Func_0813c5ac(void *object) { Func_0813c5f4(object, 0); }
+// Abilities: Sonic Wave (kind 300).
+void BattleFx_RunSonicWave(void *object) { Func_0813c5f4(object, 0); }
 
-void Func_0813c5b8(void *object) { Func_0813c5f4(object, 1); }
+// Abilities: Shriek, Harpy (kind 301).
+void BattleFx_RunShriek(void *object) { Func_0813c5f4(object, 1); }
 
-void Func_0813c5c4(void *object) { Func_0813c5f4(object, 2); }
+// Abilities: Banshee Howl (kind 302).
+void BattleFx_RunBansheeHowl(void *object) { Func_0813c5f4(object, 2); }
 
-void Func_0813c5d0(void *object) { Func_0813c5f4(object, 4); }
+// Abilities: War Cry (kind 304).
+void BattleFx_RunWarCry(void *object) { Func_0813c5f4(object, 4); }
 
-void Func_0813c5dc(void *object) { Func_0813c5f4(object, 3); }
+// Abilities: Wicked Howl (kind 305).
+void BattleFx_RunWickedHowl(void *object) { Func_0813c5f4(object, 3); }
 
-void Func_0813c5e8(void *object) { Func_0813c5f4(object, 1); }
+// The streak volley in lime (mode 1). UNUSED: no effect table entry
+// points here.
+void BattleFx_RunLimeStreaks(void *object) { Func_0813c5f4(object, 1); }

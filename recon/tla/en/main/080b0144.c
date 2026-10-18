@@ -1,49 +1,35 @@
-// ported from games/tbs/src/game/character/owners.c
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "minigame.h"
-#include "sound.h"
-#include "system.h"
-#include "edition.h"
-#include "game_flags.h"
-#include "party_state.h"
+// Draft of Class_Determine: differ 150 of 156 (tla-en, 2026-10-18). Ported
+// from The Broken Seal's function of the same name
+// (games/tbs/src/game/game.c): the class series comes from a character's two
+// strongest elements, and the class is the last of that series whose element
+// requirements it meets. The Lost Age has 244 classes, takes the series from
+// a 4 by 4 table, gives characters 5 and 7 (Jenna and Piers) their own
+// series, and lets three items (443 to 445) choose one.
+//
+// Left: register choice. The native keeps the character in r7, the item in
+// r8 and the result in fp (here r8, sl and r9), and walks the class table
+// with two induction variables (the record's offset from the table and a
+// pointer to its requirements), where this draft has one record pointer;
+// every register after the first loop shifts with it. A local table pointer
+// held across the call measured 173. Rewritten from the earlier port of The
+// Broken Seal's file, which no longer compiled.
 #include "types.h"
-#include "battle_summon.h"
-#include "runtime_interfaces.h"
-#include "fixed_math.h"
 #include "owner_state.h"
-#include "iwram_call.h"
 
-s32 GameFlag_SetBit(s32);
-
-struct TradeFlags {
-  u32 flags;
+// A class record's start, as Class_Determine reads it.
+struct ClassSeriesView {
+  s32 series;
+  u8 required[4];
+  u8 unk08[0x4c];
 };
 
-struct ElementLevelBonus {
-  u16 power;
-  u16 res;
-};
+#define CLASS_TABLE ((const struct ClassSeriesView *)gClass_DefinitionTable)
 
-extern const struct ElementLevelBonus gElement_PowerResistByLevel[16];
+extern const s32 Data_080c6604[4][4];
 
-s32 GameFlag_Test(s32 flag);
+s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 
-#if EDITION_INTERNATIONAL
-#define ENEMY_SUFFIX_FIRST '1'
-#define ENEMY_SUFFIX_LAST 8
-#else
-#define ENEMY_SUFFIX_FIRST 'A'
-#define ENEMY_SUFFIX_LAST 25
-#endif
-
-typedef s32 (*ClearWordsFn)(void *destination, s32 size);
-
-s32 Class_Determine(s32 character, const u8 *djinn) {
+s32 Class_Determine(s32 character, const u8 *djinn, s32 item) {
   s32 levels[4];
   s32 primary;
   s32 best;
@@ -56,16 +42,6 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   if (character > 7)
     return 0;
   Unit_GetElementLevels(character, djinn, levels);
-  if (GameFlag_Test(32)) {
-    if (character == 0)
-      return 200;
-    if (character == 1)
-      return 201;
-  }
-  if (character == 5)
-    return 202;
-  if (result != -1)
-    return result;
   best = result;
   primary = result;
   for (i = 0; i < 4; i++) {
@@ -82,12 +58,24 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
       j = i;
     }
   }
-  series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
-  for (i = 202; i >= 0; i--) {
-    if (gClass_DefinitionTable[i].series != series)
+  if (levels[j] <= 9)
+    j = primary;
+  series = Data_080c6604[primary][j];
+  if (series == 2 && character == 5)
+    series = 13;
+  else if (series == 6 && character == 7)
+    series = 14;
+  if (item == 444)
+    series = 16;
+  else if (item == 443)
+    series = 15;
+  else if (item == 445)
+    series = 17;
+  for (i = 243; i >= 0; i--) {
+    if (CLASS_TABLE[i].series != series)
       continue;
     for (j = 0; j < 4; j++) {
-      if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
+      if (levels[j] < CLASS_TABLE[i].required[j] * 10)
         break;
     }
     if (j == 4) {

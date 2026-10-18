@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "edition.h"
 
 void Func_02000b08(void) {
   struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
@@ -32,7 +33,7 @@ void Func_02000bdc(void) {
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(4), 0);
-#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
+#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
   Func_02000e08(129);
 #endif
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);

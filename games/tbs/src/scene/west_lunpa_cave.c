@@ -100,9 +100,9 @@ static void WestLunpaCave_PropGateWithFrozenPillar(void) {
     pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
-    Event_PlayCue(SOUND_GATE_MOVE);
+    Event_PlayCue(SE_GATE_MOVE);
     Gate_DrawPropped();
-    Event_PlayCue(SOUND_PUZZLE_SOLVED);
+    Event_PlayCue(MUS_PUZZLE_SOLVED);
     GameFlag_Set(FLAG_CAVE_GATE_RAISED);
   }
 }
@@ -141,7 +141,7 @@ static void WestLunpaCave_LowerGateFromSwitch(void) {
   if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0) {
     if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Event_PlayCue(SOUND_GATE_MOVE);
+      Event_PlayCue(SE_GATE_MOVE);
       Gate_Lower();
       GameFlag_Set(FLAG_CAVE_GATE_LOWERED);
       GameFlag_Clear(FLAG_CAVE_GATE_RAISED);
@@ -169,7 +169,7 @@ static void WestLunpaCave_RaiseGateFromSwitch(void) {
   if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
     if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Event_PlayCue(SOUND_GATE_MOVE);
+      Event_PlayCue(SE_GATE_MOVE);
       Gate_Raise();
       GameFlag_Set(FLAG_CAVE_GATE_RAISED);
       GameFlag_Clear(FLAG_CAVE_GATE_LOWERED);

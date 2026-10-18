@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814e744
+@ Abilities: Break (kind 43).
+	.global BattleFx_RunBreak
 	.thumb_func
-Func_0814e744:
+BattleFx_RunBreak:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -39,7 +40,7 @@ Func_0814e744:
 	.2byte 0xf800
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	movs r3, #0
 	mov r8, r3
@@ -318,7 +319,7 @@ Func_0814e744:
 	cmp r1, r3
 	bne .L_0814e90e
 .L_0814e9cc:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #32]
 	lsls r4, r4, #7
@@ -345,7 +346,7 @@ Func_0814e744:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #60
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -365,7 +366,7 @@ Func_0814e744:
 .L_0814ea2c:
 	.4byte gMapCellBuffer
 .L_0814ea30:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814ea34:
 	.4byte gData_08197410
 .L_0814ea38:

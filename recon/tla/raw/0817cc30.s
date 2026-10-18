@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817cc30
+@ Abilities: Ocean Fist (kind 447).
+	.global BattleFx_RunOceanFist
 	.thumb_func
-Func_0817cc30:
+BattleFx_RunOceanFist:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -34,7 +35,7 @@ Func_0817cc30:
 	adds r1, r2, #0
 	movs r0, #0
 	str r2, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r0, .L_0817cca4
 	adds r1, r5, #0
 	movs r2, #1
@@ -524,7 +525,7 @@ Func_0817cc30:
 .L_0817d044:
 	.4byte IwramCopyWords
 .L_0817d048:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817d04c:
 	.4byte Data_02010018
 .L_0817d050:
@@ -634,7 +635,7 @@ Func_0817cc30:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0817d11c:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #24]
 	lsls r4, r4, #7
@@ -660,7 +661,7 @@ Func_0817cc30:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -672,4 +673,4 @@ Func_0817cc30:
 .L_0817d16c:
 	.4byte Data_081994a8
 .L_0817d170:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

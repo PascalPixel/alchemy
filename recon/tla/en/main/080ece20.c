@@ -1,0 +1,83 @@
+// First draft of Func_080ece20: draws the world map picture on BG1, scrolled
+// to the cursor in gWorldMapWork (resource 36, or 35 at the origin when the
+// halfword at 0x640 is set): the palette, then 21 rows of 31 tiles from the
+// decoded rows, wrapping the 24-row buffer and the 32-column screen. ☀️'s
+// Map_ShowWorldMap (games/tbs/src/object/psynergy_effects.c) shows its map
+// as one picture instead. Differ 140 of 149 (draft 147), most of it register
+// choice that follows from one hoist: this draft keeps gMapCellBuffer in r11
+// across the rows and column & 31 on the stack, where the native keeps column
+// & 31 in r11, reloads gMapCellBuffer from the pool at each use and spills
+// the unwrapped row around __modsi3. The clamps also take x and z in the
+// other registers (x in r5 in the native). Shape otherwise as the listing.
+#include "types.h"
+#include "dma.h"
+#include "resource.h"
+#include "ram_buffer.h"
+#include "bg_scroll.h"
+
+struct WorldMapWork {
+  u8 padding00[0x62c];
+  s32 *cursor;
+  u8 padding630[0x10];
+  s16 centered;
+};
+
+extern struct WorldMapWork gWorldMapWork;
+extern char ResourceId_035, ResourceId_036; // resource ids, linker symbols
+
+void Func_080ece20(void) {
+  struct WorldMapWork *work = &gWorldMapWork;
+  s32 *cursor = work->cursor;
+  s32 x = *cursor++ - (120 << 16);
+  s32 z = *cursor - (80 << 16);
+  s32 resource = (s32)&ResourceId_036;
+  u32 *graphics;
+  u32 column;
+  u32 firstRow;
+  u32 row;
+  s32 bufferRow;
+  s32 unwrapped;
+  s32 tile;
+  u8 *cells;
+  u32 i;
+
+  if (work->centered != 0) {
+    resource = (s32)&ResourceId_035;
+    x = 0;
+    z = 0;
+  }
+  graphics = Resource_GetTableEntry(resource);
+  Dma_Set((u8 *)graphics + graphics[0], (void *)0x05000000, 0x84000078,
+          (volatile u32 *)0x040000d4);
+  *(u16 *)0x05000000 = 0;
+  if (x < 0)
+    x = 0;
+  if (x > 272 << 16)
+    x = 272 << 16;
+  if (z < 0)
+    z = 0;
+  if (z > 224 << 16)
+    z = 224 << 16;
+  gBgScroll[1].x = x >> 16;
+  gBgScroll[1].y = z >> 16;
+  column = (u32)x >> 19;
+  firstRow = (u32)z >> 19;
+  for (row = 0; row <= 20; row++) {
+    bufferRow = firstRow + row;
+    unwrapped = bufferRow;
+    if (bufferRow > 23)
+      bufferRow -= 24;
+    tile = ((column & 31) + unwrapped * 32 + 128) % 768 + 256;
+    Resource_DecodeType01((u8 *)graphics + graphics[unwrapped + 1],
+                          Ram_MapCellBuffer + (bufferRow << 12));
+    cells = Ram_MapCellBuffer + (((bufferRow << 6) + column) << 6);
+    for (i = 0; i <= 30; i++) {
+      Dma_Set(cells, (void *)(0x06000000 + (tile << 6)), 0x84000010,
+              (volatile u32 *)0x040000d4);
+      cells += 64;
+      tile++;
+      if (column + i == 31)
+        tile -= 32;
+    }
+  }
+}

@@ -1,9 +1,10 @@
 #include "mars_lighthouse_aerie.h"
+#include "edition.h"
 
 void Func_02004d14(void) { GameFlag_ClearBit(0x202); }
 
 // Absent from the Japanese edition, as is Func_02004d50.
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_02004d24(s32 id) {
   u8 *work = Ram_HeapSlots->windowTiles;
 

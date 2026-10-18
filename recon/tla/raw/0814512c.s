@@ -260,7 +260,7 @@ Func_0814512c:
 	ldr r0, [r1, #4]
 	adds r1, r2, #0
 	str r2, [sp, #16]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r3, [sp, #48]
 	cmp r3, #4
 	beq .L_0814532a
@@ -464,7 +464,7 @@ Func_0814512c:
 .L_081454a8:
 	.4byte Data_02011c18
 .L_081454ac:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081454b0:
 	.4byte Data_08197880
 .L_081454b4:
@@ -750,7 +750,7 @@ Func_0814512c:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #44]
 	lsls r4, r4, #7
@@ -804,7 +804,7 @@ Func_0814512c:
 	bl SummonFx_RunCanvasMode3
 	b .L_0814574e
 .L_0814574a:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 .L_0814574e:
 	add sp, #100
 	pop {r3, r5, r6, r7}
@@ -826,10 +826,10 @@ Func_0814512c:
 .L_08145770:
 	.4byte Data_081978ba
 .L_08145774:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08145778:
 	.4byte IwramClearWords
 .L_0814577c:
 	.4byte 0x06004000
 .L_08145780:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer

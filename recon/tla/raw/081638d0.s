@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081638d0
+@ Abilities: Torch (kind 214).
+	.global BattleFx_RunTorch
 	.thumb_func
-Func_081638d0:
+BattleFx_RunTorch:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -44,7 +45,7 @@ Func_081638d0:
 	ldr r3, [sp, #20]
 	add r1, sp, #24
 	ldr r0, [r3, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10
@@ -249,13 +250,13 @@ Func_081638d0:
 .L_08163aa0:
 	.4byte 0x00001000
 .L_08163aa4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08163aa8:
 	.4byte IwramFillWords + 0x74
 .L_08163aac:
 	.4byte Data_02010002
 .L_08163ab0:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_08163ab4:
 	.4byte 0x04000208
 .L_08163ab8:
@@ -380,7 +381,7 @@ Func_081638d0:
 	movs r5, #1
 	bl Func_08158ce0
 	add r8, r5
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #2
@@ -398,7 +399,7 @@ Func_081638d0:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -417,6 +418,6 @@ Func_081638d0:
 .L_08163bf4:
 	.4byte Data_02010002
 .L_08163bf8:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_08163bfc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

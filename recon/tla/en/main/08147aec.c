@@ -2,12 +2,13 @@
 
 // Summon 7, mode 0 (the wrapper in series_e.c; mode 1 is the kind that
 // casts the same scene from the caster's side). Twin: The Broken Seal's
-// BattleEffect_RunPaletteParticles, ported call for call. The Lost Age's
+// BattleFx_RunPaletteParticles, ported call for call. The Lost Age's
 // changes: every picture unpacked by Resource_LoadAndDecompress; the pair
-// from Func_08144aac; BG2CNT set with the blending; an alternate layout
-// (formation 6, eight pixels right and lower, sparks and flashes with it)
-// when the first target's animation kind is 2; formation resource 647; two
-// separate mode-0 tests at the teardown; the callback at 0xc80.
+// from BattleFx_FetchRectangleBlitters; BG2CNT set with the blending; an
+// alternate layout (formation 6, eight pixels right and lower, sparks and
+// flashes with it) when the first target's animation kind is 2; formation
+// resource 647; two separate mode-0 tests at the teardown; the callback at
+// 0xc80.
 
 // Left: order only: about twenty single swaps of a load (the argument's
 // spill, a pooled constant, the work pointer) with the constant beside it.
@@ -43,18 +44,19 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                   // BattleFx_EndCanvasLayer
-void Func_08143000(void);                   // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);                   // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                   // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);                   // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_0814cc4c(
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y);  // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y);  // ..RunImpactBurst
 void Func_08164a4c(s32 blue, s32 green, s32 red); // Palette_BrightenBgEntries
@@ -109,7 +111,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   REG_BG2CNT = 0x784;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
@@ -121,7 +123,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
                     128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   {
     struct Point2D focus;
     s32 dir;
@@ -176,9 +178,9 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0; i != 512; i++)
       PARTICLES[i].variant = -1;
     if (mode == 0) {
-      Func_0814cc4c(work->effect);
+      BattleFx_SelectLivingTargets(work->effect);
       WaitFrames(1);
-      Func_08152404(8, FORMATION_RESOURCE, 2);
+      BattleFx_SpawnObjects(8, FORMATION_RESOURCE, 2);
     }
 
     for (frame = 0; frame != 208; frame++) {
@@ -196,7 +198,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         frame = 160;
       }
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       if (frame == 178)
         Func_081180e8(134);
 
@@ -445,13 +447,13 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       Func_08158ce0(8, 8);
-      Func_081434f8();
+      ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
       WaitFrames(1);
     }
 
     // Tear down: the formation bursts where it stands and is released.
-    Scheduler_RemoveCallback(Func_08143000);
+    Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     if (mode == 0) {
@@ -465,5 +467,5 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         ResourceObject_ReleaseFar(work->objects[i]);
     }
   }
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

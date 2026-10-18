@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816f080
+@ Abilities: Wyrd Curse (kind 103).
+	.global BattleFx_RunWyrdCurse
 	.thumb_func
-Func_0816f080:
+BattleFx_RunWyrdCurse:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -36,7 +37,7 @@ Func_0816f080:
 	bne .L_0816f0d4
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816f0dc
 	.2byte 0x0000
 .L_0816f0cc:
@@ -46,7 +47,7 @@ Func_0816f080:
 .L_0816f0d4:
 	movs r0, #104
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816f0dc:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -358,7 +359,7 @@ Func_0816f080:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r11, r0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	ldr r2, .L_0816f4ac
 	ldr r3, [sp, #48]
 	adds r7, r0, #0
@@ -446,9 +447,9 @@ Func_0816f080:
 	ldr r0, .L_0816f4c0
 	mov r1, r11
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816f408:
 	ldr r4, [sp, #16]
 	add r6, sp, #48
@@ -506,16 +507,16 @@ Func_0816f080:
 	mov r1, r11
 	movs r2, #4
 	ldr r0, .L_0816f4c0
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r7, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	adds r0, r5, #0
 	movs r1, #60
 	ldr r2, .L_0816f4cc
 	bl BattleFxKernels_IntegrateVector2
 	b .L_0816f4d0
 .L_0816f494:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816f498:
 	.4byte IwramClearWords
 .L_0816f49c:
@@ -600,7 +601,7 @@ Func_0816f080:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -623,7 +624,7 @@ Func_0816f080:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816f590
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #68
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -633,4 +634,4 @@ Func_0816f080:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0816f590:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

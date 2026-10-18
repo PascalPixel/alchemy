@@ -1,13 +1,13 @@
 // Draft, differ 386 of 783: BattleFx_RunSparkGroups, the body of the
-// spark-group effects through Func_08149b94 (kind 0), Func_08149ba0
-// (kind 1) and BattleFx_RunSparkApproachVariant4 (kind 2).
+// spark-group effects through BattleFx_RunNova (kind 0), BattleFx_RunDynamite
+// (kind 1) and BattleFx_RunThrash (kind 2).
 
 // ☀️ twin: BattleFx_RunSparkGroups (games/tbs/src/effect/effect.c), shape
 // 0.803, structure 0.938. ⚓️'s changes: kind 1 also starts a palette fade
 // (work->fadeFrames 24, work->fadeStep 0); the blitter pair comes from
-// Func_08144aac(0, draw) where ☀️ loads max and additive blitters itself;
-// the shapes table Data_081979de holds halfwords; the effect runs
-// count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
+// BattleFx_FetchRectangleBlitters(0, draw) where ☀️ loads max and additive
+// blitters itself; the shapes table Data_081979de holds halfwords; the effect
+// runs count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
 // 145 at frame 2; the variant 3 wipe goes through the IWRAM call layer
 // (☀️ calls the fixed entry, tagged); the transfer callback runs at 0xc80.
 
@@ -71,23 +71,24 @@ extern char ResourceId_ParticleSpritesA;   // directory row 0x134
 extern char ResourceId_OrangePaletteB;     // directory row 0x148
 extern char ResourceId_LightningBoltSheet; // directory row 0x188
 
-// ☀️ gSparkGroups_Shapes, five halfwords for each variant: sparks in each
+// ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
 extern u16 Data_081979de[];
-extern u8 Data_08197a1a[];   // ☀️ gSparkGroups_FlashCells
-extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
+extern u8 Data_08197a1a[];   // ☀️ gPlasma_FlashCells
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 // The sparks live in the map cell buffer.
 extern struct EffectStep gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleFx_FetchRectangleBlitters(
+    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -142,7 +143,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
 
   // The flash sheet, the particle sprites and the kind's palette.
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -190,7 +191,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   for (frame = 0; frame != GROUP_COUNT * 8 + 40; frame++) {
     struct CameraWork *camera = Ram_HeapSlots->cameraWork;
@@ -294,14 +295,14 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

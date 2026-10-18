@@ -1,5 +1,6 @@
 #include "types.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
@@ -16,7 +17,7 @@ void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
     Djinn_Activate(owner, element, djinn);
 }
 
-#if defined(TLA_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 // Japanese edition: give each of four characters a Djinni set starting at 7.
 void Func_02000638(void) {
   s32 djinn;

@@ -2,6 +2,7 @@
 #include "party_state.h"
 #include "scene_ids.h"
 #include "object_runtime.h"
+#include "edition.h"
 
 struct SceneEvent;
 
@@ -34,7 +35,7 @@ void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
 // Sets the object's motion flags to 3 while it moves, for at most 60 frames
 // until its vertical speed is 0, then clears them ten frames later. The
 // editions after the Japanese one also run the given cue first.
-#ifdef TLA_EDITION_JA
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 void Func_02000100(s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native

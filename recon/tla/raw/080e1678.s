@@ -1002,7 +1002,7 @@ Func_080e1678:
 	adds r0, r0, r3
 	movs r3, #8
 	str r3, [sp, #0]
-	bl Func_080eb4a0
+	bl BattleFx_DrawCanvasBlock
 	adds r0, r7, #0
 	movs r1, #60
 	movs r2, #0

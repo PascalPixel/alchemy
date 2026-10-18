@@ -5,7 +5,7 @@
 // more spill slot, 411 instructions against 409); the work and the anchor
 // take each other's registers (the native keeps the work in r8 and the
 // anchor in sl), and the order follows from there. Belongs between
-// fall.c's BattleFx_CallEffect05 and particles.c's Func_080df174.
+// fall.c's BattleFx_CallEffect05 and particles.c's BattleFx_SpawnFallingParticles.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"

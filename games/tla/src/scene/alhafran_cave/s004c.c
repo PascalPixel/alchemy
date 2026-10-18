@@ -1,4 +1,5 @@
 #include "local.h"
+#include "edition.h"
 
 u8 *Func_0200004c(void) {
   s32 scene = gPartyState.scene;
@@ -94,7 +95,7 @@ s32 Func_02000258(void) {
 }
 
 s32 Func_0200027c(void) {
-#if defined(TLA_EDITION_JA) /* The Japanese edition does not check the         \
+#if (LANGUAGE == LANGUAGE_JAPANESE) /* The Japanese edition does not check the         \
                                entrance. */
   ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
   if (gPartyState.scene == (s32)&SceneId_Ov66aRoom1)

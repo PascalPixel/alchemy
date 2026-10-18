@@ -42,8 +42,8 @@ struct EffectParticle {
 
 void Func_080eaf98(struct EffectSprite *sprite, s32 width, s32 height,
                    u32 shape, s32 tiles);
-s32 Func_080db9cc(struct ObjectRuntime *object);
-s32 Func_080db9c0(struct ObjectRuntime *object);
+s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object);
+s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object);
 void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
@@ -58,8 +58,8 @@ void Func_080e4510(struct EffectSprite *sprite, s32 tiles) {
   s32 position[3];
 
   Func_080eaf98(sprite, 16, 30, 0x80000000, tiles);
-  sprite->depth = Func_080db9cc(scene->mainObject);
-  sprite->priority = Func_080db9c0(scene->mainObject);
+  sprite->depth = BattleFx_GetObjectDepth(scene->mainObject);
+  sprite->priority = BattleFx_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
   sprite->palette = 0;
   if (*(s8 *)(event + 394) == 3) {

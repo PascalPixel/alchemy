@@ -1,9 +1,9 @@
 // Near miss, differ 102 of 604 (effect kind 13, the fire pillars).
 
-// ☀️ twin: BattleFx_RunFirePillars (games/tbs/src/effect/effect.c), shape
+// ☀️ twin: BattleFx_RunVolcano (games/tbs/src/effect/effect.c), shape
 // 0.847, structure 1.000. ⚓️'s changes: the effect argument read directly,
 // the red and orange palettes from directory rows 0x147 and 0x148, two max
-// blitters from Func_081963ec(104, 0x13) and (188, 0x17) (⚓️ max is mode
+// blitters from BattleFx_LoadBlitter(104, 0x13) and (188, 0x17) (⚓️ max is mode
 // 1), the camera from Ram_HeapSlots->cameraWork, the pillar's x before its
 // y, the transfer callback at 0xc80, and the tables under their ⚓️ labels
 // (pillar counts Data_08197a20, depths Data_08197a23, start frames
@@ -57,19 +57,19 @@ extern char ResourceId_ParticleSpritesA; // directory row 0x134
 extern char ResourceId_RedPaletteB;      // directory row 0x147
 extern char ResourceId_OrangePaletteB;   // directory row 0x148
 
-extern u8 Data_08197a20[];    // ☀️ gFirePillars_Counts, for each variant
-extern s8 Data_08197a23[][4]; // ☀️ gFirePillars_Depths
-extern u8 Data_08197a2f[];    // ☀️ gFirePillars_StartFrames
-extern u16 gData_08197410[];  // ☀️ gParticleStreams_CellOffsets
+extern u8 Data_08197a20[];    // ☀️ gVolcano_Counts, for each variant
+extern s8 Data_08197a23[][4]; // ☀️ gVolcano_Depths
+extern u8 Data_08197a2f[];    // ☀️ gVolcano_StartFrames
+extern u16 gData_08197410[];  // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
@@ -78,7 +78,7 @@ void Audio_PlayCue(s32 cue);
 // another; each burns for the rest of the first 64 frames, scrolling its
 // flames upward, throws a burst of sparks when it starts and a few more
 // every frame after its sixteenth, and strikes every target as it starts.
-void Func_0814a264(struct BattleEffectArgument *effect) {
+void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -107,10 +107,10 @@ void Func_0814a264(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y |
                                             COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
@@ -135,7 +135,7 @@ void Func_0814a264(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
@@ -149,7 +149,7 @@ void Func_0814a264(struct BattleEffectArgument *effect) {
     if (frame == 16)
       Func_081180e8(134);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     if (frame < 64) {
       for (pillar = 0; pillar != Data_08197a20[effect->variant]; pillar++) {
@@ -258,7 +258,7 @@ void Func_0814a264(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -266,6 +266,6 @@ void Func_0814a264(struct BattleEffectArgument *effect) {
   // Tear down.
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

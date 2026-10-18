@@ -42,9 +42,9 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 extern char ResourceId_CrossedDaggersSheet;
 
 void BattleFx_BeginCanvasLayer(s32 control);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
+s32 BattleFx_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -53,7 +53,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // A rain of daggers on the first target (unused).
@@ -81,9 +81,9 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1000;
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
-  Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  BattleFx_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(SLOT_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(SLOT_BLITTER_ALTERNATE,
                 BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   blit = draw;
@@ -91,7 +91,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
                              1, 1);
   work->transferMode = 1; // each transfer clears the canvas
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Centre BG2 on the first target.
   EffectPosition_ApplyStepAndYOffset(effect->actors[0], &pos);
@@ -173,13 +173,13 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
         Audio_PlayCue(133);
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

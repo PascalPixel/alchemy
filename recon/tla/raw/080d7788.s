@@ -72,7 +72,7 @@ Func_080d7788:
 	cmp r5, #3
 	bne .L_080d7818
 	mov r0, r8
-	bl Func_080d7c04
+	bl Djinn_RunJupiterJoinEffect
 .L_080d7818:
 	bl Func_080cb82c
 	adds r1, r5, #0

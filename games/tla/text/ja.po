@@ -7037,7 +7037,7 @@ msgctxt "message"
 msgid "01746"
 msgstr "ジンカウンター"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "01747"
 msgstr "ソロ"
 
@@ -18916,11 +18916,11 @@ msgctxt "message"
 msgid "04653"
 msgstr "そうびできません"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "04654"
 msgstr "もってません"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "04655"
 msgstr "{argument_signed_number}コ もってる"
 

@@ -7,6 +7,7 @@
        ->v)
 
 #include "call.h"
+#include "edition.h"
 s32 GameFlag_Test();
 s32 GameFlag_SetBit();
 s32 Func_02002a44();
@@ -41,7 +42,7 @@ extern u8 MsgChampa52[];
 
 void Func_02000638(void) {
   s32 t0;
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   s32 t1;
 #endif
   s32 t17;
@@ -50,7 +51,7 @@ void Func_02000638(void) {
   t0 = Value1(GameFlag_Test, 0x822);
   if (t0 == 0) {
   } else {
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     // The Japanese edition has no flag 0 test.
     t1 = Value1(GameFlag_Test, 0);
     if (t1 != 0) {

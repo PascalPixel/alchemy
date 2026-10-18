@@ -9,6 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "effect_step.h"
+#include "macros.h"
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                                      s32 gravity) {
@@ -19,9 +20,8 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
   step->x += vx;
   step->y += vy;
   step->z += vz;
-  step->velocityX = vx * damping / 64;
-  step->velocityY = (vy + gravity) * damping / 64;
-  step->velocityZ = vz * damping / 64;
+  SET_VELOCITY(step, vx * damping / 64, (vy + gravity) * damping / 64,
+               vz * damping / 64);
 }
 
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,

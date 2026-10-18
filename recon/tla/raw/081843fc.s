@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081843fc
+@ Abilities: Catastrophe (scene kind 23).
+	.global BattleFx_RunCatastrophe
 	.thumb_func
-Func_081843fc:
+BattleFx_RunCatastrophe:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -50,7 +51,7 @@ Func_081843fc:
 	strh r2, [r3]
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r5, [r5, #104]
 	ldr r7, [sp, #164]
 	movs r0, #239
@@ -72,7 +73,7 @@ Func_081843fc:
 .L_0818448c:
 	.4byte gBgScroll
 .L_08184490:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08184494:
 	movs r0, #0
 	movs r1, #0
@@ -565,7 +566,7 @@ Func_081843fc:
 	str r3, [r2]
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]

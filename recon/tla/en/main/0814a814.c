@@ -1,14 +1,14 @@
-// Draft, differ 338 of 755: BattleFx_RenderMode, the body of nine effect
+// Draft, differ 338 of 755: BattleFx_RunTargetMotes, the body of nine effect
 // kinds through the wrappers in games/tla/src/battle/effect/render_mode.c
 // (modes 0 to 7).
 
-// ☀️ twin: BattleFx_RenderMode (games/tbs/src/effect/effect.c), shape 0.898,
+// ☀️ twin: BattleFx_RunTargetMotes (games/tbs/src/effect/effect.c), shape 0.898,
 // structure 0.907. ⚓️'s changes: the effect argument read directly; mode
 // 1 takes its palette from the Mars Djinn sheet (directory row 0x150) as
 // mode 7 does, where ☀️'s mode 1 takes the pink burst's; the blitters from
-// Func_081963ec(104, 0x03) (additive) and (188, 0x13) (max), and the
+// BattleFx_LoadBlitter(104, 0x03) (additive) and (188, 0x13) (max), and the
 // tornado's glints through Func_08196404(188, 7, 7, flags, 1) directly;
-// the affine wave's HBlank arm Func_08152474 and the transfer callback at
+// the affine wave's HBlank arm BattleFx_ArmBg2AffineHBlankDma and the transfer callback at
 // 0xc80. In mode 3's glint block the native ands the frame with the mode
 // register, CSE's reuse of the known mode 3 for the constant: the source
 // is frame & 3.
@@ -73,22 +73,22 @@ extern char ResourceId_VortexSheet;
 extern char ResourceId_HeartSheet; // directory row 0x16e
 extern char ResourceId_TornadoSheet;
 
-extern u16 gData_08197486[]; // ☀️ gBattleFx_GlintCellOffsets
+extern u16 gData_08197486[]; // ☀️ gBattleFx_GlintCells
 extern u8 gData_08197492[];  // ☀️ gBattleFx_GlintCellWidths
 extern u8 gData_08197498[];  // ☀️ gBattleFx_GlintCellHeights
-extern u8 Data_08197a34[];   // ☀️ gRenderMode_GlintFlips
+extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void Func_08152474(void);                  // ☀️ BattleFx_ArmBg2AffineHBlankDma
-void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void BattleFx_ArmBg2AffineHBlankDma(void);                  // ☀️ BattleFx_ArmBg2AffineHBlankDma
+void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_BuildBlitter
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // ☀️ BattleEffect_LoadWork
+                  u32 mode); // ☀️ BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void SceneTransform_ApplyPosition(s32 *position);
@@ -101,7 +101,7 @@ void Audio_PlayCue(s32 cue);
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
 // in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
 // the caster at the first target for the final blow.
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
+void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   s32 total;
   s32 member;
   s32 count;
@@ -174,10 +174,10 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
   else
     total = effect->count * 8 + 32;
   if (!(mode <= 1 || mode == 3))
-    Scheduler_AddOrUpdateCallback(Func_08152474, CALLBACK_ORDER);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, CALLBACK_ORDER);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != total; frame++) {
@@ -198,7 +198,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     // Ripple the canvas: one horizontal offset for each line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
 
@@ -235,14 +235,14 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       // An additive and a max blitter for this target's motes.
-      Func_081963ec(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
+      BattleFx_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
                                       COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      Func_081963ec(HEAP_BLITTER_ALTERNATE,
+      BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                     BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
       point[1] = 160 << 13;
       point[2] = object->z;
@@ -317,14 +317,14 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Tear down.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   if (!(mode <= 1 || mode == 3))
-    Scheduler_RemoveCallback(Func_08152474);
-  Func_08143bb8();
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  BattleFx_EndCanvasLayer();
 }

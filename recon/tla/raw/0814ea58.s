@@ -166,7 +166,7 @@ Func_0814ea58:
 .L_0814eb96:
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
@@ -492,7 +492,7 @@ Func_0814ea58:
 	beq .L_0814ee24
 	b .L_0814ecfe
 .L_0814ee24:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #52]
 	lsls r1, r1, #7
@@ -520,7 +520,7 @@ Func_0814ea58:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -531,7 +531,7 @@ Func_0814ea58:
 .L_0814ee74:
 	.4byte 0x04040404
 .L_0814ee78:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814ee7c:
 	.4byte gMapCellBuffer
 .L_0814ee80:

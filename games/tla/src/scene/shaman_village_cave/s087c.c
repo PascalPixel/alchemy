@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 void FieldEvent_WaitFrames();
 void Event_StartScreenTransition();
@@ -50,7 +51,7 @@ void UiWork_FinalizePendingCore();
 
 // The JA edition has its own form of this function; it stays on its listing in
 // recon/tla/raw/overlays (S4).
-#if !defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_0200087c(void) {
   s32 angle = 0xa000;
 

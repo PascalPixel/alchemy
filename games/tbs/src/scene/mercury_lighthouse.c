@@ -53,7 +53,8 @@
 #include "iowrite.h"
 #include "battle_unit.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
+#include "macros.h"
 
 #if TBS_PATCH_1
 #define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_MoveToAndWait
@@ -92,7 +93,6 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 #else
 #define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) ((value) << 16)
 #endif
-
 
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
@@ -1695,7 +1695,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 // Replace the party's bottle with Hermes water and show the obtained item.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventBegin();
-  Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
+  Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   Engine_ItemShowFound(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   UiWork_PushValueSlot(PartyInventory_FindOwner(ITEM_HERMES_WATER), 1);
@@ -1875,9 +1875,7 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
         options.palette = 5;
       options.startScaleX = 0x9999;
       options.startScaleY = 0x9999;
-      velocity[0] = 0;
-      velocity[1] = 0;
-      velocity[2] = 0;
+      SET_VECTOR(velocity, 0, 0, 0);
       Vector_AddPolarOffset((6 - (particleIndex >> 1)) * 0x1999, angle,
                             velocity);
       {

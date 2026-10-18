@@ -63,7 +63,7 @@ void System_Initialize(void) {
     volatile u16 *dma0 = REG_DMA0;
 
     // DMA0CNT_H: drop the HBlank repeat timing, then the enable bit
-    dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
     dma0[5] &= ~DMA_ENABLE;
     dma0[5];
   }
@@ -664,7 +664,7 @@ void System_VBlankHandler(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
 
-    dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
     dma0[5] &= ~DMA_ENABLE;
     dma0[5];
   }

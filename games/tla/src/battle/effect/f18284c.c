@@ -5,6 +5,8 @@
 void BattleFx_BeginCanvasLayer(s32 mode);
 void Func_08182898(s32 arg);
 
+// Opens the canvas layer, sets alpha blending and a 24-frame palette fade
+// counter (read by Func_08143488), then runs the effect body Func_08182898.
 void Func_0818284c(s32 arg) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 

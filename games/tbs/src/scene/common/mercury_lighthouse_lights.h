@@ -17,7 +17,8 @@
 #include "map.h"
 #include "io_reg.h"
 
-void MercuryLighthouse_SpawnLightObjects(s32 region, struct MercuryLighthouseLights *st) {
+void MercuryLighthouse_SpawnLightObjects(s32 region,
+                                         struct MercuryLighthouseLights *st) {
   struct FieldActor *actor;
   struct FieldActor *obj;
   struct AnimationObject *anim;
@@ -25,7 +26,8 @@ void MercuryLighthouse_SpawnLightObjects(s32 region, struct MercuryLighthouseLig
   s32 z;
   s32 flag;
 
-  *(struct MercuryLighthouseLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
+  *(struct MercuryLighthouseLights **)Runtime_AllocateBlock(35, sizeof(st)) =
+      st;
   flag = Engine_GameFlagIsSet(0x109);
   if (flag == 0) {
     Dma_Fill32(flag, st, sizeof(*st));

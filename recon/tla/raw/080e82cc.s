@@ -357,7 +357,7 @@ Func_080e82cc:
 	orrs r3, r1
 	strh r3, [r7, #8]
 	adds r1, r6, #0
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r3, [r6, #4]
 	ldr r4, .L_080e85c4
 	ldr r1, [r6, #24]

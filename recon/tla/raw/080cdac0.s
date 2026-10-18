@@ -30,7 +30,7 @@ Func_080cdac0:
 	cmp r3, #0
 	bne .L_080cdbe0
 	mov r0, r10
-	bl Func_080cda58
+	bl Field_GetPsynergyTargetRule
 	movs r2, #4
 	ldrsh r3, [r0, r2]
 	mov r8, r0

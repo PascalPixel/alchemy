@@ -1,13 +1,25 @@
+// Draft of DisplayTransition_Start: differ 280 of 352 (tla-en, 2026-10-18).
+// The Broken Seal's function of the same name
+// (games/tbs/src/object/object.c), ported: it fades the screen in over frames
+// frames by the kind in the mode's high byte, and queues the map's display
+// control. QUEUE_DISPLAY_CONTROL is IO_WRITE_QUEUE_PUSH on REG_DISPCNT again
+// (an empty stand-in had left the draft at 369).
+//
+// Left: other. The Lost Age's transition state is larger (its fields from
+// 0x528, allocated by Func_080d019c), the window kind also sets a halfword
+// from REG_WINOUT's high byte, and its scanline callbacks and keys differ, as
+// in DisplayTransition_Finish (0x080d0520).
+
 #include "types.h"
 #include "callback_scheduler.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
 #include "scene.h"
-#include "global_cells.h"
 #include "ram_buffer.h"
 #include "display_transition.h"
-#define QUEUE_DISPLAY_CONTROL(value)
+#define QUEUE_DISPLAY_CONTROL(value)                                           \
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, value, 0x20000)
 
 void DisplayTransition_Start(s32 mode, s32 frames) {
   void **work;
@@ -22,7 +34,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
      both spellings store the count as a halfword. The word prefix of
      the map-work view preserves its existing load/address ordering. */
   kind = (mode >> 8) & 0xff;
-  work = Ram_MapWork;
+  work = (void **)Ram_HeapSlots->mapWork;
   display = *(struct DisplayTransitionWindow **)work;
   value = mode & 0xff;
   switch (kind) {

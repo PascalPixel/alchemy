@@ -1,7 +1,7 @@
-// Draft of Func_0816aa08, effect kind 85 (Plume Edge), written from the
+// Draft of BattleFx_RunPlumeEdge, effect kind 85 (Plume Edge), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleEffect_RunImpactBurst 0.566, call order BattleFx_RunJupiterDjinnFall
-// 0.677); the pillar's two-piece scroll is BattleEffect_RunEmberColumns'.
+// BattleFx_RunImpactBurst 0.566, call order BattleFx_RunJupiter
+// 0.677); the pillar's two-piece scroll is BattleFx_RunNereid'.
 
 // Listing 467 instructions, draft 467, differ 36.
 // Left: order rows only. The native moves the work pointer to r9 before
@@ -21,7 +21,7 @@
 // the cell table through a local pointer before the spark loop       51
 // the spark loop stepped by pointer (step++): loop.c then hoists
 // the cell table into r10 as the native does                       36
-// HI through an inline helper (Func_0816d3d8's device)               135
+// HI through an inline helper (BattleFx_RunStoneJustice's device)               135
 // alchemy permute 8 minutes, 2 jobs: 25 only with a forced
 // temporary for the FlashBurstSheet id taken before the pillar
 // load, 33 with an unsigned char picture index (a false type);
@@ -58,15 +58,16 @@ extern u16 gData_08197410[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
-void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
-void Func_08157530(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
 void EffectPosition_ApplyAlternateStepAndYOffset(
@@ -84,7 +85,7 @@ void Audio_PlayCue(s32 cue);
 // sheet and the light palette over the background's.
 // Frame loop (80 frames): the fan of 64 flashes at frame 0, the user's dash
 // at frames 18 and 21, the spark burst at frame 32, then the sparks fall.
-void Func_0816aa08(struct BattleEffectArgument *effect) {
+void BattleFx_RunPlumeEdge(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -101,10 +102,10 @@ void Func_0816aa08(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
@@ -171,7 +172,7 @@ void Func_0816aa08(struct BattleEffectArgument *effect) {
     if (frame >= 0 && frame < 24)
       target->y += 2 << 16;
     if (frame == 18)
-      Func_08157530(effect->actor, effect->actors[0], 8, 80);
+      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
     if (frame == 21)
       BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 12,
                                      8 << 16);
@@ -217,13 +218,13 @@ void Func_0816aa08(struct BattleEffectArgument *effect) {
               34, scroll);
     }
 
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(104);
   Runtime_ReleaseHeapBlock(188);
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

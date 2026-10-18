@@ -1,12 +1,12 @@
-// Draft, differ 44 of 620: Func_081665a4, effect kind 58, The Broken Seal's
-// BattleFx_RunFlameBlade.
+// Draft, differ 44 of 620: BattleFx_RunRagnarok, effect kind 58, The Broken Seal's
+// BattleFx_RunRagnarok.
 
-// Twin: ☀️ BattleFx_RunFlameBlade (games/tbs/src/effect/effect.c), ported:
+// Twin: ☀️ BattleFx_RunRagnarok (games/tbs/src/effect/effect.c), ported:
 // the strike columns are placed from the first target's position (half its x
 // less 24, or less 92 on side 1), the user's mode is set to 2 (Object_SetMode,
 // where ☀️ applies argument 2 to the children), the effect stays an argument
 // (☀️ also forces variant 1), each target is also flashed when its column
-// starts, callback Func_08143000 at 0xc80.
+// starts, callback BattleFx_ProcessPendingGraphicsTransfer at 0xc80.
 
 // Left: everything is reordered rows where the native puts a load (mostly the
 // work's reload from sp+52, the pooled tables) ahead of an independent
@@ -57,14 +57,15 @@ extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_BlastSheet;
-extern u8 gData_08198a92[];  // ☀️ gFlameBlade_StrikeColumns
-extern u8 gData_08198a98[];  // ☀️ gSparkGroups_FlashCells
-extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
+extern u8 gData_08198a92[];  // ☀️ gRagnarok_StrikeColumns
+extern u8 gData_08198a98[];  // ☀️ gPlasma_FlashCells
+extern u16 gData_08197410[]; // ☀️ gBattleFx_MoteCells
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 void EffectPosition_ApplyAlternateStepAndYOffset(
@@ -79,8 +80,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // A blade of fire swings down over the targets and strikes twice, each
 // strike a flash and a fountain of sparks that bounce on the ground.
@@ -93,7 +94,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // colours; each column strikes 8 frames after the last (shake, its flash, its
 // targets flashed) and 6 frames later throws its sparks and knocks the
 // targets back.
-void Func_081665a4(struct BattleEffectArgument *effect) {
+void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 col;
@@ -113,7 +114,7 @@ void Func_081665a4(struct BattleEffectArgument *effect) {
   user = GetBattleObjectSlotFar(effect->actor)->object;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   Object_SetMode(user, 2);
   ObjectDispatch_ApplyValueToChildrenFar(user, 48);
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
@@ -164,7 +165,7 @@ void Func_081665a4(struct BattleEffectArgument *effect) {
 
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   frame = 0;
   do {
@@ -302,15 +303,15 @@ void Func_081665a4(struct BattleEffectArgument *effect) {
     } while (col != 2);
 
     Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
     frame++;
   } while (frame != BLADE_FRAMES);
 
   ObjectDispatch_ApplyValueToChildrenFar(user, 16);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

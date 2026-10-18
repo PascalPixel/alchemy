@@ -5,6 +5,7 @@
 #include "object_runtime.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
+#include "macros.h"
 
 struct SwayObject {
   u8 unk00[8];
@@ -25,7 +26,9 @@ s32 Trig_Sin(s32 angle);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct OrbitVector *position);
 
-void Func_080de818(struct SwayObject *object) {
+// Per-frame update: sways 4 pixels either side of the anchor, once every
+// 128 frames.
+void BattleFx_SwayParticle(struct SwayObject *object) {
   s16 *phase = &object->phase;
   s32 amplitude = 0x40000;
 
@@ -67,9 +70,7 @@ void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
       } while (0);
       pos.z = scene->z;
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
-      object->x = pos.x;
-      object->y = pos.y;
-      object->z = pos.z;
+      SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                    gBattleFx_CommonParticleScript);

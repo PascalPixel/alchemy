@@ -6,7 +6,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
 
 enum CaveEntrance {
   CAVE_ENTRANCE_FROM_WORLD_MAP = 1,

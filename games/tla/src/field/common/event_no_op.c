@@ -2,10 +2,11 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "party_state.h"
+#include "edition.h"
 
 void Event_NoOp(void) {}
 
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void Audio_PlayCue(s32 cue);
 
 void Func_080d2c9c(void) {

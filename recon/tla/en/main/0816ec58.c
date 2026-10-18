@@ -1,9 +1,9 @@
-// Draft of Func_0816ec58, effect kind 75 (Cool), The Broken Seal's
-// BattleFx_RunRisingBurst as The Lost Age reworked it (structure twin
+// Draft of BattleFx_RunCool, effect kind 75 (Cool), The Broken Seal's
+// BattleFx_RunUndeadSword as The Lost Age reworked it (structure twin
 // 0.772): the two columns became up to ten leaning ice columns, three
 // more for each level of the spell, each with its own start, height and
 // lean; the columns' blitters are loaded once a frame through
-// Func_08196404 (BattleEffect_LoadWork) itself; and the sparks wait for
+// Func_08196404 (BattleFx_BuildBlitter) itself; and the sparks wait for
 // the columns.
 
 // Listing 471 instructions, draft 469, differ 164.
@@ -57,21 +57,22 @@ extern s16 Data_08198b9c[];
 extern u8 Data_08198bb0[];
 extern u8 Data_08198bba[];
 extern u8 Data_08198bc4[];
-// The Broken Seal's gParticleField_PuffCells and gThornVines_EmberSizes:
+// The Broken Seal's gEruption_PuffCells and gCybele_EmberSizes:
 // the spark pictures by stage.
 extern u16 Data_08198bce[];
 extern u16 Data_08198bdc[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);                       // BattleEffect_LoadWork
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+                  u32 mode);                       // BattleFx_BuildBlitter
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
-void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
@@ -93,7 +94,7 @@ void Audio_PlayCue(s32 cue);
 // target two frames in, and sinks 10 pixels a frame from frame 32 + 4 per
 // level. The columns are drawn with max blitters until frame 24 on the
 // higher levels, with additive ones otherwise.
-void Func_0816ec58(struct BattleEffectArgument *effect) {
+void BattleFx_RunCool(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 stagger;
@@ -116,7 +117,7 @@ void Func_0816ec58(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   stagger = effect->variant * 4;
   sinkFrame = stagger + 32;
 
@@ -213,7 +214,7 @@ void Func_0816ec58(struct BattleEffectArgument *effect) {
 
     // Spark i rises from frame 8 + 2i through seven pictures, three frames
     // apiece; past the first 16 they wait until the columns sink.
-    Func_08144aac(effect->side, draw);
+    BattleFx_FetchRectangleBlitters(effect->side, draw);
     spark = work->particles;
     for (i = 0; i != effect->variant * 4 + 8; i++, spark++) {
       if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
@@ -236,11 +237,11 @@ void Func_0816ec58(struct BattleEffectArgument *effect) {
     Runtime_ReleaseHeapBlock(104);
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

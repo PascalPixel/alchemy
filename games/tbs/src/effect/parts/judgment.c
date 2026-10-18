@@ -1,0 +1,991 @@
+// Part of effect.c, the battle effect object, compiled only through it.
+// The Judgment summon.
+
+// The shockwave scene (Judgment): a gathering formation, its burst, and a
+// sweep of debris across three backdrops.
+//
+// The scene runs in two parts, each with its own frame clock.
+//
+// - The gathering, on the violet sky backdrop: a projected formation of
+//   sixteen objects moves forward while rotating motes shrink in on its
+//   centre. A burst then grows there, shards fly from it, and a ring of
+//   dimming motes spreads outward. It runs JUDGMENT_GATHER_FRAMES frames.
+// - The sweep, JUDGMENT_SWEEP_FRAMES frames: the formation gives way to
+//   debris objects and the scene cuts to an aerial backdrop, then to beach
+//   and forest ones, swapping palettes, backdrop and debris on set frames.
+//   Meanwhile expanding elliptical rings are drawn into a wave picture that
+//   persists in work, explosion cells fan out from the impact, and the
+//   debris objects rise and are recycled behind a scrolling explosion front.
+//
+// Both parts skip ahead on A or B, by different rules: the gathering simply
+// ends after frame 4, while the sweep jumps to its next transition frame
+// (150, 214 or 280).
+//
+// Particle slots: the gathering's motes use PARTICLES 0 to 127 and its
+// sparks 128 to 255 (JUDGMENT_SPARKS). The sweep's debris use particles 0
+// to 15, one for each debris object.
+//
+// The work block is laid out as JudgmentWork: the sheet's pixels first (the
+// sweep's wave picture is its first 120x120 bytes), then eight dimmed copies
+// of the mote sheet.
+
+struct JudgmentWork {
+  u8 sheet[0x2710];
+  u8 ramp[8][770];
+};
+
+#define JUDGMENT_SPARKS (&PARTICLES[128])
+
+#define JUDGMENT_GATHER_FRAMES 160      // frames of the gathering
+#define JUDGMENT_SWEEP_FRAMES 320       // frames of the sweep
+#define JUDGMENT_SHEET_FLARE_B 0x4240   // the second flare picture in the sheet
+#define JUDGMENT_FORMATION_OBJECTS 16   // objects in the formation
+#define JUDGMENT_DEBRIS_OBJECTS 16      // debris objects of the sweep
+#define JUDGMENT_SHEET_BURST 0x600      // the burst pictures in the sheet
+#define JUDGMENT_SHEET_EXPLOSION 0x4000 // the explosion pictures in the sheet
+#define JUDGMENT_SHEET_FLARE_A 0x4000   // the first flare picture in the sheet
+// The small flash picture in the sheet.
+#define JUDGMENT_SHEET_FLASH_SMALL 0x6000
+// The large flash picture in the sheet.
+#define JUDGMENT_SHEET_FLASH_LARGE 0x6110
+// The flash streak picture in the sheet.
+#define JUDGMENT_SHEET_FLASH_STREAK 0x64e8
+#define JUDGMENT_EXPLOSION_CELL_BYTES 1728 // bytes in each explosion picture
+#define JUDGMENT_WAVE_SIZE 120             // the wave picture is 120x120
+#define JUDGMENT_DMA_FILL_CANVAS                                               \
+  DMA_FILL_WORDS(0x1000) // DMA word that clears the canvas
+// DMA word that clears the wave picture.
+#define JUDGMENT_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
+
+// Abilities: Judgment (scene kind 9).
+//
+// The battle wipes away to a violet sky where a formation flies forward
+// while motes gather into it, bursts in a flash and sends out a ring of
+// light. The scene then cuts to an aerial view where the blast spreads in
+// rings, to a beach, and to a forest swept by an explosion front, before
+// brightening back into the battle. The notes above describe both parts.
+void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
+  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  s32 anchor[3];
+  struct EffectPosition projectedPosition;
+  struct SpritePlacement place;
+  volatile u32 fill;
+  struct SpritePlacement debrisPlace;
+  struct SpriteScale pair;
+  struct SpriteScale scale;
+  void *canvas;
+  struct BattleEffectWork *work;
+  struct BattlePresentationTransition *ctrl;
+  DrawRectangle draw[2];
+  s32 frame;
+  u8 *ramp;
+  struct BattleCamera *camera;
+  s32 depth;
+  s32 zoom;
+  s32 minimumDepth;
+  s32 maximumDepth;
+  void **cache;
+  DrawRectangle *slots;
+  s32 cx;
+  s32 cy;
+  s32 squash;
+  s32 sx;
+  s32 ring;
+  s32 rings;
+  s32 shift;
+  s32 i;
+  s32 j;
+  struct EffectStep *particle;
+  DrawRectangle blit;
+  volatile u16 *ime;
+
+  cache = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  ime = (u16 *)&REG_IME;
+  canvas = cache[0];
+  work = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
+  ctrl = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
+  camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
+  work->effect = effect;
+  EFFECT_BEGIN_NARROW_CANVAS(0x2000);
+  BattleFx_ConfigureEffectDisplay();
+  PLTT_BACKDROP = 0;
+  *(u16 *)&BG_PLTT[1] = 0;
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                      COMPOSITE_ADDITIVE);
+  draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
+  work->transferMode = CANVAS_COPY;
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
+  // Wipe the battle away, change the backdrop behind it, wipe back.
+  BattleFx_WipeCanvas(0, 0);
+  BattleFx_SelectLivingTargets(work->effect);
+  BattleFx_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
+  gProjection.centerY = 240;
+  WaitFrames(1);
+  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  ctrl->active = 1;
+  gBgScroll[1].x = 0;
+  BattleFx_WipeCanvas(0, 1);
+  EFFECT_SHOW_WIDE_CANVAS(16);
+  depth = 0xffc00000;
+  zoom = 0x80000;
+  minimumDepth = 0xffff;
+  maximumDepth = 0;
+  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB,
+                             work->sheet + JUDGMENT_SHEET_BURST, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c,
+                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
+
+  // Eight ever darker copies of the particle sprites, for fading: copy i
+  // caps every colour level at 64 - 7i, and the ring of motes from frame 144
+  // steps through them.
+  for (i = 0; i != 8; i++) {
+    u8 *src = ramp;
+    for (j = 0; j != 770; j++) {
+      s32 v = *src++;
+      EFFECT_CAP_LEVEL(v, 64 - i * 7);
+      ((struct JudgmentWork *)work)->ramp[i][j] = v;
+    }
+  }
+
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet),
+                  128);
+
+  for (i = 0; i != 128; i++) {
+    // A mote's radius is its x and its angles its velocities. It takes four
+    // random numbers: the fourth overwrites velocityY, losing the third.
+    PARTICLES[i].x = (Random16() & 15) + 72;
+    PARTICLES[i].velocityX = Random16() & 0xffff;
+    PARTICLES[i].velocityY = Random16() & 0xffff;
+    PARTICLES[i].velocityY = Random16() & 0xffff;
+  }
+
+  for (i = 0; i != 128; i++) {
+    // Sparks on a ring, 32 to 95 pixels up; only the disabled stage in the
+    // frame loop uses them.
+    s32 angle = Random16() & 0xffff;
+    /* FAKEMATCH: a form the bytes prove: the amplitude is a value, not a
+     * literal: the native hoists 255 into sl and multiplies with muls.
+     * 2026-10-13: 255 written at both multiplies differs 142 of 2455; amp and
+     * speed set before the loop differ 2 (i = 0 is scheduled after them), set
+     * after i = 0 or in the for initializer 0, the same bytes as here. */
+    s32 amp = 255;
+    /* FAKEMATCH: register choice: the velocities' zero is a value set at the
+     * top of the body, which loop.c hoists into r8 as the native's. 2026-10-13:
+     * 0 stored directly differs 138 of 2455; see amp for the forms set before
+     * the loop. */
+    s32 speed = 0;
+    JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
+    JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
+    JUDGMENT_SPARKS[i].y = ((Random16() & 63) + 32) << 16;
+    JUDGMENT_SPARKS[i].velocityX = speed;
+    JUDGMENT_SPARKS[i].velocityY = speed;
+    JUDGMENT_SPARKS[i].variant = angle;
+  }
+
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
+
+  // The gathering. A or B ends it after frame 4; on frame 143 the whole
+  // canvas flashes.
+  for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
+                  (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
+       frame++) {
+    /* FAKEMATCH: the frame > 143 block calls through a pointer
+     * to the slot table (base kept at sp+56) 2026-10-11: set once before the
+     * frame loop differs 22 (the preheader reload registers rotate); as a local
+     * of the frame > 143 block 579; the slot table named at the uses 581. */
+    slots = (DrawRectangle *)gWorkSlot;
+    if (frame == 143) {
+      Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
+      AudioCommand_PlayFar(SE_145);
+    }
+    if (frame == 80) {
+      AudioCommand_PlayFar(SE_142);
+    }
+
+    // Retain the disabled particle stage: this loop starts at frame zero.
+    if (frame < 0) {
+      EFFECT_VIEW_FROM_CAMERA(camera);
+      for (i = 0; i != 128; i++) {
+        s32 z;
+        s32 size;
+
+        EffectStep_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -0x400);
+        EffectPosition_ApplyBaseAndYOffset(&JUDGMENT_SPARKS[i],
+                                           &projectedPosition);
+        projectedPosition.x >>= 1;
+        projectedPosition.y -= 120;
+        if (projectedPosition.depth < 100) {
+          projectedPosition.depth = 100;
+        }
+        if (projectedPosition.depth > 900) {
+          projectedPosition.depth = 900;
+        }
+        z = projectedPosition.depth - 100;
+        projectedPosition.depth = z;
+        size = (z / 100) + 1;
+        if (minimumDepth > z) {
+          minimumDepth = z;
+        }
+        if (maximumDepth < z) {
+          maximumDepth = z;
+        }
+        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+                         projectedPosition.y, size);
+        if (frame == 64) {
+          JUDGMENT_SPARKS[i].velocityX +=
+              (Trig_Sin(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
+          JUDGMENT_SPARKS[i].velocityY +=
+              (Trig_Cos(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
+        }
+      }
+    }
+
+    if (frame == 72) {
+      work->fadeFrames = 24;
+      work->fadeStep = 0;
+    }
+
+    // Motes 0 to 63: from frame 81 + i / 4, mote i spins about the
+    // formation's centre on its own axes while its radius shrinks by 2 a
+    // frame to nothing. Nearer motes are drawn larger.
+    anchor[2] = 0;
+    anchor[1] = 0;
+    for (i = 0; i != 64; i++) {
+      if (frame > i / 4 + 80 && PARTICLES[i].x > 0) {
+        s32 size;
+
+        Render_ResetTransformState();
+        SceneTransform_ApplyRoll(PARTICLES[i].velocityY);
+        SceneTransform_ApplyPitch(PARTICLES[i].velocityX);
+        SceneTransform_ApplyYaw(PARTICLES[i].velocityY + (frame << 9));
+        anchor[0] = PARTICLES[i].x;
+        PARTICLES[i].x -= 2;
+        if (PARTICLES[i].x < 0) {
+          PARTICLES[i].x = 0;
+        }
+        EffectPosition_ApplyBaseAndYOffset(anchor, &projectedPosition);
+        if (projectedPosition.depth < -60) {
+          projectedPosition.depth = -60;
+        }
+        if (projectedPosition.depth > 60) {
+          projectedPosition.depth = 60;
+        }
+        projectedPosition.depth += 60;
+        size = projectedPosition.depth / 20 + 2;
+        projectedPosition.x += 60;
+        projectedPosition.y += 80;
+        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+                         projectedPosition.y, size);
+      }
+    }
+
+    // Place the 4x4 formation at its natural size, then move it: it slows
+    // over the first 48 frames and eases towards a stop from frame 33,
+    // jumps back on frame 144 and drifts forward from 146. Frames 72 and 76
+    // change its animation.
+    pair = unitScale;
+    place.groundHeight = 0;
+    place.height = 0;
+    for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
+      place.x = ((i % 4) << 21) + (152 << 15);
+      place.y = ((i / 4) << 21) + depth;
+      Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
+    }
+
+    depth += zoom;
+    if (frame <= 47) {
+      zoom -= 0x4000;
+    }
+    if (frame > 32) {
+      zoom = zoom * 60 / 64;
+    }
+    if (frame == 144) {
+      zoom = -0x80000;
+    }
+    if (frame == 146) {
+      zoom = 0x10000;
+    }
+
+    if (frame == 72) {
+      for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
+        AnimationObjects_SelectAnimationFar(work->objects[i], i + 16);
+      }
+    }
+    if (frame == 76) {
+      for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
+        AnimationObjects_SelectAnimationFar(work->objects[i], i + 32);
+      }
+    }
+
+    // Frames 116 to 143: the burst grows a picture every 4 frames at
+    // (60, 80), drawn as four mirrored quarters, and six shards scatter
+    // around it each frame.
+    if (frame >= 116 && frame < 144) {
+      s32 high;
+      s32 cell;
+      s32 n = (frame - 116) / 4;
+      if (n > 6) {
+        n = 6;
+      }
+      // A shared load/draw/release helper grew this runner by eight bytes
+      // in English (0x167c to0x1684); keep these four explicit draws.
+      high = gJudgment_BurstHeights[n];
+      cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
+
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_Y,
+                          COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, work->sheet + cell, 60, 80, high, high * 2);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+
+      for (i = 0; i != 6; i++) {
+        s32 k = i & 3;
+        s32 angle = Random16() & 0xffff;
+        s32 x = ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
+        s32 y = ((Trig_Cos(angle) * 16) >> 16) - gJudgment_ShardHeights[k] / 2;
+        draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60, y + 80,
+                gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
+      }
+    }
+
+    // From frame 144: a mirrored beam slides down 16 pixels a frame, the
+    // canvas keeps 75% of each frame, and for 14 frames a ring of 128 motes
+    // spreads from (60, 72) by 10 pixels a frame, a dimmer copy every 2
+    // frames. Each draw loads the alternate blitter and releases it at once.
+    if (frame > 143) {
+      s32 top = (frame << 4) - 2272;
+      s32 n;
+      s32 r;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                          COMPOSITE_ADDITIVE);
+      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 36, top, 24, 64);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_ADDITIVE);
+      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 60, top, 24, 64);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+
+      n = (frame - 144) / 2;
+      r = frame * 10 - 1424;
+      work->transferValue = 75;
+      if (n <= 6) {
+        s32 cell = n * 770 + gBattleFx_MoteCells[7] + 0x2710;
+        /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp.
+         * 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
+        s32 high = 8;
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+        blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+        for (i = 0; i != 128; i++) {
+          s32 angle = i << 9;
+          s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
+          s32 y = (r * Trig_Cos(angle)) >> 17;
+          blit(canvas, work->sheet + cell, x + 60, y + 72, high, high * 2);
+        }
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      }
+    }
+
+    EFFECT_PRESENT_FRAME(work);
+  }
+
+  // The sweep: replace the formation with 16 debris objects in three
+  // animations, load the crescent sheet and show the aerial view.
+  Iwram_FillWords(canvas, 0x4000, 0);
+
+  for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
+    ResourceObject_ReleaseFar(work->objects[i]);
+  }
+
+  for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
+    struct AnimationObject *obj = ResourceObject_CreateFar(0x186);
+    work->objects[i] = obj;
+    if (obj != 0) {
+      obj->flags = 0;
+      AnimationObjects_SelectAnimationFar(obj, (i % 3));
+      work->objects[i]->image.priority = 0;
+    }
+  }
+
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                      COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
+                             work->sheet + 0x4000, 1, 1);
+
+  {
+    // Move the mote sheet's bright levels up the palette, the rest to 1.
+    u8 *c = ramp;
+    for (i = 0; i != 770; i++, c++) {
+      if (*c > 32) {
+        *c += 224;
+      } else if (*c != 0) {
+        *c = 1;
+      }
+    }
+  }
+
+  work->fadeFrames = 0;
+  work->fadeStep = 0;
+  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  REG_BG2PA = Q_8_8(1);
+  REG_BG2X = -0x3c00;
+  REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7);
+
+  fill = 0;
+  Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+
+  // The rings' centre in the wave picture (cx, cy), their width in eighths
+  // (sx, which also scales them above the centre), their depth below it
+  // (squash) and how many are drawn a frame. shift is the explosion
+  // front's x.
+  cx = 60;
+  cy = 44;
+  squash = 6;
+  shift = 0;
+  ring = 0;
+  sx = 8;
+  rings = 2;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+
+  fill = shift;
+  Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+
+  // The sweep, on its own frame clock: the impact on the aerial view (0 to
+  // 149), the beach (150 to 213), the forest (214 to 279), and from 280 the
+  // battle again, brightening a step every frame. On frame 300 the battle
+  // shows the damage.
+  for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
+    if (frame == 66) {
+      AudioCommand_PlayFar(SE_145);
+      AudioCommand_PlayFar(SE_141);
+    }
+    if (frame == 155) {
+      AudioCommand_PlayFar(SE_162);
+    }
+    if (frame == 217) {
+      AudioCommand_PlayFar(SE_156);
+    }
+    if (frame == 280) {
+      AudioCommand_PlayFar(SE_GATE_MOVE);
+    }
+    if (frame == 300) {
+      BattleEventRuntime_BeginPhaseFar(SE_145);
+    }
+
+    // A or B jumps to the next part: 150, 214 or 280. The jump to the beach
+    // also does the part of frame 64's change it would pass over.
+    if (gKeysRepeat & (KEY_A | KEY_B)) {
+      if (frame >= 5 && frame < 150) {
+        frame = 150;
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
+        Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
+                                   work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
+                                   0);
+      } else if (frame >= 155 && frame < 214) {
+        frame = 214;
+      } else if (frame >= 219 && frame < 280) {
+        frame = 280;
+      }
+    }
+
+    // Frame 64: BG2 back to twice the width, clear the canvas and load the
+    // explosion and flash pictures.
+    if (frame == 64) {
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
+      fill = 0;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
+                                 work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
+                                 work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
+                                 0);
+    }
+
+    if (frame == 66) {
+      // Invert the backdrop's colours, background palettes 6 to 13.
+      u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
+      for (i = 0; i != 128; i++, pal++) {
+        *pal ^= 0x7fff;
+      }
+    }
+
+    // Frames 69, 182 and 238 flash the whole canvas.
+    if (frame == 69) {
+      fill = 0x3f3f3f3f;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+    }
+
+    if (frame == 70) {
+      BattlePresentation_ConfigurePaletteFadeFar(
+          1, (s32)&ResourceId_AerialViewBackdrop, 7);
+    }
+
+    // Frame 150, the beach: the rings restart from (112, 32), four a frame
+    // and as deep below the centre as they are wide.
+    if (frame == 150) {
+      cx = 112;
+      cy = 32;
+      ring = 0;
+      fill = 0;
+      rings = 4;
+      squash = 8;
+      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+      fill = 0x3f3f3f3f;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
+    }
+
+    // Frame 214, the forest: 16 debris pieces start rising from the forest
+    // floor, those further right drawn smaller.
+    if (frame == 214) {
+      fill = 0;
+      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+      fill = 0x3f3f3f3f;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
+      for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
+        particle = &work->particles[i];
+        particle->x = ((Random16() & 63) + 32) << 16;
+        particle->y = ((Random16() & 31) + 96) << 16;
+        particle->velocityY = ((Random16() & 15) + 16) << 15;
+        particle->z = 0x8000 - (particle->x >> 7);
+        particle->variant = 1;
+      }
+    }
+
+    if (frame == 280) {
+      // Back to the battle: blend the canvas over it again, fill the canvas
+      // with colour 1 and restart the debris off the right of the screen,
+      // where the explosion front now scrolls back from.
+      BattleFx_SetupBlendedDisplay();
+      fill = 0;
+      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+      fill = 0x01010101;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      ctrl->active = 0;
+      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
+        particle = &work->particles[i];
+        particle->x = ((Random16() & 63) + 256) << 16;
+        particle->y = ((Random16() & 31) + 96) << 16;
+        particle->velocityY = ((Random16() & 15) + 16) << 15;
+        particle->z = 0;
+      }
+      shift = 272;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
+    }
+
+    if (frame > 279) {
+      /* FAKEMATCH: palette RAM through a volatile pointer: the native keeps
+         red's mask 31 in the loop rather than hoisting it; a plain pointer
+         differs in 52 of 2455 rows. */
+      volatile u16 *pal = (volatile u16 *)0x05000002;
+      for (i = 0; i != 63; i++, pal++) {
+        s32 c = *pal;
+        s32 b = ((u16)c >> 10) & 31;
+        s32 g = ((u16)c >> 5) & 31;
+        s32 r = c & 31;
+        b++;
+        g++;
+        r++;
+        if (b > 31) {
+          b = 31;
+        }
+        if (g > 31) {
+          g = 31;
+        }
+        if (r > 31) {
+          r = 31;
+        }
+        *pal = RGB(r, g, b);
+      }
+    }
+
+    if (frame == 182) {
+      fill = 0x3f3f3f3f;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+    }
+
+    // Frames 0 to 63: a flare falls onto the aerial view, drawn as four
+    // mirrored quarters, its picture flickering every 4 frames.
+    if (frame <= 63) {
+      u8 *sheet;
+      s32 top = frame - 4;
+      if ((frame & 7) < 4) {
+        sheet = work->sheet + JUDGMENT_SHEET_FLARE_A;
+      } else {
+        sheet = work->sheet + JUDGMENT_SHEET_FLARE_B;
+      }
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, sheet, 36, top - 24, 24, 24);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X,
+                          COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, sheet, 59, top - 24, 24, 24);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_Y,
+                          COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, sheet, 36, top - 1, 24, 24);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          COMPOSITE_MAX);
+      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+          canvas, sheet, 59, top - 1, 24, 24);
+      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    }
+
+    // Frames 64 to 85: the flash plays twice: a small picture, a large one,
+    // then four streaks that close in (68 to 75) or spread out (82 to 85).
+    if (frame >= 64 && frame < 66) {
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
+    }
+    if (frame >= 66 && frame < 68) {
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
+    }
+    if (frame >= 68 && frame < 76) {
+      s32 d = 76 - frame;
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
+              d + 38, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
+              d + 38, 22, 44);
+    }
+    if (frame >= 78 && frame < 80) {
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
+    }
+    if (frame >= 80 && frame < 82) {
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
+    }
+    if (frame >= 82 && frame < 86) {
+      s32 d = frame * 2 - 164;
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
+              d + 38, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
+              d + 38, 22, 44);
+    }
+
+    // Frames 72 to 75: a ring of 256 motes grows around (60, 50).
+    if (frame >= 72 && frame < 76) {
+      s32 r2 = (frame << 4) - 1136;
+      /* FAKEMATCH: the size is a value, so 5 and 20 are hoisted into fp and sl.
+       * 2026-10-13: the literals (5, [9], 10 and 20) differ 100 of 2455. */
+      s32 size = 10;
+      for (i = 0; i != 256; i++) {
+        s32 angle = i << 8;
+        s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
+        s32 y = (Trig_Cos(angle) * r2) >> 17;
+        draw[0](canvas, ramp + gBattleFx_MoteCells[size - 1], x + 60, y + 50,
+                size, size * 2);
+      }
+    }
+
+    if (frame > 85) {
+      // Frames 86 to 213: draw that many more rings a frame into the wave
+      // picture, each one pixel wider than the last.
+      if (frame <= 213) {
+        for (i = 0; i != rings; i++, ring++) {
+          s32 radius = ring;
+          s32 slope = 0;
+          s32 err = ring;
+          // A midpoint circle, one point plotting all eight octants, scaled
+          // by sx and squash. The rise above the centre takes sx, not
+          // squash, so the rings are lopsided; each point is plotted again
+          // with half unscaled, one pixel to the right.
+          while (radius >= slope) {
+            s32 half;
+            s32 halfSlope;
+            s32 left;
+            s32 right;
+            s32 top;
+            s32 bottom;
+            s32 dx;
+
+            half = radius / 2;
+            dx = (half * sx) / 8;
+            right = cx + dx;
+            /* FAKEMATCH: a dead branch restores the label CSE and reload saw
+             * between the edges. 2026-10-13: without it 67 of 2455 differ; as
+             * if (dx > cx) left = 0; else left = cx - dx; 173. */
+            if (dx > cx) {
+              left = 0;
+            }
+            left = cx - dx;
+            bottom = cy + (slope * squash) / 8;
+            top = cy - (slope * sx) / 8;
+            if (top < 0) {
+              top = 0;
+            }
+            if (bottom > 119) {
+              bottom = 119;
+            }
+            if (left < 0) {
+              left = 0;
+            }
+            if (right > 119) {
+              right = 119;
+            }
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
+            right = cx + half + 1;
+            left = cx - half + 1;
+            if (left < 0) {
+              left = 0;
+            }
+            if (right > 119) {
+              right = 119;
+            }
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
+
+            halfSlope = slope / 2;
+            dx = (halfSlope * sx) / 8;
+            right = cx + dx;
+            /* FAKEMATCH: a dead branch restores the label CSE and reload saw
+             * between the edges. 2026-10-13: without it 1954 of 2455 differ,
+             * without both dead branches 1949. */
+            if (dx > cx) {
+              left = 0;
+            }
+            left = cx - dx;
+            bottom = cy + (radius * squash) / 8;
+            top = cy - (radius * sx) / 8;
+            if (left < 0) {
+              left = 0;
+            }
+            if (right > 119) {
+              right = 119;
+            }
+            if (top < 0) {
+              top = 0;
+            }
+            if (bottom > 119) {
+              bottom = 119;
+            }
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
+            right = cx + halfSlope + 1;
+            left = cx - halfSlope + 1;
+            if (left < 0) {
+              left = 0;
+            }
+            if (right > 119) {
+              right = 119;
+            }
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
+            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
+            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
+
+            err = err - slope * 2 - 1;
+            if (err < 0) {
+              err = err + radius * 2 - 2;
+              radius--;
+            }
+            slope++;
+          }
+        }
+      }
+    }
+
+    // Frames 86 to 149: nine animated explosions fan out downward from the
+    // impact.
+    if (frame >= 86 && frame < 150) {
+      s32 angle = -0x4000;
+      for (i = 0; i != 9; i++, angle += 0x1000) {
+        s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
+        s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
+        draw[0](canvas,
+                work->sheet +
+                    ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                    JUDGMENT_SHEET_EXPLOSION,
+                x + 44, y + 17, 32, 54);
+      }
+    }
+
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                        COMPOSITE_ADDITIVE);
+    draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    if (frame > 85) {
+      // From frame 86 add the wave picture over the canvas.
+      draw[1](canvas, work, 0, 0, JUDGMENT_WAVE_SIZE, JUDGMENT_WAVE_SIZE);
+    }
+
+    if (frame > 279) {
+      shift -= 8;
+    }
+
+    // Never true: the sweep ends on frame 319. The targets' reaction is
+    // kept.
+    if (frame > 319) {
+      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_BLACK,
+                                  POSE_DAMAGE, -1, 0);
+      }
+    }
+
+    if (frame == 238) {
+      fill = 0x3f3f3f3f;
+      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+    }
+
+    // Frames 214 to 279: the forest scrolls 8 pixels a frame, and from 246
+    // the explosion front follows it over a plain canvas copy; from 280 the
+    // front scrolls back.
+    if (frame >= 214 && frame < 280) {
+      gBgScroll[1].x += 8;
+    }
+
+    if (frame >= 246 && frame < 280) {
+      shift += 8;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
+    }
+
+    // From frame 214 each debris object is placed from its particle: x and y
+    // on the field, 255 pixels below the ground line, scaled by z plus 1/128
+    // of y but never below 1/32.
+    // From frame 214 each live debris piece rises; one that leaves the top
+    // comes back near the explosion front, ahead of it while it scrolls
+    // right and behind it after, and after frame 301 it stays gone. Then
+    // the front: eight jittering explosions in two columns, leaning with
+    // the way it scrolls.
+    if (frame > 213) {
+      debrisPlace.groundHeight = 0;
+      debrisPlace.height = 0;
+      for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
+        particle = &work->particles[i];
+        if (particle->variant != 0) {
+          scale.x = particle->z + (particle->y >> 7);
+          if (scale.x < 0x800) {
+            scale.x = 0x800;
+          }
+          scale.y = scale.x;
+          debrisPlace.x = particle->x;
+          debrisPlace.height = 0xff0000;
+          debrisPlace.y = particle->y + 0xff0000;
+          Object_ApplyProjectedPlacementFar(work->objects[i], &debrisPlace,
+                                            &scale, 0);
+          particle->y -= particle->velocityY;
+          if (particle->y < 0x100000) {
+            if (frame <= 279) {
+              particle->x = ((Random16() & 63) + shift + 32) << 16;
+            } else {
+              particle->x = ((Random16() & 63) + shift - 32) << 16;
+            }
+            if (frame > 301) {
+              particle->variant = 0;
+            } else if (frame > 245) {
+              particle->y = 0x600000;
+            } else {
+              particle->y = 0xc00000 - particle->x;
+            }
+          }
+        }
+      }
+
+      if (frame <= 279) {
+        for (i = 0; i != 8; i++) {
+          s32 x =
+              (i & 1) * 20 - (Random16() & 15) + (i / 2) * 4 + shift / 2 - 16;
+          s32 y = (i / 2) * 32 - (Random16() & 15);
+          draw[1](canvas,
+                  work->sheet +
+                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                      JUDGMENT_SHEET_EXPLOSION,
+                  x, y, 32, 54);
+        }
+      } else {
+        for (i = 0; i != 8; i++) {
+          s32 x =
+              (i & 1) * 20 + (Random16() & 15) - (i / 2) * 4 + shift / 2 - 16;
+          s32 y = (i / 2) * 32 - (Random16() & 15);
+          draw[1](canvas,
+                  work->sheet +
+                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                      JUDGMENT_SHEET_EXPLOSION,
+                  x, y, 32, 54);
+        }
+      }
+    }
+
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+
+    // From frame 64 the backdrop shakes up and down.
+    if (frame > 63) {
+      /* FAKEMATCH: forced temporary: the shake value through an s32 keeps the
+       * AND constant an immediate and the instruction count native's.
+       * 2026-10-13: gBgScroll[1].y = (Random16() & 3) + 30 directly differs 17
+       * of 2455, 2456 instructions. */
+      s32 shake = (Random16() & 3) + 30;
+
+      gBgScroll[1].y = shake;
+    }
+
+    EFFECT_PRESENT_FRAME(work);
+  }
+
+  for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
+    ResourceObject_ReleaseFar(work->objects[i]);
+  }
+
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+}

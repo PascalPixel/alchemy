@@ -1,10 +1,10 @@
 // Near miss, differ 150 of 1490 (summon 5, the thorn vines), with one
 // tagged forced temporary (355 without).
 
-// ☀️ twin: BattleEffect_RunDitherDissolveScene
+// ☀️ twin: BattleFx_RunCybele
 // (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line
 // for line: formation 645 spawned first, transparent blitters
-// Func_081963ec(104, 0x23) and (188, 0x27) and then max blitters (104,
+// BattleFx_LoadBlitter(104, 0x23) and (188, 0x27) and then max blitters (104,
 // 0x13) and (188, 0x17) for the explosion, Iwram_ClearWords when A or B
 // skips, the camera from Ram_HeapSlots->cameraWork, shake (4, 4) in the
 // middle phase where ☀️ has (2, 2), and the effect argument for every
@@ -17,7 +17,7 @@
 // Tried (differ):
 // trial 2's port, no device (effects trial, 2026-10-15)              363
 // trial 2 with the forced temporary at the second explosion blitter   158
-// Func_081963ec declared returning s32 (plan 0c): with the temporary
+// BattleFx_LoadBlitter declared returning s32 (plan 0c): with the temporary
 // 150, without it 355
 
 #include "types.h"
@@ -55,27 +55,27 @@ struct EffectCamera {
 extern char ResourceId_ThornVineSheet;
 extern char ResourceId_YellowRingSheet;
 extern char ResourceId_BlastSheet;
-extern u8 Data_081981fc[];  // ☀️ gThornVines_ObjectPoses
-extern u16 Data_08198202[]; // ☀️ gThornVines_ThornOffsets
-extern u8 Data_0819820c[];  // ☀️ gThornVines_ThornWidths
-extern u8 Data_08198211[];  // ☀️ gThornVines_ThornHeights
-extern u16 Data_08198216[]; // ☀️ gThornVines_LeafOffsets
-extern u8 Data_0819821c[];  // ☀️ gThornVines_LeafSizes
-extern u16 Data_08198220[]; // ☀️ the second gThornVines_ThornOffsets
-extern u8 Data_0819822a[];  // ☀️ the second gThornVines_ThornWidths
-extern u8 Data_0819822f[];  // ☀️ the second gThornVines_ThornHeights
-extern u16 Data_08198234[]; // ☀️ gThornVines_SparkOffsets
-extern u8 Data_0819823e[];  // ☀️ gThornVines_SparkSizes
-extern u16 Data_08198244[]; // ☀️ gThornVines_EmberOffsets
-extern u16 Data_08198252[]; // ☀️ gThornVines_EmberSizes
+extern u8 Data_081981fc[];  // ☀️ gCybele_ObjectPoses
+extern u16 Data_08198202[]; // ☀️ gCybele_ThornOffsets
+extern u8 Data_0819820c[];  // ☀️ gCybele_ThornWidths
+extern u8 Data_08198211[];  // ☀️ gCybele_ThornHeights
+extern u16 Data_08198216[]; // ☀️ gCybele_LeafOffsets
+extern u8 Data_0819821c[];  // ☀️ gCybele_LeafSizes
+extern u16 Data_08198220[]; // ☀️ the second gCybele_ThornOffsets
+extern u8 Data_0819822a[];  // ☀️ the second gCybele_ThornWidths
+extern u8 Data_0819822f[];  // ☀️ the second gCybele_ThornHeights
+extern u16 Data_08198234[]; // ☀️ gCybele_SparkOffsets
+extern u8 Data_0819823e[];  // ☀️ gCybele_SparkSizes
+extern u16 Data_08198244[]; // ☀️ gCybele_EmberOffsets
+extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer
-void Func_08143bb8(void);               // ☀️ BattleFx_EndCanvasLayer
-s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleEffect_LoadWork
-void Func_0814cc4c(
+void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
+s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
+void BattleFx_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
-void Func_08152404(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
+void BattleFx_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ☀️ PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ☀️ RunImpactBurst
 void Func_08118088(s32 actor, s32 motion);       // ☀️ ApplyVariantMotionFar
@@ -90,13 +90,13 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
-void Func_081434f8(void);            // ☀️ ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);            // ☀️ ObjectGroup_TickMemberTimers
 
 // Summon 5, the thorn vines: thorns fly in, vines grow up under the targets
 // and lift them while the ground throws up debris; the picture is erased
 // dot by dot, the targets are dropped from on high, and each lands in an
 // explosion with a ring of embers. A or B skips to the drop.
-void Func_0814ce30(struct BattleEffectArgument *effect) {
+void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
@@ -115,7 +115,7 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
   // picture is erased: eight shuffled runs of 0..127.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  Func_08152404(8, FORMATION_THORN_VINES, 1);
+  BattleFx_SpawnObjects(8, FORMATION_THORN_VINES, 1);
 
   order = Ram_MapCellBuffer;
   for (i = 0; i != 1024; i++)
@@ -140,16 +140,16 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
-  Func_081963ec(HEAP_BLITTER,
+  BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE,
+  BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                     COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_BG2X = -0x2000;
 
   // The vines (particles 0-15): x, the root's y, growth speed and delay.
@@ -184,7 +184,7 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
-  Func_0814cc4c(work->effect);
+  BattleFx_SelectLivingTargets(work->effect);
 
   height = -(64 << 16);
   speed = 0;
@@ -199,7 +199,7 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
     if (frame == 224)
       work->transferMode = 0;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 31) {
       work->shakeFrames = 8;
       Audio_PlayCue(157);
@@ -474,7 +474,7 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + 0x1680, 1, 1);
-      Func_081963ec(HEAP_BLITTER,
+      BattleFx_LoadBlitter(HEAP_BLITTER,
                     BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       /* FAKEMATCH: forced temporary: the blitter slot's address held across
@@ -484,7 +484,7 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
       {
         void **slots = Ram_HeapSlots->unkb8;
 
-        Func_081963ec(HEAP_BLITTER_ALTERNATE,
+        BattleFx_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                       BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                           COMPOSITE_FLIP_X);
         draw[1] = (DrawRectangle)slots[1];
@@ -494,7 +494,7 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
       REG_BG2X = 0;
       work->transferMode = 2;
       work->transferValue = 75;
-      Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(effect->actors[i])->object;
@@ -560,12 +560,12 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
       Func_08158ce0(4, 4);
     else
       Func_08158ce0(4, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
   Func_081180e8(134);
@@ -573,5 +573,5 @@ void Func_0814ce30(struct BattleEffectArgument *effect) {
   Func_0816467c(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

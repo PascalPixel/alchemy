@@ -1,7 +1,7 @@
 // Draft, differ 743 of 1075 (draft 1058 instructions, no device): effect
 // kind 125, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleFx_RunFallingSword 0.44 by shape, BattleFx_RunSeriesA 0.38
-// by call order); its backdrop swap is the one Func_0818fefc (kind 124)
+// (twins: BattleFx_RunTitanBlade 0.44 by shape, BattleFx_RunHealingMotes 0.38
+// by call order); its backdrop swap is the one BattleFx_RunMegiddo (kind 124)
 // also makes. Every call, cue and table read is in the native's order.
 // The native frame is 136 bytes: to at sp+124, from sp+112, the spawn list
 // sp+84, the blitter pair sp+76, the texture sp+68, effect sp+60, work
@@ -39,7 +39,7 @@ struct ModelTexture {
   const void *pixels;
 };
 
-// A model for the ARM renderer (Func_08196a7c). A textured model (kind 7)
+// A model for the ARM renderer (Render_DrawModelList). A textured model (kind 7)
 // takes a shade; a flat one (kind 3) the address of its colour.
 struct RenderModel {
   s32 kind;
@@ -72,12 +72,12 @@ extern const s16 Data_08199f2a[];
 extern const s16 Data_08199f2e[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
-void Func_08143bb8(void);
-void Func_081963ec(s32 slot, s32 value);
-void Func_08143000(void);
-void Func_0815b410(void);
-void Func_0817d6c4(void);
-void Func_08157530(s32 id, s32 targetId, s32 frames, s32 rate);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_LoadBlitter(s32 slot, s32 value);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void Graphics_LoadGreyRamp(void);
+void BattleFx_BuildRepeatingTilemap(void);
+void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -98,18 +98,18 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-struct RenderModel *Func_081969f8(s32 count);
+struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_08196958(const u8 *vertices, void *projected, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
-void Func_08158d68(s32 range);
-void Func_081434f8(void);
+void Camera_ApplyVerticalShake(s32 range);
+void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 // Effect kind 125, 114 frames. The screen turns to a scrolling red haze
@@ -119,7 +119,7 @@ void Audio_PlayCue(s32 cue);
 // a great slash crosses the screen and at 90 the target is struck and 128
 // flat shards scatter, tumbling; from frame 100 everything fades to white,
 // and at the end the battle backdrop returns.
-void Func_08190b74(struct BattleEffectArgument *effect) {
+void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
   struct EffectPosition from;
   struct EffectPosition to;
   s16 list[3];
@@ -150,12 +150,12 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
                              work->sheet + 0x2f10, 1, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   // The blitter faces the caster's side.
   if (effect->side == 0)
-    Func_081963ec(104, 1 << 4 | 3);
+    BattleFx_LoadBlitter(104, 1 << 4 | 3);
   else
-    Func_081963ec(104, 1 << 4 | 7);
+    BattleFx_LoadBlitter(104, 1 << 4 | 7);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   transition = Ram_HeapSlots->transitionWork;
@@ -171,7 +171,7 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
                                  0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
                                  0);
-      Func_0815b410();
+      Graphics_LoadGreyRamp();
       REG_BLDALPHA = 0x1010;
       for (i = 0; i != 64; i++)
         work->particles[i].variant = -1;
@@ -187,7 +187,7 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
       list[2] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-      Func_0817d6c4();
+      BattleFx_BuildRepeatingTilemap();
       palette = (u16 *)BG_PLTT + 96;
       for (i = 0; i != 128; i++) {
         u32 red = *palette & 31;
@@ -222,7 +222,7 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
       Audio_PlayCue(212);
       Object_SetMode(caster, 2);
       ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
-      Func_08157530(effect->actor, effect->actors[0], 7, 80);
+      BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
     }
 
     // Frame 90: the hit, and 128 shards scatter away from the caster.
@@ -265,9 +265,9 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
       if (effect->side == 0)
-        Func_081963ec(188, 1 << 4 | 11);
+        BattleFx_LoadBlitter(188, 1 << 4 | 11);
       else
-        Func_081963ec(188, 1 << 4 | 15);
+        BattleFx_LoadBlitter(188, 1 << 4 | 15);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
       Runtime_ReleaseHeapBlock(188);
@@ -342,9 +342,9 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
         }
         if (k == 1) {
           if (effect->side == 0)
-            Func_081963ec(188, 1 << 4 | 11);
+            BattleFx_LoadBlitter(188, 1 << 4 | 11);
           else
-            Func_081963ec(188, 1 << 4 | 15);
+            BattleFx_LoadBlitter(188, 1 << 4 | 15);
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         }
         draw[k](canvas, work->sheet, x - 20, y, 40, 80);
@@ -354,7 +354,7 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
     }
 
     projected = Runtime_BumpAllocateAlternatePool(32);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
     model->mesh = gData_08199364;
@@ -384,8 +384,8 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
           Func_080151e4(scale, scale * 2, scale);
           SceneTransform_ApplyPitch(Data_08199f2a[k]);
           SceneTransform_ApplyYaw(Data_08199f2e[k]);
-          Func_08196958(Data_081991e0, projected, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_DrawModelList(model);
         }
       }
 
@@ -405,8 +405,8 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
         Func_080151e4(scale, scale * 2, scale);
         SceneTransform_ApplyPitch(Data_08199f2a[k]);
         SceneTransform_ApplyYaw(Data_08199f2e[k]);
-        Func_08196958(Data_081991e0, projected, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991e0, projected, 4);
+        Render_DrawModelList(model);
       }
 
       // A flash at the target with each claw's hit.
@@ -427,8 +427,8 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
           Func_080151e4(scale, scale * 2, scale);
           SceneTransform_ApplyPitch(Data_08199f2a[k]);
           SceneTransform_ApplyYaw(Data_08199f2e[k]);
-          Func_08196958(Data_081991e0, projected, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_DrawModelList(model);
         }
       }
     }
@@ -452,8 +452,8 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
         Func_080151e4(step->variant * 3, step->variant * 6, step->variant);
         SceneTransform_ApplyPitch(step->z);
         SceneTransform_ApplyYaw(step->z);
-        Func_08196958(Data_081991a4, projected, 3);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_081991a4, projected, 3);
+        Render_DrawModelList(model);
         BattleFxKernels_IntegrateVector3(step, 62, 0);
         step++;
       }
@@ -461,8 +461,8 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
     MemFree(model);
     MemFree(projected);
 
-    Func_08158d68(8);
-    Func_081434f8();
+    Camera_ApplyVerticalShake(8);
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
@@ -472,7 +472,7 @@ void Func_08190b74(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

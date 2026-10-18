@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_RenderMode
+	.global BattleFx_RunTargetMotes
 	.thumb_func
-BattleFx_RenderMode:
+BattleFx_RunTargetMotes:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -303,9 +303,9 @@ BattleFx_RenderMode:
 .L_0814aa60:
 	.4byte gMapCellBuffer
 .L_0814aa64:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_0814aa68:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814aa6c:
 	ldr r3, [sp, #64]
 	ldr r4, [sp, #32]
@@ -480,14 +480,14 @@ BattleFx_RenderMode:
 .L_0814abcc:
 	movs r1, #3
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #104]
 	movs r1, #19
 	movs r0, #188
 	str r3, [sp, #76]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r0, #192
 	lsls r0, r0, #18
 	adds r0, #188
@@ -807,7 +807,7 @@ BattleFx_RenderMode:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -834,7 +834,7 @@ BattleFx_RenderMode:
 	ldr r0, .L_0814aeb8
 	bl Scheduler_RemoveCallback
 .L_0814ae8a:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -855,6 +855,6 @@ BattleFx_RenderMode:
 .L_0814aeb0:
 	.4byte IwramFillWords + 0x74
 .L_0814aeb4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814aeb8:
-	.4byte Func_08152474
+	.4byte BattleFx_ArmBg2AffineHBlankDma

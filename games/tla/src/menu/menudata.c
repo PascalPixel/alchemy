@@ -26,7 +26,7 @@ u8 gMenu_ListOrderMode0[24] = {
     1, 4, 3, 2, 5, 10, 6, 7, 8, 9, 11, 0xff,
 };
 
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
 // The item commands' cursor x, three columns a row
 s32 gItemMenu_CommandColumnXTable[6] = {
     86, 117, 166,
@@ -36,7 +36,7 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 #endif
 
 // The command names' widths
-#if defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH)
 u8 gCharacterMenu_CursorWidths[5] = {6, 7, 7, 6, 6};
 #else
 u8 gCharacterMenu_CursorWidths[5] = {9, 4, 6, 5, 7};

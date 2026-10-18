@@ -2,6 +2,7 @@
 #include "inventory.h"
 #include "call.h"
 #include "yallam_interiors.h"
+#include "edition.h"
 
 s32 Func_02000a90(void);
 void Func_02000a60(s32 actor, s32 angle);
@@ -90,7 +91,7 @@ void Func_02000524(void) {
         Object_GetById(14)->priorityFlags = 1;
         ObjectMotion_SetActionVariant(14, 1);
         Object_GetById(14)->priorityFlags |= 1;
-#ifndef TLA_EDITION_JA
+#if (LANGUAGE != LANGUAGE_JAPANESE)
         Func_020009f8(17, 0, 0);
 #endif
         YallamInteriors_FlagSet(0x301);

@@ -1,16 +1,15 @@
-// Draft of Func_0816d3d8, effect kind 100 (Stone Justice), written from the
+// Draft of BattleFx_RunStoneJustice, effect kind 100 (Stone Justice), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunShatteringRocks 0.502, call order BattleFx_RunFallingCrystals
-// 0.680); the shard drawing follows BattleFx_RunShatteringRocks, and the
-// shard tables are its gShatterRocks_ShardWidths, Heights and Cells.
+// BattleFx_RunSpire 0.502, call order BattleFx_RunPrism
+// 0.680); the shard drawing follows BattleFx_RunSpire, and the
+// shard tables are its gSpire_ShardWidths, Heights and Cells.
 
-// Listing 374 instructions, draft 374, differ 30.
-// Left: order rows only. The native loads the REG_BG2PA value from the
-// pool before it starts the register address, sets r1 (224) before r0 at
-// the first load and r0 (104) before r1 at the blitter, loads the blitter
-// slot before its offset, sets frame (r9) after the two position pointers,
-// and loads the height table after the width's shift; the pool offsets
-// move with them (about 12 rows).
+// Listing 374 instructions, draft 374, differ 14 (2026-10-18).
+// Left: order rows only. The native stores the third argument before it
+// copies the second to fp, loads the BLDCNT zero before it starts the
+// sheet offset (224), loads the blitter slot before its offset, sets frame
+// (r9) after the two position pointers, and starts REG_BG2X's address
+// before it reads the user's x.
 // Tried (differ):
 // first draft, plain HI macro, pointer-stepped rock loops          372
 // the two positions declared user first (their stack slots)        366
@@ -24,8 +23,15 @@
 // (s16)(v >> 16), *((s16 *)&v + 1)                                332
 // HI through an inline helper (FAKEMATCH below)                       30
 // alchemy permute 8 minutes, 2 jobs (found the helper)                30
-// The helper is a device here: Func_0816aa08 goes from 36 to 135 with
-// it, and Func_0816f928 from 218 to 212.
+// the BG2PA halfword pinned in a one-pass block (FAKEMATCH)         24
+// the height read where the call uses it (no local)                 18
+// BattleFx_LoadBlitter returning s32, as defined                    16
+// an empty asm after the REG_BG2X store (FAKEMATCH)                 14
+// the BLDCNT zero pinned as BG2PA's (16), an empty asm after the
+// blitter slot read (22), position pointers before the loop (36),
+// the frame loop as do-while (14), alchemy permute 5 minutes (14)
+// The helper is a device here: BattleFx_RunPlumeEdge goes from 36 to 135 with
+// it, and BattleFx_RunHurricane from 218 to 212.
 
 #include "types.h"
 #include "io_reg.h"
@@ -57,19 +63,19 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 extern char ResourceId_BoulderSheet;
 
-// The Broken Seal's gShatterRocks_ShardWidths, ShardHeights and ShardCells.
+// The Broken Seal's gSpire_ShardWidths, ShardHeights and ShardCells.
 extern u8 gData_0819749e[];
 extern u8 gData_081974ad[];
 extern u16 gData_081974bc[];
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void); // BattleFx_EndCanvasLayer
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_081963ec(s32 slot, s32 blitter); // BattleEffect_LoadWork, packed
+void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+s32 BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);          // ObjectGroup_UpdateMembers
-void Func_081434f8(void);                // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);                // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void BattleFx_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
@@ -91,7 +97,7 @@ void Audio_PlayCue(s32 cue);
 // they fly; from frame 64 the background scrolls after them and each
 // boulder turns toward the target; every boulder that reaches the target
 // shakes the screen and knocks the target back.
-void Func_0816d3d8(struct BattleEffectArgument *effect) {
+void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -110,15 +116,25 @@ void Func_0816d3d8(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  {
+    /* FAKEMATCH: the native loads the BG2PA halfword from the pool before it
+     * starts the register's address; pinned to r3 in a one-pass block it
+     * does (differ 22 without it). */
+    register u16 value __asm__("r3");
+
+    do {
+      value = 0x100;
+    } while (0);
+    REG_BG2PA = value;
+  }
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  Func_081963ec(104,
+  BattleFx_LoadBlitter(104,
                 BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
@@ -165,6 +181,9 @@ void Func_0816d3d8(struct BattleEffectArgument *effect) {
     }
     scrollX = scroll >> 16;
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
+    /* FAKEMATCH: the native stores REG_BG2X before it clears the hit flag
+     * (differ 16 without the barrier). */
+    __asm__("");
 
     // Each boulder spins through three pictures of its shard (z is its
     // spin rate, velocityZ the angle) and hits the target once it passes
@@ -173,16 +192,15 @@ void Func_0816d3d8(struct BattleEffectArgument *effect) {
     for (i = 0; i != ROCKS; i++) {
       s32 cell;
       u32 width;
-      u32 height;
 
       rock = &work->particles[i];
       cell = (i % 5) * 3 + rock->velocityZ / 96 % 3;
       width = gData_0819749e[cell];
-      height = gData_081974ad[cell];
 
       blit(canvas, work->sheet + gData_081974bc[cell] + 0x83c,
-           HI(rock->x) - width / 2 + scrollX, HI(rock->y) - height / 2, width,
-           height);
+           HI(rock->x) - width / 2 + scrollX,
+           HI(rock->y) - gData_081974ad[cell] / 2, width,
+           gData_081974ad[cell]);
       if (rock->variant == 0) {
         if (effect->side == 0) {
           if (targetPosition.x > HI(rock->x) + userPosition.x - 64) {
@@ -224,13 +242,13 @@ void Func_0816d3d8(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(2, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   ObjectDispatch_ApplyValueToChildrenFar(user, 16);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

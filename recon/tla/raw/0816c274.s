@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816c274
+@ Abilities: Crystal (kind 244).
+	.global BattleFx_RunCrystal
 	.thumb_func
-Func_0816c274:
+BattleFx_RunCrystal:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -115,7 +116,7 @@ Func_0816c274:
 	bne .L_0816c388
 	movs r0, #104
 	movs r1, #3
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0816c390
 	.2byte 0x0000
 .L_0816c368:
@@ -137,7 +138,7 @@ Func_0816c274:
 .L_0816c388:
 	movs r0, #104
 	movs r1, #7
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0816c390:
 	ldr r3, [sp, #52]
 	movs r5, #192
@@ -252,7 +253,7 @@ Func_0816c274:
 .L_0816c478:
 	.4byte 0x00001000
 .L_0816c47c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816c480:
 	bl Render_ResetTransformState
 	ldr r1, [sp, #16]
@@ -445,7 +446,7 @@ Func_0816c274:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r7, r0, #0
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r3, #6
 	adds r6, r0, #0
 	str r3, [r6]
@@ -495,9 +496,9 @@ Func_0816c274:
 	ldr r0, .L_0816c6f0
 	adds r1, r7, #0
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_0816c67c:
 	adds r0, r6, #0
 	bl MemFree
@@ -507,7 +508,7 @@ Func_0816c274:
 	movs r3, #120
 	str r3, [r2, #12]
 	str r3, [r2, #16]
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r4, [sp, #52]
 	lsls r1, r1, #7
@@ -528,7 +529,7 @@ Func_0816c274:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #104
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -554,4 +555,4 @@ Func_0816c274:
 .L_0816c6f0:
 	.4byte gData_08199210
 .L_0816c6f4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

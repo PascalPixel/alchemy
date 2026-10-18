@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816d130
+@ Abilities: Nirvana (kind 119).
+	.global BattleFx_RunNirvana
 	.thumb_func
-Func_0816d130:
+BattleFx_RunNirvana:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -63,7 +64,7 @@ Func_0816d130:
 	str r3, [r7, #16]
 	str r3, [r7, #20]
 	str r3, [r7, #24]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r6, [r6, #104]
 	movs r0, #239
 	lsls r0, r0, #7
@@ -286,7 +287,7 @@ Func_0816d130:
 	negs r3, r3
 	str r3, [r7, #24]
 .L_0816d382:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r4, #240
 	lsls r4, r4, #7
 	adds r4, #232
@@ -306,7 +307,7 @@ Func_0816d130:
 	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -322,6 +323,6 @@ Func_0816d130:
 .L_0816d3cc:
 	.4byte IwramCopyWords
 .L_0816d3d0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816d3d4:
 	.4byte gData_08197410

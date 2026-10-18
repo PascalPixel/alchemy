@@ -46,7 +46,7 @@
 #include "keystate.h"
 #include "owner_value.h"
 #include "party_state.h"
-#include "sound_ids.h"
+#include "songs.h"
 #include "fixed_math.h"
 #include "item_gift.h"
 #include "battle_calc.h"
@@ -84,6 +84,7 @@
 #include "fixed_point_position.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
+#include "macros.h"
 
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
@@ -905,9 +906,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
     ObjectDispatch_InitFromTable6Far(object);
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    SET_VELOCITY(object, 0, 0, 0);
     object->targetY = ACTOR_NO_TARGET;
     object->targetX = ACTOR_NO_TARGET;
     object->x = x;
@@ -942,14 +941,10 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
     ObjectDispatch_InitFromTable6Far(object);
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    SET_VELOCITY(object, 0, 0, 0);
     object->targetY = ACTOR_NO_TARGET;
     object->targetX = ACTOR_NO_TARGET;
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
     if (1 & object->flags) {
       s32 terrainId = object->terrainId;
       tileX = x;
@@ -1902,10 +1897,7 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
     px = minX;
   if (px > 312)
     px = 312;
-  if (py < minY)
-    py = minY;
-  if (py > 220)
-    py = 220;
+  CLAMP(py, minY, 220);
 
   window = UiText_OpenMessageWindowFar(state->message, px, py, 1);
   while (UiWork_IsIdleFar((struct UiWindow *)window) == 0)
@@ -2007,9 +1999,7 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
     map->origin = &camera->x;
     ObjectDispatch_InitFromTable4WithArgumentFar(camera, subject);
     if (keepPosition == 0) {
-      camera->x = subject->x;
-      camera->y = subject->y;
-      camera->z = subject->z;
+      SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
       if (work->mode != 3) {
         Map_ApplyWorkOriginAndSpanFar();
@@ -2085,9 +2075,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     positionZ = maximumZ;
   }
   if (shouldGlide == 0) {
-    camera->x = positionX;
-    camera->y = positionY;
-    camera->z = positionZ;
+    SET_POSITION(camera, positionX, positionY, positionZ);
     WaitFrames(1U);
     if (runtimeBlock->mode != 3) {
       Map_ApplyWorkOriginAndSpanFar();
@@ -2113,8 +2101,8 @@ void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
 // the camera to arrive, then 2 frames more.
 void Camera_WaitForArrival(void) {
   FieldObject_WaitForMoveFar(((struct FieldWork *)Runtime_AllocateBlock(
-                                     HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
-                                    ->camera);
+                                  HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+                                 ->camera);
   FieldEvent_WaitFrames(2);
 }
 
@@ -2138,9 +2126,7 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
     ObjectDispatch_InitFromTable4WithArgumentFar(camera, NULL);
     camera->linkedObject = target;
     if (keepCurrentPosition == 0) {
-      camera->x = target->x;
-      camera->y = target->y;
-      camera->z = target->z;
+      SET_POSITION(camera, target->x, target->y, target->z);
     }
   }
 }
@@ -2627,15 +2613,13 @@ s32 Field_TryJumpForward(void) {
   pos = &position;
 again:
   // The middle of the tile in front, then of the tile beyond.
-  pos->x = (leader->x & 0xfff00000) + 0x80000;
-  pos->y = leader->y;
-  pos->z = (leader->z & 0xfff00000) + 0x80000;
+  SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
+               (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x100000, angle, pos);
   if (Map_CheckObjectStepFar(leader, pos) == 1)
     return -1;
-  pos->x = (leader->x & 0xfff00000) + 0x80000;
-  pos->y = leader->y;
-  pos->z = (leader->z & 0xfff00000) + 0x80000;
+  SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
+               (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, pos);
   if (Map_CheckObjectStepFar(leader, pos) == 0) {
     // Crouch, then jump there.
@@ -2718,9 +2702,7 @@ s32 Field_ClimbDown(void) {
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
-      position->x = object->x;
-      position->y = object->y - 0x100000;
-      position->z = object->z;
+      SET_POSITION(position, object->x, object->y - 0x100000, object->z);
       result = CheckMapPositionCellOccupiedFar((const s32 *)position);
       if (result != 0)
         goto failure;
@@ -2793,9 +2775,7 @@ s32 Field_ClimbUp(void) {
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
-      position->x = object->x;
-      position->y = object->y;
-      position->z = object->z;
+      SET_POSITION(position, object->x, object->y, object->z);
       result = CheckMapPositionCellOccupiedFar((const s32 *)position);
       if (result != 0)
         goto failure;
@@ -3048,7 +3028,7 @@ void DisplayScroll_ArmHBlankDma(void) {
   dma = REG_DMA0;
   destination = (volatile u32 *)0x04000014; // REG_BG1HOFS
   status = dma[5];
-  control = status & (u16)~DMA_START_HBLANK_REPEAT;
+  control = status & (u16)~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] = control;
   status = dma[5];
   control = status & (u16)~DMA_ENABLE;
@@ -3152,7 +3132,7 @@ void DisplayScroll_DisarmHBlankDma(void) {
   Scheduler_RemoveCallback(DisplayScroll_ArmHBlankDma);
   Scheduler_RemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
   dma0 = REG_DMA0;
-  dma0[5] = (u16)~DMA_START_HBLANK_REPEAT & dma0[5];
+  dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];
   (void)dma0[5];
 }
@@ -5095,9 +5075,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
   s32 pos[3];
 
   if (object != 0) {
-    pos[0] = object->x;
-    pos[1] = object->y;
-    pos[2] = object->z;
+    SET_VECTOR(pos, object->x, object->y, object->z);
     Vector_AddPolarOffset(magnitude, angle, pos);
     Object_SetMoveTargetFar(object, pos[0], pos[1], pos[2]);
   }
@@ -5125,8 +5103,9 @@ s32 ResourceTable_CountFreeBlocks(void) {
 // returns the sprite whose block is shared from now on (sharedSprite, or
 // sourceSprite when there was none), or NULL for no sourceSprite. Chains of
 // afterimages pass one block along this way.
-struct AnimationObject *Sprite_ShareVramCache(
-    struct AnimationObject *sourceSprite, struct AnimationObject *sharedSprite) {
+struct AnimationObject *
+Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
+                      struct AnimationObject *sharedSprite) {
   struct AnimationObject *shared;
   struct AnimationObject *sprite;
 
@@ -5542,9 +5521,7 @@ void EventObject_Initialize(void) {
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
-  caster->velocityX = 0;
-  caster->velocityY = 0;
-  caster->velocityZ = 0;
+  SET_VELOCITY(caster, 0, 0, 0);
   if (scene->visible != 0) {
     AudioCommand_PlayFar(212);
     caster->update = BattleFx_FlickerObjectAndTick;
@@ -6092,9 +6069,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   // The hand goes 16 pixels above the target and 16 pixels toward angle.
   pusher->linkedObject = target;
   candidate = &position;
-  candidate->x = target->x.fixed;
-  candidate->y = target->y.fixed + (16 << 16);
-  candidate->z = target->z.fixed;
+  SET_POSITION(candidate, target->x.fixed, target->y.fixed + (16 << 16),
+               target->z.fixed);
   Vector_AddPolarOffset(16 << 16, angle, candidate);
   Object_SetMoveTargetFar(pusher, candidate->x, candidate->y, candidate->z);
   BattleFx_SnapScaleToFull((struct MotionObject *)pusher);
@@ -6121,9 +6097,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       Vector_AddPolarOffset(16 << 16, angle, &position);
       Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
       ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 1);
-      pusher->velocityX = 0;
-      pusher->velocityY = 0;
-      pusher->velocityZ = 0;
+      SET_VELOCITY(pusher, 0, 0, 0);
       continue;
     }
 
@@ -6147,7 +6121,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     if (Map_CheckObjectStepFar(target, &position) > 0) {
       ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
     }
     hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
@@ -6155,7 +6129,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       if (hit != user) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          AudioCommand_PlayFar(SOUND_MENU_ERROR);
+          AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
       }
 
@@ -6168,7 +6142,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
           cellZ == (candidate->z & CELL_MASK)) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          AudioCommand_PlayFar(SOUND_MENU_ERROR);
+          AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
       }
       if (cellX == (beyond.x & CELL_MASK) && cellZ == (beyond.z & CELL_MASK)) {
@@ -6176,7 +6150,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
                                              beyond.z) != 0) {
           ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            AudioCommand_PlayFar(SOUND_MENU_ERROR);
+            AudioCommand_PlayFar(SE_MENU_ERROR);
           continue;
         }
         moved = 1;
@@ -6349,7 +6323,7 @@ void *BattleFx_StartItemBreak(void *object) {
           child, radius, ((jitter - Random16()) >> 3) + source->angle);
     }
   }
-  AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   return parent;
 }
 
@@ -6590,7 +6564,7 @@ void ResetSceneTransitionEffect(void) {
   void *event;
 
   if (state->revealActive != 0) {
-    AudioCommand_PlayFar(SOUND_SCENE_TRANSITION);
+    AudioCommand_PlayFar(SE_SCENE_TRANSITION);
     Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
     zero = 0;
@@ -6631,7 +6605,7 @@ void BattleFx_RunBurstParticleMainObject(s32 unused) {
     ObjectDispatch_SetSingleChildFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     WaitFrames(10);
-    AudioCommand_PlayFar(SOUND_RECOVERY);
+    AudioCommand_PlayFar(SE_RECOVERY);
     WaitFrames(40);
     BattleFx_PrepareBufferInterpolation();
   }
@@ -6646,7 +6620,7 @@ void BattleFx_RunBurstParticles(void) {
   s32 remainingObjects;
 
   BattleEffect_SpawnBurstParticleField();
-  AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   p = &pos;
   remainingObjects = FALL_LAST;
   do {
@@ -6691,17 +6665,14 @@ void BattleEffect_SpawnBurstParticleField(void) {
     s32 radius;
 
     if (work->angle == 0x4000) {
-      pos[0] = caster->x.fixed;
-      pos[1] = caster->y.fixed + 0xa0000;
-      pos[2] = caster->z.fixed;
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
+                 caster->z.fixed);
     } else if (work->angle == 0xc000) {
-      pos[0] = caster->x.fixed;
-      pos[1] = caster->y.fixed + 0x180000;
-      pos[2] = caster->z.fixed;
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0x180000,
+                 caster->z.fixed);
     } else {
-      pos[0] = caster->x.fixed;
-      pos[1] = caster->y.fixed + 0xa0000;
-      pos[2] = caster->z.fixed;
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
+                 caster->z.fixed);
       Vector_AddPolarOffset(0xa0000, work->angle, pos);
     }
 
@@ -6728,9 +6699,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
       ObjectDispatch_SetSingleChildFlagsFar(particle, 1);
 
       // Destination: 4 to 10 pixels from the effect's position.
-      pos[0] = work->x;
-      pos[1] = work->y;
-      pos[2] = work->z;
+      SET_VECTOR(pos, work->x, work->y, work->z);
       if (work->angle == 0xc000)
         Vector_AddPolarOffset(0xe0000, work->angle, pos);
       radius = Random16() * 6 + 0x40000;
@@ -6839,8 +6808,8 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
         Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle); \
     }                                                                          \
                                                                                \
-    FieldObject_WaitForMoveFar(pair[0]);                                    \
-    AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);                                  \
+    FieldObject_WaitForMoveFar(pair[0]);                                       \
+    AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                     \
     for (n = 0; n < ANCHOR_SHARD_MAX; n++) {                                   \
       pos.x = work->x;                                                         \
       pos.y = work->y + 0x100000;                                              \
@@ -6872,7 +6841,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   fragment = Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
@@ -6961,7 +6930,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *fragment;
   s32 fragmentIndex;
 
-  AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   pos.x = source->x;
   pos.y = source->y;
   pos.z = source->z;
@@ -7003,9 +6972,7 @@ void BattleFx_CallEffect04(s32 unused) { RunBattleEffect04(); }
 static __inline__ void
 BattleFx_GetPositionAboveActor(struct FieldActor *obj,
                                struct EffectVector *pos) {
-  pos->x = obj->x.fixed;
-  pos->y = obj->y.fixed + ABOVE;
-  pos->z = obj->z.fixed;
+  SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
 // A FieldActor seen with the halfword at 0x5e (its lifetime), which
@@ -7307,9 +7274,7 @@ void BattleFx_RunOrbitingParticles(void) {
       particle->work = Random16();
       Animation_ApplyChildValuesFar(particle, 9);
 
-      p->x = scene->x;
-      p->y = scene->y;
-      p->z = scene->z;
+      SET_POSITION(p, scene->x, scene->y, scene->z);
       radius = (Random16() << 2) + (2 << 16);
       Vector_AddPolarOffset(radius, Random16(), p);
       particle->targetX = p->x;
@@ -7410,17 +7375,15 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   phase = &emitter->phase;
   scene = gEffectWork;
   if (*phase != -1) {
-    emitter->x = scene->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10));
-    emitter->y = scene->y + ABOVE;
-    emitter->z = scene->z;
+    SET_POSITION(emitter,
+                 scene->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
+                 scene->y + ABOVE, scene->z);
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
-    pos[0] = emitter->x;
-    pos[1] = emitter->y + (2 << 16);
-    pos[2] = emitter->z;
+    SET_VECTOR(pos, emitter->x, emitter->y + (2 << 16), emitter->z);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
     if (spark != 0) {
@@ -7628,7 +7591,7 @@ void FieldFx_EndCloak(void) {
   ((struct ScriptMotionObject *)obj)->hook = 0;
 
   for (i = 0; i < 5; ++i) {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     anim->dirty = 1;
     anim->flags = 2;
     WaitFrames(2);
@@ -7638,7 +7601,7 @@ void FieldFx_EndCloak(void) {
   }
 
   for (i = 0; i < 5; ++i) {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     anim->dirty = 1;
     anim->flags = 0;
     WaitFrames(2);
@@ -7674,7 +7637,7 @@ void FieldFx_StartCloak(void) {
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
   do {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = 2;
     WaitFrames(2);
@@ -7820,9 +7783,7 @@ void RunBattleEffect05(void) {
     work->y = Map_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
-  from->x = target->pos.x;
-  from->y = target->pos.y + (16 << 16);
-  from->z = target->pos.z;
+  SET_POSITION(from, target->pos.x, target->pos.y + (16 << 16), target->pos.z);
   to = &end;
   to->x = work->x;
   y = work->y;
@@ -8024,9 +7985,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
    * itself. Measured: the position named everywhere differs 10; the
    * pointer everywhere differs 561 (514 instructions for 531). */
   p = &pos;
-  p->x = work->x;
-  p->y = work->y + (16 << 16);
-  p->z = work->z;
+  SET_POSITION(p, work->x, work->y + (16 << 16), work->z);
   obj = BattleFx_SpawnItemBreakMode1(p->x + (32 << 16), p->y, p->z, 0x8000);
   hands[0] = obj;
   right = BattleFx_SpawnItemBreakMode1(p->x - (32 << 16), p->y, p->z, 0);
@@ -8036,9 +7995,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     return;
   }
   WaitFrames(15);
-  p->x = target->x.fixed;
-  p->y = target->y.fixed + (16 << 16);
-  p->z = target->z.fixed;
+  SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
+               target->z.fixed);
   Object_SetMoveTargetFar(obj, p->x + (16 << 16), p->y, p->z);
   Object_SetMoveTargetFar(right, p->x - (16 << 16), p->y, p->z);
   FieldObject_WaitForMoveFar(obj);
@@ -8119,7 +8077,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
     }
     // The way is free: move the target there.
@@ -8166,9 +8124,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   WaitFrames(15);
   AudioCommand_PlayFar(135);
   WaitFrames(15);
-  p->x = target->x.fixed;
-  p->y = target->y.fixed + (16 << 16);
-  p->z = target->z.fixed;
+  SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
+               target->z.fixed);
   {
     struct FieldActor **walk = shards;
 
@@ -8229,7 +8186,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   fragment = Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
@@ -8569,9 +8526,9 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     s32 steps = 11;
     s32 scale;
 
-    orb->x = from.x + (to.x - from.x) * step / 10;
-    orb->y = from.y + (to.y - from.y) * step / 10;
-    orb->z = from.z + (to.z - from.z) * step / 10;
+    SET_POSITION(orb, from.x + (to.x - from.x) * step / 10,
+                 from.y + (to.y - from.y) * step / 10,
+                 from.z + (to.z - from.z) * step / 10);
     scale = BattleFx_Interpolate(0x10000, 0x4000, step); // from 0.25 to full
     orb->scaleX = scale;
     orb->scaleY = scale;
@@ -8583,13 +8540,13 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 
   WaitFrames(5);
   ObjectDispatch_ApplyArgumentToChildrenFar(orb, 1);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SOUND_TRIPLE_TONE_HIGH);
+  AudioCommand_PlayFar(SE_TRIPLE_TONE_HIGH);
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.
@@ -8723,9 +8680,9 @@ void RunBattleEffect13(void) {
   do {
     s32 scale;
 
-    object->x = origin.x + (target.x - origin.x) * step / 10;
-    object->y = origin.y + (target.y - origin.y) * step / 10;
-    object->z = origin.z + (target.z - origin.z) * step / 10;
+    SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
+                 origin.y + (target.y - origin.y) * step / 10,
+                 origin.z + (target.z - origin.z) * step / 10);
     scale = BattleFx_Interpolate(0x10000, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
@@ -8761,9 +8718,9 @@ void RunBattleEffect13(void) {
   do {
     s32 scale;
 
-    object->x = target.x + (origin.x - target.x) * step / 10;
-    object->y = target.y + (origin.y - target.y) * step / 10;
-    object->z = target.z + (origin.z - target.z) * step / 10;
+    SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
+                 target.y + (origin.y - target.y) * step / 10,
+                 target.z + (origin.z - target.z) * step / 10);
     scale = BattleFx_Interpolate(0x4000, 0x10000, step);
     object->scaleX = scale;
     object->scaleY = scale;
@@ -9170,7 +9127,7 @@ void RunBattleEffect16(void) {
   object->phase = 1;
   WaitFrames(10);
   for (count = 0; count < 20; count++) {
-    entry->param = 7;
+    entry->param = SPRITE_COLOR_WHITE;
     group->dirty = 1;
     WaitFrames(2);
     group->dirty = 1;
@@ -9549,9 +9506,7 @@ void Map_UpdateWorldMapMarkers(void) {
     // The d-pad: faster the longer it is held.
     angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
     if (angle != 0xffff) {
-      pos[0] = work->x.fixed;
-      pos[1] = 0;
-      pos[2] = work->z.fixed;
+      SET_VECTOR(pos, work->x.fixed, 0, work->z.fixed);
       Vector_AddPolarOffset(work->speed, angle, pos);
       if (pos[0] < 0x100000) // x is 16 to 239 pixels
         pos[0] = 0x100000;
@@ -9640,9 +9595,7 @@ void Map_UpdateWorldMapMarkers(void) {
         if (work->speed < 0x20000)
           work->speed = 0x20000;
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
-        pos[0] = work->x.fixed;
-        pos[1] = 0;
-        pos[2] = work->z.fixed;
+        SET_VECTOR(pos, work->x.fixed, 0, work->z.fixed);
         Vector_AddPolarOffset(work->speed, (u16)angle, pos);
         work->x.fixed = pos[0];
         work->z.fixed = pos[2];

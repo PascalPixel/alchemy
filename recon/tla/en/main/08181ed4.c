@@ -1,8 +1,8 @@
 // Draft (tla-en): listing 513 instructions, draft 513, common 393, differ 240.
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
-// Func_08181eb0, Func_08181ebc and Func_08181ec8 pass modes 0, 2 and 1).
+// BattleFx_RunPurgatory, BattleFx_RunDjinnBlast and BattleFx_RunDjinnStorm pass modes 0, 2 and 1).
 // Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
-// nearest ☀️ shape is BattleFx_RunLightningPillars (0.50), which is no twin.
+// nearest ☀️ shape is BattleFx_RunPlasma (0.50), which is no twin.
 // The statements, frame (texture sp+40, the blitter pair sp+48, midpoint
 // sp+56) and the instruction count match.
 // Left:
@@ -47,7 +47,7 @@ struct Texture {
   void *pixels;
 };
 
-// One entry of the list Func_08196a7c draws; kind 7 is a textured mesh
+// One entry of the list Render_DrawModelList draws; kind 7 is a textured mesh
 // whose texture scrolls by scrollU and scrollV.
 struct RenderPrimitive {
   s32 kind;
@@ -85,7 +85,7 @@ extern const u8 gData_08198c6c[];
 extern const u8 Data_08198df8[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08144aac(s32 side, DrawRectangle *pair);
+void BattleFx_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
@@ -100,20 +100,20 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct RenderPrimitive *Func_081969f8(s32 count);
+struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
-void Func_08196958(const void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct RenderPrimitive *list);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderPrimitive *list);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143000(void);
-void Func_08143bb8(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
+void BattleFx_EndCanvasLayer(void);
 
 // A geyser between the targets. A textured column, its texture scrolling
 // upward, stands on the floor at the targets' midpoint, and drops burst
@@ -148,10 +148,10 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     REG_BLDALPHA = 0x0c10;
   else
     REG_BLDALPHA = 0x1010;
-  Func_08144aac(0, draw);
+  BattleFx_FetchRectangleBlitters(0, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   spawned = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   if (mode == 0) {
@@ -267,7 +267,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     // The column, for the first 40 frames.
     if (frame < GEYSER_DRAW_FRAMES) {
       vertices = Runtime_BumpAllocateAlternatePool(512);
-      column = Func_081969f8(1);
+      column = Render_AllocateModelList(1);
       texture.size = (texture.size & ~0xff) | 5;
       texture.size = (texture.size & ~0xff00) | 5 << 8;
       texture.pixels = work->sheet;
@@ -304,20 +304,20 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
       column->texture = &texture;
       column->vertices = vertices;
       Func_080151e4(scale * 2, 7 << 16, scale * 2);
-      Func_08196958(gData_08198c6c, vertices, 16);
-      Func_08196a7c(column);
+      Render_TransformVertices(gData_08198c6c, vertices, 16);
+      Render_DrawModelList(column);
       MemFree(column);
       MemFree(vertices);
     }
 
     Func_08158ce0(4, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback((s32)Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback((s32)BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

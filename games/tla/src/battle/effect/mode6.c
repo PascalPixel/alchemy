@@ -8,7 +8,7 @@ void Graphics_ResetBg2Pa(void) {
    * pair, differ 2). Only a halfword register loads from the pool and a u16
    * local is widened, so the value is pinned to the r3 it already takes, as in
    * f18284c.c. */
-  register u16 value __asm__("r3") = 0x100;
+  register u16 value __asm__("r3") = Q_8_8(1);
 
   /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
    * loaded. */
@@ -21,7 +21,7 @@ void Graphics_SetBg2AffineScaleHalf(void) {
   /* FAKEMATCH: as in Graphics_ResetBg2Pa, the pooled halfword is loaded before
    * the register address is started (differ 2 without the pin and its barrier).
    */
-  register u16 value __asm__("r3") = 0x80;
+  register u16 value __asm__("r3") = Q_8_8(0.5);
 
   /* FAKEMATCH: the barrier of the pin above. */
   __asm__("" : "+l"(value) : : "r2");

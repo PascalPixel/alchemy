@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0817bd88
+@ Abilities: Fire Puppet (kind 82).
+	.global BattleFx_RunFirePuppet
 	.thumb_func
-Func_0817bd88:
+BattleFx_RunFirePuppet:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -29,12 +30,12 @@ Func_0817bd88:
 	bne .L_0817bdc4
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_0817bdcc
 .L_0817bdc4:
 	movs r0, #104
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_0817bdcc:
 	ldr r3, .L_0817be0c
 	movs r2, #128
@@ -69,7 +70,7 @@ Func_0817bd88:
 .L_0817be0c:
 	.4byte 0x00001010
 .L_0817be10:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0817be14:
 	str r3, [sp, #44]
 	ldr r0, [sp, #64]
@@ -140,7 +141,7 @@ Func_0817bd88:
 	movs r1, #4
 	movs r2, #32
 	movs r3, #32
-	bl Func_08178680
+	bl Render_BuildQuadStrip
 	ldr r1, [sp, #52]
 	movs r0, #0
 	adds r1, #12
@@ -420,7 +421,7 @@ Func_0817bd88:
 	beq .L_0817c0da
 	b .L_0817bfd4
 .L_0817c0da:
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	movs r2, #0
 	ldr r3, [sp, #72]
 	mov r8, r2
@@ -505,9 +506,9 @@ Func_0817bd88:
 	ldr r1, .L_0817c264
 	movs r2, #66
 	ldr r0, .L_0817c258
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	ldr r3, .L_0817c270
 	mov r2, r10
 	str r3, [r6, #8]
@@ -549,13 +550,13 @@ Func_0817bd88:
 	ldr r0, .L_0817c274
 	ldr r1, .L_0817c264
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	adds r0, r6, #0
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	adds r0, r6, #0
 	bl MemFree
 .L_0817c202:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
@@ -579,7 +580,7 @@ Func_0817bd88:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817c278
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #92
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -610,4 +611,4 @@ Func_0817bd88:
 .L_0817c274:
 	.4byte Data_081991e0
 .L_0817c278:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

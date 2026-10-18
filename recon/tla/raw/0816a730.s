@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0816a730
+@ Abilities: Undead Sword (kind 320).
+	.global BattleFx_RunUndeadSword
 	.thumb_func
-Func_0816a730:
+BattleFx_RunUndeadSword:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -247,7 +248,7 @@ Func_0816a730:
 	ldr r4, [sp, #20]
 	ldr r1, [sp, #12]
 	ldr r0, [r4, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #0
 	mov r8, r2
 	mov r5, r10
@@ -320,7 +321,7 @@ Func_0816a730:
 	movs r1, #16
 	bl Func_08158ce0
 .L_0816a9b8:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -341,7 +342,7 @@ Func_0816a730:
 .L_0816a9e0:
 	ldr r0, .L_0816a9f8
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #44
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -350,7 +351,7 @@ Func_0816a730:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816a9f8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0816a9fc:
 	.4byte gData_08198afc
 .L_0816aa00:

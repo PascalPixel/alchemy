@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08188cb0
+@ Abilities: Helm Splitter, Skull Splitter (kind 51).
+	.global BattleFx_RunHelmSplitter
 	.thumb_func
-Func_08188cb0:
+BattleFx_RunHelmSplitter:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -129,7 +130,7 @@ Func_08188cb0:
 	mov r1, r10
 	ldr r0, [r1, #4]
 	add r1, sp, #20
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	movs r2, #0
 	mov r3, r11
 	mov r8, r2
@@ -511,7 +512,7 @@ Func_08188cb0:
 .L_08189098:
 	.4byte IwramCopyWords
 .L_0818909c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081890a0:
 	.4byte gData_08199d40
 .L_081890a4:
@@ -556,7 +557,7 @@ Func_08188cb0:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -581,7 +582,7 @@ Func_08188cb0:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #40
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -590,4 +591,4 @@ Func_08188cb0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08189144:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

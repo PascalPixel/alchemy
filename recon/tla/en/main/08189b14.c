@@ -1,7 +1,7 @@
 // Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
-// order BattleEffect_RunCirclingFallingScene 0.455): ⚓️'s own effect on ☀️'s
+// order BattleFx_RunRamses 0.455): ⚓️'s own effect on ☀️'s
 // frame, with its rune and swords drawn as textured quads by ⚓️'s model
-// kernels, as in Triple Chomp (Func_0818b868).
+// kernels, as in Triple Chomp (BattleFx_RunTripleChomp).
 // The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
 // the blitter 32, graphics 28, the start's address 24, the vertices 20, the
 // texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
@@ -33,7 +33,7 @@
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
-// Func_081963ec's packed argument: the mode in the high nibble.
+// BattleFx_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -51,8 +51,8 @@ struct ModelTexture {
   void *pixels;
 };
 
-// One entry of a model list, as Func_081969f8 allocates them and
-// Func_08196a7c draws them.
+// One entry of a model list, as Render_AllocateModelList allocates them and
+// Render_DrawModelList draws them.
 struct Model {
   s32 kind;
   s32 next;
@@ -80,7 +80,7 @@ extern s32 Data_08199200[];
 extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_081963ec(s32 slot, s32 packed);
+void BattleFx_LoadBlitter(s32 slot, s32 packed);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -97,7 +97,7 @@ s32 Trig_Cos(s32 angle);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-struct Model *Func_081969f8(s32 count);
+struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -105,15 +105,15 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
-void Func_08196958(void *corners, void *vertices, s32 count);
-void Func_08196a7c(struct Model *model);
+void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void Func_081434f8(void);
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08143bb8(void);
-void Func_08143000(void);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_ProcessPendingGraphicsTransfer(void);
 
 // Legend (effect kind 122): a fan of eight blades opens over the target for
 // 50 frames while a rune, mirrored from one corner, rises and turns behind
@@ -122,7 +122,7 @@ void Func_08143000(void);
 // at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
 // while a flash grows and fades where it lands. The effect lasts 86 frames
 // and 16 more for each further sword.
-void Func_08189b14(struct BattleEffectArgument *effect) {
+void BattleFx_RunLegend(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -147,10 +147,10 @@ void Func_08189b14(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 0)
-    Func_081963ec(HEAP_SLOT_BLITTER,
+    BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
                   BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   else
-    Func_081963ec(
+    BattleFx_LoadBlitter(
         HEAP_SLOT_BLITTER,
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                 BLIT_ADDITIVE));
@@ -166,7 +166,7 @@ void Func_08189b14(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, TRANSFER_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
 
   for (frame = 0; frame != effect->variant * 16 + 86; frame++) {
     // Frame 0: the swords set out from 80 pixels above and beside the
@@ -260,7 +260,7 @@ void Func_08189b14(struct BattleEffectArgument *effect) {
 
     // This frame's models: one quad, retextured for each part.
     vertices = Runtime_BumpAllocateAlternatePool(32);
-    model = Func_081969f8(1);
+    model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = work->sheet;
@@ -293,8 +293,8 @@ void Func_08189b14(struct BattleEffectArgument *effect) {
       Func_080150e4(frame << 9);
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x10000, 0x10000);
-      Func_08196958(Data_081991e0, vertices, 4);
-      Func_08196a7c(model);
+      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_DrawModelList(model);
     }
 
     // Each sword's flash grows where it lands and fades over 16 frames.
@@ -320,8 +320,8 @@ void Func_08189b14(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyYaw(-0x1900);
           Func_080150e4(frame << 9);
           Func_0801521c(scale);
-          Func_08196958(Data_081991e0, vertices, 4);
-          Func_08196a7c(model);
+          Render_TransformVertices(Data_081991e0, vertices, 4);
+          Render_DrawModelList(model);
         }
       }
     }
@@ -348,19 +348,19 @@ void Func_08189b14(struct BattleEffectArgument *effect) {
           length = 0x30000 - (frame << 12);
         Func_080151e4(0x8000, 0x10000,
                       (Trig_Sin((frame << 9) + i * 0x1000) / 8 + length) * 2);
-        Func_08196958(Data_08199200, vertices, 4);
-        Func_08196a7c(model);
+        Render_TransformVertices(Data_08199200, vertices, 4);
+        Render_DrawModelList(model);
       }
     }
     MemFree(model);
     MemFree(vertices);
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

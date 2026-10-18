@@ -48,7 +48,8 @@
 #include "global_cells.h"
 #include "heap_state.h"
 #include "flags.h"
-#include "sound_ids.h"
+#include "songs.h"
+#include "macros.h"
 
 #define COLOSSO_WALL_FIRST_PLATFORM 22
 #define COLOSSO_WALL_LAST_PLATFORM 25
@@ -1463,9 +1464,7 @@ static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
     s32 radius;
     s32 angle;
 
-    position[0] = source->f08;
-    position[1] = source->f0c;
-    position[2] = source->f10;
+    SET_VECTOR(position, source->f08, source->f0c, source->f10);
     radius = Engine_RandomNext();
     angle = Engine_RandomNext();
     Vector_AddPolarOffset(radius << 4, angle, position);
@@ -1496,7 +1495,7 @@ ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
                            source->f10);
   effect->f55 = 0;
   Engine_ObjectSetScript(effect, gColossoWall_RaiseScript);
-  Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
+  Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   source->f64 = 0;
   return 0;
 }

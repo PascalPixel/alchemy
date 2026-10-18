@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08154f84
+@ Abilities: Thorn, Briar, Nettle (kind 5).
+	.global BattleFx_RunThorn
 	.thumb_func
-Func_08154f84:
+BattleFx_RunThorn:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -63,12 +64,12 @@ Func_08154f84:
 .L_08154ff8:
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #36]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r3, r5, #0
 	adds r3, #188
 	ldr r3, [r3]
@@ -170,7 +171,7 @@ Func_08154f84:
 .L_081550c8:
 	.4byte 0x00001000
 .L_081550cc:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081550d0:
 	.4byte Data_08198442
 .L_081550d4:
@@ -481,7 +482,7 @@ Func_08154f84:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -504,7 +505,7 @@ Func_08154f84:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #56
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -525,4 +526,4 @@ Func_08154f84:
 .L_08155374:
 	.4byte Data_08198445
 .L_08155378:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

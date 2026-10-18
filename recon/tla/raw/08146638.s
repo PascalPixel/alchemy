@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08146638
+@ Abilities: Astral Blast (kind 68).
+	.global BattleFx_RunAstralBlast
 	.thumb_func
-Func_08146638:
+BattleFx_RunAstralBlast:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -50,7 +51,7 @@ Func_08146638:
 	bl ObjectDispatch_ApplyValueToChildrenFar
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r0, [sp, #76]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -445,7 +446,7 @@ Func_08146638:
 .L_081469b4:
 	.4byte 0x00000134
 .L_081469b8:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081469bc:
 	.4byte gMapCellBuffer
 .L_081469c0:
@@ -496,7 +497,7 @@ Func_08146638:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #76]
 	lsls r1, r1, #7
@@ -519,7 +520,7 @@ Func_08146638:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #120
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -529,4 +530,4 @@ Func_08146638:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08146a68:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

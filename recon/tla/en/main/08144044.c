@@ -1,12 +1,12 @@
 // Near miss, differ 69 of 355 (the draft has 356).
 
-// Effect kind 39. Twin: The Broken Seal's BattleFx_RunClosingSkulls, ported
+// Effect kind 39. Twin: The Broken Seal's BattleFx_RunHaunt, ported
 // call for call. The Lost Age's changes: work and canvas read directly, the
 // camera read again each frame; the skull sheet unpacked with its palette by
 // Resource_LoadAndDecompress and the pink burst palette copied after it;
-// Func_08144aac for the max and additive pair; both callbacks at 0xc80; the
-// effect runs count * 32 + 64 frames (96 there) and begins the results at
-// frame 92 (96 there); the actor loops read the effect argument.
+// BattleFx_FetchRectangleBlitters for the max and additive pair; both callbacks
+// at 0xc80; the effect runs count * 32 + 64 frames (96 there) and begins the
+// results at frame 92 (96 there); the actor loops read the effect argument.
 
 // Left: order and one instruction. The native takes &pos as add r1, sp, #64
 // where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
@@ -40,14 +40,15 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
-void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);      // BattleFx_EndCanvasLayer
+void BattleFx_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void ObjectGroup_TickMemberTimers(void);      // ObjectGroup_TickMemberTimers
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);                    // ObjectGroup_UpdateMembers
-void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
+void BattleFx_FetchRectangleBlitters(
+    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
 void Audio_PlayCue(s32 cue);
@@ -63,7 +64,7 @@ extern char ResourceId_PinkBurstSheet;
 // appear one every four frames from all around, up to 64 pixels away, and
 // close in on a point 20 pixels above the target while the view of them
 // turns; the background waves line by line throughout.
-void Func_08144044(struct BattleEffectArgument *effect) {
+void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectPosition pos;
   s32 point[3];
@@ -84,11 +85,11 @@ void Func_08144044(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
-  Func_08144aac(0, draw);
-  Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
+  BattleFx_FetchRectangleBlitters(0, draw);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 3;
   work->transferValue = 0x04040404;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Scatter every skull up to 64 pixels from its centre.
   for (i = 0; i != 512; i++) {
@@ -106,7 +107,7 @@ void Func_08144044(struct BattleEffectArgument *effect) {
       Func_081180e8(0);
 
     // The background waves sideways, one sine step per line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     if (effect->side == 0) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
@@ -121,7 +122,7 @@ void Func_08144044(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Render_ResetTransformState();
-      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       point[0] = target->x;
       point[1] = 20 << 16;
       point[2] = target->z;
@@ -157,14 +158,14 @@ void Func_08144044(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Scheduler_RemoveCallback(Func_08152474);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

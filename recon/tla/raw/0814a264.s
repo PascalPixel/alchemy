@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_0814a264
+@ Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma Storm
+@ (kind 13).
+	.global BattleFx_RunVolcano
 	.thumb_func
-Func_0814a264:
+BattleFx_RunVolcano:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -80,14 +82,14 @@ Func_0814a264:
 .L_0814a2fe:
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r1, #23
 	movs r0, #188
 	str r3, [sp, #52]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	mov r7, sp
@@ -450,7 +452,7 @@ Func_0814a264:
 .L_0814a5e0:
 	.4byte Data_08197a23
 .L_0814a5e4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0814a5e8:
 	.4byte Data_08197a20
 .L_0814a5ec:
@@ -639,7 +641,7 @@ Func_0814a264:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #44]
 	lsls r3, r3, #7
@@ -662,7 +664,7 @@ Func_0814a264:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814a7a4
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #72
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -680,4 +682,4 @@ Func_0814a264:
 .L_0814a7a0:
 	.4byte gData_08197410
 .L_0814a7a4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

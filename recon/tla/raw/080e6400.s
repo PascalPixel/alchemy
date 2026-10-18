@@ -220,7 +220,7 @@ Func_080e6400:
 	adds r0, r5, #0
 	adds r1, r6, #0
 	str r4, [sp, #0]
-	bl Func_080e6388
+	bl BattleFx_UpdateGrowingParticleSprite
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 .L_080e65a4:
@@ -393,7 +393,7 @@ Func_080e6400:
 	adds r0, r5, #0
 	adds r1, r6, #0
 	str r4, [sp, #0]
-	bl Func_080eb298
+	bl EffectSprite_DrawAtWorldPosition
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 	cmp r3, #41
@@ -627,7 +627,7 @@ Func_080e6400:
 	adds r0, r5, #0
 	adds r1, r6, #0
 	str r4, [sp, #0]
-	bl Func_080e6388
+	bl BattleFx_UpdateGrowingParticleSprite
 	ldr r3, [r6, #24]
 	ldr r4, [sp, #0]
 .L_080e68a2:

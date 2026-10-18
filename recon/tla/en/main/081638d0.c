@@ -1,7 +1,7 @@
-// Draft, differ 6 of 354: Func_081638d0, effect kind 214, The Broken Seal's
-// BattleFx_RunRipplingDisc.
+// Draft, differ 6 of 354: BattleFx_RunTorch, effect kind 214, The Broken Seal's
+// BattleFx_RunTorch.
 
-// Twin: ☀️ BattleFx_RunRipplingDisc (games/tbs/src/effect/effect.c), ported
+// Twin: ☀️ BattleFx_RunTorch (games/tbs/src/effect/effect.c), ported
 // with The Lost Age's changes: the canvas set up through Func_0815585c
 // (kind | side << 4 | anchor << 5), 80 frames where ☀️ has 96 (the fade out
 // from frame 72), and a hit at frame 48 (results phase, eight frames of shake,
@@ -40,6 +40,8 @@
 // in a one-pass block (8); alchemy permute 6 minutes, 2 jobs, on this draft
 // (no candidate beat it). screenX declared first takes sp+44, as the
 // native's.
+// 2026-10-18: each void callee declared s32 (6 or 8); alchemy permute 5
+// minutes, 2 jobs (nothing below 6).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -72,16 +74,17 @@
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
                    s32 *screenY); // BattleFx_PrepareCanvasEffect
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // A disc of rings rises on BG2 over the target's side, its colour ramp
 // cycling outward one ring a frame while each scanline sways on a sine wave.
@@ -91,7 +94,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
 // rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
 // camera. At frame 48 the target is struck; from frame 72 the disc fades.
-void Func_081638d0(struct BattleEffectArgument *effect) {
+void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenX[3];
@@ -138,10 +141,10 @@ void Func_081638d0(struct BattleEffectArgument *effect) {
   }
   REG_BLDALPHA = 0x1000;
   REG_BG2PA = 0xaa;
-  Func_08144aac(effect->side, draw);
+  BattleFx_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.
@@ -197,7 +200,7 @@ void Func_081638d0(struct BattleEffectArgument *effect) {
   // offsets move it.
   draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0xc80);
 
   for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
     // Fade in, and the sway grows with the frame.
@@ -219,7 +222,7 @@ void Func_081638d0(struct BattleEffectArgument *effect) {
     }
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
-    line = work->bg2X;
+    line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != 160; i++) {
       *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
       angle += 0x200;
@@ -236,13 +239,13 @@ void Func_081638d0(struct BattleEffectArgument *effect) {
                           0x8000003f);
     }
     Func_08158ce0(8, 8);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08152474);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-  Func_08143bb8();
+  BattleFx_EndCanvasLayer();
 }

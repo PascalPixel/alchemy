@@ -9,6 +9,8 @@
 // one-pass block (20), all three through one HeapSlots pointer (2 or 20), a
 // pointer to the effect field (20); alchemy permute 4 minutes, nothing below
 // 2.
+// 2026-10-18: each callee declared s32 in place of void, one at a time (2 or
+// 4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "motobj.h"

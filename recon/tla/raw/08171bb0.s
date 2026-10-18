@@ -168,7 +168,7 @@ Func_08171bb0:
 	bne .L_08171d28
 	movs r0, #104
 	movs r1, #19
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	b .L_08171d30
 	.2byte 0x0000
 .L_08171d00:
@@ -194,7 +194,7 @@ Func_08171bb0:
 .L_08171d28:
 	movs r0, #104
 	movs r1, #23
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 .L_08171d30:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -233,7 +233,7 @@ Func_08171bb0:
 .L_08171d78:
 	.4byte 0x00001010
 .L_08171d7c:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08171d80:
 	lsls r3, r3, #3
 	adds r3, #228
@@ -341,7 +341,7 @@ Func_08171bb0:
 	movs r3, #32
 	ldr r0, .L_08172128
 	movs r2, #32
-	bl Func_08178680
+	bl Render_BuildQuadStrip
 	ldr r4, [sp, #56]
 	movs r3, #0
 	str r3, [sp, #68]
@@ -1156,7 +1156,7 @@ Func_08171bb0:
 	bne .L_081723f0
 .L_08172462:
 	movs r0, #1
-	bl Func_081969f8
+	bl Render_AllocateModelList
 	mov r11, r0
 	ldr r0, [sp, #88]
 	cmp r0, #4
@@ -1471,9 +1471,9 @@ Func_08171bb0:
 	ldr r1, .L_081727c0
 	movs r2, #66
 	ldr r0, .L_081727d4
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r11
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	bl Transform_Pop
 	movs r3, #1
 	add r8, r3
@@ -1565,9 +1565,9 @@ Func_08171bb0:
 	ldr r0, .L_081727e4
 	ldr r1, .L_081727c0
 	movs r2, #4
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r11
-	bl Func_08196a7c
+	bl Render_DrawModelList
 .L_081727aa:
 	movs r0, #1
 	add r8, r0
@@ -1727,9 +1727,9 @@ Func_08171bb0:
 	movs r2, #66
 	ldr r0, .L_08172ad8
 	ldr r1, .L_08172adc
-	bl Func_08196958
+	bl Render_TransformVertices
 	mov r0, r11
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	movs r3, #1
 	movs r2, #128
 	add r8, r3
@@ -1849,9 +1849,9 @@ Func_08171bb0:
 	movs r2, #66
 	ldr r1, .L_08172adc
 	ldr r0, .L_08172ad8
-	bl Func_081969ac
+	bl Render_ProjectVertices
 	mov r0, r11
-	bl Func_08196a7c
+	bl Render_DrawModelList
 	bl Transform_Pop
 	movs r3, #1
 	movs r2, #128
@@ -1883,7 +1883,7 @@ Func_08171bb0:
 	movs r1, #4
 	bl Func_08158ce0
 .L_08172a2a:
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #84]
 	lsls r1, r1, #7
@@ -1955,7 +1955,7 @@ Func_08171bb0:
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08172ae4
 	bl Scheduler_RemoveCallback
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #176
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -1973,4 +1973,4 @@ Func_08171bb0:
 .L_08172ae0:
 	.4byte gCameraSceneParameters
 .L_08172ae4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

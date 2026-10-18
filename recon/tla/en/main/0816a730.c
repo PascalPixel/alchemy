@@ -1,7 +1,7 @@
-// Draft, differ 10 of 320: Func_0816a730, effect kind 320, The Broken Seal's
-// BattleFx_RunRisingBurst.
+// Draft, differ 10 of 320: BattleFx_RunUndeadSword, effect kind 320, The Broken Seal's
+// BattleFx_RunUndeadSword.
 
-// Twin: ☀️ BattleFx_RunRisingBurst (games/tbs/src/effect/effect.c), ported:
+// Twin: ☀️ BattleFx_RunUndeadSword (games/tbs/src/effect/effect.c), ported:
 // the heap blocks read from Ram_HeapSlots, the effect kept as the argument (the
 // dispatcher stores work->effect), no blitter fetch before the loop (only the
 // one after each frame's columns), a lighter shake while the columns are still
@@ -23,6 +23,7 @@
 // reads (22, 99), a one-pass block or an empty asm around the REG_BG2X store
 // (16, 14: either moves other rows), alchemy permute 6 minutes on the earlier
 // draft (18), and 5 minutes, 2 jobs, on this one (no candidate beat it).
+// 2026-10-18: each void callee declared s32, one at a time (10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -60,11 +61,11 @@
 extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_LimeColumnSheet;
 extern char ResourceId_BlastSheet;
-extern const u16 gData_08198afc[]; // ☀️ gRisingBurst_SparkCells
-extern const u16 gData_08198b0a[]; // ☀️ gRisingBurst_SparkSizes
+extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
+extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
@@ -73,14 +74,15 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode); // BattleEffect_LoadWork
-void Func_08144aac(s32 side,
-                   DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
+                  s32 mode); // BattleFx_BuildBlitter
+void BattleFx_FetchRectangleBlitters(
+    s32 side,
+    DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
-void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
@@ -91,7 +93,7 @@ void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
 // rise 12 pixels a frame to 80, held there with the brighter MAX blitter, and
 // from frame 32 sink 6 a frame; each spark shows its blast picture for its
 // age and falls under gravity. The target is struck at frame 10.
-void Func_0816a730(struct BattleEffectArgument *effect) {
+void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   void *sprites;
@@ -138,7 +140,7 @@ void Func_0816a730(struct BattleEffectArgument *effect) {
                              work->sheet + BLAST_SHEET_OFFSET, 1, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Slide the canvas so that its x = 64 is under the target.
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
@@ -197,7 +199,7 @@ void Func_0816a730(struct BattleEffectArgument *effect) {
 
     // The sparks: a new blast picture every third frame, seven in all; the
     // pairs leave one frame apart from frame 8.
-    Func_08144aac(effect->side, draw);
+    BattleFx_FetchRectangleBlitters(effect->side, draw);
     for (i = 0, particle = work->particles; i != SPARK_COUNT; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= SPARK_LIFE) {
         s32 px;
@@ -223,11 +225,11 @@ void Func_0816a730(struct BattleEffectArgument *effect) {
       Func_08158ce0(4, 4);
     else
       Func_08158ce0(16, 16);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(Func_08143000);
-  Func_08143bb8();
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
+  BattleFx_EndCanvasLayer();
 }

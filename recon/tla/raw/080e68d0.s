@@ -341,7 +341,7 @@ Func_080e68d0:
 	ldr r0, [r2, #8]
 	ldr r1, [r2, #12]
 	ldr r2, [r2, #16]
-	bl Func_080dc044
+	bl BattleFx_SpawnScatterParticle
 	movs r3, #1
 	negs r3, r3
 	add r8, r3
@@ -457,7 +457,7 @@ Func_080e68d0:
 	ands r3, r2
 	strb r3, [r6, #9]
 	ldr r0, [sp, #24]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r4, #13
@@ -469,7 +469,7 @@ Func_080e68d0:
 	orrs r3, r0
 	strb r3, [r6, #9]
 	ldr r0, [sp, #24]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	movs r3, #204
 	lsls r3, r3, #6
 	adds r3, #51
@@ -577,7 +577,7 @@ Func_080e68d0:
 	ands r3, r2
 	strb r3, [r6, #9]
 	ldr r0, [sp, #24]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13
@@ -589,7 +589,7 @@ Func_080e68d0:
 	orrs r3, r0
 	strb r3, [r6, #9]
 	ldr r0, [sp, #24]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	adds r0, #1
 	strh r0, [r6, #30]
 	mov r2, r10
@@ -684,7 +684,7 @@ Func_080e68d0:
 	ands r3, r2
 	strb r3, [r6, #9]
 	mov r0, r11
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	movs r3, #3
 	ands r0, r3
 	movs r1, #13
@@ -696,7 +696,7 @@ Func_080e68d0:
 	orrs r3, r0
 	strb r3, [r6, #9]
 	mov r0, r11
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	subs r0, #1
 	strh r0, [r6, #30]
 	mov r2, r10
@@ -774,11 +774,11 @@ Func_080e68d0:
 	bl Func_080eaf98
 	mov r1, r10
 	ldr r0, [r1, #16]
-	bl Func_080db9cc
+	bl BattleFx_GetObjectDepth
 	mov r2, r10
 	strh r0, [r6, #30]
 	ldr r0, [r2, #16]
-	bl Func_080db9c0
+	bl BattleFx_GetObjectPriority
 	ldrb r2, [r6, #9]
 	movs r3, #3
 	ands r0, r3

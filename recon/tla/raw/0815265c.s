@@ -137,19 +137,19 @@ BattleFx_RunProjectileVolleyB:
 	movs r0, #0
 	adds r1, r6, #0
 	str r6, [sp, #36]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	b .L_08152808
 .L_0815276c:
 	movs r1, #23
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #7
 	str r3, [sp, #88]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r0, sp
 	adds r0, #88
 	str r0, [sp, #36]
@@ -163,14 +163,14 @@ BattleFx_RunProjectileVolleyB:
 	bne .L_081527c8
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #39
 	str r3, [sp, #88]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r2, sp
 	adds r2, #88
 	str r2, [sp, #36]
@@ -192,14 +192,14 @@ BattleFx_RunProjectileVolleyB:
 .L_081527d2:
 	movs r1, #19
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
 	movs r0, #188
 	movs r1, #23
 	str r3, [sp, #88]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	mov r6, sp
 	adds r6, #88
 	str r6, [sp, #36]
@@ -214,7 +214,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r0, [r1, #4]
 	adds r1, r2, #0
 	str r2, [sp, #36]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 .L_08152808:
 	ldr r3, [sp, #76]
 	movs r6, #224
@@ -1110,7 +1110,7 @@ BattleFx_RunProjectileVolleyB:
 .L_08152e9c:
 	.4byte IwramCopyWords
 .L_08152ea0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08152ea4:
 	ldr r0, [sp, #60]
 	ldr r3, [r0]
@@ -2117,7 +2117,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r5, [sp, #84]
 	ldr r1, [sp, #36]
 	ldr r0, [r5, #4]
-	bl Func_08144aac
+	bl BattleFx_FetchRectangleBlitters
 	ldr r6, [sp, #56]
 	adds r6, #1
 	str r6, [sp, #56]
@@ -2495,7 +2495,7 @@ BattleFx_RunProjectileVolleyB:
 	mov r1, r11
 	cmp r1, #6
 	beq .L_08153924
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 .L_08153924:
 	ldr r3, [sp, #76]
 	movs r5, #240
@@ -2558,7 +2558,7 @@ BattleFx_RunProjectileVolleyB:
 	bl SummonFx_RunCanvasMode3
 	b .L_081539aa
 .L_081539a6:
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 .L_081539aa:
 	add sp, #252
 	pop {r3, r5, r6, r7}
@@ -2572,10 +2572,10 @@ BattleFx_RunProjectileVolleyB:
 .L_081539bc:
 	.4byte gData_08197410
 .L_081539c0:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_081539c4:
 	.4byte IwramClearWords
 .L_081539c8:
 	.4byte 0x06004000
 .L_081539cc:
-	.4byte Func_08143488
+	.4byte Palette_StepFadeTransfer

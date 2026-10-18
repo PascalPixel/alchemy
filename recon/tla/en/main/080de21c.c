@@ -4,8 +4,8 @@
 // load and the offset constant's build are swapped, the native builds the
 // growth loop's two limits after it loads the scale, and the copy loop's
 // start (sp + 24) and the last loop's r7 are set at other places.
-// effect04_entry.c's Func_080de214 declares it taking the effect argument.
-// Belongs between Func_080de214 and update_orbiting_particle_main.c's
+// effect04_entry.c's BattleFx_CallEffect04 declares it taking the effect argument.
+// Belongs between BattleFx_CallEffect04 and update_orbiting_particle_main.c's
 // BattleFx_UpdateOrbitingParticleMain.
 #include "types.h"
 #include "system.h"

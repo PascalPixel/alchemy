@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
+#include "edition.h"
 
 // clang-format off
 u32 gData_02000a98[] = {
@@ -45,7 +46,7 @@ u32 gData_02000c8c[] = {
 // clang-format on
 
 struct ScenePlacement gData_02000ca4[] = {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_SOUTHWEST, 1,
      0},
 #else

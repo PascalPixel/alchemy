@@ -1,7 +1,7 @@
-// Draft of Func_0816f928, effect kind 105 (Hurricane), written from the
+// Draft of BattleFx_RunHurricane, effect kind 105 (Hurricane), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleFx_RunJupiterDjinnFall 0.513, call order
-// BattleFx_RunLightningPillars 0.600). It ends without closing the canvas
+// BattleFx_RunJupiter 0.513, call order
+// BattleFx_RunPlasma 0.600). It ends without closing the canvas
 // layer: it clears the canvas and hands it to SummonFx_RunCanvasEffect
 // mode 3.
 
@@ -19,7 +19,7 @@
 // PARTICLES[i].field with no pointer                                218
 // the streak loop, and the splash loop, indexed (&work->particles[i])
 // rather than stepped                                               218
-// HI through an inline helper (Func_0816d3d8's device)               212
+// HI through an inline helper (BattleFx_RunStoneJustice's device)               212
 
 #include "types.h"
 #include "io_reg.h"
@@ -55,12 +55,12 @@ extern char ResourceId_SmokeSheet;
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
-void Func_08143488(void); // Palette_StepFadeTransfer
-void Func_081963ec(s32 slot, s32 blitter); // BattleEffect_LoadWork, packed
+void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
+void BattleFx_LoadBlitter(s32 slot, s32 blitter); // BattleFx_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // ObjectGroup_UpdateMembers
-void Func_081434f8(void);                  // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);                  // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range);   // Camera_ApplyShake
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
@@ -85,7 +85,7 @@ void Audio_PlayCue(s32 cue);
 // Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
 // fall in turn, one more each frame; a streak that falls below line 48
 // starts its splash.
-void Func_0816f928(struct BattleEffectArgument *effect) {
+void BattleFx_RunHurricane(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -99,14 +99,14 @@ void Func_0816f928(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(104,
+  BattleFx_LoadBlitter(104,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &position);
   REG_BG2X = (64 - position.x) << 8;
 
@@ -203,17 +203,17 @@ void Func_0816f928(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    Func_081434f8();
+    ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
   }
 
   // Clear the canvas and its characters and hand the layer over.
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
-  Scheduler_RemoveCallback(Func_08143488);
-  Scheduler_RemoveCallback(Func_08143000);
+  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+  Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   SummonFx_RunCanvasMode3(effect);
 }

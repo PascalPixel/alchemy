@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08178ee4
+@ Abilities: Heartbreak (kind 69).
+	.global BattleFx_RunHeartbreak
 	.thumb_func
-Func_08178ee4:
+BattleFx_RunHeartbreak:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -35,12 +36,12 @@ Func_08178ee4:
 	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	ldr r3, [r5, #104]
 	movs r1, #39
 	movs r0, #188
 	str r3, [sp, #16]
-	bl Func_081963ec
+	bl BattleFx_LoadBlitter
 	adds r5, #188
 	ldr r3, [r5]
 	add r2, sp, #16
@@ -114,7 +115,7 @@ Func_08178ee4:
 	str r3, [r0, #12]
 	b .L_08178fd8
 .L_08178fc4:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_08178fc8:
 	.4byte 0xff9c0000
 .L_08178fcc:
@@ -536,7 +537,7 @@ Func_08178ee4:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl Func_081434f8
+	bl ObjectGroup_TickMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -568,7 +569,7 @@ Func_08178ee4:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08143bb8
+	bl BattleFx_EndCanvasLayer
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -603,4 +604,4 @@ Func_08178ee4:
 .L_0817938c:
 	.4byte 0x3f3f3f3f
 .L_08179390:
-	.4byte Func_08143000
+	.4byte BattleFx_ProcessPendingGraphicsTransfer

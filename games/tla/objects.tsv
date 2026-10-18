@@ -1698,12 +1698,8 @@ main	rom_main_02	recon/tla/de/rom	.rom.0004d5f4	de
 main	rom_main_02	recon/tla/raw/0804d3e8	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0004d5dc	ja
 main	rom_main_02	games/tla/src/menu/selection	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0004d7a0	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0004d7d4	fr
+main	rom_main_02	recon/tla/fr/rom	.rom.0004d8a0	fr
 main	rom_main_02	recon/tla/fr/rom	.rom.0004da10	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0004d7c8	es
-main	rom_main_02	recon/tla/de/rom	.rom.0004d7b8	de
-main	rom_main_02	recon/tla/raw/0804d5ac	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0004d764	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0004d7ac	ja
 main	rom_main_02	games/tla/src/menu/mode_label	.text	en de es it

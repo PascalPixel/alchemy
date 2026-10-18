@@ -1160,12 +1160,6 @@ Menu_RunResourceSelectionLoop:
 	.thumb_func
 Menu_CenterResourceEntries:
 	.incbin "baserom.gba", 0x0004d604, 0x0000009c
-	.section .rom.0004d7c8, "ax"
-	.global Menu_SelectSaveSlotAction
-	.type Menu_SelectSaveSlotAction, %function
-	.thumb_func
-Menu_SelectSaveSlotAction:
-	.incbin "baserom.gba", 0x0004d7c8, 0x000000cc
 	.section .rom.0004d970, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0004d970, 0x00000080

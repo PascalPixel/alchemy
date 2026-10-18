@@ -4516,7 +4516,14 @@ BattlePresentation_AppendLinkedActions:
 	.type Func_0811f4d4, %function
 	.thumb_func
 Func_0811f4d4:
-	.incbin "baserom.gba", 0x0011f4ec, 0x00000968
+	.incbin "baserom.gba", 0x0011f4ec, 0x000000d0
+	.section .rom.0011f684, "ax"
+	.balign 4
+	.global Func_0811f66c
+	.type Func_0811f66c, %function
+	.thumb_func
+Func_0811f66c:
+	.incbin "baserom.gba", 0x0011f684, 0x000007d0
 	.section .rom.0011ff1e, "ax"
 	.incbin "baserom.gba", 0x0011ff1e, 0x00000002
 	.section .rom.0011ff20, "ax"

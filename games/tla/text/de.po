@@ -8890,7 +8890,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Konterkraft"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Kiesel"
 

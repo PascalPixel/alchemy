@@ -4089,7 +4089,7 @@ Func_08100e7c:
 	.type Func_08101a04, %function
 	.thumb_func
 Func_08101a04:
-	.incbin "baserom.gba", 0x00107b58, 0x000000c4
+	.incbin "baserom.gba", 0x00107b58, 0x00000050
 	.section .rom.00107c1c, "ax"
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:

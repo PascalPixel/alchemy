@@ -4746,17 +4746,17 @@ main	rom_main_06	recon/tla/raw/08101860	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.00101640	ja
 main	rom_main_06	games/tla/src/menu/owner_list	.text
 main	rom_main_06	recon/tla/it/rom	.rom.00101b20	it
-main	rom_main_06	recon/tla/it/rom	.rom.00101be4	it
 main	rom_main_06	recon/tla/fr/rom	.rom.00103b74	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.00103c38	fr
 main	rom_main_06	recon/tla/es/rom	.rom.00107b58	es
-main	rom_main_06	recon/tla/es/rom	.rom.00107c1c	es
 main	rom_main_06	recon/tla/de/rom	.rom.0010bbd0	de
-main	rom_main_06	recon/tla/de/rom	.rom.0010bc94	de
 main	rom_main_06	recon/tla/raw/08101a04	.text	en
-main	rom_main_06	recon/tla/raw/08101a54	.text	en
-main	rom_main_06	recon/tla/raw/08101ac8	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.00101a0c	ja
+main	rom_main_06	games/tla/src/menu/djinn_entry	.text
+main	rom_main_06	recon/tla/it/rom	.rom.00101be4	it
+main	rom_main_06	recon/tla/fr/rom	.rom.00103c38	fr
+main	rom_main_06	recon/tla/es/rom	.rom.00107c1c	es
+main	rom_main_06	recon/tla/de/rom	.rom.0010bc94	de
+main	rom_main_06	recon/tla/raw/08101ac8	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.00101ad0	ja
 main	rom_main_06	games/tla/src/menu/panel_highlight	.text
 main	rom_main_06	recon/tla/it/rom	.rom.00101d60	it

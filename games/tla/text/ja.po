@@ -7037,7 +7037,7 @@ msgctxt "message"
 msgid "01746"
 msgstr "ジンカウンター"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "01747"
 msgstr "ソロ"
 

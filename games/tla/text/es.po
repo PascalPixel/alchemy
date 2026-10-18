@@ -8892,7 +8892,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Contra-Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Sílex"
 

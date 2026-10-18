@@ -8897,7 +8897,7 @@ msgctxt "message"
 msgid "02207"
 msgstr "Stop Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "02208"
 msgstr "Silex"
 

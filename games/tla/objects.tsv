@@ -6697,17 +6697,12 @@ main	rom_main_15	games/tla/src/sound/music_set_pitch	.text
 main	rom_main_15	games/tla/src/sound/music_set_volume	.text
 main	rom_main_15	games/tla/src/sound/wait_for_completion	.text
 main	rom_main_15	games/tla/src/system/sound_driver_mode
-main	rom_main_15	recon/tla/it/rom	.rom.001c1010	it
+main	rom_main_15	games/tla/src/sound/noop_stub	.text
 main	rom_main_15	recon/tla/it/rom	.rom.001c1014	it
-main	rom_main_15	recon/tla/fr/rom	.rom.001c1010	fr
 main	rom_main_15	recon/tla/fr/rom	.rom.001c1014	fr
-main	rom_main_15	recon/tla/es/rom	.rom.001c1010	es
 main	rom_main_15	recon/tla/es/rom	.rom.001c1014	es
-main	rom_main_15	recon/tla/de/rom	.rom.001c1010	de
 main	rom_main_15	recon/tla/de/rom	.rom.001c1014	de
-main	rom_main_15	recon/tla/raw/081c1010	.text	en
 main	rom_main_15	recon/tla/raw/081c1014	.text	en
-main	rom_main_15	recon/tla/ja/rom	.rom.001c1010	ja
 main	rom_main_15	recon/tla/ja/rom	.rom.001c1014	ja
 main	rom_main_15	games/tla/src/sound/update_toggle_mask	.text
 main	rom_main_15	games/tla/src/sound/song_flag	.text

@@ -3,6 +3,29 @@
 #include "map.h"
 #include "io_reg.h"
 
+struct WorldMapBlock {
+  u8 unk0[2];
+  u8 unk2;
+  u8 unk3;
+};
+
+extern struct WorldMapBlock gMapBlocks[];
+
+// Reads byte 2 of the world map block under position: blocks are 32 pixels
+// square on a 32 by 32 grid, positions are Q16 pixels.
+s32 Func_0802da88(struct WorldPosition *position) {
+  s32 z = position->y;
+  s32 x = position->x;
+
+  if (x < 0)
+    x += 0x1fffff;
+  x = x >> 21 & 31;
+  if (z < 0)
+    z += 0x1fffff;
+  z = z >> 21 & 31;
+  return gMapBlocks[x + z * 32].unk2;
+}
+
 s32 GetWorldMapCollision(struct WorldPosition *position) {
   s32 x_step = position->x >> 17;
   s32 y = position->y;
@@ -40,8 +63,6 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
   return 7;
 }
-
-s32 Func_0802da88(struct WorldPosition *position);
 
 s32 Func_0802db64(void *object, struct WorldPosition *position) {
   if (Func_0802da88(position) != 255) {

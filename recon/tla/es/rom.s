@@ -305,12 +305,6 @@ ResourceObject_Create:
 	.incbin "baserom.gba", 0x00022d40, 0x00000150
 	.section .rom.00022f22, "ax"
 	.incbin "baserom.gba", 0x00022f22, 0x00000002
-	.section .rom.000230e0, "ax"
-	.global Func_080230e0
-	.type Func_080230e0, %function
-	.thumb_func
-Func_080230e0:
-	.incbin "baserom.gba", 0x000230e0, 0x000000c4
 	.section .rom.00023220, "ax"
 	.balign 4
 	.global Func_08023220
@@ -361,6 +355,10 @@ Func_0802386c:
 Func_08023e18:
 	.incbin "baserom.gba", 0x00023e18, 0x000000e4
 	.section .rom.00023f9c, "ax"
+	.global Func_08023f9c
+	.type Func_08023f9c, %function
+	.thumb_func
+Func_08023f9c:
 	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
 	.section .rom.00024736, "ax"
 	.incbin "baserom.gba", 0x00024736, 0x00000002
@@ -371,6 +369,10 @@ Func_08023e18:
 Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00024738, 0x000001e8
 	.section .rom.0002493c, "ax"
+	.global Func_0802493c
+	.type Func_0802493c, %function
+	.thumb_func
+Func_0802493c:
 	.incbin "baserom.gba", 0x0002493c, 0x00000314
 	.section .rom.00024ec6, "ax"
 	.incbin "baserom.gba", 0x00024ec6, 0x00000002

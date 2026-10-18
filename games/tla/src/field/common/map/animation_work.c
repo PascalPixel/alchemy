@@ -1,10 +1,3 @@
-// Draft, differ 0 of 74 (matches): sets up the map animation work for
-// map mode: its 92-byte work and an 8 KB buffer, both cleared by DMA from
-// one zero word, and the animation callbacks (mode 4 runs its own; modes 3
-// and 4 take Func_08023e18 at 0x480, the others Func_0802386c). No ☀️ twin
-// found; ☀️'s field.c starts its map animations the same way. With
-// dma.h's Dma_Fill32 twice (a zero per block), differ 52: the native
-// shares one stack word.
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
@@ -25,9 +18,17 @@ void Func_080246b8(void);
 void Func_08023e18(void);
 void Func_0802386c(void);
 
+// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
+// buffer, both cleared by DMA from one zero word, and the animation callbacks
+// (mode 4 runs its own; modes 3 and 4 take Func_08023e18 at 0x480, the others
+// Func_0802386c). No ☀️ twin found; ☀️'s field.c starts its map animations
+// the same way.
 void Func_080230e0(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
+  /* FAKEMATCH: one volatile zero word serves both fills, as the native shares
+     one stack word; dma.h's Dma_Fill32 twice gives each fill its own (differ
+     52). */
   volatile u32 zero;
 
   work = Runtime_AllocateBlock(24, sizeof(*work));
@@ -51,3 +52,8 @@ void Func_080230e0(s32 mode) {
   work->unk06 = 15;
   work->unk07 = 0;
 }
+
+// Two empty functions follow; nothing in the ROM refers to either.
+void Func_0802319c(void) {}
+
+void Func_080231a0(void) {}

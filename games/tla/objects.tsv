@@ -462,12 +462,7 @@ main	rom_main_01	recon/tla/de/rom	.rom.00022f22	de
 main	rom_main_01	recon/tla/raw/08022f22	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00022f22	ja
 main	rom_main_01	games/tla/src/field/common/map/render_animated_tile_frame	.text
-main	rom_main_01	recon/tla/it/rom	.rom.000230e0	it
-main	rom_main_01	recon/tla/fr/rom	.rom.000230e0	fr
-main	rom_main_01	recon/tla/es/rom	.rom.000230e0	es
-main	rom_main_01	recon/tla/de/rom	.rom.000230e0	de
-main	rom_main_01	recon/tla/raw/080230e0	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.000230e0	ja
+main	rom_main_01	games/tla/src/field/common/map/animation_work	.text
 main	rom_main_01	games/tla/src/field/common/object/object	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00023220	it
 main	rom_main_01	recon/tla/it/rom	.rom.000233a8	it

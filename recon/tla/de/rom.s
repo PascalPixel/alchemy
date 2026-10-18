@@ -1141,12 +1141,6 @@ Func_0804cda8:
 	.thumb_func
 Menu_RunResourceSelectionLoop:
 	.incbin "baserom.gba", 0x0004d378, 0x00000120
-	.section .rom.0004d498, "ax"
-	.global Menu_SelectResource
-	.type Menu_SelectResource, %function
-	.thumb_func
-Menu_SelectResource:
-	.incbin "baserom.gba", 0x0004d498, 0x000000b8
 	.section .rom.0004d5f4, "ax"
 	.global Menu_CenterResourceEntries
 	.type Menu_CenterResourceEntries, %function

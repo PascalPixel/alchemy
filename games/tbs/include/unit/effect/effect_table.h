@@ -14,7 +14,6 @@
 #define STRIKE_SPARKS 8 // each hit scatters sparks
 #define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
 
-extern u8 gIce_Counts[];
 extern s8 gStreakVolley_Tremble[];
 extern u8 gTargetStrike_Widths[];
 extern u8 gTargetStrike_Heights[];
@@ -33,17 +32,11 @@ extern u8 gBattlePieceStartY[];
 extern s8 gCornerSparks_X[];
 extern s8 gCornerSparks_Y[];
 extern u8 gCornerSparks_DrawFlags[];
-extern u8 gFroth_Counts[];
-extern u8 gWhirlwind_Shapes[];
-extern u8 gPrism_ShardStarts[];
-extern u8 gPrism_Counts[];
 extern u8 gPrism_ShardWidths[];
 extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardOffsets[];
-extern u16 gPlasma_Sparks[];
 extern u8 gPlasma_Columns[];
 extern u8 gPlasma_Counts[];
-extern u16 gSparkGroups_Shapes[];
 extern u8 gSparkGroups_FlashCells[];
 extern u8 gBoreas_Points[][2];
 extern s8 gBoreas_ShakeOffsets[];
@@ -110,5 +103,64 @@ extern u8 gNeptune_ObjectY[];
 extern s32 gNeptune_Gravity[];
 extern u16 gUndeadSword_SparkCells[];
 extern u16 gUndeadSword_SparkSizes[];
+
+// Each Ice variant: its shards and how many frames it runs.
+enum { ICE_SHARD_COUNT, ICE_FRAMES };
+extern u8 gIce_Counts[][2];
+
+// Each Douse variant: its bolt waves, sparks per bolt, spacing and frames.
+enum {
+  FALLING_BOLT_WAVE_COUNT,
+  FALLING_BOLT_SPARKS_PER_BOLT,
+  FALLING_BOLT_SPACING,
+  FALLING_BOLT_DURATION
+};
+extern u8 gFallingBolts_Counts[][4];
+
+// Each gathering-lights mode: the lights per target and the frames before the
+// targets' turns.
+enum { GATHERING_LIGHTS_COUNT, GATHERING_LIGHTS_FRAMES };
+extern u8 gMemberBurst_Counts[][2];
+
+// Each Froth variant: its motes and frames.
+enum { FROTH_MOTE_COUNT, FROTH_FRAMES };
+extern u8 gFroth_Counts[][2];
+
+// Each Whirlwind variant: its tornadoes, their sway and the screen shake.
+enum { WHIRLWIND_TORNADOES, WHIRLWIND_SWAY, WHIRLWIND_SHAKE };
+extern u8 gWhirlwind_Shapes[][3];
+
+// Each Prism variant: its crystals and frames.
+enum { PRISM_CRYSTAL_COUNT, PRISM_FRAMES };
+extern u8 gPrism_Counts[][2];
+
+// Where each Prism shard starts in the crystal.
+enum { PRISM_SHARD_START_X, PRISM_SHARD_START_Y };
+extern u8 gPrism_ShardStarts[][2];
+
+// Each Plasma variant: the sparks per pillar and the frames of shake.
+enum { PLASMA_SPARKS, PLASMA_SHAKE_FRAMES };
+extern u16 gPlasma_Sparks[][2];
+
+// Cybele's waving poses: the animations of objects 3 and 4.
+enum { CYBELE_POSE_OBJECT3, CYBELE_POSE_OBJECT4 };
+extern u8 gCybele_ObjectPoses[][2];
+
+// Where each Spire shard starts, before its rock's offset across.
+enum { SPIRE_SHARD_X, SPIRE_SHARD_Y };
+extern u8 gSpire_ShardOffsets[32][2];
+
+// The foot of each of Nereid's columns of fire.
+enum { NEREID_COLUMN_X, NEREID_COLUMN_Y };
+extern u8 gNereid_Columns[][2];
+
+// Where each rising-motes ice column stands: x and the y of its foot.
+enum { RISING_MOTES_COLUMN_X, RISING_MOTES_COLUMN_FOOT };
+extern u8 gRisingMotes_ColumnSpots[][2];
+
+// Each spark group variant: sparks per burst, bursts, and from
+// SPARK_GROUPS_OFFSET each burst's offset across.
+enum { SPARK_GROUPS_SPARKS, SPARK_GROUPS_BURSTS, SPARK_GROUPS_OFFSET };
+extern u16 gSparkGroups_Shapes[][5];
 
 #endif

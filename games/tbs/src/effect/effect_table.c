@@ -41,17 +41,17 @@ u8 gBattleFx_GlintCellWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gBattleFx_GlintCellHeights[] = {31, 31, 31, 21, 21, 24};
 
 // Falling shard and bolt wave counts.
-u8 gIce_Counts[] = {
+u8 gIce_Counts[][2] = {
     // shards, frames
-    16, 46, // variant 0
-    20, 52, // variant 1
-    32, 80, // variant 2
+    {16, 46}, // variant 0
+    {20, 52}, // variant 1
+    {32, 80}, // variant 2
 };
-u8 gFallingBolts_Counts[] = {
+u8 gFallingBolts_Counts[][4] = {
     // bolts, sparks per bolt, spacing, frames
-    6,  8,  32, 80, // variant 0
-    8,  16, 24, 80, // variant 1
-    32, 4,  8,  80, // variant 2
+    {6, 8, 32, 80},  // variant 0
+    {8, 16, 24, 80}, // variant 1
+    {32, 4, 8, 80},  // variant 2
 };
 
 // Falling streak timing and motion records.
@@ -136,11 +136,11 @@ s8 gSwirlSwipe_CellBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 // Gathering lights (Demon Night, Rumble, Haunting), by mode: the lights per
 // target and the frames before the targets' turns.
-u8 gMemberBurst_Counts[] = {
+u8 gMemberBurst_Counts[][2] = {
     // lights per target, frames
-    16, 88, // mode 0
-    8,  72, // mode 1
-    12, 80, // mode 2
+    {16, 88}, // mode 0
+    {8, 72},  // mode 1
+    {12, 80}, // mode 2
 };
 
 // Mirrored earth wall picture cells.
@@ -212,37 +212,42 @@ u8 gPaletteParticles_StreakWidths[] = {24, 29, 30, 27, 24, 16};
 u8 gPaletteParticles_StreakHeights[] = {23, 32, 37, 49, 53, 52};
 u8 gPaletteParticles_StreakDrops[] = {41, 32, 26, 11, 4, 2};
 u16 gPaletteParticles_StreakOffsets[] = {0, 552, 1480, 2590, 3913, 5185};
-u8 gNereid_Columns[] = {
+u8 gNereid_Columns[][2] = {
     // the foot of each column of fire: x, y
-    16, 104, 32, 104, 48, 104, 64, 104,
+    {16, 104},
+    {32, 104},
+    {48, 104},
+    {64, 104},
 };
 // Ember gravity while falling, by ember index & 3.
 s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
 // Vortex mote counts and tornado shapes.
-u8 gFroth_Counts[] = {
+u8 gFroth_Counts[][2] = {
     // motes, frames
-    6,  140, // variant 0
-    12, 160, // variant 1
-    30, 200, // variant 2
+    {6, 140},  // variant 0
+    {12, 160}, // variant 1
+    {30, 200}, // variant 2
 };
-u8 gWhirlwind_Shapes[] = {
+u8 gWhirlwind_Shapes[][3] = {
     // tornadoes, sway, screen shake
-    1, 16, 2, // variant 0
-    2, 24, 2, // variant 1
-    4, 32, 4, // variant 2
+    {1, 16, 2}, // variant 0
+    {2, 24, 2}, // variant 1
+    {4, 32, 4}, // variant 2
 };
 
 // Crystal counts and picture cells.
 // Where each of the 16 shards starts in the crystal: x, then y.
-u8 gPrism_ShardStarts[] = {32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99,
-                           54, 69, 34, 82, 45, 71, 31, 91, 32, 69, 26, 80,
-                           40, 68, 41, 60, 46, 60, 36, 63, 0,  0};
-u8 gPrism_Counts[] = {
+u8 gPrism_ShardStarts[][2] = {
+    {32, 60}, {33, 82}, {49, 94}, {41, 89}, {49, 76}, {32, 99},
+    {54, 69}, {34, 82}, {45, 71}, {31, 91}, {32, 69}, {26, 80},
+    {40, 68}, {41, 60}, {46, 60}, {36, 63}, {0, 0},
+};
+u8 gPrism_Counts[][2] = {
     // crystals, frames
-    1,  110, // variant 0
-    4,  134, // variant 1
-    12, 166, // variant 2
+    {1, 110},  // variant 0
+    {4, 134},  // variant 1
+    {12, 166}, // variant 2
 };
 // The twelve shard pictures.
 u8 gPrism_ShardWidths[] = {5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
@@ -251,11 +256,11 @@ s32 gPrism_ShardOffsets[] = {0,   70,   170,  247,  429,  597,
                              751, 1359, 1899, 2451, 2907, 3347};
 
 // Lightning pillar sparks, columns and counts.
-u16 gPlasma_Sparks[] = {
+u16 gPlasma_Sparks[][2] = {
     // sparks per pillar, shake frames
-    384, 2, // variant 0
-    256, 3, // variant 1
-    192, 4, // variant 2
+    {384, 2}, // variant 0
+    {256, 3}, // variant 1
+    {192, 4}, // variant 2
 };
 // Each pillar's canvas x, seven for each side.
 u8 gPlasma_Columns[] = {32, 64, 16,  48, 72, 96, 64,
@@ -264,13 +269,13 @@ u8 gPlasma_Columns[] = {32, 64, 16,  48, 72, 96, 64,
 u8 gPlasma_Counts[] = {1, 3, 7};
 
 // Spark group shapes and flash cells.
-u16 gSparkGroups_Shapes[] = {
+u16 gSparkGroups_Shapes[][5] = {
     // sparks per burst, bursts, each burst's offset across
-    128, 1, 16, 0,  0,  // variant 0
-    255, 1, 16, 0,  0,  // variant 1
-    192, 3, 0,  24, 48, // variant 2
-    340, 1, 16, 24, 48, // variant 3
-    32,  1, 16, 0,  0,  // variant 4
+    {128, 1, 16, 0, 0},   // variant 0
+    {255, 1, 16, 0, 0},   // variant 1
+    {192, 3, 0, 24, 48},  // variant 2
+    {340, 1, 16, 24, 48}, // variant 3
+    {32, 1, 16, 0, 0},    // variant 4
 };
 // The flash picture for each three frames at the end of a flash's life.
 u8 gSparkGroups_FlashCells[] = {5, 5, 4, 3, 2, 1};
@@ -709,7 +714,11 @@ BattleFxHandler gBattleFx_EffectHandlers[] = {
 
 // Rock and ice scene geometry.
 // Poses of objects 3 and 4 while they wave, three pairs.
-u8 gCybele_ObjectPoses[] = {8, 10, 9, 11, 3, 4};
+u8 gCybele_ObjectPoses[][2] = {
+    {8, 10},
+    {9, 11},
+    {3, 4},
+};
 // The five thorn cells, which the chips use too.
 u16 gCybele_ThornOffsets[] = {3920, 3932, 3947, 3955, 3970};
 u8 gCybele_ThornWidths[] = {2, 5, 2, 5, 3};
@@ -765,7 +774,7 @@ s32 gBreak_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
 // Stat-reduction shard geometry.
 // The twelve shard cells, three frames for each of four shapes.
 u16 gStatReduction_ShardCells[] = {0,   120, 180, 258, 298, 352,
-                                 408, 471, 567, 607, 631, 661};
+                                   408, 471, 567, 607, 631, 661};
 u8 gStatReduction_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
 u8 gStatReduction_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
@@ -785,10 +794,11 @@ u16 gFire_FlareCells[] = {0, 552, 1480, 2590, 3913, 5185};
 
 // Rising mote geometry and timing.
 // Where each ice column stands: x, then the y of its foot.
-u8 gRisingMotes_ColumnSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
-                                 96, 106, 8,  109, 62, 98,  33, 100, 87, 100,
-                                 21, 95,  53, 90,  33, 90,  72, 91,  82, 91,
-                                 77, 86,  52, 84,  18, 92,  56, 81};
+u8 gRisingMotes_ColumnSpots[][2] = {
+    {53, 108}, {73, 110}, {29, 110}, {73, 108}, {33, 104}, {96, 106}, {8, 109},
+    {62, 98},  {33, 100}, {87, 100}, {21, 95},  {53, 90},  {33, 90},  {72, 91},
+    {82, 91},  {77, 86},  {52, 84},  {18, 92},  {56, 81},
+};
 // Motes, ice columns and the burst frame, for each variant.
 u8 gRisingMotes_Timings[] = {32, 8, 85, 48, 12, 97, 64, 19, 109};
 // The eight mote pictures.
@@ -801,8 +811,7 @@ u8 gRisingMotes_ColumnHeights[] = {24, 16, 16};
 // The eight chip pictures (the same as the motes).
 u8 gRisingMotes_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 u8 gRisingMotes_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
-u16 gRisingMotes_ChipCells[] = {1792, 1900, 2060, 2158,
-                                 2308, 2372, 2436, 2500};
+u16 gRisingMotes_ChipCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 // Closing bolt sparks by variant.
 // Sparks by variant; [1] is how many each bolt throws a frame.
@@ -836,7 +845,7 @@ u16 gGrowth_PillarCells[] = {0, 1080, 1888};
 // Columns by variant, and where each column's root stands.
 u8 gGrowth_ColumnCounts[] = {4, 8, 12};
 u8 gGrowth_ColumnX[] = {64, 72,  56, 80, 48, 88, 40, 96,
-                           32, 104, 24, 72, 56, 80, 48, 88};
+                        32, 104, 24, 72, 56, 80, 48, 88};
 s8 gGrowth_PillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
 // The seven pictures of a puff of dust.
 s8 gGrowth_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
@@ -917,10 +926,11 @@ u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
 u8 gThor_SmokeFlips[] = {0, 4, 8, 12};
 // Where each of a rock's 21 shards starts, x then y, before the rock's
 // offset across.
-u8 gSpire_ShardOffsets[32 * 2] = {65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72,
-                                  85, 56,  88, 51, 80, 61, 75, 72, 81, 69, 71,
-                                  66, 70,  71, 64, 49, 71, 59, 69, 53, 68, 78,
-                                  73, 55,  67, 75, 62, 61, 65, 53, 61};
+u8 gSpire_ShardOffsets[32][2] = {
+    {65, 104}, {68, 95}, {64, 93}, {61, 93}, {64, 87}, {72, 85}, {56, 88},
+    {51, 80},  {61, 75}, {72, 81}, {69, 71}, {66, 70}, {71, 64}, {49, 71},
+    {59, 69},  {53, 68}, {78, 73}, {55, 67}, {75, 62}, {61, 65}, {53, 61},
+};
 // Each rock's offset across, the frame it appears (it lands 18 frames
 // later), and the rocks by variant.
 s8 gSpire_RockX[] = {0, -12, 12, -8, 16};

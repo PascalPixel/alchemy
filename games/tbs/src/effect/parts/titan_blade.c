@@ -52,11 +52,9 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   blitters[0] = slots[7];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blitters[1] = slots[8];
 

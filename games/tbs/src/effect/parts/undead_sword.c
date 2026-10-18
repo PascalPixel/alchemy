@@ -81,12 +81,10 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, mode);
           else
-            EFFECT_LOAD_BLITTER(
-                HEAP_SLOT_BLITTER,
-                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
           draw[0] = ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER]);
           ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER])(
               canvas, work, x, 112 - height, 14, height);

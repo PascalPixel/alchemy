@@ -33,8 +33,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_ICE_SHARDS_PER_TARGET);
@@ -186,8 +185,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 
   // Draw with the maximum blend, and lower every canvas pixel by 4 on each
   // transfer so the motes leave fading trails.
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   AudioCommand_PlayFar(SE_142);

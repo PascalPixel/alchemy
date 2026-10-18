@@ -53,8 +53,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
@@ -136,7 +135,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               gBolt_GlintFlips[Random16() & 3] |
-                                  COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                                  EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[work->effect->variant]);
           BOLT_GLINT_BLITTER(canvas, work->sheet + gBattleFx_GlintCells[kind],
                              x, y, gBattleFx_GlintCellWidths[kind],

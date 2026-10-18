@@ -181,9 +181,9 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   if (work->effect->side == 1)
-    drawFlags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
+    drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
-    drawFlags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
+    drawFlags = EFFECT_CLIP_BOUNDS;
   AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 8 + 108; frame++) {

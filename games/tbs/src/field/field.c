@@ -5410,8 +5410,6 @@ static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
-#define ABS(v) ((v) < 0 ? -(v) : (v))
-
 struct WorldCell {
   u32 tile : 24;
   u32 kind : 7;

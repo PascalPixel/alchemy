@@ -27,4 +27,7 @@
       (v) = (high);                                                            \
   }
 
+// The magnitude of v. v is read twice.
+#define ABS(v) ((v) < 0 ? -(v) : (v))
+
 #endif

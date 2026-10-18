@@ -167,7 +167,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
       // Fade the canvas out over the last 16 frames.
       if (frame > totalFrames - 16)
-        REG_BLDALPHA = (totalFrames - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
       EFFECT_VIEW_FROM_CAMERA(camera);
       EFFECT_FOR_EACH_TARGET(k, work->effect) {
         if (frame >= k * STREAKS_TARGET_DELAY) {

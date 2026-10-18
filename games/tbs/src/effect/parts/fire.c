@@ -38,12 +38,12 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -98,9 +98,8 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
         screen.x >>= 1;
         CLAMP(screen.depth, 160, 799);
         size = 10 - (screen.depth - 160) / 64;
-        draw[frame < launchFrame + 48 ? 1 : 0](
-            canvas, sheet + gBattleFx_MoteCells[size - 1], screen.x - size / 2,
-            screen.y - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[frame < launchFrame + 48 ? 1 : 0], canvas, sheet,
+                         screen.x, screen.y, size);
         ember->x += ember->velocityX;
         ember->y += ember->velocityY;
         ember->z += ember->velocityZ;

@@ -167,9 +167,9 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   size = 32;
   do {
     if (frame <= 8)
-      REG_BLDALPHA = (frame << 1) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
-      REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, transparent);
     ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work, 33, 41, size,
                                                      size);

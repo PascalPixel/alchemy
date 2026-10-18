@@ -15,6 +15,7 @@
 #include "heap_state.h"
 #include "game_state.h"
 #include "types.h"
+#include "macros.h"
 #include "dma.h"
 #include "iwram_call.h"
 #include "resource.h"
@@ -39,8 +40,6 @@
 // The slot machine (the reel game): its palette steps, canvas transfers and
 // line drawing, and an LZ packer.
 //--------------------------------------------------------------------------
-
-#define ABS(v) ((v) < 0 ? -(v) : (v))
 
 // The sparks of the jackpot, kept in the map cell buffer.
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)

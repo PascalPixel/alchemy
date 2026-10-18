@@ -94,11 +94,11 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   rectangle[0] = gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   secondSlot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   /* FAKEMATCH: the columns draw through a second pointer to
@@ -153,7 +153,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade out over the last 16 frames.
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-        REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, 16);
       }
       if (frame < fadeEnd) {
         i = 0;
@@ -325,11 +325,11 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   middle += (last.x - middle) / 2;
   first.x = middle;
   REG_BG2X = (64 - first.x) << 8;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   column = work->particles;
@@ -419,11 +419,11 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw = ((DrawRectangle *)slots)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
@@ -444,7 +444,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
     if (frame >= frameCount - 16) {
       // Fade out over the last 16 frames.
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = (frameCount - frame - 1) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frameCount - frame - 1, 16);
     }
 
     for (i = 0; i != gGrowth_Counts[work->effect->variant]; i++) {

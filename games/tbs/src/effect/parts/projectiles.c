@@ -67,16 +67,15 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (side == 1) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_MAX);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -122,7 +121,7 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
     // The long version fades the canvas out over its last 8 frames; the sound
     // plays on frame 8.
     if (frame > 75)
-      REG_BLDALPHA = (168 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(168 - frame * 2, 16);
     if (frame == 8)
       AudioCommand_PlayFar(SE_212);
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -702,7 +701,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 if (!hit)
                   goto drawShot;
               }
-              if (EFFECT_ABS(x) >= EFFECT_ABS(target->x)) {
+              if (ABS(x) >= ABS(target->x)) {
                 s32 spawned = 0;
                 struct EffectStep *flash = &PARTICLES[index];
 
@@ -792,7 +791,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else if (mode == 1) {
               // Shurikens vanish once past their target.
-              if (EFFECT_ABS(shot->x) <= EFFECT_ABS(target->x))
+              if (ABS(shot->x) <= ABS(target->x))
                 draw[0](canvas, work->sheet + frame % 6 * 768,
                         screenPosition->x - 16, screenPosition->y - 12, 32, 24);
             } else if (mode == 7 || mode == 9 || mode == 10) {

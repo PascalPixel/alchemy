@@ -83,11 +83,9 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   if (work->effect->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_COPY);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_COPY);
   else
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_COPY);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   AudioCommand_PlayFar(SE_212);
   for (frame = 0; frame != 21; frame++) {

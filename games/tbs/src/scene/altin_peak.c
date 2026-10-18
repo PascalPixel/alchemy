@@ -94,8 +94,6 @@ enum { SE_WATER_DRAIN = 230, SE_WATER_GONE = 0x121 };
 // The leader's jump animations.
 enum { ANIM_LEADER_JUMP = 22, ANIM_LEADER_LEAP = 7 };
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 enum { ITEM_FROST_JEWEL = 202 };
 
 extern s32 gAltinPeak_LeafMode;

@@ -9,20 +9,17 @@
 // out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   }
@@ -93,13 +90,11 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
 
   // The left half as drawn, the right half mirrored, keeping the higher
   // colour.
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   slots = gWorkSlot;
   draw[0] = slots[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                      COMPOSITE_MAX);
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                         50); // trails keep half a frame

@@ -271,27 +271,21 @@ enum CanvasTransferMode {
    REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-// The two halves of a WIN0H or WIN1H value: the window's left edge and its
-// right edge (exclusive) on one scanline.
-#define WINDOW_SPAN(left, right) (((left) << 8) | (right))
-
 // A WIN0H value whose left edge is past its right edge. The hardware then
 // takes the right edge as 240, so the span is not empty in itself; the
 // effects write it only on lines outside window 0's vertical range.
-#define WINDOW_SPAN_INVERTED WINDOW_SPAN(1, 0)
+#define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
 // Scheduler orders (Scheduler_AddOrUpdateCallback sorts the frame's callbacks
-// by them): every per-frame effect callback takes EFFECT_CALLBACK_ORDER, and
-// the palette fade EFFECT_FADE_ORDER, where the battle's own playback runs.
+// by them): every per-frame effect callback takes EFFECT_CALLBACK_ORDER; the
+// palette fade and the element streaks take EFFECT_PLAYBACK_ORDER, where the
+// battle's own playback runs.
 #define EFFECT_CALLBACK_ORDER 0x480
-#define EFFECT_FADE_ORDER 0xc80
+#define EFFECT_PLAYBACK_ORDER 0xc80
 
 // The full-screen picture Graphics_ConvertBackgroundToBlueRamp (bind.c)
 // works on, which Condemn draws too.
 #define BLUE_RAMP_PIXELS Ram_MapCellBuffer
-
-// Used for clipping canvas lines and comparing projectile travel distances.
-#define EFFECT_ABS(v) ((v) < 0 ? -(v) : (v))
 
 // Caps a colour level at cap, and at 0 from below. Fades draw from darker
 // copies of a picture built before the first frame, copy i capped at

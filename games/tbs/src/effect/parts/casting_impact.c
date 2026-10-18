@@ -904,7 +904,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           drawFlags = Random16(); // Random flips
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               gCastingImpact_GlintDrawFlags[drawFlags & 3] |
-                                  COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                                  EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
           ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
               canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[image], imageX,
@@ -939,8 +939,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           fall = 0;
         while (scroll > 104)
           scroll -= 104;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                            COMPOSITE_MAX);
         draw = (DrawRectangle *)gWorkSlot;
         draw += HEAP_SLOT_BLITTER_ALTERNATE;
         columnX = originX - 8;
@@ -986,15 +986,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= 4 && frame <= 23) {
         pairX = targetScreen->x / 2;
         height = 48;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                            COMPOSITE_MAX);
         slotDraw = (DrawRectangle *)gWorkSlot;
         CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, pairX - 24, 48, 24,
                                 height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
         CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, pairX, 48, 24,
                                 height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
@@ -1007,7 +1006,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       // fades.
       s32 image;
       if (frame > 15) {
-        REG_BLDALPHA = (32 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(32 - frame, 16);
       }
       if (frame > 5) {
         stripX = targetScreen->x / 2 - 20;
@@ -1111,7 +1110,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         s32 fade;
         fade = frame - 16;
         if (fade >= 0 && fade <= 15) {
-          REG_BLDALPHA = (16 - fade) | 0x1000;
+          REG_BLDALPHA = BLEND_ALPHA(16 - fade, 16);
         }
       }
       if (frame == 4 || frame == 5) {
@@ -1274,7 +1273,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       // 16 skulls of three 24x24 pictures rise from the target, each at one of
       // four rates by its number; from frame 48 they fade.
       if (frame > 47) {
-        REG_BLDALPHA = (64 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
       }
       {
         struct EffectStep *step = CASTING_IMPACT_IMPACT_PARTICLES;

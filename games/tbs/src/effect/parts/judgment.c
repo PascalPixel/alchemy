@@ -111,7 +111,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
   work->transferMode = CANVAS_COPY;
@@ -338,28 +338,24 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       high = gJudgment_BurstHeights[n];
       cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
+                              COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, work->sheet + cell, 60, 80, high, high * 2);
@@ -383,14 +379,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       s32 top = (frame << 4) - 2272;
       s32 n;
       s32 r;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 36, top, 24, 64);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
       (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 60, top, 24, 64);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -403,8 +397,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp.
          * 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
         s32 high = 8;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                            COMPOSITE_MAX);
         blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != 128; i++) {
           s32 angle = i << 9;
@@ -438,8 +432,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + 0x4000, 1, 1);
@@ -651,28 +644,24 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       } else {
         sheet = work->sheet + JUDGMENT_SHEET_FLARE_B;
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 36, top - 24, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 59, top - 24, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 36, top - 1, 24, 24);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
+                              COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
       (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
           canvas, sheet, 59, top - 1, 24, 24);
@@ -860,8 +849,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
 
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 85) {

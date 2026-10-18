@@ -125,12 +125,10 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   if (mode == BURST_SHOWER_MODE_FACES) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   } else {
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);

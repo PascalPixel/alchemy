@@ -5,8 +5,8 @@
 
 // Abilities: Annihilation (kind 55).
 //
-// The user closes on the first target and fire bursts from it in a shower of
-// shards. The scene runs for 64 frames:
+// The user closes on the first target and fire bursts from it in a shower
+// of shards. The scene runs for 64 frames:
 //
 //   4 on       64 shards scatter from the target and fall
 //   6 to 11    a fire streak flares in front of the user
@@ -84,13 +84,11 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     // drawing.
     if (frame >= 6 && frame <= 11) {
       if (work->effect->side == 0)
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       else
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
       blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       if (work->effect->side == 0)
@@ -107,8 +105,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       s32 step = (frame - 16) / 2;
       s32 strip;
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
       blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       if (step > 2)
         step = 2;
@@ -139,9 +136,8 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
           out.x >>= 1;
           out.y = out.y + origin.y - 112;
           size = (life >> 3) + 2;
-          blitters[(i / 2) & 1](canvas,
-                                particleSheet + gBattleFx_MoteCells[size - 1],
-                                out.x - size / 2, out.y - size, size, size * 2);
+          EFFECT_DRAW_MOTE(blitters[(i / 2) & 1], canvas, particleSheet, out.x,
+                           out.y, size);
           EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
           shard->variant--;
         }

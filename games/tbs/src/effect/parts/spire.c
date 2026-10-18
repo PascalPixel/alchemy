@@ -35,7 +35,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   EFFECT_BEGIN_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blit = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);

@@ -257,8 +257,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    BattleFx_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    BattleFx_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
                         (s32)(Ram_MapBlocks + 0x202));
@@ -477,8 +477,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw = gWorkSlot[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
   for (i = 0; i != 32; i++) {

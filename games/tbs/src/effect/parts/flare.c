@@ -40,7 +40,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 

@@ -49,39 +49,32 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   if (kind == 5) {
     if (work->effect->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_Y,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
+                              COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
+                              COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
     }
   } else {
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     }
   }
   slots = (DrawRectangle *)gWorkSlot;
@@ -298,17 +291,16 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   }
   slots = (DrawRectangle *)gWorkSlot;
   draw[0] = slots[HEAP_SLOT_BLITTER];
@@ -365,7 +357,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, EFFECT_FADE_ORDER);
+    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
+                                  EFFECT_PLAYBACK_ORDER);
     AudioCommand_PlayFar(SE_212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(

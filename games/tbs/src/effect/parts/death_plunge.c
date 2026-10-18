@@ -53,8 +53,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                      COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
@@ -188,11 +187,11 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
 
   // [0] draws as is, [1] mirrored; both skip colour 0.
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   blit = draw;
@@ -236,12 +235,12 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != BLADE_RAIN_FRAMES; frame++) {
     // Fade in over the first 16 frames and out over the last 16.
     if (frame <= 16) {
-      REG_BLDALPHA = frame | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frame, 16);
       if (frame == 16)
         REG_BLDCNT = 0;
     }
     if (frame > 103) {
-      REG_BLDALPHA = (120 - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(120 - frame, 16);
       if (frame == 104)
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     }
@@ -386,7 +385,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   work--;
   // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
   work->effect->variant++;
@@ -402,7 +401,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectBattler(work->effect->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
-      REG_BLDALPHA = (112 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
     if (frame == 16)
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE, -1,
                                 0, 20);
@@ -417,8 +416,8 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 
       i = frame / 2;
       n = i % 4;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
       draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
       draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
@@ -426,9 +425,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
       draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
       n = i % 4;
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
@@ -584,12 +581,12 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
                              work->imageStorage, 1, 1);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   slotTable = gWorkSlot;
   draw[0] = slotTable[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                      COMPOSITE_MAX);
   draw[1] = slotTable[HEAP_SLOT_BLITTER_ALTERNATE];
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
@@ -930,7 +927,7 @@ void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectScaledBattler(effect->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
-      REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0x70 - frame * 2, 16);
     if (frame == 26) {
       AudioCommand_PlayFar(SE_212);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE, -1,
@@ -1090,7 +1087,7 @@ void BattleFx_StartElementStreaks(s32 element) {
   work->frame = 0;
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x06060606; // 6 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattleFx_DrawStreaks, 0xC80);
+  Scheduler_AddOrUpdateCallback(BattleFx_DrawStreaks, EFFECT_PLAYBACK_ORDER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 }

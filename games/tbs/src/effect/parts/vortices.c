@@ -213,9 +213,9 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       wave -= 0x200000;
     // Fade in over 16 frames and out over the last 16.
     if (frame <= 16)
-      REG_BLDALPHA = frame | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(frame, 16);
     if (frame > 63)
-      REG_BLDALPHA = (0x4f - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0x4f - frame, 16);
     // Each tornado: three sections stacked, swaying about the sweep, a
     // quarter turn apart, with four glints.
     for (i = 0;

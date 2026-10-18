@@ -184,20 +184,14 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
 
     // Arcs and waves; odd strikes are drawn flipped.
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                              COMPOSITE_FLIP_X,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP,
-                          COMPOSITE_MAX);
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
     }
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -256,10 +250,10 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
 
     // Motes: drawn until they die out, bouncing off the ground.
     EFFECT_VIEW_FROM_CAMERA(camera);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (i = 0; i != 512; i++) {
@@ -272,8 +266,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
         screen.x /= 2;
         size >>= 3;
         size++;
-        draw[(i / 2) & 1](canvas, sprites + gBattleFx_MoteCells[size - 1],
-                          screen.x - size / 2, screen.y - size, size, size * 2);
+        EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sprites, screen.x, screen.y,
+                         size);
         EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
         if (mote->y < 0x80000)
           mote->velocityY = -mote->velocityY / 2;

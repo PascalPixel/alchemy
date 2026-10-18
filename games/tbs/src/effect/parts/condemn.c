@@ -126,12 +126,12 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
     if (frame <= 31) {
       if (frame > 15) {
         ripple = (frame * 2) - 32;
-        REG_BLDALPHA = (31 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(31 - frame, 16);
       }
     } else if (frame <= 63) {
       if (frame > 47) {
         ripple = (frame * 2) - 96;
-        REG_BLDALPHA = (63 - frame) | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(63 - frame, 16);
       }
     }
     if (ripple < 0) {

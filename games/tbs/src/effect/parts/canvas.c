@@ -281,7 +281,8 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, EFFECT_FADE_ORDER);
+  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
+                                EFFECT_PLAYBACK_ORDER);
 
   // Change BG2's settings while it is hidden.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -352,7 +353,8 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, EFFECT_FADE_ORDER);
+  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
+                                EFFECT_PLAYBACK_ORDER);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
@@ -546,7 +548,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   CLAMP(y0, 0, 127);
   CLAMP(y1, 0, 127);
 
-  if (EFFECT_ABS(dx) < EFFECT_ABS(dy)) {
+  if (ABS(dx) < ABS(dy)) {
     // Steep: step y a pixel at a time and follow x in fixed point.
     if (dy < 0) {
       tmp = x0;
@@ -558,7 +560,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       dx = x1 - x0;
       dy = y1 - y0;
     }
-    step = (EFFECT_ABS(x1 - x0) << 8) / EFFECT_ABS(y1 - y0);
+    step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
     x = x0;
     for (i = y0; i != y1; i++) {
       offset = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
@@ -586,7 +588,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       dx = x1 - x0;
       dy = y1 - y0;
     }
-    step = (EFFECT_ABS(y1 - y0) << 8) / EFFECT_ABS(x1 - x0);
+    step = (ABS(y1 - y0) << 8) / ABS(x1 - x0);
     y = y0;
     for (i = x0; i != x1; i++) {
       offset = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);

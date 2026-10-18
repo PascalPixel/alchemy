@@ -43,7 +43,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   slots = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
-  BattleFx_BeginCanvasLayer(0x2000);
+  BattleFx_BeginCanvasLayer(BGCNT_WRAP);
   BattleFx_RunDjinniEntrance(effect, 6, work->effect->side, 2, &screenX,
                              &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -115,12 +115,12 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     if (frame <= 8) {
       level = frame * 2;
       wave = level;
-      REG_BLDALPHA = level | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(level, 16);
     } else {
       wave = frame * 2;
     }
     if (frame > 88)
-      REG_BLDALPHA = (0xc0 - frame * 2) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(0xc0 - frame * 2, 16);
 
     // BG2's x reference for each of the 160 scanlines: a sine wave whose
     // phase advances with wave, which the HBlank DMA applies.

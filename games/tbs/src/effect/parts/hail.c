@@ -66,7 +66,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != HAIL_FRAMES; frame++) {
     // Fade out over the last 16 frames.
     if (frame > 47)
-      REG_BLDALPHA = (64 - frame) | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
                                  work->sheet + HAIL_CHIP_CELLS, 1, 1);
@@ -187,11 +187,9 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   else
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                        COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
@@ -227,12 +225,10 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
         y = y - frame * 2 + 32;
       if (work->effect->side == 1)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                COMPOSITE_FLIP_X,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
       else
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
         ((DrawRectangle)((union HeapState *)gWorkSlot)

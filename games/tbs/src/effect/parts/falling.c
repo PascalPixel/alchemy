@@ -72,7 +72,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   sparkles = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   // Load the shard and puff images before shaping their visible canvas.
-  EFFECT_BEGIN_NARROW_CANVAS(0x2001);
+  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
   BattleFx_ConfigureEffectDisplay();
@@ -128,11 +128,11 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   if (work->effect->side == 0) {
     line = (u16 *)Ram_MapCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
-                                 WINDOW_SPAN(8, 136));
+                                 WIN_RANGE(8, 136));
   } else {
     line = (u16 *)Ram_MapCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
-                                 WINDOW_SPAN(120, 248));
+                                 WIN_RANGE(120, 248));
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
@@ -284,7 +284,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   // The beam and its sparks use separate images but the same clipped canvas.
-  EFFECT_BEGIN_NARROW_CANVAS(0x2001);
+  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_CELL, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
@@ -330,12 +330,11 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     line = (u16 *)Ram_MapCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
                                  ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
-                                 WINDOW_SPAN(0, 128));
+                                 WIN_RANGE(0, 128));
   } else {
     line = (u16 *)Ram_MapCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
-                                 ((i / 2 + 60) << 8) | (i / 2 + 188),
-                                 WINDOW_SPAN(112, 240));
+    FALLING_BUILD_SLANTED_WINDOW(
+        line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,

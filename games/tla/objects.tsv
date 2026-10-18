@@ -5638,14 +5638,7 @@ main	rom_main_08	games/tla/src/battle/d012cd74	.rodata
 main	rom_main_08	games/tla/src/battle/battle_vars	.rodata
 main	rom_main_09	games/tla/src/system/far_call/table_47
 main	rom_main_09	games/tla/src/battle/effect/kernel_bank_integrate_vectors
-main	rom_main_09	recon/tla/it/rom	.rom.001380ac	it
-main	rom_main_09	recon/tla/fr/rom	.rom.001380ac	fr
-main	rom_main_09	recon/tla/es/rom	.rom.001380ac	es
-main	rom_main_09	recon/tla/de/rom	.rom.001380ac	de
-main	rom_main_09	recon/tla/raw/081380ac	.text	en
-main	rom_main_09	recon/tla/raw/081380ae	.text	en
-main	rom_main_09	recon/tla/raw/0813888c	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.001380ac	ja
+main	rom_main_09	games/tla/src/battle/effect/relocated_kernel_0
 main	rom_main_09	games/tla/src/battle/effect/relocated_kernels
 main	rom_main_09	games/tla/src/battle/effect/relocated_kernel_4
 main	rom_main_09	games/tla/src/battle/effect/relocated_kernel_5

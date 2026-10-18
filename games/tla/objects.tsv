@@ -4484,7 +4484,6 @@ main	rom_main_06	recon/tla/it/rom	.rom.000f93b6	it
 main	rom_main_06	recon/tla/fr/rom	.rom.000fb3b6	fr
 main	rom_main_06	recon/tla/es/rom	.rom.000ff3aa	es
 main	rom_main_06	recon/tla/de/rom	.rom.001033b6	de
-main	rom_main_06	recon/tla/raw/080f93b6	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000f933e	ja
 main	rom_main_06	games/tla/src/menu/cancel	.text
 main	rom_main_06	recon/tla/it/rom	.rom.000f94a2	it

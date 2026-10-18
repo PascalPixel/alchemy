@@ -192,11 +192,10 @@ void FieldEvent_End(void) {
   GameFlag_RefreshLureCapFar();
 }
 
-// Empty hooks that the event layer calls; they do nothing in the released
-// game.
-void Event_NoOpHookA(void) {}
+// Does nothing; nothing calls it.
+UNUSED void Event_NoOpHookA(void) {}
 
-// Does nothing.
+// An empty hook the event layer calls; it does nothing in the released game.
 void Event_NoOpHook(void) {}
 
 // Respawns the scene's actors from a placement table and waits one frame for
@@ -387,7 +386,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       for (discardIndex = 0; discardIndex < discardQuantity; discardIndex++)
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
-      AudioCommand_PlayFar(83);
+      AudioCommand_PlayFar(MUS_TREASURE_FOUND);
       if (owner == gGameState.selectedActor) {
         ItemGift_ShowGotItem(item, 3);
       } else {
@@ -401,7 +400,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   } else {
     // There was room: "Isaac got <item>.", and "Isaac gave <item> to
     // <member>." when someone other than the leader carries it.
-    AudioCommand_PlayFar(83);
+    AudioCommand_PlayFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
     if (owner != gGameState.selectedActor) {
       UiWork_PushValueSlotFar(item, 2);
@@ -509,7 +508,7 @@ s32 Menu_AskYesNo(s32 atBottom) {
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
-  AudioCommand_PlayFar(83);
+  AudioCommand_PlayFar(MUS_TREASURE_FOUND);
   UiWork_PushValueSlotFar(unit, 1);
   UiWork_PushValueSlotFar(ability, 4);
   UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
@@ -577,7 +576,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   field->battle = Encounter_GetEnemyGroupAtSlot(zone, slot); // enemy group
   if (zone == AERIE && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-  if (field->mode == 3) {
+  if (field->mode == MODE_WORLD_MAP) {
     struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
@@ -603,7 +602,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   gameState = &gGameState;
   gameState->pendingDjinnEvent = (no + DJINNI_0) | skipHop;
   field->battle = Encounter_GetDjinnEnemyGroup(no); // the Djinni's enemy group
-  if (field->mode == 3) {
+  if (field->mode == MODE_WORLD_MAP) {
     struct ObjectRuntime *leader = ObjectTable_Get(gameState->selectedActor);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
@@ -631,14 +630,14 @@ void Event_RequestDestination(u16 scene, u16 entrance) {
   work->exit = 999;
 }
 
-// Plays sound effect 0x12a, then soundId (0x121 for -1), and remembers
+// Plays SE_298, then soundId (SE_289 for -1), and remembers
 // soundId for BattleFx_PlayQueuedSound.
 void BattleFx_SetQueuedSoundAndPlay(s32 soundId) {
   ((struct FieldWork *)gEventWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
-    soundId = 0x121;
+    soundId = SE_289;
   }
-  AudioCommand_PlayFar(0x12a);
+  AudioCommand_PlayFar(SE_298);
   AudioCommand_PlayFar(soundId);
 }
 
@@ -1032,9 +1031,9 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
     if (speed > 5) {
-      AudioCommand_PlayFar(0x99);
+      AudioCommand_PlayFar(SE_153);
     } else {
-      AudioCommand_PlayFar(0x98);
+      AudioCommand_PlayFar(SE_152);
     }
     FieldEvent_WaitFrames(frames);
   }
@@ -1152,7 +1151,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   object = (struct ObjectRuntime *)Object_GetById(actor);
   startZ = object->z;
   if (object != 0) {
-    AudioCommand_PlayFar(0x121);
+    AudioCommand_PlayFar(SE_289);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, pose);
     WaitFrames(10);
 
@@ -1169,8 +1168,9 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
     WaitFrames(6);
 
     // Spin and sink 2 pixels a frame for 14 frames, raising dust.
-    AudioCommand_PlayFar(0xD9);
-    pose = 0; // from here a frame counter
+    AudioCommand_PlayFar(SE_217);
+    // From here pose counts frames.
+    pose = 0;
     ObjectMotion_ArmCallback(actor, 0x5000, 0);
     *objectFlags = 0;
     do {
@@ -1300,7 +1300,7 @@ void ObjectTable_DestroyById(s32 index) {
 }
 
 // Does nothing.
-void ObjectTable_DestroyNoOp(void) {}
+UNUSED void ObjectTable_DestroyNoOp(void) {}
 
 // The event command "set actor sprite param": gives every sprite part of the
 // actor param (ObjectGroup_SetChildValue). With bit 0x100 set the actor
@@ -1477,7 +1477,7 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
 }
 
 // Does nothing.
-void ObjectVisual_ReservedNoOp(void) {}
+UNUSED void ObjectVisual_ReservedNoOp(void) {}
 
 // The event command "set message": the number of the event's next message.
 void Event_SetMessageId(s32 message) {
@@ -1595,7 +1595,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   if (work->fastForward == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
-      if (work->mode == 3) {
+      if (work->mode == MODE_WORLD_MAP) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -1612,7 +1612,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
     } else if (actor <= 7) {
       sprite = actor;
       object = ObjectTable_Get(gGameState.selectedActor);
-      if (work->mode == 3) {
+      if (work->mode == MODE_WORLD_MAP) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -2001,7 +2001,7 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
     if (keepPosition == 0) {
       SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
-      if (work->mode != 3) {
+      if (work->mode != MODE_WORLD_MAP) {
         Map_ApplyWorkOriginAndSpanFar();
       }
     }
@@ -2077,7 +2077,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   if (shouldGlide == 0) {
     SET_POSITION(camera, positionX, positionY, positionZ);
     WaitFrames(1U);
-    if (runtimeBlock->mode != 3) {
+    if (runtimeBlock->mode != MODE_WORLD_MAP) {
       Map_ApplyWorkOriginAndSpanFar();
     }
   } else {
@@ -2115,8 +2115,8 @@ struct FieldActor *Camera_GetEventObject(void) {
 
 // Makes the camera follow target; unless keepCurrentPosition is set it jumps
 // there at once.
-void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
-                                 s32 keepCurrentPosition) {
+UNUSED void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
+                                        s32 keepCurrentPosition) {
   struct ObjectRuntime *camera;
 
   camera = ((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
@@ -2204,7 +2204,7 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
 
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
                                                  sizeof(struct FieldWork)))
-          ->mode != 3)
+          ->mode != MODE_WORLD_MAP)
     return;
   {
     inverse = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
@@ -2229,7 +2229,7 @@ void Event_WaitForZoomTransition(void) {
 
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
                                                  sizeof(struct FieldWork)))
-          ->mode == 3) {
+          ->mode == MODE_WORLD_MAP) {
     frames = 0;
     if (*(s16 *)&work->zoomTransitionFrames != 0) {
       do {
@@ -2281,7 +2281,7 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   struct FieldActor *target;
 
   if ((emote & 0xff) == 6) {
-    AudioCommand_PlayFar(110);
+    AudioCommand_PlayFar(SE_110);
   }
 
   target = ObjectTable_Get(actor);
@@ -2628,7 +2628,7 @@ again:
     FieldEvent_Begin();
     ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
     WaitFrames(6);
-    AudioCommand_PlayFar(152);
+    AudioCommand_PlayFar(SE_152);
     ObjectDispatch_ApplyArgumentToChildrenFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
@@ -2858,7 +2858,7 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
 }
 
 // Does nothing.
-void ObjectEffect_ReservedNoOp941DC(void) {}
+UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 
 // Starts the transition into a random battle: plays the scene's battle cue
 // and the encounter sounds, closes the screen and flashes the backdrop white,
@@ -2869,27 +2869,27 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 level;
 
   AudioCommand_PlayFar(gGameState.sceneCue);
-  AudioCommand_PlayFar(288);
-  AudioCommand_PlayFar(147);
-  if (work->mode == 3) {
+  AudioCommand_PlayFar(SE_288);
+  AudioCommand_PlayFar(SE_147);
+  if (work->mode == MODE_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead.
-    Io_Write16(0x7fff, (u16 *)0x050001e6);
+    Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     DisplayTransition_Finish(0x401, 16);
     work->transitionActive = 0;
     WaitFrames(16);
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
-      Io_Write16((level << 10) | (level << 5) | level, (u16 *)0x050001e6);
+      Io_Write16(RGB(level, level, level), (u16 *)&BG_PLTT_COLOR(15, 3));
       WaitFrames(1);
     }
   } else {
-    Io_Write16(0x7fff, &PLTT_BACKDROP);
+    Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
     DisplayTransition_Finish(0x207, 16);
     work->transitionActive = 0;
     WaitFrames(16);
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
-      Io_Write16((level << 10) | (level << 5) | level, &PLTT_BACKDROP);
+      Io_Write16(RGB(level, level, level), &PLTT_BACKDROP);
       WaitFrames(1);
     }
   }
@@ -2998,7 +2998,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         while (leader->y + leader->velocityY > leader->terrainHeight) {
           WaitFrames(1);
         }
-        AudioCommand_PlayFar(159);
+        AudioCommand_PlayFar(SE_159);
         leader->y = leader->terrainHeight;
         ObjectDispatch_ApplyArgumentToChildrenFar(leader, 22);
         FieldEvent_WaitFrames(15);
@@ -3026,7 +3026,7 @@ void DisplayScroll_ArmHBlankDma(void) {
   source = (u32 *)state->rows[state->page];
 
   dma = REG_DMA0;
-  destination = (volatile u32 *)0x04000014; // REG_BG1HOFS
+  destination = (volatile u32 *)&REG_BG1HOFS;
   status = dma[5];
   control = status & (u16)~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] = control;
@@ -3208,16 +3208,17 @@ void FieldFx_UpdateLightning(void) {
       work->timer =
           ((intervalDraw * 400) >> 16) - ((intervalJitter * 100) >> 16) + 150;
       if (work->loud != 0)
-        AudioCommand_PlayFar(172);
+        AudioCommand_PlayFar(SE_172);
       else
-        AudioCommand_PlayFar(171);
+        AudioCommand_PlayFar(SE_171);
     }
     // fall through
   case 5:
   case 10:
     // Flash: jump to the lit palette and fade back over 12 frames.
     BattleFx_ApplyColorToTargetBuffer(work, 1);
-    Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
+    Dma_Set(work->delta, target->delta, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0,
+            REG_DMA3);
     target->duration = 12;
     target->step = 0;
     break;
@@ -3249,7 +3250,7 @@ void FieldFx_StartGroundParticles(void) {
    * block, size)) differs 22: the fill moves before the sound call. */
   work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
   leader = ((struct MapScrollWork *)gMapWork[0])->origin;
-  BattleFx_SetQueuedSoundAndPlay(170);
+  BattleFx_SetQueuedSoundAndPlay(SE_170);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
@@ -3275,8 +3276,8 @@ void FieldFx_StartGroundParticles(void) {
     particle->timer = (i & 15) + 1;
     particle++;
   }
-  Io_Write16(0x3f00, &REG_BLDCNT);
-  Io_Write16(0x1008, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }
@@ -3403,8 +3404,8 @@ void FieldMotes_Start(void) {
     mote->timer = (i & 15) + 1;
     mote++;
   }
-  Io_Write16(0x3f00, &REG_BLDCNT);
-  Io_Write16(0x1008, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
   Scheduler_AddOrUpdateCallback(FieldMotes_Update, 0xc80);
 }
@@ -3680,9 +3681,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   dir = (Object_GetById(gGameState.selectedActor)->facing + 0x2000) & 0xc000;
   FieldEvent_Begin();
   WaitFrames(10);
-  AudioCommand_PlayFar(173);
+  AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(175);
+  AudioCommand_PlayFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   back = dir + 0x8000;
   WaitFrames(20);
@@ -3697,17 +3698,17 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   dist = 16 << 16;
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 4, 0);
   FieldObject_WaitForMoveFar(djinni);
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 4, 0);
   FieldObject_WaitForMoveFar(djinni);
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 4, 0);
   FieldObject_WaitForMoveFar(djinni);
   WaitFrames(20);
@@ -3749,7 +3750,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // Leap 64 pixels at the leader and stop there.
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              64 << 16, dir + 0x8000);
-  AudioCommand_PlayFar(136);
+  AudioCommand_PlayFar(SE_136);
   ObjectMotion_Launch(djinniId, 12, 0);
   WaitFrames(24);
   djinni->motionFlags = 0;
@@ -3785,7 +3786,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     FieldEvent_Begin();
     Battle_SetObjectFlag5bWhenMode3();
     if (slot != -1) {
-      if (work->mode == 3)
+      if (work->mode == MODE_WORLD_MAP)
         BattleEffect_ClearOutOfBoundsObjects();
 
       if (element == 0) // Venus
@@ -3798,7 +3799,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
         Djinn_RunJupiterJoinEffect(slot);
 
       work->actors[slot] = 0;
-      if (work->mode == 3)
+      if (work->mode == MODE_WORLD_MAP)
         BattleEffect_ClearAllObjects();
     }
 
@@ -4019,19 +4020,19 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   BattleFx_InitializeSlots();
   scene = gEffectWork;
   Shop_RestoreSceneTilesFar(0x20118c);
-  AudioCommand_PlayFar(173);
+  AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(174);
+  AudioCommand_PlayFar(SE_174);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(175);
+  AudioCommand_PlayFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
-  AudioCommand_PlayFar(140);
+  AudioCommand_PlayFar(SE_140);
   djinni->update = BattleFx_AdvanceSpinAngle;
   WaitFrames(40);
-  AudioCommand_PlayFar(153);
+  AudioCommand_PlayFar(SE_153);
   ObjectMotion_Launch(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.
@@ -4040,7 +4041,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar(djinni);
-  AudioCommand_PlayFar(164);
+  AudioCommand_PlayFar(SE_164);
   slot = scene->slots;
   remainingParticles = 23;
   do {
@@ -4064,7 +4065,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   ObjectDispatch_ApplyArgumentToChildrenFar(
       Object_GetById(gGameState.selectedActor), 28);
   WaitFrames(40);
-  AudioCommand_PlayFar(164);
+  AudioCommand_PlayFar(SE_164);
   WaitFrames(100);
   Shop_InitEffectFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
@@ -4199,7 +4200,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->flags = 0;
     effect->age = 0;
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
@@ -4230,7 +4231,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->state++;
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(145);
+      AudioCommand_PlayFar(SE_145);
   } else if (state == 4) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -4266,14 +4267,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(30);
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
-  AudioCommand_PlayFar(173);
+  AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(174);
+  AudioCommand_PlayFar(SE_174);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(175);
+  AudioCommand_PlayFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
-  AudioCommand_PlayFar(140);
+  AudioCommand_PlayFar(SE_140);
   djinni->update = BattleFx_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
@@ -4429,7 +4430,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
     effect->state++;
 
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(0x90);
+      AudioCommand_PlayFar(SE_144);
   } else if (state == 1) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -4464,15 +4465,15 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   Shop_RestoreSceneTilesFar(0x201204);
   WaitFrames(30);
   djinni->visible = 0;
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 4, 15);
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 4, 15);
   WaitFrames(30);
   djinni->callback = BattleFx_AdvanceSpinAngle;
-  AudioCommand_PlayFar(153);
+  AudioCommand_PlayFar(SE_153);
   ObjectMotion_Launch(djinniId, 8, 22);
-  AudioCommand_PlayFar(140);
+  AudioCommand_PlayFar(SE_140);
   Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = BattleFx_ShrinkObjectAndDestroyFast;
   ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 3);
@@ -4546,9 +4547,9 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(100);
-  AudioCommand_PlayFar(288);
+  AudioCommand_PlayFar(SE_288);
   WaitFrames(1);
-  AudioCommand_PlayFar(151);
+  AudioCommand_PlayFar(SE_151);
   position.x = leader->x;
   position.y = leader->y + 0x120000;
   position.z = leader->z;
@@ -4621,7 +4622,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
       effect->maxSpeed = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
-      AudioCommand_PlayFar(143);
+      AudioCommand_PlayFar(SE_143);
 
       if (*statePointer == 1)
         (*statePointer)--;
@@ -4675,21 +4676,21 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   // Tint the screen blue (red 4, green 4, blue 16).
   BattleFx_InitializeSlots();
   effectScene = gEffectWork;
-  Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | (16 << 10) | (4 << 5) | 4);
+  Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
   djinni->paused = 0;
-  AudioCommand_PlayFar(173);
+  AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(175);
+  AudioCommand_PlayFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 3, 14);
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 5, 16);
-  AudioCommand_PlayFar(152);
+  AudioCommand_PlayFar(SE_152);
   ObjectMotion_Launch(djinniId, 7, 18);
   WaitFrames(20);
 
@@ -4723,7 +4724,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
   // afterimages (and their VRAM block, unless it is the shared block 96).
   resourceId = resource->slot;
-  AudioCommand_PlayFar(153);
+  AudioCommand_PlayFar(SE_153);
   djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y.fixed += 8 << 16;
@@ -5523,7 +5524,7 @@ void EventObject_Initialize(void) {
   caster->targetZ = caster->z.fixed;
   SET_VELOCITY(caster, 0, 0, 0);
   if (scene->visible != 0) {
-    AudioCommand_PlayFar(212);
+    AudioCommand_PlayFar(SE_212);
     caster->update = BattleFx_FlickerObjectAndTick;
   }
   if (scene->active != 0) {
@@ -5562,10 +5563,13 @@ void BattleEffect_InitializeSharedScene(void) {
 
   scene = *(gWorkSlot + HEAP_SLOT_EVENT);
   work = *(gWorkSlot + 32);
-  Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, REG_DMA3);
+  Dma_Set(&work->target[0x2a0], scene + 0x776,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   if (((struct FieldWork *)scene)->revealActive == 0)
-    Dma_Set(work->target, scene + 0x236, 0x84000150, REG_DMA3);
-  Dma_Set(work->target, work->current, 0x84000000 | (sizeof work->current / 4),
+    Dma_Set(work->target, scene + 0x236, (DMA_ENABLE | DMA_32BIT) << 16 | 0x150,
+            REG_DMA3);
+  Dma_Set(work->target, work->current,
+          (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof work->current / 4),
           REG_DMA3);
 
   no = gFrameCount & 7;
@@ -5613,11 +5617,11 @@ void Camera_WorldToScreen(struct EffectVector *position) {
 #ifdef UBFIX
   struct FieldWork *event = (struct FieldWork *)gEventWork;
 
-  if (event->mode == 3) {
+  if (event->mode == MODE_WORLD_MAP) {
 #else
   struct FieldWork **eventCell = (struct FieldWork **)&gEventWork;
 
-  if ((*eventCell)->mode == 3) {
+  if ((*eventCell)->mode == MODE_WORLD_MAP) {
 #endif
     s32 result[3];
 
@@ -5674,7 +5678,7 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   BattleFx_AdvanceHueCycle();
   BattleFx_ApplyColorToTargetBuffer(
-      (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
+      RGB(work->red, work->green, work->blue) | 0x200000, 1);
   BattleFx_StartBufferInterpolation(8);
   work->sourceId = x;
   work->targetId = y;
@@ -5744,7 +5748,7 @@ void BattleFx_UpdateWaveScene(void) {
   work->page ^= 1;
   if (work->page != 0) {
     BattleFx_ApplyColorToTargetBuffer(
-        (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
+        RGB(work->red, work->green, work->blue) | 0x200000, 1);
     BattleFx_StartBufferInterpolation(1);
     BattleFx_AdvanceHueCycle();
   }
@@ -5783,7 +5787,7 @@ void BattleFx_UpdateWaveScene(void) {
   }
 
   if (work->counter == 0)
-    AudioCommand_PlayFar(130);
+    AudioCommand_PlayFar(SE_130);
   if (++work->counter > 60)
     work->counter = 0;
 }
@@ -5801,8 +5805,8 @@ void BattleFx_ArmBg0HBlankDma(void) {
   if (!work->delay) {
     u16 *line = work->lines[work->page];
     volatile u16 *dma = REG_DMA0;
-    dma[5] &= 0xc5ff; // clear the start timing and repeat
-    dma[5] &= 0x7fff; // stop
+    dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+    dma[5] &= ~DMA_ENABLE;
     (void)dma[5];
     // One halfword at each HBlank (repeating, destination reloaded).
     Dma_Set(line, REG_BG0HOFS, 0xa2600001, (volatile u32 *)dma);
@@ -5875,9 +5879,8 @@ s32 Fixed_Remainder(s32 value, s32 divisor) {
   if (divisor & 0xf0000000)
     divisor = -divisor;
   quot = Iwram_RatioMulQ14(divisor, value);
-  return value -
-         Iwram_MulQ16(quot & 0xffff0000,
-                      divisor); // less the quotient's whole part times divisor
+  // Less the quotient's whole part times divisor.
+  return value - Iwram_MulQ16(quot & 0xffff0000, divisor);
 }
 
 // Per-frame update: once the object has arrived (no destination left), runs
@@ -5946,8 +5949,8 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
 // Returns the direction of the d-pad (0x10000 a full turn): right 0, down
 // 0x4000, left 0x8000, up 0xc000; 0xffff when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
-  return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) &
-                                     15]; // the right, left, up and down bits
+  // Indexed by the right, left, up and down bits.
+  return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }
 
 //--------------------------------------------------------------------------
@@ -6159,7 +6162,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
 
     // Push: the hand's animation comes from the turn between angle and the
     // push (in quarter turns).
-    AudioCommand_PlayFar(175);
+    AudioCommand_PlayFar(SE_175);
     x = position.x;
     z = position.z;
     ObjectDispatch_ApplyArgumentToChildrenFar(
@@ -6356,7 +6359,7 @@ void UpdateRisingParticleBurst(void *object) {
   s32 dist;
   u32 spread;
 
-  AudioCommand_PlayFar(154);
+  AudioCommand_PlayFar(SE_154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
     src->angle += 0x2000; // 1/8 turn
@@ -6391,7 +6394,7 @@ void UpdateRisingParticleBurst(void *object) {
       Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
-  AudioCommand_PlayFar(131);
+  AudioCommand_PlayFar(SE_131);
   ObjectDispatch_ReleaseFar(src);
 }
 
@@ -6475,14 +6478,15 @@ void RunBattleEffect08(void) {
   BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
   BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   BattleFx_StartBufferInterpolation(1);
+  // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
-  field->revealActive = 0; // not in the English release
+  field->revealActive = 0;
 #endif
   WaitFrames(1);
   event = BattleFx_FindMatchingEvent(0x50000005, 8, &eventTarget);
   if (event != NULL)
     BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
-  AudioCommand_PlayFar(131);
+  AudioCommand_PlayFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
   // markers nearby.
@@ -6706,7 +6710,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
       Vector_AddPolarOffset(radius, Random16(), pos);
       Object_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }
-    AudioCommand_PlayFar(131);
+    AudioCommand_PlayFar(SE_131);
     WaitFrames(2);
   }
   WaitFrames(8);
@@ -6752,7 +6756,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
 
   FieldObject_WaitForMoveFar(pair[0]);
   target->update = ObjectGroup_ApplyRandomChildValues;
-  AudioCommand_PlayFar(130);
+  AudioCommand_PlayFar(SE_130);
   target->motionFlags = 4;
 
   // Lift 32 pixels, a quarter pixel at a time.
@@ -7021,7 +7025,7 @@ void RunBattleEffect04(void) {
   scene = gEffectWork;
   target = scene->child;
   BattleEffect_InitializeSharedScene();
-  AudioCommand_PlayFar(130);
+  AudioCommand_PlayFar(SE_130);
   slot = scene->slots;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
@@ -7249,7 +7253,7 @@ void BattleFx_RunOrbitingParticles(void) {
   scene = gEffectWork;
   target = scene->child;
   BattleEffect_InitializeSharedScene();
-  AudioCommand_PlayFar(115);
+  AudioCommand_PlayFar(SE_115);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the effect's position.
@@ -7287,11 +7291,11 @@ void BattleFx_RunOrbitingParticles(void) {
   } while (remainingCycles >= 0);
 
   WaitFrames(10);
-  AudioCommand_PlayFar(115);
+  AudioCommand_PlayFar(SE_115);
   WaitFrames(50);
 
   if (target != NULL && scene->enabled == 0) {
-    AudioCommand_PlayFar(212);
+    AudioCommand_PlayFar(SE_212);
 
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
@@ -7304,7 +7308,7 @@ void BattleFx_RunOrbitingParticles(void) {
     } while (remainingCycles >= 0);
 
     if (scene->childOption == 0) {
-      AudioCommand_PlayFar(220);
+      AudioCommand_PlayFar(SE_220);
       ObjectDispatch_ApplyArgumentToChildrenFar(target, 2);
     }
 
@@ -7442,7 +7446,7 @@ void RunBattleEffect03(void) {
   }
 
   resourceSlot = last->slot;
-  AudioCommand_PlayFar(130);
+  AudioCommand_PlayFar(SE_130);
   WaitFrames(110);
 
   // The one in the centre.
@@ -7458,7 +7462,7 @@ void RunBattleEffect03(void) {
     Animation_ApplyChildValuesFar(target, 7);
   }
 
-  AudioCommand_PlayFar(131);
+  AudioCommand_PlayFar(SE_131);
   WaitFrames(12);
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
@@ -7478,7 +7482,7 @@ void RunBattleEffect03(void) {
 
   // Sparks.
   Animation_ApplyChildValuesFar(object, 0);
-  AudioCommand_PlayFar(84);
+  AudioCommand_PlayFar(MUS_084);
   if (object != 0) {
     target->update = BattleFx_RunSparkEmitter;
     target->timer = 0;
@@ -7534,7 +7538,7 @@ void FieldFx_CheckCloakTile(void) {
   tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
 #endif
 
-  if (field->mode == 3) {
+  if (field->mode == MODE_WORLD_MAP) {
     u32 tx;
     u32 ty;
 
@@ -7585,7 +7589,7 @@ void FieldFx_EndCloak(void) {
   anim = obj->animation;
   entry = anim->entries[0];
 
-  AudioCommand_PlayFar(154);
+  AudioCommand_PlayFar(SE_154);
   Scheduler_RemoveCallback(FieldFx_CheckCloakTile);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
   ((struct ScriptMotionObject *)obj)->hook = 0;
@@ -7632,7 +7636,7 @@ void FieldFx_StartCloak(void) {
   u32 n;
   void (*check)(void);
 
-  AudioCommand_PlayFar(130);
+  AudioCommand_PlayFar(SE_130);
   ObjectDispatch_ApplyArgumentToChildrenFar(leader, 0);
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
@@ -7774,7 +7778,7 @@ void RunBattleEffect05(void) {
   if (lightOrb == 0)
     return;
   BattleEffect_InitializeSharedScene();
-  AudioCommand_PlayFar(138);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   if (work->initialized == 0) {
     work->x = target->pos.x;
     work->z = target->pos.z;
@@ -7844,7 +7848,7 @@ void RunBattleEffect05(void) {
         particle->callback = BattleFx_SpawnRandomAngleTriplet;
         particle->flag = 2;
       }
-      AudioCommand_PlayFar(132);
+      AudioCommand_PlayFar(SE_132);
       WaitFrames(6);
     }
     WaitFrames(10);
@@ -8009,7 +8013,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   // Lift to 24 pixels above the ground.
   target->update = ObjectGroup_ApplyRandomChildValues;
   Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
-  AudioCommand_PlayFar(130);
+  AudioCommand_PlayFar(SE_130);
   target->motionFlags = 4;
   ObjectDispatch_SetSingleChildFlagsFar(target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
@@ -8086,7 +8090,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      AudioCommand_PlayFar(175);
+      AudioCommand_PlayFar(SE_175);
       x = p->x;
       z = p->z;
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
@@ -8120,9 +8124,9 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
   ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
   Scheduler_RemoveCallback(BattleFx_SpawnFallingParticles);
-  AudioCommand_PlayFar(135);
+  AudioCommand_PlayFar(SE_135);
   WaitFrames(15);
-  AudioCommand_PlayFar(135);
+  AudioCommand_PlayFar(SE_135);
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
@@ -8144,7 +8148,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       }
     }
   }
-  AudioCommand_PlayFar(131);
+  AudioCommand_PlayFar(SE_131);
   ObjectDispatch_ReleaseFar(hands[0]);
   ObjectDispatch_ReleaseFar(hands[1]);
 
@@ -8393,7 +8397,7 @@ void RunBattleEffect14(void) {
   } while (step < steps);
   ball->scaleX = 0x1b333; // 1.7 wide
   ball->scaleY = 0x14ccc; // 1.3 high
-  AudioCommand_PlayFar(163);
+  AudioCommand_PlayFar(SE_163);
   WaitFrames(20);
   if (scene->enabled == 0) {
     if (target != 0)
@@ -8426,7 +8430,7 @@ void RunBattleEffect14(void) {
   }
   ObjectDispatch_ApplyArgumentToChildrenFar(ball, 1);
   WaitFrames(30);
-  AudioCommand_PlayFar(136);
+  AudioCommand_PlayFar(SE_136);
   WaitFrames(20);
   ObjectDispatch_ReleaseFar(ball);
   BattleFx_PrepareBufferInterpolation();
@@ -8668,7 +8672,7 @@ void RunBattleEffect13(void) {
   if (object == 0)
     return;
   BattleEffect_InitializeSharedScene();
-  AudioCommand_PlayFar(138);
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
   object->angle = actor->angle;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
@@ -8699,7 +8703,7 @@ void RunBattleEffect13(void) {
     WaitFrames(1);
   }
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
-  AudioCommand_PlayFar(132);
+  AudioCommand_PlayFar(SE_132);
   if (child != 0)
     Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y,
                                         -(9 << 16));
@@ -8711,7 +8715,7 @@ void RunBattleEffect13(void) {
     WaitFrames(1);
   }
   WaitFrames(10);
-  AudioCommand_PlayFar(114);
+  AudioCommand_PlayFar(SE_MENU_ERROR);
 
   // Shrink back to the caster.
   step = 0;
@@ -8803,7 +8807,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
     slot->state++;
 
     if ((gFrameCount & 2) != 0)
-      AudioCommand_PlayFar(246);
+      AudioCommand_PlayFar(SE_246);
   } else if (state == 1) {
     if (EffectSlot_HasPendingTarget(slot) == 0)
       slot->state--;
@@ -8830,12 +8834,12 @@ void BattleFx_RunEffect15(void) {
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
   WaitFrames(30);
   obj->update = ObjectGroup_ApplyRandomChildValues;
-  AudioCommand_PlayFar(131);
+  AudioCommand_PlayFar(SE_131);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 28);
   WaitFrames(40);
 
   // Start spinning.
-  AudioCommand_PlayFar(220);
+  AudioCommand_PlayFar(SE_220);
   Animation_ApplyChildValuesFar(obj, 0);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
   obj->update = BattleFx_UpdateSpinAngle;
@@ -9122,7 +9126,7 @@ void RunBattleEffect16(void) {
     object->phase = zero;
     object->step = zero;
   }
-  AudioCommand_PlayFar(0x8c);
+  AudioCommand_PlayFar(SE_140);
   WaitFrames(15);
   object->phase = 1;
   WaitFrames(10);
@@ -9139,7 +9143,7 @@ void RunBattleEffect16(void) {
   object->angle = angle;
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
   WaitFrames(15);
-  AudioCommand_PlayFar(0xae);
+  AudioCommand_PlayFar(SE_174);
   WaitFrames(55);
   Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
   if (gGameState.cloaked != 0)
@@ -9655,7 +9659,7 @@ void Map_UpdateWorldMapMarkers(void) {
   }
 
   // Pulse the markers' transparency.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, 0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }
 
@@ -9676,7 +9680,7 @@ void Map_ShowWorldMap(s32 picture) {
   s32 savedStatus;
   s16 blend;
 
-  if (field->mode != 3)
+  if (field->mode != MODE_WORLD_MAP)
     return;
   field->camera->movementState = 1;
   savedStatus = field->transitionFrames;
@@ -9772,7 +9776,7 @@ void BattleFx_RunVisibilityTransition(void) {
   struct FieldWork *field =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
 
-  if (field->mode == 3) {
+  if (field->mode == MODE_WORLD_MAP) {
     Scheduler_SuspendOverlayTasks();
     BattleFx_UpdateObjectVisibilityBounds();
     Leader_StopMoving();

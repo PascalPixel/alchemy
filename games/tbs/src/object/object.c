@@ -314,7 +314,7 @@ void Game_ResetForNewGame(s32 mode) {
     if (GameFlag_TestFar(0x101))
       GameFlag_ClearBitFar(0x101);
     else
-      AudioCommand_PlayFar(0x120);
+      AudioCommand_PlayFar(SE_288);
     record = &table[gGameState.scene];
     entrance = gGameState.entrance;
 
@@ -322,8 +322,8 @@ void Game_ResetForNewGame(s32 mode) {
     {
       volatile u16 *dma0 = REG_DMA0;
 
-      dma0[5] &= 0xc5ff;
-      dma0[5] &= 0x7fff;
+      dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+      dma0[5] &= ~DMA_ENABLE;
       dma0[5];
     }
     Scheduler_ResetTaskTable();
@@ -679,9 +679,9 @@ struct SceneInteractionEntry {
 extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
 
 // Chooses the current scene's field music (gGameState.cue) from the first rule
-// matching the scene or its group and the entrance; music 18 when none does.
+// matching the scene or its group and the entrance; MUS_018 when none does.
 void Scene_ResolveInteractionResult(void) {
-  s16 music = 18;
+  s16 music = MUS_018;
   s16 scene = gGameState.scene;
   s16 entrance = gGameState.entrance;
   s16 group = gGameState.sceneGroup;
@@ -826,7 +826,7 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
 // Chooses the battle music for slot of zone (gGameState.sceneCue).
 // gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 // (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-// last before it. Link battles always use music 18.
+// last before it. Link battles always use MUS_018.
 void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;
@@ -834,7 +834,7 @@ void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   u16 value;
 
   if (GameFlag_TestFar(FLAG_LINK_BATTLE)) {
-    music = 18;
+    music = MUS_018;
   } else {
     for (;;) {
       value = *table++;
@@ -1103,7 +1103,7 @@ s32 ObjectTable_FindLastActiveId(void) {
 }
 
 // Returns the address of actor slot index in the event work.
-void *ObjectTable_GetSlotAddress(u32 actorIndex) {
+UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
   return (u8 *)gEventWork + 0x14 + actorIndex * sizeof(void *);
 }
 
@@ -1290,7 +1290,8 @@ void ObjectTable_Snapshot(void) {
     if (object == NULL)
       continue;
     *indices++ = actorIndex;
-    Dma_Set(object, snapshot, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
+    Dma_Set(object, snapshot,
+            (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct ObjectRuntime) / 4),
             REG_DMA3);
     if (object->animationKind == 1) {
       struct AnimationObject *sprite = object->animation;
@@ -1341,7 +1342,9 @@ void ObjectTable_Restore(void) {
     object = ObjectTable_Get(actorIndex);
     if (object != NULL) {
       sprite = object->animation;
-      Dma_Set(snapshot, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
+      Dma_Set(snapshot, object,
+              (DMA_ENABLE | DMA_32BIT) << 16 |
+                  (sizeof(struct ObjectRuntime) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
@@ -1407,8 +1410,6 @@ enum StepTileEvent {
 };
 
 #define STEP_FLAG_DOUBLE_SPEED 0x167
-
-#define STEP_CUE_EFFECT 139
 
 // Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
@@ -1647,7 +1648,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = accumulatedDistance & 0xffff;
       BattleParty_ApplyDrain(amount, 0);
       if (BattlePlacement_UpdateTimedEntriesFar())
-        AudioCommand_PlayFar(STEP_CUE_EFFECT);
+        AudioCommand_PlayFar(SE_139);
       Event_ClearInvalidPackedValues();
       partyHurt = BattleParty_ApplyStatusDamage();
     }
@@ -1735,7 +1736,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
     if (amount < -10)
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     else
-      AudioCommand_PlayFar(133);
+      AudioCommand_PlayFar(SE_133);
   } else {
     AudioCommand_PlayFar(SE_RECOVERY);
   }
@@ -1794,7 +1795,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
   if (worstPoison != 0) {
     BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleFx_StartBufferInterpolation(4);
-    AudioCommand_PlayFar(133);
+    AudioCommand_PlayFar(SE_133);
   }
 
   return worstPoison;
@@ -1988,14 +1989,14 @@ s32 Field_RunScene(s32 entrance) {
               struct BattleUnit *vitals;
 
               if (gGameState.selectedActor == 0) {
-                if (GameFlag_TestFar(0x20) != 0)
+                if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0)
                   ObjectDispatch_ApplyArgumentToChildrenFar(actor, 21);
                 else
                   ObjectDispatch_ApplyArgumentToChildrenFar(actor, 37);
               } else {
                 ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
               }
-              AudioCommand_PlayFar(59);
+              AudioCommand_PlayFar(MUS_059);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
               vitals = UnitGetFar(gGameState.selectedActor);
@@ -2396,7 +2397,7 @@ redraw:
         green++;
       if (channel == 3 && blue < 31)
         blue++;
-      *paletteColor = (blue << 10) | (green << 5) | red;
+      *paletteColor = RGB(red, green, blue);
       goto redraw;
     }
     if (gKeysRepeat & KEY_B) {
@@ -2411,7 +2412,7 @@ redraw:
         green--;
       if (channel == 3 && blue != 0)
         blue--;
-      *paletteColor = (blue << 10) | (green << 5) | red;
+      *paletteColor = RGB(red, green, blue);
       goto redraw;
     }
     if (gKeysRepeat & KEY_START) {
@@ -2524,7 +2525,8 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   if (searchFlags != EVENT_SEARCH) {
     mimicDifference = (result & 0xfff00000) ^ 0x500000;
     ignoresCondition = mimicDifference | (0U - mimicDifference);
-    ignoresCondition >>= 31; // 1 when tmp is not 0
+    // 1 when mimicDifference is not 0.
+    ignoresCondition >>= 31;
   }
   return ignoresCondition;
 }
@@ -2588,7 +2590,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
 }
 
 // Runs the scene's initialization again. Nothing calls this.
-void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
+UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 // Returns the talk event of actor id: for the actor the party has stopped, its
 // kind 7 event if it has one.
@@ -2772,11 +2774,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
         AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
       case 32:
-        AudioCommand_PlayFar(128);
+        AudioCommand_PlayFar(SE_128);
         ObjectEffect_BeginContextEffect26();
         break;
       case 48:
-        AudioCommand_PlayFar(129);
+        AudioCommand_PlayFar(SE_129);
         ObjectEffect_BeginContextEffect25();
         break;
       }
@@ -2905,7 +2907,7 @@ s32 Field_SearchTile(s32 tile) {
                                                      1);
               UiWork_FinalizeAndReleaseBlock16Far();
               ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
-              AudioCommand_PlayFar(246);
+              AudioCommand_PlayFar(SE_246);
               FieldEvent_WaitFrames(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
                                                      1);
@@ -3198,7 +3200,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
   targetActor = Object_GetById(target);
   emitter = 0;
   if (targetActor != 0) {
-    AudioCommand_PlayFar(124);
+    AudioCommand_PlayFar(SE_124);
     ObjectDispatch_ApplyArgumentToChildrenFar(targetActor, 4);
     WaitFrames(12);
     emitter = (s32)BattleFx_StartRandomParticleEmitter(actor, itemId);
@@ -3621,8 +3623,8 @@ s32 Field_UsePsynergy(u32 code) {
   if (before || after || during) {
     target =
         Field_FindNearbyPsynergyTarget(gGameState.selectedActor, abilityGroup);
-    if (after && (after->trigger & 0x400)) // the event plays the effect
-    {
+    // An event with trigger flag 0x400 plays the effect itself.
+    if (after && (after->trigger & 0x400)) {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
       GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
     }
@@ -3809,7 +3811,7 @@ s32 Marker_FindSlot(s32 id) {
 }
 
 // Does nothing.
-void EffectRuntime_ReservedNoOp(void) {}
+UNUSED void EffectRuntime_ReservedNoOp(void) {}
 
 // Gives the actor of marker id animation, plays sound and waits 12 frames.
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
@@ -3830,7 +3832,9 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 }
 
 // Closes the chest of marker id again (its item could not be carried).
-void Marker_CloseChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 5, 0x7d); }
+void Marker_CloseChest(s32 id) {
+  SetMarkerAnimationAndPlaySound(id, 5, SE_125);
+}
 
 // Makes the chest of marker id jump up as a mimic.
 void Marker_LaunchMimic(s32 id) {
@@ -3845,7 +3849,7 @@ void Marker_LaunchMimic(s32 id) {
     WaitFrames(18);
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
-    AudioCommand_PlayFar(0x92);
+    AudioCommand_PlayFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
       ObjectDispatch_SetSingleChildFlagsFar(object, 1);
@@ -3854,7 +3858,7 @@ void Marker_LaunchMimic(s32 id) {
 }
 
 // Opens the chest of marker id.
-void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, 0x7c); }
+void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, SE_124); }
 
 // Shows the chest of marker id open (animation 2).
 void Marker_ShowOpened(s32 id) {
@@ -4066,14 +4070,15 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)srcZ)->facing,
                         picturePosition.coordinates);
   pictureX = (picturePosition.vector.x & 0xfff00000) + (8 << 16);
-  srcZ = (picturePosition.vector.z & 0xfff00000) +
-         (8 << 16); // srcZ now holds the cell's z
+  // srcZ now holds the cell's z.
+  srcZ = (picturePosition.vector.z & 0xfff00000) + (8 << 16);
 
   if (((struct FieldWork *)work)->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
     struct EffectObj *effect = EFFECT_OBJECT_POOL;
 
-    work = EFFECT_OBJECT_COUNT - 1; // work now counts the actors left
+    // work now counts the actors left.
+    work = EFFECT_OBJECT_COUNT - 1;
 
     do {
       if (effect->scriptWord != 0) {
@@ -4363,16 +4368,16 @@ void BattleFx_StartWindowHBlankDma(void) {
   volatile u16 *dma0 = REG_DMA0;
 
   // Stop the previous transfer before priming the first line's registers.
-  dma0[5] &= 0xc5ff;
-  dma0[5] &= 0x7fff;
+  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[5] &= ~DMA_ENABLE;
   (void)dma0[5];
   REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   Io_Write16(*scanlineData++, &REG_WININ);
   Io_Write16(*scanlineData++, &REG_WINOUT);
   Io_Write16(*scanlineData++, &REG_WIN0H);
   Io_Write16(*scanlineData++, &REG_WIN1H);
-  Io_Write16(160, &REG_WIN0V);
-  Io_Write16(160, &REG_WIN1V);
+  Io_Write16(WIN_RANGE(0, 160), &REG_WIN0V);
+  Io_Write16(WIN_RANGE(0, 160), &REG_WIN1V);
   // HBlank repeats one word: both horizontal window bounds for the next line.
   Dma_Set(scanlineData, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)dma0);
 }
@@ -4452,9 +4457,10 @@ void DisplayTransition_UpdateScanlineTable(void) {
       state->duration = 0;
       if (state->nextMode == 0) {
         if (state->end == 64) {
-          REG_DISPCNT &= 0x81ff;
+          REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                           DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
         } else {
-          REG_DISPCNT &= 0x9fff;
+          REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
         }
         Scheduler_RemoveCallback(
             (SchedulerCallback)BattleFx_StartWindowHBlankDma);
@@ -4463,8 +4469,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
         {
           volatile u16 *dma0 = REG_DMA0;
 
-          dma0[5] &= 0xc5ff;
-          dma0[5] &= 0x7fff;
+          dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+          dma0[5] &= ~DMA_ENABLE;
           dma0[5];
         }
         return;
@@ -5152,24 +5158,24 @@ again:
   switch (state->irqPhase) {
   case 3:
     if (scanline >= state->irqFirstLine) {
-      REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
+      REG_DISPCNT = (REG_DISPCNT & 0xfff8) | DISPCNT_MODE_2;
       state->irqPhase = 9;
     }
     break;
   case 2:
     if (scanline >= state->irqSecondLine) {
-      REG_DISPCNT &= 0xFFF8;
+      REG_DISPCNT &= 0xfff8;
       state->irqPhase = 9;
     }
     break;
   case 1:
     if (scanline >= state->irqFirstLine) {
-      REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
+      REG_DISPCNT = (REG_DISPCNT & 0xfff8) | DISPCNT_MODE_2;
       state->irqPhase++;
       goto again;
     }
     if (scanline >= state->irqSecondLine) {
-      REG_DISPCNT &= 0xFFF8;
+      REG_DISPCNT &= 0xfff8;
       state->irqPhase = 3;
       goto again;
     }
@@ -5198,8 +5204,8 @@ void DisplayTransition_UpdateFrame(void) {
       state->duration = 0;
       Scheduler_RemoveCallback(DisplayTransition_UpdateFrame);
       dma0 = REG_DMA0;
-      dma0[5] &= 0xc5ff;
-      dma0[5] &= 0x7fff;
+      dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+      dma0[5] &= ~DMA_ENABLE;
       (void)dma0[5];
       return;
     } else {
@@ -5227,7 +5233,7 @@ void DisplayTransition_UpdateFrame(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
-                      0x84000008);
+                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x8);
 }
 
 // Fills background screen block 4 with tile 0 in palette 15 and, unless color
@@ -5244,7 +5250,8 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
     tile = work->solidTile;
     for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, BG_CHAR_BLOCK(0), 0x84000008, REG_DMA3);
+    Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x8, REG_DMA3);
   }
 }
 
@@ -5791,8 +5798,10 @@ void BattleFx_StartFadeOverlay(void *object) {
   VramCache_Load(94, 0x200, tiles);
   Runtime_ReleaseHeapBlock(14);
   Scheduler_AddOrUpdateCallback(FadeOverlay_DrawMarks, 0xc80);
-  Io_Write16(0x3f9e, &REG_BLDCNT);
-  Io_Write16(16, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                 BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)

@@ -106,12 +106,12 @@ void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param);
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param);
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
 void Object_LinkPair(s32 firstId, s32 secondId, s32 wait);
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first,
-                                          struct FacingObject *raw_second);
+void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
+                                          struct FacingObject *secondObject);
 void ObjectTable_DestroyById(s32 index);
 void ObjectTable_DestroyNoOp(void);
 void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param);
-void ObjectGroup_ApplyIndexedChildValue(union FieldObject *object);
+void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject);
 void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param);
 void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
                                  const void *script);
@@ -205,7 +205,7 @@ struct EffectSlot;
 struct MotionObject;
 
 void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
-void Djinn_RunBattleStartHop(s32 id);
+void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldObject_PlaceSceneActors(void);
 // Djinn_ResolvePendingEvent is called from object.c with no prototype in scope:
@@ -215,18 +215,18 @@ void BattleFx_UpdateAllSlots(void);
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject);
-void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor);
+void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle);
 void Djinn_RunJupiterJoinEffect(s32 djinniId);
 void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject);
 void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
-void Djinn_RunMarsJoinEffect(s32 arg);
+void Djinn_RunMarsJoinEffect(s32 djinniId);
 void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject);
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
-void BattleFx_RunVenusDjinnCapture(s32 arg);
+void BattleFx_RunVenusDjinnCapture(s32 djinniId);
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect);
 void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject);
-void BattleFx_RunMercuryDjinnCapture(s32 id);
+void BattleFx_RunMercuryDjinnCapture(s32 djinniId);
 
 struct EffectVector;
 
@@ -319,7 +319,7 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject);
 void BattleFx_CallEffect05(s32 unused);
 void RunBattleEffect05(void);
 void BattleFx_SpawnFallingParticles(void);
-void BattleFx_SteerLiftedTarget(s32 id);
+void BattleFx_SteerLiftedTarget(s32 targetId);
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                   s32 angle);
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object);
@@ -333,8 +333,8 @@ void BattleFx_UpdateRadialCamera(struct EffectSlot *effect);
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused);
 void BattleEffect_RunFallbackObjectTransition(void);
 void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject);
-void BattleEffect_PauseObject(s32 id);
-void BattleFx_ResumeObject(s32 id);
+void BattleEffect_PauseObject(s32 actorId);
+void BattleFx_ResumeObject(s32 actorId);
 s32 BattleFx_FilterObjectIdByFlags(s32 id);
 void BattleFx_RunEffect13Hook(s32 unused);
 void RunBattleEffect13(void);

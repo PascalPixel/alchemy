@@ -1,0 +1,167 @@
+// Part of psynergy_effects.c, compiled only through it.
+// Growth.
+
+#include "../psynergy_effects_internal.h"
+
+#define GROWTH_PARTICLE_MAX 24     // particles round the target
+#define GROWTH_PARTICLE_OBJECT 284 // particle object
+#define GROWTH_FALL_OBJECT 217     // falling object
+#define GROWTH_FALL_LAST 4         // five falling objects, 0 to 4
+
+struct BurstParticleVector {
+  s32 values[3]; // x, y, z
+};
+
+// A particle sprite's attributes.
+struct BurstParticleVisual {
+  u8 reserved00[5];
+  u8 flagsALow : 5;
+  u8 flip : 1;
+  u8 flagsAHigh : 2;
+  u8 reserved06;
+  u8 flagsBLow : 6;
+  u8 flagsBHigh : 2;
+  union {
+    struct {
+      u16 shape : 10;
+      u16 unused : 6;
+    } bits;
+    struct {
+      u8 lo;
+      u8 highLow : 4;
+      u8 palette : 4;
+    } bytes;
+  } attributes;
+};
+
+struct BurstParticleVisualGroup {
+  struct BurstParticleVisual primary;
+  struct BurstParticleVisual child;
+};
+
+// Effect 12 cast on a target: particles round the target, which takes the
+// sprite priority of the ground under it.
+void BattleFx_RunBurstParticleMainObject(s32 unused) {
+  struct FieldActor *target;
+
+  target = ((struct BattleFxScene *)gEffectWork)->child;
+  if (target != NULL) {
+    BattleEffect_SpawnBurstParticleField();
+    ObjectDispatch_ApplyArgumentToChildrenFar(target, 2);
+    target->collisionFlags = 0;
+    ObjectDispatch_SetSingleChildFlagsFar(target, 0);
+    target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    WaitFrames(10);
+    AudioCommand_PlayFar(SE_RECOVERY);
+    WaitFrames(40);
+    BattleFx_PrepareBufferInterpolation();
+  }
+}
+
+// Effect 12 cast with no target: the particles, then five falling objects
+// 4 to 10 pixels round the effect's position.
+void BattleFx_RunBurstParticles(void) {
+  struct BattleFxScene *work = gEffectWork;
+  struct BurstParticleVector pos;
+  struct BurstParticleVector *p;
+  s32 remainingObjects;
+
+  BattleEffect_SpawnBurstParticleField();
+  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+  p = &pos;
+  remainingObjects = GROWTH_FALL_LAST;
+  do {
+    struct FieldActor *particle;
+    s32 radius;
+
+    p->values[0] = work->x;
+    p->values[2] = work->z;
+    radius = (Random16() * 6) + 0x40000;
+    Vector_AddPolarOffset(radius, Random16(), p);
+    p->values[1] = work->y;
+    particle = Object_Spawn(GROWTH_FALL_OBJECT, p->values[0], p->values[1],
+                            p->values[2]);
+    if (particle != 0) {
+      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+                                   gBattleFx_BurstParticleObjectScript);
+      particle->motionFlags = ACTOR_FALLS;
+    }
+    WaitFrames(((Random16() * 2) >> 16) + 2);
+    remainingObjects--;
+  } while (remainingObjects >= 0);
+  WaitFrames(30);
+  BattleFx_PrepareBufferInterpolation();
+}
+
+// Sends 24 particles, one every 2 frames, from in front of the caster to
+// points round the effect's position. They start 10 pixels up facing south,
+// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise.
+void BattleEffect_SpawnBurstParticleField(void) {
+  struct BattleFxScene *work;
+  struct FieldActor *caster;
+  s32 pos[3];
+  s32 particleIndex;
+
+  work = gEffectWork;
+  caster = work->mainObject;
+  BattleEffect_InitializeSharedScene();
+
+  for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
+       particleIndex++) {
+    struct FieldActor *particle;
+    struct BurstParticleVisual *visual;
+    struct BurstParticleVisual *child;
+    s32 radius;
+
+    if (work->angle == 0x4000) {
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
+                 caster->z.fixed);
+    } else if (work->angle == 0xc000) {
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0x180000,
+                 caster->z.fixed);
+    } else {
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
+                 caster->z.fixed);
+      Vector_AddPolarOffset(0xa0000, work->angle, pos);
+    }
+
+    // Copy the flip, shape and palette to the child sprite.
+    particle = Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0], pos[1], pos[2]);
+    visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
+    child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
+    child->flip = visual->flip;
+    child->flagsAHigh = visual->flagsAHigh;
+    child->flagsBHigh = visual->flagsBHigh;
+    child->attributes.bits.shape = visual->attributes.bits.shape;
+    child->attributes.bytes.palette = visual->attributes.bytes.palette;
+
+    if (particle != 0) {
+      particle->scaleY = 0xb333; // 0.7
+      particle->scaleX = 0xb333;
+      particle->acceleration = 0x18000;
+      particle->speed = 0x18000;
+      particle->motionFlags = 0;
+      Animation_ApplyChildValuesFar(particle, 11);
+      ObjectDispatch_ApplyArgumentToChildrenFar(particle, 7);
+      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+                                   gBattleFx_CommonParticleScript + 1);
+      ObjectDispatch_SetSingleChildFlagsFar(particle, 1);
+
+      // Destination: 4 to 10 pixels from the effect's position.
+      SET_VECTOR(pos, work->x, work->y, work->z);
+      if (work->angle == 0xc000)
+        Vector_AddPolarOffset(0xe0000, work->angle, pos);
+      radius = Random16() * 6 + 0x40000;
+      Vector_AddPolarOffset(radius, Random16(), pos);
+      Object_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
+    }
+    AudioCommand_PlayFar(SE_131);
+    WaitFrames(2);
+  }
+  WaitFrames(8);
+}
+
+#undef GROWTH_PARTICLE_MAX
+#undef GROWTH_PARTICLE_OBJECT
+#undef GROWTH_FALL_OBJECT
+#undef GROWTH_FALL_LAST

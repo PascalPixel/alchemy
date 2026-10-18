@@ -49,7 +49,7 @@
 s32 ReelGame_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomSeed = gGameState.playTime;
-  AudioCommand_PlayFar(9);
+  AudioCommand_PlayFar(MUS_009);
   ReelGame_Run();
   return 0;
 }
@@ -144,7 +144,7 @@ void Palette_DarkenSceneStep(void) {
       g = 0;
     if (r < 0)
       r = 0;
-    *col++ = (b << 10) | (g << 5) | r;
+    *col++ = RGB(r, g, b);
   }
   col = (u16 *)&OBJ_PLTT[1];
   for (i = 0; i != 239; i++) {
@@ -162,7 +162,7 @@ void Palette_DarkenSceneStep(void) {
       g = 0;
     if (r < 0)
       r = 0;
-    *col++ = (b << 10) | (g << 5) | r;
+    *col++ = RGB(r, g, b);
   }
 }
 
@@ -195,7 +195,7 @@ void Palette_StepTowardResource(s32 resource) {
       b++;
     else if (b > dst_b)
       b--;
-    dst[i] = (b << 10) | (g << 5) | r;
+    dst[i] = RGB(r, g, b);
   }
   Dma_Set(dst + 1, (void *)&BG_PLTT[1], (DMA_ENABLE << 16) | 63, REG_DMA3);
 }
@@ -414,8 +414,8 @@ void ReelGame_RunFrame(void) {
             AudioCommand_PlayFar(SE_MENU_CANCEL);
           }
         }
-        REG_BLDCNT = 0x3fd0;
-        REG_BLDALPHA = 0x10;
+        REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL;
+        REG_BLDALPHA = BLEND_ALPHA(16, 0);
         if (work->pressed & KEY_A) {
           work->state = REEL_SPINNING;
           fx->frame = 0;
@@ -423,7 +423,7 @@ void ReelGame_RunFrame(void) {
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(ITEM_GAME_TICKET);
           UiWork_FinalizeFar(work->subWindow, 1);
-          AudioCommand_PlayFar(0x130);
+          AudioCommand_PlayFar(SE_304);
         }
       }
     } else if (work->state == REEL_CHOOSING_HOLDS) {
@@ -445,10 +445,10 @@ void ReelGame_RunFrame(void) {
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          AudioCommand_PlayFar(0x131);
+          AudioCommand_PlayFar(SE_305);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          AudioCommand_PlayFar(0x130);
+          AudioCommand_PlayFar(SE_304);
           work->state = REEL_SPINNING;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
@@ -540,10 +540,10 @@ void ReelGame_RunFrame(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = REEL_SHOWING_WIN;
-        AudioCommand_PlayFar(93);
+        AudioCommand_PlayFar(MUS_093);
         work->timer = 0;
-        REG_BLDCNT = 0x3f44;
-        REG_BLDALPHA = 0x1010;
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+        REG_BLDALPHA = BLEND_ALPHA(16, 16);
         fx->transferMode = 2;
         fx->transferValue = 75;
       }
@@ -580,14 +580,14 @@ void ReelGame_RunFrame(void) {
         UiText_DrawCharacterAtOffsetFar(MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        AudioCommand_PlayFar(0x132);
+        AudioCommand_PlayFar(SE_306);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              AudioCommand_PlayFar(0x133);
+              AudioCommand_PlayFar(SE_307);
               break;
             }
           }
@@ -653,7 +653,7 @@ void ReelGame_RunFrame(void) {
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
           work->state = REEL_WON;
-          AudioCommand_PlayFar(171);
+          AudioCommand_PlayFar(SE_171);
           fx->transferMode = 1;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
@@ -1007,7 +1007,7 @@ void ReelGame_Run(void) {
         *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = k * 32 + i + 148;
     }
   }
-  REG_BG1CNT = BGCNT_SCREEN_BASE(5) | BGCNT_CHAR_BASE(2) | 1;
+  REG_BG1CNT = BGCNT_SCREEN_BASE(5) | BGCNT_CHAR_BASE(2) | BGCNT_PRIORITY(1);
   REG_BG2CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
@@ -1015,20 +1015,24 @@ void ReelGame_Run(void) {
   gBgScroll[1].y = 0;
   gBgScroll[2].x = 0;
   gBgScroll[2].y = 0;
-  REG_WININ = 0x3737;
-  REG_WINOUT = 0x2727;
-  REG_BLDCNT = 0x3f44;
-  REG_BLDALPHA = 0x1010;
+  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
+              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+               WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
+               WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_CLR;
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG1HOFS = 0;
   REG_BG2HOFS = 0;
   REG_BG1VOFS = 0xff60;
   REG_BG2VOFS = 0xff60;
-  REG_WIN0H = 0x28c8;
-  REG_WIN0V = 0x1878;
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0xa0;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0xa0;
+  REG_WIN0H = WIN_RANGE(40, 200);
+  REG_WIN0V = WIN_RANGE(24, 120);
+  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0V = WIN_RANGE(0, 160);
+  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1V = WIN_RANGE(0, 160);
 
   {
     u16 *shade = (u16 *)(work->sheet + 0x200);

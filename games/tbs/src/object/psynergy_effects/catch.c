@@ -1,0 +1,107 @@
+// Part of psynergy_effects.c, compiled only through it.
+// Catch.
+
+#include "../psynergy_effects_internal.h"
+
+// Effect 13 cast on a target (from BattleFx_DispatchRequestKind).
+void BattleFx_RunEffect13Hook(s32 unused) { RunBattleEffect13(); }
+
+// Psynergy effect 13: carries object 215 from 16 pixels above the caster to
+// the goal in 10 steps, growing from a quarter to full size, presses down 20
+// pixels moving child to (-9, -9), rises 19.5 pixels and shrinks back. The
+// goal is 32 pixels in front of the caster with scene->enabled, otherwise
+// the effect's position, 32 pixels up in both cases.
+void RunBattleEffect13(void) {
+  struct BattleFxScene *scene = gEffectWork;
+  struct MotionObject *actor = scene->mainObject;
+  struct MotionObject *child = scene->child;
+  struct MotionObject *object;
+  struct FixedPointPosition spawn;
+  struct FixedPointPosition origin;
+  struct FixedPointPosition target;
+  s32 step;
+  s32 i;
+  s32 steps = 11;
+
+  origin.x = actor->x;
+  origin.y = actor->y + (16 << 16);
+  origin.z = actor->z;
+  if (scene->enabled) {
+    target.x = actor->x;
+    target.y = actor->y + (32 << 16);
+    target.z = actor->z;
+    Vector_AddPolarOffset(32 << 16, scene->angle, &target.x);
+  } else {
+    target.x = scene->x;
+    target.y = scene->y + (32 << 16);
+    target.z = scene->z;
+  }
+  spawn.x = scene->x;
+  spawn.y = scene->y + (32 << 16);
+  spawn.z = scene->z;
+  object = Object_Spawn(215, spawn.x, spawn.y, spawn.z);
+  if (object == 0)
+    return;
+  BattleEffect_InitializeSharedScene();
+  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  object->angle = actor->angle;
+  object->speedLimit = 0x14ccc;
+  object->motionFlags = 0;
+  ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
+  Animation_ApplyChildValuesFar(object, 1);
+
+  // Reach out to the goal.
+  step = 0;
+  do {
+    s32 scale;
+
+    SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
+                 origin.y + (target.y - origin.y) * step / 10,
+                 origin.z + (target.z - origin.z) * step / 10);
+    scale = BattleFx_Interpolate(0x10000, 0x4000, step);
+    object->scaleX = scale;
+    object->scaleY = scale;
+    WaitFrames(1);
+    step++;
+  } while (step < steps);
+  WaitFrames(10);
+  ObjectDispatch_ApplyArgumentToChildrenFar(object, 6);
+  WaitFrames(15);
+
+  // Press down 2 pixels a frame for 10 frames.
+  for (i = 0; i < 10; i++) {
+    object->y -= 2 << 16;
+    WaitFrames(1);
+  }
+  ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
+  AudioCommand_PlayFar(SE_132);
+  if (child != 0)
+    Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y,
+                                        -(9 << 16));
+  WaitFrames(20);
+
+  // Rise 1.5 pixels a frame for 13 frames.
+  for (i = 0; i < 13; i++) {
+    object->y += 0x18000;
+    WaitFrames(1);
+  }
+  WaitFrames(10);
+  AudioCommand_PlayFar(SE_MENU_ERROR);
+
+  // Shrink back to the caster.
+  step = 0;
+  do {
+    s32 scale;
+
+    SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
+                 target.y + (origin.y - target.y) * step / 10,
+                 target.z + (origin.z - target.z) * step / 10);
+    scale = BattleFx_Interpolate(0x4000, 0x10000, step);
+    object->scaleX = scale;
+    object->scaleY = scale;
+    WaitFrames(1);
+    step++;
+  } while (step < steps);
+  ObjectDispatch_ReleaseFar(object);
+  BattleFx_PrepareBufferInterpolation();
+}

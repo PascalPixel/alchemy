@@ -13,7 +13,7 @@
 struct BattleEffectWork {
   struct EffectStep particles[64];
   u8 sheet[0x6980];
-  s32 bg2X[160];
+  s32 bg2xLines[160];
   u8 unk7300[0x480];
   s32 transferMode;
   s32 transferValue;
@@ -53,7 +53,7 @@ struct BattleEffectWork {
 };
 
 STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 0x700);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2X) == 0x7080);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 0x7080);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 0x77a8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);

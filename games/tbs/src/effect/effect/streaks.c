@@ -6,7 +6,7 @@
 // turn, in one of five colours.
 
 // gStreakVolley_Records has four flags for each style.
-#define STREAK_VALUE(mode, n) gStreakVolley_Records[(mode) * 4 + (n)]
+#define STREAK_VALUE(mode, n) gStreakVolley_Records[(mode)][(n)]
 #define STREAK_ANIMATE 0 // nonzero: the streak cycles through three images
 #define STREAK_HIT 1     // nonzero: play the hit sound and flash the target
 #define STREAK_MOTION 2  // the target's recoil motion on the hit (-1: none)
@@ -162,7 +162,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     for (frame = 0; frame != totalFrames; frame++) {
-      s32 *row = work->bg2X;
+      s32 *row = work->bg2xLines;
 
       // A sine wave of BG2X offsets, one per scanline, for the wave
       // HBlank DMA; this effect does not start that DMA itself.

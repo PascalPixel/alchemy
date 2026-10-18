@@ -180,7 +180,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     for (frame = 0; frame != total; frame++) {
-      s32 *row = work->bg2X;
+      s32 *row = work->bg2xLines;
 
       // Wobble BG2's 160 lines on a sine wave, and fade the last 16
       // frames out.

@@ -293,7 +293,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     if (mode != CARD_SLEEP) {
       if (mode == CARD_BAFFLE) {
         // The screen waves, line by line.
-        s32 *line = work->bg2X;
+        s32 *line = work->bg2xLines;
 
         for (i = 0; i != 160; i++)
           *line++ =

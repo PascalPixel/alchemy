@@ -9,7 +9,7 @@
 #define PLASMA_SECOND_IMAGE 0x1500 // the second picture in the sheet
 
 // gPlasma_Columns has seven pillars for each side.
-#define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(pillar) + (side) * 7]
+#define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
 
 // Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
 // Thunderstorm (kind 18).

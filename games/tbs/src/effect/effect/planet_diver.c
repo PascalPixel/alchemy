@@ -292,7 +292,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
       BattleEventRuntime_BeginPhaseFar(0);
 
     // Ripple the canvas sideways, line by line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     if (work->effect->side == 0) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
@@ -402,7 +402,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 
     // Ripple the canvas sideways, line by line.
     camera = gCameraWork;
-    row = work->bg2X;
+    row = work->bg2xLines;
     if (work->effect->side == 0) {
       s32 angle;
       s32 base;

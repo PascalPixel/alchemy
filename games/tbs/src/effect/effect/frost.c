@@ -10,7 +10,7 @@ enum {
 
 // The value of one column of this effect's gRisingMotes_Timings row.
 #define RISING_MOTE_TIMING(field)                                              \
-  (gRisingMotes_Timings[work->effect->variant * 3 + (field)])
+  gRisingMotes_Timings[work->effect->variant][(field)]
 
 // Abilities: Frost, Tundra, Glacier (kind 6).
 //

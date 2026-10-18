@@ -362,7 +362,7 @@ void ReelGame_RunFrame(void) {
   Random16();
 
   dma = REG_DMA0;
-  dma[5] &= ~DMA_START_HBLANK_REPEAT;
+  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
   dma[5];
   Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY, 0xa2600001,

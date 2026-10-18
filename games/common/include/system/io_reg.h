@@ -166,7 +166,9 @@ enum DisplayControl {
 #define REG_RCNT (*(volatile u16 *)0x04000134)
 
 #define DMA_ENABLE 0x8000
-#define DMA_START_HBLANK_REPEAT 0x3a00
+// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
+// and repeat (bit 9): the bits cleared before a channel is stopped.
+#define DMA_START_TIMING_DRQ_REPEAT 0x3a00
 #define DMA_32BIT 0x04000000
 #define DMA_SRC_FIXED32 0x01000000
 #define DMA_ENABLE32 0x80000000

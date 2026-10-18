@@ -56,7 +56,7 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
    * first (differ 2) */
   asm volatile("" : "+l"(io));
   (void)channel[5];
-  Dma_Set(work->bg2X, (void *)((io << 19) + 0x28), 0xa6600001,
+  Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28), 0xa6600001,
           (volatile u32 *)channel);
 }
 
@@ -78,6 +78,6 @@ void BattleFx_ArmBg1HBlankDma(void) {
    * BattleFx_ArmBg2AffineHBlankDma (differ 2 without) */
   asm volatile("" : "+l"(io));
   (void)channel[5];
-  Dma_Set(work->bg2X, (void *)((io << 19) + 0x14), 0xa6600001,
+  Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14), 0xa6600001,
           (volatile u32 *)channel);
 }

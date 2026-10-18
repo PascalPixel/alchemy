@@ -72,7 +72,7 @@ DEFINE_EFFECT_KIND(BattleFx_RunDrown, BattleFx_RunTargetMotes, 6)
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
 // Modes other than 0, 1 and 3 ripple the canvas: BG2's x is set line by
-// line from work->bg2X (BattleFx_ArmBg2AffineHBlankDma).
+// line from work->bg2xLines (BattleFx_ArmBg2AffineHBlankDma).
 #define TARGET_MOTES_RIPPLE(mode) (!((mode) <= 1 || (mode) == 3))
 
 // Where mode 3 keeps its glint images in work->sheet.
@@ -191,7 +191,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       BattleEventRuntime_BeginPhaseFar(SE_133);
     }
     // Ripple the canvas sideways, line by line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x40000 - ((Trig_Sin((frame << 12) + i * 0x800) * 4))) >> 10;
 

@@ -98,7 +98,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 
     // The background waves sideways line by line.
     camera = Ram_HeapSlots->cameraWork;
-    row = work->bg2X;
+    row = work->bg2xLines;
     if (effect->side == 0) {
       s32 angle;
       s32 base;

@@ -18,7 +18,7 @@ enum {
 
 // The value of one column of this effect's gLightningBolts_Counts row.
 #define LIGHTNING_BOLT_VALUE(field)                                            \
-  (gLightningBolts_Counts[work->effect->variant * 4 + (field)])
+  gLightningBolts_Counts[work->effect->variant][(field)]
 
 // The bolt pictures in the sheet, after the tornado.
 #define LIGHTNING_BOLT_CELLS 0xc56

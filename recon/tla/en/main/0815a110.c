@@ -313,7 +313,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect,
 
     // The ripple's line table: BG2 swings six pixels on a sine wave.
     for (i = 0; i != 160; i++)
-      work->bg2X[i] = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
+      work->bg2xLines[i] = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     if (variant == 10 && frame == 8)
       Audio_PlayCue(221);
     blows = RECORD(RECORD_BLOWS);

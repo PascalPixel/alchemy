@@ -222,7 +222,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     }
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
-    line = work->bg2X;
+    line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != 160; i++) {
       *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
       angle += 0x200;

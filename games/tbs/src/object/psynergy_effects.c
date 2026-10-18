@@ -3028,7 +3028,7 @@ void DisplayScroll_ArmHBlankDma(void) {
   dma = REG_DMA0;
   destination = (volatile u32 *)0x04000014; // REG_BG1HOFS
   status = dma[5];
-  control = status & (u16)~DMA_START_HBLANK_REPEAT;
+  control = status & (u16)~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] = control;
   status = dma[5];
   control = status & (u16)~DMA_ENABLE;
@@ -3132,7 +3132,7 @@ void DisplayScroll_DisarmHBlankDma(void) {
   Scheduler_RemoveCallback(DisplayScroll_ArmHBlankDma);
   Scheduler_RemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
   dma0 = REG_DMA0;
-  dma0[5] = (u16)~DMA_START_HBLANK_REPEAT & dma0[5];
+  dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];
   (void)dma0[5];
 }

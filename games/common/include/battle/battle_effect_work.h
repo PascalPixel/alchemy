@@ -25,7 +25,7 @@ struct BattleEffectWork {
   union {
     struct {
       u8 sheet[0x6980];
-      s32 bg2X[160];
+      s32 bg2xLines[160]; // BG2X for each scanline, for an HBlank DMA
       u8 unk6c00[0x480];
     };
     u8 imageStorage[0x7080];
@@ -70,7 +70,7 @@ struct BattleEffectWork {
   struct BattleEffectArgument *effect;
 };
 
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2X) == 0x6980);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 0x6980);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, imageStorage) == 0);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, trackedCanvas.origin) ==
               0x13c4);

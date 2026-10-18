@@ -53,7 +53,7 @@
 // The fragments' registers and modes are described at the top of
 // battle_effect_composite.s.
 
-#define DMA_COPY_WORDS(n) (0x84000000 | (n))
+#define DMA_COPY_WORDS(n) (DMA_ENABLE32 | DMA_32BIT | (n))
 
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
@@ -392,6 +392,9 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 
   BLITTER_WALK();
 
+  // The template is the last thing in battle_effect_composite.s, which the
+  // object list links straight before effect_table.c, whose first table is
+  // gBattleFx_MoteCells: a complete walk ends at that table's address.
   codeEnd = (const u32 *)gBattleFx_MoteCells;
   return templateWords == codeEnd;
 }

@@ -67,7 +67,7 @@ enum BurstField {
 };
 
 // The value of one field of this flurry's gBurstScene_Records row.
-#define BURST_RECORD(field) (gBurstScene_Records[variant * 7 + (field)])
+#define BURST_RECORD(field) gBurstScene_Records[(variant)][(field)]
 
 // The packed flash pictures and the waves.
 #define BURST_FLASH_CELLS 0x5100

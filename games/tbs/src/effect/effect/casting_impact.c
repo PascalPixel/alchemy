@@ -196,7 +196,7 @@ enum CastingImpact {
 #define CASTING_IMPACT_PARTICLE_COUNT 64
 
 // gCastingImpact_ImageX has seven pictures for each side.
-#define CASTING_IMAGE_X(side, image) gCastingImpact_ImageX[(side) * 7 + (image)]
+#define CASTING_IMAGE_X(side, image) gCastingImpact_ImageX[(side)][(image)]
 
 // Gather sparks around the acting unit, launch the Djinni and draw its impact.
 // Impacts 15, 17, 24, 26 and 35 (Severe Blow) hand off to another effect after
@@ -668,7 +668,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     if (kind != CASTING_IMPACT_MORTAL_DANGER) {
       if (kind != CASTING_IMPACT_ASURA) {
         s32 base;
-        scanline = work->bg2X;
+        scanline = work->bg2xLines;
         i = 0;
         base = 0x40000;
         phase = frame << 12;

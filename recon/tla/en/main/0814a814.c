@@ -198,7 +198,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     // Ripple the canvas: one horizontal offset for each line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
 

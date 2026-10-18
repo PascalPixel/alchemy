@@ -107,7 +107,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
       Func_081180e8(0);
 
     // The background waves sideways, one sine step per line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     if (effect->side == 0) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;

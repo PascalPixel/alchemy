@@ -102,7 +102,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // Ripple the canvas sideways, line by line.
-    row = work->bg2X;
+    row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
 

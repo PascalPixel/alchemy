@@ -45,13 +45,13 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_FACES,     // demon faces from 16 pixels in front
 };
 
-// Arms DMA 0 to copy one word of gBattleFxWork's bg2X table into BG2X at
+// Arms DMA 0 to copy one word of gBattleFxWork's bg2xLines table into BG2X at
 // each horizontal blank, bending BG2 line by line.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->bg2X, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
+  Dma_Set(work->bg2xLines, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
           (volatile u32 *)channel);
 }
 

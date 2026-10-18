@@ -460,13 +460,13 @@ void BattleFx_RunThrash(struct BattleEffectArgument *effect);
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect);
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect);
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect);
-void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 variant);
+void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode);
 
 // undead_sword.c
 void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect);
 
 // blitter.c
 s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                      u32 mode);
+                          u32 mode);
 
 #endif

@@ -136,14 +136,14 @@
 #define DMA_HBLANK_WORD_PER_LINE 0xa6600001
 
 // DMA control word that fills n words from one fixed source word.
-#define DMA_FILL_WORDS(n) (0x85000000 | (n))
+#define DMA_FILL_WORDS(n) (DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (n))
 
 // Stops a DMA channel: clears its repeat and start timing bits, then its
 // enable bit, and reads the control register back so the stop takes effect
 // before the channel is set up again.
 static inline void Dma_Stop(volatile u16 *channel) {
-  channel[DMA_CONTROL_HALF] &= 0xc5ff;
-  channel[DMA_CONTROL_HALF] &= 0x7fff;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   (void)channel[DMA_CONTROL_HALF];
 }
 

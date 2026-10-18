@@ -35,7 +35,7 @@
 
 // gRagnarok_StrikeColumns has three columns for each side.
 #define RAGNAROK_COLUMN_X(side, column)                                        \
-  gRagnarok_StrikeColumns[(column) + (side) * 3]
+  gRagnarok_StrikeColumns[(side)][(column)]
 
 // Abilities: Ragnarok (kind 58).
 //

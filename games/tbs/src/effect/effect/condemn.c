@@ -28,8 +28,8 @@
 #define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces
 
 // gCondemn_PanelX and _PanelY have seven stages for each column and row.
-#define CONDEMN_PANEL_X(column, stage) gCondemn_PanelX[(column) * 7 + (stage)]
-#define CONDEMN_PANEL_Y(row, stage) gCondemn_PanelY[(row) * 7 + (stage)]
+#define CONDEMN_PANEL_X(column, stage) gCondemn_PanelX[(column)][(stage)]
+#define CONDEMN_PANEL_Y(row, stage) gCondemn_PanelY[(row)][(stage)]
 
 // Abilities: Condemn (kind 40).
 //
@@ -146,7 +146,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
     }
     // The last 16 frames of each of the first two passes ripple harder and
     // harder as the panel fades out.
-    scanline = work->bg2X;
+    scanline = work->bg2xLines;
     ripple = 0;
     if (frame <= 31) {
       if (frame > 15) {

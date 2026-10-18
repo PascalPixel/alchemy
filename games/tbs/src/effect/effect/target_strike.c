@@ -33,7 +33,7 @@
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
 // gTargetStrike_Records has seven entries for each style.
-#define STRIKE_VALUE(mode, field) gTargetStrike_Records[(mode) * 7 + (field)]
+#define STRIKE_VALUE(mode, field) gTargetStrike_Records[(mode)][(field)]
 enum {
   STRIKE_KIND,         // STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
   STRIKE_HITS,         // how many times the target is struck

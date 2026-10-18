@@ -172,7 +172,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
 
     // Before each jump the image fades out over eight frames while the
     // background waves harder.
-    scanline = work->bg2X;
+    scanline = work->bg2xLines;
     amp = 0;
     if (frame <= 23) {
       if (frame > 15) {

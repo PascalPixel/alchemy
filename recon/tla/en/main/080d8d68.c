@@ -1,11 +1,10 @@
-// Near miss, differ 12 of 75: links two objects into workspace slot `index`
+// Near miss, differ 6 of 75: links two objects into workspace slot `index`
 // of heap slot 0x9c: records their ids and the first one's sprite priority
 // (2 for a many-part object), builds the link between their positions raised
 // 8 pixels (Func_080d8e08), and sets both to mode 2. No ☀️ twin found. Left:
-// instruction order only: the native copies id to r7 after starting the
-// heap base, stores the priority before the value (the native stores value,
-// id, priority; written in that order the two ids swap registers, differ 20),
-// and starts 0x80000 between the second object's loads.
+// instruction order only: the native copies id to r7 after loading the
+// work, loads the second end's y after building 0x80000 and adds the raise to
+// the first y straight after, as in Func_080da1b8.
 #include "types.h"
 #include "field_sprite.h"
 #include "object_runtime.h"
@@ -21,6 +20,7 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
 
   if (first != NULL && second != NULL) {
     struct Work9cSlot *slot;
+    s32 lift;
 
     if (first->animationKind == 1)
       priority = ((struct FieldSprite *)first->animation)->priority;
@@ -28,8 +28,13 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
     slot->id = id;
     slot->value = other;
     *(s16 *)slot->unk06 = priority;
-    Func_080d8e08(index, first->x, first->y + 0x80000, first->z, second->x,
-                  second->y + 0x80000, second->z);
+    lift = 128;
+    /* FAKEMATCH: starts 0x80000 before the stack arguments load, as the
+     * native does (differ 12 without it). */
+    asm volatile("" : "+l"(lift));
+    lift <<= 12;
+    Func_080d8e08(index, first->x, first->y + lift, first->z, second->x,
+                  second->y + lift, second->z);
   }
   Object_SetMode(first, 2);
   Object_SetMode(second, 2);

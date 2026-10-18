@@ -1,4 +1,10 @@
-// differ 28: ported from ☀️ radpart.c; load order only
+// Near miss, differ 12 of 292: ported from ☀️ (BattleFx_RunVenusDjinnCapture),
+// with ⚓️'s data: the effect scene keeps its slots at 0x50, the sparks and
+// the spawned objects are kind 672 and the cue is 298. What remains is order:
+// the native builds the slot pointer and the spark count between the
+// position's loads, starts 240 << 15 before the second y load, and clears r7
+// earlier; barriers on the position's address and the count, as in
+// Djinn_RunMarsJoinEffect, measured 36 to 38.
 #include "types.h"
 #include "system.h"
 #include "animspr.h"
@@ -191,10 +197,10 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   position[2] = djinni->z;
   Camera_WorldToScreen(position);
 
-  slot = (u8 *)effectSlots + 88;
+  slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, 284, position[0], position[2]);
+    EffectSlot_Initialize(slot, 672, position[0], position[2]);
     EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
@@ -211,7 +217,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
 
     nextState = 2;
     slotState = effectSlots;
-    slotState += 152;
+    slotState += 144;
     remaining = 23;
     do {
       if (slotState[5] != 0)
@@ -229,7 +235,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
     position[0] = leader->x;
     position[1] = leader->y + 0x780000;
     position[2] = leader->z;
-    djinni = (struct CaptureObject *)Object_Spawn(284, position[0], position[1],
+    djinni = (struct CaptureObject *)Object_Spawn(672, position[0], position[1],
                                                   position[2]);
     if (djinni != NULL) {
       scale = Random16() / 3 + 0x10000;
@@ -245,14 +251,14 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   }
 
   WaitFrames(100);
-  Audio_PlayCue(288);
+  Audio_PlayCue(298);
   WaitFrames(1);
   Audio_PlayCue(151);
   position[0] = leader->x;
   position[1] = leader->y + 0x120000;
   position[2] = leader->z;
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct CaptureObject *)Object_Spawn(284, position[0], position[1],
+    djinni = (struct CaptureObject *)Object_Spawn(672, position[0], position[1],
                                                   position[2]);
     if (djinni == NULL)
       break;

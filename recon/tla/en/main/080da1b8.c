@@ -1,5 +1,8 @@
-// Near miss, differ 12: as Func_080d8fa8, the stack arguments are scheduled
-// apart; the first parameter is saved a row early.
+// Near miss, differ 6 of 54, instruction order only (8 without the tagged
+// barrier). The native copies the first id to r8 after the work's load,
+// loads the second end's y after building 0x80000, and adds the raise to the
+// first y straight after; this draft loads that y first and adds the first
+// raise last. Func_080d9e98 and Func_080d9104 share the pattern.
 #include "worka0.h"
 #include "object_runtime.h"
 
@@ -12,10 +15,15 @@ void Func_080da1b8(s32 index, s32 from, s32 to) {
 
   if (a != NULL && b != NULL) {
     struct WorkA0Slot *slot = &work->slots[index];
+    s32 lift;
 
     slot->first = from;
     slot->second = to;
-    Func_080da22c(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000,
-                  b->z);
+    lift = 128;
+    /* FAKEMATCH: starts 0x80000 before the stack arguments load, as the
+     * native does (differ 8 without it). */
+    asm volatile("" : "+l"(lift));
+    lift <<= 12;
+    Func_080da22c(index, a->x, a->y + lift, a->z, b->x, b->y + lift, b->z);
   }
 }

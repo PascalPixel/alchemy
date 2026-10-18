@@ -19781,7 +19781,7 @@ msgctxt "message"
 msgid "04847"
 msgstr "Dies sind deine Erfahrungspunkte."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04848"
 msgstr "Alle KP wurden aufgefüllt!"
 

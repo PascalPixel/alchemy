@@ -19669,7 +19669,7 @@ msgctxt "message"
 msgid "04843"
 msgstr "Sono i tuoi Punti esperienza."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04844"
 msgstr "Recuperati tutti i PS!"
 

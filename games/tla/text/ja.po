@@ -17816,7 +17816,7 @@ msgctxt "message"
 msgid "04380"
 msgstr "げんざいの けいけんちです"
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04381"
 msgstr "HPぜんかい!"
 

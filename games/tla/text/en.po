@@ -17840,7 +17840,7 @@ msgctxt "message"
 msgid "04383"
 msgstr "These are your experience points."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04384"
 msgstr "You recovered all HP!"
 

@@ -19699,7 +19699,7 @@ msgctxt "message"
 msgid "04843"
 msgstr "Voici vos points d'expérience."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04844"
 msgstr "Vous avez récupéré tous vos PV!"
 

@@ -1022,12 +1022,8 @@ Menu_CenterResourceEntries:
 	.thumb_func
 Menu_AnimateSelectionToEntry:
 	.incbin "baserom.gba", 0x0004d764, 0x00000048
-	.section .rom.0004d7ac, "ax"
-	.global Menu_SelectSaveSlotAction
-	.type Menu_SelectSaveSlotAction, %function
-	.thumb_func
-Menu_SelectSaveSlotAction:
-	.incbin "baserom.gba", 0x0004d7ac, 0x000001a8
+	.section .rom.0004d878, "ax"
+	.incbin "baserom.gba", 0x0004d878, 0x000000dc
 	.section .rom.0004d9fc, "ax"
 	.global Func_0804d7fc
 	.type Func_0804d7fc, %function

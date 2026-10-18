@@ -6651,7 +6651,12 @@ main	rom_main_15	recon/tla/fr/rom	.rom.001c0428	fr
 main	rom_main_15	recon/tla/es/rom	.rom.001c0428	es
 main	rom_main_15	recon/tla/de/rom	.rom.001c0428	de
 main	rom_main_15	recon/tla/raw/081c0428	.text	en
-main	rom_main_15	recon/tla/raw/081c048c	.text	en
+main	rom_main_15	recon/tla/ja/rom	.rom.001c0428	ja
+main	rom_main_15	games/tla/src/sound/noop_stub_work_copy	.text
+main	rom_main_15	recon/tla/it/rom	.rom.001c0490	it
+main	rom_main_15	recon/tla/fr/rom	.rom.001c0490	fr
+main	rom_main_15	recon/tla/es/rom	.rom.001c0490	es
+main	rom_main_15	recon/tla/de/rom	.rom.001c0490	de
 main	rom_main_15	recon/tla/raw/081c0490	.text	en
 main	rom_main_15	recon/tla/raw/081c04ac	.text	en
 main	rom_main_15	recon/tla/raw/081c04e0	.text	en
@@ -6659,7 +6664,7 @@ main	rom_main_15	recon/tla/raw/081c0544	.text	en
 main	rom_main_15	recon/tla/raw/081c0550	.text	en
 main	rom_main_15	recon/tla/raw/081c057c	.text	en
 main	rom_main_15	recon/tla/raw/081c05c8	.text	en
-main	rom_main_15	recon/tla/ja/rom	.rom.001c0428	ja
+main	rom_main_15	recon/tla/ja/rom	.rom.001c0490	ja
 main	rom_main_15	games/tla/src/sound/driver/midi_key_to_frequency
 main	rom_main_15	games/tla/src/sound/driver/midi_key_frequency_tables
 main	rom_main_15	games/tla/src/sound/driver/channel_unlink

@@ -5700,7 +5700,14 @@ Func_081c0168:
 	.section .rom.001c0428, "ax"
 	.global Func_081c0428
 Func_081c0428:
-	.incbin "baserom.gba", 0x001c0428, 0x000001c0
+	.incbin "baserom.gba", 0x001c0428, 0x00000064
+	.section .rom.001c0490, "ax"
+	.balign 4
+	.global Func_081c0490
+	.type Func_081c0490, %function
+	.thumb_func
+Func_081c0490:
+	.incbin "baserom.gba", 0x001c0490, 0x00000158
 	.section .rom.001c075a, "ax"
 	.incbin "baserom.gba", 0x001c075a, 0x00000048
 	.section .rom.001c07a2, "ax"

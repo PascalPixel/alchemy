@@ -295,10 +295,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
       portraitSprite.oam.word.attr01 = 0xC0002400;
       portraitSprite.oam.word.attr23 = 0;
 #if TBS_PATCH_4
-      /* FAKEMATCH: the zero lives in sl here; sched2 puts the attr23 store
-       * before the move into sl and the 0xFC00 load before the face tile load,
-       * which may alias that store; native moves into sl between the two stores
-       * and loads the tile first (4 instructions) */
+      /* FAKEMATCH(barrier): an empty asm, so the move into sl comes between
+       * the two stores and the face tile loads before 0xFC00, as native;
+       * without it, 13 of 1458 instructions differ in tbs-es. */
       asm("");
 #endif
       portraitSprite.oam.f.tile = face->oam.f.tile;
@@ -309,19 +308,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH: arm_reorg counts this empty asm as 4 bytes, so the gFrameCount
-     * literal falls past the face x literal's 64-byte ldrh range and opens the
-     * next pool, as native; the pool and its branch move two instructions
-     * earlier, 85 -> 63. */
-    /* FAKEMATCH: removing both barriers gives EN 1392/1392, common 1390, differ
-     * 4: gFrameCount joins the earlier pool and the branch follows two extra
-     * loads. ES 1458/1458, common 1455, differ 6: attr23/mov sl order and the
-     * 0x3ff load also move. 2026-10-11: arm_reorg runs before shorten_branches
-     * and counts the empty asm at its 4-byte default length while it emits
-     * nothing; the halfword constant fix needs that much more estimated length
-     * after it, and no C statement or single pattern-length change (strh, str,
-     * orr, and tested over all 413 English objects) supplies it. In ES and IT
-     * both asms are scheduling barriers only (differ 8 without them). */
+    /* FAKEMATCH(barrier): arm_reorg counts this empty asm as 4 bytes, so the
+     * gFrameCount literal falls past the face x literal's 64-byte ldrh range
+     * and opens the next pool, as native (in tbs-es and tbs-it it orders the
+     * stores only); without it, 13 of 1392 instructions differ in tbs-en. */
     asm("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gResource_FixedBlockBTiles);

@@ -195,11 +195,10 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
             0) {
           break;
         }
-        /* FAKEMATCH: a dead store here keeps the test above from being
-           threaded past the break. Measured (2026-10-13, after
-           MenuCell_SetCursor): without it the unusable branch skips the
-           native jump through the next block (793 instructions for 794,
-           differ 11 in every edition). */
+        /* FAKEMATCH(dead): a dead store keeps the test above from being
+         * threaded past the break; without it, the unusable branch skips the
+         * native jump through the next block and 2 of 794 instructions differ
+         * in tbs-en. */
         result = -1;
       } else {
         result = -1;

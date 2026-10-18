@@ -36,21 +36,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct BattleUnit *unit;
   struct BattleWork *battle;
   struct UiWindow *window;
-  /* FAKEMATCH: the earlier combined pin/barrier removal gave EN 1585/1585,
-   * common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320.
-   * ES 1684/1684, common 1569, differ 230: infoWin/selection swap r10/r9 and
-   * spill slots permute. Both extents stayed unchanged. */
 #if TBS_PATCH_4
   struct UiWindow *conditionWindow;
 #else
-  /* FAKEMATCH: register choice only: as an ordinary local the info window is
-   * spilled and the frame shrinks to 320 bytes (differ 492); the native keeps
-   * it in r9. 2026-10-11: its live length is doubled by update_equiv_regs (the
-   * first set carries a constant REG_EQUAL), giving priority 2104 against &pos
-   * 2171 and the hoisted bit-field zero 2142; one duplicated no-effect block
-   * reaches 2143 against 2149 (differ 202), two push &pos below the zero
-   * (differ 449), and an initializer without the note sends it to r10 as in
-   * ES/IT (differ 96). */
+  /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
+   * an ordinary local it is spilled, the frame shrinks to 320 bytes and 969
+   * of 1585 instructions differ in tbs-en. */
   register struct UiWindow *conditionWindow asm("r9");
 #endif
   s32 targetIndex;
@@ -259,10 +250,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     effect.angle = 0;
 #if !(LANGUAGE == LANGUAGE_SPANISH) && !(LANGUAGE == LANGUAGE_ITALIAN)
-    /* FAKEMATCH: seventeen dead stores restore the native frame's spill slots
-     * (table, entries, ids and cursor * 2 at sp+36 to sp+24, above &effect and
-     * selectionSlot); without them differ 102 in tbs-en, every row a spill
-     * offset. ES and IT match without them. */
+    /* FAKEMATCH(dead): seventeen dead stores restore the native frame's spill
+     * slots (table, entries, ids and cursor * 2 at sp+36 to sp+24, above
+     * &effect and selectionSlot); without them, 65 of 1585 instructions
+     * differ in tbs-en, each a spill offset. */
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;

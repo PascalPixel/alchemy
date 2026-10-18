@@ -210,10 +210,10 @@ u32 SaveState_BuildSummaryHeader(void) {
     u32 frames;
 
     n = 242;
-    /* FAKEMATCH: the one-pass null arm and duplicate frame read end
-     * CSE with the bound constant ahead of the frame load. Folding
-     * the arm reverses two rows; the conditional and duplicate read
-     * disappear, preserving all 174 instructions in every edition. */
+    /* FAKEMATCH(one-pass): a null arm that is never taken, its assignment in a
+     * block that runs once, ends CSE with the bound constant ahead of the
+     * frame load and emits nothing; as a plain assignment in it, or with no
+     * arm at all, 2 of 174 instructions differ in tbs-en. */
     if (!frame) {
       do {
         n = 242;
@@ -500,11 +500,9 @@ void PaletteGlow_UpdateSine(void) {
       red += 22;
       green += 16;
       colour += 20;
-      /* FAKEMATCH: the one-pass block keeps the blue shift after the three
-       * adds, in source order. Measured: without it the scheduler moves the
-       * red add below the shifts (differ 6); the colour as one expression
-       * differs 25, and r, g, b locals in place of col differ 6, as a do
-       * or a for loop. */
+      /* FAKEMATCH(one-pass): the blue shift in a block of its own stays after
+       * the three adds, in source order; as a plain shift, the red add moves
+       * below the shifts and 6 of 33 instructions differ in tbs-en. */
       do {
         colour <<= 10;
       } while (0);
@@ -512,8 +510,9 @@ void PaletteGlow_UpdateSine(void) {
       colour |= green;
       colour |= red;
     }
-    /* FAKEMATCH: the one-pass block keeps the store ahead of the loop
-     * index's increment. Measured: without it, differ 2. */
+    /* FAKEMATCH(one-pass): the store in a block of its own stays ahead of the
+     * loop index's increment; as a plain store, 3 of 33 instructions differ
+     * in tbs-en. */
     do {
       *palette++ = colour;
     } while (0);

@@ -161,9 +161,10 @@ s32 Ui_RunSelectionScreen(s32 mode) {
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          /* FAKEMATCH: needed to match: the empty loop restores the CSE block
+          /* FAKEMATCH(one-pass): an empty block restores the CSE block
            * boundary at the panel body's head, so the exit test compares count
-           * instead of reloading work->count (223 differ without it). */
+           * instead of reloading work->count; as no block, 99 of 1037
+           * instructions differ in tbs-en. */
           do {
           } while (0);
           count = selectionUi->iconCount;
@@ -306,11 +307,10 @@ s32 Ui_RunSelectionScreen(s32 mode) {
     for (panel = 0; panel <= 6; panel++) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
-        /* FAKEMATCH: the add of 0x44a stays apart from the store it addresses
-         * (adds r3, r7; strh r6, [r3]); as a plain store combine folds it into
-         * strh r6, [r3, r7], 0 -> 33. An ordinary row pointer with three
-         * post-increment stores shortens Ui_RunSelectionScreen by 24 bytes
-         * in tbs-en instead of matching its address formation. */
+        /* FAKEMATCH(volatile): the add of 0x44a stays apart from the store it
+         * addresses (adds r3, r7; strh r6, [r3]); as a plain store, combine
+         * folds it into strh r6, [r3, r7] and 2 of 1037 instructions differ
+         * in tbs-en. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(render->tilemap + (entryIndex + 17) * 32 +
                             panel * 3 + 5 + (col & 3)) = UI_TILE(0x7f);

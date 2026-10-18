@@ -231,9 +231,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       UiWindow_MarkVisibleTileAttributes();
       COUNTDOWN->entryActive[0] = 0;
       COUNTDOWN->selected[commandIndex] = 0x80000000;
-      /* FAKEMATCH: twelve dead stores restore the native frame's spill slots (i
-       * << 1, i << 2 and i << 4 at sp+32 to sp+24, above &hdr at sp+20);
-       * without them differ 50 in every edition, every row a spill offset. */
+      /* FAKEMATCH(dead): twelve dead stores restore the native frame's spill
+       * slots (i << 1, i << 2 and i << 4 at sp+32 to sp+24, above &hdr at
+       * sp+20); without them, 26 of 1727 instructions differ in tbs-en, each a
+       * spill offset. */
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
@@ -362,15 +363,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        /* FAKEMATCH: instruction order only (pool placement): arm_reorg counts
-         * this empty asm as a 4-byte insn, so the pool goes in after mov r1,
-         * r10 as native, whose constant 40 acts as a range-60
-         * (zero_extendhisi2) pool load (differ 14). 2026-10-11: arm_reorg runs
-         * before shorten_branches and counts the empty asm at its 4-byte
-         * default length while it emits nothing; the halfword constant fix
-         * needs that much more estimated length after it, and no C statement or
-         * single pattern-length change (strh, str, orr, and tested over all 413
-         * English objects) supplies it. */
+        /* FAKEMATCH(barrier): arm_reorg counts this empty asm as a 4-byte
+         * instruction, so the pool goes in after mov r1, r10 as native, whose
+         * constant 40 acts as a range-60 (zero_extendhisi2) pool load;
+         * without it, 13 of 1727 instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
@@ -447,15 +443,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         state->entries[0].oam.f.x = 56;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH: instruction order only (pool placement, schedule): counted
-         * as 4 bytes, the empty asm puts the pool after mov r2, r9 as native
-         * (constant 56) and keeps ok = 1 - (j != 4) among the slot stores
-         * (differ 12). 2026-10-11: arm_reorg runs before shorten_branches and
-         * counts the empty asm at its 4-byte default length while it emits
-         * nothing; the halfword constant fix needs that much more estimated
-         * length after it, and no C statement or single pattern-length change
-         * (strh, str, orr, and tested over all 413 English objects) supplies
-         * it. */
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * after mov r2, r9 as native (constant 56) and keeps ok = 1 - (j != 4)
+         * among the slot stores; without it, 34 of 1727 instructions differ
+         * in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
@@ -644,14 +635,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         state->entries[0].oam.f.x = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH: instruction order only (pool placement): counted as 4
-         * bytes, the empty asm puts the pool after ldr r1, [sp, #72] as native
-         * (constant 48) (differ 10). 2026-10-11: arm_reorg runs before
-         * shorten_branches and counts the empty asm at its 4-byte default
-         * length while it emits nothing; the halfword constant fix needs that
-         * much more estimated length after it, and no C statement or single
-         * pattern-length change (strh, str, orr, and tested over all 413
-         * English objects) supplies it. */
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * after ldr r1, [sp, #72] as native (constant 48); without it, 6 of
+         * 1727 instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;

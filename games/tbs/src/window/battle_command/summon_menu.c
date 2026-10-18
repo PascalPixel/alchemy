@@ -72,13 +72,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   // Move usable summons to the front in reverse traversal; keep others in
   // order.
   count = Summon_ListLearnedFar(learnedSummons);
-  /* FAKEMATCH: instruction order only (block placement and schedule):
-     with the first scan's exit inside this one-pass block, loop.c's
-     find_and_verify_loops finds no barrier at depth 0 and leaves the
-     main loop's select block in place, as the native has it (without
-     the block it moves after the scan: differ 224, 6 branches fewer);
-     inside it, count and used are stored before count - 1 is built
-     (differ 2 with used = 0 before the block). */
+  /* FAKEMATCH(one-pass): with the first scan's exit inside a block that runs
+   * once, loop.c's find_and_verify_loops finds no barrier at depth 0 and
+   * leaves the main loop's select block in place, as the native has it; as a
+   * plain block, 88 of 946 instructions differ in tbs-en. */
   do {
     s32 i;
 

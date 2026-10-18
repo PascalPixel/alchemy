@@ -192,13 +192,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    /* FAKEMATCH: register choice (spill slots) only: re-pointing cur each
-       frame orders the spill slots of the cursor address and row*2 as the
-       native frame does. Measured (2026-10-13, after MenuCell_SetCursor):
-       without it differ 56; with it but without the assignment before
-       the loop, differ 14; the cursor written directly, with no cur,
-       781 instructions for 770 (differ 209). Battle_SelectAbility sets
-       curSpr the same two ways, untagged (394 and 36 without them). */
+    /* FAKEMATCH(dead): cursorSprite set again to the cursor each frame orders
+     * the spill slots of the cursor address and row * 2 as the native frame
+     * does; without it, 28 of 770 instructions differ in tbs-en. */
     cursorSprite = &cursor;
     ((u32 *)cursorSprite)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)cursorSprite)[2] = 0;

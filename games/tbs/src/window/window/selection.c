@@ -523,10 +523,10 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
 
   state->records[side].kind = 0;
   if (side != 0) {
-    /* FAKEMATCH: the separate local loads the tile pointer early into r5 and
-     * makes its copy late, as the native does. Assigning
-     * gMenu_CursorObjectTiles directly where right is read: differ 42; the same
-     * at the top of the branch: differ 16 (tbs-en). */
+    /* FAKEMATCH(temporary): the tile pointer in a local of its own, loaded
+     * early into r5 and copied late, as the native does; as
+     * gMenu_CursorObjectTiles assigned where right is read, 35 of 136
+     * instructions differ in tbs-en. */
     const u8 *right = gMenu_CursorObjectTiles;
 
     count = state->count;
@@ -804,12 +804,9 @@ void Menu_StepLeft(struct SelectionScreen *state) {
       node = state->head;
       i = 64;
       {
-        /* FAKEMATCH: the zero goes through r0. 2026-10-11: CSE follows the beq
-         * into this block and reuses the known-zero OR register for a plain
-         * store (differ 28); only a loop-end note before the else label stops
-         * it, and a fresh zero then takes r3 (differ 4); r0 needs the zero live
-         * across the first loop, which no instruction-free second use gives (a
-         * second store after the loop: differ 13). */
+        /* FAKEMATCH(pin): the zero in r0, live across the first loop as the
+         * native has it; as a plain store of 0, 6 of 184 instructions differ
+         * in tbs-en. */
         register s32 z asm("r0") = 0;
         state->records[1].kind = z;
       }

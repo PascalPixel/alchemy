@@ -161,9 +161,9 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       *(void **)&entry->tile = (void *)zero;
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
-      /* FAKEMATCH: advancing and restoring the captured pointer keeps
-       * the window chain in r9. Without the pair, r8/r9 allocation
-       * changes and two extra instructions remain (80 -> 82, 22 rows). */
+      /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps
+       * the window chain in r9; without the pair, 8 of 80 instructions of
+       * the nested DjinnMenu_DrawStatArrow differ in tbs-en. */
       win++;
       win--;
       entry->tile.bits.index = VramCache_Reload(

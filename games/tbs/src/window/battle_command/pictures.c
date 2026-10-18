@@ -52,9 +52,9 @@ void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj) {
   value = (u8)obj->y + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
   obj->oam.y = value;
   obj = obj->next;
-  /* FAKEMATCH: the volatile read loads gFrameTick again for the second sprite,
-   * as the bytes do; read plainly, CSE reuses the first index and the function
-   * differs 33, 15 instructions for 22. */
+  /* FAKEMATCH(volatile): gFrameTick read again for the second sprite, as the
+   * bytes do; read plainly, CSE reuses the first index and 20 of 22
+   * instructions differ in tbs-en. */
   value =
       (u8)obj->y + gUi_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
   obj->oam.y = value;
@@ -481,11 +481,9 @@ void Graphics_InstallBg1VCountHandler(void) {
   s32 zero = 0;
 
   *(volatile u16 *)address = zero;
-  /* FAKEMATCH: instruction order only: the do-while keeps the handler
-     load ahead of the index. Plain forms measured (2026-10-13):
-     REG_BG0VOFS = 0 or Io_Write16 with a direct call load the halfword
-     zero from the pool (differ 6); through an s32 zero the store
-     matches but the call sets r0 before loading the handler (differ 2). */
+  /* FAKEMATCH(one-pass): the handler's address set in a block of its own keeps
+   * its load ahead of the handler index; as a plain assignment, 2 of 10
+   * instructions differ in tbs-en. */
   do {
     address = (u32)Graphics_ClearBg1ControlBit2;
   } while (0);

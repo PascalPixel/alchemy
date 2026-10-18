@@ -334,11 +334,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     {
       u32 size;
 
-      /* FAKEMATCH: instruction order only: the size in a block of its own, so
-       * the slot number goes to r0 before the size's copy to r1. 2026-10-13,
-       * tbs-en: RamCode_LoadSlot, the size and the block as initialized locals,
-       * and the size written at both uses with no local all differ 2 (the copy
-       * to r1 first). */
+      /* FAKEMATCH(one-pass): the size set in a block of its own, so the slot
+       * number goes to r0 before the size's copy to r1; as a plain
+       * assignment, 22 of 706 instructions differ in tbs-en. */
       do {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
@@ -851,9 +849,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     {
       u32 size;
 
-      /* FAKEMATCH: instruction order only: the size in a block of its own, as
-       * in the international copy above; RamCode_LoadSlot differs 2 (the copy
-       * to r1 first). */
+      /* FAKEMATCH(one-pass): the size set in a block of its own, as in the
+       * international copy above; as a plain assignment, 24 of 895
+       * instructions differ in tbs-ja. */
       do {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);

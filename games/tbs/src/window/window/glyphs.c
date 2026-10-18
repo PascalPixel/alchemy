@@ -108,12 +108,10 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   s32 pixelsLeft;
   u32 tileLine;
 
-  /* FAKEMATCH: the empty one-pass block ends a scheduling region, keeping the
-   * spill of out ahead of the work-address load. Without it the load is
-   * scheduled first (differ 2 in tbs-ja, the only edition with this body);
-   * assigning work after markGlyph = 0 instead moves the zero too (differ 6).
-   * Initializing work at its declaration without the block also swaps the
-   * address load and out spill (two instructions in tbs-ja, 2026-10-16). */
+  /* FAKEMATCH(one-pass): an empty block before work is set ends a scheduling
+   * region, keeping the spill of out ahead of the work-address load; as no
+   * block, 2 of 185 instructions differ in tbs-ja, the only edition with this
+   * body. */
   do {
   } while (0);
   work = UI_WORK;
@@ -152,10 +150,10 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
     if (markGlyph != 0) {
-      /* FAKEMATCH: assigning pixel in the markGlyph argument computes pixels +
-       * 7 in r1 and makes the loop's copy in r5, as the native does. A plain
-       * pixels + 7 argument computes it in r5 and makes the copy in r1 (differ
-       * 6 in tbs-ja, the only edition with this body). */
+      /* FAKEMATCH(temporary): pixel assigned in the argument, so pixels + 7
+       * is computed in r1 and the loop's copy made in r5, as the native does;
+       * as a plain pixels + 7 argument, 4 of 185 instructions differ in
+       * tbs-ja. */
       Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
       Iwram_ExpandBitRuns(markGlyph, pixels + 8, colour);
     }
@@ -166,9 +164,9 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
       Iwram_ExpandBitRuns(markGlyph, pixels + 24, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     if (markGlyph != 0) {
-      /* FAKEMATCH: the same assignment in the argument as the outlined path
-       * above; a plain pixels + 7 argument differs the same way (differ 6 in
-       * tbs-ja). */
+      /* FAKEMATCH(temporary): pixel assigned in the argument, as in the
+       * outlined path above; as a plain pixels + 7 argument, 4 of 185
+       * instructions differ in tbs-ja. */
       Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
     }
   }

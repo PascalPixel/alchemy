@@ -124,9 +124,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   djinnEntries[djinnCount] = DJINN_ENTRY_END;
   render->dirty = 1;
 
-  /* FAKEMATCH: forced store: this dead store of curSpr before the loop keeps
-   * the native allocation; without it the function differs 394 (1193
-   * instructions for 1201) in tbs-en and tbs-ja (measured 2026-10-14). */
+  /* FAKEMATCH(dead): cursorSprite set before the loop, which sets it again,
+   * keeps the native allocation; without it, 197 of 1201 instructions differ
+   * in tbs-en. */
   cursorSprite = &cursor;
   for (;;) {
     // Rebuild descriptions only when the selection or preview page changes.
@@ -148,11 +148,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         u32 selected;
         UiWork_ClearValueNameTables();
         alreadySelected = 0;
-        /* FAKEMATCH: this one-pass loop retains the native redraw
-         * reload after the selected-entry load. A plain assignment
-         * folds k to zero (1201 -> 1200 instructions, 27 rows differ);
-         * reading selected in the comparison moves the reload early
-         * (2 rows differ). No loop instructions survive. */
+        /* FAKEMATCH(one-pass): a loop that runs once keeps the redraw reload
+         * after the selected-entry load, and none of its instructions
+         * survive; as k = redraw, 3 of 1201 instructions differ in tbs-en. */
         selected = COUNTDOWN->selected[redraw];
         for (k = redraw; k == redraw;) {
           k = redraw;
@@ -476,23 +474,24 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     {
       s32 cx;
 
-      /* FAKEMATCH: the one-pass calculation keeps row's reload after
-       * the x shift. Without the block, mov r2, r10 fills the ldrh
-       * delay slot before lsls (2 differing instruction rows). */
+      /* FAKEMATCH(one-pass): the x computed in a block of its own keeps the
+       * row's reload after the x shift; as no block, mov r2, r10 fills the
+       * ldrh delay slot before lsls and 2 of 1201 instructions differ in
+       * tbs-en. */
       do {
         cx = listWindow->x * 8;
       } while (0);
-      /* FAKEMATCH: instruction order: row read in a low register here is
-       * reloaded before the subtract, and row * 2 inherits that reload, so mov
-       * r2, r10 precedes subs r3, #2 as native (2 rows without; equal priority,
-       * and the reload otherwise has the later luid) */
+      /* FAKEMATCH(barrier): an empty asm reading the row in a low register,
+       * so it is reloaded before the subtract and row * 2 inherits that
+       * reload: mov r2, r10 precedes subs r3, #2 as native; without it, 2 of
+       * 1201 instructions differ in tbs-en. */
       asm("" : : "l"(selectedRow));
       cursorPos.x = cx - 2;
     }
     cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    /* FAKEMATCH: forced re-point: curSpr already holds &slot; storing it again
-     * here keeps the native reload; without it the function differs 36 in
-     * tbs-en and tbs-ja (measured 2026-10-14). */
+    /* FAKEMATCH(dead): cursorSprite set again to the cursor it already points
+     * at keeps the native reload; without it, 18 of 1201 instructions differ
+     * in tbs-en. */
     cursorSprite = &cursor;
     ((u32 *)cursorSprite)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)cursorSprite)[2] = 0;

@@ -2375,7 +2375,9 @@ BattleFx_CallEffect22:
 	.type Func_080e7844, %function
 	.thumb_func
 Func_080e7844:
-	.incbin "baserom.gba", 0x000f4844, 0x00000a88
+	.incbin "baserom.gba", 0x000f4844, 0x00000750
+	.section .rom.000f4fec, "ax"
+	.incbin "baserom.gba", 0x000f4fec, 0x000002e0
 	.global Func_080e82cc
 	.type Func_080e82cc, %function
 	.thumb_func

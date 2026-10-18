@@ -3770,7 +3770,9 @@ Func_080e7818:
 	.section .rom.000e7830, "ax"
 	.global BattleFx_CallEffect22
 BattleFx_CallEffect22:
-	.incbin "baserom.gba", 0x000e7830, 0x00000f88
+	.incbin "baserom.gba", 0x000e7830, 0x00000758
+	.section .rom.000e7fe0, "ax"
+	.incbin "baserom.gba", 0x000e7fe0, 0x000007d8
 	.section .rom.000e87b8, "ax"
 	.global Func_080e87c4
 	.type Func_080e87c4, %function

@@ -49,6 +49,7 @@
 #include "unit/runtime/math_table.h"
 #include "unit/runtime/numtext.h"
 #include "savedata.h"
+#include "songs.h"
 
 #if TBS_PATCH_2
 #define HALT_ON_GAMEPAK_IRQ 1
@@ -3462,7 +3463,7 @@ void SerialTest_Run(void) {
   s32 n;
   s32 tick;
 
-  AudioCommand_PlayFar(3);
+  AudioCommand_PlayFar(MUS_003);
   SerialRuntime_Initialize();
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;

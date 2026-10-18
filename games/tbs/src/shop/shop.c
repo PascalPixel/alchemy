@@ -1407,7 +1407,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawUnitGrid(itemWindow, unitId);
 
   if (definition->flags & ITEM_CURSED) {
-    AudioCommand_PlayFar(103);
+    AudioCommand_PlayFar(SE_103);
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
     while (UiWork_IsCompleteFar() == 0) {
@@ -1759,7 +1759,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     return;
   }
   // Discard each item before crediting coins and rebuilding the inventory grid.
-  AudioCommand_PlayFar(102);
+  AudioCommand_PlayFar(SE_102);
   for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);
@@ -1941,11 +1941,11 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
   WaitFrames(10);
-  AudioCommand_PlayFar(100);
+  AudioCommand_PlayFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(100);
+  AudioCommand_PlayFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(100);
+  AudioCommand_PlayFar(SE_100);
   WaitFrames(110);
   AudioCommand_PlayFar(SE_MENU_CONFIRM);
   WaitFrames(20);
@@ -2931,7 +2931,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  AudioCommand_PlayFar(86);
+  AudioCommand_PlayFar(MUS_086);
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
   Event_StartScreenTransitionFar();

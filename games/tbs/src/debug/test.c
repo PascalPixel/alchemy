@@ -33,6 +33,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "field_scene.h"
+#include "songs.h"
 
 void Engine_EventSetMessage(s16 message);
 
@@ -583,7 +584,7 @@ static void DebugMenu_SelectItem(void) {
   s32 itemCount;
 
   itemCount = DEBUG_ITEM_COUNT;
-  Engine_AudioPlayCue(112);
+  Engine_AudioPlayCue(SE_MENU_CONFIRM);
   window = Engine_DebugCreateWindow(0, 0, 30, 7, 2);
   details = Engine_DebugCreateWindow(0, 8, 13, 10, 2);
   selectedItemId = 1;
@@ -616,44 +617,44 @@ static void DebugMenu_SelectItem(void) {
     // These are independent tests: a single frame can add and move the cursor.
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Engine_AudioPlayCue(113);
+        Engine_AudioPlayCue(SE_MENU_CANCEL);
         break;
       }
-      Engine_AudioPlayCue(175);
+      Engine_AudioPlayCue(SE_175);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(113);
+      Engine_AudioPlayCue(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       selectedItemId--;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selectedItemId++;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       selectedItemId += DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       selectedItemId -= DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       selectedItemId += DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       selectedItemId -= DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     Engine_TaskWait(1);
   }

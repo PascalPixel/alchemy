@@ -30,6 +30,7 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 #include "fx_scene.h"
+#include "songs.h"
 
 // Edition-specific text and window layout values.
 #if TBS_PATCH_1
@@ -134,18 +135,18 @@ static void ItemLevel_RunLevelEditor(void) {
     // Start/Select add five levels; A adds one. Tests remain independent.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       ItemLevel_AdjustPartyLevels(5);
-      Engine_AudioPlayCue(93);
+      Engine_AudioPlayCue(MUS_093);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       ItemLevel_AdjustPartyLevels(1);
-      Engine_AudioPlayCue(91);
+      Engine_AudioPlayCue(MUS_091);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      Engine_AudioPlayCue(113);
+      Engine_AudioPlayCue(SE_MENU_CANCEL);
       RenderOutput_RedrawSavedRect(window);
       Engine_TaskWait(1);
       UiWork_Finalize(window, 1);
@@ -177,7 +178,7 @@ static void ItemLevel_SelectItem(void) {
   entryCount = ITEM_COUNT;
   seekDirection = 0;
   selectedItemId = 1;
-  Engine_AudioPlayCue(112);
+  Engine_AudioPlayCue(SE_MENU_CONFIRM);
   redraw = 1;
   window = UiWindow_Create(0, 0, 30, 7, 2);
   details = UiWindow_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
@@ -209,50 +210,50 @@ static void ItemLevel_SelectItem(void) {
     }
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Engine_AudioPlayCue(113);
+        Engine_AudioPlayCue(SE_MENU_CANCEL);
         break;
       }
-      Engine_AudioPlayCue(175);
+      Engine_AudioPlayCue(SE_175);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(113);
+      Engine_AudioPlayCue(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       seekDirection = -1;
       selectedItemId--;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       seekDirection = 1;
       selectedItemId++;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedItemId += BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
       selectedItemId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
       selectedItemId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
       selectedItemId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction.
     if (seekDirection == -1) {
@@ -301,7 +302,7 @@ static void ItemLevel_SelectAbility(void) {
   entryCount = ABILITY_COUNT;
   seekDirection = 0;
   selectedAbilityId = 1;
-  Engine_AudioPlayCue(112);
+  Engine_AudioPlayCue(SE_MENU_CONFIRM);
   redraw = 1;
   window = UiWindow_Create(0, 0, 30, 12, 2);
   // Copy the existing sprite palette into the debug window palettes.
@@ -325,44 +326,44 @@ static void ItemLevel_SelectAbility(void) {
       UiText_DrawResource(messageOrDefinitionId, window, 0, 48);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(113);
+      Engine_AudioPlayCue(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       seekDirection = -1;
       selectedAbilityId--;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       seekDirection = 1;
       selectedAbilityId++;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedAbilityId += BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
       selectedAbilityId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
       selectedAbilityId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
       selectedAbilityId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(111);
+      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction.
     if (seekDirection == -1) {

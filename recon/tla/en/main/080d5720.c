@@ -8,7 +8,11 @@
 // taken before the frame copy brought it from 4 to 2 (permute, 2026-10-18).
 // An empty asm barrier after the priority's store puts the address in place
 // but moves the linked object's store (str r6, [r5, #104]) a slot earlier,
-// wherever the barrier stands after it (differ 2); a one-pass block there
+// wherever the barrier stands after it (differ 2): sched2 links every asm,
+// volatile or not, to the stores still pending, which gives that store a
+// third dependent and puts it ahead of the mode's movs r1, #2 (tied in
+// priority). Empty asms taking the leader or the flags' address, with or
+// without the stored value, measured 2 to 27; a one-pass block there
 // changes the allocation (differ 29); volatile byte accesses 13 to 27. The
 // event work halfword and the saved priority byte are struct fields: through
 // cast pointers the halfword's zero comes from the pool and the byte store

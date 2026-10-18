@@ -1,7 +1,8 @@
 // Near miss, differ 18 of 231: The Broken Seal twin (FieldMotes_Update) with 64
 // motes in the heap slot 0x74 workspace, started by FieldMotes_Start
-// (080d6e58); the terrain height takes and returns whole coordinates here.
-// Left: instruction order only, in six places: the native issues each of the
+// (field/common/effect/motes.c), whose module it joins when it matches; the
+// terrain height takes and returns whole coordinates here. Left:
+// instruction order only, in six places: the native issues each of the
 // four tile masks' pool loads (ldr r1, =0xfffffc00) one slot earlier, starts
 // the jitter's 1 (movs r3, #1) after the position load and copies the
 // workspace to fp after the stack stores. The age is the decremented timer

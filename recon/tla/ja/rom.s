@@ -3364,9 +3364,9 @@ Func_080e9db4:
 	.section .rom.000ea818, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000ea818, 0x0000029c
-	.section .rom.000eaadc, "ax"
+	.section .rom.000eab14, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000eaadc, 0x00000390
+	.incbin "baserom.gba", 0x000eab14, 0x00000358
 	.section .rom.000eaedc, "ax"
 	.incbin "baserom.gba", 0x000eaedc, 0x00000084
 	.section .rom.000eaf60, "ax"

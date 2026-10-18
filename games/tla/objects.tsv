@@ -4243,22 +4243,23 @@ main	rom_main_05	recon/tla/raw/080ea8d4	.text	en
 main	rom_main_05	recon/tla/raw/080eaa14	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ea818	ja
 main	rom_main_05	games/tla/src/field/common/map/cell_index	.text	ja en de fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000efb8c	fr
+main	rom_main_05	games/tla/src/field/common/map/cell_tag	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000efbc4	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000efcdc	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000efdf0	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000efea8	fr
-main	rom_main_05	recon/tla/de/rom	.rom.000f7b98	de
+main	rom_main_05	games/tla/src/field/common/map/cell_tag	.text	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f7bd0	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f7ce8	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f7dfc	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f7eb4	de
-main	rom_main_05	recon/tla/raw/080eab98	.text	en
+main	rom_main_05	games/tla/src/field/common/map/cell_tag	.text	en
 main	rom_main_05	recon/tla/raw/080eabd0	.text	en
 main	rom_main_05	recon/tla/raw/080eace8	.text	en
 main	rom_main_05	recon/tla/raw/080eadfc	.text	en
 main	rom_main_05	recon/tla/raw/080eaeb4	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000eaadc	ja
+main	rom_main_05	games/tla/src/field/common/map/cell_tag	.text	ja
+main	rom_main_05	recon/tla/ja/rom	.rom.000eab14	ja
 main	rom_main_05	games/tla/src/field/common/object/objfind	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000eaf8c	it
 main	rom_main_05	recon/tla/it/rom	.rom.000eb010	it

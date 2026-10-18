@@ -1,5 +1,5 @@
 // Draft of BattleFx_RunSerac, decompiled from the listing: differ 1130 of 1101
-// (draft 1093), the same 92 calls and control flow; allocation differs.
+// (draft 1093), the same 91 calls and control flow; allocation differs.
 
 #include "types.h"
 #include "battle_effect.h"

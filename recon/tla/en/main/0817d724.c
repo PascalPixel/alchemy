@@ -1,5 +1,5 @@
 // Draft of BattleFx_RunRisingDragonEnemy, decompiled from the listing: differ
-// 1038 of 1034 (draft 1024), the same 77 calls and control flow; allocation
+// 1038 of 1034 (draft 1024), the same 76 calls and control flow; allocation
 // differs.
 
 #include "types.h"

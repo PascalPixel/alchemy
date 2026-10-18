@@ -238,7 +238,8 @@ struct DisplayScrollObject {
   u32 attr2;
 };
 
-extern u16 gFlash_Handler3; // The credits reuse a flash-library work word.
+// The credits reuse a flash-library work word.
+extern u16 gFlash_Handler3;
 
 // 128 entries sent to OAM, also stored in flash-library work space.
 #define SCROLL_OBJECTS                                                         \

@@ -1720,7 +1720,8 @@ struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
 // Levels character `owner` up one level at a time until `targetLevel`, then
 // recomputes its stats.
 void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
-  struct LevelUpResult gains; // Each level's gains are discarded.
+  // Each level's gains are discarded.
+  struct LevelUpResult gains;
   s32 currentLevel = UnitGet(owner)->level;
 
   while (currentLevel < targetLevel) {

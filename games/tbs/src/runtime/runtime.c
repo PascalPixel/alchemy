@@ -2979,6 +2979,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
     }
     gSerialRuntime.phase = 1;
   }
+    // Fall through.
   case 1:
     SerialRuntime_CollectReceivedPayloads(receive);
     SerialRuntime_PrepareSendPacket(send);
@@ -3060,7 +3061,8 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   if (gSerialRuntime.mode == 8)
     status |= 0x80;
   result = SerialRuntime_AddParentFlag(status);
-  if (((control << 26) >> 30) > 1) // SIOCNT bits 4 and 5, the multiplayer id
+  // SIOCNT bits 4 and 5, the multiplayer id
+  if (((control << 26) >> 30) > 1)
     result |= 0x2000;
   return result;
 }

@@ -70,9 +70,9 @@ void Camera_ResetSceneDefaults(void) {
 
 // Multiplies two 8.8 fixed-point values, rounding toward zero.
 s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
-  /* FAKEMATCH: separate operand promotion and rounded output retain the
-   * native sign-extension order and result copy. A direct product adjusted
-   * in place is two bytes shorter in EN. */
+  /* FAKEMATCH(temporary): the product built in its own variable from a copy
+   * of right, then rounded into another; as product = left * right adjusted
+   * in place, 4 of 14 instructions differ in tbs-en. */
   s16 left = leftValue;
   s16 right = rightValue;
   s32 product;
@@ -252,11 +252,13 @@ void LuckyDice_Run(void) {
   s32 numbers[DICE_RESULT_COUNT];
   s32 groundPoint[3];
   s32 screen[3];
-  /* FAKEMATCH: unused local; the native frame keeps 32 unused bytes at
-   * sp+168..200, between screen and the affine halfwords (without it 42) */
+  /* FAKEMATCH(dead): an unused local for the 32 bytes the native frame keeps
+   * at sp+168..200, between screen and the affine halfwords; without it, 21
+   * of 2046 instructions differ in tbs-en. */
   s32 unused[8];
-  /* FAKEMATCH: volatile restores the form the bytes prove, four halfwords
-   * stored to sp+166..160 and each reloaded with ldrh (without it 902) */
+  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
+   * reloaded with ldrh, the form the bytes prove; as plain u16 locals, 463 of
+   * 2046 instructions differ in tbs-en. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;
@@ -274,8 +276,9 @@ void LuckyDice_Run(void) {
 #endif
   u16 *spritePalette;
   struct BattleEffectWork *diceWork;
-  /* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words
-   * (tag in oambuf.h): without the qualifier differ 1702. */
+  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
+   * words are volatile (oambuf.h); as plain words, 810 of 2046 instructions
+   * differ in tbs-en. */
   struct LuckyDiceSprites *sprites;
   struct BattleCamera *camera;
   s32 frame;
@@ -572,8 +575,8 @@ void LuckyDice_Run(void) {
     } else if (state == LUCKY_DICE_AIM && frame > 17) {
       // Aiming: Up and Down raise and lower the dice between 32 and 160.
       // B quits, as does running out of coins for a bet; A throws.
-      /* FAKEMATCH: two discarded reads of gKeysRepeat, the form the bytes prove
-       * (native loads it twice before the KEY_UP test; without them 189) */
+      // DEAD: gKeysRepeat is read twice and discarded before the KEY_UP test;
+      // both loads are in the ROM.
       (void)gKeysRepeat;
       (void)gKeysRepeat;
       if (gKeysHeld & KEY_UP) {

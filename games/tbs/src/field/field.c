@@ -215,8 +215,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     if (layer->script == 0) {
       continue;
     }
-    /* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command
-     * back-edges and the decoded frame value separate from the hold reload. */
+    // The command loop is written with goto: as while ((s16)layer->timer <= 0),
+    // 33 of 544 instructions differ in tbs-en.
   read_command:
     if ((s16)layer->timer <= 0) {
       frame = layer->script[layer->pos++];
@@ -340,8 +340,9 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         continue;
       }
       key = (key << 8) | i;
-      /* FAKEMATCH: needed to match: the first shift written apart and the scan
-       * left by goto keep the scan unrotated, with its step at the top. */
+      // The scan leaves by goto, which keeps it unrotated with its step at the
+      // top: as a for loop that shifts while drawOrder[k] > key, 156 of 544
+      // instructions differ in tbs-en, and with one break test 91.
       k = drawCount;
       if (k >= 0 && drawOrder[k] > key) {
         drawOrder[k + 1] = drawOrder[k];
@@ -515,8 +516,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   s32 screenY = *pos++;
   s32 groundHeight = *pos;
   s32 slot;
-  /* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the
-   * 68-byte frame; removing them leaves 44 bytes. */
+  /* FAKEMATCH(dead): two unused arrays for 24 bytes of the native 68-byte
+   * frame; without them, 2 of 250 instructions differ in tbs-en. */
   s32 ground[3];
   s32 screen[3];
   struct AffineTransform effect;
@@ -1003,10 +1004,9 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
   keepPlace = animation & 0x80;
   animation &= 0x7f;
 
-  /* FAKEMATCH: the i/test loop keeps an 8-byte frame; a for loop spills an
-   * layer cursor and uses 12 bytes. 2026-10-13: for (i = 0; i <
-   * sprite->count; i++) strength-reduces entries[i] into that cursor
-   * (82 instructions for 76, differ 30). */
+  // The loop is written with goto, which keeps an 8-byte frame: as for (i = 0;
+  // i < sprite->count; i++), loop.c strength-reduces entries[i] into a spilled
+  // cursor and 16 of 76 instructions differ in tbs-en.
   if (sprite->lastNo != animation) {
     i = 0;
     goto test_entry;
@@ -1142,9 +1142,9 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
     }
     if (found != NULL) {
       // Bind the metadata and start its first animation at command zero.
-      /* FAKEMATCH: instruction order only: read as a word, the frames load does
-       * not wait on the animId store, so the zero for pos and param loads first
-       * as native; the typed read swaps the two (differ 2). */
+      // Read as a word, the frames load does not wait on the animId store, so
+      // the zero for pos and param loads first as native; as metadata->frames,
+      // 1 of 61 instructions differs in tbs-en.
       frames = (void **)*(s32 *)&metadata->frames;
       layer = found;
       layer->animId = id;
@@ -1259,8 +1259,9 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
   *attribute++ = 0x6000;
   *attribute = (gVramBlockCache[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(sprite, id) == -1) {
-    /* FAKEMATCH: native dead -1 after Register (movs/negs); empty arm
-       after a same-byte reload keeps the carrier (differ 32 -> 0). */
+    /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 the native
+     * builds after the call and never uses; with the call alone, 2 of 152
+     * instructions differ in tbs-en. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return freeSprite;
@@ -1884,9 +1885,9 @@ struct FixedCamera {
 // screen. An object on or near the screen takes its layer and priority from
 // the cell under it; one off screen gives up its VRAM cache entry.
 void ObjectSystem_UpdateCamera(void) {
-  /* FAKEMATCH: frame local: unused; the native frame keeps room for
-     three points above the position. Measured (2026-10-13): without it
-     the frame is 44 bytes for 80 (differ 4, the two sp adjustments). */
+  /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
+   * three points above the position; without it, 2 of 267 instructions differ
+   * in tbs-en. */
   struct CameraPoint unusedPoints[3];
   s32 objectIndex;
   struct MapScrollWork *mapWork;
@@ -2032,9 +2033,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
   void *sprite;
   s32 groupScale[2];
   s32 scale[2];
-  /* FAKEMATCH: frame local: unused; the native frame keeps room for two
-     points above the scales. Measured (2026-10-13): without it the frame
-     is 28 bytes for 52 (differ 4, the two sp adjustments). */
+  /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
+   * two points above the scales; without it, 2 of 181 instructions differ in
+   * tbs-en. */
   struct CameraPoint unusedPoints[2];
 
   // UB: camera and system work are separate globals, beyond gObjectSlots.
@@ -3125,12 +3126,10 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
       // The distance in the XZ plane: dy is computed as in
       // Object_SetMoveTarget but not used for the distance.
       dx = (x - cameraObject->x) / 0x10000;
-      /* FAKEMATCH: dead code: this dy is overwritten below and the compiler
-       * drops it, but its references rank y above the bounds in global
-       * allocation, keeping y in r5 as native; without it 114 rows differ in
-       * the English build (y in r9). The form is the sibling
-       * Object_SetMoveTarget's three-axis delta. Clamping X then Z with one
-       * minimum/maximum pair and no dead dy changes 273 text bytes in EN. */
+      /* FAKEMATCH(dead): this dy is overwritten below, as in
+       * Object_SetMoveTarget's three-axis delta, but its references rank y
+       * above the bounds in global allocation and keep it in r5 as native;
+       * without it, 52 of 224 instructions differ in tbs-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
@@ -3266,16 +3265,11 @@ retry:
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
         0)
       goto retry;
-    /* FAKEMATCH: one-pass block: it ends cse2's block, so the division works on
-     * the loaded pos.x and the copy outlives it into the move target call. As
-     * plain statements cse2 swaps them (differ 16), also with dx/dz split or
-     * casts. The retry gotos stay: as for(;;) with continue, loop.c hoists &pos
-     * and &probe, which the native recomputes each try (differ 128).
-     * Moving success into a <= limit branch without the block changes 53
-     * text bytes: the coordinate copies still swap and exits reorder.
-     * A shared inline home-radius predicate used here and by WanderNearHome
-     * adds 8 bytes to each function in EN; that command's deltas must remain
-     * live for its fallback heading. */
+    /* FAKEMATCH(one-pass): it ends cse2's block, so the division works on the
+     * loaded x and the copy outlives it into the move target call; as plain
+     * statements, 8 of 184 instructions differ in tbs-en. The retry gotos stay:
+     * as for (;;) with continue, loop.c hoists the two positions' addresses,
+     * which the native recomputes each try. */
     do {
       dx = candidatePosition.x / 0x10000 - object->homeX;
       dz = candidatePosition.z / 0x10000 - object->homeZ;
@@ -3725,11 +3719,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     if (freeBlocks - 136 < 0)
       AudioCommand_PlayFar(SE_135);
   }
-  /* FAKEMATCH: the volatile read puts gDebugMode's address in r5 here and at
-   * the test before it, as the bytes do; read plainly both take r3 (differ 12,
-   * 808 instructions either way). Grouping both debug actions under an outer
-   * ordinary test, retaining a fresh read after calls, changes 6 text bytes
-   * in EN: the address still uses r3 and two branch targets differ. */
+  /* FAKEMATCH(volatile): the volatile read puts gDebugMode's address in r5 here
+   * and at the test before it, as native; as gDebugMode != 0, 9 of 808
+   * instructions differ in tbs-en. */
   if (*(volatile u8 *)&gDebugMode != 0) {
     s32 delayKeyMask;
 
@@ -4350,13 +4342,10 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
   struct FieldPosition position;
-  /* FAKEMATCH: never used; its 68 bytes are the native frame space no
-   * instruction touches. Without it the frame is 12 bytes, not 80 (differ 8:
-   * the sp adjustments and pos's address). 68 bytes is exactly the probe locals
-   * of the sibling Object_MoveOnWorldMap (testPosition and angleOffsets[28]
-   * internationally, leftPosition, rightPosition and angleOffsets[22] in
-   * Japan); declared here instead, they also match tbs-en and tbs-ja
-   * (2026-10-13). */
+  /* FAKEMATCH(dead): an unused local for the 68 bytes of native frame no
+   * instruction touches, the size of the probe locals of Object_MoveOnWorldMap
+   * (which, declared here instead, also match); without it, 4 of 213
+   * instructions differ in tbs-en. */
   u8 unusedProbeFrame[68];
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
@@ -4732,10 +4721,9 @@ s32 Map_LoadLayeredScene(s32 index) {
                                  (u32)&ResourceId_Map001),
           graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
-      /* FAKEMATCH: needed to match: these four copies call the fixed entry
-       * itself; through Iwram_CopyWords the scene header and the work move from
-       * r5 and r8 to r8 and sl (237 of 357 instructions differ), with or
-       * without the function's other devices. */
+      /* FAKEMATCH(wrapper): these four copies call the fixed entry itself, past
+       * the IWRAM call layer; as Iwram_CopyWords, 103 of 349 instructions
+       * differ in tbs-en. */
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[2] +
                                                   (u32)&ResourceId_Map001),
@@ -4764,9 +4752,8 @@ s32 Map_LoadLayeredScene(s32 index) {
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
 #else
-  /* FAKEMATCH: Scheduler_AddOrUpdateCallback is called as void (*)(void
-   * (*)(void), s32); as s32 (*)(SchedulerCallback, s32), its prototype,
-   * Map_LoadLayeredScene has 6 of 868 bytes different */
+  // Called through a cast as void (*)(void (*)(void), s32); called as its
+  // prototype, 2 of 349 instructions differ in tbs-en.
   ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)(
       Map_UpdateLayerScroll, 0xc85);
 #endif
@@ -5003,13 +4990,9 @@ struct TilePos {
 // attributes, and redraws the copied cells that are on screen.
 void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
-  /* FAKEMATCH: needed to match: temporary sharing preserves register allocation
-   * and scheduling without changing the frame or instructions. Measured
-   * 2026-10-11, before the volatile casts on the two word copies were dropped
-   * as unneeded: i = 0 after the offset differs 59, at the top of the body 32;
-   * a fresh bytes = cell * 8 is hoisted by loop.c, 158; the scale before the
-   * first destination, 4; address expressions without scr and blk, 113-153. A
-   * plain body differs 214. */
+  /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
+   * schedule of the cell loop; as a plain body (the offset computed once, two
+   * word stores), 96 of 141 instructions differ in tbs-en. */
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
@@ -5106,10 +5089,9 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
   u32 endMarker = 0xffff;
   u32 firstSourceCopy = sourceX;
 
-  /* FAKEMATCH: the conditional cancelling updates end CSE before the
-   * comparison, preserving its ip copy while source stays in r0. Both
-   * updates disappear; removing them loses the copy (53 -> 52 English
-   * instructions, five rows differ). */
+  /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
+   * before the comparison, keeping its ip copy while source stays in r0;
+   * without them, 2 of 53 instructions differ in tbs-en. */
   if (copyCommand) {
     sourceX ^= firstSourceCopy;
     sourceX ^= firstSourceCopy;
@@ -5133,12 +5115,9 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
       {
         u32 nextSourceCopy = sourceX;
 
-        /* FAKEMATCH: the same ip copy after the wait. 2026-10-11: the native
-         * compares a copy of source held in ip at both tests; the copy's pseudo
-         * must reach regclass with only the copy and the branch as its insns,
-         * which CSE's copy swap or combine's substitution removes in every
-         * plain form tried (best, a do-while on the field re-read with stop in
-         * a local: differ 12). */
+        /* FAKEMATCH(barrier): the same ip copy after the wait, which CSE's copy
+         * swap or combine removes in every plain form tried; without the
+         * barrier, 2 of 53 instructions differ in tbs-en. */
         __asm__("" : "+r"(nextSourceCopy));
         if (nextSourceCopy == endMarkerCopy)
           break;
@@ -5224,11 +5203,11 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
             u32 tmp10;
             u32 tmp14;
             u32 tmp16;
-            /* FAKEMATCH: restoring the unscaled cell keeps loop.c's
-             * shift inside the successful layer branch. The restoration
-             * folds away, preserving the native 36-byte frame and registers.
-             * The copy chain through tmp2 to tmp17 sets the registers and
-             * stack slots: written as two plain word stores, tbs-en differs. */
+            /* FAKEMATCH(temporary): restoring the unscaled cell keeps loop.c's
+             * shift inside the successful layer branch, and the copy chain
+             * through tmp2 to tmp17 sets the registers and stack slots of the
+             * native 36-byte frame; as two plain word stores, 65 of 137
+             * instructions differ in tbs-en. */
             u32 bytes = metatileId * 8;
             u32 tmp8;
             u32 tmp17;
@@ -5304,12 +5283,9 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
 // attributes; cells in a visible area update the BG maps too.
 void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                            s32 dstY) {
-  /* FAKEMATCH: needed to match: word/index temporaries preserve register
-   * allocation; the plain body allocates differently and uses a 40-byte frame.
-   * Measured 2026-10-11, before the volatile casts on the two word copies were
-   * dropped as unneeded: i = 0 after pos = view differs 38; the scale into n,
-   * 52; the scale before the first destination, 54. A plain body differs 204.
-   */
+  /* FAKEMATCH(temporary): the word and index temporaries set the registers and
+   * the 36-byte frame; as a plain body (the offset computed once, two word
+   * stores), 94 of 142 instructions differ in tbs-en. */
   s32 y;
   u32 *sourceCells = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *destinationCells = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
@@ -5502,10 +5478,9 @@ s32 Map_InitializePerspectiveScene(void) {
   u16 *yaw;
   u16 *pitch;
   u16 *zoomTransitionFrames;
-  /* FAKEMATCH: the fill word is this function's own volatile local, filled by
-   * Dma_Fill32Cell, so it takes the native's frame slot at sp+28; plain
-   * Dma_Fill32's inner word lands at sp+16 and the slots after it shift (differ
-   * 4 in all six editions, measured 2026-10-13). */
+  /* FAKEMATCH(volatile): the fill word is this function's own volatile local,
+   * filled by Dma_Fill32Cell, so it takes the native frame slot at sp+28; as
+   * Dma_Fill32, 2 of 331 instructions differ in tbs-en. */
   volatile u32 fill;
   struct FixedPointPosition eyeOffset;
   s32 farPlane;
@@ -5553,11 +5528,9 @@ s32 Map_InitializePerspectiveScene(void) {
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  /* FAKEMATCH: one-pass block; its loop notes keep the 0x100 for BG2PD built
-   * just before its store and the 12 for Runtime_AllocateBlock loaded before
-   * the 76. Without it differ 6, whether the three writes are Io_Put16,
-   * Io_Set16 or plain stores; Io_Write16 for BG2PD (itself a one-pass macro)
-   * differ 2. */
+  /* FAKEMATCH(one-pass): its loop notes keep the 0x100 for BG2PD built just
+   * before its store and the 12 for Runtime_AllocateBlock loaded before the 76;
+   * as plain statements, 3 of 331 instructions differ in tbs-en. */
   do {
     Io_Put16(&REG_BG2PD, 0x100);
     REG_BG2X = 0;
@@ -6095,11 +6068,9 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
 // wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 // 0xfeff stops, and 0xffff loops to the start.
 void MapAnimation_Update(void) {
-  /* FAKEMATCH: each channel is written (state->anim + i), not through a channel
-   * pointer: a pointer anim = state->anim + i (or &state->anim[i], declared in
-   * either scope) differs 4, ip and lr swapping the 0xffff sentinel and the
-   * VRAM base; a walking anim++ differs 8; state->anim[i]. differs 167, no
-   * walking pointer at all. */
+  // Each channel is written (mapState->anim + channelIndex): as
+  // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
+  // a channel pointer swaps ip and lr.
   struct MapState *mapState = gMapWork[0];
   u32 channelIndex;
 
@@ -6982,13 +6953,9 @@ void Resource_RunCopiedDecoder(s32 a, s32 b) {
 
   base = gDecodeBuffer;
   RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
-  /* FAKEMATCH: one-pass block: its loop notes keep gBgTileBuffer's address load
-   * ahead of a's move into r0, as the bytes order the call's arguments. Plain
-   * forms measured 2026-10-13: the bare call differ 2 (that load one move
-   * later); the tile address in a local differ 2; &gBgTileBuffer[0x4000] and
-   * &base[0x1000] through WORK_SLOT differ 3; the routine in a local pointer
-   * differ 8; base += 0x1000 after the load call differ 10; gDecodeBuffer +
-   * 0x1000 at the declaration differ 26. */
+  /* FAKEMATCH(one-pass): its loop notes keep gBgTileBuffer's address load ahead
+   * of a's move into r0, as native; as the bare call, 1 of 39 instructions
+   * differs in tbs-en. */
   do {
     ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(
         a, b, gBgTileBuffer + 0x4000, base + 0x1000);
@@ -7092,12 +7059,10 @@ void Ui_RunIconMonitor(void) {
     u8 *flags;
   } spriteWork;
   s32 changed;
-  /* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared
-   * (keystate.h): each *held and *repeat is a load of its own. A plain held
-   * differs 245, 663 instructions for 672; a plain repeat 89, 669 for 672.
-   * Using gKeysHeld and gKeysRepeat directly differs 283: the native keeps only
-   * these two addresses in fp and r9 and reloads every other key address from
-   * the pool. */
+  /* FAKEMATCH(temporary): the native keeps only the addresses of gKeysHeld and
+   * gKeysRepeat in fp and r9, read through these pointers, and reloads every
+   * other key address from the pool; as gKeysHeld and gKeysRepeat directly, 135
+   * of 672 instructions differ in tbs-en. */
   volatile u32 *heldKeys;
   volatile u32 *repeatedKeys;
   u32 i;
@@ -7150,11 +7115,9 @@ restart:
     ResourceMetadata_Register(spriteWork.sprite, layers[1].number);
     ResourceMetadata_Register(spriteWork.sprite, layers[2].number);
     ResourceMetadata_Register(spriteWork.sprite, layers[3].number);
-    /* FAKEMATCH: needed to match: the native adds the flags offset to the
-     * object's own register (r5) in place; a separate address takes a copy.
-     * Measured 2026-10-13: ((struct AnimationObject *)alt)->flags = flag, the
-     * same through a pointer local, or a byte offset from alt all differ 55; a
-     * separate object variable 128 (the index and the object share r5). */
+    /* FAKEMATCH(temporary): the native adds the flags offset to the sprite's
+     * own register (r5) in place; as spriteWork.sprite->flags = shadowsEnabled,
+     * 21 of 672 instructions differ in tbs-en. */
     spriteWork.flags = &spriteWork.sprite->flags;
     *spriteWork.flags = shadowsEnabled;
   }
@@ -7378,11 +7341,9 @@ s32 Ui_FindNextNumberWithMetadata(s32 spriteId, s32 direction) {
       continue;
     }
     {
-      /* FAKEMATCH: the upper bound in a local compares as cmp against 0x200
-       * with blt; the literal compares against 0x1ff from the pool. 2026-10-13:
-       * start >= 0x200 or 0x200 <= start differs 9 of 25 (ldr r3, =0x1ff and
-       * ble); the tests as one else-if chain 9, start < 0x200 guarding the
-       * lookup 13. */
+      /* FAKEMATCH(temporary): the bound in a local compares as cmp against
+       * 0x200 with blt, as native; as spriteId >= 0x200, 3 of 25 instructions
+       * differ in tbs-en. */
       s32 spriteLimit = 0x200;
       if (spriteId >= spriteLimit) {
         spriteId = -1;

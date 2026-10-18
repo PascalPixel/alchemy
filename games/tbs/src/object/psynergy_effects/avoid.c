@@ -7,7 +7,7 @@
 
 // End of the effect: switches the caster's display flags between 3 and 1 on
 // a 5-frame cycle.
-void BattleFx_UpdateEffect16State(void) {
+void FieldFx_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
   struct AnimationObject *rec;
   struct AnimationEntry *entry;
@@ -66,7 +66,7 @@ void FieldEvent_ShowStatusMessage(void) {
 // (avoidDistance 0x9600000) until it wears off, and the game says
 // "Monsters won't attack so often now.". Flag 0x145 marks it as cast from the
 // Sacred Feather.
-void RunBattleEffect16(void) {
+void FieldFx_RunAvoid(void) {
   struct BattleFxScene *scene;
   struct ArcEffectObject *object;
   struct AnimationObject *group;
@@ -109,11 +109,11 @@ void RunBattleEffect16(void) {
   }
   object->callback = NULL;
   object->angle = angle;
-  Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_BlinkAvoidCaster, 0xc80);
   WaitFrames(15);
   AudioCommand_PlayFar(SE_174);
   WaitFrames(55);
-  Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
+  Scheduler_RemoveCallback(FieldFx_BlinkAvoidCaster);
   if (gGameState.cloaked != 0)
     ObjectDispatch_SetSingleChildFlagsFar(object, 2);
   else

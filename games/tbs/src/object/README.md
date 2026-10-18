@@ -57,10 +57,12 @@ part's own work block), `scene` for the effect scene, `object` and
 Functions are named for what they act on: `Scene_`, `Encounter_`, `Field_`,
 `Event_` and `FieldEvent_` (scene script commands), `Object_`,
 `ObjectMotion_`, `ObjectTable_`, `Marker_`, `Camera_`, `Djinn_`,
-`DisplayTransition_`, `EffectSlot_`, `FieldFx_`, `ReelGame_`, and the
-prefixes of the engine's other families. `BattleFx_` and `BattleEffect_`
-here are older names: most of those functions play field Psynergy, not
-battle effects, and keep their names until each is renamed from evidence.
+`DisplayTransition_`, `EffectSlot_`, `ReelGame_`, and the prefixes of the
+engine's other families. Field Psynergy effects are `FieldFx_`, a kind's
+runner named for its Psynergy (`FieldFx_RunCatch`). `BattleFx_`,
+`BattleEffect_` and `RunBattleEffectNN` here are older names for field
+Psynergy code that other folders or ⚓️'s twins also use; they keep them
+until a rename across folders.
 
 ## Spellings
 

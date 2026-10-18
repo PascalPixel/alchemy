@@ -126,7 +126,7 @@ BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
 }
 
 // Runs the update of each of the 24 effect slots.
-static __inline__ void BattleFx_UpdateSceneSlots(void) {
+static __inline__ void FieldFx_UpdateSceneSlots(void) {
   struct EffectSlot *slot;
   s32 remainingSlots;
 

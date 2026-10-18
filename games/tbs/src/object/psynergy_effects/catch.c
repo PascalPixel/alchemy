@@ -4,14 +4,14 @@
 #include "../psynergy_effects_internal.h"
 
 // Effect 13 cast on a target (from BattleFx_DispatchRequestKind).
-void BattleFx_RunEffect13Hook(s32 unused) { RunBattleEffect13(); }
+void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 
 // Psynergy effect 13: carries object 215 from 16 pixels above the caster to
 // the goal in 10 steps, growing from a quarter to full size, presses down 20
 // pixels moving child to (-9, -9), rises 19.5 pixels and shrinks back. The
 // goal is 32 pixels in front of the caster with scene->enabled, otherwise
 // the effect's position, 32 pixels up in both cases.
-void RunBattleEffect13(void) {
+void FieldFx_RunCatch(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *actor = scene->mainObject;
   struct MotionObject *child = scene->child;

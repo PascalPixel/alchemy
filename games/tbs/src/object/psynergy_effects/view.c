@@ -24,9 +24,9 @@ void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
 // The scheduler calls void(void). Plain void changes the native return from
 // pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
 #ifdef UBFIX
-void BattleFx_StepRatioTransition(void) {
+void FieldFx_StepRatioTransition(void) {
 #else
-s32 BattleFx_StepRatioTransition(void) {
+s32 FieldFx_StepRatioTransition(void) {
 #endif
   struct PerspectiveWork *work;
   s16 *frames;
@@ -56,9 +56,9 @@ s32 BattleFx_StepRatioTransition(void) {
   if (*step == *frames) {
     *frames = 0;
 #ifdef UBFIX
-    Scheduler_RemoveCallback(BattleFx_StepRatioTransition);
+    Scheduler_RemoveCallback(FieldFx_StepRatioTransition);
 #else
-    Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
+    Scheduler_RemoveCallback((SchedulerCallback)FieldFx_StepRatioTransition);
 #endif
   }
 }
@@ -81,9 +81,9 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   work->zoomTransitionFrames = frames;
   work->zoomTransitionStep = 0;
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(BattleFx_StepRatioTransition, 0xc94);
+  Scheduler_AddOrUpdateCallback(FieldFx_StepRatioTransition, 0xc94);
 #else
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition,
+  Scheduler_AddOrUpdateCallback((SchedulerCallback)FieldFx_StepRatioTransition,
                                 0xc94);
 #endif
 }

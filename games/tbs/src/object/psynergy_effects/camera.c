@@ -136,8 +136,8 @@ struct FieldActor *Camera_GetEventObject(void) {
 
 // Makes the camera follow target; unless keepCurrentPosition is set it jumps
 // there at once.
-UNUSED void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
-                                        s32 keepCurrentPosition) {
+UNUSED void Camera_FollowObject(struct ObjectRuntime *target,
+                                s32 keepCurrentPosition) {
   struct ObjectRuntime *camera;
 
   camera = ((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,

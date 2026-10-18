@@ -253,7 +253,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 }
 
 // Scheduler callback: updates the 24 effect slots.
-void BattleFx_UpdateAllSlots(void) { BattleFx_UpdateSceneSlots(); }
+void BattleFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 
 // Allocates and clears the effect slots (heap block 56) and starts their
 // update callback.

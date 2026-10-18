@@ -65,7 +65,7 @@ void BattleFx_Run(void) {
     BattleFx_RunBurstParticles();
     return;
   case 13:
-    RunBattleEffect13();
+    FieldFx_RunCatch();
     return;
   case 9: // free the object stopped before, then stop the nearest one
     if (gGameState.pausedObject != -1) {
@@ -100,7 +100,7 @@ void BattleFx_Run(void) {
     BattleFx_RunEffect15();
     return;
   case 16:
-    RunBattleEffect16();
+    FieldFx_RunAvoid();
     return;
   }
 }
@@ -141,7 +141,7 @@ void BattleFx_DispatchRequestKind(void) {
     BattleFx_StartOrbitingParticles(targetId);
     break;
   case 12:
-    BattleFx_RunBurstParticleMainObject(targetId);
+    FieldFx_RunGrowthOnTarget(targetId);
     break;
   case 9:
     if (gGameState.pausedObject != -1) {
@@ -159,7 +159,7 @@ void BattleFx_DispatchRequestKind(void) {
     BattleFx_CallEffect14(targetId);
     break;
   case 13:
-    BattleFx_RunEffect13Hook(targetId);
+    FieldFx_RunCatchOnTarget(targetId);
     break;
   case 8:
     RunBattleEffect08();
@@ -171,7 +171,7 @@ void BattleFx_DispatchRequestKind(void) {
     BattleFx_RunEffect15();
     break;
   case 16:
-    RunBattleEffect16();
+    FieldFx_RunAvoid();
     break;
   }
 }
@@ -211,7 +211,7 @@ void FieldEvent_RunTypeHandler(void) {
 // shown at target; a larger one is a routine, called with param and target
 // (through r3). Afterwards, with flag 322 set, says "But nothing happens.".
 // Returns 0.
-s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
+s32 Field_RunEventAction(void *event, s32 param, s32 target) {
   s32 script;
 
   if (event != NULL) {

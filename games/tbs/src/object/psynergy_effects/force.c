@@ -157,7 +157,7 @@ void RunBattleEffect04(void) {
   // Run the map's event for it, if there is one.
   event = BattleFx_FindMatchingEvent(0x50000005, 4, &eventTarget);
   if (event != NULL)
-    BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(20);

@@ -86,7 +86,7 @@ void RunBattleEffect08(void) {
   WaitFrames(1);
   event = BattleFx_FindMatchingEvent(0x50000005, 8, &eventTarget);
   if (event != NULL)
-    BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
@@ -148,7 +148,7 @@ void ResetSceneTransitionEffect(void) {
     event = BattleFx_FindMatchingEvent(REVEAL_END_EVENT, REVEAL_FIELD_KIND,
                                        &eventTarget);
     if (event != NULL)
-      BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
 
     if (work->childOption == 0) {
       scene->nextMode = 0;

@@ -7,7 +7,7 @@
 // (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
 // it follows, 9 pixels in front of it and up to 5 pixels further while
 // small.
-void BattleFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
+void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   // A shared inline kernel with a constant inversion argument changes both
   // arc updates from 0x58 to 0x5c bytes in the forced native English build.
   struct FieldActor *arc = (struct FieldActor *)fieldObject;
@@ -32,7 +32,7 @@ void BattleFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
 
 // Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 // object and up to 5 pixels nearer while small.
-void BattleFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
+void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   struct FieldActor *arc = (struct FieldActor *)fieldObject;
   struct FieldActor *anchor;
   s32 frame;
@@ -121,9 +121,9 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   // Arc B in front of everything, arc A at the caster's priority.
   // BUG: allocation failures above leave a missing arc or sprite here.
   // The original does not define a partial-pair recovery path.
-  arcs[0]->update = BattleFx_UpdateScaledArcObjectB;
+  arcs[0]->update = FieldFx_UpdateScaledArcObjectB;
   arcs[0]->sprite->image.priority = 0;
-  arcs[1]->update = BattleFx_UpdateScaledArcObjectA;
+  arcs[1]->update = FieldFx_UpdateScaledArcObjectA;
   arcs[1]->sprite->image.priority = source->sprite->image.priority;
   arcs[1]->priorityFlags = 2;
 }
@@ -144,7 +144,7 @@ void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
 
 // Per-frame update: cycles an object through sprite params 0 to 5, one step
 // every 2 frames, and spawns the swelling arcs on it every 16.
-void BattleFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
+void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;

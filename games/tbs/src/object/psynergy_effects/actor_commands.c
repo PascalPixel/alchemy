@@ -417,10 +417,10 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   Object_RefreshSelectorById(objectId);
 }
 
-// Moves a dust puff of BattleFx_SpawnBurstParticle: it drifts with its x and
+// Moves a dust puff of FieldFx_SpawnBurstParticle: it drifts with its x and
 // z velocity (kept in speed and acceleration), which drag slows by 1/18 and
 // 1/16 each frame, and rises 1/64 pixel a frame.
-void BattleFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
+void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 velocityX;
   s32 x;
@@ -452,7 +452,7 @@ void BattleFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 // the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with one
 // of two animations. A nonzero param is given to its sprite parts
 // (ObjectGroup_SetChildValue).
-void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
+void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
   struct AnimationObject *child;
   s32 speed;
@@ -485,7 +485,7 @@ void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     speed <<= 1;
     object->speed = 0x1999 * speed;
     object->timer = 0;
-    object->update = BattleFx_UpdateParticleLinearMotion;
+    object->update = FieldFx_UpdateParticleLinearMotion;
     child->flags = 0;
     child->image.priority = source->sprite->image.priority;
   }
@@ -533,7 +533,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       object->targetY = nextY;
       WaitFrames(1);
       if ((param != -1) && (pose & 1)) {
-        BattleFx_SpawnBurstParticle((struct FieldActor *)object, param);
+        FieldFx_SpawnBurstParticle((struct FieldActor *)object, param);
       }
       pose++;
     } while ((u32)pose <= 0xD);

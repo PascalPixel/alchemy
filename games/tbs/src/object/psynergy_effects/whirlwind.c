@@ -29,7 +29,7 @@ struct OrbitEffect {
 
 // Per-frame update of a particle: moves by its velocity, slowing its x and z
 // velocity a little, and changes its scale and spin.
-void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object) {
+void FieldFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
   effect->x += effect->velocity.x;
@@ -52,7 +52,7 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   u32 i;
 
   opt.palette = 0;
-  opt.update = BattleFx_UpdateParticleMotionAndScale;
+  opt.update = FieldFx_UpdateParticleMotionAndScale;
   opt.startScaleX = 0xcccc; // 0.8
   opt.startScaleY = 0xcccc;
   i = 0;

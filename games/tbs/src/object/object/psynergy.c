@@ -106,7 +106,7 @@ s32 Field_UsePsynergy(u32 code) {
   BattleFx_SetupObjectPair(gGameState.selectedActor, target);
   EventObject_Initialize();
 
-  BattleFx_RunEventAction(before, userId, target);
+  Field_RunEventAction(before, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT)) {
     if (GameFlag_TestFar(FLAG_PSYNERGY_TARGET))
       BattleFx_DispatchRequestKind();
@@ -114,7 +114,7 @@ s32 Field_UsePsynergy(u32 code) {
       BattleFx_Run();
   }
   EffectRuntime_StopCurrentObject();
-  BattleFx_RunEventAction(after, userId, target);
+  Field_RunEventAction(after, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
     BattleFx_ClearChildValueOnMismatch();
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);

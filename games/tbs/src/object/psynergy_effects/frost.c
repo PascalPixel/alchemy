@@ -31,8 +31,8 @@ void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
 
 // Both winding directions share the countdown and position update. timer is
 // initialized to 60; preserve its halfword narrowing before computing radius.
-static inline void BattleFx_UpdateSpiralParticle(union FieldObject *fieldObject,
-                                                 s32 clockwise) {
+static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
+                                                s32 clockwise) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct EffectVector position;
   s16 remainingFrames;
@@ -62,12 +62,12 @@ static inline void BattleFx_UpdateSpiralParticle(union FieldObject *fieldObject,
 
 // Spirals anticlockwise at twice the frames left in pixels, then fades.
 void BattleFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
-  BattleFx_UpdateSpiralParticle(fieldObject, 0);
+  FieldFx_UpdateSpiralParticle(fieldObject, 0);
 }
 
 // Per-frame update: as BattleFx_UpdateOrbitingParticleLeft, clockwise.
 void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
-  BattleFx_UpdateSpiralParticle(fieldObject, 1);
+  FieldFx_UpdateSpiralParticle(fieldObject, 1);
 }
 
 // Effect 6 cast on a target (scene->child); with childMode the target is
@@ -163,7 +163,7 @@ void BattleFx_RunOrbitingParticles(void) {
     target->update = BattleFx_UpdateOrbitingParticleMain;
     event = BattleFx_FindMatchingEvent(0x50000005, 6, &eventTarget);
     if (event != NULL) {
-      BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
     }
     WaitFrames(20);
   }

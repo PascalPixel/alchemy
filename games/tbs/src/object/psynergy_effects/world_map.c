@@ -395,7 +395,7 @@ void Map_ShowWorldMap(s32 picture) {
 
 // On the world map, shows only the scene actors within 320 pixels sideways,
 // 600 above and 400 below the camera.
-void BattleFx_UpdateObjectVisibilityBounds(void) {
+void Field_UpdateObjectVisibilityBounds(void) {
   struct ObjectRuntime *object;
   s32 x;
   s32 y;
@@ -440,7 +440,7 @@ void BattleFx_RunVisibilityTransition(void) {
 
   if (field->mode == MODE_WORLD_MAP) {
     Scheduler_SuspendOverlayTasks();
-    BattleFx_UpdateObjectVisibilityBounds();
+    Field_UpdateObjectVisibilityBounds();
     Leader_StopMoving();
     BattleFx_ScheduleRatioTransition(0x9d89, 6);
     if (gKeysHeld & KEY_L) {

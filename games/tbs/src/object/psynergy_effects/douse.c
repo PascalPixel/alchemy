@@ -39,7 +39,7 @@ struct Effect05State {
 
 // Per-frame update of a falling particle: on reaching altitude, it scatters
 // three small particles.
-void BattleFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
+void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
   struct Effect05Object *particle = (struct Effect05Object *)fieldObject;
   s32 i;
   struct Effect05Object *p;
@@ -184,7 +184,7 @@ void RunBattleEffect05(void) {
       particle = Object_Spawn(0xf0, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->altitude = pos.y - (32 << 16);
-        particle->callback = BattleFx_SpawnRandomAngleTriplet;
+        particle->callback = FieldFx_SpawnRandomAngleTriplet;
         particle->flag = 2;
       }
       AudioCommand_PlayFar(SE_132);

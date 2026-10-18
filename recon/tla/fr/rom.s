@@ -2134,12 +2134,6 @@ UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d8c7c, 0x00000328
 	.section .rom.000d91da, "ax"
 	.incbin "baserom.gba", 0x000d91da, 0x00000002
-	.section .rom.000d91f0, "ax"
-	.global Func_080d41fc
-	.type Func_080d41fc, %function
-	.thumb_func
-Func_080d41fc:
-	.incbin "baserom.gba", 0x000d91f0, 0x00000134
 	.section .rom.000d9324, "ax"
 	.global Func_080d4330
 	.type Func_080d4330, %function

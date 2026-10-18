@@ -3294,17 +3294,11 @@ main	rom_main_05	recon/tla/es/rom	.rom.000dd1da	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e11e6	de
 main	rom_main_05	recon/tla/ja/rom	.rom.000d41c6	ja
 main	rom_main_05	games/tla/src/field/common/object/table_run_if_active	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d41f0	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d4324	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000d91f0	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000d9324	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000dd1f0	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dd324	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e11fc	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e1330	de
-main	rom_main_05	recon/tla/raw/080d41fc	.text	en
 main	rom_main_05	recon/tla/raw/080d4330	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d41dc	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d4310	ja
 main	rom_main_05	games/tla/src/field/common/object/attach_work_target_to_object	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d4400	it

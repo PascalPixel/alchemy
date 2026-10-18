@@ -3425,14 +3425,14 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000d6654	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d67c8	ja
 main	rom_main_05	games/tla/src/field/common/effect/ground_particles	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d69e8	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d6b84	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000db9e8	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000df9e8	es
-main	rom_main_05	recon/tla/es/rom	.rom.000dfb84	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e39f4	de
 main	rom_main_05	recon/tla/raw/080d69f4	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d69d4	ja
-main	rom_main_05	games/tla/src/field/common/effect/rising_particles	.text	en de fr ja
+main	rom_main_05	games/tla/src/field/common/effect/rising_particles	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000d6c54	it
+main	rom_main_05	recon/tla/es/rom	.rom.000dfc54	es
 main	rom_main_05	recon/tla/fr/rom	.rom.000dbc54	fr
 main	rom_main_05	recon/tla/de/rom	.rom.000e3c60	de
 main	rom_main_05	recon/tla/raw/080d6c60	.text	en

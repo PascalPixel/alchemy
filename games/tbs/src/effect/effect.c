@@ -24045,6 +24045,176 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
     break;                                                                     \
   }
 
+// The template walk itself, written once. BattleFx_LoadWork expands it
+// twice under two definitions of PUT, COPY, COPY_FROM, COPY_TWICE,
+// PUT_BRANCH, MARK and PATCH: first to count the words, then to write them.
+// It uses the caller's templateWords, flags, mode, widthShift, heightShift,
+// and the branch sites emptyRowsBranch, emptyColumnsBranch, rowLoop,
+// skipBranch, partialRun and fullCellLoop.
+#define BLITTER_WALK()                                                         \
+  COPY(3);                                                                     \
+  if (mode == COMPOSITE_ADDITIVE) {                                            \
+    COPY_FROM(BattleEffect_Mask, 3);                                           \
+  }                                                                            \
+                                                                               \
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {                          \
+    COPY_FROM(templateWords, 3);                                               \
+  }                                                                            \
+  templateWords += 3;                                                          \
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {                          \
+    COPY_FROM(templateWords, 4);                                               \
+  }                                                                            \
+  templateWords += 4;                                                          \
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) {                            \
+    COPY_FROM(templateWords, 3);                                               \
+  }                                                                            \
+  templateWords += 3;                                                          \
+  if ((flags & COMPOSITE_FLIP) == 0) {                                         \
+    PUT(templateWords[0]);                                                     \
+  }                                                                            \
+  templateWords += 1;                                                          \
+                                                                               \
+  if ((flags & COMPOSITE_CLIP_Y) != 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+    PUT(templateWords[1]);                                                     \
+    if ((flags & COMPOSITE_FLIP_Y) != 0) {                                     \
+      PUT(templateWords[2]);                                                   \
+    } else {                                                                   \
+      PUT(templateWords[3]);                                                   \
+    }                                                                          \
+    PUT(templateWords[4]);                                                     \
+    PUT(templateWords[5]);                                                     \
+    PUT(templateWords[6] + (1 << heightShift));                                \
+    PUT(templateWords[7] + (1 << heightShift));                                \
+  }                                                                            \
+  templateWords += 8;                                                          \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  MARK(emptyRowsBranch);                                                       \
+  PUT(*templateWords++);                                                       \
+                                                                               \
+  if ((flags & COMPOSITE_CLIP_X) == 0) {                                       \
+    PUT(templateWords[0] + (1 << widthShift) - 1);                             \
+  }                                                                            \
+  templateWords += 1;                                                          \
+  if ((flags & COMPOSITE_CLIP_X) != 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+    PUT(templateWords[1]);                                                     \
+    if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
+      PUT(templateWords[2]);                                                   \
+      PUT(templateWords[3]);                                                   \
+    } else {                                                                   \
+      PUT(templateWords[4]);                                                   \
+      PUT(templateWords[5]);                                                   \
+    }                                                                          \
+    PUT(templateWords[6]);                                                     \
+    PUT(templateWords[7]);                                                     \
+    PUT(templateWords[8] + gBattleFx_BitOperands[widthShift]);                 \
+    if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
+      PUT(templateWords[9]);                                                   \
+    } else {                                                                   \
+      PUT(templateWords[10]);                                                  \
+    }                                                                          \
+    PUT(templateWords[11] + gBattleFx_BitOperands[widthShift]);                \
+  }                                                                            \
+  templateWords += 12;                                                         \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  MARK(emptyColumnsBranch);                                                    \
+  PUT(*templateWords++);                                                       \
+                                                                               \
+  COPY(6);                                                                     \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  if ((flags & COMPOSITE_CLIP_X) == 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+  }                                                                            \
+  templateWords += 1;                                                          \
+                                                                               \
+  COPY(5);                                                                     \
+                                                                               \
+  MARK(rowLoop);                                                               \
+  PUT(templateWords[0]);                                                       \
+  PUT(templateWords[1] + (1 << (heightShift - 3)) - 1);                        \
+  PUT(templateWords[2] + ((widthShift - 3) << 7));                             \
+  PUT(templateWords[3]);                                                       \
+  templateWords += 4;                                                          \
+                                                                               \
+  if ((flags & COMPOSITE_CLIP_X) == 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+  }                                                                            \
+  templateWords += 1;                                                          \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  MARK(skipBranch);                                                            \
+  PUT(*templateWords++);                                                       \
+  if ((flags & COMPOSITE_FLIP_X) != 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+  } else {                                                                     \
+    PUT(templateWords[1]);                                                     \
+  }                                                                            \
+  templateWords += 2;                                                          \
+                                                                               \
+  MARK(partialRun);                                                            \
+  BLITTER_PARTIAL_RUN(mode, flags);                                            \
+  templateWords += 4;                                                          \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  PUT_BRANCH(partialRun);                                                      \
+  PUT(*templateWords++);                                                       \
+  if ((flags & COMPOSITE_CLIP_X) == 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+    PUT(templateWords[1]);                                                     \
+  }                                                                            \
+  templateWords += 2;                                                          \
+  PATCH(skipBranch);                                                           \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  MARK(skipBranch);                                                            \
+  PUT(*templateWords++);                                                       \
+                                                                               \
+  MARK(fullCellLoop);                                                          \
+  BLITTER_FULL_CELLS(mode, flags);                                             \
+  templateWords += 4;                                                          \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  if ((flags & COMPOSITE_CLIP_X) == 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+    PUT(templateWords[1]);                                                     \
+  }                                                                            \
+  templateWords += 2;                                                          \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  PUT_BRANCH(fullCellLoop);                                                    \
+  PATCH(skipBranch);                                                           \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  MARK(skipBranch);                                                            \
+  PUT(*templateWords++);                                                       \
+  if ((flags & COMPOSITE_FLIP_X) != 0) {                                       \
+    PUT(templateWords[0]);                                                     \
+  } else {                                                                     \
+    PUT(templateWords[1]);                                                     \
+  }                                                                            \
+  templateWords += 2;                                                          \
+                                                                               \
+  MARK(partialRun);                                                            \
+  BLITTER_PARTIAL_RUN(mode, flags);                                            \
+  templateWords += 4;                                                          \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  PUT_BRANCH(partialRun);                                                      \
+  PATCH(skipBranch);                                                           \
+                                                                               \
+  COPY(3);                                                                     \
+                                                                               \
+  PUT_BRANCH(rowLoop);                                                         \
+  PATCH(emptyRowsBranch);                                                      \
+  PATCH(emptyColumnsBranch);                                                   \
+                                                                               \
+  PUT(*templateWords++);                                                       \
+  PUT(*templateWords++)
+
 // Install a canvas blitter in the requested heap slot. widthShift and
 // heightShift are log2 dimensions; flags select clipping and mirroring, and
 // mode selects how source pixels combine with the destination.
@@ -24078,168 +24248,7 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   wordCount = 0;
   templateWords = BattleEffect_Composite;
 
-  COPY(3);
-  if (mode == COMPOSITE_ADDITIVE) {
-    COPY_FROM(BattleEffect_Mask, 3);
-  }
-
-  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
-    COPY_FROM(templateWords, 3);
-  }
-  templateWords += 3;
-  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {
-    COPY_FROM(templateWords, 4);
-  }
-  templateWords += 4;
-  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) {
-    COPY_FROM(templateWords, 3);
-  }
-  templateWords += 3;
-  if ((flags & COMPOSITE_FLIP) == 0) {
-    PUT(templateWords[0]);
-  }
-  templateWords += 1;
-
-  if ((flags & COMPOSITE_CLIP_Y) != 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-    if ((flags & COMPOSITE_FLIP_Y) != 0) {
-      PUT(templateWords[2]);
-    } else {
-      PUT(templateWords[3]);
-    }
-    PUT(templateWords[4]);
-    PUT(templateWords[5]);
-    PUT(templateWords[6] + (1 << heightShift));
-    PUT(templateWords[7] + (1 << heightShift));
-  }
-  templateWords += 8;
-
-  PUT(*templateWords++);
-  MARK(emptyRowsBranch);
-  PUT(*templateWords++);
-
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0] + (1 << widthShift) - 1);
-  }
-  templateWords += 1;
-  if ((flags & COMPOSITE_CLIP_X) != 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-    if ((flags & COMPOSITE_FLIP_X) != 0) {
-      PUT(templateWords[2]);
-      PUT(templateWords[3]);
-    } else {
-      PUT(templateWords[4]);
-      PUT(templateWords[5]);
-    }
-    PUT(templateWords[6]);
-    PUT(templateWords[7]);
-    PUT(templateWords[8] + gBattleFx_BitOperands[widthShift]);
-    if ((flags & COMPOSITE_FLIP_X) != 0) {
-      PUT(templateWords[9]);
-    } else {
-      PUT(templateWords[10]);
-    }
-    PUT(templateWords[11] + gBattleFx_BitOperands[widthShift]);
-  }
-  templateWords += 12;
-
-  PUT(*templateWords++);
-  MARK(emptyColumnsBranch);
-  PUT(*templateWords++);
-
-  COPY(6);
-
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-  }
-  templateWords += 1;
-
-  COPY(5);
-
-  MARK(rowLoop);
-  PUT(templateWords[0]);
-  PUT(templateWords[1] + (1 << (heightShift - 3)) - 1);
-  PUT(templateWords[2] + ((widthShift - 3) << 7));
-  PUT(templateWords[3]);
-  templateWords += 4;
-
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-  }
-  templateWords += 1;
-
-  PUT(*templateWords++);
-  MARK(skipBranch);
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_FLIP_X) != 0) {
-    PUT(templateWords[0]);
-  } else {
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-
-  MARK(partialRun);
-  BLITTER_PARTIAL_RUN(mode, flags);
-  templateWords += 4;
-
-  PUT(*templateWords++);
-  PUT_BRANCH(partialRun);
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-  PATCH(skipBranch);
-
-  PUT(*templateWords++);
-  MARK(skipBranch);
-  PUT(*templateWords++);
-
-  MARK(fullCellLoop);
-  BLITTER_FULL_CELLS(mode, flags);
-  templateWords += 4;
-
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-
-  PUT(*templateWords++);
-  PUT_BRANCH(fullCellLoop);
-  PATCH(skipBranch);
-
-  PUT(*templateWords++);
-  MARK(skipBranch);
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_FLIP_X) != 0) {
-    PUT(templateWords[0]);
-  } else {
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-
-  MARK(partialRun);
-  BLITTER_PARTIAL_RUN(mode, flags);
-  templateWords += 4;
-
-  PUT(*templateWords++);
-  PUT_BRANCH(partialRun);
-  PATCH(skipBranch);
-
-  COPY(3);
-
-  PUT_BRANCH(rowLoop);
-  PATCH(emptyRowsBranch);
-  PATCH(emptyColumnsBranch);
-
-  PUT(*templateWords++);
-  PUT(*templateWords++);
+  BLITTER_WALK();
 
 #undef PUT
 #undef COPY
@@ -24252,8 +24261,10 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   /* FAKEMATCH: one-pass blocks keep each writing step together and in list
    * order while allowing scheduling within it. Measured 2026-10-13 in all six
    * editions, written as plain statements: PUT differs 38, COPY 12 and PATCH 2,
-   * so each of the three carries a tag and counts at its uses. COPY_FROM,
-   * COPY_TWICE and PUT_BRANCH match without a block and have none. */
+   * so each of the three carries a tag and counts at its uses: 54 PUT, 4 COPY
+   * and 5 PATCH, written once in BLITTER_WALK, which both walks expand (the
+   * counting walk's definitions are no device). COPY_FROM, COPY_TWICE and
+   * PUT_BRANCH match without a block and have none. */
 #define PUT(word)                                                              \
   do {                                                                         \
     *codeWords++ = (word);                                                     \
@@ -24292,168 +24303,7 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   codeWords = (u32 *)Runtime_AllocateHeapBlock(slot, wordCount << 2);
   templateWords = BattleEffect_Composite;
 
-  COPY(3);
-  if (mode == COMPOSITE_ADDITIVE) {
-    COPY_FROM(BattleEffect_Mask, 3);
-  }
-
-  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
-    COPY_FROM(templateWords, 3);
-  }
-  templateWords += 3;
-  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {
-    COPY_FROM(templateWords, 4);
-  }
-  templateWords += 4;
-  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) {
-    COPY_FROM(templateWords, 3);
-  }
-  templateWords += 3;
-  if ((flags & COMPOSITE_FLIP) == 0) {
-    PUT(templateWords[0]);
-  }
-  templateWords += 1;
-
-  if ((flags & COMPOSITE_CLIP_Y) != 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-    if ((flags & COMPOSITE_FLIP_Y) != 0) {
-      PUT(templateWords[2]);
-    } else {
-      PUT(templateWords[3]);
-    }
-    PUT(templateWords[4]);
-    PUT(templateWords[5]);
-    PUT(templateWords[6] + (1 << heightShift));
-    PUT(templateWords[7] + (1 << heightShift));
-  }
-  templateWords += 8;
-
-  PUT(*templateWords++);
-  MARK(emptyRowsBranch);
-  PUT(*templateWords++);
-
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0] + (1 << widthShift) - 1);
-  }
-  templateWords += 1;
-  if ((flags & COMPOSITE_CLIP_X) != 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-    if ((flags & COMPOSITE_FLIP_X) != 0) {
-      PUT(templateWords[2]);
-      PUT(templateWords[3]);
-    } else {
-      PUT(templateWords[4]);
-      PUT(templateWords[5]);
-    }
-    PUT(templateWords[6]);
-    PUT(templateWords[7]);
-    PUT(templateWords[8] + gBattleFx_BitOperands[widthShift]);
-    if ((flags & COMPOSITE_FLIP_X) != 0) {
-      PUT(templateWords[9]);
-    } else {
-      PUT(templateWords[10]);
-    }
-    PUT(templateWords[11] + gBattleFx_BitOperands[widthShift]);
-  }
-  templateWords += 12;
-
-  PUT(*templateWords++);
-  MARK(emptyColumnsBranch);
-  PUT(*templateWords++);
-
-  COPY(6);
-
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-  }
-  templateWords += 1;
-
-  COPY(5);
-
-  MARK(rowLoop);
-  PUT(templateWords[0]);
-  PUT(templateWords[1] + (1 << (heightShift - 3)) - 1);
-  PUT(templateWords[2] + ((widthShift - 3) << 7));
-  PUT(templateWords[3]);
-  templateWords += 4;
-
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-  }
-  templateWords += 1;
-
-  PUT(*templateWords++);
-  MARK(skipBranch);
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_FLIP_X) != 0) {
-    PUT(templateWords[0]);
-  } else {
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-
-  MARK(partialRun);
-  BLITTER_PARTIAL_RUN(mode, flags);
-  templateWords += 4;
-
-  PUT(*templateWords++);
-  PUT_BRANCH(partialRun);
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-  PATCH(skipBranch);
-
-  PUT(*templateWords++);
-  MARK(skipBranch);
-  PUT(*templateWords++);
-
-  MARK(fullCellLoop);
-  BLITTER_FULL_CELLS(mode, flags);
-  templateWords += 4;
-
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_CLIP_X) == 0) {
-    PUT(templateWords[0]);
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-
-  PUT(*templateWords++);
-  PUT_BRANCH(fullCellLoop);
-  PATCH(skipBranch);
-
-  PUT(*templateWords++);
-  MARK(skipBranch);
-  PUT(*templateWords++);
-  if ((flags & COMPOSITE_FLIP_X) != 0) {
-    PUT(templateWords[0]);
-  } else {
-    PUT(templateWords[1]);
-  }
-  templateWords += 2;
-
-  MARK(partialRun);
-  BLITTER_PARTIAL_RUN(mode, flags);
-  templateWords += 4;
-
-  PUT(*templateWords++);
-  PUT_BRANCH(partialRun);
-  PATCH(skipBranch);
-
-  COPY(3);
-
-  PUT_BRANCH(rowLoop);
-  PATCH(emptyRowsBranch);
-  PATCH(emptyColumnsBranch);
-
-  PUT(*templateWords++);
-  PUT(*templateWords++);
+  BLITTER_WALK();
 
   codeEnd = (const u32 *)gBattleFx_MoteCellOffsets;
   return templateWords == codeEnd;
@@ -24468,6 +24318,7 @@ s32 BattleFx_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 #undef MARK
 #undef PATCH
 #undef BLITTER_PARTIAL_RUN
+#undef BLITTER_WALK
 #undef BLITTER_FULL_CELLS
 #undef BRANCH_FIELD
 #undef DMA_COPY_WORDS

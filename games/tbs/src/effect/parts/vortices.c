@@ -30,8 +30,8 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   s8 *flags;
 
   flags = (s8 *)Ram_MapCellBuffer; // nonzero once a mote has struck
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
@@ -70,7 +70,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != gFroth_Counts[work->effect->variant][FROTH_FRAMES];
        frame++) {
-    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+    camera = WORK_SLOT(HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
       work->cameraDelta = 0x180;
     else

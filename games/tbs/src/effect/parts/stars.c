@@ -34,10 +34,10 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectStep *trails;
 
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
-  graphics = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -74,7 +74,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 60; frame++) {
     // Swing the camera round, slowing over frames 40 to 47.
     if (frame <= 47) {
-      struct BattleCamera *view = *(gWorkSlot + HEAP_SLOT_CAMERA);
+      struct BattleCamera *view = WORK_SLOT(HEAP_SLOT_CAMERA);
       s32 speed;
 
       if (frame <= 39)
@@ -206,10 +206,10 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectStep *trails;
 
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
-  graphics = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,

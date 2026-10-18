@@ -126,7 +126,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   if (work->effect->prelude == 1)
@@ -183,7 +183,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[1] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER_ALTERNATE);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
@@ -286,7 +286,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0);
 
@@ -321,7 +321,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[1] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER_ALTERNATE);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 

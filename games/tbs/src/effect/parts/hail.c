@@ -176,9 +176,9 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   s32 screenY;
   s32 j;
 
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screenX,

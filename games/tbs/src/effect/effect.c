@@ -14,7 +14,9 @@
 // thing the engine names elsewhere: those keep its prefix (Camera_,
 // Palette_, Graphics_, Resource_, EffectStep_, EffectPosition_,
 // ObjectGroup_), as their Lost Age twins do. A part's macros are its own;
-// one that two parts use is defined in this file. The shared machinery:
+// one that two parts use is defined in this file. A work slot is read as
+// WORK_SLOT(n) or as gWorkSlot[n], whichever the site matches with: in this
+// GCC the two can compile differently. The shared machinery:
 //
 //   Entry points    dispatch.c: BattleFx_RunTableEffect,
 //                   BattleFx_RunSceneEffect; positions.c:

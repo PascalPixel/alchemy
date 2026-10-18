@@ -299,10 +299,10 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
-  sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  sheet = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == MOTE_FOUNTAIN_HEALING)
     BattleFx_BeginCanvasLayer(0);

@@ -25,7 +25,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   u8 *graphics;
   u8 *palette;
 
-  // cursor points at gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], the canvas.
+  // cursor points at WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS), the canvas.
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
   work = cursor[-1]; // [39] the effect work

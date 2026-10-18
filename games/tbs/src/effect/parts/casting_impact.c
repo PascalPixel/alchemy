@@ -249,7 +249,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   slot = slots;
   work = (struct BattleEffectWork *)*slot++;
   canvas = *slot;
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   sprites = (u8 *)EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = command;
   if (kind == CASTING_IMPACT_MORTAL_DANGER ||

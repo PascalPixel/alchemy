@@ -25,8 +25,8 @@ void BattleFx_WipeCanvas(s32 mode, s32 value) {
   s32 y;
   s32 wipePosition;
 
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 
@@ -261,11 +261,11 @@ void ObjectGroup_TickMemberTimers(void) {
 // BattleFx_EndCanvasLayer restores.
 // bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleFx_BeginCanvasLayer(s32 bgControl) {
-  struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
-  void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+  void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleBackgroundView *display =
-      *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -332,11 +332,11 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
 void BattleFx_OpenCanvasLayer(s32 bgControl) {
   // The tile-map loop is written out here and in BattleFx_BeginCanvasLayer:
   // shared, both compile 4 bytes shorter.
-  struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
-  void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+  void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleBackgroundView *display =
-      *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -416,8 +416,8 @@ void BattleFx_BeginTiledCanvas(s32 bgControl) {
 // fade and brings the backdrop's palette back from level 21 to 0 over 8
 // frames, then shows BG2 again and hides BG1.
 void BattleFx_EndCanvasLayer(void) {
-  struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   s32 i;
 
   AudioCommand_PlayFar(SE_289);

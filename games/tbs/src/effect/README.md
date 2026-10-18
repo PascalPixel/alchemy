@@ -43,6 +43,31 @@ canvas), runs the effect and releases them:
 An effect may schedule callbacks that use those blocks, but it must remove
 them before it returns, because the blocks are gone afterwards.
 
+## Effect kinds and moves
+
+Each ordinary effect kind is named after the move that uses it, such as
+`BattleFx_RunQuake` or `BattleFx_RunCure`, and its comment lists every ability
+that reaches it. Kinds that no ability uses keep descriptive names. Many kinds
+are one family drawn by a shared runner with a mode, and are written as
+`DEFINE_EFFECT_KIND(BattleFx_RunCure, BattleFx_RunHealingMotes, 2)`: the move's
+name over the runner and the mode it passes. The largest families:
+
+| Runner | What it draws |
+| --- | --- |
+| `BattleFx_RunTargetStrike` | repeated slashes or columns of light on the first target |
+| `BattleFx_RunProjectileVolley` | shots that fly from the user and burst on each target |
+| `BattleFx_RunLobbedShells` | shells lobbed at each target in turn, bursting into smoke |
+| `BattleFx_RunBurstShower` | a shower of bursts at random points near the targets |
+| `BattleFx_RunTargetMotes` | smoke, hearts or orbs turning around each target |
+| `BattleFx_RunStatBoost` | flares that swirl into each target and burst |
+| `BattleFx_RunStatReduction` | a dagger or shield over each target that shatters |
+| `BattleFx_RunHealingMotes` | healing sparkles swirling in to each target |
+| `BattleFx_RunStreakVolley` | streaks fired from above the user at each target |
+| `BattleFx_RunRushingStrike` | the user rushes at the first target and strikes |
+| `BattleFx_RunBurstScene` | a flurry of strikes on the first target |
+| `BattleFx_RunGrowingColumns` | vines or green pillars growing from the ground |
+| `BattleFx_RunDjinnBeams` | a Djinni appears, then columns of light fall on the targets |
+
 ## The canvas
 
 Most effects draw into one canvas: 128x128 pixels of 8-bit colour, stored as
@@ -54,7 +79,7 @@ sets the work block's `transferPending` and waits a frame. The scheduled
 callback `BattleFx_ProcessPendingGraphicsTransfer` copies the canvas
 to video memory and then treats the pixels it keeps according to the work
 block's transfer mode (`enum CanvasTransferMode`): leave them, clear them,
-fade them, darken or brighten them. Canvas pixels are indices into a palette
+fade them to a half or a quarter, darken or brighten them. Canvas pixels are indices into a palette
 ramp, so fading the indices makes trails decay without any bookkeeping per
 particle. Effects that draw a full-screen picture in `gMapCellBuffer` use BG1
 instead, flushed by `BattleFx_FlushPendingGraphicsTransfer`.
@@ -80,7 +105,9 @@ callback first.
 Within a frame, steps each run over a range of frames, in a fixed order,
 ending with the transfer. The order matters for two reasons: later steps draw
 over earlier ones, and many steps draw random numbers, so moving a step
-changes every random value after it.
+changes every random value after it. Cues that fire on one frame, such as a
+sound, a screen shake or a palette step, are tests on the frame number, and the
+comments in a long effect mark where each of its phases begins.
 
 ## Particles
 
@@ -89,6 +116,6 @@ fixed point unless a comment says otherwise, and one spare word (`variant`)
 that each effect uses as it needs: a life, a frame or a picture. The
 particles live in `gMapCellBuffer`. Effects reserve ranges of it by index, and
 a slot whose particle has finished is reused by the next one launched, so an
-effect's pool size is fixed. `EffectStep_AdvanceWithGravity2D` and its kin
+effect's pool size is fixed, and its comments say which indices hold what. `EffectStep_AdvanceWithGravity2D` and its kin
 move particles under gravity, and `BattleUnit_ProjectToScreen` projects
 battle positions onto the screen.

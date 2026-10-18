@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Volcano.
 
+#include "../effect_internal.h"
+
 // The fire pillars stand at random distances on the targets' side and scroll
 // a column of fire up with a flickering flame at its foot. Each erupts with a
 // fountain of 200 sparks and keeps spitting 4 a frame into one pool of 1024

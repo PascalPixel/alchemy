@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Procne summon.
 
+#include "../effect_internal.h"
+
 // The whirlwind sheet holds three 48x64 frames, then the dust; the violet
 // comets are decoded further on.
 #define PROCNE_DUST_CELLS (3 * (48 * 64))

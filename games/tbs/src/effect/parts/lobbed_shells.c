@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Lobbed shells (Mad Spatter, Decompose, Bone Chiller ...).
 
+#include "../effect_internal.h"
+
 // The shells take 16 slots of PARTICLES per target, of which the first
 // flies; the shell bursts reuse the map buffer as records of their own.
 

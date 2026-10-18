@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Rushing strikes (Bone Charge, Brute Force, Onslaught, Headbutt).
 
+#include "../effect_internal.h"
+
 // Packs 288 rows of 40 bytes to half width, keeping every second byte
 // (the bytes of the odd columns win).
 //

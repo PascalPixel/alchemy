@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Meteor and Outer Space.
 
+#include "../effect_internal.h"
+
 // Add per-channel steps to background colours 1 to 63, capped at 31.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];

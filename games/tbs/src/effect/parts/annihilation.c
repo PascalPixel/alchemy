@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Annihilation.
 
+#include "../effect_internal.h"
+
 #define ANNIHILATION_FRAMES 64
 
 // Abilities: Annihilation (kind 55).

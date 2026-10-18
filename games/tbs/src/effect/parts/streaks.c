@@ -2,6 +2,8 @@
 // Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep
 // Star, Soothing Star).
 
+#include "../effect_internal.h"
+
 // Streak volleys: three streaks of light fly from the user to each target in
 // turn, in one of five colours.
 

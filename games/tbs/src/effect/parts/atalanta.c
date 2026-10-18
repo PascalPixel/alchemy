@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Atalanta summon.
 
+#include "../effect_internal.h"
+
 // Atalanta's staged slashes run in two parts. In the gathering part a 3x3
 // formation follows a stored path while sixteen blades draw their trail
 // particles in, flash and fly off; each trail particle's random rotation

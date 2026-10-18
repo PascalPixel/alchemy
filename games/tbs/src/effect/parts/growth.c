@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Growth, Punji, Vine and Thorn.
 
+#include "../effect_internal.h"
+
 // Growing columns and thorns spring up one after another on a fixed schedule,
 // each shaking the screen as it appears, throwing up puffs of dust from its
 // root and making the targets react a few frames later. The dust is a pool

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Judgment summon.
 
+#include "../effect_internal.h"
+
 // The shockwave scene (Judgment): a gathering formation, its burst, and a
 // sweep of debris across three backdrops.
 //

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Kirin summon.
 
+#include "../effect_internal.h"
+
 // Kirin's object row runs in two stages. In the sweep stage nine objects
 // ride in on a sine wave while the backdrop scrolls, a ring of motes opens
 // around them and a trail of fire follows. In the rise stage the row slides

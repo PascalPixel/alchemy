@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The walls of Berserk, Spasm and Recovery.
 
+#include "../effect_internal.h"
+
 // The canvas blitters, and the 48-frame wall effects.
 
 // Builds the two usual routines that draw onto the 128x128 canvas, both

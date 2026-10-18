@@ -2,6 +2,8 @@
 // Death Plunge, the blade rain, the element pillar, the element burst and
 // the shattering picture.
 
+#include "../effect_internal.h"
+
 // - Death Plunge runs the user up to the first target; both leap, turn upside
 //   down, and on the hit bounce apart while a ring of flashes rises from the
 //   user.

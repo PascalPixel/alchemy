@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Ray.
 
+#include "../effect_internal.h"
+
 // Closing bolts: four lightning bolts that close in from around the
 // target, and the sparks they throw.
 

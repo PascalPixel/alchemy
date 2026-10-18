@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Titan Blade.
 
+#include "../effect_internal.h"
+
 // Titan Blade raises embers from frame 28 while a pillar of fire scrolls over
 // the target. The sword then drops onto the target, a ring of flashes bursts
 // from frame 56, sparks fly from frame 60 and the embers swell as they clear.

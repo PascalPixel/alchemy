@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Monster bites, fangs and slashes on one target.
 
+#include "../effect_internal.h"
+
 // Target strikes: repeated slashes or columns of light on the first target.
 //
 // One runner, BattleFx_RunTargetStrike, plays all twelve strike styles. Each

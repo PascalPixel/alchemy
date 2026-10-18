@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Ramses summon.
 
+#include "../effect_internal.h"
+
 // Ramses' slots: objects 0 to 6 are the formation, 7 and 8 the orb and 9 to
 // 14 the rocks. work->particles 0 to 5 move the rocks (variant counts their
 // bounces), 6 to 29 are the orb's puffs (eight kept per drop, four thrown)

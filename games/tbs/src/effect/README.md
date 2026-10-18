@@ -10,7 +10,8 @@ frames and returns when the effect is over.
 
 | File | What it holds |
 | --- | --- |
-| `effect.c` | the guide, the includes and the macros every effect shares; it includes the parts below at its end |
+| `effect.c` | the guide; it includes `effect_internal.h`, then the parts below in ROM order |
+| `effect_internal.h` | the includes, macros and helpers every part shares; each part includes it too |
 | `parts/*.c` | the effects themselves, in 66 parts (index below); never compiled on their own |
 | `effect_table.c` | the effects' tables: picture cells, sizes, offsets and frame lists, in the order the code uses them, and the handler table |
 | `effect_bits.c` | the bit operands the blitter builder adds to its widths |
@@ -19,9 +20,8 @@ frames and returns when the effect is over.
 The headers are in `games/tbs/include/unit/effect/`: `effect.h` for the
 functions and `effect_table.h` for the tables.
 
-A part opened on its own lacks the macros and declarations `effect.c` gives
-it before its include, so an editor may flag names in it; read and check a
-part as part of `effect.c`.
+Each part includes `effect_internal.h`, so a part opened on its own resolves
+in an editor; it is still compiled only as part of `effect.c`.
 
 In the ROM the effect code is one object of about 150 KB, linked as
 `games/tbs/objects.tsv` lists it:

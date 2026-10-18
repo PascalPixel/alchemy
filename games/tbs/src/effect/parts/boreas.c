@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Boreas summon.
 
+#include "../effect_internal.h"
+
 // Boreas, the rock and ice scene, is the longest of the effects. Its first
 // half opens a window on a field of rocks that crumble in three waves,
 // throwing up chips, while a big ice block drops in and bursts into spray

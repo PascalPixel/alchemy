@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Djinn healing.
 
+#include "../effect_internal.h"
+
 #define DJINN_HEAL_SWIRL_FRAMES 98 // frames of the swirl
 #define DJINN_HEAL_SWIRL_MOTES 32  // motes swirled in
 

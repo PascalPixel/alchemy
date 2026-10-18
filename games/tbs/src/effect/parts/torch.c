@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Torch and Kite.
 
+#include "../effect_internal.h"
+
 // Torch's rippling disc builds a radial picture by computing one quadrant
 // and mirroring it into the other three, then bends it line by line through
 // BG2's affine reference while the palette cycles. Each pixel holds its

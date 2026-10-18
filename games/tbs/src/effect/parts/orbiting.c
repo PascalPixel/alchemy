@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Swirling stars, orbiting skulls and target bursts.
 
+#include "../effect_internal.h"
+
 // - The swirling stars spin 64 stars about a point above the field, each on
 //   its own axis, then pull them back to the centre.
 // - The orbiting skulls (BattleFx_RunOrbitingSkulls) circle each target in

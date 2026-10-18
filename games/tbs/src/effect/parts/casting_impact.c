@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The casting impact scene and its image helpers.
 
+#include "../effect_internal.h"
+
 // Casting impacts.
 //
 // A casting impact (enum CastingImpact, the ability's effect kind less 100)

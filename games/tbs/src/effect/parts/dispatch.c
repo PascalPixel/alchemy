@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Running scene and table effects, and shared target helpers.
 
+#include "../effect_internal.h"
+
 // Calls the empty BattleFx_DoNothing count times, without waiting for a
 // frame.
 // count : how many calls

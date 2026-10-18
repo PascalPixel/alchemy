@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Hail and Ground.
 
+#include "../effect_internal.h"
+
 // The rock toss (Ground): a Venus Djinni throws six rocks from the user,
 // shedding chips, which swirl and home in on the first target.
 

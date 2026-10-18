@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Display, scroll and window HBlank DMA helpers.
 
+#include "../effect_internal.h"
+
 // Puts the battle screen back into the display state every effect starts
 // from and ends with: no blending, window 0 and window 1 both covering the
 // battle view (lines 16 to 135), and the effect display mode queued for the

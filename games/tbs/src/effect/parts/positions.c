@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Effect positions, projection and id dispatch helpers.
 
+#include "../effect_internal.h"
+
 // Particle motion and projection into the battle view.
 //
 // Effect particles are EffectStep records in 16.16 fixed point. The two

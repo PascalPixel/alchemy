@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Dragon Cloud.
 
+#include "../effect_internal.h"
+
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83      // the flame strikes the first target
 #define DRAGON_CLOUD_TRAIL_CELL_BYTES 936 // bytes in each trail copy

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Demon Night, Rumble and Haunting.
 
+#include "../effect_internal.h"
+
 // The lights take 128 slots of PARTICLES per target, and ripple the effect
 // layer throughout through the HBlank DMA of BG2's affine origin.
 

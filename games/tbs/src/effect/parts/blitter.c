@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The blitter builder, BattleFx_BuildBlitter.
 
+#include "../effect_internal.h"
+
 // Build specialized canvas blitters from the resident ARM kernels.
 //
 // Effects draw sprite cells onto a 128x128 canvas with small ARM routines

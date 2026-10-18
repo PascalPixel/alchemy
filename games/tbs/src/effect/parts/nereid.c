@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Nereid summon.
 
+#include "../effect_internal.h"
+
 // Nereid's ember columns draw three wrapping columns of fire over a band
 // rising along the canvas floor. Its embers burst from one point, fall back
 // under gravity, and from frame 80 rise away; one that falls below the band

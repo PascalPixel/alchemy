@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Bind and Triangle Strike.
 
+#include "../effect_internal.h"
+
 // The triangle effects (Bind, Luff and BattleFx_RunTriangleStrike) spin a
 // shrinking triangle onto the first target for 64 frames and then stand a
 // rune there. The triangle is drawn as the ring and star effects draw their

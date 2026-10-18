@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Plasma, and the spark groups of Blast and Dynamite.
 
+#include "../effect_internal.h"
+
 // The lightning pillars strike every 8 frames with a white flash, showing two
 // pictures over three frames, and throw sparks up from each column's foot
 // into one pool of 1024 in PARTICLES, as Volcano's fire pillars do. A spark's

@@ -17,7 +17,7 @@ Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The
 - Source: `games/<game>/src`, `include`, `sound`, `text`, and `games/common` for what both games share. ☀️'s code sits in one folder per bank of the main image (`runtime`, `field`, `window`, `game`, `menu`, `shop`, `battle`, `effect`, `object`) beside `graphics`, `map`, `sound`, `system`, `debug` and `scene` (each scene overlay is `scene/<place>.c` with `scene/entry/` and `scene/import/` tables). Unit headers follow the same paths under `include/unit`.
 - `games/<game>/objects.tsv` lists every object in link order with its sections and editions; `games/<game>/main.ld` is the one main script, chosen by `--defsym <GAME>_EDITION_<LANG>=1`. ☀️'s overlays link through `games/tbs/src/system/overlay/overlay.ld`; ⚓️'s are one script each under `recon/tla/raw/overlays`.
 - `recon/tla` holds ⚓️'s not-yet-C work: `raw/` listings, `<lang>/` scaffolds, `en/main/<address>.c` drafts. ☀️ has no `recon/`.
-- `games/tbs/src/effect/effect.c` is one object written as parts: it includes the files under `effect/parts/` in ROM order (S3).
+- `games/tbs/src/effect/effect.c` is one object written as parts: it includes `effect_internal.h`, the private header every part also includes, then the files under `effect/parts/` in ROM order (S3).
 - The `Makefile` builds everything; `tools/` holds the small C programs it runs (`ags-*`); the optional `psynergy` submodule holds the Rust matching aids and the progress count. `out/` and `tools/out/` are build output.
 
 ## Commands

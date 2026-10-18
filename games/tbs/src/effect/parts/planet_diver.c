@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Planet Diver, Haunt and the orbiting spirals.
 
+#include "../effect_internal.h"
+
 // - Planet Diver flashes the user, throws it into the air, turns it into a
 //   ball of fire that falls on the target and bursts into 256 chips that
 //   bounce on the ground. The impact chips reuse the map buffer that other

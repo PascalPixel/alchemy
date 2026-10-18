@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Thrash, Quick Strike and Vorpal Slash.
 
+#include "../effect_internal.h"
+
 // The effects here: two hops that start a spark group, a four-frame
 // image revealed in front of the target, and two mirrored columns rising at
 // the target's feet.

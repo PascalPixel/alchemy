@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Healing motes: Ply, Wish, Cure, Cure Poison.
 
+#include "../effect_internal.h"
+
 // Healing sparkles.
 //
 // Healing sparkles come in seven modes. Motes of light scattered around each

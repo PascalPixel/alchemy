@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Beam sequences and the ring and spark scene.
 
+#include "../effect_internal.h"
+
 // The beam sequence draws a growing beam picture and its projected sparks
 // over the first target. The ring-and-spark scene plays a strike of rings and
 // sparks, restoring the user's motion afterwards.

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Revive, Water of Life, Quartz and Dew.
 
+#include "../effect_internal.h"
+
 // Beams of light: a Djinni appears, motes drift down, and a column of
 // light falls from the sky onto each target.
 

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Fire.
 
+#include "../effect_internal.h"
+
 // The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
 #define FIRE_EMBERS 64
 

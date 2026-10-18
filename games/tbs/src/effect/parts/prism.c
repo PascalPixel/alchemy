@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Prism.
 
+#include "../effect_internal.h"
+
 // Falling crystals.
 
 #define PRISM_GROUND_Y 0x380000 // y 56, where the crystals shatter

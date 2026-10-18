@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Gaia.
 
+#include "../effect_internal.h"
+
 // Gaia, the rising wall, rebuilds its pictures from one decoded sheet: nine
 // one-line rows of the growing wall stretched to 32 lines, the top and the
 // foot of the standing wall and three frames of swelling ground. The ground

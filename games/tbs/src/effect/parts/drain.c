@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Break and Drain.
 
+#include "../effect_internal.h"
+
 // Break: ice shards burst from each target.
 #define DRAIN_ICE_SHARDS_PER_TARGET 128 // shards for each target
 

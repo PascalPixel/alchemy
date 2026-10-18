@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Status motes: Taint, Delude, Paralyze, Sleep, Curse ....
 
+#include "../effect_internal.h"
+
 // Smoke, glints and status pictures centered on battle targets.
 // Mote modes choose how the particles gather or spread around each target.
 

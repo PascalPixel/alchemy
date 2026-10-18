@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Bolt.
 
+#include "../effect_internal.h"
+
 // Bolt's sparks fall under gravity and bounce off the ground at half speed.
 
 // Lightning bolts: a bolt strikes each target, with sparks and glints.

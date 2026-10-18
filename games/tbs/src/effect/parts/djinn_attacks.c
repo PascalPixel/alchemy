@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Mercury, Jupiter, Venus and Mars Djinn attacks.
 
+#include "../effect_internal.h"
+
 // Copies a w x h byte picture into an h x w one turned 90 degrees
 // clockwise: the top row of src becomes the right column of dst.
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {

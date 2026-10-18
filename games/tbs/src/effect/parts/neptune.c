@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Neptune summon.
 
+#include "../effect_internal.h"
+
 // Restore the background 2 horizontal scale to one screen pixel per source
 // pixel.
 void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }

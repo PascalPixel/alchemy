@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Smoke Bomb and Blast.
 
+#include "../effect_internal.h"
+
 // Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 //
 // A fountain of grey motes and puffs of smoke bursts up beside the targets

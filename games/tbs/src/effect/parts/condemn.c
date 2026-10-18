@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Condemn.
 
+#include "../effect_internal.h"
+
 #define CONDEMN_FRAMES 132
 #define CONDEMN_BREAK_FRAME 88   // the panel breaks in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Thor summon.
 
+#include "../effect_internal.h"
+
 // 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
 // before them.
 #define THOR_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))

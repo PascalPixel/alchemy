@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Undead Sword.
 
+#include "../effect_internal.h"
+
 // Abilities: Undead Sword (kind 320).
 //
 // Two mirrored columns of light rise at the first target's feet and sink

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The blessings' burst showers.
 
+#include "../effect_internal.h"
+
 // The burst shower fires one burst a frame from the user at random points
 // near the targets, and hits each target every 8 frames. One mode draws a
 // lightning bolt instead. Each burst is one particle slot, its variant

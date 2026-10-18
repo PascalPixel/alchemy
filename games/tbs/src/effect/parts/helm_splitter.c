@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Helm Splitter, formations and the impact burst.
 
+#include "../effect_internal.h"
+
 // - Helm Splitter's fire swirl charge leaps the user at the first target,
 //   plays the swirl over it and scatters bouncing sparks. The sparks live in
 //   PARTICLES, whose 1024 slots are cleared first.

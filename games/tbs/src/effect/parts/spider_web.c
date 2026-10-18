@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Poison Beat, Spinning Beat and Spider Web.
 
+#include "../effect_internal.h"
+
 // - The swirl swipe (Poison Beat, Spinning Beat) sweeps a swirl across the
 //   first target; its two modes differ in colour, length and how the target
 //   reacts.

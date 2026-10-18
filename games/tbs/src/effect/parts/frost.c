@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Frost.
 
+#include "../effect_internal.h"
+
 // One row of gFrost_Timings, for each variant.
 enum {
   FROST_MOTES,   // the rising motes

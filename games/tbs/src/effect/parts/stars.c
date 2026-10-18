@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Astral Blast and Shining Star.
 
+#include "../effect_internal.h"
+
 // Astral Blast flies three ten-pointed rings at the target, knocking it back;
 // Shining Star drops eight ten-pointed stars that bounce near the target.
 // Each outline is drawn from a handful of corner points projected onto the

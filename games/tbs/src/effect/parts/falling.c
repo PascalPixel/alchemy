@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Ice and Douse: shards and bolts falling on the targets' side.
 
+#include "../effect_internal.h"
+
 // Fills window 0's per-scanline edges for the falling shards and bolts:
 // lines 8 to `last` take `slant`, an expression of the line `i`; the rest of
 // the battle view, down to line 135, takes the fixed `span`; and the lines

@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Flare.
 
+#include "../effect_internal.h"
+
 #define FLARE_ARC_COUNT 9 // flames on the arc
 
 // Abilities: Flare, Flare Wall, Flare Storm (kind 11).

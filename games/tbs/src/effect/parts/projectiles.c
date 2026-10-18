@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Projectile volleys (Slash, Shuriken, Wing Flutter, Blizzard ...).
 
+#include "../effect_internal.h"
+
 // Djinni entrance: sparks swirl around a point that travels from the user
 // to the goal and gather into the djinni, which sways for 16 frames and
 // bursts into motes. Leaves the canvas cleared for the effect that

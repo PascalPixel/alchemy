@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The canvas layer: transfers, opening and closing, tile maps, lines.
 
+#include "../effect_internal.h"
+
 // The canvas layer's functions: opening and closing it, its transfers and
 // palette fades, clipping and the target flash timers. README.md describes
 // the canvas, its transfer modes and the two BG1 paths.

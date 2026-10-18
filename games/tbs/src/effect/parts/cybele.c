@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Cybele summon.
 
+#include "../effect_internal.h"
+
 // Cybele reuses work->particles over the scene:
 // - 0 to 15: vines (only the first ten are drawn).
 // - 32 to 47: thorns, until frame 127.

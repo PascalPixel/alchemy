@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Ragnarok.
 
+#include "../effect_internal.h"
+
 // Ragnarok swings a 64x128 blade down over 10 frames, pauses until frame 20
 // and then creeps on until frame 39. Two columns of light strike at frames 16
 // and 24: each is a large flash, a ring of 12 small flashes and 256 sparks

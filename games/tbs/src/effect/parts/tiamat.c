@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Dragon Driver and the Tiamat summon.
 
+#include "../effect_internal.h"
+
 // The palette particles scene raises embers from the user's side while
 // flashes, sparks and falling streaks fly; in mode 0 a formation of eight
 // objects sweeps in with them and explodes at the end. PARTICLES holds 512

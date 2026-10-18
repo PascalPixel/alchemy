@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Quake.
 
+#include "../effect_internal.h"
+
 // The columns of a gQuake_Timings row.
 enum {
   QUAKE_TIMING_FRAMES,      // frames in the whole effect

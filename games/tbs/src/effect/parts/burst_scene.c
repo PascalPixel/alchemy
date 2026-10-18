@@ -1,6 +1,8 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Gust, Flying Attack and the rush bursts.
 
+#include "../effect_internal.h"
+
 // Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
 //
 // The flurry's entries: each passes its kind of flurry to

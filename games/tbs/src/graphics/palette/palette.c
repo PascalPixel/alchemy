@@ -155,8 +155,8 @@ void Title_UpdateIntroSprites(void) {
   }
   for (; spriteCount <= 119; spriteCount++)
     INTRO_OBJ(spriteCount).attr01 = 0x400020a0;
-  REG_BLDCNT = 0x3f50;
-  REG_BLDALPHA = 0x0e0e;
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(14, 14);
   Dma_Set(&INTRO_OBJ(0), OAM,
           ((spriteCount * 8) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   stripY = 32 - gBgScroll[1].y;
@@ -232,13 +232,14 @@ void Title_LoadIntroBackgrounds(void) {
     *tilemap++ = blankTile;
   }
 
-  REG_BG1CNT = 0x1f43;
-  REG_BG2CNT = 0x1e81;
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0x9f;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0x9f;
-  REG_WININ = 0x1616;
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_MOSAIC | BGCNT_SCREEN_BASE(31);
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(30);
+  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0V = WIN_RANGE(0, 159);
+  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1V = WIN_RANGE(0, 159);
+  REG_WININ = WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |
+              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ;
   for (row = 0; row < 4; row++) {
     gBgScroll[row].y = 0;
     gBgScroll[row].x = 0;
@@ -252,9 +253,9 @@ void Title_LoadIntroBackgrounds(void) {
   work->rise = 0;
   work->state = 0;
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
-  REG_BLDCNT = 0x3fbf;
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
+  REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 }
 
 // The "Press Start" prompt: its tile count, rows and sprites, and where it
@@ -384,8 +385,8 @@ s32 Title_ShowIntro(s32 prompt) {
       Scheduler_RemoveCallback(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
       WaitFrames(1);
-      REG_BG2CNT = 0x681;
-      REG_DISPCNT = 0x1440;
+      REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
+      REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
       resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
       Dma_Set(resourceData, (void *)BG_PLTT,
@@ -430,7 +431,8 @@ s32 Title_ShowIntro(s32 prompt) {
   }
   Fade_FromWhite(30);
   Fade_Wait();
-  REG_DISPCNT = 0x1540;
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (prompt != 0)
     holdFrames = 3600;
   else
@@ -464,7 +466,9 @@ s32 Title_ShowIntro(s32 prompt) {
       }
 #endif
       level = gTitle_PromptBlendLevels[i % 60];
-      REG_BLDCNT = 0x2f50;
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
+                   BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
+                   BLDCNT_TGT2_BD;
       REG_BLDALPHA = (16 - level) * 256 + level;
     }
     if ((gKeysPressed & (KEY_A | KEY_START)) != 0) {
@@ -506,8 +510,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   Fade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);
-  REG_BG2CNT = 0x681;
-  REG_DISPCNT = 0x1440;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   result = 0;
   gBgScroll[2].y = result;
   resourceData = Resource_GetTableEntry(resourceId);
@@ -531,7 +535,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
-  REG_DISPCNT = 0x1540;
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (mode == 0) {
     Fade_FromBlack(1);
     Fade_Wait();
@@ -588,8 +593,9 @@ s32 Title_ShowAnimatedSplash(void) {
   Fade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);
-  REG_BG2CNT = 0x685;
-  REG_DISPCNT = 0x1440;
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
   /* FAKEMATCH: needed to match: workIndex carries the decode destination
    * before counting; a separate pointer is coalesced with resourceData
@@ -615,7 +621,8 @@ s32 Title_ShowAnimatedSplash(void) {
   DebugText_Clear();
   Fade_FromWhite(1);
   Fade_Wait();
-  REG_DISPCNT = 0x1540;
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   for (workIndex = 0; workIndex < 120; workIndex++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + resourceData,
             BG_CHAR_BLOCK(1) + 0x100,
@@ -694,10 +701,10 @@ void PaletteFade_Update(void) {
   {
     u16 *backgroundColors = paletteBank;
 
-    IO_WRITE_QUEUE_PUSH(0x05000000, (u32)backgroundColors,
+    IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
                         (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
   }
-  IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(paletteBank + 256),
+  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(paletteBank + 256),
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
 }
 
@@ -973,9 +980,9 @@ void PaletteFade_Init(void) {
 
   buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
-  Dma_Set((void *)0x05000000, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set((void *)BG_PLTT, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
-  Dma_Set((void *)0x05000200, &buffer->palette[256],
+  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256],
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
                     0);

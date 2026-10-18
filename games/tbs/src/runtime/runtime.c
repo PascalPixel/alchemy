@@ -80,7 +80,7 @@ void System_Initialize(void) {
   System_CopyBuildStamp();
   Ui_LoadWindowGraphics();
   DebugText_Clear();
-  REG_DISPCNT = 0x140;
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
 #if defined(HALT_ON_GAMEPAK_IRQ)
   Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, IwramHalt);
@@ -500,7 +500,7 @@ void WaitFrames(s32 frames) {
       savedBackdropColor = PLTT_BACKDROP;
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
-        Io_Write16(0x7fff, &PLTT_BACKDROP);
+        Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
         for (delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES; delayFrame++) {
           CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
@@ -1811,7 +1811,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
-  Io_Write16(0x400, &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 
 // Loads the window font and frame tiles into BG character block 0, the window
@@ -1823,13 +1823,13 @@ void Ui_LoadWindowGraphics(void) {
   Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
-  Io_Write16(0x4180, &BG_PLTT_COLOR(15, 4));
-  Io_Write16(0x3960, &BG_PLTT_COLOR(15, 5));
-  Io_Write16(0x3140, &BG_PLTT_COLOR(15, 6));
-  Io_Write16(0x2920, &BG_PLTT_COLOR(15, 7));
-  Io_Write16(0x49a0, &BG_PLTT_COLOR(15, 8));
-  Io_Write16(0x51c0, &BG_PLTT_COLOR(15, 9));
-  Io_Write16(0x59e0, &BG_PLTT_COLOR(15, 10));
+  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
+  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(15, 5));
+  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(15, 6));
+  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(15, 7));
+  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
+  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
+  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
   Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);
 }

@@ -1,10 +1,12 @@
 # 🌋 Alchemy
 
-Alchemy is a decompilation of ☀️ **Golden Sun: The Broken Seal** and ⚓️ **Golden Sun: The Lost Age**: the Game Boy Advance games written out again as readable C code, pictures, music and text, which build back into the original games byte for byte, in all six languages.
+Alchemy is a decompilation of the Game Boy Advance games ☀️ **Golden Sun: The Broken Seal** and ⚓️ **Golden Sun: The Lost Age**.
 
 ## What that means
 
-Camelot wrote Golden Sun as source code and turned it into the machine code on the cartridge. Their source was never released. Alchemy writes it again, one function at a time, and every piece is checked by compiling it and checking that the result matches the real cartridges.
+Camelot wrote Golden Sun as source code and compiled it into `0`'s and `1`'s on a game cartridge. That source was never released, and Alchemy tries to recover that source code by guessing what it was based on the `0`'s and `1`'s on the game cartridge. 
+
+Like guessing the exact ingredients in a cake by making new cakes and seeing if it tastes the same. It's mad. And it's working.
 
 With the source you can read exactly how Golden Sun works, from the damage formulas to every cutscene, and change it: rebalance it, translate it, add scenes, or build editors and ports on top of it.
 
@@ -12,13 +14,11 @@ With the source you can read exactly how Golden Sun works, from the damage formu
 
 - **Not a remake, a mod or a PC port.** It builds exactly the games Camelot shipped, unchanged, and that is all it will ever be. Mods and ports belong in projects of their own, built from it.
 - **Not new content.** Every picture, song and line of dialogue is Camelot's, taken from the cartridge into editable files. No art, music or writing in it is AI-generated.
-- **Not a download.** There's no installer, `.exe` or ROM image. The repository holds the source code plus Camelot's art, music and text as editable files, and the build recreates the original ROMs exactly.
+- **Not a download.** There's no installer, `.exe` or ROM image. The repository holds the source code, music, and images, and the build recreates the original ROMs exactly.
 
 ## How it's made
 
-Alchemy is a hobby project I started in July 2026 to enjoy making things again after a burnout. I build it with AI coding assistants: they propose C code, the build compares it with the cartridge, and only what matches is kept. I direct the work, decide how the code is organized and named, and fix what doesn't match.
-
-The code is still being cleaned up for people. Names and comments are moving into plain English, and functions nobody understands yet keep placeholder names such as `sub_08012345` rather than guesses.
+Alchemy is a hobby project I started in July 2026 to enjoy making things again after a burnout. I build it with AI coding assistants: they propose C code, the build compares it with the cartridge, and keep what matches. I direct the work, decide how the code is organized and named, and fix what is broken, or stuck.
 
 ## Where it stands
 
@@ -40,12 +40,6 @@ The code is still being cleaned up for people. Names and comments are moving int
 | Spanish  | `de0bdc889594b012cad213ca83707feb81ada28b` | `a2e3e80036195343c2713410ac14f4e329e3f40d` |
 | French   | `42f3b262c16cfc5bde1fa2b25016fb74046de1b3` | `f14855c0f8c87a95cc52189e8e3b2bd9df186322` |
 | Italian  | `ca45e04b26b2f040ac63e679a459d21869f5f28d` | `57f1d005666b81645e55412658427e27099c5907` |
-
-## Explore and mod it
-
-The source of each game is under `games/tbs` and `games/tla`, with what both share in `games/common`. The battle effects are the most finished part, and the model for the rest: [games/tbs/src/effect/README.md](games/tbs/src/effect/README.md) shows how to find the code a move plays, change it and give a move a new effect.
-
-To try a change, build one language, such as `make tbs-en`, and play `out/tbs-en/tbs-en.gba`. A mod changes the ROM on purpose, so it won't match the original, and it doesn't need to.
 
 ## Acknowledgements
 

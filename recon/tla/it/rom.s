@@ -1750,10 +1750,6 @@ Func_080b11f8:
 	.incbin "baserom.gba", 0x000b1204, 0x00000084
 	.section .rom.000b1f34, "ax"
 	.incbin "baserom.gba", 0x000b1f34, 0x00000004
-	.section .rom.000c8000, "ax"
-	.global Resource_FarCall006
-Resource_FarCall006:
-	.incbin "baserom.gba", 0x000c8000, 0x00000008
 	.section .rom.000c8008, "ax"
 	.global Game_ResetForNewGameFar
 	.type Game_ResetForNewGameFar, %function
@@ -2488,12 +2484,6 @@ EffectSlot_SetObjectModeFar:
 	.thumb_func
 EffectSlot_SetCallbackFar:
 	.incbin "baserom.gba", 0x000c85b8, 0x00000008
-	.section .rom.000c85c0, "ax"
-	.global Camera_WorldToScreenFar
-	.type Camera_WorldToScreenFar, %function
-	.thumb_func
-Camera_WorldToScreenFar:
-	.incbin "baserom.gba", 0x000c85c0, 0x00000008
 	.section .rom.000c8628, "ax"
 	.global Object_BuildRecordSnapshotFar
 	.type Object_BuildRecordSnapshotFar, %function
@@ -2723,6 +2713,10 @@ Func_080caa4c:
 	.balign 4
 	.incbin "baserom.gba", 0x000cb09c, 0x0000062c
 	.section .rom.000cb91c, "ax"
+	.global Field_RunScene
+	.type Field_RunScene, %function
+	.thumb_func
+Field_RunScene:
 	.incbin "baserom.gba", 0x000cb91c, 0x00000d60
 	.section .rom.000cc67c, "ax"
 	.global Func_080cc67c

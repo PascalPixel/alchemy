@@ -205,15 +205,7 @@ Func_02000ebc:
 	.global Func_02000ec4
 	.thumb_func
 Func_02000ec4:
-	.ifdef TLA_EDITION_ES
 	overlay_veneer Camera_WorldToScreenFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Camera_WorldToScreenFar
-	.else
-	overlay_veneer Func_080c85c0
-	.endif
-	.endif
 	.global Func_02000ecc
 	.thumb_func
 Func_02000ecc:

@@ -340,7 +340,7 @@ Game_ResetForNewGame:
 	movs r0, #0
 	bl BattleFx_LoadResourceGroup
 	adds r0, r6, #0
-	bl Func_080cb91c
+	bl Field_RunScene
 	bl Func_080c9694
 	b .L_080c99ea
 .L_080c9c0c:

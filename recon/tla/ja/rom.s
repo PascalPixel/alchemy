@@ -1602,10 +1602,6 @@ Func_080b11f8:
 	.incbin "baserom.gba", 0x000ac1c8, 0x00000084
 	.section .rom.000acef8, "ax"
 	.incbin "baserom.gba", 0x000acef8, 0x00000004
-	.section .rom.000c8000, "ax"
-	.global Resource_FarCall006
-Resource_FarCall006:
-	.incbin "baserom.gba", 0x000c8000, 0x00000008
 	.section .rom.000c8008, "ax"
 	.global Game_ResetForNewGameFar
 	.type Game_ResetForNewGameFar, %function
@@ -1974,12 +1970,6 @@ Func_080c8580:
 	.thumb_func
 EffectSlot_UpdateFar:
 	.incbin "baserom.gba", 0x000c8588, 0x00000038
-	.section .rom.000c85c0, "ax"
-	.global Func_080c85c0
-	.type Func_080c85c0, %function
-	.thumb_func
-Func_080c85c0:
-	.incbin "baserom.gba", 0x000c85c0, 0x00000008
 	.section .rom.000c85c8, "ax"
 	.global BattleFx_GetResourceIdFar
 	.type BattleFx_GetResourceIdFar, %function
@@ -2450,6 +2440,10 @@ Func_080cae5c:
 	.balign 4
 	.incbin "baserom.gba", 0x000cb09c, 0x0000062c
 	.section .rom.000cb91c, "ax"
+	.global Field_RunScene
+	.type Field_RunScene, %function
+	.thumb_func
+Field_RunScene:
 	.incbin "baserom.gba", 0x000cb91c, 0x00000d58
 	.section .rom.000cc674, "ax"
 	.global Func_080cc67c

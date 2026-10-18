@@ -305,15 +305,7 @@ Func_02001d0c:
 	.global Func_02001d14
 	.thumb_func
 Func_02001d14:
-	.ifdef TLA_EDITION_ES
 	overlay_veneer Camera_WorldToScreenFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Camera_WorldToScreenFar
-	.else
-	overlay_veneer Func_080c85c0
-	.endif
-	.endif
 	.global Func_02001d1c
 	.thumb_func
 Func_02001d1c:

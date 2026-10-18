@@ -1330,16 +1330,6 @@ Func_080b11f8:
 	.incbin "baserom.gba", 0x000be1f8, 0x00000084
 	.section .rom.000bef28, "ax"
 	.incbin "baserom.gba", 0x000bef28, 0x00000004
-	.section .rom.000d5000, "ax"
-	.global Resource_FarCall006
-Resource_FarCall006:
-	.incbin "baserom.gba", 0x000d5000, 0x00000008
-	.section .rom.000d55c0, "ax"
-	.global Func_080c85c0
-	.type Func_080c85c0, %function
-	.thumb_func
-Func_080c85c0:
-	.incbin "baserom.gba", 0x000d55c0, 0x00000008
 	.section .rom.000d6694, "ax"
 	.incbin "baserom.gba", 0x000d6694, 0x0000028c
 	.section .rom.000d6944, "ax"
@@ -1422,6 +1412,10 @@ Func_080cae5c:
 	.balign 4
 	.incbin "baserom.gba", 0x000d809c, 0x0000062c
 	.section .rom.000d891c, "ax"
+	.global Field_RunScene
+	.type Field_RunScene, %function
+	.thumb_func
+Field_RunScene:
 	.incbin "baserom.gba", 0x000d891c, 0x00000c30
 	.section .rom.000d954c, "ax"
 	.global Func_080cc54c

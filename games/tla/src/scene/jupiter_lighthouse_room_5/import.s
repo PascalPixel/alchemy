@@ -429,15 +429,7 @@ Func_020029a8:
 	.global Func_020029b0
 	.thumb_func
 Func_020029b0:
-	.ifdef TLA_EDITION_ES
 	overlay_veneer Camera_WorldToScreenFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Camera_WorldToScreenFar
-	.else
-	overlay_veneer Func_080c85c0
-	.endif
-	.endif
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:

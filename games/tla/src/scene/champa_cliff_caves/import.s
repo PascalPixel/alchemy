@@ -373,15 +373,7 @@ Func_020035bc:
 	.global Func_020035c4
 	.thumb_func
 Func_020035c4:
-	.ifdef TLA_EDITION_ES
 	overlay_veneer Camera_WorldToScreenFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Camera_WorldToScreenFar
-	.else
-	overlay_veneer Func_080c85c0
-	.endif
-	.endif
 	.global Func_020035cc
 	.thumb_func
 Func_020035cc:

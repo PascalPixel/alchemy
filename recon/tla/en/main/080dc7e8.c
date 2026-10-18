@@ -1,11 +1,11 @@
-// Draft, differ 59 of 171: mostly order and register choice. Left: the
-// prologue loads (the owner spilled after the 0x80 slot here), the slot
-// loop's two pointers swapped (r5/r6), kind >= 17 compiled as cmp #16; ble
-// where the native has cmp #17; blt, the wait loop's counter zeroed after
-// the test, and the kind's halfword for the != 28 test read again after
-// the 0xca5 store where the native reads it with the != 8 test. The bytes
-// read as s8 (event, block 32) keep the native's sign extensions; as u8
-// with casts, differ 76. (u16)kind != 28 measured 53.
+// Draft, differ 33 of 171 (2026-10-18; 59 before): order and register choice.
+// The held unsigned kind (as in BattleEffect_InitializeSharedScene) and a
+// halfword 17 (found by permuter) are tagged devices. Left: the prologue
+// loads (the owner spilled after the 0x80 slot here), the slot loop's two
+// pointers swapped (r5/r6; counting i up instead measured 49), the wait
+// loop's counter zeroed after the test, and register choice round the
+// owner's layer. The bytes read as s8 (event, block 32) keep the native's
+// sign extensions; as u8 with casts, differ 76.
 // BattleEffect_CleanupSceneObjects, the field event runner's cleanup
 // of the heap slot 0xe0 effect work. Clears every owned effect slot, ends the
 // arc effects unless the event work's byte 0xcb6 holds them, waits up to 90
@@ -70,12 +70,17 @@ void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupMap *map = (struct CleanupMap *)Ram_HeapSlots->mapWork;
   struct CleanupSlot *slot = work->slots;
   s32 i;
+  s32 raw;
+  s16 first;
 
   for (i = 23; i >= 0; i--, slot++) {
     if (slot->owned)
       BattleFx_ClearOwnedSlot(slot);
   }
-  if (work->kind >= 17 && (work->kind <= 27 || work->kind == 30))
+  /* FAKEMATCH: a halfword 17 makes the first test cmp #17; blt as the native
+   * (cmp #16; ble with the constant). */
+  first = 17;
+  if (work->kind >= first && (work->kind <= 27 || work->kind == 30))
     Func_080dc954();
   if (event[0xcb6] != 0)
     return;
@@ -99,9 +104,14 @@ void BattleEffect_CleanupSceneObjects(void) {
     ((u8 *)owner)[35] = work->ownerByte;
     ((struct CleanupAnimation *)owner->animation)->layer = work->layer;
   }
+  /* FAKEMATCH: the kind read unsigned and held, so the != 28 test shifts
+   * that copy without reading it again after the 0xca5 store (differ 59
+   * without). */
+  raw = *(u16 *)&work->kind;
+  asm("" : "+r"(raw));
   if (work->kind != 8)
     event[0xca5] = 1;
-  if (work->kind != 28)
+  if ((s16)raw != 28)
     event[0xcad] = 1;
   Event_NoOp();
   Runtime_ReleaseHeapBlock(224);

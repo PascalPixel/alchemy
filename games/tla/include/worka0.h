@@ -7,7 +7,9 @@
 // Heap-slot 0xa0 workspace: eight slots and 128 nodes.
 struct WorkA0Node {
   struct WorkA0Node *next;
-  u8 unk04[12];
+  s32 x;
+  s32 y;
+  s32 z;
   s8 used;
   u8 unk11[15];
 };

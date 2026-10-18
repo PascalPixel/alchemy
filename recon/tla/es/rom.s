@@ -2817,12 +2817,6 @@ Func_080ce458:
 	.incbin "baserom.gba", 0x000d7eac, 0x00000078
 	.section .rom.000d8050, "ax"
 	.incbin "baserom.gba", 0x000d8050, 0x00000080
-	.section .rom.000d8158, "ax"
-	.global Func_080cf158
-	.type Func_080cf158, %function
-	.thumb_func
-Func_080cf158:
-	.incbin "baserom.gba", 0x000d8158, 0x00000024
 	.section .rom.000d817c, "ax"
 	.global BattleFx_StartRandomParticleEmitter
 	.type BattleFx_StartRandomParticleEmitter, %function

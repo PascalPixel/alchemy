@@ -9,6 +9,7 @@
 #include "types.h"
 #include "objdisp.h"
 #include "field_event.h"
+#include "ram_buffer.h"
 
 struct ParticleEmitter {
   u8 padding[8];
@@ -54,4 +55,23 @@ void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
     mask |= 4;
     object->child->flags = mask;
   }
+}
+
+struct RevealWork {
+  u8 unk000[0xca4];
+  s8 revealActive;
+};
+
+// Returns 1 while Reveal is active, else 0, as ☀️'s Field_IsRevealActive.
+s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
+  s32 revealState;
+  u32 isActive = 0;
+  struct RevealWork *work = Ram_HeapSlots->eventWork;
+
+  if (work != NULL) {
+    revealState = work->revealActive;
+    isActive = (0 - revealState) | revealState;
+    isActive >>= 31;
+  }
+  return isActive;
 }

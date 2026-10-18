@@ -146,13 +146,13 @@ void BattleFx_BuildWindowEdgeTable(void) {
 // Shows the battle objects of every unit with HP left on the targets' side:
 // the enemies (units 128 to 133) when the first target is one, otherwise
 // the party (units 0 to 7).
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg) {
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect) {
   s16 list[14];
   s32 count;
   s32 i;
 
   count = 0;
-  if (arg->actors[0] > 127) {
+  if (effect->actors[0] > 127) {
     for (i = 0; i != 6; i++) {
       s32 id = i + 128;
 

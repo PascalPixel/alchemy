@@ -17,7 +17,7 @@ struct BattleEffectWork {
   u8 unk7300[0x480];
   s32 transferMode;
   s32 transferValue;
-  s32 unk7788;
+  s32 unk_7788;
   s32 frame;
   s32 scrollTimer;
   s32 scrollInterval;
@@ -39,7 +39,7 @@ struct BattleEffectWork {
   u16 dispcnt;
   u16 bldcnt;
   u16 bldalpha;
-  u16 padding77ce;
+  u16 unk_77ce;
   s32 bg2x;
   s32 bg2y;
   u16 bg2pa;

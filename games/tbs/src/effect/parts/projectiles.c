@@ -7,14 +7,14 @@
 // follows.
 //
 // effect: the user and the targets.
-// kind: the djinni: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter; 4 to 7 the same
+// mode: the djinni: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter; 4 to 7 the same
 //       over 84 frames instead of 64.
 // side: 1 mirrors the pictures.
 // anchor: where the djinni appears: 0 over the first target, 1 at the
 //         first target's x at depth 0, 2 over the user, 3 at the user's x
 //         at depth 0, 4 in the centre of the field.
 // outX, outY: receive the djinni's last screen position.
-void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 kind,
+void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
                                 s32 side, s32 anchor, s32 *outX, s32 *outY) {
   s32 center[3];
   s32 goal[3];
@@ -41,13 +41,13 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 kind,
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  if (kind > 3) {
-    kind -= 4;
+  if (mode > 3) {
+    mode -= 4;
     frameCount = 84;
   } else {
     frameCount = 64;
   }
-  switch (kind) {
+  switch (mode) {
   case 0:
     sheetId = (s32)&ResourceId_VenusDjinnSmallSheet;
     break;

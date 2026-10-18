@@ -34,7 +34,7 @@
 // gRagnarok_StrikeColumns: first two of three per side. PARTICLES holds 340
 // sparks per column.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -45,8 +45,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(heapCache, cursor, work, canvas);
-  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
   user = GetBattleObjectSlotFar(effect->actor)->object;
   effect->variant = 1;
@@ -228,7 +228,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
             } else {
               x = spark->x;
               if ((x >= 0 && x <= 0x7effff) && y >= 0) {
-                u8 *cel;
+                u8 *cell;
                 s32 lane;
                 s32 py = y >> 16;
                 s32 px = x >> 16;
@@ -237,10 +237,10 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
                 // compositing.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cel = sheet + gBattleFx_MoteCells[size - 1];
+                cell = sheet + gBattleFx_MoteCells[size - 1];
                 px -= size / 2;
                 py -= size;
-                blit[lane](canvas, cel, px, py, size, size * 2);
+                blit[lane](canvas, cell, px, py, size, size * 2);
               }
             }
           }

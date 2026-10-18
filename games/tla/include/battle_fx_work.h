@@ -16,7 +16,7 @@ struct BattleFxWork {
   u8 unk7080[0x700];
   s32 transferMode;
   s32 transferValue;
-  s32 unk7788;
+  s32 unk_7788;
   s32 frame;
   s32 scrollTimer;
   s32 scrollInterval;

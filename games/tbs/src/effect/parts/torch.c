@@ -16,7 +16,7 @@
 // moves the rings. The scene runs for 96 frames: it fades in over the
 // first 9, ripples throughout and fades out over the last 7.
 void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenY;
@@ -40,8 +40,8 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   s32 angle;
   s32 *line;
 
-  heapCache = gBattleFxWork;
-  EFFECT_GET_WORK_AND_CANVAS(heapCache, work, canvas);
+  slots = gBattleFxWork;
+  EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
   BattleFx_RunDjinniEntrance(effect, 6, work->effect->side, 2, &screenX,

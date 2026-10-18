@@ -16,7 +16,7 @@
 // effect: the user and the target; a nonzero variant gives the burst its
 // second picture and a sound.
 void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -33,11 +33,11 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   s32 size;
   u8 *burstPixels;
 
-  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  particleSheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
+  particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapCellBuffer;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);

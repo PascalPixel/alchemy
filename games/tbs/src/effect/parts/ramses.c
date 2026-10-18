@@ -34,7 +34,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
-  void **cache;
+  void **slots;
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -44,10 +44,10 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   s32 i;
   s32 k;
 
-  cache = &gBattleFxWork[1];
-  canvas = cache[0];
-  work = cache[-1];
-  sheet = cache[1];
+  slots = &gBattleFxWork[1];
+  canvas = slots[0];
+  work = slots[-1];
+  sheet = slots[1];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();

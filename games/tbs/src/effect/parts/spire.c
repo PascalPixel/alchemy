@@ -10,9 +10,9 @@
 // Shattering rocks: boulders drop along the row of targets, centred on
 // it, and burst into tumbling shards, hitting every target as each lands.
 //
-// object: the targets; variant picks the number of boulders
+// effect: the targets; its variant picks the number of boulders
 //         (gSpire_RockCounts).
-void BattleFx_RunSpire(struct BattleEffectArgument *object) {
+void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -31,7 +31,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *object) {
   u32 height;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = object;
+  work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);

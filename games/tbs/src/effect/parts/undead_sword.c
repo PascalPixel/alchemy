@@ -7,7 +7,7 @@
 // again, scattering 16 sparks that drift upward; the target is struck on
 // frame 10. 54 frames.
 void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -27,9 +27,9 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   s32 cell;
   s32 size;
 
-  EFFECT_GET_SLOTS(heap, cursor, work, canvas);
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  sprites = heap[2];
+  sprites = slots[2];
   BattleFx_BeginCanvasLayer(0);
   REG_BG2PA = Q_8_8(1); // Normal horizontal scale too
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);

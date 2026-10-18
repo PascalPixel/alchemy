@@ -24,7 +24,7 @@ struct CanvasWork {
   u8 unk0000[0x7780];
   s32 transferMode;
   s32 transferValue;
-  u8 unk7788[0x15c];
+  u8 unk_7788[0x15c];
   s32 framesSinceTransfer;
   s32 transferPending;
 };

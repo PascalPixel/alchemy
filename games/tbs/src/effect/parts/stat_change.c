@@ -284,11 +284,11 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       // The burst: six frames of 4 frames each, from frame 52.
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
-        s32 cel = (frame - member * 8 - 52) / 4 % 6;
+        s32 cell = (frame - member * 8 - 52) / 4 % 6;
 
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
         draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-        draw[0](canvas, work->sheet + cel * 1600 + STAT_BOOST_BURST,
+        draw[0](canvas, work->sheet + cell * 1600 + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
       }
@@ -297,49 +297,49 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       if (mode == 0) {
         // Seven 24x40 frames, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
-          s32 cel = (frame - member * 8 - 80) / 4 % 7;
+          s32 cell = (frame - member * 8 - 80) / 4 % 7;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          draw[0](canvas, work->sheet + cel * 960 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * 960 + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
       } else if (mode == 3 || mode == 5) {
         // Six 32x64 frames, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 cel = (frame - member * 8 - 80) / 4 % 6;
+          s32 cell = (frame - member * 8 - 80) / 4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          draw[0](canvas, work->sheet + cel * 2048 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * 2048 + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
       } else if (mode == 4) {
         // 64x32 frames, 2 frames each, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 cel = (frame - member * 8 - 80) / 2 % 6;
+          s32 cell = (frame - member * 8 - 80) / 2 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
           draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-          draw[0](canvas, work->sheet + cel * 2048 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * 2048 + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);
-          draw[1](canvas, work->sheet + cel * 2048 + STAT_BOOST_PICTURE,
+          draw[1](canvas, work->sheet + cell * 2048 + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y + 8, 64, 32);
           EFFECT_RELEASE_BLITTERS();
         }
       } else {
         // Six 40x40 frames, 4 frames each, added.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
-          s32 cel = (frame - member * 8 - 80) / 4 % 6;
+          s32 cell = (frame - member * 8 - 80) / 4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_ADDITIVE);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          draw[0](canvas, work->sheet + cel * 1600 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * 1600 + STAT_BOOST_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }

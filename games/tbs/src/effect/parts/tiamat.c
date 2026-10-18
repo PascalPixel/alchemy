@@ -372,14 +372,14 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
 
         if (streak->y > 55) {
           if (streak->variant >= 0 && streak->variant <= 11) {
-            s32 cel = streak->variant / 2;
+            s32 cell = streak->variant / 2;
 
             draw[0](canvas,
-                    work->sheet + gTiamat_StreakOffsets[cel] +
+                    work->sheet + gTiamat_StreakOffsets[cell] +
                         PALETTE_PARTICLES_STREAK_IMAGES,
-                    streak->x - gTiamat_StreakWidths[cel] / 2,
-                    streak->y + gTiamat_StreakDrops[cel],
-                    gTiamat_StreakWidths[cel], gTiamat_StreakHeights[cel]);
+                    streak->x - gTiamat_StreakWidths[cell] / 2,
+                    streak->y + gTiamat_StreakDrops[cell],
+                    gTiamat_StreakWidths[cell], gTiamat_StreakHeights[cell]);
           }
           streak->variant++;
           if (streak->variant == 12)

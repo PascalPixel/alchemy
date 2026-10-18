@@ -523,15 +523,15 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
     // Dust: seven pictures, 2 frames each, drawn mirrored about the middle.
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
-        s32 cel = PARTICLES[i].variant / 2;
-        draw(canvas, work->sheet + gGrowth_ThornPuffCells[cel],
-             PARTICLES[i].x - gGrowth_ThornPuffWidths[cel],
-             PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
-             gGrowth_ThornPuffWidths[cel], (s8)gGrowth_ThornPuffHeights[cel]);
+        s32 cell = PARTICLES[i].variant / 2;
+        draw(canvas, work->sheet + gGrowth_ThornPuffCells[cell],
+             PARTICLES[i].x - gGrowth_ThornPuffWidths[cell],
+             PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
+             gGrowth_ThornPuffWidths[cell], (s8)gGrowth_ThornPuffHeights[cell]);
         drawFlip(
-            canvas, work->sheet + gGrowth_ThornPuffCells[cel], PARTICLES[i].x,
-            PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
-            gGrowth_ThornPuffWidths[cel], (s8)gGrowth_ThornPuffHeights[cel]);
+            canvas, work->sheet + gGrowth_ThornPuffCells[cell], PARTICLES[i].x,
+            PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
+            gGrowth_ThornPuffWidths[cell], (s8)gGrowth_ThornPuffHeights[cell]);
         if (++PARTICLES[i].variant == 14) {
           PARTICLES[i].variant = -1;
         }

@@ -17,9 +17,7 @@
 // smaller the further away they are. The scene runs for 160 frames. All
 // 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
 // though only 64 are drawn.
-//
-// object: the effect argument.
-void BattleFx_RunSwirlingStars(void *object) {
+void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -32,7 +30,7 @@ void BattleFx_RunSwirlingStars(void *object) {
   s32 frame;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = object;
+  work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
   BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
@@ -219,9 +217,7 @@ void BattleFx_RunOrbitingSkulls(void) {
 // Target bursts: on each target in turn, 8 frames apart, a burst flares up
 // in the middle while five puffs of smoke scatter around it, for 40
 // frames.
-//
-// object: the effect argument.
-void BattleFx_RunTargetBursts(void *object) {
+void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -236,7 +232,7 @@ void BattleFx_RunTargetBursts(void *object) {
   s32 point[3];
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = object;
+  work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
@@ -280,11 +276,11 @@ void BattleFx_RunTargetBursts(void *object) {
 
     camera = gCameraWork;
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object;
+      struct MotionObject *effect;
 
-      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+      effect = GetBattleObjectSlotFar(work->effect->actors[member])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, object->x, 160 << 13, object->z);
+      SET_VECTOR(point, effect->x, 160 << 13, effect->z);
       SceneTransform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct EffectStep *puff;
@@ -292,21 +288,21 @@ void BattleFx_RunTargetBursts(void *object) {
         // The target's five puffs and its burst, each through six pictures
         // of six frames, holding the last; the burst rises faster.
         for (i = 0; i != 6; i++) {
-          s32 cel;
+          s32 cell;
 
           puff = &work->particles[member * 6 + i];
-          cel = puff->variant / 6;
-          if (cel > 5)
-            cel = 5;
+          cell = puff->variant / 6;
+          if (cell > 5)
+            cell = 5;
           EffectPosition_ProjectPoint(puff, &screen);
           screen.x >>= 1;
           if (i == 5) {
             EffectStep_AdvanceWithGravity3D(puff, 62, 0x800);
-            drawBurst(canvas, work->sheet + cel * 0x480 + TARGET_BURST_CELLS,
+            drawBurst(canvas, work->sheet + cell * 0x480 + TARGET_BURST_CELLS,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
             EffectStep_AdvanceWithGravity3D(puff, 60, 0x200);
-            drawSmoke(canvas, work->sheet + cel * 0x480, screen.x - 12,
+            drawSmoke(canvas, work->sheet + cell * 0x480, screen.x - 12,
                       screen.y - 36, 24, 48);
           }
           puff->variant += 1;

@@ -15,7 +15,7 @@
 // out through a ripple, the last over the first target; on frame 88 it shatters
 // in a white flash into a burst of larger pieces and the target is knocked
 // back, bouncing on frame 120. The effect layer ripples throughout. 132 frames.
-void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
+void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -39,7 +39,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *object) {
   /* FAKEMATCH: the zero is held in sl through the setup calls.
    * Storing the literal 0 without the local: differ 66. */
   zero = 0;
-  work->effect = object;
+  work->effect = effect;
   BattleFx_BeginTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

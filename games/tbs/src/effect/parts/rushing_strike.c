@@ -55,9 +55,8 @@ DEFINE_EFFECT_KIND(BattleFx_RunHeadbutt, BattleFx_RunRushingStrike, 3)
 // frames in all.
 //
 // effect: the user and the targets.
-// variant: the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
-void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
-                               s32 variant) {
+// mode   : the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
+void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   /* FAKEMATCH: the blitter/camera declarations and independent
    * store order preserve spill slots and loop preheader order 2026-10-11: the
    * camera read is the plain slot now; Ram_MapCellBuffer at the two uses of
@@ -111,7 +110,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
   Graphics_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1,
                              1);
-  switch (variant) {
+  switch (mode) {
   case 0:
     paletteId = (s32)&ResourceId_FirePillarSheetB;
     break;

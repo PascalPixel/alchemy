@@ -9,5 +9,5 @@ void BattleFx_RunTableEffectFar(struct BattleEffectArgument *effect);
 void BattleFx_RunElementPillarFar(struct BattleEffectArgument *effect);
 void BattleFx_RunShatteringOpeningFar(struct BattleEffectArgument *effect);
 void BattleFx_RunElementBurstFar(struct BattleEffectArgument *effect);
-void BattleFx_StartElementStreaksFar(s32 kind);
+void BattleFx_StartElementStreaksFar(s32 element);
 void BattleFx_EndElementStreaksFar(void);

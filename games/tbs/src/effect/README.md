@@ -109,6 +109,20 @@ kind N)`. The description does not repeat the kind or the frame count a
   `work->sheet`; a cell is a byte offset into it (the `*_CELL` and `*_CELLS`
   constants).
 - **level**: a pixel value, an index into a palette ramp. Fades work on levels.
+- **element**: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter, where a function takes
+  one.
+
+The same locals carry the same names in every handler:
+
+- `effect`: the `struct BattleEffectArgument *` a handler is passed.
+- `slots` and `cursor`: `gBattleFxWork`, and the pointer that walks it to
+  fetch `work` and `canvas` (`EFFECT_GET_SLOTS`).
+- `work`: the effect's `struct BattleEffectWork`; `canvas`: the 128x128 canvas.
+- `sheet`: the decoded pictures, usually `work->sheet`.
+- `draw`: the `BlitterPair`, a rectangle blitter for each facing
+  (`BattleFx_FetchRectangleBlitters`).
+- `frame`: the frame counter; `cell`: a picture's index or offset.
+- `unk_<offset>`: a field whose meaning is not known yet.
 
 ## Entry points
 

@@ -8,7 +8,7 @@ struct BattleFxTransferWork {
   u8 unk0000[0x7780];
   s32 transferMode;
   s32 transferValue;
-  u8 unk7788[0x78e4 - 0x7788];
+  u8 unk_7788[0x78e4 - 0x7788];
   s32 framesSinceTransfer;
   s32 transferPending;
 };

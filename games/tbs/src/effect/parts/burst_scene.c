@@ -66,9 +66,6 @@ enum BurstField {
   BURST_FLASH      // 1 fills the canvas on each hit
 };
 
-// The value of one field of this flurry's gBurstScene_Records row.
-#define BURST_RECORD(field) gBurstScene_Records[(variant)][(field)]
-
 // The packed flash pictures and the waves.
 #define BURST_FLASH_CELLS 0x5100
 #define BURST_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
@@ -83,8 +80,8 @@ enum BurstField {
 //
 // effect: the user and the targets; prelude 1 brings in a Jupiter djinni
 //         first.
-// variant: the row of gBurstScene_Records.
-void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
+// mode   : the row of gBurstScene_Records.
+void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
   struct EffectPosition screen;
@@ -130,7 +127,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (BURST_RECORD(BURST_ARC_SHEET) == 0)
+  if (gBurstScene_Records[mode][BURST_ARC_SHEET] == 0)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
   else
@@ -138,7 +135,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
                                1);
   Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, BURST_WAVE_CELLS, 1,
                              0);
-  switch (BURST_RECORD(BURST_PALETTE)) {
+  switch (gBurstScene_Records[mode][BURST_PALETTE]) {
   case 0:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
@@ -177,8 +174,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
   BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0],
                                  4, 0);
 
-  for (frame = 0; frame != BURST_RECORD(BURST_FRAMES); frame++) {
-    s32 bursts = BURST_RECORD(BURST_STRIKES);
+  for (frame = 0; frame != gBurstScene_Records[mode][BURST_FRAMES]; frame++) {
+    s32 bursts = gBurstScene_Records[mode][BURST_STRIKES];
 
     EffectPosition_ProjectScaledBattler(work->effect->actor, &actorPos);
     actorPos.x /= 2;
@@ -203,12 +200,12 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (i = 0; i != bursts; i++) {
-      s32 start = i * BURST_RECORD(BURST_INTERVAL);
+      s32 start = i * gBurstScene_Records[mode][BURST_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
-        if ((i & 3) <= 1 || BURST_RECORD(BURST_ARC_SHEET) == 1) {
+        if ((i & 3) <= 1 || gBurstScene_Records[mode][BURST_ARC_SHEET] == 1) {
           // The arc: six 48x72 frames.
           if (work->effect->side == 0)
             draw[i & 1](canvas, work->sheet + step * 3456, targetPos.x / 2 - 16,
@@ -228,7 +225,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
-        if (BURST_RECORD(BURST_FLASH) == 1)
+        if (gBurstScene_Records[mode][BURST_FLASH] == 1)
           Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
@@ -242,7 +239,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant) {
           work->shakeFrames = 4;
           AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         }
-        for (j = 0; j != BURST_RECORD(BURST_MOTES); j++)
+        for (j = 0; j != gBurstScene_Records[mode][BURST_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
       // The flash: six 20x48 frames, 2 frames each.

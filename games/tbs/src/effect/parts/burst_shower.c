@@ -103,7 +103,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  BlitterPair blit;
+  BlitterPair draw;
   struct EffectPosition origin;
   struct EffectPosition targetSpots[8];
   s32 aim[3];
@@ -127,13 +127,13 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == BURST_SHOWER_MODE_FACES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                         COMPOSITE_MAX);
-    blit[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
+    draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_MAX);
-    blit[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+    draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   } else {
-    BattleFx_FetchRectangleBlitters(work->effect->side, blit);
+    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   }
 
   // The pictures and the palette.
@@ -245,10 +245,10 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     // a frame for 48 frames at a random point near a target.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->effect->side == 1) {
-        blit[0](canvas, BURST_SHOWER_IMAGE + ((frame / 3 % 3 * 9) << 9),
+        draw[0](canvas, BURST_SHOWER_IMAGE + ((frame / 3 % 3 * 9) << 9),
                 origin.x - 2, origin.y - 32, 72, 62);
       } else {
-        blit[0](canvas, BURST_SHOWER_IMAGE + ((frame / 3 % 3 * 9) << 9),
+        draw[0](canvas, BURST_SHOWER_IMAGE + ((frame / 3 % 3 * 9) << 9),
                 origin.x - 70, origin.y - 32, 72, 62);
       }
     } else {
@@ -278,18 +278,18 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
-            blit[work->effect->side](canvas, BURST_SHOWER_IMAGE,
+            draw[work->effect->side](canvas, BURST_SHOWER_IMAGE,
                                      HI(spark->x) - 16, HI(spark->y) - 32,
                                      width, height);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
-            blit[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
+            draw[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
                     HI(spark->x) - 16, HI(spark->y) - 32, width, height);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (spark->variant > 1) {
-            blit[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
+            draw[0](canvas, BURST_SHOWER_IMAGE + ((spark->variant / 4) << 11),
                     HI(spark->x) - 16, HI(spark->y) - 32, width, height);
           }
         }

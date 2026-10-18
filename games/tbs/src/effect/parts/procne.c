@@ -16,7 +16,7 @@
 //   395        : the targets fall back to the ground.
 // Pressing A or B skips to frame 160, or from there to frame 395. At the
 // end the battle shows the damage and the targets go back to their places.
-void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
+void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void *canvas;
@@ -57,7 +57,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *argument) {
   camera = *(struct BattleCamera **)((u8 *)slots - 112);
   work = slots[-1];
   graphics = slots[1];
-  work->effect = argument;
+  work->effect = effect;
 
   BattleFx_BeginCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);

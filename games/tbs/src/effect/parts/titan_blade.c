@@ -30,7 +30,7 @@
 // as the battle shows the damage, and every target flashes and recoils on
 // frame 68. The canvas is wiped at frames 9 and 60.
 void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
-  void **heap;
+  void **slots;
   void **slotCursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -43,8 +43,8 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   s32 sparkOriginX;
   s32 i;
 
-  EFFECT_GET_SLOTS(heap, slotCursor, work, canvas);
-  sheet = heap[2];
+  EFFECT_GET_SLOTS(slots, slotCursor, work, canvas);
+  sheet = slots[2];
 
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -54,11 +54,11 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_MAX);
-  blitters[0] = heap[7];
+  blitters[0] = slots[7];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                       COMPOSITE_TRANSPARENT);
-  blitters[1] = heap[8];
+  blitters[1] = slots[8];
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
                              work->sheet + TITAN_BLADE_SWORD_IMAGE, 1, 1);

@@ -174,15 +174,15 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         struct EffectStep *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
         if (frame >= i + 72 && thorn->y < (104 << 16)) {
-          s32 cel = (frame + i) / 4 % 5;
+          s32 cellIndex = (frame + i) / 4 % 5;
           s32 x = HI(thorn->x);
           s32 y = thorn->y >> 16;
-          u8 *cell = work->sheet + gCybele_ThornOffsets[cel];
-          u32 width = gCybele_ThornWidths[cel];
+          u8 *cell = work->sheet + gCybele_ThornOffsets[cellIndex];
+          u32 width = gCybele_ThornWidths[cellIndex];
           u32 tall;
 
           x -= width >> 1;
-          tall = gCybele_ThornHeights[cel];
+          tall = gCybele_ThornHeights[cellIndex];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
           EffectStep_AdvanceWithGravity2D(thorn, 64, 0x1000);
@@ -274,11 +274,11 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         struct EffectStep *chip = &work->particles[32 + i];
 
         if (chip->variant >= 0) {
-          s32 cel = i % 5;
+          s32 cellIndex = i % 5;
 
-          draw[0](canvas, work->sheet + gCybele_ChipOffsets[cel], HI(chip->x),
-                  HI(chip->y), gCybele_ChipWidths[cel],
-                  gCybele_ChipHeights[cel]);
+          draw[0](canvas, work->sheet + gCybele_ChipOffsets[cellIndex],
+                  HI(chip->x), HI(chip->y), gCybele_ChipWidths[cellIndex],
+                  gCybele_ChipHeights[cellIndex]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += 0x4000;
@@ -465,17 +465,17 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         s32 start = i * 4 + 302;
 
         if (frame >= start && frame < i * 4 + 314) {
-          s32 cel = (frame - start) / 2;
+          s32 cellIndex = (frame - start) / 2;
           struct MotionObject *object =
               GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
           SET_VECTOR(point, object->x, 0, object->z);
           EffectPosition_ProjectPoint(point, &screen);
           screen.x >>= 1;
-          draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24,
-                  20, 24);
-          draw[1](canvas, work->sheet + cel * 480, screen.x, screen.y - 24, 20,
-                  24);
+          draw[0](canvas, work->sheet + cellIndex * 480, screen.x - 20,
+                  screen.y - 24, 20, 24);
+          draw[1](canvas, work->sheet + cellIndex * 480, screen.x,
+                  screen.y - 24, 20, 24);
         }
         if (frame >= start + 6) {
           for (j = 0; j != 5; j++) {
@@ -484,9 +484,9 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
             EffectPosition_ProjectPoint(&ember->x, &screen);
             screen.x >>= 1;
             if (ember->variant >= 0 && ember->variant <= 26) {
-              s32 cel = CYBELE_EMBER_CELL;
-              s32 offset = gCybele_EmberOffsets[cel];
-              u32 size = gCybele_EmberSizes[cel];
+              s32 cellIndex = CYBELE_EMBER_CELL;
+              s32 offset = gCybele_EmberOffsets[cellIndex];
+              u32 size = gCybele_EmberSizes[cellIndex];
 
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);

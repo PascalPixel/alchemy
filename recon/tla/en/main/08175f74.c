@@ -68,7 +68,7 @@ struct SummonWork {
   u8 buffer[0x7080];
   s32 transferMode;
   s32 transferValue;
-  u8 unk7788[0x20];
+  u8 unk_7788[0x20];
   s32 unk77a8;
   u8 unk77ac[0x30];
   struct SpriteObject *objects[14];

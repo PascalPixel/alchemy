@@ -145,18 +145,18 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
           screen.x >>= 1;
           screen.x += work->effect->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
-            s32 cel = puff->variant / 3;
+            s32 cell = puff->variant / 3;
             u32 width;
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gEruption_PuffSizes[cel];
-            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
+            width = gEruption_PuffSizes[cell];
+            draw[0](canvas, work->sheet + gEruption_PuffCells[cell],
                     screen.x - (width >> 1), screen.y - (width >> 1), width,
                     width);
 #else
-            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
-                    screen.x - ((width = gEruption_PuffSizes[cel]) >> 1),
+            draw[0](canvas, work->sheet + gEruption_PuffCells[cell],
+                    screen.x - ((width = gEruption_PuffSizes[cell]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
           }
@@ -194,11 +194,11 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 // Creates the effect's animation objects in gBattleFxWork's objects.
 //
 // entryCount: how many objects to create.
-// kind: the resource object every one of them is made from.
-// variant: the sprite priority they take.
+// source: the resource object every one of them is made from.
+// priority: the sprite priority they take.
 // Object n plays animation n. A slot whose object could not be created is
 // left NULL.
-void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
+void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 entryIndex = 0;
 
@@ -206,13 +206,13 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
     return;
   }
   do {
-    struct AnimationObject *object = ResourceObject_CreateFar(kind);
+    struct AnimationObject *object = ResourceObject_CreateFar(source);
 
     work->objects[entryIndex] = object;
     if (object != 0) {
       object->flags = 0;
       AnimationObjects_SelectAnimationFar(object, entryIndex);
-      work->objects[entryIndex]->image.priority = variant;
+      work->objects[entryIndex]->image.priority = priority;
     }
     entryIndex++;
   } while (entryIndex != entryCount);

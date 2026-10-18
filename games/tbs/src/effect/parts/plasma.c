@@ -221,11 +221,11 @@ DEFINE_EFFECT_KIND(BattleFx_RunDynamite, BattleFx_RunSparkGroups, 1)
 // effect->variant picks the shape from gPlasma_Shapes: sparks per
 // burst, how many bursts, and each burst's offset across. Variant 2 also
 // scrolls the camera, and variant 3 flashes the whole canvas on frame 4.
-// kind : 0 at (60, 48), the battle shows the damage on frame 24;
+// mode : 0 at (60, 48), the battle shows the damage on frame 24;
 //        1 at (60, 64), orange; the damage shows on frame 2;
 //        2 below the user, in the LightningBolt colours, with the sparks
 //          rising instead of falling; the damage shows on frame 2.
-void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
+void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
   void **slots;
@@ -248,11 +248,11 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  if (kind == 0) {
+  if (mode == 0) {
     BattleFx_BeginCanvasLayer(1);
     originX = 60;
     originY = 48;
-  } else if (kind == 1) {
+  } else if (mode == 1) {
     BattleFx_BeginCanvasLayer(0);
     originX = 60;
     originY = 64;
@@ -271,11 +271,11 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  if (kind == 1) {
+  if (mode == 1) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  } else if (kind == 2) {
+  } else if (mode == 2) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
@@ -351,7 +351,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
      * built in r2 where the ROM uses r1 (3 of 776 instructions differ). */
     if (work->effect->variant == 3 && frame == 4)
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-    if (kind == 1 || kind == 2) {
+    if (mode == 1 || mode == 2) {
       if (frame == 2)
         BattleEventRuntime_BeginPhaseFar(SE_145);
     } else {
@@ -410,13 +410,13 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
             point->variant = -1;
         }
       }
-      // The sparks fly (rising for kind 2). Below y 108 a spark bounces back
+      // The sparks fly (rising for mode 2). Below y 108 a spark bounces back
       // at half speed instead of being drawn; otherwise it is drawn while on
       // the canvas, shrinking with its life, alternate sparks additively.
       if (frame > start + 5) {
         s32 gravity;
 
-        if (kind == 2)
+        if (mode == 2)
           gravity = -0x1000;
         else
           gravity = 0x1000;

@@ -10635,7 +10635,7 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   }
   work->frames = 0;
   work->ready = 0;
-  work->canvasOrigin.unk08 = 0;
+  work->canvasOrigin.unk_08 = 0;
   Iwram_ClearWords(gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], 0x4000);
   graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWords(BG_PLTT, graphics, 128);
@@ -10776,7 +10776,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
       work->canvasOrigin.y = (64U - (u32)projectedPosition->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->canvasOrigin.x,
                               0x84000002);
-      work->canvasOrigin.unk08 = 1;
+      work->canvasOrigin.unk_08 = 1;
       WaitFrames(1);
     }
     Graphics_ResetVramBlockAndReleaseHeapBlocks(element);
@@ -10793,7 +10793,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
       effectWork->trackedCanvas.origin.y = (64U - (u32)position2.y) << 8;
       IO_WRITE_QUEUE_PUSH(0x04000028, (u32)&effectWork->trackedCanvas.origin.x,
                           0x84000002);
-      effectWork->trackedCanvas.origin.unk08 = 1;
+      effectWork->trackedCanvas.origin.unk_08 = 1;
       WaitFrames(1);
     }
     BattleFx_EndElementStreaksFar();

@@ -43,14 +43,14 @@ DEFINE_EFFECT_KIND(BattleFx_RunVorpalSlash, BattleFx_RunFlashingStrike, 2)
 // frames 16 to 19, the battle shows the damage on frame 18, and on frame 20
 // the target reels and the screen shakes. 21 frames.
 void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
-  void **heap;
+  void **slots;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
   s32 frame;
 
-  heap = gBattleFxWork;
-  EFFECT_GET_WORK_AND_CANVAS(heap, work, canvas);
+  slots = gBattleFxWork;
+  EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDCNT = 0;

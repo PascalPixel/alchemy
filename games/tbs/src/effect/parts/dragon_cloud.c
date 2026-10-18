@@ -38,7 +38,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition position;
   DrawRectangle draw[2];
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -52,11 +52,11 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
 
-  EFFECT_GET_SLOTS(heapCache, cursor, work, canvas);
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   drift = 0;
   x = 0;
   y = 0;
-  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

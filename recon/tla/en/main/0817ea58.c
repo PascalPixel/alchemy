@@ -61,7 +61,7 @@ struct SummonWork {
   u8 frames[0x7080];
   s32 transferMode;
   s32 transferValue;
-  u8 unk7788[8];
+  u8 unk_7788[8];
   s32 unk7790;
   s32 unk7794;
   s32 unk7798;

@@ -145,21 +145,21 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
       struct EffectStep *ember = &PARTICLES[i];
 
       if (ember->variant >= 0 && ember->variant < 12) {
-        s32 cel;
+        s32 cell;
         u32 width;
 
-        cel = ember->variant / 2;
+        cell = ember->variant / 2;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gFire_FlareWidths[cel];
-        draw[1](canvas, work->sheet + gFire_FlareCells[cel],
-                ember->x - (width >> 1), ember->y + gFire_FlareBiasY[cel] - 56,
-                width, gFire_FlareHeights[cel]);
+        width = gFire_FlareWidths[cell];
+        draw[1](canvas, work->sheet + gFire_FlareCells[cell],
+                ember->x - (width >> 1), ember->y + gFire_FlareBiasY[cell] - 56,
+                width, gFire_FlareHeights[cell]);
 #else
-        draw[1](canvas, work->sheet + gFire_FlareCells[cel],
-                ember->x - ((width = gFire_FlareWidths[cel]) >> 1),
-                ember->y + gFire_FlareBiasY[cel] - 56, width,
-                gFire_FlareHeights[cel]);
+        draw[1](canvas, work->sheet + gFire_FlareCells[cell],
+                ember->x - ((width = gFire_FlareWidths[cell]) >> 1),
+                ember->y + gFire_FlareBiasY[cell] - 56, width,
+                gFire_FlareHeights[cell]);
 #endif
         ember->variant++;
       }

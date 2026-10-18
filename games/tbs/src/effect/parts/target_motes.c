@@ -253,7 +253,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 
             distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0 && mote->variant <= 23) {
-              s32 cel = mote->variant / 4;
+              s32 cell = mote->variant / 4;
 
               EffectPosition_ProjectPoint(mote, &screen);
               screen.x >>= 1;
@@ -261,7 +261,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
               // smoke draws one mote in four additively. A mote that has
               // reached the centre is no longer drawn.
               if (mode == 5 || mode == 7)
-                draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
+                draw[1](canvas, work->sheet + cell * 1600, screen.x - 20,
                         screen.y - 20, 40, 40);
               else if (mode == 6)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
@@ -270,7 +270,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
+                draw[(i & 3) != 0](canvas, work->sheet + cell * 1152,
                                    screen.x - 12, screen.y - 24, 24, 48);
               // Closing motes step 2 pixels towards the centre and start their
               // cycle again where they are; rising motes rise 1 pixel a frame
@@ -395,14 +395,14 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;
          particleIndex++, current++) {
       if (frame > particleIndex * 4 && current->y <= 0x7fffff) {
-        s32 cel;
+        s32 cell;
 
-        cel = (current->variant / 16) & 7;
-        if (cel < 4)
-          drawUpright(canvas, work->sheet + (cel << 10),
+        cell = (current->variant / 16) & 7;
+        if (cell < 4)
+          drawUpright(canvas, work->sheet + (cell << 10),
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         else
-          drawFlipped(canvas, work->sheet + (cel << 10) - 0x1000,
+          drawFlipped(canvas, work->sheet + (cell << 10) - 0x1000,
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         current->y += current->velocityY;
         current->velocityY += 0x2000;
@@ -446,7 +446,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   s32 i;
   s32 frame;
   s32 start;
-  s32 cel;
+  s32 cell;
   s32 y;
   struct EffectPosition screenPosition;
 
@@ -498,8 +498,8 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
           draw[0](canvas, work->sheet + CURSE_MARKER_CELLS,
                   screenPosition.x - 8, y - 20, 16, 20);
           if (frame >= start) {
-            cel = ((frame - start) + marker->variant) / 6 % 9;
-            draw[0](canvas, work->sheet + cel * 192, screenPosition.x - 8,
+            cell = ((frame - start) + marker->variant) / 6 % 9;
+            draw[0](canvas, work->sheet + cell * 192, screenPosition.x - 8,
                     screenPosition.y - 16, 16, 12);
           }
         }

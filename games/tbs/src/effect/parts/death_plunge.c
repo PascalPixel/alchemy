@@ -1051,9 +1051,9 @@ void BattleFx_DrawStreaks(void) {
 // BattleFx_DrawStreaks with a canvas that darkens each frame.
 // The caller keeps the canvas on its unit and ends the burst with
 // BattleFx_EndElementStreaks.
-// kind : the element, which picks the palette: 0 Venus yellow, 1 Mercury
+// element: the element, which picks the palette: 0 Venus yellow, 1 Mercury
 //        blue, 2 Mars red, 3 Jupiter violet, others a dusty grey.
-void BattleFx_StartElementStreaks(s32 kind) {
+void BattleFx_StartElementStreaks(s32 element) {
   struct BattleEffectWork *work;
   void *palette;
   s32 id;
@@ -1064,7 +1064,7 @@ void BattleFx_StartElementStreaks(s32 kind) {
   work->fadeFrames = 24;
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  switch (kind) {
+  switch (element) {
   case 0:
     id = (s32)&ResourceId_YellowPaletteB;
     break;

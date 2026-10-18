@@ -114,7 +114,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect);
 void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect);
 void BattleFx_RunElementBurst(struct BattleEffectArgument *effect);
 void BattleFx_DrawStreaks(void);
-void BattleFx_StartElementStreaks(s32 kind);
+void BattleFx_StartElementStreaks(s32 element);
 void BattleFx_EndElementStreaks(void);
 
 // spider_web.c
@@ -174,7 +174,7 @@ void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect);
 void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode);
 
 // condemn.c
-void BattleFx_RunCondemn(struct BattleEffectArgument *object);
+void BattleFx_RunCondemn(struct BattleEffectArgument *effect);
 
 // bind.c
 void Graphics_ConvertBackgroundToBlueRamp(void);
@@ -186,7 +186,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect);
 void BattleFx_RunShiningStar(struct BattleEffectArgument *effect);
 
 // procne.c
-void BattleFx_RunProcne(struct BattleEffectArgument *argument);
+void BattleFx_RunProcne(struct BattleEffectArgument *effect);
 
 // tiamat.c
 void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect);
@@ -210,7 +210,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 void BattleFx_RunPlasma(struct BattleEffectArgument *effect);
 void BattleFx_RunNova(struct BattleEffectArgument *effect);
 void BattleFx_RunDynamite(struct BattleEffectArgument *effect);
-void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
+void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode);
 
 // volcano.c
 void BattleFx_RunVolcano(struct BattleEffectArgument *effect);
@@ -237,7 +237,7 @@ void BattleFx_CallDoNothing(s32 count);
 void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect);
 void BattleFx_RunTableEffect(struct BattleEffectArgument *effect);
 void BattleFx_BuildWindowEdgeTable(void);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
 void BattleFx_SetupBlendedDisplay(void);
 void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                                s32 timerSlot, s32 timerFrames);
@@ -298,7 +298,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect);
 void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect);
 void BattleFx_RunBlast(struct BattleEffectArgument *effect);
 void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode);
-void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
+void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority);
 void BattleFx_DoNothing(void);
 
 // burst_shower.c
@@ -313,9 +313,9 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect);
 void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
 
 // orbiting.c
-void BattleFx_RunSwirlingStars(void *object);
+void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect);
 void BattleFx_RunOrbitingSkulls(void);
-void BattleFx_RunTargetBursts(void *object);
+void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect);
 
 // atalanta.c
 void BattleFx_RunAtalanta(struct BattleEffectArgument *effect);
@@ -331,7 +331,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect);
 void BattleFx_RunBolt(struct BattleEffectArgument *effect);
 
 // projectiles.c
-void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 kind,
+void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
                                 s32 side, s32 anchor, s32 *outX, s32 *outY);
 void BattleFx_RunSlash(struct BattleEffectArgument *effect);
 void BattleFx_RunShuriken(struct BattleEffectArgument *effect);
@@ -355,8 +355,7 @@ void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect);
 void BattleFx_RunBruteForce(struct BattleEffectArgument *effect);
 void BattleFx_RunOnslaught(struct BattleEffectArgument *effect);
 void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect);
-void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
-                               s32 variant);
+void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode);
 
 // djinn_attacks.c
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h);
@@ -376,7 +375,7 @@ void Camera_ApplyShake(s32 rangeX, u32 rangeY);
 void BattleFx_RunThor(struct BattleEffectArgument *effect);
 
 // spire.c
-void BattleFx_RunSpire(struct BattleEffectArgument *object);
+void BattleFx_RunSpire(struct BattleEffectArgument *effect);
 
 // burst_scene.c
 void BattleFx_RunGust(struct BattleEffectArgument *effect);
@@ -385,7 +384,7 @@ void BattleFx_RunRansack(struct BattleEffectArgument *effect);
 void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect);
 void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect);
 void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect);
-void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 variant);
+void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode);
 
 // gaia.c
 void BattleFx_RunGaia(struct BattleEffectArgument *effect);
@@ -411,7 +410,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect);
 
 // casting_impact.c
 void BattleFx_StepPaletteToResource(s32 resourceId);
-void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind);
+void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode);
 
 // torch.c
 void BattleFx_RunTorch(struct BattleEffectArgument *effect);

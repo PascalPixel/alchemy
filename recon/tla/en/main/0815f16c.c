@@ -27,7 +27,7 @@ struct SummonWork {
   u8 unk7300[0x480];
   s32 unk7780;
   s32 unk7784;
-  u8 unk7788[0x20];
+  u8 unk_7788[0x20];
   s32 unk77a8;
   u8 unk77ac[8];
   s32 unk77b4;

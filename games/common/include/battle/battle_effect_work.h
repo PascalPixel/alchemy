@@ -13,7 +13,7 @@ struct BattleCanvasOrigin {
   s32 x;
   s32 y;
   // Written after staging the coordinates; no reader has been identified.
-  s32 unk08;
+  s32 unk_08;
 };
 
 STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
@@ -26,7 +26,7 @@ struct BattleEffectWork {
     struct {
       u8 sheet[0x6980];
       s32 bg2xLines[160]; // BG2X for each scanline, for an HBlank DMA
-      u8 unk6c00[0x480];
+      u8 unk_6c00[0x480];
     };
     u8 imageStorage[0x7080];
     // The tracked elemental scene stages its origin inside the image area.
@@ -38,7 +38,7 @@ struct BattleEffectWork {
   struct EffectStep particles[64];
   s32 transferMode;
   s32 transferValue;
-  s32 unk7788;
+  s32 unk_7788;
   s32 frame;
   s32 scrollTimer;
   s32 scrollInterval;
@@ -60,7 +60,7 @@ struct BattleEffectWork {
   u16 dispcnt;
   u16 bldcnt;
   u16 bldalpha;
-  u16 padding77ce;
+  u16 unk_77ce;
   s32 bg2x;
   s32 bg2y;
   struct AnimationObject *objects[16];

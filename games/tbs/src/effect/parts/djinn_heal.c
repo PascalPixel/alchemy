@@ -177,7 +177,7 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
             s32 zz = (spark->z >> 8) * (spark->z >> 8);
             s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0) {
-              s32 cel;
+              s32 cellIndex;
 
               EffectPosition_ProjectPoint(spark, &view);
               view.x >>= 1;
@@ -185,11 +185,11 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
               /* FAKEMATCH: the size series A draws its sparks
                * at, kept from that effect and never used here. Without the dead
                * store: differ 479. */
-              cel = 3 - (view.depth - 314) / 128;
-              cel = (i * 4 + frame) % 9;
+              cellIndex = 3 - (view.depth - 314) / 128;
+              cellIndex = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + gBattleFx_PuffCells[cel];
-                u32 edge = gBattleFx_PuffSizes[cel];
+                u8 *cell = sheet + gBattleFx_PuffCells[cellIndex];
+                u32 edge = gBattleFx_PuffSizes[cellIndex];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);

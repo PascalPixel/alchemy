@@ -1,14 +1,17 @@
-// Near miss, differ 10 of 85: starts Func_080d69f4's rising particles:
-// allocates and clears the heap slot 0x74 workspace, decodes the particle
-// tiles into VRAM, sets each of the 64 particles' sprite words and places it
-// on the ground at a random point of the strip, staggering their timers by 2
-// frames, and schedules the update. No ☀️ twin found. Left: the fill word's
-// zero: the native builds it in r2 and starts the DMA address (movs r3, #128)
-// before it, this draft builds it in r3 first; and the callback's pointer
-// load sits one slot later at the end (instruction order).
 #include "types.h"
 #include "dma.h"
+#include "edition.h"
 
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+// The European far-call tables give the terrain height's entry another name.
+s32 Func_08020190(s32 layer, s32 x, s32 z);
+#define Map_GetTerrainHeightFar Func_08020190
+#else
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+#endif
+
+// One rising particle: its sprite's attribute words, world position, drift
+// and frames left.
 struct RisingParticle {
   u32 sprite[3];
   s32 posX;
@@ -19,6 +22,7 @@ struct RisingParticle {
   u8 unk1e[2];
 };
 
+// Heap slot 0x74 while the rising particles run.
 struct RisingParticleWork {
   s32 vramEntry;
   s32 tile;
@@ -31,22 +35,30 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 u32 Random16(void);
-s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_080d69f4(void);
 
 extern const u8 gData_080f385e[];
 
-#define DMA3 ((volatile u32 *)0x040000d4)
-
+// Starts Func_080d69f4's rising particles: allocates and clears heap slot
+// 0x74, decodes the particle tiles into VRAM, sets each of the 64 particles'
+// sprite words and places it on the ground at a random point of the strip
+// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
+// schedules the update.
 void Func_080d6b90(void) {
   struct RisingParticleWork *work = Runtime_AllocateBlock(116, 0x814);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
+  /* FAKEMATCH: the register variable builds the fill word's zero in r2,
+   * after the DMA address is started (differ 8 without it: the zero
+   * takes r3 first). */
+  register u32 zero asm("r2");
+  s32 priority;
   u8 *tiles;
   u32 i;
 
-  Dma_Fill32Cell(fill, 0, work, 0x814);
+  zero = 0;
+  Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = Runtime_AllocateBlock(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
   work->vramEntry = Resource_FindFreeEntry();
@@ -68,5 +80,9 @@ void Func_080d6b90(void) {
     particle->drift = 0;
     particle->timer = i * 2;
   }
-  Scheduler_AddOrUpdateCallback(Func_080d69f4, 0x480);
+  priority = 0x480;
+  /* FAKEMATCH: the barrier builds the priority before the callback's pool
+   * load, as the native does (differ 2 without it). */
+  asm volatile("");
+  Scheduler_AddOrUpdateCallback(Func_080d69f4, priority);
 }

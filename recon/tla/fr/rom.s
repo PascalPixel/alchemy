@@ -2239,13 +2239,12 @@ Func_080d6674:
 Func_080d67e8:
 	.incbin "baserom.gba", 0x000db7dc, 0x00000124
 	.section .rom.000db9e8, "ax"
-	.incbin "baserom.gba", 0x000db9e8, 0x0000019c
-	.section .rom.000dbb84, "ax"
-	.global Func_080d6b90
-	.type Func_080d6b90, %function
+	.global Func_080d69f4
+	.type Func_080d69f4, %function
 	.thumb_func
-Func_080d6b90:
-	.incbin "baserom.gba", 0x000dbb84, 0x000000d0
+Func_080d69f4:
+	.incbin "baserom.gba", 0x000db9e8, 0x0000019c
+	.section .rom.000dbc54, "ax"
 	.global Func_080d6c60
 	.type Func_080d6c60, %function
 	.thumb_func

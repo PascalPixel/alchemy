@@ -38,9 +38,9 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->motionFlags = 0;
   sprite->nextFrame = 0;
   effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
   sprite->priority = party->sprite->priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;

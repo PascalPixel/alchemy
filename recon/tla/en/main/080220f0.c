@@ -16,9 +16,19 @@
 // (216), the transform declared first (216).
 
 #include "types.h"
-#include "affine.h"
 #include "animspr.h"
 #include "iwram_call.h"
+
+// games/tla/include/affine.h's transform, written out: the stale affine.h
+// beside these drafts would shadow it.
+struct AffineTransform {
+  u16 scaleX;
+  u16 scaleY;
+  u16 angle;
+  u16 unk06;
+};
+
+s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
 // The Lost Age's animation object: The Broken Seal's fields with the
 // shadow's sprite moved after them.

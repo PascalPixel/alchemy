@@ -1,0 +1,43 @@
+// Draft, differ 48 of 28: the work copy of the sound initialization, as ☀️'s
+// Audio_Initialize (games/common/src/sound/sound.c). The listing starts at
+// the copy's second call: its first ten instructions (from 081c04cc) sit in
+// the pool words of 081c04ac's listing, so the draft compiles the whole
+// function and the comparison covers only the listing's part. A
+// sound-library function: the draft compiles with the game profile, where the
+// build routes the library through old_agbcc. Other: register choice
+// (r5-r7 and r3 against the listing's r4-r6 and r0), the count's
+// narrowing and the game compiler's rotated loop.
+#include "types.h"
+#include "audio_engine.h"
+#include "ram_buffer.h"
+
+extern char Sound_PlayerCount[];
+#define SOUND_PLAYER_COUNT ((u16)(u32)Sound_PlayerCount)
+
+void Sound_Mixer(void);
+void AudioEngine_Initialize(struct SoundWork *work);
+void CgbAudio_Initialize(struct CgbNote *notes);
+void AudioEngine_SetMode(u32 mode);
+void MusicPlayer_Initialize(struct SoundPlayer *player,
+                            struct SoundTrack *tracks, u8 count);
+extern struct SoundWork gSound_Work;
+extern struct CgbNote gSound_CgbNotes[4];
+extern u8 gSound_WorkBytes[];
+extern const struct PlayerSlot gSound_PlayerSlots[];
+
+void Func_081c04e0(void) {
+  s32 playerIndex;
+
+  Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer, 0x04000100);
+  AudioEngine_Initialize(&gSound_Work);
+  CgbAudio_Initialize(gSound_CgbNotes);
+  AudioEngine_SetMode(AUDIO_INITIAL_MODE);
+  for (playerIndex = 0; playerIndex < SOUND_PLAYER_COUNT; playerIndex++) {
+    struct SoundPlayer *player = gSound_PlayerSlots[playerIndex].player;
+
+    MusicPlayer_Initialize(player, gSound_PlayerSlots[playerIndex].tracks,
+                           gSound_PlayerSlots[playerIndex].trackCount);
+    player->checkPriority = gSound_PlayerSlots[playerIndex].checkPriority;
+    player->workBytes = gSound_WorkBytes;
+  }
+}

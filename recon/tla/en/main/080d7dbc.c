@@ -162,15 +162,15 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->limitTurnStep = state;
     effect->state++;
 
-    ((struct AnimationObject *)effect->object)->part[0].priority =
-        owner->sprite->part[0].priority;
+    ((struct AnimationObject *)effect->object)->image.priority =
+        owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
     if ((gFrameTick & 1) != 0)
       Audio_PlayCue(134);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
-      ((struct AnimationObject *)effect->object)->part[0].priority = 0;
+      ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
     if (EffectSlot_HasPendingTarget(effect) == 0)
@@ -179,7 +179,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     if (EffectSlot_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
-      ((struct AnimationObject *)effect->object)->part[0].priority = 0;
+      ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
       effect->render = 0;
       effect->state++;

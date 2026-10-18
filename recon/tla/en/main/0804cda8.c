@@ -9,11 +9,21 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource_menu.h"
-#include "affine.h"
 #include "frame.h"
 #include "display_transition.h"
 #include "vram_tab.h"
 #include "callback_scheduler.h"
+
+// games/tla/include/affine.h's transform, written out: the stale affine.h
+// beside these drafts would shadow it.
+struct AffineTransform {
+  u16 scaleX;
+  u16 scaleY;
+  u16 angle;
+  u16 unk06;
+};
+
+s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
 extern const u16 gUi_BounceScales[];
 

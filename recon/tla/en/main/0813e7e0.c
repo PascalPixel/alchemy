@@ -54,7 +54,6 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleFx_ClearActorTimers(void); // BattleFx_ClearActorTimers
 void Func_08191530(struct BattleEffectArgument *effect);
 s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);

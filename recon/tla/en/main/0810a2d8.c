@@ -1,69 +1,91 @@
+// Near miss, differ 10 of 170: the shop repairs a unit's damaged item at slot
+// (refusing other kinds, undamaged items, cursed equipped items and a price
+// over the party's coins), then offers to equip it. ☀️'s Shop_RepairItem in
+// games/tbs/src/shop/shop.c, rewritten with ⚓️'s calls (UnitGet,
+// Shop_GetItemPrice, UiText_DrawQuantity, the shop message and choice routines
+// Func_0810857c and Func_08108630, Inventory_RepairFar, Func_08109188 for the
+// coins) and numbered messages, their ☀️ names beside them. Instruction order
+// only, the same pattern as Shop_SellItem (0810a108): the work pointer's
+// address build against the frame setup, the slot offset's copy and the 0x1ff
+// mask's first move, and one register copy against the equipped slot's spill.
 #include "party_state.h"
 #include "battle_system.h"
-extern struct ShopRuntime *gMenuWork;
-extern u8 gData_03001f2c[];
+#include "battle_unit.h"
+#include "item.h"
+#include "ram_buffer.h"
 
-extern u8 MsgShopRepairConfirm[];
-extern u8 MsgCannotRepairKind[];
-extern u8 MsgNotDamaged[];
-extern u8 MsgCursedWontComeOff[];
-extern u8 MsgNotEnoughMoney[];
+// The shop work block, as this function reads it.
+struct ShopRuntime {
+  u8 unk000[0x24];
+  s32 itemWindow;
+};
 
-struct ItemDefinition *Item_Get(s32 item);
+extern u8 Msg04715[]; // MsgCannotRepairKind
+extern u8 Msg04716[]; // MsgNotDamaged
+extern u8 Msg04717[]; // MsgCursedWontComeOff
+extern u8 Msg04718[]; // MsgNotEnoughMoney
+extern u8 Msg04719[]; // MsgShopRepairConfirm, then its three replies
+
+struct BattleUnit *UnitGet(s32 unitId);
 s32 Inventory_FindEquippedFar(s32 unitId, u8 kind);
-void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void UiMessage_ShowAndRestoreState(s32 message);
-s32 UiMessage_ShowChoice(s32 value);
+u32 Shop_GetItemPrice(s32 item);
+void UiText_DrawQuantity(s32 value, s32 slot);
+void Func_0810857c(s32 message);
+s32 Func_08108630(s32 value);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void Func_08077068(s32 unitId, s32 slot);
+void Inventory_RepairFar(s32 unitId, s32 slot);
 void Party_AdjustCoinsFar(s32 amount);
+void Func_08109188(void);
+void Shop_DrawItemCount(s32 window, s32 unitId);
+s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
+void Shop_SellOld(s32 unitId, s32 slot);
 
 void Shop_RepairItem(s32 unitId, s32 slot) {
-  struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = UnitGetFar(unitId);
+  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
+  struct BattleUnit *unit = UnitGet(unitId);
   s32 itemId = unit->inventory[slot] & 0x1ff;
   struct ItemDefinition *item = Item_Get(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
-  u32 price = Shop_RepairPrice(unit->inventory[slot]);
+  u32 price = Shop_GetItemPrice(unit->inventory[slot]);
   s32 message;
   u8 kind;
   u32 saved;
 
   kind = item->useType;
   if (kind != 2) {
-    UiWork_PushValueSlotFar(itemId, 2);
-    UiMessage_ShowAndRestoreState((s32)MsgCannotRepairKind);
+    UiText_DrawQuantity(itemId, 2);
+    Func_0810857c((s32)Msg04715);
     return;
   }
   if (!(unit->inventory[slot] & 0x400)) {
-    UiWork_PushValueSlotFar(itemId, 2);
-    UiMessage_ShowAndRestoreState((s32)MsgNotDamaged);
+    UiText_DrawQuantity(itemId, 2);
+    Func_0810857c((s32)Msg04716);
     return;
   }
   if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
-    UiWork_PushValueSlotFar(itemId, 2);
-    UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
+    UiText_DrawQuantity(itemId, 2);
+    Func_0810857c((s32)Msg04717);
     return;
   }
-  if (price > gGameState.money) {
-    UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
+  if (price > gPartyState.coins) {
+    Func_0810857c((s32)Msg04718);
     return;
   }
-  UiWork_PushValueSlotFar(itemId, 2);
-  UiWork_PushValueSlotFar(price, 5);
-  message = (s32)MsgShopRepairConfirm;
-  UiMessage_ShowAndRestoreState(message);
-  if (UiMessage_ShowChoice(0) != 0) {
-    UiMessage_ShowAndRestoreState(message + 1);
+  UiText_DrawQuantity(itemId, 2);
+  UiText_DrawQuantity(price, 5);
+  message = (s32)Msg04719;
+  Func_0810857c(message);
+  if (Func_08108630(0) != 0) {
+    Func_0810857c(message + 1);
     return;
   }
   saved = unit->inventory[slot];
   unit->inventory[slot] = 0;
-  Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, 2);
-  UiMessage_ShowAndRestoreState(message + 2);
+  Shop_DrawItemCount(shop->itemWindow, unitId);
+  UiText_DrawQuantity(itemId, 2);
+  Func_0810857c(message + 2);
   UiWork_FinalizePendingCoreFar();
   WaitFrames(10);
   Audio_PlayCue(100);
@@ -75,12 +97,12 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Audio_PlayCue(112);
   WaitFrames(20);
   unit->inventory[slot] = saved;
-  Func_08077068(unitId, slot);
+  Inventory_RepairFar(unitId, slot);
   Party_AdjustCoinsFar(-price);
-  Shop_DrawMoney();
-  Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, 2);
-  UiMessage_ShowAndRestoreState(message + 3);
+  Func_08109188();
+  Shop_DrawItemCount(shop->itemWindow, unitId);
+  UiText_DrawQuantity(itemId, 2);
+  Func_0810857c(message + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);
 }

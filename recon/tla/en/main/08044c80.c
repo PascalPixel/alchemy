@@ -1,35 +1,40 @@
+// Draft of Party_ShowPairJoinedMessage: differ 8 of 135 (tla-en, 2026-10-18).
+// Its ☀️ twin is games/tbs/src/window/battle_command.c's function of the
+// same name. It opens a message window with the two joining characters'
+// portraits, plays the join fanfare and waits for it, or for A, B or a
+// shoulder button.
+//
+// Left: instruction order only (a constant build and two argument copies sit
+// one place apart).
+
 #include "callback_scheduler.h"
 #include "types.h"
 #include "io_reg.h"
 #include "scene.h"
 #include "render_input.h"
 #include "resource.h"
+#include "ram_buffer.h"
+#include "window.h"
+#include "input.h"
 
-#if defined(TBS_EDITION_EN)
-
-struct MessageWindow;
-
-extern u8 *gWindowWork;
 extern u8 MsgPairJoinedParty[];
 
-struct MessageWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWindow_DrawDividerLine(struct MessageWindow *, s32, s32, s32, s32);
+struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
+void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Party_LookupCharacterValueByFlag32(s32);
 s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32);
+s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
-void UiWork_Finalize(struct MessageWindow *, s32);
-
-extern volatile u32 gKeyState;
+void UiWork_Finalize(struct UiWindow *, s32);
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
-  u8 *work = gWindowWork;
-  struct MessageWindow *window;
+  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct UiWindow *window;
   s32 sprite2[3];
   s32 sprite1[3];
   s32 *entry1;
@@ -48,7 +53,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   if (window != NULL) {
     UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
 
-    work[0xea3] = 1;
+    work->dirty = 1;
 
     UiGlyph_LoadEntryWithPalette(
         Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)),
@@ -67,8 +72,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p++ = 0x802c000c;
     *p = palette | 0xf000;
 
-    *(u16 *)(work + 0x12f4) = zero;
-    *(u16 *)(work + 0x12f6) = zero;
+    work->speakerVoiceSound = zero;
+    work->speakerVoiceCountdown = zero;
 
     UiWork_PushValueSlot(first, 1);
     UiWork_PushValueSlot(second, 1);
@@ -84,7 +89,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
       Runtime_PushSlotEntry(entry2, 250);
       WaitFrames(1);
     } while (Audio_Check() != 0 &&
-             (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+             (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     UiWork_Finalize(window, 2);
     WaitFrames(1);

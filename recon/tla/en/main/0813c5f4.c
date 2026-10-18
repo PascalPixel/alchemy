@@ -70,7 +70,6 @@ extern char ResourceId_CyanPalette;
 void BattleFx_BeginCanvasLayer(s32 control);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
 s32 BattleFx_LoadBlitter(s32 slot, s32 flags);
-s32 BattleFx_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);

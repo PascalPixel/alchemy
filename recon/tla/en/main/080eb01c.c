@@ -17,7 +17,7 @@
 // width and (cos + sin) times the half height, as the ROM computes it.
 #include "types.h"
 #include "iwram_call.h"
-#include "affine.h"
+#include <affine.h> // not the stale copy beside this draft
 #include "fixed_math.h"
 #include "effect_sprite.h"
 

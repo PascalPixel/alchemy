@@ -1,0 +1,23 @@
+// Draft, differ 20 of 11: the cut-off head of a work copy of the song start,
+// as ☀️'s Audio_PlaySound (games/common/src/sound/sound.c): the copy stops
+// after the player slot's offset, and the listing's last four words are the
+// ARM 32x32 high multiply's Thumb entry (bx pc, umull, bx lr) that follows
+// it. A sound-library function: the draft compiles with the game profile,
+// where the build routes the library through old_agbcc. Other: the listing
+// loads both table addresses first (r2, r1) and keeps the products in r1 and
+// r3; the game compiler loads each table where it is used.
+#include "types.h"
+#include "audio_engine.h"
+
+void MusicPlayer_StartSong(struct SoundPlayer *player,
+                           const struct SequenceHeader *header);
+extern const struct PlayerSlot gSound_PlayerSlots[];
+extern const struct SongEntry gSound_SongTable[];
+
+void Func_081c05c8(u16 id) {
+  const struct PlayerSlot *slots = gSound_PlayerSlots;
+  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *song = &songs[id];
+
+  MusicPlayer_StartSong(slots[song->slot].player, song->header);
+}

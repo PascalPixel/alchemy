@@ -1,4 +1,10 @@
-
+// Draft of FieldObject_Create: differ 12 of 181 (tla-en, 2026-10-18). Its
+// ☀️ twin is games/tbs/src/field/field.c's FieldObject_Create: it takes a
+// free runtime object, gives it one or two resource sprites by kind, places
+// it and sets its default motion.
+//
+// Left: instruction order only (an add of sl, one store and a branch sit
+// a few places apart; the pool loads move with them).
 
 #include "object_runtime.h"
 #include "metadata_lookup.h"
@@ -98,7 +104,7 @@ struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y,
       }
       break;
     case 2:
-      work = Ram_HeapSlots->unk18[0];
+      work = (struct ObjectDraftWork *)Ram_HeapSlots->objectSystem;
       entry = (struct DispatchChild **)((u8 *)work + 8 +
                                         work->childListCursor++ * 4);
       object->animationKind = kind;

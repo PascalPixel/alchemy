@@ -1,6 +1,17 @@
+// Draft of Menu_SelectResource: differ 0 of 81 (tla-en, 2026-10-18), ready to
+// adopt. Its ☀️ twin is games/tbs/src/window/battle_command.c's function of
+// the same name: it steps the selection from start to goal, redrawing the
+// label each step and slowing as it nears the goal, then confirms.
+
 #include "types.h"
 #include "resource.h"
 #include "system.h"
+#include "ram_buffer.h"
+
+// The menu sounds, as The Broken Seal's sound_ids.h names them.
+#define SOUND_MENU_CURSOR_MOVE 111
+#define SOUND_MENU_CONFIRM 112
+
 extern u8 gData_03001f38[];
 
 struct MenuSelectionState {
@@ -14,13 +25,18 @@ struct MenuSelectionState {
   s16 resourceBase;
 };
 
-extern struct MenuSelectionState *gMenuSelectWork;
 extern u8 gMenu_SelectionStepDelays[];
 extern u8 MsgCommandName;
 
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resourceId, void *work, s32 x, s32 y);
 void Audio_PlayCue(s32 sound_id);
+
+static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
+  if (diff >= 0)
+    return diff;
+  return rhs - lhs;
+}
 
 s32 Menu_SelectResource(s32 start, s32 goal) {
   s16 resourceBase;
@@ -34,7 +50,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   const u8 *table;
   struct MenuSelectionState *state;
 
-  state = gMenuSelectWork;
+  state = Ram_HeapSlots->menuSelectWork;
   step = 1;
   delay = 12;
   state->selection = (s16)start;

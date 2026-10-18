@@ -1,4 +1,27 @@
+// Near miss, differ 10 of 158: draws one page of the psynergy list (name, PP
+// cost, greyed when the PP is short or the action restricted), ☀️'s
+// PsynergyMenu_DrawActionPage in games/tbs/src/menu/menu.c, with ⚓️'s
+// work-block offsets (flags 0x21c, entries 0x1c4, owner byte 0x216). Instruction
+// order only: the entry's halfword load and the 0x3fff mask's first move swap
+// at each of three reads, and one move of the row moves past the mask.
 #include "battle_type.h"
+#include "ram_buffer.h"
+
+struct MenuResult {
+  s32 ownerState;
+  s32 unk04;
+  s32 page;
+  s32 pageCount;
+  s32 row;
+  s32 entryCount;
+  s32 selectedIndex;
+};
+
+// The psynergy menu work block, as this function reads it.
+struct PsynergyMenuState {
+  u8 unk000[0x216];
+  u8 ownerIds[2];
+};
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
@@ -11,7 +34,7 @@ void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
                                   s32 y);
-struct BattleUnit *UnitGetFar(s32 owner);
+struct BattleUnit *UnitGet(s32 owner);
 struct BattleAct *BattleActGet(s32 action);
 extern u8 MsgAbilityName;
 extern u8 MsgShortcutHelp[];
@@ -26,14 +49,14 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   s32 cursor;
   struct BattleUnit *owner;
   struct BattleAct *ability;
-  struct PsynergyMenuState *menu = gMenuWork;
+  struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
 
   (void)unused;
 
   RenderOutput_RedrawSavedRectFar(window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-  if (2 & *(u16 *)((u8 *)menu + 0x220)) {
+  if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
     UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutHelp, window, 0, 88);
   } else {
     UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, 0, 88);
@@ -51,9 +74,9 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
   row = 0;
   if (visibleCount > row) {
-    cursor = firstEntry * 2 + 0x1c8;
+    cursor = firstEntry * 2 + 0x1c4;
     do {
-      owner = UnitGetFar(menu->ownerIds[0]);
+      owner = UnitGet(menu->ownerIds[0]);
       ability = BattleActGet(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {

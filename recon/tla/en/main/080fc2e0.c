@@ -1,0 +1,104 @@
+// First draft of Func_080fc2e0: after giving or trading the selected item to
+// the member in pane 1, offers to equip it there; the twin of ☀️'s
+// ItemMenu_ConfirmEquip (games/tbs/src/menu/menu.c) in its first-release
+// layout (Yes and No at x 96, the cursor at 184). Returns 0 when it is
+// equipped; 1 when the player says No, backs out, or the member cannot equip
+// it, and the member is left as before. Differ 32 of 179 (draft 177): the
+// native reads gInput.pressed afresh for the B test, as a volatile read would,
+// where this draft reuses the A test's load (four rows and the branches
+// after it shift by one); the rest is order: the owner byte for the preview
+// is loaded before the slot's address is copied to r10, here after.
+#include "types.h"
+#include "mem.h"
+#include "input.h"
+#include "flag_call.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
+
+struct InventoryMenuState {
+  u8 unk000[0xf0];
+  s32 messageWindow;
+  u8 unk0f4[0x74];
+  u16 selectedSlots[2];
+  u8 unk16c[0xaa];
+  u8 paneOwner[2];
+};
+
+extern u8 MsgYes[];           // the ☀️ twin's name
+extern u8 MsgEquipThisItem[]; // the ☀️ twin's name
+
+void *UnitGet(s32 unit);
+void Func_080fae8c(s32 owner, s32 slot, s32 mode);
+s32 Inventory_EquipFar(s32 owner, s32 slot);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+                                    s32 height);
+void Func_080f8ab4(s32 x, s32 y);
+void Func_080f8a44(s32 x, s32 y);
+void Audio_PlayCue(s32 cue);
+void UnitCalcFar(s32 unit);
+void Unit_RefreshPsynergyFar(s32 unit);
+void WaitFrames(s32 frames);
+
+s32 Func_080fc2e0(s32 unused) {
+  s32 rows = 2;
+  s32 selection = 0;
+  s32 changed = 1;
+  struct InventoryMenuState *menu =
+      (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
+  void *unit = UnitGet(menu->paneOwner[1]);
+  void *saved;
+  s32 window;
+
+  Func_080fae8c(menu->paneOwner[1], menu->selectedSlots[1], 0);
+  saved = MemAlloc(332);
+  Iwram_CopyWords(saved, unit, 332);
+  window = menu->messageWindow;
+  if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
+            2) <= 1) {
+    selection = 1;
+  } else {
+    UiText_DrawCharacterAtOffsetFar((s32)MsgYes, window, 96, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgYes + 1, window, 96, 16);
+    UiWindow_ClearInteriorTilesFar(window, 16, 16, 96, 24);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgEquipThisItem, window, 0, 16);
+    Func_080f8ab4(184, 5);
+    for (;;) {
+      if (GameFlag_Test(336))
+        break;
+      if (changed) {
+        changed = 0;
+        selection = (selection + rows) % rows;
+      }
+      if (gInput.pressed & 1) {
+        Audio_PlayCue(175);
+        break;
+      }
+      if (gInput.pressed & 2) {
+        Audio_PlayCue(113);
+        selection = 1;
+        break;
+      }
+      Func_080f8a44(184, (selection << 4) + 5);
+      if (gInput.repeat & 64) {
+        selection--;
+        changed = 1;
+        Audio_PlayCue(111);
+      }
+      if (gInput.repeat & 128) {
+        selection++;
+        changed = 1;
+        Audio_PlayCue(111);
+      }
+      WaitFrames(1);
+    }
+  }
+  if (GameFlag_Test(336))
+    selection = 1;
+  if (selection == 1)
+    Iwram_CopyWords(unit, saved, 332);
+  MemFree(saved);
+  Unit_RefreshPsynergyFar(menu->paneOwner[1]);
+  UnitCalcFar(menu->paneOwner[1]);
+  return selection;
+}

@@ -1,3 +1,11 @@
+// Near miss, differ 2 of 47: after the glyph call the native builds 0x11c as
+// movs r2, #142; ldr r4, [sp] (base's caller-save restore); lsls r2, r2, #1,
+// where here the shift comes before the restore. 2026-10-18: 0x8e held by an
+// empty asm puts the restore after the movs but moves the constant to r3
+// (differ 6); pinned to r2, with the sum pinned to r3 and the shift kept in
+// r2, the registers match and the shift is back ahead of the restore (differ
+// 2); naming base in the asm keeps base out of the stack (differ 54). Five
+// permuter minutes found nothing below 6 from the pinned form.
 #include "types.h"
 
 void UiText_LoadRemappedGlyph(u8 *base, u32 value, s32 slot_a, s32 slot_b);

@@ -1,19 +1,18 @@
-// First draft of Func_081091cc: draws the shop item's name and price, or its
-// cannot-buy or not-broken note; the twin of ☀️'s Shop_DrawItemPrice
-// (games/tbs/src/shop/shop.c), in the twin's goto layout, with a fourth kind:
-// kind 3 draws message 0x1249 + price instead. The messages take the twin's
-// names; MsgPriceKind3 is a placeholder. Differ 0 of 65: matches with the
-// switch on the kind as the twin has it (if-gotos give 46).
 #include "types.h"
 
+// MsgItemCondition starts a list: "----------", "Processed", "Rusted".
 extern u8 MsgCannotBuyThat[], MsgNotBroken[], MsgPrice[], MsgItemName[],
-    MsgPriceKind3[];
-
+    MsgItemCondition[];
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 
+// Draws the shop item's name and price, or its cannot-buy or not-broken note;
+// the twin of ☀️'s Shop_DrawItemPrice (games/tbs/src/shop/shop.c), in the
+// twin's goto layout, with a fourth kind: kind 3 draws the item condition
+// message numbered by the price instead. It matches with the switch on the
+// kind as the twin has it (if-gotos give differ 46).
 void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind) {
   s32 labelMessage;
 
@@ -45,7 +44,7 @@ draw:
     }
   }
   if (priceKind == 3)
-    UiText_DrawCharacterAtOffsetFar(price + (s32)MsgPriceKind3, window, 8, 8);
+    UiText_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8, 8);
   else
     goto show_price;
 }

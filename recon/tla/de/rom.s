@@ -2872,8 +2872,6 @@ Func_08108948:
 	.incbin "baserom.gba", 0x00110948, 0x0000009c
 	.section .rom.00110b70, "ax"
 	.incbin "baserom.gba", 0x00110b70, 0x00000618
-	.section .rom.001111cc, "ax"
-	.incbin "baserom.gba", 0x001111cc, 0x000000a4
 	.section .rom.0011128c, "ax"
 	.incbin "baserom.gba", 0x0011128c, 0x00000398
 	.section .rom.001116f8, "ax"

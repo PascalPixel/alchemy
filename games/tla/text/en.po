@@ -2483,7 +2483,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "A glowing, red ball of volcanic rock "
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 
@@ -18968,7 +18968,7 @@ msgctxt "MsgYourCoins"
 msgid "04663"
 msgstr "Your Coins:"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "04664"
 msgstr "Price"
 
@@ -18996,11 +18996,11 @@ msgctxt "MsgNoItems"
 msgid "04670"
 msgstr "No items"
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "04671"
 msgstr "We can't buy that."
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "04672"
 msgstr "It's not broken."
 
@@ -19036,7 +19036,7 @@ msgctxt "message"
 msgid "04680"
 msgstr "LUCK"
 
-msgctxt "message"
+msgctxt "MsgItemCondition"
 msgid "04681"
 msgstr "----------"
 

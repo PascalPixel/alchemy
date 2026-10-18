@@ -128,7 +128,8 @@ void BattleFx_RunOrbitingSkulls(void) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   draw[0] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   // Put the canvas on the targets' side of the screen.
   if (work->effect->side == 0)
     xOffset = 0;

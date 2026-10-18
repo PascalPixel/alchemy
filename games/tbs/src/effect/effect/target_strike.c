@@ -252,7 +252,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // Strike halfway between the target's middle and its feet.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPosition);
@@ -298,7 +299,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
             BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
           } else {
             AudioCommand_PlayFar(SE_133);
-            BattleEventRuntime_BeginPhaseFar(133);
+            BattleEventRuntime_BeginPhaseFar(SE_133);
           }
           // A heavy hit lights every spark at once; otherwise the hit
           // lights the next 32. Each hit also starts the next 8 smoke
@@ -374,7 +375,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 4;
         if (frame > (STRIKE_VALUE(mode, STRIKE_HITS) * 4 - 4) *
                         STRIKE_VALUE(mode, STRIKE_IMAGE_FRAMES))
-          BattleEventRuntime_BeginPhaseFar(133);
+          BattleEventRuntime_BeginPhaseFar(SE_133);
         else
           AudioCommand_PlayFar(SE_133);
         for (i = 0; i != 64; i++) {

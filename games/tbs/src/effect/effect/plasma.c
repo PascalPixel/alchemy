@@ -67,7 +67,8 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   sparks = gMapCellBuffer;
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   count = gPlasma_Counts[work->effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -326,7 +327,8 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
        frame !=
@@ -350,7 +352,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     if (kind == 1 || kind == 2) {
       if (frame == 2)
-        BattleEventRuntime_BeginPhaseFar(145);
+        BattleEventRuntime_BeginPhaseFar(SE_145);
     } else {
       if (frame == 2)
         AudioCommand_PlayFar(SE_145);

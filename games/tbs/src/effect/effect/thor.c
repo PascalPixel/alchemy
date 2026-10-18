@@ -131,8 +131,10 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   work->scrollStepX = 1;
   work->scrollStepY = 0;
   view->busy = 1;
-  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval,
+                                EFFECT_CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY;
   BattleFx_WipeCanvas(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
@@ -403,7 +405,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 140) {
-        BattleEventRuntime_BeginPhaseFar(134);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       }
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown

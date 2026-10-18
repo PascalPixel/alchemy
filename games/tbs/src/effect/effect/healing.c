@@ -243,7 +243,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas to 3/4, for trails
   work->transferValue = 75; // percent
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;

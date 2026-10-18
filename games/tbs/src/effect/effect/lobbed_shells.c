@@ -156,7 +156,8 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   if (LOBBED_SHELLS_SHATTER(mode) == 0)
     total = work->effect->count * 8 + 72;
   else
@@ -178,7 +179,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
           if (frame == k * 8 + 17) {
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
-            BattleEventRuntime_BeginPhaseFar(133);
+            BattleEventRuntime_BeginPhaseFar(SE_133);
           }
           /* FAKEMATCH: restores the CSE block boundary after
            * the hit block (k << 3 is recomputed). Without the block: differ

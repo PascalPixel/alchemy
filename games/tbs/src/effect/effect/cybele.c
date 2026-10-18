@@ -513,7 +513,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  BattleEventRuntime_BeginPhaseFar(134);
+  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
   BattleFx_RunImpactBurst(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

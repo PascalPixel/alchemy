@@ -165,10 +165,12 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   else
     total = work->effect->count * 8 + 32;
   if (TARGET_MOTES_RIPPLE(mode))
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+                                  EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != total; frame++) {
@@ -186,7 +188,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
     }
     // Ripple the canvas sideways, line by line.
     row = work->bg2X;
@@ -372,7 +374,8 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
     REG_BG2X = -0x7000;                       // over the party's side
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_142);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
@@ -467,7 +470,8 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
   draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   // Each flame starts at a random point of its animation.
   EFFECT_FOR_EACH_TARGET(i, work->effect) {
     work->particles[i].variant = Random16() & 63;

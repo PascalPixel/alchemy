@@ -158,7 +158,7 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect,
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
     }
     // The ring: six pictures, 2 frames each, from frame 8, at the target's x

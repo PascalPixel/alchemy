@@ -54,7 +54,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   BattleFx_WipeCanvas(1, 0);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 379, 2);
@@ -277,7 +278,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  BattleEventRuntime_BeginPhaseFar(134);
+  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
   BattleFx_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

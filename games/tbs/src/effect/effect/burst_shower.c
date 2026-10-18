@@ -208,7 +208,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // Where the bursts start: the user, moved for some modes.
   for (i = 0; i != 64; i++) {
@@ -254,11 +255,11 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {
-        BattleEventRuntime_BeginPhaseFar(134);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       }
     } else {
       if (frame == 60) {
-        BattleEventRuntime_BeginPhaseFar(134);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       }
     }
 

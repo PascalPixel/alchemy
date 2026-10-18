@@ -77,13 +77,14 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_136);
   frame = 0;
   do {
     // Frame 24 lets the battle show the damage.
     if (frame == 24) {
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
     }
 
     // Each flame shows six pictures, 4 frames each, and goes out.

@@ -77,7 +77,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleFx_WipeCanvas(1, 0);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
@@ -132,7 +133,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
           inset[line] = Random16() & 63;
         }
         *edge = 0;
-        Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
+        Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable,
+                                      EFFECT_CALLBACK_ORDER);
       }
       *edge += edgeSpeed;
       edgeSpeed += 3;
@@ -381,7 +383,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 146; frame++) {
     count = 0;
     if (frame == 96) {
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     }
     if (frame == 16) {
       work->shakeFrames = 32;

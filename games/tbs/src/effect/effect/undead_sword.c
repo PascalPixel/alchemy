@@ -40,7 +40,8 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   work->transferMode = CANVAS_COPY_AND_FADE; // 3/4 afterimage
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // Shift so that canvas x = 64 lines up with the target.
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
@@ -62,7 +63,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 54; frame++) {
     if (frame == 10) {
       work->shakeFrames = 8;
-      BattleEventRuntime_BeginPhaseFar(212);
+      BattleEventRuntime_BeginPhaseFar(SE_212);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);

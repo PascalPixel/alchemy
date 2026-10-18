@@ -378,7 +378,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   /* FAKEMATCH: retain each output pointer while preparing its
    * call 2026-10-11: the pointers set in statements before the calls differ 38,
    * after the calls 142. */
@@ -627,7 +628,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   if ((kindFromTwo >= 0 && kindFromTwo <= 1) ||
       kind == CASTING_IMPACT_BAD_OMEN || kind == CASTING_IMPACT_HEAT_MIRAGE ||
       kind == CASTING_IMPACT_MURK || kind == CASTING_IMPACT_BLINDING_SMOG) {
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+                                  EFFECT_CALLBACK_ORDER);
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by kind.

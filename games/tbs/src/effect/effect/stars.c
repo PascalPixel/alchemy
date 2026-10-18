@@ -51,7 +51,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -219,7 +220,8 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;

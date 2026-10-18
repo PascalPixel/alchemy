@@ -122,7 +122,8 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
 
   draw[0](canvas, work, 0, 0, 128, 128);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+                                EFFECT_CALLBACK_ORDER);
 
   // Fade the radial picture in, ripple each scanline, then fade it out.
   for (frame = 0; frame != TORCH_FRAMES; frame++) {

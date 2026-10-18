@@ -307,7 +307,7 @@
 // Returns nonzero when the walk ended exactly at gBattleFx_MoteCellOffsets,
 // the expected end of the template.
 s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                      u32 mode) {
+                          u32 mode) {
   const u32 *templateWords;
   u32 *codeWords;
   u32 *emptyRowsBranch;

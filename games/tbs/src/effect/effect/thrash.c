@@ -75,7 +75,8 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = CANVAS_COPY_AND_CLEAR; // Clear to 0 each frame.
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // Move the acting unit toward the target over 16 frames.
   if (mode == 1)
@@ -107,7 +108,7 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
       Iwram_FillWords(canvas, 0x4000,
                       0x3f3f3f3f); // Fill the entire canvas with color 0x3f.
     if (frame == 18)
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     if (frame == 20) {
       work->shakeFrames = 8;
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);

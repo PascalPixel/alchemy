@@ -128,7 +128,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                     128);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // Mode 1 mirrors everything when the user is on the right (side 1).
   if (mode == 0)
@@ -187,7 +188,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 178)
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
 
     // From frame 128 the trails keep only half; over frames 160 to 175 the
     // canvas is filled each frame and the palette brightens; from 176 the

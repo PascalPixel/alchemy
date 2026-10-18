@@ -139,7 +139,7 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
     if (frame == 60) {
       AudioCommand_PlayFar(SE_145);
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     }
 
     // From frame 56: a ring of 16 flashes around the target.

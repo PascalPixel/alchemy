@@ -79,10 +79,12 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
+                                EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_146);
 
   for (frame = 0; frame != gMemberBurst_Counts[mode][GATHERING_LIGHTS_FRAMES] +
@@ -94,7 +96,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
       if (mode == 0)
         BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       else
-        BattleEventRuntime_BeginPhaseFar(133);
+        BattleEventRuntime_BeginPhaseFar(SE_133);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 

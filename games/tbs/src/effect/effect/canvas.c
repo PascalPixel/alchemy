@@ -282,7 +282,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, EFFECT_FADE_ORDER);
 
   // Change BG2's settings while it is hidden.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -291,7 +291,8 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
                           DISPCNT_WIN1_ON,
                       0x20000);
   WaitFrames(1);
-  REG_BG2CNT = bgControl | 0x784;
+  REG_BG2CNT =
+      bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -353,13 +354,14 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, EFFECT_FADE_ORDER);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       0x20000);
   WaitFrames(1);
-  REG_BG2CNT = bgControl | 0x784;
+  REG_BG2CNT =
+      bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
@@ -398,7 +400,8 @@ void BattleFx_BeginTiledCanvas(s32 bgControl) {
   s32 offset;
 
   BattleFx_BeginCanvasLayer(bgControl);
-  REG_BG2CNT = bgControl | 0x6784;
+  REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
   offset = 0;
   for (row = 0; row != 16; row++) {
     EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
@@ -460,7 +463,9 @@ void BattleFx_HideBg1AndRestoreBackdrop(void) {
               ->secondMode;
   battle = Ram_WorkSlot[HEAP_SLOT_BATTLE];
   *flag = 1;
-  QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
+  QueueIoWriteDelay2((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                                            DISPCNT_BG0_ON | DISPCNT_BG2_ON |
+                                            DISPCNT_OBJ_ON);
   WaitFrames(1);
   BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
   WaitFrames(1);
@@ -493,15 +498,17 @@ void BattleFx_SetupCanvasTileMap(void) {
   BattlePresentation_ConfigurePaletteFadeFar(2, screen->background, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;
-  Iwram_ClearWords((void *)0x06003fc0, 64);
-  Iwram_FillWords((void *)0x0600f900, 0x200, -1);
+  Iwram_ClearWords(BG_CHAR_BLOCK(0) + 0xff * 64, 64); // blank tile 0xff
+  Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 0x200,
+                  -1); // map rows 4 onwards
   byteOffset = 0;
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 32; column++, byteOffset += 2) {
       if (column > 15)
-        *(volatile u16 *)(0x0600fb00 + byteOffset) = 0xff;
+        *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) = 0xff;
       else
-        *(volatile u16 *)(0x0600fb00 + byteOffset) = row * 16 + 0x100 + column;
+        *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) =
+            row * 16 + 0x100 + column;
     }
   }
   REG_DISPCNT = EFFECT_DISPCNT;

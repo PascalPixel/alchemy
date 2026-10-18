@@ -135,20 +135,22 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
                                 WINDOW_SPAN(120, 248));
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
+                                EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == 1)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   for (frame = 0; frame != gIce_Counts[work->effect->variant][ICE_FRAMES];
        frame++) {
     // 16 frames before the end, the battle shows the damage, with sound
     // 132 as each target is hit.
     if (frame == gIce_Counts[work->effect->variant][ICE_FRAMES] - 16)
-      BattleEventRuntime_BeginPhaseFar(132);
+      BattleEventRuntime_BeginPhaseFar(SE_132);
 
     // Shards: fall 8 pixels a frame down the slant; on landing, shatter
     // through five images, kicking up puffs in the middle of it.
@@ -335,7 +337,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
                                 WINDOW_SPAN(112, 240));
   }
 
-  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
+                                EFFECT_CALLBACK_ORDER);
   // Variant 0 clears the canvas every frame; the others leave trails.
   if (work->effect->variant == 0) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -344,7 +347,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
        frame !=
@@ -354,7 +358,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     // 132 as each target is hit.
     if (frame ==
         gFallingBolts_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
-      BattleEventRuntime_BeginPhaseFar(132);
+      BattleEventRuntime_BeginPhaseFar(SE_132);
 
     // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
     // burst and play a two-image flash.

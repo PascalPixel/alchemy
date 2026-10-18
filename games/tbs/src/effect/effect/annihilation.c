@@ -69,7 +69,8 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   } while (i != 64);
 
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {

@@ -17,6 +17,9 @@
 #define BGCNT_SCREEN_BASE(block) ((block) << 8)
 // Affine backgrounds only: wrap around instead of showing the backdrop.
 #define BGCNT_WRAP 0x2000
+// The background's size: for an affine one, 0 to 3 are 128, 256, 512 and 1024
+// pixels square.
+#define BGCNT_SIZE(n) ((n) << 14)
 
 enum DisplayControl {
   DISPCNT_MODE_0 = 0x0000, // four text backgrounds

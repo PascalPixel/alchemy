@@ -70,10 +70,11 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   BattleFx_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
-  Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0x480);
+  Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, EFFECT_CALLBACK_ORDER);
   Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleFx_WipeCanvas(1, 0);
   REG_WIN0H = WIN_RANGE(240, 240);
@@ -160,7 +161,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           noise[k] = Random16() & 63;
         }
         *phase = 0;
-        Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
+        Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable,
+                                      EFFECT_CALLBACK_ORDER);
       }
       *phase += windowEdgeStep;
       windowEdgeStep += 3;
@@ -454,7 +456,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   do {
     // A column drops every 16 frames; the battle shows the damage on frame 96.
     if (frame == 96) {
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     }
     for (i = 0; i != 5; i++) {
       flameColumn = &work->particles[i];

@@ -68,10 +68,11 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
+  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   for (frame = 0; frame != (gFire_Counts[work->effect->variant] >> 1) + 132;
        frame++) {
@@ -80,7 +81,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
     EFFECT_VIEW_FROM_CAMERA(camera);
 

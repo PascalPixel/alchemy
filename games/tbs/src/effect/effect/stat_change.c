@@ -178,7 +178,8 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer halves the canvas, for trails
   work->transferValue = 50; // percent
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   if (work->effect->side == 1)
     drawFlags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else

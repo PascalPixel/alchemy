@@ -49,7 +49,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   {
     struct Point2D focus;
     struct Point2D velocity;

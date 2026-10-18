@@ -67,7 +67,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   BattleFx_WipeCanvas(0, 0);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 370, 1);
@@ -95,7 +96,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval,
+                                EFFECT_CALLBACK_ORDER);
   view->busy = 1;
   BattleFx_WipeCanvas(0, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);

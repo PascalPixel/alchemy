@@ -503,7 +503,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                work->sheet + VOLLEY_DJINNI_CELLS, 1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   }
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -594,13 +595,13 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame == 4)
           AudioCommand_PlayFar(SE_136);
         if (frame == 32)
-          BattleEventRuntime_BeginPhaseFar(134);
+          BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       } else if (mode == 7) {
         if (frame == 48)
-          BattleEventRuntime_BeginPhaseFar(133);
+          BattleEventRuntime_BeginPhaseFar(SE_133);
       } else if (mode != 5) {
         if (frame == 16)
-          BattleEventRuntime_BeginPhaseFar(133);
+          BattleEventRuntime_BeginPhaseFar(SE_133);
       }
 
       // Prelude: the small djinni circles, and from frame 70 rises away; it
@@ -698,7 +699,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
                 shot->variant = 1;
                 if (mode == 5) {
-                  BattleEventRuntime_BeginPhaseFar(134);
+                  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
                 } else if (mode != 6 && soundCooldown == 0) {
                   soundCooldown = 8;
                   AudioCommand_PlayFar(SE_132);

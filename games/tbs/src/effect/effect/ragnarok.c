@@ -118,7 +118,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // Reduce to 3/4 on each transfer for an afterimage.
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   frame = 0;
   do {
@@ -133,7 +134,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_145);
     }
     if (frame == 40) {
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     }
 
     //------------------------------------------------------------------

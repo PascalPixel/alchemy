@@ -112,7 +112,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       AudioCommand_PlayFar(SE_144);
     if (frame == gEruptionEffect_Counts[variant][FIELD_FRAMES] - 48)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
 
     // The motes still above the ground, sized 9 down to 1 over depths 160
     // to 799, alternating the two mote sets.

@@ -275,6 +275,12 @@ enum CanvasTransferMode {
 #define WINDOW_SPAN_EMPTY WINDOW_SPAN(1, 0)
 
 // Used for clipping canvas lines and comparing projectile travel distances.
+// Scheduler orders (Scheduler_AddOrUpdateCallback sorts the frame's callbacks
+// by them): every per-frame effect callback takes EFFECT_CALLBACK_ORDER, and
+// the palette fade EFFECT_FADE_ORDER, where the battle's own playback runs.
+#define EFFECT_CALLBACK_ORDER 0x480
+#define EFFECT_FADE_ORDER 0xc80
+
 // The full-screen picture Graphics_ConvertBackgroundToBlueRamp (bind.c)
 // works on, which Condemn draws too.
 #define BLUE_RAMP_PIXELS Ram_MapCellBuffer

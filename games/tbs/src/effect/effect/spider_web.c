@@ -55,7 +55,8 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
   // Line the canvas up so the swipe crosses the target.
@@ -82,7 +83,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (frame == 8) {
       if (mode == 0) {
-        BattleEventRuntime_BeginPhaseFar(133);
+        BattleEventRuntime_BeginPhaseFar(SE_133);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
       } else {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
@@ -154,7 +155,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
                              1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_143);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
@@ -186,7 +188,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(143);
+      BattleEventRuntime_BeginPhaseFar(SE_143);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == 10)
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,

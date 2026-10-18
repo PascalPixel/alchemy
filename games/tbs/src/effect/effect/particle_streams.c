@@ -174,7 +174,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   BattleFx_WipeCanvas(0, 0);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   // The rising formation: two animated objects in mode 1, otherwise one
@@ -241,7 +242,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
   Scheduler_AddOrUpdateCallback(Camera_AdvanceBg2Reference, 0x4ff);
-  Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   for (i = 0; i != 128; i++)
     offsets[i] = Random16() & 63;
   {
@@ -284,7 +286,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     BattleFx_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
                         (s32)(Ram_MapBlocks + 0x202));
@@ -553,7 +555,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         ResourceObject_ReleaseFar(work->objects[1]);
         BattleActor_CommitPlacementFar();
       }
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != 64; i++) {

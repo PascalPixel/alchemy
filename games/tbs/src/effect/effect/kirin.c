@@ -70,7 +70,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   BattleFx_WipeCanvas(1, 0);
   BattleFx_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
   gProjection.centerY = 240;
@@ -449,7 +450,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     } while (frame != 96);
   }
 
-  BattleEventRuntime_BeginPhaseFar(134);
+  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
   i = 0;
   do {
     ResourceObject_ReleaseFar(work->objects[i]);

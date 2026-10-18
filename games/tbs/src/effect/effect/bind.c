@@ -149,7 +149,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x2000);
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
@@ -302,7 +303,8 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x1000);
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = 0x04040404; // 4 off every pixel each frame
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;

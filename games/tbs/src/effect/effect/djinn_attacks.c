@@ -110,14 +110,15 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_MOTE_SLOTS);
   AudioCommand_PlayFar(SE_162);
   frame = 0;
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
 
     // Flames move 12 pixels left a frame and shatter on their 5th frame.
     for (i = 0; i != MERCURY_FLAMES; i++) {
@@ -241,7 +242,8 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
                              work->sheet + 0x320, 1, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75; // each transfer fades the canvas to 3/4
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   // The flameballs start at x 64 to 127, y -80 to -17.
   for (i = 0; i != 32; i++) {
@@ -255,7 +257,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   angle = 0x8000; // 180 degrees
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
 
     // The djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
     // (half that across), reaches 0 at frame 32, passing through the
@@ -397,7 +399,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
     // Ten flame columns rise 12 pixels a frame, one every 4 frames from
     // frame 16; each throws 16 motes and hits every target as it appears.
     for (i = 0; i != VENUS_COLUMNS; i++) {
@@ -527,7 +529,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   diveY = -172;
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
     // A glowing orb flares, then the djinni dives down to the left.
     if (frame <= 23)
       blitters[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40,

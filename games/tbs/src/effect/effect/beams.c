@@ -159,9 +159,9 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     // summon table, 133 otherwise; on frame 4 the target plays motion 0.
     if (frame == 5) {
       if (Summon_IsEntrySecondaryFlaggedFar(unit->classId))
-        BattleEventRuntime_BeginPhaseFar(134);
+        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
       else
-        BattleEventRuntime_BeginPhaseFar(133);
+        BattleEventRuntime_BeginPhaseFar(SE_133);
     }
     if (frame == 4)
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
@@ -367,7 +367,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
+    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, EFFECT_FADE_ORDER);
     AudioCommand_PlayFar(SE_212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(
@@ -435,7 +435,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 5)
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
     if (frame == 4)
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, &screenPosition);

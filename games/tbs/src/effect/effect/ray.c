@@ -78,7 +78,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      BattleEventRuntime_BeginPhaseFar(133); // start playing the results
+      BattleEventRuntime_BeginPhaseFar(SE_133); // start playing the results
     if (frame < 16) {
       // Clear the canvas every 5 frames.
       if (frame % 5 == 2)

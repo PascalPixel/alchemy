@@ -63,10 +63,11 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   }
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
+  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   AudioCommand_PlayFar(SE_164);
 
   for (frame = 0; frame != gFroth_Counts[work->effect->variant][FROTH_FRAMES];
@@ -79,7 +80,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     // 16 frames before the end the battle shows the damage, with sound 132
     // on each hit.
     if (frame == gFroth_Counts[work->effect->variant][FROTH_FRAMES] - 16)
-      BattleEventRuntime_BeginPhaseFar(132);
+      BattleEventRuntime_BeginPhaseFar(SE_132);
     EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != gFroth_Counts[work->effect->variant][FROTH_MOTE_COUNT];
          i++) {
@@ -195,7 +196,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
   AudioCommand_PlayFar(SE_141);
@@ -203,7 +205,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 80; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(133);
+      BattleEventRuntime_BeginPhaseFar(SE_133);
     // Seven flashes of the canvas, 8 frames apart.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)

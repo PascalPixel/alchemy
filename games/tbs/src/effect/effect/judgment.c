@@ -115,7 +115,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   // Wipe the battle away, change the backdrop behind it, wipe back.
   BattleFx_WipeCanvas(0, 0);
   BattleFx_SelectLivingTargets(work->effect);
@@ -505,7 +506,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
-      BattleEventRuntime_BeginPhaseFar(145);
+      BattleEventRuntime_BeginPhaseFar(SE_145);
     }
 
     // A or B jumps to the next part: 150, 214 or 280. The jump to the beach

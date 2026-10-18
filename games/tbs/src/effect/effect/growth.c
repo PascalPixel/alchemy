@@ -150,7 +150,8 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
 
   frame = 0;
   if (duration != 0) {
@@ -159,7 +160,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
     fadeEnd = duration - 4;
     do {
       if (frame == cueFrame) {
-        BattleEventRuntime_BeginPhaseFar(132);
+        BattleEventRuntime_BeginPhaseFar(SE_132);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade out over the last 16 frames.
@@ -351,7 +352,8 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   } while (i != VINE_COLUMNS);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   frame = 0;
   do {
     if (frame == 32) {
@@ -441,7 +443,8 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   drawFlip = ((DrawRectangle *)
                   slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                EFFECT_CALLBACK_ORDER);
   frameCount = gThorn_Counts[work->effect->variant] * 8 + 56;
 
   for (i = 0; i != 1024; i++) {
@@ -450,7 +453,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != frameCount; frame++) {
     if (frame == frameCount - 64) {
-      BattleEventRuntime_BeginPhaseFar(132);
+      BattleEventRuntime_BeginPhaseFar(SE_132);
     }
     if (frame >= frameCount - 16) {
       // Fade out over the last 16 frames.

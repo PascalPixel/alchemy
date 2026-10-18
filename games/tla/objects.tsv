@@ -3269,20 +3269,16 @@ main	rom_main_05	recon/tla/it/rom	.rom.000d3a04	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d3b1c	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000d8934	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000d8a04	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000d8b1c	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000dc91c	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dc934	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dca04	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dcb1c	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e0940	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e0a10	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e0b28	de
 main	rom_main_05	recon/tla/raw/080d3940	.text	en
 main	rom_main_05	recon/tla/raw/080d3a10	.text	en
-main	rom_main_05	recon/tla/raw/080d3b28	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d3920	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d39f0	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d3b08	ja
 main	rom_main_05	games/tla/src/field/common/object/active	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d3c7c	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000d8c7c	fr

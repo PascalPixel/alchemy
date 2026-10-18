@@ -1,6 +1,11 @@
-// Near miss: alchemy diff 080d3940,080d3a10,080d3b28 differs by store and
-// constant scheduling around the position copy and the zero/0x400 register
-// choice in Func_080d3b28.
+// Near misses, one draft for the two listings (psynergy diff on a copy that
+// keeps one function). Func_080d3940, differ 6 of 99: the native loads
+// object->z (ldr r2, [r2, #16]) before lsls r3, r3, #8 and stores it before
+// the ands, and builds the flags' address (mov r1, r8) after the strb of the
+// zero; Func_080d3a10, differ 14 of 132: the same two kinds, the first
+// position store issued before lsls r3, r3, #6. Each is a load or store the
+// native issues a slot earlier than agscc's ARM9TDMI model. Func_080d3b28,
+// once a third function here, is adopted in field/common/object/active.c.
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
@@ -18,8 +23,13 @@ s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void ResourceMetadata_ClearRecordFar(void *record);
 
 struct ObjectSprite {
-  u8 unk00[5];
-  u8 attr0High;
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affineMode : 2;
+  u16 objectMode : 2;
+  u16 mosaic : 1;
+  u16 palette256 : 1;
+  u16 shape : 2;
   u8 unk06[2];
   u16 tile : 10;
   u16 priority : 2;
@@ -114,35 +124,5 @@ void Func_080d3a10(u32 id, u32 angle, s32 mode) {
     object->priorityFlags |= 2;
     sprite->nextFrame = 0;
     sprite->rotation = angle + 0x4000;
-  }
-}
-
-void Func_080d3b28(u32 id, s32 resource) {
-  struct ObjectRuntime *object = Object_GetById(id);
-  struct ObjectSprite *sprite;
-  u8 *buffer;
-  s32 tile;
-  u8 kind;
-
-  if (object != NULL) {
-    kind = object->animationKind;
-    if (kind == 1) {
-      sprite = object->animation;
-      if (resource & 0x8000)
-        resource = 0;
-      buffer = Runtime_AllocateHeapBlock(68, 0x608) + 0x400;
-      Dma_Fill32(0, buffer, 0x80);
-      Func_08038248(resource, buffer);
-      tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
-      Runtime_ReleaseHeapBlock(68);
-      object->unk5c[0] = kind;
-      ResourceMetadata_ClearRecordFar(sprite->record);
-      sprite->record = NULL;
-      sprite->unk1b = 0;
-      sprite->attr0High &= ~0x20;
-      sprite->tile = tile;
-      sprite->frameTimer = 0;
-      sprite->nextFrame = 0;
-    }
   }
 }

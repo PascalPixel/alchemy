@@ -190,8 +190,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] =
-      (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GROUND_DJINNI_CELLS, 1, 1);
@@ -231,8 +230,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
-        ((DrawRectangle)((union HeapState *)gWorkSlot)
-             ->slots[HEAP_SLOT_BLITTER_ALTERNATE])(
+        ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
             canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       draw[0](canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
@@ -280,8 +278,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
 
             EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, chip->velocityY,
                                 COMPOSITE_MAX);
-            draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
-                          ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             if (chip->velocityY & 4)
               chipX = x - gHail_ChipWidths[chip->velocityX] -
                       gHail_ChipX[chip->velocityX] + 24;

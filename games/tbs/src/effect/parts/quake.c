@@ -51,7 +51,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
+  camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width

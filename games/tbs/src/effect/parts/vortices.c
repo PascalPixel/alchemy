@@ -171,7 +171,7 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
 
-  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;

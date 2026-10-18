@@ -17,8 +17,10 @@
 // constants start with its name or one of its handlers', take what they read
 // as arguments, and are #undef'd at the end of the part; a macro two parts
 // use is defined in this file. A work slot is read as WORK_SLOT(n) or as
-// gWorkSlot[n], whichever the site matches with: in this GCC the two can
-// compile differently. The shared machinery:
+// gWorkSlot[n], whichever the site matches with (in this GCC the two can
+// compile differently), through a base pointer as EFFECT_SLOT or CANVAS_SLOT,
+// and as a blitter as EFFECT_BLITTERS[n]; any other spelling carries a
+// FAKEMATCH tag. The shared machinery:
 //
 //   Entry points    dispatch.c: BattleFx_RunTableEffect,
 //                   BattleFx_RunSceneEffect; positions.c:

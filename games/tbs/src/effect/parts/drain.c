@@ -147,7 +147,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
+  camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
   if (effect->variant == 0)
     alternate = 0;
   else

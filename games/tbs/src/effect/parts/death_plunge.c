@@ -919,8 +919,7 @@ void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
-  draw[0] =
-      (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   AudioCommand_PlayFar(SE_140);
 
   for (frame = 0; frame != 56; frame++) {

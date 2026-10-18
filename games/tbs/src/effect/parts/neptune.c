@@ -59,8 +59,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   struct SpriteScale scale;
   s32 ground = NEPTUNE_FLAME_GROUND;
 
-  cache =
-      (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+  cache = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)cache[0];
   work = (struct BattleEffectWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
   particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);

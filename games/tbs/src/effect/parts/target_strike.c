@@ -158,7 +158,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   s32 resource;
   s32 i;
   s32 wispSheet = TARGET_STRIKE_SMOKE_CELLS;
-  DrawRectangle *lower = &gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
+  DrawRectangle *lower = &EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -285,7 +285,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_MAX);
-          gBlitters[HEAP_SLOT_BLITTER](
+          EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTargetStrike_Offsets[picture],
               targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
                   gTargetStrike_Widths[picture] + 8,
@@ -294,7 +294,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         } else {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
-          gBlitters[HEAP_SLOT_BLITTER](
+          EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTargetStrike_Offsets[picture],
               targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
@@ -370,16 +370,16 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
-      gBlitters[HEAP_SLOT_BLITTER](canvas,
-                                   work->sheet + stage * (18 * 48) + 0xc80,
-                                   targetPosition.x / 2 - 18, 56, 18, 48);
+      EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
+          canvas, work->sheet + stage * (18 * 48) + 0xc80,
+          targetPosition.x / 2 - 18, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
-      gBlitters[HEAP_SLOT_BLITTER](canvas,
-                                   work->sheet + stage * (18 * 48) + 0xc80,
-                                   targetPosition.x / 2, 56, 18, 48);
+      EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
+          canvas, work->sheet + stage * (18 * 48) + 0xc80, targetPosition.x / 2,
+          56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
       if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==
           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 3) {
@@ -457,7 +457,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = gBlitters[HEAP_SLOT_BLITTER];
+    draw[0] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;

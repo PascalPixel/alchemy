@@ -28,10 +28,10 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   struct MotionObject *user;
   s32 i;
 
-  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
+  camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (effect->side == 1)
@@ -43,12 +43,10 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] =
-      (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
-                ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the top of the user's body in a random direction and

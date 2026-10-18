@@ -235,7 +235,9 @@ struct Point2D {
 // Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
-#define gBlitters ((DrawRectangle *)gWorkSlot)
+// The work slots read as blitters: EFFECT_BLITTERS[HEAP_SLOT_BLITTER] and
+// EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE].
+#define EFFECT_BLITTERS ((DrawRectangle *)gWorkSlot)
 
 // The functions the parts of effect.c define, part by part in include order.
 

@@ -129,7 +129,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -186,8 +186,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
     // faster every 16 frames, spin the triangle onto the first target and
     // stand the rune there, then present the frame.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] =
-        (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -289,7 +288,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -324,8 +323,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
     // faster every 16 frames, spin the triangle onto the first target and
     // stand the rune there, then present the frame.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] =
-        (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER_ALTERNATE);

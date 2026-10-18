@@ -272,11 +272,11 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       if (frame <= 139) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
-        drawAlt = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
+        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
       } else {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
-        drawAlt = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
+        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
       }
       dotCount = count;
       if (dotCount > 128) {
@@ -337,13 +337,13 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
-      gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas, work->sheet, 32,
-                                             (frame - 151) * 20 - 12, 32, 96);
+      EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+          canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32, 96);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas, work->sheet, 64,
-                                             (frame - 151) * 20 - 12, 32, 96);
+      EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+          canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32, 96);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     }
     EFFECT_PRESENT_FRAME(work);
@@ -453,7 +453,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
               s32 boltY = (Random16() & 3) + 32;
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-              gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+              EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
                   canvas, work->sheet + i % 3 * 0x1440, boltX, boltY, 72, 72);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
@@ -482,27 +482,27 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
-                                               work->sheet + THOR_MOTE_CELLS,
-                                               moteX + 60, moteY - 24, 12, 24);
+        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+            canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY - 24, 12,
+            24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                             COMPOSITE_MAX);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
             canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                                 COMPOSITE_FLIP_Y,
                             COMPOSITE_MAX);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         j = 0;
@@ -534,7 +534,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         // Live sparks fall under gravity and bounce at half speed off the
         // ground (y 120); those on the canvas shrink as their life runs
         // out.
-        DrawRectangle draw = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
+        DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
         struct EffectStep *spark;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
              i++, spark++) {
@@ -583,7 +583,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
                   (gBattleFx_GlintCellHeights[glint] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               3 | gThor_SmokeFlips[Random16() & 3], 2);
-          gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+          EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
               canvas, Ram_MapCellBuffer + gBattleFx_GlintCells[glint], x,
               y + 56, gBattleFx_GlintCellWidths[glint],
               gBattleFx_GlintCellHeights[glint]);

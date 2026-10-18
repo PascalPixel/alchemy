@@ -309,12 +309,10 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   else
     BattleFx_BeginCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] =
-      (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
-                ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     resource = (s32)&ResourceId_OrangePaletteA;

@@ -96,8 +96,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blit =
-      (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+  blit = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 

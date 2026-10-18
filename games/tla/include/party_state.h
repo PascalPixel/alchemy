@@ -40,7 +40,9 @@ struct PartyState {
   u16 unk232;
   u16 keys234;
   u16 keys236;
-  u8 unk238[8];
+  u16 keys238;
+  u16 keys23a;
+  u8 unk23c[4];
   u16 packedEvents[2];
   u8 unk244[7];
   u8 battleRule24b;

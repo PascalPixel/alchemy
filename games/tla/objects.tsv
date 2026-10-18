@@ -610,12 +610,6 @@ main	rom_main_01	recon/tla/raw/0802632c	.text	en
 main	rom_main_01	recon/tla/raw/080267bc	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002632c	ja
 main	rom_main_01	games/tla/src/field/common/script/prompt_choice	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00026e60	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00026e60	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00026e60	es
-main	rom_main_01	recon/tla/de/rom	.rom.00026e60	de
-main	rom_main_01	recon/tla/raw/08026e60	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00026e60	ja
 main	rom_main_01	games/tla/src/field/common/script/radius_overlap	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00026fc8	it
 main	rom_main_01	recon/tla/fr/rom	.rom.00026fc8	fr

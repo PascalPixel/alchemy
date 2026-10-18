@@ -1,3 +1,10 @@
+// Near miss, differ 6 of 43: the progress bar's serial callback, drawing row
+// min(progress, 6) of gUi_ProgressBarRows. Left, instruction order only: the
+// native loads the rows' address between the two halves of row * 3 and loads
+// the destination and 0xf080 before the last shift (lsls; ldr; adds; ldr;
+// ldr; lsls). 2026-10-18: the rows' address held by an empty asm that also
+// reads row << 1 orders the first load but swaps the final sum's operands
+// and builds the shift before the other two loads (differ 6 to 10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "mem.h"
@@ -14,7 +21,8 @@ void Func_08042dc4(s32 step) {
   u16 *dst;
   s32 i;
 
-  /* FAKEMATCH: the native issues the workspace load first. */
+  /* FAKEMATCH: the native issues the workspace load first (differ 8
+   * without the barrier). */
   __asm__("");
   if (*(s16 *)(save + 0x3142) <= 3)
     step <<= 1;

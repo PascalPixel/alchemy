@@ -3,6 +3,12 @@
 // the draft finishes the multiply first. Tried: every operand order of the
 // address sum, the address as a local or in place, array indexing (all differ
 // 2); a one-pass block in the loop stops the strength reduction (differ 55).
+// 2026-10-18: the tile address held by an empty asm that also reads set << 1
+// at the top of the set loop orders that row as the native does, but reload
+// then takes r3 for both hoisted loads in the entry block (ldr; mov r8; ldr;
+// mov sl where the native loads r2 and r3 first, differ 6); pinning the
+// address to r2 differs 70; an asm on set << 1 with the address as input
+// differs 63. Five permuter minutes on the asm form found nothing below 2.
 #include "types.h"
 #include "iwram_call.h"
 

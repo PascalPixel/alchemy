@@ -4,7 +4,13 @@
 // movs. Without the barrier the whole offset is built before the load (differ
 // 6). Measured: the offset half-built behind an in-out barrier changes the
 // register allocation (differ 22); a constant 192 named in the barrier is
-// folded back (differ 28).
+// folded back (differ 28). 2026-10-18: the level read as a byte index of the
+// workspace rather than work->summary[slot].level changes the first block's
+// registers by itself (the ldrsh index and the -1 take r2 and r3, differ 29 to
+// 33 with the constant whole); with that index, 192 pinned to r1 behind a
+// barrier on the heap slot's address and a second on the loaded workspace,
+// and slot << 6 taken first, the level block matches and only those first
+// block registers differ (differ 10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"

@@ -5,6 +5,9 @@
 // draft, an explicit cursor and an explicit per-pass offset all reduce the
 // level read to a second cursor and so keep the result out of r8 and the third
 // flag address out of sl. The Broken Seal twin has no level test.
+// 2026-10-18: written as a goto loop with an explicit cursor, the level read
+// takes the native's form (i << 6 and 0x3058 each pass) but nothing is
+// hoisted: the flag addresses and the 1 are loaded in the loop (differ 115).
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"

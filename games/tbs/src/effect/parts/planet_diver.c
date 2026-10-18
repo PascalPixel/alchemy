@@ -170,7 +170,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
           chip->life = (Random16() & 7) + 32;
         }
         work->shakeFrames = 8;
-        BattleEventRuntime_BeginPhaseFar(SE_145);
+        EFFECT_SHOW_DAMAGE(SE_145);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 8);
@@ -266,7 +266,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 
     camera = gCameraWork;
     if (frame == 96) // the battle shows the damage
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // Ripple the canvas sideways, line by line.
     row = work->bg2xLines;
@@ -307,8 +307,8 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
             if (dist != 0) {
               EffectPosition_ProjectPoint(skull, &screenPosition);
               screenPosition.x >>= 1;
-              draw[0](canvas, work->sheet + i % 3 * 576, screenPosition.x - 12,
-                      screenPosition.y - 12, 24, 24);
+              draw[0](canvas, work->sheet + i % 3 * (24 * 24),
+                      screenPosition.x - 12, screenPosition.y - 12, 24, 24);
               skull->x -= skull->x / dist;
               skull->y -= skull->y / dist;
               skull->z -= skull->z / dist;

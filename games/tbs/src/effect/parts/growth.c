@@ -148,7 +148,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
     fadeEnd = duration - 4;
     do {
       if (frame == cueFrame) {
-        BattleEventRuntime_BeginPhaseFar(SE_132);
+        EFFECT_SHOW_DAMAGE(SE_132);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade out over the last 16 frames.
@@ -439,7 +439,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != frameCount; frame++) {
     if (frame == frameCount - 64) {
-      BattleEventRuntime_BeginPhaseFar(SE_132);
+      EFFECT_SHOW_DAMAGE(SE_132);
     }
     if (frame >= frameCount - 16) {
       // Fade out over the last 16 frames.

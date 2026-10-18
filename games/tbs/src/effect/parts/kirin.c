@@ -437,7 +437,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     } while (frame != 96);
   }
 
-  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
     ResourceObject_ReleaseFar(work->objects[i]);

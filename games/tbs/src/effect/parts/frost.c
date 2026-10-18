@@ -66,7 +66,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     lowest = 120 << 16;
     highest = 0;
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME] + 11)
-      BattleEventRuntime_BeginPhaseFar(SE_132);
+      EFFECT_SHOW_DAMAGE(SE_132);
     SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);

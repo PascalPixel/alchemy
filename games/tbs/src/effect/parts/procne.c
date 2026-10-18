@@ -1,6 +1,11 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // The Procne summon.
 
+// The whirlwind sheet holds three 48x64 frames, then the dust; the violet
+// comets are decoded further on.
+#define PROCNE_DUST_CELLS (3 * (48 * 64))
+#define PROCNE_COMET_CELLS 0x3600
+
 // Abilities: Procne (scene kind 8).
 //
 // 400 frames:
@@ -205,7 +210,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 160) <= 239) {
-      image = work->sheet + frame / 4 % 3 * 3072;
+      image = work->sheet + frame / 4 % 3 * (48 * 64);
       draw[0](canvas, image, 8, 0, width, 64);
       draw[0](canvas, image, 8, 64, width, 64);
     }
@@ -223,8 +228,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
           EffectPosition_ProjectPoint(&world.x, &screen);
           screen.x >>= 1;
           if (point[index].y <= 0x3fffff) {
-            draw[0](canvas, work->sheet + 0x2400, screen.x - 12, screen.y - 12,
-                    16, 16);
+            draw[0](canvas, work->sheet + PROCNE_DUST_CELLS, screen.x - 12,
+                    screen.y - 12, 16, 16);
           }
           if (point[index].z > 24)
             point[index].z -= 4;
@@ -266,7 +271,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
       resource += 0x80;
-      Resource_DecodeType01(resource, work->sheet + 0x3600);
+      Resource_DecodeType01(resource, work->sheet + PROCNE_COMET_CELLS);
 
       index = 0;
       do {
@@ -514,7 +519,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 400);
 
-  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
   // Put the targets back.
   EFFECT_FOR_EACH_TARGET(index, work->effect) {
@@ -539,3 +544,6 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef PROCNE_DUST_CELLS
+#undef PROCNE_COMET_CELLS

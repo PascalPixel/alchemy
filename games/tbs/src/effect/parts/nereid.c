@@ -93,7 +93,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       if (frame <= 15)
         rise += 2;
 

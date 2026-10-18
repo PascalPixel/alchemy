@@ -179,7 +179,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
           if (frame == k * 8 + 17) {
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
-            BattleEventRuntime_BeginPhaseFar(SE_133);
+            EFFECT_SHOW_DAMAGE(SE_133);
           }
           /* FAKEMATCH: restores the CSE block boundary after
            * the hit block (k << 3 is recomputed). Without the block: differ
@@ -196,10 +196,10 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
             EffectPosition_ProjectPoint(shot, &position);
             position.x >>= 1;
             if (step > 4)
-              draw[0](canvas, work->sheet + step * 768, position.x - 16,
+              draw[0](canvas, work->sheet + step * (32 * 24), position.x - 16,
                       position.y - 12, 32, 24);
             else
-              draw[0](canvas, work->sheet + step * 768, position.x - 12,
+              draw[0](canvas, work->sheet + step * (24 * 32), position.x - 12,
                       position.y - 16, 24, 32);
             if (shot->variant == 0)
               EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
@@ -259,7 +259,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
         position.x >>= 1;
         if (LOBBED_SHELLS_SHATTER(mode) == 0) {
           draw[1](canvas,
-                  work->sheet + burst->variant / 8 * 1152 +
+                  work->sheet + burst->variant / 8 * (24 * 48) +
                       LOBBED_SHELLS_SMOKE_CELLS,
                   position.x - 12, position.y - 24, 24, 48);
         } else {

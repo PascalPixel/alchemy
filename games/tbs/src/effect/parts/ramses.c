@@ -277,7 +277,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleFx_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

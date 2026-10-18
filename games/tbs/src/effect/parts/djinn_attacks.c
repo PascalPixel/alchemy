@@ -61,7 +61,12 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // the images.
 
 #define MERCURY_FRAMES 96
-#define MERCURY_FLAMES 5 // flames thrown
+// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
+// turns both on their side after its djinni.
+#define DJINN_ATTACKS_FLAME2_CELLS (17 * 104)
+#define MERCURY_TALL_FLAME_CELLS 0x2a8 // 104x17, not drawn
+#define MERCURY_FLAME_CELLS 0x990      // 65x34
+#define MERCURY_FLAMES 5               // flames thrown
 // The Djinn attacks share these: each flame, ball or column that lands
 // throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
 // PARTICLES (Venus's columns fill 16 of them), and the motes move through all
@@ -104,8 +109,10 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-  Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
-  Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
+  Graphics_TransposeCopy(cells, work->sheet + MERCURY_TALL_FLAME_CELLS, 17,
+                         104);
+  Graphics_TransposeCopy(cells + DJINN_ATTACKS_FLAME2_CELLS,
+                         work->sheet + MERCURY_FLAME_CELLS, 34, 65);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                         75); // each transfer fades the canvas to 3/4
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
@@ -114,14 +121,14 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
 
     // Flames move 12 pixels left a frame and shatter on their 5th frame.
     for (i = 0; i != MERCURY_FLAMES; i++) {
       flame = &work->particles[i];
       if (flame->variant != -1) {
-        blit[0](canvas, work->sheet + 0x990, flame->x - 16, flame->y - 17, 65,
-                34);
+        blit[0](canvas, work->sheet + MERCURY_FLAME_CELLS, flame->x - 16,
+                flame->y - 17, 65, 34);
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
@@ -199,8 +206,9 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
 }
 
 #define JUPITER_FRAMES 96
-#define JUPITER_FLAMEBALLS 8 // flameballs that fall
-#define JUPITER_GROUND_Y 95  // where the flameballs land
+#define JUPITER_FLAMEBALLS 8          // flameballs that fall
+#define JUPITER_GROUND_Y 95           // where the flameballs land
+#define JUPITER_FLAMEBALL_CELLS 0x320 // after the djinni
 
 // Abilities: Jupiter (kind 253).
 //
@@ -235,7 +243,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
-                             work->sheet + 0x320, 1, 0);
+                             work->sheet + JUPITER_FLAMEBALL_CELLS, 1, 0);
   // Each transfer fades the canvas to 3/4.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -251,7 +259,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   angle = 0x8000; // 180 degrees
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
 
     // The djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
     // (half that across), reaches 0 at frame 32, passing through the
@@ -268,8 +276,8 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
       ball = &work->particles[i];
       if (frame >= i * 4 + 8 && ball->y <= JUPITER_GROUND_Y) {
-        blit[0](canvas, work->sheet + 0x320, ball->x - 20, ball->y - 32, 40,
-                64);
+        blit[0](canvas, work->sheet + JUPITER_FLAMEBALL_CELLS, ball->x - 20,
+                ball->y - 32, 40, 64);
         ball->x -= 6;
         ball->y += 12;
         if (ball->y > JUPITER_GROUND_Y) {
@@ -334,6 +342,9 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 
 #define VENUS_FRAMES 96
 #define VENUS_COLUMNS 10 // columns of flame that rise
+// The blue flame sheet, after the djinni, and its second flame.
+#define VENUS_FLAME_SHEET 0x2f8
+#define VENUS_COLUMN_CELLS (VENUS_FLAME_SHEET + DJINN_ATTACKS_FLAME2_CELLS)
 
 // Abilities: Venus (kind 250).
 //
@@ -371,7 +382,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
-                             work->sheet + 0x2f8, 1, 0);
+                             work->sheet + VENUS_FLAME_SHEET, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The flame columns start at the bottom, at random x.
   for (i = 0; i != 32; i++) {
@@ -392,14 +403,14 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     // Ten flame columns rise 12 pixels a frame, one every 4 frames from
     // frame 16; each throws 16 motes and hits every target as it appears.
     for (i = 0; i != VENUS_COLUMNS; i++) {
       column = &work->particles[i];
       if (frame >= i * 4 + 16) {
-        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32, 34,
-                65);
+        draw[0](canvas, work->sheet + VENUS_COLUMN_CELLS, column->x - 17,
+                column->y - 32, 34, 65);
         if (frame == i * 4 + 16) {
           for (j = 0; j != 16; j++) {
             s32 direction;
@@ -448,6 +459,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
 #define MARS_STRIKE_FRAME 32     // the Djinni strikes the ground
 #define MARS_FLAMES 9            // flames along the arc
 #define MARS_EMBERS_PER_FLAME 16 // embers in each flame
+#define MARS_ORB_CELLS 0x320     // six 40x40 orb pictures, after the djinni
 
 // Abilities: Mars (kind 252).
 //
@@ -486,8 +498,8 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+                             work->sheet + MARS_ORB_CELLS, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Nine flames along a flattened arc, 2 frames apart, each with 16
@@ -522,11 +534,12 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   diveY = -172;
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     // A glowing orb flares, then the djinni dives down to the left.
     if (frame <= 23)
-      blitters[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40,
-                  40);
+      blitters[0](canvas,
+                  work->sheet + MARS_ORB_CELLS + (frame / 4) * (40 * 40), 40,
+                  20, 40, 40);
     // On frame 20 the small Djinni's palette replaces the start of the
     // background palette.
     if (frame == 20)
@@ -627,3 +640,10 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
 #undef MARS_STRIKE_FRAME
 #undef MARS_FLAMES
 #undef MARS_EMBERS_PER_FLAME
+#undef DJINN_ATTACKS_FLAME2_CELLS
+#undef MERCURY_TALL_FLAME_CELLS
+#undef MERCURY_FLAME_CELLS
+#undef JUPITER_FLAMEBALL_CELLS
+#undef VENUS_FLAME_SHEET
+#undef VENUS_COLUMN_CELLS
+#undef MARS_ORB_CELLS

@@ -133,8 +133,8 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
 // the next effect takes over.
 static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
                                             void *canvas) {
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
   work->effect->prelude = 0;
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
@@ -520,8 +520,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     REG_BG2X = (64 - targetScreen->x) << 8;
     work->transferMode = CANVAS_COPY_AND_CLEAR; // Clear to 0 each frame.
     work->transferValue = 0;
-    Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-    Iwram_ClearWords(canvas, 0x4000);
+    Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_BYTES);
     REG_BLDCNT = 0;
   }
   if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
@@ -717,11 +717,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         mode != CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
       if (frame <= 11) {
         if (work->effect->side == 0) {
-          blitters[0](canvas, work->sheet + frame / 2 * 3456,
+          blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
                       casterScreen->x - 32, casterScreen->y - 40, 48, 72);
         } else {
-          blitters[0](canvas, work->sheet + frame / 2 * 3456, casterScreen->x,
-                      casterScreen->y - 40, 48, 72);
+          blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
+                      casterScreen->x, casterScreen->y - 40, 48, 72);
         }
       }
     }
@@ -781,7 +781,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         mode != CASTING_IMPACT_IMPACT_ASURA) {
       if (frame >= 4 && frame <= 15) {
         drawPair[1](canvas,
-                    work->sheet + (frame - 4) / 2 * 960 +
+                    work->sheet + (frame - 4) / 2 * (20 * 48) +
                         CASTING_IMPACT_ORB_CELLS,
                     targetScreen->x / 2 - 8, casterScreen->y - 24, 20, 48);
       }
@@ -1014,8 +1014,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         cellOffset = image * 2560;
         blitters[0](canvas, Ram_MapCellBuffer + 0xc56 + cellOffset, stripX, 16,
                     40, 32);
-        blitters[0](canvas, image * 1280 + (Ram_MapCellBuffer + 0x2a56), stripX,
-                    48, 40, 32);
+        blitters[0](canvas, image * (40 * 32) + (Ram_MapCellBuffer + 0x2a56),
+                    stripX, 48, 40, 32);
         blitters[0](canvas, cellOffset + (Ram_MapCellBuffer + 0x1156), stripX,
                     80, 40, 32);
       }
@@ -1062,14 +1062,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 0),
                       imageY + gCastingImpact_ImageY[0], 57, 98);
         }
-        blitters[0](canvas, work->sheet + 0x15d2,
+        blitters[0](canvas, work->sheet + (57 * 98),
                     CASTING_IMPACT_IMAGE_X(work->effect->side, 1),
                     imageY + gCastingImpact_ImageY[1], 99, 69);
         if (frame == 4 || frame == 5) {
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
         }
         if (frame == 6 || frame == 7) {
-          blitters[0](canvas, work->sheet + 0x3081,
+          blitters[0](canvas, work->sheet + (57 * 98 + 99 * 69),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 2),
                       imageY + gCastingImpact_ImageY[2], 128, 91);
         }
@@ -1080,17 +1080,18 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
               imageY + gCastingImpact_ImageY[3], 128, &blitters[0]);
         }
         if (frame == 10 || frame == 11) {
-          blitters[0](canvas, Ram_MapCellBuffer + 0x2d80,
+          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 4),
                       imageY + gCastingImpact_ImageY[4], 128, 59);
         }
         if (frame == 12 || frame == 13) {
-          blitters[0](canvas, Ram_MapCellBuffer + 0x4b00,
+          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91 + 128 * 59),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 5),
                       imageY + gCastingImpact_ImageY[5], 122, 29);
         }
         if (frame == 14 || frame == 15) {
-          blitters[0](canvas, Ram_MapCellBuffer + 0x58d2,
+          blitters[0](canvas,
+                      Ram_MapCellBuffer + (128 * 91 + 128 * 59 + 122 * 29),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 6),
                       imageY + gCastingImpact_ImageY[6], 76, 25);
         }
@@ -1114,7 +1115,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 4 || frame == 5) {
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
       }
       if (frame <= 3) {
         if (work->effect->side == 1) {
@@ -1143,13 +1144,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
                                          &blitters[0]);
         }
         if (frame == 10 || frame == 11) {
-          blitters[0](canvas, Ram_MapCellBuffer + 0x2d80, 0, 16, 128, 59);
+          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91), 0, 16, 128, 59);
         }
         if (frame == 12 || frame == 13) {
-          blitters[0](canvas, Ram_MapCellBuffer + 0x4b00, 0, 16, 128, 29);
+          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91 + 128 * 59), 0, 16,
+                      128, 29);
         }
         if (frame == 14 || frame == 15) {
-          blitters[0](canvas, Ram_MapCellBuffer + 0x5980, 0, 16, 128, 26);
+          blitters[0](canvas,
+                      Ram_MapCellBuffer + (128 * 91 + 128 * 59 + 128 * 29), 0,
+                      16, 128, 26);
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
@@ -1281,7 +1285,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           s32 image = i % 3;
           EffectPosition_ProjectPoint(step, &projected);
           projected.x /= 2;
-          blitters[i & 1](canvas, Ram_MapCellBuffer + image * 576,
+          blitters[i & 1](canvas, Ram_MapCellBuffer + image * (24 * 24),
                           projected.x - 12, projected.y - 12, 24, 24);
           EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
           step->variant++;
@@ -1298,7 +1302,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
             s32 image = age / 4;
             EffectPosition_ProjectPoint(step, &projected);
             projected.x /= 2;
-            blitters[i & 1](canvas, Ram_MapCellBuffer + image * 1152,
+            blitters[i & 1](canvas, Ram_MapCellBuffer + image * (24 * 48),
                             projected.x - 12, projected.y - 24, 24, 48);
             if (mode == CASTING_IMPACT_IMPACT_ACID_BATH)
               EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
@@ -1325,7 +1329,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     // Impact: ability-specific shake at frame 6; target reacts at frames 6
     // and 14.
     if (frame == 3) {
-      BattleEventRuntime_BeginPhaseFar(-1);
+      EFFECT_SHOW_DAMAGE(-1);
     }
     if (frame == 4) {
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
@@ -1367,8 +1371,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   // Meltdown hands the cleared canvas to the stat reduction (Impair); the
   // others stop the wave callback and release the canvas.
   if (mode == CASTING_IMPACT_IMPACT_MELTDOWN) {
-    Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-    Iwram_ClearWords(canvas, 0x4000);
+    Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+    Iwram_ClearWords(canvas, CANVAS_BYTES);
     work->effect->prelude = 0;
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);

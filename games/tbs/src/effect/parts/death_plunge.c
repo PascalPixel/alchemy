@@ -147,7 +147,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       ObjectDispatch_ApplyArgumentToChildrenFar(user, 0);
     }
     if (frame == 54) // the battle shows the damage, with a heavy impact
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0) {
       AudioCommand_PlayFar(SE_136);
       work->shakeFrames = 6;
@@ -342,7 +342,8 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(
       HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-  canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+  canvas =
+      (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   camera = gCameraWork;
   work->effect = effect;
@@ -419,7 +420,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
       draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
-      draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
+      draw[1](canvas, work->sheet + n * (17 * 64), 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       glow = work->sheet + n * 1032 + 0x1100;
       draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
@@ -428,7 +429,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
       n = i % 4;
-      draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
+      draw[1](canvas, work->sheet + n * (17 * 64), 64, ground.y - 64, 17, 64);
       draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     }
@@ -536,9 +537,9 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   s32 centreY;
 
   work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  size = 0x4000;
+  size = CANVAS_BYTES;
   canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, size);
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   slots = gWorkSlot + HEAP_SLOT_BATTLE;
   battle = slots[0];
   view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
@@ -870,7 +871,7 @@ void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
   s32 i;
 
   work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-  canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
@@ -935,7 +936,7 @@ void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
     }
     // Frames 28 to 48: the burst of light (48x48), seven images.
     if (frame >= 28 && frame <= 48)
-      draw[0](canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40,
+      draw[0](canvas, work->sheet + (frame - 28) / 3 * (48 * 48) + 0x1400, 40,
               ground.y - 24, 48, 48);
     // Frames 0 to 14: a spark (32x32) at each corner, flipped to face
     // outwards, five images.
@@ -1059,7 +1060,7 @@ void BattleFx_StartElementStreaks(s32 element) {
   s32 id;
 
   work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   REG_BG2PA = Q_8_8(1);
@@ -1099,7 +1100,7 @@ void BattleFx_EndElementStreaks(void) {
   Scheduler_RemoveCallback(BattleFx_DrawStreaks);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   {
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   }
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);

@@ -99,8 +99,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame ==
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES] - 16)
-      BattleEventRuntime_BeginPhaseFar(
-          133); // 16 frames before the end, move on to the results
+      EFFECT_SHOW_DAMAGE(SE_133); // 16 frames before the end
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {

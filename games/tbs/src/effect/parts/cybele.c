@@ -8,12 +8,13 @@
 //   frame 128 the sparks, six per target from 16 on, share these slots.
 // - 0 on: embers, ten per target, from frame 302.
 #define CYBELE_FRAMES 366
-#define CYBELE_CHIP_COUNT 48  // chips thrown by the thorns
-#define CYBELE_VINES 10       // vines drawn
-#define CYBELE_FIRST_SPARK 16 // the first spark in work->particles
-#define CYBELE_FIRST_THORN 32 // the first thorn in work->particles
-#define CYBELE_FIRST_CHIP 16  // the first chip in work->particles
-#define CYBELE_EMBER_CELL 6   // the ember picture in gCybele_EmberOffsets
+#define CYBELE_CHIP_COUNT 48      // chips thrown by the thorns
+#define CYBELE_VINES 10           // vines drawn
+#define CYBELE_BLAST_CELLS 0x1680 // the blast pictures, after the yellow ring
+#define CYBELE_FIRST_SPARK 16     // the first spark in work->particles
+#define CYBELE_FIRST_THORN 32     // the first thorn in work->particles
+#define CYBELE_FIRST_CHIP 16      // the first chip in work->particles
+#define CYBELE_EMBER_CELL 6       // the ember picture in gCybele_EmberOffsets
 
 // Abilities: Cybele (scene kind 5).
 //
@@ -130,7 +131,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
     // A or B skips the vines straight to the drop.
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285) {
-      Iwram_ClearWords(canvas, 0x4000);
+      Iwram_ClearWords(canvas, CANVAS_BYTES);
       frame = 286;
     }
     // From frame 224 the canvas keeps what is drawn, so the picture holds
@@ -227,7 +228,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           s32 k;
 
           if (i > 5)
-            sheet = work->sheet + 0x6c0;
+            sheet = work->sheet + 24 * (8 + 64);
           top = (rise - vine->variant) * vine->velocityY;
           for (wrap = top; wrap > 184; wrap -= 64)
             ;
@@ -428,7 +429,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
-                                 work->sheet + 0x1680, 1, 1);
+                                 work->sheet + CYBELE_BLAST_CELLS, 1, 1);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
       draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -470,9 +471,9 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           SET_VECTOR(point, object->x, 0, object->z);
           EffectPosition_ProjectPoint(point, &screen);
           screen.x >>= 1;
-          draw[0](canvas, work->sheet + cellIndex * 480, screen.x - 20,
+          draw[0](canvas, work->sheet + cellIndex * (20 * 24), screen.x - 20,
                   screen.y - 24, 20, 24);
-          draw[1](canvas, work->sheet + cellIndex * 480, screen.x,
+          draw[1](canvas, work->sheet + cellIndex * (20 * 24), screen.x,
                   screen.y - 24, 20, 24);
         }
         if (frame >= start + 6) {
@@ -507,7 +508,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleFx_RunImpactBurst(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
@@ -521,3 +522,4 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 #undef CYBELE_FIRST_THORN
 #undef CYBELE_FIRST_CHIP
 #undef CYBELE_EMBER_CELL
+#undef CYBELE_BLAST_CELLS

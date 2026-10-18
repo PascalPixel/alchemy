@@ -76,7 +76,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
       s32 offset;
 
@@ -197,7 +197,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
     user = GetBattleObjectSlotFar(work->effect->actor)->object;
     halfHeight = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
     if (frame == 64)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 40)
       ObjectGroup_UpdateMembers(work->effect->actor, SPRITE_COLOR_WHITE, -1, -1,

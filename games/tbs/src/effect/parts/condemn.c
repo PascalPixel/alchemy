@@ -171,7 +171,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
             canvas, work->sheet + 0x15d2, CONDEMN_PANEL_X(panelColumn, 1),
             CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
-          Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
+          Iwram_FillWords(canvas, CANVAS_BYTES, 0x3F3F3F3F);
         }
         if ((frame - 90) <= 1U) {
           draw[work->effect->side](

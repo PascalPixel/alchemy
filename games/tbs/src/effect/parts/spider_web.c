@@ -87,7 +87,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (frame == 8) {
       if (mode == 0) {
-        BattleEventRuntime_BeginPhaseFar(SE_133);
+        EFFECT_SHOW_DAMAGE(SE_133);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
       } else {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
@@ -104,7 +104,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == 65) {
         work->shakeFrames = 4;
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
     Camera_ApplyShake(8, 8);
@@ -190,7 +190,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
                                                      size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(SE_143);
+      EFFECT_SHOW_DAMAGE(SE_143);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == 10)
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,

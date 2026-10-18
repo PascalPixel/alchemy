@@ -7,6 +7,11 @@
 #include "farcall.h"
 #endif
 
+// A battle sprite id's low twelve bits; the two-part sprites' second part
+// is their id + 0x2001.
+#define SPRITE_ID_MASK 0xfff
+#define SPRITE_SECOND_PART 0x2001
+
 #if GAME_TLA
 struct ResourceObject;
 struct ResourceObjectWork;

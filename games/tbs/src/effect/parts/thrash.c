@@ -98,10 +98,10 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     else if (frame <= 15)
       draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
     if (frame >= 16 && frame <= 19)
-      Iwram_FillWords(canvas, 0x4000,
+      Iwram_FillWords(canvas, CANVAS_BYTES,
                       0x3f3f3f3f); // Fill the entire canvas with color 0x3f.
     if (frame == 18)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 20) {
       work->shakeFrames = 8;
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);

@@ -90,7 +90,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
         camera->yaw = (s16)camera->yaw - 192;
     }
     if (frame == 16)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame < 64) {

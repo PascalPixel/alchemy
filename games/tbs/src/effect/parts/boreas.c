@@ -367,7 +367,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 146; frame++) {
     count = 0;
     if (frame == 96) {
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame == 16) {
       work->shakeFrames = 32;

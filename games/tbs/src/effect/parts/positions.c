@@ -120,7 +120,7 @@ void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   Runtime_AllocateBlock(HEAP_SLOT_BATTLE_SHEET, value);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
                             sizeof(struct BattleEffectWork));
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   value = effect->kind;
   kind = value;
   value = kind - 100;

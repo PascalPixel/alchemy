@@ -151,7 +151,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
     // 16 frames before the end, the battle shows the damage, with sound
     // 132 as each target is hit.
     if (frame == gFalling_IceCounts[work->effect->variant][ICE_FRAMES] - 16)
-      BattleEventRuntime_BeginPhaseFar(SE_132);
+      EFFECT_SHOW_DAMAGE(SE_132);
 
     // Shards: fall 8 pixels a frame down the slant; on landing, shatter
     // through five images, kicking up puffs in the middle of it.
@@ -357,7 +357,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     // 132 as each target is hit.
     if (frame ==
         gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
-      BattleEventRuntime_BeginPhaseFar(SE_132);
+      EFFECT_SHOW_DAMAGE(SE_132);
 
     // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
     // burst and play a two-image flash.

@@ -66,10 +66,10 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   AudioCommand_PlayFar(SE_ITEM_BREAK);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8)
-        Iwram_FillWords(canvas, 0x4000, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
     }
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       s32 start = i * 8;

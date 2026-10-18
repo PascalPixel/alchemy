@@ -180,7 +180,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     if (frame == 96)
       AudioCommand_PlayFar(SE_145);
     if (frame == 120)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // The swelling ground (frames 0 to 81).
     if (frame <= 81) {

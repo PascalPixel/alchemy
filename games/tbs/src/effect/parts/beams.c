@@ -148,13 +148,14 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   }
 
   for (frame = 0; frame != 32; frame++) {
-    // Frame 5 starts battle phase 134 if the user's class is flagged in the
-    // summon table, 133 otherwise; on frame 4 the target plays motion 0.
+    // On frame 5 the battle shows the damage, with the heavy impact if the
+    // user's class is flagged in the summon table and SE_133 otherwise. On
+    // frame 4 the target plays motion 0.
     if (frame == 5) {
       if (Summon_IsEntrySecondaryFlaggedFar(unit->classId))
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattleEventRuntime_BeginPhaseFar(SE_133);
+        EFFECT_SHOW_DAMAGE(SE_133);
     }
     if (frame == 4)
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
@@ -264,7 +265,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   struct MotionObject *target;
   u16 *background;
   void *colors = (void *)BG_PLTT;
-  s32 words = 0x4000;
+  s32 canvasBytes = CANVAS_BYTES;
   s32 big;
   s32 half;
   s32 frame;
@@ -394,8 +395,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   // The strike: clear the canvas, scroll BG1 so the first target is on
   // screen, and start 64 sparks at its middle, rising and flying away from
   // the centre of the field.
-  Iwram_ClearWords(canvas, words);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), words);
+  Iwram_ClearWords(canvas, canvasBytes);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
@@ -426,7 +427,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 5)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
@@ -440,7 +441,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     else if (frame <= 5)
       draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 7)
-      draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapCellBuffer + (120 * 120), 0, 0, 120, 120);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // From frame 4 the sparks fly, as in the beam sequence: only the first
     // 32 move, each drawn and moved twice a frame.

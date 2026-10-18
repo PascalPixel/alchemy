@@ -59,7 +59,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 54; frame++) {
     if (frame == 10) {
       work->shakeFrames = 8;
-      BattleEventRuntime_BeginPhaseFar(SE_212);
+      EFFECT_SHOW_DAMAGE(SE_212);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);

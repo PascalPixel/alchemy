@@ -205,31 +205,31 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
             gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] == 1) {
           // The arc: six 48x72 frames.
           if (work->effect->side == 0)
-            draw[i & 1](canvas, work->sheet + step * 3456, targetPos.x / 2 - 16,
-                        targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas, work->sheet + step * (48 * 72),
+                        targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
           else
-            draw[i & 1](canvas, work->sheet + step * 3456, targetPos.x / 2 - 32,
-                        targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas, work->sheet + step * (48 * 72),
+                        targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
         } else {
           // The wave: six 48x16 frames.
           if (work->effect->side == 0)
-            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * 768,
+            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * 768,
+            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * (48 * 16),
                         targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
         if (gBurstScene_Records[mode][BURST_SCENE_FLASH] == 1)
-          Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
         if (i == bursts - 1) {
           BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
           work->shakeFrames = 8;
-          BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         } else {
           if (i & 1)
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 7);
@@ -242,7 +242,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
       // The flash: six 20x48 frames, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
-                work->sheet + ((frame - start - 2) / 2) * 960 +
+                work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
                     BURST_SCENE_FLASH_CELLS,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }

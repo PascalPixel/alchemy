@@ -457,7 +457,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   do {
     // A column drops every 16 frames; the battle shows the damage on frame 96.
     if (frame == 96) {
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     for (i = 0; i != 5; i++) {
       flameColumn = &work->particles[i];

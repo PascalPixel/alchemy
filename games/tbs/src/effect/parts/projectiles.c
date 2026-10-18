@@ -231,8 +231,8 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 }
 
@@ -599,13 +599,13 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame == 4)
           AudioCommand_PlayFar(SE_136);
         if (frame == 32)
-          BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (mode == 7) {
         if (frame == 48)
-          BattleEventRuntime_BeginPhaseFar(SE_133);
+          EFFECT_SHOW_DAMAGE(SE_133);
       } else if (mode != 5) {
         if (frame == 16)
-          BattleEventRuntime_BeginPhaseFar(SE_133);
+          EFFECT_SHOW_DAMAGE(SE_133);
       }
 
       // Prelude: the small djinni circles, and from frame 70 rises away; it
@@ -707,7 +707,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
                 shot->variant = 1;
                 if (mode == 5) {
-                  BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+                  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
                 } else if (mode != 6 && soundCooldown == 0) {
                   soundCooldown = 8;
                   AudioCommand_PlayFar(SE_132);
@@ -792,15 +792,15 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             } else if (mode == 1) {
               // Shurikens vanish once past their target.
               if (ABS(shot->x) <= ABS(target->x))
-                draw[0](canvas, work->sheet + frame % 6 * 768,
+                draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
                         screenPosition->x - 16, screenPosition->y - 12, 32, 24);
             } else if (mode == 7 || mode == 9 || mode == 10) {
               s32 cell = j & 3;
               draw[0](canvas, work->sheet + gProjectiles_PelletOffsets[cell],
                       screenPosition->x - 4, screenPosition->y - 4, 8, 8);
             } else if (mode == 2) {
-              draw[0](canvas, work->sheet + j % 6 * 128, screenPosition->x - 4,
-                      screenPosition->y - 8, 8, 16);
+              draw[0](canvas, work->sheet + j % 6 * (8 * 16),
+                      screenPosition->x - 4, screenPosition->y - 8, 8, 16);
             } else if (mode == 3) {
               draw[0](canvas, work->sheet + 96, screenPosition->x - 9,
                       screenPosition->y - 7, 18, 13);

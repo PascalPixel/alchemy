@@ -53,6 +53,9 @@ DEFINE_EFFECT_KIND(BattleFx_RunOuterSpace, BattleFx_RunParticleStreams, 1)
 #define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise
 #define PARTICLE_STREAMS_BURST_FRAMES 54 // frames of the burst
 
+// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
+#define PARTICLE_STREAMS_MOTE_CELLS 0x3200
+
 // The stream runs in two halves. The rise dissolves the battle map into a
 // starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
 // objects while motes, orbiting sparks and falling drops are drawn into the
@@ -155,7 +158,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   if (mode == 1) {
     for (i = 0; i != 2; i++) {
       struct AnimationObject *object =
-          ResourceObject_CreateFar(483 + i * 0x2001);
+          ResourceObject_CreateFar(483 + i * SPRITE_SECOND_PART);
 
       work->objects[i] = object;
       if (object != 0) {
@@ -201,7 +204,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // Dissolve: start the background scroll, then erase the map from the top
   // in ragged columns, each lagging by one of 128 random offsets of 0 to 63
   // rows. The erased band grows faster every frame until it passes row 191.
@@ -299,10 +302,10 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       asm("" : "=r"(base) : "0"(base), "r"(count));
       line = (u16 *)(base + 0x1f80);
       if (mode == 1) {
-        if ((gKeysRepeat & 3) && frame > 16)
+        if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
       } else {
-        if ((gKeysRepeat & 3) && frame > 4)
+        if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 4)
           break;
       }
       {
@@ -528,7 +531,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         ResourceObject_ReleaseFar(work->objects[1]);
         BattleActor_CommitPlacementFar();
       }
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != 64; i++) {
@@ -547,8 +550,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           point.depth = 799;
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
-             work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
-                 0x3200,
+             work->sheet +
+                 (gBattleFx_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
+                 PARTICLE_STREAMS_MOTE_CELLS,
              point.x - size / 2, point.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
@@ -568,8 +572,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 size = rise + 3;
 
       draw(canvas,
-           work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
-               0x3200,
+           work->sheet +
+               (gBattleFx_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
+               PARTICLE_STREAMS_MOTE_CELLS,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)
@@ -641,3 +646,4 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
 #undef PARTICLE_STREAMS_EMBERS
 #undef PARTICLE_STREAMS_RISE_FRAMES
 #undef PARTICLE_STREAMS_BURST_FRAMES
+#undef PARTICLE_STREAMS_MOTE_CELLS

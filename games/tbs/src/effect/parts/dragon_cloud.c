@@ -129,7 +129,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
     camera = gCameraWork;
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0)
       AudioCommand_PlayFar(SE_136);
     if (frame == 50)

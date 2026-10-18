@@ -21,7 +21,7 @@ enum {
   ERUPTION_FIELD_FRAMES // frames in the whole effect
 };
 
-// The mote pictures in the sheet: two sets of sizes, 770 bytes apart.
+// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
 #define ERUPTION_FIELD_MOTE_CELLS 0x3200
 
 // Shared by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
@@ -111,7 +111,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       AudioCommand_PlayFar(SE_144);
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
 
     // The motes still above the ground, sized 9 down to 1 over depths 160
     // to 799, alternating the two mote sets.
@@ -127,7 +127,8 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
-                work->sheet + (gBattleFx_MoteCells[size - 1] + (i & 1) * 770) +
+                work->sheet +
+                    (gBattleFx_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                     ERUPTION_FIELD_MOTE_CELLS,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);

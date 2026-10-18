@@ -94,27 +94,28 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
     source = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_CANVAS);
     switch (work->transferMode) {
     case CANVAS_COPY:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_CLEAR:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
-      Iwram_FillWords(source, 0x4000, work->transferValue);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
+      Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
       if (work->transferValue == 50) {
-        ColorBuffer_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1), 0x4000);
+        ColorBuffer_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
+                                   CANVAS_BYTES);
       } else {
         ColorBuffer_BackupAndScaleThreeQuarters(
-            source, (void *)BG_CHAR_BLOCK(1), 0x4000);
+            source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       }
       break;
     case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_BackupAndDarken(source, work->transferValue,
-                                  (void *)BG_CHAR_BLOCK(1), 0x4000);
+                                  (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_BRIGHTEN:
       ColorBuffer_BackupAndBrighten(source, work->transferValue,
-                                    (void *)BG_CHAR_BLOCK(1), 0x4000);
+                                    (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
     work->transferPending = 0;
@@ -317,8 +318,8 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
     EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   work->shakeFrames = 0;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -385,8 +386,8 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
     EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   WaitFrames(1);
 }
 
@@ -427,7 +428,7 @@ void BattleFx_EndCanvasLayer(void) {
   gProjection.centerY = 120;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -520,8 +521,8 @@ void BattleFx_SetupCanvasTileMap(void) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   WaitFrames(1);
 }
 

@@ -118,7 +118,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 
     if (frame == 8) {
       work->shakeFrames = frame;
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 16);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);

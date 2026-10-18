@@ -96,9 +96,9 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 
     if (frame == 80) {
       if (mode == 0)
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattleEventRuntime_BeginPhaseFar(SE_133);
+        EFFECT_SHOW_DAMAGE(SE_133);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -129,8 +129,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
             EffectPosition_ProjectPoint(mote, &screenPosition);
             screenPosition.x >>= 1;
-            draw[0](canvas, work->sheet + i % 3 * 640, screenPosition.x - 10,
-                    screenPosition.y - 16, 20, 32);
+            draw[0](canvas, work->sheet + i % 3 * (20 * 32),
+                    screenPosition.x - 10, screenPosition.y - 16, 20, 32);
             EffectStep_AdvanceWithGravity3D(mote, 62, 0);
             if (frame > k * 20 + i + 30) {
               s32 dx = (target->x - mote->x) >> 9;

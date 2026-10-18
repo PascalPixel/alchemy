@@ -163,7 +163,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     if (frame == 64)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // The Djinni sways 20 pixels either way and from frame 32 rises 2
@@ -315,7 +315,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     if (frame == 64)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);

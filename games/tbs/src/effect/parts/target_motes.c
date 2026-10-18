@@ -180,12 +180,12 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
         BattleMotion_ApproachTargetFar(work->effect->actor,
                                        work->effect->actors[0], 16, 0);
       if (frame == total - 32) {
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     }
     // Ripple the canvas sideways, line by line.
     row = work->bg2xLines;
@@ -261,7 +261,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
               // smoke draws one mote in four additively. A mote that has
               // reached the centre is no longer drawn.
               if (mode == 5 || mode == 7)
-                draw[1](canvas, work->sheet + cell * 1600, screen.x - 20,
+                draw[1](canvas, work->sheet + cell * (40 * 40), screen.x - 20,
                         screen.y - 20, 40, 40);
               else if (mode == 6)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
@@ -270,7 +270,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + cell * 1152,
+                draw[(i & 3) != 0](canvas, work->sheet + cell * (24 * 48),
                                    screen.x - 12, screen.y - 24, 24, 48);
               // Closing motes step 2 pixels towards the centre and start their
               // cycle again where they are; rising motes rise 1 pixel a frame
@@ -378,7 +378,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
     camera = gCameraWork;
     if (frame == 80)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(targetIndex, work->effect) {
       struct MotionObject *target;
 
@@ -475,7 +475,7 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   frame = 0;
   while (frame != (work->effect->count << 5) + 32) {
     if (frame == 32) {
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     }
     i = 0;
     if (work->effect->count != 0) {
@@ -499,8 +499,8 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
                   screenPosition.x - 8, y - 20, 16, 20);
           if (frame >= start) {
             cell = ((frame - start) + marker->variant) / 6 % 9;
-            draw[0](canvas, work->sheet + cell * 192, screenPosition.x - 8,
-                    screenPosition.y - 16, 16, 12);
+            draw[0](canvas, work->sheet + cell * (16 * 12),
+                    screenPosition.x - 8, screenPosition.y - 16, 16, 12);
           }
         }
         marker++;

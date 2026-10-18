@@ -78,11 +78,11 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      BattleEventRuntime_BeginPhaseFar(SE_133); // start playing the results
+      EFFECT_SHOW_DAMAGE(SE_133); // start playing the results
     if (frame < 16) {
       // Clear the canvas every 5 frames.
       if (frame % 5 == 2)
-        Iwram_FillWords(canvas, 0x4000, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
       for (bolt = 0; bolt != RAY_COUNT; bolt++) {
         s32 angle;
         s32 x;

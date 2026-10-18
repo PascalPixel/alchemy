@@ -84,7 +84,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   do {
     // Frame 24 lets the battle show the damage.
     if (frame == 24) {
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     }
 
     // Each flame shows six pictures, 4 frames each, and goes out.

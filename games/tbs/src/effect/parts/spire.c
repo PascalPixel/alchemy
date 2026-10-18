@@ -67,7 +67,7 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   }
   for (frame = 0; frame != gSpire_DropFrames[rockCount - 1] + 80; frame++) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
-      BattleEventRuntime_BeginPhaseFar(SE_132);
+      EFFECT_SHOW_DAMAGE(SE_132);
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gSpire_DropFrames[i] + 18) {

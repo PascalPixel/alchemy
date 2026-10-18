@@ -75,7 +75,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
-      BattleEventRuntime_BeginPhaseFar(0x86);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (work->effect->variant != 0 && frame == 8)
       AudioCommand_PlayFar(0xd4);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &position);
@@ -119,7 +119,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
     if (frame == 8) {
-      Dma_Fill32(0x3f3f3f3f, canvas, 0x4000);
+      Dma_Fill32(0x3f3f3f3f, canvas, CANVAS_BYTES);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     // Shards shrink as their lives run down; pairs of shards alternate

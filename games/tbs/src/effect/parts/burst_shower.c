@@ -231,11 +231,11 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     } else {
       if (frame == 60) {
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
 

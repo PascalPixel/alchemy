@@ -78,7 +78,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     // 16 frames before the end the battle shows the damage, with sound 132
     // on each hit.
     if (frame == gVortices_Counts[work->effect->variant][FROTH_FRAMES] - 16)
-      BattleEventRuntime_BeginPhaseFar(SE_132);
+      EFFECT_SHOW_DAMAGE(SE_132);
     EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != gVortices_Counts[work->effect->variant][FROTH_MOTE_COUNT];
          i++) {
@@ -201,11 +201,11 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 80; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_133);
     // Seven flashes of the canvas, 8 frames apart.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)
-        Iwram_FillWords(canvas, 0x4000, 0x08080808);
+        Iwram_FillWords(canvas, CANVAS_BYTES, 0x08080808);
     }
     if (work->effect->side == 1)
       wave += 0x200000;

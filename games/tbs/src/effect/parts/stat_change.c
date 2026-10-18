@@ -190,7 +190,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
     struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 
     if (frame == 80)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // The djinni, facing the other way from the flares, sways from side to
     // side and, after 32 frames, rises 2 pixels a frame. For the first 4
@@ -288,7 +288,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
         draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-        draw[0](canvas, work->sheet + cell * 1600 + STAT_BOOST_BURST,
+        draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
       }
@@ -301,7 +301,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          draw[0](canvas, work->sheet + cell * 960 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * (24 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
@@ -312,7 +312,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          draw[0](canvas, work->sheet + cell * 2048 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * (32 * 64) + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
@@ -326,9 +326,9 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
           draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-          draw[0](canvas, work->sheet + cell * 2048 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * (64 * 32) + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);
-          draw[1](canvas, work->sheet + cell * 2048 + STAT_BOOST_PICTURE,
+          draw[1](canvas, work->sheet + cell * (64 * 32) + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y + 8, 64, 32);
           EFFECT_RELEASE_BLITTERS();
         }
@@ -339,7 +339,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_ADDITIVE);
           draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          draw[0](canvas, work->sheet + cell * 1600 + STAT_BOOST_PICTURE,
+          draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
@@ -507,7 +507,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != work->effect->count * 4 + 64; frame++) {
     camera = gCameraWork;
     if (frame == 72)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(j, work->effect) {
       struct MotionObject *object;
       s32 targetFrame;
@@ -529,12 +529,12 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
         y = screen.y;
         if (mode == 0) {
           if (targetFrame <= 26)
-            blitters[0](canvas, work->sheet + targetFrame / 4 % 7 * 960, x - 12,
-                        y - 20, 24, 40);
+            blitters[0](canvas, work->sheet + targetFrame / 4 % 7 * (24 * 40),
+                        x - 12, y - 20, 24, 40);
         } else {
           if (targetFrame <= 23)
-            draw[1](canvas, work->sheet + targetFrame / 4 % 6 * 1600, x - 20,
-                    y - 20, 40, 40);
+            draw[1](canvas, work->sheet + targetFrame / 4 % 6 * (40 * 40),
+                    x - 20, y - 20, 40, 40);
         }
         if (targetFrame == 24)
           AudioCommand_PlayFar(SE_143);

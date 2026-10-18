@@ -79,7 +79,8 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
         CLAMP(screen.depth, 250, 0x27a);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
-                work->sheet + ((i & 3) * 770 + gBattleFx_MoteCells[size - 1]),
+                work->sheet +
+                    ((i & 3) * MOTE_SET_BYTES + gBattleFx_MoteCells[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(star, 60, 0);
         if (frame > i / 4 + 30) {

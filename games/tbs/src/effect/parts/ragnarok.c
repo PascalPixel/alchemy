@@ -120,7 +120,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_145);
     }
     if (frame == 40) {
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     //------------------------------------------------------------------

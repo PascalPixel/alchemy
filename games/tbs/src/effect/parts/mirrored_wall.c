@@ -119,7 +119,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
                                   SPRITE_COLOR_RED_TINT, -1, 0, 32);
     }
     if (frame == 24)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     if (frame == 8 && mode == 0)
       AudioCommand_PlayFar(SE_RECOVERY);
 

@@ -167,7 +167,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           else
             Object_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
-            BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             AudioCommand_PlayFar(SE_HEAVY_IMPACT);
             ObjectGroup_UpdateMembers(work->effect->actors[0],
@@ -252,7 +252,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 128; frame++) {
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {
       step = &work->particles[i];
       if (frame >= step->variant) {

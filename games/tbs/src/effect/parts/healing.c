@@ -250,7 +250,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     struct BattleCamera *camera = gCameraWork;
 
     if (frame == 40)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // The djinni sways from side to side and, after 32 frames, rises 2 pixels
     // a frame. For the first 4 frames it is also added on top.

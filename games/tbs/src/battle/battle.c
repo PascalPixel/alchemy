@@ -2634,11 +2634,6 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-// A battle sprite id's low twelve bits; the two-part sprites' second part
-// is their id + 0x2001.
-#define SPRITE_ID_MASK 0xfff
-#define SPRITE_SECOND_PART 0x2001
-
 // The sprite unit 32 pixels wide use for an effect.
 #define NARROW_EFFECT_SPRITE 0x1ff
 

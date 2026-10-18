@@ -31,7 +31,7 @@
 
 struct JudgmentWork {
   u8 sheet[0x2710];
-  u8 ramp[8][770];
+  u8 ramp[8][MOTE_SET_BYTES];
 };
 
 #define JUDGMENT_SPARKS (&PARTICLES[128])
@@ -144,7 +144,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // steps through them.
   for (i = 0; i != 8; i++) {
     u8 *src = ramp;
-    for (j = 0; j != 770; j++) {
+    for (j = 0; j != MOTE_SET_BYTES; j++) {
       s32 v = *src++;
       EFFECT_CAP_LEVEL(v, 64 - i * 7);
       ((struct JudgmentWork *)work)->ramp[i][j] = v;
@@ -202,7 +202,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
      * of the frame > 143 block 579; the slot table named at the uses 581. */
     slots = (DrawRectangle *)gWorkSlot;
     if (frame == 143) {
-      Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
+      Iwram_FillWords(canvas, CANVAS_BYTES, 0x2a2a2a2a);
       AudioCommand_PlayFar(SE_145);
     }
     if (frame == 80) {
@@ -393,7 +393,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       r = frame * 10 - 1424;
       work->transferValue = 75;
       if (n <= 6) {
-        s32 cell = n * 770 + gBattleFx_MoteCells[7] + 0x2710;
+        s32 cell = n * MOTE_SET_BYTES + gBattleFx_MoteCells[7] + 0x2710;
         /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp.
          * 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
         s32 high = 8;
@@ -415,14 +415,14 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
   // The sweep: replace the formation with 16 debris objects in three
   // animations, load the crescent sheet and show the aerial view.
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct AnimationObject *obj = ResourceObject_CreateFar(0x186);
+    struct AnimationObject *obj = ResourceObject_CreateFar(390);
     work->objects[i] = obj;
     if (obj != 0) {
       obj->flags = 0;
@@ -440,7 +440,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   {
     // Move the mote sheet's bright levels up the palette, the rest to 1.
     u8 *c = ramp;
-    for (i = 0; i != 770; i++, c++) {
+    for (i = 0; i != MOTE_SET_BYTES; i++, c++) {
       if (*c > 32) {
         *c += 224;
       } else if (*c != 0) {
@@ -495,7 +495,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
-      BattleEventRuntime_BeginPhaseFar(SE_145);
+      EFFECT_SHOW_DAMAGE(SE_145);
     }
 
     // A or B jumps to the next part: 150, 214 or 280. The jump to the beach

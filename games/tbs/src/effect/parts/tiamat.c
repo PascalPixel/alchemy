@@ -154,7 +154,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 178)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // From frame 128 the trails keep only half; over frames 160 to 175 the
     // canvas is filled each frame and the palette brightens; from 176 the

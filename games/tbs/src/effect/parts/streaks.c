@@ -229,7 +229,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
             if (frame == k * STREAKS_TARGET_DELAY + 24) {
               AudioCommand_PlayFar(SE_133);
               if (k == 0) // the first hit lets the battle show the damage
-                BattleEventRuntime_BeginPhaseFar(-1);
+                EFFECT_SHOW_DAMAGE(-1);
               ObjectGroup_UpdateMembers(work->effect->actors[k],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
             }
@@ -383,7 +383,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == MOTE_FOUNTAIN_DRIFTING) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
-          BattleEventRuntime_BeginPhaseFar(-1);
+          EFFECT_SHOW_DAMAGE(-1);
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 8);
         }
@@ -392,7 +392,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
           AudioCommand_PlayFar(SE_RECOVERY);
-          BattleEventRuntime_BeginPhaseFar(-1);
+          EFFECT_SHOW_DAMAGE(-1);
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     -1, i, 8);
         }

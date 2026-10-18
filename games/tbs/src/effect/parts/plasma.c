@@ -92,7 +92,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
         camera->scroll += speed;
     }
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // Pillar i strikes on frame 8i with a flash, shows its first image the
     // frame after and its second for two frames after that.
@@ -100,7 +100,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
       start = i * PLASMA_SPACING;
       if (frame == start) {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
-        Iwram_FillWords(canvas, 0x4000, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
@@ -350,15 +350,15 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
      * through Iwram_FillWords a spilled invariant ahead of the frame loop is
      * built in r2 where the ROM uses r1 (3 of 776 instructions differ). */
     if (work->effect->variant == 3 && frame == 4)
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0x3f3f3f3f);
     if (mode == 1 || mode == 2) {
       if (frame == 2)
-        BattleEventRuntime_BeginPhaseFar(SE_145);
+        EFFECT_SHOW_DAMAGE(SE_145);
     } else {
       if (frame == 2)
         AudioCommand_PlayFar(SE_145);
       if (frame == 24)
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     // Burst i starts on frame 8i with a two-frame flash, then its ring and

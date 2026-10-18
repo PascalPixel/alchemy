@@ -122,7 +122,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     // reels, the camera shakes and 16 sparks fly from (64, 80), each living
     // 16 to 31 frames.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
-      BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 6);
@@ -392,7 +392,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   // Finish by clearing background character block 1.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
 }
 

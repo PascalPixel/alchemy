@@ -200,6 +200,14 @@ enum CanvasTransferMode {
 // do-while (0) in an effect's frame loop differently at some sites, and the
 // comma form matches at all of them.
 
+// Lets the battle show the damage: resumes its paused playback, which plays
+// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
+#define EFFECT_SHOW_DAMAGE(hitSound) BattleEventRuntime_BeginPhaseFar(hitSound)
+
+// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
+// BG_CHAR_BLOCK(1).
+#define CANVAS_BYTES (128 * 128)
+
 // Opens the canvas layer at the canvas's own width, one texel per pixel,
 // where BattleFx_BeginCanvasLayer stretches it to twice the width.
 #define EFFECT_BEGIN_NARROW_CANVAS(bgControl)                                  \
@@ -246,6 +254,9 @@ enum CanvasTransferMode {
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
   (Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer),          \
    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER), BattleFx_EndCanvasLayer())
+
+// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
+#define MOTE_SET_BYTES 770
 
 // Particle sheets hold ten mote cells, 1x2 to 10x20 pixels. Draws mote cell
 // `size` (size pixels wide, twice that tall) of `sheet` through blitter

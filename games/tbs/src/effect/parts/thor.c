@@ -5,6 +5,9 @@
 // before them.
 #define THOR_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 
+// The particle sprites, after the light fan pictures.
+#define THOR_SPRITES_CELLS 0x1800
+
 // The violet mote in the second part's sheet.
 #define THOR_MOTE_CELLS 0x6000
 
@@ -14,12 +17,12 @@
 //
 // effect: the targets.
 
-#define THOR_PARTICLE_COUNT 910     // particles in THOR_PARTICLES
-#define THOR_DIMMED_DOTS 10000      // the darker copies of the dot pictures
-#define THOR_DIMMED_DOT_BYTES 0x302 // bytes in each darker copy
-#define THOR_DUSK_FRAMES 170        // frames, at most, of the dusk part
-#define THOR_LIGHTNING_FRAMES 192   // frames of the lightning part
-#define THOR_BOLTS 30               // violet bolts after the pillar
+#define THOR_PARTICLE_COUNT 910 // particles in THOR_PARTICLES
+#define THOR_DIMMED_DOTS 10000  // the darker copies of the dot pictures
+#define THOR_DIMMED_DOT_BYTES MOTE_SET_BYTES // bytes in each darker copy
+#define THOR_DUSK_FRAMES 170      // frames, at most, of the dusk part
+#define THOR_LIGHTNING_FRAMES 192 // frames of the lightning part
+#define THOR_BOLTS 30             // violet bolts after the pillar
 
 // Launches up to max sparks from (px, py), 16.16, into the free slots
 // (variant 0) of THOR_PARTICLES, walking them with spark and counting with
@@ -100,7 +103,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
-                             work->sheet + 0x1800, 0, 0);
+                             work->sheet + THOR_SPRITES_CELLS, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // Eight copies of the dot pictures, each with its colour levels capped 7
@@ -400,7 +403,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 140) {
-        BattleEventRuntime_BeginPhaseFar(SE_HEAVY_IMPACT);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
@@ -412,7 +415,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
             blit[0](canvas, work->sheet, 36, 0, 48, pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
+            blit[0](canvas, work->sheet + (48 * 112), 36, 0, 48, 112);
           }
           if (frame == start + 2) {
             THOR_LAUNCH_SPARKS(spark, i, pillarX << 16, pillarY << 16,
@@ -440,7 +443,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
           if (frame == i * 8 + 80) {
-            Iwram_FillWords(canvas, 0x4000, 0x10101010);
+            Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
           }
         }
         for (i = 0; i != THOR_BOLTS; i++) {
@@ -614,3 +617,4 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 #undef THOR_LIGHTNING_FRAMES
 #undef THOR_BOLTS
 #undef THOR_LAUNCH_SPARKS
+#undef THOR_SPRITES_CELLS

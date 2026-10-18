@@ -95,7 +95,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 64)
       AudioCommand_PlayFar(SE_212);
     if (frame == 80)
-      BattleEventRuntime_BeginPhaseFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways 20 pixels either way and from frame 32 rises 2
     // pixels a frame; it is drawn twice over its first four frames.
@@ -146,7 +146,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
             draw[i & 1](canvas,
                         work->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
-                                576 +
+                                (24 * 24) +
                             DJINN_BEAMS_MOTE_CELLS,
                         screenPosition.x - 12, screenPosition.y - 12, 24, 24);
             mote->y -= 1 << 16;

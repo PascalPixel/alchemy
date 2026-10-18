@@ -67,6 +67,9 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define MERCURY_TALL_FLAME_CELLS 0x2a8 // 104x17, not drawn
 #define MERCURY_FLAME_CELLS 0x990      // 65x34
 #define MERCURY_FLAMES 5               // flames thrown
+// The mote slots Mercury walks: room for more than MERCURY_FLAMES *
+// DJINN_ATTACKS_MOTES_PER_FLAME.
+#define MERCURY_MOTE_SLOTS 256
 // The Djinn attacks share these: each flame, ball or column that lands
 // throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
 // PARTICLES (Venus's columns fill 16 of them), and the motes move through all
@@ -187,7 +190,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
     // Motes shrink as they age and slow as they fall. A mote's variant is
     // its remaining life and -1 marks a free slot; at life 0 it still draws
     // once before the slot is freed.
-    for (i = 0; i != 256; i++) {
+    for (i = 0; i != MERCURY_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
@@ -612,7 +615,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
       }
       index++;
       step++;
-    } while (index != 144);
+    } while (index != MARS_FLAMES * MARS_EMBERS_PER_FLAME);
 
     if (frame == 38) {
       EFFECT_FOR_EACH_TARGET(index, work->effect) {
@@ -647,3 +650,4 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
 #undef VENUS_FLAME_SHEET
 #undef VENUS_COLUMN_CELLS
 #undef MARS_ORB_CELLS
+#undef MERCURY_MOTE_SLOTS

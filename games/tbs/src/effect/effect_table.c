@@ -232,7 +232,7 @@ s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
 // vortices.c: Vortex mote counts and tornado shapes.
 u8 gVortices_Counts[][2] = {
-    // motes, frames
+    // motes (at most FROTH_MOTES, vortices.c), frames
     {6, 140},  // variant 0
     {12, 160}, // variant 1
     {30, 200}, // variant 2
@@ -796,7 +796,7 @@ u8 gStatChange_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
 // fire.c: Homing ember counts and flare geometry.
-// Embers by variant.
+// Embers by variant, at most FIRE_EMBERS (fire.c).
 u8 gFire_Counts[] = {16, 32, 64};
 // The impact flare pictures' sizes and y offsets.
 u8 gFire_FlareWidths[] = {24, 29, 30, 27, 24, 16};

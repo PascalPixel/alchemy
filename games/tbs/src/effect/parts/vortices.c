@@ -3,6 +3,9 @@
 
 #define FROTH_MOTE_CELL 0xc00 // the mote picture in the sheet
 #define FROTH_FIRST_TARGET 32 // the first target seat in work->particles
+// The motes set up in work->particles, before the target seats: no row of
+// gVortices_Counts may ask for more.
+#define FROTH_MOTES 30
 
 // Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
 //
@@ -45,7 +48,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
-  for (i = 0; i != 30; i++) {
+  for (i = 0; i != FROTH_MOTES; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x, y, source->z);
     SET_VELOCITY(point, ((s32)((Random16() & 255) - 127) << 16) >> 5,
@@ -274,3 +277,4 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
 
 #undef FROTH_MOTE_CELL
 #undef FROTH_FIRST_TARGET
+#undef FROTH_MOTES

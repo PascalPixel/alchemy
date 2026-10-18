@@ -1,6 +1,9 @@
 // Part of effect.c, the battle effect object, compiled only through it.
 // Fire.
 
+// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
+#define FIRE_EMBERS 64
+
 // Abilities: Fire, Fireball, Inferno (kind 12).
 //
 // Homing embers: embers burst from the top of the user two a frame, turn
@@ -52,7 +55,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   // speed, rising at -16 to 111 sixty-fourths of a pixel a frame.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   bodyTop = user->y + Battle_GetObjectTableValueFar(work->effect->actor);
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != FIRE_EMBERS; i++) {
     struct EffectStep *ember = &PARTICLES[i];
     s32 angle;
     s32 speed;
@@ -175,3 +178,5 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   EFFECT_RELEASE_BLITTERS();
   BattleFx_EndCanvasLayer();
 }
+
+#undef FIRE_EMBERS

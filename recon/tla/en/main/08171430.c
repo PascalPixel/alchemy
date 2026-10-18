@@ -1,5 +1,7 @@
-// Draft of BattleFx_RunLightSurge, decompiled from the listing: differ 912 of
-// 828 (draft 802), the same 67 calls and control flow; allocation differs.
+// Draft of BattleFx_RunLightSurge, decompiled from the listing: differ 648 of
+// 828 (draft 814), the same 67 calls and control flow; allocation differs.
+// The pillar offsets are read as plain (not const) bytes, so the native
+// reloads and redivides them after each Trig_Sin call.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -114,7 +116,7 @@ extern const u8 Data_08199244[];   // a quad's mesh
 extern const u8 Data_081991e0[];   // its corners
 extern const s32 Data_08198bfc[4]; // per pillar: its size,
 extern const s8 Data_08198c0c[4];  // its shade
-extern const s8 Data_08198c10[4];  // and its offset
+extern s8 Data_08198c10[4];        // and its offset
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14

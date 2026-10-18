@@ -1,4 +1,4 @@
-// Draft (tla-en): listing 464 instructions, draft 462, common 321, differ 284.
+// Draft (tla-en): listing 464 instructions, draft 461, differ 285.
 // Written from the listing (☀️'s BattleFx_RunRushingStrike is only
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
 // at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
@@ -10,8 +10,12 @@
 // is spilled.
 // - the heap slot base stays in r5 from the first loads to draw's load
 // after the Func_081963ec call, as through the "heap" pointer here.
-// - the native keeps one Func_081963ec call after the two argument pairs;
-// here each arm has its call.
+// - each arm loads the blitter after its Func_081963ec call, so the two
+// calls end alike and are merged into one, as in the native (with the
+// load after the if, the else arm's call keeps a USE and stays apart).
+// - the first switch's case 0 draws through r6 in the native, which keeps
+// its call apart; here it loads r4 and joins the shared draw (31 call
+// sites for 32).
 // - cross-jumping of the switch's draw calls: in the native side 0's case
 // 0 keeps its own call (its draw is reloaded into r6, the rest into r4),
 // cases 1 and 2 of both sides share one call and cases 3 and 4 share
@@ -94,11 +98,13 @@ void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
   s32 i;
 
   BattleFx_BeginCanvasLayer(1);
-  if (effect->side == 0)
+  if (effect->side == 0) {
     Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
-  else
+    draw = (DrawRectangle)heap->unk64[1];
+  } else {
     Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY | FLIP_X));
-  draw = (DrawRectangle)heap->unk64[1];
+    draw = (DrawRectangle)heap->unk64[1];
+  }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,

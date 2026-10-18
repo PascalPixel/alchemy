@@ -77,8 +77,6 @@ Func_08013de4:
 	.thumb_func
 VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x000141a0, 0x00000080
-	.section .rom.00014422, "ax"
-	.incbin "baserom.gba", 0x00014422, 0x00000002
 	.section .rom.00014b9c, "ax"
 	.global Func_08014b70
 	.type Func_08014b70, %function
@@ -112,10 +110,6 @@ Func_0801596c:
 	.thumb_func
 Func_08016180:
 	.incbin "baserom.gba", 0x000161ac, 0x0000015c
-	.section .rom.00016372, "ax"
-	.incbin "baserom.gba", 0x00016372, 0x00000002
-	.section .rom.00016512, "ax"
-	.incbin "baserom.gba", 0x00016512, 0x00000002
 	.section .rom.000165e0, "ax"
 	.global SerialRuntime_CollectReceivedPayloads
 	.type SerialRuntime_CollectReceivedPayloads, %function

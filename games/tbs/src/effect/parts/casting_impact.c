@@ -78,8 +78,9 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
 // Packs a casting impact's picture rows (Graphics_PackTileRows).
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                           s32 height) {
-  /* FAKEMATCH: keep packing arguments within their own inline
-   * scope */
+  /* FAKEMATCH: keep packing arguments within their own inline scope;
+   * called directly, BattleFx_RunCastingImpact differs 202 (tbs-en,
+   * 2026-10-18). */
   Graphics_PackTileRows(src, dest, width, height);
 }
 
@@ -87,8 +88,9 @@ static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
 static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
                                            s32 x, s32 y, s32 width, s32 height,
                                            DrawRectangle *draw) {
-  /* FAKEMATCH: inline scope reloads each image address at its
-   * drawing call */
+  /* FAKEMATCH: inline scope reloads each image address at its drawing
+   * call; called directly, BattleFx_RunCastingImpact differs 938 (tbs-en,
+   * 2026-10-18). */
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
@@ -98,7 +100,8 @@ static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
                                                DrawRectangle *draw) {
   /* FAKEMATCH: derive height inside the inline scope so the
    * dimension stores reuse one register instead of keeping two argument
-   * temporaries alive */
+   * temporaries alive; called directly, BattleFx_RunCastingImpact differs 128
+   * (tbs-en, 2026-10-18). */
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
@@ -108,8 +111,9 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                    s32 y, s32 width, s32 height,
                                                    s32 scroll,
                                                    DrawRectangle *draw) {
-  /* FAKEMATCH: subtract the scrolled part inside the drawing
-   * scope */
+  /* FAKEMATCH: subtract the scrolled part inside the drawing scope;
+   * called directly, BattleFx_RunCastingImpact differs 60 (tbs-en,
+   * 2026-10-18). */
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 

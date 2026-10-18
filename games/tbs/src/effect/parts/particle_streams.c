@@ -299,7 +299,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 angle = frame << 8;
       /* FAKEMATCH: count fixed in r2, as in the reference; as a hard register
        * it leaves the division temp canonical in cse, so the compare and +3 use
-       * the temp as in the reference. */
+       * the temp as in the reference. Unpinned, it differs 10 (tbs-en,
+       * 2026-10-18). */
       register s32 count asm("r2") = work->frame;
       /* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1.
        * 2026-10-11: plain `heat = work->frame / 4` with a plain line pointer

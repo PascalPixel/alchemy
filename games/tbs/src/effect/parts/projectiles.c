@@ -685,7 +685,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 hit = x >= 0;
                 /* FAKEMATCH: the same CSE block end keeps the
                  * opposite sign result before its side check;
-                 * the cancelling updates emit no instructions. */
+                 * the cancelling updates emit no instructions. Without
+                 * this second pair it differs 14 (tbs-en, 2026-10-18). */
                 if (target) {
                   hit ^= x;
                   hit ^= x;

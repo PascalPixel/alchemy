@@ -33,7 +33,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
 }
 
 // Releases the four objects and removes their scheduler callback.
-#define DEFINE_FOUR_OBJECT_RELEASE(name, update)                               \
+#define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
   void name(void) {                                                            \
     struct FourObjectMotionState *state = gMenuWork;                           \
     s32 index = 0;                                                             \
@@ -50,11 +50,13 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
     Scheduler_RemoveCallback(update);                                          \
   }
 
-DEFINE_FOUR_OBJECT_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
-                           FourObjectMotion_UpdateAllPositions)
+FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
+                                  FourObjectMotion_UpdateAllPositions)
 
-#define FIXED_ONE 0x10000u
-#define VERTICAL_ORIGIN 0x01e20000u
+// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
+// pixels, in 16.16.
+#define FOUR_OBJECT_MOTION_FULL_SCALE 0x10000u
+#define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
 
 // Projects the four objects at full scale from their saved row positions.
 void FourObjectMotion_UpdateAllPositions(void) {
@@ -68,11 +70,11 @@ void FourObjectMotion_UpdateAllPositions(void) {
     struct AnimationObject *object = state->objects[index];
 
     if (object != 0) {
-      u32 vertical =
-          VERTICAL_ORIGIN - ((s32)state->verticalOrigins[index] << 16);
+      u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y -
+                     ((s32)state->verticalOrigins[index] << 16);
       object->image.priority = 0;
-      scale.x = FIXED_ONE;
-      scale.y = FIXED_ONE;
+      scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
+      scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
       placement.x = (s32)state->positionsX[index] << 16;
       placement.height = vertical;
       placement.y = ((s32)state->positionsY[index] << 16) + vertical;
@@ -203,8 +205,8 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   return 1;
 }
 
-DEFINE_FOUR_OBJECT_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
-                           FourObjectMotion_UpdateBottomRow)
+FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
+                                  FourObjectMotion_UpdateBottomRow)
 
 // Selects animation 1 for each party figure that exists.
 void Menu_EnableAllItemObjects(void) {
@@ -215,3 +217,7 @@ void Menu_EnableAllItemObjects(void) {
     AnimationObjects_SelectAnimationFar(state->ownerObjects[index], 1);
   }
 }
+
+#undef FOUR_OBJECT_MOTION_DEFINE_RELEASE
+#undef FOUR_OBJECT_MOTION_FULL_SCALE
+#undef FOUR_OBJECT_MOTION_ORIGIN_Y

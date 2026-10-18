@@ -4,9 +4,79 @@
 
 #include "../menu_internal.h"
 
+// Where the edition's text goes. The international editions have longer
+// words, and some languages move a message to fit its own.
+//
+// The x of the small message windows "Dropped it.", "You were cursed!" and
+// "Removed".
+#if TBS_PATCH_1
+#define ITEM_MODAL_SHORT_X 14
+#define ITEM_MODAL_REMOVED_X 14
+#else
+#define ITEM_MODAL_SHORT_X 15
+#define ITEM_MODAL_REMOVED_X 17
+#endif
+
+#if LANGUAGE == LANGUAGE_FRENCH
+#define ITEM_CANNOT_TRADE_X 11
+#else
+#define ITEM_CANNOT_TRADE_X 15
+#endif
+
+#if LANGUAGE == LANGUAGE_ITALIAN
+#define ITEM_TRADED_X 13
+#else
+#define ITEM_TRADED_X 15
+#endif
+
+#if TBS_PATCH_1
+#define ITEM_TRADE_PROMPT_X 0
+#else
+#define ITEM_TRADE_PROMPT_X 16
+#endif
+
+// The x of the command grid's middle column.
+#if TBS_PATCH_1
+#define ITEM_COMMAND_TEXT_X 32
+#else
+#define ITEM_COMMAND_TEXT_X 40
+#endif
+
+#if TBS_PATCH_1
+#define ITEM_QUANTITY_WINDOW_WIDTH 30
+#else
+#define ITEM_QUANTITY_WINDOW_WIDTH 13
+#endif
+
+// The hand cursor and the "How many?" question of the quantity chooser.
+#if TBS_PATCH_1
+#define ITEM_GIVE_CURSOR_X 128
+#define ITEM_GIVE_ASK_X 32
+#define ITEM_GIVE_ASK_Y 0
+#else
+#define ITEM_GIVE_CURSOR_X 88
+#define ITEM_GIVE_ASK_X 0
+#define ITEM_GIVE_ASK_Y 32
+#endif
+
+#if TBS_PATCH_1
+#define ITEM_DROP_QUESTION_X 0
+#else
+#define ITEM_DROP_QUESTION_X 8
+#endif
+
+// The item list's icon column and name column.
+#if TBS_PATCH_1
+#define ITEM_LIST_PAGE_ICONS_X 116
+#define ITEM_LIST_NAME_X 24
+#else
+#define ITEM_LIST_PAGE_ICONS_X 120
+#define ITEM_LIST_NAME_X 32
+#endif
+
 // The event work as the item picker sees it: what the player chose, for the
 // event script. The shared header has no names for these two fields yet.
-struct AssetSelectionResult {
+struct ItemPickerResult {
   s32 unk000[0x60];
   u16 chosenItem; // owner << 10 | item id
   u8 unk182[0x18];
@@ -61,7 +131,7 @@ s32 RunAssetSelectionScreen(void) {
   result = ItemMenu_RunCommands(&owner, &target, &item);
   Menu_EnsureCancelSound();
   if (result == 1) {
-    struct AssetSelectionResult *selection =
+    struct ItemPickerResult *selection =
         cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
 
     selection->chosenItem = (owner << 10) | (item & ITEM_ID_MASK);
@@ -93,38 +163,17 @@ s32 RunAssetSelectionScreen(void) {
   return result;
 }
 
-// The x of the small message windows "Dropped it.", "You were cursed!" and
-// "Removed".
-#if TBS_PATCH_1
-#define MODAL_SHORT_X 14
-#define MODAL_REMOVED_X 14
-#else
-#define MODAL_SHORT_X 15
-#define MODAL_REMOVED_X 17
-#endif
-
-#if LANGUAGE == LANGUAGE_FRENCH
-#define CANNOT_TRADE_MESSAGE_X 11
-#else
-#define CANNOT_TRADE_MESSAGE_X 15
-#endif
-
-#if LANGUAGE == LANGUAGE_ITALIAN
-#define TRADED_MESSAGE_X 13
-#else
-#define TRADED_MESSAGE_X 15
-#endif
-
 // The most items of one kind a stack holds.
-#define INVENTORY_STACK_MAX 30
+#define ITEM_STACK_MAX 30
 
 // The resident IWRAM word copy, called through its address.
-typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
+typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
-#define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
+#define ITEM_IWRAM_COPY_WORDS                                                  \
+  ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
-static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src,
-                                s32 size) {
+static __inline__ s32 Item_CopyWords(ItemWordCopyFn copy, void *dst,
+                                     const void *src, s32 size) {
   /* FAKEMATCH: needed to match: the copy routine as IwramIrqMain plus its
    * offset, passed first; direct calls share the 332-byte size in r5 and move
    * the routine to r6, and through Iwram_CopyWords the routine is loaded before
@@ -427,7 +476,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->paneIcons[0]->active = ICON_HIDDEN;
         WaitFrames(1);
         RenderOutput_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage(MsgDroppedIt, MODAL_SHORT_X, 13);
+        InventoryMenu_ShowModalMessage(MsgDroppedIt, ITEM_MODAL_SHORT_X, 13);
         menu->completionFlag = 1;
         state = ITEM_STEP_ITEM;
       } else {
@@ -446,7 +495,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if ((item->flags & ITEM_STACKABLE) != 0) {
         heldCount = InventoryMenu_GetItemQuantity(
             menu->paneOwner[1], menu->selectedItems[0] & ITEM_ID_MASK);
-        if (heldCount == INVENTORY_STACK_MAX) {
+        if (heldCount == ITEM_STACK_MAX) {
           transferFailed = 1;
         }
         if (ItemMenu_Count(menu->paneOwner[1]) == INVENTORY_SLOTS &&
@@ -456,8 +505,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         stackSize = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
         if (transferFailed == 0) {
-          if (heldCount + stackSize > INVENTORY_STACK_MAX) {
-            amount = INVENTORY_STACK_MAX - heldCount;
+          if (heldCount + stackSize > ITEM_STACK_MAX) {
+            amount = ITEM_STACK_MAX - heldCount;
           } else {
             amount = stackSize;
           }
@@ -536,7 +585,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             RenderOutput_ClearListFar(menu->infoWindow);
             InventoryMenu_ShowModalMessage(MsgEquippedIt +
                                                7, // "You were cursed!"
-                                           MODAL_SHORT_X, 14);
+                                           ITEM_MODAL_SHORT_X, 14);
           }
         }
       }
@@ -566,8 +615,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       targetUnit = UnitGetFar(menu->paneOwner[1]);
       sourceCopy = MemAlloc(BATTLE_UNIT_SIZE);
       targetCopy = MemAlloc(BATTLE_UNIT_SIZE);
-      CopyWords(IWRAM_COPY_WORDS, sourceCopy, sourceUnit, BATTLE_UNIT_SIZE);
-      CopyWords(IWRAM_COPY_WORDS, targetCopy, targetUnit, BATTLE_UNIT_SIZE);
+      Item_CopyWords(ITEM_IWRAM_COPY_WORDS, sourceCopy, sourceUnit,
+                     BATTLE_UNIT_SIZE);
+      Item_CopyWords(ITEM_IWRAM_COPY_WORDS, targetCopy, targetUnit,
+                     BATTLE_UNIT_SIZE);
       sourceQuantity = 0;
       while (sourceQuantity <= 29) {
         result =
@@ -626,11 +677,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       WaitFrames(1);
       if (transferFailed == 1) {
-        CopyWords(IWRAM_COPY_WORDS, sourceUnit, sourceCopy, BATTLE_UNIT_SIZE);
-        CopyWords(IWRAM_COPY_WORDS, targetUnit, targetCopy, BATTLE_UNIT_SIZE);
+        Item_CopyWords(ITEM_IWRAM_COPY_WORDS, sourceUnit, sourceCopy,
+                       BATTLE_UNIT_SIZE);
+        Item_CopyWords(ITEM_IWRAM_COPY_WORDS, targetUnit, targetCopy,
+                       BATTLE_UNIT_SIZE);
         RenderOutput_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage(MsgCannotTrade, CANNOT_TRADE_MESSAGE_X,
-                                       14);
+        InventoryMenu_ShowModalMessage(MsgCannotTrade, ITEM_CANNOT_TRADE_X, 14);
 #if TBS_PATCH_LEVEL == 3
         RenderOutput_RedrawSavedRectFar(menu->statusWindow);
 #endif
@@ -664,10 +716,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
               RenderOutput_ClearListFar(menu->infoWindow);
               InventoryMenu_ShowModalMessage(MsgEquippedIt +
                                                  7, // "You were cursed!"
-                                             MODAL_SHORT_X, 14);
+                                             ITEM_MODAL_SHORT_X, 14);
             }
           } else {
-            InventoryMenu_ShowModalMessage(MsgTraded, TRADED_MESSAGE_X, 14);
+            InventoryMenu_ShowModalMessage(MsgTraded, ITEM_TRADED_X, 14);
           }
         }
       }
@@ -709,7 +761,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         AudioCommand_PlayFar(SE_103); // the curse sound
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, // "You were cursed!"
-                                       MODAL_SHORT_X, 8);
+                                       ITEM_MODAL_SHORT_X, 8);
       }
       state = ITEM_STEP_ITEM;
       break;
@@ -730,7 +782,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                 menu->paneOwner[0]);
       menu->equipPreview = 0;
       RenderOutput_ClearListFar(menu->infoWindow);
-      InventoryMenu_ShowModalMessage(MsgRemoved, MODAL_REMOVED_X, 8);
+      InventoryMenu_ShowModalMessage(MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
       Event_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_ITEM;
       break;
@@ -1082,12 +1134,6 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
-#if TBS_PATCH_1
-#define TRADE_PROMPT_X 0
-#else
-#define TRADE_PROMPT_X 16
-#endif
-
 // Chooses the party member to use (mode 0) or give (mode 1) the selected item
 // to. Using shows each member's status as the cursor passes; giving shows each
 // member's items, how many of this item they already hold, or that they would
@@ -1160,7 +1206,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           if (ItemMenu_Count(menu->ownerIds[ownerIndex]) == INVENTORY_SLOTS &&
               heldCount == 0)
             UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window,
-                                            TRADE_PROMPT_X, 72);
+                                            ITEM_TRADE_PROMPT_X, 72);
 #endif
         }
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
@@ -1572,8 +1618,8 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row) {
 #endif
 
 // Each item command's state in the grid.
-#define COMMAND_DISABLED (-1)
-#define COMMAND_AVAILABLE 1
+#define ITEM_COMMAND_STATE_DISABLED (-1)
+#define ITEM_COMMAND_STATE_AVAILABLE 1
 
 // The item command grid: Use, Equip and Details on the top row, Give, Remove
 // and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
@@ -1625,23 +1671,23 @@ s32 ItemMenu_ChooseCmd(void) {
   // Start on the command chosen last, or on the first one available.
   lastCommand = (s8)menu->listMode;
   if (lastCommand == -1) {
-    if (commandStates[ITEM_COMMAND_INSPECT] == COMMAND_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 2;
       row = 0;
     }
-    if (commandStates[ITEM_COMMAND_GIVE] == COMMAND_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_GIVE] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 0;
       row = 1;
     }
-    if (commandStates[ITEM_COMMAND_EQUIP] == COMMAND_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_EQUIP] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 1;
       row = 0;
     }
-    if (commandStates[ITEM_COMMAND_REMOVE] == COMMAND_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_REMOVE] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 1;
       row = 1;
     }
-    if (commandStates[ITEM_COMMAND_USE] == COMMAND_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_USE] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 0;
       row = 0;
     }
@@ -1695,7 +1741,7 @@ s32 ItemMenu_ChooseCmd(void) {
     WaitFrames(1);
 
     if ((gKeysPressed & KEY_A) != 0) {
-      if (commandStates[commandIndex] == COMMAND_DISABLED) {
+      if (commandStates[commandIndex] == ITEM_COMMAND_STATE_DISABLED) {
         AudioCommand_PlayFar(SE_MENU_ERROR);
       } else {
         switch (commandIndex) {
@@ -1765,61 +1811,54 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
   item = Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == 0) { // usable items
-    commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   } else {
-    commandStates[ITEM_COMMAND_USE] = COMMAND_DISABLED;
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_AVAILABLE;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_AVAILABLE;
   }
 
   if (Item_ClassifyUseMode(menu->paneOwner[0], menu->selectedItems[0]) != -1)
-    commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
   else
-    commandStates[ITEM_COMMAND_USE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
 
   if (menu->selectedItems[0] & INVENTORY_BROKEN)
-    commandStates[ITEM_COMMAND_USE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
 
   if (Item_CanOwnerEquip(menu->paneOwner[0],
                          menu->selectedItems[0] & ITEM_ID_MASK) == 0) {
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   }
 
-  commandStates[ITEM_COMMAND_GIVE] = COMMAND_AVAILABLE;
-  commandStates[ITEM_COMMAND_DROP] = COMMAND_AVAILABLE;
-  commandStates[ITEM_COMMAND_INSPECT] = COMMAND_AVAILABLE;
+  commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_AVAILABLE;
+  commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_AVAILABLE;
+  commandStates[ITEM_COMMAND_INSPECT] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
-    commandStates[ITEM_COMMAND_REMOVE] = COMMAND_AVAILABLE;
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_AVAILABLE;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   } else {
-    commandStates[ITEM_COMMAND_REMOVE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_DISABLED;
   }
 
   if (item->flags & ITEM_CANNOT_UNEQUIP) {
-    commandStates[ITEM_COMMAND_REMOVE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_DISABLED;
     if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
-      commandStates[ITEM_COMMAND_GIVE] = COMMAND_DISABLED;
-      commandStates[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
+      commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_DISABLED;
+      commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_DISABLED;
     }
   }
 
   if (BattleFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)
-    commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->partyCount <= 1)
-    commandStates[ITEM_COMMAND_GIVE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_DISABLED;
 
   if (item->flags & ITEM_INDISPENSABLE)
-    commandStates[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_DISABLED;
 }
-
-// The x of the command grid's middle column.
-#if TBS_PATCH_1
-#define ITEM_TEXT_X 32
-#else
-#define ITEM_TEXT_X 40
-#endif
 
 #define TEXT_COLOR_DISABLED 14
 
@@ -1831,7 +1870,7 @@ void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window) {
 
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
-  disabled = COMMAND_DISABLED;
+  disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
     UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
 
@@ -1840,7 +1879,8 @@ void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window) {
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
     UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 1, window, ITEM_TEXT_X,
+  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 1, window,
+                                  ITEM_COMMAND_TEXT_X,
                                   24); // "Equip"
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
@@ -1861,8 +1901,8 @@ void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window) {
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
     UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
   // "Remove"
-  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 5, window, ITEM_TEXT_X,
-                                  32);
+  UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 5, window,
+                                  ITEM_COMMAND_TEXT_X, 32);
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 }
 
@@ -1952,12 +1992,6 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   return 1;
 }
 
-#if TBS_PATCH_1
-#define QUANTITY_WINDOW_WIDTH 30
-#else
-#define QUANTITY_WINDOW_WIDTH 13
-#endif
-
 // The item menu's Details screen: describes the item entry value in a large
 // window (the whole top half after patch 1) and waits for A or B. Up and Down
 // move an unused counter from 0 to 4. Returns the counter, or -1 after B.
@@ -1976,7 +2010,7 @@ s32 Menu_SelectQuantity(s32 value) {
 #if TBS_PATCH_1
   itemIcon->active = ICON_HIDDEN;
 #endif
-  window = UiWindow_CreateFar(0, 0, QUANTITY_WINDOW_WIDTH, 10, 2);
+  window = UiWindow_CreateFar(0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10, 2);
   // Freeze the party figures and hide the cursor meanwhile.
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
@@ -2327,17 +2361,6 @@ void ItemMenu_SetMsgWin3(void) {
                      13, 0, 17, 3);
 }
 
-// The hand cursor and the "How many?" question of the quantity chooser.
-#if TBS_PATCH_1
-#define GIVE_CURSOR_X 128
-#define GIVE_ASK_X 32
-#define GIVE_ASK_Y 0
-#else
-#define GIVE_CURSOR_X 88
-#define GIVE_ASK_X 0
-#define GIVE_ASK_Y 32
-#endif
-
 // Asks how many of the selected item stack to give or drop: Left and Right
 // choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
 // baseQuantity + quantityRange on a dial of digit sprites), with the owner's
@@ -2374,14 +2397,14 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
     RenderOutput_CreateFar(block, 0x40004000, window, 48, 32);
     rightDial = RenderOutput_CreateFar(block, 0x40004000, window, 80, 32);
     rightDial->oam.index += 4;
-    UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
+    UiMenu_SlideCursor(ITEM_GIVE_CURSOR_X, 40);
     while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
       if (changed) {
         changed = 0;
         quantity = (quantityRange + quantity) % quantityRange;
         RenderOutput_RedrawSavedRectFar(window);
-        UiText_DrawCharacterAtOffsetFar(MsgGiveHowMany, window, GIVE_ASK_X,
-                                        GIVE_ASK_Y);
+        UiText_DrawCharacterAtOffsetFar(MsgGiveHowMany, window, ITEM_GIVE_ASK_X,
+                                        ITEM_GIVE_ASK_Y);
         Dma_Set(gMenu_QuantityTiles, tiles,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
         Shop_FillSelectorFar(30, 14, tiles);
@@ -2423,7 +2446,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         AudioCommand_PlayFar(SE_MENU_CANCEL);
         break;
       }
-      UiMenu_PositionCursor(GIVE_CURSOR_X, 40);
+      UiMenu_PositionCursor(ITEM_GIVE_CURSOR_X, 40);
       if (gKeysRepeat & KEY_LEFT) {
         quantity--;
         changed = 1;
@@ -2464,12 +2487,6 @@ void ItemMenu_DrawItemHead(void) {
                                   menu->messageWindow, 16, 8);
 }
 
-#if TBS_PATCH_1
-#define DROP_QUESTION_X 0
-#else
-#define DROP_QUESTION_X 8
-#endif
-
 // Asks whether to drop item (an inventory entry): its name, the question, and
 // Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
 s32 ItemMenu_ConfirmDrop(s32 item) {
@@ -2486,9 +2503,9 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   Item_GetDirectFar(itemId);
   UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 24, 0);
   question = MsgConfirmDrop;
-  UiText_DrawCharacterAtOffsetFar(question, window, DROP_QUESTION_X, 16);
+  UiText_DrawCharacterAtOffsetFar(question, window, ITEM_DROP_QUESTION_X, 16);
   question++;
-  UiText_DrawCharacterAtOffsetFar(question, window, DROP_QUESTION_X, 24);
+  UiText_DrawCharacterAtOffsetFar(question, window, ITEM_DROP_QUESTION_X, 24);
   answer = MsgYes;
   UiText_DrawCharacterAtOffsetFar(answer, window, 24, 40);
   answer++;
@@ -2706,15 +2723,6 @@ s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
   return 1;
 }
 
-// The item list's icon column and name column.
-#if TBS_PATCH_1
-#define ITEM_LIST_PAGE_ICONS_X 116
-#define ITEM_LIST_NAME_X 24
-#else
-#define ITEM_LIST_PAGE_ICONS_X 120
-#define ITEM_LIST_NAME_X 32
-#endif
-
 // Draws one page of the item list into window: up to five item names with
 // their icons, and the page numbers when there is more than one page.
 s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
@@ -2922,3 +2930,22 @@ s32 ItemMenu_RunList(s32 paneIndex) {
   WaitFrames(1);
   return result;
 }
+
+#undef ITEM_MODAL_SHORT_X
+#undef ITEM_MODAL_REMOVED_X
+#undef ITEM_CANNOT_TRADE_X
+#undef ITEM_TRADED_X
+#undef ITEM_TRADE_PROMPT_X
+#undef ITEM_COMMAND_TEXT_X
+#undef ITEM_QUANTITY_WINDOW_WIDTH
+#undef ITEM_GIVE_CURSOR_X
+#undef ITEM_GIVE_ASK_X
+#undef ITEM_GIVE_ASK_Y
+#undef ITEM_DROP_QUESTION_X
+#undef ITEM_LIST_PAGE_ICONS_X
+#undef ITEM_LIST_NAME_X
+#undef ITEM_STACK_MAX
+#undef ITEM_IWRAM_COPY_WORDS
+#undef ITEM_COMMAND_STATE_DISABLED
+#undef ITEM_COMMAND_STATE_AVAILABLE
+#undef TEXT_COLOR_DISABLED

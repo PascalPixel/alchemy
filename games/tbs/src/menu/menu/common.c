@@ -5,6 +5,27 @@
 
 #include "../menu_internal.h"
 
+// The status panel's name and ailment column starts further left in the
+// international editions, whose ailment labels are longer, and so does
+// "Cannot equip".
+#if TBS_PATCH_1
+#define STATUS_PANEL_TEXT_X 32
+#define STATUS_PANEL_CANNOT_EQUIP_X 0
+#else
+#define STATUS_PANEL_TEXT_X 40
+#define STATUS_PANEL_CANNOT_EQUIP_X 16
+#endif
+
+// A Psynergy item's panel: Spanish puts "Learned" or "Will learn" above the
+// Psynergy's name, the other editions below it.
+#if LANGUAGE == LANGUAGE_SPANISH
+#define STATUS_PANEL_LEARN_NAME_Y 56
+#define STATUS_PANEL_LEARN_STATUS_Y 48
+#else
+#define STATUS_PANEL_LEARN_NAME_Y 48
+#define STATUS_PANEL_LEARN_STATUS_Y 56
+#endif
+
 // UiWindow_UpdateOrCreate: keep an existing window as it is, without redrawing
 // its saved rectangle. The low byte of the flags is the window style.
 #define WINDOW_KEEP_EXISTING 0x100
@@ -77,24 +98,6 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
     *handle = NULL;
   }
 }
-
-// The status panel's name and ailment column starts further left in the
-// international editions, whose ailment labels are longer.
-#if TBS_PATCH_1
-#define STATUS_PANEL_TEXT_X 32
-#define CANNOT_EQUIP_TEXT_X 0
-#else
-#define STATUS_PANEL_TEXT_X 40
-#define CANNOT_EQUIP_TEXT_X 16
-#endif
-
-#if LANGUAGE == LANGUAGE_SPANISH
-#define LEARN_PSYNERGY_NAME_Y 56
-#define LEARN_PSYNERGY_STATUS_Y 48
-#else
-#define LEARN_PSYNERGY_NAME_Y 48
-#define LEARN_PSYNERGY_STATUS_Y 56
-#endif
 
 // Copies one BattleUnit with the resident IWRAM word copy.
 static inline void Owner_Copy(struct BattleUnit *destination,
@@ -196,7 +199,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
 
     if (!Item_CanOwnerEquip(owner, item)) {
       UiText_DrawCharacterAtOffsetFar(MsgCannotEquip, window,
-                                      CANNOT_EQUIP_TEXT_X, 48);
+                                      STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
     }
     // Equip (or, previewing a removal, unequip) the item on the real unit,
@@ -230,14 +233,14 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // label above the name.
     if (known) {
       UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0,
-                                      LEARN_PSYNERGY_NAME_Y);
+                                      STATUS_PANEL_LEARN_NAME_Y);
       UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0,
-                                      LEARN_PSYNERGY_STATUS_Y);
+                                      STATUS_PANEL_LEARN_STATUS_Y);
     } else {
       UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0,
-                                      LEARN_PSYNERGY_NAME_Y);
+                                      STATUS_PANEL_LEARN_NAME_Y);
       UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0,
-                                      LEARN_PSYNERGY_STATUS_Y);
+                                      STATUS_PANEL_LEARN_STATUS_Y);
     }
     break;
   }
@@ -266,7 +269,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
 #if LANGUAGE != LANGUAGE_JAPANESE
 // The pixels the field allows each digit. The Latin font's digits are 7
 // pixels wide, so the digits themselves take a pixel less each.
-#define FIELD_PIXELS_PER_DIGIT 8
+#define NUMBER_PIXELS_PER_DIGIT 8
 
 // Returns how many decimal digits number has, but at least 2: 0-99 give 2,
 // 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
@@ -315,7 +318,7 @@ void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
   // Step x back to the field's left edge; the number writer right-aligns the
   // number in a field of width characters. x changes in place: a separate
   // left-edge local changes the registers.
-  x -= width * FIELD_PIXELS_PER_DIGIT;
+  x -= width * NUMBER_PIXELS_PER_DIGIT;
   UiText_DrawNumberAtOffsetFar(number, width, window, x, y);
 }
 
@@ -1219,3 +1222,16 @@ void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
 
 // Selects text color 4 for the following drawing calls.
 void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
+
+#undef STATUS_PANEL_TEXT_X
+#undef STATUS_PANEL_CANNOT_EQUIP_X
+#undef STATUS_PANEL_LEARN_NAME_Y
+#undef STATUS_PANEL_LEARN_STATUS_Y
+#undef WINDOW_KEEP_EXISTING
+#undef WINDOW_STYLE_MASK
+#undef NUMBER_PIXELS_PER_DIGIT
+#undef ICON_TILE_BYTES
+#undef CURSOR_BOB_STEP
+#undef PAGE_LABEL_FIRST
+#undef PAGE_CAP_LEFT
+#undef PAGE_CAP_RIGHT

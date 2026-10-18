@@ -69,7 +69,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   messageOffset = 0;
   partyResultShown = 0;
 
-  if (targetId != 9)
+  if (targetId != MENU_TARGET_WHOLE_PARTY)
     target = UnitGetFar(targetId);
   else
     target = UnitGetFar(0);

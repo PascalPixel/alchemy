@@ -5,10 +5,32 @@
 #include "../menu_internal.h"
 
 // The German, Spanish, French and Italian Psynergy menus save the window
-// tiles they draw over (0x2000 bytes from 0x06004000) and restore them after.
+// tiles they draw over and restore them after.
 #if TBS_PATCH_2
-#define PROMPT_TILES BG_CHAR_BLOCK(1)
-#define PROMPT_TILES_SIZE 0x2000
+#define PSYNERGY_PROMPT_TILES BG_CHAR_BLOCK(1)
+#define PSYNERGY_PROMPT_TILES_SIZE 0x2000
+#endif
+
+// The highlight over the Psynergy list's rows.
+#if TBS_PATCH_1
+#define PSYNERGY_DETAIL_ROW_X 0
+#define PSYNERGY_DETAIL_ROW_WIDTH 15
+#else
+#define PSYNERGY_DETAIL_ROW_X 1
+#define PSYNERGY_DETAIL_ROW_WIDTH 14
+#endif
+
+// The Psynergy list's page icons, "PP" label, names and hand cursor.
+#if TBS_PATCH_1
+#define PSYNERGY_PAGE_ICONS_X 112
+#define PSYNERGY_PP_LABEL_X 96
+#define PSYNERGY_NAME_X 16
+#define PSYNERGY_LIST_CURSOR_X 88
+#else
+#define PSYNERGY_PAGE_ICONS_X 120
+#define PSYNERGY_PP_LABEL_X 72
+#define PSYNERGY_NAME_X 32
+#define PSYNERGY_LIST_CURSOR_X 98
 #endif
 
 // The Psynergy menu an event opens (window command 1): the field menu's
@@ -18,7 +40,7 @@
 // player backs out.
 s32 Menu_OpenConfirmPrompt(void) {
 #if TBS_PATCH_2
-  void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
+  void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
 #endif
   struct PsynergyMenuState *state =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
@@ -38,8 +60,9 @@ s32 Menu_OpenConfirmPrompt(void) {
   Link_DrawShiftedTilePairFar(0x06002500);
 #if TBS_PATCH_2
   Scheduler_EnableOverlayCallbacksWithFlags();
-  Iwram_CopyWords(saved, PROMPT_TILES, PROMPT_TILES_SIZE);
-  Iwram_FillWords(PROMPT_TILES, PROMPT_TILES_SIZE, 0x33333333);
+  Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);
+  Iwram_FillWords(PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE,
+                  0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
   // Let the player choose.
@@ -63,7 +86,7 @@ s32 Menu_OpenConfirmPrompt(void) {
 #if TBS_PATCH_2
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
-  Iwram_CopyWords(PROMPT_TILES, saved, PROMPT_TILES_SIZE);
+  Iwram_CopyWords(PSYNERGY_PROMPT_TILES, saved, PSYNERGY_PROMPT_TILES_SIZE);
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 0;
   MemFree(saved);
   WaitFrames(1);
@@ -84,9 +107,6 @@ enum PsynergyMenuStep {
   PSYNERGY_STEP_TARGET,
   PSYNERGY_STEP_APPLY,
 };
-
-// The target id meaning the whole party.
-#define TARGET_WHOLE_PARTY 9
 
 // Runs the Psynergy menu: choose a party member and one of their Psynergy,
 // then use it on a member (or the whole party), or, in the shortcut modes, set
@@ -219,7 +239,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         break;
       }
       if (targetMode == 2) {
-        menu->ownerIds[1] = TARGET_WHOLE_PARTY;
+        menu->ownerIds[1] = MENU_TARGET_WHOLE_PARTY;
         step = PSYNERGY_STEP_APPLY;
         break;
       }
@@ -236,9 +256,9 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       actionEntry = menu->paneAction[0];
       useResult = BattleEffect_ApplyToTargets(actionEntry, menu->ownerIds[0],
                                               menu->ownerIds[1], 0);
-      if (menu->ownerIds[1] == TARGET_WHOLE_PARTY) {
+      if (menu->ownerIds[1] == MENU_TARGET_WHOLE_PARTY) {
         menu->ownerIds[1] = menu->ownerIds[0];
-        chosenTarget = TARGET_WHOLE_PARTY;
+        chosenTarget = MENU_TARGET_WHOLE_PARTY;
       }
       if (useResult != -1) {
         action = BattleActGet(menu->paneAction[0] & OWNER_ACTION_ID_MASK);
@@ -264,7 +284,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         step = PSYNERGY_STEP_LIST;
       } else {
         menu->skipSlide = 1;
-        if (chosenTarget == TARGET_WHOLE_PARTY) {
+        if (chosenTarget == MENU_TARGET_WHOLE_PARTY) {
           menu->flags |= 1;
           step = PSYNERGY_STEP_LIST;
         } else {
@@ -587,14 +607,14 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 }
 
 // A Psynergy shortcut: its owner above bit 10, the Psynergy's id below.
-#define SHORTCUT_OWNER_SHIFT 10
-#define SHORTCUT_PSYNERGY_MASK 0x3ff
+#define PSYNERGY_SHORTCUT_OWNER_SHIFT 10
+#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
 // Sets the L (shortcutIndex 0) or R (shortcutIndex 1) Psynergy shortcut:
 // ownerId << 10 | the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex) {
   s32 id = actionId & OWNER_ACTION_ID_MASK;
-  s32 code = (ownerId << SHORTCUT_OWNER_SHIFT) | id;
+  s32 code = (ownerId << PSYNERGY_SHORTCUT_OWNER_SHIFT) | id;
 
   if (shortcutIndex == 0) {
     gGameState.firstShortcut = code;
@@ -623,39 +643,39 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutLabel, window, 0, -8);
 
   UiText_GetResourceDimensionsFar(
-      (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
   if (gGameState.firstShortcut != 0) {
-    UiWork_PushValueSlotFar(gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK,
-                            4);
+    UiWork_PushValueSlotFar(
+        gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK, 4);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
-          UnitGetFar(gGameState.firstShortcut >> SHORTCUT_OWNER_SHIFT), window,
-          80, 0);
+          UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+          window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 0, 0);
   }
 
   UiText_GetResourceDimensionsFar(
-      (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
   if (gGameState.secondShortcut != 0) {
-    UiWork_PushValueSlotFar(gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK,
-                            4);
+    UiWork_PushValueSlotFar(
+        gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK, 4);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(
-          UnitGetFar(gGameState.secondShortcut >> SHORTCUT_OWNER_SHIFT), window,
-          80, 8);
+      UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.secondShortcut >>
+                                              PSYNERGY_SHORTCUT_OWNER_SHIFT),
+                                   window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 0, 8);
@@ -677,7 +697,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutLabel, window, 0, -8);
 
   UiText_GetResourceDimensionsFar(
-      (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
@@ -691,21 +711,23 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
   if (gGameState.firstShortcut != 0) {
     if (wide)
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+              MsgAbilityName,
           window, 8, 0);
     else
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.firstShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+              MsgAbilityName,
           window, 16, 0);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.firstShortcut >> SHORTCUT_OWNER_SHIFT), window,
-        80, 0);
+        UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+        window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 24, 0);
   }
 
   UiText_GetResourceDimensionsFar(
-      (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+      (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
@@ -719,15 +741,17 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
   if (gGameState.secondShortcut != 0) {
     if (wide)
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+              MsgAbilityName,
           window, 8, 8);
     else
       UiText_DrawCharacterAtOffsetFar(
-          (gGameState.secondShortcut & SHORTCUT_PSYNERGY_MASK) + MsgAbilityName,
+          (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+              MsgAbilityName,
           window, 16, 8);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.secondShortcut >> SHORTCUT_OWNER_SHIFT), window,
-        80, 8);
+        UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+        window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 24, 8);
@@ -924,15 +948,6 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
 // held).
 #define PSYNERGY_MENU_SHORTCUT_HELP 2
 
-// The highlight over the Psynergy list's rows.
-#if TBS_PATCH_1
-#define DETAIL_ROW_X 0
-#define DETAIL_ROW_WIDTH 15
-#else
-#define DETAIL_ROW_X 1
-#define DETAIL_ROW_WIDTH 14
-#endif
-
 // Updates the Psynergy list for the row under the cursor: puts the Psynergy's
 // description in the info window, unless a kept message is there, and
 // highlights its row of the five. window and work are not used.
@@ -970,12 +985,14 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
   rowIndex = 0;
   do {
     if (rowIndex == state->row) {
-      Render_SetTilemapFlagRect((void *)menu->psynergyWindow, DETAIL_ROW_X,
-                                rowIndex * 2 + 1, DETAIL_ROW_WIDTH, 1,
+      Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
+                                PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
+                                PSYNERGY_DETAIL_ROW_WIDTH, 1,
                                 14); // highlighted
     } else {
-      Render_SetTilemapFlagRect((void *)menu->psynergyWindow, DETAIL_ROW_X,
-                                rowIndex * 2 + 1, DETAIL_ROW_WIDTH, 1,
+      Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
+                                PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
+                                PSYNERGY_DETAIL_ROW_WIDTH, 1,
                                 15); // normal
     }
     rowIndex++;
@@ -984,18 +1001,6 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
   WaitFrames(1);
   return 1;
 }
-
-#if TBS_PATCH_1
-#define PSYNERGY_PAGE_ICONS_X 112
-#define PSYNERGY_PP_LABEL_X 96
-#define PSYNERGY_NAME_X 16
-#define PSYNERGY_LIST_CURSOR_X 88
-#else
-#define PSYNERGY_PAGE_ICONS_X 120
-#define PSYNERGY_PP_LABEL_X 72
-#define PSYNERGY_NAME_X 32
-#define PSYNERGY_LIST_CURSOR_X 98
-#endif
 
 // Draws one page of the Psynergy list into window: up to five names with their
 // icons and PP costs, a Psynergy the member cannot afford in the no-HP colour
@@ -1321,3 +1326,15 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
     return 0;
   return 1;
 }
+
+#undef PSYNERGY_PROMPT_TILES
+#undef PSYNERGY_PROMPT_TILES_SIZE
+#undef PSYNERGY_DETAIL_ROW_X
+#undef PSYNERGY_DETAIL_ROW_WIDTH
+#undef PSYNERGY_PAGE_ICONS_X
+#undef PSYNERGY_PP_LABEL_X
+#undef PSYNERGY_NAME_X
+#undef PSYNERGY_LIST_CURSOR_X
+#undef PSYNERGY_SHORTCUT_OWNER_SHIFT
+#undef PSYNERGY_SHORTCUT_ID_MASK
+#undef PSYNERGY_MENU_SHORTCUT_HELP

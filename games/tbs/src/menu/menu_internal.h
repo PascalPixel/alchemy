@@ -84,6 +84,9 @@ s32 _call_via_r3(void *, void *, s32, void *);
 // The info window holds a message the next selection must not draw over.
 #define FLAG_MENU_INFO_KEPT 0x151
 
+// The target id of a Psynergy or item used on the whole party.
+#define MENU_TARGET_WHOLE_PARTY 9
+
 // Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 

@@ -4,11 +4,89 @@
 
 #include "../menu_internal.h"
 
+// The international editions show eight party figure rows, their longer
+// words need more window, and their larger numbers need fewer digits.
+//
 // How many party figure rows Menu_OpenCharacterSelector resets.
 #if TBS_PATCH_1
 #define CHARACTER_SELECTOR_OWNER_COUNT 8
 #else
 #define CHARACTER_SELECTOR_OWNER_COUNT 4
+#endif
+
+// The window tiles the Status menu saves and restores.
+#if TBS_PATCH_1
+#define STATUS_SAVED_TILE_BYTES 0x2000
+#else
+#define STATUS_SAVED_TILE_BYTES 0x800
+#endif
+
+// The longest status help text, in characters.
+#if TBS_PATCH_1
+#define STATUS_HELP_TEXT_MAX 0x80
+#else
+#define STATUS_HELP_TEXT_MAX 0x40
+#endif
+
+// The stat column of the status page's top rows.
+#if TBS_PATCH_1
+#define STATUS_STAT_DIGITS 3
+#define STATUS_STAT_X 200
+#else
+#define STATUS_STAT_DIGITS 4
+#define STATUS_STAT_X 192
+#endif
+
+// Items to a page of the equipment page's list.
+#if TBS_PATCH_1
+#define STATUS_EQUIP_PAGE_SIZE 5
+#else
+#define STATUS_EQUIP_PAGE_SIZE 6
+#endif
+
+// The hand cursor on the Psynergy page.
+#if TBS_PATCH_1
+#define STATUS_PSYNERGY_CURSOR_X 55
+#define STATUS_PSYNERGY_CURSOR_Y 60
+#else
+#define STATUS_PSYNERGY_CURSOR_X 58
+#define STATUS_PSYNERGY_CURSOR_Y 52
+#endif
+
+// The highlight over the equipment window's four slot rows.
+#if TBS_PATCH_1
+#define STATUS_EQUIP_SLOT_X 1
+#define STATUS_EQUIP_SLOT_WIDTH 12
+#else
+#define STATUS_EQUIP_SLOT_X 2
+#define STATUS_EQUIP_SLOT_WIDTH 9
+#endif
+
+// The equipment page's item list: its page icons, the item names, and the
+// Attack and Defense figures.
+#if TBS_PATCH_1
+#define SHOP_PAGE_ICONS_X 119
+#define SHOP_ITEM_NAME_X 128
+#define SHOP_STAT_X 80
+#else
+#define SHOP_PAGE_ICONS_X 123
+#define SHOP_ITEM_NAME_X 136
+#define SHOP_STAT_X 72
+#endif
+
+#if LANGUAGE == LANGUAGE_GERMAN
+#define SHOP_EMPTY_MESSAGE_X 112
+#else
+#define SHOP_EMPTY_MESSAGE_X 120
+#endif
+
+// The equipment window, and the equipped items' names in it.
+#if TBS_PATCH_1
+#define STATUS_EQUIP_WINDOW_WIDTH 15
+#define STATUS_EQUIPPED_NAME_X 8
+#else
+#define STATUS_EQUIP_WINDOW_WIDTH 13
+#define STATUS_EQUIPPED_NAME_X 16
 #endif
 
 // Lets the player choose one party member, over the field (the Colosso scenes
@@ -61,13 +139,6 @@ s32 CharacterSelector_Run(void) {
   return result;
 }
 
-// The window tiles from 0x06004000 the Status menu saves and restores.
-#if TBS_PATCH_1
-#define SAVED_TILE_BYTES 0x2000
-#else
-#define SAVED_TILE_BYTES 0x800
-#endif
-
 // The Status menu an event opens (window command 4) over the field: saves the
 // first two background palettes and the window tiles it draws over, sets up
 // the party row and, when the party has Djinn, the four Djinn sprites, runs
@@ -76,7 +147,7 @@ s32 ActionMenu_Open(void) {
   struct CharacterMenuState *state =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
   void *palette = Runtime_BumpAllocateAlternatePool(64);
-  void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
+  void *tiles = Runtime_BumpAllocateAlternatePool(STATUS_SAVED_TILE_BYTES);
   s32 result;
   s32 index;
 
@@ -90,7 +161,7 @@ s32 ActionMenu_Open(void) {
   Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
-  Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), SAVED_TILE_BYTES);
+  Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
 #endif
   Palette_LightenBankHighlight(14);
   // The first sprite palette into background palettes 0 and 1, each with a
@@ -103,8 +174,8 @@ s32 ActionMenu_Open(void) {
   Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
 #if TBS_PATCH_1
-  Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), SAVED_TILE_BYTES);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), SAVED_TILE_BYTES, 0x33333333);
+  Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
@@ -136,7 +207,7 @@ s32 ActionMenu_Open(void) {
   WaitFrames(1);
 #endif
   Iwram_CopyWords((void *)BG_PLTT, palette, 64);
-  Iwram_CopyWords(BG_CHAR_BLOCK(1), tiles, SAVED_TILE_BYTES);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
   MemFree(tiles);
   MemFree(palette);
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 1;
@@ -317,8 +388,8 @@ CharacterMenu_SetSelectedOwnerRow(struct CharacterMenuState *menu,
 
 // The Status menu's party row: Left and Right choose a member, showing their
 // status; L and R move the member one place along the party order; Select
-// lists the Djinn found (once the first is found, game flag 48); A chooses the
-// member and B backs out. Returns 1 or -1.
+// lists the Djinn found (once the first is caught, FLAG_DJINNI_0); A chooses
+// the member and B backs out. Returns 1 or -1.
 s32 CharacterSelector_RunRearrange(void) {
   struct CharacterMenuState *menu;
   s32 ownerIndex;
@@ -835,13 +906,6 @@ void CharacterMenu_DrawSelectionLabels(struct UiWindow *target, s32 selected,
     UiText_DrawResourceFar(MsgStatusNormal, target, 0, 0);
 }
 
-// The longest status help text, in characters.
-#if TBS_PATCH_1
-#define PROGRESS_TEXT_MAX 0x80
-#else
-#define PROGRESS_TEXT_MAX 0x40
-#endif
-
 // Native revisions keep different local widths; the text value consumes u32.
 #if TBS_PATCH_1
 typedef u64 ExperienceDifference;
@@ -876,9 +940,9 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     }
   }
 
-  buffer = MemAlloc(PROGRESS_TEXT_MAX * 2);
+  buffer = MemAlloc(STATUS_HELP_TEXT_MAX * 2);
   UiText_CopyMessageStringFar(messageVariant + MsgProgressHelp, buffer,
-                              PROGRESS_TEXT_MAX);
+                              STATUS_HELP_TEXT_MAX);
   UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
   MemFree(buffer);
 }
@@ -1008,15 +1072,6 @@ spin:
 
 #endif
 
-// The stat column of the status page's top rows.
-#if TBS_PATCH_1
-#define STAT_DIGITS 3
-#define STAT_X 200
-#else
-#define STAT_DIGITS 4
-#define STAT_X 192
-#endif
-
 // Draws the top rows of member ownerId's status page into window: name, class,
 // level, experience, HP and PP on the left, Attack, Defense, Agility and Luck
 // on the right. flags' 0x100 keeps what is drawn instead of clearing it.
@@ -1057,10 +1112,14 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 22, window, 152, 8);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 21, window, 152, 16);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 20, window, 152, 24);
-  UiText_DrawNumberInWindowFar(unit->atk, STAT_DIGITS, window, STAT_X, 0);
-  UiText_DrawNumberInWindowFar(unit->def, STAT_DIGITS, window, STAT_X, 8);
-  UiText_DrawNumberInWindowFar(unit->agi, STAT_DIGITS, window, STAT_X, 16);
-  UiText_DrawNumberInWindowFar(unit->luck, STAT_DIGITS, window, STAT_X, 24);
+  UiText_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
+                               STATUS_STAT_X, 0);
+  UiText_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
+                               STATUS_STAT_X, 8);
+  UiText_DrawNumberInWindowFar(unit->agi, STATUS_STAT_DIGITS, window,
+                               STATUS_STAT_X, 16);
+  UiText_DrawNumberInWindowFar(unit->luck, STATUS_STAT_DIGITS, window,
+                               STATUS_STAT_X, 24);
 }
 
 // Fills ailments[0..4] (CharacterAilment) with member ownerId's ailments: down
@@ -1101,15 +1160,9 @@ s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId) {
   return count;
 }
 
-#if TBS_PATCH_1
-#define EQUIP_LIST_PAGE_SIZE 5
-#else
-#define EQUIP_LIST_PAGE_SIZE 6
-#endif
-
 // Fills result with the item list of the member in pane index for the
 // equipment pages: their unit, the menu's item count, and the page and row of
-// the item chosen last for them, EQUIP_LIST_PAGE_SIZE items to a page.
+// the item chosen last for them, STATUS_EQUIP_PAGE_SIZE items to a page.
 // Returns 1.
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 unitBits;
@@ -1129,10 +1182,10 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
   if (itemCount == 0) {
     selected = 0;
   }
-  page = selected / EQUIP_LIST_PAGE_SIZE;
-  row = selected % EQUIP_LIST_PAGE_SIZE;
-  pageCount = itemCount / EQUIP_LIST_PAGE_SIZE;
-  if (itemCount % EQUIP_LIST_PAGE_SIZE != 0) {
+  page = selected / STATUS_EQUIP_PAGE_SIZE;
+  row = selected % STATUS_EQUIP_PAGE_SIZE;
+  pageCount = itemCount / STATUS_EQUIP_PAGE_SIZE;
+  if (itemCount % STATUS_EQUIP_PAGE_SIZE != 0) {
     pageCount++;
   }
   result->ownerState = unitBits;
@@ -1375,16 +1428,6 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-struct BattleUnit;
-
-#if TBS_PATCH_1
-#define PREPARED_PSYNERGY_CURSOR_X 55
-#define PREPARED_PSYNERGY_CURSOR_Y 60
-#else
-#define PREPARED_PSYNERGY_CURSOR_X 58
-#define PREPARED_PSYNERGY_CURSOR_Y 52
-#endif
-
 s32 PsynergyMenu_SelectAction(void) {
 
   struct PsynergyMenuState *menu;
@@ -1449,8 +1492,8 @@ s32 PsynergyMenu_SelectAction(void) {
       navigationResult = Menu_HandlePageInput(0, state.entryCount, PAGE_ROWS,
                                               &state.row, &state.page);
       menu->paneIcon[0]->active = ICON_SHOWN;
-      UiMenu_PositionCursor(PREPARED_PSYNERGY_CURSOR_X,
-                            state.row * 16 + PREPARED_PSYNERGY_CURSOR_Y);
+      UiMenu_PositionCursor(STATUS_PSYNERGY_CURSOR_X,
+                            state.row * 16 + STATUS_PSYNERGY_CURSOR_Y);
       if (navigationResult == 1) {
         listNeedsRedraw = 1;
         redraw = 1;
@@ -1517,14 +1560,6 @@ void PsynergyMenu_PreparedIconsNoOp(void) {}
 // Reserved second empty callback for the prepared Psynergy page.
 void PsynergyMenu_PreparedIconsSecondNoOp(void) {}
 
-#if TBS_PATCH_1
-#define EQUIP_SLOT_X 1
-#define EQUIP_SLOT_WIDTH 12
-#else
-#define EQUIP_SLOT_X 2
-#define EQUIP_SLOT_WIDTH 9
-#endif
-
 s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
                            struct MenuResult *state) {
   struct InventoryMenuState *menu;
@@ -1574,50 +1609,34 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
   }
 
   for (rowIndex = 0; rowIndex <= 3; rowIndex++) {
-    Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, rowIndex * 2 + 1,
-                              EQUIP_SLOT_WIDTH, 1, 15);
+    Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X,
+                              rowIndex * 2 + 1, STATUS_EQUIP_SLOT_WIDTH, 1, 15);
   }
 
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
     item = Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
     switch (item->type) {
     case 1:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+      Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 1,
+                                STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
     case 4:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 3,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+      Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 3,
+                                STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
     case 3:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 5,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+      Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 5,
+                                STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
     case 2:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 7,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+      Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 7,
+                                STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
     }
   }
   WaitFrames(1);
   return 1;
 }
-
-#if TBS_PATCH_1
-#define SHOP_PAGE_ICONS_X 119
-#define SHOP_ITEM_NAME_X 128
-#define SHOP_STAT_X 80
-#else
-#define SHOP_PAGE_ICONS_X 123
-#define SHOP_ITEM_NAME_X 136
-#define SHOP_STAT_X 72
-#endif
-
-#if LANGUAGE == LANGUAGE_GERMAN
-#define SHOP_EMPTY_MESSAGE_X 112
-#else
-#define SHOP_EMPTY_MESSAGE_X 120
-#endif
 
 s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
                       struct MenuResult *state) {
@@ -1662,12 +1681,6 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-#if TBS_PATCH_1
-#define EQUIP_WINDOW_WIDTH 15
-#else
-#define EQUIP_WINDOW_WIDTH 13
-#endif
-
 s32 ItemMenu_SelectItem(void) {
 
   struct InventoryMenuState *menu;
@@ -1689,7 +1702,8 @@ s32 ItemMenu_SelectItem(void) {
     result = 0;
     UnitGetFar(menu->ownerIds[ownerId]);
   }
-  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, 2);
+  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, STATUS_EQUIP_WINDOW_WIDTH,
+                          10, 2);
   ItemMenu_PosCategory();
 
   for (iconIndex = 0; iconIndex < 32; iconIndex++) {
@@ -1886,12 +1900,6 @@ void ItemMenu_DrawCategory(struct UiWindow *window, s32 ownerId, s32 mode) {
   }
 }
 
-#if TBS_PATCH_1
-#define NAME_X 8
-#else
-#define NAME_X 16
-#endif
-
 // Draws the nonempty equipment entries by their item names.
 void ItemMenu_DrawEquippedItemNames(struct UiWindow *window, u16 *items) {
   s32 slotIndex;
@@ -1902,20 +1910,20 @@ void ItemMenu_DrawEquippedItemNames(struct UiWindow *window, u16 *items) {
       itemId = items[slotIndex] & ITEM_ID_MASK;
       switch (Item_GetDirectFar(itemId)->type) {
       case 1:
-        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, NAME_X,
-                                        8);
+        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
+                                        STATUS_EQUIPPED_NAME_X, 8);
         break;
       case 2:
-        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, NAME_X,
-                                        56);
+        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
+                                        STATUS_EQUIPPED_NAME_X, 56);
         break;
       case 3:
-        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, NAME_X,
-                                        40);
+        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
+                                        STATUS_EQUIPPED_NAME_X, 40);
         break;
       case 4:
-        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, NAME_X,
-                                        24);
+        UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
+                                        STATUS_EQUIPPED_NAME_X, 24);
         break;
       }
     }
@@ -2120,3 +2128,20 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled) {
   } while (index <= 4);
   return 1;
 }
+
+#undef CHARACTER_SELECTOR_OWNER_COUNT
+#undef STATUS_SAVED_TILE_BYTES
+#undef STATUS_HELP_TEXT_MAX
+#undef STATUS_STAT_DIGITS
+#undef STATUS_STAT_X
+#undef STATUS_EQUIP_PAGE_SIZE
+#undef STATUS_PSYNERGY_CURSOR_X
+#undef STATUS_PSYNERGY_CURSOR_Y
+#undef STATUS_EQUIP_SLOT_X
+#undef STATUS_EQUIP_SLOT_WIDTH
+#undef SHOP_PAGE_ICONS_X
+#undef SHOP_ITEM_NAME_X
+#undef SHOP_STAT_X
+#undef SHOP_EMPTY_MESSAGE_X
+#undef STATUS_EQUIP_WINDOW_WIDTH
+#undef STATUS_EQUIPPED_NAME_X

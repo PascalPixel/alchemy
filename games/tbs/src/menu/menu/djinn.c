@@ -4,6 +4,43 @@
 
 #include "../menu_internal.h"
 
+// The international editions widen the Djinn list's highlight, show a trade
+// preview's second side in another mode and lay the stat preview out for
+// fewer digits.
+//
+// The highlight over a row of the Djinn list, in tiles.
+#if TBS_PATCH_1
+#define DJINN_CURSOR_WIDTH 6
+#else
+#define DJINN_CURSOR_WIDTH 5
+#endif
+
+#if TBS_PATCH_1
+#define DJINN_SWAP_PREVIEW_MODE 2
+#else
+#define DJINN_SWAP_PREVIEW_MODE 4
+#endif
+
+// The stat preview's columns; an arrow stands at x (in tiles) or, in the
+// international editions, at the pixel column iconX the preview sets.
+#if TBS_PATCH_1
+#define DJINN_PREVIEW_DIGITS 3
+#define DJINN_PREVIEW_CURRENT_X 48
+#define DJINN_PREVIEW_MAX_X 80
+#define DJINN_PREVIEW_SLASH_X 72
+#define DJINN_PREVIEW_LUCK_X 56
+#define DJINN_PREVIEW_ARROW_X(x, iconX) (iconX)
+#define DJINN_PREVIEW_PP_X 88
+#else
+#define DJINN_PREVIEW_DIGITS 4
+#define DJINN_PREVIEW_CURRENT_X 32
+#define DJINN_PREVIEW_MAX_X 72
+#define DJINN_PREVIEW_SLASH_X 64
+#define DJINN_PREVIEW_LUCK_X 48
+#define DJINN_PREVIEW_ARROW_X(x, iconX) ((x) * 8 + 64)
+#define DJINN_PREVIEW_PP_X 56
+#endif
+
 // Returns (value + modulus) % modulus for the menu cursor wrap.
 s32 Menu_GetModuloOfSum(s32 value, s32 modulus) {
   return (value + modulus) % modulus;
@@ -100,7 +137,7 @@ s32 ItemMenu_Run(void) {
  * selection store's scheduling region. As plain statements the two shifts of
  * found * DJINN_LIST_ROWS swap (differ 2); as an inline function with its own
  * counter, one more register is saved. */
-#define DjinnMenu_ReselectPairEntry(menu, i)                                   \
+#define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \
     s32 column;                                                                \
     s32 found;                                                                 \
@@ -270,7 +307,7 @@ s32 DjinnMenu_RunScreen(void) {
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
       Menu_ComputeEntryValues(menu->backdrop);
-      DjinnMenu_ReselectPairEntry(menu, listIndex);
+      DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = ICON_SHOWN;
       step = DJINN_STEP_HANDLE_RESULT;
       break;
@@ -309,7 +346,7 @@ s32 DjinnMenu_RunScreen(void) {
       UnitCalcFar(menu->shownOwner[0]);
       UnitCalcFar(menu->shownOwner[1]);
       Menu_ComputeEntryValues(menu->backdrop);
-      DjinnMenu_ReselectPairEntry(menu, listIndex);
+      DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = ICON_SHOWN;
       step = DJINN_STEP_SELECT_DJINN;
       break;
@@ -408,8 +445,8 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
 
 #define DJINN_BACKDROP_FRAME_TILE 150
 
-#define PREVIEW_ACTION_GAINED 0x8000
-#define PREVIEW_ACTION_LOST 0x4000
+#define DJINN_PREVIEW_GAINED 0x8000
+#define DJINN_PREVIEW_LOST 0x4000
 
 // UB: the implicit int call conflicts with DrawElementList's void definition.
 // The sole caller ignores this wrapper's result. Plain void changes the native
@@ -470,7 +507,7 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
     }
     if (otherIndex == 32) {
       gainedCount++;
-      actionsOut[actionCount - 1] |= PREVIEW_ACTION_GAINED;
+      actionsOut[actionCount - 1] |= DJINN_PREVIEW_GAINED;
     }
   }
   for (actionIndex = 0;
@@ -486,7 +523,7 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
       lostCount++;
       actionsOut[actionCount] =
           (before[actionIndex].encodedAction & OWNER_ACTION_ID_MASK) |
-          PREVIEW_ACTION_LOST;
+          DJINN_PREVIEW_LOST;
       actionCount++;
     }
   }
@@ -523,8 +560,9 @@ s32 Menu_ComputeEntryValues(void *table) {
   }
 }
 
-#define ELEMENT_TILE 0x5001
-#define ENTRY entries[listIndex]
+// The window map entry of the first element icon, in palette 5; the four
+// elements follow it in order.
+#define DJINN_ELEMENT_TILE 0x5001
 
 // Draws each owner's Djinn column, including set and recovering entries.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
@@ -555,28 +593,30 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
     lineIndex = 0;
     for (element = 0; element < DJINN_ELEMENTS; element++) {
       for (listIndex = 0; listIndex < table->counts[row]; listIndex++) {
-        if (element != (ENTRY & DJINN_ENTRY_ELEMENT) >> 5)
+        if (element != (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5)
           continue;
-        if ((ENTRY & DJINN_ENTRY_IS_SET) == 0)
+        if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
           UiWork_SetParamNibbleFar(2);
         canChangeState = 0;
-        if (Djinn_IsReadyFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
-                             (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
-                             ENTRY & DJINN_ENTRY_INDEX) ||
-            Djinn_IsActiveFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
-                              (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
-                              ENTRY & DJINN_ENTRY_INDEX))
+        if (Djinn_IsReadyFar((entries[listIndex] & DJINN_ENTRY_OWNER) >> 8,
+                             (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5,
+                             entries[listIndex] & DJINN_ENTRY_INDEX) ||
+            Djinn_IsActiveFar((entries[listIndex] & DJINN_ENTRY_OWNER) >> 8,
+                              (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5,
+                              entries[listIndex] & DJINN_ENTRY_INDEX))
           canChangeState = 1;
         if (!canChangeState)
           UiWork_SetParamNibbleFar(4);
-        UiWindow_SetTilemapEntryFar(menu->listWindow,
-                                    ((ENTRY & DJINN_ENTRY_ELEMENT) >> 5) +
-                                        ELEMENT_TILE,
-                                    row * 7 + 1, lineIndex + 2, 0);
+        UiWindow_SetTilemapEntryFar(
+            menu->listWindow,
+            ((entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5) +
+                DJINN_ELEMENT_TILE,
+            row * 7 + 1, lineIndex + 2, 0);
         UiText_DrawCharacterAtOffsetFar(
             MsgDjinnName +
-                ((ENTRY & DJINN_ENTRY_ELEMENT) >> 5) * DJINN_PER_ELEMENT +
-                (ENTRY & DJINN_ENTRY_INDEX),
+                ((entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5) *
+                    DJINN_PER_ELEMENT +
+                (entries[listIndex] & DJINN_ENTRY_INDEX),
             menu->listWindow, row * 56 + 16, lineIndex * 8 + 16);
         lineIndex++;
         UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
@@ -762,11 +802,6 @@ s32 DjinnMenu_ShowHelp(void) {
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
-#if TBS_PATCH_1
-#define CURSOR_WIDTH 6
-#else
-#define CURSOR_WIDTH 5
-#endif
 
 // Chooses an owner and Djinni, or a set, standby, give or trade action.
 // The tutorial can replace the sampled input without changing the input order.
@@ -837,9 +872,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     fromX = (u16)((u32)sourceCursor % (u32)10);
     fromY = (u16)((u32)sourceCursor / (u32)10);
     Menu_DrawAtWindowOffset(menu->listWindow, fromX * 7 + 1, fromY + 2,
-                            CURSOR_WIDTH, 1, 14);
+                            DJINN_CURSOR_WIDTH, 1, 14);
     UiWindow_ApplyRectAtObjectOrigin(menu->listWindow, fromX * 7 + 1, 2,
-                                     CURSOR_WIDTH, 7, 6);
+                                     DJINN_CURSOR_WIDTH, 7, 6);
     for (n = 0; n < menu->ownerCount; n++) {
       if (n == menu->selectedColumn[0]) {
         if (menu->pairEntries[0] & DJINN_ENTRY_IS_SET)
@@ -880,8 +915,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
         UiWindow_SetTilemapEntryFar(
-            menu->helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 0,
-            0, 0);
+            menu->helpWindow,
+            DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 0, 0, 0);
         UiWork_PushValueSlotFar(menu->shownOwner[0], 1);
         UiWork_PushValueSlotFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
@@ -896,8 +931,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
                                 4);
         UiWindow_SetTilemapEntryFar(
-            menu->helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 6,
-            0, 0);
+            menu->helpWindow,
+            DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 6, 0, 0);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel + 1,
                                         menu->helpWindow, 56, 0);
 #endif
@@ -999,7 +1034,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
       if (!(columnFlags[ownerColumn] & 1))
         Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, CURSOR_WIDTH, 1, 14);
+                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 14);
       ((struct UiWork *)gWindowWork[0])->dirty = 1;
     }
     if (columnFlags[ownerColumn] & 1)
@@ -1324,7 +1359,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       } else {
         result = 10;
         Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, CURSOR_WIDTH, 1, 15);
+                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         break;
       }
@@ -1334,7 +1369,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (columnFlags[ownerColumn] & 4)
         continue;
       Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                              djinnRow + 2, CURSOR_WIDTH, 1, 15);
+                              djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
       if (columnFlags[ownerColumn] & 4)
         continue;
       if (columnFlags[ownerColumn] & 1) {
@@ -1359,7 +1394,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (columnFlags[ownerColumn] & 4)
         continue;
       Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                              djinnRow + 2, CURSOR_WIDTH, 1, 15);
+                              djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
       djinnRow++;
       count = backdrop->list.counts[ownerColumn];
       if (count == 0)
@@ -1379,7 +1414,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       if (!(columnFlags[ownerColumn] & 4))
         Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, CURSOR_WIDTH, 1, 15);
+                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
       ownerColumn--;
       ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
       if (mode == 0) {
@@ -1402,7 +1437,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       if (!(columnFlags[ownerColumn] & 4))
         Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, CURSOR_WIDTH, 1, 15);
+                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
       ownerColumn++;
       ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
       if (mode == 0) {
@@ -1475,12 +1510,6 @@ s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
   return count;
 }
 
-#if TBS_PATCH_1
-#define DJINN_SWAP_PREVIEW_MODE 2
-#else
-#define DJINN_SWAP_PREVIEW_MODE 4
-#endif
-
 // Draws both sides of the give or trade preview for the selected page.
 s32 Menu_RunPairedEntryAction(s32 mode, s32 pageIndex) {
   s32 sp14;
@@ -1502,23 +1531,6 @@ s32 Menu_RunPairedEntryAction(s32 mode, s32 pageIndex) {
   return 1;
 }
 
-#if TBS_PATCH_1
-#define PREVIEW_DIGITS 3
-#define PREVIEW_CURRENT_X 48
-#define PREVIEW_MAX_X 80
-#define PREVIEW_SLASH_X 72
-#define PREVIEW_LUCK_X 56
-#define PREVIEW_ARROW_X iconX
-#define PREVIEW_PP_X 88
-#else
-#define PREVIEW_DIGITS 4
-#define PREVIEW_CURRENT_X 32
-#define PREVIEW_MAX_X 72
-#define PREVIEW_SLASH_X 64
-#define PREVIEW_LUCK_X 48
-#define PREVIEW_ARROW_X (x * 8 + 64)
-#define PREVIEW_PP_X 56
-#endif
 // Copies a full unit for a temporary Djinn-stat preview.
 static __inline__ void Unit_Copy(struct BattleUnit *destination,
                                  struct BattleUnit *source) {
@@ -1556,32 +1568,32 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
 
   if (page == 0) {
     if (previewMode == 3) {
-      UiText_DrawNumberInWindowFar(unit->maxHp, PREVIEW_DIGITS, window,
-                                   x * 8 + PREVIEW_MAX_X, y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->maxPp, PREVIEW_DIGITS, window,
-                                   x * 8 + PREVIEW_MAX_X, y * 8 + 64);
-      UiText_DrawNumberInWindowFar(unit->hp, PREVIEW_DIGITS, window,
-                                   x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->pp, PREVIEW_DIGITS, window,
-                                   x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+      UiText_DrawNumberInWindowFar(unit->maxHp, DJINN_PREVIEW_DIGITS, window,
+                                   x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 56);
+      UiText_DrawNumberInWindowFar(unit->maxPp, DJINN_PREVIEW_DIGITS, window,
+                                   x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 64);
+      UiText_DrawNumberInWindowFar(unit->hp, DJINN_PREVIEW_DIGITS, window,
+                                   x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 56);
+      UiText_DrawNumberInWindowFar(unit->pp, DJINN_PREVIEW_DIGITS, window,
+                                   x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 64);
       UiText_DrawStringAtOffsetFar(gDjinnMenu_TextSlash, window,
-                                   x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
+                                   x * 8 + DJINN_PREVIEW_SLASH_X, y * 8 + 56);
       UiText_DrawStringAtOffsetFar(gDjinnMenu_TextSlash, window,
-                                   x * 8 + PREVIEW_SLASH_X, y * 8 + 64);
+                                   x * 8 + DJINN_PREVIEW_SLASH_X, y * 8 + 64);
     } else {
-      UiText_DrawNumberInWindowFar(unit->hp, PREVIEW_DIGITS, window,
-                                   x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
-      UiText_DrawNumberInWindowFar(unit->pp, PREVIEW_DIGITS, window,
-                                   x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+      UiText_DrawNumberInWindowFar(unit->hp, DJINN_PREVIEW_DIGITS, window,
+                                   x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 56);
+      UiText_DrawNumberInWindowFar(unit->pp, DJINN_PREVIEW_DIGITS, window,
+                                   x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 64);
     }
-    UiText_DrawNumberInWindowFar(unit->atk, PREVIEW_DIGITS, window,
-                                 x * 8 + PREVIEW_CURRENT_X, y * 8 + 72);
-    UiText_DrawNumberInWindowFar(unit->def, PREVIEW_DIGITS, window,
-                                 x * 8 + PREVIEW_CURRENT_X, y * 8 + 80);
-    UiText_DrawNumberInWindowFar(unit->agi, PREVIEW_DIGITS, window,
-                                 x * 8 + PREVIEW_CURRENT_X, y * 8 + 88);
-    UiText_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + PREVIEW_LUCK_X,
-                                 y * 8 + 96);
+    UiText_DrawNumberInWindowFar(unit->atk, DJINN_PREVIEW_DIGITS, window,
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 72);
+    UiText_DrawNumberInWindowFar(unit->def, DJINN_PREVIEW_DIGITS, window,
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 80);
+    UiText_DrawNumberInWindowFar(unit->agi, DJINN_PREVIEW_DIGITS, window,
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 88);
+    UiText_DrawNumberInWindowFar(unit->luck, 2, window,
+                                 x * 8 + DJINN_PREVIEW_LUCK_X, y * 8 + 96);
   }
 
   // Only the temporary unit changes; the saved record is restored below.
@@ -1652,8 +1664,8 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       if (originalUnit->classIndex != unit->classIndex)
         column += 5;
       for (i = 0; i < 4; i++) {
-        UiWindow_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5,
-                                    0);
+        UiWindow_SetTilemapEntryFar(window, DJINN_ELEMENT_TILE + i,
+                                    column + i * 2, y + 5, 0);
         UiWindow_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
                                     column + i * 2 + 1, y + 5, 0);
       }
@@ -1664,61 +1676,61 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
         UiText_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
                                      y * 8 + 56);
         if (unit->hp > originalUnit->hp)
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56,
-                                           0);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 56, 0);
         else
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56,
-                                           1);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 56, 1);
       }
       if (unit->pp != originalUnit->pp) {
         UiText_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72,
                                      y * 8 + 64);
         if (unit->pp > originalUnit->pp)
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64,
-                                           0);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 64, 0);
         else
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64,
-                                           1);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 64, 1);
       }
       if (unit->atk != originalUnit->atk) {
         UiText_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
                                      y * 8 + 72);
         if (unit->atk > originalUnit->atk)
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 72,
-                                           0);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 72, 0);
         else
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 72,
-                                           1);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 72, 1);
       }
       if (unit->def != originalUnit->def) {
         UiText_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
                                      y * 8 + 80);
         if (unit->def > originalUnit->def)
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 80,
-                                           0);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 80, 0);
         else
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 80,
-                                           1);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 80, 1);
       }
       if (unit->agi != originalUnit->agi) {
         UiText_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
                                      y * 8 + 88);
         if (unit->agi > originalUnit->agi)
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 88,
-                                           0);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 88, 0);
         else
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 88,
-                                           1);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 88, 1);
       }
       if (unit->luck != originalUnit->luck) {
         UiText_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
                                      y * 8 + 96);
         if (unit->luck > originalUnit->luck)
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 96,
-                                           0);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 96, 0);
         else
-          UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 96,
-                                           1);
+          UiIcon_DrawVariantWithTileOffset(
+              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 96, 1);
       }
     }
   }
@@ -1752,8 +1764,8 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       line++;
     }
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
-    UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, x * 8 + PREVIEW_PP_X,
-                                    y * 8);
+    UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window,
+                                    x * 8 + DJINN_PREVIEW_PP_X, y * 8);
     if (previewMode != 3) {
       s32 lines;
 
@@ -1786,3 +1798,22 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
   MemFree(originalUnit);
   return 1;
 }
+
+#undef DJINN_CURSOR_WIDTH
+#undef DJINN_SWAP_PREVIEW_MODE
+#undef DJINN_PREVIEW_DIGITS
+#undef DJINN_PREVIEW_CURRENT_X
+#undef DJINN_PREVIEW_MAX_X
+#undef DJINN_PREVIEW_SLASH_X
+#undef DJINN_PREVIEW_LUCK_X
+#undef DJINN_PREVIEW_ARROW_X
+#undef DJINN_PREVIEW_PP_X
+#undef DJINN_RESELECT_PAIR_ENTRY
+#undef DJINN_BACKDROP_FRAME_TILE
+#undef DJINN_PREVIEW_GAINED
+#undef DJINN_PREVIEW_LOST
+#undef DJINN_ELEMENT_TILE
+#undef DJINN_ENTRY_SET
+#undef DJINN_OWNER
+#undef DJINN_ELEMENT
+#undef DJINN_NUMBER

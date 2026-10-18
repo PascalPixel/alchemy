@@ -46,6 +46,61 @@ enum {
 #define UI_CANVAS_SIZE 0xf00
 #define UI_CANVAS_FIRST_TILE 0x128
 
+// The UI tilemap in VRAM (BG screen block 4), which UiWork_UploadDirtyBlocks
+// copies the work block's tilemap to.
+#define UI_TILEMAP_VRAM ((u8 *)0x06002000)
+
+// A tilemap entry of palette 15, the UI palette.
+#define UI_TILE(tile) (0xf000 | (tile))
+// Two copies of a tilemap entry, for filling a run of entries a word at a time.
+#define UI_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
+
+// The window frame's tiles. While UiRenderWork.mode is set (a battle effect
+// sets it while it greys palette 15 and scrolls BG0 by scanline) the corners
+// are one rounded tile, flipped for each corner.
+enum {
+  UI_TILE_BLANK = UI_TILE(0x00),
+  UI_TILE_FRAME_TOP_LEFT = UI_TILE(0x10),
+  UI_TILE_FRAME_TOP = UI_TILE(0x11),
+  UI_TILE_FRAME_TOP_RIGHT = UI_TILE(0x12),
+  UI_TILE_FRAME_BOTTOM_LEFT = UI_TILE(0x13),
+  UI_TILE_FRAME_BOTTOM = UI_TILE(0x14),
+  UI_TILE_FRAME_BOTTOM_RIGHT = UI_TILE(0x15),
+  UI_TILE_FRAME_LEFT = UI_TILE(0x16),
+  UI_TILE_FRAME_RIGHT = UI_TILE(0x17),
+  UI_TILE_FRAME_ROUND_CORNER = UI_TILE(0x1c),
+  UI_TILE_WINDOW_FILL = UI_TILE(0x20),
+  // Divider lines (UiWindow_DrawDividerLine) and their joins.
+  UI_TILE_DIVIDER_TEE_DOWN = UI_TILE(0x09),  // a vertical line leaving below
+  UI_TILE_DIVIDER_TEE_UP = UI_TILE(0x0a),    // a vertical line leaving above
+  UI_TILE_DIVIDER_TEE_RIGHT = UI_TILE(0x0b), // a horizontal line leaving right
+  UI_TILE_DIVIDER_TEE_LEFT = UI_TILE(0x0c),  // a horizontal line leaving left
+  UI_TILE_DIVIDER_CROSS = UI_TILE(0x0d),
+  UI_TILE_DIVIDER_HORIZONTAL = UI_TILE(0x0e),
+  UI_TILE_DIVIDER_VERTICAL = UI_TILE(0x0f),
+  UI_TILE_FRAME_TOP_TEE = UI_TILE(0x18),    // the top edge meeting a line
+  UI_TILE_FRAME_BOTTOM_TEE = UI_TILE(0x19), // the bottom edge meeting a line
+  UI_TILE_FRAME_LEFT_TEE = UI_TILE(0x1a),   // the left edge meeting a line
+  UI_TILE_FRAME_RIGHT_TEE = UI_TILE(0x1b),  // the right edge meeting a line
+  // In battle, the bottom frame tiles' lower rows, which UiWork_Initialize
+  // copies to tiles 128 to 130.
+  UI_TILE_BATTLE_FRAME_BOTTOM_LEFT = UI_TILE(0x80),
+  UI_TILE_BATTLE_FRAME_BOTTOM = UI_TILE(0x81),
+  UI_TILE_BATTLE_FRAME_BOTTOM_RIGHT = UI_TILE(0x82),
+};
+
+// The tilemap entry flip bits.
+#define TILE_HFLIP 0x400
+#define TILE_VFLIP 0x800
+
+// The DMA control word that fills count words from one fixed source word.
+#define DMA_FILL32(count)                                                      \
+  ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (count))
+// The DMA control word that copies count words.
+#define DMA_COPY32(count) ((DMA_ENABLE | DMA_32BIT) << 16 | (count))
+// The DMA control word that copies count halfwords.
+#define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
+
 // How a render output's sprite moves (struct RenderOutput.active), run each
 // frame by UiWork_AnimateSpriteSlots. 0 is a free output.
 enum {

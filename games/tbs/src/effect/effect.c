@@ -2238,6 +2238,12 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect) {
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
 
+// Plots the four corners (x1 or x2, y1 or y2): one point of the circle
+// mirrored into four octants.
+#define PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2)                              \
+  (PLOT_SHATTER_MASK_PIXEL(x2, y2), PLOT_SHATTER_MASK_PIXEL(x2, y1),           \
+   PLOT_SHATTER_MASK_PIXEL(x1, y2), PLOT_SHATTER_MASK_PIXEL(x1, y1))
+
 #define OPENING_FRAMES 128 // frames in the effect
 #define OPENING_FLASHES 32 // flashes thrown as the picture breaks
 #define OPENING_PIECES 33  // pieces the picture breaks into
@@ -2459,20 +2465,14 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
             x1 = 0;
           if (x2 > 255)
             x2 = 255;
-          PLOT_SHATTER_MASK_PIXEL(x2, y2);
-          PLOT_SHATTER_MASK_PIXEL(x2, y1);
-          PLOT_SHATTER_MASK_PIXEL(x1, y2);
-          PLOT_SHATTER_MASK_PIXEL(x1, y1);
+          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
           x1 = leftX + 1;
-          x2 = octantX + 97;
+          x2 = octantX + OPENING_DISC_X + 1;
           if (x1 < 0)
             x1 = 0;
           if (x2 > 255)
             x2 = 255;
-          PLOT_SHATTER_MASK_PIXEL(x2, y2);
-          PLOT_SHATTER_MASK_PIXEL(x2, y1);
-          PLOT_SHATTER_MASK_PIXEL(x1, y2);
-          PLOT_SHATTER_MASK_PIXEL(x1, y1);
+          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
 
           x2 = octantY + centreX;
           x1 = centreX - octantY;
@@ -2487,20 +2487,14 @@ void BattleFx_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect) {
             y1 = 0;
           if (y2 > 119)
             y2 = 119;
-          PLOT_SHATTER_MASK_PIXEL(x2, y2);
-          PLOT_SHATTER_MASK_PIXEL(x2, y1);
-          PLOT_SHATTER_MASK_PIXEL(x1, y2);
-          PLOT_SHATTER_MASK_PIXEL(x1, y1);
+          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
           x1 = innerLeftX + 1;
-          x2 = octantY + 97;
+          x2 = octantY + OPENING_DISC_X + 1;
           if (x1 < 0)
             x1 = 0;
           if (x2 > 255)
             x2 = 255;
-          PLOT_SHATTER_MASK_PIXEL(x2, y2);
-          PLOT_SHATTER_MASK_PIXEL(x2, y1);
-          PLOT_SHATTER_MASK_PIXEL(x1, y2);
-          PLOT_SHATTER_MASK_PIXEL(x1, y1);
+          PLOT_SHATTER_MASK_CORNERS(x1, x2, y1, y2);
 
           error -= octantY * 2 + 1;
           if (error < 0) {

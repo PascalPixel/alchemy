@@ -3320,7 +3320,7 @@ Func_080dbe44:
 Func_080d3b28:
 	.incbin "baserom.gba", 0x000e392c, 0x00000030
 	.section .rom.000e399c, "ax"
-	.incbin "baserom.gba", 0x000e399c, 0x00000500
+	.incbin "baserom.gba", 0x000e399c, 0x000004c8
 	.section .rom.000e3ec0, "ax"
 	.global Func_080cdf5c
 	.type Func_080cdf5c, %function

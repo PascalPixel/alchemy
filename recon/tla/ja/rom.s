@@ -3598,7 +3598,14 @@ ItemMenu_DrawEquippedItemNames:
 Func_08100e7c:
 	.incbin "baserom.gba", 0x00100e84, 0x00000734
 	.section .rom.00101640, "ax"
-	.incbin "baserom.gba", 0x00101640, 0x00000490
+	.incbin "baserom.gba", 0x00101640, 0x0000036c
+	.section .rom.00101a0c, "ax"
+	.balign 4
+	.global Func_08101a04
+	.type Func_08101a04, %function
+	.thumb_func
+Func_08101a04:
+	.incbin "baserom.gba", 0x00101a0c, 0x000000c4
 	.section .rom.00101ad0, "ax"
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
@@ -3612,7 +3619,12 @@ DjinnMenu_DrawPage:
 Func_08101c7c:
 	.incbin "baserom.gba", 0x00101c84, 0x000000b8
 	.section .rom.00101d64, "ax"
-	.incbin "baserom.gba", 0x00101d64, 0x00002b9c
+	.incbin "baserom.gba", 0x00101d64, 0x000012d8
+	.global Func_08103064
+	.type Func_08103064, %function
+	.thumb_func
+Func_08103064:
+	.incbin "baserom.gba", 0x0010303c, 0x000018c4
 	.section .rom.00104964, "ax"
 	.balign 4
 	.global Func_0810498c

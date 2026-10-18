@@ -1,7 +1,11 @@
-// Draft of Func_08172b00, decompiled from the listing: differ 1219 of 1216
-// (draft 1137), the same control flow and 71 calls but one: the compiler merges
-// the two identical Djinni blits into one call, the listing keeps both;
-// allocation differs.
+// Draft of Func_08172b00, decompiled from the listing: differ 774 of 1216
+// (draft 1208), the same control flow and 71 calls but one; the Djinni's
+// start and step are read as work->particles[62] and [63] in place, so their
+// field addresses are hoisted as in the native.
+// Left: the compiler merges the tails of mode 0's two Djinni blits into one
+// call (the native loads the blitter early for the first, so its tails
+// differ); a separate sheet pointer or blitter copy does not change that.
+// The rest is allocation.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -138,8 +142,6 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *p;
-  struct EffectStep *origin;
-  struct EffectStep *step;
   s32 frames;
   s32 count;
   s32 frame;
@@ -171,11 +173,9 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   caster = *GetBattleObjectSlotFar(effect->actor);
 
   // The last two particles keep the Djinni's start and its step.
-  origin = &work->particles[62];
-  step = &work->particles[63];
-  origin->x = focus[0];
-  origin->y = focus[1];
-  origin->z = focus[2];
+  work->particles[62].x = focus[0];
+  work->particles[62].y = focus[1];
+  work->particles[62].z = focus[2];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                              work->sheet + 0x1000, 1, 1);
@@ -201,15 +201,15 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != frames; frame++) {
     if (frame == 0) {
       camera[27] = savedYaw;
-      focus[0] = origin->x;
-      focus[1] = origin->y;
-      focus[2] = origin->z;
-      step->x = 0;
-      step->y = 0;
-      step->z = 0;
-      step->velocityX = target[2] - focus[0];
-      step->velocityY = target[3] - focus[1] + 0x1e0000;
-      step->velocityZ = target[4] - focus[2];
+      focus[0] = work->particles[62].x;
+      focus[1] = work->particles[62].y;
+      focus[2] = work->particles[62].z;
+      work->particles[63].x = 0;
+      work->particles[63].y = 0;
+      work->particles[63].z = 0;
+      work->particles[63].velocityX = target[2] - focus[0];
+      work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+      work->particles[63].velocityZ = target[4] - focus[2];
       for (i = 0; i != 62; i++) {
         work->particles[i].variant = -1;
       }
@@ -235,35 +235,35 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame <= 31) {
         // Pull back...
-        focus[0] -= step->x;
-        focus[1] -= step->y;
-        focus[2] -= step->z;
+        focus[0] -= work->particles[63].x;
+        focus[1] -= work->particles[63].y;
+        focus[2] -= work->particles[63].z;
         if (frame <= 15) {
-          step->x += step->velocityX >> 10;
-          step->y += step->velocityY >> 10;
-          step->z += step->velocityZ >> 10;
+          work->particles[63].x += work->particles[63].velocityX >> 10;
+          work->particles[63].y += work->particles[63].velocityY >> 10;
+          work->particles[63].z += work->particles[63].velocityZ >> 10;
         }
-        step->x = step->x * 56 / 64;
-        step->y = step->y * 56 / 64;
-        step->z = step->z * 56 / 64;
+        work->particles[63].x = work->particles[63].x * 56 / 64;
+        work->particles[63].y = work->particles[63].y * 56 / 64;
+        work->particles[63].z = work->particles[63].z * 56 / 64;
         if (frame == 31) {
           Audio_PlayCue(138);
         }
       } else if (frame <= 45) {
         // ...drive in...
-        focus[0] += step->x;
-        focus[1] += step->y;
-        focus[2] += step->z;
-        step->x += step->velocityX >> 7;
-        step->y += step->velocityY >> 7;
-        step->z += step->velocityZ >> 7;
+        focus[0] += work->particles[63].x;
+        focus[1] += work->particles[63].y;
+        focus[2] += work->particles[63].z;
+        work->particles[63].x += work->particles[63].velocityX >> 7;
+        work->particles[63].y += work->particles[63].velocityY >> 7;
+        work->particles[63].z += work->particles[63].velocityZ >> 7;
       } else if (frame <= 72 && !(frame & 3)) {
         s32 thrown = 0;
 
         // ...and strike, every fourth frame.
-        focus[0] += step->x / 2;
-        focus[1] += step->y / 2;
-        focus[2] += step->z / 2;
+        focus[0] += work->particles[63].x / 2;
+        focus[1] += work->particles[63].y / 2;
+        focus[2] += work->particles[63].z / 2;
         if (frame == 72) {
           Func_081180e8(134);
           work->shakeFrames = 8;
@@ -293,12 +293,12 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else {
       if ((u32)frame <= 22) {
-        focus[0] += step->x;
-        focus[1] += step->y;
-        focus[2] += step->z;
-        step->x += step->velocityX >> 7;
-        step->y += step->velocityY >> 7;
-        step->z += step->velocityZ >> 7;
+        focus[0] += work->particles[63].x;
+        focus[1] += work->particles[63].y;
+        focus[2] += work->particles[63].z;
+        work->particles[63].x += work->particles[63].velocityX >> 7;
+        work->particles[63].y += work->particles[63].velocityY >> 7;
+        work->particles[63].z += work->particles[63].velocityZ >> 7;
       }
       if (frame == 15) {
         work->shakeFrames = 6;

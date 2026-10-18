@@ -76,7 +76,7 @@ extern char ResourceId_TornadoSheet;
 extern u16 gData_08197486[]; // ☀️ gBattleFx_GlintCellOffsets
 extern u8 gData_08197492[];  // ☀️ gBattleFx_GlintCellWidths
 extern u8 gData_08197498[];  // ☀️ gBattleFx_GlintCellHeights
-extern u8 Data_08197a34[];   // ☀️ gRenderMode_GlintFlips
+extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer

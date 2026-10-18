@@ -54,7 +54,7 @@
 extern char ResourceId_GreenPillarSheet;
 extern char ResourceId_VineSheet;
 
-// The Broken Seal's gDualTable_* tables, in effect_table.s.
+// The Broken Seal's gGrowth_* tables, in effect_table.s.
 extern u8 Data_081983ea[];  // _ColumnCounts: columns by strength
 extern u8 Data_081983ed[];  // _ColumnX: each column's root
 extern u8 Data_081983d7[];  // _HeightLimits: by i % 3

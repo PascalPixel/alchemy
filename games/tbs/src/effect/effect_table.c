@@ -285,7 +285,7 @@ u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 
 // Target mote glint orientations.
 // Glint orientations: none, and mirrored each way and both.
-u8 gRenderMode_GlintFlips[] = {0, 4, 8, 12};
+u8 gTargetMotes_GlintFlips[] = {0, 4, 8, 12};
 
 // Indexed by effect kind minus one; kind zero is handled by the dispatcher.
 //
@@ -764,10 +764,10 @@ s32 gBreak_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
 
 // Stat-reduction shard geometry.
 // The twelve shard cells, three frames for each of four shapes.
-u16 gPaletteRamp_ShardCells[] = {0,   120, 180, 258, 298, 352,
+u16 gStatReduction_ShardCells[] = {0,   120, 180, 258, 298, 352,
                                  408, 471, 567, 607, 631, 661};
-u8 gPaletteRamp_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
-u8 gPaletteRamp_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
+u8 gStatReduction_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
+u8 gStatReduction_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
 // Rock wall timing, by variant: frames in the effect, frames each pillar
 // stands, and how far the screen shakes.
@@ -799,9 +799,9 @@ u16 gRisingMotes_MoteCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 u16 gRisingMotes_ColumnCells[] = {0, 768, 1280};
 u8 gRisingMotes_ColumnHeights[] = {24, 16, 16};
 // The eight chip pictures (the same as the motes).
-u8 gRisingMotes_EmberWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
-u8 gRisingMotes_EmberHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
-u16 gRisingMotes_EmberCells[] = {1792, 1900, 2060, 2158,
+u8 gRisingMotes_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
+u8 gRisingMotes_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
+u16 gRisingMotes_ChipCells[] = {1792, 1900, 2060, 2158,
                                  2308, 2372, 2436, 2500};
 
 // Closing bolt sparks by variant.
@@ -810,10 +810,10 @@ u8 gLightningBolts_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
 // Eruption counts and puff layouts.
 // Motes, puffs of smoke and frames, for each variant.
-u8 gBlastAndSmokeBomb_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
+u8 gEruptionEffect_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 // The seven puff pictures, square.
-u16 gBlastAndSmokeBomb_PuffCells[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
-u16 gBlastAndSmokeBomb_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
+u16 gEruptionEffect_PuffCells[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
+u16 gEruptionEffect_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 // Unreferenced cell layouts, from 6x6 through 20x20
 u16 gUnused_SheetCells6[] = {0, 36, 100, 200, 344, 540};
@@ -828,20 +828,20 @@ struct SpriteScale gStagedParticles_UnitScale = {{{0x10000, 0x10000}}};
 
 // Growing vine and pillar geometry.
 // The three column shapes: vine and pillar widths, cells and height caps.
-u8 gDualTable_VineWidths[] = {21, 28, 19};
-u8 gDualTable_HeightLimits[] = {119, 119, 102};
-u16 gDualTable_VineCells[] = {0, 2499, 5831};
-u8 gDualTable_PillarWidths[] = {10, 8, 9};
-u16 gDualTable_PillarCells[] = {0, 1080, 1888};
+u8 gGrowth_VineWidths[] = {21, 28, 19};
+u8 gGrowth_HeightLimits[] = {119, 119, 102};
+u16 gGrowth_VineCells[] = {0, 2499, 5831};
+u8 gGrowth_PillarWidths[] = {10, 8, 9};
+u16 gGrowth_PillarCells[] = {0, 1080, 1888};
 // Columns by variant, and where each column's root stands.
-u8 gDualTable_ColumnCounts[] = {4, 8, 12};
-u8 gDualTable_ColumnX[] = {64, 72,  56, 80, 48, 88, 40, 96,
+u8 gGrowth_ColumnCounts[] = {4, 8, 12};
+u8 gGrowth_ColumnX[] = {64, 72,  56, 80, 48, 88, 40, 96,
                            32, 104, 24, 72, 56, 80, 48, 88};
-s8 gDualTable_PillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
+s8 gGrowth_PillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
 // The seven pictures of a puff of dust.
-s8 gDualTable_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
-u8 gDualTable_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
-u16 gDualTable_PuffCells[] = {0, 50, 148, 379, 891, 1926, 3276};
+s8 gGrowth_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
+u8 gGrowth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
+u16 gGrowth_PuffCells[] = {0, 50, 148, 379, 891, 1926, 3276};
 // Each vine's root, across from the middle of the targets.
 s8 gVine_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
                             -24, 24, -12, -40, -4, -16, -32, 12};
@@ -860,7 +860,7 @@ u16 gThorn_PuffCells[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 // and bolts drawn over each other.
 u8 gLightningBolts_Counts[] = {16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3};
 // The flips a glint may be drawn in, and its blend by variant.
-u8 gLightningBolts_GlintPalettes[] = {0, 4, 8, 12};
+u8 gLightningBolts_GlintFlips[] = {0, 4, 8, 12};
 u8 gLightningBolts_GlintModes[] = {2, 2, 3};
 
 // Projectile volley modes and picture cells.
@@ -977,7 +977,7 @@ u8 gCastingImpact_GlintDrawFlags[] = {0, 4, 8, 12};
 u8 gCastingImpact_ImageX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 u8 gCastingImpact_ImageY[] = {0, 20, 2, 2, 34, 64, 68};
 // The four ice chip cells, 8x8.
-u16 gCastingImpact_OrbitCells[] = {2308, 2372, 2436, 2500, 0};
+u16 gCastingImpact_IceChipCells[] = {2308, 2372, 2436, 2500, 0};
 
 // Fire swirl picture cells.
 // The seven cells of the fire swirl, and where each sits from the user.

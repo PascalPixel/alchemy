@@ -211,7 +211,7 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect);
 void BattleFx_RunRay(struct BattleEffectArgument *effect);
 void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect);
 void BattleFx_RunBlast(struct BattleEffectArgument *effect);
-void BattleFx_RunBlastAndSmokeBomb(struct BattleEffectArgument *effect,
+void BattleFx_RunEruption(struct BattleEffectArgument *effect,
                                    s32 mode);
 
 void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
@@ -226,7 +226,7 @@ void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect);
 void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect);
 void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunSwirlingStars(void *object);
-void BattleFx_RunOrbitingSparks(void);
+void BattleFx_RunOrbitingSkulls(void);
 void BattleFx_RunTargetBursts(void *object);
 void BattleFx_RunAtalanta(struct BattleEffectArgument *effect);
 void BattleFx_RunGrowth(struct BattleEffectArgument *effect);

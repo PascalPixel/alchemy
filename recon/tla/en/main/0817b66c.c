@@ -1,6 +1,6 @@
 // Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
 // Effect kind 76, written from the listing (☀️'s nearest shapes are
-// BattleFx_RunUndeadSword, 0.55, and BattleFx_RunBlastAndSmokeBomb; neither is
+// BattleFx_RunUndeadSword, 0.55, and BattleFx_RunEruption; neither is
 // a twin). The shape matches; what is left is the arm9tdmi scheduling
 // leftover.
 // In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as

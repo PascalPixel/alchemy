@@ -1,7 +1,7 @@
 // Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
 // BattleFx_RunBlast) and 380 (mode 1, through BattleFx_RunSmokeBomb).
 
-// Twin: The Broken Seal's BattleFx_RunBlastAndSmokeBomb (effect.c), call for
+// Twin: The Broken Seal's BattleFx_RunEruption (effect.c), call for
 // call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its
 // argument, takes its heap blocks as Ram_HeapSlots fields, loads its
 // blitter through Func_081963ec (BLIT_MAX 1 where COMPOSITE_MAX is 2),
@@ -66,10 +66,10 @@ enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
 extern char ResourceId_BlastSheet;
 extern char ResourceId_FireStreakSheet;
-extern u8 Data_081983a2[][3]; // gBlastAndSmokeBomb_Counts
+extern u8 Data_081983a2[][3]; // gEruptionEffect_Counts
 extern u16 gData_08197410[];  // gBattleFx_MoteCellOffsets
-extern u16 Data_081983ac[];   // gBlastAndSmokeBomb_PuffCells
-extern u16 Data_081983ba[];   // gBlastAndSmokeBomb_PuffSizes
+extern u16 Data_081983ac[];   // gEruptionEffect_PuffCells
+extern u16 Data_081983ba[];   // gEruptionEffect_PuffSizes
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.

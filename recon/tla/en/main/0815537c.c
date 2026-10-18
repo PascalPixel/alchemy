@@ -52,7 +52,7 @@ extern char ResourceId_Data134;
 // The Broken Seal's gLightningBolts_Counts: four bytes for each strength,
 // sparks, glints, glint spread and bolts.
 extern u8 Data_08198462[];
-// The Broken Seal's gLightningBolts_GlintPalettes and _GlintModes.
+// The Broken Seal's gLightningBolts_GlintFlips and _GlintModes.
 extern u8 Data_0819846e[];
 extern u8 Data_08198472[];
 // The Broken Seal's gBattleFx_GlintCellOffsets, _GlintCellWidths and

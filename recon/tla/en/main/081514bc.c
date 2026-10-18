@@ -63,9 +63,9 @@ extern u8 Data_08198351[];  // gRisingMotes_MoteWidths
 extern u8 Data_08198359[];  // gRisingMotes_MoteHeights
 extern u16 Data_08198372[]; // gRisingMotes_ColumnCells
 extern u8 Data_08198378[];  // gRisingMotes_ColumnHeights
-extern u16 Data_0819838c[]; // gRisingMotes_EmberCells
-extern u8 Data_0819837b[];  // gRisingMotes_EmberWidths
-extern u8 Data_08198383[];  // gRisingMotes_EmberHeights
+extern u16 Data_0819838c[]; // gRisingMotes_ChipCells
+extern u8 Data_0819837b[];  // gRisingMotes_ChipWidths
+extern u8 Data_08198383[];  // gRisingMotes_ChipHeights
 extern u16 Data_0819744c[]; // gBattleFx_PuffCells
 extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 

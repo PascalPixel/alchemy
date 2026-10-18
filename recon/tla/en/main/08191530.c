@@ -1,7 +1,7 @@
 // Draft, differ 188 of 468 (no device): the cloud swirl that
 // Func_0813e7e0 runs after setting up the effect blocks, written from the
 // listing (twins: BattleFx_BeginCanvasLayer 0.45 by shape,
-// BattleFx_RunOrbitingSparks 0.60 by call order). The rotation goes
+// BattleFx_RunOrbitingSkulls 0.60 by call order). The rotation goes
 // through six IO_WRITE_QUEUE_PUSH writes a frame, in the queue's order
 // (value, address, control), as the native's inline pushes are.
 // Left: allocation. The native holds canvas in r9 and work in r10, keeps

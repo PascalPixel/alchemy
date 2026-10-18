@@ -84,7 +84,7 @@ extern char ResourceId_BlastSheet;
 extern struct FxScale gData_08196e6c; // one to one
 extern u8 gData_08198a64[];           // ☀️ gRamses_ObjectColumns
 extern u8 gData_08198a6d[];           // ☀️ gRamses_ObjectRows
-extern u16 gData_08198a76[];          // ☀️ gBlastAndSmokeBomb_PuffCells
+extern u16 gData_08198a76[];          // ☀️ gEruptionEffect_PuffCells
 extern u16 gData_08198a84[];          // ☀️ gCybele_EmberSizes
 extern u16 gData_08197410[];          // ☀️ gBattleFx_MoteCellOffsets
 

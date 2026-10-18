@@ -11,13 +11,17 @@ frames and returns when the effect is over.
 | File | What it holds |
 | --- | --- |
 | `effect.c` | the guide, the includes and the macros every effect shares; it includes the parts below at its end |
-| `effect/*.c` | the effects themselves, in 66 parts (index below); never compiled on their own |
+| `parts/*.c` | the effects themselves, in 66 parts (index below); never compiled on their own |
 | `effect_table.c` | the effects' tables: picture cells, sizes, offsets and frame lists, in the order the code uses them, and the handler table |
 | `effect_bits.c` | the bit operands the blitter builder adds to its widths |
 | `battle_effect_composite.s`, `battle_effect_composite_color.s` | the ARM fragments blitters are built from |
 
 The headers are in `games/tbs/include/unit/effect/`: `effect.h` for the
 functions and `effect_table.h` for the tables.
+
+A part opened on its own lacks the macros and declarations `effect.c` gives
+it before its include, so an editor may flag names in it; read and check a
+part as part of `effect.c`.
 
 In the ROM the effect code is one object: 150 KB of compiled code, one small
 block of constants, then the tables. Camelot's other C files are each followed

@@ -1,4 +1,4 @@
-@ The colour fragments BattleFx_BuildBlitter (effect/blitter.c) builds canvas
+@ The colour fragments BattleFx_BuildBlitter (parts/blitter.c) builds canvas
 @ blitters from, as it does the others in battle_effect_composite.s: each
 @ adds picture pixels (r1) to the canvas (r9) with sl as the cap mask, forward
 @ or reverse.

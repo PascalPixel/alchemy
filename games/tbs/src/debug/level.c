@@ -41,8 +41,6 @@
 #define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawResource
 #endif
 
-void Engine_AudioPlayCue(s32 cue);
-void Engine_TaskWait(s32 frames);
 #define ITEM_COUNT 270
 #define ABILITY_COUNT 270
 #define BROWSER_ROW_STEP 10

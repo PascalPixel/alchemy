@@ -12,20 +12,22 @@ void Title_NoOpPalette(void);
 s32 Title_ShowSplashScreen(s32 mode);
 s32 Title_ShowAnimatedSplash(void);
 void Graphics_NoOpColor(void);
-void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step, s32 frames);
+void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
+                              s16 *componentSteps, s32 frames);
 void PaletteFade_Update(void);
-void Palette_Transform(u32 mode, u16 *src, u16 *dst, s32 half);
+void Palette_Transform(u32 mode, u16 *source, u16 *destination,
+                       s32 paletteHalf);
 void PaletteFade_Init(void);
 void PaletteFade_Release(void);
-void PaletteFade_SetTarget(s32 index, s32 transform);
+void PaletteFade_SetTarget(s32 mode, s32 paletteHalf);
 // UB: the early call implicitly returns int, but the definition returns void.
 // A plain prototype reverses the two argument moves in Title_ShowIntro (EN).
 #ifdef UBFIX
 void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf);
 #endif
-void PaletteFade_SetBackdrop(s32 value);
-void PaletteFade_Start(s32 value);
-s32 Graphics_ClampRgb555Channel(s32 val);
-s32 Graphics_ClampRgb555Component(s32 val);
+void PaletteFade_SetBackdrop(s32 color);
+void PaletteFade_Start(s32 frames);
+s32 Graphics_ClampRgb555Channel(s32 value);
+s32 Graphics_ClampRgb555Component(s32 value);
 
 #endif

@@ -32,7 +32,8 @@ struct WorkA0 {
 // Heap-slot 0xa4 workspace.
 struct WorkA4Slot {
   s16 id;
-  u8 unk02[26];
+  u8 unk02[22];
+  struct ChainLink *root; // the first link Func_080daecc hangs; NULL if free
 };
 
 struct WorkA4Item {

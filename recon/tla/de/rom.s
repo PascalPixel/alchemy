@@ -1974,7 +1974,7 @@ Func_080d9e98:
 Func_080da060:
 	.incbin "baserom.gba", 0x000e7060, 0x000008a8
 	.section .rom.000e79a8, "ax"
-	.incbin "baserom.gba", 0x000e79a8, 0x000004c8
+	.incbin "baserom.gba", 0x000e79a8, 0x00000494
 	.section .rom.000e7ecc, "ax"
 	.global Func_080daecc
 	.type Func_080daecc, %function

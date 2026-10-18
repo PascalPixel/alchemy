@@ -3636,8 +3636,8 @@ main	rom_main_05	recon/tla/de/rom	.rom.000e79a8	de
 main	rom_main_05	recon/tla/raw/080da9a8	.text	en
 main	rom_main_05	recon/tla/raw/080daab0	.text	en
 main	rom_main_05	recon/tla/raw/080dacb8	.text	en
-main	rom_main_05	recon/tla/raw/080dae3c	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000da964	ja
+main	rom_main_05	games/tla/src/field/common/worka0/f0dae3c	.text
 main	rom_main_05	games/tla/src/field/common/worka0/f0dae70	.text
 main	rom_main_05	games/tla/src/field/common/worka0/f0daea8	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000daec0	it

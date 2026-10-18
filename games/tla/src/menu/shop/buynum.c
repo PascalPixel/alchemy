@@ -2,6 +2,7 @@
 #include "item.h"
 #include "ram_buffer.h"
 #include "party_state.h"
+#include "render_input.h"
 
 struct ShopUnit {
   u8 unk00[216];
@@ -19,6 +20,39 @@ struct ShopWork {
 
 void *UnitGet(s32 unitId);
 s32 Inventory_FindFar(s32 unitId, s32 item_id);
+extern u8 MsgYouHave[], MsgShopNoneInStock[];
+
+void RenderOutput_PrepareForRedrawFar(struct RenderInput *window);
+void UiText_DrawQuantity(s32 value, s32 digits);
+void UiText_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+                                     s32 x, s32 y);
+void Func_0810bf98(struct RenderInput *window, s32 x, s32 y, s32 unit);
+
+// Shows how many of an item the member already carries ("You have"/none) and
+// draws the member's inventory icons through Func_0810bf98 at (8, 8); the twin
+// of ☀️'s Shop_DrawUnitItem (games/tbs/src/shop/shop.c), whose icon loop ⚓️
+// moved into that helper. It matches with the twin's quantityOffset local
+// (differ 10 with the offset inside the read).
+void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
+  u8 *unitBytes;
+  s32 slot;
+  s32 quantityOffset;
+
+  unitBytes = (u8 *)UnitGet(unitId);
+  if (window != 0) {
+    RenderOutput_PrepareForRedrawFar(window);
+    slot = Inventory_FindFar(unitId, itemId);
+    if (slot != -1) {
+      quantityOffset = slot * 2 + 216;
+      UiText_DrawQuantity((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
+      UiText_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
+    } else {
+      UiText_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
+    }
+    Func_0810bf98(window, 8, 8, unitId);
+  }
+}
+
 s32 Item_AdjustCounterFar(s32 item_id, s32 amount);
 void Func_081084f4(s32 messageId);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);

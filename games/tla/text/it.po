@@ -20813,11 +20813,11 @@ msgctxt "message"
 msgid "05127"
 msgstr "Non attivabile"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05128"
 msgstr "Non ne hai"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05129"
 msgstr "Ne hai {argument_signed_number}"
 

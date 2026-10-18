@@ -18984,11 +18984,11 @@ msgctxt "message"
 msgid "04667"
 msgstr "Can't equip"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "04668"
 msgstr "None in stock"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "04669"
 msgstr "You have {argument_signed_number}"
 

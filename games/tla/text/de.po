@@ -21081,11 +21081,11 @@ msgctxt "message"
 msgid "05170"
 msgstr "Nicht anlegbar"
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05171"
 msgstr "Du hast 0"
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05172"
 msgstr "Du hast {argument_signed_number}"
 

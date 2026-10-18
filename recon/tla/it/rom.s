@@ -4287,7 +4287,7 @@ Func_08108948:
 	.section .rom.001091cc, "ax"
 	.incbin "baserom.gba", 0x001091cc, 0x000000a4
 	.section .rom.0010928c, "ax"
-	.incbin "baserom.gba", 0x0010928c, 0x00000398
+	.incbin "baserom.gba", 0x0010928c, 0x00000324
 	.section .rom.001096f8, "ax"
 	.global Func_081096f8
 	.type Func_081096f8, %function

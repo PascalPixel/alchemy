@@ -20855,11 +20855,11 @@ msgctxt "message"
 msgid "05134"
 msgstr "No equipable."
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "05135"
 msgstr "No tiene."
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "05136"
 msgstr "Tiene {argument_signed_number}."
 

@@ -28,7 +28,9 @@
 // recoil depends on the kind, the summon test reads the enemy id, and the
 // palette goes by DMA.
 
-// Listing 687 instructions, draft 687, differ 50 (2026-10-15). Left: rows
+// Listing 687 instructions, draft 687, differ 44 (2026-10-18; 50 before the
+// three devices below: the argument's store before the RAM base and both
+// BG1CNT halfwords pinned to r3, as in BattleFx_RunUndeadSword). Left: rows
 // one place apart (stack and pool loads, constants built around them, the
 // call arguments' stores), the usual residue; no allocation difference.
 
@@ -38,6 +40,8 @@
 // the beam with draw[0], as the listing loads [sp, #56]    210 -> 54
 // declaration order, a greedy sweep                        54
 // the tables without const, as ☀️'s readers extern theirs 54 -> 50
+// the start barrier and the two BG1CNT pins                50 -> 44
+// an empty asm between draw[0] and draw[1]                 44
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -137,6 +141,10 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
+  /* FAKEMATCH: stores the argument before the 0x03000000 base is started; the
+   * native's first instruction after sub sp is str r0 (differ 46 without it).
+   */
+  __asm__("");
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
@@ -148,7 +156,17 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   Func_0813ba50();
   Func_08143d80();
-  REG_BG1CNT = 0x1f80;
+  {
+    /* FAKEMATCH: the native loads the BG1CNT halfword from the pool before it
+     * starts the register's address; pinned to r3 in a one-pass block it does
+     * (differ 46 without it). */
+    register u16 value __asm__("r3");
+
+    do {
+      value = 0x1f80;
+    } while (0);
+    REG_BG1CNT = value;
+  }
   WaitFrames(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
@@ -222,7 +240,15 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
-  REG_BG1CNT = 0x1f81;
+  {
+    /* FAKEMATCH: as at the first BG1CNT store (differ 46 without it). */
+    register u16 value __asm__("r3");
+
+    do {
+      value = 0x1f81;
+    } while (0);
+    REG_BG1CNT = value;
+  }
   EffectPosition_ApplyAnimationAndYOffset(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 96 - anchor.x;

@@ -40,6 +40,8 @@
 // in a one-pass block (8); alchemy permute 6 minutes, 2 jobs, on this draft
 // (no candidate beat it). screenX declared first takes sp+44, as the
 // native's.
+// 2026-10-18: each void callee declared s32 (6 or 8); alchemy permute 5
+// minutes, 2 jobs (nothing below 6).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

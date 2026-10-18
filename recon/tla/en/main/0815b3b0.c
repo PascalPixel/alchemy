@@ -8,6 +8,9 @@
 // (differ 17), an empty asm (differ 8), the flag byte read into a local held
 // by an asm (differ 11, the mask becomes 254), an asm on the sprite pointer
 // (differ 22).
+// 2026-10-18: the flags as a plain u8 cleared with &= ~1 (3), each of the ten
+// stores moved to every other place (2 at best), the call's result held in a
+// local and stored after the flag clear (14), alchemy permute 4 minutes (2).
 #include "types.h"
 #include "animspr.h"
 #include "ram_buffer.h"

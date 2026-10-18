@@ -17,6 +17,8 @@
 // 2026-10-15 (fx-n3): rewritten for reading (names, comments, clang-format);
 // still 6. A running ring base and y stepped by the outer loop (the native
 // keeps both in stack slots): 104.
+// 2026-10-18: psynergy permute (6 min, 2 jobs, seed 31): no candidate below
+// the draft.
 #include "types.h"
 #include "fixed_math.h"
 

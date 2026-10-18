@@ -10,17 +10,21 @@
 // 0x159 of directory.s (assets BattleFx_BlastSheet and
 // BattleFx_FireStreakSheet), not yet named there.
 
-// Near miss: differ 22 of 464 (draft 464), all order residue: nine pairs
-// where the native issues a pool load or a constant one slot earlier
-// than agscc (the RAM base before the mode's spill, the BLDALPHA value,
-// the mote buffer before its counter, the cell offset table, r0 before
-// r1 for BattleFx_LoadBlitter, the actor offset before the cue arguments).
+// Near miss: differ 18 of 464 (draft 464, 2026-10-18), all order residue:
+// pairs where the native issues a pool load or a constant one slot earlier
+// than agscc (the RAM base before the mode's spill, the mote buffer before
+// its counter, the cell offset table, the actor offset before the cue
+// arguments).
 
 // Tried (2026-10-15):
 // - The Broken Seal's body ported call for call: differ 40, every frame
 // offset four bytes off (frame 52 for 56).
 // - the blitter as a pair, as The Broken Seal's twin (tagged): 22.
 // - greedy declaration-order sweep, two passes: no gain.
+// Tried (2026-10-18): BattleFx_LoadBlitter returning s32, as defined (22 ->
+// 20); the BLDALPHA halfword pinned in a one-pass block (20 -> 18); an
+// empty asm before the heap reads (20: the effect's copy to sl moves too);
+// alchemy permute 5 minutes (nothing below 20).
 
 #include "types.h"
 #include "battle_display.h"
@@ -44,7 +48,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
@@ -98,7 +102,17 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  {
+    /* FAKEMATCH: the native loads the BLDALPHA halfword from the pool before
+     * it starts the register's address; pinned to r3 in a one-pass block it
+     * does (differ 20 without it). */
+    register u16 value __asm__("r3");
+
+    do {
+      value = 0x1010;
+    } while (0);
+    REG_BLDALPHA = value;
+  }
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   if (mode == 1) {
     for (i = 0; i != 64; i++) {

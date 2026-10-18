@@ -24,6 +24,8 @@
 // alchemy permute, 5 minutes: 40 by holding the IWRAM copy entry in
 // a local before the call, a forced temporary against the IWRAM
 // call layer; not kept
+// the BLDALPHA halfword pinned to r3 (one-pass block or barrier)    80
+// (the sheet offset 0x700 then splits across the first call)
 
 #include "types.h"
 #include "system.h"

@@ -12,6 +12,7 @@
 // (no candidate below 2). By hand through sched2's ranking, a load costing
 // 3 cycles instead of agscc's 2 gives the object's load priority 37 over
 // the shifts' 36: the native order.
+// 2026-10-18: case 5 with pos[2] first: 16; the object as *(objects + i): 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_fx_work.h"

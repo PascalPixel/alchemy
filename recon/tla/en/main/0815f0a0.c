@@ -6,7 +6,11 @@
 // store and loses on dependants; a load latency of 3 would put it first.
 // Tried: dst[0] = 0 in a one-pass block, before or after it, in the for
 // header, as dst[0] = i = 0, an empty asm after it (all differ 2 or 19),
-// alchemy permute 4 minutes (no better).
+// alchemy permute 4 minutes (no better). 2026-10-18: i = 0 before the store
+// (19), a do-while (2), col set after the copy (18), i unsigned (2), the
+// mask in a u16 or s32 local (3: it becomes movs r7, #31); sched2 inserts
+// the hoisted pool load after the store, and with equal priority (2) the
+// store wins on insn order.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

@@ -1,5 +1,5 @@
-// Near miss of Func_08153c30, an unused effect (no caller): differ 20 of
-// 291 (draft 291).
+// Near miss of Func_08153c30, an unused effect (no caller): differ 16 of
+// 291 (draft 291, 2026-10-18).
 
 // Twin: The Broken Seal's BattleFx_RunTargetBursts (effect.c), call for
 // call. The Lost Age loads its two blitters through BattleFx_LoadBlitter into heap
@@ -9,13 +9,17 @@
 // BattleFx_SmokeSheet, 0x12d BattleFx_TargetBurstImage and 0x17f
 // BattleFx_PinkBurstSheet.
 
-// Left: ten rows, each a pair the native issues in the other order: the
-// effect argument's spill before the RAM base, r1 before r0 for the first
-// BattleFx_LoadBlitter, the record's address after the camera word, object->z
-// before its store, the cell's 9x before the frame word.
+// Left: eight rows, each a pair the native issues in the other order: the
+// particle cursor's setup before the loop counters, the record's address
+// after the camera word, object->z before its store, the cell's 9x before
+// the frame word.
 
 // Tried (2026-10-15): the lane's rewrite (named modes, the burst offset as
 // a constant): 22 -> 20.
+// Tried (2026-10-18): BattleFx_LoadBlitter returning s32, as defined: 20 ->
+// 18; an empty asm before the heap reads (tagged): 18 -> 16; alchemy permute
+// 5 minutes (from 18): 16 only by one block around the whole body (not
+// kept).
 
 #include "types.h"
 #include "battle_display.h"
@@ -39,7 +43,7 @@
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
 void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
-void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
+s32 BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_LoadWork
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 
@@ -73,6 +77,10 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
   struct EffectPosition screen;
   s32 record[3];
 
+  /* FAKEMATCH: stores the argument before the 0x03000000 base is started; the
+   * native's first instruction after sub sp is the argument's store (differ
+   * 18 without it). */
+  __asm__("");
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);

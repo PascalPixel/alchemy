@@ -23,6 +23,7 @@
 // reads (22, 99), a one-pass block or an empty asm around the REG_BG2X store
 // (16, 14: either moves other rows), alchemy permute 6 minutes on the earlier
 // draft (18), and 5 minutes, 2 jobs, on this one (no candidate beat it).
+// 2026-10-18: each void callee declared s32, one at a time (10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

@@ -7923,7 +7923,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case EFFECT_REVIVE_FULL:
+    case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
         target->hp = target->maxHp;
         UnitRatioFar(targetId);
@@ -7935,7 +7935,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case EFFECT_REVIVE_HALF:
+    case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->maxHp / 2;
         UnitRatioFar(targetId);
@@ -7946,7 +7946,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
         target->hp = target->maxHp * 7 / 10;
         UnitRatioFar(targetId);
@@ -7957,7 +7957,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case EFFECT_CURE_POISON:
+    case ABILITY_EFFECT_CURE_POISON:
       if (target->poison != 0) {
         target->poison = 0;
         changed = 1;

@@ -5673,93 +5673,93 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
   {                                                                            \
     (applies) = 0;                                                             \
     switch ((action)->effect) {                                                \
-    case EFFECT_ATK_UP2:                                                       \
-    case EFFECT_ATK_UP1:                                                       \
+    case ABILITY_EFFECT_ATTACK_UP_2:                                           \
+    case ABILITY_EFFECT_ATTACK_UP:                                             \
       if ((unit)->attackStage + 1 <= 4)                                        \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case EFFECT_ATK_DOWN2:                                                     \
-    case EFFECT_ATK_DOWN1:                                                     \
+    case ABILITY_EFFECT_ATTACK_DOWN_2:                                         \
+    case ABILITY_EFFECT_ATTACK_DOWN:                                           \
       if ((unit)->attackStage - 1 >= -4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case EFFECT_DEF_UP2:                                                       \
-    case EFFECT_DEF_UP1:                                                       \
+    case ABILITY_EFFECT_DEFENSE_UP_2:                                          \
+    case ABILITY_EFFECT_DEFENSE_UP:                                            \
       if ((unit)->defenseStage + 1 <= 4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case EFFECT_DEF_DOWN2:                                                     \
-    case EFFECT_DEF_DOWN1:                                                     \
+    case ABILITY_EFFECT_DEFENSE_DOWN_2:                                        \
+    case ABILITY_EFFECT_DEFENSE_DOWN:                                          \
       if ((unit)->defenseStage - 1 >= -4)                                      \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case EFFECT_RES_UP2:                                                       \
-    case EFFECT_RES_UP1:                                                       \
+    case ABILITY_EFFECT_RESISTANCE_UP_2:                                       \
+    case ABILITY_EFFECT_RESISTANCE_UP:                                         \
       if ((unit)->resistanceStage + 1 <= 4)                                    \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
-    case EFFECT_RES_DOWN2:                                                     \
-    case EFFECT_RES_DOWN1:                                                     \
+    case ABILITY_EFFECT_RESISTANCE_DOWN_2:                                     \
+    case ABILITY_EFFECT_RESISTANCE_DOWN:                                       \
       if ((unit)->resistanceStage - 1 >= -4)                                   \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
-    case EFFECT_CURE_POISON:                                                   \
+    case ABILITY_EFFECT_CURE_POISON:                                           \
       if ((unit)->poison != 0)                                                 \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_CURE_PART:                                                     \
+    case ABILITY_EFFECT_RESTORE:                                               \
       COUNT_PARTIAL_CURES((unit), (applies));                                  \
       break;                                                                   \
-    case EFFECT_HEAL_60:                                                       \
-    case EFFECT_HEAL_30:                                                       \
+    case ABILITY_EFFECT_HEAL_HP_60:                                            \
+    case ABILITY_EFFECT_HEAL_HP_30:                                            \
       if ((unit)->hp < (unit)->maxHp)                                          \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_BUFF_CLEAR:                                                    \
+    case ABILITY_EFFECT_BREAK:                                                 \
       COUNT_POSITIVE_MODIFIERS((unit), (applies));                             \
       break;                                                                   \
-    case EFFECT_CURE_ALL:                                                      \
+    case ABILITY_EFFECT_CURE_ALL:                                              \
       COUNT_ALL_CURES((unit), (applies));                                      \
       break;                                                                   \
-    case EFFECT_DEATH_CURSE:                                                   \
+    case ABILITY_EFFECT_CURSE:                                                 \
       if ((unit)->grimReaper == 0)                                             \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_POISON:                                                        \
+    case ABILITY_EFFECT_POISON:                                                \
       if ((unit)->poison == 0)                                                 \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_VENOM:                                                         \
+    case ABILITY_EFFECT_DEADLY_POISON:                                         \
       if ((unit)->poison <= 1)                                                 \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_STUN:                                                          \
+    case ABILITY_EFFECT_STUN:                                                  \
       if ((unit)->stun == 0)                                                   \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_SLEEP:                                                         \
+    case ABILITY_EFFECT_SLEEP:                                                 \
       if ((unit)->sleep == 0)                                                  \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_EVIL_SPIRIT:                                                   \
+    case ABILITY_EFFECT_HAUNT:                                                 \
       if ((unit)->haunt == 0)                                                  \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case EFFECT_REVIVE_FULL:                                                   \
-    case EFFECT_REVIVE_HALF:                                                   \
-    case EFFECT_REVIVE_80:                                                     \
+    case ABILITY_EFFECT_REVIVE:                                                \
+    case ABILITY_EFFECT_REVIVE_HALF:                                           \
+    case ABILITY_EFFECT_REVIVE_80:                                             \
       if ((unit)->hp == 0)                                                     \
         (applies) = 100;                                                       \
       break;                                                                   \

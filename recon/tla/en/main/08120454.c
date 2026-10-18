@@ -173,7 +173,7 @@
 // moves the branch and literal offsets after it; apply it with the
 // tail's fix. heal read first (heal = *(s16 *)stat_ptr--; old =
 // stat_ptr[1];) 150. On top of it, for the tail: maxv *= 60 or 30 then
-// heal += maxv / 100 191, else if (... == EFFECT_HEAL_30) 149. There
+// heal += maxv / 100 191, else if (... == ABILITY_EFFECT_HEAL_HP_30) 149. There
 // sched2 puts our movs r1, #100 before each branch's last shift, so
 // the two tails differ and jump2 shares only the call; the listing
 // keeps it last in both and shares it. Alchemy permute over the heal

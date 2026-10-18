@@ -3263,22 +3263,16 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000d3248	ja
 main	rom_main_05	games/tla/src/field/common/object/motion_events	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d336a	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d336c	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d3454	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000d836a	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000d836c	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000d8454	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000dc36a	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dc36c	es
-main	rom_main_05	recon/tla/es/rom	.rom.000dc454	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e0376	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e0378	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e0460	de
 main	rom_main_05	recon/tla/raw/080d3376	.text	en
 main	rom_main_05	recon/tla/raw/080d3378	.text	en
-main	rom_main_05	recon/tla/raw/080d3460	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d3356	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d3358	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d3440	ja
 main	rom_main_05	games/tla/src/field/common/object/angle	.text
 main	rom_main_05	games/tla/src/field/common/object/link_pair	.text
 main	rom_main_05	games/tla/src/field/common/object/child	.text

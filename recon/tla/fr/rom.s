@@ -2114,13 +2114,11 @@ ObjectMotion_WaitForAnimationChange:
 	.section .rom.000d836a, "ax"
 	.incbin "baserom.gba", 0x000d836a, 0x00000002
 	.section .rom.000d836c, "ax"
-	.incbin "baserom.gba", 0x000d836c, 0x000000e8
-	.section .rom.000d8454, "ax"
-	.global BattleFx_RunRisingObjectSequence
-	.type BattleFx_RunRisingObjectSequence, %function
+	.global Func_080d3378
+	.type Func_080d3378, %function
 	.thumb_func
-BattleFx_RunRisingObjectSequence:
-	.incbin "baserom.gba", 0x000d8454, 0x0000013c
+Func_080d3378:
+	.incbin "baserom.gba", 0x000d836c, 0x000000e8
 	.section .rom.000d8774, "ax"
 	.global Func_080d3780
 	.type Func_080d3780, %function

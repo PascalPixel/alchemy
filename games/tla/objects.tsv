@@ -3021,12 +3021,6 @@ main	rom_main_04	recon/tla/de/rom	.rom.000dc17c	de
 main	rom_main_04	recon/tla/raw/080cf17c	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000cf15c	ja
 main	rom_main_04	games/tla/src/battle/effect/destroy	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000cf350	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000d4350	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d8350	es
-main	rom_main_04	recon/tla/de/rom	.rom.000dc350	de
-main	rom_main_04	recon/tla/raw/080cf350	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000cf330	ja
 main	rom_main_04	games/tla/src/battle/effect/rising	.text
 main	rom_main_04	games/tla/src/battle/effect/spawn	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000cf554	it

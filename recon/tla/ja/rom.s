@@ -2547,13 +2547,6 @@ Func_080cf050:
 	.thumb_func
 BattleFx_StartRandomParticleEmitter:
 	.incbin "baserom.gba", 0x000cf15c, 0x000001c4
-	.section .rom.000cf330, "ax"
-	.balign 4
-	.global Func_080cf350
-	.type Func_080cf350, %function
-	.thumb_func
-Func_080cf350:
-	.incbin "baserom.gba", 0x000cf330, 0x00000064
 	.section .rom.000cf534, "ax"
 	.incbin "baserom.gba", 0x000cf534, 0x000001a8
 	.section .rom.000cf6dc, "ax"

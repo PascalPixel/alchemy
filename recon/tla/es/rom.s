@@ -3022,12 +3022,6 @@ ObjectMotion_SetPositionWithTerrain:
 	.thumb_func
 ObjectMotion_MoveToObject:
 	.incbin "baserom.gba", 0x000dc208, 0x0000002c
-	.section .rom.000dc25c, "ax"
-	.global ObjectMotion_WaitForAnimationChange
-	.type ObjectMotion_WaitForAnimationChange, %function
-	.thumb_func
-ObjectMotion_WaitForAnimationChange:
-	.incbin "baserom.gba", 0x000dc25c, 0x00000050
 	.section .rom.000dc36a, "ax"
 	.incbin "baserom.gba", 0x000dc36a, 0x00000002
 	.section .rom.000dc36c, "ax"

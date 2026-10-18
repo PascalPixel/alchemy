@@ -3238,12 +3238,6 @@ main	rom_main_05	recon/tla/de/rom	.rom.000e0214	de
 main	rom_main_05	games/tla/src/field/common/object/terrain_position	.text	ja en
 main	rom_main_05	games/tla/src/field/common/object/setmode	.text
 main	rom_main_05	games/tla/src/field/common/object/set_action_by_id	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d325c	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000d825c	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000dc25c	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e0268	de
-main	rom_main_05	recon/tla/raw/080d3268		en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d3248	ja
 main	rom_main_05	games/tla/src/field/common/object/motion_events	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d336a	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d336c	it

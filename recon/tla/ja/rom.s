@@ -2684,12 +2684,6 @@ Func_080d296c:
 	.align 2, 0
 Func_080d2b4c:
 	.incbin "baserom.gba", 0x000d2b2c, 0x000000b8
-	.section .rom.000d3248, "ax"
-	.global ObjectMotion_WaitForAnimationChange
-	.type ObjectMotion_WaitForAnimationChange, %function
-	.thumb_func
-ObjectMotion_WaitForAnimationChange:
-	.incbin "baserom.gba", 0x000d3248, 0x00000050
 	.section .rom.000d3356, "ax"
 	.incbin "baserom.gba", 0x000d3356, 0x00000002
 	.section .rom.000d3358, "ax"

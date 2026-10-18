@@ -133,7 +133,8 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
       resourceData + 256, tileDestination, paletteOffset);
   Runtime_ReleaseHeapBlock(CREDITS_DECODER_HEAP_SLOT);
 
-  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData, 0x84000040);
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData,
+                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x40);
 }
 
 // Builds the 512 tilemap words surrounding a sliding credits backdrop:
@@ -893,7 +894,8 @@ void DisplayScroll_UpdateObjects(void) {
         tileIndex = 0;
     }
   }
-  Dma_Set(SCROLL_OBJECTS, OAM, 0x84000100, REG_DMA3);
+  Dma_Set(SCROLL_OBJECTS, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+          REG_DMA3);
   if ((*(s16 *)&gFlash_Handler0) == 0 && (gFrameTick & 3) == 0)
     gFlash_Handler3++;
 }

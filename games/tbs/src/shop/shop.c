@@ -482,7 +482,8 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
 
   tileBuffer = Runtime_AllocateBlock(14, 0x400);
   priceSprite = 0;
-  Dma_Set(gShop_PriceTiles, tileBuffer, 0x84000040, REG_DMA3);
+  Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
+          REG_DMA3);
   Shop_CopyGlyphs(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
@@ -526,8 +527,10 @@ void Shop_RestoreSceneTiles(s32 layer) {
 #endif
   u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(savedPalette, eventBytes + 0x236, 0x84000150, REG_DMA3);
-  Dma_Set(savedPalette, paletteBuffers->current, 0x840002a0, REG_DMA3);
+  Dma_Set(savedPalette, eventBytes + 0x236,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
+  Dma_Set(savedPalette, paletteBuffers->current,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
   BattleFx_ApplyColorToTargetBufferFar(layer, 1);
   BattleFx_StartBufferInterpolationFar(16);
 }
@@ -1308,7 +1311,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
         if (redraw) {
           redraw = 0;
           quantityIndex = (quantityIndex + maximum) % maximum;
-          Dma_Set(gShop_QuantityTiles, tileBuffer, 0x84000040, REG_DMA3);
+          Dma_Set(gShop_QuantityTiles, tileBuffer,
+                  (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
           Shop_FillSelector(30, 14, tileBuffer);
           Shop_FillSelector(minimum + maximum, 0, tileBuffer);
           Shop_FillSelector(minimum + quantityIndex + 1, 10, tileBuffer);

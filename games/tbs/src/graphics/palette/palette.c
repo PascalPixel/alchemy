@@ -157,13 +157,15 @@ void Title_UpdateIntroSprites(void) {
     INTRO_OBJ(spriteCount).attr01 = 0x400020a0;
   REG_BLDCNT = 0x3f50;
   REG_BLDALPHA = 0x0e0e;
-  Dma_Set(&INTRO_OBJ(0), OAM, ((spriteCount * 8) >> 2) | 0x84000000, REG_DMA3);
+  Dma_Set(&INTRO_OBJ(0), OAM,
+          ((spriteCount * 8) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
   INTRO_OBJ(12).attr01 = stripY | 0xc05c2000;
   INTRO_OBJ(12).attr2 = 0x800;
-  Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8, 0x84000002, REG_DMA3);
-  Dma_Set(&INTRO_OBJ(0), OAM, 0x84000008, REG_DMA3);
+  Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 2, REG_DMA3);
+  Dma_Set(&INTRO_OBJ(0), OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
 }
 
 // Loads the title intro's two scrolling backgrounds and its sprite tiles,
@@ -180,18 +182,23 @@ void Title_LoadIntroBackgrounds(void) {
   work = Ram_WorkSlot[43];
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
-  Dma_Set(resourceData, (void *)OBJ_PLTT, 0x84000080, REG_DMA3);
+  Dma_Set(resourceData, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+          REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
   Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x80000f00, REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, DMA_ENABLE << 16 | 0xf00,
+          REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
-  Dma_Set(resourceData, (void *)BG_PLTT, 0x84000080, REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+          REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 0x200;
   Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0), 0x80002760, REG_DMA3);
-  Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0),
+          DMA_ENABLE << 16 | 0x2760, REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0,
+          DMA_ENABLE << 16 | 0x4ec0, REG_DMA3);
 
   blankTile = 0x1ff;
   tilemap = (u16 *)BG_SCREEN_BLOCK(30);
@@ -244,7 +251,7 @@ void Title_LoadIntroBackgrounds(void) {
   work->tick = 0;
   work->rise = 0;
   work->state = 0;
-  Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   REG_BLDCNT = 0x3fbf;
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
@@ -334,8 +341,8 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
           Dma_Set(Ram_MapCellBuffer + 0x2580 - work->backRows * 960,
-                  (u8 *)0x06004b00 - work->backRows * 960, 0x800001e0,
-                  REG_DMA3);
+                  (u8 *)0x06004b00 - work->backRows * 960,
+                  DMA_ENABLE << 16 | 0x1e0, REG_DMA3);
           work->backRows++;
           tick = work->tick;
         }
@@ -348,13 +355,13 @@ s32 Title_ShowIntro(s32 prompt) {
         if ((y & 7) == 0) {
           if (work->frontRows * 8 <= 24) {
             Dma_Set(Ram_MapCellBuffer + 0x99c0 - work->frontRows * 1920,
-                    (u8 *)0x0600e4c0 - work->frontRows * 1920, 0x800003c0,
-                    REG_DMA3);
+                    (u8 *)0x0600e4c0 - work->frontRows * 1920,
+                    DMA_ENABLE << 16 | 0x3c0, REG_DMA3);
           } else {
             clearValue = 0;
             Dma_Set(&clearValue,
                     (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
-                    0x810003c0, REG_DMA3);
+                    (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 0x3c0, REG_DMA3);
             tilemap = (u16 *)0x0600f6c0;
             for (i = 0; i < 5; i++) {
               for (j = 0; j < 30; j++)
@@ -381,11 +388,13 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_DISPCNT = 0x1440;
       gBgScroll[2].y = 0;
       resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
-      Dma_Set(resourceData, (void *)BG_PLTT, 0x84000078, REG_DMA3);
+      Dma_Set(resourceData, (void *)BG_PLTT,
+              (DMA_ENABLE | DMA_32BIT) << 16 | 0x78, REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 0x200;
       Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-      Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), 0x80004b00, REG_DMA3);
+      Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), DMA_ENABLE << 16 | 0x4b00,
+              REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
       tile = 0x100;
       i = 0;
@@ -502,9 +511,11 @@ s32 Title_ShowSplashScreen(s32 mode) {
   result = 0;
   gBgScroll[2].y = result;
   resourceData = Resource_GetTableEntry(resourceId);
-  Dma_Set(resourceData, (void *)BG_PLTT, 0x84000070, REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
+          REG_DMA3);
   Resource_DecodeType01(resourceData + 448, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), 0x84002580, REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   tileIndex = 256;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
   for (rowOrHoldFrame = 0; rowOrHoldFrame < 20; rowOrHoldFrame++) {
@@ -517,7 +528,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
     gBgScroll[rowOrHoldFrame].y = 0;
     gBgScroll[rowOrHoldFrame].x = 0;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   REG_DISPCNT = 0x1540;
@@ -683,9 +694,11 @@ void PaletteFade_Update(void) {
   {
     u16 *backgroundColors = paletteBank;
 
-    IO_WRITE_QUEUE_PUSH(0x05000000, (u32)backgroundColors, 0x84000080);
+    IO_WRITE_QUEUE_PUSH(0x05000000, (u32)backgroundColors,
+                        (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
   }
-  IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(paletteBank + 256), 0x84000080);
+  IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(paletteBank + 256),
+                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
 }
 
 // Transforms 512 source colours into destination components (three
@@ -960,8 +973,10 @@ void PaletteFade_Init(void) {
 
   buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
-  Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
-  Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
+  Dma_Set((void *)0x05000000, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+          REG_DMA3);
+  Dma_Set((void *)0x05000200, &buffer->palette[256],
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
                     0);
   callbackPriority = 3200;

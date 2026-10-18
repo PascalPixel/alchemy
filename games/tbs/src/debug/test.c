@@ -590,8 +590,10 @@ static void DebugMenu_SelectItem(void) {
   selectedItemId = 1;
   redraw = 1;
   // Reuse the item palette for both debug windows.
-  Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
+  Dma_Set((const void *)0x05000200, (void *)0x050001c0, DMA_ENABLE << 16 | 0x10,
+          REG_DMA3);
+  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, DMA_ENABLE << 16 | 1,
+          REG_DMA3);
   Engine_TaskWait(1);
   while (1) {
     if (redraw) {

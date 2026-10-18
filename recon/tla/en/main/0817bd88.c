@@ -1,5 +1,5 @@
-// Draft of BattleFx_RunFirePuppet, decompiled from the listing: differ 386 of
-// 543 (draft 521), the same 49 calls and control flow; allocation differs.
+// Draft of BattleFx_RunFirePuppet, decompiled from the listing: differ 364 of
+// 543 (draft 535), the same 49 calls and control flow; allocation differs.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -132,7 +132,6 @@ void BattleFx_RunFirePuppet(struct BattleEffectArgument *effect) {
   u8 *sprites;
   s32 *camera;
   struct PuppetTarget *target;
-  struct EffectStep *saved;
   struct EffectPosition pos;
   struct ModelTexture texture;
   struct RenderModel *model;
@@ -161,12 +160,11 @@ void BattleFx_RunFirePuppet(struct BattleEffectArgument *effect) {
   target = *GetBattleObjectSlotFar(effect->actors[0]);
   endX = 0;
   endY = 0;
-  saved = &work->particles[63];
-  saved->x = target->x;
-  saved->y = target->y;
-  saved->z = target->z;
-  saved->velocityX = target->unk18;
-  saved->velocityY = target->unk1c;
+  work->particles[63].x = target->x;
+  work->particles[63].y = target->y;
+  work->particles[63].z = target->z;
+  work->particles[63].velocityX = target->unk18;
+  work->particles[63].velocityY = target->unk1c;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,

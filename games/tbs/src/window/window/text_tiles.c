@@ -8,8 +8,9 @@
 // first gets a free tile of its own, which entry and mirror then point to.
 // Only nonzero remap entries replace pixels; shared tiles become private before
 // upload.
-void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
-                                 u8 *remap) {
+// Nothing calls it.
+UNUSED void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
+                                        u8 *remap) {
   struct UiRenderWork *work = UI_WORK;
   u8 pixels[128];
   u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
@@ -354,8 +355,8 @@ void UiWork_SetAltFlagAndClearTable(s32 allowAlternateTiles) {
   } while (j >= 0);
 }
 
-// Does nothing.
-void UiRender_ReservedNoOp(void) {}
+// Does nothing, and nothing calls it.
+UNUSED void UiRender_ReservedNoOp(void) {}
 
 // Draws a straight divider line inside a window from tile (x1, y1) to
 // (x2, y2), horizontal or vertical: its ends join the frame or the lines they

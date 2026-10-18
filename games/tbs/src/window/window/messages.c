@@ -393,7 +393,8 @@ extern const void *const Text_MessageContexts[][2];
 // becomes the next context.
 // Tree traversal consumes bytes; reader->words retains that byte position
 // between calls.
-s32 UiText_DecodeSymbol(struct TextReader *reader) {
+// Nothing calls it.
+UNUSED s32 UiText_DecodeSymbol(struct TextReader *reader) {
   u32 code;
   u32 contextBank;
   const u8 *base;

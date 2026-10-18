@@ -343,7 +343,8 @@ s32 SaveState_ProcessSelectedSlot(void) {
 // Asks "OK to save over this file?" and, on Yes, writes the save stamp into
 // the current file (SaveState_ProcessSelectedSlot) and says "Your game was
 // saved." Returns that result.
-s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
+// Nothing calls it.
+UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
   s32 result;
 
   // UB: on No, result is returned without ever being set.

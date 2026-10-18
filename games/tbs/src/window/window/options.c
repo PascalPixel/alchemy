@@ -3,10 +3,10 @@
 
 #include "../window_internal.h"
 
-// Three empty functions.
-void GraphicsPalette_ReservedNoOpC9BC(void) {}
-void GraphicsPalette_ReservedNoOpC9C0(void) {}
-void GraphicsPalette_ReservedNoOpC9C4(void) {}
+// Three empty functions; nothing calls them.
+UNUSED void GraphicsPalette_ReservedNoOpC9BC(void) {}
+UNUSED void GraphicsPalette_ReservedNoOpC9C0(void) {}
+UNUSED void GraphicsPalette_ReservedNoOpC9C4(void) {}
 
 // One of the seven entries of the option screen's work from offset 0x400;
 // only its state is known.
@@ -18,7 +18,8 @@ struct MenuWorkspaceEntry {
 
 // Clears the option screen's seven entry states, its row, its tint and its
 // cursor animation.
-void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
   struct MenuWorkspaceEntry *entry =
       (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
   u16 zero = 0;
@@ -47,7 +48,8 @@ void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
 // colour settings: the hue picks a point on the colour wheel and the
 // brightness shifts all three channels.
 // The three wave samples are one third of the 96-step colour cycle apart.
-void WindowColor_ComputeTint(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void WindowColor_ComputeTint(struct WorkspaceWork *work) {
   s16 phase;
   s32 bias;
   s32 blue;
@@ -81,7 +83,8 @@ void WindowColor_ComputeTint(struct WorkspaceWork *work) {
 
 // Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
 // window tint.
-void WindowColor_WritePalette(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void WindowColor_WritePalette(struct WorkspaceWork *work) {
   *(s16 *)&BG_PLTT_COLOR(15, 4) =
       WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
   *(s16 *)&BG_PLTT_COLOR(15, 5) =
@@ -175,7 +178,8 @@ void PaletteGlow_Update(s32 phase, s32 brightness) {
 }
 
 // Moves the three-row settings cursor up, wrapping to the bottom.
-void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
   if (work->page == 0)
     work->page = 2;
   else
@@ -183,14 +187,16 @@ void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
 }
 
 // Moves the three-row settings cursor down, wrapping to the top.
-void OptionMenu_NextRow(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void OptionMenu_NextRow(struct WorkspaceWork *work) {
   if (++work->page > 2)
     work->page = 0;
 }
 
 // Lowers the setting on the three-row cursor's row: message speed, window hue
 // or window brightness.
-void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
   switch (work->page) {
   case 0:
     if (gGameState.messageSpeed != 0)
@@ -209,7 +215,8 @@ void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
 
 // Raises the setting on the three-row cursor's row: message speed, window hue
 // or window brightness.
-void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
+// Nothing calls it.
+UNUSED void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
   switch (work->page) {
   case 0:
     if (gGameState.messageSpeed <= 1)

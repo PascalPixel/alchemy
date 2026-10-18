@@ -369,9 +369,10 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
 // tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 // both the work block's copy and VRAM. A NULL buffer draws the decoded text
 // in UiRenderWork.entries.
-void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
-                                        const struct UiWindow *work,
-                                        s32 offsetX, s32 offsetY) {
+// Nothing calls it.
+UNUSED void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
+                                               const struct UiWindow *work,
+                                               s32 offsetX, s32 offsetY) {
   struct UiRenderWork *canvas = UI_WORK;
   u32 cell;
 

@@ -5,7 +5,8 @@
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 // Always 1: the international name entry has no voicing marks to check.
-s32 Resource_ReturnTrue(void) { return 1; }
+// Nothing calls it.
+UNUSED s32 Resource_ReturnTrue(void) { return 1; }
 #else
 
 // The kana voicing marks of the Japanese name entry, which join the letter

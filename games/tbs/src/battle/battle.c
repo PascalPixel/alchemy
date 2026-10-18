@@ -11336,6 +11336,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   if (enemyClasses[0] == 0)
     goto assigned;
 assign_enemy:
+  // Repeated enemy classes get distinct suffixes within this encounter.
   {
     s32 suffixCode = EnemyCountDecrement(enemyClasses[memberOrEnemyIndex], 1);
 

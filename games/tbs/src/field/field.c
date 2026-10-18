@@ -1007,6 +1007,7 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
     i = 0;
     goto test_entry;
   entry_loop:
+    // Only the first layer supplies the sprite's offsets.
     {
       struct AnimationEntry *layer = sprite->entries[i];
       struct AnimationMetadata *metadata;

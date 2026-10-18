@@ -3189,6 +3189,7 @@ void SerialRuntime_HandleTransferInterrupt(void) {
 
   channel = 0;
 receive_loop:
+  // Hand complete packets to the frame code without overwriting its buffers.
   {
     s32 receiveIndex;
     u16 *incoming;

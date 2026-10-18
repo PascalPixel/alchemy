@@ -121,56 +121,6 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
-// The UI tilemap in VRAM (BG screen block 4), which UiWork_UploadDirtyBlocks
-// copies the work block's tilemap to.
-#define UI_TILEMAP_VRAM ((u8 *)0x06002000)
-
-// A tilemap entry of palette 15, the UI palette.
-#define UI_TILE(tile) (0xf000 | (tile))
-// Two copies of a tilemap entry, for filling a run of entries a word at a time.
-#define UI_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
-
-// The window frame's tiles. While UiRenderWork.mode is set (a battle effect
-// sets it while it greys palette 15 and scrolls BG0 by scanline) the corners
-// are one rounded tile, flipped for each corner.
-enum {
-  UI_TILE_BLANK = UI_TILE(0x00),
-  UI_TILE_FRAME_TOP_LEFT = UI_TILE(0x10),
-  UI_TILE_FRAME_TOP = UI_TILE(0x11),
-  UI_TILE_FRAME_TOP_RIGHT = UI_TILE(0x12),
-  UI_TILE_FRAME_BOTTOM_LEFT = UI_TILE(0x13),
-  UI_TILE_FRAME_BOTTOM = UI_TILE(0x14),
-  UI_TILE_FRAME_BOTTOM_RIGHT = UI_TILE(0x15),
-  UI_TILE_FRAME_LEFT = UI_TILE(0x16),
-  UI_TILE_FRAME_RIGHT = UI_TILE(0x17),
-  UI_TILE_FRAME_ROUND_CORNER = UI_TILE(0x1c),
-  UI_TILE_WINDOW_FILL = UI_TILE(0x20),
-  // Divider lines (UiWindow_DrawDividerLine) and their joins.
-  UI_TILE_DIVIDER_TEE_DOWN = UI_TILE(0x09),  // a vertical line leaving below
-  UI_TILE_DIVIDER_TEE_UP = UI_TILE(0x0a),    // a vertical line leaving above
-  UI_TILE_DIVIDER_TEE_RIGHT = UI_TILE(0x0b), // a horizontal line leaving right
-  UI_TILE_DIVIDER_TEE_LEFT = UI_TILE(0x0c),  // a horizontal line leaving left
-  UI_TILE_DIVIDER_CROSS = UI_TILE(0x0d),
-  UI_TILE_DIVIDER_HORIZONTAL = UI_TILE(0x0e),
-  UI_TILE_DIVIDER_VERTICAL = UI_TILE(0x0f),
-  UI_TILE_FRAME_TOP_TEE = UI_TILE(0x18),    // the top edge meeting a line
-  UI_TILE_FRAME_BOTTOM_TEE = UI_TILE(0x19), // the bottom edge meeting a line
-  UI_TILE_FRAME_LEFT_TEE = UI_TILE(0x1a),   // the left edge meeting a line
-  UI_TILE_FRAME_RIGHT_TEE = UI_TILE(0x1b),  // the right edge meeting a line
-};
-
-// The tilemap entry flip bits.
-#define TILE_HFLIP 0x400
-#define TILE_VFLIP 0x800
-
-// The DMA control word that fills count words from one fixed source word.
-#define DMA_FILL32(count)                                                      \
-  ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (count))
-// The DMA control word that copies count words.
-#define DMA_COPY32(count) ((DMA_ENABLE | DMA_32BIT) << 16 | (count))
-// The DMA control word that copies count halfwords.
-#define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
-
 // A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
@@ -202,7 +152,8 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
   struct RenderOutput *out = work->freeOutputs.head;
 
   if (out != NULL) {
-    if (out->next == NULL) // the list is now empty
+    // Taking the last output leaves the list empty.
+    if (out->next == NULL)
       work->freeOutputs.tailLink = &work->freeOutputs.head;
     work->freeOutputs.head = out->next;
     out->next = NULL;
@@ -298,10 +249,11 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   s32 UiWork_CopyTileTail(u32 sourceTile, u32 destinationTile) {
     sourceTile &= 0x3ff;
     destinationTile &= 0x3ff;
-    Dma_Set((void *)(0x06000010 + sourceTile * 32),
-            (void *)(0x06000000 + destinationTile * 32), DMA_COPY16(8),
+    Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
+            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP, DMA_COPY16(8),
             REG_DMA3);
-    return Iwram_ClearWords((void *)(0x0600000c + destinationTile * 32), 20);
+    return Iwram_ClearWords(
+        BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
   // Battle windows share the field's pools but use the canvas tile set.
@@ -2027,8 +1979,8 @@ s32 UiText_GetWideStringWidth(u16 *text) {
 #else
         glyphIndex = code - TEXT_VOICED_MARK;
         if (glyphIndex > 1U) {
-          glyphIndex +=
-              TEXT_VOICED_MARK - TEXT_SPACE; // the font starts at the space
+          // The font starts at the space.
+          glyphIndex += TEXT_VOICED_MARK - TEXT_SPACE;
           width += FONT_GLYPH(glyphIndex)->width;
         }
       } else {
@@ -2174,7 +2126,8 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
   }
 
   cell = ((work->y + offsetY + 1) << 5) + (work->x + offsetX) + 1;
-  if (cell < 32 * 20) { // inside the tilemap
+  if (cell < 32 * 20) {
+    // Inside the tilemap.
     s32 src;
     s32 dst;
 
@@ -2237,7 +2190,8 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else
-        if ((u16)(code - TEXT_VOICED_MARK) > 1) // the kana marks share a tile
+        // The kana marks share a tile.
+        if ((u16)(code - TEXT_VOICED_MARK) > 1)
           x++;
 #endif
       }
@@ -5315,7 +5269,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
     *slot = Resource_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
   Runtime_ReleaseHeapBlock(17);
-  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0), 0x80000010,
+  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0), DMA_COPY16(16),
           REG_DMA3);
 }
 
@@ -7165,13 +7119,20 @@ void WindowColor_ComputeTint(struct WorkspaceWork *work) {
 // Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
 // window tint.
 void WindowColor_WritePalette(struct WorkspaceWork *work) {
-  *(s16 *)0x050001E8 = WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
-  *(s16 *)0x050001EA = WindowColor_ScaleTint(work, 0xD555, 0xBBBB, 0xEEEE);
-  *(s16 *)0x050001EC = WindowColor_ScaleTint(work, 0xBBBB, 0xAAAA, 0xCCCC);
-  *(s16 *)0x050001EE = WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
-  *(s16 *)0x050001F0 = WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
-  *(s16 *)0x050001F2 = WindowColor_ScaleTint(work, 0x12221, 0xEEEE, 0x15555);
-  *(s16 *)0x050001F4 = WindowColor_ScaleTint(work, 0x13BBB, 0x10000, 0x17777);
+  *(s16 *)&BG_PLTT_COLOR(15, 4) =
+      WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
+  *(s16 *)&BG_PLTT_COLOR(15, 5) =
+      WindowColor_ScaleTint(work, 0xD555, 0xBBBB, 0xEEEE);
+  *(s16 *)&BG_PLTT_COLOR(15, 6) =
+      WindowColor_ScaleTint(work, 0xBBBB, 0xAAAA, 0xCCCC);
+  *(s16 *)&BG_PLTT_COLOR(15, 7) =
+      WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
+  *(s16 *)&BG_PLTT_COLOR(15, 8) =
+      WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
+  *(s16 *)&BG_PLTT_COLOR(15, 9) =
+      WindowColor_ScaleTint(work, 0x12221, 0xEEEE, 0x15555);
+  *(s16 *)&BG_PLTT_COLOR(15, 10) =
+      WindowColor_ScaleTint(work, 0x13BBB, 0x10000, 0x17777);
 }
 
 // Returns the window tint with each channel scaled (16.16 fixed point) and
@@ -7422,7 +7383,8 @@ struct UiWindow *OptionMenu_Open(void) {
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     Dma_Set(gWorkspaceOptions_SliderPalette,
-            (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), 0x80000020, REG_DMA3);
+            (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY16(32),
+            REG_DMA3);
     VramCache_Load(x, 256, gWorkspaceOptions_SliderTiles);
     y = 0;
     marker = RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
@@ -7786,7 +7748,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
 
   redraw = 1;
   rows = 3;
-  settingsOnly = GameFlag_TestFar(0x17E);
+  settingsOnly = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
   first = 0;
   SystemMenu_Initialize();
   work = gSelectionWork;
@@ -7886,7 +7848,7 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
   u32 i;
 
   dst = pixels;
-  src = (u8 *)(0x06000000 + 32 * tile);
+  src = BG_CHAR_BLOCK(0) + TILE_SIZE_4BPP * tile;
   for (i = 0; i < 32; i++) {
     n = *src++;
     *dst++ = n & 15;
@@ -7935,7 +7897,8 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     *entry = tile | 0xf000;
     *mirror = tile | 0xf000;
   }
-  Dma_Set(pixels, (void *)(0x06000000 + tile * 32), 0x84000008, REG_DMA3);
+  Dma_Set(pixels, BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP, DMA_COPY32(8),
+          REG_DMA3);
 }
 
 // Draws a string of 16-bit character codes with the window font into tiles
@@ -8117,7 +8080,7 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       *tiles = paletteBits | tile;
       *mirror = paletteBits | tile;
     }
-    vramTile = (u32 *)(0x06000000 + tile * 32);
+    vramTile = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
     *vramTile++ = ((u32 *)canvas)[index];
     *vramTile++ = ((u32 *)canvas)[index + 0x40];
     *vramTile++ = ((u32 *)canvas)[index + 0x80];
@@ -8433,7 +8396,8 @@ void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
 
   cell = ((window->y + (offsetY >> 3) + 1) << 5) +
          (window->x + (offsetX >> 3)) + 1;
-  if (cell < 32 * 20) { // inside the tilemap
+  if (cell < 32 * 20) {
+    // Inside the tilemap.
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)UI_TILEMAP_VRAM;
     text = canvas->entries;
@@ -8489,7 +8453,8 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
 
   cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
          (work->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 32 * 20) { // inside the tilemap
+  if (cell < 32 * 20) {
+    // Inside the tilemap.
     vram = (s32)UI_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
@@ -8586,7 +8551,8 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 
   cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
          (work->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 32 * 20) { // inside the tilemap
+  if (cell < 32 * 20) {
+    // Inside the tilemap.
     vram = (s32)UI_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;

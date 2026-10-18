@@ -1,17 +1,17 @@
-// Draft, differ 564 of 927 (draft 935 instructions, no device): the body
-// of the leaping strike family (BattleFx_RunPlanetDiver mode 0 and BattleFx_RunPlanetary
-// mode 1 in summon_modes_7.c), written from the listing on The Broken
-// Seal's canvas skeleton (twin BattleFx_RunPlanetDiver 0.53 by shape and
-// call order: the caster object leaps, lands and slides as there) with the
-// ARM model renderer for mode 1's claw, rings and pillars.
-// The native frame is 92 bytes: effect sp+68, mode sp+64, work sp+60,
-// canvas sp+56, draw sp+48, graphics sp+44, target sp+40, stepX sp+36,
-// stepY sp+32, homeX sp+28, homeZ sp+24, landed sp+20, &pos sp+16,
-// projected sp+12, &texture sp+8, the texture at sp+72 and pos at sp+80.
-// Here it is 88 (one spill fewer), so every stack offset is 4 lower, and
-// the caster stays in r9 as in the native but the loops' registers differ.
-// The slide is written as two plain ifs; the native's shape (the landing
-// test reusing the new y) is the same code (564 either way).
+// Draft, differ 481 of 927 (draft 930 instructions, no device): the body
+// of the leaping strike family (BattleFx_RunPlanetDiver mode 0 and
+// BattleFx_RunPlanetary mode 1 in summon_modes_7.c), written from the listing
+// on The Broken Seal's canvas skeleton (twin BattleFx_RunPlanetDiver 0.53 by
+// shape and call order: the caster object leaps, lands and slides as there)
+// with the ARM model renderer for mode 1's claw, rings and pillars. The native
+// frame is 92 bytes: effect sp+68, mode sp+64, work sp+60, canvas sp+56, draw
+// sp+48, graphics sp+44, target sp+40, stepX sp+36, stepY sp+32, homeX sp+28,
+// homeZ sp+24, landed sp+20, &pos sp+16, projected sp+12, &texture sp+8, the
+// texture at sp+72 and pos at sp+80. Here it is 88 (one spill fewer), so every
+// stack offset is 4 lower, and the caster stays in r9 as in the native but the
+// loops' registers differ. The slide divides by a local 16, which the native
+// passes to __divsi3. The slide is written as two plain ifs; the native's shape
+// (the landing test reusing the new y) is the same code (564 either way).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -225,6 +225,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 16: down at the target's depth, then sliding to it over 16
     // frames.
     if (frame == 16) {
+      s32 slide = 16;
+
       caster->verticalMotionStrength = 0;
       if (mode == 0)
         caster->z = target->z;
@@ -234,8 +236,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
       caster->velocityX = 0;
       caster->velocityY = 0;
       caster->velocityZ = 0;
-      stepX = (target->x * 60 / 100 - caster->x) / 16;
-      stepY = (target->y - caster->y) / 16;
+      stepX = (target->x * 60 / 100 - caster->x) / slide;
+      stepY = (target->y - caster->y) / slide;
       Object_ResetMotion(caster);
     }
 

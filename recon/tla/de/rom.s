@@ -782,13 +782,6 @@ UiWork_SetTwoEntriesTo999:
 	.thumb_func
 Ui_BuildPairedPatternsToSlot:
 	.incbin "baserom.gba", 0x0003d538, 0x000000b0
-	.section .rom.0003d618, "ax"
-	.balign 4
-	.global Func_0803d5c4
-	.type Func_0803d5c4, %function
-	.thumb_func
-Func_0803d5c4:
-	.incbin "baserom.gba", 0x0003d618, 0x000000bc
 	.section .rom.0003d6d4, "ax"
 	.global ItemIcon_Compose
 	.type ItemIcon_Compose, %function

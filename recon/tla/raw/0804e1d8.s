@@ -199,7 +199,7 @@ Func_0804e1d8:
 	movs r1, #1
 	add r2, sp, #12
 	add r3, sp, #8
-	bl Func_0803d5c4
+	bl UiIcon_BuildItemIconTiles
 	b .L_0804e37a
 .L_0804e362:
 	mov r3, r9

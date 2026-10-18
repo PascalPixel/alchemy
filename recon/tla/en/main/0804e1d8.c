@@ -27,7 +27,7 @@ void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x,
                                u32 y);
 void UiText_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window,
                                s32 x, s32 y);
-void Func_0803d5c4(s32 icon, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
+void UiIcon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                                   s32 reuse);
 s32 Resource_FindFreeEntry(void);
@@ -98,7 +98,7 @@ s32 Func_0804e1d8(void) {
         x = (i - row * 8) * 16;
         y = row * 16 + 16;
         if (mode == 0) {
-          Func_0803d5c4(base + i, 1, &slot, &tile, mode);
+          UiIcon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
           RenderOutput_Create(slot, 0x40000000, window, x, y);
         } else if (mode == 1) {
           UiIcon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);

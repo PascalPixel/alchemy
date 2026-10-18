@@ -46,7 +46,7 @@ MenuSelection_SetupEntry:
 	add r2, sp, #8
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_0803d5c4
+	bl UiIcon_BuildItemIconTiles
 	ldr r3, .L_0803f3bc
 	b .L_0803f352
 .L_0803f33a:

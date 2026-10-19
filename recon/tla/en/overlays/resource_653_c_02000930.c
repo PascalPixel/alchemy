@@ -2,7 +2,9 @@
 // mask (movs r3, #3) before it loads the sprite and masks before it loads
 // the attribute byte; the draft loads the sprite first. A direct
 // object->animation cast, a one-pass block and a masked temporary were
-// tried (differ 4, 4 and 15).
+// tried (differ 4, 4 and 15). 2026-10-19: the mask pinned to r3 (7), the
+// masked priority behind an empty asm (3: the store masks again), the
+// priority or the sprite pointer behind one (4 and 10).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 void Func_02000930(struct ObjectRuntime *object, s32 priority) {

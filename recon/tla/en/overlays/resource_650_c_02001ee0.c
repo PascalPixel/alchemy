@@ -7,6 +7,8 @@
 // the owner after the store must have stalled a cycle. Tried 2026-10-15:
 // the action pointer taken at the native's place, in its own variable
 // (differ 25) or in the actor's (25, and the store's zero is pooled).
+// 2026-10-19: the action pointer behind an asm volatile after the scaleX
+// store (31: the barrier's estimated bytes move the literal pools).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

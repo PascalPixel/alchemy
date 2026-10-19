@@ -7,7 +7,11 @@
 // loads gPartyState's address before moving z into r10, and loads the sprite
 // before copying flags for the mode. Loading the target scale and step count
 // before the branch took it from 40 to 12; five minutes of alchemy permute
-// found nothing better (27).
+// found nothing better (27). The velocity stores follow field_effect.h's
+// struct Vector3 (the draft no longer compiled). Tried 2026-10-19: velocityX
+// pinned to r11 and z to r10 behind an empty asm barrier, as Func_02000cbc of
+// overlay 64c matches (18: the other parameter copies all move ahead of the
+// pool load).
 #include "types.h"
 #include "party_state.h"
 #include "field_sprite.h"
@@ -45,9 +49,9 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(effect, 0);
   effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
   Object_SetSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;

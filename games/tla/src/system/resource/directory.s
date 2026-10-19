@@ -491,7 +491,7 @@ Resource_DirectoryTable:
 	resource , FieldFx_YellowFlameBurst
 	resource , FieldFx_BlueFlameBurst
 	resource , FieldFx_Leaves
-	resource , FieldFx_DustPuffA
+	resource DustPuffA, FieldFx_DustPuffA
 	resource , FieldFx_DustPuffB
 	resource , Resource_Data1E3
 	resource , FieldFx_GoldStar

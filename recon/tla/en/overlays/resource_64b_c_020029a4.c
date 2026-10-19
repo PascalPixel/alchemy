@@ -9,7 +9,8 @@
 // inline (no change), a one-pass block before or around the store or around the
 // call, or an asm volatile after the call (the store matches, but the r5/0x480
 // setup before the scheduler call turns, differ 4 to 12). alchemy permute, 5
-// minutes: nothing closer.
+// minutes: nothing closer. 2026-10-19: the event work behind an empty asm
+// (8), the 436 offset pinned to r6 (21).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

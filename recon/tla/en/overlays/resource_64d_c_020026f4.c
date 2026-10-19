@@ -1,63 +1,81 @@
+// Draft, differ 65 of 83 (was 67, a raw draft calling absolute addresses),
+// rewritten from the listing: the Venus Lighthouse entrance's spark setup.
+// It takes heap slot 220, unpacks resource 0x1e1 (directory.s's DustPuffA)
+// into it, loads the tiles into a free VRAM entry, sets up the 96 sparks
+// (each sprite set up, each frame -1) and schedules Func_0200258c. Every instruction
+// but the loop's counter is the native's; the rest is registers: the native
+// keeps the work in r6, the tile base in r10 and the counter in r8, while here
+// the work takes r7, the tile base r8 and the counter r4, saved around the
+// call (sub sp, #8). The state pointer as a local moved the -13 mask back
+// into the loop as the native has it (was hoisted into r10). Measured: the
+// sprite and state as pointers stepped by the loop (78), the counter pinned
+// to r8 (64, the loop is no longer reversed), five minutes of psynergy
+// permute (nothing valid under 65).
 #include "types.h"
+#include "ram_buffer.h"
 
-void Func_0200a7ec();
-s32 Func_0200a814();
-void Func_0200a824();
-s32 Func_0200a834();
-s32 Func_0200a83c();
-s32 Func_0200a844();
-void Func_0200aa0c();
+struct SparkState {
+  u8 unk00[24];
+  s32 frame;
+};
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0) { return f(a0); }
+struct SparkSprite {
+  u8 unk00[4];
+  u16 attr0 : 13;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 attr1;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1) { f(a0, a1); }
+struct SparkWork {
+  u8 unk0000[0x800];
+  struct SparkState states[96];
+  struct SparkSprite sprites[96];
+  u16 unk2180;
+  u16 tileBase;
+  u16 resource;
+};
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1) { return f(a0, a1); }
+extern char ResourceId_DustPuffA;
 
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2) {
-  return f(a0, a1, a2);
-}
+void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+void Func_02002824(void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
+void Func_02002a0c(struct SparkSprite *sprite, s32 width, s32 height, s32 attr,
+                   s32 tile);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Func_0200258c(void);
 
 void Func_020026f4(void) {
-  u32 i;
-  s32 p10;
-  s32 rec4;
-  s32 rec7;
-  s32 rec8;
-  s32 record;
-  u8 *v5;
-  s32 v7;
-  s32 base8_5f;
+  struct SparkWork *work = Runtime_AllocateHeapBlockFar(220, 0x2188);
+  s32 resource;
+  s32 tileBase;
+  s32 i;
 
-  base8_5f = 95;
-  rec8 = Value2(Func_0200a814, 220, 0x2188);
-  record = Value1(Func_0200a844, 0x1e1);
-  Func_0200a824(record, rec8);
-  rec7 = Func_0200a83c();
-  rec4 = Value3(Func_0200a834, rec7, 0x800, rec8);
-  *(u16 *)((rec8 + 0x2182)) = rec4;
-  *(u16 *)((rec8 + 0x2184)) = rec7;
-  v5 = (rec8 + 0x1280);
-  v7 = (rec8 + 0x800);
-  do {
-    Func_0200aa0c((s32)v5, 8, 8, 0x40000000, rec4);
-    v5[5] |= 32;
-    v5[9] = ((15 & v5[9]) & -13);
-    {
-      s32 shown = 240;
+  Func_02002824(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  resource = Resource_FindFreeEntry();
+  tileBase = VramCache_Load(resource, 0x800, work);
+  work->tileBase = tileBase;
+  work->resource = resource;
+  for (i = 0; i < 96; i++) {
+    struct SparkState *state = &work->states[i];
+    struct SparkSprite *sprite = &work->sprites[i];
 
-      *(u16 *)((s32)v5 + 30) = shown;
-    }
-    base8_5f = (base8_5f + -1);
-    *(s32 *)(v7 + 24) = -1;
-    v5 = ((s32)v5 + 40);
-    v7 = (v7 + 28);
-  } while (base8_5f >= 0);
-  {
-    s32 shown = 0;
-
-    *(u16 *)((rec8 + 0x2180)) = shown;
+    Func_02002a0c(sprite, 8, 8, 0x40000000, tileBase);
+    sprite->fullColor = 1;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    state->frame = -1;
   }
-  Call2(Func_0200a7ec, 0x200a58d, 0x480);
-  p10 = (s32)v5;
+  work->unk2180 = 0;
+  Scheduler_AddOrUpdateCallback(Func_0200258c, 0x480);
 }

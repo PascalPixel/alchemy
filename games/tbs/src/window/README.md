@@ -1,4 +1,4 @@
-# Windows and menus
+# Windows
 
 This folder holds The Broken Seal's window system and the screens built on it:
 the windows drawn into a shared BG tilemap, the message channels that type
@@ -17,8 +17,8 @@ screen, the battle menus and the debug menus.
 | `articles.c` | each edition's articles and possessives, which the decoder writes before names |
 | `scales.c` | sprite scales, motion curves and the window colour wheel |
 | `text_speed.c` | the message speed tables |
-| `windata.s`, `keyboard.s` | glyph widths, text colours, the party status columns, the name entry keyboards |
-| `cursor.s`, `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `games/tbs/src/menu` and `games/tbs/src/graphics` |
+| `windata.s`, [`keyboard.s`](keyboard.s) | glyph widths, text colours, the party status columns, the name entry keyboards |
+| [`cursor.s`](cursor.s), `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `games/tbs/src/menu` and `games/tbs/src/graphics` |
 
 Each guide's comment says where to start, and each part's second line says
 what it holds: `head -2 window/*.c battle_command/*.c` lists them. A part
@@ -27,12 +27,13 @@ but it is compiled only through its guide. The ROM shows each of the two
 objects as one; the parts are ours, cut where one family ends and the next
 begins. Link order is in `games/tbs/objects.tsv`, from `glyph_arm`.
 
-The unit headers are in `games/tbs/include/unit/window/`. Its `window.h` also
-holds what both objects use: the UI tilemap's tiles (`UI_TILE_`), the window
-flags (`UI_WINDOW_`), sprite motions (`UI_SPRITE_`), message argument kinds
-(`MSG_ARG_`) and the DMA control words (`DMA_COPY32` and its kin).
+The unit headers are in `games/tbs/include/unit/window/`. Its
+[`window.h`](../../include/unit/window/window.h) also holds what both objects
+use: the UI tilemap's tiles (`UI_TILE_`), the window flags (`UI_WINDOW_`),
+sprite motions (`UI_SPRITE_`), message argument kinds (`MSG_ARG_`) and the
+DMA control words (`DMA_COPY32` and its kin).
 
-## Words used here
+## Words
 
 - **work block**: `struct UiRenderWork`, heap slot `HEAP_SLOT_WINDOW`, reached
   as `UI_WORK` or `gWindowWork[0]`. It holds the tilemap, the window slots,
@@ -95,7 +96,7 @@ compile differently:
 - A function whose result nothing reads keeps its `s32` return where `void`
   changes its epilogue; `UBFIX` gives the `void` form.
 
-## Changing a window or a message
+## How to change a window or a message
 
 - A window's place and size are tiles: `UiWindow_Create(x, y, width, height,
   flags)`; a window narrower or shorter than 2 tiles, or wider or taller than
@@ -106,3 +107,11 @@ compile differently:
 - Messages are in the PO catalogs in `games/tbs/text`. Their control codes are
   the `MSG_` codes in `window/decode.c`, and a message window sizes itself to
   its text (`UiWindow_FitOnScreen`).
+
+## Limits
+
+- The screen is 30 by 20 tiles; a window narrower or shorter than 2 tiles,
+  or wider or taller than 30, draws no frame.
+- Three message channels and 64 render outputs (`struct UiRenderWork`).
+- The text canvas holds 120 tiles from tile 0x128 (`UI_CANVAS_VRAM`): the
+  interior of a full-width window six tiles tall.

@@ -2665,7 +2665,7 @@ const s32 gTolbiShipDeck_PresentationActionsB[] = {
 };
 
 const s32 gTolbiShipDeck_RandomActorActions[] = {
-    SC_CALL(SceneActor_UpdateScalePulse),
+    SC_CALL(Scene_SquashAndStretch),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

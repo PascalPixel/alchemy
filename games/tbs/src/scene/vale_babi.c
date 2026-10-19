@@ -1064,7 +1064,7 @@ s32 gValeBabi_Actor10FallsScript[] = {
 };
 
 s32 gValeBabi_DoraFacesIsaacScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_MOVE(PIXELS(567), 0, PIXELS(690)),
     SC_SYNC,

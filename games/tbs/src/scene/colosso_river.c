@@ -59,8 +59,7 @@
 #define COLOSSO_RIVER_FACE_DIRECTION Engine_ActorFaceDirection
 #define COLOSSO_RIVER_PLACE_STAGED_PAIR ColossoRiver_MoveActorPairByOffset
 #define COLOSSO_RIVER_SELECT_MODE_BLOCK ColossoRiver_SelectPresentationScript
-#define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES                               \
-  SceneActor_ApplyValueAndMatchingSlots
+#define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
 #else
 #define COLOSSO_RIVER_FACE_DIRECTION ((s32 (*)())Engine_ActorFaceDirection)
 #define COLOSSO_RIVER_PLACE_STAGED_PAIR                                        \
@@ -68,7 +67,7 @@
 #define COLOSSO_RIVER_SELECT_MODE_BLOCK                                        \
   ((s32 (*)())ColossoRiver_SelectPresentationScript)
 #define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES                               \
-  ((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)
+  ((s32 (*)(s32, s32))Scene_GiveAndEquipItem)
 #endif
 
 // Forward declarations.

@@ -1050,7 +1050,7 @@ static void Event_WatchBoulderFall(void) {
   if (GameFlag_IsSet(FLAG_VALE_BOULDER_FELL) == 0) {
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
-    SceneState_SetValue140Mode0();
+    Scene_BeginCutscenePsynergy();
     Engine_TaskWait(1);
     Event_PlayCue(SE_141);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1190,7 +1190,7 @@ static void Event_WatchBoulderFall(void) {
     Event_ShowMessage(22, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(20);
-    SceneEffect_CleanupSceneObjects();
+    Scene_EndCutscenePsynergy();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
     Engine_EventWait(20);
@@ -2715,7 +2715,7 @@ s32 gValeStorm_LookAroundScript[] = {
 };
 
 s32 gValeStorm_ActorEightScript[] = {
-    SC_CALL(SceneActor_UpdateScalePulse),
+    SC_CALL(Scene_SquashAndStretch),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

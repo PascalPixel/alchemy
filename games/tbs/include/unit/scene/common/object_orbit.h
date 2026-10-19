@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void InitializeStagedActorSceneOrbitingEffect(s32 id);
+void Scene_FloatNut(s32 id);
 
 #endif

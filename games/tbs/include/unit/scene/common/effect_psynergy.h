@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void SceneState_SetValue140Mode0(void);
-void SceneEffect_CleanupSceneObjects(void);
+void Scene_BeginCutscenePsynergy(void);
+void Scene_EndCutscenePsynergy(void);
 
 #endif

@@ -7,11 +7,9 @@
 
 // Prepare the effect work and spark tiles of Move (ability 140) for the
 // cutscene's Psynergy.
-void SceneState_SetValue140Mode0(void) {
+void Scene_BeginCutscenePsynergy(void) {
   Engine_PsynergyBegin(ABILITY_MOVE, 0);
 }
 
 // End the cutscene's Psynergy and release its effect work.
-void SceneEffect_CleanupSceneObjects(void) {
-  BattleEffect_CleanupSceneObjects();
-}
+void Scene_EndCutscenePsynergy(void) { BattleEffect_CleanupSceneObjects(); }

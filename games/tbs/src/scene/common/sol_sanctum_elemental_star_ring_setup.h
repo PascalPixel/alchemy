@@ -190,7 +190,7 @@ static void SolSanctum_UpdateRing(void) {
 
 // Start the floating lights: count actors (at most 10) from first, each drawn
 // translucent and starting at its largest scale.
-void SolSanctum_SetupElementalRings(s32 first, u32 count) {
+void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // The actors are read through struct SolSanctumRingObject, the plain-C view
   // this site matches with (scene/README.md): it keeps the sprite-flags address
   // before the ring-entry store, where FieldActor and AnimationObject swap the

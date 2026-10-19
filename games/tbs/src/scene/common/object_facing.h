@@ -7,8 +7,7 @@
 
 // An object script call: an actor with a facing target turns towards it, at
 // most a sixteenth of a turn a frame.
-static s32
-OverlayObject_UpdateFacingTowardTarget(struct ScriptInterpreter *interpreter) {
+static s32 Scene_TurnTowardTarget(struct ScriptInterpreter *interpreter) {
   struct FacingObject *obj = (struct FacingObject *)interpreter;
   s32 delta;
   u16 old;

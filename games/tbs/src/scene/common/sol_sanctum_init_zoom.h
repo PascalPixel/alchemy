@@ -7,7 +7,7 @@
 // The scene opens in the window transition over 16 frames. Once Mt. Aleph has
 // erupted (FLAG_SOL_SANCTUM_ERUPTED), the rooms rumble (SE_141), the map shakes
 // without end and sparkles start.
-s32 Scene_InitSceneRequestAndCameraZoom(void) {
+s32 SolSanctumRooms_Initialize(void) {
   struct FieldWork *work;
 
   s32 shakeX = 0x10000;

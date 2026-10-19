@@ -2393,7 +2393,7 @@ s8 gAltinPeak_PaletteScript[] = {
 
 // Room 1's beast keeps turning to face the party leader.
 s32 gAltinPeak_FaceLeaderScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -1095,7 +1095,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
-  SceneState_SetValue140Mode0();
+  Scene_BeginCutscenePsynergy();
   Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
@@ -1367,7 +1367,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 1;
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
-  SceneEffect_CleanupSceneObjects();
+  Scene_EndCutscenePsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_EventRequestExit(5);

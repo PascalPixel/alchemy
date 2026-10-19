@@ -220,7 +220,7 @@ static void Event_DemonstratePsynergy(void) {
     Engine_ActorStartRepeatedMotion(17, 2);
     Engine_EventWait(15);
     // Flash the caster before starting the palette cycle and camera shake.
-    SceneState_SetValue140Mode0();
+    Scene_BeginCutscenePsynergy();
     shakes = 0;
     for (i = 0; i < 40; i++) {
       ValeHome_FlashPsynergyPalette(Object_GetById(17));
@@ -243,7 +243,7 @@ static void Event_DemonstratePsynergy(void) {
     Engine_AudioPlayCue(SE_289);
     Scheduler_RemoveCallback(ValeHome_UpdateActor17Psynergy);
     Engine_TaskWait(1);
-    SceneEffect_CleanupSceneObjects();
+    Scene_EndCutscenePsynergy();
     Engine_ActorSetChildValue(17, 0);
     Engine_EventWait(40);
     Engine_EventSetMessage(MsgValeBeholdPowerPsynergy);
@@ -310,7 +310,7 @@ static void Event_DemonstrateLevitation(void) {
   Actor_SetAttachedEffect(15, 0x102);
   Engine_EventWait(20);
   // Charge the caster's display, then start both palette updates.
-  SceneState_SetValue140Mode0();
+  Scene_BeginCutscenePsynergy();
   for (i = 0; i < 40; i++) {
     ValeHome_FlashPsynergyPalette(Object_GetById(15));
     Engine_TaskWait(1);
@@ -334,7 +334,7 @@ static void Event_DemonstrateLevitation(void) {
   Actor_SetChildValue(15, 0);
   Actor_SetChildValue(20, 0);
   Engine_EventWait(40);
-  SceneEffect_CleanupSceneObjects();
+  Scene_EndCutscenePsynergy();
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 30);
   Event_ShowMessage(15, 0);
   Engine_EventEnd();
@@ -1614,7 +1614,7 @@ s32 gValeHome_Actor24BounceActions[] = {
 };
 
 s32 gValeHome_FaceTargetActions[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -1242,7 +1242,7 @@ s32 MogallForest_Initialize(void) {
       Engine_TaskWait(1);
       Engine_ActorSetPosition(ACTOR_NUT, PIXELS(632), PIXELS(440));
       if (Engine_GameFlagIsSet(FLAG_NUT_CAUGHT) == 0) {
-        InitializeStagedActorSceneOrbitingEffect(ACTOR_NUT);
+        Scene_FloatNut(ACTOR_NUT);
       }
       Engine_ActorSetChildValue(ACTOR_FIRST_AREA_HOSTILE_APE, 15);
       Engine_ActorSetChildValue(ACTOR_FIRST_AREA_EAST_APE, 15);

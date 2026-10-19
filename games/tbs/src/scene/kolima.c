@@ -701,7 +701,7 @@ static void Kolima_WitnessForestCurse(void) {
   firstCurtainState = &gFallingEffectState;
   gFallingEffectOffset = PIXELS(128);
   *firstCurtainState = 1;
-  FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, 0xc80);
   Engine_EventWait(180);
   Event_PlayCue(MUS_021);
   Kolima_ShowMessageAndWait(GARET, 80);
@@ -774,7 +774,7 @@ static void Kolima_WitnessForestCurse(void) {
     } while (gFallingEffectState != 0);
   }
   Engine_EventWait(300);
-  Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
+  Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(120);
   Event_PlayCue(MUS_017);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
@@ -994,7 +994,7 @@ static void Kolima_WitnessForestCurse(void) {
   gFallingEffectOffset = PIXELS(128);
   secondCurtainState = &gFallingEffectState;
   *secondCurtainState = 1;
-  FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, 0xc80);
   Engine_EventWait(80);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -1121,7 +1121,7 @@ static void Kolima_WitnessForestCurse(void) {
   // End the forest\'s appeal and let the party decide whether to help.
   Event_ShowMessage(18, 0);
   Event_ShowMessage(17, 0);
-  Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
+  Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(80);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
@@ -1508,7 +1508,7 @@ s32 gKolima_DebrisScript[] = {
 };
 
 s32 gKolima_FaceLeaderScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -1715,15 +1715,15 @@ s32 gKolima_RegionScript[] = {
 
 s32 gFallingEffectScript[] = {
     SC_ADD(SW_Y, -PIXELS(2)),
-    SC_CALL(SceneEffect_SetModeByFrameBit1),
+    SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_ADD(SW_Y, -PIXELS(2)),
-    SC_CALL(SceneEffect_SetModeByFrameBit1),
+    SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
     SC_ADD(SW_Y, -PIXELS(1)),
-    SC_CALL(SceneEffect_SetModeByFrameBit1),
+    SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
     SC_CALL(Kolima_TriggerRegionScript),

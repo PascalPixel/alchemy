@@ -1545,7 +1545,7 @@ s32 gImil_MiaRunOutScript[] = {
 };
 
 s32 gImil_FaceTargetScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

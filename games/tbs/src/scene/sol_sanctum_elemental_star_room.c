@@ -1977,7 +1977,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Object_GetById(ringActor)->collisionFlags = 0;
     Engine_ActorSetSpritePriority(ringActor++, 1);
   } while ((u32)ringActor <= 24);
-  SolSanctum_SetupElementalRings(15, 16);
+  SolSanctum_StartFloatingLights(15, 16);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     Actor_SetPosition(ACTOR_KRADEN, PIXELS(456), PIXELS(360));
     Actor_SetPosition(JENNA, PIXELS(440), PIXELS(346));
@@ -2164,7 +2164,7 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gSolSanctumElementalStarRoom_AngleScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

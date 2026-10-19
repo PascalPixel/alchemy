@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void FieldScene_UpdateFallingEffect(void);
+void Kolima_UpdateCurseDust(void);
 
 #endif

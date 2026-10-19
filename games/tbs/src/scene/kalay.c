@@ -1003,7 +1003,7 @@ static void Kalay_PrepareCave(void) {
   struct FieldActor *guard;
 
   if (Engine_GameFlagIsSet(0xfd6) == 0) {
-    InitializeStagedActorSceneOrbitingEffect(ACTOR_CAVE_NUT);
+    Scene_FloatNut(ACTOR_CAVE_NUT);
   }
   if (Engine_GameFlagIsSet(0x915) != 0) {
     guard = Object_GetById(ACTOR_CAVE_GUARD);
@@ -2204,7 +2204,7 @@ s32 gKalay_SecondGuideReturnScript[] = {
 };
 
 s32 gKalay_PartyFidgetScript[] = {
-    SC_CALL(OverlayObject_UpdateHeadingTimer),
+    SC_CALL(Scene_LookAboutRandomly),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

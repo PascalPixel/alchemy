@@ -56,7 +56,7 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
 // Touch trigger 11, walking east: hop 30 pixels east of the leader. The
 // patched editions hop from the centre of the moving character's cell, 40
 // pixels.
-static void EV11_TOUCH(void) {
+static void KolimaForest_HopEast(void) {
   u32 buf[3];
 #if !TBS_PATCH_1
   buf[0] = Object_GetById(0)->x.fixed + 0x1e0000;

@@ -659,7 +659,7 @@ s32 KolimaForestTree_Initialize(void) {
   gGameState.retreatScene = (s32)&SceneId_KolimaForestBridge;
   gGameState.retreatEntrance = 4;
   if (!Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED))
-    SceneEffect_AdjustPaletteColors(3);
+    KolimaPalette_Curse(3);
   Object_GetById(ACTOR_TRET)->radius = 6;
   Object_GetById(ACTOR_LAUREL)->radius = 6;
   Object_GetById(12)->radius = 6;

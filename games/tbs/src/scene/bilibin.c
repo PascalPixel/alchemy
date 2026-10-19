@@ -755,7 +755,7 @@ static void Bilibin_UpdateRaisedBlockCells(void) {
 }
 
 s32 gBilibin_FaceLeaderScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

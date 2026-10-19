@@ -60,14 +60,13 @@
 #define COLOSSO_LOG_FACE_DIRECTION Engine_ActorFaceDirection
 #define COLOSSO_LOG_INITIALIZE_MODE_TASK                                       \
   ColossoLogRollingStage_InitializeModeTask
-#define COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES                                 \
-  SceneActor_ApplyValueAndMatchingSlots
+#define COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
 #else
 #define COLOSSO_LOG_FACE_DIRECTION ((s32 (*)())Engine_ActorFaceDirection)
 #define COLOSSO_LOG_INITIALIZE_MODE_TASK                                       \
   ((s32 (*)())ColossoLogRollingStage_InitializeModeTask)
 #define COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES                                 \
-  ((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)
+  ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
 // Forward declarations.

@@ -262,7 +262,7 @@ static void Garden_ApplyProgress(void) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   }
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT) == 0) {
-    InitializeStagedActorSceneOrbitingEffect(ACTOR_FLOATING_NUT);
+    Scene_FloatNut(ACTOR_FLOATING_NUT);
   }
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     Actor_SetPosition(ACTOR_WEST_GUARD, PIXELS(308), PIXELS(263));
@@ -394,7 +394,7 @@ u16 gPalaceGateOpenSteps[] = {
 
 // A guard turns to keep facing the party.
 s32 gGuardWatchesParty[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

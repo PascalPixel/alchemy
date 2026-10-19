@@ -96,15 +96,14 @@
 #define COLOSSO_WALL_SHOW_MESSAGE Engine_EventShowMessage
 #define COLOSSO_WALL_MOVE_ACTOR_PAIR ColossoWall_MovePusherAndLog
 #define COLOSSO_WALL_START_MODE_TASK ColossoWall_StartLetteringAnimation
-#define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE                                 \
-  SceneActor_ApplyValueAndMatchingSlots
+#define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE Scene_GiveAndEquipItem
 #else
 #define COLOSSO_WALL_SHOW_MESSAGE ((s32 (*)())Engine_EventShowMessage)
 #define COLOSSO_WALL_MOVE_ACTOR_PAIR ((s32 (*)())ColossoWall_MovePusherAndLog)
 #define COLOSSO_WALL_START_MODE_TASK                                           \
   ((s32 (*)())ColossoWall_StartLetteringAnimation)
 #define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE                                 \
-  ((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)
+  ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
 // Forward declarations.

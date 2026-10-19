@@ -699,7 +699,7 @@ static void ValeInteriors_SpawnDriftingSprite(void) {
 }
 
 s32 gValeInteriors_FaceTargetScript[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -1,4 +1,4 @@
-// Draft, differ 2 of 127: ☀️'s InitializeStagedActorSceneOrbitingEffect with
+// Draft, differ 2 of 127: ☀️'s Scene_FloatNut with
 // ⚓️'s blend, callback and flag 0xf5d gate before it. Left: the native loads
 // sprite byte 5 right after the negs of -13, this draft two rows later (after
 // movs r3, #4); the scheduler ranks the byte-9 chain higher. Tried: the three

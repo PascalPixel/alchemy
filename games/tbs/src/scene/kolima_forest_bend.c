@@ -396,7 +396,7 @@ s32 KolimaForestBend_Initialize(void) {
   actor->scaleY = 0xc000;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
-    SceneEffect_AdjustPaletteColors(4);
+    KolimaPalette_Curse(4);
   return 0;
 }
 

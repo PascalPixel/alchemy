@@ -820,7 +820,7 @@ s32 Scene_Initialize(void) {
         SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_HideSecrets();
     if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0) {
-      InitializeStagedActorSceneOrbitingEffect(ACTOR_FLOATING_NUT);
+      Scene_FloatNut(ACTOR_FLOATING_NUT);
     }
     puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
     if (puddle != NULL) {

@@ -966,7 +966,7 @@ s32 gValeKraden_RockslideSurvivorSwayActions[] = {
 
 // Keep a linked actor facing its current target.
 s32 gValeKraden_FaceTargetActions[] = {
-    SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

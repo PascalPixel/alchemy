@@ -83,13 +83,13 @@ s32 KolimaForestClearing_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
-    InitializeStagedActorSceneOrbitingEffect(NUT);
+    Scene_FloatNut(NUT);
   }
   FieldScene_RedrawActorFootprint(8);
   FieldScene_RedrawActorFootprint(9);
   FieldScene_RedrawActorFootprint(10);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    SceneEffect_AdjustPaletteColors(11);
+    KolimaPalette_Curse(11);
   }
   return 0;
 }

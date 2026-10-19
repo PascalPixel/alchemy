@@ -109,7 +109,7 @@ s32 KolimaForestRiver_Initialize(void) {
   FieldScene_RedrawActorFootprint(9);
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    SceneEffect_AdjustPaletteColors(6);
+    KolimaPalette_Curse(6);
   }
   return 0;
 }
@@ -175,7 +175,7 @@ struct SceneEvent gKolimaForestRiverEvents[] = {
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestRiver_PushLog)},
     {TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV11_TOUCH)},
+     EVENT_SCRIPT(KolimaForest_HopEast)},
     {SCENE_EVENTS_END},
 };
 

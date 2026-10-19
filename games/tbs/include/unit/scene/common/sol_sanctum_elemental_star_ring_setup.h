@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void SolSanctum_SetupElementalRings(s32 first, u32 count);
+void SolSanctum_StartFloatingLights(s32 first, u32 count);
 
 #endif

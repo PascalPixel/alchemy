@@ -34,7 +34,7 @@ u32 gFallingEffectState __attribute__((section(".bss")));
 // fall: 0 within 128 pixels of the origin; 1 and 2 over a band that widens
 // (by 50 a frame, to 15000 and 30000) as it moves towards the origin; 3
 // drifting on until it is far past, then back to 0.
-void FieldScene_UpdateFallingEffect(void) {
+void Kolima_UpdateCurseDust(void) {
   struct FieldActor *object = NULL;
   struct SceneEffectOrigin *origin;
   struct AnimationObject *sprite;

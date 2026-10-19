@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-s32 Scene_InitSceneRequestAndCameraZoom(void);
+s32 SolSanctumRooms_Initialize(void);
 
 #endif

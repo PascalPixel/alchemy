@@ -1190,9 +1190,9 @@ s32 Vale_Initialize(void) {
   } else {
     if (!Engine_GameFlagIsSet(0xfd0)) {
       if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
-        InitializeStagedActorSceneOrbitingEffect(26);
+        Scene_FloatNut(26);
       } else {
-        InitializeStagedActorSceneOrbitingEffect(20);
+        Scene_FloatNut(20);
       }
     }
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -1729,7 +1729,7 @@ static void Event_MendingTheRoof(void) {
   Engine_EventWait(20);
 
   // Garet's repair effect trails dust across the house.
-  SceneState_SetValue140Mode0();
+  Scene_BeginCutscenePsynergy();
   Engine_ActorSetAnimation(GARET, 17);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 1, 0, 20);
   Event_PlayCue(SE_131);
@@ -1772,7 +1772,7 @@ static void Event_MendingTheRoof(void) {
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Effect_SpawnRisingDustBurst(dustEmitter);
-  SceneEffect_CleanupSceneObjects();
+  Scene_EndCutscenePsynergy();
 
   // Finish the reunion conversation after the repair effects settle.
   Engine_EventWait(10);
@@ -1987,7 +1987,7 @@ static void Event_RoofMended(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
-  SceneState_SetValue140Mode0();
+  Scene_BeginCutscenePsynergy();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
   FieldScheduler_AddCallback(Effect_PlayStepSound, 3200);
   for (i = 0; i < 40; i++) {
@@ -2109,7 +2109,7 @@ static void Event_RoofMended(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
   Actor_SetActionScript(0, gLeaderHammerAction);
   Engine_EventWait(120);
-  SceneEffect_CleanupSceneObjects();
+  Scene_EndCutscenePsynergy();
   Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
   Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   leader->scaleX = Q16_ONE;

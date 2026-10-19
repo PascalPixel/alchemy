@@ -808,7 +808,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_ActorFaceDirection(SHEBA, FACING_EAST, 20);
   Engine_ActorSetAnimationAndWait(SHEBA, ANIM_NOD);
   Engine_EventWait(40);
-  SceneState_SetValue140Mode0();
+  Scene_BeginCutscenePsynergy();
   Engine_TaskWait(1);
   frame = 0;
   do {
@@ -839,7 +839,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Engine_TaskWait(1);
   Actor_SetChildValue(SHEBA, 0);
   Engine_TaskWait(10);
-  SceneEffect_CleanupSceneObjects();
+  Scene_EndCutscenePsynergy();
   Engine_ActorJump(SHEBA, 2, 40);
   VenusLighthouseAerie_ShowMessage(SHEBA);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 20);
@@ -3214,7 +3214,7 @@ s32 gVenusLighthouseAerie_PartyExitAction[] = {
 };
 
 s32 gVenusLighthouseAerie_PartyHeadingAction[] = {
-    SC_CALL(OverlayObject_UpdateHeadingTimer),
+    SC_CALL(Scene_LookAboutRandomly),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

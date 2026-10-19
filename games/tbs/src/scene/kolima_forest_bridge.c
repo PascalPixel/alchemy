@@ -385,7 +385,7 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   gFallingEffectWidth = 0;
   gFallingEffectOffset = 0x800000;
   gFallingEffectState = 1;
-  FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, 0xc80);
   Engine_EventWait(180);
   Event_PlayCue(MUS_021);
   KolimaForestBridge_ShowMessageAndWait(GARET, 80);
@@ -456,7 +456,7 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
     } while (gFallingEffectState != 0);
   }
   Engine_EventWait(300);
-  Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
+  Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(120);
   Event_PlayCue(MUS_017);
   ColorBuffer_ApplyTarget(0x10000, 1);
@@ -674,7 +674,7 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   gFallingEffectWidth = 0;
   gFallingEffectOffset = 0x800000;
   gFallingEffectState = 1;
-  FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, 0xc80);
   Engine_EventWait(80);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -810,7 +810,7 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   Engine_EventWait(60);
   Event_ShowMessage(LAUREL, 0);
   Event_ShowMessage(TRET, 0);
-  Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
+  Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(80);
   ColorBuffer_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(60);
@@ -1308,7 +1308,7 @@ struct SceneEvent gKolimaForestBridge_Events[] = {
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestBridge_PushLog)},
     {TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV11_TOUCH)},
+     EVENT_SCRIPT(KolimaForest_HopEast)},
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {SCENE_EVENTS_END},
@@ -1329,15 +1329,15 @@ s32 gKolimaForestBridge_SparkleBurstScript[] = {
 
 s32 gFallingEffectScript[] = {
     SC_ADD(SW_Y, PIXELS(-2)),
-    SC_CALL(SceneEffect_SetModeByFrameBit1),
+    SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_ADD(SW_Y, PIXELS(-2)),
-    SC_CALL(SceneEffect_SetModeByFrameBit1),
+    SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
     SC_ADD(SW_Y, PIXELS(-1)),
-    SC_CALL(SceneEffect_SetModeByFrameBit1),
+    SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
     SC_CALL(KolimaForestBridge_BurstOnBarrier),

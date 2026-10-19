@@ -24,7 +24,7 @@ static s32 SceneEffect_UpdateOrbitPosition(s32 *p) {
 
 // Draw actor id as the Nut's icon and start it floating, 32 pixels up unless
 // the party returns to where it was.
-void InitializeStagedActorSceneOrbitingEffect(s32 id) {
+void Scene_FloatNut(s32 id) {
   OrbitingSceneObject *actor;
   OrbitingSceneObjectSprite *sprite;
   u8 *transfer;

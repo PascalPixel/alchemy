@@ -25,7 +25,7 @@ static void KolimaPalette_Capture(void);
 // Keep the healthy colours, curse the background palettes 0 to 13 (all but
 // colours 1 to 7 of palette 1 and 1 to 8 of palette 12) by strength, keep the
 // cursed colours too, and show them.
-void SceneEffect_AdjustPaletteColors(s32 strength) {
+void KolimaPalette_Curse(s32 strength) {
   u16 i;
 
   KolimaPalette_SaveFirst();

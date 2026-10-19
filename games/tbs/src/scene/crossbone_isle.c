@@ -249,7 +249,7 @@ s32 Scene_Initialize(void) {
     if (FLAG_CHECK(0xfd7) != 0) {
       return 0;
     }
-    InitializeStagedActorSceneOrbitingEffect(8);
+    Scene_FloatNut(8);
     return 0;
   }
   // Rooms 6-14 share the guard, moved-block, and return-entrance protocol.

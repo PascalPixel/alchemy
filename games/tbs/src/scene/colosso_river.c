@@ -460,6 +460,8 @@ UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
 
 // Reaching the arena: the leader takes a prize (the Iron Shield if first, the
 // Padded Gloves if second), and he and his opponent face off and fight.
+// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 approach;
   s32 n;

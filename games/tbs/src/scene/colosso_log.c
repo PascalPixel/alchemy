@@ -711,6 +711,8 @@ UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
 
 // Reaching the arena: the leader takes a prize (the Claymore if first, the
 // Hunter's Sword if second), and he and his opponent face off and fight.
+// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 place;
   s32 i;

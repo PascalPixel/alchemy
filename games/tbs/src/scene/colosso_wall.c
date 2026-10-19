@@ -692,6 +692,8 @@ static void Event_HaltLifts(void) {
 
 // Reaching the arena: the leader takes a prize (the Chain Mail if first, the
 // Cotton Shirt if second), and he and his opponent face off and fight.
+// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 rivalFinishedFirst;
   s32 refreshCount;

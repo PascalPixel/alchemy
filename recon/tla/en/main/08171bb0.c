@@ -1,7 +1,19 @@
-// Draft of Func_08171bb0, decompiled from the listing: differ 1664 of 1748
-// (draft 1748), the same 109 calls and control flow; allocation differs.
+// Draft of Func_08171bb0, decompiled from the listing: differ 1370 of 1748
+// (draft 1750), the same 109 calls and control flow; allocation differs.
+// Left (2026-10-19), among others: the mirror loop of mode 2 keeps
+// row * 2 and row * 64 as shifts ("not worth while" in loop.c) where the
+// native reduces both to induction variables, and it reuses the sheet
+// address it passed to the load where the native recomputes
+// gData_02014000 + 0x1000.
+// Tried (differ):
+// first draft                                                      1664
+// the blitter as The Broken Seal's pair (FAKEMATCH below), and frame
+// declared after it before camera, sprites, frames and unit (the
+// native's stack order)                                            1472
+// the mode 2 sheet size 0x1000 in a local used for the load's offset
+// and the clear (the native keeps the 0x1000 in r5 for both)        1370
+// the mirror loop's addresses as &gData_02014000[...] (1370)
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +21,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +43,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +63,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -116,16 +130,20 @@ void SceneTransform_ApplyPosition(void *position);
 void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
+  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
+   * though only the first is used; its second word is the unused word at
+   * sp 76 of the native's 176-byte frame. As one DrawRectangle the frame
+   * is 172 bytes and every stack offset below it moves (differ 1488). */
+  DrawRectangle blit[2];
+  s32 frame;
   s16 *camera;
   u8 *sprites;
-  u8 *unit;
   s32 frames;
-  DrawRectangle blit;
+  u8 *unit;
   s32 *target;
   struct EffectStep *p;
   struct RenderModel *model;
   struct ModelTexture texture;
-  s32 frame;
   s32 phase;
   s32 shade;
   s32 i;
@@ -152,9 +170,10 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
 
     if (mode == 2) {
       s32 row;
+      s32 size = 0x1000;
 
-      Resource_LoadAndDecompress(0x13a, gData_02014000 + 0x1000, 1, 0);
-      Iwram_ClearWords(gData_02014000, 0x1000);
+      Resource_LoadAndDecompress(0x13a, gData_02014000 + size, 1, 0);
+      Iwram_ClearWords(gData_02014000, size);
       for (row = 0; row != 48; row++) {
         u8 *src = gData_02014000 + (row + row * 2) * 8 + 0x1000;
         u8 *left = Data_02014208 + row * 64;
@@ -184,7 +203,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   } else {
     BattleFx_LoadBlitter(SLOT_BLITTER, 23);
   }
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
@@ -208,7 +227,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   if (mode == 4 || mode == 2) {
     Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x12f), 128);
   }
-  Render_BuildQuadStrip(Data_02012000, (mode == 2 || mode == 4) ? 8 : 4, 32, 32);
+  Render_BuildQuadStrip(Data_02012000, (mode == 2 || mode == 4) ? 8 : 4, 32,
+                        32);
 
   frame = 0;
   if (frames != 0) {
@@ -265,10 +285,9 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           pos[1] = pos[1] + (frame << 18) - 0x700000;
         }
         pos[2] = point[2];
-        EffectPosition_ProjectPoint(pos,
-                                           (struct EffectPosition *)screen);
-        blit(canvas, work->sheet + 0x2000, screen[0] / 2 - 10, screen[1] - 20,
-             20, 40);
+        EffectPosition_ProjectPoint(pos, (struct EffectPosition *)screen);
+        blit[0](canvas, work->sheet + 0x2000, screen[0] / 2 - 10,
+                screen[1] - 20, 20, 40);
       }
       if (frame > 7) {
         if (mode <= 1 && frame <= 47) {
@@ -331,8 +350,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               BattleFxKernels_IntegrateVector3(p, 62, 1024);
             }
             EffectPosition_ProjectPoint(p, &proj);
-            blit(canvas, sprites + gData_08197410[n - 1], proj.x / 2 - n / 2,
-                 proj.y - n, n, n * 2);
+            blit[0](canvas, sprites + gData_08197410[n - 1], proj.x / 2 - n / 2,
+                    proj.y - n, n, n * 2);
           }
         }
       }
@@ -440,8 +459,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           p = work->particles;
           for (i = 0; i != 8; i++, p++) {
             if (p->variant <= 23) {
-              blit(canvas, gData_02015000 + ((p->variant / 4) << 11),
-                   HI(p->x) - 16, HI(p->y) - 32, 32, 64);
+              blit[0](canvas, gData_02015000 + ((p->variant / 4) << 11),
+                      HI(p->x) - 16, HI(p->y) - 32, 32, 64);
               BattleFxKernels_IntegrateVector2(p, 60, -0x2000);
               p->variant++;
             }

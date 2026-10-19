@@ -1,5 +1,13 @@
-// Draft of BattleFx_RunRagingHeat, decompiled from the listing: differ 410 of
+// Draft of BattleFx_RunRagingHeat, decompiled from the listing: differ 374 of
 // 669 (draft 673), the same 54 calls and control flow; allocation differs.
+// 2026-10-19 (run 33), from 410: the plain and the flipped blitter as one
+// pair (draw[0] at sp+48, draw[1] at sp+52, as the native) with frame
+// declared before it and sprites after: 390; centerX and baseY declared
+// before the model, spark and vertex locals: 374. The slots from sp+64 down
+// to sp+36 are now the native's. Left: the native's hoisted
+// (centerX - ...) << 16 takes sp+32 above vertices (28) and shade (24),
+// as if those two had registers until reload spilled them; here the order
+// is reversed.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -123,18 +131,18 @@ extern const u8 gData_08199210[]; // its corners
 void BattleFx_RunRagingHeat(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
+  s32 frame;
+  // The plain and the flipped blitter, as one pair.
+  DrawRectangle draw[2];
   u8 *sprites;
-  DrawRectangle blit;
-  DrawRectangle blitFlipped;
   struct EffectPosition targets[8];
   struct ModelTexture texture;
+  s32 centerX;
+  s32 baseY;
   struct RenderModel *model;
   struct EffectStep *spark;
   struct EffectStep *ember;
   void *vertices;
-  s32 centerX;
-  s32 baseY;
-  s32 frame;
   s32 shade;
   s32 i;
   s32 j;
@@ -146,11 +154,11 @@ void BattleFx_RunRagingHeat(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0xa10;
   BattleFx_LoadBlitter(SLOT_BLITTER,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleFx_LoadBlitter(188,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                            COMPOSITE_FLIP_X));
-  blitFlipped = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   for (i = 0; i != effect->count; i++) {
     EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
   }
@@ -222,14 +230,14 @@ void BattleFx_RunRagingHeat(struct BattleEffectArgument *effect) {
         work->shakeFrames = 16;
       }
       if (y <= 52) {
-        blit(canvas, gMapCellBuffer, centerX / 2 - 24, y, 24, 64);
-        blitFlipped(canvas, gMapCellBuffer, centerX / 2, y, 24, 64);
+        draw[0](canvas, gMapCellBuffer, centerX / 2 - 24, y, 24, 64);
+        draw[1](canvas, gMapCellBuffer, centerX / 2, y, 24, 64);
       }
       for (i = 0, spark = work->particles;
            i != Data_08199400[effect->variant][0]; i++, spark++) {
         if ((u32)spark->variant <= 23) {
           if (spark->variant > 1) {
-            blit(canvas, work->sheet + 0x4000 + ((spark->variant / 4) << 11),
+            draw[0](canvas, work->sheet + 0x4000 + ((spark->variant / 4) << 11),
                  HI(spark->x) - 16, HI(spark->y) - 32, 32, 64);
           }
           BattleFxKernels_IntegrateVector2(spark, 60, -0x1000);
@@ -241,7 +249,7 @@ void BattleFx_RunRagingHeat(struct BattleEffectArgument *effect) {
         if (ember->variant >= 0) {
           s32 size = (ember->variant >> 3) + 1;
 
-          blit(canvas, sprites + gData_08197410[size - 1],
+          draw[0](canvas, sprites + gData_08197410[size - 1],
                HI(ember->x) - size / 2, HI(ember->y) - size, size, size * 2);
           BattleFxKernels_IntegrateVector2(ember, 60, 0x1000);
           ember->variant--;

@@ -41,8 +41,8 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId);
 static void TolbiShipMast_RunLandingSequence(void);
 static void TolbiShipMast_AnnounceLand(void);
 static void TolbiShipMast_UpdateSway(void);
-static s32 TolbiShipMast_GetFlagPairDifference(void);
-static s32 TolbiShipMast_GetFlagGroupValue(u32 groupIndex);
+static s32 TolbiShipMast_GetRowingBalance(void);
+static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
 s32 gTolbiShipMast_DriftY __attribute__((section(".bss")));
 s32 gTolbiShipMast_DriftX __attribute__((section(".bss")));
@@ -685,10 +685,11 @@ static void TolbiShipMast_AnnounceLand(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  // The flag-group score chooses the continuing scene's exit.
+  // How evenly the passengers row picks the next scene: a balance of 11 takes
+  // exit 15.
   gGameState.savedScene = (s32)&SceneId_TolbiShipInteriors;
   gGameState.savedEntrance = 2;
-  if (TolbiShipMast_GetFlagPairDifference() == 11) {
+  if (TolbiShipMast_GetRowingBalance() == 11) {
     Engine_EventRequestExit(15);
   } else {
     Engine_EventRequestExit(14);
@@ -713,24 +714,25 @@ static void TolbiShipMast_UpdateSway(void) {
   gTolbiShipMast_SwayY &= 0xffff;
 }
 
-// Subtracts the odd flag groups' values from the even groups' values.
-static s32 TolbiShipMast_GetFlagPairDifference(void) {
-  s32 evenGroups;
-  s32 oddGroups;
+// How evenly the chosen passengers row: the values of those at the west seats
+// (the first and third filled) less those at the east seats.
+static s32 TolbiShipMast_GetRowingBalance(void) {
+  s32 westSeats;
+  s32 eastSeats;
 
-  evenGroups = TolbiShipMast_GetFlagGroupValue(0);
-  evenGroups += TolbiShipMast_GetFlagGroupValue(2);
-  oddGroups = TolbiShipMast_GetFlagGroupValue(1);
-  oddGroups += TolbiShipMast_GetFlagGroupValue(3);
-  return evenGroups - oddGroups;
+  westSeats = TolbiShipMast_GetSeatRowValue(0);
+  westSeats += TolbiShipMast_GetSeatRowValue(2);
+  eastSeats = TolbiShipMast_GetSeatRowValue(1);
+  eastSeats += TolbiShipMast_GetSeatRowValue(3);
+  return westSeats - eastSeats;
 }
 
-// Returns the value of the first set flag in one of four nine-flag groups.
-static s32 TolbiShipMast_GetFlagGroupValue(u32 groupIndex) {
+// The rowing value of the passenger chosen for a seat, or 0 while it is empty.
+static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
   s32 firstFlag = 0;
-  u32 flagIndex;
+  u32 passenger;
 
-  switch (groupIndex) {
+  switch (seat) {
   case 0:
     firstFlag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;
@@ -744,9 +746,9 @@ static s32 TolbiShipMast_GetFlagGroupValue(u32 groupIndex) {
     firstFlag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
-  for (flagIndex = 0; flagIndex <= 8; flagIndex++) {
-    if (Engine_GameFlagIsSet(firstFlag + flagIndex) != 0)
-      return gTolbiShipMast_FlagValues[flagIndex];
+  for (passenger = 0; passenger <= 8; passenger++) {
+    if (Engine_GameFlagIsSet(firstFlag + passenger) != 0)
+      return gTolbiShipMast_PassengerRowValues[passenger];
   }
   return 0;
 }
@@ -940,7 +942,9 @@ struct SceneEvent gTolbiShipMast_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-u32 gTolbiShipMast_FlagValues[] = {
+// Each passenger's rowing value, in the order of their actors in the hold
+// from 8.
+u32 gTolbiShipMast_PassengerRowValues[] = {
     7, 5, 8, 4, 9, 12, 6, 3,
     0,
 };

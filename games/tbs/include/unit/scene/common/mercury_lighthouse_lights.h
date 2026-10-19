@@ -19,7 +19,7 @@ struct MercuryLighthouseLights {
 
 STATIC_ASSERT(sizeof(struct MercuryLighthouseLights) == 0x1c);
 
-void MercuryLighthouse_SpawnLightObjects(s32 region,
-                                         struct MercuryLighthouseLights *st);
+void MercuryLighthouse_RestoreLights(s32 region,
+                                     struct MercuryLighthouseLights *st);
 
 #endif

@@ -25,8 +25,8 @@
 // collision code. On an ordinary entrance the leader has no lights. When the
 // party returns to where it was, the column of lights over the leader and the
 // light under them in the pool are made again.
-void MercuryLighthouse_SpawnLightObjects(s32 region,
-                                         struct MercuryLighthouseLights *st) {
+void MercuryLighthouse_RestoreLights(s32 region,
+                                     struct MercuryLighthouseLights *st) {
   struct FieldActor *actor;
   struct FieldActor *obj;
   struct AnimationObject *anim;

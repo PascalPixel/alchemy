@@ -137,24 +137,24 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
 // Touching trigger 21 once Ply has worked: rising sparks keep appearing
 // while the leader stands on the pillar.
 static void MercuryLighthouseEntrance_SpawnTimedRiseEffect(void) {
-  MercuryLighthouse_TickSpawnTimer();
+  MercuryLighthouse_SparkleAtLeader();
 }
 
 // Touching trigger 31 once Ply has worked: the raised pillar is let go.
 static void MercuryLighthouseEntrance_ReleaseRaisedPillar(void) {
-  SceneState_ClearCurrentRecordAndReleaseTarget();
+  MercuryLighthouse_LoseLights();
 }
 
 // Walking into trigger 11, 21 or 31 once Ply has worked: one step across
 // the water pillars in the pressed direction.
 static void MercuryLighthouseEntrance_TryPillarStep(void) {
-  MercuryLighthouse_RunActorMove();
+  MercuryLighthouse_HopAcrossPool();
 }
 
 // Touching trigger 11 once Ply has worked: the pillar underfoot rises to its
 // full height.
 static void MercuryLighthouseEntrance_RaiseTouchedPillar(void) {
-  MercuryLighthouseEntrance_RaisePillar();
+  MercuryLighthouse_ChargeLights();
 }
 
 // The entrance positions and camera bounds.
@@ -191,17 +191,17 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
 
 // Walking north into trigger 67: the leader rises to the southern landing.
 static void MercuryLighthouseEntrance_RiseToSouthernLanding(void) {
-  SceneActor_RunActorZeroHandledMotion(17);
+  MercuryLighthouse_LeaveThroughPassage(17);
 }
 
 // Walking north into trigger 68: the leader rises to the northern landing.
 static void MercuryLighthouseEntrance_RiseToNorthernLanding(void) {
-  SceneActor_RunActorZeroHandledMotion(18);
+  MercuryLighthouse_LeaveThroughPassage(18);
 }
 
 // Walking north into trigger 69: the leader rises to the middle landing.
 static void MercuryLighthouseEntrance_RiseToMiddleLanding(void) {
-  SceneActor_RunActorZeroHandledMotion(19);
+  MercuryLighthouse_LeaveThroughPassage(19);
 }
 
 // The touch, search, talk and Psynergy events.
@@ -342,7 +342,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     REG_BLDALPHA = alpha;
   }
   // Restore persistent lighting and the Retreat destination first.
-  MercuryLighthouse_SpawnLightObjects(
+  MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gSceneState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gGameState.retreatEntrance = 11;
@@ -863,7 +863,7 @@ struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
     { SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReadHeartInscription) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_PLY_TARGET, FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED, EVENT_SCRIPT(MercuryLighthouseEntrance_ActivateWithPly) },
-    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
+    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_ITEM_4C, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_CHEST_EF0, 0x500000 },
     { SCENE_EVENTS_END },

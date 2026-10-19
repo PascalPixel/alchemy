@@ -189,7 +189,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
 // leader if it is not there, and grows a stage with each pair of sparks, half
 // a second apart, up to three lights. The column's cell is where a sinking
 // leader comes back to; flag 0x161 is set while the leader has lights.
-void MercuryLighthouseEntrance_RaisePillar(void) {
+void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *leader;
   struct FieldActor *pillar;
@@ -245,7 +245,7 @@ void MercuryLighthouseEntrance_RaisePillar(void) {
 
 // Touch trigger 31: the leader loses their lights, and the column swells and
 // fades away.
-void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
+void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
       *(struct MercuryLighthouseLights **)WORK_SLOT(35);
   struct FieldActor *target;
@@ -272,7 +272,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
 // to the landing cell; the column shrinks a stage, or goes with the last
 // light. Landing in the pool with no light under them, the leader sinks until
 // a key is pressed after half a second, and is put back at the heart.
-void MercuryLighthouse_RunActorMove(void) {
+void MercuryLighthouse_HopAcrossPool(void) {
   struct FieldWork *work;
   struct MercuryLighthouseLights *state;
   struct FieldActor *actor;
@@ -392,7 +392,7 @@ void MercuryLighthouse_RunActorMove(void) {
 
 // Touch trigger 21: while the leader stands there, a sparkle rises from them
 // every 10 to 39 frames.
-void MercuryLighthouse_TickSpawnTimer(void) {
+void MercuryLighthouse_SparkleAtLeader(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *point;
 
@@ -408,7 +408,7 @@ void MercuryLighthouse_TickSpawnTimer(void) {
 }
 
 // Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, 1)): remove the column of light.
-static void OverlayObject_ReleasePublishedAttachment(void) {
+static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published = Runtime_AllocateBlock(35, 4);
   struct MercuryLighthouseLights *state;
   struct FieldActor *pillar;

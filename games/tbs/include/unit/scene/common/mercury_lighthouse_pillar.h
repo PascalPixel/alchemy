@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-void MercuryLighthouseEntrance_RaisePillar(void);
+void MercuryLighthouse_ChargeLights(void);
 
-void SceneState_ClearCurrentRecordAndReleaseTarget(void);
-void MercuryLighthouse_RunActorMove(void);
-void MercuryLighthouse_TickSpawnTimer(void);
+void MercuryLighthouse_LoseLights(void);
+void MercuryLighthouse_HopAcrossPool(void);
+void MercuryLighthouse_SparkleAtLeader(void);
 
 #endif

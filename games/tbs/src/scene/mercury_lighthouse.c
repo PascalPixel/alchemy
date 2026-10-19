@@ -252,22 +252,22 @@ const struct ScenePlacement *MercuryLighthouse_GetPlacements(void) {
 // On the first map, as in the entrance hall, once Ply has worked there:
 // touching trigger 21 keeps rising sparks appearing on the pillar.
 static void MercuryLighthouse_SpawnTimedRiseEffect(void) {
-  MercuryLighthouse_TickSpawnTimer();
+  MercuryLighthouse_SparkleAtLeader();
 }
 
 // Touching trigger 31 or 32: the raised pillar is let go.
 static void MercuryLighthouse_ReleaseRaisedPillar(void) {
-  SceneState_ClearCurrentRecordAndReleaseTarget();
+  MercuryLighthouse_LoseLights();
 }
 
 // Walking into trigger 11, 21 or 31: one step across the water pillars.
 static void MercuryLighthouse_TryPillarStep(void) {
-  MercuryLighthouse_RunActorMove();
+  MercuryLighthouse_HopAcrossPool();
 }
 
 // Touching trigger 11: the pillar underfoot rises to its full height.
 static void MercuryLighthouse_RaiseTouchedPillar(void) {
-  MercuryLighthouseEntrance_RaisePillar();
+  MercuryLighthouse_ChargeLights();
 }
 
 // Searching trigger 10 at the lighthouse's foot: "Strange forces are at
@@ -300,17 +300,17 @@ const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
 // Walking north into trigger 53 on the third map: the leader rises through
 // exit 3 (the trigger less 50), as the entrance hall's risers do.
 static void MercuryLighthouse_ExitWithSparks(void) {
-  SceneActor_RunActorZeroHandledMotion(gEventWork->touchedTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
 // Walking north into trigger 63 on the third map: the same, through exit 13.
 static void MercuryLighthouse_ExitAfterSparkStep(void) {
-  SceneActor_RunActorZeroHandledMotion(gEventWork->touchedTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
 // Walking north into trigger 55 at the foot: the same, through exit 5.
 static void MercuryLighthouse_LeaveWithSparkTrail(void) {
-  SceneActor_RunActorZeroHandledMotion(gEventWork->touchedTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
 // With all three channel blocks in place the floor shakes, the screen fades
@@ -2044,7 +2044,7 @@ s32 MercuryLighthouse_Initialize(void) {
     s32 alpha = BLEND_ALPHA(16, 16);
     REG_BLDALPHA = alpha;
   }
-  MercuryLighthouse_SpawnLightObjects(
+  MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gSceneState);
   BattleFx_StartFadeOverlay(0);
   if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED))
@@ -3086,7 +3086,7 @@ struct SceneEvent gMercuryLighthouseEvents1[] = {
     { TOUCH_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_MoveChannelBlocks) },
     { EVENT_TALK, MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThisStatueWasntHereBeforeI) },
-    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
+    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_BLOCKING_MIA, FLAG_MIA_JOINED_PARTY, EVENT_SCRIPT(MercuryLighthouse_MiaJoinsAfterRescue) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SCENE_EVENTS_END },
@@ -3116,7 +3116,7 @@ struct SceneEvent gMercuryLighthouseEvents2[] = {
     { EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_WalkLeaderIn) },
     { EVENT_TALK, ACTOR_SLEET, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_StartDjinnBattle) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_InspectLockedDoor) },
-    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
+    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATE_STATUE, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_OpenGateWithMovedBlock) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_CHEST_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { SEARCH(SEARCH_CHEST), 102, FLAG_CHEST_NUT, FIND_ITEM(ITEM_NUT) },
@@ -3145,7 +3145,7 @@ struct SceneEvent gMercuryLighthouseEvents3[] = {
     { TOUCH_WALKING, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_MoveStoneDoorBlocks) },
     { TOUCH_WALKING, 47, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushAndSaveBlockPositions) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_InspectLockedDoor) },
-    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
+    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLEN_STATUE, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_OpenStairGateWithMovedBlock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_BLOCK + 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
@@ -3182,7 +3182,7 @@ struct SceneEvent gMercuryLighthouseEventsOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, 0x82b, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE, EVENT_SCRIPT(MercuryLighthouse_MiaOpensEntranceWithPly) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_WATERFALL_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PlyOpensWaterfallPassage) },
-    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
+    { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { USE_ITEM(ITEM_EMPTY_BOTTLE), 5, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), EVENT_SCRIPT(MercuryLighthouse_FillHermesWaterBottle) },
     { SCENE_EVENTS_END },
 };

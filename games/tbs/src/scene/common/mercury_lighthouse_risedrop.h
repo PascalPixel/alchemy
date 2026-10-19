@@ -7,7 +7,7 @@
 
 // Touch a passage: the leader moves north with the trail of sparks, vanishes,
 // and after half a second the screen fades and the party takes exit.
-static void SceneActor_RunActorZeroHandledMotion(s32 exit) {
+static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_228);

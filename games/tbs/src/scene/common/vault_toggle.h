@@ -10,15 +10,11 @@
 // Touch trigger 1: use the alternate collision, copied from cell (55, 26).
 static void Vault_EnableAlternatePassageCells(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
-  {
-    Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
-  }
+  Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 }
 
 // Touch trigger 2: restore the usual collision, copied from cell (23, 23).
 static void Vault_RestorePassageCells(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
-  {
-    Map_CopyCellAttributes(23, 23, 4, 2, 23, 26);
-  }
+  Map_CopyCellAttributes(23, 23, 4, 2, 23, 26);
 }

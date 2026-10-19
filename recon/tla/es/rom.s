@@ -2755,10 +2755,9 @@ Func_080ccd78:
 	.thumb_func
 Func_080d0520:
 	.incbin "baserom.gba", 0x000d5ec8, 0x000006bc
-	.section .rom.000d6584, "ax"
-	.global Scene_RunRaisedEvent
-Scene_RunRaisedEvent:
-	.incbin "baserom.gba", 0x000d6584, 0x00000398
+	.section .rom.000d6680, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000d6680, 0x0000029c
 	.section .rom.000d691c, "ax"
 	.global Func_080cc54c
 	.type Func_080cc54c, %function

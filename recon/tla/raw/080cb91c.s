@@ -965,7 +965,7 @@ Func_080cb91c:
 	str r3, [sp, #0]
 	movs r1, #0
 	ldrsh r0, [r6, r1]
-	bl Func_080cd5bc
+	bl Scene_RunTouchOrExit
 	ldr r3, [sp, #0]
 	strh r3, [r5]
 	strh r3, [r6]

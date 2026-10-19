@@ -91,6 +91,7 @@
 #include "display_transition.h"
 #include "frame.h"
 #include "macros.h"
+#include "flags.h"
 
 // Edition-specific text and window layout values.
 #if (LANGUAGE == LANGUAGE_SPANISH)

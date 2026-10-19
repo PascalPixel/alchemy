@@ -586,7 +586,6 @@ s32 Menu_RunWorkspaceOptions(void) {
   return result;
 }
 
-#define FLAG_WORKSPACE_SETTINGS_ONLY 0x17e
 #define WORKSPACE_ROWS 3
 #define WORKSPACE_DEBUG_ROWS 3
 #define WORKSPACE_ROW_HEIGHT 24
@@ -621,7 +620,8 @@ void SystemMenu_Release(void) {
 
 // Opens the system menu's window with its entries (Save your quest, Sleep,
 // Change settings, and the debug entries in debug mode; only Change settings
-// while flag 0x17e is set), their icons and the cursor. Returns the window.
+// while FLAG_IN_LINK_LOBBY is set), their icons and the cursor. Returns the
+// window.
 struct UiWindow *SystemMenu_Open(void) {
   struct WorkspaceWork *work;
   s32 rows;
@@ -638,7 +638,7 @@ struct UiWindow *SystemMenu_Open(void) {
 
   rows = WORKSPACE_ROWS;
   work = gSelectionWork;
-  settingsOnly = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
+  settingsOnly = GameFlag_TestFar(FLAG_IN_LINK_LOBBY);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
@@ -718,7 +718,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
 
   redraw = 1;
   rows = 3;
-  settingsOnly = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
+  settingsOnly = GameFlag_TestFar(FLAG_IN_LINK_LOBBY);
   first = 0;
   SystemMenu_Initialize();
   work = gSelectionWork;

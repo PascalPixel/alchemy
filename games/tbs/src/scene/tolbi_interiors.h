@@ -7,12 +7,6 @@
 #include "common/colosso_story_flags.h"
 #include "flags.h"
 
-enum TolbiInteriorsFlag {
-  // Set at the Tolbi docks when the ticket money is returned ("I returned the
-  // cost of your ticket to you").
-  FLAG_TOLBI_DOCKS_TICKETS_REFUNDED = 0x8ab,
-};
-
 // Actors, numbered in the order of the placement table from 8.
 enum TolbiInteriorsActor {
   TOLBI_INTERIORS_HOST = 9, // "Do you want to stay with us?"

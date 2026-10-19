@@ -269,8 +269,8 @@ s32 TolbiInteriors_ApplyEntryState(void) {
         TolbiInteriors_WatchSailorsArgue();
       }
     }
-    // The docks' refund flag also removes these two actors from the rooms.
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_TICKETS_REFUNDED) != 0) {
+    // Once the docks' confrontation (the refund) is seen, these two have left.
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) != 0) {
       Engine_ActorSetPosition(TOLBI_INTERIORS_WOULD_BE_WARRIOR, 0, 0);
       Engine_ActorSetPosition(36, 0, 0);
     }

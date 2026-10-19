@@ -551,7 +551,7 @@ menu_top:;
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     GameFlag_ClearBit(0x106);
-    Engine_GameFlagSet(0x17e);
+    Engine_GameFlagSet(FLAG_IN_LINK_LOBBY);
     gSleepDisabled = 1;
     Event_SetDestination((s32)&SceneId_LinkLobby, 1);
     goto leave;

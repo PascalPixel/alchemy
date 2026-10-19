@@ -33,7 +33,7 @@ s32 Field_UsePsynergy(u32 code) {
     userId = 0;
 
   // Where Psynergy has no effect.
-  if (GameFlag_TestFar(FLAG_PSYNERGY_NONE)) {
+  if (GameFlag_TestFar(FLAG_IN_LINK_LOBBY)) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }

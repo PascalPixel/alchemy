@@ -31,6 +31,9 @@
 // The link lobby's battle against a monster when no opponent is linked:
 // formations matched to the party's level, and no spoils.
 #define FLAG_MONSTER_BATTLE 0x173
+// Set when the cleared game's menu goes to the link lobby: there Psynergy has
+// no effect and the system menu offers only Change settings.
+#define FLAG_IN_LINK_LOBBY 0x17e
 // Flags 0x300 to 0x3ff are place flags: Scene_ResetFlagsOnEnter clears them
 // when the party enters another place group, and each place uses the numbers
 // for its own, so the scenes name them. These two are the link lobby's.

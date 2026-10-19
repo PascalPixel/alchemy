@@ -3745,15 +3745,20 @@ Func_08127308:
 	.incbin "baserom.gba", 0x00127304, 0x00000264
 	.section .rom.00127584, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00127584, 0x00000484
+	.global Func_08127588
+	.type Func_08127588, %function
+	.thumb_func
+Func_08127588:
+	.incbin "baserom.gba", 0x00127584, 0x000000c4
+	.section .rom.00127868, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00127868, 0x000001a0
 	.section .rom.00127ad8, "ax"
 	.global EnemyCountDecrement
 	.type EnemyCountDecrement, %function
 	.thumb_func
 EnemyCountDecrement:
 	.incbin "baserom.gba", 0x00127ad8, 0x000000c4
-	.section .rom.00127c7a, "ax"
-	.incbin "baserom.gba", 0x00127c7a, 0x00000002
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.001281e6, "ax"

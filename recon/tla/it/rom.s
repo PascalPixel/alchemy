@@ -4377,9 +4377,6 @@ Func_08126944:
 	.thumb_func
 Func_08126978:
 	.incbin "baserom.gba", 0x00126990, 0x00000034
-	.section .rom.00126a10, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00126a10, 0x000000ec
 	.section .rom.00126be4, "ax"
 	.global Graphics_AdvancePaletteCycle
 	.type Graphics_AdvancePaletteCycle, %function
@@ -4403,15 +4400,20 @@ Func_08127308:
 	.incbin "baserom.gba", 0x00127320, 0x00000264
 	.section .rom.001275a0, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x001275a0, 0x00000484
+	.global Func_08127588
+	.type Func_08127588, %function
+	.thumb_func
+Func_08127588:
+	.incbin "baserom.gba", 0x001275a0, 0x000000c4
+	.section .rom.00127884, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00127884, 0x000001a0
 	.section .rom.00127af4, "ax"
 	.global EnemyCountDecrement
 	.type EnemyCountDecrement, %function
 	.thumb_func
 EnemyCountDecrement:
 	.incbin "baserom.gba", 0x00127af4, 0x000000c4
-	.section .rom.00127c96, "ax"
-	.incbin "baserom.gba", 0x00127c96, 0x00000002
 	.section .rom.00127cec, "ax"
 	.incbin "baserom.gba", 0x00127cec, 0x000003cc
 	.section .rom.00128202, "ax"

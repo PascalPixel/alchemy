@@ -1,7 +1,14 @@
+// Near miss, differ 6 of 112 (15 before, with the camera from gCameraWork;
+// 2026-10-19): the camera now comes from its heap slot, as in its sibling
+// 08126804. Left, as there: the native stores pos[1] and pos[2] before it
+// loads Iwram_RatioMulQ14's entry and pos[0] after it, and copies the camera
+// to r2 (mov r2, r8) before the two zero render bounds, this draft after
+// them. Tried: the render bounds written last to first (12).
 #include "types.h"
 #include "iwram_call.h"
 #include "scene.h"
 #include "battle_display.h"
+#include "ram_buffer.h"
 
 extern u8 gProjection[];
 
@@ -18,7 +25,7 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   s32 span = 0x01fe0000;
   s32 mode;
-  struct BattleCamera *scene = gCameraWork;
+  struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->pos;
   s32 *hud = (s32 *)gProjection;
   s32 scale = __divsi3(mode << 16, 100);

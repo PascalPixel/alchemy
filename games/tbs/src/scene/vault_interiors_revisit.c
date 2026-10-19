@@ -23,7 +23,16 @@
 #include "item_ids.h"
 #include "flags.h"
 
+// The townspeople, named by what they say on the party's return.
 enum {
+  ACTOR_GEM_OWNER = 8, // a cat ate his precious stone
+  ACTOR_GEM_OWNERS_WIFE = 9,
+  ACTOR_CHILD = 11,           // "Daddy hasn't been paying attention"
+  ACTOR_COLOSSO_HUSBAND = 12, // would like to see Colosso once more
+  ACTOR_COLOSSO_WIFE = 13,
+  ACTOR_MAYOR = 16, // before the theft was solved, his wife called him that
+  ACTOR_MAYORS_WIFE = 17,
+  ACTOR_COOK = 23, // did some cooking and has bones to spare
   ACTOR_VAULT_BONE_GIVER = 18,
   ACTOR_VAULT_WEAPON_MERCHANT = 19,
   ACTOR_VAULT_ARMOR_MERCHANT = 20,
@@ -35,33 +44,32 @@ enum {
   VAULT_INN = 1
 };
 
+// Set once the mayor has told Isaac the thieves escaped from jail.
+enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
+
 // Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
 // Return the arrival positions for the revisited houses and shops.
-const struct SceneEntrance *VaultInteriorsRevisit_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriorsRevisit_Entrances;
 }
 
 // This scene has no region table.
-const struct SceneRegion *VaultInteriorsRevisit_GetRegions(void) {
-  return NULL;
-}
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 // Returns the exits to the surrounding Vault map.
-const u32 *VaultInteriorsRevisit_GetExits(void) {
-  return gVaultInteriorsRevisit_Exits;
-}
+const u32 *Scene_GetExits(void) { return gVaultInteriorsRevisit_Exits; }
 
 // Applies view conditions to the placements before the field spawns them.
-const struct ScenePlacement *VaultInteriorsRevisit_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements = gVaultInteriorsRevisit_Placements;
 
   FieldScene_PrepareActors(placements);
   return placements;
 }
 
-// Shows the actor's selected message after selecting animation 1.
+// The actor stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingActorDialogue(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(actor, ANIM_STAND);
@@ -76,58 +84,65 @@ static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 actor, s32 message) {
   VaultInteriorsRevisit_ShowStandingActorDialogue(actor);
 }
 
-// The resident thinks the cat stood up.
-static void VaultInteriorsRevisit_DiscussCatStandingUp(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(9, MsgVaultThoughtSawCatGetUp);
+// The wife thought she saw the cat paw the gemstone on the table, and then
+// the treasure was gone.
+static void Event_WifeSawCatTakeGem(void) {
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE,
+                                     MsgVaultThoughtSawCatGetUp);
 }
 
-// The resident says Dodonpa's henchmen never attacked Vault.
-static void VaultInteriorsRevisit_DiscussDodonpasHenchmen(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(11,
+// The child points out Dodonpa's henchmen never attacked: maybe the thieves
+// weren't from Lunpa after all.
+static void Event_ChildDoubtsThievesWereFromLunpa(void) {
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_CHILD,
                                      MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
 
-// The resident talks about the approaching Colosso tournament.
-static void VaultInteriorsRevisit_DiscussColosso(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(12, MsgVaultItsNearTimeForColosso);
+// The husband would like to see Colosso in Tolbi once more before he dies.
+static void Event_HusbandLongsForColosso(void) {
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COLOSSO_HUSBAND,
+                                     MsgVaultItsNearTimeForColosso);
 }
 
-// Greets Isaac's returning party and records the conversation.
-static void VaultInteriorsRevisit_GreetReturningParty(void) {
+// The mayor welcomes Isaac back: the thieves he caught escaped from jail.
+// Asked whether the party has met them, a yes and a no get different warnings.
+static void Event_WelcomeIsaacBack(void) {
   Engine_EventBegin();
-  // Welcome Isaac home before asking about the thieves.
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
-  Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
-  Engine_ActorSetAnimation(16, 1);
-  Event_ShowMessageAndWait(16, 0, 20);
-  Engine_ActorSetAnimationAndWait(16, ANIM_SHAKE_HEAD);
-  Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
-  Event_ShowMessageAndWait(16, 0, 20);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | 2, 60);
-  Event_ShowMessageAndWait(16, 0, 30);
+  Engine_ActorFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | 2, 60);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
-  Event_OpenMessage(16, 0);
+  Event_OpenMessage(ACTOR_MAYOR, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
   }
-  Event_ShowMessageAndWait(16, 0, 20);
-  GameFlag_Set(0x300);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  GameFlag_Set(FLAG_WELCOMED_BACK);
   GameFlag_Set(0x868);
   Engine_EventEnd();
 }
 
-// After the greeting, the resident discusses the thieves' revenge.
-static void VaultInteriorsRevisit_DiscussThievesRevenge(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(16, MsgVaultThoseGuysReallyWantedRevenge);
+// After the welcome: those thieves really wanted revenge, so take care.
+static void Event_WarnOfThievesRevenge(void) {
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_MAYOR,
+                                     MsgVaultThoseGuysReallyWantedRevenge);
 }
 
-// The resident talks about cooking.
-static void VaultInteriorsRevisit_DiscussCooking(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(23, MsgVaultDidSomeCookingNowIve);
+// The cook has useless bones left from cooking and asks if the party wants
+// some.
+static void Event_OfferLeftoverBones(void) {
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
-// Offers a Bone, giving it only if the party accepts and has inventory space.
-static void VaultInteriorsRevisit_OfferBone(void) {
+// The bone giver offers leftover bones from dinner (again, once one was
+// taken); a yes gets a Bone if there is room, a no a nod.
+static void Event_OfferBones(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(ACTOR_VAULT_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
@@ -139,15 +154,15 @@ static void VaultInteriorsRevisit_OfferBone(void) {
   }
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
-    Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
+    Engine_EventWait(20);
     Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
-    Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
+    Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(ACTOR_VAULT_BONE_GIVER, 2);
-    Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
+    Engine_EventWait(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
       Engine_ActorSetAnimationAndWait(ACTOR_VAULT_BONE_GIVER, ANIM_SHAKE_HEAD);
-      Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
+      Engine_EventWait(20);
       Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
       Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
     } else {
@@ -158,37 +173,39 @@ static void VaultInteriorsRevisit_OfferBone(void) {
   } else {
     // Declining selects the following line and the actor's response pose.
     gEventWork->message++;
-    Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
+    Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(ACTOR_VAULT_BONE_GIVER, ANIM_NOD);
-    Engine_EventWait(ACTOR_VAULT_ARMOR_MERCHANT);
+    Engine_EventWait(20);
     Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
   }
   Actor_FaceDirection(ACTOR_VAULT_BONE_GIVER, FACING_SOUTH, 0);
   Engine_EventEnd();
 }
 
-// Mind Read on actor 16 can lead into the return greeting.
-static void VaultInteriorsRevisit_GreetPartyDuringMindRead(void) {
+// Mind Read on the mayor before the welcome: he notices and welcomes Isaac
+// back.
+static void Event_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
 
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(16, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_MAYOR, 1);
   Engine_EventEnd();
   // Keep the actor paused through the conversation, then resume action 2.
-  paused = &Object_GetById(16)->paused;
+  paused = &Object_GetById(ACTOR_MAYOR)->paused;
   *paused = 1;
-  VaultInteriorsRevisit_GreetReturningParty();
-  paused = &Object_GetById(16)->paused;
+  Event_WelcomeIsaacBack();
+  paused = &Object_GetById(ACTOR_MAYOR)->paused;
   *paused = unpaused;
-  Actor_SetBuiltinAction(16, 2);
+  Actor_SetBuiltinAction(ACTOR_MAYOR, 2);
 }
 
 // Shared Bone-item dialogue follows the actor conversations.
 #include "common/vault_bone.h"
 
-// Opens shop 4 when approached facing north; otherwise shows local news.
-static void VaultInteriorsRevisit_TalkToWeaponMerchant(void) {
+// Across the counter the weapon shop opens; from elsewhere the merchant talks
+// of a river of fire beyond Mt. Aleph.
+static void Event_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
@@ -204,8 +221,9 @@ static void VaultInteriorsRevisit_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-// Opens shop 5 when approached facing north; otherwise discusses Mt. Aleph.
-static void VaultInteriorsRevisit_TalkToArmorMerchant(void) {
+// Across the counter the armor shop opens; from elsewhere the merchant says
+// the eruption split the continent in two.
+static void Event_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
@@ -221,8 +239,9 @@ static void VaultInteriorsRevisit_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-// Opens shop 6 when approached facing north; otherwise shows its dialogue.
-static void VaultInteriorsRevisit_TalkToItemMerchant(void) {
+// Across the counter the item shop opens; from elsewhere the merchant has had
+// few customers lately.
+static void Event_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
@@ -238,8 +257,9 @@ static void VaultInteriorsRevisit_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-// Opens inn 1 when approached facing north; otherwise shows its dialogue.
-static void VaultInteriorsRevisit_TalkToInnkeeper(void) {
+// Across the counter the inn opens; from elsewhere the innkeeper complains
+// that no one comes, what with the volcano.
+static void Event_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
   leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
@@ -255,8 +275,9 @@ static void VaultInteriorsRevisit_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// Mind Read changes after the resident has given the party a Bone.
-static void VaultInteriorsRevisit_ReadBoneGiversThoughts(void) {
+// Mind Read on the bone giver: hungry while cooking, or, once a Bone was
+// given, wondering whether "he" has a calcium deficiency.
+static void Event_ReadBoneGiverMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
@@ -268,12 +289,12 @@ static void VaultInteriorsRevisit_ReadBoneGiversThoughts(void) {
 }
 
 // Returns the talk, Psynergy, search and exit event table.
-const struct SceneEvent *VaultInteriorsRevisit_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriorsRevisit_Events;
 }
 
 // Initializes the selected interior: lowers actor 8 or starts the spot check.
-s32 VaultInteriorsRevisit_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 entrance;
   s32 clearedState;
 
@@ -288,10 +309,12 @@ s32 VaultInteriorsRevisit_Initialize(void) {
     Object_GetById(8)->y.fixed = clearedState;
     Object_GetById(8)->terrainHeight = clearedState;
   } else if (entrance == 7 || entrance == 11) {
-    // Keep the Bone offer conditional on the leader's position in the room.
-    OverlayObject_ConfigureObject22WithResource17(0xe7, PIXELS(568), PIXELS(16),
-                                                  PIXELS(672));
-    FieldScheduler_AddCallback(Vault_UpdateBoneProximityFlag, 0xc80);
+    // Show the Bone lying in the room, and track whether the leader stands
+    // beside it (FLAG_SCENE_TEMP_50).
+    OverlayObject_ConfigureObject22WithResource17(ITEM_BONE, PIXELS(568),
+                                                  PIXELS(16), PIXELS(672));
+    FieldScheduler_AddCallback(Vault_UpdateBoneProximityFlag,
+                               TASK_PRIORITY_SCENE);
   }
 
   return 0;
@@ -366,46 +389,46 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_DiscussCatStandingUp) },
+    { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
+    { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WifeSawCatTakeGem) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_DiscussDodonpasHenchmen) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_DiscussColosso) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
-    { EVENT_TALK, 16, 0x300, EVENT_SCRIPT(VaultInteriorsRevisit_GreetReturningParty) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_DiscussThievesRevenge) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
+    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildDoubtsThievesWereFromLunpa) },
+    { EVENT_TALK, ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HusbandLongsForColosso) },
+    { EVENT_TALK, ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
+    { EVENT_TALK, ACTOR_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_WelcomeIsaacBack) },
+    { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnOfThievesRevenge) },
+    { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_TalkToWeaponMerchant) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_TalkToArmorMerchant) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_TalkToItemMerchant) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_TalkToInnkeeper) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_DiscussCooking) },
-    { EVENT_TALK, 18, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(VaultInteriorsRevisit_OfferBone) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
+    { EVENT_TALK, ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
+    { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
+    { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OfferLeftoverBones) },
+    { EVENT_TALK, ACTOR_VAULT_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x300, EVENT_SCRIPT(VaultInteriorsRevisit_GreetPartyDuringMindRead) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_ReadMindAndWelcomeIsaacBack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriorsRevisit_ReadBoneGiversThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
-    { SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
-    { SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
-    { SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_WOODEN_BOX), 103, 0xf4e, FIND_ITEM(ITEM_MINT) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_WOODEN_BOX), 103, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
     { 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOfAngara)) },
     { SCENE_EVENTS_END },

@@ -10,11 +10,11 @@ struct SceneEvent;
 struct ScenePlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *VaultCave_GetRegions(void);
+const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
-s32 VaultCave_ApplyEntryState(void);
+s32 Scene_Initialize(void);
 extern const s16 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
 extern struct SceneEntrance gVaultCaveEntrancesOther[];

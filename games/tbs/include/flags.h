@@ -454,6 +454,47 @@
 // Vale during the eruption
 // Isaac and Garet came down Mt. Aleph and followed the elders into the sanctum.
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
+// Vault: the stolen Shaman's Rod, and its containers, set once each is
+// searched
+// Set when Ivan first shows the party his strange powers at the mayor's.
+#define FLAG_VAULT_MET_IVAN 0x850
+// Set once the mayor has thanked the party for helping Ivan.
+#define FLAG_VAULT_MAYOR_THANKED_PARTY 0x851
+// Set when the party first approaches the two suspects at the inn.
+#define FLAG_VAULT_SUSPECTS_APPROACHED 0x852
+// Set once the mayor has given the party the Water of Life.
+#define FLAG_VAULT_WATER_OF_LIFE_RECEIVED 0x857
+// Set once the crate is pushed aside, opening the passage behind it.
+#define FLAG_VAULT_CRATE_MOVED 0x859
+// Set when the party agrees to help Ivan find the rod; while it is set and
+// the thieves are free, Ivan waits in Vault whenever the party leaves town.
+#define FLAG_VAULT_IVAN_JOINED_ROD_SEARCH 0x856
+// Set once Ivan has read the minds of the two cornered suspects.
+#define FLAG_VAULT_SUSPECTS_MIND_READ 0x853
+// Set as the three thieves are confronted in the attic, before the battle.
+#define FLAG_VAULT_THIEVES_CONFRONTED 0x854
+#define FLAG_VAULT_BOX_NUT 0xf4a
+
+// Vault interiors: their containers, set once each is searched
+#define FLAG_VAULT_INTERIORS_JAR_COINS 0xf4b
+#define FLAG_VAULT_INTERIORS_BARREL_COINS 0xf4c
+#define FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB 0xf4d
+#define FLAG_VAULT_INTERIORS_BOX_MINT 0xf4e
+
+// Vault cave: its switches, and its chests, set once each is opened
+#define FLAG_VAULT_CAVE_SWITCH_FLIPPED 0x9a8
+#define FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH 0x9a9
+#define FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH 0x9aa
+#define FLAG_VAULT_CAVE_1_CHEST 0xef3
+#define FLAG_VAULT_CAVE_2_CHEST 0xfc4
+
+// Vault Jail: its chests, set once each is opened
+#define FLAG_JAIL_CHEST_WATER_OF_LIFE 0xf8c
+#define FLAG_JAIL_CHEST_SMOKE_BOMB 0xf8d
+#define FLAG_JAIL_CHEST_LUCKY_MEDAL 0xf8e
+#define FLAG_JAIL_CHEST_ANTIDOTE 0xf8f
+#define FLAG_JAIL_CHEST_COINS 0xf90
+#define FLAG_JAIL_CHEST_ELIXIR 0xf91
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

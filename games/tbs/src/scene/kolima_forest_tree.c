@@ -35,6 +35,7 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "macros.h"
+#include "songs.h"
 
 enum {
   ACTOR_TRET = 8,
@@ -210,7 +211,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   ColorBuffer_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   gKolimaForestTreePlaySparkSound = 1;
   FieldScheduler_AddCallback(KolimaForestTree_SpawnRejectionSpark,
                              TASK_PRIORITY_SCENE);
@@ -221,7 +222,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
-  Event_PlayCue(133);
+  Event_PlayCue(SE_133);
   leader->velocityY = PIXELS(5);
   leader->gravity = PIXELS(1) / 4;
   leader->bounce = 5 * Q16_ONE / 8;
@@ -232,7 +233,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   do {
     Engine_TaskWait(1);
   } while (leader->velocityY <= 0);
-  Event_PlayCue(161);
+  Event_PlayCue(SE_161);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
   Engine_EventWait(120);
   Engine_TaskRemoveCallback(KolimaForestTree_SpawnRejectionSpark);
@@ -293,10 +294,11 @@ static void KolimaForestTree_RestoreTret(void) {
   const s32 *finalActions;
 
   // Gather the companions while Hermes' Water seeps into Tret.
+  // Flag 3: Mia is in the party.
   includeMia = GameFlag_IsSet(3);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   Engine_MessageShowCentered(MsgKolimaWaterHermesSeepedIntoTret, 1);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -333,18 +335,18 @@ static void KolimaForestTree_RestoreTret(void) {
   Camera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   Camera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
   Engine_CameraWaitForMove();
-  Event_PlayCue(246);
+  Event_PlayCue(SE_246);
   Engine_EventWait(40);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
   Camera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
   Engine_CameraWaitForMove();
-  Event_PlayCue(246);
+  Event_PlayCue(SE_246);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_SOUTH, 20);
   Camera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
   Engine_CameraWaitForMove();
-  Event_PlayCue(246);
+  Event_PlayCue(SE_246);
   if (*paletteFrame != 24) {
     do {
       Engine_TaskWait(1);
@@ -371,7 +373,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_EventWait(40);
   KolimaForestTree_PlayGesture(ACTOR_TRET_AUXILIARY, 1);
   Engine_EventWait(40);
-  Event_PlayCue(7);
+  Event_PlayCue(MUS_007);
   // Tret and Laurel discover that their powers have returned.
   Engine_EventSetMessage(MsgKolimaFeelGreatPowerSpreadingThrough);
   Event_ShowMessage(8, 0);
@@ -618,7 +620,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   Actor_SetActionScript(GARET, finalActions);
@@ -637,7 +639,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessageAndWait(0x4009, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
-  Event_PlayCue(1);
+  Event_PlayCue(MUS_001);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
@@ -704,7 +706,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   if (phase != 0)
     return;
   if (gKolimaForestTreePlaySparkSound != 0)
-    Engine_AudioPlayCue(200);
+    Engine_AudioPlayCue(SE_200);
   effect = Engine_ObjectCreate(26, spawnX, spawnY, spawnZ);
   if (effect == 0)
     return;
@@ -878,7 +880,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   case 20:
   case 30:
   case 40:
-    Engine_AudioPlayCue(220);
+    Engine_AudioPlayCue(SE_220);
     for (sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
       spark = Engine_ObjectCreate(0x11d, gKolimaForestTreeSparkOrigin[0],
                                   gKolimaForestTreeSparkOrigin[1],
@@ -992,6 +994,7 @@ struct ScenePlacement gKolimaForestTreePlacements[] = {
 
 struct SceneEvent gKolimaForestTreeEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    // Hermes' Water (item 0xb8) used on Tret.
     { 0xb814, 12, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(KolimaForestTree_UseHermesWater) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToLaurel) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },

@@ -29,6 +29,7 @@
 #include "resource_37de_scene.h"
 #include "macros.h"
 #include "flags.h"
+#include "songs.h"
 
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
@@ -137,7 +138,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   {
     Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
   }
-  Engine_AudioPlayCue(200);
+  Engine_AudioPlayCue(SE_200);
   for (flash = 0; flash != 22; flash++) {
     Map_CopyCellsTo(10, 61, 17, 40, 2, 1);
     Engine_EventWait(4);
@@ -744,7 +745,7 @@ s32 SolSanctumStatue_Initialize(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    BattleFx_SetQueuedSoundAndPlay(141);
+    BattleFx_SetQueuedSoundAndPlay(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
   }
@@ -909,7 +910,7 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         Actor_SetSpeed(17, PIXELS(3), PIXELS(1));
         statue->motionFlags = 0;
         Engine_ActorSetSpritePriority(17, 3);
-        Engine_AudioPlayCue(189);
+        Engine_AudioPlayCue(SE_189);
         Engine_ActorSetDestination(17, 288, 178);
         Engine_EventWait(8);
         Actor_SetPosition(18, PIXELS(288), PIXELS(178));
@@ -923,7 +924,7 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         Engine_ActorSetPosition(17, 0, 0);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);
-        Engine_AudioPlayCue(141);
+        Engine_AudioPlayCue(SE_141);
         Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
         Engine_EventWait(10);
         Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -934,12 +935,12 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         Engine_EventWait(30);
         Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
         Engine_EventWait(40);
-        Engine_AudioPlayCue(0x121);
+        Engine_AudioPlayCue(SE_289);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);
         Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
         Engine_EventWait(60);
-        Engine_AudioPlayCue(188);
+        Engine_AudioPlayCue(SE_188);
         if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
             Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
             Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
@@ -964,7 +965,7 @@ static void SolSanctumStatue_PushCenterStatueBack(void) {
   if (movingActor != 0) {
     if ((movingActor->z.fixed >> 20) == 8) {
       Engine_EventBegin();
-      Event_PlayCue(185);
+      Event_PlayCue(SE_185);
       Actor_SetSpeed(17, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Object_GetById(17)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1063,7 +1064,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   s32 statueZ;
 
   Engine_EventBegin();
-  Engine_AudioPlayCue(185);
+  Engine_AudioPlayCue(SE_185);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
   Engine_ActorSetSpeed(0, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1327,13 +1328,13 @@ static void SolSanctumStatue_OpenSeal(void) {
     Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(172), 1);
     Engine_CameraWaitForMove();
-    Engine_AudioPlayCue(186);
+    Engine_AudioPlayCue(SE_186);
     COPY_CELLS(sSealScene.open);
     for (pulse = 0; pulse != 20; pulse++) {
-      Engine_AudioPlayCue(246);
+      Engine_AudioPlayCue(SE_246);
       COPY_CELLS(sSealScene.pulseA);
       Engine_EventWait(4);
-      Engine_AudioPlayCue(246);
+      Engine_AudioPlayCue(SE_246);
       COPY_CELLS(sSealScene.pulseB);
       Engine_EventWait(4);
     }
@@ -1389,7 +1390,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
-      Event_PlayCue(186);
+      Event_PlayCue(SE_186);
       Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
@@ -1413,7 +1414,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
-      Event_PlayCue(186);
+      Event_PlayCue(SE_186);
       Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);

@@ -24,6 +24,7 @@
 #include "field_obj.h"
 #include "fixed_math.h"
 #include "macros.h"
+#include "songs.h"
 
 // Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
@@ -115,7 +116,7 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   // Open the three doorway frames before moving the leader inside.
   width = 3;
   height = 2;
-  Event_PlayCue(181);
+  Event_PlayCue(SE_181);
   Map_CopyCellsTo(16, 28, 21, 3, width, height);
   Engine_TaskWait(10);
   Map_CopyCellsTo(16, 30, 21, 3, width, height);
@@ -184,7 +185,7 @@ static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
       Battle_ResetEffectCounter();
       // Place the gem in the relief, then replace the doorway cells.
       oneCell = 1;
-      Event_PlayCue(182);
+      Event_PlayCue(SE_182);
       Map_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       Engine_MapRedraw();
       Engine_EventWait(40);
@@ -192,7 +193,7 @@ static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
       Engine_MessageShowCentered(message, 1);
       Engine_EventWait(20);
       reliefWidth = 3;
-      Event_PlayCue(183);
+      Event_PlayCue(SE_183);
       Map_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
       Map_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
       Map_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
@@ -241,14 +242,14 @@ static void SolSanctumEntrance_PlaceSecondSmallGem(void) {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     // Place the second gem and open the inner doorway.
-    Engine_AudioPlayCue(182);
+    Engine_AudioPlayCue(SE_182);
     Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
     Engine_MapRedraw();
     Engine_EventWait(40);
     message = MsgSolSanctumSetSmallGem;
     Engine_MessageShowCentered(message, 1);
     Engine_EventWait(20);
-    Engine_AudioPlayCue(183);
+    Engine_AudioPlayCue(SE_183);
     Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
     Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     Engine_MapRedraw();
@@ -418,7 +419,7 @@ static void SolSanctumEntrance_PushFacedBlock(void) {
     if (FieldObject_CheckMovementCollision(block, destination) <= 0) {
       Object_SetMode(leader, 8);
       Engine_TaskWait(15);
-      Engine_AudioPlayCue(185);
+      Engine_AudioPlayCue(SE_185);
       block->speed = PIXELS(1) / 5;
       block->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(block, destination->x, destination->y,
@@ -495,7 +496,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    BattleFx_SetQueuedSoundAndPlay(141);
+    BattleFx_SetQueuedSoundAndPlay(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
   }
@@ -1028,7 +1029,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   } else {
     randomValue = Engine_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
-      Event_PlayCue(138);
+      Event_PlayCue(SE_ITEM_BREAK);
       Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

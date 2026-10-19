@@ -39,6 +39,7 @@
 #include "objcmd.h"
 #include "frame.h"
 #include "fixed_math.h"
+#include "songs.h"
 
 // Scene temporary flags: 00 is set once the Great Healer has warned Isaac
 // that leaving the village cannot be undone; 01 marks the visit after a
@@ -233,7 +234,7 @@ static void Sanctum_ReconsiderQuest(void) {
         Engine_ColorBufferApplyTarget(0, 0);
         Engine_ColorBufferInterpolate(120);
         Engine_EventWait(120);
-        Engine_AudioPlayCue(86);
+        Engine_AudioPlayCue(MUS_086);
         AudioCommand_WaitForCompletion();
         Engine_GameFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
         Engine_EventRequestExit(30);
@@ -641,7 +642,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ActorSetAnimation(8, 0);
     Actor_SetChildValue(8, 0x100);
     Sanctum_ShowHealerAfterimage();
-    Event_PlayCue(0xc4);
+    Event_PlayCue(SE_196);
     Sanctum_SpawnOrbitingEffect(8, 0x1200);
     Engine_EventWait(32);
     Sanctum_SpawnOrbitingEffect(8, 0x1200);
@@ -708,7 +709,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ActorSetAnimation(8, 0);
     Actor_SetChildValue(8, 0x100);
     Sanctum_ShowHealerAfterimage();
-    Event_PlayCue(0xc4);
+    Event_PlayCue(SE_196);
     Sanctum_SpawnOrbitingEffect(8, 0x1200);
     Engine_EventWait(32);
     Sanctum_SpawnOrbitingEffect(8, 0x1200);
@@ -930,7 +931,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     ColorBuffer_ApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);
-    Event_PlayCue(0x56);
+    Event_PlayCue(MUS_086);
     AudioCommand_WaitForCompletion();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Engine_EventRequestExit(30);
@@ -1019,20 +1020,20 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(30);
   Event_ShowMessage(8, 0);
   Engine_EventWait(80);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PALE, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
   Engine_EventWait(120);
-  Event_PlayCue(21);
-  Event_PlayCue(0x134);
+  Event_PlayCue(MUS_021);
+  Event_PlayCue(SE_308);
   // The Wise One enters while the healer's afterimages appear.
   Actor_SetPosition(13, PIXELS(200), PIXELS(8));
   Actor_SetSpeed(13, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_MoveToAndWait(13, 200, 72);
-  Event_PlayCue(0x120);
+  Event_PlayCue(SE_288);
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_ActorSetAnimation(8, 0);
@@ -1056,8 +1057,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_ShowMessage(13, 0);
   Engine_EventWait(60);
   Engine_ActorSetChildValue(13, 0x100);
-  Event_PlayCue(17);
-  Event_PlayCue(0x134);
+  Event_PlayCue(MUS_017);
+  Event_PlayCue(SE_308);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(13);
@@ -1067,7 +1068,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne = Object_GetById(13);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
-  Event_PlayCue(0x120);
+  Event_PlayCue(SE_288);
   Actor_SetChildValue(13, 0);
   Actor_SetPosition(13, 0, 0);
   Engine_EventWait(40);
@@ -1078,7 +1079,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(120);
   Sanctum_HideHealerAfterimage();
   Engine_ActorSetAnimation(8, 1);
-  Event_PlayCue(2);
+  Event_PlayCue(MUS_002);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(20);

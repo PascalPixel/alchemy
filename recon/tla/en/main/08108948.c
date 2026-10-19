@@ -1,10 +1,13 @@
-// Near miss, differ 16 of 71 (draft 69): moves the shop cursor one step of
-// its glide toward the target, setting the sprite's position and its OAM x
-// and y, and stops the glide on its last step. Other: the listing builds the
-// x field's 0x1ff mask with split constants where this loads it from the pool
-// (writing the OAM through the RenderOutput's oam bitfields directly gives
-// the same differ), and the step's increment and the start x load come after
-// the target x load there.
+// Near miss, differ 8 of 71, instruction order only: moves the shop cursor
+// one step of its glide toward the target, setting the sprite's position and
+// its OAM x and y, and stops the glide on its last step; ☀️'s
+// ShopCursor_Advance (games/tbs/src/shop/shop.c). The x field is written
+// through a u32 mask, as Func_081089e4 beside it in menu/shop/cursor_set.c
+// does, so the 0x1ff mask is split as the native's (16 with the bitfield
+// alone). Left: the native loads the target x before the start x and adds
+// the step after both, and loads the zero from the pool before building the
+// mask; agscc issues each load a step later, the pattern AGENTS.md records
+// for ⚓️.
 #include "types.h"
 #include "render_input.h"
 #include "ram_buffer.h"
@@ -68,6 +71,7 @@ void ShopCursor_Advance(struct ShopCursor *cursor) {
   s32 step;
   s32 x;
   s32 y;
+  u32 mask;
 
   if (cursor == NULL)
     return;
@@ -75,13 +79,15 @@ void ShopCursor_Advance(struct ShopCursor *cursor) {
   if (kind == 0)
     return;
   sprite = cursor->anchor;
-  step = (s8)++cursor->active;
+  step = ++cursor->active;
   x = cursor->x + (cursor->targetX - (s16)cursor->x) * step / kind;
   sprite->x = x;
-  ((struct SpriteAttr *)&sprite->oam)->x = x;
+  mask = 0x1ff;
+  mask &= x;
+  sprite->oam.x = mask;
   y = cursor->y + (cursor->targetY - (s16)cursor->y) * step / kind;
   sprite->y = y;
-  ((struct SpriteAttr *)&sprite->oam)->y = y;
+  sprite->oam.y = y;
   if (step == kind) {
     cursor->kind = 0;
     cursor->active = 0;

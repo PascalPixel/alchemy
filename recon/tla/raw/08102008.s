@@ -310,7 +310,7 @@ Func_08102008:
 	ldr r0, [sp, #72]
 	adds r1, r6, #0
 	movs r3, #1
-	bl Func_08101c40
+	bl UiPanel_HighlightGridCell
 	subs r3, r6, r7
 	lsls r1, r3, #3
 	subs r1, r1, r3
@@ -416,7 +416,7 @@ Func_08102008:
 	ldr r0, [sp, #72]
 	ldr r2, [sp, #52]
 	movs r3, #1
-	bl Func_08101c40
+	bl UiPanel_HighlightGridCell
 .L_08102322:
 	ldr r2, [sp, #60]
 	movs r5, #1
@@ -1713,7 +1713,7 @@ Func_08102008:
 	mov r1, r11
 	ldr r2, [sp, #52]
 	movs r3, #0
-	bl Func_08101c40
+	bl UiPanel_HighlightGridCell
 	movs r0, #112
 	movs r5, #10
 	bl Audio_PlayCue
@@ -1745,7 +1745,7 @@ Func_08102008:
 	mov r1, r11
 	ldr r2, [sp, #52]
 	movs r3, #0
-	bl Func_08101c40
+	bl UiPanel_HighlightGridCell
 	movs r0, #111
 	bl Audio_PlayCue
 	ldr r7, [sp, #12]
@@ -1819,7 +1819,7 @@ Func_08102008:
 	ldr r2, [sp, #52]
 	mov r1, r11
 	movs r3, #0
-	bl Func_08101c40
+	bl UiPanel_HighlightGridCell
 	movs r0, #111
 	bl Audio_PlayCue
 	ldr r2, [sp, #52]
@@ -1884,7 +1884,7 @@ Func_08102008:
 	ldr r0, [sp, #72]
 	ldr r2, [sp, #52]
 	movs r3, #0
-	bl Func_08101c40
+	bl UiPanel_HighlightGridCell
 .L_08102f0a:
 	ldr r2, [sp, #16]
 	movs r3, #32

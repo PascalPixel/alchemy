@@ -4,12 +4,13 @@
 // entries in the work and starts MenuIcon_PushSlots. Beside
 // MenuIcon_PushSlots (games/tla/src/menu/menu_icon_slots.c) and
 // MenuIcon_ReleaseSlots (menu_icon_release.c), whose work layout this uses.
-// Differ 56 of 83 (draft 71). Left: the native keeps the table base in r11
+// Differ 49 of 83 (draft 76). Left: the native keeps the table base in r11
 // and its offset 2 * i in r9 with a separate counter in r8 counting down,
-// saving r8 to r11; here i stays the counter, spilled to the stack around
-// the calls, and only r8 is saved. Measured: indexing the slots and entries
-// by i gives 82; a pointer walking the id table 54 (not the native's
-// base-plus-offset load).
+// saving r8 to r11; with the table in a local, as here, agscc also counts
+// down but walks one pointer through the ids (ldrh r1, [r3, #0]) and saves
+// r8 to r10 only. Measured: the global indexed directly keeps i as the
+// counter, spilled around the calls (56); indexing the slots and entries by
+// i gives 82; a pointer walking the id table 54.
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource.h"
@@ -39,6 +40,7 @@ void Func_081053a8(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   struct MenuSlotEntry *slot = menu->slots;
   u16 *resource = menu->resources;
+  u16 *ids = gData_08105a50;
   s32 entry;
   s32 i;
 
@@ -47,7 +49,7 @@ void Func_081053a8(void) {
     if (entry <= 95) {
       u32 *attributes;
 
-      Func_08038288(8, gData_08105a50[i], entry, 0);
+      Func_08038288(8, ids[i], entry, 0);
       attributes = &slot->attributes;
       *attributes++ = 0x40000000;
       *attributes = 0;

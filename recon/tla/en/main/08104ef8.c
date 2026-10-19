@@ -1,3 +1,9 @@
+// Near miss, differ 14 of 110 (23 when the objects were stored through a
+// pointer stepped beside the index), instruction order only: the native
+// spills first (str r0, [sp, #4]) before it builds the work address, builds
+// the objects pointer's spill after the loop's first index copies, and loads
+// the flags byte before building the -13 mask; agscc issues each a step
+// later, the load and store pattern AGENTS.md records for ⚓️.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -19,7 +25,6 @@ s32 Func_080c82b8(s32 owner);
 void Menu_CreateOwnerEntryObjects(s32 first) {
   struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
   u16 owners[14];
-  void **objects;
   u8 *object;
   s32 i;
 
@@ -32,7 +37,6 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
     }
   }
   menu->count = Party_ListActiveOwnersFar(owners);
-  objects = menu->objects;
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
     object = ResourceObject_CreateFar(Func_080c82b8(owners[first + i]));
@@ -41,6 +45,6 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
       ((s8 *)object)[9] &= -13;
       object[26] = 0;
     }
-    *objects++ = object;
+    menu->objects[i] = object;
   }
 }

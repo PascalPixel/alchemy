@@ -1,4 +1,4 @@
-// Draft, differ 16 of 120 (no device): summon 25's change of backdrop
+// Draft, differ 6 of 120 (one device; 16 without it): summon 25's change of backdrop
 // behind the wipe (Func_08191958's midpoint). The colour loop takes The
 // Broken Seal's matched channel form (BattleFx_RunGaia's darkening:
 // blue and green through (u16)color shifts, which agscc does in halfword
@@ -13,6 +13,12 @@
 // (38), (u16) casts on the masked channels (35-45), other channel orders
 // (37-58). alchemy permute 5 minutes: best 8, by computing red << 5 into a
 // temporary before the blue clamp (a forced temporary; not kept).
+// 2026-10-19: an empty asm before the green clamp (FAKEMATCH below) adds
+// the four estimated bytes that move the loop's pool to the native's place
+// (16 to 6; before the red clamp or before red &= color: 8; before the blue
+// clamp: 6 as well). Left: the two TLA load-before-
+// shift rows, REG_BG1HOFS's zero and the colour loop's 31, each one row
+// early in the native. psynergy permute 6 minutes from here: nothing below 6.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -76,6 +82,10 @@ void Func_0819253c(void) {
 
     if (red < 0)
       red = 0;
+    /* FAKEMATCH(asm): an empty asm, whose four estimated bytes place the
+     * literal pool after the green clamp as the native does; as plain C, 16
+     * of 120 instructions differ in tla-en. */
+    asm("");
     if (green < 0)
       green = 0;
     if (blue < 0)

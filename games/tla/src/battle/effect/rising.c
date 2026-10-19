@@ -9,8 +9,42 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const u8 *script);
 void Marker_MoveLeaderAwayFromEmitter(void);
-void Func_080cf350(struct ObjectRuntime *object);
+void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object,
+                                         s32 priority);
 extern const u8 gData_080effd8[];
+extern const u8 gData_080f0074[];
+
+// Places the object 36 pixels above the controlled owner, gives it its
+// sprite priority and, three frames on, the descent script, and turns the
+// owner to face a quarter turn.
+void Func_080cf350(struct ObjectRuntime *object) {
+  struct ObjectRuntime *owner;
+
+  if (object == 0)
+    return;
+
+  {
+    /* FAKEMATCH(pin): the owner kept in r0, where the call returns it, until
+     * after the motion byte's store; as an ordinary local, 2 of 40
+     * instructions differ in tla-en. */
+    register struct ObjectRuntime *found asm("r0") =
+        ObjectTable_Get(EventRuntime_GetControlledOwner());
+    object->acceleration = 0x10000;
+    object->speedLimit = 0x20000;
+    object->motionFlags = 0;
+    /* FAKEMATCH(barrier): the owner's copy out of r0 held after the stores,
+     * as the native copies it; without the barrier, 2 of 40 instructions
+     * differ in tla-en. */
+    __asm__ volatile("" : "+r"(found));
+    owner = found;
+  }
+  Object_SetPosition(object, owner->x, owner->y + 0x240000, owner->z);
+  ObjectDispatch_SetSpritePriorityFar(object, 1);
+  WaitFrames(3);
+  Object_SetMode(owner, 28);
+  ObjectDispatch_InitializeFar(object, gData_080f0074);
+  owner->angle = 0x4000;
+}
 
 void EffectRuntime_RunRisingObjectSequence(struct ObjectRuntime *object, s32 flags) {
   struct ObjectRuntime *owner;

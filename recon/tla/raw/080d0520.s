@@ -97,7 +97,7 @@ DisplayTransition_Finish:
 .L_080d05e4:
 	.4byte Func_080cf78c
 .L_080d05e8:
-	.4byte Func_080cf6fc
+	.4byte BattleFx_StartWindowHBlankDma
 .L_080d05ec:
 	bl WaitFrames
 	movs r2, #160

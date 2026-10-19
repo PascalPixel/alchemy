@@ -7,7 +7,6 @@
 #include "edition.h"
 
 void Func_080cf78c(void);
-void Func_080cf6fc(void);
 
 // The Spanish and Italian far-call tables reach this function under another
 // slot's name (Func_080d6b90); those two editions keep it on their scaffold
@@ -26,13 +25,13 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   state->mask = 0x3f3f;
   state->active = (REG_WINOUT & 0xff00) | 1;
   Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
-  Scheduler_AddOrUpdateCallback(Func_080cf6fc, 0xc76);
+  Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0xc76);
 }
 #endif
 
 void Func_080d0184(void) {
   Scheduler_SuspendTasks(Func_080cf78c);
-  Scheduler_SuspendTasks(Func_080cf6fc);
+  Scheduler_SuspendTasks(BattleFx_StartWindowHBlankDma);
 }
 
 void *Func_080d019c(void) {

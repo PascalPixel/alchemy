@@ -150,7 +150,7 @@ DisplayTransition_Start:
 .L_080d0300:
 	.4byte Func_080cf78c
 .L_080d0304:
-	.4byte Func_080cf6fc
+	.4byte BattleFx_StartWindowHBlankDma
 .L_080d0308:
 	.4byte gIoWriteQueue
 .L_080d030c:

@@ -1,52 +1,35 @@
-// Draft, differ 6 of 154: as ☀️ Scene_ApplyEntrance
-// (games/tbs/src/object/object.c), places the party at its entrance and sets
-// the map's scroll bounds, at least a screen wide and tall. In ⚓️ it takes a
-// flag: when set, the entrance must be found (an entrance with its required
-// flag set, or -1) or it returns 0 without change; when clear the first
-// entry is used. Flag 0x109 keeps the party position. Returns 1. The party
-// position is in PartyState's unk1fc, read through a view of gPartyState
-// (with a byte-offset cast the five stores share one folded base, differ
-// 56). Left: instruction order only (the pool load of gPartyState against
-// the argument copy, the -1 build and the 240 << 16 shift).
+// Near miss, differ 4 of 154 (2026-10-18): the twin of ☀️'s
+// Scene_ApplyEntrance, here with an argument (1: find the entrance and fail
+// with 0 when there is none; 0: take the first). The empty asm barrier after
+// the camera's left edge is read moves the -1 constant below the load as the
+// native has it (differ 6 without it; tag it under S2 before adoption). Left:
+// the gPartyState literal is loaded after the argument copy (the native loads
+// it first), and the 240 << 16 shift is finished before map->maxX is loaded.
+// Tried: the comparison written the other way round (8), a width variable
+// behind a "+r" asm (87), six minutes of permute (nothing below 4 without the
+// barrier).
 #include "types.h"
-#include "ram_buffer.h"
 #include "party_state.h"
+#include "ram_buffer.h"
+#include "map.h"
 #include "field_scene.h"
 
+struct OverlayHeader {
+  void *unk00[3];
+  const struct SceneEntrance *(*entrances)(void);
+};
+
+extern struct OverlayHeader gOverlayArea;
 s32 GameFlag_Test(s32 flag);
 
-// The scene overlay's entry table; its fourth entry returns the entrances.
-extern void *gOverlayArea[];
-
-struct MapScrollView {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minY;
-  s32 maxX;
-  s32 maxY;
-};
-
-#define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
-// The party position fields in unk1fc of struct PartyState.
-struct PartyPositionView {
-  u8 unk000[0x1fc];
-  s32 x;
-  s32 y;
-  s32 z;
-  u32 heading;
-  u16 turn;
-};
-
-#define gPartyPosition (*(struct PartyPositionView *)&gPartyState)
-
-s32 Func_080cc67c(s32 search) {
-  struct MapScrollView *map = (struct MapScrollView *)Ram_HeapSlots->mapWork;
+s32 Func_080cc67c(s32 findEntrance) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 entrance = gPartyState.entrance;
-  const struct SceneEntrance *entry =
-      ((const struct SceneEntrance *(*)(void))gOverlayArea[3])();
+  const struct SceneEntrance *entry = gOverlayArea.entrances();
   s32 found = 0;
+  s32 left;
 
-  if (search != 0) {
+  if (findEntrance) {
     while (entry->entrance != -1) {
       if (entry->entrance == entrance &&
           (entry->requiredFlag == -1 || GameFlag_Test(entry->requiredFlag))) {
@@ -60,25 +43,27 @@ s32 Func_080cc67c(s32 search) {
   }
 
   if (!GameFlag_Test(0x109)) {
-    gPartyPosition.x = REGION_FIXED(entry->x);
-    gPartyPosition.y = REGION_FIXED(entry->y);
-    gPartyPosition.z = REGION_FIXED(entry->z);
-    gPartyPosition.heading = entry->facing;
-    gPartyPosition.turn = 0;
+    gPartyState.x = entry->x << 16;
+    gPartyState.y = entry->y << 16;
+    gPartyState.z = entry->z << 16;
+    gPartyState.heading = entry->facing;
+    gPartyState.turn = 0;
   }
 
-  if (entry->cameraLeft != -1)
-    map->minX = REGION_FIXED(entry->cameraLeft);
+  left = entry->cameraLeft;
+  __asm__ volatile("");
+  if (left != -1)
+    map->minX = left << 16;
   if (entry->cameraTop != -1)
-    map->minY = REGION_FIXED(entry->cameraTop);
+    map->minZ = entry->cameraTop << 16;
   if (entry->cameraRight != -1)
-    map->maxX = REGION_FIXED(entry->cameraRight);
+    map->maxX = entry->cameraRight << 16;
   if (entry->cameraBottom != -1)
-    map->maxY = REGION_FIXED(entry->cameraBottom);
+    map->maxZ = entry->cameraBottom << 16;
 
   if (map->minX + (240 << 16) > map->maxX)
     map->minX = map->maxX - (240 << 16);
-  if (map->minY + (160 << 16) > map->maxY)
-    map->minY = map->maxY - (160 << 16);
+  if (map->minZ + (160 << 16) > map->maxZ)
+    map->minZ = map->maxZ - (160 << 16);
   return 1;
 }

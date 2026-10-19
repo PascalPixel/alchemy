@@ -1,10 +1,5 @@
-// Near miss: differ 2 of 122 (one reordered row). The native starts the 0x40000
-// before it loads the owner height (str r3, [r2]; movs r2, #128; ldr r3, [r0,
-// #12]; lsls r2, r2, #11); the draft loads first. Tried: the sum in either
-// order, the constant in a variable added to, three minutes of the permuter.
-// The quarter turn needs one variable assigned twice. Func_080cdd80 after it
-// opens the same way.
 #include "types.h"
+#include "edition.h"
 #include "party_state.h"
 #include "object_runtime.h"
 
@@ -15,6 +10,15 @@ void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 struct ObjectRuntime *Func_080eaf28(s32 *position, s32 mode);
 s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
 
+// Whether the object 16 pixels in front of the current owner, along its
+// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
+// nothing solid stands on the cell beyond it or above it and its terrain
+// test passes there, else 0. Func_080cdd80, after it, makes the push.
+// The Japanese edition has no test against the paused object and stays on
+// its scaffold: with the branch below it differs by one reordered row (the
+// angle's argument copy issued after the next position load, differ 4).
+// The Spanish and Italian far-call tables name this function's slot
+// Func_080eab98, so those two editions keep it on their scaffold too (S4).
 s32 Func_080cdc74(void) {
   s32 position[3];
   s32 above[3];
@@ -24,11 +28,19 @@ s32 Func_080cdc74(void) {
   s32 id;
   s32 terrain;
   s32 result;
+  /* FAKEMATCH(pin): the half cell (128 << 11) started in r2, as the native
+   * does; as an ordinary local, 19 of 122 instructions differ in tla-en. */
+  register s32 half asm("r2");
   s32 angle = owner->angle >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = owner->x;
-  position[1] = (owner->y + 0x40000) & 0xfff80000;
+  half = 128;
+  /* FAKEMATCH(barrier): the half cell started before the owner's height is
+   * loaded, as the native does; without the barrier, 2 of 122 instructions
+   * differ in tla-en (as plain `owner->y + 0x40000`, also 2). */
+  __asm__ volatile("" : "+r"(half));
+  position[1] = (owner->y + (half << 11)) & 0xfff80000;
   position[2] = owner->z;
   Vector_AddPolarOffset(0x100000, angle, position);
   target = Func_080eaf28(position, 1);
@@ -36,9 +48,11 @@ s32 Func_080cdc74(void) {
     return 0;
   if (BYTE_AT(target, 98) != 0)
     return 0;
+#if LANGUAGE != LANGUAGE_JAPANESE
   id = gPartyState.pausedObject;
   if (id != 1 && target == Object_GetById(id))
     return 0;
+#endif
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;

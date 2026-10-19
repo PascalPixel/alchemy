@@ -1,0 +1,125 @@
+// Draft, differ 167 of 241 (2026-10-18), from the listing: spawns the
+// current scene's item objects (chests, jars, buried items) from the rows
+// Func_080ceba8 finds, at most 16. Left: the loop. The native tests the row
+// type once before the loop and again at its foot, with one pointer stepped
+// by 2 and 6 and no giv; as a while (type = *rows++ ...) the tests rotate
+// but loop.c splits the pointer in two (differ 193), and as a for (;;) with
+// the tests repeated GCC cross-jumps the two tests into one (this form).
+// The kind chain matches as an else-if chain.
+#include "types.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "object_runtime.h"
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+#define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
+
+struct SceneItemWork {
+  u8 unk000[0x114];
+  struct ObjectRuntime *objects[16];
+  u8 unk154[0x18a - 0x154];
+  s8 mode;
+};
+
+extern u8 gMapCellBuffer[];
+s16 *Func_080ceba8(void);
+s32 Func_080cec24(s32 value, s32 *out);
+struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+s32 GameFlag_Test(s32 flag);
+void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
+                                           u32 flags);
+void Func_080d3b28(s32 id, s32 item);
+
+void Func_080cec34(void) {
+  s16 *rows = Func_080ceba8();
+  struct SceneItemWork *work = Ram_HeapSlots->eventWork;
+  s32 i;
+  s32 type;
+  s32 id;
+  s32 flag;
+  s32 item;
+  s32 position[3];
+  s32 kind;
+  s32 buried;
+  struct ObjectRuntime *object;
+
+  if (rows == NULL)
+    return;
+  i = 0;
+  type = *rows++;
+  if (type == 0 || (type & 0x4000))
+    return;
+  for (;;) {
+    id = *rows++;
+    flag = *rows++;
+    item = *rows++;
+    if ((type == 128 || flag == -1 || !GameFlag_Test(flag)) &&
+        !Func_080cec24(id, position)) {
+      buried = 0;
+      if ((u16)(type - 128) <= 1)
+        kind = 487;
+      else if (type == 130)
+        kind = 265;
+      else if (type == 132)
+        kind = 322;
+      else if (type == 131)
+        kind = 489;
+      else {
+        kind = 489;
+        buried = 1;
+      }
+      object = Func_080200c0(kind, position[0], position[1], position[2]);
+      if (object != NULL) {
+        if (work->mode == 3) {
+          object->motionFlags = 2;
+          object->terrainHeight = 0;
+          object->y = 0;
+        } else {
+          object->terrainHeight =
+              Map_GetTerrainHeightFar(0, object->x, object->z);
+          object->y += object->terrainHeight;
+          if (buried) {
+            struct MapWork *map;
+            struct MapCell *cells;
+            struct MapCell *cell;
+            s32 x;
+            s32 z;
+
+            object->motionFlags = 2;
+            object->terrainHeight += 0xfff00000;
+            object->y = object->terrainHeight;
+            map = Ram_HeapSlots->mapWork;
+            cells = (struct MapCell *)gMapCellBuffer;
+            x = object->x >> 20;
+            z = object->z >> 20;
+            if (map != NULL)
+              cells = map->layers[0].cells;
+            cell = &cells[x + (z << 7)];
+            if ((u32)(cell->collisionCode - 242) <= 5)
+              cell->collisionCode = 0;
+          }
+        }
+        Object_SetMode(object, 1);
+        ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+        if (GameFlag_Test(flag))
+          Object_SetMode(object, 2);
+        Object_ResetMotion(object);
+        S16_AT(object, 100) = object->x / 0x10000;
+        S16_AT(object, 102) = object->z / 0x10000;
+        BYTE_AT(object, 35) = 1;
+        BYTE_AT(object, 89) = 1;
+        work->objects[i] = object;
+        if (type == 131)
+          Func_080d3b28(i + 64, item);
+        if (type == 133)
+          BYTE_AT(object, 89) = 0;
+      }
+    }
+    if (++i > 15)
+      break;
+    type = *rows++;
+    if (type == 0 || (type & 0x4000))
+      break;
+  }
+}

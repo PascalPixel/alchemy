@@ -1,16 +1,20 @@
+// Draft, differ 39 of 320 (2026-10-18): the twin of ☀️'s
+// Debug_RunPaletteEditor, reading this game's gInput (repeat for the keys,
+// held for Start's blink) and closing with Func_08014b70. Left: when L wraps
+// the palette to 13 the native repeats the redraw's first two shifts and
+// the tile store before it jumps back (as it does for R's wrap to 0, which
+// this draft matches), and a few scheduling swaps in the redraw.
 #include "types.h"
 #include "io_reg.h"
 
-extern volatile u32 gKeysRepeat;
-extern volatile u32 gData_03001ae8;
-extern volatile u32 gData_03001e40;
+#include "input.h"
 
 extern const u8 gDebug_PaletteSwatchTiles[];
 
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
 void Ui_LoadWindowGraphics(void);
-void DebugText_Clear(void);
+void Func_08014b70(void);
 
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
@@ -58,39 +62,39 @@ redraw:
   }
   WaitFrames(1);
   for (;;) {
-    if (gKeysRepeat & KEY_UP) {
+    if (gInput.repeat & KEY_UP) {
       channel--;
       if (channel <= 0)
         channel = 3;
     }
-    if (gKeysRepeat & KEY_DOWN) {
+    if (gInput.repeat & KEY_DOWN) {
       channel++;
       if (channel > 3)
         channel = 1;
     }
-    if (gKeysRepeat & KEY_LEFT) {
+    if (gInput.repeat & KEY_LEFT) {
       color--;
       if (color <= 0)
         color = 15;
     }
-    if (gKeysRepeat & KEY_RIGHT) {
+    if (gInput.repeat & KEY_RIGHT) {
       color++;
       if (color > 15)
         color = 1;
     }
-    if (gKeysRepeat & KEY_L) {
+    if (gInput.repeat & KEY_L) {
       palette--;
       if (palette < 0)
         palette = 13;
       goto redraw;
     }
-    if (gKeysRepeat & KEY_R) {
+    if (gInput.repeat & KEY_R) {
       palette++;
       if (palette > 13)
         palette = 0;
       goto redraw;
     }
-    if (gKeysRepeat & KEY_A) {
+    if (gInput.repeat & KEY_A) {
       colors = &PALETTE[palette * 16 + color];
       value = *colors;
       red = value & 31;
@@ -105,7 +109,7 @@ redraw:
       *colors = (blue << 10) | (green << 5) | red;
       goto redraw;
     }
-    if (gKeysRepeat & KEY_B) {
+    if (gInput.repeat & KEY_B) {
       colors = &PALETTE[palette * 16 + color];
       value = *colors;
       red = value & 31;
@@ -120,13 +124,13 @@ redraw:
       *colors = (blue << 10) | (green << 5) | red;
       goto redraw;
     }
-    if (gKeysRepeat & KEY_START) {
+    if (gInput.repeat & KEY_START) {
       colors = &PALETTE[palette * 16 + color];
       value = *colors;
       red = 0;
       for (;;) {
         WaitFrames(1);
-        if (!(gData_03001ae8 & 8))
+        if (!(gInput.held & KEY_START))
           break;
         if (red == 0)
           *colors = 0x7fff;
@@ -141,11 +145,10 @@ redraw:
       }
       *colors = value;
     }
-    if (gKeysRepeat & KEY_SELECT)
+    if (gInput.repeat & KEY_SELECT)
       break;
-    gData_03001e40;
     WaitFrames(1);
   }
   Ui_LoadWindowGraphics();
-  DebugText_Clear();
+  Func_08014b70();
 }

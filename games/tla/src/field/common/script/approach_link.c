@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 
 // SC_APPROACH_LINK, as ☀️'s function of the same name: follows the linked
@@ -49,10 +49,10 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
     moveZ = dz * remainingDistance / distancePixels;
     Object_SetMoveTarget(object, object->x + moveX, object->y,
                          object->z + moveZ);
-    ObjectDispatch_ApplyArgumentToChildren(object, 2);
+    ObjectDispatch_SelectAnimation(object, 2);
     object->step = (object->step + 1);
     return 1;
   }
-  ObjectDispatch_ApplyArgumentToChildren(object, 1);
+  ObjectDispatch_SelectAnimation(object, 1);
   return 0;
 }

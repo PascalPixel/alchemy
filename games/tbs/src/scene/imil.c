@@ -1334,7 +1334,7 @@ static void Imil_TurnSlidingActor(union FieldObject *object) {
     d = -0x1000;
   actor->facing = prev + d;
   Object_SetMode(actor, 2);
-  ObjectDispatch_ApplyValueToChildren((struct DispatchObject *)actor, 0x30);
+  ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor, 0x30);
 }
 
 // The leader slides along the ice until something stops him.
@@ -1383,7 +1383,7 @@ static void Imil_RunIceSlide(void) {
     subject->timer = 0;
     Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
     Object_SetMode(subject, 2);
-    ObjectDispatch_ApplyValueToChildren((struct DispatchObject *)subject, 48);
+    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)subject, 48);
     FieldObject_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;
 

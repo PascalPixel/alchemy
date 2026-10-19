@@ -151,7 +151,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Audio_PlayCue(212);
         Object_SetMode(BattleObjGet(unitId)->object, 3);
-        ObjectDispatch_ApplyValueToChildrenFar(
+        ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
         Func_08127308(unitId, i, 2, -1);
         BattleEventRuntime_WaitForReady();

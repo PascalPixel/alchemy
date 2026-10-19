@@ -320,12 +320,12 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
   s32 user;
 
   user = (s32)GetBattleObjectSlotFar(effect->actor)->object;
-  ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(user,
-                                         PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
+  ObjectDispatch_SelectAnimationFar(user, 2);
+  ObjectDispatch_SetAnimationSpeedFar(user,
+                                      PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleFx_RunProjectileVolley(effect, mode);
-  ObjectDispatch_ApplyValueToChildrenFar(
-      user, PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
+  ObjectDispatch_SetAnimationSpeedFar(user,
+                                      PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
 }
 
 // Abilities: Cutting Edge (kind 57).
@@ -949,7 +949,7 @@ void BattleFx_InitializeRisingObject(s32 id) {
   object->snapToTarget = 1;
   ObjectDispatch_InitFromTable6Far(object);
   Object_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
 // Moves a battler 80% of the way to another one over a number of frames,
@@ -988,7 +988,7 @@ void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->autoFaceMotion = 1;
   ObjectDispatch_InitFromTable6Far(object);
   Object_SetMoveTargetFar(object, x, 0, z);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+  ObjectDispatch_SelectAnimationFar(object, 2);
 }
 
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST

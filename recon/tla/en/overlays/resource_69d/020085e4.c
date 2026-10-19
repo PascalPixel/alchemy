@@ -72,7 +72,7 @@ next:
 
 extern u8 gData_020026f8[];
 extern s32 gData_02002718;
-void ObjectDispatch_ApplyValueToChildren();
+void ObjectDispatch_SetAnimationSpeed();
 s32 Func_02001ee8();
 void Func_02001ed8();
 void Func_02001db8();
@@ -109,10 +109,10 @@ void Func_02000990(struct FieldActor *ball) {
   leader = Object_GetById(gPartyState.currentOwner);
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_ApplyValueToChildren(ball, 0);
+    ObjectDispatch_SetAnimationSpeed(ball, 0);
     return;
   }
-  ObjectDispatch_ApplyValueToChildren(ball, 16);
+  ObjectDispatch_SetAnimationSpeed(ball, 16);
   t = ball->timer + 1;
   ball->timer = t;
   if ((t & 31) == 31)

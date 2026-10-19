@@ -21,7 +21,7 @@ s32 Func_080c8710(struct ObjectRuntime *object);
 s32 Func_080c8700(struct ObjectRuntime *object);
 s32 Func_0802da24(s32 *position);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
@@ -122,7 +122,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
       work->blockedSteps = 0;
     work->heldKeys = INPUT_HELD;
   }
-  ObjectDispatch_ApplyArgumentToChildren(object, animation);
+  ObjectDispatch_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;

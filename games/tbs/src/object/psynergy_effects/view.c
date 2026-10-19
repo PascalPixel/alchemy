@@ -161,7 +161,7 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)bubble,
                                    gBattleFx_LinkedObjectScript);
-      ObjectDispatch_ApplyArgumentToChildrenFar(bubble, emote & 15);
+      ObjectDispatch_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->work = actor;
@@ -239,12 +239,12 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   mode = flags & 3;
   switch (mode) {
   case 1:
-    ObjectDispatch_ApplyArgumentToChildrenFar(effect, 1);
+    ObjectDispatch_SelectAnimationFar(effect, 1);
     object->linkedObject = effect;
     effect->timer = 1;
     break;
   case 2:
-    ObjectDispatch_ApplyArgumentToChildrenFar(effect, 2);
+    ObjectDispatch_SelectAnimationFar(effect, 2);
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
                                  (u32)gObjectMotion_WaitScript);
     effect->timer = 1;

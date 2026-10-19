@@ -57,7 +57,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
   PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObjGet(work.actor)->object;
   Object_SetMode(object, 3);
-  ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);

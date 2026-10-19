@@ -86,7 +86,7 @@ void BattleFx_EndCanvasLayer(void);         // BattleFx_EndCanvasLayer
 void SummonFx_RunCanvasMode2(struct BattleEffectArgument *effect);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
-s32 ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
+s32 ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                            s32 value);
 // The target is a whole word here: variant 3 passes the user twice, loaded once
 // and copied, where an s16 parameter would load it again halved.
@@ -168,7 +168,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
 
     Object_SetMode(user, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(user, 48);
+    ObjectDispatch_SetAnimationSpeedFar(user, 48);
   } else
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
   if (variant == 4)
@@ -259,7 +259,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     SummonFx_RunCanvasMode2(effect);
   } else {
     if (variant == 4)
-      ObjectDispatch_ApplyValueToChildrenFar(
+      ObjectDispatch_SetAnimationSpeedFar(
           GetBattleObjectSlotFar(effect->actor)->object, 16);
     BattleFx_EndCanvasLayer();
   }

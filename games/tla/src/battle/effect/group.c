@@ -10,9 +10,9 @@
 #include "object_runtime.h"
 #include "ram_buffer.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar                                 \
+#define ObjectDispatch_SetAnimationSpeedFar                                 \
   ((void (*)(struct ObjectRuntime *,                                           \
-             s32))ObjectDispatch_ApplyValueToChildrenFar)
+             s32))ObjectDispatch_SetAnimationSpeedFar)
 
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
@@ -62,7 +62,7 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
       object->movementState = groupMode;
-      ObjectDispatch_ApplyValueToChildrenFar(object, action);
+      ObjectDispatch_SetAnimationSpeedFar(object, action);
     }
     objectId++;
   } while (objectId <= 0x50);

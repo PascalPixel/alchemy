@@ -418,7 +418,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
-  ObjectDispatch_ApplyValueToChildrenFar(casterActor, 0);
+  ObjectDispatch_SetAnimationSpeedFar(casterActor, 0);
   position = &djinnPos;
   SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
                casterActor->z);
@@ -540,7 +540,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == CASTING_IMPACT_IMPACT_15 || mode == CASTING_IMPACT_IMPACT_17 ||
       mode == CASTING_IMPACT_IMPACT_24 || mode == CASTING_IMPACT_IMPACT_26) {
     CastingImpact_EndPrelude(work, canvas);
-    ObjectDispatch_ApplyArgumentToChildrenFar(casterActor, 3);
+    ObjectDispatch_SelectAnimationFar(casterActor, 3);
     if (mode == CASTING_IMPACT_IMPACT_15) {
       BattleFx_RunProjectileVolley(effect, 9);
     }
@@ -553,7 +553,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_RunProjectileVolley(effect, 8);
     return;
   }
-  ObjectDispatch_ApplyValueToChildrenFar(casterActor, 16);
+  ObjectDispatch_SetAnimationSpeedFar(casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;

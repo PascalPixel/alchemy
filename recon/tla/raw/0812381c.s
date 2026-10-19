@@ -1081,7 +1081,7 @@ Func_0812381c:
 	bl BattleObjGet
 	movs r1, #32
 	ldr r0, [r0]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	mov r0, r10
 	ldr r3, [r0]
 	movs r2, #3

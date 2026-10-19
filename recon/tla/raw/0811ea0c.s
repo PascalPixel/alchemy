@@ -200,14 +200,14 @@ Func_0811ea0c:
 	bl BattleMotion_ApproachTarget
 	ldr r0, [r5]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 .L_0811ebb8:
 	mov r1, r8
 	ldr r0, [r1, #8]
 	bl BattleObjGet
 	movs r1, #16
 	ldr r0, [r0]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	mov r2, r8
 	ldrh r3, [r2, #36]
 	cmp r3, #7

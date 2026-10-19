@@ -99,13 +99,13 @@ void FieldFx_RunRetreat(void) {
   WaitFrames(30);
   obj->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(SE_131);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 28);
+  ObjectDispatch_SelectAnimationFar(obj, 28);
   WaitFrames(40);
 
   // Start spinning.
   AudioCommand_PlayFar(SE_220);
   Animation_ApplyChildValuesFar(obj, 0);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
+  ObjectDispatch_SelectAnimationFar(obj, 3);
   obj->update = FieldFx_UpdateSpinAngle;
   obj->timer = 0;
   WaitFrames(70);

@@ -227,7 +227,7 @@ BattleFx_RunGeode:
 	strh r0, [r5]
 	ldr r0, [sp, #32]
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r3, #8
 	str r3, [sp, #0]
 	movs r1, #16
@@ -1272,7 +1272,7 @@ BattleFx_RunGeode:
 .L_0816d0d4:
 	ldr r0, [sp, #32]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816d12c

@@ -70,10 +70,10 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02005d5c:
 	overlay_veneer Object_SetMode
-	.global ObjectDispatch_ApplyValueToChildren
+	.global ObjectDispatch_SetAnimationSpeed
 	.thumb_func
-ObjectDispatch_ApplyValueToChildren:
-	overlay_veneer ObjectDispatch_ApplyValueToChildrenFar
+ObjectDispatch_SetAnimationSpeed:
+	overlay_veneer ObjectDispatch_SetAnimationSpeedFar
 	.global Func_02005d6c
 	.thumb_func
 Func_02005d6c:

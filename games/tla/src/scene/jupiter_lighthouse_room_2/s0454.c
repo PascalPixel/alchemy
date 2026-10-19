@@ -7,7 +7,7 @@ void WaitFrames(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 void Func_020022bc(s32 a);
 
@@ -28,7 +28,7 @@ void Func_02000454(void) {
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
     ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
     ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 216, 680);
-    ObjectDispatch_ApplyValueToChildren(object, 64);
+    ObjectDispatch_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
       object->y += 0x30000;

@@ -80,7 +80,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
     ((struct AnimationObject *)fragment->records)->image.priority = 0;
-    ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 3);
+    ObjectDispatch_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
     if (scale < 0x10000) {
       do {

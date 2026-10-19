@@ -398,14 +398,14 @@ Func_02000750:
 .L_020087ae:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_020088fa
 .L_020087b8:
 	.4byte gPartyState
 .L_020087bc:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]

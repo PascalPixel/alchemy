@@ -39,7 +39,7 @@ void Func_0200446c(s32 cue);
 void Func_020041dc(struct ObjectRuntime *object, const void *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 void Func_02002738(void);
 extern u32 gInput;

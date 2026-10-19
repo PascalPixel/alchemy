@@ -274,7 +274,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       if ((target <= 7) != (units[i] <= 7))
         BattlePres_SetActorRecordMode(units[i], 1);
     } else {
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
+      ObjectDispatch_SelectAnimationFar(object, 3);
     }
   }
   // The sound of a cast, as the caster raises its hand.
@@ -449,7 +449,7 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
                                                  2, 1);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], frames,
                               BattleClass_GetAttackHop(unit->classId) << 16);
-  ObjectDispatch_ApplyValueToChildrenFar(
+  ObjectDispatch_SetAnimationSpeedFar(
       (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(work.effect.actors[0]);
 
@@ -577,7 +577,7 @@ UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
                                                  2, 1);
   BattleMotion_ApproachTarget(work.effect.actor, savedInput->targetIds[0],
                               frames, 0);
-  ObjectDispatch_ApplyValueToChildrenFar(
+  ObjectDispatch_SetAnimationSpeedFar(
       (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(savedInput->targetIds[0]);
 
@@ -630,8 +630,8 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
   BattlePres_BuildTargetList(plan, &work.effect);
   BattlePres_SetActorModes(0, 0);
   object = BattleObjGet(work.effect.actor)->object;
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
-  ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SelectAnimationFar(object, 3);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.effect.side = 1;
   else
@@ -677,7 +677,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     WaitFrames(60);
   }
   BattleEventRuntime_WaitForReady();
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, 1);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++)
     ObjMotRst(work.effect.actors[targetOrFadeIndex]);
@@ -794,8 +794,8 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   BattlePres_SetActorModes(0, 0);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   object = BattleObjGet(work.effect.actor)->object;
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
-  ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SelectAnimationFar(object, 3);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   // The sound of a cast, as the caster raises its hand.
   AudioCommand_PlayFar(SE_CAST);
   if (mode & 2)
@@ -836,7 +836,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       BattlePres_RestorePalette();
     }
     BattleEventRuntime_WaitForReady();
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
     for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
       ObjMotRst(work.effect.actors[targetIndex]);
   }
@@ -853,7 +853,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   s32 flashesRemaining;
 
   UnitGetFar(unitId);
-  ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(unitId)->object, 5);
+  ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 5);
 
   selected = selection;
   flashesRemaining = 1;

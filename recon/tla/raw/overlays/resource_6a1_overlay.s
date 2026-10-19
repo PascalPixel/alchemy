@@ -395,14 +395,14 @@ Func_02000628:
 .L_02008686:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_020087d2
 .L_02008690:
 	.4byte gPartyState
 .L_02008694:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]

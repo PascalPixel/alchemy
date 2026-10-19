@@ -795,7 +795,7 @@ Func_08027064:
 	beq .L_080276aa
 	mov r0, r8
 	movs r1, #8
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_080276f4
 .L_080276aa:
 	ldr r2, [sp, #36]
@@ -816,7 +816,7 @@ Func_08027064:
 .L_080276ca:
 	mov r0, r8
 	adds r1, r5, #0
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_080276f4
 .L_080276d4:
 	.4byte 0xfffff000
@@ -833,7 +833,7 @@ Func_08027064:
 .L_080276ec:
 	mov r0, r8
 	ldr r1, [sp, #16]
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 .L_080276f4:
 	ldr r2, [sp, #36]
 	cmp r2, #0

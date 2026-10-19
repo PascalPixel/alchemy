@@ -118,7 +118,7 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   if (object != NULL) {
     object->movementState = 0;
     ObjectDispatch_InitFromTable6Far(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+    ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
@@ -131,10 +131,10 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
   if (object != NULL) {
     object->movementState = 0;
     ObjectDispatch_InitFromTable6Far(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+    ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     FieldObject_WaitForMoveFar(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
 
@@ -159,7 +159,7 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     offsetInColumn = pixelX - columnX;
     object->movementState = 0;
     ObjectDispatch_InitFromTable6Far(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+    ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
     FieldObject_WaitForMoveFar(object);
@@ -192,7 +192,7 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
   if (object != NULL) {
     object->movementState = 0;
     ObjectDispatch_InitFromTable6Far(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+    ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
@@ -207,7 +207,7 @@ void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
   ObjectMotion_OffsetPositionAndReset(objectId, xOffset, zOffset);
   if (object != NULL) {
     FieldObject_WaitForMoveFar(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
 
@@ -227,7 +227,7 @@ void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
       ObjectMotion_SetHorizontalPositionWithTerrain(objectId, leader->x,
                                                     leader->z);
     object->movementState = 0;
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+    ObjectDispatch_SelectAnimationFar(object, 2);
     ObjectMotion_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                  (const s32 *)&gObjectMotion_LaunchScript);
@@ -242,7 +242,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 
   if (object != NULL) {
     FieldObject_WaitForMoveFar(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
 
@@ -323,7 +323,7 @@ void Object_SetModeById(u32 objectId, s32 animation) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
+    ObjectDispatch_SelectAnimationFar(object, animation);
 }
 
 // Sets the animation timer steps of each of an actor's sprites
@@ -332,8 +332,7 @@ void Object_SetActionById(u32 objectId, s32 steps) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object,
-                                           steps);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, steps);
 }
 
 // Waits, at most 90 frames, for an actor's animation to change.
@@ -463,12 +462,12 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     child = object->sprite;
     switch (Random16() & 1) {
     case 1:
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+      ObjectDispatch_SelectAnimationFar(object, 2);
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                    (const s32 *)gBattleFx_BurstParticleScriptA);
       break;
     default:
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+      ObjectDispatch_SelectAnimationFar(object, 1);
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                    (const s32 *)gBattleFx_BurstParticleScriptB);
       break;
@@ -506,12 +505,12 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   startZ = object->z;
   if (object != 0) {
     AudioCommand_PlayFar(SE_289);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, pose);
+    ObjectDispatch_SelectAnimationFar(object, pose);
     WaitFrames(10);
 
     // Hop up and forward 12 pixels.
     objectFlags = &object->flags;
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
     {
       u8 flags = 2;
       flags |= *objectFlags;
@@ -779,7 +778,7 @@ void Object_ResetTargetAndSetMode1(u32 objectId) {
     object->targetY = ACTOR_NO_TARGET;
     object->targetZ = ACTOR_NO_TARGET;
     ObjectDispatch_InitFromTable6Far(object);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
 

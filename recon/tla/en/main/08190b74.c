@@ -87,7 +87,7 @@ void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 void Object_SetMode(struct MotionObject *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
+void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
@@ -221,7 +221,7 @@ void BattleFx_RunOdyssey(struct BattleEffectArgument *effect) {
     if (frame == 84) {
       Audio_PlayCue(212);
       Object_SetMode(caster, 2);
-      ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
+      ObjectDispatch_SetAnimationSpeedFar(caster, 48);
       BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
     }
 

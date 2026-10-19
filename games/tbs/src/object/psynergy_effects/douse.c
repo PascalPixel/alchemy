@@ -210,7 +210,7 @@ void FieldFx_RunDouse(void) {
         particle->callback = BattleFx_UpdateDriftingFallObject;
         particle->flag = 0;
         particle->sprite->mode = 2;
-        ObjectDispatch_ApplyArgumentToChildrenFar(particle, 8);
+        ObjectDispatch_SelectAnimationFar(particle, 8);
         Animation_ApplyChildValuesFar(particle, 7);
       }
       WaitFrames(6);

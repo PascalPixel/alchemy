@@ -3269,7 +3269,7 @@ Func_08173aac:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #212
 	bl Audio_PlayCue
 .L_0817549e:
@@ -3281,7 +3281,7 @@ Func_08173aac:
 	bl GetBattleObjectSlotFar
 	movs r1, #16
 	ldr r0, [r0]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 .L_081754b4:
 	mov r5, r11
 	cmp r5, #22

@@ -4323,14 +4323,14 @@ Func_020032b4:
 .L_0200b312:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_0200b45e
 .L_0200b31c:
 	.4byte gPartyState
 .L_0200b320:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]

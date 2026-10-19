@@ -437,7 +437,7 @@ Func_08028aac:
 	blt .L_08028e1e
 	adds r0, r7, #0
 	movs r1, #6
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_08028e36
 .L_08028e1e:
 	ldr r2, [sp, #12]
@@ -445,12 +445,12 @@ Func_08028aac:
 	beq .L_08028e2e
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_08028e36
 .L_08028e2e:
 	adds r0, r7, #0
 	movs r1, #2
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 .L_08028e36:
 	ldr r3, [sp, #12]
 	cmp r3, #0

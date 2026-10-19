@@ -51,7 +51,7 @@ Func_0811edb0:
 	bl Object_SetMode
 	mov r0, r9
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	mov r2, r10
 	ldrb r3, [r2, #3]
 	cmp r3, #7

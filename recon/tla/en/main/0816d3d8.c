@@ -79,7 +79,7 @@ void ObjectGroup_TickMemberTimers(void);                // ObjectGroup_TickMembe
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void BattleFx_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
+void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -139,7 +139,7 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
   scrollSpeed = 0;
   cueTimer = 0;
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  ObjectDispatch_ApplyValueToChildrenFar(user, 48);
+  ObjectDispatch_SetAnimationSpeedFar(user, 48);
 
   for (frame = 0; frame != 107; frame++) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
@@ -247,7 +247,7 @@ void BattleFx_RunStoneJustice(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  ObjectDispatch_ApplyValueToChildrenFar(user, 16);
+  ObjectDispatch_SetAnimationSpeedFar(user, 16);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
   BattleFx_EndCanvasLayer();

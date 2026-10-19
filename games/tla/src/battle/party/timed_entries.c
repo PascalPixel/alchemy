@@ -215,7 +215,7 @@ s32 Func_08124cc4(s32 side) {
           BattleEvPush(11, id);
           if (BattleParty_IsUnitListed(id)) {
             Object_SetMode((struct ObjectRuntime *)BattleObjGet(id)->object, 3);
-            ObjectDispatch_ApplyValueToChildrenFar(
+            ObjectDispatch_SetAnimationSpeedFar(
                 (struct DispatchObject *)BattleObjGet(id)->object, 32);
           }
           element = entry->element;

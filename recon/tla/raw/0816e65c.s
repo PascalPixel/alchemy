@@ -232,7 +232,7 @@ Func_0816e65c:
 	bl Func_0814cd48
 	movs r1, #32
 	ldr r0, [sp, #28]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 .L_0816e82e:
 	movs r0, #32
 	bl Runtime_BumpAllocateAlternatePool
@@ -731,7 +731,7 @@ Func_0816e65c:
 .L_0816ec16:
 	ldr r0, [sp, #28]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816ec54

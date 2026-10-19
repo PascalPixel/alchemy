@@ -115,7 +115,7 @@ void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
+void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -211,7 +211,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
   // The caster lunges at the target.
   BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  ObjectDispatch_ApplyValueToChildrenFar(
+  ObjectDispatch_SetAnimationSpeedFar(
       GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &target);

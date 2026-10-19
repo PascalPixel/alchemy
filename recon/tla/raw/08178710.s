@@ -81,7 +81,7 @@ BattleFx_RunRisingDragon:
 	ldr r0, [r0]
 	movs r1, #48
 	str r0, [sp, #52]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r1, #2
 	ldr r0, [sp, #52]
 	bl Object_SetMode
@@ -969,7 +969,7 @@ BattleFx_RunRisingDragon:
 .L_08178ea4:
 	ldr r0, [sp, #52]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08178ee0

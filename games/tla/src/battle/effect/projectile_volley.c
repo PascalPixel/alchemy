@@ -12,8 +12,8 @@
 #include "motobj.h"
 #include "field_event.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar                                 \
-  ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_SetAnimationSpeedFar                                 \
+  ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleFx_RunSlash, BattleFx_RunProjectileVolley, 0)
 
@@ -32,9 +32,9 @@ void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
   BattleFx_RunProjectileVolley(effect, 5);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
@@ -42,9 +42,9 @@ void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
   BattleFx_RunProjectileVolley(effect, 6);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
 DEFINE_EFFECT_KIND(BattleFx_RunSleet, BattleFx_RunProjectileVolley, 7)
@@ -54,9 +54,9 @@ void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
   BattleFx_RunProjectileVolley(effect, 9);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleFx_RunProjectileVolleyMode12WithAction(
@@ -65,9 +65,9 @@ void BattleFx_RunProjectileVolleyMode12WithAction(
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
   BattleFx_RunProjectileVolley(effect, 12);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleFx_RunProjectileVolleyMode13WithAction(
@@ -76,9 +76,9 @@ void BattleFx_RunProjectileVolleyMode13WithAction(
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
   BattleFx_RunProjectileVolley(effect, 13);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleFx_RunProjectileVolleyMode14WithAction(
@@ -87,9 +87,9 @@ void BattleFx_RunProjectileVolleyMode14WithAction(
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x30);
   BattleFx_RunProjectileVolley(effect, 14);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }
 
 DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode15,

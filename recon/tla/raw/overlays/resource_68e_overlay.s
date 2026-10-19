@@ -798,7 +798,7 @@ Func_02000884:
 	ldr r3, [r5, #80]
 	strb r2, [r3, #26]
 	ldr r1, [sp, #20]
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 .L_020088ba:
 	ldr r0, [r5, #80]
 	movs r1, #0

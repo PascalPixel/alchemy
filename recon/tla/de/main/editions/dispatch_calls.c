@@ -56,7 +56,7 @@ extern const s32 gObjectDispatch_Table6[];
 
 #endif
 
-void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object,
+void ObjectDispatch_SelectAnimation(struct DispatchObject *object,
                                             s32 argument) {
   struct DispatchChild **items;
   struct DispatchChild *item;
@@ -81,7 +81,7 @@ void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object,
+void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object,
                                          s32 value) {
   s32 count;
   struct DispatchChild *child;
@@ -106,7 +106,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object,
   }
 }
 
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object,
+void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
                                         s32 argument, s32 value) {
   struct DispatchChild **items;
   struct DispatchChild *item;

@@ -96,7 +96,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   object->velocityZ = zero;
   object->targetX = ACTOR_NO_TARGET;
   object->targetZ = ACTOR_NO_TARGET;
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
+  ObjectDispatch_SelectAnimationFar(object, animation);
   WaitFrames(18);
 }
 
@@ -131,7 +131,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   eff->param = 15;
   leader->x = (leader->x & mask) + 0x80000;
   leader->z &= mask;
-  ObjectDispatch_ApplyArgumentToChildrenFar(leader, animation);
+  ObjectDispatch_SelectAnimationFar(leader, animation);
   WaitFrames(30);
   spriteAnimation->count = 1;
   ResourceMetadata_ClearRecordFar(spriteAnimation->entries[1]);
@@ -177,7 +177,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         }
         AudioCommand_PlayFar(SE_159);
         leader->y = leader->terrainHeight;
-        ObjectDispatch_ApplyArgumentToChildrenFar(leader, 22);
+        ObjectDispatch_SelectAnimationFar(leader, 22);
         FieldEvent_WaitFrames(15);
         Camera_FollowActor(leaderId, 1);
         result = 3;

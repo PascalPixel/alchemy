@@ -111,7 +111,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   saved = Func_0811e3ac(plan, &work);
   object = BattleObjGet(work.actor)->object;
   Object_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
-  ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   Audio_PlayCue(154);
   if (mode & 2)
     Func_08127308(work.actor, plan->element, 1, 0);

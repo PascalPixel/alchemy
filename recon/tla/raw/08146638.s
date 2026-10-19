@@ -48,7 +48,7 @@ BattleFx_RunAstralBlast:
 	bl Object_SetMode
 	adds r0, r6, #0
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r1, #19
 	movs r0, #104
 	bl BattleFx_LoadBlitter

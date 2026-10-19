@@ -238,7 +238,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId) {
-      ObjectDispatch_ApplyArgumentToChildrenFar(actorRecord, 3);
+      ObjectDispatch_SelectAnimationFar(actorRecord, 3);
     }
   }
 
@@ -334,8 +334,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   UiWork_PushValueSlotFar(work.effect.actor, VALUE_UNIT_NAME);
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], 13, 0);
-  ObjectDispatch_ApplyValueToChildrenFar(
-      BattleObjGet(work.effect.actor)->object, 16);
+  ObjectDispatch_SetAnimationSpeedFar(BattleObjGet(work.effect.actor)->object,
+                                      16);
   BattleObjGet(work.effect.actors[0]);
 
   work.effect.count = 1;
@@ -389,8 +389,8 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
         BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   object = BattleObjGet(work.effect.actor)->object;
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+  ObjectDispatch_SelectAnimationFar(object, 3);
+  ObjectDispatch_SetAnimationSpeedFar(object, 16);
   if ((u16)action->target <= 7) {
     work.effect.side = 1;
     BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
@@ -426,7 +426,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
     BattleFx_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
     BattleFx_RunTableEffectFar(&work.effect);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
     ObjMotRst(work.effect.actors[targetIndex]);
@@ -459,7 +459,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
     unit->hp = 0;
 
   battleObject = BattleObjGet(unitId);
-  ObjectDispatch_ApplyArgumentToChildrenFar(battleObject->object, 5);
+  ObjectDispatch_SelectAnimationFar(battleObject->object, 5);
   PartyStatusDrawFar(0);
   UiWork_ClearValueNameTablesFar();
 
@@ -490,7 +490,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   battleObject = BattleObjGet(unitId);
-  ObjectDispatch_ApplyArgumentToChildrenFar(battleObject->object, 1);
+  ObjectDispatch_SelectAnimationFar(battleObject->object, 1);
 }
 
 // For a unit whose HP has run out: plays its falling animation to the last

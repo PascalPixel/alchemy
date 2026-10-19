@@ -81,7 +81,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   scene->y = caster->y;
   orb = Object_Spawn(250, 0, 0, 0);
   step = 0;
-  ObjectDispatch_ApplyArgumentToChildrenFar(orb, 0);
+  ObjectDispatch_SelectAnimationFar(orb, 0);
   if (orb == 0)
     return;
 
@@ -110,7 +110,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   }
 
   WaitFrames(5);
-  ObjectDispatch_ApplyArgumentToChildrenFar(orb, 1);
+  ObjectDispatch_SelectAnimationFar(orb, 1);
   AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
   AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
@@ -171,7 +171,7 @@ void BattleEffect_PauseObject(s32 actorId) {
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
     object->paused = 1;
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0);
+    ObjectDispatch_SetAnimationSpeedFar(object, 0);
   }
 }
 
@@ -187,7 +187,7 @@ void BattleFx_ResumeObject(s32 actorId) {
       Animation_ApplyChildValuesFar(object, state->pausedPose);
     }
     object->paused = 0;
-    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+    ObjectDispatch_SetAnimationSpeedFar(object, 16);
   }
 }
 

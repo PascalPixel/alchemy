@@ -159,7 +159,7 @@ void FieldFx_RunFrost(void) {
 
     if (scene->childOption == 0) {
       AudioCommand_PlayFar(SE_220);
-      ObjectDispatch_ApplyArgumentToChildrenFar(target, 2);
+      ObjectDispatch_SelectAnimationFar(target, 2);
     }
 
     target->update = BattleFx_UpdateOrbitingParticleMain;

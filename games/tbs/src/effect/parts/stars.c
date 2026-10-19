@@ -55,8 +55,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  ObjectDispatch_ApplyArgumentToChildrenFar(caster, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
+  ObjectDispatch_SelectAnimationFar(caster, 2);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 48);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;

@@ -194,7 +194,7 @@ void EventObject_Initialize(void) {
   caster = scene->mainObject;
   ability = (s16)scene->action;
   announcedAbility = ability;
-  ObjectDispatch_ApplyArgumentToChildrenFar(caster, 0x14);
+  ObjectDispatch_SelectAnimationFar(caster, 0x14);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
@@ -221,7 +221,7 @@ void EventObject_Initialize(void) {
     if (scene->visible != 0) {
       caster->update = FieldFx_CycleObjectValueByCounter;
     }
-    ObjectDispatch_ApplyArgumentToChildrenFar(caster, 0x15);
+    ObjectDispatch_SelectAnimationFar(caster, 0x15);
   } else {
     EffectRuntime_StopCurrentObject();
   }

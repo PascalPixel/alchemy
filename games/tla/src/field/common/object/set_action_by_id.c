@@ -12,9 +12,9 @@
 #include "objdisp.h"
 #include "system.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar                                 \
+#define ObjectDispatch_SetAnimationSpeedFar                                 \
   ((void (*)(struct ObjectRuntime *,                                           \
-             s32))ObjectDispatch_ApplyValueToChildrenFar)
+             s32))ObjectDispatch_SetAnimationSpeedFar)
 
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 
@@ -39,5 +39,5 @@ void Object_SetActionById(u32 objectId, s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    ObjectDispatch_ApplyValueToChildrenFar(object, action);
+    ObjectDispatch_SetAnimationSpeedFar(object, action);
 }

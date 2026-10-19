@@ -63,7 +63,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802db64(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
@@ -170,9 +170,9 @@ update_object:
       work->blockedSteps = 0;
   }
   if (collision != 0)
-    ObjectDispatch_ApplyArgumentToChildren(object, 9);
+    ObjectDispatch_SelectAnimation(object, 9);
   else
-    ObjectDispatch_ApplyArgumentToChildren(object, movementAnimation);
+    ObjectDispatch_SelectAnimation(object, movementAnimation);
 
   if (collision != 0) {
     object->targetX = 0x80000000;

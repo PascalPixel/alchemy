@@ -298,9 +298,8 @@ s32 Battle_ProcessRoundEnd(void) {
             PUSH_MESSAGE(MsgDjinnSet);
             BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
             AudioCommand_PlayFar(SE_212);
-            ObjectDispatch_ApplyArgumentToChildrenFar(
-                BattleObjGet(unitId)->object, 3);
-            ObjectDispatch_ApplyValueToChildrenFar(
+            ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 3);
+            ObjectDispatch_SetAnimationSpeedFar(
                 (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
             element = expiredEntry->element;
             Djinn_ActivateFar(unitId, element, expiredEntry->index);
@@ -557,9 +556,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
         AudioCommand_PlayFar(SE_212);
-        ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(unitId)->object,
-                                                  3);
-        ObjectDispatch_ApplyValueToChildrenFar(
+        ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 3);
+        ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
         BattleFx_PlayUnitElementEffect(unitId, i, 2, largestSummonCost - 1);
         BattleEventRuntime_WaitForReady();

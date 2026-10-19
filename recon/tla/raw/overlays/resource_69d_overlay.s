@@ -236,7 +236,7 @@ Func_02000384:
 	bl Object_SetModeById
 	adds r0, r6, #0
 	movs r1, #64
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r3, .L_020084f8
 	movs r1, #85
 	adds r1, r1, r6
@@ -737,14 +737,14 @@ Func_02000990:
 .L_020089ee:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_02008b3a
 .L_020089f8:
 	.4byte gPartyState
 .L_020089fc:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]

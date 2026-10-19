@@ -249,7 +249,7 @@ Func_0811e3ac:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #128
 	lsls r0, r0, #19
 	movs r1, #253

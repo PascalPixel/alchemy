@@ -989,7 +989,7 @@ Func_02000f00:
 	bl ObjectMotion_ResetTargetsAndVelocity
 	adds r0, r5, #0
 	movs r1, #10
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r5, #48]
@@ -1007,7 +1007,7 @@ Func_02000f00:
 	strb r3, [r2]
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 .L_02008f86:
 	pop {r3}
 	mov r8, r3
@@ -1073,7 +1073,7 @@ Func_02000fac:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 .L_02009004:
 	movs r2, #128
 	ldr r1, .L_02009038
@@ -1088,7 +1088,7 @@ Func_02000fac:
 	ldr r3, .L_02009044
 	adds r0, r6, #0
 	ldr r1, [r3]
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009028:

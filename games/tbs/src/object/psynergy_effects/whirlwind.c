@@ -172,7 +172,7 @@ void FieldFx_RunWhirlwind(void) {
     return;
   }
   BattleEffect_InitializeSharedScene();
-  ObjectDispatch_ApplyArgumentToChildrenFar(ball, 2);
+  ObjectDispatch_SelectAnimationFar(ball, 2);
   do {
     s32 scale;
     ball->x.fixed = from.x + step * (to.x - from.x) / 10;
@@ -217,7 +217,7 @@ void FieldFx_RunWhirlwind(void) {
     WaitFrames(20);
     WaitFrames(120);
   }
-  ObjectDispatch_ApplyArgumentToChildrenFar(ball, 1);
+  ObjectDispatch_SelectAnimationFar(ball, 1);
   WaitFrames(30);
   AudioCommand_PlayFar(SE_136);
   WaitFrames(20);

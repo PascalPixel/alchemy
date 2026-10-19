@@ -465,9 +465,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         AudioCommand_PlayFar(SE_212);
-        ObjectDispatch_ApplyArgumentToChildrenFar(
-            BattleObjGet(request->unitId)->object, 3);
-        ObjectDispatch_ApplyValueToChildrenFar(
+        ObjectDispatch_SelectAnimationFar(BattleObjGet(request->unitId)->object,
+                                          3);
+        ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(request->unitId)->object, 32);
         BattleFx_PlayUnitElementEffect(request->unitId,
                                        DJINN_ELEMENT(request->parameter), 3, 0);

@@ -719,7 +719,7 @@ Func_08027e20:
 .L_080283b8:
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_080283e0
 	.2byte 0x0000
 .L_080283c4:
@@ -735,7 +735,7 @@ Func_08027e20:
 .L_080283d8:
 	mov r0, r8
 	movs r1, #2
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 .L_080283e0:
 	ldr r3, .L_08028520
 	ldr r1, .L_08028524

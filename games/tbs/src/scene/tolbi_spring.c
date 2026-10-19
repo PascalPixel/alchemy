@@ -796,8 +796,8 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
     zero.v = 0;
     actor->motionFlags = zero.v;
     actor->sprite->flags = zero.v;
-    ObjectDispatch_ApplyValueToChildren((struct DispatchObject *)actor,
-                                        childValue);
+    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor,
+                                     childValue);
   }
   // BUG: the original still dereferences actor here when lookup returned NULL.
   sprite = actor->sprite;

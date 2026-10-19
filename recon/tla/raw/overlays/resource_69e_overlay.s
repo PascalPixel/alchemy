@@ -63,7 +63,7 @@ Func_020002b8:
 	bl Func_02002a40
 	movs r1, #64
 	adds r0, r7, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	movs r0, #50
 	bl FieldEvent_WaitFrames
 	movs r0, #178
@@ -280,7 +280,7 @@ Func_020002b8:
 	str r3, [r7, #108]
 	adds r0, r7, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r3, .L_02008570
 	movs r1, #133
 	lsls r1, r1, #2
@@ -838,14 +838,14 @@ Func_02001070:
 .L_020090ce:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_0200921a
 .L_020090d8:
 	.4byte gPartyState
 .L_020090dc:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]

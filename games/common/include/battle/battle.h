@@ -75,8 +75,8 @@ void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
-void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object,
-                                            s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *object,
+                                         s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);

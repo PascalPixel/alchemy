@@ -85,7 +85,7 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
     // Draw the sparkle at priority 1.
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_ParticleScript);
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
+    ObjectDispatch_SelectAnimationFar(obj, 0);
     ((struct AnimationObject *)obj->animation)->image.priority = 1;
   }
 }
@@ -216,7 +216,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   object->flags = 0;
   Object_SetMoveTargetFar(object, leader->x, leader->y + (36 << 16), leader->z);
   WaitFrames(3);
-  ObjectDispatch_ApplyArgumentToChildrenFar(leader, 28);
+  ObjectDispatch_SelectAnimationFar(leader, 28);
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                gBattleFx_RisingPulseScript);
   leader->angle = 0x4000;
@@ -246,7 +246,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
     if (flags == 3) {
       WaitFrames(80);
     }
-    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
+    ObjectDispatch_SelectAnimationFar(leader, 1);
   }
 }
 
@@ -277,7 +277,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
       ItemDisplay_RaiseAboveLeader((struct ObjectRuntime *)object);
 
     WaitFrames(80);
-    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
+    ObjectDispatch_SelectAnimationFar(leader, 1);
     ObjectDispatch_ReleaseFar(object);
   }
 }

@@ -120,7 +120,7 @@ extern s32 gCameraSceneParameters[];
 
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleFx_BuildRepeatingTilemap(void);
@@ -200,7 +200,7 @@ void BattleFx_RunMegiddo(struct BattleEffectArgument *effect) {
     }
   }
   casterValue = caster[18];
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 0);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 0);
   caster[9] = 0;
   caster[10] = 0;
   caster[11] = 0;
@@ -354,7 +354,7 @@ void BattleFx_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 84) {
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x785, 0x20000);
-      ObjectDispatch_ApplyValueToChildrenFar(caster, 128);
+      ObjectDispatch_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       work->transferMode = 3;
       work->transferValue = 0x06060606;

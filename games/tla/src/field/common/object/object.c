@@ -375,7 +375,7 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
 //--------------------------------------------------------------------------
 // Set animation no on all of the object's graphics.
 //--------------------------------------------------------------------------
-void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no) {
+void ObjectDispatch_SelectAnimation(void *raw, s32 no) {
   struct DispatchObject *obj;
   void **list;
   s32 n;
@@ -404,7 +404,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no) {
 //--------------------------------------------------------------------------
 // Call AnimationObjects_SetActiveTimerSteps for all of the object's graphics.
 //--------------------------------------------------------------------------
-void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val) {
+void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *obj, s32 val) {
   s32 n;
   void *spr;
   void **list;
@@ -431,7 +431,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val) {
 //--------------------------------------------------------------------------
 // Combine the previous two operations: set animation no and pass steps.
 //--------------------------------------------------------------------------
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
+void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *obj, s32 no,
                                         s32 steps) {
   void **list;
   void *spr;

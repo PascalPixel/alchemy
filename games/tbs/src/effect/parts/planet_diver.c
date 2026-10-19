@@ -121,7 +121,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->autoFaceMotion = 0;
       actor->snapToTarget = 0;
       Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
-      ObjectDispatch_ApplyArgumentToChildrenFar(actor, 2);
+      ObjectDispatch_SelectAnimationFar(actor, 2);
       work->shakeFrames = frame;
       AudioCommand_PlayFar(SE_136);
     }

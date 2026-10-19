@@ -113,7 +113,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
@@ -209,7 +209,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else if (frame == 0) {
       Func_0814cd48(effect->actor, -1, 2, 0, -1);
-      ObjectDispatch_ApplyValueToChildrenFar(caster, 32);
+      ObjectDispatch_SetAnimationSpeedFar(caster, 32);
     }
 
     vertices = Runtime_BumpAllocateAlternatePool(32);
@@ -345,7 +345,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 16);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();

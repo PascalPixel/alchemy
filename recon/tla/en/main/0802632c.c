@@ -41,7 +41,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802d958(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void *UnitGet(s32 owner);
@@ -199,9 +199,9 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
     action = 9;
     if (((struct UnitHp *)UnitGet(gPartyState.currentOwner))->hp == 0)
       action = 22;
-    ObjectDispatch_ApplyArgumentToChildren(object, action);
+    ObjectDispatch_SelectAnimation(object, action);
   } else {
-    ObjectDispatch_ApplyArgumentToChildren(object, movementAnimation);
+    ObjectDispatch_SelectAnimation(object, movementAnimation);
   }
 
   if (collision != 0) {

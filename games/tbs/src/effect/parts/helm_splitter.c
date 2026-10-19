@@ -90,7 +90,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     object->autoFaceMotion = 1;
     ObjectDispatch_InitFromTable6Far(object);
     Object_SetMoveTargetFar(object, x, 0, z);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+    ObjectDispatch_SelectAnimationFar(object, 2);
   }
 
   // Play the swirl and impact, then let the sparks bounce and fade.

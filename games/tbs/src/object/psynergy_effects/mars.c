@@ -41,7 +41,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   djinni->timer = 0;
   WaitFrames(80);
   djinni->update = BattleFx_ShrinkObjectAndDestroySlow;
-  ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 3);
+  ObjectDispatch_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x.fixed;
@@ -67,8 +67,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(60);
   ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_ApplyArgumentToChildrenFar(
-      Object_GetById(gGameState.selectedActor), 28);
+  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
+                                    28);
 
   // Every spark still in use stops its fountain (state 2). The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.

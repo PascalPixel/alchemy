@@ -49,7 +49,7 @@ void FieldFx_RunCatch(void) {
   object->angle = actor->angle;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
+  ObjectDispatch_SelectAnimationFar(object, 5);
   Animation_ApplyChildValuesFar(object, 1);
 
   // Reach out to the goal.
@@ -67,7 +67,7 @@ void FieldFx_RunCatch(void) {
     step++;
   } while (step < steps);
   WaitFrames(10);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 6);
+  ObjectDispatch_SelectAnimationFar(object, 6);
   WaitFrames(15);
 
   // Press down 2 pixels a frame for 10 frames.
@@ -75,7 +75,7 @@ void FieldFx_RunCatch(void) {
     object->y -= 2 << 16;
     WaitFrames(1);
   }
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
+  ObjectDispatch_SelectAnimationFar(object, 5);
   AudioCommand_PlayFar(SE_132);
   if (child != 0)
     Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y,

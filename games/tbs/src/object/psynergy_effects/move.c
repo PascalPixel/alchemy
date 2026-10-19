@@ -124,7 +124,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       position.z = target->z.fixed;
       Vector_AddPolarOffset(16 << 16, angle, &position);
       Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-      ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 1);
+      ObjectDispatch_SelectAnimationFar(pusher, 1);
       SET_VELOCITY(pusher, 0, 0, 0);
       continue;
     }
@@ -147,7 +147,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     beyond.z = target->z.fixed;
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
     if (Map_CheckObjectStepFar(target, &position) > 0) {
-      ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+      ObjectDispatch_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
@@ -155,7 +155,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
     if (hit != NULL) {
       if (hit != user) {
-        ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+        ObjectDispatch_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
@@ -168,7 +168,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       cellZ = user->z.fixed & MOVE_CELL_MASK;
       if (cellX == (candidate->x & MOVE_CELL_MASK) &&
           cellZ == (candidate->z & MOVE_CELL_MASK)) {
-        ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+        ObjectDispatch_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
@@ -177,7 +177,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
         if (Map_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
                                              beyond.z) != 0) {
-          ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+          ObjectDispatch_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             AudioCommand_PlayFar(SE_MENU_ERROR);
           continue;
@@ -191,7 +191,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     AudioCommand_PlayFar(SE_175);
     x = position.x;
     z = position.z;
-    ObjectDispatch_ApplyArgumentToChildrenFar(
+    ObjectDispatch_SelectAnimationFar(
         pusher, gBattleFx_QuadrantModes[(u16)(angle - direction) >> 14]);
     WaitFrames(15);
     target->paused = 0;
@@ -299,7 +299,7 @@ void FieldFx_RunMove(void) {
   object = BattleFx_StartItemBreak(object);
   BattleFx_SnapScaleToFull(object);
   if (object != 0) {
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 4);
+    ObjectDispatch_SelectAnimationFar(object, 4);
     WaitFrames(30);
   }
   BattleFx_PrepareBufferInterpolation();
@@ -330,7 +330,7 @@ void *BattleFx_StartItemBreak(void *object) {
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
-  ObjectDispatch_ApplyArgumentToChildrenFar(parent, 3);
+  ObjectDispatch_SelectAnimationFar(parent, 3);
   Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2

@@ -323,18 +323,18 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
   }
 
 // Switches all of an object's sprites to animation value.
-OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_ApplyArgumentToChildren, void *,
+OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SelectAnimation, void *,
                              AnimationObjects_SelectAnimation)
 
 // Sets the animation speed (timer step) of all of an object's sprites.
-OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_ApplyValueToChildren,
+OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed,
                              struct DispatchObject *,
                              AnimationObjects_SetActiveTimerSteps)
 
 // Both of the above: switches all of an object's sprites to animation and
 // sets their timer step to step.
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object,
-                                        s32 animation, s32 step) {
+void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
+                                         s32 animation, s32 step) {
   void **sprites;
   void *sprite;
   s32 spritesRemaining;

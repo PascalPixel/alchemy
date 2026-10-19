@@ -54,7 +54,7 @@ s32 Func_0802632c();
 s32 Func_080267bc();
 s32 Func_08027e0c();
 s32 ObjectDispatch_ReleaseAndClear();
-s32 Script_ApplyArgumentToChildren();
+s32 Script_SetAnimation();
 s32 Script_Nop();
 s32 Script_PlaySound();
 s32 Script_CallWithOperand();
@@ -279,7 +279,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Func_080267bc,                       // 0x24 SC_CMD_24
     Func_08027e0c,                       // 0x25 SC_CMD_25
     ObjectDispatch_ReleaseAndClear,      // 0x26 SC_FREE
-    Script_ApplyArgumentToChildren,      // 0x27 SC_ARG
+    Script_SetAnimation,      // 0x27 SC_ARG
     Script_Nop,                  // 0x28 SC_NOP
     Script_PlaySound,                 // 0x29 SC_SE
     Script_CallWithOperand,              // 0x2a SC_CMD_2A

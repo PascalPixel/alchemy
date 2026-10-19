@@ -68,10 +68,10 @@ void Leader_StopMoving(void) {
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gGameState.movementMode == 1) {
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 0xC);
+    ObjectDispatch_SelectAnimationFar(object, 0xC);
     return;
   }
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
 // The event command "begin event": closes any timed notice, stops the leader,

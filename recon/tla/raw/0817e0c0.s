@@ -163,7 +163,7 @@ Func_0817e0c0:
 	bl GetBattleObjectSlotFar
 	movs r1, #48
 	ldr r0, [r0]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r3, #36
 	ldrsh r0, [r5, r3]
 	bl GetBattleObjectSlotFar

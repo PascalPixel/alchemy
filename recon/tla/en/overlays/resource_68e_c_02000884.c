@@ -11,7 +11,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 
 struct Half {
@@ -37,7 +37,7 @@ void Func_02000884(s32 id, s32 *pos, s32 dir, s32 palette, s32 value) {
     zero.v = 0;
     object->motionFlags = zero.v;
     ((u8 *)object->animation)[26] = zero.v;
-    ObjectDispatch_ApplyValueToChildren(object, value);
+    ObjectDispatch_SetAnimationSpeed(object, value);
   }
   sprite = object->animation;
   i = 0;

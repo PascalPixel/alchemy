@@ -45,7 +45,7 @@ BattleFx_RunRagnarok:
 	bl Object_SetMode
 	movs r1, #48
 	ldr r0, [sp, #36]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	mov r1, r11
 	add r5, sp, #64
 	movs r6, #36
@@ -667,7 +667,7 @@ BattleFx_RunRagnarok:
 .L_08166abe:
 	ldr r0, [sp, #36]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r0, .L_08166af4
 	bl Scheduler_RemoveCallback
 	movs r0, #188

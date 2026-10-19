@@ -12,12 +12,12 @@ ObjectSystem_InitializeFar:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
-	overlay_veneer ObjectDispatch_ApplyArgumentToChildren
-	.global ObjectDispatch_ApplyValueToChildrenFar
+	overlay_veneer ObjectDispatch_SelectAnimation
+	.global ObjectDispatch_SetAnimationSpeedFar
 	.thumb_func
-ObjectDispatch_ApplyValueToChildrenFar:
-	overlay_veneer ObjectDispatch_ApplyValueToChildren
-	.global ObjectDispatch_ApplyPairToChildrenFar
+ObjectDispatch_SetAnimationSpeedFar:
+	overlay_veneer ObjectDispatch_SetAnimationSpeed
+	.global ObjectDispatch_SetAnimationAndSpeedFar
 	.thumb_func
-ObjectDispatch_ApplyPairToChildrenFar:
-	overlay_veneer ObjectDispatch_ApplyPairToChildren
+ObjectDispatch_SetAnimationAndSpeedFar:
+	overlay_veneer ObjectDispatch_SetAnimationAndSpeed

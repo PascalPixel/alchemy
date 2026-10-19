@@ -68,7 +68,7 @@ void Field_PlaceMapMarkers(void) {
               ObjectDispatch_ReleaseFar(markerActor);
               continue;
             }
-            ObjectDispatch_ApplyArgumentToChildrenFar(markerActor, 2);
+            ObjectDispatch_SelectAnimationFar(markerActor, 2);
           }
           ObjectDispatch_InitFromTable6Far(markerActor);
           markerActor->homeX = markerActor->x / 0x10000;
@@ -96,7 +96,7 @@ void Field_PlaceMapMarkers(void) {
           ObjectMotion_SnapToTerrain(markerActor);
           ObjectDispatch_SetSingleChildFlagsFar(markerActor, 0);
           ObjectDispatch_InitFromTable6Far(markerActor);
-          ObjectDispatch_ApplyArgumentToChildrenFar(markerActor, 1);
+          ObjectDispatch_SelectAnimationFar(markerActor, 1);
           markerActor->homeX = markerActor->x / 0x10000;
           markerActor->homeZ = markerActor->z / 0x10000;
           markerActor->flags59 = 1;
@@ -152,7 +152,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
     marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
+      ObjectDispatch_SelectAnimationFar(object, animation);
     AudioCommand_PlayFar(sound);
     WaitFrames(12);
   }
@@ -175,7 +175,7 @@ void Marker_LaunchMimic(s32 id) {
     object = marker->object;
     WaitFrames(18);
     if (object != NULL)
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
+      ObjectDispatch_SelectAnimationFar(object, 7);
     AudioCommand_PlayFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
@@ -198,7 +198,7 @@ void Marker_ShowOpened(s32 id) {
     marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+      ObjectDispatch_SelectAnimationFar(object, 2);
   }
 }
 

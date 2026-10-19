@@ -23,7 +23,7 @@ void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -48,11 +48,11 @@ void Func_020001d8(struct ObjectRuntime *object) {
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_ApplyValueToChildren(object, 0);
+    ObjectDispatch_SetAnimationSpeed(object, 0);
     Map_EnableUpdateCallback();
     return;
   }
-  ObjectDispatch_ApplyValueToChildren(object, 16);
+  ObjectDispatch_SetAnimationSpeed(object, 16);
   Map_DisableUpdateCallback();
   if (OBJECT_BYTE(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)

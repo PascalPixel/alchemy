@@ -10,7 +10,7 @@
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Object_SetMode, 1
-	.set import.ObjectDispatch_ApplyValueToChildren, 1
+	.set import.ObjectDispatch_SetAnimationSpeed, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1

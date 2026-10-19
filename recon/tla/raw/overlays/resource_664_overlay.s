@@ -1207,12 +1207,12 @@ Func_02000d48:
 .L_02008db6:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_02008f24
 .L_02008dc0:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r2, [r6, #16]
 	ldr r3, [r6, #12]
 	ldr r1, [r6, #8]
@@ -1626,12 +1626,12 @@ Func_020010b4:
 .L_0200911e:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_02009280
 .L_02009128:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r2, [r6, #16]
 	ldr r3, [r6, #12]
 	ldr r1, [r6, #8]
@@ -2084,12 +2084,12 @@ Func_02001458:
 .L_020094d2:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_020095f0
 .L_020094dc:
 	movs r1, #16
 	adds r0, r6, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	movs r2, #100
 	adds r2, r2, r6
 	movs r1, #0

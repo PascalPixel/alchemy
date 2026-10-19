@@ -421,7 +421,7 @@ Func_0802632c:
 .L_0802667c:
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_080266ac
 	.2byte 0x0000
 .L_08026688:
@@ -441,7 +441,7 @@ Func_0802632c:
 .L_080266a4:
 	adds r0, r6, #0
 	ldr r1, [sp, #8]
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 .L_080266ac:
 	ldr r2, [sp, #12]
 	cmp r2, #0

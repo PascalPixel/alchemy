@@ -221,7 +221,7 @@ void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
 void Transform_SetLookAt(void *, void *);
 void Object_SetMode(struct BattleObject *, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
+void ObjectDispatch_SetAnimationSpeedFar(struct BattleObject *, s32);
 s32 BattleUnit_GetEffectHeightFar(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **GetBattleObjectSlotFar(s32);
@@ -601,7 +601,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     work->particle[i].vy = Random16() & 0xffff;
     work->particle[i].vz = Random16() & 0xffff;
   }
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0);
   origin[0] = object->x;
   origin[1] = object->y + 0x500000;
   origin[2] = object->z;
@@ -728,7 +728,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       BattleFx_RunProjectileVolley(action, 8);
     return;
   }
-  ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+  ObjectDispatch_SetAnimationSpeedFar(object, 16);
   object->unk24 = save24;
   object->unk28 = save28;
   object->unk2c = save2c;

@@ -72,7 +72,7 @@ void FieldFx_RunForce(void) {
   projectile->speed = 4 << 16;
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
-  ObjectDispatch_ApplyArgumentToChildrenFar(projectile, 5);
+  ObjectDispatch_SelectAnimationFar(projectile, 5);
   Animation_ApplyChildValuesFar(projectile, 3);
   scale = projectile->scaleX;
   if (scale < 0x10000) {
@@ -98,7 +98,7 @@ void FieldFx_RunForce(void) {
       copy->speed = 4 << 16;
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
-      ObjectDispatch_ApplyArgumentToChildrenFar(copy, 5);
+      ObjectDispatch_SelectAnimationFar(copy, 5);
       Animation_ApplyChildValuesFar(copy, 2);
       sharedAnimation = Sprite_ShareVramCache(
           (struct AnimationObject *)copy->sprite, sharedAnimation);

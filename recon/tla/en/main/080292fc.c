@@ -67,9 +67,9 @@ extern const u16 gData_0802ec5c[16];
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
@@ -172,8 +172,8 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
       work->blockedSteps = 0;
     work->heldKeys = INPUT_HELD;
   }
-  ObjectDispatch_ApplyArgumentToChildren(object, 29);
-  ObjectDispatch_ApplyValueToChildren(object, value);
+  ObjectDispatch_SelectAnimation(object, 29);
+  ObjectDispatch_SetAnimationSpeed(object, value);
   if (collisionFlags != 0) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;

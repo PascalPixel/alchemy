@@ -301,7 +301,7 @@ BattleFx_RunOdyssey:
 	bl Object_SetMode
 	movs r1, #48
 	ldr r0, [sp, #44]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r7, [sp, #60]
 	movs r3, #80
 	movs r2, #36

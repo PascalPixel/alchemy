@@ -174,7 +174,7 @@ Func_080298c0:
 	ldr r3, [r7, #16]
 	movs r1, #3
 	str r3, [r6, #8]
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	ldr r3, [r7, #8]
 	add r5, sp, #68
 	str r3, [r5]
@@ -767,7 +767,7 @@ Func_080298c0:
 	str r2, [r7, #36]
 	str r2, [r7, #40]
 	str r2, [r7, #44]
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_0802a100
 .L_08029ef2:
 	ldr r4, .L_0802a004
@@ -824,7 +824,7 @@ Func_080298c0:
 	str r5, [r7, #40]
 	str r5, [r7, #44]
 	movs r1, #3
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_0802a100
 .L_08029f68:
 	movs r3, #192
@@ -859,7 +859,7 @@ Func_080298c0:
 .L_08029f9e:
 	movs r1, #1
 	adds r0, r7, #0
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	ldr r1, [sp, #32]
 	cmp r1, #0
 	beq .L_0802a014

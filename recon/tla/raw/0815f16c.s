@@ -924,7 +924,7 @@ Func_0815f16c:
 	bne .L_0815f8ea
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	mov r3, sp
 	adds r3, #228
 	str r3, [sp, #16]
@@ -1417,7 +1417,7 @@ Func_0815f16c:
 .L_0815fce2:
 	adds r0, r7, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r0, [sp, #80]
 	str r0, [r7, #36]
 	ldr r1, [sp, #76]

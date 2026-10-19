@@ -86,7 +86,7 @@ Func_0811ca54:
 	bl Object_SetMode
 	mov r0, r10
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldrh r3, [r5, #10]
 	cmp r3, #7
 	bhi .L_0811cb18

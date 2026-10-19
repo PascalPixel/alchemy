@@ -146,7 +146,7 @@ void BattleEvent_Playback(void) {
             if (events->pendingCue > 0)
               AudioCommand_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
-            ObjectDispatch_ApplyArgumentToChildrenFar(
+            ObjectDispatch_SelectAnimationFar(
                 BattleObjGet(events->actorId)->object, POSE_DAMAGE);
             events->phase = PLAY_HIT;
             events->timer = 0;

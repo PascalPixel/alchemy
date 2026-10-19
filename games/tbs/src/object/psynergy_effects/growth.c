@@ -49,7 +49,7 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
   target = ((struct BattleFxScene *)gEffectWork)->child;
   if (target != NULL) {
     BattleEffect_SpawnBurstParticleField();
-    ObjectDispatch_ApplyArgumentToChildrenFar(target, 2);
+    ObjectDispatch_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -146,7 +146,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
       particle->speed = 0x18000;
       particle->motionFlags = 0;
       Animation_ApplyChildValuesFar(particle, 11);
-      ObjectDispatch_ApplyArgumentToChildrenFar(particle, 7);
+      ObjectDispatch_SelectAnimationFar(particle, 7);
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_CommonParticleScript + 1);
       ObjectDispatch_SetSingleChildFlagsFar(particle, 1);

@@ -74,7 +74,7 @@ BattleFx_RunStoneJustice:
 	ldr r0, [r0]
 	movs r1, #48
 	str r0, [sp, #20]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	mov r1, sp
 	mov r2, sp
 	adds r1, #56
@@ -395,7 +395,7 @@ BattleFx_RunStoneJustice:
 .L_0816d6ea:
 	ldr r0, [sp, #20]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r0, .L_0816d710
 	bl Scheduler_RemoveCallback
 	movs r0, #104

@@ -276,7 +276,7 @@ Func_0802a124:
 .L_0802a346:
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	ldr r0, [sp, #16]
 	cmp r0, #0
 	beq .L_0802a3a2

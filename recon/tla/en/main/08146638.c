@@ -116,7 +116,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Object_SetMode(caster, 2);
-  ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)caster, 48);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
   BattleFx_LoadBlitter(HEAP_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;

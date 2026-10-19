@@ -135,7 +135,7 @@ void Func_08124e20(void) {
             Audio_PlayCue(212);
             if (BattleParty_IsUnitListed(unitId)) {
               Object_SetMode(BattleObjGet(unitId)->object, 3);
-              ObjectDispatch_ApplyValueToChildrenFar(
+              ObjectDispatch_SetAnimationSpeedFar(
                   (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
             }
             element = expiredEntry->element;

@@ -52,8 +52,8 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos);
 void Map_RenderAnimatedTileFramesForObject(u8 *sprite);
 void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count);
-void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no);
-void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val);
+void ObjectDispatch_SelectAnimation(void *raw, s32 no);
+void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *obj, s32 val);
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter);
 s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter);
 void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
@@ -140,8 +140,8 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
                                          s32 z);
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script);
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object,
-                                        s32 animation, s32 step);
+void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
+                                         s32 animation, s32 step);
 void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
                                      u32 rotation);
 void Animation_SetIndexAndInitObjects(void *rawDispatchObject, s32 animationId);

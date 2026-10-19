@@ -12,8 +12,8 @@
 #include "motobj.h"
 #include "field_event.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar                                 \
-  ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_SetAnimationSpeedFar                                 \
+  ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_SetAnimationSpeedFar)
 
 void BattleFx_RunCanvasModeByCount(s32 *effect) {
   if (*effect > 199)
@@ -29,7 +29,7 @@ void BattleFx_RunCanvasMode3WithAction(struct BattleEffectArgument *effect) {
 
   object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
   Object_SetMode(object, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x1c);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x1c);
   Func_0818f620(effect, 3);
-  ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+  ObjectDispatch_SetAnimationSpeedFar(object, 0x10);
 }

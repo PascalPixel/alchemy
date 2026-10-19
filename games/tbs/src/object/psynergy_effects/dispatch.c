@@ -352,7 +352,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->unk23 = 4;
     ((struct AnimationObject *)object->animation)->image.priority = 0;
     ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, 1);
   }
   return object;
 }
@@ -371,7 +371,7 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
     object = ObjectTable_Get(actorId);
     if (actorId != *player && object != NULL && object != except) {
       object->movementState = state;
-      ObjectDispatch_ApplyValueToChildrenFar(object, value);
+      ObjectDispatch_SetAnimationSpeedFar(object, value);
     }
     actorId++;
   } while (actorId <= OBJ_LAST);

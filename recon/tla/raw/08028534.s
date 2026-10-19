@@ -381,12 +381,12 @@ Func_08028534:
 	beq .L_0802883c
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_08028844
 .L_0802883c:
 	adds r0, r7, #0
 	movs r1, #2
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 .L_08028844:
 	ldr r1, .L_0802891c
 	ldr r0, .L_08028904

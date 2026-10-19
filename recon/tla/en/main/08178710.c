@@ -107,7 +107,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void Object_SetMode(void *object, s32 mode);
 
 extern char ResourceId_SmokeBandSheet;
@@ -178,7 +178,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   endY[0] = 0;
   endY[1] = 0;
   caster = *GetBattleObjectSlotFar(effect->actor);
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 48);
   Object_SetMode(caster, 2);
   EffectPosition_ProjectBattler(effect->actor, &source);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -398,7 +398,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 16);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();

@@ -73,7 +73,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->actors[0]);
   ObjectDispatch_InitFromTable6Far(user);
   Object_SetMoveTargetFar(user, x, 0, z);
-  ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
+  ObjectDispatch_SelectAnimationFar(user, 2);
   user->snapToTarget = 1;
   user->autoFaceMotion = 1;
   user->acceleration = 2 << 16;
@@ -146,7 +146,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->scaleY = -user->scaleY;
       user->y -= userHeight;
       target->y -= targetHeight;
-      ObjectDispatch_ApplyArgumentToChildrenFar(user, 0);
+      ObjectDispatch_SelectAnimationFar(user, 0);
     }
     if (frame == 54) // the battle shows the damage, with a heavy impact
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

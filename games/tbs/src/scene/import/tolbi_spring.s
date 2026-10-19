@@ -8,7 +8,7 @@
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
 	.set import.Object_SetMode, 1
-	.set import.ObjectDispatch_ApplyValueToChildren, 1
+	.set import.ObjectDispatch_SetAnimationSpeed, 1
 	.set import.Engine_MapCopyCellsTo, 1
 	.set import.UiWindow_Create, 1
 	.set import.UiWork_Finalize, 1

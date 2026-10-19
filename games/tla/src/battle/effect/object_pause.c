@@ -15,8 +15,8 @@
 #include "party_state.h"
 #include "animspr.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar                                 \
-  ((void (*)(void *, s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_SetAnimationSpeedFar                                 \
+  ((void (*)(void *, s32))ObjectDispatch_SetAnimationSpeedFar)
 
 void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object) {
   s8 *table = gBattleFx_RandomChildValues;
@@ -40,7 +40,7 @@ void BattleEffect_PauseObject(s32 id) {
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
     object->value5b = 1;
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0);
+    ObjectDispatch_SetAnimationSpeedFar(object, 0);
   }
 }
 
@@ -54,6 +54,6 @@ void BattleFx_ResumeObject(s32 id) {
       Animation_ApplyChildValuesFar(object, (s8)gPartyState.savedByte);
     }
     object->value5b = 0;
-    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+    ObjectDispatch_SetAnimationSpeedFar(object, 16);
   }
 }

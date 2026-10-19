@@ -281,10 +281,10 @@ Func_080292fc:
 .L_08029510:
 	mov r0, r10
 	movs r1, #29
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	mov r0, r10
 	ldr r1, [sp, #4]
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r1, [sp, #20]
 	cmp r1, #0
 	beq .L_0802953c

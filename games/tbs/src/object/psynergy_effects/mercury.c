@@ -70,7 +70,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
       copy->update = BattleFx_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Animation_ApplyChildValuesFar(copy, 9);
-      ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
+      ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
       resource = Sprite_ShareVramCache(copy->sprite, resource);
       copy->linkedObject = previous;
@@ -96,8 +96,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   WaitFrames(10);
   ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_ApplyArgumentToChildrenFar(
-      Object_GetById(gGameState.selectedActor), 28);
+  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
+                                    28);
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on

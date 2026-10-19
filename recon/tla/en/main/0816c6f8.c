@@ -109,7 +109,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "io_write_queue.h"
 #include "irqlock.h"
 
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
@@ -216,7 +216,7 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 48);
   Func_0818de3c(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
   for (frame = 0; frame != 74; frame++) {
@@ -467,7 +467,7 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 16);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();

@@ -206,7 +206,7 @@ Func_08172b00:
 	strh r3, [r2]
 	ldr r0, [sp, #48]
 	movs r1, #240
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r0, [sp, #44]
 	movs r4, #0
 	str r4, [sp, #76]
@@ -1313,7 +1313,7 @@ Func_08172b00:
 .L_0817352c:
 	ldr r0, [sp, #48]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817356c

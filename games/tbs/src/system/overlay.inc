@@ -88,8 +88,8 @@
 	import Object_InitializeMode, AnimationObjects_SelectAnimationFar
 	import ResourceMetadata_Register, ResourceMetadata_RegisterFar
 	import ResourceMetadata_ClearRecord, ResourceMetadata_ClearRecordFar
-	import Object_SetMode, ObjectDispatch_ApplyArgumentToChildrenFar
-	import ObjectDispatch_ApplyValueToChildren, ObjectDispatch_ApplyValueToChildrenFar
+	import Object_SetMode, ObjectDispatch_SelectAnimationFar
+	import ObjectDispatch_SetAnimationSpeed, ObjectDispatch_SetAnimationSpeedFar
 	import Engine_ObjectSetScript, ObjectDispatch_InitializeFar
 	import Engine_ObjectCreate, Object_CreateFar
 	import Engine_ObjectDispatchRelease, ObjectDispatch_ReleaseFar

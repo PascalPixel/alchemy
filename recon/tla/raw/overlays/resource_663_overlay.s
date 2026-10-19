@@ -2237,12 +2237,12 @@ Func_02001908:
 .L_02009976:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_02009b42
 .L_02009980:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r2, [r6, #16]
 	ldr r3, [r6, #12]
 	ldr r1, [r6, #8]

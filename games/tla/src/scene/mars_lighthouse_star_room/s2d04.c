@@ -24,7 +24,7 @@ void Func_02002d04(struct ObjectRuntime *object) {
     turn = -0x1000;
   object->angle += turn;
   Func_020041cc(object, 2);
-  ObjectDispatch_ApplyValueToChildren(object, 48);
+  ObjectDispatch_SetAnimationSpeed(object, 48);
 }
 
 void Func_02002d90(void) {

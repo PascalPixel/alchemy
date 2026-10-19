@@ -58,7 +58,7 @@ of the parts is in `battle.c`, and each part's first lines say what it holds:
   it is staged (`enum BattlePlanStaging`) and its **presentation flags** the
   effect and how it plays (`STAGING_*`, from `actflags.tsv`).
 - **event**: one entry of the battle event queue (`BattleEvPush`).
-- **pose**: what `ObjectDispatch_ApplyArgumentToChildrenFar` sets on a battle
+- **pose**: what `ObjectDispatch_SelectAnimationFar` sets on a battle
   object (`POSE_*`).
 
 The same locals carry the same names in every part: `battle` or `work` for

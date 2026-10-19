@@ -82,7 +82,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Object_SetMode(object, *mode);
   }
-  ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else

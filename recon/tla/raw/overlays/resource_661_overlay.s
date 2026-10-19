@@ -2053,7 +2053,7 @@ Func_02001e58:
 .L_02009eb0:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	bl Map_EnableUpdateCallback
 	b .L_02009ff4
 .L_02009ebe:
@@ -2097,7 +2097,7 @@ Func_02001e58:
 	adds r5, r3, r1
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	bl Map_DisableUpdateCallback
 	ldrb r3, [r5, #2]
 	movs r0, #128

@@ -229,7 +229,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
     fragment->gravity = 0x1999;
-    ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 0);
+    ObjectDispatch_SelectAnimationFar(fragment, 0);
     fragment->lifetime = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
                                  gBattleFx_CommonParticleScript);

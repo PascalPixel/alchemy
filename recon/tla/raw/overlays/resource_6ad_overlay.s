@@ -1913,14 +1913,14 @@ Func_02001894:
 .L_020098f2:
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	b .L_02009a3e
 .L_020098fc:
 	.4byte gPartyState
 .L_02009900:
 	adds r0, r6, #0
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r3, r6, #0
 	adds r3, #100
 	ldrh r2, [r3]
@@ -6230,7 +6230,7 @@ Func_02004140:
 	bl Func_02005480
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r0, r7, #0
 	bl Func_020054c0
 	ldr r3, .L_0200c3e8
@@ -6576,7 +6576,7 @@ Func_020043ec:
 	bl Func_02005480
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	adds r0, r7, #0
 	bl Func_020054c0
 	ldr r3, .L_ja_0200c524
@@ -6951,7 +6951,7 @@ Func_020043ec:
 	bl Func_02005480
 	adds r0, r7, #0
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	movs r5, #0
 	b .L_0200c5a2
 .L_0200c57a:
@@ -7273,7 +7273,7 @@ Func_0200470c:
 	bl Func_02005480
 	adds r0, r5, #0
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r3, .L_0200c810
 	str r3, [r5, #108]
 	b .L_0200c8be

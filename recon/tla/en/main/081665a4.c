@@ -67,7 +67,7 @@ void BattleFx_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *draw); // BattleFx_FetchRectangleBlitters
 void Object_SetMode(void *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
@@ -116,7 +116,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   BattleFx_FetchRectangleBlitters(effect->side, draw);
   Object_SetMode(user, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(user, 48);
+  ObjectDispatch_SetAnimationSpeedFar(user, 48);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   if (effect->side == 0)
     baseX = target.x / 2 - 24;
@@ -309,7 +309,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != BLADE_FRAMES);
 
-  ObjectDispatch_ApplyValueToChildrenFar(user, 16);
+  ObjectDispatch_SetAnimationSpeedFar(user, 16);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);

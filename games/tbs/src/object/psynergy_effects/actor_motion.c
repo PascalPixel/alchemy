@@ -42,9 +42,9 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
       newX = object->x + (s32)((u32)pixelsX << 20) / step;
       newZ = object->z + (s32)((u32)pixelsZ << 20) / step;
       Object_SetMoveTargetFar(object, newX, object->y, newZ);
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+      ObjectDispatch_SelectAnimationFar(object, 2);
     } else {
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+      ObjectDispatch_SelectAnimationFar(object, 1);
     }
   }
   return 1;

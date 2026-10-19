@@ -12,7 +12,7 @@ extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
 s32 Math_Cosine(s32 angle);
-void ObjectDispatch_ApplyValueToChildren(struct FieldActor *object, s32 value);
+void ObjectDispatch_SetAnimationSpeed(struct FieldActor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 u32 Random16Far(void);
@@ -62,11 +62,11 @@ void Func_02000550(struct FieldActor *object) {
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    ObjectDispatch_ApplyValueToChildren(object, 0);
+    ObjectDispatch_SetAnimationSpeed(object, 0);
     Map_EnableUpdateCallback();
     return;
   }
-  ObjectDispatch_ApplyValueToChildren(object, 16);
+  ObjectDispatch_SetAnimationSpeed(object, 16);
   Map_DisableUpdateCallback();
   if (BYTE_AT(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)

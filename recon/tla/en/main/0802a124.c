@@ -51,7 +51,7 @@ extern const s32 gData_0802ece0[];
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802db64(struct ObjectRuntime *object, struct FieldPosition *position);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
@@ -153,7 +153,7 @@ update_object:
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  ObjectDispatch_ApplyArgumentToChildren(object, 1);
+  ObjectDispatch_SelectAnimation(object, 1);
 
   if (collision != 0) {
     object->targetX = 0x80000000;

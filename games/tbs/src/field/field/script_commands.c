@@ -186,8 +186,8 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
 
 // SC_ARG(v): switches the object's sprites to animation v.
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
-  ObjectDispatch_ApplyArgumentToChildren(
-      interpreter, interpreter->script[interpreter->cursor + 1]);
+  ObjectDispatch_SelectAnimation(interpreter,
+                                 interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }
@@ -476,11 +476,11 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
     moveZ = dz * remainingDistance / distancePixels;
     Object_SetMoveTarget(object, object->x + moveX, object->y,
                          object->z + moveZ);
-    ObjectDispatch_ApplyArgumentToChildren(object, 2);
+    ObjectDispatch_SelectAnimation(object, 2);
     object->step = (object->step + 1);
     return 1;
   }
-  ObjectDispatch_ApplyArgumentToChildren(object, 1);
+  ObjectDispatch_SelectAnimation(object, 1);
   return 0;
 }
 

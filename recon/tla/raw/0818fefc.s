@@ -171,7 +171,7 @@ BattleFx_RunMegiddo:
 	ldr r3, [r3, #72]
 	movs r1, #0
 	str r3, [sp, #44]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r4, [sp, #40]
 	mov r0, sp
 	mov r1, sp
@@ -728,7 +728,7 @@ BattleFx_RunMegiddo:
 	strh r4, [r0]
 	ldr r0, [sp, #40]
 	movs r1, #128
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r1, #240
 	lsls r1, r1, #6
 	ldr r2, .L_08190790

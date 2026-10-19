@@ -114,14 +114,14 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     }
 
     if (object) {
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+      ObjectDispatch_SelectAnimationFar(object, 1);
       // Start each idle animation at a random frame.
       if (object->animationKind == 1 && (sprite = object->animation) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->angle = entry->facing;
       object->unk59 = 1;
       ObjectMotion_SetActionCallback(object, entry->behavior);
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+      ObjectDispatch_SelectAnimationFar(object, 1);
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
       ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
       if (object->y != 0) {
@@ -212,7 +212,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     object->terrainHeight = object->y;
     object->flags = 0;
     ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-    ObjectDispatch_ApplyArgumentToChildrenFar(object, 12);
+    ObjectDispatch_SelectAnimationFar(object, 12);
   } else {
     gGameState.movementMode = 0;
   }
@@ -498,7 +498,7 @@ void ObjectTable_Restore(void) {
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
-        ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
+        ObjectDispatch_SelectAnimationFar(object, animation);
       ObjectDispatch_SetSingleChildFlagsFar(object, *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;

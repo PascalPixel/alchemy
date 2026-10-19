@@ -148,7 +148,7 @@ s32 Field_RunScene(s32 entrance) {
             Leader_StopMoving();
             Battle_SetObjectFlag5bWhenMode3();
             for (i = 0; i < work->fallenCount; i++) {
-              ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
+              ObjectDispatch_SelectAnimationFar(actor, 22);
               UiWork_PushValueSlotFar(work->fallenOwners[i], 1);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldStrengthExhausted,
                                                      1);
@@ -159,11 +159,11 @@ s32 Field_RunScene(s32 entrance) {
 
               if (gGameState.selectedActor == 0) {
                 if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0)
-                  ObjectDispatch_ApplyArgumentToChildrenFar(actor, 21);
+                  ObjectDispatch_SelectAnimationFar(actor, 21);
                 else
-                  ObjectDispatch_ApplyArgumentToChildrenFar(actor, 37);
+                  ObjectDispatch_SelectAnimationFar(actor, 37);
               } else {
-                ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
+                ObjectDispatch_SelectAnimationFar(actor, 19);
               }
               AudioCommand_PlayFar(MUS_059);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,

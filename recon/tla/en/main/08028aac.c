@@ -61,7 +61,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802dbd0(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 void ObjectDispatch_SetChildByteValue(struct ObjectRuntime *object, s32 value);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
@@ -211,11 +211,11 @@ update_object:
     work->heldKeys = gInput.held;
   }
   if (object->y >= 0x40000)
-    ObjectDispatch_ApplyArgumentToChildren(object, 6);
+    ObjectDispatch_SelectAnimation(object, 6);
   else if (collision != 0)
-    ObjectDispatch_ApplyArgumentToChildren(object, 1);
+    ObjectDispatch_SelectAnimation(object, 1);
   else
-    ObjectDispatch_ApplyArgumentToChildren(object, 2);
+    ObjectDispatch_SelectAnimation(object, 2);
 
   if (collision != 0) {
     object->targetX = 0x80000000;

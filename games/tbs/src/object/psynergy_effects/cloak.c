@@ -85,7 +85,7 @@ void FieldFx_EndCloak(void) {
 
   AudioCommand_PlayFar(SE_CAST);
   Scheduler_RemoveCallback(FieldFx_CheckCloakTile);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
+  ObjectDispatch_SelectAnimationFar(obj, 0);
   ((struct ScriptMotionObject *)obj)->hook = 0;
 
   for (i = 0; i < 5; ++i) {
@@ -132,7 +132,7 @@ void FieldFx_StartCloak(void) {
   void (*check)(void);
 
   AudioCommand_PlayFar(SE_130);
-  ObjectDispatch_ApplyArgumentToChildrenFar(leader, 0);
+  ObjectDispatch_SelectAnimationFar(leader, 0);
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
   do {

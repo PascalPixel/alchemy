@@ -168,7 +168,7 @@ Func_0811f088:
 	bl Object_SetMode
 	movs r1, #16
 	mov r0, r9
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #154
 	bl Audio_PlayCue
 	movs r3, #2

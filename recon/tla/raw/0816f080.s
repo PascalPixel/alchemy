@@ -619,7 +619,7 @@ BattleFx_RunWyrdCurse:
 .L_0816f568:
 	ldr r0, [sp, #20]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0816f590

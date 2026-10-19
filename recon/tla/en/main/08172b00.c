@@ -110,7 +110,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
                    s32 cellHeight); // builds a grid's mesh
 void Render_ProjectVertices(const u8 *vertices, void *projected, s32 count);
@@ -207,7 +207,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
     frames = 50;
   }
   REG_BG2PA = 0x80;
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 240);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 240);
 
   for (frame = 0; frame != frames; frame++) {
     if (frame == 0) {
@@ -476,7 +476,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     WaitFrames(1);
   }
-  ObjectDispatch_ApplyValueToChildrenFar(caster, 16);
+  ObjectDispatch_SetAnimationSpeedFar(caster, 16);
   Runtime_ReleaseHeapBlock(104);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();

@@ -200,7 +200,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
   emitter = 0;
   if (targetActor != 0) {
     AudioCommand_PlayFar(SE_124);
-    ObjectDispatch_ApplyArgumentToChildrenFar(targetActor, 4);
+    ObjectDispatch_SelectAnimationFar(targetActor, 4);
     WaitFrames(12);
     emitter = (s32)BattleFx_StartRandomParticleEmitter(actor, itemId);
   }

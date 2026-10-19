@@ -285,12 +285,12 @@ Func_080279b0:
 	beq .L_08027bec
 	adds r0, r7, #0
 	movs r1, #9
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	b .L_08027bf4
 .L_08027bec:
 	adds r0, r7, #0
 	ldr r1, [sp, #4]
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 .L_08027bf4:
 	ldr r3, [sp, #16]
 	cmp r3, #0

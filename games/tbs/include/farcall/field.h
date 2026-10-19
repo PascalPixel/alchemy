@@ -15,9 +15,8 @@ void ResourceMetadata_UnregisterFar(struct AnimationObject *state, s32 handle);
 void ResourceMetadata_ClearRecordFar(struct AnimationEntry *layer);
 void Animation_SetWorkEntryFar(struct AnimationEntry *work, s32 no);
 void ObjectSystem_InitializeFar(s32 mode);
-void ObjectDispatch_ApplyArgumentToChildrenFar(void *raw, s32 no);
-void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *obj,
-                                            s32 val);
+void ObjectDispatch_SelectAnimationFar(void *raw, s32 no);
+void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *obj, s32 val);
 void ObjectDispatch_InitializeFar(struct DispatchObject *obj,
                                   const s32 *script);
 void ObjectDispatch_InitFromTable2Far(struct DispatchObject *obj);

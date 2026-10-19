@@ -367,16 +367,16 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       gEventWork->blockedSteps = 0;
   }
   if (pushed != 0) {
-    ObjectDispatch_ApplyArgumentToChildren(object, 8);
+    ObjectDispatch_SelectAnimation(object, 8);
   } else if (collision != 0) {
     s32 action;
 
     action = 9;
     if (UnitGetFar(gGameState.selectedActor)->hp == 0)
       action = 22;
-    ObjectDispatch_ApplyArgumentToChildren(object, action);
+    ObjectDispatch_SelectAnimation(object, action);
   } else {
-    ObjectDispatch_ApplyArgumentToChildren(object, movementAnimation);
+    ObjectDispatch_SelectAnimation(object, movementAnimation);
   }
 
   // Blocked: stop and turn towards the pad, at most 0x1000 a frame.
@@ -667,9 +667,9 @@ update_object:
       gEventWork->blockedSteps = 0;
   }
   if (collision != 0)
-    ObjectDispatch_ApplyArgumentToChildren(object, 9);
+    ObjectDispatch_SelectAnimation(object, 9);
   else
-    ObjectDispatch_ApplyArgumentToChildren(object, movementAnimation);
+    ObjectDispatch_SelectAnimation(object, movementAnimation);
 
   if (collision != 0) {
     object->targetX = TARGET_UNSET;
@@ -833,7 +833,7 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
       gEventWork->blockedSteps = 0;
   }
   // Commit the chosen animation before either stopping or setting the target.
-  ObjectDispatch_ApplyArgumentToChildren(object, animation);
+  ObjectDispatch_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;

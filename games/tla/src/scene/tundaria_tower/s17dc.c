@@ -5,7 +5,7 @@ s32 GameFlag_Test(s32 flag);
 extern u32 gInput;
 extern s16 gData_02003272[];
 void Func_02002f80(struct ObjectRuntime *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 
 void Func_020017dc(struct ObjectRuntime *object) {
@@ -32,5 +32,5 @@ void Func_020017dc(struct ObjectRuntime *object) {
     turn = -0x1000;
   object->angle += turn;
   Func_02002f80(object, 2);
-  ObjectDispatch_ApplyValueToChildren(object, 48);
+  ObjectDispatch_SetAnimationSpeed(object, 48);
 }

@@ -666,7 +666,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	movs r1, #0
 	ldr r0, [sp, #24]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	ldr r2, [sp, #24]
 	ldr r1, [sp, #32]
 	ldrh r2, [r2, #6]
@@ -790,7 +790,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	ldr r0, [sp, #24]
 	movs r1, #16
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 .L_080cd542:
 	movs r2, #0
 	str r2, [sp, #28]

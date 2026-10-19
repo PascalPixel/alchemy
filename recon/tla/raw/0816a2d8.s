@@ -224,7 +224,7 @@ Func_0816a2d8:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #48
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 	b .L_0816a4a6
 .L_0816a496:
 	ldr r2, [sp, #16]
@@ -522,7 +522,7 @@ Func_0816a2d8:
 	bl GetBattleObjectSlotFar
 	movs r1, #16
 	ldr r0, [r0]
-	bl ObjectDispatch_ApplyValueToChildrenFar
+	bl ObjectDispatch_SetAnimationSpeedFar
 .L_0816a6e0:
 	bl BattleFx_EndCanvasLayer
 .L_0816a6e4:

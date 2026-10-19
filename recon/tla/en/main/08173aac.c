@@ -125,7 +125,7 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase);
 void BattleFx_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void BattleFx_ArmBg2AffineHBlankDma(void); // BattleFx_ArmBg2AffineHBlankDma
 void Object_SetMode(void *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void ObjectDispatch_SetAnimationSpeedFar(void *object, s32 value);
 void Graphics_LoadGreyRamp(void);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Palette_LoadBasicObjColors(void);
@@ -960,11 +960,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
         Object_SetMode(user, 0);
         Object_SetMode(user, 2);
-        ObjectDispatch_ApplyValueToChildrenFar(user, 0);
+        ObjectDispatch_SetAnimationSpeedFar(user, 0);
         Audio_PlayCue(212);
       }
       if (frame == 14)
-        ObjectDispatch_ApplyValueToChildrenFar(
+        ObjectDispatch_SetAnimationSpeedFar(
             *GetBattleObjectSlotFar(effect->actor), 16);
       if (frame == 22)
         Audio_PlayCue(212);

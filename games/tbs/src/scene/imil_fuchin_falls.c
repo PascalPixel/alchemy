@@ -1532,7 +1532,7 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
     direction = -0x1000;
   actor->facing = facing + direction;
   Object_SetMode(actor, 2);
-  ObjectDispatch_ApplyValueToChildren(actor, 0x30);
+  ObjectDispatch_SetAnimationSpeed(actor, 0x30);
 }
 
 // Slide along the ice until terrain or a collision boundary ends the move.
@@ -1581,7 +1581,7 @@ static void Imil_SlideActorAcrossIce(void) {
     Engine_ObjectSetPosition(actor, x, actor->y.fixed, z);
 
     Object_SetMode(actor, 2);
-    ObjectDispatch_ApplyValueToChildren(actor, 48);
+    ObjectDispatch_SetAnimationSpeed(actor, 48);
     FieldObject_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 

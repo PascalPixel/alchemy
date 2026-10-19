@@ -211,7 +211,7 @@ s32 Scene_TalkToActor(s32 id) {
       u8 *movementState = &actor->movementState;
 
       *movementState = 1;
-      ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)actor, 0);
+      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 0);
       savedAngle = actor->angle;
       talkFacing = (u8)placement->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
@@ -253,8 +253,7 @@ s32 Scene_TalkToActor(s32 id) {
         }
       }
       actor->movementState = 0;
-      ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)actor,
-                                             16);
+      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
     }
     result = 0;
   }
@@ -462,7 +461,7 @@ s32 Field_SearchTile(s32 tile) {
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);
               PartyStatus_CloseFar();
-              ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+              ObjectDispatch_SelectAnimationFar(object, 2);
               AudioCommand_PlayFar(SE_246);
               FieldEvent_WaitFrames(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,

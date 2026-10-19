@@ -279,9 +279,9 @@ s32 BattlePres_SetActorModeAndAction(s32 unitId) {
     pose = POSE_ENEMY_DOWN - pose;
   }
 
-  ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(unitId)->object, pose);
-  ObjectDispatch_ApplyValueToChildrenFar(BattleObjGet(unitId)->object,
-                                         (unitId & 3) + 14);
+  ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, pose);
+  ObjectDispatch_SetAnimationSpeedFar(BattleObjGet(unitId)->object,
+                                      (unitId & 3) + 14);
 }
 
 // Releases every sprite unitId's object holds and leaves it with none.

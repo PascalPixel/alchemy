@@ -62,8 +62,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   WaitFrames(60);
   ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_ApplyArgumentToChildrenFar(
-      Object_GetById(gGameState.selectedActor), 28);
+  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
+                                    28);
   WaitFrames(40);
   AudioCommand_PlayFar(SE_164);
   WaitFrames(100);

@@ -89,7 +89,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
       Animation_ApplyChildValuesFar(copy, tint);
-      ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
+      ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCache(copy->sprite, sharedSprite);
       copy->linkedObject = prev;
@@ -110,7 +110,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetX = ACTOR_NO_TARGET;
   djinni->targetZ = ACTOR_NO_TARGET;
   djinni->targetY = ACTOR_NO_TARGET;
-  ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 0);
+  ObjectDispatch_SelectAnimationFar(djinni, 0);
   djinni->sprite->image.priority = 2;
   FieldEvent_End();
 }
@@ -193,7 +193,7 @@ void FieldObject_PlaceSceneActors(void) {
           Object_SetPositionAndResetMotionFar(obj, leader->x, leader->y,
                                               leader->z - (32 << 16));
         }
-        ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+        ObjectDispatch_SelectAnimationFar(obj, 1);
       }
     }
   }

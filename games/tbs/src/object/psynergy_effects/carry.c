@@ -134,8 +134,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       pos.z = target->z.fixed;
       Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
       Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
-      ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 1);
-      ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 1);
+      ObjectDispatch_SelectAnimationFar(hands[0], 1);
+      ObjectDispatch_SelectAnimationFar(hands[1], 1);
       continue;
     }
 
@@ -160,8 +160,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       goto blocked;
     if (BattleFx_CheckRaisedTargetCollision(target, p) > 0) {
     blocked: // the way is blocked: a buzzer every 16 frames
-      ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
-      ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
+      ObjectDispatch_SelectAnimationFar(hands[0], 4);
+      ObjectDispatch_SelectAnimationFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
         AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
@@ -175,8 +175,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       AudioCommand_PlayFar(SE_175);
       x = p->x;
       z = p->z;
-      ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
-      ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
+      ObjectDispatch_SelectAnimationFar(hands[0], 4);
+      ObjectDispatch_SelectAnimationFar(hands[1], 4);
       WaitFrames(15);
       target->paused = i;
       target->speed = 0x3333;
@@ -203,8 +203,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   // Shards fly from the target, the hands vanish, and the target hops and
   // drops.
   //------------------------------------------------------------------
-  ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
-  ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
+  ObjectDispatch_SelectAnimationFar(hands[0], 4);
+  ObjectDispatch_SelectAnimationFar(hands[1], 4);
   Scheduler_RemoveCallback(BattleFx_SpawnFallingParticles);
   AudioCommand_PlayFar(SE_135);
   WaitFrames(15);
@@ -280,7 +280,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
     fragment->speedLimit = 0x30000;
     fragment->acceleration = 0x30000;
     fragment->autoFaceMotion = 0;
-    ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 1);
+    ObjectDispatch_SelectAnimationFar(fragment, 1);
     scale = fragment->scaleX;
     if (scale < 0x10000) {
       do {

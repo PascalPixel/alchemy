@@ -247,11 +247,11 @@ Func_08029570:
 	adds r0, r4, #0
 	ldr r1, [sp, #16]
 	str r4, [sp, #0]
-	bl ObjectDispatch_ApplyArgumentToChildren
+	bl ObjectDispatch_SelectAnimation
 	ldr r4, [sp, #0]
 	movs r1, #8
 	adds r0, r4, #0
-	bl ObjectDispatch_ApplyValueToChildren
+	bl ObjectDispatch_SetAnimationSpeed
 	ldr r0, [sp, #20]
 	movs r3, #4
 	strb r3, [r0, #23]

@@ -51,7 +51,7 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   ObjectDispatch_InitFromTable6Far(object);
   Object_SetMoveTargetFar(object, battleObject->anchorX * 3, 0,
                           battleObject->anchorZ);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
 // Sends the unit of startSlot leaping progress percent of the way toward
@@ -81,7 +81,7 @@ void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
   start->verticalMotionPhase = 0;
   start->autoFaceMotion = 1;
   Object_SetMoveTargetFar(start, x, 0, startZ + zStep);
-  ObjectDispatch_ApplyArgumentToChildrenFar(start, 2);
+  ObjectDispatch_SelectAnimationFar(start, 2);
 }
 
 // Sends a unit's object back to its spot.
@@ -133,7 +133,7 @@ void BattleMotion_InitializeObject(s32 unitId) {
   ObjectDispatch_InitFromTable6Far(object);
   Object_SetMoveTargetFar(object, Iwram_MulQ16(battleObject->anchorX, 0x14ccc),
                           0, battleObject->anchorZ);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
+  ObjectDispatch_SelectAnimationFar(object, 5);
 }
 
 #define CLASS_NO_KNOCKBACK 0x94 // a class that never moves when hit
@@ -162,7 +162,7 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
     targetX = (anchorX * gBattleMotion_VariantDistancePercent[variant]) / 100;
     Object_SetMoveTargetFar(object, targetX, 0, battleObject->anchorZ);
   }
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
+  ObjectDispatch_SelectAnimationFar(object, 5);
 }
 
 // Sends unit actorId three quarters of the way to unit targetId, arriving
@@ -200,7 +200,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->autoFaceMotion = 1;
   ObjectDispatch_InitFromTable6Far(object);
   Object_SetMoveTargetFar(object, x, 0, z);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+  ObjectDispatch_SelectAnimationFar(object, 2);
 }
 
 // Restarts unit id's motion in pose 2.
@@ -209,7 +209,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
 
   object = BattleObjGet(unitId)->object;
   ObjectDispatch_InitFromTable6Far(object);
-  ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+  ObjectDispatch_SelectAnimationFar(object, 2);
 }
 
 // Does nothing; BattleMotion_ApplyPairMidpoint passes it a position and a

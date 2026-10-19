@@ -59,8 +59,10 @@ void FieldEffect_WatchLeaderDistance(void) {
   }
 }
 
-// Psynergy effect 8: starts a screen transition centred on the leader, runs
-// the matching event if there is one, and puts markers round the leader.
+// Abilities: Reveal (field kind 8).
+//
+// Starts a screen transition centred on the leader, runs the matching event if
+// there is one, and puts markers round the leader.
 void RunBattleEffect08(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
@@ -86,7 +88,7 @@ void RunBattleEffect08(void) {
   WaitFrames(1);
   event = BattleFx_FindMatchingEvent(0x50000005, 8, &eventTarget);
   if (event != NULL)
-    BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
@@ -107,7 +109,6 @@ void RunBattleEffect08(void) {
 }
 
 #define REVEAL_END_EVENT 0x40000005 // Psynergy event, stage 4
-#define REVEAL_FIELD_KIND 8         // the Reveal effect
 
 // Ends Reveal if it is running: stops its watch, brings the colours back
 // from black over 30 frames and runs stage 4 of the Psynergy event.
@@ -145,10 +146,10 @@ void ResetSceneTransitionEffect(void) {
     BattleFx_StartBufferInterpolation(30);
     WaitFrames(1);
 
-    event = BattleFx_FindMatchingEvent(REVEAL_END_EVENT, REVEAL_FIELD_KIND,
+    event = BattleFx_FindMatchingEvent(REVEAL_END_EVENT, FIELD_KIND_REVEAL,
                                        &eventTarget);
     if (event != NULL)
-      BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
 
     if (work->childOption == 0) {
       scene->nextMode = 0;
@@ -160,4 +161,3 @@ void ResetSceneTransitionEffect(void) {
 }
 
 #undef REVEAL_END_EVENT
-#undef REVEAL_FIELD_KIND

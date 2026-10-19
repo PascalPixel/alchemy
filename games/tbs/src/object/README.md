@@ -39,7 +39,9 @@ them all. The link order of the folder's objects is in
 - **field kind**: a Psynergy's field effect, the `type` column of
   `games/tbs/src/game/actions.tsv`: 1 Move, 2 Mind Read, 3 Ply, 4 Force,
   5 Douse, 6 Frost, 7 Lift, 8 Reveal, 9 Halt, 10 Cloak, 11 Carry, 12 Growth,
-  13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid.
+  13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid; `enum FieldKind`
+  (`FIELD_KIND_CATCH`) in `unit/object/psynergy_effects.h` names them, and
+  the effect scene keeps it as its `animation`.
 - **effect scene**: `struct BattleFxScene` in `gEffectWork` (heap slot
   `HEAP_SLOT_FX`, 56): the Psynergy being used, its caster and target, and
   its 24 effect slots.
@@ -57,10 +59,12 @@ part's own work block), `scene` for the effect scene, `object` and
 Functions are named for what they act on: `Scene_`, `Encounter_`, `Field_`,
 `Event_` and `FieldEvent_` (scene script commands), `Object_`,
 `ObjectMotion_`, `ObjectTable_`, `Marker_`, `Camera_`, `Djinn_`,
-`DisplayTransition_`, `EffectSlot_`, `FieldFx_`, `ReelGame_`, and the
-prefixes of the engine's other families. `BattleFx_` and `BattleEffect_`
-here are older names: most of those functions play field Psynergy, not
-battle effects, and keep their names until each is renamed from evidence.
+`DisplayTransition_`, `EffectSlot_`, `ReelGame_`, and the prefixes of the
+engine's other families. Field Psynergy effects are `FieldFx_`, a kind's
+runner named for its Psynergy (`FieldFx_RunCatch`). `BattleFx_`,
+`BattleEffect_` and `RunBattleEffectNN` here are older names for field
+Psynergy code that other folders or ⚓️'s twins also use; they keep them
+until a rename across folders.
 
 ## Spellings
 
@@ -89,4 +93,9 @@ the instructions that differ without it (AGENTS.md, S2).
 Psynergy events and plays the effect of the ability's field kind:
 `psynergy_effects/dispatch.c` runs the kind's handler, cast with no target
 (`BattleFx_Run`) or on one (`BattleFx_DispatchRequestKind`). Each kind's
-effect is the part named for it, such as `psynergy_effects/reveal.c`.
+effect is the part named for it, such as `psynergy_effects/reveal.c`, and
+each of its entry points opens with the abilities that reach it:
+
+```c
+// Abilities: Catch (field kind 13), cast on a target.
+```

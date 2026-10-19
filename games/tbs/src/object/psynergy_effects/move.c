@@ -52,11 +52,13 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 
 #define MOVE_CELL_MASK 0xfff00000 // a 16-pixel tile
 
-// Move (kind 1): puts the pushing hand beside the target and pushes the
-// target 16 pixels the way the d-pad points, for as long as the player
-// pushes; A, B, L or R end it. Where the target cannot go, an error sound
-// plays every 16 frames. When the push would run into the caster, the caster
-// blocks it or, when the tile beyond is free, is pushed along too.
+// Abilities: Move (field kind 1), cast on a target.
+//
+// Puts the pushing hand beside the target and pushes the target 16 pixels the
+// way the d-pad points, for as long as the player pushes; A, B, L or R end it.
+// Where the target cannot go, an error sound plays every 16 frames. When the
+// push would run into the caster, the caster blocks it or, when the tile beyond
+// is free, is pushed along too.
 void BattleFx_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
@@ -276,8 +278,10 @@ next_state:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-// The item break effect cast with no target: shows the broken item beside
-// the caster for 30 frames, then turns it into particles.
+// Abilities: Move (field kind 1), cast with no target.
+//
+// Shows the broken item beside the caster for 30 frames, then turns it into
+// particles.
 void BattleFx_RunItemBreakSequence(void) {
   s32 work[3];
   struct BattleFxScene *scene;

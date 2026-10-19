@@ -42,7 +42,16 @@
 //--------------------------------------------------------------------------
 
 // The sparks of the jackpot, kept in the map cell buffer.
-#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+#define REEL_SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+
+// The slot machine's own work block (struct ReelWork), beside the battle
+// effect blocks it borrows.
+#define REEL_HEAP_SLOT 45
+
+// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
+// its tile 212, where the third row of its map begins.
+#define REEL_CANVAS_SIZE (256 * 128)
+#define REEL_CANVAS_TILES (BG_CHAR_BLOCK(0) + 0x3500)
 
 // Plays the slot machine: blanks the screen, seeds the random numbers with the
 // play time and runs the game. Returns 0.
@@ -58,30 +67,30 @@ s32 ReelGame_Start(void) {
 // keeps them). Returns 0.
 s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 n;
-  u32 r_mask;
-  u32 g_mask;
-  u32 b_mask;
+  u32 redMask;
+  u32 greenMask;
+  u32 blueMask;
   u32 col;
   u32 r;
   u32 g;
   u32 b;
 
   if (count > 0) {
-    r_mask = 0x1f;
-    g_mask = 0x3e0;
-    b_mask = 0x7c00;
+    redMask = 0x1f;
+    greenMask = 0x3e0;
+    blueMask = 0x7c00;
     n = count;
     do {
       // Scale each channel where it stands and keep the top 16 bits.
       col = *src;
-      r = col & r_mask;
-      g = col & g_mask;
-      b = b_mask & col;
+      r = col & redMask;
+      g = col & greenMask;
+      b = blueMask & col;
       r *= scale;
       g *= scale;
       b *= scale;
-      col = ((r >> 16) & r_mask) | ((g >> 16) & g_mask);
-      col |= (b >> 16) & b_mask;
+      col = ((r >> 16) & redMask) | ((g >> 16) & greenMask);
+      col |= (b >> 16) & blueMask;
       *dst = col;
       src++;
       dst++;
@@ -92,8 +101,8 @@ s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
 }
 
 // A scheduler callback: on a frame whose canvas is ready (transferPending),
-// sends the 256 x 128 8bpp canvas to VRAM at 0x06003500, then clears it or
-// fades it into trails as transferMode says.
+// sends the canvas to its tiles in VRAM (REEL_CANVAS_TILES), then clears it
+// or fades it into trails as transferMode says.
 void ReelGame_TransferCanvas(void) {
   struct BattleEffectWork *work;
   u8 *buf;
@@ -102,17 +111,20 @@ void ReelGame_TransferCanvas(void) {
   if (work->transferPending == 1) {
     buf = gBattleFxWork[1];
     switch (work->transferMode) {
-    case 1: // then fill the canvas with transferValue
-      Dma_Set(buf, (void *)0x06003500, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000,
-              REG_DMA3);
-      Iwram_FillWords(buf, 0x8000, work->transferValue);
+    case 1:
+      // Then fill the canvas with transferValue.
+      Dma_Set(buf, (void *)REEL_CANVAS_TILES,
+              (DMA_ENABLE | DMA_32BIT) << 16 | REEL_CANVAS_SIZE / 4, REG_DMA3);
+      Iwram_FillWords(buf, REEL_CANVAS_SIZE, work->transferValue);
       break;
-    case 2: // trails: fade non-zero colour numbers to 1/2 or 3/4
+    case 2:
+      // Trails: fade nonzero colour numbers to 1/2 or 3/4.
       if (work->transferValue == 50)
-        ColorBuffer_BackupAndHalveNonzero(buf, (u8 *)0x06003500, 0x8000);
+        ColorBuffer_BackupAndHalveNonzero(buf, REEL_CANVAS_TILES,
+                                          REEL_CANVAS_SIZE);
       else
-        ColorBuffer_BackupAndScaleNonzeroThreeQuarters(buf, (u8 *)0x06003500,
-                                                       0x8000);
+        ColorBuffer_BackupAndScaleNonzeroThreeQuarters(buf, REEL_CANVAS_TILES,
+                                                       REEL_CANVAS_SIZE);
       break;
     }
     work->transferPending = 0;
@@ -179,21 +191,21 @@ void Palette_StepTowardResource(s32 resource) {
     s32 r = *col & 0x1f;
     s32 g = (*col >> 5) & 0x1f;
     s32 b = (*col >> 10) & 0x1f;
-    s32 dst_r = dst[i] & 0x1f;
-    s32 dst_g = (dst[i] >> 5) & 0x1f;
-    s32 dst_b = (dst[i] >> 10) & 0x1f;
+    s32 targetRed = dst[i] & 0x1f;
+    s32 targetGreen = (dst[i] >> 5) & 0x1f;
+    s32 targetBlue = (dst[i] >> 10) & 0x1f;
 
-    if (r < dst_r)
+    if (r < targetRed)
       r++;
-    else if (r > dst_r)
+    else if (r > targetRed)
       r--;
-    if (g < dst_g)
+    if (g < targetGreen)
       g++;
-    else if (g > dst_g)
+    else if (g > targetGreen)
       g--;
-    if (b < dst_b)
+    if (b < targetBlue)
       b++;
-    else if (b > dst_b)
+    else if (b > targetBlue)
       b--;
     dst[i] = RGB(r, g, b);
   }
@@ -332,9 +344,10 @@ struct ReelSave {
 // title letters of a win, the frame, the hold lamps, the spin counter, the
 // paylines, the reel symbols, the lever and the bottom bar.
 void ReelGame_RunFrame(void) {
-  /* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words
-   * (tag in oambuf.h): without attr01's qualifier differ 119, 1730 instructions
-   * for 1729; without attr2's differ 1558, 1701 for 1729. */
+  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
+   * words are volatile (oambuf.h), so loop.c keeps the offset givs of every
+   * loop over the list; as plain u32 words, 675 of 1729 instructions differ
+   * in tbs-en. */
   struct ReelWork *work;
   struct BattleEffectWork *fx;
   volatile u16 *dma;
@@ -353,7 +366,8 @@ void ReelGame_RunFrame(void) {
   s32 k;
   s32 i;
 
-  work = ((struct ReelWork **)gBattleFxWork)[6];
+  work = ((struct ReelWork **)
+              gBattleFxWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
   fx = gBattleFxWork[0];
   sprite = 0;
   objMode = 0x400;
@@ -363,7 +377,8 @@ void ReelGame_RunFrame(void) {
   dma = REG_DMA0;
   dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
-  dma[5];
+  (void)dma[5];
+  // One halfword at each HBlank (repeating, destination reloaded).
   Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY, 0xa2600001,
           (volatile u32 *)dma);
 
@@ -888,11 +903,12 @@ void ReelGame_InitTitle(void) {
   struct UiWindow *window;
   s32 message;
 
-  state = ((struct ReelWork **)gBattleFxWork)[6];
+  state = ((struct ReelWork **)
+               gBattleFxWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
   work = gBattleFxWork[0];
   left = 0;
   for (i = 0; i != 0x800; i++)
-    SPARKS[i].variant = 0;
+    REEL_SPARKS[i].variant = 0;
 
   letter = work->particles;
   y = -0x200000;
@@ -952,10 +968,11 @@ void ReelGame_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = Runtime_AllocateHeapBlock(41, 0x60e);
-  canvas = Runtime_AllocateHeapBlock(40, 0x8000);
-  work = Runtime_AllocateBlock(39, sizeof(struct BattleEffectWork));
-  state = Runtime_AllocateBlock(45, sizeof(struct ReelWork));
+  sheet = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, REEL_CANVAS_SIZE);
+  work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT,
+                               sizeof(struct BattleEffectWork));
+  state = Runtime_AllocateBlock(REEL_HEAP_SLOT, sizeof(struct ReelWork));
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)((u8 *)&gGameState + 12);
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
@@ -1036,7 +1053,7 @@ void ReelGame_Run(void) {
 
   {
     u16 *shade = (u16 *)(work->sheet + 0x200);
-    s32 size = 0x8000;
+    s32 size = REEL_CANVAS_SIZE;
 
     state->state = REEL_BETTING;
     state->cursor = 0;
@@ -1045,8 +1062,9 @@ void ReelGame_Run(void) {
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
             (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 32, REG_DMA3);
-    BG_PLTT_COLOR(4, 0) = 0x2f8b;
-    BG_PLTT_COLOR(4, 1) = 0x5bf6;
+    // The paylines' two greens, colours 64 and 65 on the canvas.
+    BG_PLTT_COLOR(4, 0) = RGB(11, 28, 11);
+    BG_PLTT_COLOR(4, 1) = RGB(22, 31, 22);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
     Dma_Set(entry, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 480 / 4,
             REG_DMA3);
@@ -1093,13 +1111,13 @@ void ReelGame_Run(void) {
       }
     }
 
-    BattleEffect_LoadWorkFar(46, 8, 7, 3, 2);
-    draw[0] = gWorkSlot[46];
-    BattleEffect_LoadWorkFar(47, 8, 7, 3, 3);
-    draw[1] = gWorkSlot[47];
+    BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
+    draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 8, 7, 3, 3);
+    draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Iwram_FillWords(canvas, size, 0);
-    Dma_Set(canvas, (void *)0x06003500,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x8000 / 4, REG_DMA3);
+    Dma_Set(canvas, (void *)REEL_CANVAS_TILES,
+            (DMA_ENABLE | DMA_32BIT) << 16 | REEL_CANVAS_SIZE / 4, REG_DMA3);
     Dma_Set((void *)BG_PLTT, work, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
             REG_DMA3);
     Dma_Set((void *)OBJ_PLTT, shade, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
@@ -1150,7 +1168,7 @@ void ReelGame_Run(void) {
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
-          struct EffectStep *spark = &SPARKS[(frame / 8 & 3) * 256];
+          struct EffectStep *spark = &REEL_SPARKS[(frame / 8 & 3) * 256];
 
           for (j = 0; j != 256; j++) {
             s32 speed;
@@ -1168,7 +1186,7 @@ void ReelGame_Run(void) {
           }
         }
         for (j = 0; j != 1024; j++) {
-          struct EffectStep *spark = &SPARKS[j];
+          struct EffectStep *spark = &REEL_SPARKS[j];
 
           if (spark->variant > 0) {
             s32 x;
@@ -1248,16 +1266,23 @@ void ReelGame_Run(void) {
                            0x100);
       WaitFrames(1);
     }
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback(ReelGame_TransferCanvas);
     Scheduler_RemoveCallback(ReelGame_RunFrame);
-    Runtime_ReleaseHeapBlock(45);
-    Runtime_ReleaseHeapBlock(40);
-    Runtime_ReleaseHeapBlock(39);
-    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(REEL_HEAP_SLOT);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
   }
 }
+
+// The LZ packer: a window of 1024 bytes, matches of up to PACK_MATCH_MAX
+// bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes read ahead.
+#define PACK_WINDOW_MASK 0x3ff
+#define PACK_MATCH_MAX 272
+#define PACK_DISTANCE_MAX 63
+#define PACK_LOOKAHEAD 672
 
 // The LZ packer below: empties its 256 hash chains (one per byte value) and
 // numbers its 1024 window nodes.
@@ -1306,7 +1331,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   u32 base = start;
 
   if (current < limit) {
-    u32 mask = 0x3ff;
+    u32 mask = PACK_WINDOW_MASK;
     u32 removal = base + 0x124;
 
     do {
@@ -1336,7 +1361,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
   current++;
   if (current < limit) {
-    u32 mask = 0x3ff;
+    u32 mask = PACK_WINDOW_MASK;
     struct AudioTrackSlotWork **root = &gFlash_Handler3;
     s32 empty = -1;
 
@@ -1364,13 +1389,9 @@ void AudioTrack_CopyBufferedBytes(u8 *destination) {
   }
 }
 
-#define WINDOW_MASK 0x3ff
-#define MATCH_MAX 272
-#define DIST_MAX 63
-#define PRIME_COUNT 672
-
-// Finds the longest earlier match (up to MATCH_MAX bytes, at most DIST_MAX
-// back) for the bytes at window position start; matchLen stays 1 for none.
+// Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
+// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
+// stays 1 for none.
 static __inline__ void AudioTrack_FindWindowMatch(s32 start) {
   struct AudioSlotNode *node;
   s32 len;
@@ -1380,21 +1401,22 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start) {
     return;
   }
   node = gFlash_Handler3->bucket[gFlash_Handler3->bucketBySlot[start]];
-  if (start + MATCH_MAX > WINDOW_MASK) {
+  if (start + PACK_MATCH_MAX > PACK_WINDOW_MASK) {
     while (node != NULL) {
-      s32 dist = (start - node->slot) & WINDOW_MASK;
+      s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
-      if (dist > 0 && dist <= DIST_MAX) {
-        for (len = 1; len < MATCH_MAX; len++) {
-          if (gFlash_Handler3->bucketBySlot[(start + len) & WINDOW_MASK] !=
-              gFlash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK]) {
+      if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
+        for (len = 1; len < PACK_MATCH_MAX; len++) {
+          if (gFlash_Handler3->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
+              gFlash_Handler3
+                  ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
         if (gFlash_Handler3->matchLen < len) {
           gFlash_Handler3->matchOffset = dist;
           gFlash_Handler3->matchLen = len;
-          if (len == MATCH_MAX) {
+          if (len == PACK_MATCH_MAX) {
             return;
           }
         }
@@ -1403,19 +1425,20 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start) {
     }
   } else {
     while (node != NULL) {
-      s32 dist = (start - node->slot) & WINDOW_MASK;
+      s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
-      if (dist > 0 && dist <= DIST_MAX) {
-        for (len = 1; len < MATCH_MAX; len++) {
+      if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
+        for (len = 1; len < PACK_MATCH_MAX; len++) {
           if (gFlash_Handler3->bucketBySlot[start + len] !=
-              gFlash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK]) {
+              gFlash_Handler3
+                  ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
         if (gFlash_Handler3->matchLen < len) {
           gFlash_Handler3->matchOffset = dist;
           gFlash_Handler3->matchLen = len;
-          if (len == MATCH_MAX) {
+          if (len == PACK_MATCH_MAX) {
             return;
           }
         }
@@ -1430,7 +1453,7 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start) {
 // two bytes of distance and length (lengths 2 to 16), or three for lengths up
 // to 272; a match is put off by one byte when the next position matches
 // further. A zero match ends the stream. Nothing in this game calls it.
-s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
+UNUSED s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s32 defer;
   s32 len;
   s32 saveOffset;
@@ -1448,7 +1471,7 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
   gFlash_Handler3->flagMask = 0x80;
   gFlash_Handler3->outBuf[0] = 0;
   gFlash_Handler3->outCnt = 1;
-  AudioTrack_ConsumeSlotBytes(0, PRIME_COUNT, input);
+  AudioTrack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
 
   while (gFlash_Handler3->bucketBySlot[gFlash_Handler3->pos] != -1) {
     AudioTrack_FindWindowMatch(gFlash_Handler3->pos);
@@ -1457,11 +1480,12 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
       if (gFlash_Handler3->matchLen > 1) {
         saveOffset = gFlash_Handler3->matchOffset;
         saveLen = len;
-        AudioTrack_FindWindowMatch((gFlash_Handler3->pos + 1) & WINDOW_MASK);
+        AudioTrack_FindWindowMatch((gFlash_Handler3->pos + 1) &
+                                   PACK_WINDOW_MASK);
         if (gFlash_Handler3->matchLen > 2) {
           reach[0] = gFlash_Handler3->matchLen + 1;
           AudioTrack_FindWindowMatch((gFlash_Handler3->pos + len) &
-                                     WINDOW_MASK);
+                                     PACK_WINDOW_MASK);
           reach[1] = gFlash_Handler3->matchLen + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
@@ -1496,10 +1520,10 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
       gFlash_Handler3->matchLen = 1;
     }
 
-    AudioTrack_ConsumeSlotBytes(gFlash_Handler3->pos + PRIME_COUNT,
+    AudioTrack_ConsumeSlotBytes(gFlash_Handler3->pos + PACK_LOOKAHEAD,
                                 gFlash_Handler3->matchLen, input);
     gFlash_Handler3->pos =
-        (gFlash_Handler3->pos + gFlash_Handler3->matchLen) & WINDOW_MASK;
+        (gFlash_Handler3->pos + gFlash_Handler3->matchLen) & PACK_WINDOW_MASK;
     gFlash_Handler3->flagMask >>= 1;
     if (gFlash_Handler3->flagMask == 0) {
       AudioTrack_CopyBufferedBytes(dst);

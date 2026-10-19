@@ -248,10 +248,10 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   afterEvent = BattleFx_FindMatchingEvent(PSYNERGY_EV(2), group, &target);
   BattleFx_LoadActionEffectResources(abilityId, 0);
   BattleFx_SetupObjectPair(gGameState.selectedActor, target);
-  BattleFx_RunEventAction(beforeEvent, userId, target);
+  Field_RunEventAction(beforeEvent, userId, target);
   FieldEvent_RunTypeHandler();
   EffectRuntime_StopCurrentObject();
-  BattleFx_RunEventAction(afterEvent, userId, target);
+  Field_RunEventAction(afterEvent, userId, target);
   BattleEffect_CleanupSceneObjects();
   return 0;
 }

@@ -29,7 +29,7 @@ struct OrbitEffect {
 
 // Per-frame update of a particle: moves by its velocity, slowing its x and z
 // velocity a little, and changes its scale and spin.
-void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object) {
+void FieldFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
   effect->x += effect->velocity.x;
@@ -52,7 +52,7 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   u32 i;
 
   opt.palette = 0;
-  opt.update = BattleFx_UpdateParticleMotionAndScale;
+  opt.update = FieldFx_UpdateParticleMotionAndScale;
   opt.startScaleX = 0xcccc; // 0.8
   opt.startScaleY = 0xcccc;
   i = 0;
@@ -140,13 +140,14 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   }
 }
 
-// Effect 14 cast on a target.
+// Abilities: Whirlwind, Gale (field kind 14), cast on a target.
 void BattleFx_CallEffect14(s32 unused) { RunBattleEffect14(); }
 
-// Psynergy effect 14: an orb is carried from the caster to 4 pixels above
-// the effect's position over 10 frames, growing from 0.25. Without
-// scene->enabled the target shrinks, and 16 particles appear round the orb,
-// one every 6 frames, and circle it.
+// Abilities: Whirlwind, Gale (field kind 14).
+//
+// An orb is carried from the caster to 4 pixels above the effect's position
+// over 10 frames, growing from 0.25. Without scene->enabled the target shrinks,
+// and 16 particles appear round the orb, one every 6 frames, and circle it.
 void RunBattleEffect14(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *src = scene->mainObject;

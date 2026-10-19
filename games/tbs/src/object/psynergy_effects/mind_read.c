@@ -18,9 +18,11 @@ struct WaveFxWork {
   u8 counter;   // particle spawn cycle (0 to 60)
 };
 
-// Starts the wave effect (kind 2) of caster sourceId on target targetId:
-// fades the palettes toward a hue that shifts with the frame counter, and
-// starts its per-frame update (BattleFx_UpdateWaveScene) after 8 frames.
+// Abilities: Mind Read (field kind 2).
+//
+// Starts the wave effect of caster sourceId on target targetId: fades the
+// palettes toward a hue that shifts with the frame counter, and starts its
+// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
 void RunSceneTransitionEffect(s32 x, s32 y) {
   struct WaveFxWork *work;
 
@@ -36,7 +38,7 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   Ui_FillBank15PaletteGrey();
-  Scheduler_AddOrUpdateCallback(BattleFx_UpdateWaveScene, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_UpdateMindReadWave, 0xc80);
 }
 
 // Stops the wave effect: restores the caster's colours and the palettes and
@@ -46,7 +48,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
 
   work = *(void **)((u32)&gBattleBgFxWork);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Scheduler_RemoveCallback(BattleFx_UpdateWaveScene);
+  Scheduler_RemoveCallback(FieldFx_UpdateMindReadWave);
   Animation_ApplyChildPalette(
       Object_GetById(((struct WaveFxWork *)work)->sourceId), 1);
   BattleFx_PrepareBufferInterpolation();
@@ -58,7 +60,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
 // steps the colour fade and the hue, keeps the caster's colours lit, and
 // every 60 frames sends three particles (object 281) from the target to the
 // caster, with sound 130.
-void BattleFx_UpdateWaveScene(void) {
+void FieldFx_UpdateMindReadWave(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   u16 *line;
   u32 scanline;
@@ -161,7 +163,7 @@ void BattleFx_AdvanceHueCycle(void) {
   u8 *pg;
   u8 *pb;
 
-  BattleFx_ComputeHueChannels(work->hue << 16, &r, &g, &b);
+  FieldFx_ComputeHueChannels(work->hue << 16, &r, &g, &b);
 
   // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue (0x28b).
   offset = 0x28b;
@@ -187,7 +189,7 @@ void BattleFx_AdvanceHueCycle(void) {
 
 // Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
 // (16.16).
-void BattleFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
+void FieldFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
   *r = BattleFx_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
   *g = BattleFx_HueChannelRamp(hue, 0, 31 << 16);
   *b = BattleFx_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
@@ -274,10 +276,11 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
 
   work = gWindowWork[0];
   Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = 0x7fff;  // white
-  BG_PLTT_COLOR(15, 3) = 0;       // black
-  BG_PLTT_COLOR(15, 11) = 0x294a; // grey (10)
-  BG_PLTT_COLOR(15, 12) = 0x5294; // grey (20)
+  // Palette 15's white, black and two greys.
+  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(15, 3) = 0;
+  BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   ((struct UiRenderWork *)work)->mode = 0;
 }

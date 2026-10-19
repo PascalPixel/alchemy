@@ -56,7 +56,7 @@ void FieldFx_UpdateGroundParticles(void) {
 
 // Scheduler callback for the storm: every 150 to 550 frames lightning flashes
 // the palette three times (5 frames apart) with a thunderclap, louder with
-// loud set. Flag 358 holds the next flash back.
+// loud set. Flag 0x166 holds the next flash back.
 void FieldFx_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
   struct BattleEffectBuffers *target = gFieldBlendWork[2];
@@ -64,7 +64,7 @@ void FieldFx_UpdateLightning(void) {
 
   if (*timer < 0)
     return;
-  if (GameFlag_TestFar(358))
+  if (GameFlag_TestFar(0x166))
     work->timer = 128;
   switch ((*timer)--) {
   case 0:

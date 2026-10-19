@@ -3,7 +3,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-// Effect 4 cast on a target.
+// Abilities: Force (field kind 4), cast on a target.
 void BattleFx_CallEffect04(s32 unused) { RunBattleEffect04(); }
 
 // Writes the position 16 pixels above the actor.
@@ -13,9 +13,10 @@ BattleFx_GetPositionAboveActor(struct FieldActor *obj,
   SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
-// Psynergy effect 4: a shot appears in front of the caster, grows and flies
-// forward with three afterimages; what it hits (scene->child) is pushed 16
-// pixels.
+// Abilities: Force (field kind 4).
+//
+// A shot appears in front of the caster, grows and flies forward with three
+// afterimages; what it hits (scene->child) is pushed 16 pixels.
 void RunBattleEffect04(void) {
   struct FieldActor *target;
   s32 eventTarget;
@@ -157,7 +158,7 @@ void RunBattleEffect04(void) {
   // Run the map's event for it, if there is one.
   event = BattleFx_FindMatchingEvent(0x50000005, 4, &eventTarget);
   if (event != NULL)
-    BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(20);

@@ -7,7 +7,7 @@
 
 // Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 // (timer counts up) until timer * 0x50 reaches 0x1000.
-void BattleFx_UpdateSpinAngle(union FieldObject *fieldObject) {
+void FieldFx_UpdateSpinAngle(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 step;
 
@@ -80,8 +80,9 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   }
 }
 
-// Psynergy effect 15: spins the main object and shrinks it while 24
-// particles fly out, one a frame.
+// Abilities: Retreat (field kind 15).
+//
+// Spins the main object and shrinks it while 24 particles fly out, one a frame.
 void BattleFx_RunEffect15(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
@@ -105,7 +106,7 @@ void BattleFx_RunEffect15(void) {
   AudioCommand_PlayFar(SE_220);
   Animation_ApplyChildValuesFar(obj, 0);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
-  obj->update = BattleFx_UpdateSpinAngle;
+  obj->update = FieldFx_UpdateSpinAngle;
   obj->timer = 0;
   WaitFrames(70);
 

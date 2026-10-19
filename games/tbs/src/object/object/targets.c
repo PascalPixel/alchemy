@@ -128,13 +128,14 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     if (candidate == 0 || (candidate->unk59 & 8) != 0)
       continue;
 
-    // The height allowed: 8 pixels, or 48 for kind 13, 64 for 5, 16 for 2.
+    // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
+    // Mind Read.
     heightLimit = 8 << 16;
-    if (kind == 13)
+    if (kind == FIELD_KIND_CATCH)
       heightLimit = 48 << 16;
-    if (kind == 5)
+    if (kind == FIELD_KIND_DOUSE)
       heightLimit = 64 << 16;
-    if (kind == 2)
+    if (kind == FIELD_KIND_MIND_READ)
       heightLimit = 16 << 16;
 
     {
@@ -165,12 +166,12 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
       continue;
 
     // The cone: 0x1800 either side up to 19 pixels, 0x1000 beyond; 0x2000
-    // for kind 2.
+    // for Mind Read.
     angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
     coneHalfAngle = 0x1800;
     if (distance > 19)
       coneHalfAngle = 0x1000;
-    if (kind == 2)
+    if (kind == FIELD_KIND_MIND_READ)
       coneHalfAngle = 0x2000;
 
     if (distance > 11) {

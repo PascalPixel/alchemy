@@ -37,37 +37,38 @@ void BattleFx_Run(void) {
   targetId = scene->secondObjectId;
 
   switch (kind) {
-  case 1:
+  case FIELD_KIND_MOVE:
     BattleFx_RunItemBreakSequence();
     return;
-  case 7:
+  case FIELD_KIND_LIFT:
     RunBattleEffect07();
     return;
-  case 11:
+  case FIELD_KIND_CARRY:
     RunBattleEffect11();
     return;
-  case 4:
+  case FIELD_KIND_FORCE:
     RunBattleEffect04();
     return;
-  case 5:
+  case FIELD_KIND_DOUSE:
     RunBattleEffect05();
     return;
-  case 14:
+  case FIELD_KIND_WHIRLWIND:
     RunBattleEffect14();
     return;
-  case 6:
+  case FIELD_KIND_FROST:
     BattleFx_RunOrbitingParticles();
     return;
-  case 3:
+  case FIELD_KIND_PLY:
     RunBattleEffect03();
     return;
-  case 12:
+  case FIELD_KIND_GROWTH:
     BattleFx_RunBurstParticles();
     return;
-  case 13:
-    RunBattleEffect13();
+  case FIELD_KIND_CATCH:
+    FieldFx_RunCatch();
     return;
-  case 9: // free the object stopped before, then stop the nearest one
+  case FIELD_KIND_HALT:
+    // Free the object stopped before, then stop the nearest one.
     if (gGameState.pausedObject != -1) {
       BattleFx_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
@@ -85,22 +86,23 @@ void BattleFx_Run(void) {
       BattleEffect_RunFallbackObjectTransition();
     }
     return;
-  case 2: // the wave and colour effect (stopping a running kind 8 first)
+  case FIELD_KIND_MIND_READ:
+    // The wave and colour effect, stopping a running Reveal first.
     if (runtime->revealActive != 0)
       ResetSceneTransitionEffect();
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
     return;
-  case 8:
+  case FIELD_KIND_REVEAL:
     RunBattleEffect08();
     return;
-  case 10:
+  case FIELD_KIND_CLOAK:
     FieldFx_StartCloak();
     return;
-  case 15:
+  case FIELD_KIND_RETREAT:
     BattleFx_RunEffect15();
     return;
-  case 16:
-    RunBattleEffect16();
+  case FIELD_KIND_AVOID:
+    FieldFx_RunAvoid();
     return;
   }
 }
@@ -115,35 +117,36 @@ void BattleFx_DispatchRequestKind(void) {
 
   scene->enabled = 0;
   switch (kind) {
-  case 2:
+  case FIELD_KIND_MIND_READ:
     if (runtime->revealActive != 0)
       ResetSceneTransitionEffect();
     if (gGameState.pausedObject != scene->secondObjectId)
       ((struct ObjectRuntime *)scene->child)->movementState = 1;
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
     break;
-  case 1: // push the target with the direction keys
+  case FIELD_KIND_MOVE:
+    // Push the target with the direction keys.
     BattleFx_SteerPushedTarget(targetId);
     break;
-  case 7:
+  case FIELD_KIND_LIFT:
     BattleEffect_RunTargetedItemBreak(targetId);
     break;
-  case 11:
+  case FIELD_KIND_CARRY:
     BattleFx_SteerLiftedTarget(targetId);
     break;
-  case 4:
+  case FIELD_KIND_FORCE:
     BattleFx_CallEffect04(targetId);
     break;
-  case 5:
+  case FIELD_KIND_DOUSE:
     BattleFx_CallEffect05(targetId);
     break;
-  case 6:
+  case FIELD_KIND_FROST:
     BattleFx_StartOrbitingParticles(targetId);
     break;
-  case 12:
-    BattleFx_RunBurstParticleMainObject(targetId);
+  case FIELD_KIND_GROWTH:
+    FieldFx_RunGrowthOnTarget(targetId);
     break;
-  case 9:
+  case FIELD_KIND_HALT:
     if (gGameState.pausedObject != -1) {
       BattleFx_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
@@ -152,36 +155,36 @@ void BattleFx_DispatchRequestKind(void) {
     gGameState.pausedObject = targetId;
     BattleFx_MarkChildAndRunFallbackTransition(targetId);
     break;
-  case 3:
+  case FIELD_KIND_PLY:
     BattleFx_CallEffect03AndStop(targetId);
     break;
-  case 14:
+  case FIELD_KIND_WHIRLWIND:
     BattleFx_CallEffect14(targetId);
     break;
-  case 13:
-    BattleFx_RunEffect13Hook(targetId);
+  case FIELD_KIND_CATCH:
+    FieldFx_RunCatchOnTarget(targetId);
     break;
-  case 8:
+  case FIELD_KIND_REVEAL:
     RunBattleEffect08();
     break;
-  case 10:
+  case FIELD_KIND_CLOAK:
     FieldFx_StartCloak();
     break;
-  case 15:
+  case FIELD_KIND_RETREAT:
     BattleFx_RunEffect15();
     break;
-  case 16:
-    RunBattleEffect16();
+  case FIELD_KIND_AVOID:
+    FieldFx_RunAvoid();
     break;
   }
 }
 
-// Finishes an effect of kind 2: ends the effect and lets its target move
-// again, unless the target is the object kept stopped.
+// Finishes the current effect when it is Mind Read: ends the effect and lets
+// its target move again, unless the target is the object kept stopped.
 void BattleFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = gEffectWork;
 
-  if (scene->animation == 2) {
+  if (scene->animation == FIELD_KIND_MIND_READ) {
     BattleFx_FinishSceneAndReleaseHeapBlock();
     if (gGameState.pausedObject != scene->secondObjectId) {
       ((struct ObjectRuntime *)scene->child)->movementState = 0;
@@ -189,19 +192,19 @@ void BattleFx_ClearChildValueOnMismatch(void) {
   }
 }
 
-// The extra handler of effect kinds 8, 10 and 16.
+// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
   kind = ((struct BattleFxScene *)gEffectWork)->animation;
   switch (kind) {
-  case 8:
+  case FIELD_KIND_REVEAL:
     ResetSceneTransitionEffect();
     return;
-  case 10:
+  case FIELD_KIND_CLOAK:
     FieldFx_EndCloak();
     return;
-  case 16:
+  case FIELD_KIND_AVOID:
     FieldEvent_ShowStatusMessage();
     return;
   }
@@ -209,9 +212,9 @@ void FieldEvent_RunTypeHandler(void) {
 
 // Runs the event tied to an effect: a result below 0x10000 is a message,
 // shown at target; a larger one is a routine, called with param and target
-// (through r3). Afterwards, with flag 322 set, says "But nothing happens.".
+// (through r3). Afterwards, with flag 0x142 set, says "But nothing happens.".
 // Returns 0.
-s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
+s32 Field_RunEventAction(void *event, s32 param, s32 target) {
   s32 script;
 
   if (event != NULL) {
@@ -226,7 +229,7 @@ s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
         _call_via_r3(param, target);
       }
     }
-    if (GameFlag_TestFar(322) != 0) {
+    if (GameFlag_TestFar(0x142) != 0) {
       FieldEvent_Begin();
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
       FieldEvent_End();

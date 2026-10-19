@@ -4,7 +4,7 @@
 #include "../psynergy_effects_internal.h"
 
 // Scheduler callback: updates the 24 effect slots.
-void BattleFx_UpdateAllEffectSlots(void) { BattleFx_UpdateSceneSlots(); }
+void BattleFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 
 // Prepares the work of the Psynergy effect for ability (heap slot 56) and
 // loads its spark tiles. Called again while an effect resolves, it only
@@ -42,7 +42,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   if (gGameState.map == (s32)&SceneId_MercuryLighthouse2)
     work->lit = 1;
   BattleFx_SetupObjectPair(gGameState.selectedActor, -1);
-  if (work->animation != 8)
+  if (work->animation != FIELD_KIND_REVEAL)
     ev->effectTimerRunning = running;
   work->tileSlot = Resource_FindFreeEntry();
   VramCache_Load((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
@@ -137,9 +137,9 @@ void BattleEffect_CleanupSceneObjects(void) {
   if (runtime->resolvingAction == 0) {
     s32 waited = 0;
     void (*firstActiveUpdate)(union FieldObject *) =
-        BattleFx_UpdateScaledArcObjectB;
+        FieldFx_UpdateScaledArcObjectB;
     void (*secondActiveUpdate)(union FieldObject *) =
-        BattleFx_UpdateScaledArcObjectA;
+        FieldFx_UpdateScaledArcObjectA;
     s32 active;
 
     do {
@@ -170,10 +170,10 @@ void BattleEffect_CleanupSceneObjects(void) {
     map->shakeX = scene->savedShakeX;
     map->shakeY = scene->savedShakeY;
     map->shakeDecay = scene->savedShakeDecay;
-    if (scene->animation != 8)
+    if (scene->animation != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
     BattleFx_PlayQueuedSound();
-    Runtime_ReleaseHeapBlock(0x38);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
   }
 }
 
@@ -219,7 +219,7 @@ void EventObject_Initialize(void) {
   }
   if (GameFlag_TestFar(0x140) != 0) {
     if (scene->visible != 0) {
-      caster->update = BattleFx_CycleObjectValueByCounter;
+      caster->update = FieldFx_CycleObjectValueByCounter;
     }
     ObjectDispatch_ApplyArgumentToChildrenFar(caster, 0x15);
   } else {

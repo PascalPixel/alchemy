@@ -47,6 +47,7 @@
 #include "object_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "songs.h"
 #include "macros.h"
 
 #define WATER_ACTOR 16
@@ -472,7 +473,7 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
       Engine_EventBegin();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
-      Engine_AudioPlayCue(152);
+      Engine_AudioPlayCue(SE_152);
       Object_SetMode(leader, 7);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
@@ -672,13 +673,13 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
                              0xc80);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, CrossboneIslePillarRooms_JitterBackgroundScroll);
-  Engine_AudioPlayCue(231);
+  Engine_AudioPlayCue(SE_231);
   sShakeChance = 0;
   do {
     Engine_TaskWait(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove both scroll callbacks.
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_289);
   if (Engine_GameFlagIsSet(WATER_RAISED_FLAG) == 0) {
     Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
     Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
@@ -708,10 +709,10 @@ static void Event_FlipWaterSwitch(void) {
   waterRaised = GameFlag_IsSet(WATER_RAISED_FLAG);
   // Raise or drain the water before updating the pillar collision footprints.
   if (waterRaised == 0) {
-    Event_PlayCue(232);
+    Event_PlayCue(SE_232);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps1, 84, 24);
     Engine_EventWait(30);
-    Event_PlayCue(240);
+    Event_PlayCue(SE_240);
     Engine_ActorSetSpritePriority(WATER_ACTOR, 1);
     Object_GetById(WATER_ACTOR)->motionFlags = waterRaised;
     water = Actor_Get(WATER_ACTOR);
@@ -726,10 +727,10 @@ static void Event_FlipWaterSwitch(void) {
     Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     GameFlag_Set(WATER_RAISED_FLAG);
   } else {
-    Event_PlayCue(232);
+    Event_PlayCue(SE_232);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps2, 84, 24);
     Engine_EventWait(30);
-    Event_PlayCue(230);
+    Event_PlayCue(SE_230);
     Object_GetById(WATER_ACTOR)->motionFlags = 0;
     water = Actor_Get(WATER_ACTOR);
     water->y.fixed = -PIXELS(32);
@@ -959,7 +960,7 @@ static void Event_MovePillar(void) {
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
       if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
-        Engine_AudioPlayCue(189);
+        Engine_AudioPlayCue(SE_189);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P).
         /* FAKEMATCH: the u8 view keeps these flag updates out of the record's
@@ -973,7 +974,7 @@ static void Event_MovePillar(void) {
       } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
         CrossboneIslePillarRooms_StopAtGroundOrHeight(
             (struct FieldActor *)actor, 0);
-        Engine_AudioPlayCue(189);
+        Engine_AudioPlayCue(SE_189);
         actor->y = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_ShrinkPillar(id);
@@ -1178,7 +1179,7 @@ static void CrossboneIslePillarRooms_SpawnFrostParticle(void) {
   if ((gFrameCount & 2) != 0)
     return;
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(136);
+    Engine_AudioPlayCue(SE_136);
 
   settings = &options;
   settings->palette = 10;
@@ -1325,7 +1326,7 @@ static void Event_MoveSinkingPillar(void) {
     alreadyLowered = GameFlag_IsSet(PILLAR_SUNK_FLAG);
     if (alreadyLowered == 0) {
       Engine_EventWait(10);
-      Engine_AudioPlayCue(159);
+      Engine_AudioPlayCue(SE_159);
       pillar->motionFlags = alreadyLowered;
       pillar->terrainHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);

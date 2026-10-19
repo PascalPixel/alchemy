@@ -31,6 +31,7 @@
 #include "ability_ids.h"
 #include "macros.h"
 #include "flags.h"
+#include "songs.h"
 #include "item_ids.h"
 
 // The room's actors: Garet and Ivan take their party slots, the rest follow
@@ -164,7 +165,7 @@ static void Event_PushWestPillar(void) {
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Event_PlayCue(185);
+  Event_PlayCue(SE_185);
   // 16 pixels east from trigger 5, west from trigger 6.
   offsetX = (11 - (work->touchedTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
@@ -203,7 +204,7 @@ s32 Scene_Initialize(void) {
 
   Engine_GameFlagSet(0x144);
   Engine_EventWait(10);
-  BattleFx_SetQueuedSoundAndPlay(170);
+  BattleFx_SetQueuedSoundAndPlay(SE_170);
   Engine_ActorSetAnimation(11, 2);
   Object_GetById(11)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
@@ -538,9 +539,9 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
   actor->flags34 = 0;
   Engine_ActorWaitForMove(id);
   SceneActor_WaitObjectBelowHeight(actor, 0x200000);
-  Engine_AudioPlayCue(188);
+  Engine_AudioPlayCue(SE_188);
   Map_SetShake(0x50000, 0x50000, 0x10000);
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   Map_SetShake(-1, -1, 0xe666);
   for (i = 0; i <= 16; i++) {
     v = &dir;
@@ -562,7 +563,7 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
   p->targetScaleX = 0x18000;
   p->targetScaleY = 0x13333;
   Effect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0, 0x1c0000, p);
-  Engine_AudioPlayCue(154);
+  Engine_AudioPlayCue(SE_CAST);
   Engine_ActorSetAnimation(id, 3);
   Engine_MapWaitWorkValuesBelow256();
 }

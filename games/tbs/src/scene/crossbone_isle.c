@@ -35,6 +35,7 @@
 #include "field_obj.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "songs.h"
 
 // Forward declarations.
 static void CrossboneIsle_RestoreMovedRoomBlock(void);
@@ -325,7 +326,7 @@ static void Event_MoveBlock(void) {
 
   Engine_EventWait(8);
   CrossboneIsle_SpawnBlockMovedBurst(8);
-  Engine_AudioPlayCue(136);
+  Engine_AudioPlayCue(SE_136);
   Engine_EventWait(40);
 
   Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
@@ -359,7 +360,7 @@ static void Event_PushBlock(void) {
 // goes through.
 static void Event_OpenWestDoor(void) {
   Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
-  Engine_AudioPlayCue(183);
+  Engine_AudioPlayCue(SE_183);
   Engine_EventRequestExit(4);
 }
 
@@ -405,7 +406,7 @@ static void Event_EnterGuardedRoom(void) {
     Engine_EventEnd();
   } else {
     Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
-    Engine_AudioPlayCue(183);
+    Engine_AudioPlayCue(SE_183);
     Engine_EventRequestExit(3);
   }
 }
@@ -592,9 +593,9 @@ static void CrossboneIsle_MoveSelectedActorAndBlock(s32 actorId, s32 xOffset,
   } else {
     Object_SetMode(block, 3);
   }
-  Engine_AudioPlayCue(226);
+  Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(selectedActor);
-  Engine_AudioPlayCue(288);
+  Engine_AudioPlayCue(SE_288);
   Engine_EventEnd();
 }
 
@@ -728,7 +729,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
     Engine_EventBegin();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(152);
+    Engine_AudioPlayCue(SE_152);
     Object_SetMode(actor, 7);
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);

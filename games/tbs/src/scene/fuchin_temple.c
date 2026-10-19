@@ -181,7 +181,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   // The monk leaps aside and lands in a puff of dust.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 392);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Engine_AudioPlayCue(132);
+  Engine_AudioPlayCue(SE_132);
   movingMonk = Object_GetById(FALLS_MONK);
   movingMonk->velocityY = 0x140000;
   movingMonk = Object_GetById(FALLS_MONK);
@@ -192,7 +192,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   movingMonk = Object_GetById(FALLS_MONK);
   movingMonk->gravity = 0x10000;
   Engine_ActorFaceDirection(FALLS_MONK, FACING_EAST, 0);
-  Engine_AudioPlayCue(132);
+  Engine_AudioPlayCue(SE_132);
   // Only the palette option is enabled for these three particles.
   options.palette = 7;
   Effect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0x8000,
@@ -252,7 +252,7 @@ static void Event_NyunpaOffersTest(void) {
     Engine_EventWait(5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Object_GetById(NYUNPA)->paused = 0;
-    Event_PlayCue(152);
+    Event_PlayCue(SE_152);
     nyunpa = Actor_Get(NYUNPA);
     nyunpa->velocityY = 0x80000;
     Engine_ActorSetAnimation(NYUNPA, ANIM_STAND);
@@ -268,7 +268,7 @@ static void Event_NyunpaOffersTest(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     Engine_EventWait(5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Event_PlayCue(152);
+    Event_PlayCue(SE_152);
     Object_GetById(NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(NYUNPA);
     nyunpa->velocityY = 0x80000;
@@ -451,7 +451,7 @@ static void FuchinTemple_ToppleTreeWest(void) {
   tree->y.fixed = 0x120000;
   tree->targetY = 0x120000;
 
-  Engine_AudioPlayCue(227);
+  Engine_AudioPlayCue(SE_227);
 
   Effect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
                0xffffcccd, 0x6666, 0, 0, 0);
@@ -479,7 +479,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
   tree->y.fixed = 0x120000;
   tree->targetY = 0x120000;
   tree->scaleX = 0xffff3334;
-  Engine_AudioPlayCue(227);
+  Engine_AudioPlayCue(SE_227);
   Effect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
                0x10000, 0x3333, 0, 0, 0);
   Effect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000, 0xcccc,
@@ -503,7 +503,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   } while (stepIndex < 4);
   rotation = 0;
   tree->sprite->rotation = rotation;
-  Engine_AudioPlayCue(227);
+  Engine_AudioPlayCue(SE_227);
   Effect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
                0xffff3334, 0, 0xffffcccd, 0, 0);
   Effect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
@@ -535,7 +535,7 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   tree->sprite->rotation = 0;
   tree->z.fixed += 0x180000;
   tree->targetZ = ACTOR_NO_TARGET;
-  Engine_AudioPlayCue(227);
+  Engine_AudioPlayCue(SE_227);
 
   Effect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000, -0xcccc,
                0, 0x3333, 0, 0);
@@ -610,7 +610,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Object_GetById(TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   Object_GetById(TRAINING_TREE)->scaleX = 0xcccc;
   Object_GetById(TRAINING_TREE)->sprite->rotation = 0x8000;
-  Engine_AudioPlayCue(124);
+  Engine_AudioPlayCue(SE_124);
   Engine_EventWait(40);
   Engine_ActorWalkToAndWait(15, 216, 152);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 30);
@@ -665,7 +665,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
 
     sprite->rotation = rotation;
   }
-  Engine_AudioPlayCue(124);
+  Engine_AudioPlayCue(SE_124);
   Engine_EventWait(40);
   Engine_ActorWalkToAndWait(15, 216, 152);
   Actor_FaceDirection(15, FACING_SOUTH, 30);
@@ -800,7 +800,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WalkToAndWait(16, 308, 248);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(16, FACING_NORTH, 20);
-  Event_PlayCue(158);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gFuchinTemple_CellStepsB, 78, 13);
   Engine_ActorRunRepeatedMotion(16, 2);
   Engine_EventWait(20);
@@ -840,7 +840,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Engine_ActorWaitForMove(FEH);
   Actor_FaceDirection(FEH, FACING_SOUTH + FACING_STEP, 0);
   Engine_ActorWaitForMove(FEIZHI);
-  Event_PlayCue(159);
+  Event_PlayCue(SE_159);
   Map_AnimateCells(gFuchinTemple_CellStepsC, 78, 13);
   Event_ShowMessageAndWait(FEH, 0, 20);
   Actor_FaceActor(9, FEIZHI, 0);
@@ -972,7 +972,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
     sprite->rotation = rotation;
   }
-  Event_PlayCue(124);
+  Event_PlayCue(SE_124);
   Event_ShowMessageAndWait(FEH, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_WalkToAndWait(16, 256, 240);
@@ -1250,7 +1250,7 @@ static void FuchinTemple_FehSeesChi(void) {
 
     sprite->rotation = rotation;
   }
-  Event_PlayCue(124);
+  Event_PlayCue(SE_124);
   Engine_EventWait(40);
   Actor_WalkToAndWait(15, 216, 152);
   Actor_FaceDirection(15, FACING_SOUTH, 30);
@@ -1276,7 +1276,7 @@ static void Event_OpenLockedDoor(void) {
     Engine_MessageShowCentered(MsgXianItIsLocked, 1);
     Engine_EventEnd();
   } else {
-    Event_PlayCue(158);
+    Event_PlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gFuchinTemple_CellStepsB, 78, 13);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 306, 248);
@@ -1398,7 +1398,7 @@ static void Event_EnterWaterfallGrotto(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   gEventWork->transitionFrames = 60;
   Engine_EventCloseScreen();
-  Engine_AudioPlayCue(154);
+  Engine_AudioPlayCue(SE_CAST);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -1421,7 +1421,7 @@ static void Event_LeaveTemple(void) {
 // into Nyunpa's hall.
 static void Event_EnterNyunpasHall(void) {
   Engine_EventBegin();
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   Map_AnimateCells(gFuchinTemple_CellStepsA, 77, 8);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -1451,7 +1451,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Actor_SetAttachedEffect(NYUNPA, 0x102);
   Engine_EventWait(60);
   Object_GetById(NYUNPA)->paused = 0;
-  Event_PlayCue(152);
+  Event_PlayCue(SE_152);
   nyunpa = Actor_Get(NYUNPA);
   nyunpa->velocityY = 0x80000;
   Engine_ActorSetAnimation(NYUNPA, ANIM_STAND);
@@ -2153,7 +2153,7 @@ s32 Scene_Initialize(void) {
       }
     }
   } else {
-    BattleFx_SetQueuedSoundAndPlay(170);
+    BattleFx_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(9)->collisionFlags |= 16;
     if (gGameState.entrance == 3 && Engine_GameFlagIsSet(0xf14) &&
         !Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {
@@ -2204,7 +2204,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   for (shotIndex = 0; shotIndex < 8; shotIndex++) {
     Engine_EventWait(10);
     if (shotIndex & 1) {
-      Engine_AudioPlayCue(0x82);
+      Engine_AudioPlayCue(SE_130);
     }
     Effect_Spawn(nyunpa->x.fixed, nyunpa->y.fixed, nyunpa->z.fixed + 0xffe80000,
                  0, 0x9999, 0, 0x00360001, &options);
@@ -2231,14 +2231,14 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   s32 particleY;
   s32 riseSpeed;
 
-  Engine_AudioPlayCue(0x83);
+  Engine_AudioPlayCue(SE_131);
   Object_GetById(HAMA)->update = FuchinTemple_AlternateLessonChildEffect;
   Engine_EventWait(40);
   Engine_ColorBufferApplySource(128 << 9, 0);
   Engine_ColorBufferApplyTarget(0x205c54, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(40);
-  Engine_AudioPlayCue(0x83);
+  Engine_AudioPlayCue(SE_131);
   Object_GetById(IVAN)->update = FuchinTemple_AlternateLessonChildEffect;
   Engine_EventWait(120);
   hama = Object_GetById(HAMA);
@@ -2248,7 +2248,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   options.type = 0x011d;
   for (particleIndex = 0; particleIndex < 64; particleIndex++) {
     if ((particleIndex & 3) == 0) {
-      Engine_AudioPlayCue(246);
+      Engine_AudioPlayCue(SE_246);
     }
     particleX = hama->x.fixed +
                 ((((u32)(Engine_RandomNext() * 3) << 4) >> 16) << 16) +
@@ -2260,7 +2260,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
                  152 << 13, &options);
     Engine_TaskWait(2);
   }
-  Engine_AudioPlayCue(220);
+  Engine_AudioPlayCue(SE_220);
   Engine_EventWait(30);
   // Fade back and remove both hooks before the conversation resumes.
   Engine_ColorBufferApplyTarget(128 << 9, 1);

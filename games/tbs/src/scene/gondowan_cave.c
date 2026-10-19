@@ -27,6 +27,7 @@
 #include "field_obj.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "songs.h"
 
 // The first room's actors: the soldiers who guard the bridge, and Iodem.
 #define SOLDIER_1 8
@@ -296,7 +297,7 @@ static void Event_MoveSecondObject(void) {
     Map_CopyCellAttributes(108, 17, 1, 1, destinationCellX, destinationCellZ);
     Engine_EventWait(8);
     GondowanCave_PlaceMovedSecondObject(3);
-    Event_PlayCue(154);
+    Event_PlayCue(SE_CAST);
     GameFlag_Set(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
   }
   Engine_EventEnd();
@@ -343,7 +344,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   }
   actor->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
-  Engine_AudioPlayCue(136);
+  Engine_AudioPlayCue(SE_136);
   Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
   Actor_SetDestination(actorId, 472, 288);
   actor->gravity = 4 * PIXELS(1) / 5;
@@ -371,7 +372,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   GondowanCave_WaitForDescent(actor, PIXELS(32));
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
-  Engine_AudioPlayCue(154);
+  Engine_AudioPlayCue(SE_CAST);
   Engine_ActorSetAnimation(actorId, 3);
   Map_WaitWorkValuesBelow256();
   Engine_EventWait(10);

@@ -43,6 +43,7 @@
 #include "field_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "songs.h"
 
 #if TBS_PATCH_1
 #define CROSSBONE_PURSUER_STEP_Z 16
@@ -175,7 +176,7 @@ static void Event_BaneFirstEscape(void) {
     Engine_ActorRunRepeatedMotion(15, 2);
     Engine_EventWait(20);
     Actor_SetSpeed(BANE, PIXELS(1), PIXELS(1) / 2);
-    Event_PlayCue(152);
+    Event_PlayCue(SE_152);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(BANE, 584, 680);
@@ -206,7 +207,7 @@ static void Event_BaneSecondEscape(void) {
       Engine_ActorRunRepeatedMotion(15, 2);
       Engine_EventWait(20);
       Actor_SetSpeed(BANE, PIXELS(1), PIXELS(1) / 2);
-      Event_PlayCue(152);
+      Event_PlayCue(SE_152);
       jumpingDjinni = Object_GetById(BANE);
       jumpingDjinni->velocityY = PIXELS(10);
       Actor_WalkToAndWait(BANE, 584, 664);
@@ -220,7 +221,7 @@ static void Event_BaneSecondEscape(void) {
       Actor_WalkToAndWait(BANE, 744, 664);
       Actor_WalkToAndWait(BANE, 824, 664);
       Engine_EventWait(10);
-      Event_PlayCue(208);
+      Event_PlayCue(SE_208);
       Map_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
       Engine_EventWait(20);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -253,7 +254,7 @@ static void Event_BaneLastEscape(void) {
     djinni = Object_GetById(BANE);
     djinni->sprite->rotation = 0;
     ObjectDispatch_ApplyValueToChildren(djinni, 16);
-    Event_PlayCue(152);
+    Event_PlayCue(SE_152);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(8);
     Actor_FaceDirection(BANE, FACING_WEST, 30);
@@ -261,7 +262,7 @@ static void Event_BaneLastEscape(void) {
     Engine_ActorRunRepeatedMotion(15, 2);
     Engine_EventWait(20);
     Actor_SetSpeed(BANE, PIXELS(1), PIXELS(1) / 2);
-    Event_PlayCue(152);
+    Event_PlayCue(SE_152);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(4);
     Actor_WalkToAndWait(BANE, 880, 680);
@@ -356,7 +357,7 @@ static void CrossboneIslePlatformRooms_OpenPassage(s32 passageInfo) {
   s32 collisionColumn = columnOffset + 13;
 
   if (passageInfo & PASSAGE_PLAY_OPENING) {
-    Engine_AudioPlayCue(157);
+    Engine_AudioPlayCue(SE_GATE_MOVE);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Map_CopyCells(79, 29, 1, 3, tileColumn, 40);
@@ -370,7 +371,7 @@ static void CrossboneIslePlatformRooms_OpenPassage(s32 passageInfo) {
 // Open the red-key passage, optionally playing its opening.
 static void CrossboneIslePlatformRooms_OpenPlatformPassage(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
-    Event_PlayCue(157);
+    Event_PlayCue(SE_GATE_MOVE);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Map_CopyCells(84, 29, 1, 3, 70, 49);
@@ -543,7 +544,7 @@ static void Event_DodgeFirstPursuer(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   Actor_SetSpeed(8, PIXELS(19) / 10, PIXELS(19) / 20);
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   leader = Object_GetById(0);
   if (leader != 0) {
     Actor_SetDestination(8, leader->x.part.pixel, leader->z.part.pixel);
@@ -551,7 +552,7 @@ static void Event_DodgeFirstPursuer(void) {
   Engine_ActorWaitForMove(8);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
   Engine_EventWait(4);
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   Actor_SetDestinationOffset(8, 0, CROSSBONE_PURSUER_STEP_Z);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetDestination(8, 360, 152);
@@ -581,14 +582,14 @@ static void Event_DodgeSecondPursuer(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   Actor_SetSpeed(9, PIXELS(17) / 10, PIXELS(17) / 20);
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   leader = Object_GetById(0);
   if (leader != 0) {
     Actor_SetDestination(9, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(9);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   Engine_EventWait(4);
   Actor_SetDestinationOffset(9, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -612,7 +613,7 @@ static void CrossboneIslePlatformRooms_TrackPursuerColumn(s32 pursuerIndex) {
     return;
 
   Engine_ActorSetSpeed(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
-  Engine_AudioPlayCue(188);
+  Engine_AudioPlayCue(SE_188);
   Engine_ActorSetDestination(pursuerId, (column << 4) + 8, 360);
 
   gCrossboneIslePlatformRooms_SlotColumns[pursuerIndex] = column;
@@ -646,7 +647,7 @@ static void Event_DodgeThirdPursuer(void) {
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Actor_SetSpeed(10, PIXELS(17) / 10, PIXELS(17) / 20);
-    Event_PlayCue(188);
+    Event_PlayCue(SE_188);
     leader = Object_GetById(0);
     if (leader != 0) {
       Actor_SetDestination(10, leader->x.part.pixel, leader->z.part.pixel);
@@ -654,7 +655,7 @@ static void Event_DodgeThirdPursuer(void) {
     Engine_ActorWaitForMove(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
     Engine_EventWait(4);
-    Event_PlayCue(188);
+    Event_PlayCue(SE_188);
     Actor_SetDestinationOffset(10, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(10, 264, 360);
@@ -673,7 +674,7 @@ static void Event_DodgeFourthPursuer(void) {
     Engine_EventBegin();
     Actor_SetSpeed(0, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_ActorSetSpeed(11, PIXELS(17) / 10, PIXELS(17) / 20);
-    Engine_AudioPlayCue(188);
+    Engine_AudioPlayCue(SE_188);
     leaderColumn = Object_GetById(0)->x.fixed / PIXELS(16);
     if (leaderColumn > Object_GetById(11)->x.fixed / PIXELS(16)) {
       Engine_ActorSetDestinationOffset(11, 8, 0);
@@ -691,7 +692,7 @@ static void Event_DodgeFourthPursuer(void) {
     Engine_ActorWaitForMove(11);
     Engine_ActorSetDestinationOffset(0, 0, CROSSBONE_LEADER_STEP_Z);
     Engine_EventWait(4);
-    Engine_AudioPlayCue(188);
+    Engine_AudioPlayCue(SE_188);
     Engine_ActorSetDestinationOffset(11, 0, 16);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetDestination(11, 344, 360);
@@ -723,14 +724,14 @@ static void Event_DodgeFifthPursuer(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   Actor_SetSpeed(12, PIXELS(17) / 10, PIXELS(17) / 20);
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   leader = Object_GetById(0);
   if (leader != 0) {
     Actor_SetDestination(12, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(12);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   Actor_SetDestinationOffset(12, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetDestination(12, 312, 232);

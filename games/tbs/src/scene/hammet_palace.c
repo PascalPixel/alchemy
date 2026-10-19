@@ -23,6 +23,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "flags.h"
+#include "songs.h"
 
 // The palace's actors: the party keeps its slots, the rest follow the
 // placement table from 8.
@@ -124,9 +125,9 @@ static void Event_LeaveThroughDoor(void) {
   Engine_EventBegin();
   Engine_EventWait(10);
   if (work->touchedTrigger == 4) {
-    Event_PlayCue(188);
+    Event_PlayCue(SE_188);
   } else {
-    Event_PlayCue(158);
+    Event_PlayCue(SE_DOOR_OPEN);
   }
   Map_ClearLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);

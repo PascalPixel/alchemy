@@ -36,6 +36,7 @@
 #include "fixed_math.h"
 
 #include "flags.h"
+#include "songs.h"
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
@@ -281,7 +282,7 @@ static void Event_PushStumpOver(void) {
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     FieldScheduler_AddCallback(fragmentCallback, 3200);
-    Engine_AudioPlayCue(141);
+    Engine_AudioPlayCue(SE_141);
     Engine_ActorSetDestinationOffset(STUMP, 1, 0);
     Engine_ActorWaitForMove(STUMP);
     Engine_EventWait(10);
@@ -294,13 +295,13 @@ static void Event_PushStumpOver(void) {
     Engine_EventWait(3);
     // It tips over the edge.
     Engine_ActorSetSpeed(STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_AudioPlayCue(288);
+    Engine_AudioPlayCue(SE_288);
     Engine_ActorSetDestination(STUMP, 416, 200);
     movedActor = Object_GetById(STUMP);
     Engine_ActorSetSpriteFlags(movedActor, 0);
     Engine_TaskRemoveCallback(fragmentCallback);
     Engine_EventWait(12);
-    Engine_AudioPlayCue(189);
+    Engine_AudioPlayCue(SE_189);
     xSource = Object_GetById(STUMP);
     randomX = Engine_RandomNext();
     fixedX = xSource->x.fixed;
@@ -323,7 +324,7 @@ static void Event_PushStumpOver(void) {
                                  fallingSpeed, style, zero);
     Engine_EventWait(20);
     // It lands below; the shake dies down before the map cells change.
-    Engine_AudioPlayCue(154);
+    Engine_AudioPlayCue(SE_CAST);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
@@ -346,7 +347,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
   if (x == 38 && z == 14) {
     Object_GetById(EAST_PILLAR)->y.fixed = -PIXELS(2);
     Object_GetById(EAST_PILLAR)->targetY = Object_GetById(EAST_PILLAR)->y.fixed;
-    Engine_AudioPlayCue(188);
+    Engine_AudioPlayCue(SE_188);
     GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
                                  Object_GetById(EAST_PILLAR)->y.fixed,
                                  Object_GetById(EAST_PILLAR)->z.fixed,
@@ -413,7 +414,7 @@ static void Event_JumpGapWest(void) {
     Engine_EventBegin();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(152);
+    Engine_AudioPlayCue(SE_152);
     Object_SetMode(leader, 7);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);

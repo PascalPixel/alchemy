@@ -25,6 +25,7 @@
 #include "fixed_math.h"
 #include "objcmd.h"
 #include "flags.h"
+#include "songs.h"
 #include "item_ids.h"
 #include "ability_ids.h"
 
@@ -170,9 +171,9 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
   work->fields.field22 = 0;
   Engine_ActorWaitForMove(no);
   SceneActor_WaitObjectBelowHeight(work, 0);
-  Engine_AudioPlayCue(188);
+  Engine_AudioPlayCue(SE_188);
   Map_SetShake(0x50000, 0x50000, 0x10000);
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   Map_SetShake(-1, -1, 0xe666);
   for (cnt = 0; cnt < 17; cnt++) {
     vec.x = Trig_Cos(cnt << 12);
@@ -196,7 +197,7 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
   opt.fields.target34 = 0x13333;
   Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0,
                0x1c0000, &opt.fields);
-  Engine_AudioPlayCue(154);
+  Engine_AudioPlayCue(SE_CAST);
   Engine_ActorSetAnimation(no, 3);
   Map_WaitWorkValuesBelow256();
 }

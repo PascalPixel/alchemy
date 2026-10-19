@@ -2,11 +2,6 @@
 	.global Data_080f3984
 Data_080f3984:
 	.incbin "baserom.gba", 0x000f3984, 0x00000040
-	.section .unidentified.081c3430,"a"
-	.balign 4
-	.global Data_081c3430
-Data_081c3430:
-	.incbin "baserom.gba", 0x001c3430, 0x0000000c
 	.section .unidentified.0885af9d,"a"
 	.incbin "baserom.gba", 0x0085af9d, 0x00000003
 	.section .unidentified.088902a1,"a"

@@ -30,6 +30,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "staged_actor.h"
 #include "select_overlay_data_by_runtime_selector.h"
 #include "edition.h"
@@ -162,7 +163,7 @@ struct LightWheel gAltmillerCave_LightWheelState
 
 // Talking to the Djinni in room 4 starts the battle for Djinni 65.
 static void AltmillerCave_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(ACTOR_DJINNI, 65);
+  Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SQUALL);
 }
 
 // Returns the entrance table, shared by the six rooms.

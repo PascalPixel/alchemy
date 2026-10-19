@@ -23,6 +23,7 @@
 #include "glyph.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "call.h"
 #include "battle_party.h"
 #include "field_effect.h"
@@ -105,7 +106,9 @@ static void Imil_RecruitDjinni(void) {
 }
 
 // Talking to the Djinni in the second platform room starts its battle.
-static void Fuchin_StartDjinnBattle(void) { Field_RequestDjinnBattle(11, 62); }
+static void Fuchin_StartDjinnBattle(void) {
+  Field_RequestDjinnBattle(11, DJINNI_ZEPHYR);
+}
 
 // Select the entrances for the current Imil or Fuchin room.
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {

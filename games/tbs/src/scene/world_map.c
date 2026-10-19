@@ -26,6 +26,7 @@
 #include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "map_render_work.h"
 #include "field_service.h"
 #include "iwram_call.h"
@@ -95,9 +96,6 @@ enum {
   ACTOR_MARS_DJINNI = 9,
   ACTOR_MERCURY_DJINNI = 10
 };
-
-// Djinn numbers, 20 to an element (Field_RequestDjinnBattle).
-enum { DJINNI_VINE = 3, DJINNI_HAIL = 24, DJINNI_CORONA = 42 };
 
 // The world map's scene flags:
 // FLAG_SCENE_TEMP_00: the carried actor has landed on its guide.

@@ -15,6 +15,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "field_effect.h"
 #include "staged_actor.h"
 #include "select_overlay_data_by_runtime_selector.h"
@@ -144,7 +145,7 @@ enum {
 
 // Talking to Quartz in the second area: the Djinni battle (Djinni 2).
 static void MogallForest_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(18, 2);
+  Field_RequestDjinnBattle(18, DJINNI_QUARTZ);
 }
 
 // Jump the leader to an unobstructed fixed-point position and restore motion.

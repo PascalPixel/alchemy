@@ -35,6 +35,7 @@
 #include "field_event.h"
 #include "engine_call.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "text/msg_ids.h"
 #include "edition.h"
 #include "global_cells.h"
@@ -181,7 +182,7 @@ enum {
 
 // Talking to Sleet: the Djinni battle (Djinni 21, Mercury Djinni 1).
 static void MercuryLighthouse_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(ACTOR_SLEET, 21);
+  Field_RequestDjinnBattle(ACTOR_SLEET, DJINNI_SLEET);
 }
 
 #if TBS_PATCH_3

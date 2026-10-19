@@ -25,6 +25,7 @@
 #include "field_event.h"
 #include "engine_call.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "display_transition.h"
 #include "map_scroll.h"
 #include "flags.h"
@@ -34,11 +35,7 @@
 // Breeze, the Jupiter Djinni on the branch: Djinni 61 is the name message
 // "Breeze", and its placement is gone once its flag (FLAG_DJINNI_0 + 61) is
 // set.
-enum {
-  ACTOR_BREEZE = ACTOR_FIRST_PLACED,
-  SPRITE_JUPITER_DJINNI = 0x5d,
-  DJINNI_BREEZE = 61
-};
+enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED, SPRITE_JUPITER_DJINNI = 0x5d };
 
 // Starts the scanline-dependent BG3 scroll callbacks.
 static void TretTreeBranch_StartBg3Split(void);

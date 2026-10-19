@@ -42,6 +42,7 @@
 #include "facing_object.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 
 #include "battle_effect_runtime.h"
 #include "ability_ids.h"
@@ -164,7 +165,7 @@ extern u16 gAltinPeak_FlickerTimer;
 // Talking to the Djinni in room 7 makes it hop and starts the battle for
 // Djinni 23.
 static void AltinPeak_TalkToDjinni(void) {
-  Field_RequestDjinnBattle(ACTOR_DJINNI, 23);
+  Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SPRITZ);
 }
 
 // Shared source, included where its bytes sit in the ROM.

@@ -20,6 +20,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -114,7 +115,9 @@ struct FieldGlobals {
 void QueueSceneSound(s32 cue);
 
 // Talking to the Djinni starts its battle.
-static void Event_FightDjinni(void) { Field_RequestDjinnBattle(DJINNI, 45); }
+static void Event_FightDjinni(void) {
+  Field_RequestDjinnBattle(DJINNI, DJINNI_FLASH);
+}
 
 // A storm's placement script: clears its sprite and collision flags.
 static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(

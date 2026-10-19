@@ -20,6 +20,7 @@
 #include "system.h"
 #include "suhalla_gate.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "types.h"
 #include "field_event.h"
 #include "scene_ids.h"
@@ -57,7 +58,9 @@ enum { ENTRANCE_SOUTH = 1, ENTRANCE_FROM_HOUSE = 3, ENTRANCE_EAST = 5 };
 enum { LUNPA_SUHALLA_GATE_HOUSE = 10 };
 
 // Talking to the Djinni starts its battle.
-static void Event_FightDjinni(void) { Field_RequestDjinnBattle(DJINNI, 26); }
+static void Event_FightDjinni(void) {
+  Field_RequestDjinnBattle(DJINNI, DJINNI_DEW);
+}
 
 // Where the party can enter each of the three scenes.
 const struct SceneEntrance *Scene_GetEntrances(void) {

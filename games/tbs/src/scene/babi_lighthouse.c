@@ -25,6 +25,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "field_effect.h"
 #include "staged_actor.h"
 #include "spawn_configured_effect.h"
@@ -105,7 +106,7 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 
 // Talking to the Djinni in room 2 starts the battle for Djinni 66.
 static void BabiLighthouse_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(ACTOR_DJINNI, 66);
+  Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_LUFF);
 }
 
 // Shared source is included here in ROM order.

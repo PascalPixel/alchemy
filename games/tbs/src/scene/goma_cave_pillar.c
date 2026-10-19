@@ -21,6 +21,7 @@
 #include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "djinn_ids.h"
 #include "staged_actor.h"
 #include "b5_context.h"
 #include "edition.h"
@@ -53,9 +54,6 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 #define EAST_PILLAR 10
 #define FORGE 12
 #define WITNESS 13 // the man who fought Forge and lost it
-
-// Forge's Djinni number; its name is message 1119 plus the number.
-#define DJINNI_FORGE 40
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"

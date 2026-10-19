@@ -11,6 +11,12 @@
 #include "dma.h"
 #include "io_reg.h"
 
+// Sol Sanctum's Elemental Star room and its eruption: the lights that float in
+// the room (actors 15 to 24), each pulsing and drifting on its own path from
+// the tables gSolSanctumRing_* and gSolSanctum_Ring*, by its index.
+
+enum { SOL_SANCTUM_RING_MAX = 10 };
+
 // Legacy actor view used only while setting up the sprite flags.
 struct SolSanctumRingObject {
   u8 pad00[8];
@@ -46,13 +52,18 @@ struct SolSanctumRingEntry {
 };
 
 struct SolSanctumRingList {
-  struct SolSanctumRingEntry entries[10];
+  struct SolSanctumRingEntry entries[SOL_SANCTUM_RING_MAX];
   u16 count;
 };
 
-// Pulse each Elemental Star's scale and move it through its drifting orbit.
+// A scene callback, the lights' work in work slot 33. Every third frame each
+// light grows to its largest scale and shrinks to a tenth; at the smallest it
+// vanishes for 24 steps while its drift carries on, and comes back where the
+// drift has taken it. Its drift is a random speed on each axis, as its tables
+// allow, turned into a sine swing.
 static void SolSanctum_UpdateRing(void) {
-  struct SolSanctumRingList *list = Runtime_AllocateBlock(33, 404);
+  struct SolSanctumRingList *list =
+      Runtime_AllocateBlock(33, sizeof(struct SolSanctumRingList));
   struct SolSanctumRingEntry *entry = list->entries;
   u32 i;
 
@@ -177,7 +188,8 @@ static void SolSanctum_UpdateRing(void) {
   }
 }
 
-// Start the shared floating-star animation for a consecutive group of actors.
+// Start the floating lights: count actors (at most 10) from first, each drawn
+// translucent and starting at its largest scale.
 void SolSanctum_SetupElementalRings(s32 first, u32 count) {
   /* FAKEMATCH: the legacy scalar setup view keeps the sprite-flags address
    * calculation before the ring-entry store. Using FieldActor and
@@ -190,11 +202,11 @@ void SolSanctum_SetupElementalRings(s32 first, u32 count) {
   s32 none;
   s32 cleared;
 
-  list = Runtime_AllocateBlock(33, 0x194);
+  list = Runtime_AllocateBlock(33, sizeof(struct SolSanctumRingList));
   entry = list->entries;
-  Dma_Fill32(0, list, 0x194);
-  if (count > 10)
-    count = 10;
+  Dma_Fill32(0, list, sizeof(struct SolSanctumRingList));
+  if (count > SOL_SANCTUM_RING_MAX)
+    count = SOL_SANCTUM_RING_MAX;
   none = 0;
   i = none;
   if (count != 0) {
@@ -208,7 +220,8 @@ void SolSanctum_SetupElementalRings(s32 first, u32 count) {
         *frame = cleared;
       }
       obj->state = cleared;
-      Engine_ObjectSetBlendMode(Object_GetById(first), 1);
+      Engine_ObjectSetBlendMode(Object_GetById(first),
+                                OBJECT_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctumRing_MaxScales[i];
       entry->scaleStep = -gSolSanctumRing_ScaleSteps[i];
       entry->timer = 3;

@@ -9,12 +9,12 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 LamakanDesert_EnterArea(s32 a0, s32 a1);
+const struct SceneEntrance *LamakanDesert_GetEntrances(void);
+const struct SceneRegion *LamakanDesert_GetRegions(void);
+const u32 *LamakanDesert_GetExits(void);
+const struct ScenePlacement *LamakanDesert_GetPlacements(void);
+const struct SceneEvent *LamakanDesert_GetEvents(void);
+s32 LamakanDesert_Initialize(s32 a0, s32 a1);
 void HeatGauge_Start(void);
 extern const s32 gEffectScript0[];
 extern const s32 gEffectScript1[];

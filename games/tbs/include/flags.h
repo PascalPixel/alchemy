@@ -79,6 +79,9 @@
 // Kolima Forest
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3 // Catch took the clearing's Nut
 
+// Lamakan Desert
+#define FLAG_LAMAKAN_SAND_MONSTER_BEATEN 0x90a // on the third map
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

@@ -40,6 +40,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "songs.h"
+#include "flags.h"
 
 // Lamakan Desert, four maps of sand between Altin and the world map east.
 //
@@ -52,17 +53,18 @@
 static void HeatGauge_SetHeld(u16 held);
 
 enum {
-  FLAG_HAZARDS_PAUSED = 0x200, // a collapse, a pit or the monster is under way
-  FLAG_SECRETS_REVEALED = 0x201, // Reveal shows the pits
-  FLAG_HEAT_QUARTER = 0x300,     // the gauge has passed a quarter
+  // FLAG_SCENE_TEMP_00: a collapse, a pit or the monster is under way.
+  FLAG_HAZARDS_PAUSED = FLAG_SCENE_TEMP_00,
+  // FLAG_SCENE_TEMP_01: Reveal shows the pits.
+  FLAG_SECRETS_REVEALED = FLAG_SCENE_TEMP_01,
+  FLAG_HEAT_QUARTER = 0x300, // the gauge has passed a quarter
   FLAG_HEAT_HALF = 0x301,
   FLAG_HEAT_THREE_QUARTERS = 0x302,
   // Who has complained since the gauge last passed a mark: one per member,
   // in the order of their actors.
   FLAG_GARET_COMPLAINED = 0x303,
   FLAG_IVAN_COMPLAINED = 0x304,
-  FLAG_MIA_COMPLAINED = 0x305,
-  FLAG_SAND_MONSTER_BEATEN = 0x90a
+  FLAG_MIA_COMPLAINED = 0x305
 };
 
 enum {
@@ -101,7 +103,7 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   s32 phase;
 
   if ((gFrameCount & 7) == 0) {
-    Engine_AudioPlayCue(118);
+    Engine_AudioPlayCue(SE_118);
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
@@ -124,7 +126,7 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
 }
 
 // Where the party can enter each of the four maps.
-const struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_LamakanDesert1) {
@@ -143,17 +145,17 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 // The desert has no regions.
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *LamakanDesert_GetRegions(void) { return 0; }
 
 // All four desert maps share the packed exit table.
-const u32 *Scene_GetExits(void) { return gLamakanDesertExits; }
+const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
 // The pits and the monster of each map. Arriving at the third map's
 // entrance 5, the way back from the monster's battle, marks it beaten.
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     if (gGameState.entrance == 5) {
-      Engine_GameFlagSet(FLAG_SAND_MONSTER_BEATEN);
+      Engine_GameFlagSet(FLAG_LAMAKAN_SAND_MONSTER_BEATEN);
 #if TBS_PATCH_3
       Engine_GameFlagSet(0x87a);
 #endif
@@ -188,7 +190,9 @@ static void LeaveForTheWorldMap(void) {
 }
 
 // The desert's triggers, the same on every map.
-const struct SceneEvent *Scene_GetEvents(void) { return gLamakanDesertEvents; }
+const struct SceneEvent *LamakanDesert_GetEvents(void) {
+  return gLamakanDesertEvents;
+}
 
 // Reveal's end (phase 4), and every entry: the pits and Smog vanish under
 // the sand again (cells 70, 68 or 69, 99 over the saved patches), the chests
@@ -311,7 +315,7 @@ static s32 Reveal_ShowSecrets(void) {
     Actor_SetPosition(SAND_MONSTER, PIXELS(168), PIXELS(92));
     Actor_SetPosition(9, PIXELS(128), PIXELS(316));
     Map_CopyCellAttributes(6, 0, 3, 3, 9, 6);
-    if (Engine_GameFlagIsSet(FLAG_SAND_MONSTER_BEATEN) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_LAMAKAN_SAND_MONSTER_BEATEN) == 0) {
       Map_CopyCells(0, 119, 3, 1, 9, 5);
     }
   }
@@ -497,11 +501,11 @@ static void CollapseFromHeat(void) {
     FieldObject_SetPosition(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
-  Event_PlayCue(152);
+  Event_PlayCue(SE_152);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   SceneActor_WaitObjectBelowHeight(leader,
                                    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-  Event_PlayCue(241);
+  Event_PlayCue(SE_241);
   {
     struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -549,8 +553,8 @@ static void CollapseFromHeat(void) {
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
   }
-  Event_PlayCue(0x120);
-  Event_PlayCue(152);
+  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_152);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
   Event_Wait(10);
@@ -652,10 +656,10 @@ static void FallIntoPit(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, best, 0);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(60);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   record = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + 0x8000) & -0x1000;
@@ -676,7 +680,7 @@ static void FallIntoPit(void) {
   Engine_EventWait(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | 4, 0);
   Engine_EventWait(60);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   record = Object_GetById(ACTOR_PARTY_LEADER);
   record->update = NULL;
@@ -719,7 +723,7 @@ static void SlideDownDune(void) {
   }
   if (hit < 0) {
     // Let the fall complete before returning to ordinary field movement.
-    Actor_SetAttachedEffect(id, 0x102);
+    Actor_SetAttachedEffect(id, EMOTE_IN_FRONT | 2);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + 0x80000);
     Object_SetMode(actor, 7);
@@ -769,7 +773,7 @@ static void MeetSandMonster(void) {
 
   eventBytes = (u8 *)gEventWork;
   HeatGauge_CountStep();
-  if (GameFlag_IsSet(FLAG_SAND_MONSTER_BEATEN) == 0) {
+  if (GameFlag_IsSet(FLAG_LAMAKAN_SAND_MONSTER_BEATEN) == 0) {
     paused = GameFlag_IsSet(FLAG_HAZARDS_PAUSED);
     if (paused == 0) {
       GameFlag_Set(FLAG_HAZARDS_PAUSED);
@@ -790,7 +794,7 @@ static void MeetSandMonster(void) {
       Actor_FaceActor(ACTOR_PARTY_LEADER, SAND_MONSTER, 0);
       Engine_EventWait(40);
       Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
       Engine_EventWait(40);
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       backwardOffset.x = paused;
@@ -807,7 +811,7 @@ static void MeetSandMonster(void) {
       Engine_EventWait(2);
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
       Engine_EventWait(30);
-      Event_PlayCue(148);
+      Event_PlayCue(SE_148);
       Engine_ActorRunRepeatedMotion(SAND_MONSTER, 2);
       Engine_EventWait(20);
       Actor_SetSpeed(SAND_MONSTER, 0x28000, 0x14000);
@@ -823,7 +827,7 @@ static void MeetSandMonster(void) {
 // Entering the desert: the heat gauge (600 steps) starts on the first three
 // maps, the patches Reveal uncovers are saved to the spare cells at 64, 126
 // or 64, 124, and the secrets are hidden.
-s32 LamakanDesert_EnterArea(s32 a0, s32 a1) {
+s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   s32 v5;
 
   gGameState.hazardLimit = 0x258;
@@ -1157,7 +1161,7 @@ struct ScenePlacement gLamakanDesertPlacementsOther[] = {
 };
 
 struct ScenePlacement gLamakanDesertPlacements1[] = {
-    { 0xc3, FLAG_SAND_MONSTER_BEATEN, ACTOR_STAND,
+    { 0xc3, FLAG_LAMAKAN_SAND_MONSTER_BEATEN, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(364), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1165,7 +1169,7 @@ struct ScenePlacement gLamakanDesertPlacements1[] = {
 };
 
 struct ScenePlacement gLamakanDesertPlacements2[] = {
-    { 0xc3, FLAG_SAND_MONSTER_BEATEN, ACTOR_STAND,
+    { 0xc3, FLAG_LAMAKAN_SAND_MONSTER_BEATEN, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(352), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1181,7 +1185,7 @@ struct ScenePlacement gLamakanDesertPlacements2[] = {
 };
 
 struct ScenePlacement gLamakanDesertPlacements3[] = {
-    { 0xc3, FLAG_SAND_MONSTER_BEATEN, ACTOR_STAND,
+    { 0xc3, FLAG_LAMAKAN_SAND_MONSTER_BEATEN, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(316), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1203,7 +1207,7 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_TOUCH, 22, FLAG_HAZARDS_PAUSED, EVENT_SCRIPT(FallIntoPit) },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SlideDownDune) },
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetSandMonster) },
-    { EVENT_TALK, 8, FLAG_SAND_MONSTER_BEATEN, EVENT_SCRIPT(FightSandMonster) },
+    { EVENT_TALK, 8, FLAG_LAMAKAN_SAND_MONSTER_BEATEN, EVENT_SCRIPT(FightSandMonster) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
     { SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(0x24) },
     { SEARCH(SEARCH_UNNAMED), 101, 0x350, FIND_PSYNERGY_STONE },

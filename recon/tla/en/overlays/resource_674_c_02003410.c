@@ -1,5 +1,5 @@
 // Draft of overlay 674's Func_02003410, its palette queue's allocation (the
-// main image's Runtime_AllocateAndClearQueue with other loops), differ 30
+// main image's PaletteQueue_Initialize with other loops), differ 30
 // of 42. The native keeps the queue in r0, the entry in r4 and i in r5,
 // rebuilds the loop limits 16 << 16 and 4 << 16 on every pass (no loop notes:
 // goto loops), and steps j through its u16 value (lsls, lsrs; adds #1; lsls,

@@ -3,7 +3,7 @@
 #include "types.h"
 #include "palqueue.h"
 
-void Runtime_AllocateAndClearQueue(void) {
+void PaletteQueue_Initialize(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
   u16 i;

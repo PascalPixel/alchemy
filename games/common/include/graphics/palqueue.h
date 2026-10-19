@@ -28,9 +28,9 @@ STATIC_ASSERT(sizeof(struct PaletteSnapshotWork) == 0xb4);
 STATIC_ASSERT(offsetof(struct PaletteSnapshotWork, count) == 0xb0);
 
 #if GAME_TLA
-void Runtime_AllocateAndClearQueue(void);
+void PaletteQueue_Initialize(void);
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
-void Runtime_ScheduleCallbackAndReleaseBlock28(void);
+void PaletteQueue_Stop(void);
 void PaletteQueue_StepCycles(void);
 #endif
 

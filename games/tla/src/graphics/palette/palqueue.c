@@ -10,12 +10,12 @@
 
 #include "palqueue_add.c"
 
-void Runtime_ScheduleCallbackAndReleaseBlock28(void) {
+void PaletteQueue_Stop(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(112);
 }
 
-void Scheduler_ScheduleCallbackBAfterFrames(void) {
+void PaletteQueue_Start(void) {
   Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0x480);
 }
 

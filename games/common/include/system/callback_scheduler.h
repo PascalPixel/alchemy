@@ -45,7 +45,7 @@ void Scheduler_RunPass(s32 key);
 #endif
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
 #if GAME_TLA
-void Scheduler_ScheduleCallbackBAfterFrames(void);
+void PaletteQueue_Start(void);
 
 void Scheduler_ResetTaskTable(void);
 void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count);

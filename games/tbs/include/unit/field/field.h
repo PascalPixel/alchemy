@@ -279,11 +279,11 @@ void DisplayBlend_StartScript(u16 *script);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
 
-void Runtime_AllocateAndClearQueue(void);
+void PaletteQueue_Initialize(void);
 s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
                      s16 colorCount);
-void Runtime_ScheduleCallbackAndReleaseBlock28(void);
-void Scheduler_ScheduleCallbackBAfterFrames(void);
+void PaletteQueue_Stop(void);
+void PaletteQueue_Start(void);
 void PaletteQueue_StepCycles(void);
 
 s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY);

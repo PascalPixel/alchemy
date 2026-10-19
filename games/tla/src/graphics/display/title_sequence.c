@@ -176,7 +176,7 @@ row:
 column:
   {
     /* FAKEMATCH(temporary): the s16 step written as its high-half wrap, as
-     * in Title_ShowSplashScreen's draft, with the loops as gotos, so that
+     * in Title_ShowSplashScreen (splash.c), with the loops as gotos, so that
      * loop.c neither hoists the step nor strength-reduces it; as
      * *tilemap++ = tile; tile++, 94 of 254 instructions differ in tla-en. */
     s32 old = tile;

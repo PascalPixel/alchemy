@@ -4358,12 +4358,6 @@ Func_081a729c:
 	.thumb_func
 Title_NoOpPalette:
 	.incbin "baserom.gba", 0x001a7534, 0x00000004
-	.section .rom.001a7538, "ax"
-	.global Func_081a7518
-	.type Func_081a7518, %function
-	.thumb_func
-Func_081a7518:
-	.incbin "baserom.gba", 0x001a7538, 0x000001e0
 	.section .rom.001a7718, "ax"
 	.global Func_081a76f8
 	.type Func_081a76f8, %function

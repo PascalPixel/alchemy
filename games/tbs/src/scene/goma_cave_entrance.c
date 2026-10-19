@@ -521,8 +521,6 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
   struct EffectOptions *p;
   struct Actor *actor;
   u32 i;
-  s32 x;
-  s32 z;
 
   actor = (struct Actor *)Object_GetById(id);
   actor->layer = 0;

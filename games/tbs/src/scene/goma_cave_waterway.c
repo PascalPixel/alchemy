@@ -71,7 +71,7 @@ static void Event_MoveStump(void) {
     Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
     landed = Object_GetById(STUMP);
-    Engine_ActorSetSpriteFlags((s32)landed, 0);
+    Engine_ActorSetSpriteFlags(landed, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED);
   }
 }

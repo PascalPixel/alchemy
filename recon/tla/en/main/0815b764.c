@@ -119,7 +119,7 @@ extern const u8 gData_08199210[];
 extern s32 gCameraSceneParameters[];
 
 void BattleFx_ProcessPendingBlock2Transfer(void);
-void Func_08143424(void);
+void Display_ApplyBg2Affine(void);
 void Palette_StepFadeTransfer(void);
 void Func_0815b68c(void);
 void Func_0815f0a0(s32 palette);
@@ -255,7 +255,7 @@ void BattleFx_RunUlysses(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       if (!loaded) {
         Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingBlock2Transfer, 0xc8f);
-        Scheduler_AddOrUpdateCallback(Func_08143424, 0xcff);
+        Scheduler_AddOrUpdateCallback(Display_ApplyBg2Affine, 0xcff);
         Resource_LoadAndDecompress(0xc7, work->sheet + 0x2781, 1, 0);
         loaded = 1;
       }
@@ -354,7 +354,7 @@ void BattleFx_RunUlysses(struct BattleEffectArgument *effect) {
     if (frame == 132) {
       if (loaded == 1) {
         Scheduler_RemoveCallback(BattleFx_ProcessPendingBlock2Transfer);
-        Scheduler_RemoveCallback(Func_08143424);
+        Scheduler_RemoveCallback(Display_ApplyBg2Affine);
         Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc8f);
         Resource_LoadAndDecompress(0x15c, work->sheet + 0x1e97, 1, 0);
         loaded = 0;

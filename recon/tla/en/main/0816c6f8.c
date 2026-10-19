@@ -106,7 +106,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
                    s32 cellHeight); // builds a grid's mesh
 void Func_08143354(void);
-void Func_08143424(void);
+void Display_ApplyBg2Affine(void);
 void BattleFx_ProcessPendingBlock2Transfer(void);
 
 extern char ResourceId_VenusDjinnSmallSheet;
@@ -172,7 +172,7 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc8f);
-  Scheduler_AddOrUpdateCallback(Func_08143424, 0xcff);
+  Scheduler_AddOrUpdateCallback(Display_ApplyBg2Affine, 0xcff);
   projected = work->sheet;
   vertices = work->sheet + 0x800;
   mesh = work->sheet + 0xc00;
@@ -255,7 +255,7 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
       REG_BG2CNT = 0x784;
     }
     if (frame == 35) {
-      Scheduler_RemoveCallback(Func_08143424);
+      Scheduler_RemoveCallback(Display_ApplyBg2Affine);
       Scheduler_RemoveCallback(BattleFx_ProcessPendingBlock2Transfer);
       Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc8f);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);

@@ -1,5 +1,6 @@
 #include "script.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -438,7 +439,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventBegin();
   partyLayout = &gKolima_LayoutFlag;
   // Flag 3: Mia is in the party.
-  *partyLayout = GameFlag_IsSet(3);
+  *partyLayout = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   actor = Object_GetById(19);
   Engine_ActorSetSpriteFlags(actor, 0);
   actor = Object_GetById(20);

@@ -33,6 +33,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "item_ids.h"
 #include "macros.h"
 #include "songs.h"
@@ -295,7 +296,7 @@ static void KolimaForestTree_RestoreTret(void) {
 
   // Gather the companions while Hermes' Water seeps into Tret.
   // Flag 3: Mia is in the party.
-  includeMia = GameFlag_IsSet(3);
+  includeMia = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Event_PlayCue(MUS_017);

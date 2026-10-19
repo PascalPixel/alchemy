@@ -34,6 +34,7 @@
 #include "heap_state.h"
 #include "field_effect.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "map_scroll.h"
 #include "songs.h"
 #include "event.h"
@@ -278,7 +279,7 @@ static void Event_FightTret(void) {
   s32 hasMia;
   struct FieldActor *leader;
 
-  hasMia = FLAG_CHECK(3);
+  hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
   EV_BEGIN();
   SE(MUS_017);
   MESSAGE_SET(MsgTretHmHrooom);
@@ -366,7 +367,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
-  hasMia = FLAG_CHECK(3);
+  hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
   Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 2);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=

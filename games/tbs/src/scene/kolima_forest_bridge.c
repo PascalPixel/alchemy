@@ -1,5 +1,6 @@
 #include "script.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -210,7 +211,7 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   Camera_MoveTo(PIXELS(246), -1, PIXELS(604), 0);
   // Flag 3: Mia is in the party.
   party = &gKolimaForestBridge_MiaInParty;
-  *party = GameFlag_IsSet(3);
+  *party = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   record = Object_GetById(13);
   Engine_ActorSetSpriteFlags(record, 0);
   record = Object_GetById(14);

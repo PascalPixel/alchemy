@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FLAGS_H
 #define ALCHEMY_FLAGS_H
 
+// Flags 0 to 7: the character with that id (character_ids.h) is in the party
+// (Party_AddActiveOwner).
+#define FLAG_IN_PARTY(character) (character)
 #define FLAG_CHILDHOOD 0x20 // the prologue: Isaac and Garet are children
 #define FLAG_DJINNI_0 48    // the flag of Djinni 0, set once it is caught
 // Set as a battle starts, cleared as a field scene starts.

@@ -3,6 +3,7 @@
 
 #include "unit/scene/bilibin_interiors.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "battle.h"
@@ -267,7 +268,7 @@ static void Event_TalkAboutMeal(void) {
 // 7 say who is), even frozen Imil must feel warm with her around.
 static void Event_ReadMiaAdmirersMind(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(MIA) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MsgBilibinEvenFrozenImilMustFeel);
   } else {
     Engine_EventSetMessage(MsgBilibinWhenSpringComesWantGo);

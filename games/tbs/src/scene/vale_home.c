@@ -1,5 +1,6 @@
 #include "game_state.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "vram_tab.h"
@@ -197,10 +198,10 @@ static void Event_DemonstratePsynergy(void) {
     Engine_EventSetMessage(message);
     // "...with just the two of you?", three or four: the flag numbered for a
     // character is set once that character has joined.
-    if (Engine_GameFlagIsSet(IVAN) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0) {
       gEventWork->message++;
     }
-    if (Engine_GameFlagIsSet(MIA) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
       gEventWork->message++;
     }
     Engine_EventOpenMessage(17, 0);

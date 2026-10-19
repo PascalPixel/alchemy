@@ -38,6 +38,7 @@
 #include "map.h"
 #include "macros.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "songs.h"
 
 // Imil's two maps share actor numbers; each is named on the map it is proved.
@@ -176,7 +177,7 @@ const struct SceneEvent *Imil_GetEvents(void) {
 // with the party (flag 3), he says that even her healing can't help them all.
 static void Imil_TalkToColdVillager(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilEvenIfMiaHealsUs));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilBrrrrrChooImFreezingMia));
@@ -193,7 +194,7 @@ static void Imil_TalkToColdVillager(void) {
 // has joined the party, he can't understand why she left.
 static void Imil_ReadColdVillagerMind(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilMiaShouldHereByNow));
@@ -323,7 +324,7 @@ static void Imil_AskAboutRestaurantMenu(void) {
 // where Mia went; once Mia has joined, she says everyone counts on her.
 static void Imil_TalkToSecondApprentice(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilEveryoneCountsOnMiaThats));
     Engine_EventShowMessage(ACTOR_SECOND_APPRENTICE, 0);
   } else {
@@ -339,7 +340,7 @@ static void Imil_TalkToSecondApprentice(void) {
 // joined, they must help her.
 static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilMiaWasSayingSheHas));
@@ -388,7 +389,7 @@ static void Imil_ReadCountingChildMind(void) {
 // joined, she feels grown up.
 static void Imil_ReadApprenticeMind(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilTheseFolkOkayTheyDont));
@@ -595,7 +596,7 @@ static void Imil_TalkToApprentice(void) {
     if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
       Event_ShowMessage(ACTOR_APPRENTICE, 0);
-    } else if (GameFlag_IsSet(3) != 0) {
+    } else if (GameFlag_IsSet(FLAG_IN_PARTY(MIA)) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilAmHealerWhileMiaOut));
       Event_ShowMessage(ACTOR_APPRENTICE, 0);
     } else {

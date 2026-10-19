@@ -35,6 +35,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "songs.h"
 
 enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
@@ -369,7 +370,7 @@ static void Event_TalkAboutIvan(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultTalkingAboutHammetsServantIvan);
   // Flag 2 is set while Ivan is in the party.
-  if (Engine_GameFlagIsSet(2) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0) {
     workspace = gEventWork;
     ++workspace->message;
   }
@@ -395,7 +396,7 @@ static void Event_AskWhetherIvanWentToLunpa(void) {
   actor->timer |= 2;
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultDidntGoLunpa);
-  if (Engine_GameFlagIsSet(2) != 0)
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
     ++gEventWork->message;
   Engine_ActorSetAnimation(ACTOR_FIRST_WALKER, 0);
   Vault_FaceActorAndWait(ACTOR_FIRST_WALKER, 0, 2);
@@ -507,7 +508,7 @@ static void Event_ReadMindOnIvan(void) {
     Engine_EventSetMessage(MsgVaultBetWasThoseThreeCreeps);
   } else {
     Engine_EventSetMessage(MsgVaultWhereDidIvanGoBy);
-    if (Engine_GameFlagIsSet(2) != 0)
+    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
       ++gEventWork->message;
   }
   SceneActor_RunActorCommandWithFlag91(ACTOR_FIRST_WALKER);
@@ -823,7 +824,7 @@ s32 Scene_Initialize(void) {
   if (gGameState.entrance == 11) {
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-        if (Engine_GameFlagIsSet(2) == 0) {
+        if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) == 0) {
           Engine_EventBegin();
           Actor_SetPosition(IVAN, PIXELS(40), PIXELS(310));
           Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 0);

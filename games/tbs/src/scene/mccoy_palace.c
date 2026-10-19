@@ -15,6 +15,7 @@
 #include "sound.h"
 #include "system.h"
 #include "flags.h"
+#include "character_ids.h"
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
@@ -584,7 +585,7 @@ static void Event_AudienceWithMcCoy(void) {
     if (actor != 0) {
       Engine_ActorSetPosition(IVAN, actor->x.fixed, actor->z.fixed);
     }
-    if (Engine_GameFlagIsSet(3) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       if (actor != 0) {
         Engine_ActorSetPosition(MIA, actor->x.fixed, actor->z.fixed);
@@ -593,7 +594,7 @@ static void Event_AudienceWithMcCoy(void) {
     McCoyPalace_PrepareCompanionApproach();
     Actor_SetDestinationOffset(GARET, -16, 16);
     Engine_ActorSetDestinationOffset(IVAN, 16, 16);
-    if (Engine_GameFlagIsSet(3) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
       Engine_ActorSetDestinationOffset(MIA, 32, 16);
     }
     Engine_ActorWaitForMove(IVAN);
@@ -647,7 +648,7 @@ static void Event_AudienceWithMcCoy(void) {
       Engine_ActorSetDestination(IVAN, actor->x.part.pixel,
                                  actor->z.part.pixel);
     }
-    if (Engine_GameFlagIsSet(3) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
       Engine_ActorSetAnimation(MIA, ANIM_WALK);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       if (actor != 0) {
@@ -682,7 +683,7 @@ static void Event_AudienceWithMcCoy(void) {
   if (actor != 0) {
     Engine_ActorSetPosition(IVAN, actor->x.fixed, actor->z.fixed);
   }
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Engine_ActorSetPosition(MIA, actor->x.fixed, actor->z.fixed);
@@ -691,7 +692,7 @@ static void Event_AudienceWithMcCoy(void) {
   McCoyPalace_PrepareCompanionApproach();
   Actor_SetDestinationOffset(GARET, -16, 16);
   Engine_ActorSetDestinationOffset(IVAN, 16, 16);
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_ActorSetDestinationOffset(MIA, 32, 16);
   }
   Engine_ActorWaitForMove(IVAN);
@@ -924,7 +925,7 @@ accepted:
   if (actor != 0) {
     Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  if (Engine_GameFlagIsSet(3) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_ActorSetAnimation(MIA, ANIM_WALK);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {

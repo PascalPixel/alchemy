@@ -77,7 +77,7 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 }
 
 // Decode type-01 compressed data. Scenes and the title and clear menus use
-// this wrapper. The same decode in main-image field/camera.c uses call.h's
+// this wrapper. The same decode in main-image field/lucky_dice.c uses call.h's
 // tagged Value2 instead.
 static inline s32 FieldResource_DecodeType01(const void *source,
                                              void *destination) {

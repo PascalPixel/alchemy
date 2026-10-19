@@ -1,4 +1,4 @@
-#include "unit/field/camera.h"
+#include "unit/field/lucky_dice.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"

@@ -19,7 +19,7 @@ in perspective, and what the ground is like under a point. Scenes (in
 | `facing.c` | the facing tables, then the parts' small constant tables: the tile dissolve order, the fixed camera's matrix, the float wave, the idle script, the world map's pad headings, footprint scripts and turn rates |
 | `curve_data.c`, `mapdata.c` | the terrain height tables, and the height function table with the world map's terrain behaviour and steps |
 | `world_map_resources.c`, `griddata.c` | the world map's graphics sets, and the sprite viewer's scale |
-| `camera.c` | the Lucky Dice minigame, with the camera defaults and 8.8 helpers it uses |
+| `lucky_dice.c` | the Lucky Dice minigame, with the camera defaults and 8.8 helpers it uses |
 | `layered.tsv`, `remap*.tsv`, `scenes.s` | the layered map table, the byte remap table and the scene table |
 
 The headers are in `games/tbs/include/unit/field/`, one for each file; the

@@ -36,7 +36,6 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s3c84.o"(.text)
         "*/games/tla/src/scene/kibombo/s3dec.o"(.text)
         "*/games/tla/src/scene/kibombo/s40cc.o"(.text)
-        "*/resource_670_overlay.o"(.text.x0200c294)
         "*/games/tla/src/scene/kibombo/s4424.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200c524)
         "*/games/tla/src/scene/kibombo/s45d0.o"(.text)

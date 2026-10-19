@@ -1,14 +1,18 @@
-// Near miss, differ 4 of 153: the sanctum's service loop. It opens the priest's
-// window (his face resource from the actor's sprite, or a plain window), the
-// cursor and the coins window, then offers the party service until the menu is
-// cancelled. ☀️'s Shop_ConfirmAct in games/tbs/src/shop/shop.c, written with
-// ⚓️'s calls (Func_08108148 for the cursor work, Func_080380f8 for the
-// side-object window, Func_08108aa8 to place the cursor, Func_0810a9ac to show
-// a message, Func_0810a8ec to count the downed, Func_0810abf0 for the service,
-// Func_0810824c to clean up), its work-block offsets and numbered messages.
-// Instruction order only: the work pointer's load against the action offset's
-// first move, and the keeper resource's reload against the window call's x
-// argument.
+// Near miss, differ 2 of 153 (2026-10-19; was 4): the sanctum's service loop.
+// It opens the priest's window (his face resource from the actor's sprite, or a
+// plain window), the cursor and the coins window, then offers the party service
+// until the menu is cancelled. ☀️'s Shop_ConfirmAct in
+// games/tbs/src/shop/shop.c, written with ⚓️'s calls (Func_08108148 for the
+// cursor work, Func_080380f8 for the side-object window, Func_08108aa8 to place
+// the cursor, Func_0810a9ac to show a message, Shop_CountUnits to count the
+// downed, Func_0810abf0 for the service, Func_0810824c to clean up), its
+// work-block offsets and numbered messages. Instruction order only: the work
+// pointer's load against the action offset's first move, and the keeper
+// resource's reload against the window call's x argument. The work's barrier
+// with an r2 clobber (as Shop_DrawSelectMsg's) fixes the first; the second, the
+// reload issued before movs r1, #0 (native: after), is the pattern 0810b418 and
+// 0810b5c4 share. Tried: the resource through a u16 temporary, u16 or s16
+// parameters, a pinned-zero x behind a barrier.
 #include "types.h"
 #include "render_input.h"
 #include "ram_buffer.h"
@@ -54,7 +58,7 @@ void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 void Func_08108aa8(struct ShopCursor *cursor, s32 targetX, s32 targetY);
 void Func_0810a9ac(s32 message);
 void Func_08109188(void);
-s32 Func_0810a8ec(void);
+s32 Shop_CountUnits(void);
 void Func_0810abf0(void);
 s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWork_FinalizeFar(s32 window, s32 style);
@@ -68,6 +72,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
 
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
+  asm("" : "+l"(shop) : : "r2");
   shop->partyAction = listWindow;
 
   shop->keeperResource =
@@ -100,7 +105,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
       break;
 
     Func_0810a9ac((s32)Msg04821);
-    if (Func_0810a8ec() == 0) {
+    if (Shop_CountUnits() == 0) {
       Func_0810a9ac((s32)Msg04821 + 1);
     } else {
       Func_0810abf0();

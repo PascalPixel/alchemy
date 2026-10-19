@@ -1,11 +1,13 @@
-// Draft, differ 10 of 107: the forge's counter: opens the shop menu in forge
-// mode, shows the smith's portrait from the speaking object's sprite and the
-// cursor, asks for a material (Func_0810b6bc) and says goodbye on cancel. No
-// ☀️ twin. Left: instruction order only: the first constant's movs ahead of
-// the menu work's load, the pooled zero (the icon kind, a QImode constant
-// that survives to a register, as here) ahead of the portrait store, and the
-// argument zeros, each one slot from the native; the pool branch then lands
-// one row earlier.
+// Draft, differ 8 of 107 (2026-10-19; was 10): the forge's counter: opens the
+// shop menu in forge mode, shows the smith's portrait from the speaking
+// object's sprite and the cursor, asks for a material (Func_0810b6bc) and says
+// goodbye on cancel. No ☀️ twin. Left: instruction order only: the first
+// constant's movs ahead of the menu work's load, the pooled zero (the icon
+// kind, a QImode constant that survives to a register, as here) ahead of the
+// portrait store, and the argument zeros, each one slot from the native; the
+// pool branch then lands one row earlier. The work's barrier with an r1 clobber
+// (as Shop_CountUnits's) fixes the first movs; left are the pooled zero and the
+// argument zeros around the portrait's reload, as in 0810aa80 and 0810b418.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"
@@ -61,6 +63,7 @@ s32 Forge_Open(s32 objectId) {
 
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
+  asm("" : "+l"(shop) : : "r1");
   shop->open = 1;
   shop->partyAction = 4;
   shop->portrait = *Object_GetByIdFar(objectId)->sprite->portrait;

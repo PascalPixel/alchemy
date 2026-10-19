@@ -113,6 +113,7 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_18 0x218 // Suhalla Desert: the storm holding the party
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 

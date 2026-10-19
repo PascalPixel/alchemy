@@ -116,4 +116,20 @@
 #define FLAG_LAYANA_SCOLDED_LUNPA_VISIT 0x913
 #define FLAG_HAMMET_HOMECOMING_SEEN 0x914
 
+// Fuchin Temple and Master Feh's school
+// Nyunpa is enlightened, beyond words: he has passed away.
+#define FLAG_NYUNPA_ENLIGHTENED 0x88f
+// The visitor from Kolima heard that the bridge is open again.
+#define FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN 0x890
+#define FLAG_NYUNPA_TEST_ACCEPTED 0x891 // the test of the waterfall grotto
+#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 // the monk stepped aside
+#define FLAG_NYUNPA_TAUGHT_FORCE 0x893        // the power the monks call Ki
+#define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
+#define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
+#define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
+#define FLAG_FEH_SAW_CHI 0x89b
+// Nyunpa's test was declined; the students saw the training tree fall.
+#define FLAG_NYUNPA_TEST_DECLINED 0x300
+#define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
+
 #endif

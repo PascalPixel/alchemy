@@ -72,6 +72,16 @@
 
 // Vault: the stolen Shaman's Rod, and its containers, set once each is
 // searched
+// Set when Ivan first shows the party his strange powers at the mayor's.
+#define FLAG_VAULT_MET_IVAN 0x850
+// Set once the mayor has thanked the party for helping Ivan.
+#define FLAG_VAULT_MAYOR_THANKED_PARTY 0x851
+// Set when the party first approaches the two suspects at the inn.
+#define FLAG_VAULT_SUSPECTS_APPROACHED 0x852
+// Set once the mayor has given the party the Water of Life.
+#define FLAG_VAULT_WATER_OF_LIFE_RECEIVED 0x857
+// Set once the crate is pushed aside, opening the passage behind it.
+#define FLAG_VAULT_CRATE_MOVED 0x859
 // Set when the party agrees to help Ivan find the rod; while it is set and
 // the thieves are free, Ivan waits in Vault whenever the party leaves town.
 #define FLAG_VAULT_IVAN_JOINED_ROD_SEARCH 0x856

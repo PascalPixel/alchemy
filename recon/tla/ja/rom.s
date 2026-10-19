@@ -2401,8 +2401,6 @@ Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000c9fd8, 0x0000018c
 	.section .rom.000ca2fc, "ax"
 	.incbin "baserom.gba", 0x000ca2fc, 0x0000006c
-	.section .rom.000ca3f4, "ax"
-	.incbin "baserom.gba", 0x000ca3f4, 0x000000a0
 	.section .rom.000ca4a8, "ax"
 	.incbin "baserom.gba", 0x000ca4a8, 0x0000006c
 	.section .rom.000ca5d8, "ax"

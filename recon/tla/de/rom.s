@@ -1353,12 +1353,6 @@ Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000d6fd8, 0x0000018c
 	.section .rom.000d72fc, "ax"
 	.incbin "baserom.gba", 0x000d72fc, 0x0000006c
-	.section .rom.000d73f4, "ax"
-	.global Func_080ca3f4
-	.type Func_080ca3f4, %function
-	.thumb_func
-Func_080ca3f4:
-	.incbin "baserom.gba", 0x000d73f4, 0x000000a0
 	.section .rom.000d74a8, "ax"
 	.incbin "baserom.gba", 0x000d74a8, 0x0000006c
 	.section .rom.000d75d8, "ax"

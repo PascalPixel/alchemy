@@ -73,7 +73,7 @@ struct SpawnCounter gBilibin_RiverEffectTimer;
 #include "common/object_facing.h"
 
 // Selects the entrance positions for the current part of Bilibin.
-const struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin1) {
@@ -89,7 +89,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 // Only the raised approach supplies exit-region boxes.
-const struct SceneRegion *Scene_GetRegions(void) {
+const struct SceneRegion *Bilibin_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_Bilibin2) {
     return (const struct SceneRegion *)gBilibinRegions2;
   }
@@ -97,13 +97,13 @@ const struct SceneRegion *Scene_GetRegions(void) {
 }
 
 // Returns the packed exit destinations shared by the three maps.
-u8 *SceneData_GetMessageTable(void) { return (u8 *)gBilibinExits; }
+const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
 // Gust, Jupiter Djinni 0, joins the party on the warehouse approach.
 static void Event_GustJoins(void) { Djinn_JoinParty(GUST, ELEMENT_JUPITER, 0); }
 
 // Selects the village, river or raised-approach actors.
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ScenePlacement *Bilibin_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin1) {
@@ -127,7 +127,7 @@ static void Event_InspectWell(void) {
 }
 
 // Selects the dialogue, searches and interactions for the current map.
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct SceneEvent *Bilibin_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin1) {
@@ -433,7 +433,7 @@ static void Event_JillGivesHardNut(void) {
 }
 
 // Restores the current map's actors, collision cells and opening transition.
-s32 Scene_Initialize(void) {
+s32 Bilibin_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.scene == (s32)&SceneId_Bilibin1) {
     Bilibin_RestoreVillageActors();

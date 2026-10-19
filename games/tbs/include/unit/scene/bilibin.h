@@ -9,12 +9,12 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-u8 *SceneData_GetMessageTable(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct SceneEntrance *Bilibin_GetEntrances(void);
+const struct SceneRegion *Bilibin_GetRegions(void);
+const u32 *Bilibin_GetExits(void);
+const struct ScenePlacement *Bilibin_GetPlacements(void);
+const struct SceneEvent *Bilibin_GetEvents(void);
+s32 Bilibin_Initialize(void);
 extern s32 gBilibin_FaceLeaderScript[];
 extern u16 gBilibinEntrancesOther[];
 extern struct SceneEntrance gBilibinEntrances1[];

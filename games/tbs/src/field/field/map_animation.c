@@ -7,6 +7,8 @@
 // groups of four halfwords (source tile, count, destination tile, frames to
 // wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 // 0xfeff stops, and 0xffff loops to the start.
+// The retries stay gotos: as an inner for (;;) loop with continue and break,
+// loop.c reshapes the channel loop.
 void MapAnimation_Update(void) {
   // Each channel is written (mapState->anim + channelIndex): as
   // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
@@ -132,8 +134,8 @@ void Map_DisableUpdateCallback(void) {
 // Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
 // any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
 // halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-// A for (;;) retry loop with continue hoists the blendControl address and
-// changes 118 text bytes in tbs-en (2026-10-16); keep the retry edges for now.
+// The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
+// blendControl's address and 118 bytes of tbs-en's code change.
 void DisplayBlend_RunScript(void) {
   struct MapState *mapState = gMapWork[0];
   struct BlendScriptState *blend;

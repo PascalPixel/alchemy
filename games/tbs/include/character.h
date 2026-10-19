@@ -15,85 +15,120 @@ struct BattleUnit;
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
 struct CharacterDefinition {
-  u8 unk00[0x50];
+  u8 unk00[0x50]; ///< Twenty words in chars.tsv; not named by any TBS code.
+  /// The growth curves: each stat at levels 0, 20, 40, 60, 80 and 100. A
+  /// level up adds a twentieth of the step around the new level, with a
+  /// random part; level 1 adds the first point (Owner_LevelUp).
+  ///@{
   s16 hp[6];
   s16 pp[6];
   u16 atk[6];
   u16 def[6];
   u16 agi[6];
   u8 luck[6];
+  ///@}
+  /// Added to ten times the Djinn set in each element to give the
+  /// character's element levels (Unit_GetElementLevels).
   u8 elementBonus[4];
-  u8 startingLevel;
-  u8 unk097;
+  u8 startingLevel; ///< the level a new game raises the character to
+  u8 unk097;        ///< Padding in chars.tsv.
+  /// The starting items, each added and equipped at a new game; the low nine
+  /// bits are the item.
   u16 items[13];
-  u8 unk0b2[2];
+  u8 unk0b2[2]; ///< Padding in chars.tsv.
 };
 
 /// An ability a class teaches, and the level it is learned at.
 struct ClassAbility {
-  u8 ability;
-  u8 level;
-  u8 unk02[2];
+  u8 ability;  ///< the action taught, 0 for none
+  u8 level;    ///< the level it is taught at
+  u8 unk02[2]; ///< Padding in classes.tsv.
 };
 
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {
+  /// The series the class belongs to; Class_Determine picks the series from
+  /// the character's two strongest elements.
   long series;
+  /// The element levels the class needs, in tens: the last class of the
+  /// series the character meets in all four is its class.
   u8 required[4];
-  u8 hp;   ///< tenths of the base stat
-  u8 pp;   ///< tenths of the base stat
-  u8 atk;  ///< tenths of the base stat
-  u8 def;  ///< tenths of the base stat
-  u8 agi;  ///< tenths of the base stat
-  u8 luck; ///< tenths of the base stat
-  u8 unk0e[2];
-  struct ClassAbility abilities[16];
+  u8 hp;                             ///< tenths of the base stat
+  u8 pp;                             ///< tenths of the base stat
+  u8 atk;                            ///< tenths of the base stat
+  u8 def;                            ///< tenths of the base stat
+  u8 agi;                            ///< tenths of the base stat
+  u8 luck;                           ///< tenths of the base stat
+  u8 unk0e[2];                       ///< Padding in classes.tsv.
+  struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
+  /// [0] to [2]: the ability effects the class is weak to
+  /// (BattleTarget_IsWeakToEffect); [3] is not read there.
   u8 unk50[4];
 };
 
 /// A Djinni: its ability and the stat bonuses it gives while set.
 struct DjinnDefinition {
-  u16 abilityId;
-  u8 unk02[2];
+  u16 abilityId; ///< the action the Djinni unleashes
+  u8 unk02[2];   ///< Reserved in djinn.tsv; not named by any TBS code.
+  /// Added to the base stats while the Djinni is set (UnitCalc), before the
+  /// class multiplies them.
+  ///@{
   s8 hp;
   s8 pp;
   s8 atk;
   s8 def;
   s8 agi;
   s8 luck;
-  u8 unk0a[2];
+  ///@}
+  u8 unk0a[2]; ///< Reserved in djinn.tsv.
 };
 
 /// An enemy's definition: its level and stats, items, element preset, the
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {
+  /// The enemy's name: enemies.tsv's name column, 15 bytes, blank in every
+  /// row. BattleUnitSet takes the name from the messages instead.
   u8 unk00[15];
   u8 level;
+  /// The base stats BattleUnitSet copies into the unit.
+  ///@{
   u16 hp;
   u16 pp;
   u16 atk;
   u16 def;
   u16 agi;
   u8 luck;
-  u8 turns;
+  u8 turns; ///< actions a round (BattleUnit.baseActionCount)
   u8 hpRegen;
   u8 ppRegen;
-  u8 unk1e[2];
-  u32 rewards;
-  u8 unk24[4];
-  u16 items[4];
-  u8 counts[4];
-  u8 elementPreset;
+  ///@}
+  u8 unk1e[2];      ///< Reserved in enemies.tsv: 0 in every row.
+  u32 rewards;      ///< 0 in every row; copied to BattleUnit.rewards
+  u8 unk24[4];      ///< Reserved in enemies.tsv: 0 in every row.
+  u16 items[4];     ///< items the enemy carries, 0 for none
+  u8 counts[4];     ///< how many of each item it carries
+  u8 elementPreset; ///< row of gEnemy_ElementPresetTable, 0 to 43
+  /// Whom a single-target attack favours: the target with the most HP left
+  /// (0), the most maximum HP (1) or no one (2). The action choice also skips
+  /// an ability the enemy lacks PP for unless it is 0, and a sealed one when
+  /// it is 2.
   s8 targetStrategy;
+  /// How the action is chosen from `actions` (BattleCommand_SelectAutomatic):
+  /// one of three weight tables (0 to 2), a random place then in order (3),
+  /// in order (4), the next place (5) or the same place (6).
   s8 actionStrategy;
-  u8 itemActions;
-  u16 actions[8];
+  u8 itemActions; ///< one bit per place in `actions`: use an item held instead
+  u16 actions[8]; ///< the abilities the enemy chooses from
+  /// [0] to [2]: the ability effects the enemy is weak to
+  /// (BattleTarget_IsWeakToEffect); [3] is 0 in every row.
   u8 unk48[4];
-  u16 coins;
-  s16 item;
+  u16 coins; ///< coins won
+  s16 item;  ///< the item it may leave, 0 for none
+  /// The chance of the item: 1 in 2 to the power itemChance - 1, two powers
+  /// better with BattleEnemy_RecordDefeat's Djinn bonus; 0 for none.
   s16 itemChance;
-  u16 experience;
+  u16 experience; ///< experience won
 };
 
 /// A level up's result: the level reached, an ability learned and the gain in

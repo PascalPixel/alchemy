@@ -4,19 +4,19 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *ConditionalSceneSetup_GetScriptData(void);
-s32 ConditionalSceneSetup_GetInitialState(void);
-u8 *ConditionalSceneSetup_GetMessageData(void);
-u8 *ConditionalSceneSetup_GetActorData(void);
-u8 *ConditionalSceneSetup_GetEffectData(void);
-s32 ConditionalSceneSetup_InitForScene15(void);
-extern s32 gValeEruption_ActionScriptHead[];
-extern s32 gValeEruption_ActionScriptGaret[];
-extern s32 gValeEruption_ActionScript[];
-extern struct SceneEntrance gValeEruption_SceneTable0[];
-extern u32 gValeEruption_SceneTable1[];
-extern struct ScenePlacement gValeEruption_SceneTable2[];
-extern struct SceneEvent gValeEruption_SceneTable3[];
-extern u16 gValeEruption_CellSteps[];
+struct SceneEntrance *ValeEruption_GetEntrances(void);
+struct SceneRegion *ValeEruption_GetRegions(void);
+u32 *ValeEruption_GetExits(void);
+struct ScenePlacement *ValeEruption_GetPlacements(void);
+struct SceneEvent *ValeEruption_GetEvents(void);
+s32 ValeEruption_Initialize(void);
+extern s32 gValeEruption_LeaderWalksDown[];
+extern s32 gValeEruption_GaretWalksDown[];
+extern s32 gValeEruption_EnterSanctum[];
+extern struct SceneEntrance gValeEruption_Entrances[];
+extern u32 gValeEruption_Exits[];
+extern struct ScenePlacement gValeEruption_Placements[];
+extern struct SceneEvent gValeEruption_Events[];
+extern u16 gValeEruption_SanctumDoorOpens[];
 
 #endif

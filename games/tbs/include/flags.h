@@ -70,6 +70,10 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Vale during the eruption
+// Isaac and Garet came down Mt. Aleph and followed the elders into the sanctum.
+#define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

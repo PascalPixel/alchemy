@@ -32,6 +32,7 @@
 #include "map_scroll.h"
 #include "macros.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Kolima Forest's bend, between the river and Tret's tree. A floodgate
 // switch raises and lowers the river: with the water high the logs float
@@ -633,6 +634,6 @@ struct SceneEvent gKolimaForestBendEvents[] = {
     {SEARCH(SEARCH_UNNAMED), FLOODGATE_SWITCH, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestBend_FlipFloodgateSwitch)},
     // A Fur Coat (item 0x5b).
-    {SEARCH(SEARCH_CHEST), 100, 0xf00, FIND_ITEM(0x5b)},
+    {SEARCH(SEARCH_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {SCENE_EVENTS_END},
 };

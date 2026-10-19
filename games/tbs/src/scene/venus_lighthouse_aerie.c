@@ -56,8 +56,7 @@
 #include "fx_scene.h"
 #include "palbuf.h"
 #include "flags.h"
-
-enum { ITEM_SHAMANS_ROD = 65, ITEM_VENUS_STAR = 220 };
+#include "item_ids.h"
 
 // Forward declarations.
 static void Event_SteadyPillars(void);

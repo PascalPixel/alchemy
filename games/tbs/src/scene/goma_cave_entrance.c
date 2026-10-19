@@ -43,9 +43,6 @@
 #define STUMP_IVY 15 // the ivy holding the stump
 #define IVY 16
 
-// Ivan's Shaman's Rod: item names are message 386 plus the item number.
-#define SHAMANS_ROD 65
-
 // Private scene actions used by the reunion sequence.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 id);
@@ -579,7 +576,7 @@ static void GomaCaveEntrance_GiveShamansRod(void) {
   s32 i;
   s32 id;
 
-  id = SHAMANS_ROD;
+  id = ITEM_SHAMANS_ROD;
   member = UnitGet(IVAN);
   tries = 0;
 retry:

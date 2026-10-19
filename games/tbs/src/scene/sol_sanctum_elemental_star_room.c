@@ -38,6 +38,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
@@ -63,8 +64,6 @@ enum StarRoomActor {
   ACTOR_FELIX,
   ACTOR_ALEX
 };
-
-enum { ITEM_MYTHRIL_BAG = 224 };
 
 #define NULL ((void *)0)
 

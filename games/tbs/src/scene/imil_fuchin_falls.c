@@ -38,6 +38,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Seven maps: the Djinni's ice room by Imil, then Fuchin Falls' four platform
 // rooms, the room of the Ki inscription and the dragon statue's room.
@@ -1969,7 +1970,7 @@ struct SceneEvent gImilFuchinFalls_FourthRoomEvents[] = {
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {SEARCH(SEARCH_CHEST), 100, 0xf6b, FIND_ITEM(0x8)},
+    {SEARCH(SEARCH_CHEST), 100, 0xf6b, FIND_ITEM(ITEM_ARCTIC_BLADE)},
     {SCENE_EVENTS_END},
 };
 
@@ -1980,7 +1981,7 @@ struct SceneEvent gImilFuchinFalls_KiRoomEvents[] = {
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {SEARCH(SEARCH_UNNAMED), 7, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_ReadKiInscription)},
-    {SEARCH(SEARCH_CHEST), 100, 0xf14, FIND_ITEM(0xc8)},
+    {SEARCH(SEARCH_CHEST), 100, 0xf14, FIND_ITEM(ITEM_ORB_OF_FORCE)},
     {SCENE_EVENTS_END},
 };
 

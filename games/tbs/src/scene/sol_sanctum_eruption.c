@@ -36,6 +36,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
@@ -64,7 +65,7 @@ s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
 enum { ACTOR_WISE_ONE = 15, ACTOR_FIRST_ROCK = 16, ROCK_COUNT = 16 };
 
-enum { OBJECT_ELEMENTAL_STAR = 22, ITEM_MARS_STAR = 222 };
+enum { OBJECT_ELEMENTAL_STAR = 22 };
 
 #define ELEMENTAL_ARC_SCALE_X_DECREASE 7372
 #define EMBER_EMISSION_DISABLED 999

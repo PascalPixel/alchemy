@@ -5,8 +5,7 @@
 #include "keystate.h"
 #include "field_event.h"
 #include "field_scene.h"
-
-enum { ITEM_DRAGONS_EYE = 230 };
+#include "item_ids.h"
 
 extern void *gWorkSlot[];
 

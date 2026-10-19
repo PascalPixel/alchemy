@@ -32,6 +32,7 @@
 #include "facing_object.h"
 #include "field_obj.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static void Bilibin_RestoreVillageActors(void);
@@ -954,7 +955,7 @@ struct SceneEvent gBilibinEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), VILLAGE_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillageBlockCells) },
     { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0 },
-    { SEARCH(SEARCH_JAR), 100, 0xf50, FIND_ITEM(0xb4) },
+    { SEARCH(SEARCH_JAR), 100, 0xf50, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, 0xf51, FIND_COINS(5) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectWell) },
     { SCENE_EVENTS_END },

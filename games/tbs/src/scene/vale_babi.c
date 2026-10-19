@@ -69,8 +69,6 @@ enum ValeBabiActor {
   ACTOR_INNKEEPER = 13
 };
 
-enum { ITEM_MYTHRIL_BAG = 224 };
-
 // Return the entrances, among them the scenes played on arrival.
 struct SceneEntrance *ValeBabi_GetEntrances(void) {
   return gValeBabi_Entrances;
@@ -1277,7 +1275,7 @@ struct SceneEvent gValeBabi_Events[] = {
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
-    { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
+    { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
     { SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
@@ -1312,7 +1310,7 @@ struct SceneEvent gValeBabi_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
-    { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
+    { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
     { SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
@@ -1357,7 +1355,7 @@ struct SceneEvent gValeBabi_EventsAfterKalay[] = {
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
-    { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
+    { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
     { SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
@@ -1385,7 +1383,7 @@ struct SceneEvent gValeBabi_ScholarsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
     { 0x21, 20, CONDITION_ALWAYS, 19 },
-    { SEARCH(SEARCH_JAR), 103, 0xf9e, FIND_ITEM(0xc2) },
+    { SEARCH(SEARCH_JAR), 103, 0xf9e, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
     { SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledStudyOf)) },
@@ -1404,7 +1402,7 @@ struct SceneEvent gValeBabi_ScholarsLaterEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
     { 0x21, 20, CONDITION_ALWAYS, 19 },
-    { SEARCH(SEARCH_JAR), 103, 0xf9e, FIND_ITEM(0xc2) },
+    { SEARCH(SEARCH_JAR), 103, 0xf9e, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
     { SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledStudyOf)) },

@@ -38,6 +38,7 @@
 #include "field_effect.h"
 #include "fixed_math.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Vale's village: its doors, the Psynergy Stone, the stormy night when the
 // villagers send Isaac to the elders and he overhears the two surviving
@@ -52,8 +53,6 @@ enum ValeHomeActor {
   ACTOR_FIRST_TRAVELER = 23,
   ACTOR_SECOND_TRAVELER = 24
 };
-
-enum { ITEM_HERB = 180, ITEM_CATCH_BEADS = 207 };
 
 // Forward declarations.
 static void Event_MeetSurvivingTravelers(void);

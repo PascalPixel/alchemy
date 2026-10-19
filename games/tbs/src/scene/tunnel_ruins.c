@@ -38,6 +38,7 @@
 #include "flags.h"
 #include "songs.h"
 #include "event.h"
+#include "item_ids.h"
 
 // The ruins' first scene (SceneId_TunnelRuins1), in the order of its
 // placements: two pairs of pillars to push or Move, three blocks, three bushes
@@ -1930,8 +1931,8 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor)},
     {SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSecondStatue)},
     // Chests: item 0x71 is the Oracle's Robe, item 0x54 Asura's Armor.
-    {SEARCH(SEARCH_CHEST), 100, 0xf32, FIND_ITEM(0x71)},
-    {SEARCH(SEARCH_CHEST), 101, 0xf33, FIND_ITEM(0x54)},
+    {SEARCH(SEARCH_CHEST), 100, 0xf32, FIND_ITEM(ITEM_ORACLES_ROBE)},
+    {SEARCH(SEARCH_CHEST), 101, 0xf33, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_MoveDousePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_DouseBeginsOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_FreezeDousePuddle)},

@@ -25,6 +25,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Scene temporary flags 00, 01 and 02 select the plain, first-tint and
 // second-tint palettes, respectively.
@@ -1494,6 +1495,7 @@ struct SceneEvent gSolSanctumLunaSolRoomsEvents[] = {
     {EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_KradenFindsHall)},
     {EVENT_TOUCH, 9, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_KradenStopsPartyLeaving)},
-    {SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_HERB_FOUND, FIND_ITEM(0xb4)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_HERB_FOUND,
+     FIND_ITEM(ITEM_HERB)},
     {SCENE_EVENTS_END},
 };

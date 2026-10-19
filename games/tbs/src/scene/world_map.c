@@ -49,6 +49,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
@@ -1511,7 +1512,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventWait(1);
   Object_GetById(gWorldMapTriggerActor)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ItemShowFound(242, 3);
-  Engine_PartyGiveItem(242, 0);
+  Engine_PartyGiveItem(ITEM_BLACK_ORB, 0);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
   Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
@@ -1612,7 +1613,6 @@ static void Event_SearchShipwreck(void) {
 }
 
 #define SITE 55
-#define ITEM_BLACK_ORB 242
 
 // Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
 // and the party is to press on to Babi Lighthouse.
@@ -3001,7 +3001,7 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_TOUCH, 93, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(Event_MeetHail) },
     { SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchShipwreck) },
     { 0xf204, 96, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(Event_UseBlackOrb) },
-    { SEARCH(SEARCH_GROUND), 100, 0xfcf, FIND_ITEM(0x103) },
+    { SEARCH(SEARCH_GROUND), 100, 0xfcf, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { EVENT_TALK, 55, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x437, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },

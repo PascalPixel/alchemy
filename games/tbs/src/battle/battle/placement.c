@@ -4,7 +4,6 @@
 #include "../battle_internal.h"
 
 // Isaac and Garet hold a Machete with sprites of their own.
-#define ITEM_MACHETE 15
 #define SPRITE_ISAAC_MACHETE 480
 #define SPRITE_GARET_MACHETE 482
 

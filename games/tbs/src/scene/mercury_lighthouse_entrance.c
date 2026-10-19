@@ -50,6 +50,7 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // The entrance's actors. Mia stands in her own party slot; the Lizard Man is
 // the monster she cannot get past (encounter table 36 fights him as "Lizard
@@ -863,7 +864,7 @@ struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
     { SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReadHeartInscription) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_PLY_TARGET, FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED, EVENT_SCRIPT(MercuryLighthouseEntrance_ActivateWithPly) },
     { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_ITEM_4C, FIND_ITEM(0x4c) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_ITEM_4C, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_CHEST_EF0, 0x500000 },
     { SCENE_EVENTS_END },
 };

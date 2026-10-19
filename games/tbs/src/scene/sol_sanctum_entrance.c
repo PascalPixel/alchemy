@@ -25,6 +25,7 @@
 #include "fixed_math.h"
 #include "macros.h"
 #include "songs.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
@@ -1219,7 +1220,7 @@ struct SceneEvent gSolSanctumEntranceEvents1[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(0xe1) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
     { 0xe104, 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetFirstSmallJewel) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectFirstMinotaurRelief) },
     { SCENE_EVENTS_END },

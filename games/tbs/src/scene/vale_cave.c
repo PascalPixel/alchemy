@@ -937,7 +937,7 @@ struct SceneEvent gValeCave_Events2[] = {
     { EVENT_TOUCH, 55, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
     { EVENT_TOUCH, 56, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
     { 0x7, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKite) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfc2, FIND_ITEM(0xcc) }, // the Halt Gem
+    { SEARCH(SEARCH_CHEST), 100, 0xfc2, FIND_ITEM(ITEM_HALT_GEM) }, // the Halt Gem
     { SEARCH(SEARCH_CHEST), 101, 0xfc3, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedTile) },

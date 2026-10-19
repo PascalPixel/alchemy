@@ -34,9 +34,6 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// The ticket bought here is handed over at the boarding gate.
-#define DOCKS_BOARDING_TICKET 235
-
 // The three maps share actor numbers; each is named on the map it is proved.
 enum KalayTolbiDocksActor {
   // Kalay docks
@@ -260,8 +257,8 @@ static void KalayTolbiDocks_TalkToGatekeeper(void) {
     Event_ShowMessage(ACTOR_GATEKEEPER, 0);
     // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
-      ticketOwner = PartyInventory_FindOwner(DOCKS_BOARDING_TICKET);
-      ticketSlot = Inventory_Find(ticketOwner, DOCKS_BOARDING_TICKET);
+      ticketOwner = PartyInventory_FindOwner(ITEM_BOAT_TICKET);
+      ticketSlot = Inventory_Find(ticketOwner, ITEM_BOAT_TICKET);
       Engine_ActorSetAnimationAndWait(ACTOR_GATEKEEPER, ANIM_NOD);
       Actor_WalkToAndWait(ACTOR_GATEKEEPER, 88, 1288);
       Actor_FaceDirection(ACTOR_GATEKEEPER, FACING_SOUTH, 0);
@@ -367,7 +364,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         gEventWork->message += 3;
         Event_ShowMessage(ACTOR_TICKET_SELLER, 0);
         // Complete both inventory and coin changes only after confirmation.
-        Engine_PartyGiveItem(DOCKS_BOARDING_TICKET, 0);
+        Engine_PartyGiveItem(ITEM_BOAT_TICKET, 0);
         GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
         Party_AdjustCoins(-ticketPrice);
       }

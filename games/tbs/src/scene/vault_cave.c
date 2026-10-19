@@ -34,6 +34,7 @@
 #include "map_scroll.h"
 #include "field_runtime.h"
 #include "macros.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
@@ -1151,7 +1152,7 @@ struct SceneEvent gVaultCaveEvents2[] = {
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_2_CHEST, FIND_ITEM(0x82) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_2_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH, EVENT_SCRIPT(Event_MoveSouthernBlock) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 60, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernBlock) },

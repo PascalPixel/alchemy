@@ -2092,9 +2092,9 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
     { 0x8413, 100, 0xec0, FIND_COINS(1) },
     { 0xc413, 100, 0xec0, FIND_COINS(1) },
     { 0xa413, 100, 0xec0, FIND_COINS(1) },
-    { 0x8413, 101, 0xec1, FIND_ITEM(0xc3) },
-    { 0xc413, 101, 0xec1, FIND_ITEM(0xc3) },
-    { 0xa413, 101, 0xec1, FIND_ITEM(0xc3) },
+    { 0x8413, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
+    { 0xc413, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
+    { 0xa413, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
     { SCENE_EVENTS_END },
 };
 
@@ -2167,7 +2167,7 @@ struct SceneEvent gCrossboneIsleEvents3[] = {
     { EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock16) },
     { SEARCH(SEARCH_CHEST), 100, 0xee2, FIND_COINS(999) },
     { SEARCH(SEARCH_CHEST), 101, 0xee3, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { SEARCH(SEARCH_CHEST), 102, 0xee4, FIND_ITEM(0xb) },
+    { SEARCH(SEARCH_CHEST), 102, 0xee4, FIND_ITEM(ITEM_MURAMASA) },
     { SEARCH(SEARCH_CHEST), 103, 0xee5, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SCENE_EVENTS_END },
 };
@@ -2185,7 +2185,7 @@ struct SceneEvent gCrossboneIsleEvents5[] = {
      EVENT_SCRIPT(Event_FightFinalGuards)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_HopSouth)},
-    {SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(0x53)},
+    {SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(ITEM_DEMON_MAIL)},
     {SEARCH(SEARCH_CHEST), 101, 0xef7, 0x500007},
     {SCENE_EVENTS_END},
 };

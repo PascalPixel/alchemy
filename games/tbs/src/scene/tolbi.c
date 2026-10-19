@@ -337,10 +337,10 @@ static void Tolbi_TalkToSnackVendor(void) {
     Engine_GameFlagSet(FLAG_TOLBI_CORN_GIVEN);
     Engine_EventSetMessage(MsgTolbiLeftovers);
     Engine_EventShowMessage(TOLBI_SNACK_VENDOR, 0);
-    Engine_ItemShowFound(233, 3); // corn
+    Engine_ItemShowFound(ITEM_CORN, 3);
     Engine_EventShowMessage(TOLBI_SNACK_VENDOR, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Engine_PartyGiveItem(233, 0);
+    Engine_PartyGiveItem(ITEM_CORN, 0);
   } else {
     Engine_EventSetMessage(MsgTolbiFestivalLongerUsual);
     Engine_EventShowMessage(TOLBI_SNACK_VENDOR, 0);

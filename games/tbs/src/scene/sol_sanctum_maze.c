@@ -18,6 +18,7 @@
 
 #include "field_event.h"
 #include "flags.h"
+#include "item_ids.h"
 
 // A maze of Sol Sanctum, scene 14: two exits to scene 16 and the chest that
 // holds the second Small Jewel (item 0xe1).
@@ -66,6 +67,6 @@ struct SceneEvent gSolSanctumMazeEvents[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND,
-     FIND_ITEM(0xe1)},
+     FIND_ITEM(ITEM_SMALL_JEWEL)},
     {SCENE_EVENTS_END},
 };

@@ -41,6 +41,7 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
+#include "item_ids.h"
 
 // Lamakan Desert, four maps of sand between Altin and the world map east.
 //
@@ -1209,13 +1210,13 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetSandMonster) },
     { EVENT_TALK, 8, FLAG_LAMAKAN_SAND_MONSTER_BEATEN, EVENT_SCRIPT(FightSandMonster) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(0x24) },
+    { SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(ITEM_VULCAN_AXE) },
     { SEARCH(SEARCH_UNNAMED), 101, 0x350, FIND_PSYNERGY_STONE },
-    { SEARCH(SEARCH_CHEST), 102, 0xf7c, FIND_ITEM(0xc4) },
+    { SEARCH(SEARCH_CHEST), 102, 0xf7c, FIND_ITEM(ITEM_LUCKY_PEPPER) },
     { SEARCH(SEARCH_UNNAMED), 103, 0x351, FIND_PSYNERGY_STONE },
     { SEARCH(SEARCH_CHEST), 105, 0xf7d, FIND_COINS(777) },
-    { SEARCH(SEARCH_CHEST), 106, 0xf7e, FIND_ITEM(0xb7) },
-    { SEARCH(SEARCH_CHEST), 107, 0xf7f, FIND_ITEM(0xc3) },
+    { SEARCH(SEARCH_CHEST), 106, 0xf7e, FIND_ITEM(ITEM_POTION) },
+    { SEARCH(SEARCH_CHEST), 107, 0xf7f, FIND_ITEM(ITEM_MINT) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
     { EVENT_RAISED, 1, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },

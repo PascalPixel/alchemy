@@ -62,8 +62,6 @@ static void CrossboneIslePlatformRooms_InitializeScene1(void);
 static void CrossboneIslePlatformRooms_InitializeScene2(void);
 static void CrossboneIslePlatformRooms_InitializeScene3(void);
 
-enum { ITEM_RED_KEY = 243, ITEM_BLUE_KEY = 244 };
-
 // The Djinni Bane, in the block room: Venus Djinni 6 (name message 1125).
 enum { BANE = 15 };
 #define DJINNI_BANE 6
@@ -1444,8 +1442,8 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents1[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckLeaderAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckLeaderAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xeca, FIND_COINS(333) },
-    { SEARCH(SEARCH_CHEST), 101, 0xecb, FIND_ITEM(0x10b) },
-    { SEARCH(SEARCH_CHEST), 102, 0xecc, FIND_ITEM(0xc0) },
+    { SEARCH(SEARCH_CHEST), 101, 0xecb, FIND_ITEM(ITEM_FAIRY_RING) },
+    { SEARCH(SEARCH_CHEST), 102, 0xecc, FIND_ITEM(ITEM_COOKIE) },
     { SEARCH(SEARCH_CHEST), 103, 0xecd, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SCENE_EVENTS_END },
 };
@@ -1469,8 +1467,8 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents2[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
     { SEARCH(SEARCH_CHEST), 100, 0xece, FIND_COINS(444) },
     { SEARCH(SEARCH_CHEST), 101, 0xecf, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_CHEST), 102, 0xed0, FIND_ITEM(0x60) },
-    { SEARCH(SEARCH_CHEST), 103, 0xed1, FIND_ITEM(0xba) },
+    { SEARCH(SEARCH_CHEST), 102, 0xed0, FIND_ITEM(ITEM_STORM_GEAR) },
+    { SEARCH(SEARCH_CHEST), 103, 0xed1, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -1544,7 +1542,7 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents3[] = {
     {SEARCH(SEARCH_CHEST), 104, 0xed6, FIND_COINS(666)},
     {SEARCH(SEARCH_CHEST), 105, 0xed7, FIND_ITEM(ITEM_WATER_OF_LIFE)},
     {SEARCH(SEARCH_CHEST), 106, 0xed8, FIND_ITEM(ITEM_ELIXIR)},
-    {SEARCH(SEARCH_CHEST), 107, 0xed9, FIND_ITEM(0x26)},
+    {SEARCH(SEARCH_CHEST), 107, 0xed9, FIND_ITEM(ITEM_DEMON_AXE)},
     {SCENE_EVENTS_END},
 };
 

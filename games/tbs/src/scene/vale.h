@@ -13,8 +13,7 @@
 #include "staged_actor.h"
 #include "field_event.h"
 #include "field_scene.h"
-
-enum { ITEM_NUT = 181 };
+#include "item_ids.h"
 
 enum { ACTOR_DORA = 21 };
 

@@ -2498,7 +2498,7 @@ struct SceneEvent gKalay_CaveEvents[] = {
 struct SceneEvent gKalay_Events4[] = {
     { 0x31, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { SEARCH(SEARCH_CHEST), 100, 0xf22, FIND_ITEM(0xc1) },
+    { SEARCH(SEARCH_CHEST), 100, 0xf22, FIND_ITEM(ITEM_APPLE) },
     { SCENE_EVENTS_END },
 };
 
@@ -2530,12 +2530,12 @@ struct SceneEvent gKalay_TunnelEvents[] = {
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StartTrackingLeader) },
     { EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_DisableLeaderAutomaticPriority) },
     { EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnableLeaderAutomaticPriority) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf1c, FIND_ITEM(0x84) },
+    { SEARCH(SEARCH_CHEST), 100, 0xf1c, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_RecruitDjinn) },
     { SEARCH(SEARCH_CHEST), 102, 0xf1e, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_CHEST), 103, 0xf1f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 104, 0xf20, FIND_COINS(200) },
-    { SEARCH(SEARCH_CHEST), 105, 0xf21, FIND_ITEM(0xb7) },
+    { SEARCH(SEARCH_CHEST), 105, 0xf21, FIND_ITEM(ITEM_POTION) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

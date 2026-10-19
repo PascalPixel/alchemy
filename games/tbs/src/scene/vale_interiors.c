@@ -45,8 +45,6 @@ enum ValeInteriorsActor {
   ACTOR_FIRST_DRIFTING_SPRITE = 23
 };
 
-enum { ITEM_HERB = 180 };
-
 // Forward declarations.
 static void Event_GaretComesHome(void);
 static void ValeInteriors_SpawnDriftingSprite(void);

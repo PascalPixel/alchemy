@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_UNIT_H
 #define ALCHEMY_BATTLE_UNIT_H
 
+/// @file
+/// BattleUnit, a party member's or enemy's battle state, with the elements,
+/// abilities and actions it uses.
+
 #include "edition.h"
 #include "static_assert.h"
 
@@ -10,14 +14,19 @@ enum {
   OWNER_ACTION_ID_MASK = 0x3fff
 };
 
+/// An entry in a unit's action list: the action's id (OWNER_ACTION_ID_MASK)
+/// and marks for an action its class or an equipped item gave.
 struct OwnerActionSlot {
+  /// bits: 15 from the class | 14 from an equipped item | 13..0 action id.
+  /// Entries with neither mark were taught for good; 0 is empty.
   u16 encodedAction;
-  u16 unk02;
+  u16 unk02; ///< Not named by any TBS code.
 };
 
+/// A unit's elemental power and resistance in one element.
 struct BattleElementStats {
-  s16 power;
-  s16 resistance;
+  s16 power;      ///< Elemental power in the element.
+  s16 resistance; ///< Elemental resistance to it.
 };
 
 /// The elements, in the order of every table kept per element: a unit's
@@ -41,6 +50,9 @@ enum Element {
 /// Granite, Flash and Kite, 9 the field Psynergy, Defend, Flee and enemies'
 /// commands.
 #define ABILITY_KIND_MASK 15
+
+/// The kinds of ability, by the low four bits of BattleAct.flags. Kinds 0, 7
+/// and 9 have no enumerator; ABILITY_KIND_MASK says what they hold in TBS.
 enum AbilityKind {
   ABILITY_KIND_HEAL_HP = 1,           ///< Cure, Fizz, healing items
   ABILITY_KIND_EFFECT = 2,            ///< damage only if the effect lands
@@ -129,98 +141,135 @@ enum AbilityEffect {
   ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
 };
 
+/// An ability's definition, a row of gBattleAction_DefinitionTable: its
+/// targeting, kind, element, effect, range, PP cost and power.
 struct BattleAct {
-  u8 targetMode;
-  u8 flags;   ///< the kind (ABILITY_KIND_MASK) and where it can be used
+  u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
+  /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
+  /// row | 3..0 kind (ABILITY_KIND_MASK, enum AbilityKind).
+  u8 flags;
   u8 element; ///< enum Element
   u8 effect;  ///< enum AbilityEffect
   u8 unk04[4];
-  u8 range; ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
-  u8 ppCost;
-  u16 power;
+  u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
+  u8 ppCost; ///< PP the ability costs
+  u16 power; ///< what the kind applies, 0 for none
   u8 type0c;
   u8 unk0d[3];
 };
 
+/// BattleAct.flags: where an ability can be used.
 enum BattleActionUse {
-  ACTION_USABLE_IN_FIELD = 0x40,
-  ACTION_USABLE_IN_BATTLE = 0x80
+  ACTION_USABLE_IN_FIELD = 0x40, ///< can be used outside battle
+  ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
+/// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
+/// Djinn and ailments.
 struct BattleUnit {
-  u8 name[0x0f];
-  u8 level;
-  s16 baseHp;
-  s16 basePp;
-  s16 hpGauge;
-  s16 ppGauge;
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;
-  u8 baseActionCount;
-  u8 baseHpRegen;
-  u8 basePpRegen;
-  u8 unk022[2];
+  u8 name[0x0f];      ///< one byte a character, ending in 0
+  u8 level;           ///< 1 to 99 for a character
+  s16 baseHp;         ///< before equipment, Djinn and class (UnitCalc)
+  s16 basePp;         ///< before equipment, Djinn and class (UnitCalc)
+  s16 hpGauge;        ///< hp / maxHp in 0..0x4000; 1 while any HP remains
+  s16 ppGauge;        ///< pp / maxPp in 0..0x4000; 1 while any PP remains
+  u16 baseAttack;     ///< before equipment, Djinn, class and stages
+  u16 baseDefense;    ///< before equipment, Djinn, class and stages
+  u16 baseAgility;    ///< before equipment, Djinn, class and stages
+  u8 baseLuck;        ///< before equipment, Djinn and class
+  u8 baseActionCount; ///< actions a round before equipment
+  u8 baseHpRegen;     ///< HP regained each turn before equipment
+  u8 basePpRegen;     ///< PP regained each turn before equipment
+  u8 unk022[2];       ///< Not named by any TLA C.
+  /// Power and resistance before equipment and stages: an enemy's from its
+  /// element preset, a character's from its element levels
+  /// (Unit_CalcBaseElements).
   struct BattleElementStats baseElement[4];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 actionEntryCount;
-  u8 hpRegen;
-  u8 ppRegen;
-  u8 unk046[2];
+  s16 maxHp;           ///< maximum HP (UnitCalc)
+  s16 maxPp;           ///< maximum PP (UnitCalc)
+  s16 hp;              ///< current HP, 0 when downed
+  s16 pp;              ///< current PP
+  u16 atk;             ///< Attack (UnitCalc)
+  u16 def;             ///< Defense (UnitCalc)
+  u16 agi;             ///< Agility (UnitCalc)
+  u8 luck;             ///< Luck (UnitCalc)
+  u8 actionEntryCount; ///< actions each round (UnitCalc)
+  u8 hpRegen;          ///< HP regained at each turn's end
+  u8 ppRegen;          ///< PP regained at each turn's end
+  u8 unk046[2];        ///< Not named by any TLA C.
+  /// Power and resistance in each element after equipment, element levels
+  /// and Resistance stages (UnitCalc).
   struct BattleElementStats element[4];
+  /// The action list: Psynergy taught for good, then the class's and the
+  /// equipment's. An empty entry is 0.
   struct OwnerActionSlot actionSlots[32];
+  /// Items held, one entry each: bits 15..11 quantity | 10 broken |
+  /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];
-  u8 unk0f6[2];
+  u8 unk0f6[2]; ///< Not named by any TLA C.
+  /// The Djinn held, one bit per Djinni (by its index) in each element's word.
   u32 djinnAvailable[4];
+  /// The Djinn set, one bit per Djinni.
   u32 djinnActive[4];
-  u8 djinnOwnedCounts[4];
-  u8 djinnActiveCounts[4];
-  u32 rewards;
-  u32 experience;
+  u8 djinnOwnedCounts[4];  ///< the Djinn held in each element
+  u8 djinnActiveCounts[4]; ///< the Djinn set in each element
+  u32 rewards;             ///< 0 for an enemy (the BattleUnitSet draft)
+  u32 experience;          ///< a character's experience points
+  /// Written with the character's id at a new game, and read as one (ISAAC,
+  /// GARET...) by the battle presentation.
   u8 classId;
+  /// The character's class, worked out from its Djinn (Unit_UpdateClass); 0
+  /// marks an enemy, and code throughout tests it to tell the two apart.
   u8 classIndex;
+  /// BATTLE_UNIT_ABSENT (0), BATTLE_UNIT_ENEMY (1) or BATTLE_UNIT_PARTY (2).
+  /// Enemies 9 to 66 and 369 to 377 are put on side 2 (the BattleUnitSet
+  /// draft).
   u8 side;
+  /// 0 to 4: each guard effect raises it to its own level and no lower;
+  /// Defend's is 1.
   u8 guardLevel;
-  s8 elementLevels[4];
+  s8 elementLevels[4]; ///< cleared by BattleParty_ResetActiveRuntimeFields
+  /// The curse: nonzero shows it in the menus and lets the sanctum remove it.
   s8 restraint;
   s8 poison; ///< 1 poisoned, 2 deadly poison
-  /// Each stat change: the turns it has left, and its stage (UnitCalc: an
-  /// eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
+  /// Each stat change: the turns it has left, and its stage. Stages run -4 to
+  /// 4 and last 7 turns.
+  ///@{
   u8 attackTurns;
   s8 attackStage;
   u8 defenseTurns;
   s8 defenseStage;
   u8 resistanceTurns;
   s8 resistanceStage;
-  /// Delusion to sleep: the turns each status has left.
+  ///@}
+  /// Delusion to sleep: the turns each status has left, 7 when it lands.
+  ///@{
   u8 delusion;
   s8 confusion;
   u8 charm;
   u8 stun;
   u8 sleep;
-  u8 psySeal; ///< Bind's turns in the low three bits, Luff's above
-  u8 refrain;
-  s8 reflect;
+  ///@}
+  /// bits: 7..3 Luff (16 when cast, minus 8 a turn) | 2..0 Bind's turns
+  /// (7 when cast). Psynergy is sealed while any bit is set.
+  u8 psySeal;
+  u8 refrain;    ///< HP regeneration's turns left, 5 when cast
+  s8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
-  u8 grimReaper; ///< the Grim Reaper's countdown
+  u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
   /// The totals of equipment effects 23 (unleash chance) and 24 that UnitCalc
   /// sums.
   // TBS never reads them back.
   u8 equipBonus[2];
+  /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;
-  u8 immobile;
-  u8 agilityTurns;
-  s8 agilityStage;
-  s8 challenge;
-  u8 unk149;
+  u8 immobile;     ///< set by ABILITY_EFFECT_GROUND
+  u8 agilityTurns; ///< the Agility change's turns left, 5 when cast
+  s8 agilityStage; ///< the Agility stage, -4 to 8 (twice the Agility)
+  s8 challenge;    ///< set by the challenge effect
+  u8 unk149;       ///< Not named by any TLA C.
+  /// The unit's id: an enemy's (the BattleUnitSet draft), and a character's
+  /// (0 to 7) for Unit_UpdateClass and the experience table.
   u16 enemyId;
 };
 
@@ -266,9 +315,9 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 }
 
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
-/// A statement macro, written do { } while (0): every site matches through
-/// that shape. Written out at each site, or as an inline function, the
-/// gauge loads are scheduled across the store before them.
+// A statement macro, written do { } while (0): every site matches through that
+// shape. Written out at each site, or as an inline function, the gauge loads
+// are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
     (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->maxHp);        \

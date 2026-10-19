@@ -5,7 +5,8 @@
 // FIELD_AT the two halfword stores do not alias and the entrance store is
 // scheduled ahead of the call's argument. Tried for the first: an empty asm
 // after the store, the effect store as a plain pointer or one FIELD_AT, the
-// owner read as a plain pointer (16).
+// owner read as a plain pointer (16). Tried 2026-10-19: gPartyState's address
+// pinned to r5 for the first owner read (12) or for every read (40).
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

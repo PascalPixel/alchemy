@@ -2,7 +2,8 @@
 // after the Q16 multiply the native starts the rise (`movs r2, #128`), copies
 // the parent's x, then shifts; the draft copies first, and its `movs r0, #1`
 // comes two rows late. The one-pass block and rise local that match the twins
-// Func_02004598 and 020045e4 give 8 differ here.
+// Func_02004598 and 020045e4 give 8 differ here. 2026-10-19: the rise pinned
+// to r2 and the result to r0 (6), the rise behind an empty asm (6).
 #include "types.h"
 #include "iwram_call.h"
 #include "object_runtime.h"

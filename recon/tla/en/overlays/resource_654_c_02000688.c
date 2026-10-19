@@ -6,7 +6,10 @@
 // load goes first (equal priority, and the load comes first in insn order).
 // Measured: Call2 and Value2 (2), r1 pinned (2), the 1 held by an empty asm
 // (fixes it, but the rectangle copy's arguments before it reorder: 4), a second
-// barrier anywhere (4).
+// barrier anywhere (4). Tried 2026-10-19: the 1 pinned to r1 and the id to r0
+// in that order (2), the 1 behind an asm volatile with or without a memory
+// clobber, or with the owner as a "+m" operand (4, 4 and 40), the first
+// rectangle copy called directly (11).
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "io_reg.h"
 #include "iowrite.h"

@@ -1,7 +1,8 @@
 // Near miss, differ 6 of 30, order only: the native loads the address of
 // gData_02006294 first and sets the call argument (movs r0, #0) between the
 // mask and the and; a one-pass block before the bit-field store leaves
-// differ 4.
+// differ 4. 2026-10-19: the call's 0 pinned to r0 before the bit-field store
+// (6, no change).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 struct MapWork17 {

@@ -4260,12 +4260,6 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000eaf60	ja
 main	rom_main_05	games/tla/src/battle/effect/screen_sprite	.text
 main	rom_main_05	games/tla/src/battle/effect/step_vector	.text
 main	rom_main_05	games/tla/src/battle/effect/plot_canvas_pixel	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000eb3c4	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f03c4	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f43c4	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f83d0	de
-main	rom_main_05	recon/tla/raw/080eb3d0	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000eb314	ja
 main	rom_main_05	games/tla/src/battle/effect/color_fade_map	.text
 main	rom_main_05	games/tla/src/battle/effect/canvas_sprite	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000eb694	it

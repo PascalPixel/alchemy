@@ -15,12 +15,14 @@
 #define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
 #define RAMSES_SPARKS 512         ///< sparks of the orb's burst
 
+/// Over the desert backdrop a formation stands while an orb circles above it,
+/// drops three times throwing puffs, and flies off; RAMSES_ROCKS rocks fall and
+/// bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks from
+/// PARTICLES.
+///
 /// Abilities: Ramses (scene kind 1).
 ///
-/// Over the desert backdrop a formation stands while an orb circles above it,
-/// drops three times throwing puffs, and flies off; RAMSES_ROCKS rocks fall
-/// and bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks
-/// from PARTICLES. Up to RAMSES_FRAMES frames; A or B ends it early.
+/// Up to RAMSES_FRAMES frames; A or B ends it early.
 ///
 ///   0 to 90     the orb circles above the formation
 ///   91 to 196   it drops three times, 40 frames apart, throwing puffs, and

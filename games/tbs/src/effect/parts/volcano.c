@@ -18,15 +18,16 @@
 #define VOLCANO_FLAME_IMAGE_ODD 0xdd0   ///< the flame on odd frames
 #define VOLCANO_FLAME_IMAGE_EVEN 0x10b4 ///< the flame on even frames
 
-/// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
-/// Storm (kind 13).
-///
 /// One, two or four columns of fire (gVolcano_Counts by effect->variant) rise
 /// near the far edge on the targets' side, at the depths of gVolcano_Depths,
 /// starting at gVolcano_StartFrames; each erupts with a fountain of 200 sparks
-/// and keeps spitting more, and each eruption knocks the targets back. The
-/// battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant 2
-/// also swings the camera round.
+/// and keeps spitting more, and each eruption knocks the targets back.
+///
+/// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
+/// Storm (kind 13).
+///
+/// The battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant
+/// 2 also swings the camera round.
 void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

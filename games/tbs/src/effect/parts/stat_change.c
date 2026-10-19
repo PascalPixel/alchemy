@@ -9,44 +9,45 @@
 // each target in turn, 8 frames apart, and a burst of light and the mode's
 // picture (a dagger, a shield, a streak or a wisp) play over it.
 
+/// Stat boosts, in six modes: light gathers on each target and bursts, and a
+/// picture (a dagger, a shield, a streak or a wisp) plays over it.
+///
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); kind 46 is used by no ability.
 ///
-/// Stat boosts, in six modes: light gathers on each target and bursts, and
-/// a picture (a dagger, a shield, a streak or a wisp) plays over it.
-/// PARTICLES holds the gathering flares, 64 for each target.
-/// One entry for each mode.
+/// PARTICLES holds the gathering flares, 64 for each target. One entry for each
+/// mode.
 void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 0);
 }
-/// Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
+/// Gathers stat-boost light and displays a shield in Mars colours.
 ///
-/// Gather stat-boost light and display a shield in Mars colours.
+/// Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
 void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 1);
 }
+/// Gathers stat-boost light and displays a shield in Jupiter colours.
+///
 /// Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
 /// 215).
-///
-/// Gather stat-boost light and display a shield in Jupiter colours.
 void BattleFx_RunWard(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 2);
 }
-/// Abilities: Granite (kind 200).
+/// Gathers stat-boost light and displays a violet streak in Venus colours.
 ///
-/// Gather stat-boost light and display a violet streak in Venus colours.
+/// Abilities: Granite (kind 200).
 void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 3);
 }
-/// Abilities: Flash (kind 213).
+/// Gathers stat-boost light and displays a violet streak in Mars colours.
 ///
-/// Gather stat-boost light and display a violet streak in Mars colours.
+/// Abilities: Flash (kind 213).
 void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 5);
 }
-/// Abilities: Zephyr (kind 216).
+/// Gathers stat-boost light and displays a wisp without replacing its palette.
 ///
-/// Gather stat-boost light and display a wisp without replacing its palette.
+/// Abilities: Zephyr (kind 216).
 void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 4);
 }
@@ -392,23 +393,23 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // scene's counts from its timing table. Several steps consume random numbers,
 // so their order within a frame is part of the effect.
 
-/// Abilities: Dull, Blunt (kind 27).
+/// Breaks the dagger picture into shards that fade through darker copies.
 ///
-/// Break the dagger picture into shards that fade through darker copies.
+/// Abilities: Dull, Blunt (kind 27).
 void BattleFx_RunDull(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 0);
 }
-/// Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
+/// A shield appears over each target and breaks into shards that fade through
+/// darker copies, in the glow orb's colours (style 1).
 ///
-/// A shield appears over each target and breaks into shards that fade
-/// through darker copies, in the glow orb's colours (style 1).
+/// Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
 void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 1);
 }
-/// Abilities: Weaken, Enfeeble (kind 31).
+/// A shield appears over each target and breaks into fading shards, in the pink
+/// burst's colours (style 2).
 ///
-/// A shield appears over each target and breaks into fading shards, in the
-/// pink burst's colours (style 2).
+/// Abilities: Weaken, Enfeeble (kind 31).
 void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 2);
 }

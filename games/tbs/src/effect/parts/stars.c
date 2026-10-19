@@ -10,12 +10,12 @@
 // canvas and stored in the velocity fields of EffectStep records; each edge
 // is sampled at evenly spaced points and a mote or flare is stamped at each.
 
-/// Abilities: Astral Blast (kind 68).
-///
 /// Three star-shaped rings of light fly from 40 pixels above the user at the
 /// first target, 12 frames apart, growing and spinning as they go, while the
 /// camera swings round; each knocks the target back on arrival, and the third
 /// lets the battle show the damage.
+///
+/// Abilities: Astral Blast (kind 68).
 void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
 #ifndef UBFIX
@@ -191,12 +191,14 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Shining Star (kind 62).
-///
 /// Eight spinning star outlines fall from 120 pixels above the user towards the
 /// first target, a few frames apart, and bounce off the ground near it, each
 /// bounce shaking the screen and flashing the targets; the battle shows the
-/// damage on frame 96. 128 frames.
+/// damage on frame 96.
+///
+/// Abilities: Shining Star (kind 62).
+///
+/// 128 frames.
 void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

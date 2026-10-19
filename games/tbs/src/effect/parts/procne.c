@@ -9,6 +9,9 @@
 #define PROCNE_DUST_CELLS (3 * (48 * 64))
 #define PROCNE_COMET_CELLS 0x3600
 
+/// A whirlwind lifts the targets, then comets from a block of objects in a
+/// violet sky strike them.
+///
 /// Abilities: Procne (scene kind 8).
 ///
 /// 400 frames:

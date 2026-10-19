@@ -27,15 +27,16 @@
 #define RAGNAROK_COLUMN_X(side, column)                                        \
   gRagnarok_StrikeColumns[(side)][(column)]
 
+/// A huge flaming blade swings down over the targets and two columns of light
+/// strike through them.
+///
 /// Abilities: Ragnarok (kind 58).
 ///
-/// A huge flaming blade swings down over the targets and two columns of light
-/// strike through them. The sword is drawn for 40 frames: it swings down over
-/// 10 frames, pauses until frame 20, then creeps on. The columns flash at
-/// frames 16 and 24 and scatter sparks six frames later, as the targets
-/// recoil; the battle shows the damage on frame 40. Column x comes from
-/// gRagnarok_StrikeColumns: first two of three per side. PARTICLES holds 340
-/// sparks per column.
+/// The sword is drawn for 40 frames: it swings down over 10 frames, pauses
+/// until frame 20, then creeps on. The columns flash at frames 16 and 24 and
+/// scatter sparks six frames later, as the targets recoil; the battle shows the
+/// damage on frame 40. Column x comes from gRagnarok_StrikeColumns: first two
+/// of three per side. PARTICLES holds 340 sparks per column.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

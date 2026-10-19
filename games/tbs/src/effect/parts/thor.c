@@ -57,17 +57,18 @@
     }                                                                          \
   }
 
+/// The scene plays in two parts on the effect canvas.
+///
 /// Abilities: Thor (scene kind 12).
 ///
-/// The scene plays in two parts on the effect canvas. In the dusk part
-/// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
-/// lines across it form over scrolling dusk clouds; the circle turns, sinks
-/// into the sky and a beam of light falls from it. In the lightning part
-/// (THOR_LIGHTNING_FRAMES) a pillar of lightning strikes the formation and
-/// throws sparks, THOR_BOLTS violet bolts follow while a violet mote sways
-/// above, and the formation is pushed back in smoke until an impact burst ends
-/// the effect. The sparks live in THOR_PARTICLES; a spark whose variant is 0
-/// is free, and a positive variant counts the frames it has left.
+/// In the dusk part (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128
+/// dots and three lines across it form over scrolling dusk clouds; the circle
+/// turns, sinks into the sky and a beam of light falls from it. In the
+/// lightning part (THOR_LIGHTNING_FRAMES) a pillar of lightning strikes the
+/// formation and throws sparks, THOR_BOLTS violet bolts follow while a violet
+/// mote sways above, and the formation is pushed back in smoke until an impact
+/// burst ends the effect. The sparks live in THOR_PARTICLES; a spark whose
+/// variant is 0 is free, and a positive variant counts the frames it has left.
 void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},

@@ -6,11 +6,12 @@
 
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
 
+/// Flame arc: nine flames rise one after another, 4 frames apart, along a half
+/// circle, over 80 frames.
+///
 /// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
 ///
-/// Flame arc: nine flames rise one after another, 4 frames apart, along a
-/// half circle, over 80 frames. Each target is hit in turn, 8 frames apart
-/// from frame 16.
+/// Each target is hit in turn, 8 frames apart from frame 16.
 ///
 /// effect: the targets. variant 1 adds a second flame 16 pixels above each
 ///         one, variant 2 a third 32 pixels above (and longer trails).

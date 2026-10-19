@@ -24,15 +24,15 @@ struct DualColumn {
   s32 start;     ///< the frame it starts to grow
 };
 
-/// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
+/// Grows vines from the ground, scattering dust from each root.
 ///
-/// Grow vines from the ground, scattering dust from each root.
+/// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
 void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 0);
 }
-/// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
+/// Grows green pillars from the ground, scattering dust from each root.
 ///
-/// Grow green pillars from the ground, scattering dust from each root.
+/// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
 void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 1);
 }
@@ -288,10 +288,10 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 #define VINE_COLUMNS 16 ///< columns that rise
 #define VINE_FRAMES 70
 
-/// Abilities: Vine (kind 202).
-///
 /// Rising vines: sixteen green vines grow from the middle of the row of
 /// targets, 2 frames apart, and shrink back.
+///
+/// Abilities: Vine (kind 202).
 ///
 /// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
 /// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
@@ -384,10 +384,10 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Thorn, Briar, Nettle (kind 5).
+/// Rising thorns: thorns burst from the ground one every 8 frames, throwing up
+/// dust from their roots.
 ///
-/// Rising thorns: thorns burst from the ground one every 8 frames, throwing
-/// up dust from their roots.
+/// Abilities: Thorn, Briar, Nettle (kind 5).
 ///
 /// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
 /// of dust on each of its first two frames; on frame 8i + 12 the targets

@@ -32,12 +32,14 @@ enum SlashSheetCell {
   ATALANTA_SLASH_BOTTOM = 0x1bf3
 };
 
+/// Rain of blades: under a violet sky, a 3x3 formation of objects flies along a
+/// stored path while sixteen blades gather trails of light, flash and fly off;
+/// A or B skips ahead.
+///
 /// Abilities: Atalanta (scene kind 4).
 ///
-/// Rain of blades: under a violet sky, a 3x3 formation of objects flies
-/// along a stored path while sixteen blades gather trails of light, flash
-/// and fly off; A or B skips ahead. Then 24 blades fall diagonally on the
-/// targets and burst into flame, hitting each target as they land.
+/// Then 24 blades fall diagonally on the targets and burst into flame, hitting
+/// each target as they land.
 ///
 /// effect: the targets.
 void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {

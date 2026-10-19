@@ -60,10 +60,10 @@ void FieldEffect_WatchLeaderDistance(void) {
   }
 }
 
-/// Abilities: Reveal (field kind 8).
-///
 /// Starts a screen transition centred on the leader, runs the matching event if
 /// there is one, and puts markers round the leader.
+///
+/// Abilities: Reveal (field kind 8).
 void FieldFx_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;

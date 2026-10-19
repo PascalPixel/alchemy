@@ -22,11 +22,11 @@
 #define BOREAS_POINT_X(rock) gBoreas_Points[rock][0]
 #define BOREAS_POINT_Y(rock) gBoreas_Points[rock][1]
 
-/// Abilities: Boreas (scene kind 10).
+/// Rocks and ice blocks: a window opens on rocks that crumble, a big ice block
+/// drops and throws up spray; then ice blocks rain down on the targets, and
+/// boulders crumble into bouncing chips.
 ///
-/// Rocks and ice blocks: a window opens on rocks that crumble, a big ice
-/// block drops and throws up spray; then ice blocks rain down on the
-/// targets, and boulders crumble into bouncing chips.
+/// Abilities: Boreas (scene kind 10).
 ///
 /// effect: the targets.
 void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {

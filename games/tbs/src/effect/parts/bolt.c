@@ -24,9 +24,9 @@ enum {
 /// The bolt pictures in the sheet, after the tornado.
 #define BOLT_CELLS 0xc56
 
-/// Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
-///
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
+///
+/// Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
 ///
 /// Target i's turn starts on frame 8i with a flash of the canvas. The bolt
 /// drops from the top, 64 pixels a frame down to y 104, and the screen shakes

@@ -47,11 +47,13 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// is at most this, just above 80 pixels.
 #define FALLING_LAND_Y 0x27f
 
-/// Abilities: Ice, Ice Horn, Ice Missile (kind 7).
-///
 /// Ice shards rain down diagonally onto the targets' side of the field and
 /// shatter into puffs of sparkle, flashing and shaking each target as they
-/// land. The canvas shows only inside a slanted band of window 0, so the shards
+/// land.
+///
+/// Abilities: Ice, Ice Horn, Ice Missile (kind 7).
+///
+/// The canvas shows only inside a slanted band of window 0, so the shards
 /// stream out of the sky above the targets. effect->variant picks the size of
 /// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames, 20
 /// for 52, 32 for 80); variant 1 leaves longer trails and variant 2 draws
@@ -263,16 +265,17 @@ struct BoltSparkBuffer {
 #define DOUSE_FLASH_CELL 0x844   ///< the landing flash picture in the sheet
 #define DOUSE_BURST_CELL 0xa84   ///< the 42x42 burst picture in the sheet
 
+/// Blue bolts streak down diagonally onto the targets' side of the field, each
+/// bursting into a fountain of falling sparks where it lands, while the targets
+/// flash.
+///
 /// Abilities: Douse, Drench, Deluge (kind 9).
 ///
-/// Blue bolts streak down diagonally onto the targets' side
-/// of the field, each bursting into a fountain of falling sparks where it
-/// lands, while the targets flash. Like the falling shards, the canvas shows
-/// only inside a slanted band of window 0.
-/// effect->variant picks the volley from gFalling_Counts: 6 bolts of 8
-/// sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
-/// frames; it also picks how the canvas fades (see below).
-/// effect->side is 1 when the targets are the party, 0 when they are enemies.
+/// Like the falling shards, the canvas shows only inside a slanted band of
+/// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of
+/// 8 sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
+/// frames; it also picks how the canvas fades (see below). effect->side is 1
+/// when the targets are the party, 0 when they are enemies.
 void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

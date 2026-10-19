@@ -4,10 +4,10 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Abilities: Lift (field kind 7), cast on a target.
-///
 /// An object appears 32 pixels to either side, each moves 14 pixels in, and
 /// they lift the target 32 pixels with them.
+///
+/// Abilities: Lift (field kind 7), cast on a target.
 void FieldFx_RunLiftOnTarget(s32 unused) {
   struct BattleFxScene *work;
   struct DispatchObject *caster;
@@ -65,6 +65,9 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   BattleFx_PrepareBufferInterpolation();
 }
 
+/// Lift cast with no target: objects appear above the caster and to either
+/// side, move apart and scatter into shards.
+///
 /// Abilities: Lift (field kind 7), cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, BattleFx_SpawnItemBreakMode3)
 

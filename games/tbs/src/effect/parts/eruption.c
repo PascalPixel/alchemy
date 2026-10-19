@@ -4,18 +4,19 @@
 
 #include "../effect_internal.h"
 
+/// A fountain of grey motes and puffs of smoke bursts up beside the targets and
+/// falls back, flashing each target.
+///
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 ///
-/// A fountain of grey motes and puffs of smoke bursts up beside the targets
-/// and falls back, flashing each target. It always uses the second
-/// count-table row.
+/// It always uses the second count-table row.
 void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
   BattleFx_RunEruption(effect, 1);
 }
-/// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
-///
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
+///
+/// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
 void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
   BattleFx_RunEruption(effect, 0);
 }

@@ -4,6 +4,9 @@
 
 #include "../effect_internal.h"
 
+/// Plays one of the flurries of BattleFx_RunBurstScene, the effect's variant
+/// choosing which.
+///
 /// Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
 ///
 /// The flurry's entries: each passes its kind of flurry to
@@ -22,33 +25,33 @@ void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 8);
 }
 
-/// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
+/// Plays the first flurry style selected by the effect table.
 ///
-/// Play the first flurry style selected by the effect table.
+/// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
 void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
-/// Abilities: Ransack (kind 321); Mad Dash (kind 343).
+/// Uses the same first flurry style for this alternate effect-table entry.
 ///
-/// Use the same first flurry style for this alternate effect-table entry.
+/// Abilities: Ransack (kind 321); Mad Dash (kind 343).
 void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
-/// Abilities: Bacteria Rush (kind 328).
+/// Plays the second flurry style selected by the effect table.
 ///
-/// Play the second flurry style selected by the effect table.
+/// Abilities: Bacteria Rush (kind 328).
 void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 1);
 }
-/// Abilities: Freebite Rush (kind 334).
+/// Plays the third flurry style selected by the effect table.
 ///
-/// Play the third flurry style selected by the effect table.
+/// Abilities: Freebite Rush (kind 334).
 void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 2);
 }
-/// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
+/// Chooses flurry styles 3, 4 or 5 from the effect variant.
 ///
-/// Choose flurry styles 3, 4 or 5 from the effect variant.
+/// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
 void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 3);

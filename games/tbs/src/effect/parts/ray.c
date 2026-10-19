@@ -12,10 +12,10 @@
 #define RAY_CELLS 0x60e ///< the bolt pictures in the sheet
 #define RAY_COUNT 4
 
-/// Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
+/// Four bolts turn in towards the centre for 16 frames, scattering sparks from
+/// their roots; the sparks fly on until frame 64.
 ///
-/// Four bolts turn in towards the centre for 16 frames, scattering sparks
-/// from their roots; the sparks fly on until frame 64.
+/// Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
 ///
 /// effect: the targets. variant 2 shows the canvas at double width;
 ///         variant 0 draws every bolt with the maximum blend, the others

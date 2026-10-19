@@ -16,11 +16,11 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define NEPTUNE_PARTICLES 1024     ///< map-buffer particle slots
 #define NEPTUNE_FLARE_SHEET 0x4e20 ///< the flare pictures in the sheet
 
-/// Abilities: Neptune (scene kind 6).
-///
 /// Over dusk clouds a formation of objects flies in through rising spray,
 /// gathers a ring of flares into a burst of light, then five blue flame columns
 /// drop onto the targets, throwing sparks.
+///
+/// Abilities: Neptune (scene kind 6).
 ///
 /// The scene runs in two stages. The first (244 frames; A or B ends it after
 /// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their

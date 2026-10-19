@@ -11,16 +11,16 @@
 // that order. An idle particle's variant is -1; a live one's counts its age
 // up until it goes out.
 
-/// Abilities: Dragon Driver (kind 385).
-///
 /// The rising embers from the user's side, in the LightningBolt colours.
+///
+/// Abilities: Dragon Driver (kind 385).
 void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 1);
 }
-/// Abilities: Tiamat (scene kind 7).
+/// The rising embers with a formation of eight objects that sweeps in and
+/// explodes at the end.
 ///
-/// The rising embers with a
-/// formation of eight objects that sweeps in and explodes at the end.
+/// Abilities: Tiamat (scene kind 7).
 void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 0);
 }

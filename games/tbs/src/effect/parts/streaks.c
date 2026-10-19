@@ -26,40 +26,48 @@ enum StreakStyle {
   STREAKS_STYLE_CYAN
 };
 
+/// Ember streaks.
+///
 /// Abilities: Sonic Wave (kind 300).
 ///
-/// Ember streaks. Three streaks of ember light fly from the user at each target
-/// in turn; each target flashes and recoils.
+/// Three streaks of ember light fly from the user at each target in turn; each
+/// target flashes and recoils.
 void BattleFx_RunSonicWave(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_EMBER);
 }
+/// Lime streaks.
+///
 /// Abilities: Shriek (kind 301).
 ///
-/// Lime streaks. Three streaks of lime light fly from the user at each target
-/// in turn; each target flashes and recoils.
+/// Three streaks of lime light fly from the user at each target in turn; each
+/// target flashes and recoils.
 void BattleFx_RunShriek(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
+/// Violet streaks.
+///
 /// Abilities: Banshee Howl (kind 302).
 ///
-/// Violet streaks. Three streaks of violet light fly from the user at each
-/// target in turn; each target flashes and trembles.
+/// Three streaks of violet light fly from the user at each target in turn; each
+/// target flashes and trembles.
 void BattleFx_RunBansheeHowl(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_VIOLET);
 }
+/// Cyan streaks.
+///
 /// Abilities: War Cry (kind 304).
 ///
-/// Cyan streaks. Three flickering cyan streaks, cycling through three colour
-/// rows, fly from the user at each target in turn; each target flashes and
-/// recoils.
+/// Three flickering cyan streaks, cycling through three colour rows, fly from
+/// the user at each target in turn; each target flashes and recoils.
 void BattleFx_RunWarCry(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_CYAN);
 }
+/// Red streaks.
+///
 /// Abilities: Wicked Howl (kind 305).
 ///
-/// Red streaks. Three flickering red streaks, cycling through three colour
-/// rows, fly from the user at each target in turn; each target flashes and
-/// trembles.
+/// Three flickering red streaks, cycling through three colour rows, fly from
+/// the user at each target in turn; each target flashes and trembles.
 void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_RED);
 }
@@ -265,19 +273,21 @@ enum MoteFountainMode {
 };
 enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
+/// Rising motes that drift onto the targets and strike.
+///
 /// Abilities: Sleep Star (kind 349).
 ///
-/// Rising motes that drift onto the targets and strike.
 /// Motes burst out of the user and float up, wobbling, as they drift across the
 /// field; each target flinches in turn.
 void BattleFx_RunSleepStar(struct BattleEffectArgument *effect) {
   BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
 }
+/// Rising healing motes.
+///
 /// Abilities: Soothing Star (kind 344).
 ///
-/// Rising healing motes. Orange motes burst out of the
-/// user and float up close to it, and each target glows in turn with the
-/// recovery sound.
+/// Orange motes burst out of the user and float up close to it, and each target
+/// glows in turn with the recovery sound.
 void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
   BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }

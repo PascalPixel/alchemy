@@ -22,11 +22,13 @@
 #define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
 #define HELM_SPLITTER_SPARK_SLOTS 128 ///< spark slots moved and drawn
 
+/// The user leaps at the first target and strikes through a fire swirl; on
+/// frame 18 the target flashes and reels and 16 sparks scatter, bouncing off
+/// the ground.
+///
 /// Abilities: Helm Splitter (kind 51).
 ///
-/// The user leaps at the first target and strikes through a fire swirl; on
-/// frame 18 the target flashes and reels and 16 sparks scatter, bouncing
-/// off the ground. 70 frames.
+/// 70 frames.
 void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

@@ -17,6 +17,9 @@
 #define NEREID_EMBERS 1024        ///< embers in PARTICLES
 #define NEREID_COLUMN_IMAGE 0x6e4 ///< the column of fire in the sheet
 
+/// A formation of twelve objects sweeps in among embers and columns of fire,
+/// and explodes.
+///
 /// Abilities: Nereid (scene kind 2).
 ///
 /// 124 frames; pressing A

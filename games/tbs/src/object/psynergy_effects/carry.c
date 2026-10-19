@@ -41,11 +41,12 @@ BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
   return collision;
 }
 
+/// Two hands lift it to 24 pixels above the ground; the d-pad moves it 16
+/// pixels at a time and A, B, L or R drops it where it is.
+///
 /// Abilities: Carry (field kind 11), cast on a target.
 ///
-/// Two hands lift it to 24 pixels above the ground; the d-pad moves it 16
-/// pixels at a time and A, B, L or R drops it where it is. Where the way is
-/// blocked a buzzer sounds.
+/// Where the way is blocked a buzzer sounds.
 void BattleFx_SteerLiftedTarget(s32 targetId) {
   struct BattleFxScene *work;
   struct FieldActor *src;
@@ -262,6 +263,9 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   }
 }
 
+/// Carry cast with no target: objects appear above the caster and to either
+/// side, move apart and scatter into shards.
+///
 /// Abilities: Carry (field kind 11), cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunCarry, BattleFx_SpawnItemBreakMode1)
 

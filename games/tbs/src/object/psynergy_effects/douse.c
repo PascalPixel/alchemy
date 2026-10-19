@@ -92,15 +92,19 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   }
 }
 
+/// Runs Douse cast on a target, through FieldFx_RunDouse.
+///
 /// Abilities: Douse (field kind 5), cast on a target.
 void FieldFx_RunDouseOnTarget(s32 unused) { FieldFx_RunDouse(); }
 
-/// Abilities: Douse (field kind 5).
-///
 /// An orb of light rises from 16 pixels above the target to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
-/// particles, and returns. With no destination yet, the destination is 16
-/// pixels from the target toward angle.
+/// particles, and returns.
+///
+/// Abilities: Douse (field kind 5).
+///
+/// With no destination yet, the destination is 16 pixels from the target toward
+/// angle.
 void FieldFx_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;

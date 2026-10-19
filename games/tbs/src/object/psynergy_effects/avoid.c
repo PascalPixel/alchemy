@@ -60,6 +60,9 @@ void FieldEvent_ShowStatusMessage(void) {
   UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }
 
+/// The caster spins and flashes, then blinks, and encounters are kept away
+/// until Avoid wears off.
+///
 /// Abilities: Avoid (field kind 16), and the Sacred Feather.
 ///
 /// The caster spins shedding falling arcs and flashes 20 times, then blinks for

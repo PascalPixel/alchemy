@@ -38,18 +38,18 @@ void BattleFx_ArmPaletteHBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-/// Abilities: Meteor (scene kind 11).
-///
 /// A formation rises out of a dissolving starfield and bursts into embers and
 /// flashes: the particle stream in mode 0, with one spawned object rising.
+///
+/// Abilities: Meteor (scene kind 11).
 void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 0);
 }
-/// Abilities: Outer Space (kind 384).
-///
 /// The user leaps up, and two objects rise out of a dissolving starfield and
 /// burst into embers and flashes: the particle stream in mode 1, in the
 /// lightning bolt's colours.
+///
+/// Abilities: Outer Space (kind 384).
 void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 1);
 }

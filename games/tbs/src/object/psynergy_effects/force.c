@@ -4,6 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
+/// Runs Force cast on a target, through FieldFx_RunForce.
+///
 /// Abilities: Force (field kind 4), cast on a target.
 void FieldFx_RunForceOnTarget(s32 unused) { FieldFx_RunForce(); }
 
@@ -14,10 +16,10 @@ BattleFx_GetPositionAboveActor(struct FieldActor *obj,
   SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
-/// Abilities: Force (field kind 4).
-///
 /// A shot appears in front of the caster, grows and flies forward with three
 /// afterimages; what it hits (scene->child) is pushed 16 pixels.
+///
+/// Abilities: Force (field kind 4).
 void FieldFx_RunForce(void) {
   struct FieldActor *target;
   s32 eventTarget;

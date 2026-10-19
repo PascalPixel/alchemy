@@ -8,10 +8,10 @@
 #define SPIRE_SHARD_CELLS 0x83c
 #define SPIRE_SHARDS 21 ///< shards per rock
 
-/// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
+/// Shattering rocks: boulders drop along the row of targets, centred on it, and
+/// burst into tumbling shards, hitting every target as each lands.
 ///
-/// Shattering rocks: boulders drop along the row of targets, centred on
-/// it, and burst into tumbling shards, hitting every target as each lands.
+/// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
 ///
 /// effect: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts).

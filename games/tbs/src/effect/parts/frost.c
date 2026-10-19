@@ -11,13 +11,15 @@ enum {
   FROST_FRAME    ///< the frame the motes burst
 };
 
+/// Rising motes: motes spiral upwards while ice columns spring up one every 3
+/// frames from frame 36; at the burst frame the motes spread and fall, chips
+/// fly and smoke rises over the heights they span.
+///
 /// Abilities: Frost, Tundra, Glacier (kind 6).
 ///
-/// Rising motes: motes spiral upwards while ice columns spring up one every
-/// 3 frames from frame 36; at the burst frame the motes spread and fall,
-/// chips fly and smoke rises over the heights they span. The targets take a
-/// blue tint 4 frames apart from frame 40, the battle shows the damage 11
-/// frames after the burst, and the effect ends 75 frames after it.
+/// The targets take a blue tint 4 frames apart from frame 40, the battle shows
+/// the damage 11 frames after the burst, and the effect ends 75 frames after
+/// it.
 ///
 /// effect: the targets; variant picks the number of motes and columns and
 ///         the burst frame (gFrost_Timings).

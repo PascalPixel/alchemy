@@ -6,10 +6,12 @@
 
 #define ANNIHILATION_FRAMES 64
 
+/// The user closes on the first target and fire bursts from it in a shower of
+/// shards.
+///
 /// Abilities: Annihilation (kind 55).
 ///
-/// The user closes on the first target and fire bursts from it in a shower
-/// of shards. The scene runs for 64 frames:
+/// The scene runs for 64 frames:
 ///
 ///   4 on       64 shards scatter from the target and fall
 ///   6 to 11    a fire streak flares in front of the user

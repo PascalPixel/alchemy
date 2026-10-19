@@ -8,9 +8,10 @@
 // image revealed in front of the target, and two mirrored columns rising at
 // the target's feet.
 
-/// Abilities: Thrash (kind 388).
+/// Hops the acting unit toward the first target; triggers type 4 after 29
+/// frames.
 ///
-/// Hop the acting unit toward the first target; trigger type 4 after 29 frames.
+/// Abilities: Thrash (kind 388).
 void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   // Hop 3/4 of the distance at displacement / 24, initial vertical speed 12.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
@@ -29,16 +30,16 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
 }
 
-/// Abilities: Quick Strike (kind 52).
-///
 /// The user leaps at the first target, four pictures flash across the effect
 /// layer, then it fills with one colour as the target is struck.
+///
+/// Abilities: Quick Strike (kind 52).
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 1);
 }
-/// Abilities: Vorpal Slash (kind 65).
+/// Flashes the target using the first pair of reveal-mask resources.
 ///
-/// Flash the target using the first pair of reveal-mask resources.
+/// Abilities: Vorpal Slash (kind 65).
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 2);
 }

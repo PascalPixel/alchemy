@@ -120,10 +120,10 @@ void FieldFx_ResumeCloakCheck(void) {
   }
 }
 
-/// Abilities: Cloak (field kind 10).
-///
 /// The leader blinks 10 times and hides (cloaked set), and the tile check
 /// starts; where the leader cannot hide it shows again at once.
+///
+/// Abilities: Cloak (field kind 10).
 void FieldFx_StartCloak(void) {
   struct FieldWork *field = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);

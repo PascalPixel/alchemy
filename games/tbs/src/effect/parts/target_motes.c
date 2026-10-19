@@ -20,9 +20,9 @@
 // image cycle. The bouncing sheep (Sleep) and the target markers (Curse) that
 // follow keep theirs in work->particles.
 
-/// Abilities: Taint, Poison (kind 32).
-///
 /// Lime smoke (effect->variant 0) or pink smoke.
+///
+/// Abilities: Taint, Poison (kind 32).
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);
@@ -36,39 +36,39 @@ UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-/// Abilities: Delude, Confuse, Mist (kind 33).
-///
 /// Cyan smoke that rises.
+///
+/// Abilities: Delude, Confuse, Mist (kind 33).
 void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 2);
 }
-/// Abilities: Paralyze (kind 36).
-///
 /// Rising smoke with glints.
+///
+/// Abilities: Paralyze (kind 36).
 void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 3);
 }
-/// Abilities: Heartrender (kind 346); kind 35 is used by no ability.
-///
 /// Hearts.
+///
+/// Abilities: Heartrender (kind 346); kind 35 is used by no ability.
 void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 4);
 }
-/// Abilities: Mystic Flame (kind 312).
-///
 /// Glowing orbs.
+///
+/// Abilities: Mystic Flame (kind 312).
 void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 5);
 }
-/// Abilities: Demon Fire (kind 64).
-///
 /// Glowing orbs in Mars Djinn colours, and the user strikes.
+///
+/// Abilities: Demon Fire (kind 64).
 void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 7);
 }
-/// Abilities: Drown (kind 66).
-///
 /// Vortex motes.
+///
+/// Abilities: Drown (kind 66).
 void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 6);
 }
@@ -332,12 +332,14 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
 #define SLEEP_SHEEP 12  ///< sheep dropped
 
+/// Twelve sheep drop onto the targets' side, one every 4 frames, tumbling
+/// through eight images (the last four mirrored both ways); each target takes
+/// its damage pose in turn from frame 64, and the battle shows the result on
+/// frame 80.
+///
 /// Abilities: Sleep (kind 37).
 ///
-/// Twelve sheep drop onto the targets' side, one every 4
-/// frames, tumbling through eight images (the last four mirrored both
-/// ways); each target takes its damage pose in turn from frame 64, and the
-/// battle shows the result on frame 80. 148 frames.
+/// 148 frames.
 void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -439,11 +441,11 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
 #define CURSE_MARKER_CELLS 1728 ///< the marker picture in the sheet
 
-/// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+/// A small flame burns above each target in turn, 16 frames apart, for 72
+/// frames each, over a marker at its feet; the battle shows the result on frame
+/// 32.
 ///
-/// A small flame burns above each target in
-/// turn, 16 frames apart, for 72 frames each, over a marker at its feet;
-/// the battle shows the result on frame 32.
+/// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
 void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;

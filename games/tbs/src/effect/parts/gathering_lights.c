@@ -9,24 +9,24 @@
 
 // Lights that scatter from the user and gather into each target.
 
-/// Abilities: Demon Night (kind 50).
-///
 /// Sixteen pink lights burst out of the user and are pulled into each target,
 /// with the heavy impact sound.
+///
+/// Abilities: Demon Night (kind 50).
 void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 0);
 }
-/// Abilities: Rumble (kind 308).
-///
 /// Eight lights in Mars Djinn colours burst out of the user and are pulled into
 /// each target.
+///
+/// Abilities: Rumble (kind 308).
 void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 1);
 }
-/// Abilities: Haunting (kind 351).
-///
 /// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
 /// into each target.
+///
+/// Abilities: Haunting (kind 351).
 void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 2);
 }

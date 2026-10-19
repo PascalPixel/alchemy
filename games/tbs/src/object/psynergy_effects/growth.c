@@ -40,10 +40,10 @@ struct BurstParticleVisualGroup {
   struct BurstParticleVisual child;
 };
 
-/// Abilities: Growth (field kind 12), cast on a target.
-///
 /// Particles round the target, which takes the sprite priority of the ground
 /// under it.
+///
+/// Abilities: Growth (field kind 12), cast on a target.
 void FieldFx_RunGrowthOnTarget(s32 unused) {
   struct FieldActor *target;
 
@@ -61,10 +61,10 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
   }
 }
 
-/// Abilities: Growth (field kind 12), cast with no target.
-///
 /// The particles, then five falling objects 4 to 10 pixels round the effect's
 /// position.
+///
+/// Abilities: Growth (field kind 12), cast with no target.
 void FieldFx_RunGrowth(void) {
   struct BattleFxScene *work = gEffectWork;
   struct BurstParticleVector pos;

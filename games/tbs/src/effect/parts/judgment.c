@@ -60,13 +60,14 @@ struct JudgmentWork {
 /// DMA word that clears the wave picture.
 #define JUDGMENT_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
 
+/// The battle wipes away to a violet sky where a formation flies forward while
+/// motes gather into it, bursts in a flash and sends out a ring of light.
+///
 /// Abilities: Judgment (scene kind 9).
 ///
-/// The battle wipes away to a violet sky where a formation flies forward
-/// while motes gather into it, bursts in a flash and sends out a ring of
-/// light. The scene then cuts to an aerial view where the blast spreads in
-/// rings, to a beach, and to a forest swept by an explosion front, before
-/// brightening back into the battle. The notes above describe both parts.
+/// The scene then cuts to an aerial view where the blast spreads in rings, to a
+/// beach, and to a forest swept by an explosion front, before brightening back
+/// into the battle. The notes above describe both parts.
 void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];

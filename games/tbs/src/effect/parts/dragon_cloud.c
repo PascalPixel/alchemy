@@ -22,12 +22,13 @@
        &(sheet)[DRAGON_CLOUD_PUFF_CELLS] + gBattleFx_PuffArcCells[cell], x, y, \
        gBattleFx_PuffArcCellWidths[cell], gBattleFx_PuffArcCellHeights[cell])
 
+/// A flame leaves the user along a stored path with a fading trail of 19 copies
+/// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
+/// bursts into embers and flashes.
+///
 /// Abilities: Dragon Cloud (kind 49).
 ///
-/// A flame leaves the user along a stored path with a fading trail of 19
-/// copies behind it, then strikes the first target on
-/// DRAGON_CLOUD_STRIKE_FRAME and bursts into embers and flashes. The trail's
-/// last nine copies are darker versions of the trail picture, each
+/// The trail's last nine copies are darker versions of the trail picture, each
 /// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns over the first 64 of
 /// the DRAGON_CLOUD_FRAMES frames:
 ///

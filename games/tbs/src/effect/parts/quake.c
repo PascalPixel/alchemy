@@ -20,11 +20,12 @@ struct RockWallHeights {
 /// ground cut from the background.
 #define QUAKE_WALL_CELLS 0x1e00
 
+/// Rock wall: three rock pillars rise from the left, 4 frames apart, and sink
+/// again, throwing the targets standing on them into the air.
+///
 /// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
 ///
-/// Rock wall: three rock pillars rise from the left, 4 frames apart, and
-/// sink again, throwing the targets standing on them into the air. Each
-/// pillar is capped with a strip of ground cut from the background.
+/// Each pillar is capped with a strip of ground cut from the background.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
 void BattleFx_RunQuake(struct BattleEffectArgument *effect) {

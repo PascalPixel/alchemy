@@ -22,15 +22,17 @@
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
 
+/// Pillars of lightning strike one every 8 frames, each with a white flash,
+/// throwing sparks up from the ground and knocking the targets back; the battle
+/// shows the damage on frame 32.
+///
 /// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
 /// Thunderstorm (kind 18).
 ///
-/// Pillars of lightning strike one every 8 frames, each with a white flash,
-/// throwing sparks up from the ground and knocking the targets back; the battle
-/// shows the damage on frame 32. effect->variant picks how many pillars
-/// (gPlasma_Counts), how many sparks each throws and how long the screen shakes
-/// (gPlasma_Sparks); with variant 2 the camera also swings round for the first
-/// 64 frames. effect->side picks the row of pillar positions.
+/// effect->variant picks how many pillars (gPlasma_Counts), how many sparks
+/// each throws and how long the screen shakes (gPlasma_Sparks); with variant 2
+/// the camera also swings round for the first 64 frames. effect->side picks the
+/// row of pillar positions.
 void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
@@ -200,18 +202,16 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 // burst (only the first twelve are drawn), and its sparks in PARTICLES,
 // one run per burst.
 
+/// Bursts at (60, 48), the canvas behind the battle's first layer (priority 1).
+///
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
 /// (kind 15).
-///
-/// Bursts at (60, 48), the canvas behind the battle's
-/// first layer (priority 1).
 void BattleFx_RunNova(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 0);
 }
-/// Abilities: Dynamite (kind 338).
+/// Orange bursts at (60, 64), the canvas in front (priority 0).
 ///
-/// Orange bursts at (60, 64), the canvas in front
-/// (priority 0).
+/// Abilities: Dynamite (kind 338).
 void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }

@@ -30,27 +30,27 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 #define RUSHING_STRIKE_SPARK_COUNT 64   ///< sparks
 #define RUSHING_STRIKE_RING_BYTES 0x3c0 ///< one 20x48 ring picture
 
-/// Abilities: Bone Charge (kind 311).
+/// Rushes the target and scatters sparks in the fire pillar palette.
 ///
-/// Rush the target and scatter sparks in the fire pillar palette.
+/// Abilities: Bone Charge (kind 311).
 void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 0);
 }
-/// Abilities: Brute Force (kind 314).
+/// Rushes the target and scatters sparks in the ice-block palette.
 ///
-/// Rush the target and scatter sparks in the ice-block palette.
+/// Abilities: Brute Force (kind 314).
 void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 1);
 }
-/// Abilities: Onslaught (kind 326).
+/// Rushes the target and scatters sparks in the pink-burst palette.
 ///
-/// Rush the target and scatter sparks in the pink-burst palette.
+/// Abilities: Onslaught (kind 326).
 void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 2);
 }
-/// Abilities: Headbutt (kind 339).
+/// Rushes the target and scatters sparks in the blast palette.
 ///
-/// Rush the target and scatter sparks in the blast palette.
+/// Abilities: Headbutt (kind 339).
 void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 3);
 }

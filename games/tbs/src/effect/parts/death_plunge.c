@@ -23,11 +23,11 @@
 
 #define DEATH_PLUNGE_FRAMES 96
 
-/// Abilities: Death Plunge (kind 53).
-///
 /// The user runs 9/10 of the way to the first target, then both leap and turn
 /// upside down in the air; on frame 54 the target is hit and both bounce back,
 /// while flashes burst from the user and rise in a widening ring.
+///
+/// Abilities: Death Plunge (kind 53).
 void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

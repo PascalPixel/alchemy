@@ -8,17 +8,18 @@
 
 #define PRISM_GROUND_Y 0x380000 ///< y 56, where the crystals shatter
 
-/// Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
-///
 /// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
 /// shatter on the ground into 16 spinning shards each, flashing the targets and
 /// shaking the screen; the battle shows the damage 80 frames before the end,
-/// and the canvas darkens away over the last 8. effect->variant picks the
-/// volley from gPrism_Counts (crystals and frames: 1 in 110, 4 in 134, 12 in
-/// 166); with variant 2 the camera also swings round for the first 104 frames.
-/// The crystals are particles[]: z is 1 once shattered, variant is the frame it
-/// starts to fall. The shards are 16 per crystal in PARTICLES: z is how fast it
-/// spins.
+/// and the canvas darkens away over the last 8.
+///
+/// Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
+///
+/// effect->variant picks the volley from gPrism_Counts (crystals and frames: 1
+/// in 110, 4 in 134, 12 in 166); with variant 2 the camera also swings round
+/// for the first 104 frames. The crystals are particles[]: z is 1 once
+/// shattered, variant is the frame it starts to fall. The shards are 16 per
+/// crystal in PARTICLES: z is how fast it spins.
 void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;

@@ -16,14 +16,15 @@
 #define GAIA_WALL_FOOT_CELLS 0x25c0
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall
 
+/// Rising wall: the ground swells, a wall of rock rises from it, stands while
+/// rocks tumble up its face and the targets are battered, and sinks again.
+///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
 /// (kind 3).
 ///
-/// Rising wall: the ground swells, a wall of rock rises from it, stands
-/// while rocks tumble up its face and the targets are battered, and sinks
-/// again. The wall is symmetric: its left half is drawn, then mirrored for
-/// the right. Its centre is at canvas x 64 + wallX. The rocks are 11
-/// animation objects, moved by particles[10] to particles[20].
+/// The wall is symmetric: its left half is drawn, then mirrored for the right.
+/// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
+/// moved by particles[10] to particles[20].
 ///
 /// effect: the targets; variant 0 to 2 widens the wall.
 void BattleFx_RunGaia(struct BattleEffectArgument *effect) {

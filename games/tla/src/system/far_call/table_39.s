@@ -4,7 +4,19 @@
 	.global Func_080f8058
 	.thumb_func
 Func_080f8058:
+.ifdef TLA_EDITION_DE
+	overlay_veneer Func_081051a8
+.else
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_081051a8
+.else
+.ifdef TLA_EDITION_FR
+	overlay_veneer Func_081051a8
+.else
 	overlay_veneer Func_08104ef8
+.endif
+.endif
+.endif
 	.global Func_080f8060
 	.thumb_func
 Func_080f8060:

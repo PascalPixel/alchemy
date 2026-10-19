@@ -208,7 +208,7 @@ Func_080f9644:
 .L_080f980a:
 	cmp r6, #2
 	bne .L_080f9864
-	bl Func_080fa2d0
+	bl ItemMenu_Use
 	mov r1, r9
 	ldr r0, [r1, #48]
 	bl RenderOutput_ClearListFar
@@ -334,7 +334,7 @@ Func_080f9644:
 	beq .L_080f9918
 	movs r7, #8
 .L_080f9918:
-	bl Func_080fa2d0
+	bl ItemMenu_Use
 	movs r3, #140
 	lsls r3, r3, #1
 	adds r3, #255

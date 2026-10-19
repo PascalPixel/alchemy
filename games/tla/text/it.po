@@ -19221,7 +19221,7 @@ msgctxt "MsgItBroke"
 msgid "04739"
 msgstr "Strum. rotto!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04740"
 msgstr "{button_icon:3}+{button_icon:1}:Ordina strum."
 
@@ -19669,7 +19669,7 @@ msgctxt "message"
 msgid "04843"
 msgstr "Sono i tuoi Punti esperienza."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04844"
 msgstr "Recuperati tutti i PS!"
 

@@ -3,11 +3,14 @@
 // ItemMenu_ConfirmEquip (games/tbs/src/menu/menu.c) in its first-release
 // layout (Yes and No at x 96, the cursor at 184). Returns 0 when it is
 // equipped; 1 when the player says No, backs out, or the member cannot equip
-// it, and the member is left as before. Differ 32 of 179 (draft 177): the
-// native reads gInput.pressed afresh for the B test, as a volatile read would,
-// where this draft reuses the A test's load (four rows and the branches
-// after it shift by one); the rest is order: the owner byte for the preview
-// is loaded before the slot's address is copied to r10, here after.
+// it, and the member is left as before.
+//
+// Near miss, differ 8 of 179, instruction order only: four times the native
+// issues a load between or ahead of a constant's halves (the slot offset 362
+// around the unit store, the 332 copy size around the copy-back loads). The
+// native passes the owner to Func_080fae8c a second time, as its target. With
+// gInput.pressed volatile the form without the helper measured 15 with three
+// arguments and 55 with four; the helper came from the permuter (2026-10-19).
 #include "types.h"
 #include "mem.h"
 #include "input.h"
@@ -28,7 +31,7 @@ extern u8 MsgYes[];           // the ☀️ twin's name
 extern u8 MsgEquipThisItem[]; // the ☀️ twin's name
 
 void *UnitGet(s32 unit);
-void Func_080fae8c(s32 owner, s32 slot, s32 mode);
+void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
@@ -40,6 +43,12 @@ void UnitCalcFar(s32 unit);
 void Unit_RefreshPsynergyFar(s32 unit);
 void WaitFrames(s32 frames);
 
+// FAKEMATCH(wrapper): the slot read through a helper at both uses; as
+// menu->selectedSlots[1] in place, 55 of 179 instructions differ in tla-en.
+static inline u16 SelectedTargetSlot(struct InventoryMenuState *menu) {
+  return menu->selectedSlots[1];
+}
+
 s32 Func_080fc2e0(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
@@ -50,11 +59,12 @@ s32 Func_080fc2e0(s32 unused) {
   void *saved;
   s32 window;
 
-  Func_080fae8c(menu->paneOwner[1], menu->selectedSlots[1], 0);
+  Func_080fae8c(menu->paneOwner[1], SelectedTargetSlot(menu), 0,
+                menu->paneOwner[1]);
   saved = MemAlloc(332);
   Iwram_CopyWords(saved, unit, 332);
   window = menu->messageWindow;
-  if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
+  if ((u32)(Inventory_EquipFar(menu->paneOwner[1], SelectedTargetSlot(menu)) +
             2) <= 1) {
     selection = 1;
   } else {

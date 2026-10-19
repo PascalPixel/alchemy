@@ -19235,7 +19235,7 @@ msgctxt "MsgItBroke"
 msgid "04739"
 msgstr "¡Se rompió!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04740"
 msgstr "{button_icon:3}+{button_icon:1}:Colocar objetos"
 
@@ -19683,7 +19683,7 @@ msgctxt "message"
 msgid "04843"
 msgstr "Sus puntos de experiencia."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04844"
 msgstr "¡Recuperó todos los PV!"
 

@@ -19331,7 +19331,7 @@ msgctxt "MsgItBroke"
 msgid "04743"
 msgstr "Es ist kaputt!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04744"
 msgstr "{button_icon:3}+{button_icon:1}:Items anordnen"
 
@@ -19781,7 +19781,7 @@ msgctxt "message"
 msgid "04847"
 msgstr "Dies sind deine Erfahrungspunkte."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "04848"
 msgstr "Alle KP wurden aufgefüllt!"
 

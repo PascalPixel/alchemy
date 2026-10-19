@@ -3449,7 +3449,7 @@ BattleFx_RunEclipse:
 Func_08142944:
 	.incbin "baserom.gba", 0x00142944, 0x000006bc
 	.section .rom.00143354, "ax"
-	.incbin "baserom.gba", 0x00143354, 0x00000134
+	.incbin "baserom.gba", 0x00143354, 0x0000010c
 	.section .rom.0014355c, "ax"
 	.balign 4
 	.global Func_0814355c

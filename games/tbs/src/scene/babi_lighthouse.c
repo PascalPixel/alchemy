@@ -372,6 +372,7 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
+  // Flag 0x98a is set with it; no scene of this overlay reads it.
   GameFlag_Set(0x98a);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -1265,6 +1266,8 @@ s32 BabiLighthouse_SetupScene(void) {
     // Match the arrival effect and fall to the entrance used in this room.
     switch (state->entrance) {
     case 10:
+      // Once the party has come in at entrance 10, flag 0x980 keeps three
+      // cells there redrawn from (120, 7) and one cell's attributes changed.
       GameFlag_Set(0x980);
       // Fall through: both entrances restore the same remembered tile changes.
     case 11:

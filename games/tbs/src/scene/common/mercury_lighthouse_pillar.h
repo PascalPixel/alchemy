@@ -130,9 +130,9 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   }
 
   // Alternate the light's draw parameter every two frames and redraw it.
-  /* FAKEMATCH: retain the scalar sprite-slot access while FieldActor exposes
-   * the single/group union. Plain actor->sprite swaps the movs r0, #1 and
-   * sprite load at tbs-en 0x531e; the typed scalar slot keeps their order. */
+  // The sprite slot is read by its offset, the plain-C form of actor->sprite
+  // this site matches with (scene/README.md): through FieldActor's
+  // single/group union the movs r0, #1 and the sprite load swap.
   {
     struct AnimationObject *sprite =
         *(struct AnimationObject **)((u8 *)actor +
@@ -213,9 +213,9 @@ void MercuryLighthouseEntrance_RaisePillar(void) {
       Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
       obj->linkedObject = leader;
       obj->motionFlags = 4;
-      /* FAKEMATCH: retain the scalar height access. Plain obj->y.fixed
-       * subtraction moves the saved sprite reload after the height add/store
-       * at tbs-en 0x5498; the scalar coordinate keeps its original order. */
+      // The height is written by its offset, the plain-C form of obj->y.fixed
+      // this site matches with (scene/README.md): as the field, the sprite's
+      // reload moves after the add and store.
       *(s32 *)((u8 *)obj + offsetof(struct FieldActor, y)) += -PIXELS(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;

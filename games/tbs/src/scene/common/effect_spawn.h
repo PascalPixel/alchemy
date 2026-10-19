@@ -40,9 +40,9 @@ static inline void Effect_InitializeMotion(struct FieldEffect *effect,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  /* FAKEMATCH: read the sprite/group slot as its original scalar pointer.
-   * Plain leader->sprite moves the pointer reload after the velocity.z store
-   * instead of before it (two instructions differ in tbs-en, 2026-10-16). */
+  // The sprite slot is read by its offset, the plain-C form of leader->sprite
+  // this site matches with (scene/README.md): as the field, the pointer's
+  // reload moves after the velocity.z store.
   sprite->image.priority =
       (*(struct AnimationObject **)((u8 *)leader +
                                     offsetof(struct FieldActor, sprite)))

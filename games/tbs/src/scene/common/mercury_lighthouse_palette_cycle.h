@@ -19,9 +19,9 @@
 // 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
 // stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  /* FAKEMATCH: volatile restores the form the bytes prove: cur lives at sp+2,
-   * stored with strh and loaded again with ldrh for v (a 4-byte frame and r7
-   * for none). Without it differ 38, 55 instructions for 65. */
+  /* FAKEMATCH(volatile): cur lives at sp+2, stored with strh and loaded again
+   * with ldrh for v, as the bytes show; as a plain u16, 22 of 65 instructions
+   * differ in tbs-en. */
   volatile u16 cur;
   u32 i;
   s32 v;

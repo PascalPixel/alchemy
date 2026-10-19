@@ -191,10 +191,10 @@ static void SolSanctum_UpdateRing(void) {
 // Start the floating lights: count actors (at most 10) from first, each drawn
 // translucent and starting at its largest scale.
 void SolSanctum_SetupElementalRings(s32 first, u32 count) {
-  /* FAKEMATCH: the legacy scalar setup view keeps the sprite-flags address
-   * calculation before the ring-entry store. Using FieldActor and
-   * AnimationObject directly swaps those two instructions. The animation
-   * callback uses FieldActor normally. */
+  // The actors are read through struct SolSanctumRingObject, the plain-C view
+  // this site matches with (scene/README.md): it keeps the sprite-flags address
+  // before the ring-entry store, where FieldActor and AnimationObject swap the
+  // two instructions. The callback reads FieldActor.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;
   struct SolSanctumRingObject *obj;

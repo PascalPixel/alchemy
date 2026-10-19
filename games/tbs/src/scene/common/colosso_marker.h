@@ -104,16 +104,14 @@ void Colosso_RestoreCompetitor(s32 id) {
     Engine_EventWait(30);
   }
   zero = 0;
-  /* FAKEMATCH: needed to match: byte accesses keep the stage zero before the
-   * start-position load. As state->stage and state->mode stores, of zero, a
-   * literal 0 or zero = 0: differ 6. Measured 2026-10-13: a struct-field store
-   * at a varying address may pass the scalar load of gColosso_CompetitorStartX
-   * (fixed_scalar_and_varying_struct_p); a byte store through a pointer is no
-   * struct reference. The actor held as union FieldObject with field stores:
-   * differ 6; gMenuCtrlWork->fill and ->edge: differ 40. */
+  // Stored as bytes through a pointer, the plain-C form of state->stage and
+  // state->mode this site matches with (scene/README.md): a struct-field store
+  // at a varying address may pass the load of gColosso_CompetitorStartX
+  // (fixed_scalar_and_varying_struct_p), and a byte store is no struct
+  // reference.
   control = (u8 *)state;
-  control[(u32)&((struct CompetitorState *)0)->stage] = zero;
-  control[(u32)&((struct CompetitorState *)0)->mode] = 15;
+  control[offsetof(struct CompetitorState, stage)] = zero;
+  control[offsetof(struct CompetitorState, mode)] = 15;
   actor->x.fixed = gColosso_CompetitorStartX;
   actor->z.fixed = gColosso_CompetitorStartZ;
   actor->facing = gColosso_CompetitorStartAngle;
@@ -205,9 +203,9 @@ static void Colosso_UpdateMarker(void) {
     gColosso_MarkerBlink = 0;
   }
   if (++gColosso_MarkerBlink <= 13) {
-    /* FAKEMATCH: needed to match: the size bit in a local puts the priority
-     * after it. As the literal 0x40000000 in the expression, in any of four
-     * operand orders: differ 6. */
+    /* FAKEMATCH(temporary): the size bit (0x40000000) in a local puts the
+     * priority after it; as the literal in the expression, 3 of 124
+     * instructions differ in tbs-en. */
     s32 size = 0x40000000;
 
     x = gColosso_MarkerX;

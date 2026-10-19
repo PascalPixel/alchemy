@@ -5019,13 +5019,7 @@ main	rom_main_07	games/tla/src/menu/shop/shopspr	.rodata
 main	rom_main_07	games/tla/src/menu/shop/selofs	.rodata
 main	rom_main_07	games/tla/src/menu/shop/d010c38e	.rodata
 main	rom_main_07	games/tla/src/menu/shop/shopdata	.rodata
-main	rom_main_08	recon/tla/it/rom	.rom.00118000	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118000	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00118000	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118000	de
-main	rom_main_08	recon/tla/raw/08118000	.text	en
-main	rom_main_08	recon/tla/raw/08118008	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.00118000	ja
+main	rom_main_08	games/tla/src/system/far_call/resource_09
 main	rom_main_08	games/tla/src/system/far_call/table_43
 main	rom_main_08	games/tla/src/system/far_call/table_44
 main	rom_main_08	recon/tla/es/rom	.rom.00118058	es

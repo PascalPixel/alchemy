@@ -3740,10 +3740,6 @@ Func_0810bdf4:
 	.thumb_func
 Func_0810bebc:
 	.incbin "baserom.gba", 0x0010bed0, 0x000000dc
-	.section .rom.00118000, "ax"
-	.global Resource_FarCall009
-Resource_FarCall009:
-	.incbin "baserom.gba", 0x00118000, 0x00000010
 	.section .rom.00118070, "ax"
 	.incbin "baserom.gba", 0x00118070, 0x00000008
 	.section .rom.00118078, "ax"
@@ -3777,6 +3773,10 @@ DebugParty_LoadPreset:
 	.incbin "baserom.gba", 0x00118738, 0x0000021c
 	.section .rom.00118958, "ax"
 	.balign 4
+	.global Func_08118958
+	.type Func_08118958, %function
+	.thumb_func
+Func_08118958:
 	.incbin "baserom.gba", 0x00118958, 0x00000274
 	.section .rom.00118c68, "ax"
 	.incbin "baserom.gba", 0x00118c68, 0x000000c4
@@ -3939,7 +3939,12 @@ Func_08123574:
 	.incbin "baserom.gba", 0x00123570, 0x0000129c
 	.section .rom.00124cc0, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00124cc0, 0x00000eb4
+	.incbin "baserom.gba", 0x00124cc0, 0x00000ddc
+	.global Func_08125aa0
+	.type Func_08125aa0, %function
+	.thumb_func
+Func_08125aa0:
+	.incbin "baserom.gba", 0x00125a9c, 0x000000d8
 	.section .rom.00125bb4, "ax"
 	.incbin "baserom.gba", 0x00125bb4, 0x00000054
 	.section .rom.00125d70, "ax"

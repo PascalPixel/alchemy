@@ -1,7 +1,10 @@
-// Near miss, differ 6 of 63, rewritten from the listing (the old draft had
-// ☀️'s VRAM offset and tile layout). Instruction order only: the listing loads
-// the VRAM base before the set times 3 add, and here the second mask's load
-// is lifted above the first store.
+// Near miss, differ 2 of 63 (2026-10-19), rewritten from the listing (the old
+// draft had ☀️'s VRAM offset and tile layout). Instruction order only: the
+// listing loads the VRAM base between the two instructions of set times 3.
+// The mask table is declared without const: as const its second load is
+// lifted above the first store (differ 6). Writing the base as a local, or
+// the offset in other orders, is no nearer; three minutes of permute found
+// nothing.
 // Draws two sets of six pattern tiles into OBJ VRAM at 0x06006000: each tile
 // filled with colour 4, then rows 1 to 7 XORed with a pair of row masks
 // (gMenu_PatternRowMasks), the first set's masks clamped to the row so its
@@ -9,7 +12,7 @@
 #include "types.h"
 #include "iwram_call.h"
 
-extern const u32 gMenu_PatternRowMasks[][2];
+extern u32 gMenu_PatternRowMasks[][2];
 
 void Menu_BuildLocalizedPatternTiles(void) {
   s32 set;

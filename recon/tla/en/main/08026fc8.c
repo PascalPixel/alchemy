@@ -1,12 +1,14 @@
-// Near miss, differ 10, instruction order only: the native loads the new
-// object's sprite before it stores the terrain height (the draft after it,
-// next to the call), and loads the child's flags byte before it builds the
-// mask 12 (the draft after the first and). Tried: explicit masks on a u8 or
-// s8 field (differ 14 to 47), the height in a local with an empty asm on the
-// sprite (registers change, differ 38), permute 5 minutes (no better).
-// Creates object kind 14 above this one, plays cue 623 unless bit 0 of
-// unk66 is set, and gives the new sprite this one's layer bits; mode 2 also
-// applies child values 13 and 8.
+// Near miss, differ 4 of 69, instruction order only. Creates object kind 14
+// above this one, plays cue 623 unless bit 0 of unk66 is set, and gives the
+// new sprite this one's layer bits; mode 2 also applies child values 13 and 8.
+// Left: the native stores value1a before it copies the parent sprite pointer
+// to r2, and loads the child's flags byte right after the parent's (here after
+// the first and). A second empty asm after the value1a store fixes the first
+// but swaps the next call's two argument moves (differ 4 again). Tried before:
+// explicit masks on a u8 or s8 field (differ 14 to 47), u8, s8, u16 or u32
+// bitfields (no change), the layer through a local or a volatile pointer (no
+// change), the height in a local with an empty asm on the sprite (registers
+// change, differ 38), permute 4 minutes from here (no better).
 #include "types.h"
 #include "object_runtime.h"
 #include "object_dispatch.h"
@@ -35,6 +37,11 @@ void Func_08026fc8(struct ObjectRuntime *object, s32 mode) {
     struct Child *child = created->animation;
 
     created->terrainHeight = object->terrainHeight;
+    /* FAKEMATCH(barrier): an empty asm after the height's store, so the
+     * sprite loads between the height's load and store and the call's
+     * arguments follow; as plain statements, 10 of 69 instructions differ in
+     * tla-en. */
+    asm("");
     ObjectDispatch_Initialize((struct DispatchObject *)created, gData_0802ec88);
     created->motionFlags = 0;
     if (child != NULL) {

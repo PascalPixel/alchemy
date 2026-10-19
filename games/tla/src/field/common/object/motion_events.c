@@ -1,6 +1,43 @@
 #include "event_work.h"
 #include "object_runtime.h"
 #include "objdisp.h"
+#include "animspr.h"
+#include "system.h"
+
+// ⚓️'s animation group: the number last applied and its entries.
+struct AnimationGroup {
+  u8 unk00[0x18];
+  u8 lastNo;
+  u8 unk19[0x0f];
+  struct AnimationEntry *entries[4];
+};
+
+// Waits, at most 90 frames, for an actor's animation to change or for its
+// first entry's script to reach code 241.
+void ObjectMotion_WaitForAnimationChange(u32 objectId) {
+  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct AnimationGroup *group;
+  u32 saved;
+  /* FAKEMATCH(pin): the saved number stored and read again through a pointer
+   * held in r6, as the native's str and ldr through r6 show; as a plain
+   * pointer, 12 of 37 instructions differ in tla-en. */
+  register u32 *savedNo asm("r6");
+  s32 elapsedFrames;
+
+  if (object != NULL && object->animationKind == 1) {
+    group = object->animation;
+    savedNo = &saved;
+    *savedNo = group->lastNo;
+    for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
+      WaitFrames(1);
+      if (*savedNo != group->lastNo)
+        break;
+      if (group->entries[0] != NULL && group->entries[0]->script != NULL &&
+          group->entries[0]->script[group->entries[0]->pos] == 241)
+        break;
+    }
+  }
+}
 
 void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action) {
   Object_SetModeById(objectId, action);

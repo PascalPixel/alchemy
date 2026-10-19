@@ -184,7 +184,7 @@ ObjectTable_RunIfActiveFar:
 	.global Battle_ShowPairedUnitWorkAndWaitFar
 	.thumb_func
 Battle_ShowPairedUnitWorkAndWaitFar:
-	overlay_veneer Func_080d41fc
+	overlay_veneer Battle_ShowPairedUnitWorkAndWait
 	.global Ui_SetMessageVoiceFromActorFar
 	.thumb_func
 Ui_SetMessageVoiceFromActorFar:

@@ -1904,12 +1904,6 @@ ObjectMotion_SetPositionWithTerrain:
 	.thumb_func
 ObjectMotion_MoveToObject:
 	.incbin "baserom.gba", 0x000d8208, 0x0000002c
-	.section .rom.000d825c, "ax"
-	.global ObjectMotion_WaitForAnimationChange
-	.type ObjectMotion_WaitForAnimationChange, %function
-	.thumb_func
-ObjectMotion_WaitForAnimationChange:
-	.incbin "baserom.gba", 0x000d825c, 0x00000050
 	.section .rom.000d836a, "ax"
 	.incbin "baserom.gba", 0x000d836a, 0x00000002
 	.section .rom.000d836c, "ax"
@@ -1937,12 +1931,6 @@ Func_080d3940:
 	.thumb_func
 Func_080d3a10:
 	.incbin "baserom.gba", 0x000d8a04, 0x00000118
-	.section .rom.000d8b1c, "ax"
-	.global Func_080d3b28
-	.type Func_080d3b28, %function
-	.thumb_func
-Func_080d3b28:
-	.incbin "baserom.gba", 0x000d8b1c, 0x000000c0
 	.section .rom.000d8c7c, "ax"
 	.balign 4
 	.global UiText_OpenMessageAtObject
@@ -1952,12 +1940,6 @@ UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d8c7c, 0x00000328
 	.section .rom.000d91da, "ax"
 	.incbin "baserom.gba", 0x000d91da, 0x00000002
-	.section .rom.000d91f0, "ax"
-	.global Func_080d41fc
-	.type Func_080d41fc, %function
-	.thumb_func
-Func_080d41fc:
-	.incbin "baserom.gba", 0x000d91f0, 0x00000134
 	.section .rom.000d9324, "ax"
 	.global Func_080d4330
 	.type Func_080d4330, %function

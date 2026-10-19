@@ -2506,12 +2506,6 @@ Func_080d296c:
 	.align 2, 0
 Func_080d2b4c:
 	.incbin "baserom.gba", 0x000d2b2c, 0x000000b8
-	.section .rom.000d3248, "ax"
-	.global ObjectMotion_WaitForAnimationChange
-	.type ObjectMotion_WaitForAnimationChange, %function
-	.thumb_func
-ObjectMotion_WaitForAnimationChange:
-	.incbin "baserom.gba", 0x000d3248, 0x00000050
 	.section .rom.000d3356, "ax"
 	.incbin "baserom.gba", 0x000d3356, 0x00000002
 	.section .rom.000d3358, "ax"
@@ -2539,12 +2533,6 @@ Func_080d3940:
 	.thumb_func
 Func_080d3a10:
 	.incbin "baserom.gba", 0x000d39f0, 0x00000118
-	.section .rom.000d3b08, "ax"
-	.global Func_080d3b28
-	.type Func_080d3b28, %function
-	.thumb_func
-Func_080d3b28:
-	.incbin "baserom.gba", 0x000d3b08, 0x000000c0
 	.section .rom.000d3c68, "ax"
 	.balign 4
 	.global UiText_OpenMessageAtObject
@@ -2554,12 +2542,6 @@ UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d3c68, 0x00000328
 	.section .rom.000d41c6, "ax"
 	.incbin "baserom.gba", 0x000d41c6, 0x00000002
-	.section .rom.000d41dc, "ax"
-	.global Func_080d41fc
-	.type Func_080d41fc, %function
-	.thumb_func
-Func_080d41fc:
-	.incbin "baserom.gba", 0x000d41dc, 0x00000134
 	.section .rom.000d4310, "ax"
 	.global Func_080d4330
 	.type Func_080d4330, %function

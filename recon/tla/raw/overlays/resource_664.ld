@@ -46,7 +46,7 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200aaa8)
         "*/resource_664_overlay.o"(.text.x0200ab58)
         "*/games/tla/src/scene/airs_rock_inside/s2bd0.o"(.text)
-        "*/resource_664_overlay.o"(.text.x0200ac40)
+        "*/games/tla/src/scene/airs_rock_inside/s2c40.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s2cc0.o"(.text)
         "*/resource_664_overlay.o"(.text.x0200acf0)
         "*/games/tla/src/scene/airs_rock_inside/s3170.o"(.text)

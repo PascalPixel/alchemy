@@ -1,5 +1,9 @@
-// near miss: differ 36 (listing 65 instructions, draft 63); as Func_02002b18,
-// and the red channel's + 4 is scheduled apart
+// Near miss, differ 2 of 65 (was 36): as Func_02002b18, with red raised by 4
+// more and green and blue by 4 less, written in its draft's form (a halfword
+// colour, the channels extracted first, the destination as a pointer). Left:
+// the native loads the pool constant 0x1f one insn earlier (before adds r0,
+// r0, r2); an empty asm before the red sum moves the masks instead (differ
+// 16).
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern u8 gData_0200635c[];
@@ -17,17 +21,24 @@ struct KibomboWork90 {
 };
 
 void Func_02002ba4(s32 index, s32 entry, s32 delta) {
-  s16 color = gData_02007948[entry];
-  s16 r = (color & 0x1f) + delta + 4;
-  s16 g;
-  s16 b;
+  u16 color = gData_02007948[entry];
+  s16 r = color & 0x1f;
+  s16 g = (color >> 5) & 0x1f;
+  s16 b = (color >> 10) & 0x1f;
 
+  r += delta + 4;
   delta -= 4;
-  g = (((u16)color >> 5) & 0x1f) + (delta >> 1);
-  b = (((u16)color >> 10) & 0x1f) + (delta >> 2);
+  g += delta >> 1;
+  b += delta >> 2;
+
   r = Func_02002b08(r);
   g = Func_02002b08(g);
   b = Func_02002b08(b);
-  r |= (b << 10) | (g << 5);
-  ((u16 *)0x05000000)[index] = r;
+  {
+    u16 *dst = &((u16 *)0x05000000)[index];
+
+    r |= (b << 10) | (g << 5);
+    *dst = r;
+  }
 }
+

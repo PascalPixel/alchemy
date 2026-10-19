@@ -1,5 +1,11 @@
-// near miss: differ 22 (listing 63 instructions, draft 63); the native builds
-// index * 2 in r10 before the three channels are joined, and stores from r0
+// Near miss, differ 6 of 63 (was 22): brightens palette colour `index` from
+// entry `entry` by delta (green by half and blue by a quarter of it) through
+// Func_02002b08. Taking the destination as a pointer before the channels are
+// joined builds index * 2 in r10 as the native does. Left: the native loads
+// the pool constant 0x1f one insn earlier, and places the literal pool before
+// the third call where arm_reorg here places it after (the size estimate is 4
+// bytes short there; an empty asm before that call moves the pool but
+// disturbs the allocation, differ 40).
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern u8 gData_0200635c[];
@@ -29,6 +35,10 @@ void Func_02002b18(s32 index, s32 entry, s32 delta) {
   r = Func_02002b08(r);
   g = Func_02002b08(g);
   b = Func_02002b08(b);
-  r |= (b << 10) | (g << 5);
-  ((u16 *)0x05000000)[index] = r;
+  {
+    u16 *dst = &((u16 *)0x05000000)[index];
+
+    r |= (b << 10) | (g << 5);
+    *dst = r;
+  }
 }

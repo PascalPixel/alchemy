@@ -50,9 +50,9 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
   effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
   Object_SetSpritePriority((struct FieldActor *)effect,
                            party->sprite->priority);
   effect->scaleRateX = 0;

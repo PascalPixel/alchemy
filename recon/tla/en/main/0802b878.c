@@ -1,75 +1,78 @@
-// Draft, differ 124 of 131: Map_WriteLayerCellTile, puts 32 by 32 pixel
-// picture tile in quarter (x & 1, y & 1) of BG layer layer: unless update
-// is set and the quarter already shows it, decodes the picture (or clears
-// it) in heap slot 56, copies its 16 rows into gMapBlocks and, when update
-// is set, redraws its tiles into the screen at 0x06004000. Called by
-// games/tla/src/field/common/map/perspective.c. No ☀️ twin found. Same
-// operations; left is register choice: the native keeps layer * 2 in r9
-// and y in r8 and adds them again at each use, where this draft keeps the
-// sum.
+// Near miss, differ 18 of 131 (2026-10-18): The Broken Seal's
+// Map_WriteLayerCellTile; this game clears the block (IwramClearWords)
+// where the tile has no data instead of decoding it, and uses heap slot 56.
+// Left: the native loads the map work, the stack argument update, the block
+// table and the cell buffer each a step earlier, and forms gMapBlocks in r1
+// (here r2) and reloads update into r2 (here r3). Six minutes of permute: no
+// better.
 #include "types.h"
-#include "ram_buffer.h"
-#include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "ram_buffer.h"
+#include "map.h"
 #include "iwram_call.h"
+#include "mem.h"
+#include "graphics.h"
 
-struct LayerTileWork {
+struct PerspectiveTiles {
   u8 unk000[0x114];
   u32 *tiles;
   u8 unk118[0x830];
-  u16 shown[3][2][2];
+  u16 quarterTiles[8];
 };
 
 extern u8 gMapBlocks[];
-extern u8 gMapCellBuffer[];
-extern u8 Data_02010002[];
-
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
-  struct LayerTileWork *work = (struct LayerTileWork *)Ram_HeapSlots->mapWork;
-  u32 *tiles = work->tiles;
-  u16 *shown;
-  u8 *buffer;
-  u8 *source;
-  u8 *destination;
-  u16 *screen;
-  u32 row;
-  u32 column;
+  struct PerspectiveTiles *perspective =
+      (struct PerspectiveTiles *)Ram_HeapSlots->mapWork;
+  u32 *tileOffsets = perspective->tiles;
+  u16 *shownQuarter;
+  u16 *decodedTile;
+  u16 *sourceTiles;
+  u8 *quarterCells;
+  u16 *screenTiles;
+  u32 rowIndex;
+  u32 columnIndex;
+  u32 metatileId;
 
   x &= 1;
   y &= 1;
-  layer *= 2;
-  shown = &work->shown[0][0][0] + ((layer + y) * 2 + x);
-  if (update == 0 && tile == *shown)
+  shownQuarter = &perspective->quarterTiles[(layer * 2 + y) * 2 + x];
+  if (update == 0 && tile == *shownQuarter)
     return 0;
-  *shown = tile;
-  buffer = Runtime_AllocateHeapBlock(56, 0x400);
-  if (tiles[tile] != 0)
-    Resource_DecodeByteLzInRam((u8 *)tiles + tiles[tile], buffer);
+  *shownQuarter = tile;
+  decodedTile = Runtime_AllocateHeapBlock(56, 0x400);
+  if (tileOffsets[tile] != 0)
+    Resource_DecodeByteLzInRam((u8 *)tileOffsets + tileOffsets[tile],
+                               decodedTile);
   else
-    Iwram_ClearWords(buffer, 0x400);
-  source = buffer;
-  destination = gMapBlocks + ((((layer + y) << 5) + x) << 6);
-  for (row = 0; row < 16; row++) {
-    Dma_Set(source, destination, 0x84000010, REG_DMA3);
-    source += 64;
-    destination += 128;
-  }
-  if (update != 0) {
-    screen = (u16 *)(0x06004000 + ((((layer + y) << 6) + x) << 5));
-    source = buffer;
-    for (row = 0; row < 16; row++) {
-      for (column = 0; column < 16; column++) {
-        u32 cell = *(u16 *)source << 2;
+    Iwram_ClearWords(decodedTile, 0x400);
 
-        screen[0] = *(u16 *)(gMapCellBuffer + cell);
-        screen[32] = *(u16 *)(Data_02010002 + cell);
-        source += 4;
-        screen++;
+  sourceTiles = decodedTile;
+  quarterCells = gMapBlocks + (((layer * 2 + y) * 32 + x) << 6);
+  for (rowIndex = 0; rowIndex < 16; rowIndex++) {
+    Dma_Set(sourceTiles, quarterCells, 0x84000010, REG_DMA3);
+    sourceTiles += 32;
+    quarterCells += 128;
+  }
+
+  if (update != 0) {
+    screenTiles = (u16 *)(0x06004000 + ((((layer * 2 + y) << 6) + x) << 5));
+    sourceTiles = decodedTile;
+    for (rowIndex = 0; rowIndex < 16; rowIndex++) {
+      for (columnIndex = 0; columnIndex < 16; columnIndex++) {
+        u16 *bottomTiles;
+
+        metatileId = *sourceTiles;
+        screenTiles[0] = *(u16 *)(Ram_MapCellBuffer + metatileId * 4);
+        bottomTiles = (u16 *)(Ram_MapCellBuffer + 2);
+        bottomTiles = (u16 *)((u8 *)bottomTiles + metatileId * 4);
+        screenTiles[32] = *bottomTiles;
+        screenTiles++;
+        sourceTiles += 2;
       }
-      screen += 48;
+      screenTiles += 48;
     }
   }
   Runtime_ReleaseHeapBlock(56);

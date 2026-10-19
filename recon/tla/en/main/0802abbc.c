@@ -1,74 +1,73 @@
-// Draft, differ 140 of 97: draws one row of 16 map blocks of BG layer
-// layer into its screen block at 0x06002800, from the cell buffer wrapped
-// by the layer's masks and origins, each block's top and bottom tile pairs
-// from gMapBlocks. ☀️'s Map_SetCameraCenter (games/tbs/src/field/field.c)
-// draws the same way through CopyMetatileToScreen. Same instructions;
-// register choice differs throughout (the native holds the cell pointer in
-// ip, the screen in sl, the loop count in r6), and the native addresses a
-// block's second word from a pooled gMapBlocks + 4 (Data_02020004) where
-// this draft adds 4 to the index (also with gMapBlocks as a u32 array).
+// Near miss, differ 125 of 97 (2026-10-18), first pass: The Broken Seal's
+// Map_RenderMetatileRow with this game's layer window (masks and origins at
+// layer +40 to +46 that wrap the source cells). Left: allocation. The native
+// keeps tileX in r6, the cell base in ip, the BG map in r10 and the masks 127
+// and 30 in lr and r0 across the window tests, with no frame; this spills
+// one word and uses r11. The block tables read through the constants
+// 0x02020000 and 0x02020004 inside the loop as the native does (as symbols
+// they hoist). Six minutes of permute: no better.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
 
-struct MapLayerWrap {
+#define Ram_MapBlocks ((u8 *)0x02020000)
+
+struct MapLayerWindow {
   s32 x, y;
-  u8 unk08[0x20];
-  u16 maskX;
-  u16 maskY;
-  u16 originX;
-  u16 originY;
+  s32 offsetX, offsetY;
+  s32 scaleX, scaleY;
+  s32 speedX, speedY;
+  s32 phaseX, phaseY;
+  u16 maskX, maskY;
+  u16 originX, originY;
   struct MapCell *cells;
   u8 *terrainIds;
 };
 
-struct MapCellWord {
-  u32 block : 11;
-  u32 flags : 21;
-};
+void Func_0802abbc(u32 layer, s32 tileX, s32 tileY) {
+  u32 *cells = (u32 *)Ram_MapCellBuffer;
+  struct MapLayerWindow *window =
+      (struct MapLayerWindow *)&Ram_HeapSlots->mapWork->layers[layer];
+  u8 *screenMap = (u8 *)0x06002800 + (layer << 11);
+  u32 sourceRow = ((tileY / 2) & 0x7f) << 7;
+  u32 screenRowOffset = (tileY & 30) << 5;
+  u32 maskY = window->maskY;
+  u32 originY = window->originY;
+  u32 sourceColumn;
+  u32 screenColumnOffset;
+  u32 maskX;
+  u32 originX;
+  u32 metatileIndex;
 
-struct MapBlock {
-  u32 top;
-  u32 bottom;
-};
-
-extern struct MapCellWord gMapCellBuffer[];
-extern struct MapBlock gMapBlocks[];
-
-void Func_0802abbc(s32 layer, s32 x, s32 y) {
-  struct MapCellWord *cells = gMapCellBuffer;
-  struct MapLayerWrap *wrap =
-      (struct MapLayerWrap *)&Ram_HeapSlots->mapWork->layers[layer];
-  u8 *screen = (u8 *)0x06002800 + (layer << 11);
-  u32 row = (y / 2) & 127;
-  u32 screenRow = (y & 30) << 5;
-  u32 mask = wrap->maskY;
-  u32 origin = wrap->originY;
-  u32 column;
-  u32 screenColumn;
-  u32 i;
-
-  row <<= 7;
-  if (mask != 0x3f80) {
-    row = (row - origin) & mask;
-    cells = gMapCellBuffer + origin;
+  if (maskY != 0x3f80) {
+    cells = (u32 *)Ram_MapCellBuffer + originY;
+    sourceRow = (sourceRow - originY) & maskY;
   }
-  column = (x / 2) & 127;
-  mask = wrap->maskX;
-  origin = wrap->originX;
-  screenColumn = x & 30;
-  column &= mask;
-  if (mask != 127) {
-    column = (column - origin) & mask;
-    cells += origin;
+  maskX = window->maskX;
+  sourceColumn = ((tileX / 2) & 0x7f) & maskX;
+  originX = window->originX;
+  screenColumnOffset = tileX & 30;
+  if (maskX != 0x7f) {
+    sourceColumn = (sourceColumn - originX) & maskX;
+    cells += originX;
   }
-  for (i = 0; i < 16; i++) {
-    u32 block = cells[row + column].block;
-    u32 *dst = (u32 *)(screen + (screenRow + screenColumn) * 2);
+  for (metatileIndex = 0; metatileIndex <= 15; metatileIndex++) {
+    u32 *sourceCell = cells;
+    u32 *metatileRows;
+    u8 *screenTile;
+    u32 metatileWordOffset;
 
-    dst[0] = gMapBlocks[block].top;
-    dst[16] = gMapBlocks[block].bottom;
-    column = (column + 1) & mask;
-    screenColumn = (screenColumn + 2) & 30;
+    sourceCell += sourceRow + sourceColumn;
+    metatileWordOffset = (*sourceCell << 21) >> 20;
+    metatileRows = (u32 *)Ram_MapBlocks;
+    metatileRows += metatileWordOffset;
+    screenTile = screenMap + (screenRowOffset + screenColumnOffset) * 2;
+    *(u32 *)screenTile = *metatileRows;
+    metatileRows = (u32 *)(Ram_MapBlocks + 4);
+    metatileRows += metatileWordOffset;
+    sourceColumn++;
+    *(u32 *)(screenTile + 64) = *metatileRows;
+    screenColumnOffset = (screenColumnOffset + 2) & 30;
+    sourceColumn &= maskX;
   }
 }

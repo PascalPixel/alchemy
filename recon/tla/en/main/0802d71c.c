@@ -1,6 +1,11 @@
-// Near miss, differ 28 of 66: the tail differs in register choice. The native
-// keeps the scaled code in r1, reads the kind through r0, parks the handler
-// offset in ip and loads the handler last; this reads the kind through r3.
+// Near miss, differ 2 of 66 (2026-10-18): the height of the ground at a point
+// on a layer less base, written as its matched twins Func_0802d7b0 and
+// Func_0802d87c (cell_open.c). Left: one instruction order; the native reads
+// the kind (ldrb r0, [r0]) before it builds the 15 mask (movs r2, #15). Here
+// the mask is free to go first, as Collision's base sits in r3; in the twins
+// it sits in r2 and holds the mask back. Pinning the mask behind a barrier
+// placed in the index (differ 16 to 26) or reading the kind into a local
+// (differ 45) loses the code pointer's constant 0x0202c001.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -14,7 +19,7 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *state = Ram_HeapSlots->eventWork;
   u8 *grid;
-  s32 code;
+  u8 *code;
 
   if (work == NULL)
     return 0;
@@ -24,8 +29,6 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
     grid = work->layers[layer].terrainIds;
   else
     grid = gMapShapeGrid;
-  code = grid[x / 16 + ((z / 16) << 7)] * 4;
-  return gMap_TerrainHeightHandlers[Ram_MapCollision[code] & 15](
-             Ram_MapCollision + 1 + code, x & 15, z & 15) -
-         base;
+  code = Ram_MapCollision + grid[x / 16 + ((z / 16) << 7)] * 4;
+  return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) - base;
 }

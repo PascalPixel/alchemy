@@ -1,3 +1,7 @@
+/// @file
+/// The mast of the ship across the Karagol Sea, where the lookout announces the
+/// course, the approaching monsters and land, and an Anchor Charm can be found.
+
 #include "script.h"
 #include "game_state.h"
 #include "scene_ids.h"

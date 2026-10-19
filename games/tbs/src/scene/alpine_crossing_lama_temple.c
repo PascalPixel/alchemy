@@ -1,12 +1,13 @@
-#include "script.h"
-// Two scenes share this overlay:
-//
-// - Alpine Crossing, the stretch of the Silk Road where a rockslide traps
-//   Hsu. Feizhi, Master Hama and the party meet there, and the party frees
-//   Hsu with Lift.
-// - Lama Temple, Master Hama's temple, with its monks, a wall that only
-//   Reveal sees through, and Hama's farewell once Hsu is safe.
+/// @file
+/// Alpine Crossing and Lama Temple, two scenes that share this overlay:
+///
+/// - Alpine Crossing, the stretch of the Silk Road where a rockslide traps Hsu.
+///   Feizhi, Master Hama and the party meet there, and the party frees Hsu with
+///   Lift.
+/// - Lama Temple, Master Hama's temple, with its monks, a wall that only Reveal
+///   sees through, and Hama's farewell once Hsu is safe.
 
+#include "script.h"
 #include "game_state.h"
 #include "unit/scene/alpine_crossing_lama_temple.h"
 #include "unit/object/object.h"

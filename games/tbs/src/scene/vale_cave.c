@@ -1,3 +1,8 @@
+/// @file
+/// The cave above Vale: three rooms of Psynergy puzzles, where the Jupiter
+/// Djinni Kite hides. Djinn_JoinParty(ACTOR_KITE, 3, 4) gives Jupiter Djinni 4,
+/// and the fifth Jupiter Djinni the text names is Kite.
+
 #include "game_state.h"
 #include "version.h"
 #include "engine_call.h"
@@ -36,10 +41,6 @@
 
 #include "fixed_math.h"
 #include "songs.h"
-
-// The cave above Vale: three rooms of Psynergy puzzles, where the Jupiter
-// Djinni Kite hides. Djinn_JoinParty(ACTOR_KITE, 3, 4) gives Jupiter Djinni 4,
-// and the fifth Jupiter Djinni the text names is Kite.
 
 // Kite is placement 8 of the second room; the objects moved with Move or
 // pushed are placements 9 to 11 of the second and third rooms.

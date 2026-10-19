@@ -1,3 +1,7 @@
+/// @file
+/// Xian: the water carrier who spills her water, Frost on the spill, the kung
+/// fu student and his training tree, Feizhi, and a Mercury Djinni.
+
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/xian.h"

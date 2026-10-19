@@ -1,3 +1,9 @@
+/// @file
+/// The colosseum where Colosso is held, in three scenes: the crowd outside the
+/// gates, the halls where the party watches the warriors' trials, and the
+/// finals' waiting room, where Isaac meets the seven warriors who cleared the
+/// trials and marches out with them to the finals.
+
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"

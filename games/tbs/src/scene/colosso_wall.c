@@ -1,3 +1,8 @@
+/// @file
+/// Colosso's second finals course: Isaac races another warrior through the
+/// Mini-Maze, the shifting floor, the Log-Rolling Stage, the Wall and the Board
+/// Walk to the arena.
+
 #include "script.h"
 #include "game_state.h"
 #include "io_write_queue.h"

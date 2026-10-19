@@ -1,3 +1,8 @@
+/// @file
+/// Sol Sanctum's Elemental Star room: the party bags the four stars from their
+/// pedestals, Saturos and Menardi take Jenna and Kraden hostage, and Alex takes
+/// the stars.
+
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/sol_sanctum_elemental_star_room.h"

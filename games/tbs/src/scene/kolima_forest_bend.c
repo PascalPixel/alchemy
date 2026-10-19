@@ -1,3 +1,14 @@
+/// @file
+/// Kolima Forest's bend, between the river and Tret's tree. A floodgate switch
+/// raises and lowers the river: with the water high the logs float (26 pixels
+/// up) and can be rolled along it; with it low they lie on the riverbed. A
+/// short log slides between two places, and a sign warns the party off the
+/// switch.
+///
+/// The water level, the short log's place and each log's cells are kept in
+/// gSceneState (gKolimaForestBendLayout, gKolimaForestBendReturned and
+/// gKolimaForestBendRecords), so they survive a battle.
+
 #include "battle_effect_runtime.h"
 #include "flags.h"
 #include "unit/import.h"
@@ -33,16 +44,6 @@
 #include "macros.h"
 #include "songs.h"
 #include "item_ids.h"
-
-// Kolima Forest's bend, between the river and Tret's tree. A floodgate
-// switch raises and lowers the river: with the water high the logs float
-// (26 pixels up) and can be rolled along it; with it low they lie on the
-// riverbed. A short log slides between two places, and a sign warns the
-// party off the switch.
-//
-// The water level, the short log's place and each log's cells are kept in
-// gSceneState (gKolimaForestBendLayout, gKolimaForestBendReturned and
-// gKolimaForestBendRecords), so they survive a battle.
 
 enum {
   SHORT_LOG = 8, ///< slides between x 72 and x 104

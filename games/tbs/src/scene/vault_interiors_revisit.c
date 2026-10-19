@@ -1,3 +1,7 @@
+/// @file
+/// Vault's houses, shops and inn on the party's return, after the thieves have
+/// escaped from jail.
+
 #include "game_state.h"
 #include "unit/scene/vault_interiors_revisit.h"
 #include "unit/scene/common/vault_itemobj.h"

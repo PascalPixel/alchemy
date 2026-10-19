@@ -1,3 +1,8 @@
+/// @file
+/// Kolima Forest's clearing, between the bridge and the river. Three logs lie
+/// in the grass for the party to push, and a Nut circles out of reach until
+/// Catch pulls it in.
+
 #include "battle_effect_runtime.h"
 #include "flags.h"
 #include "version.h"
@@ -24,10 +29,6 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "item_ids.h"
-
-// Kolima Forest's clearing, between the bridge and the river. Three logs
-// lie in the grass for the party to push, and a Nut circles out of reach
-// until Catch pulls it in.
 
 /// Actors 8 to 10 are the logs; 11 is the Nut.
 enum { NUT = 11 };

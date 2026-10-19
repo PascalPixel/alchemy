@@ -1,3 +1,14 @@
+/// @file
+/// Lunpa, the town under Dodonpa's fortress, on two maps: the town itself
+/// (Lunpa 1), with its well, its hidden passage to the jail and Reveal's
+/// secrets, and the gate below the fortress (Lunpa 2), where two guards turn
+/// the party away until Cloak gets them past.
+///
+/// Scene flags in the town: FLAG_SCENE_TEMP_00, the puddle is frozen into a
+/// pillar; FLAG_SCENE_TEMP_01, Reveal's secrets are hidden; FLAG_SCENE_TEMP_02,
+/// the hidden passage to the jail is open. At the gate, FLAG_SCENE_TEMP_40 to
+/// _44, as flags.h describes them.
+
 #include "game_state.h"
 #include "version.h"
 #include "scene_ids.h"
@@ -17,16 +28,6 @@
 #include "text/msg_ids.h"
 #include "field_obj.h"
 #include "macros.h"
-
-// Lunpa, the town under Dodonpa's fortress, on two maps: the town itself
-// (Lunpa 1), with its well, its hidden passage to the jail and Reveal's
-// secrets, and the gate below the fortress (Lunpa 2), where two guards turn
-// the party away until Cloak gets them past.
-//
-// Scene flags in the town: FLAG_SCENE_TEMP_00, the puddle is frozen into a
-// pillar; FLAG_SCENE_TEMP_01, Reveal's secrets are hidden; FLAG_SCENE_TEMP_02,
-// the hidden passage to the jail is open. At the gate, FLAG_SCENE_TEMP_40 to
-// _44, as flags.h describes them.
 
 static void Lunpa_WatchForUncloakedParty(void);
 

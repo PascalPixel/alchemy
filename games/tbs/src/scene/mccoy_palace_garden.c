@@ -1,3 +1,13 @@
+/// @file
+/// The garden before Lord McCoy's palace in Bilibin. Two guards keep the palace
+/// gate and let only brave warriors through; once Kolima's curse is lifted,
+/// they arrest the party for breaking it and take them to McCoy.
+///
+/// Scene flags: FLAG_SCENE_TEMP_00, the palace gate is open;
+/// FLAG_SCENE_TEMP_01, the east guard has scolded the party for keeping McCoy
+/// waiting. Flag 0x304, reused from place to place, is set in Bilibin when
+/// McCoy is looking for the party.
+
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/mccoy_palace_garden.h"
@@ -32,15 +42,6 @@
 #else
 #define MCCOY_GARDEN_SET_ACTOR_POSITION ((s32 (*)())Engine_ActorSetPosition)
 #endif
-
-// The garden before Lord McCoy's palace in Bilibin. Two guards keep the
-// palace gate and let only brave warriors through; once Kolima's curse is
-// lifted, they arrest the party for breaking it and take them to McCoy.
-//
-// Scene flags: FLAG_SCENE_TEMP_00, the palace gate is open; FLAG_SCENE_TEMP_01,
-// the east guard has scolded the party for keeping McCoy waiting. Flag
-// 0x304, reused from place to place, is set in Bilibin when McCoy is
-// looking for the party.
 
 enum {
   ACTOR_WEST_WORKER = 8,

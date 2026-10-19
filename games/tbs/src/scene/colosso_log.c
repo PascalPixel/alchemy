@@ -1,3 +1,8 @@
+/// @file
+/// Colosso's third finals course: Isaac races another warrior through the
+/// Scales of Justice, the Stepping-Stone Stage, the Wall Wedge, the Free-Climb
+/// Area, the Moving Sidewalk Stage and a log-rolling area to the arena.
+
 #include "script.h"
 #include "version.h"
 #include "game_state.h"

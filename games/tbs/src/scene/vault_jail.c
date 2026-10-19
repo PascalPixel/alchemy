@@ -1,3 +1,7 @@
+/// @file
+/// Vault's jail, where the thieves who stole Hammet's Shaman's Rod are held; on
+/// the party's return a lone prisoner takes their place.
+
 #include "game_state.h"
 #include "unit/scene/vault_jail.h"
 #include "unit/object/object.h"

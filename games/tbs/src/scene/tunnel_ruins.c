@@ -1,3 +1,9 @@
+/// @file
+/// The tunnel ruins, in two scenes of Psynergy puzzles: pillars to push or
+/// Move, blocks, bushes for Whirlwind, sinking pillars and puddles for Frost in
+/// the first; a pillar for Douse, balance platforms, statues that vanish under
+/// Reveal and more pillars in the other.
+
 #include "script.h"
 #include "version.h"
 #include "game_state.h"

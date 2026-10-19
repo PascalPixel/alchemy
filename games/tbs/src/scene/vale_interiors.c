@@ -1,3 +1,8 @@
+/// @file
+/// The houses and shops of Vale. Garet's family lives in the house at entrance
+/// 6: his grandfather, his grandmother, and his parents ("Mom, Dad... I'm
+/// home...").
+
 #include "script.h"
 #include "game_state.h"
 #include "unit/import.h"
@@ -24,10 +29,6 @@
 #include "ram_buffer.h"
 #include "flags.h"
 #include "songs.h"
-
-// The houses and shops of Vale. Garet's family lives in the house at entrance
-// 6: his grandfather, his grandmother, and his parents ("Mom, Dad... I'm
-// home...").
 
 enum ValeInteriorsActor {
   /// Garet's grandfather. "Isaac, please take care of my grandson, Garet."

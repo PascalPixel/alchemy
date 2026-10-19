@@ -1,3 +1,7 @@
+/// @file
+/// A branch of Tret, the great tree, where Breeze, a Jupiter Djinni, waits;
+/// touch triggers move the leader and the camera along the branch.
+
 #include "unit/scene/tret_tree_branch.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"

@@ -1,3 +1,7 @@
+/// @file
+/// A maze of Sol Sanctum, scene 14: two exits to scene 16 and the chest that
+/// holds the second Small Jewel (item 0xe1).
+
 #include "unit/scene/sol_sanctum_maze.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"
 #include "battle.h"
@@ -19,9 +23,6 @@
 #include "field_event.h"
 #include "flags.h"
 #include "item_ids.h"
-
-// A maze of Sol Sanctum, scene 14: two exits to scene 16 and the chest that
-// holds the second Small Jewel (item 0xe1).
 
 /// Where the party can enter the maze.
 const struct SceneEntrance *Scene_GetEntrances(void) {

@@ -1,3 +1,8 @@
+/// @file
+/// A Colosso finals course: Isaac races another warrior through the Rock
+/// Challenge, the Pipeworks, the Broken Bridge and the Lumber Water Crossing
+/// Area to the arena, where the two fight.
+
 #include "script.h"
 #include "version.h"
 #include "game_state.h"

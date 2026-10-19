@@ -1,3 +1,8 @@
+/// @file
+/// Venus Lighthouse's aerie: the pillars the leader jumps between, the Shaman's
+/// Rod handed over for Sheba, and the battle with Saturos and Menardi, who
+/// fuse.
+
 #include "script.h"
 #include "game_state.h"
 #include "vram_tab.h"

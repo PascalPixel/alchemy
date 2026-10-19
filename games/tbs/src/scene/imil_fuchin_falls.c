@@ -1,3 +1,12 @@
+/// @file
+/// The Djinni's ice room by Imil and Fuchin Falls, in seven maps: the ice room,
+/// then Fuchin Falls' four platform rooms, the room of the Ki inscription and
+/// the dragon statue's room.
+///
+/// Flags 0x301 to 0x315 belong to the cave and hold the platforms' stops: 0x301
+/// to 0x303 the first room's, 0x304 to 0x307 the second's, 0x308 to 0x312 the
+/// third's and 0x313 to 0x315 the fourth's.
+
 #include "script.h"
 #include "game_state.h"
 #include "keystate.h"
@@ -40,13 +49,6 @@
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"
-
-// Seven maps: the Djinni's ice room by Imil, then Fuchin Falls' four platform
-// rooms, the room of the Ki inscription and the dragon statue's room.
-//
-// Flags 0x301 to 0x315 belong to the cave and hold the platforms' stops:
-// 0x301 to 0x303 the first room's, 0x304 to 0x307 the second's, 0x308 to
-// 0x312 the third's and 0x313 to 0x315 the fourth's.
 
 enum ImilFuchinFallsActor {
   ACTOR_IMIL_DJINNI = 8, ///< in the ice room

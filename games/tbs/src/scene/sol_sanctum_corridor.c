@@ -1,4 +1,5 @@
-
+/// @file
+/// A corridor of Sol Sanctum, scene 15: two exits to scene 16 and nothing else.
 
 #include "unit/scene/sol_sanctum_corridor.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"
@@ -19,9 +20,6 @@
 #include "field_obj.h"
 
 #include "field_event.h"
-
-// A corridor of Sol Sanctum, scene 15: two exits to scene 16 and nothing
-// else.
 
 /// Where the party can enter the corridor.
 const struct SceneEntrance *Scene_GetEntrances(void) {

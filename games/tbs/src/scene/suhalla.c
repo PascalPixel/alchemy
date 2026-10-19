@@ -1,3 +1,8 @@
+/// @file
+/// Suhalla, the town at the edge of the Suhalla Desert. Once Babi's audience
+/// after Colosso has been held, its people stand and talk differently: the
+/// sandstorms have brought Tolbi's soldiers to the town.
+
 #include "game_state.h"
 #include "unit/scene/suhalla.h"
 #include "unit/object/object.h"
@@ -19,10 +24,6 @@
 #include "item_ids.h"
 #include "songs.h"
 #include "flags.h"
-
-// Suhalla, the town at the edge of the Suhalla Desert. Once Babi's audience
-// after Colosso has been held, its people stand and talk differently: the
-// sandstorms have brought Tolbi's soldiers to the town.
 
 // FLAG_SCENE_TEMP_01: Growth has made the sprout grow.
 

@@ -1,3 +1,6 @@
+/// @file
+/// Kolima's houses and shops, whose residents stand as trees while the curse
+/// lasts.
 
 #include "game_state.h"
 #include "flags.h"

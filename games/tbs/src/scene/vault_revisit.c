@@ -1,3 +1,7 @@
+/// @file
+/// Vault after the thieves escaped from jail, when the party passes through
+/// again.
+
 #include "game_state.h"
 #include "window.h"
 #include "unit/scene/vault_revisit.h"
@@ -28,9 +32,6 @@
 #include "call.h"
 #include "flags.h"
 #include "songs.h"
-
-// Vault after the thieves escaped from jail, when the party passes through
-// again.
 
 enum {
   ACTOR_GREETER = 8, ///< Vault's greeter. "You're the warriors who captured..."

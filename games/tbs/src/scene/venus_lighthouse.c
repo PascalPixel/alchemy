@@ -1,3 +1,8 @@
+/// @file
+/// Venus Lighthouse, in six scenes: floor switches that slide walls aside,
+/// blocks that sink into sockets to open gates, and sparkling passages the
+/// leader steps through.
+
 #include "script.h"
 #include "game_state.h"
 #include "unit/import.h"

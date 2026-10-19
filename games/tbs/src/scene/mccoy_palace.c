@@ -1,3 +1,17 @@
+/// @file
+/// Lord McCoy's palace in Bilibin. At the first audience McCoy asks the party
+/// to lift the curse on Kolima, then turns them away as too young; once the
+/// curse is lifted, his guards bring them back and he rewards them with one of
+/// four treasures.
+///
+/// Scene flags: FLAG_SCENE_TEMP_00, the escort has opened the front door;
+/// FLAG_SCENE_TEMP_02, the party is choosing its reward; FLAG_SCENE_TEMP_10 to
+/// _13, the chest it chose. The flags from 0x300 are reused from place to
+/// place: 0x302 and 0x303, the admirer has spoken or been read once; 0x321,
+/// McCoy has turned the party away; 0x322, the reward is still to choose;
+/// 0x333, the reward visit is over. McCoy speaks as SPEAKER_PORTRAIT_RIGHT |
+/// ACTOR_LORD_MCCOY, a speaker bit field_event.h does not name yet.
+
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/mccoy_palace.h"
@@ -28,19 +42,6 @@
 #include "facing_object.h"
 #include "fixed_math.h"
 #include "songs.h"
-
-// Lord McCoy's palace in Bilibin. At the first audience McCoy asks the party
-// to lift the curse on Kolima, then turns them away as too young; once the
-// curse is lifted, his guards bring them back and he rewards them with one
-// of four treasures.
-//
-// Scene flags: FLAG_SCENE_TEMP_00, the escort has opened the front door;
-// FLAG_SCENE_TEMP_02, the party is choosing its reward; FLAG_SCENE_TEMP_10 to
-// _13, the chest it chose. The flags from 0x300 are reused from place to
-// place: 0x302 and 0x303, the admirer has spoken or been read once; 0x321,
-// McCoy has turned the party away; 0x322, the reward is still to choose; 0x333,
-// the reward visit is over. McCoy speaks as SPEAKER_PORTRAIT_RIGHT |
-// ACTOR_LORD_MCCOY, a speaker bit field_event.h does not name yet.
 
 /// The palace's people and the reward room's chests.
 enum {

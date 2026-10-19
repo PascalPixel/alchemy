@@ -1,3 +1,8 @@
+/// @file
+/// Sol Sanctum's statue hall: four statues pushed onto their seals and two that
+/// shine their beams at the centre open a hole in the hall's floor, and Kraden
+/// explains the puzzle.
+
 #include "game_state.h"
 #include "version.h"
 #include "unit/scene/sol_sanctum_statue.h"

@@ -1,3 +1,8 @@
+/// @file
+/// Suhalla's houses, shop, inn and sanctum. After Babi's audience the inn holds
+/// two of Tolbi's soldiers, wounded in the sandstorms, and Iodem comes to
+/// question them about Sheba.
+
 #include "game_state.h"
 #include "field_event.h"
 #include "unit/import.h"
@@ -12,10 +17,6 @@
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
-
-// Suhalla's houses, shop, inn and sanctum. After Babi's audience the inn
-// holds two of Tolbi's soldiers, wounded in the sandstorms, and Iodem comes
-// to question them about Sheba.
 
 /// Arriving by this entrance also marks Babi's audience as held.
 enum { ENTRANCE_90 = 90 };

@@ -1,3 +1,12 @@
+/// @file
+/// Vale's village: its doors, the Psynergy Stone, the stormy night when the
+/// villagers send Isaac to the elders and he overhears the two surviving
+/// travelers, the villagers' farewell when the party sets out (entrance 12),
+/// and the village after the party's return from Kalay.
+///
+/// Group flag 0x302: the villager welcomed Isaac home. Group flag 0x306: the
+/// villager searching for the Psynergy Stone told Isaac it is gone.
+
 #include "game_state.h"
 #include "flags.h"
 #include "character_ids.h"
@@ -40,14 +49,6 @@
 #include "fixed_math.h"
 #include "songs.h"
 #include "item_ids.h"
-
-// Vale's village: its doors, the Psynergy Stone, the stormy night when the
-// villagers send Isaac to the elders and he overhears the two surviving
-// travelers, the villagers' farewell when the party sets out (entrance 12),
-// and the village after the party's return from Kalay.
-//
-// Group flag 0x302: the villager welcomed Isaac home. Group flag 0x306: the
-// villager searching for the Psynergy Stone told Isaac it is gone.
 
 enum ValeHomeActor {
   /// One of the two travelers. "Only the two of us survived..."

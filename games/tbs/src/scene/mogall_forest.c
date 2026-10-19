@@ -1,3 +1,10 @@
+/// @file
+/// Mogall Forest's three areas. Apes (sprite 0xbf) hide in the undergrowth;
+/// Force on a hiding place (an invisible actor, sprite 0x16, on the same spot)
+/// brings one out. Most point the way on and leave; the hostile ones attack,
+/// fought as encounter table 53 slot 0, the "Ape", and the last is the Killer
+/// Ape of slot 1. Logs (sprites 0xcd and 0xcf) can be pushed into the river.
+
 #include "script.h"
 #include "game_state.h"
 #include "engine_call.h"
@@ -40,12 +47,6 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "songs.h"
-
-// Mogall Forest's three areas. Apes (sprite 0xbf) hide in the undergrowth;
-// Force on a hiding place (an invisible actor, sprite 0x16, on the same spot)
-// brings one out. Most point the way on and leave; the hostile ones attack,
-// fought as encounter table 53 slot 0, the "Ape", and the last is the Killer
-// Ape of slot 1. Logs (sprites 0xcd and 0xcf) can be pushed into the river.
 
 /// The first area.
 enum MogallForest1Actor {

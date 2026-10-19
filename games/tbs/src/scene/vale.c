@@ -1,3 +1,17 @@
+/// @file
+/// Vale's plaza and the paths around it in daytime: the game opens here three
+/// years after the storm with Isaac mending his roof (entrances 16 and 17), and
+/// the villagers talk of the story before the party leaves, after it has left
+/// and after its return from Kalay.
+///
+/// FLAG_SCENE_TEMP_02: the roof has just been mended. FLAG_SCENE_TEMP_04: Isaac
+/// is in the northern passage. FLAG_SCENE_TEMP_10: the upper path's cells are
+/// in place. FLAG_SCENE_TEMP_41: the villager watching Isaac is paused. Group
+/// flags 0x303 and 0x304: Garet has talked with his sister and with the
+/// villager he asks to protect his family. 0x305: set by an unused scene.
+/// 0x307: a villager asked about the lack of travelers. 0x308: the roof-mending
+/// end has played. 0x314 to 0x316: the movable object's column.
+
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -88,19 +102,6 @@ static void Vale_AdjustVillagerPriorityForLeaderHeight(void);
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor);
 static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor);
 static void Vale_CycleActorPalette(struct FieldActor *actor);
-
-// Vale's plaza and the paths around it in daytime: the game opens here three
-// years after the storm with Isaac mending his roof (entrances 16 and 17), and
-// the villagers talk of the story before the party leaves, after it has left
-// and after its return from Kalay.
-//
-// FLAG_SCENE_TEMP_02: the roof has just been mended. FLAG_SCENE_TEMP_04: Isaac
-// is in the northern passage. FLAG_SCENE_TEMP_10: the upper path's cells are
-// in place. FLAG_SCENE_TEMP_41: the villager watching Isaac is paused.
-// Group flags 0x303 and 0x304: Garet has talked with his sister and with the
-// villager he asks to protect his family. 0x305: set by an unused scene. 0x307:
-// a villager asked about the lack of travelers. 0x308: the roof-mending end has
-// played. 0x314 to 0x316: the movable object's column.
 
 enum HouseActor { ACTOR_BOARD = 23, ACTOR_LAST_BOARD = 24 };
 

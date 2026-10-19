@@ -1,3 +1,6 @@
+/// @file
+/// The houses, shops and inn of Vault while Hammet's rod is missing.
+
 #include "game_state.h"
 #include "flags.h"
 #include "animspr.h"
@@ -44,8 +47,7 @@
 #define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(464)
 #endif
 
-/// The houses, shops and inn of Vault while Hammet's rod is missing. The
-/// townspeople are named by what they say.
+/// The townspeople, named by what they say.
 enum {
   ACTOR_GEM_OWNER = 8, ///< a sparkling rock was blown here from the volcano
   ACTOR_GEM_OWNERS_WIFE = 9,

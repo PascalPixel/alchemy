@@ -1,3 +1,12 @@
+/// @file
+/// Lamakan Desert, four maps of sand between Altin and the world map east.
+///
+/// Walking fills a heat gauge (gGameState.hazardSteps of hazardLimit), drawn as
+/// a bar at the top of the screen; each quarter it fills makes a party member
+/// complain, and a full gauge leaves the leader collapsed at the nearest
+/// recovery point. Reveal uncovers the hidden pits, the shimmering heat haze
+/// hides them again, and a pit drags the leader into a battle.
+
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/lamakan_desert.h"
@@ -42,14 +51,6 @@
 #include "songs.h"
 #include "flags.h"
 #include "item_ids.h"
-
-// Lamakan Desert, four maps of sand between Altin and the world map east.
-//
-// Walking fills a heat gauge (gGameState.hazardSteps of hazardLimit),
-// drawn as a bar at the top of the screen; each quarter it fills makes a
-// party member complain, and a full gauge leaves the leader collapsed at the
-// nearest recovery point. Reveal uncovers the hidden pits, the shimmering
-// heat haze hides them again, and a pit drags the leader into a battle.
 
 static void HeatGauge_SetHeld(u16 held);
 

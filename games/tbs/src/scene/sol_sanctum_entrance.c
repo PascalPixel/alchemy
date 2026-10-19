@@ -1,3 +1,8 @@
+/// @file
+/// Sol Sanctum's entrance, in two maps: the door, the two minotaur reliefs that
+/// open passages once the Small Jewels are set in them, and the rooms of
+/// movable blocks.
+
 #include "game_state.h"
 #include "unit/field/field.h"
 #include "unit/import.h"

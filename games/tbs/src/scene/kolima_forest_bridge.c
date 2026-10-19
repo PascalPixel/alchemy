@@ -1,3 +1,13 @@
+/// @file
+/// Kolima Forest's bridge, where the road from the world map enters the forest.
+/// Of its three logs, the one pushed west to the bank tips into the river and
+/// bridges it. Arriving from the world map before the party has seen the curse
+/// in Kolima, they see it fall here: sparkles of Tret's glamour rain down,
+/// domes of their own Psynergy shield them, and Tret and Laurel, unseen, speak
+/// of the dying forest.
+///
+/// FLAG_SCENE_TEMP_00: the log is in the river.
+
 #include "script.h"
 #include "flags.h"
 #include "character_ids.h"
@@ -30,15 +40,6 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "fixed_math.h"
-
-// Kolima Forest's bridge, where the road from the world map enters the
-// forest. Of its three logs, the one pushed west to the bank tips into the
-// river and bridges it. Arriving from the world map before the party has
-// seen the curse in Kolima, they see it fall here: sparkles of Tret's
-// glamour rain down, domes of their own Psynergy shield them, and Tret and
-// Laurel, unseen, speak of the dying forest.
-//
-// FLAG_SCENE_TEMP_00: the log is in the river.
 
 enum { ENTRANCE_FROM_WORLD_MAP = 4 };
 

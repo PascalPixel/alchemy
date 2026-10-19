@@ -1,3 +1,7 @@
+/// @file
+/// Inside Tret, the great tree: cracked floors that give way under the leader
+/// on the second step, and Tret's face, which attacks the party.
+
 #include "battle_effect_runtime.h"
 #include "version.h"
 #include "game_state.h"

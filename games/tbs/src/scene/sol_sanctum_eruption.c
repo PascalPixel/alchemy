@@ -1,3 +1,7 @@
+/// @file
+/// Sol Sanctum collapsing as the volcano erupts: Saturos and his group take
+/// Jenna and Kraden away, and the Wise One rescues Isaac and Garet.
+
 #include "script.h"
 #include "game_state.h"
 #include "unit/scene/sol_sanctum_eruption.h"

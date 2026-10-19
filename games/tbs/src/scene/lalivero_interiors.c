@@ -1,3 +1,9 @@
+/// @file
+/// Lalivero's buildings, on two maps. The first holds the shops, the sanctum
+/// and the houses along the streets; the second holds Faran's house and the
+/// inn, where the party reports to Faran after Venus Lighthouse and Iodem asks
+/// them to meet him outside.
+
 #include "script.h"
 #include "game_state.h"
 #include "scene_ids.h"
@@ -26,11 +32,6 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
-// Lalivero's buildings, on two maps. The first holds the shops, the
-// sanctum and the houses along the streets; the second holds Faran's house
-// and the inn, where the party reports to Faran after Venus Lighthouse and
-// Iodem asks them to meet him outside.
-
 static void TellFaranAboutFelix(void);
 
 enum {

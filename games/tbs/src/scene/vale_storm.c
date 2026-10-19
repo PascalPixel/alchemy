@@ -1,3 +1,7 @@
+/// @file
+/// Vale on the stormy night: the paths and doors the party passes as the storm
+/// rages, with Dora and Kyle on the first arrival.
+
 #include "script.h"
 #include "game_state.h"
 #include "unit/import.h"

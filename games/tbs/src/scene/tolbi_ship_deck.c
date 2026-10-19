@@ -1,13 +1,15 @@
+/// @file
+/// The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
+/// at the Kalay dock while the replacement ship fails to come, setting sail
+/// with the passengers at the oars, the sea monsters and the Kraken, the
+/// arrival at Tolbi, and the stop at anchor off the island. Entrances 10 to 19
+/// chain the voyage's cutscenes, each leaving by an exit that comes back to the
+/// next.
+
 #include "script.h"
 #include "flags.h"
 #include "songs.h"
 #include "version.h"
-// The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
-// at the Kalay dock while the replacement ship fails to come, setting sail with
-// the passengers at the oars, the sea monsters and the Kraken, the arrival at
-// Tolbi, and the stop at anchor off the island. Entrances 10 to 19 chain the
-// voyage's cutscenes, each leaving by an exit that comes back to the next.
-
 #include "game_state.h"
 #include "unit/scene/tolbi_ship_deck.h"
 #include "unit/object/object.h"

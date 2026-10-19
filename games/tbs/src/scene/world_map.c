@@ -1,3 +1,7 @@
+/// @file
+/// The world map: the Djinn met on it, the passages between its regions, the
+/// map markers, and the actors of particular arrivals.
+
 #include "script.h"
 #include "version.h"
 #include "game_state.h"

@@ -1,3 +1,22 @@
+/// @file
+/// Dodonpa's fortress above Lunpa, on four maps. The outer rooms (map 1) and
+/// the guard rooms with Donpa's chamber (map 2) are watched by guards who throw
+/// an uncloaked party out; the column room (map 3) hides its passages behind
+/// Whirlwind, Reveal and a column to Move; in the rescue room (map 4) the party
+/// finds Hammet, Dodonpa springs his trap and Donpa judges his son.
+///
+/// Scene flags: FLAG_SCENE_TEMP_14, a guard has spotted the party and
+/// FLAG_SCENE_TEMP_15 with it; FLAG_SCENE_TEMP_17 and _18, the first and second
+/// switch are still hidden; FLAG_SCENE_TEMP_24, the entrance guard has thrown
+/// the party out; FLAG_SCENE_TEMP_25, the sentries have; FLAG_SCENE_TEMP_26,
+/// the startled resident promised to keep quiet; FLAG_SCENE_TEMP_27, the
+/// resident was already startled; FLAG_SCENE_TEMP_70, Hammet's rescue has
+/// begun.
+///
+/// The flags from 0x300 are reused from place to place: 0x301, Hammet is
+/// rescued; 0x313, the attendant has told Donpa's story; 0x314, Donpa has shown
+/// his reward; 0x350 to 0x35c, the cell doors the Cell Key opened.
+
 #include "game_state.h"
 #include "field_event.h"
 #include "unit/import.h"
@@ -29,23 +48,6 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
-
-// Dodonpa's fortress above Lunpa, on four maps. The outer rooms (map 1) and
-// the guard rooms with Donpa's chamber (map 2) are watched by guards who
-// throw an uncloaked party out; the column room (map 3) hides its passages
-// behind Whirlwind, Reveal and a column to Move; in the rescue room (map 4)
-// the party finds Hammet, Dodonpa springs his trap and Donpa judges his son.
-//
-// Scene flags: FLAG_SCENE_TEMP_14, a guard has spotted the party and
-// FLAG_SCENE_TEMP_15 with it; FLAG_SCENE_TEMP_17 and _18, the first and second
-// switch are still hidden; FLAG_SCENE_TEMP_24, the entrance guard has thrown
-// the party out; FLAG_SCENE_TEMP_25, the sentries have; FLAG_SCENE_TEMP_26,
-// the startled resident promised to keep quiet; FLAG_SCENE_TEMP_27, the
-// resident was already startled; FLAG_SCENE_TEMP_70, Hammet's rescue has begun.
-//
-// The flags from 0x300 are reused from place to place: 0x301, Hammet is
-// rescued; 0x313, the attendant has told Donpa's story; 0x314, Donpa has
-// shown his reward; 0x350 to 0x35c, the cell doors the Cell Key opened.
 
 /// The outer rooms (map 1).
 enum {

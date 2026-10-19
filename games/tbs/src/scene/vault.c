@@ -1,3 +1,7 @@
+/// @file
+/// Vault after the eruption, while Hammet's Shaman's Rod is missing and after
+/// the party has jailed the thieves.
+
 #include "game_state.h"
 #include "animspr.h"
 #include "window.h"
@@ -40,9 +44,7 @@
 
 enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
 
-/// Vault after the eruption, while Hammet's Shaman's Rod is missing and after
-/// the party has jailed the thieves. The townspeople are named by what they
-/// say.
+/// The townspeople, named by what they say.
 enum {
   ACTOR_GREETER = 8, ///< greets the party. "Welcome to Vault"
   /// Asks about the eruption. "Wasn't the eruption of Mt. Aleph incredible?"

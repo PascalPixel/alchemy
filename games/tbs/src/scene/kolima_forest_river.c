@@ -1,3 +1,10 @@
+/// @file
+/// Kolima Forest's river, between the clearing and the bend. Of its three logs,
+/// the one pushed west to the bank tips into the river and floats there, a
+/// bridge to the far side.
+///
+/// FLAG_SCENE_TEMP_01: the log is in the river.
+
 #include "battle_effect_runtime.h"
 #include "flags.h"
 #include "global_cells.h"
@@ -26,12 +33,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "songs.h"
-
-// Kolima Forest's river, between the clearing and the bend. Of its three
-// logs, the one pushed west to the bank tips into the river and floats
-// there, a bridge to the far side.
-//
-// FLAG_SCENE_TEMP_01: the log is in the river.
 
 /// Actors 8 to 10 are the logs; 10 is the one that can reach the river.
 enum { RIVER_LOG = 10 };

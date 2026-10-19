@@ -1,3 +1,7 @@
+/// @file
+/// Xian's houses, shops and inn, and the room behind Master Feh's school, where
+/// Master Feh, Feizhi and Hsu wait once Hsu is back.
+
 #include "game_state.h"
 #include "unit/scene/xian_interiors.h"
 #include "unit/scene/common/effect_spawn.h"

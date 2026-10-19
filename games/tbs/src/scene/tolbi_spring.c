@@ -1,3 +1,8 @@
+/// @file
+/// Tolbi's spring and the game rooms beside it: Lucky Medals or coins tossed
+/// into the spring win prizes, and the attendants run Lucky Dice and Lucky
+/// Wheels.
+
 #include "keystate.h"
 #include "unit/scene/tolbi_spring.h"
 #include "unit/object/object.h"

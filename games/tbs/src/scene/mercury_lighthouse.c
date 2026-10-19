@@ -1,3 +1,10 @@
+/// @file
+/// Mercury Lighthouse, in four maps. The fourth is the lighthouse's foot, with
+/// the Hermes fountain, the lift and the door Mia opens; the others are floors
+/// inside, entered from the entrance hall (mercury_lighthouse_entrance.c).
+/// Sprite 0xe0 is a statue: Mia says "This statue wasn't here before" of the
+/// one blocking her on the first.
+
 #include "script.h"
 #include "game_state.h"
 #include "heap_state.h"
@@ -86,12 +93,6 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void);
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 
 #define NULL ((void *)0)
-
-// The overlay's four maps. The fourth is the lighthouse's foot, with the
-// Hermes fountain, the lift and the door Mia opens; the others are floors
-// inside, entered from the entrance hall (mercury_lighthouse_entrance.c).
-// Sprite 0xe0 is a statue: Mia says "This statue wasn't here before" of the
-// one blocking her on the first.
 
 /// The first map: Mia, the statue that blocks her and the channel blocks.
 enum MercuryLighthouse1Actor {

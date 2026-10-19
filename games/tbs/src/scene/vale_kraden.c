@@ -1,3 +1,7 @@
+/// @file
+/// The north of Vale around Kraden's cottage: the fence above the village, the
+/// path down to the plaza, and the cottage's gate.
+
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/vale_kraden.h"
@@ -27,9 +31,6 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "songs.h"
-
-// The north of Vale around Kraden's cottage: the fence above the village, the
-// path down to the plaza, and the cottage's gate.
 
 // FLAG_SCENE_TEMP_42: the cottage's gate stands open since Kraden went in.
 

@@ -1,3 +1,11 @@
+/// @file
+/// Lalivero, the desert town below Babi Lighthouse.
+///
+/// Two visits share this scene. On the first, the party and Iodem find Tolbi's
+/// soldiers beaten by Saturos's group, who took Sheba to the ruins under the
+/// lighthouse. After Venus Lighthouse, the party comes back through the aerie's
+/// exit and Iodem gives them the Black Orb that sails Babi's ship.
+
 #include "game_state.h"
 #include "unit/scene/lalivero.h"
 #include "unit/object/object.h"
@@ -22,13 +30,6 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
-
-// Lalivero, the desert town below Babi Lighthouse.
-//
-// Two visits share this scene. On the first, the party and Iodem find
-// Tolbi's soldiers beaten by Saturos's group, who took Sheba to the ruins
-// under the lighthouse. After Venus Lighthouse, the party comes back through
-// the aerie's exit and Iodem gives them the Black Orb that sails Babi's ship.
 
 static void TalkToIodemAboutTheShip(void);
 

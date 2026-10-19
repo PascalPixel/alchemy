@@ -1,3 +1,7 @@
+/// @file
+/// West Lunpa Cave: a gate puzzle of switches and puddles that Frost freezes
+/// into pillars, and Bunza, whose wagon carries the party out of Lunpa.
+
 #include "game_state.h"
 #include "scene_ids.h"
 #include "field_event.h"

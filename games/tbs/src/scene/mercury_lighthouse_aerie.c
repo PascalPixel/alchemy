@@ -1,3 +1,8 @@
+/// @file
+/// Mercury Lighthouse's aerie: the platforms the leader jumps between, the
+/// party's arrival and the confrontation with Saturos and Menardi, the battle
+/// with Saturos, and Alex's scene after it.
+
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"

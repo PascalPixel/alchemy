@@ -1,3 +1,7 @@
+/// @file
+/// A sanctum: Vale's, where the Great Healer asks Isaac to go to Sol Sanctum
+/// and a refusal ends the game, or another town's, with its healer.
+
 #include "battle_effect_runtime.h"
 #include "flags.h"
 #include "game_state.h"

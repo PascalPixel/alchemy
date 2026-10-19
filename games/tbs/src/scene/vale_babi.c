@@ -1,3 +1,11 @@
+/// @file
+/// The south-west of Vale around Isaac's house, through the stormy night, the
+/// party's departure and its return; entrance 19 is instead a room of Babi's
+/// scholars, and entrance 22 shows the Mythril Bag.
+///
+/// FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit. Group flag
+/// 0x300: the innkeeper welcomed Isaac back. Group flag 0x301: a neighbour
+/// remarked how much Isaac has grown.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -54,14 +62,6 @@ static void ValeBabi_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
-
-// The south-west of Vale around Isaac's house, through the stormy night, the
-// party's departure and its return; entrance 19 is instead a room of Babi's
-// scholars, and entrance 22 shows the Mythril Bag.
-//
-// FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
-// Group flag 0x300: the innkeeper welcomed Isaac back. Group flag 0x301: a
-// neighbour remarked how much Isaac has grown.
 
 enum ValeBabiActor {
   /// Dora. "Isaac, Dora, hurry! The Boulder could fall at any second!"

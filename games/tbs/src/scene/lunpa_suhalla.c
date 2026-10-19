@@ -1,3 +1,8 @@
+/// @file
+/// The buildings of Lunpa, and the house by the gate to Suhalla: homes, the
+/// weapon, armor and item shops, the inn and the temple. The shops and the inn
+/// only trade once Lunpa has reopened.
+
 #include "game_state.h"
 #include "field_event.h"
 #include "unit/scene/lunpa_suhalla.h"
@@ -6,10 +11,6 @@
 #include "lunpa_suhalla.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
-
-// The buildings of Lunpa, and the house by the gate to Suhalla: homes,
-// the weapon, armor and item shops, the inn and the temple. The shops and
-// the inn only trade once Lunpa has reopened.
 
 static void Event_TalkToInnkeeper(void);
 static void Event_TalkToChef(void);

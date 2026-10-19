@@ -1,13 +1,14 @@
+/// @file
+/// Below the decks of the ship across the Karagol Sea: the captain's cabin, the
+/// passengers' hold and the rowing deck. After each monster attack the party
+/// chooses which passenger rows at the empty seat; the attacks fought off
+/// number the seat being filled, and each seat has a group of flags, one for
+/// each passenger.
+
 #include "script.h"
 #include "flags.h"
 #include "songs.h"
 #include "macros.h"
-// Below the decks of the ship across the Karagol Sea: the captain's cabin,
-// the passengers' hold and the rowing deck. After each monster attack the
-// party chooses which passenger rows at the empty seat; the attacks fought off
-// number the seat being filled, and each seat has a group of flags, one for
-// each passenger.
-
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/tolbi_ship_interiors.h"

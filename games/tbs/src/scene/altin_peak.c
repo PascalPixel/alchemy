@@ -1,11 +1,12 @@
+/// @file
+/// Altin Mine, the eleven rooms under Altin where the hydros statues flood the
+/// village. The party rides rolling logs, freezes puddles into pillars with
+/// Frost, fights the water beasts, lowers the water three times and finds the
+/// ancient ruins at the bottom.
+
 #include "script.h"
 #include "version.h"
 #include "macros.h"
-// Altin Mine, the eleven rooms under Altin where the hydros statues flood
-// the village. The party rides rolling logs, freezes puddles into pillars
-// with Frost, fights the water beasts, lowers the water three times and
-// finds the ancient ruins at the bottom.
-
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"

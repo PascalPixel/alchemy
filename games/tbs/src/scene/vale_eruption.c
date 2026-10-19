@@ -1,3 +1,7 @@
+/// @file
+/// Vale's square during the eruption, where the villagers wait for Isaac and
+/// Garet to come down the mountain. The erupting mountain is Mt. Aleph.
+
 #include "game_state.h"
 #include "unit/scene/vale_eruption.h"
 #include "unit/object/object.h"
@@ -19,9 +23,6 @@
 #include "flags.h"
 #include "songs.h"
 #include "fixed_math.h"
-
-// Vale's square under the erupting Mt. Aleph, where the villagers wait for
-// Isaac and Garet to come down the mountain.
 
 enum ValeEruptionActor {
   /// Garet's grandfather. "Oooh, my grandson! Will Garet be safe in this

@@ -1,3 +1,9 @@
+/// @file
+/// Kalay, in six maps: the town, the palace gate, the cave by the palace's
+/// secret passage, two more maps and the tunnel with the two blocks. Leaving
+/// town after hearing of the Colosso tour, the party watches the tour group
+/// stop and set off without its missing man.
+
 #include "game_state.h"
 #include "unit/field/field.h"
 #include "engine_call.h"

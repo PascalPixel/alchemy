@@ -1,3 +1,8 @@
+/// @file
+/// Kolima Forest's clearing before Tret, the great tree, and Laurel: once
+/// Tret's hostile heart is defeated, Hermes' Water heals him and lifts Kolima's
+/// curse.
+
 #include "battle_effect_runtime.h"
 #include "game_state.h"
 #include "unit/scene/kolima_forest_tree.h"

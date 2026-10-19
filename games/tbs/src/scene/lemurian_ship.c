@@ -1,3 +1,11 @@
+/// @file
+/// The Lemurian ship's hidden harbor at Lalivero, and the end of the game.
+///
+/// The leader steps up with the Black Orb: it glows, spray rises and the
+/// ancient ship comes up out of the water. The party boards, talks over the
+/// journey so far and sails; curtains close and the game goes to the clear
+/// screen.
+
 #include "script.h"
 #include "version.h"
 #include "game_state.h"
@@ -50,13 +58,6 @@
 #else
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 80
 #endif
-
-// The Lemurian ship's hidden harbor at Lalivero, and the end of the game.
-//
-// The leader steps up with the Black Orb: it glows, spray rises and the
-// ancient ship comes up out of the water. The party boards, talks over the
-// journey so far and sails; curtains close and the game goes to the clear
-// screen.
 
 static void Ripple_Stop(void);
 static void Curtain_Start(void);

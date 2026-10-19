@@ -1,3 +1,8 @@
+/// @file
+/// Kolima, whose villagers the forest's curse has turned into trees, in three
+/// maps: the village, an interior and the bridge. On the first visit the party
+/// sees the curse fall and the bridge collapse.
+
 #include "script.h"
 #include "flags.h"
 #include "character_ids.h"

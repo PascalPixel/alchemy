@@ -1,3 +1,7 @@
+/// @file
+/// Sol Sanctum's hall of the Luna and Sol rooms: the rooms take on the tint of
+/// the seals' lights, and Kraden studies the symbols on the floor.
+
 #include "game_state.h"
 #include "unit/scene/sol_sanctum_luna_sol_rooms.h"
 #include "unit/object/object.h"

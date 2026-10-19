@@ -1,3 +1,8 @@
+/// @file
+/// Imil, in two maps: the town and its interiors. The townspeople are sick
+/// until the epidemic is cured (flag 0x881); Mia heals the old man, and the
+/// cold villager waits for her.
+
 #include "script.h"
 #include "animspr.h"
 #include "version.h"

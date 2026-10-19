@@ -18,20 +18,19 @@
 #include "field_scene.h"
 #include "item_ids.h"
 #include "songs.h"
+#include "flags.h"
 
-// Suhalla, the town at the edge of the Suhalla Desert.
+// Suhalla, the town at the edge of the Suhalla Desert. Once Babi's audience
+// after Colosso has been held, its people stand and talk differently: the
+// sandstorms have brought Tolbi's soldiers to the town.
 
-enum {
-  FLAG_PROP_GROWN = 0x201,
-  // Set on arriving by entrance 90; the townsfolk then stand and talk
-  // differently.
-  FLAG_SUHALLA_LATER = 0x96f
-};
+// FLAG_SCENE_TEMP_01: Growth has made the sprout grow.
 
+// Arriving by this entrance also marks Babi's audience as held.
 enum { ENTRANCE_90 = 90 };
 
-// Sprite 0xee at 72, 144, which ability 12 moves aside.
-enum { PROP = 16 };
+// The sprout at 72, 144, the last of the placements.
+enum { SPROUT = 16 };
 
 // Where the party can enter Suhalla.
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -44,16 +43,16 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 // Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
-// The townsfolk, earlier or later.
+// The townsfolk, who stand elsewhere after Babi's audience.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_SUHALLA_LATER) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
     return gSuhallaPlacementsLater;
   }
   return gSuhallaPlacements;
 }
 
-// A villager asks whether the party is going to Lalivero.
-static void AskIfGoingToLalivero(s32 actorId) {
+// A villager asks "Are you trying to get to Lalivero?" and answers yes or no.
+static void Event_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Engine_EventSetMessage(firstMessage);
   Engine_EventOpenMessage(actorId, 0);
@@ -66,8 +65,9 @@ static void AskIfGoingToLalivero(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-// A villager asks whether the sandstorm brought the party to Suhalla.
-static void AskIfBroughtBySandstorm(s32 actorId) {
+// After Babi's audience a villager asks whether the sandstorm brought the
+// party to Suhalla, and answers yes or no.
+static void Event_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Engine_EventSetMessage(firstMessage);
   Engine_EventOpenMessage(actorId, 0);
@@ -80,16 +80,16 @@ static void AskIfBroughtBySandstorm(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-// The prop's cell takes the open cell's attributes after it is moved.
-static void Suhalla_OpenGrownPropCell(void) {
-
+// Growth on the sprout: the plant grows, and its map cell takes the
+// attributes of the grown plant's cell.
+static void Event_GrowSprout(void) {
   Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
-  Engine_GameFlagSet(FLAG_PROP_GROWN);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
 }
 
-// The leader walks into a doorway: the door opens and the touched exit is
-// taken.
-static void EnterDoor(void) {
+// The leader walks north into a doorway: the door opens, the leader steps
+// through and the party leaves by that exit.
+static void Event_EnterDoor(void) {
   struct EventWork *work = gEventWork;
   s32 exitTrigger = work->touchedTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
@@ -104,7 +104,7 @@ static void EnterDoor(void) {
 }
 
 // The same through the wide door of trigger 2.
-static void EnterWideDoor(void) {
+static void Event_EnterWideDoor(void) {
   struct EventWork *work = gEventWork;
   s32 exitTrigger = work->touchedTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
@@ -117,30 +117,31 @@ static void EnterWideDoor(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-// The doors, the townsfolk and the prop, earlier or later.
+// The doors, the townsfolk, the treasure and the sprout, before or after
+// Babi's audience.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_SUHALLA_LATER) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
   }
   return gSuhallaEvents;
 }
 
-// Sets Suhalla up as the party enters, with the prop where it was moved.
+// Sets Suhalla up as the party enters, with the sprout grown if Growth was
+// used on it.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   if (gGameState.entrance == ENTRANCE_90) {
-    Engine_GameFlagSet(FLAG_SUHALLA_LATER);
+    Engine_GameFlagSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO);
   }
 
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 
-  // Match the persistent prop state to its collision cell and animation.
-  if (Engine_GameFlagIsSet(FLAG_PROP_GROWN) != 0) {
-    Suhalla_OpenGrownPropCell();
-    Engine_ActorSetAnimation(PROP, 4);
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
+    Event_GrowSprout();
+    Engine_ActorSetAnimation(SPROUT, 4);
   }
   return 0;
 }
@@ -223,16 +224,16 @@ u16 gSuhallaWideDoorOpenSteps[] = {
 };
 
 struct SceneEvent gSuhallaEvents[] = {
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EnterWideDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWideDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(AskIfGoingToLalivero) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIfGoingToLalivero) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
@@ -248,16 +249,16 @@ struct SceneEvent gSuhallaEvents[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
     { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), PROP, FLAG_PROP_GROWN, EVENT_SCRIPT(Suhalla_OpenGrownPropCell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), SPROUT, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_GrowSprout) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gSuhallaEventsLater[] = {
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EnterWideDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWideDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
@@ -266,7 +267,7 @@ struct SceneEvent gSuhallaEventsLater[] = {
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(AskIfBroughtBySandstorm) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIfBroughtBySandstorm) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
@@ -280,7 +281,7 @@ struct SceneEvent gSuhallaEventsLater[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
     { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), PROP, FLAG_PROP_GROWN, EVENT_SCRIPT(Suhalla_OpenGrownPropCell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), SPROUT, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_GrowSprout) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

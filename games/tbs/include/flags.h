@@ -70,6 +70,25 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Vale
+// The prologue's stormy night: lightning over Vale, the rockslide and the
+// monsters loose in the village.
+#define FLAG_VALE_STORM 0x834
+// Set whenever Kalay is entered; Vale's villagers then talk of the party's
+// journey.
+#define FLAG_REACHED_KALAY 0x87a
+
+// Vale, Kraden's cottage
+#define FLAG_OVERHEARD_KRADEN 0x800 // Kraden wondered aloud about the strangers
+// The man hurt in the rockslide believes he will die.
+#define FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP 0x82f
+// He found he was unhurt and ran to the plaza.
+#define FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED 0x839
+#define FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT 0x87d
+#define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
+// A monster was fought on the stormy night: Vale's music changes (song 23).
+#define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
+
 // Vale during the eruption
 // Isaac and Garet came down Mt. Aleph and followed the elders into the sanctum.
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
@@ -98,6 +117,7 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_42 0x242 // Vale: Kraden's gate stands open
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 

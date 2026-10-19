@@ -17,8 +17,8 @@ extern struct SceneEntrance gValeKraden_Entrances[];
 extern u32 gValeKraden_Exits[];
 extern struct ScenePlacement gValeKraden_Placements[];
 extern struct SceneEvent gValeKraden_Events[];
-extern struct SceneEvent gValeKraden_Events834[];
-extern struct SceneEvent gValeKraden_Events87a[];
+extern struct SceneEvent gValeKraden_StormEvents[];
+extern struct SceneEvent gValeKraden_EventsAfterKalay[];
 extern u16 gValeKraden_GateCells[];
 
 #endif

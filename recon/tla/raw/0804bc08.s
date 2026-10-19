@@ -1873,7 +1873,7 @@ Func_0804bc08:
 	ldr r2, [sp, #72]
 	str r4, [sp, #4]
 	ldrh r0, [r2, r6]
-	bl Resource_LoadKind26EntryToBuffer
+	bl ItemIcon_LoadIntoSlot
 	ldr r3, .L_0804cb44
 	ldrh r2, [r5, #8]
 	ands r0, r3

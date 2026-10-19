@@ -306,7 +306,7 @@ Func_08049a30:
 	adds r7, #1
 	adds r2, r3, #0
 	str r2, [sp, #4]
-	bl Resource_LoadKind26EntryToBuffer
+	bl ItemIcon_LoadIntoSlot
 	ldr r3, .L_08049ccc
 	ldr r1, [sp, #12]
 	mov r2, r10

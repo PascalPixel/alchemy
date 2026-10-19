@@ -1468,7 +1468,7 @@ Func_08046b08:
 	lsls r3, r4, #2
 	ldr r1, [r2, r3]
 	adds r0, r5, #0
-	bl Resource_LoadKind26EntryToBuffer
+	bl ItemIcon_LoadIntoSlot
 	ldr r3, .L_0804768c
 	ldr r2, .L_08047690
 	ands r0, r3

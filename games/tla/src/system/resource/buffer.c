@@ -63,7 +63,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index) {
+s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   u8 *work;
 

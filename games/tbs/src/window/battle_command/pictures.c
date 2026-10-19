@@ -307,7 +307,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
 
 // Compose the item icon with style 0x1a in temporary transfer work and reload
 // the requested cache slot. Return its tile index.
-s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index) {
+s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 

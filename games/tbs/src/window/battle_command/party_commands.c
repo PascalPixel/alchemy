@@ -641,8 +641,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        iconSprite->oam.f.tile = Resource_LoadKind26EntryToBuffer(
-            unit->inventory[selection], handle);
+        iconSprite->oam.f.tile =
+            ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->entryActive[1] = 1;
         UiText_DrawCharacterAtOffset((unit->inventory[selection] & 0x1ff) +
                                          MsgItemName,

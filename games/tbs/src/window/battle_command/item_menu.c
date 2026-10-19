@@ -139,8 +139,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
           UiText_DrawCharacterAtOffset((item & ITEM_ID_MASK) + MsgItemName,
                                        window, 16, i * 16);
           UiWork_SetParamNibble(15);
-          sprites[i].oam.f.tile =
-              Resource_LoadKind26EntryToBuffer(item, iconSlots[i]);
+          sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;

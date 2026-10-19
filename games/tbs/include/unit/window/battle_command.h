@@ -124,7 +124,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 void Link_DrawShiftedTilePair(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
-s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index);
+s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot);
 s32 Ui_GetTableWordZero(s32 no);

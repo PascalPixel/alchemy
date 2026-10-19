@@ -1447,12 +1447,12 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
   Engine_GameFlagSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN);
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_LEFT);
-  Engine_GameFlagSet(0x806);
-  Engine_GameFlagSet(0x807);
+  Engine_GameFlagSet(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
+  Engine_GameFlagSet(FLAG_VALE_ANGRY_VILLAGER_ARGUED);
   Engine_GameFlagSet(FLAG_MET_SATUROS_AND_MENARDI);
   Engine_GameFlagSet(FLAG_OVERHEARD_KRADEN);
   Engine_GameFlagSet(FLAG_SANCTUM_VISIT_PLANNED);
-  Engine_GameFlagSet(0x823);
+  Engine_GameFlagSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_ENTERED);
   Engine_GameFlagSet(0xf01);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED);

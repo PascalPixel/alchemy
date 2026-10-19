@@ -4,12 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
-s32 MapStagedScene_SelectPrimaryData(void);
-s32 MapStagedScene_GetEmptyData(void);
-s32 MapStagedScene_SelectSecondaryData(void);
-s32 MapStagedScene_SelectTertiaryData(void);
-s32 MapStagedScene_SelectQuaternaryData(void);
-s32 Vale_ApplyEntryState(void);
+struct SceneEntrance *Vale_GetEntrances(void);
+struct SceneRegion *Vale_GetRegions(void);
+u32 *Vale_GetExits(void);
+struct ScenePlacement *Vale_GetPlacements(void);
+struct SceneEvent *Vale_GetEvents(void);
+s32 Vale_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
@@ -18,14 +18,14 @@ extern s32 gLeaderHammerAction[];
 extern s32 gGaretAction[];
 extern s32 gVillagerAction[];
 extern s32 gDustBurstScript[];
-extern struct SceneEntrance gValeEntrances[];
-extern u32 gValeExits[];
-extern struct ScenePlacement gValePlacements[];
-extern struct ScenePlacement gValePlacements2[];
-extern struct ScenePlacement gValePlacements3[];
-extern struct ScenePlacement gValePlacements4[];
-extern struct SceneEvent gValeEvents[];
-extern struct SceneEvent gValeEvents2[];
+extern struct SceneEntrance gVale_Entrances[];
+extern u32 gVale_Exits[];
+extern struct ScenePlacement gVale_Placements[];
+extern struct ScenePlacement gVale_PlacementsAfterLeaving[];
+extern struct ScenePlacement gVale_PlacementsAfterKalay[];
+extern struct ScenePlacement gVale_RepairPlacements[];
+extern struct SceneEvent gVale_Events[];
+extern struct SceneEvent gVale_EventsAfterLeaving[];
 extern u16 gValeCellAnimC[];
 extern u16 gValeCellAnimA[];
 extern u16 gValeCellAnimB[];

@@ -89,6 +89,18 @@
 // A monster was fought on the stormy night: Vale's music changes (song 23).
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 
+// Vale, the plaza
+// "Do you need to go past here? You must be going to Kraden's cottage..."
+#define FLAG_VALE_ASKED_IF_GOING_TO_KRADEN 0x806
+// A villager's first outburst at Garet ("Garet, you make me so mad
+// sometimes!").
+#define FLAG_VALE_ANGRY_VILLAGER_ARGUED 0x807
+// Back from Kalay, a villager asked whether Jenna is back yet.
+#define FLAG_VALE_ASKED_IF_JENNA_IS_BACK 0x81f
+// A villager stopped Isaac: "You're not planning on sneaking up to Mt.
+// Aleph..."
+#define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
+
 // Vale on the stormy night, the paths outside
 // The four rocks that fall across the paths (actors 11 to 14).
 #define FLAG_VALE_STORM_FIRST_ROCK_FELL 0x830
@@ -162,6 +174,7 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_41 0x241 // Vale: the plaza's watching villager paused
 #define FLAG_SCENE_TEMP_42 0x242 // Vale: Kraden's gate stands open
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone

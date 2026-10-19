@@ -18,7 +18,7 @@ enum { ITEM_NUT = 181 };
 
 enum { ACTOR_DORA = 21 };
 
-extern struct SceneEvent gValeEvents3[];
+extern struct SceneEvent gVale_EventsAfterKalay[];
 extern s32 gJennaAction[];
 
 #include "global_cells.h"

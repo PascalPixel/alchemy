@@ -39,7 +39,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x02009528)
         "*/resource_691_overlay.o"(.text.x020095e4)
         "*/resource_691_overlay.o"(.text.x02009738)
-        "*/resource_691_overlay.o"(.text.x020099e8)
+        "*/games/tla/src/scene/magma_rock/s19e8.o"(.text)
         "*/resource_691_overlay.o"(.text.x02009a38)
         "*/games/tla/src/scene/magma_rock/switch.o"(.text)
         "*/games/tla/src/scene/magma_rock/calls.o"(.text)

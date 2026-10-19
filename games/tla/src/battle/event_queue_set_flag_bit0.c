@@ -39,7 +39,7 @@ struct BattleEventFlagWork {
   u32 flags;
 };
 
-void Battle_SetRuntimeFlagBit0(struct BattleEventFlagWork *runtime,
+void BattleEv_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
                                u32 operand) {
   runtime->flags |= 1;
 }

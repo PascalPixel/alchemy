@@ -98,8 +98,8 @@ void BattleEvent_Playback(void) {
             AudioCommand_PlayFar(events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_DJINN_BONUS:
-            Battle_SetRuntimeFlagBit0(events,
-                                      events->queue.operands[eventIndex]);
+            BattleEv_GrantDjinnBonus(events,
+                                     events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_UNIT_NAME: // Name inserted into the message.
             UiWork_PushValueSlotFar(events->queue.operands[eventIndex],

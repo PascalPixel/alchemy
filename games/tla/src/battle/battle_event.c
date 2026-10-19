@@ -6,7 +6,7 @@ struct BattleDisplayFlags {
   s32 marked;
 };
 
-void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand);
+void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 s32 BattleActor_DestroyTemporaryObject(s32 unitId);
 void UiText_DrawQuantity(s32 value, s32 kind);
 void UiText_ShowMessageAndWaitCoreFar(u32 message);
@@ -44,7 +44,7 @@ u32 BattleEv_DispatchQueued(void) {
     if (opcode <= 15)
       switch (opcode) {
       case BATTLE_EVENT_DJINN_BONUS:
-        Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]);
+        BattleEv_GrantDjinnBonus(runtime, queue->operands[i]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
         BattleActor_DestroyTemporaryObject(queue->operands[i]);

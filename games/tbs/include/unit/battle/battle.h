@@ -173,7 +173,7 @@ s32 BattlePresentation_WaitForAdvance(void);
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y);
 void BattleEv_MarkDisplay(void);
 s32 BattleActor_DestroyTemporaryObject(s32 unitId);
-void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand);
+void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 u32 BattleEv_DispatchQueued(void);
 u32 BattleEvPush(u32 opcode, u32 operand);
 s32 BattleEffectDeadCheck(s32 effect);

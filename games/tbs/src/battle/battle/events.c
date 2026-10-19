@@ -168,7 +168,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 unitId) {
 
 // The BATTLE_EVENT_DJINN_BONUS event: grants the Djinn bonus for the rest of
 // the action. Its operand is ignored.
-void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand) {
+void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand) {
   runtime->flags |= EVENT_FLAG_DJINN_BONUS;
 }
 
@@ -185,7 +185,7 @@ u32 BattleEv_DispatchQueued(void) {
     if (opcode <= BATTLE_EVENT_DJINN_BONUS)
       switch (opcode) {
       case BATTLE_EVENT_DJINN_BONUS:
-        Battle_SetRuntimeFlagBit0(runtime, queue->operands[eventIndex]);
+        BattleEv_GrantDjinnBonus(runtime, queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
         BattleActor_DestroyTemporaryObject(queue->operands[eventIndex]);

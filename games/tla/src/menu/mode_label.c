@@ -16,9 +16,10 @@ void UiWindow_ClearInteriorTiles(void *window, s32 x, s32 y, s32 right,
                                  s32 bottom);
 void UiText_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 
-/// ☀️'s function of the same name: when the selected mode changes, it clears
-/// the lower window's label area and writes the mode's lines of text. The Lost
-/// Age's area is 128 wide at x 8, and a mode past 2 draws nothing.
+/// When the selected mode changes, clears the lower window's label area and
+/// writes the mode's lines of text. The area is 128 wide at x 8, and a mode
+/// past 2 draws nothing.
+// ☀️'s function of the same name.
 void Menu_DrawModeLabel(void) {
   struct MenuModeLabelState *state = Ram_HeapSlots->menuSelectWork;
 

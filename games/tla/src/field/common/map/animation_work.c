@@ -21,8 +21,8 @@ void Func_0802386c(void);
 /// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
-/// 0x480, the others Func_0802386c). No ☀️ twin found; ☀️'s field.c
-/// starts its map animations the same way.
+/// 0x480, the others Func_0802386c).
+// No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
 void Func_080230e0(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;

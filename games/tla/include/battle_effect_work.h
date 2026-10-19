@@ -2,9 +2,10 @@
 #define ALCHEMY_BATTLE_EFFECT_WORK_H
 
 /// @file
-/// The Lost Age's copy of the battle effect work: The Broken Seal's block with
-/// the 64 particles in front of the sheet, the two affine scales after the BG2
-/// reference point, 64 object slots and one more word before the effect.
+/// The Lost Age's copy of the battle effect work.
+// The Broken Seal's block with the 64 particles in front of the sheet, the two
+// affine scales after the BG2 reference point, 64 object slots and one more
+// word before the effect.
 
 #include "effect_step.h"
 #include "battle_effect_argument.h"

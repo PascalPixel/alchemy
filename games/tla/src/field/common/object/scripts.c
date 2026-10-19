@@ -245,8 +245,9 @@ const s32 gData_080f3750[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Keep the leader's display layer. The Spanish and Italian scaffolds name
-/// the function by the far-call slot that reaches it in the other editions.
+/// Keep the leader's display layer.
+// The Spanish and Italian scaffolds name the function by the far-call slot
+// that reaches it in the other editions.
 const s32 gData_080f3764[] = {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
     SC_CALL(Func_080da908),

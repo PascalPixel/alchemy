@@ -29,8 +29,8 @@ void Func_08029810(struct FieldActor *object) {
 }
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-/// Spanish and Italian builds use a different name for this far call, as in
-/// objlayer.c.
+// Spanish and Italian builds use a different name for this far call, as in
+// objlayer.c.
 s32 BattleFx_WaitForArcGroupsFar(s32 arg);
 #else
 s32 Func_080c8828(s32 arg);

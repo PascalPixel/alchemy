@@ -19,8 +19,9 @@ s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Loads the battle sprites of a unit into free sprite slots: one slot, or
 /// two neighbouring ones for a wide sprite. A few sprites load a second part
 /// into the next free slots. Returns the first slot in bits 12 and up with
-/// the sprite value below, or 0 when a load fails. The Broken Seal's function
-/// of the same name, keyed by the enemy id, with seven two-part sprites.
+/// the sprite value below, or 0 when a load fails.
+// The Broken Seal's function of the same name, keyed by the enemy id, with
+// seven two-part sprites.
 s32 SummonSlot_RegisterActorSprites(s32 unit) {
   s32 pass;
   struct BattleSpriteSlots *table =

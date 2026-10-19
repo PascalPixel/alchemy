@@ -8,10 +8,11 @@ s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
-/// both the work block's copy and VRAM, as ☀️'s function of the same name. A
-/// NULL buffer draws the decoded text in UiRenderWork.entries. ⚓️ reads the
-/// window's position signed and passes offsetX & 7 where ☀️ passes the VRAM
-/// base. Not in tla-ja, which keeps an older layout.
+/// both the work block's copy and VRAM. A NULL buffer draws the decoded text
+/// in UiRenderWork.entries. The window's position is read signed. Not in
+/// tla-ja, which keeps an older layout.
+// As ☀️'s function of the same name, which passes the VRAM base where this
+// one passes offsetX & 7.
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
                                         const struct UiWindow *work,
                                         s32 offsetX, s32 offsetY) {

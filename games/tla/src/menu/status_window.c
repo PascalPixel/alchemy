@@ -24,8 +24,9 @@ void Func_080ff370(s32, s32, s32); ///< draws the status ailments
 
 /// Creates the status window and its side object the first time, spawns the
 /// icon entries in mode 3, then draws the status ailments (with 0x100 when the
-/// window was just made). ☀️'s version also creates eight entry objects; ⚓️'s
-/// does not. The work block is ⚓️'s (window 0x28, object 0x170, mode 0x21c).
+/// window was just made). The work block holds the window at 0x28, the object
+/// at 0x170 and the mode at 0x21c.
+// ☀️'s version also creates eight entry objects.
 void Menu_CreateWindowAndEntryObjects(s32 resource) {
   s32 created;
   s32 handle;

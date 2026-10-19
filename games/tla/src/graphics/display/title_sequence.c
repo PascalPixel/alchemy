@@ -106,12 +106,13 @@ void Fade_FromWhite(s32 frames);
 void Fade_Wait(void);
 void Func_080140d8(void *entry, s32 slot);
 
-/// The title screen, as the end of The Broken Seal's Title_RunIntro: fades to
-/// white, shows Title_ScreenPicture on BG2 (its map numbered from tile 0x1a0,
-/// two blank columns a row) and, with prompt set, loads the five prompt
-/// sprites. After the fade from white it holds 660 frames, or 5400 with the
-/// prompt; after the first 120 the prompt's three sprites blink by
-/// Data_081a873e's levels, and A or Start ends it early, returning 1 (else 0).
+/// The title screen: fades to white, shows Title_ScreenPicture on BG2 (its
+/// map numbered from tile 0x1a0, two blank columns a row) and, with prompt
+/// set, loads the five prompt sprites. After the fade from white it holds 660
+/// frames, or 5400 with the prompt; after the first 120 the prompt's three
+/// sprites blink by Data_081a873e's levels, and A or Start ends it early,
+/// returning 1 (else 0).
+// As the end of The Broken Seal's Title_RunIntro.
 s32 Func_081a729c(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
@@ -266,6 +267,7 @@ column:
   return result;
 }
 
-/// An empty entry the far-call table keeps, as The Broken Seal's.
+/// An empty entry the far-call table keeps.
+// As The Broken Seal's.
 void Title_NoOpPalette(void) {}
 #endif

@@ -20,11 +20,11 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 Func_08127588(s32 formation);
 
-/// As The Broken Seal's function of the same name: keeps up to thirty-two
-/// eligible formations near the party's adjusted average level, chooses one
-/// randomly and returns its level adjustment through outMargin. This game first
-/// sets flags from others, clears the enemy flags of Data_08130c5c, sets flags
-/// 71, 230 and 117, and searches 660 formations.
+/// Keeps up to thirty-two eligible formations near the party's adjusted
+/// average level, chooses one randomly and returns its level adjustment
+/// through outMargin. It first sets flags from others, clears the enemy flags
+/// of Data_08130c5c, sets flags 71, 230 and 117, and searches 660 formations.
+// As The Broken Seal's function of the same name, which has no flag setup.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);

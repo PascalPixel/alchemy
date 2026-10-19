@@ -31,8 +31,8 @@ extern char ResourceId_ShopDownArrowTiles;
 
 void Func_08108948(void *work);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-/// The Spanish and Italian far-call tables reach it through the slot they name
-/// BattleEffect_InitializeSharedSceneFar.
+// The Spanish and Italian far-call tables reach it through the slot they name
+// BattleEffect_InitializeSharedSceneFar.
 void BattleEffect_InitializeSharedSceneFar(void);
 #else
 void EventRuntime_ResolveAllPendingActionsFar(void);
@@ -49,8 +49,8 @@ void Func_08108130(void) {
 }
 
 /// Opens the shop's work: lists the party, loads the cursor, page arrow, gem
-/// and stat arrow tiles, and starts the cursor's callback. The Broken Seal's
-/// Shop_InitializeCursorWork.
+/// and stat arrow tiles, and starts the cursor's callback.
+// The Broken Seal's Shop_InitializeCursorWork.
 void Func_08108148(void) {
   struct ShopRuntime *work;
   s32 slot;
@@ -88,7 +88,7 @@ void Func_08108148(void) {
 }
 
 /// Closes the shop: stops the cursor's callback, frees its tiles and the work.
-/// The Broken Seal's Shop_ReleaseCursorWork.
+// The Broken Seal's Shop_ReleaseCursorWork.
 void Func_0810824c(void) {
   struct ShopRuntime *state;
 

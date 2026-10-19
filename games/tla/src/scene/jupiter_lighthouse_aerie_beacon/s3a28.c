@@ -4,8 +4,8 @@
 #include "event_work.h"
 
 /// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
-/// the three rows from 72 less the row of z, as ☀️'s
-/// MercuryLighthouseAerie_CollectBandSlots does. Nothing in this overlay calls it.
+/// the three rows from 72 less the row of z. Nothing in this overlay calls it.
+// As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
 void Func_02003a28(s32 *out, s32 zArg) {
   /* FAKEMATCH: four pins (z in r4, its shifted value in r2, the 64 in r3 and
    * the column in r3) give the native's allocation; as plain locals z goes to

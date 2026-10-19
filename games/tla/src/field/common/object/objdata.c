@@ -103,8 +103,8 @@ const u16 gData_0802ec5c[16] = {
     0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
 };
 
-/// Wait, then release the object, as The Broken Seal's
-/// gWorldMap_FootprintActions do.
+/// Wait, then release the object.
+// As The Broken Seal's gWorldMap_FootprintActions do.
 const s32 gData_0802ec7c[] = {
     SC_WAIT(120),
     SC_FREE,

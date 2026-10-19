@@ -2,8 +2,8 @@
 #define ALCHEMY_BATTLE_DISPLAY_H
 
 /// @file
-/// The Lost Age's presentation work holds nine actors, where The Broken Seal's
-/// (games/tbs/include/battle/battle_display.h) holds eight.
+/// The Lost Age's presentation work, which holds nine actors.
+// The Broken Seal's (games/tbs/include/battle/battle_display.h) holds eight.
 
 #include "battle_session.h"
 

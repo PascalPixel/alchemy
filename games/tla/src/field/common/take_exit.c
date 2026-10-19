@@ -19,11 +19,11 @@ extern struct SceneEntries gOverlayArea;
 #define EXIT_NONE 999 ///< Field_RunScene's result when the scene was not left
 
 /// Chooses the scene and entrance to go to when the party leaves the current
-/// scene, as ☀️'s function of the same name: exitKind is the kind of exit
-/// Field_RunScene ended on, and the scene's exit table gives the first exit of
-/// that kind (or of any kind) whose flag is not set. ⚓️ also takes an exit
-/// whose flag word is -1. An exit of kind 0 or the end of the scene's exits
-/// falls back to the scene of its first exit.
+/// scene: exitKind is the kind of exit Field_RunScene ended on, and the
+/// scene's exit table gives the first exit of that kind (or of any kind) whose
+/// flag is not set or whose flag word is -1. An exit of kind 0 or the end of
+/// the scene's exits falls back to the scene of its first exit.
+// As ☀️'s function of the same name, which has no -1 flag word.
 void Scene_TakeExit(s32 exitKind) {
   s16 currentScene;
   const u32 *exitTable;

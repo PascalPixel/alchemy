@@ -23,8 +23,8 @@ void Func_0810824c(void);
 /// The price per guest of each inn.
 extern const s8 gData_0810cf2c[];
 
-/// Multiplies the inn's price per guest by the number of living party members,
-/// as ☀️'s Inn_RoomPrice.
+/// Multiplies the inn's price per guest by the number of living party members.
+// As ☀️'s Inn_RoomPrice.
 s32 Inn_RoomPrice(s32 innId) {
   /* FAKEMATCH(pin): the work kept in r6 and the member offset in r5 under the
    * barrier below, which gives the work one more use; as a plain local, 16 of

@@ -20,8 +20,8 @@ static __inline__ struct ObjectRuntime *Func_02004b30_(s32 kind, s32 x, s32 y,
   return Func_02004b30(kind, x, y, z);
 }
 
-/// Spawns a pair of sparks at the object, as ☀️'s
-/// MercuryLighthouse_SpawnSparkPair does at a spawn point.
+/// Spawns a pair of sparks at the object.
+// As ☀️'s MercuryLighthouse_SpawnSparkPair does at a spawn point.
 void Func_020039f4(struct ObjectRuntime *object) {
   struct ObjectRuntime *spark;
   struct FieldSprite *sprite;

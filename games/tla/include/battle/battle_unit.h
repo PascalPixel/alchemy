@@ -212,7 +212,8 @@ struct BattleUnit {
   u8 haunt;      ///< set while an evil spirit grips the unit
   u8 grimReaper; ///< the Grim Reaper's countdown
   /// The totals of equipment effects 23 (unleash chance) and 24 that UnitCalc
-  /// sums; TBS never reads them back
+  /// sums.
+  // TBS never reads them back.
   u8 equipBonus[2];
   u8 ready;
   u8 immobile;

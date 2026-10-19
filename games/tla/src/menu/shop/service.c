@@ -49,8 +49,8 @@ struct ShopRuntime {
   s8 partyAction;
 };
 
-/// Counts the party members who need the selected sanctum service, as ☀️'s
-/// Shop_CountUnits.
+/// Counts the party members who need the selected sanctum service.
+// As ☀️'s Shop_CountUnits.
 s32 Shop_CountUnits(void) {
   struct ShopRuntime *shop;
   s32 eligibleCount;

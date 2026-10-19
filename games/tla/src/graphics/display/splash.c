@@ -18,10 +18,10 @@ void Fade_Wait(void);
 void Func_08014b70(void);
 void Ui_LoadWindowGraphics(void);
 
-/// Shows the Nintendo logo with its jingle, as The Broken Seal's function of
-/// the same name. With mode 0 it fades in and holds two seconds; otherwise it
-/// waits a second, fades in, holds three seconds and fades out, faster once
-/// skipped. Returns -1 when A or Start skipped it.
+/// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
+/// two seconds; otherwise it waits a second, fades in, holds three seconds and
+/// fades out, faster once skipped. Returns -1 when A or Start skipped it.
+// As The Broken Seal's function of the same name.
 s32 Title_ShowSplashScreen(s32 mode) {
   s32 result;
   u8 *data;

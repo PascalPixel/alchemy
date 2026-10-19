@@ -97,7 +97,8 @@ extern const u8 gData_080f0fe0[];
 /// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
 /// its 24-step cycle and a brightness level (7 is neutral): three channels of
 /// the wave, each raised or lowered by the level and held to 0..31, packed as
-/// RGB555. ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
+/// RGB555.
+// ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
 s32 Func_080e989c(s32 counter, s32 level) {
   s16 phase;
   s16 bias;

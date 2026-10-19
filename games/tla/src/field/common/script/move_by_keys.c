@@ -29,11 +29,12 @@ s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
  * test; as a plain field one read serves several (differ 43). */
 #define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
 
-/// The script command 0x1b, as ☀️'s Object_MoveByKeys: moves an object 8 pixels
-/// at a time by the direction pad, with up and down changing its height (y)
-/// rather than its depth. Refuses steps into an occupied cell, from or onto a
-/// cell without attribute bit 6, or onto ground too high (up) or too low
-/// (down), and records the held keys in the event work. Returns 1.
+/// The script command 0x1b: moves an object 8 pixels at a time by the
+/// direction pad, with up and down changing its height (y) rather than its
+/// depth. Refuses steps into an occupied cell, from or onto a cell without
+/// attribute bit 6, or onto ground too high (up) or too low (down), and
+/// records the held keys in the event work. Returns 1.
+// As ☀️'s Object_MoveByKeys.
 s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   struct FieldPosition position;
   struct MapCell *sourceCell;

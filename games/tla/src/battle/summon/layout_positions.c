@@ -8,8 +8,9 @@ s32 BattleClass_IsSmall(s32 index);
 /// (nearer, at -50, for a few large enemies) and z steps down by half the
 /// width of each actor on either side, centred on the column's middle.
 /// Actors 254 and 255 are 25 wide; others are 27 when their summon entry is
-/// flagged and 38 when not. The Broken Seal's function of the same name, keyed
-/// by the enemy id, with nine enemies forward where it names two.
+/// flagged and 38 when not.
+// The Broken Seal's function of the same name, keyed by the enemy id, with
+// nine enemies forward where it names two.
 void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
                             s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;

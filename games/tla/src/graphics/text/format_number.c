@@ -4,10 +4,11 @@ u32 Math_UnsignedMulHigh(u32 a, u32 b);
 u32 Math_UnsignedMulHighAdd(u32 a, u32 b, s32 c);
 
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
-/// text starts, as ☀️'s UiText_FormatNumber. With width 0 the number has no
-/// padding and a minus sign when negative; otherwise it is right-aligned in
-/// width characters (up to 12) and unsigned. Each digit divides by 10 through
-/// the long-multiply helpers: 0x1999999a is 2^32 / 10, rounded up.
+/// text starts. With width 0 the number has no padding and a minus sign when
+/// negative; otherwise it is right-aligned in width characters (up to 12) and
+/// unsigned. Each digit divides by 10 through the long-multiply helpers:
+/// 0x1999999a is 2^32 / 10, rounded up.
+// As ☀️'s UiText_FormatNumber.
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;

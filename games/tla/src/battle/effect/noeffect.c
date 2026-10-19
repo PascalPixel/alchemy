@@ -35,8 +35,8 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
 void BattleFx_DoNothing(void) {}
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
-/// table into BG2X, one word a line (The Broken Seal's
-/// BattleFx_ArmBg2AffineHBlankDma).
+/// table into BG2X, one word a line.
+// The Broken Seal's BattleFx_ArmBg2AffineHBlankDma.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];

@@ -3,7 +3,7 @@
 
 /// @file
 /// The Lost Age's key input state: held, pressed and repeating keys.
-/// The Broken Seal's input state is declared separately in keystate.h.
+// The Broken Seal's input state is declared separately in keystate.h.
 
 #include "types.h"
 #include "static_assert.h"

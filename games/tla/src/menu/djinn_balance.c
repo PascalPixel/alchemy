@@ -9,8 +9,8 @@ struct DjinnMenuWork {
 s32 Func_0810498c(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the
-/// party's djinn balanced, and returns how many there are. The Broken Seal's
-/// Djinn_MarkBalancedEntries.
+/// party's djinn balanced, and returns how many there are.
+// The Broken Seal's Djinn_MarkBalancedEntries.
 s32 Func_08104928(s8 *table, s32 self) {
   s32 cnt;
   s32 i;

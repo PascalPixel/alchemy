@@ -5,10 +5,10 @@
 #include "battle_effect.h"
 
 /// Meteor Blow's horizontal-blank callback, the same routine as
-/// particle_stream_modes.c's BattleFx_ArmPaletteHBlankDma (The Broken Seal's
-/// BattleFx_ArmPaletteHBlankDma): stops DMA 0, then arms it to copy one BG
-/// palette word per scanline from the line table in the effect work, so the
-/// backdrop's colour changes down the screen.
+/// particle_stream_modes.c's BattleFx_ArmPaletteHBlankDma: stops DMA 0, then
+/// arms it to copy one BG palette word per scanline from the line table in the
+/// effect work, so the backdrop's colour changes down the screen.
+// The Broken Seal's BattleFx_ArmPaletteHBlankDma.
 void BattleFx_ArmMeteorBlowPaletteDma(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;

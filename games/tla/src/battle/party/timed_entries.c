@@ -160,12 +160,12 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattleEventRuntime_WaitForReady(void);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 
-/// Ticks one side's Djinn recovery at the round's end, as ☀️'s
-/// DjinnRecovery_Tick with ⚓️'s presentation: an owner must be
-/// in the battle; each Djinni that comes back plays its event (its icon, sound
-/// 175, the flash and its message) before it is Set. The message is
+/// Ticks one side's Djinn recovery at the round's end: an owner must be in the
+/// battle; each Djinni that comes back plays its event (its icon, sound 175,
+/// the flash and its message) before it is Set. The message is
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
 /// 0.
+// ☀️'s DjinnRecovery_Tick with ⚓️'s presentation.
 s32 Func_08124cc4(s32 side) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;

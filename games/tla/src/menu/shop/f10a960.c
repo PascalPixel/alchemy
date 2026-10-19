@@ -36,8 +36,8 @@ s32 UiWork_IsCompleteFar(void);
 void WaitFrames(s32 frames);
 
 /// Shows the service message, its wording for the shop's mode, with the
-/// keeper's portrait, and waits until it has been read. The Broken Seal's
-/// UiMessage_ShowResolvedAndWait.
+/// keeper's portrait, and waits until it has been read.
+// The Broken Seal's UiMessage_ShowResolvedAndWait.
 void Func_0810a9ac(s32 value) {
   u8 *shop;
   s32 portrait;
@@ -68,8 +68,8 @@ struct ShopRuntime {
 };
 
 /// As Func_0810a9ac, with the cursor's anchor object set to state 13 while the
-/// message shows and restored after. The Broken Seal's
-/// UiMessage_ShowResolvedAndRestoreState.
+/// message shows and restored after.
+// The Broken Seal's UiMessage_ShowResolvedAndRestoreState.
 void Func_0810a9fc(s32 message) {
   struct ShopRuntime *shop;
   u8 **anchor;

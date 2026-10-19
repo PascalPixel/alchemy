@@ -27,10 +27,11 @@ void RenderOutput_RedrawSavedRectFar(void *window);
 void InventoryMenu_ShowModalMessage(const u8 *message, s32 a, s32 b);
 void UnitCalcFar(s32 unit);
 
-/// Uses the selected item from the owner in pane 0 on the member in pane 1, as
-/// The Broken Seal's ItemMenu_Use. On failure plays the error sound, shows why
-/// in the info window and returns -1; otherwise plays the item's animation,
-/// recalculates both members and returns 1.
+/// Uses the selected item from the owner in pane 0 on the member in pane 1.
+/// On failure plays the error sound, shows why in the info window and returns
+/// -1; otherwise plays the item's animation, recalculates both members and
+/// returns 1.
+// As The Broken Seal's ItemMenu_Use.
 s32 ItemMenu_Use(void) {
   struct ItemMenuUseWork *menu;
   s32 result;

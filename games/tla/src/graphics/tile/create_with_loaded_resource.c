@@ -76,7 +76,8 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 }
 
 /// Creates the stat change arrow from the up or down arrow resource the
-/// menu loaded. The Broken Seal's UiIcon_CreateStatChangeArrow.
+/// menu loaded.
+// The Broken Seal's UiIcon_CreateStatChangeArrow.
 s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                  s32 variant) {
   struct RenderOutput *object;
@@ -107,8 +108,8 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
 }
 
 /// As UiIcon_CreateStatChangeArrow, with the arrow raised three pixels for
-/// the first variant and four for the second. The Broken Seal's
-/// UiIcon_DrawVariantWithTileOffset.
+/// the first variant and four for the second.
+// The Broken Seal's UiIcon_DrawVariantWithTileOffset.
 s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
   struct RenderOutput *object;
   u32 resource;

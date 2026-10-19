@@ -54,8 +54,8 @@ void Func_0200008c(struct ObjectRuntime *object) {
 
 /// Circles the object around actor 8: each frame it steps its angle back by
 /// 0x800 and places itself at the anchor's x and z plus the cosine and sine
-/// times two radii read from its speed limit and its counter byte. The twin of
-/// ☀️'s SceneEffect_UpdateCounterDrivenOrbit.
+/// times two radii read from its speed limit and its counter byte.
+// The twin of ☀️'s SceneEffect_UpdateCounterDrivenOrbit.
 void Func_020000e4(struct ObjectRuntime *object) {
   struct ObjectRuntime *anchor = Object_GetById(8);
   u16 *pangle = (u16 *)&object->action;

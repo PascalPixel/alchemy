@@ -56,7 +56,8 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s8 kind);
 
 /// Moves the cursor's sprite a quarter of the way to its target on each
-/// axis, at least one pixel. The Broken Seal's ShopCursor_MoveTowardTarget.
+/// axis, at least one pixel.
+// The Broken Seal's ShopCursor_MoveTowardTarget.
 void Func_081089e4(struct ShopCursor *cursor) {
   struct ShopCursorSprite3 *sprite;
   s32 delta;
@@ -132,7 +133,8 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
 }
 
 /// Puts the cursor at x, y at once: both its position and its target, and its
-/// sprite with them. The Broken Seal's ShopCursor_SetPositionImmediate.
+/// sprite with them.
+// The Broken Seal's ShopCursor_SetPositionImmediate.
 void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y) {
   {
     struct ShopCursorSprite3 *sprite =

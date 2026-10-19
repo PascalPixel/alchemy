@@ -17,9 +17,10 @@ s32 GameFlag_Test(s32 flag);
 void Func_080ca514(s32 behavior);
 
 /// Returns the world map encounter zone for the terrain at position (0 for
-/// none) and chooses the battle backdrop for that terrain, as ☀️'s function of
-/// the same name. ⚓️ has no encounters in render mode 8, reads its second rule
-/// table in render mode 7, and a rule's flag must be set for it to apply.
+/// none) and chooses the battle backdrop for that terrain. There are no
+/// encounters in render mode 8, render mode 7 reads the second rule table,
+/// and a rule's flag must be set for it to apply.
+// As ☀️'s function of the same name.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   struct TerrainRule *rule = gData_080eedbc;
   s32 behavior;

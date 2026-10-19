@@ -14,8 +14,8 @@
 
 /// Takes a free window output, writes its OAM attributes at the window's
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's
-/// list, as ☀️'s RenderOutput_Create. Releases the resource slot and returns
-/// NULL when no output is free.
+/// list. Releases the resource slot and returns NULL when no output is free.
+// As ☀️'s RenderOutput_Create.
 struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags,
                                          struct RenderInput *input, s32 offsetX,
                                          s32 offsetY) {

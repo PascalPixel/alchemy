@@ -21,9 +21,10 @@ static __inline__ void Decode_(void *source, void *destination) {
   Resource_DecodeType01(source, destination);
 }
 
-/// The title logo, as ☀️'s Title_LoadBackground: its palette, its tiles
-/// decoded and copied to VRAM, a 30 by 20 tilemap of consecutive tiles with
-/// two blank cells closing each row, and the four scroll pairs cleared.
+/// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by
+/// 20 tilemap of consecutive tiles with two blank cells closing each row, and
+/// the four scroll pairs cleared.
+// As ☀️'s Title_LoadBackground.
 void Func_02000490(void) {
   u8 *res;
   s32 id;

@@ -31,8 +31,9 @@ void Func_02000090(struct FieldActor *self) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/// Circles object 36 as ☀️'s SceneEffect_UpdateCounterDrivenOrbit does:
-/// wider across than deep, by the actor's speed and its byte at 98.
+/// Circles object 36, wider across than deep, by the actor's speed and its
+/// byte at 98.
+// As ☀️'s SceneEffect_UpdateCounterDrivenOrbit does.
 void Func_020000ec(struct FieldActor *self) {
   struct FieldActor *centre = Object_GetById(36);
   u16 angle = self->timer;

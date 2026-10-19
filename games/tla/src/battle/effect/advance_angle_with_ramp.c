@@ -13,8 +13,8 @@ void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object) {
 }
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
-/// frame; released once its scale falls below 0x3000, as ☀️'s
-/// BattleFx_UpdateDescendingObject.
+/// frame; released once its scale falls below 0x3000.
+// As ☀️'s BattleFx_UpdateDescendingObject.
 void BattleFx_UpdateDescendingObject(struct ObjectRuntime *obj) {
   u32 scale;
   u32 scaleX;

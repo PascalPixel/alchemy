@@ -9,7 +9,7 @@
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-/// The European far-call tables give the terrain height's entry another name.
+// The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else

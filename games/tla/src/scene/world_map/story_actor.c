@@ -29,8 +29,8 @@ static __inline__ s32 MulQ16(s32 a, s32 b) {
   return Iwram_MulQ16(a, b);
 }
 
-/// The marker blinks and bobs up and down on a circle, as The Broken Seal's
-/// WorldMap_UpdateBobbingMarker.
+/// The marker blinks and bobs up and down on a circle.
+// As The Broken Seal's WorldMap_UpdateBobbingMarker.
 void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   s16 *angle;
   s32 y;

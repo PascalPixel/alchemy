@@ -33,7 +33,7 @@ s32 Camera_ApplyTransformByFlag(void) {
   }
 }
 
-/// BattleObjGet, as the native expands it here.
+// BattleObjGet, as the native expands it here.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   u8 *work = (u8 *)Ram_HeapSlots->battleWork;
   struct BattleObj *slots = ((struct BattleWork *)work)->slots;

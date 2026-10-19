@@ -49,9 +49,9 @@ struct ResourceSprite {
 
 s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id);
 
-/// Create an animated sprite object for animation id, as ☀️'s function of
-/// the same name. Use one of 64 free objects and a VRAM cache entry.
-/// Return the object, or NULL on failure.
+/// Creates an animated sprite object for animation id, using one of 64 free
+/// objects and a VRAM cache entry. Returns the object, or NULL on failure.
+// As ☀️'s function of the same name.
 struct ResourceObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct ResourceSprite *sprite;

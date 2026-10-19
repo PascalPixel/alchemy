@@ -1,6 +1,7 @@
 /// @file
 /// The staff credits: the battle backdrops shown behind them and the lines
-/// that scroll past, as The Broken Seal's slides.c has them.
+/// that scroll past.
+// As The Broken Seal's slides.c has them.
 
 #include "types.h"
 #include "edition.h"
@@ -37,8 +38,8 @@ extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
 
-/// The Broken Seal's slideshow backdrops less one, ending in 0. Nothing
-/// reads this list.
+/// The slideshow backdrops, ending in 0. Nothing reads this list.
+// The Broken Seal's list less one.
 // clang-format off
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,

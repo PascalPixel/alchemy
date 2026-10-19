@@ -34,10 +34,10 @@ extern s32 gData_020022b8;
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_0200006c(s32 slot);
 
-/// The lobby's task each frame, ported from ☀️'s LinkLobby_PollPeerReady:
-/// counts frames without the opponent, clears the peer signatures after 25,
-/// and raises the event trigger when both sides are ready or the link is
-/// lost. Returns whether the peer answered.
+/// The lobby's task each frame: counts frames without the opponent, clears
+/// the peer signatures after 25, and raises the event trigger when both sides
+/// are ready or the link is lost. Returns whether the peer answered.
+// Ported from ☀️'s LinkLobby_PollPeerReady.
 s32 Func_02000134(void) {
   struct LobbyEventWork *work;
   s32 result;

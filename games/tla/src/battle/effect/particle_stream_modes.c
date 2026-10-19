@@ -5,9 +5,9 @@
 #include "battle_effect.h"
 #include "battle_effect_argument.h"
 
-/// The Broken Seal's BattleFx_ArmPaletteHBlankDma: stops DMA 0, then arms it
-/// to copy one palette line from the battle effect work into the BG palette
-/// at each horizontal blank.
+/// Stops DMA 0, then arms it to copy one palette line from the battle effect
+/// work into the BG palette at each horizontal blank.
+// The Broken Seal's BattleFx_ArmPaletteHBlankDma.
 void BattleFx_ArmPaletteHBlankDma(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;

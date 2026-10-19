@@ -15,9 +15,9 @@ void RenderOutput_PrepareForRedrawFar(s32 window);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 
-/// Shows the selected member's service price, or that no treatment is needed,
-/// as ☀️'s Shop_DrawSelectMsg. The service kind's variable takes the message
-/// once the kind is no longer needed, as the native's register does.
+/// Shows the selected member's service price, or that no treatment is needed.
+// As ☀️'s Shop_DrawSelectMsg. The service kind's variable takes the message
+// once the kind is no longer needed, as the native's register does.
 void Shop_DrawSelectMsg(s32 window, s32 unitId) {
   s32 kindOrMessage;
   s32 price;

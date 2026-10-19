@@ -9,10 +9,10 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 
 /// Draws the shop item's name and price, or its cannot-buy or not-broken note;
-/// the twin of ☀️'s Shop_DrawItemPrice (games/tbs/src/shop/shop.c), in the
-/// twin's goto layout, with a fourth kind: kind 3 draws the item condition
-/// message numbered by the price instead. It matches with the switch on the
-/// kind as the twin has it (if-gotos give differ 46).
+/// kind 3 draws the item condition message numbered by the price instead.
+// The twin of ☀️'s Shop_DrawItemPrice (games/tbs/src/shop/shop.c), in the
+// twin's goto layout, with kind 3 added. It matches with the switch on the
+// kind as the twin has it (if-gotos give differ 46).
 void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind) {
   s32 labelMessage;
 

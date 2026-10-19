@@ -149,11 +149,11 @@ extern u8 Data_081395f8CodeWords[];
 extern u8 Data_0813ae14CodeWords[];
 extern u8 Data_0813b2ecCodeWords[];
 
-/// Copies a kernel whose DMA control is a word of its own. Kernels 8, 9 and 10
-/// read it from the pool, one word each, two of them equal yet stored twice,
-/// so it is a symbol of each kernel: written 0x84000000 | (size >> 2) the two
-/// fold into one pool entry, and as a number the size is built in three
-/// instructions.
+/// Copies a kernel whose DMA control is a word of its own.
+// Kernels 8, 9 and 10 read it from the pool, one word each, two of them equal
+// yet stored twice, so it is a symbol of each kernel: written
+// 0x84000000 | (size >> 2) the two fold into one pool entry, and as a number
+// the size is built in three instructions.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
   {                                                                            \
     (to) = MemAlloc((u32)(bytes));                                             \

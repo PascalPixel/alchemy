@@ -21,8 +21,8 @@ void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 void Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
 void Audio_PlayCue(s32 cue);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-/// Spanish and Italian far-call tables name the entry to the same routine
-/// differently.
+// Spanish and Italian far-call tables name the entry to the same routine
+// differently.
 void Func_080c8688(void);
 #define Func_080c8698 Func_080c8688
 #else

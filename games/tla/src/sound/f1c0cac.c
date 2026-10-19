@@ -38,8 +38,8 @@ s32 Func_081c0cac(s32 cue) { return 3; }
 /// Plays sound command id: 78 fades the music out, 390 and 395 fade players
 /// 3 and 5, 100 to 699 are songs started on their table's player (7 takes
 /// the first idle one of 7 down to 4), 80 to 99 play over silenced music,
-/// and the rest (79 aside) become the background music, as The Broken Seal's
-/// with ⚓️'s ranges.
+/// and the rest (79 aside) become the background music.
+// As The Broken Seal's, with ⚓️'s ranges.
 void AudioCommand_Play(s32 id) {
   s32 flags;
   s32 player;

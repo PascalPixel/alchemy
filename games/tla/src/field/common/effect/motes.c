@@ -17,7 +17,7 @@
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-/// The European far-call tables give the terrain height's entry another name.
+// The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else
@@ -54,9 +54,9 @@ struct MoteWork {
 
 void Func_080d6c60(void);
 
-/// Starts the floating motes (Func_080d6c60), as ☀️'s function of the same
-/// name with 64 of them: loads their tiles and puts each under the leader with
-/// staggered timers, drawn semi-transparent.
+/// Starts the 64 floating motes (Func_080d6c60): loads their tiles and puts
+/// each under the leader with staggered timers, drawn semi-transparent.
+// As ☀️'s function of the same name.
 void FieldMotes_Start(void) {
   struct MoteWork *work;
   struct Mote *mote;

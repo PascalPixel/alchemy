@@ -38,14 +38,14 @@ void WaitFrames(s32 frames);
  * (the three tests fold into one against 11). */
 #define INPUT ((volatile struct InputState *)&gInput)
 
-/// Shows message in the item menu, with the hand cursor hidden meanwhile, as
-/// The Broken Seal's InventoryMenu_ShowModalMessage: in Japanese its first
-/// form, elsewhere its TBS_PATCH_1 form less the redraw after the wait.
+/// Shows message in the item menu, with the hand cursor hidden meanwhile.
 ///
 /// With y == -1 the message goes into the info window; otherwise a modal
 /// window sized to the message opens at (x, y). With x == -1 the message stays
 /// up and flag 337 records that the info window holds it; otherwise it waits
 /// for A, B or Start and clears it again.
+// As The Broken Seal's InventoryMenu_ShowModalMessage: in Japanese its first
+// form, elsewhere its TBS_PATCH_1 form less the redraw after the wait.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;

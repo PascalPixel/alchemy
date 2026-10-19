@@ -4,8 +4,9 @@
 #include "event_work.h"
 
 /// Returns the first of objects 8 to 63 standing in the same 16-pixel cell
-/// as position (x, y and z), or NULL. Callers pass the object asking, as
-/// ☀️'s twin takes it; the search does not use it.
+/// as position (x, y and z), or NULL. Callers pass the object asking; the
+/// search does not use it.
+// ☀️'s twin takes the object too.
 struct ObjectRuntime *Object_FindInCell(s32 *position,
                                         struct ObjectRuntime *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

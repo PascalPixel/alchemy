@@ -56,7 +56,7 @@ struct EffectPosition {
 
 /// UB: indexing from &x crosses separate scalar members in the legacy record.
 /// UBFIX provides a real array while keeping the effects' named coordinates.
-/// An always-on union changes native alias analysis in the effect/window code.
+// An always-on union changes native alias analysis in the effect/window code.
 static inline s32 *EffectPosition_Coordinates(struct EffectPosition *position) {
 #ifdef UBFIX
   return position->coordinates;

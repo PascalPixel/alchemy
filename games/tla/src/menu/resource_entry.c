@@ -13,7 +13,8 @@
 #include "resource_menu.h"
 #include "ram_buffer.h"
 
-/// The menu sounds, as The Broken Seal's songs.h names them (SE_MENU_*).
+/// The menu sounds.
+// Named as The Broken Seal's songs.h names them (SE_MENU_*).
 #define SOUND_MENU_CURSOR_MOVE 111
 #define SOUND_MENU_CONFIRM 112
 
@@ -42,8 +43,8 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 }
 
 /// Steps the selection from start to goal, redrawing the label each step and
-/// slowing as it nears the goal, then confirms; ☀️'s function of the same
-/// name in window/battle_command.c.
+/// slowing as it nears the goal, then confirms.
+// ☀️'s function of the same name in window/battle_command.c.
 s32 Menu_SelectResource(s32 start, s32 goal) {
   s16 resourceBase;
   s16 cur;

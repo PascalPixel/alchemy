@@ -9,7 +9,7 @@
 #include "edition.h"
 
 /// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
-/// The Broken Seal has 1-16; ⚓️ adds 17-30.
+// The Broken Seal has 1-16; ⚓️ adds 17-30.
 enum FieldPsynergyAnimation {
   FIELD_FX_PUSH = 1,  ///< pushes the target the way the pad points
   FIELD_FX_WAVE = 2,  ///< the hue wave from the caster to the target

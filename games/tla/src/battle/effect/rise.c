@@ -21,8 +21,8 @@ void BattleFx_InitializeRisingObject(s32 slot) {
 }
 
 /// Moves the object rate percent of the way to the target's object in the
-/// given frames (The Broken Seal's BattleFx_SetApproachMotion, which always
-/// moves 80 percent).
+/// given frames.
+// The Broken Seal's BattleFx_SetApproachMotion always moves 80 percent.
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);

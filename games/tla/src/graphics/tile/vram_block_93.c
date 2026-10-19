@@ -18,8 +18,8 @@ extern u8 Render_CopyStridedCodeSize[];
 
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
-/// entry 93 and copies the strided tile copier into RAM, as ☀️'s function of
-/// the same name.
+/// entry 93 and copies the strided tile copier into RAM.
+// As ☀️'s function of the same name.
 void ObjectSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;

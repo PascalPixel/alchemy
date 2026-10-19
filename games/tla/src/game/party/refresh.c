@@ -10,7 +10,7 @@ s32 UnitCalc(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
-/// Party_RestoreHpPp from The Broken Seal.
+// Party_RestoreHpPp from The Broken Seal.
 void Func_080ae16c(s32 arg0) {
   s32 count;
   s32 n;
@@ -75,7 +75,7 @@ void Func_080ae16c(s32 arg0) {
 
 extern const u8 gCharacter_ElementGroupTable[];
 
-/// Party_RestorePpOfLitElements from The Broken Seal.
+// Party_RestorePpOfLitElements from The Broken Seal.
 void Func_080ae220(void) {
   s32 count;
   s32 n;

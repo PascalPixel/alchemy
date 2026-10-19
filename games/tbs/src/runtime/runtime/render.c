@@ -19,8 +19,9 @@ typedef void (*OamBuildRoutine)(void *work);
 enum { OBJ_AFFINE_MATRIX_COUNT = 32, RENDER_DEPTH_SLOT_COUNT = 256 };
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
-/// scale and rotation and fills it in. Returns the matrix number, or 0 when
-/// all 32 are taken.
+/// scale and rotation and fills it in. Returns the matrix number, 0 to 31.
+/// When all 32 are taken it fills nothing and still returns 0, which a caller
+/// cannot tell from matrix 0: the sprite is drawn with whatever matrix 0 holds.
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   union AffineMatrix *matrix;
   s16 *coefficient;

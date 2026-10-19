@@ -1313,8 +1313,6 @@ Class_Determine:
 	.thumb_func
 DjinnRecovery_Remove:
 	.incbin "baserom.gba", 0x000bdd58, 0x000000ac
-	.section .rom.000bdf5a, "ax"
-	.incbin "baserom.gba", 0x000bdf5a, 0x00000002
 	.section .rom.000be088, "ax"
 	.balign 4
 	.global Func_080b1088
@@ -1328,8 +1326,6 @@ Func_080b1088:
 	.thumb_func
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000be1f8, 0x00000084
-	.section .rom.000bef28, "ax"
-	.incbin "baserom.gba", 0x000bef28, 0x00000004
 	.section .rom.000d6694, "ax"
 	.incbin "baserom.gba", 0x000d6694, 0x0000028c
 	.section .rom.000d6944, "ax"

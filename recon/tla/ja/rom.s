@@ -1600,8 +1600,6 @@ Func_080b1088:
 	.thumb_func
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000ac1c8, 0x00000084
-	.section .rom.000acef8, "ax"
-	.incbin "baserom.gba", 0x000acef8, 0x00000004
 	.section .rom.000c8008, "ax"
 	.global Game_ResetForNewGameFar
 	.type Game_ResetForNewGameFar, %function

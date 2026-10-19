@@ -29,3 +29,8 @@ gOwner_ExperienceThresholds:
 	.incbin "games/tla/src/game/character/level_experience_5.table"
 	.incbin "games/tla/src/game/character/level_experience_6.table"
 	.incbin "games/tla/src/game/character/level_experience_7.table"
+@ One tenth as a 32-bit fraction, the reciprocal the divide-by-ten code
+@ multiplies by; nothing found reads this copy.
+	.global Data_080b1f28
+Data_080b1f28:
+	.4byte 0x1999999a

@@ -2239,8 +2239,6 @@ main	rom_main_03	recon/tla/de/rom	.rom.000bdd58	de
 main	rom_main_03	recon/tla/raw/080b0d58	.text	en
 main	rom_main_03	recon/tla/ja/rom	.rom.000abd54	ja
 main	rom_main_03	games/tla/src/game/djinn/trade	.text
-main	rom_main_03	recon/tla/de/rom	.rom.000bdf5a	de
-main	rom_main_03	recon/tla/raw/080b0f5a		en
 main	rom_main_03	games/tla/src/game/djinn/sum_owner_counts	.text
 main	rom_main_03	games/tla/src/game/djinn/party	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000b1094	it
@@ -2256,12 +2254,6 @@ main	rom_main_03	recon/tla/raw/080b11f8	.text	en
 main	rom_main_03	recon/tla/ja/rom	.rom.000ac068	ja
 main	rom_main_03	recon/tla/ja/rom	.rom.000ac1c8	ja
 main	rom_main_03	games/tla/src/game/character/experience_table	.rodata
-main	rom_main_03	recon/tla/it/rom	.rom.000b1f34	it
-main	rom_main_03	recon/tla/fr/rom	.rom.000b6f28	fr
-main	rom_main_03	recon/tla/es/rom	.rom.000baf34	es
-main	rom_main_03	recon/tla/de/rom	.rom.000bef28	de
-main	rom_main_03	recon/tla/raw/080b1f28	.text	en
-main	rom_main_03	recon/tla/ja/rom	.rom.000acef8	ja
 main	rom_main_03	games/tla/src/game/inventory/cntidx	.rodata
 main	rom_main_03	games/tla/src/game/item/item_table	.rodata
 main	rom_main_03	games/tla/src/game/inventory/actions	.rodata

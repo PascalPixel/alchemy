@@ -55,7 +55,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void);
 
 enum StarRoomActor {
-  ACTOR_ARRIVAL_GLOW = ACTOR_FIRST_PLACED,
+  ACTOR_TELEPORT_GLOW = ACTOR_FIRST_PLACED,
   ACTOR_KRADEN,
   ACTOR_SATUROS,
   ACTOR_MENARDI,
@@ -487,7 +487,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Object_GetById(ACTOR_FELIX_MASKED);
-  glow = Object_GetById(ACTOR_ARRIVAL_GLOW);
+  glow = Object_GetById(ACTOR_TELEPORT_GLOW);
   spriteFlags = &felix->sprite->flags;
   zero = 0;
   *spriteFlags = zero;
@@ -511,7 +511,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetPosition(ACTOR_ARRIVAL_GLOW, PIXELS(471), PIXELS(290));
+  Engine_ActorSetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_FELIX_MASKED, 2);
   for (i = 0; i != 90; i++) {
@@ -531,7 +531,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(30);
   *spriteFlags = 1;
-  Engine_ActorSetPosition(ACTOR_ARRIVAL_GLOW, 0, 0);
+  Engine_ActorSetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
   Engine_ActorSetSpritePriority(ACTOR_FELIX_MASKED, 1);
   {
     u8 *flags = &Object_GetById(ACTOR_FELIX_MASKED)->priorityFlags;
@@ -1326,7 +1326,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_CameraWaitForMove();
   Engine_MapRedraw();
   // Materialize Isaac above the arrival platform with the expanding glow.
-  glow = Actor_Get(ACTOR_ARRIVAL_GLOW);
+  glow = Actor_Get(ACTOR_TELEPORT_GLOW);
   glow->scaleX = Q16_ONE / 10;
   glow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1344,7 +1344,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetPosition(ACTOR_ARRIVAL_GLOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
@@ -1378,7 +1378,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
     *leaderSprite = shown;
   }
-  Engine_ActorSetPosition(ACTOR_ARRIVAL_GLOW, 0, 0);
+  Engine_ActorSetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
@@ -1479,7 +1479,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_ARRIVAL_GLOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_KRADEN, 2);
   for (i = 0; i != 90; i++) {
@@ -1510,7 +1510,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
     *kradenSprite = shown;
   }
-  Actor_SetPosition(ACTOR_ARRIVAL_GLOW, 0, 0);
+  Actor_SetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
   Engine_EventWait(30);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 306);

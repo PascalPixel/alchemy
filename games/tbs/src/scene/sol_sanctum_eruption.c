@@ -135,7 +135,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
   SolSanctumEruption_PlaceHostageGroup();
-  Engine_ActorSetSpritePriority(15, 1);
+  Engine_ActorSetSpritePriority(ACTOR_WISE_ONE, 1);
 #ifndef UBFIX
   // UB: these are separate work-pointer globals. The native sequence reaches
   // the event slot through the particle slot; named globals add four bytes
@@ -178,8 +178,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 40);
   Engine_EventSetMessage(MsgSolSanctumJennaWhatHappened);
-  Engine_EventShowMessageAndWait(11, 0, 20);
-  Engine_EventShowMessage(10, 0);
+  Engine_EventShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Engine_EventShowMessage(ACTOR_SATUROS, 0);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   Event_ShowMessageAndWait(JENNA, 0, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
@@ -197,10 +197,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
-  actor = Object_GetById(15);
+  actor = Object_GetById(ACTOR_WISE_ONE);
   Engine_ActorSetSpriteFlags(actor, 0);
-  Actor_SetPosition(15, PIXELS(325), PIXELS(302));
-  actor = Object_GetById(15);
+  Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(325), PIXELS(302));
+  actor = Object_GetById(ACTOR_WISE_ONE);
   actor->motionFlags = 5;
   sparkles->stopped = 1;
   Event_PlayCue(SE_289);
@@ -225,13 +225,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(200);
-  Event_OpenMessage(0x1001, 0);
+  Event_OpenMessage(0x1000 | GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolSanctumIKnowItsARock);
   } else {
     Engine_EventSetMessage(MsgSolSanctumSomeoneIsLiftingIt);
   }
-  Event_ShowMessageAndWait(0x1001, 0, 80);
+  Event_ShowMessageAndWait(0x1000 | GARET, 0, 80);
   Engine_EventSetMessage(MsgSolSanctumKradenCouldThatBeThe);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
@@ -245,11 +245,11 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_MapRenderWaitForValues();
   SolSanctumEruption_SetMaterializationTint(0, 20, 60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
-  Actor_FaceDirection(15, FACING_NORTHWEST, 40);
+  Actor_FaceDirection(ACTOR_WISE_ONE, FACING_NORTHWEST, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
-  Event_ShowMessageAndWait(0x1001, 0, 30);
-  Actor_FaceDirection(15, FACING_EAST + FACING_STEP, 40);
+  Event_ShowMessageAndWait(0x1000 | GARET, 0, 30);
+  Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST + FACING_STEP, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
   Event_ShowMessageAndWait(JENNA, 0, 30);
@@ -282,7 +282,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 40);
-  Event_ShowMessageAndWait(0x4005, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 40);
   Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
@@ -317,7 +317,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 3);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_ShowMessageAndWait(0x4009, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
@@ -348,12 +348,12 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Event_ShowMessageAndWait(0x200e, 0, 30);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_ALEX, 0, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 40);
-  Event_ShowMessageAndWait(0x2005, 0, 40);
+  Event_ShowMessageAndWait(0x2000 | JENNA, 0, 40);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 0);
@@ -381,12 +381,12 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
-  Event_ShowMessage(0x200b, 0);
+  Event_ShowMessage(0x2000 | ACTOR_MENARDI, 0);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(8) / 5, PIXELS(4) / 5);
   // Stage Menardi and Jenna for the hostage exchange.
   Actor_SetSpeed(JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 338);
-  actor = Object_GetById(11);
+  actor = Object_GetById(ACTOR_MENARDI);
   actor->steeringFlags = 254 & actor->steeringFlags;
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 348);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
@@ -402,7 +402,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 332);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
-  Event_ShowMessage(0x200b, 0);
+  Event_ShowMessage(0x2000 | ACTOR_MENARDI, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 2);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
@@ -422,7 +422,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(0x100a, 0, 40);
+  Event_ShowMessageAndWait(0x1000 | ACTOR_SATUROS, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
@@ -460,7 +460,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   SolSanctumEruption_RaiseAndShrinkActor(11);
   Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 40);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
-  Event_ShowMessageAndWait(0x2005, 0, 40);
+  Event_ShowMessageAndWait(0x2000 | JENNA, 0, 40);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
@@ -483,13 +483,13 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct FieldActor *spriteOwner;
   u8 frame;
 
-  departureEffect = Object_GetById(8);
+  departureEffect = Object_GetById(ACTOR_TELEPORT_GLOW);
   departureEffect->scaleX = Q16_ONE;
   departureEffect->scaleY = Q16_ONE;
   Engine_ActorWalkToAndWait(actorId, 471, 290);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   Engine_EventWait(10);
-  Actor_SetPosition(8, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
   actor = Object_GetById(actorId);
   spriteOwner = Object_GetById(actorId);
   Engine_ActorSetSpriteFlags(spriteOwner, 0);
@@ -515,7 +515,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
     frame++;
   } while (frame != 90);
   Actor_SetPosition(actorId, 0, 0);
-  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
 }
 
 // Unused empty callback.
@@ -578,7 +578,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
                              spun->z.fixed + offsetZ);
   }
   Engine_EventWait(20);
-  Engine_ActorWaitForMove(16);
+  Engine_ActorWaitForMove(ACTOR_FIRST_ROCK);
   for (rockIndex = 16; rockIndex <= 31; rockIndex++) {
     actor = Object_GetById(rockIndex);
     Engine_ActorStop(rockIndex);
@@ -1694,9 +1694,10 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
     }
   }
   pair[0]->update = Effect_AnimateVerticalNegative;
-  pair[0]->sprite->image.priority = Object_GetById(15)->sprite->image.priority;
+  pair[0]->sprite->image.priority =
+      Object_GetById(ACTOR_WISE_ONE)->sprite->image.priority;
   {
-    struct FieldActor *wiseOne = Object_GetById(15);
+    struct FieldActor *wiseOne = Object_GetById(ACTOR_WISE_ONE);
     struct FieldActor *risingEffect = pair[1];
 
     risingEffect->sprite->image.priority = wiseOne->sprite->image.priority;

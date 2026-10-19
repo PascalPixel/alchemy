@@ -2488,7 +2488,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "Bola roja procedente de roca volcánica."
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 
@@ -18655,7 +18655,7 @@ msgctxt "message"
 msgid "04594"
 msgstr "Djinn / Cambiar"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Ataque"
 

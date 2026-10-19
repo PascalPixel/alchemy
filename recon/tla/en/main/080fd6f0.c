@@ -4,13 +4,14 @@
 // whose byte 6 (☀️'s type0c, the field effect) is set; any other mode those
 // with it set or usable in the field (flags & 0x40) first, then, unless mode
 // is 2, the rest. ⚓️ writes the passes as separate loops, the slots counted
-// down. Differ 48 of 136 (draft 134). Left: the clear keeps its byte offset
-// as the counter (cmp r3, #0), where the native walks a pointer down to
-// actions (cmp r3, ip), the form ☀️'s twin reaches only with a doubled
-// FAKEMATCH store, not used here (an index from 31 gives 73, a pointer 84
-// with an unsigned compare); after it, register choice (actions and the 0x3fff
-// mask swap r0, r2 and r3 at each loop head). Clearing count first is
-// measured: the native builds &actions[count] from a live zero.
+// down. Differ 9 of 136 (2026-10-19, from 48): the clear walks a pointer down
+// storing a literal 0, which agscc loads from the pool as the native does (a
+// zero local is built with movs). Left: the native compares the pointer with
+// a copy of actions in ip (mov ip, r8), here with r8 itself; one instruction,
+// which shifts the pool and two branches. Copying actions through an empty
+// asm gives the copy (differ 4, the copy one slot early); an index from 31 is
+// 73. Clearing count first is measured: the native builds &actions[count]
+// from a live zero.
 #include "types.h"
 
 struct OwnerActionSlot {
@@ -39,8 +40,14 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
   s32 offset;
 
   count = 0;
-  for (offset = 62; offset >= 0; offset -= 2)
-    *(u16 *)((u8 *)actions + offset) = 0;
+  {
+    u16 *clear = &actions[31];
+
+    do {
+      *clear = 0;
+      clear--;
+    } while ((s32)clear >= (s32)actions);
+  }
 
   if (mode == 1) {
     for (i = 0; i < 32; i++) {

@@ -18735,7 +18735,7 @@ msgctxt "message"
 msgid "04594"
 msgstr "Dschinn/Tauschen"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attacke"
 

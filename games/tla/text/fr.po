@@ -2493,7 +2493,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "Boule magma rougeoyante"
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 
@@ -18670,7 +18670,7 @@ msgctxt "message"
 msgid "04594"
 msgstr "Djinn / Echanger"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attaque"
 

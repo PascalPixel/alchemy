@@ -1,10 +1,10 @@
-// Near miss, differ 43 of 184: the twin of The Broken Seal's
-// PsynergyMenu_SelectOwner. The native keeps the loop in source order (the page
-// block, the A test, the B test, the cursor call, b to the top); here jump.c
-// moves the B test and the cursor call above the loop's top and enters with a
-// jump. Written with goto the order is right but loop.c no longer hoists the
-// 0x204 offset and the list address (differ 73). The native also copies the
-// hoisted offset (mov r6, r8) where this reuses r8. MsgChooseCharacter is
+// Near miss, differ 6 of 184 (2026-10-19): the twin of The Broken Seal's
+// PsynergyMenu_SelectOwner. Written as while (1) the loop keeps the native's
+// order (as for (;;), jump.c moves the B test and the cursor call above the
+// loop's top: differ 43; with goto, 73). Left, in the setup: the native
+// issues the moves of pending, the 0x204 offset's shift and the message
+// window's base one or two slots earlier. The initializers in nine other
+// orders and three minutes of permute are no nearer. MsgChooseCharacter is
 // message 4406 in English; it needs its name in the six catalogs before this
 // links (ja 4403, de 4870, es/fr/it 4866 by the text of The Broken Seal's
 // MsgChooseCharacter; unverified against those ROMs).
@@ -65,7 +65,7 @@ s32 Func_080feb58(void) {
                                   0, 0);
   UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1,
                                   menu->messageWindow, 0, 16);
-  for (;;) {
+  while (1) {
     // PERM
     if (pending) {
       selection = (selection + count) % count;

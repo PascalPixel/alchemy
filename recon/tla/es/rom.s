@@ -3771,6 +3771,10 @@ InventoryMenu_SortByListOrder:
 	.section .rom.000fef90, "ax"
 	.incbin "baserom.gba", 0x000fef90, 0x0000016c
 	.section .rom.000ff2d0, "ax"
+	.global Menu_SetPageIcons
+	.type Menu_SetPageIcons, %function
+	.thumb_func
+Menu_SetPageIcons:
 	.incbin "baserom.gba", 0x000ff2d0, 0x00000098
 	.section .rom.000ff3aa, "ax"
 	.incbin "baserom.gba", 0x000ff3aa, 0x00000002
@@ -3863,13 +3867,9 @@ Func_080feec0:
 Func_080ff370:
 	.incbin "baserom.gba", 0x001054a4, 0x00000570
 	.section .rom.00105a80, "ax"
-	.incbin "baserom.gba", 0x00105a80, 0x00000b8c
-	.section .rom.00106694, "ax"
-	.global ItemMenu_DrawEquippedItemNames
-	.type ItemMenu_DrawEquippedItemNames, %function
-	.thumb_func
-ItemMenu_DrawEquippedItemNames:
-	.incbin "baserom.gba", 0x00106694, 0x000000a4
+	.incbin "baserom.gba", 0x00105a80, 0x000007b4
+	.section .rom.00106370, "ax"
+	.incbin "baserom.gba", 0x00106370, 0x0000029c
 	.section .rom.0010688c, "ax"
 	.balign 4
 	.global Func_08100738

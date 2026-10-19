@@ -1,132 +1,144 @@
-#include "mem.h"
+// Draft of Func_08100e7c: runs the Djinn menu, keeping the field's tiles and
+// the party's event mode; the twin of The Broken Seal's ItemMenu_Run
+// (games/tbs/src/menu/menu/djinn.c), rewritten with ⚓️'s heap block (220,
+// 0xcec), menu work and calls (Func_0810106c is the screen loop).
+// Near miss, differ 10 of 201 (2026-10-19), instruction order only: the native
+// loads the object system before it starts the 1 it stores there, and the
+// pooled zero before the selection offset's first move, and so places the
+// literal pool one instruction earlier.
 #include "types.h"
-#include "system.h"
+#include "ram_buffer.h"
+#include "party_state.h"
 #include "iwram_call.h"
 
-struct ItemMenuModeState {
-  u8 reserved000[0x20c];
-  u8 mode;
+struct ObjectSystemWork {
+  u8 unk00[4];
+  u16 suspended;
 };
 
-struct ItemMenuDisplayState {
-  u16 reserved00[2];
-  u16 busy;
-};
-
-struct ItemMenuSavedGraphics {
-  u8 reserved000[0xa8];
+struct DjinnMenuBackdrop {
+  u8 list[0xa8];
   u8 tiles[0x2000];
-  u16 palette[64];
-  void *reserved2128;
-  s32 variant;
+  u8 palette[0x80];
+  s32 tutorialTimer;
+  s32 tutorialStep;
 };
 
-struct ItemMenuWork {
-  u8 reserved000[0x1c];
-  u8 selection;
-  u8 target;
-  u8 reserved01e[0xee];
-  s32 window;
-  u8 reserved110[0x64];
-  u16 slot;
-  u16 targetSlot;
-  u16 item;
-  u8 reserved17a[10];
-  struct ItemMenuSavedGraphics *saved;
-  u8 reserved188[0x80];
+struct DjinnMenuWork {
+  u8 unk000[0x1c];
+  s8 selectedColumn[2];
+  u8 unk01e[0xd2];
+  s32 helpWindow;
+  u8 unk0f4[0x74];
+  u16 selection[2];
+  u16 pairEntry;
+  u8 unk16e[0x12];
+  struct DjinnMenuBackdrop *backdrop;
+  u8 unk184[0x80];
   u16 owners[8];
-  u8 reserved218;
-  u8 count;
+  u8 unk214;
+  u8 ownerCount;
 };
 
-extern struct ItemMenuModeState gGameState;
-extern struct ItemMenuDisplayState *gMenuCtrlWork;
-s32 GameFlag_TestFar(s32 flag);
+void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void Runtime_ReleaseHeapBlock(s32 slot);
+void MemFree(void *block);
+s32 GameFlag_Test(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
+void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 mode);
 void Scheduler_EnableOverlayCallbacksWithFlags(void);
 void Scheduler_DisableOverlayCallbacksWithFlags(void);
-void Func_080153e0(s32 value);
-void Func_080152a8(void);
+void UiWork_SetAltFlagAndClearTableFar(s32 flag);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Resource_LoadPairedBlocksIfAvailable(void);
-void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);
-void Menu_SetFirstObjectRowCoordinates(s32 mode);
-void Palette_LightenBankHighlight(s32 palette);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
-void DjinnMenu_RunScreen(void);
-void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
+void Func_080fa368(s32 x, s32 y, s32 mode, s32 columns);
+void Menu_SetFirstObjectRowCoordinates(s32 offset);
+void Palette_LightenBankHighlight(s32 bank);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 frame);
+void Func_081051a8(void);
+s32 Func_0810106c(void);
+void MenuIcon_ReleaseObjects(void);
 void Menu_ResetTwoResourceEntries(void);
 void ItemMenu_Close(void);
+void Func_08038290(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 
-s32 ItemMenu_Run(void) {
-  struct ItemMenuWork *menu;
-  u32 oldMode;
-  s32 state;
-  struct ItemMenuSavedGraphics *saved;
+static __inline__ void CopyWords_(void *destination, const void *source,
+                                  s32 size) {
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as the scene layer does; as plain calls, 14 of 201
+   * instructions differ in tla-en. */
+  Iwram_CopyWords(destination, source, size);
+}
+
+s32 Func_08100e7c(void) {
+  struct DjinnMenuWork *menu;
+  u32 savedEventMode;
+  s32 enabled;
+  struct DjinnMenuBackdrop *backdrop;
   s32 zero;
 
-  menu = Runtime_AllocateHeapBlock(55, 0xa70);
-  oldMode = gGameState.mode;
-  gGameState.mode = 2;
-  state = gMenuCtrlWork->busy = 1;
+  menu = Runtime_AllocateHeapBlock(220, 0xcec);
+  savedEventMode = gPartyState.eventMode;
+  gPartyState.eventMode = 2;
+  enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
-  saved = Runtime_BumpAllocateAlternatePool(0x2130);
-  menu->saved = saved;
-  saved->reserved2128 = 0;
-  saved->variant = 0;
-  if (GameFlag_TestFar(0x16e)) {
-    if (!GameFlag_TestFar(0x16f)) {
-      if (!GameFlag_TestFar(0x171))
-        saved->variant = state;
+  backdrop = Runtime_BumpAllocateAlternatePool(0x2130);
+  menu->backdrop = backdrop;
+  backdrop->tutorialTimer = 0;
+  backdrop->tutorialStep = 0;
+  if (GameFlag_Test(0x16e)) {
+    if (!GameFlag_Test(0x16f)) {
+      if (!GameFlag_Test(0x171))
+        backdrop->tutorialStep = enabled;
       else
-        saved->variant = 14;
+        backdrop->tutorialStep = 14;
     } else {
-      if (!GameFlag_TestFar(0x171))
-        saved->variant = 27;
+      if (!GameFlag_Test(0x171))
+        backdrop->tutorialStep = 27;
       else
-        saved->variant = 28;
+        backdrop->tutorialStep = 28;
     }
   }
   Scheduler_EnableOverlayCallbacksWithFlags();
-  Func_080153e0(1);
+  UiWork_SetAltFlagAndClearTableFar(1);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
-  menu->count = Party_ListActiveOwnersFar(menu->owners);
+  menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
-  ItemMenu_Init(0, 3, 0, 7);
+  Func_080fa368(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
   Palette_LightenBankHighlight(14);
-  menu->window = UiWindow_CreateFar(13, 0, 17, 5, 2);
-  menu->item = 255;
+  menu->helpWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
+  menu->pairEntry = 255;
   zero = 0;
-  menu->selection = zero;
-  menu->target = zero;
-  menu->slot = 0;
-  menu->targetSlot = 0;
-  FourObjectMotion_InitializeBottomRow(menu->window, 0);
-  DjinnMenu_RunScreen();
-  FourObjectMotion_ClearSlotsAndScheduleAlt();
+  menu->selectedColumn[0] = zero;
+  menu->selectedColumn[1] = zero;
+  menu->selection[0] = 0;
+  menu->selection[1] = 0;
+  Func_081051a8();
+  Func_0810106c();
+  MenuIcon_ReleaseObjects();
   Menu_ResetTwoResourceEntries();
   WaitFrames(1);
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  gMenuCtrlWork->busy = 0;
-  Func_080152a8();
-  Func_080153e0(0);
-  Iwram_CopyWords((void *)0x06004000, saved->tiles, 0x2000);
-  Iwram_CopyWords((void *)0x05000080, saved->palette, 128);
+  Ram_HeapSlots->objectSystem->suspended = 0;
+  Func_08038290();
+  UiWork_SetAltFlagAndClearTableFar(0);
+  CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
+  CopyWords_((void *)0x05000080, backdrop->palette, 128);
   WaitFrames(1);
   Scheduler_DisableOverlayCallbacksWithFlags();
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-  MemFree(menu->saved);
-  Runtime_ReleaseHeapBlock(55);
+  MemFree(menu->backdrop);
+  Runtime_ReleaseHeapBlock(220);
   Event_ClearInvalidPackedValuesFar();
-  gGameState.mode = oldMode;
+  gPartyState.eventMode = savedEventMode;
   return 1;
 }

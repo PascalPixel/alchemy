@@ -1,0 +1,121 @@
+// First draft of Func_080ff370: draws member ownerId's status page, the twin
+// of The Broken Seal's CharacterMenu_DrawStatusAilments
+// (games/tbs/src/menu/menu/status.c). ⚓️ draws the ailments with
+// Func_081054e0. MsgDjinnLabel and MsgPowerLabel are messages 4140 and 4141
+// in English; they need their names in the six catalogs before this links.
+// Differ 12 of 261 (2026-10-19), instruction order only: the native stores
+// the two spilled parameters before it builds the heap address, reloads mode
+// before the 0x100 mask, and starts the power pointer before the window x.
+// The locals are declared in the order that gives the native stack slots
+// (hasDjinn 8, djinnRow 12, element 16; otherwise differ 56).
+#include "types.h"
+#include "ram_buffer.h"
+#include "battle_unit.h"
+
+struct MenuIcon {
+  u8 unk00[5];
+  u8 active;
+};
+
+struct CharacterMenuState {
+  u8 unk000[0x170];
+  struct MenuIcon *statusCursor;
+  u8 unk174[0xa8];
+  u16 page;
+};
+
+extern u8 MsgDjinnLabel[];
+extern u8 MsgPowerLabel[];
+extern const u8 gMenu_LvString[];
+extern const u8 gMenu_SlashString[];
+
+s32 Party_SumDjinnCountsFar(s32 owner);
+struct BattleUnit *UnitGet(s32 owner);
+void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
+                                    s32 height);
+void Func_081054e0(s32 window, s32 x, s32 y, u8 *ailments);
+void WaitFrames(s32 frames);
+void UiWork_SetParamNibbleFar(s32 color);
+void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
+                                 s32 palette);
+void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
+void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
+void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
+                                  s32 y);
+s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
+
+void Func_080ff370(s32 window, s32 ownerId, s32 mode) {
+  struct CharacterMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct BattleUnit *unit;
+  s32 element;
+  s32 djinnRow;
+  s32 keepDrawn;
+  s32 hasDjinn;
+  u8 ailments[8];
+
+  if (Party_SumDjinnCountsFar(-1) != 0)
+    hasDjinn = 1;
+  else
+    hasDjinn = 0;
+  unit = UnitGet(ownerId);
+  if ((mode & 0xff) == 1)
+    djinnRow = 7;
+  else
+    djinnRow = 10;
+  menu->statusCursor->active = 1;
+  ItemMenu_DrawOwnerStatus(window, ownerId, mode);
+  CharacterMenu_BuildAvailability(ailments, 1, ownerId);
+  keepDrawn = mode & 0x100;
+  if (keepDrawn == 0)
+    UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
+  Func_081054e0(window, 0, 40, ailments);
+  if (menu->page == 3)
+    return;
+  if (keepDrawn == 0) {
+    WaitFrames(1);
+    UiWindow_ClearInteriorTilesFar(window, 64, 56, 224, 96);
+  }
+  UiWork_SetParamNibbleFar(15);
+  if (mode == 1 || hasDjinn == 1) {
+    UiWindow_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 3, 23, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 4, 27, djinnRow, 4);
+  }
+  if (hasDjinn)
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnLabel, window, 64,
+                                    djinnRow * 8 + 8);
+  if (mode == 1) {
+    if (!hasDjinn)
+      djinnRow--;
+    UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
+    UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64,
+                                    djinnRow * 8 + 24);
+    UiText_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64,
+                                    djinnRow * 8 + 32);
+  }
+  for (element = 0; element <= 3; element++) {
+    if (hasDjinn)
+      UiText_DrawNumberInWindowFar(unit->djinnOwnedCounts[element], 1, window,
+                                   element * 32 + 120, djinnRow * 8 + 8);
+    if ((mode & 0xff) == 1) {
+      if (hasDjinn) {
+        UiText_DrawNumberInWindowFar(unit->djinnActiveCounts[element], 1,
+                                     window, element * 32 + 104,
+                                     djinnRow * 8 + 8);
+        UiText_DrawStringInWindowFar(gMenu_SlashString, window,
+                                     element * 32 + 112, djinnRow * 8 + 8);
+      }
+      UiText_DrawNumberInWindowFar(Unit_GetElementLevelFar(ownerId, element), 2,
+                                   window, element * 32 + 112,
+                                   djinnRow * 8 + 16);
+      UiText_DrawNumberInWindowFar(unit->element[element].power, 3, window,
+                                   element * 32 + 104, djinnRow * 8 + 24);
+      UiText_DrawNumberInWindowFar(unit->element[element].resistance, 3, window,
+                                   element * 32 + 104, djinnRow * 8 + 32);
+    }
+  }
+}

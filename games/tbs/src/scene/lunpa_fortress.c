@@ -461,7 +461,7 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
     SE(SE_125);
     OBJ_MODE(actorId, 5);
   }
-  Engine_ObjectDispatchRelease(itemEffect);
+  Engine_ObjectDispatchRelease((struct FieldActor *)itemEffect);
   EV_END();
   return itemGiven;
 }

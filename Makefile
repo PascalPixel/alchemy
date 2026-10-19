@@ -3,13 +3,6 @@
 # out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against
 # rom.sha1. Every rule the ROM is built by is in this file.
 
-# Each edition builds in its own make, all sharing one job pool. GNU Make
-# 3.81, macOS's /usr/bin/make, busy-waits on that pool, and a compare that
-# takes seconds takes many minutes; Make 4 or later is required.
-ifeq ($(filter 4.% 5.%,$(MAKE_VERSION)),)
-$(error GNU Make $(MAKE_VERSION) is too old: use GNU Make 4 or later (INSTALL.md))
-endif
-
 GAMES    := tbs tla
 LANGS    := ja en de es fr it
 EDITIONS := $(foreach game,$(GAMES),$(addprefix $(game)-,$(LANGS)))
@@ -42,9 +35,12 @@ help:
 	  'make land               on main before committing: all twelve, the tests, the measurement'
 
 # Each edition builds in its own make, so its variables below are set once;
-# the tools are built first, once.
+# the tools are built first, once. GNU Make 3.81, macOS's make, busy-waits
+# when a parallel make waits for a job, so there each edition builds serially
+# while the editions still build side by side.
+SERIAL := $(if $(filter 3.%,$(MAKE_VERSION)),-j1)
 $(EDITIONS): tools
-	@$(MAKE) -f Makefile EDITION=$@ rom
+	@$(MAKE) $(SERIAL) -f Makefile EDITION=$@ rom
 
 $(addprefix compare-,$(EDITIONS)): compare-%: %
 	@grep -F ' out/$*/$*.gba' rom.sha1 | $(SHA1) -
@@ -59,7 +55,7 @@ ifndef EDITION
 .PHONY: modern
 modern: $(addprefix modern-,$(TBS))
 modern-%: tools
-	@$(MAKE) -f Makefile EDITION=$* modern
+	@$(MAKE) $(SERIAL) -f Makefile EDITION=$* modern
 endif
 
 clean:
@@ -233,12 +229,14 @@ $(BUILD)/overlays/resource_%_overlay.o: $$(OVERLAY_SOURCE) $(OVERLAY_ROM)
 CHARMAP_tbs := games/common/src/graphics/font/charmap_ja.tsv
 CHARMAP_tla := games/common/src/graphics/font/charmap_tla_ja.tsv
 CHARMAP := $(if $(filter ja,$(LANG)),$(CHARMAP_$(GAME)))
-$(BUILD)/text/messages.inc: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
+# ags-text rewrites a file only when its contents change, so a .po edit
+# recompiles only what it affects; the stamp records when it last ran.
+$(BUILD)/text/messages.inc $(BUILD)/text/msg_ids.h: $(BUILD)/text/stamp ;
+$(BUILD)/text/stamp: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
 	@mkdir -p $(@D)
-	$(PO2AGS) $< $@ $(if $(CHARMAP),--charmap $(CHARMAP))
-$(BUILD)/text/msg_ids.h: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
-	@mkdir -p $(@D)
-	$(PO2AGS) $< $@ --header $(if $(filter tbs,$(GAME)),--as-value)
+	$(PO2AGS) $< $(@D)/messages.inc $(if $(CHARMAP),--charmap $(CHARMAP))
+	$(PO2AGS) $< $(@D)/msg_ids.h --header $(if $(filter tbs,$(GAME)),--as-value)
+	@touch $@
 
 # ⚓️'s scaffolds read the edition's own ROM (O1), checked against rom.sha1.
 $(BUILD)/baserom.gba: roms/$(EDITION).gba

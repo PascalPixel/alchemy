@@ -17,7 +17,7 @@
 #define OBJ_MODE(no, m) Engine_ActorSetAnimation((no), (m))
 #define OBJ_EMOTE(no, e, t) Actor_ShowEmote((no), (e), (t))
 
-// Get an object by index as the same union FieldObject passed to update hooks.
+/// Get an object by index as the same union FieldObject passed to update hooks.
 #define OBJ_GET(no) ((union FieldObject *)Object_GetById(no))
 
 #define FLAG_CHECK(f) GameFlag_IsSet(f)

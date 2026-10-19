@@ -1,7 +1,8 @@
 #ifndef MINIGAME_H
 #define MINIGAME_H
 
-// MINIGAME
+/// @file
+/// MINIGAME
 
 #include "types.h"
 #include "edition.h"

@@ -10,8 +10,8 @@ struct BattleEffectArgument;
 struct EffectPosition;
 struct EffectStep;
 
-// The large effects BattleFx_RunSceneEffect runs, by kind: the summons, and
-// Meteor's scene (kind 0 runs it too).
+/// The large effects BattleFx_RunSceneEffect runs, by kind: the summons, and
+/// Meteor's scene (kind 0 runs it too).
 enum SceneEffectKind {
   SCENE_EFFECT_RAMSES = 1,
   SCENE_EFFECT_NEREID,
@@ -28,9 +28,9 @@ enum SceneEffectKind {
 };
 
 typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
-// Effect kinds: the kind an ability's gBattle_ActionFlags entry selects, by
-// the handler that plays it; a later kind that shares a handler adds its
-// number. Kinds without a handler have no name. Kind 0 is the dispatcher's.
+/// Effect kinds: the kind an ability's gBattle_ActionFlags entry selects, by
+/// the handler that plays it; a later kind that shares a handler adds its
+/// number. Kinds without a handler have no name. Kind 0 is the dispatcher's.
 enum BattleFxKind {
   BATTLE_FX_QUAKE = 1,
   BATTLE_FX_SPIRE = 2,
@@ -208,9 +208,9 @@ typedef struct {
   s16 values[1];
 } BattleEffectIndexWindow;
 
-// The map cell buffer (gMapCellBuffer), which the effects borrow, has two
-// views here: Ram_MapCellBuffer as bytes, at its fixed address, and PARTICLES
-// as particles. The effects use these two, not gMapCellBuffer itself.
+/// The map cell buffer (gMapCellBuffer), which the effects borrow, has two
+/// views here: Ram_MapCellBuffer as bytes, at its fixed address, and PARTICLES
+/// as particles. The effects use these two, not gMapCellBuffer itself.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 #define EFFECT_CLIP_BOUNDS                                                     \
@@ -224,19 +224,19 @@ typedef struct {
 #define Q_16_16_TO_INT(v) (((s16 *)&(v))[1])
 #endif
 
-// Two-dimensional {x, y} pair for position or velocity.
+/// Two-dimensional {x, y} pair for position or velocity.
 struct Point2D {
   s32 x;
   s32 y;
 };
 
-// Effect renderer pair: BattleFx_BuildBlitter creates [0] in
-// HEAP_SLOT_BLITTER and [1] in HEAP_SLOT_BLITTER_ALTERNATE.
-// Many effects keep this pair in their stack frame.
+/// Effect renderer pair: BattleFx_BuildBlitter creates [0] in
+/// HEAP_SLOT_BLITTER and [1] in HEAP_SLOT_BLITTER_ALTERNATE.
+/// Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
-// The work slots read as blitters: EFFECT_BLITTERS[HEAP_SLOT_BLITTER] and
-// EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE].
+/// The work slots read as blitters: EFFECT_BLITTERS[HEAP_SLOT_BLITTER] and
+/// EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE].
 #define EFFECT_BLITTERS ((DrawRectangle *)gWorkSlot)
 
 // The functions the parts of effect.c define, part by part in include order.

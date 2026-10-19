@@ -8,7 +8,7 @@
 struct SceneEvent;
 struct ScenePlacement;
 
-// Each stop links to up to three others, with a heading for each connection.
+/// Each stop links to up to three others, with a heading for each connection.
 struct VaultInteriorsStopConnection {
   u8 stopIndex;
   u8 facing;

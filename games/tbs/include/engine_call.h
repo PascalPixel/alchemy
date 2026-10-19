@@ -1,15 +1,16 @@
 #ifndef ALCHEMY_ENGINE_CALL_H
 #define ALCHEMY_ENGINE_CALL_H
 
-// Engine call layer: one typed inline for each of the thirteen main-image
-// routines below that the scene, menu and debug overlays import; every overlay
-// call of them goes through it. Main-image code calls them as ordinary
-// functions; only the shared scene/common/scroll_initialize_hblank_dma.h, which
-// object/psynergy_effects.c includes as lemurian_ship.c does, reaches the layer
-// there. Overlays call main-image routines through these inline functions;
-// their calls resolve to import stubs. Passing arguments through inline
-// parameters rematerializes constants at each call. field_service.h includes
-// this layer; rooms without the scene command layer use it directly.
+/// @file
+/// Engine call layer: one typed inline for each of the thirteen main-image
+/// routines below that the scene, menu and debug overlays import; every overlay
+/// call of them goes through it. Main-image code calls them as ordinary
+/// functions; only the shared scene/common/scroll_initialize_hblank_dma.h,
+/// which object/psynergy_effects.c includes as lemurian_ship.c does, reaches
+/// the layer there. Overlays call main-image routines through these inline
+/// functions; their calls resolve to import stubs. Passing arguments through
+/// inline parameters rematerializes constants at each call. field_service.h
+/// includes this layer; rooms without the scene command layer use it directly.
 
 #include "types.h"
 #include "unit/object/psynergy_effects.h"
@@ -22,9 +23,9 @@ struct FieldActor;
 struct FieldPosition;
 struct MenuSprite;
 
-// Register a main-image scheduler callback. The scene layer's Task_AddCallback
-// and FieldScheduler_AddOrUpdateCallback also use this wrapper, so overlays
-// import this routine under one name.
+/// Register a main-image scheduler callback. The scene layer's Task_AddCallback
+/// and FieldScheduler_AddOrUpdateCallback also use this wrapper, so overlays
+/// import this routine under one name.
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback,
                                              s32 priority) {
   return Scheduler_AddOrUpdateCallback(callback, priority);
@@ -76,9 +77,9 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
   return Unit_AddHp(owner, delta);
 }
 
-// Decode type-01 compressed data. Scenes and the title and clear menus use
-// this wrapper. The same decode in main-image field/lucky_dice.c uses call.h's
-// tagged Value2 instead.
+/// Decode type-01 compressed data. Scenes and the title and clear menus use
+/// this wrapper. The same decode in main-image field/lucky_dice.c uses call.h's
+/// tagged Value2 instead.
 static inline s32 FieldResource_DecodeType01(const void *source,
                                              void *destination) {
   return Resource_DecodeType01(source, destination);

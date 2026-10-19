@@ -16,8 +16,8 @@
 #define STRIKE_SPARKS 8 // each hit scatters sparks
 #define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
 
-// Every table effect_table.c defines, in its order. A table read by columns
-// is a two-dimensional array, its columns named by the enum above it.
+/// Every table effect_table.c defines, in its order. A table read by columns
+/// is a two-dimensional array, its columns named by the enum above it.
 extern u16 gBattleFx_MoteCells[];
 extern u16 gBattleFx_FlareCells[];
 extern u16 gBattleFx_PuffCells[];
@@ -30,11 +30,11 @@ extern u16 gBattleFx_GlintCells[];
 extern u8 gBattleFx_GlintCellWidths[];
 extern u8 gBattleFx_GlintCellHeights[];
 
-// Each Ice variant: its shards and how many frames it runs.
+/// Each Ice variant: its shards and how many frames it runs.
 enum { ICE_SHARD_COUNT, ICE_FRAMES };
 extern u8 gFalling_IceCounts[][2];
 
-// Each Douse variant: its bolt waves, sparks per bolt, spacing and frames.
+/// Each Douse variant: its bolt waves, sparks per bolt, spacing and frames.
 enum {
   FALLING_BOLT_WAVE_COUNT,
   FALLING_BOLT_SPARKS_PER_BOLT,
@@ -69,8 +69,8 @@ extern u16 gSpiderWeb_Cells[];
 extern u8 gSpiderWeb_CellX[];
 extern s8 gSpiderWeb_CellBiasY[];
 
-// Each gathering-lights mode: the lights per target and the frames before the
-// targets' turns.
+/// Each gathering-lights mode: the lights per target and the frames before the
+/// targets' turns.
 enum { GATHERING_LIGHTS_COUNT, GATHERING_LIGHTS_FRAMES };
 extern u8 gGatheringLights_Counts[][2];
 
@@ -106,25 +106,25 @@ extern u8 gTiamat_StreakHeights[];
 extern u8 gTiamat_StreakDrops[];
 extern u16 gTiamat_StreakOffsets[];
 
-// The foot of each of Nereid's columns of fire.
+/// The foot of each of Nereid's columns of fire.
 enum { NEREID_COLUMN_X, NEREID_COLUMN_Y };
 extern u8 gNereid_Columns[][2];
 
 extern s32 gNereid_Gravity[];
 
-// Each Froth variant: its motes and frames.
+/// Each Froth variant: its motes and frames.
 enum { FROTH_MOTE_COUNT, FROTH_FRAMES };
 extern u8 gVortices_Counts[][2];
 
-// Each Whirlwind variant: its tornadoes, their sway and the screen shake.
+/// Each Whirlwind variant: its tornadoes, their sway and the screen shake.
 enum { WHIRLWIND_TORNADOES, WHIRLWIND_SWAY, WHIRLWIND_SHAKE };
 extern u8 gVortices_Shapes[][3];
 
-// Where each Prism shard starts in the crystal.
+/// Where each Prism shard starts in the crystal.
 enum { PRISM_SHARD_START_X, PRISM_SHARD_START_Y };
 extern u8 gPrism_ShardStarts[][2];
 
-// Each Prism variant: its crystals and frames.
+/// Each Prism variant: its crystals and frames.
 enum { PRISM_CRYSTAL_COUNT, PRISM_FRAMES };
 extern u8 gPrism_Counts[][2];
 
@@ -132,15 +132,15 @@ extern u8 gPrism_ShardWidths[];
 extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardOffsets[];
 
-// Each Plasma variant: the sparks per pillar and the frames of shake.
+/// Each Plasma variant: the sparks per pillar and the frames of shake.
 enum { PLASMA_SPARKS, PLASMA_SHAKE_FRAMES };
 extern u16 gPlasma_Sparks[][2];
 
 extern u8 gPlasma_Columns[][7];
 extern u8 gPlasma_Counts[];
 
-// Each spark group variant: sparks per burst, bursts, and from
-// SPARK_GROUPS_OFFSET each burst's offset across.
+/// Each spark group variant: sparks per burst, bursts, and from
+/// SPARK_GROUPS_OFFSET each burst's offset across.
 enum { SPARK_GROUPS_SPARKS, SPARK_GROUPS_BURSTS, SPARK_GROUPS_OFFSET };
 extern u16 gPlasma_Shapes[][5];
 
@@ -150,7 +150,7 @@ extern s8 gVolcano_Depths[][4];
 extern u8 gVolcano_StartFrames[];
 extern u8 gTargetMotes_GlintFlips[];
 
-// Cybele's waving poses: the animations of objects 3 and 4.
+/// Cybele's waving poses: the animations of objects 3 and 4.
 enum { CYBELE_POSE_OBJECT3, CYBELE_POSE_OBJECT4 };
 extern u8 gCybele_ObjectPoses[][2];
 
@@ -195,7 +195,7 @@ extern u8 gFire_FlareHeights[];
 extern u8 gFire_FlareBiasY[];
 extern u16 gFire_FlareCells[];
 
-// Where each rising-motes ice column stands: x and the y of its foot.
+/// Where each rising-motes ice column stands: x and the y of its foot.
 enum { RISING_MOTES_COLUMN_X, RISING_MOTES_COLUMN_FOOT };
 extern u8 gFrost_ColumnSpots[][2];
 
@@ -259,7 +259,7 @@ extern u8 gHail_ChipY[];
 extern u8 gThor_TargetPalettes[];
 extern u8 gThor_SmokeFlips[];
 
-// Where each Spire shard starts, before its rock's offset across.
+/// Where each Spire shard starts, before its rock's offset across.
 enum { SPIRE_SHARD_X, SPIRE_SHARD_Y };
 extern u8 gSpire_ShardOffsets[][2];
 

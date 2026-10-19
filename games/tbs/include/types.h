@@ -19,11 +19,11 @@ typedef unsigned long long u64;
 #define UNUSED __attribute__((unused))
 
 #ifdef MODERN
-// the modern build places code and data where its own compiler puts them:
-// a fixed address is the linked name, called through a register as at a
-// fixed address, so that code copied into RAM still reaches it
-// the linked name is pasted before it is macro-expanded: a name that is
-// itself a macro would otherwise expand first and cannot be pasted
+/// the modern build places code and data where its own compiler puts them:
+/// a fixed address is the linked name, called through a register as at a
+/// fixed address, so that code copied into RAM still reaches it
+/// the linked name is pasted before it is macro-expanded: a name that is
+/// itself a macro would otherwise expand first and cannot be pasted
 #define FIXED_LINKED_(symbol, name)                                            \
   ({                                                                           \
     extern char symbol[] __asm__(name);                                        \

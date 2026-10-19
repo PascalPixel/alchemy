@@ -44,7 +44,8 @@ struct SoundTrack;
 typedef void (*SoundCommand)(struct SoundPlayer *player,
                              struct SoundTrack *track);
 
-// Driver entries follow gSound_CommandTableTemplate, including its helper tail.
+/// Driver entries follow gSound_CommandTableTemplate, including its helper
+/// tail.
 #define SOUND_COMMAND_FINISH 0
 #define SOUND_COMMAND_GOTO 1
 #define SOUND_COMMAND_WORK_BYTE 8

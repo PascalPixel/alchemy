@@ -10,9 +10,9 @@ struct SceneEvent;
 struct ScenePlacement;
 union FieldObject;
 
-// A field Psynergy's effect, as the field kind: the type column of
-// games/tbs/src/game/actions.tsv, named for the abilities that have it. The
-// effect scene keeps it as its animation.
+/// A field Psynergy's effect, as the field kind: the type column of
+/// games/tbs/src/game/actions.tsv, named for the abilities that have it. The
+/// effect scene keeps it as its animation.
 enum FieldKind {
   FIELD_KIND_MOVE = 1,
   FIELD_KIND_MIND_READ = 2,
@@ -27,13 +27,13 @@ enum FieldKind {
   FIELD_KIND_CARRY = 11,
   FIELD_KIND_GROWTH = 12,
   FIELD_KIND_CATCH = 13,
-  // Whirlwind and Gale.
+  /// Whirlwind and Gale.
   FIELD_KIND_WHIRLWIND = 14,
   FIELD_KIND_RETREAT = 15,
   FIELD_KIND_AVOID = 16
 };
 
-// One frame of a sparkle: its height offset and tile (fxdata.c).
+/// One frame of a sparkle: its height offset and tile (fxdata.c).
 struct SparkleFrame {
   s16 dy;
   u16 tile;
@@ -72,7 +72,7 @@ void Event_SetDestination(s32 scene, s32 entrance);
 void Event_SetSavedDestination(u16 scene, u16 entrance);
 void Event_SetExitRequest(u16 request);
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo);
-// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
+/// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
 #define DJINN_NO_HOP 0x800
 void Field_RequestDjinnBattle(s32 flag, s32 no);
 void Event_SetNextDestination(s32 scene, s32 entrance);
@@ -89,18 +89,18 @@ struct ObjectRuntime;
 struct FieldActor *Object_GetById(s32 actor);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
-// Built-in actions selected by ObjectMotion_SetActionCallback.
+/// Built-in actions selected by ObjectMotion_SetActionCallback.
 #define ACTOR_ACTION_IDLE 1
 #define ACTOR_ACTION_FOLLOW_LINKED_OBJECT 5
 #define ACTOR_ACTION_FACE_SELECTED_ACTOR 6
-// Clear child and collision flags, then return to the idle script.
+/// Clear child and collision flags, then return to the idle script.
 #define ACTOR_ACTION_RESET 7
 
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action);
 void ObjectMotion_EnableActionAndResetMotion(u32 objectId);
 void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId);
 void Object_RefreshSelectorById(u32 objectId);
-// Accepts a built-in action number or script address; waits up to 300 frames.
+/// Accepts a built-in action number or script address; waits up to 300 frames.
 void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action);
 void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
@@ -232,9 +232,9 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
 void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldObject_PlaceSceneActors(void);
-// Djinn_ResolvePendingEvent is called from object.c with no prototype in scope:
-// Field_RunScene calls it, and object.c comes before this unit in ROM order, so
-// in one file the call would still come first. No split evidence.
+/// Djinn_ResolvePendingEvent is called from object.c with no prototype in
+/// scope: Field_RunScene calls it, and object.c comes before this unit in ROM
+/// order, so in one file the call would still come first. No split evidence.
 void BattleFx_UpdateAllSlots(void);
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);

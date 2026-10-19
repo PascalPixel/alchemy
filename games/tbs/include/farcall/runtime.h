@@ -1,6 +1,6 @@
-// Frame scheduling, memory, resources and core runtime services.
-// Far-call interfaces; their ordered jump stubs live in
-// games/tbs/src/system/far_call/RUNTIME.S.
+/// Frame scheduling, memory, resources and core runtime services.
+/// Far-call interfaces; their ordered jump stubs live in
+/// games/tbs/src/system/far_call/RUNTIME.S.
 void WaitFramesFar(s32 frames);
 s32 Scheduler_AddOrUpdateCallbackFar(SchedulerCallback callback, s32 order);
 s32 Scheduler_RemoveCallbackFar(SchedulerCallback callback);

@@ -113,7 +113,7 @@ static inline s32 Party_GiveItem(s32 item, s32 flags) {
 
 static inline void Psynergy_Cancel(void) { Engine_PsynergyCancel(); }
 
-// Calls the main-image scheduler through engine_call.h.
+/// Calls the main-image scheduler through engine_call.h.
 static inline s32 Task_AddCallback(void (*callback)(void), s32 priority) {
   return FieldScheduler_AddCallback(callback, priority);
 }
@@ -148,7 +148,7 @@ static inline void FieldObject_MotionSetPositionAndCommit(s32 actor, s32 x,
   Engine_ObjectMotionSetPositionAndCommit(actor, x, z);
 }
 
-// Calls the main-image scheduler through engine_call.h.
+/// Calls the main-image scheduler through engine_call.h.
 static inline s32 FieldScheduler_AddOrUpdateCallback(SchedulerCallback callback,
                                                      s32 priority) {
   return FieldScheduler_AddCallback(callback, priority);

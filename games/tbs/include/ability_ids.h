@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
-// Ability numbers. Each ability's name is message 819 plus its number in the
-// game's text (Frost is message 843, Mind Read 960).
+/// Ability numbers. Each ability's name is message 819 plus its number in the
+/// game's text (Frost is message 843, Mind Read 960).
 enum AbilityId {
   ABILITY_GROWTH = 0x0c,
   ABILITY_FROST = 0x18,
@@ -21,8 +21,8 @@ enum AbilityId {
   ABILITY_RETREAT = 0x95,
   ABILITY_AVOID = 0x96,
   ABILITY_DROWN = 0xdb,
-  // The summons: four to an element, in the order of their Djinn costs, each
-  // element's six ids apart.
+  /// The summons: four to an element, in the order of their Djinn costs, each
+  /// element's six ids apart.
   ABILITY_VENUS = 0x17c,
   ABILITY_RAMSES = 0x17d,
   ABILITY_CYBELE = 0x17e,
@@ -39,7 +39,7 @@ enum AbilityId {
   ABILITY_ATALANTA = 0x18f,
   ABILITY_PROCNE = 0x190,
   ABILITY_THOR = 0x191,
-  // An enemy that splits itself in two ("attempts to divide").
+  /// An enemy that splits itself in two ("attempts to divide").
   ABILITY_SPEED_SURGE = 0x1f7
 };
 

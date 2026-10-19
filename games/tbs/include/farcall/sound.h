@@ -1,6 +1,6 @@
-// Audio mixing, playback commands and music-player updates.
-// Far-call interfaces; their ordered jump stubs live in
-// games/tbs/src/system/far_call/SOUND.S.
+/// Audio mixing, playback commands and music-player updates.
+/// Far-call interfaces; their ordered jump stubs live in
+/// games/tbs/src/system/far_call/SOUND.S.
 void AudioEngine_RunMixerFar(void);
 void Audio_InitializeRuntimeDefaultsFar(void);
 #ifndef OWN_AudioCommand_PlayFar

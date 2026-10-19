@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_ITEM_IDS_H
 #define ALCHEMY_ITEM_IDS_H
 
-// Item ids, named from the English release: an item's name is message
-// 386 + its id. Only items the code names are listed.
+/// Item ids, named from the English release: an item's name is message
+/// 386 + its id. Only items the code names are listed.
 enum ItemId {
   ITEM_ARCTIC_BLADE = 0x08,
   ITEM_GAIA_BLADE = 0x09,

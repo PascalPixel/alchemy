@@ -25,10 +25,10 @@ enum ItemFlags {
   ITEM_STACKABLE = 0x10
 };
 
-// An item's type (struct ItemDefinition's type), where it is known.
+/// An item's type (struct ItemDefinition's type), where it is known.
 enum ItemType {
   ITEM_TYPE_WEAPON = 1,
-  // The items that teach Psynergy while held: Orb of Force to Catch Beads.
+  /// The items that teach Psynergy while held: Orb of Force to Catch Beads.
   ITEM_TYPE_PSYNERGY = 6
 };
 
@@ -48,8 +48,8 @@ enum ItemEffectKind {
   ITEM_EFFECT_SCALE_DEFENSE,
   ITEM_EFFECT_SCALE_AGILITY,
   ITEM_EFFECT_SCALE_LUCK,
-  // Element power and resistance, in the element order Venus, Mercury, Mars,
-  // Jupiter
+  /// Element power and resistance, in the element order Venus, Mercury, Mars,
+  /// Jupiter
   ITEM_EFFECT_ADD_VENUS_POWER,
   ITEM_EFFECT_ADD_MERCURY_POWER,
   ITEM_EFFECT_ADD_MARS_POWER,
@@ -58,11 +58,11 @@ enum ItemEffectKind {
   ITEM_EFFECT_ADD_MERCURY_RESIST,
   ITEM_EFFECT_ADD_MARS_RESIST,
   ITEM_EFFECT_ADD_JUPITER_RESIST,
-  ITEM_EFFECT_ADD_UNLEASH_CHANCE, // percent added to the weapon's unleash
-  ITEM_EFFECT_24,                 // summed by UnitCalc; TBS never reads it
-  ITEM_EFFECT_25,                 // sets restraint bit 3, which lifts bit 0
-  ITEM_EFFECT_ADD_TURNS,          // more actions each round
-  ITEM_EFFECT_LURE // sets FLAG_LURE_CAP while worn: encounters come faster
+  ITEM_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
+  ITEM_EFFECT_24,                 ///< summed by UnitCalc; TBS never reads it
+  ITEM_EFFECT_25,                 ///< sets restraint bit 3, which lifts bit 0
+  ITEM_EFFECT_ADD_TURNS,          ///< more actions each round
+  ITEM_EFFECT_LURE ///< sets FLAG_LURE_CAP while worn: encounters come faster
 };
 
 struct ItemEffect {
@@ -83,10 +83,10 @@ struct ItemDefinition {
   u16 icon;
   s16 primaryBonus;
   s8 secondaryBonus;
-  u8 unleashChance; // in steps of 5 percent
+  u8 unleashChance; ///< in steps of 5 percent
   u8 useType;
   u8 reserved0d;
-  u16 unleashAction; // the action a weapon unleashes, or 0
+  u16 unleashAction; ///< the action a weapon unleashes, or 0
 
   u8 reserved10[4];
   s32 element;

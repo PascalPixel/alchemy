@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Fixed addresses of IWRAM-resident routines.
+/// Fixed addresses of IWRAM-resident routines.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 #define Iwram_ClearWordsEntry                                                  \
@@ -17,8 +17,8 @@
 #define Iwram_ExpandBitRuns                                                    \
   FIXED_ADDRESS((s32 (*)(const void *bits, void *destination, s32 value)),     \
                 0x03000214, IwramExpandBitRuns)
-// Reads all three word-aligned coordinates before writing the result. Input
-// may be an array or a record's coordinate prefix; output may overlap it.
+/// Reads all three word-aligned coordinates before writing the result. Input
+/// may be an array or a record's coordinate prefix; output may overlap it.
 #define Iwram_TransformVectorEntry                                             \
   FIXED_ADDRESS((s32 (*)(const void *vector, s32 *result)), 0x03000250,        \
                 IwramTransformVector)
@@ -37,7 +37,7 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03001388, IwramCopyWords)
 
-// All calls go through this layer.
+/// All calls go through this layer.
 static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
   return Iwram_RatioMulQ14Entry(divisor, value);
 }
@@ -78,7 +78,7 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
 }
 
 #ifdef MODERN
-// r0/r1 are the routine's arguments; it returns through ip instead of lr.
+/// r0/r1 are the routine's arguments; it returns through ip instead of lr.
 CAMELOT_ASM(
     "a call that returns through ip, which no procedure-call standard produces")
 static inline s32 Iwram_Call2(s32 left, s32 right, void *routine) {

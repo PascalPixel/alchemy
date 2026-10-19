@@ -15,16 +15,16 @@
 #define BGCNT_MOSAIC 0x0040
 #define BGCNT_256_COLORS 0x0080
 #define BGCNT_SCREEN_BASE(block) ((block) << 8)
-// Affine backgrounds only: wrap around instead of showing the backdrop.
+/// Affine backgrounds only: wrap around instead of showing the backdrop.
 #define BGCNT_WRAP 0x2000
-// The background's size: for an affine one, 0 to 3 are 128, 256, 512 and 1024
-// pixels square.
+/// The background's size: for an affine one, 0 to 3 are 128, 256, 512 and 1024
+/// pixels square.
 #define BGCNT_SIZE(n) ((n) << 14)
 
 enum DisplayControl {
-  DISPCNT_MODE_0 = 0x0000, // four text backgrounds
-  DISPCNT_MODE_1 = 0x0001, // BG0 and BG1 text, BG2 affine
-  DISPCNT_MODE_2 = 0x0002, // BG2 and BG3 affine
+  DISPCNT_MODE_0 = 0x0000, ///< four text backgrounds
+  DISPCNT_MODE_1 = 0x0001, ///< BG0 and BG1 text, BG2 affine
+  DISPCNT_MODE_2 = 0x0002, ///< BG2 and BG3 affine
   DISPCNT_OBJ_1D_MAP = 0x0040,
   DISPCNT_BG0_ON = 0x0100,
   DISPCNT_BG1_ON = 0x0200,
@@ -41,9 +41,9 @@ enum DisplayControl {
 #define REG_BG3HOFS (*(volatile u16 *)0x0400001c)
 #define REG_BG3VOFS (*(volatile u16 *)0x0400001e)
 
-// The BG2/BG3 affine matrix entries are signed 8.8 fixed point: texels
-// stepped per screen pixel. Q_8_8(1) draws the layer at its own size and
-// Q_8_8(0.5) twice as large.
+/// The BG2/BG3 affine matrix entries are signed 8.8 fixed point: texels
+/// stepped per screen pixel. Q_8_8(1) draws the layer at its own size and
+/// Q_8_8(0.5) twice as large.
 #define Q_8_8(n) ((s16)((n) * 256))
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
@@ -63,14 +63,14 @@ enum DisplayControl {
 #define REG_WIN1H (*(volatile u16 *)0x04000042)
 #define REG_WIN0V (*(volatile u16 *)0x04000044)
 #define REG_WIN1V (*(volatile u16 *)0x04000046)
-// A REG_WINxH or REG_WINxV value: the window covers start up to, but not
-// including, end.
+/// A REG_WINxH or REG_WINxV value: the window covers start up to, but not
+/// including, end.
 #define WIN_RANGE(start, end) (((start) << 8) | (end))
 #define REG_WININ (*(volatile u16 *)0x04000048)
 #define REG_WINOUT (*(volatile u16 *)0x0400004a)
 
-// REG_WININ: the layers shown inside window 0 (low byte) and window 1 (high
-// byte). CLR lets the colour effect of REG_BLDCNT apply there.
+/// REG_WININ: the layers shown inside window 0 (low byte) and window 1 (high
+/// byte). CLR lets the colour effect of REG_BLDCNT apply there.
 #define WININ_WIN0_BG0 0x0001
 #define WININ_WIN0_BG1 0x0002
 #define WININ_WIN0_BG2 0x0004
@@ -86,8 +86,8 @@ enum DisplayControl {
 #define WININ_WIN1_CLR 0x2000
 #define WININ_WIN1_ALL 0x3f00
 
-// REG_WINOUT: the layers shown outside both windows (low byte) and inside the
-// sprite window (high byte).
+/// REG_WINOUT: the layers shown outside both windows (low byte) and inside the
+/// sprite window (high byte).
 #define WINOUT_WIN01_BG0 0x0001
 #define WINOUT_WIN01_BG1 0x0002
 #define WINOUT_WIN01_BG2 0x0004
@@ -106,8 +106,8 @@ enum DisplayControl {
 #define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 
-// REG_BLDCNT: the first target layers, the colour effect, then the second
-// target layers that a blend mixes the first ones with.
+/// REG_BLDCNT: the first target layers, the colour effect, then the second
+/// target layers that a blend mixes the first ones with.
 #define BLDCNT_TGT1_BG0 0x0001
 #define BLDCNT_TGT1_BG1 0x0002
 #define BLDCNT_TGT1_BG2 0x0004
@@ -128,7 +128,8 @@ enum DisplayControl {
 #define BLDCNT_TGT2_ALL 0x3f00
 
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
-// A REG_BLDALPHA value: top and bottom are the two targets' weights, out of 16.
+/// A REG_BLDALPHA value: top and bottom are the two targets' weights, out
+/// of 16.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054)
 
@@ -146,20 +147,20 @@ enum DisplayControl {
 #define OBJ_PLTT ((volatile u16 *)0x05000200)
 #define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
 
-// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
-// the palette stores it: blue in the high bits.
+/// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
+/// the palette stores it: blue in the high bits.
 #define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
 
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
 #define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
 #define TILE_SIZE_4BPP 32
-// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
+/// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
 
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 
-// TMxCNT_H flags, as pret names them.
+/// TMxCNT_H flags, as pret names them.
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080
 
@@ -171,20 +172,20 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)
 #define REG_RCNT (*(volatile u16 *)0x04000134)
 
-// SIOCNT flags, as pret names them.
+/// SIOCNT flags, as pret names them.
 #define SIO_115200_BPS 0x0003
 #define SIO_START 0x0080
 #define SIO_32BIT_MODE 0x1000
 #define SIO_MULTI_MODE 0x2000
 #define SIO_INTR_ENABLE 0x4000
 
-// RCNT's mode: 0 leaves the port to SIOCNT's serial modes; bit 15 alone
-// makes it general-purpose pins.
+/// RCNT's mode: 0 leaves the port to SIOCNT's serial modes; bit 15 alone
+/// makes it general-purpose pins.
 #define RCNT_SIO_MODE 0x0000
 #define RCNT_GPIO_MODE 0x8000
 
-// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
-// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
+/// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+/// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
 #define DMA_DEST_INC 0x0000
 #define DMA_DEST_DEC 0x0020
 #define DMA_DEST_FIXED 0x0040
@@ -202,14 +203,14 @@ enum DisplayControl {
 #define DMA_START_SPECIAL 0x3000
 #define DMA_INTR_ENABLE 0x4000
 #define DMA_ENABLE 0x8000
-// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
-// and repeat (bit 9): the bits cleared before a channel is stopped.
+/// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
+/// and repeat (bit 9): the bits cleared before a channel is stopped.
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
   (DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT)
 
-// DMA control words: copy n words or halfwords at once, or one halfword or
-// word each HBlank to a register reloaded every line (a scanline table that
-// drives a window edge, a scroll or an affine register).
+/// DMA control words: copy n words or halfwords at once, or one halfword or
+/// word each HBlank to a register reloaded every line (a scanline table that
+/// drives a window edge, a scroll or an affine register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \
@@ -219,7 +220,7 @@ enum DisplayControl {
        << 16 |                                                                 \
    1)
 
-// BIOS CpuSet control flags, above its count.
+/// BIOS CpuSet control flags, above its count.
 #define CPU_SET_SRC_FIXED 0x01000000
 #define CPU_SET_32BIT 0x04000000
 
@@ -246,8 +247,8 @@ enum KeyMask {
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012)
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
-// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
-// sound channel's speakers, timer and FIFO reset.
+/// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
+/// sound channel's speakers, timer and FIFO reset.
 #define SOUND_CGB_MIX_FULL 0x0002
 #define SOUND_A_MIX_FULL 0x0004
 #define SOUND_B_MIX_FULL 0x0008

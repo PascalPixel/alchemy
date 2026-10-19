@@ -1,6 +1,6 @@
-// Scene events, field Psynergy, objects and effect lifecycles.
-// Far-call interfaces; their ordered jump stubs live in
-// games/tbs/src/system/far_call/OBJECT.S.
+/// Scene events, field Psynergy, objects and effect lifecycles.
+/// Far-call interfaces; their ordered jump stubs live in
+/// games/tbs/src/system/far_call/OBJECT.S.
 s32 Field_RunSceneFar(s32 entrance);
 void Game_ResetForNewGameFar(s32 mode);
 void FieldEvent_WaitFramesFar(s32 frames);

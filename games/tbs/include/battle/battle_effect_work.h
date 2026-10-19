@@ -8,11 +8,11 @@
 
 struct AnimationObject;
 
-// Two adjacent affine background coordinates, queued together for BG2X/BG2Y.
+/// Two adjacent affine background coordinates, queued together for BG2X/BG2Y.
 struct BattleCanvasOrigin {
   s32 x;
   s32 y;
-  // Written after staging the coordinates; no reader has been identified.
+  /// Written after staging the coordinates; no reader has been identified.
   s32 unk_08;
 };
 
@@ -20,16 +20,16 @@ STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
 STATIC_ASSERT(offsetof(struct BattleCanvasOrigin, y) == 0x04);
 
 struct BattleEffectWork {
-  // Images and scanline tables reuse the storage before the particles.
-  // The tile-animation mask extends beyond sheet into the table area.
+  /// Images and scanline tables reuse the storage before the particles.
+  /// The tile-animation mask extends beyond sheet into the table area.
   union {
     struct {
       u8 sheet[0x6980];
-      s32 bg2xLines[160]; // BG2X for each scanline, for an HBlank DMA
+      s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
       u8 unk_6c00[0x480];
     };
     u8 imageStorage[0x7080];
-    // The tracked elemental scene stages its origin inside the image area.
+    /// The tracked elemental scene stages its origin inside the image area.
     struct {
       u8 image[0x13c4];
       struct BattleCanvasOrigin origin;

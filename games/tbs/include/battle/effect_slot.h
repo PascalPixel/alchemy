@@ -32,8 +32,8 @@ struct EffectSlot {
   s16 orbitAngle;
   s8 state;
   s8 stopAtTarget;
-  s8 limitTurnStep; // Clamp steering to maxTurnStep; zero faces the target
-                    // directly.
+  s8 limitTurnStep; ///< Clamp steering to maxTurnStep; zero faces the target
+                    ///< directly.
   s8 updateMotion;
   s8 render;
   s8 active;

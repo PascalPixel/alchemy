@@ -1,6 +1,6 @@
-// Party members, items, Djinn and game-state operations.
-// Far-call interfaces; their ordered jump stubs live in
-// games/tbs/src/system/far_call/GAME.S.
+/// Party members, items, Djinn and game-state operations.
+/// Far-call interfaces; their ordered jump stubs live in
+/// games/tbs/src/system/far_call/GAME.S.
 void *Djinn_GetRecoveryTableFar(s32 arg0);
 #ifndef OWN_UnitGetFar
 struct BattleUnit *UnitGetFar(u32 owner);

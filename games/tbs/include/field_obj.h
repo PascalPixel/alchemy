@@ -49,7 +49,7 @@ struct FieldActor {
     struct AnimationObject *sprite;
     void **sprites;
   };
-  // Zero hides sprites; one draws a single sprite, two draws a group.
+  /// Zero hides sprites; one draws a single sprite, two draws a group.
   u8 spriteStorageKind;
   u8 motionFlags;
   u8 unk56[3];
@@ -65,7 +65,7 @@ struct FieldActor {
   u8 riseEnabled;
   s16 timer;
   u16 work;
-  struct FieldActor *linkedObject; // Linked object
+  struct FieldActor *linkedObject; ///< Linked object
   void (*update)(union FieldObject *object);
 };
 
@@ -92,7 +92,7 @@ STATIC_ASSERT(offsetof(struct FieldActor, update) == 0x6c);
 
 #define ACTOR_NO_TARGET ((s32)0x80000000)
 
-// Preserve the current action and motion when assigning a linked target.
+/// Preserve the current action and motion when assigning a linked target.
 enum ActorLinkFlag { ACTOR_LINK_KEEP_MOTION = 0x10000 };
 
 enum ActorPriorityFlag {

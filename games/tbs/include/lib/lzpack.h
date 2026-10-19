@@ -1,9 +1,10 @@
 #ifndef ALCHEMY_LZPACK_H
 #define ALCHEMY_LZPACK_H
 
-// The LZ packer's work: hash chains over a 1024-byte window, one chain per
-// byte value, and the output it is building. It borrows gFlash_Handler3 as
-// its work pointer.
+/// @file
+/// The LZ packer's work: hash chains over a 1024-byte window, one chain per
+/// byte value, and the output it is building. It borrows gFlash_Handler3 as
+/// its work pointer.
 
 #include "edition.h"
 #include "types.h"
@@ -11,8 +12,8 @@
 #include "audio_engine_symbols.h"
 
 struct LzPackNode {
-  struct LzPackNode *next; // Next node with the same value.
-  struct LzPackNode *prev; // Previous node, or the bucket field at the head.
+  struct LzPackNode *next; ///< Next node with the same value.
+  struct LzPackNode *prev; ///< Previous node, or the bucket field at the head.
   s32 slot;
 };
 

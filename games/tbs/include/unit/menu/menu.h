@@ -11,9 +11,9 @@ struct OwnerActionSlot;
 struct UiWindow;
 struct RenderOutput;
 
-// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
-// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
-// type, ending with LIST_ORDER_END.
+/// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
+/// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
+/// type, ending with LIST_ORDER_END.
 #define LIST_ORDER_TYPE_MASK 0x7f
 #define LIST_ORDER_EQUIPPED 0x80
 #define LIST_ORDER_END 0xff
@@ -242,8 +242,8 @@ typedef void MenuBackdropResult;
 #else
 typedef s32 MenuBackdropResult;
 #endif
-// The native wrapper forwards an implicit result; the defined interface is
-// void.
+/// The native wrapper forwards an implicit result; the defined interface is
+/// void.
 MenuBackdropResult Menu_OpenBackdropScreen(void);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
                           struct OwnerActionSlot *after, u16 *actionsOut,

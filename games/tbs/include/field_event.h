@@ -13,7 +13,7 @@
 // The games' compiler takes the store as written; a current GCC refuses it,
 // so the modern build names the place without its const.
 #ifdef MODERN
-// The comma expression removes qualifiers without promoting narrow integers.
+/// The comma expression removes qualifiers without promoting narrow integers.
 #define STORE_CONST(place) (*(__typeof__(((void)0, (place))) *)&(place))
 #else
 #define STORE_CONST(place) (place)
@@ -38,9 +38,9 @@ enum ActorAnimation {
 
 #define EMOTE_IN_FRONT 0x100
 
-// Speaker bits above the actor id in a message command, as
-// UiText_OpenMessageAtObject reads them: the portrait left or right of the
-// speaker, and the message window above it or never above it.
+/// Speaker bits above the actor id in a message command, as
+/// UiText_OpenMessageAtObject reads them: the portrait left or right of the
+/// speaker, and the message window above it or never above it.
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
 #define SPEAKER_WINDOW_ABOVE 0x4000
@@ -50,16 +50,16 @@ enum ActorAnimation {
   (srcX), (srcY), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff
 
-// Cell replacement: procedure and destination cells
+/// Cell replacement: procedure and destination cells
 struct MapCellAnim {
   const u16 *steps;
   u16 x;
   u16 y;
 };
 
-// Imports of main-image routines. EventRequestExit, ActorSetPosition,
-// ActorSetAnimation and RandomNext have differing argument counts at their
-// call sites, as measured in the bytes, so retain old-style declarations.
+/// Imports of main-image routines. EventRequestExit, ActorSetPosition,
+/// ActorSetAnimation and RandomNext have differing argument counts at their
+/// call sites, as measured in the bytes, so retain old-style declarations.
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
@@ -149,12 +149,12 @@ struct FieldActor *Engine_ActorLookup(s32 actor);
 void Engine_ActorDestroy(s32 actor);
 void Engine_ActorSetChildValue(s32 actor, s32 value);
 void Engine_ActorEnableActionCallback(s32 actor, s32 action);
-// The engine encodes either a built-in action or an action-script address.
+/// The engine encodes either a built-in action or an action-script address.
 static inline void Actor_SetActionScript(s32 actor, const s32 *script) {
   Engine_ActorEnableActionCallback(actor, (s32)script);
 }
 
-// Run a script, waiting at most 300 frames for its final command.
+/// Run a script, waiting at most 300 frames for its final command.
 static inline void Actor_RunActionScriptAndWait(s32 actor, const s32 *script) {
   Object_SetActionCallbackAndRefreshById(actor, (s32)script);
 }
@@ -274,13 +274,13 @@ static inline void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width,
   Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
 }
 
-// Set shake amplitudes in fixed-point pixels and the per-frame decay factor.
-// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
+/// Set shake amplitudes in fixed-point pixels and the per-frame decay factor.
+/// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
 static inline void Map_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   Engine_WorkSetValuesIfNonNegative(horizontal, vertical, decay);
 }
 
-// Keep the scene wrappers separate from the main-image declarations.
+/// Keep the scene wrappers separate from the main-image declarations.
 #define GameFlag_Set FieldEvent_GameFlagSet
 #define GameFlag_IsSet FieldEvent_GameFlagIsSet
 #define GameFlag_Clear FieldEvent_GameFlagClear

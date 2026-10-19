@@ -58,14 +58,14 @@ void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void FieldFx_RunLift(void);
 void FieldFx_RunCarry(void);
 
-// One of the scene's events (the same 12 bytes as struct SceneEvent).
+/// One of the scene's events (the same 12 bytes as struct SceneEvent).
 struct EffectDescriptor {
-  s32 flags; // the low 4 bits are the kind (SceneEventKind; 7 talks to
-             // the actor the party stopped)
-  u8 value;  // the target (an actor or a tile code)
+  s32 flags; ///< the low 4 bits are the kind (SceneEventKind; 7 talks to
+             ///< the actor the party stopped)
+  u8 value;  ///< the target (an actor or a tile code)
   u8 unused05;
-  s16 condition; // as for GameFlag_IsConditionActive
-  s32 result;    // below 0x10000 a message, else a function to call
+  s16 condition; ///< as for GameFlag_IsConditionActive
+  s32 result;    ///< below 0x10000 a message, else a function to call
 };
 
 #define OBJ_LAST 66 // the last actor slot searched
@@ -174,11 +174,11 @@ void DisplayTransition_InitializeState(s32 value);
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames);
 void BattlePalette_UpdateBlend(void);
-// BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
-// scope: in one file its definition would come before
-// FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
-// (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
-// object|psynergy_effects.
+/// BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
+/// scope: in one file its definition would come before
+/// FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
+/// (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
+/// object|psynergy_effects.
 void BattleEffect_InitializeBuffers(void);
 void BattlePalette_StopBlendAndReleaseBuffer(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

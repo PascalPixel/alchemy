@@ -47,12 +47,12 @@ STATIC_ASSERT(sizeof(struct SceneEntries) == 48);
 STATIC_ASSERT(offsetof(struct SceneEntries, exits) == 0x14);
 STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
 
-// A map marker placed as an actor: a chest or a Psynergy stone.
+/// A map marker placed as an actor: a chest or a Psynergy stone.
 struct MarkerSlot {
   struct ObjectRuntime *object;
-  u8 id; // the trigger of its scene event
+  u8 id; ///< the trigger of its scene event
   u8 unk05;
-  u8 column; // its 16-pixel cell
+  u8 column; ///< its 16-pixel cell
   u8 row;
 };
 
@@ -61,43 +61,43 @@ STATIC_ASSERT(offsetof(struct MarkerSlot, id) == 4);
 STATIC_ASSERT(offsetof(struct MarkerSlot, column) == 6);
 STATIC_ASSERT(offsetof(struct MarkerSlot, row) == 7);
 
-// Full event work allocated by Field_RunScene (heap slot 27). The twelve
-// requests from action to event are handled by the field loop.
+/// Full event work allocated by Field_RunScene (heap slot 27). The twelve
+/// requests from action to event are handled by the field loop.
 struct FieldWork {
   struct ScenePlacement *tables[4];
   const struct SceneEvent *events;
   struct FieldActor *actors[66];
   struct MarkerSlot markers[10];
-  s16 action;     // a scene action to run
-  s16 input;      // an input event to dispatch
-  s16 exit;       // the exit taken, which ends the scene
-  s16 menu;       // open the main menu
-  s16 examine;    // the A button: examine what is ahead
-  s16 start;      // the Start button: open the pause menu
-  u16 descriptor; // an actor's event, as actor | 0x1000
-  s16 tile;       // a tile's event
-  s16 battle;     // the enemy group of a random encounter
-  s16 command;    // a field Psynergy to use
-  s16 item;       // an item to use
-  s16 event;      // a special event: -1 for poison or hazard damage
+  s16 action;     ///< a scene action to run
+  s16 input;      ///< an input event to dispatch
+  s16 exit;       ///< the exit taken, which ends the scene
+  s16 menu;       ///< open the main menu
+  s16 examine;    ///< the A button: examine what is ahead
+  s16 start;      ///< the Start button: open the pause menu
+  u16 descriptor; ///< an actor's event, as actor | 0x1000
+  s16 tile;       ///< a tile's event
+  s16 battle;     ///< the enemy group of a random encounter
+  s16 command;    ///< a field Psynergy to use
+  s16 item;       ///< an item to use
+  s16 event;      ///< a special event: -1 for poison or hazard damage
   s16 fallenCount;
-  s16 survivorCount; // 0 when the whole party fell
+  s16 survivorCount; ///< 0 when the whole party fell
   s16 fallenOwners[9];
   s16 itemArgument;
   s16 blockedSteps;
   s16 mode;
-  u8 encounterGroups[8]; // encounter zone for each kind of ground
-  s32 encounterBias;     // randomized distance adjustment between battles
+  u8 encounterGroups[8]; ///< encounter zone for each kind of ground
+  s32 encounterBias;     ///< randomized distance adjustment between battles
   s32 encounterThreshold;
-  s32 walkingDistanceScale; // scales movement for PP and status updates
-  s32 walkingDistance;      // accumulated 16.16 distance awaiting an update
+  s32 walkingDistanceScale; ///< scales movement for PP and status updates
+  s32 walkingDistance;      ///< accumulated 16.16 distance awaiting an update
   struct MapCell *currentTile;
   struct MapCell *previousTile;
   s32 transition;
   u16 unk1c4;
   u16 transitionActive;
   s32 transitionFrames;
-  s32 fastForward; // debug: skip timed event waits and actor messages
+  s32 fastForward; ///< debug: skip timed event waits and actor messages
   u8 unk1d0[8];
   s16 message;
   u16 unk1da;
@@ -110,17 +110,17 @@ struct FieldWork {
   s32 sideWindow;
   u8 unk200[0xab6];
   u16 busy;
-  s16 revealActive;  // nonzero while Reveal is active
-  s16 revealFrames;  // the frames Reveal has left
-  s16 revealCenterX; // where Reveal was cast, in pixels
+  s16 revealActive;  ///< nonzero while Reveal is active
+  s16 revealFrames;  ///< the frames Reveal has left
+  s16 revealCenterX; ///< where Reveal was cast, in pixels
   s16 revealCenterY;
-  // Nonzero lets the Reveal countdown advance; menus and other effects pause
-  // it.
+  /// Nonzero lets the Reveal countdown advance; menus and other effects pause
+  /// it.
   s16 effectTimerRunning;
-  s16 nameMessage;    // first message of the menu's name window (0: none)
-  s16 nameWidth;      // width of the name window (0: the default)
-  s8 resolvingAction; // set while Psynergy takes effect
-  s8 castStarted;     // set once a cast has been announced
+  s16 nameMessage;    ///< first message of the menu's name window (0: none)
+  s16 nameWidth;      ///< width of the name window (0: the default)
+  s8 resolvingAction; ///< set while Psynergy takes effect
+  s8 castStarted;     ///< set once a cast has been announced
   s16 queuedSound;
 };
 

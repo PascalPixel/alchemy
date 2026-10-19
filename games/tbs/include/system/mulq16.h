@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-// Multiplies 16.16 fixed-point values, returning the middle 32 product bits.
-// Emits IwramMulQ16's three instructions (smull, lsl, orr) at the call site.
+/// Multiplies 16.16 fixed-point values, returning the middle 32 product bits.
+/// Emits IwramMulQ16's three instructions (smull, lsl, orr) at the call site.
 CAMELOT_ASM("smull with RdLo and RdHi in any two registers, even over its "
             "inputs, where mulsidi3 "
             "pairs them (RdHi = RdLo + 1) apart from the inputs and "

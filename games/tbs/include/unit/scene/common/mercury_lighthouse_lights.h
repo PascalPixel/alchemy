@@ -6,7 +6,7 @@
 
 struct FieldActor;
 
-// Published in the scene's light-controller slot while the pillar is active.
+/// Published in the scene's light-controller slot while the pillar is active.
 struct MercuryLighthouseLights {
   s32 levels;
   s32 terrainCode;

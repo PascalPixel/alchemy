@@ -39,7 +39,7 @@ struct BattlePresentationTransition {
   s32 unk1c;
 };
 
-// The effect updates its command while the presentation keeps animation state.
+/// The effect updates its command while the presentation keeps animation state.
 struct BattlePresentationWork {
   struct BattleEffectArgument effect;
   u8 savedAnimationParameters[8][4];

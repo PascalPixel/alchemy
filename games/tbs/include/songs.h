@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_SONGS_H
 #define ALCHEMY_SONGS_H
 
-// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
-// music and SE_ ids sound effects, as their sequences in sound/sequence are
-// named. A sound whose meaning is shown has a name; the others keep their
-// number.
+/// @file
+/// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
+/// music and SE_ ids sound effects, as their sequences in sound/sequence are
+/// named. A sound whose meaning is shown has a name; the others keep their
+/// number.
 
 #define MUS_000 0
 #define MUS_001 1
@@ -141,8 +142,8 @@
 #define SE_149 149
 #define SE_150 150
 #define SE_151 151
-// An actor jumps: ObjectMotion_Launch plays the high jump above 5 pixels a
-// frame.
+/// An actor jumps: ObjectMotion_Launch plays the high jump above 5 pixels a
+/// frame.
 #define SE_JUMP 152
 #define SE_HIGH_JUMP 153
 #define SE_CAST 154

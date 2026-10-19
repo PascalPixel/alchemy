@@ -1,7 +1,8 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
-// BATTLE
+/// @file
+/// BATTLE
 
 #include "types.h"
 #include "edition.h"
@@ -162,14 +163,14 @@ void ItemIcon_LoadTilesFar(s32 item);
 s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
 #endif
 
-// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
-// that the battle code picks by name.
+/// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
+/// that the battle code picks by name.
 enum BattlePose {
-  POSE_ENEMY_HELD = 0, // an enemy asleep, stunned or held
+  POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
   POSE_STANDING = 1,
-  POSE_PARTY_HELD = 4, // asleep, stunned or held; also a downed member
-  POSE_DAMAGE = 5,     // taking damage
-  POSE_ENEMY_DOWN = 5  // a downed enemy stays in its damage pose
+  POSE_PARTY_HELD = 4, ///< asleep, stunned or held; also a downed member
+  POSE_DAMAGE = 5,     ///< taking damage
+  POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
 #endif

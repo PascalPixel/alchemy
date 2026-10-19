@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Height samples and pixel coordinates within a 16x16 terrain cell.
+/// Height samples and pixel coordinates within a 16x16 terrain cell.
 typedef s32 (*TerrainHeightFn)(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
 extern const TerrainHeightFn gMap_TerrainHeightFunctions[16];

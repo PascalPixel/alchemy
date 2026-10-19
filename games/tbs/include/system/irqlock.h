@@ -14,19 +14,19 @@
 // IME_RESTORE's and IRQ_UNLOCK's wrappers are devices, not this layer: a plain
 // restore matches at some sites (see their tags).
 
-// Saves the original IME value in saved.
+/// Saves the original IME value in saved.
 #define IME_SAVE(ime, saved)                                                   \
   do {                                                                         \
     (saved) = *(ime);                                                          \
   } while (0)
 
-// Disables interrupts.
+/// Disables interrupts.
 #define IME_DISABLE(ime)                                                       \
   do {                                                                         \
     *(ime) = (u16)(u32)(ime);                                                  \
   } while (0)
 
-// Restores IME from saved.
+/// Restores IME from saved.
 /* FAKEMATCH: the do { } while (0) wrapper steers: written plainly as *(ime) =
  * (saved), BattleFx_PlayUnitElementEffect differs 2 and
  * BattleFx_RunJudgment differs 6 in all six ☀️ editions;
@@ -38,7 +38,7 @@
     *(ime) = (saved);                                                          \
   } while (0)
 
-// Disables interrupts and saves IME in saved; IRQ_UNLOCK restores it.
+/// Disables interrupts and saves IME in saved; IRQ_UNLOCK restores it.
 #define IRQ_LOCK(saved)                                                        \
   do {                                                                         \
     volatile u16 *ime_ = &REG_IME;                                             \
@@ -47,7 +47,7 @@
     IME_DISABLE(ime_);                                                         \
   } while (0)
 
-// Restores the IME value saved by IRQ_LOCK.
+/// Restores the IME value saved by IRQ_LOCK.
 /* FAKEMATCH: the do { } while (0) wrapper steers: it keeps the restore apart
  * from the code before it. Written plainly as REG_IME = saved, 7 of the 8
  * Scheduler_ functions in ☀️'s runtime.c that lock differ 2 in tbs-en

@@ -4,8 +4,8 @@
 #include "edition.h"
 #include "types.h"
 
-// The hardware's interrupt sources: each one's bit number in IE and IF, and
-// its slot in gIrqHandlers.
+/// The hardware's interrupt sources: each one's bit number in IE and IF, and
+/// its slot in gIrqHandlers.
 enum {
   IRQ_VBLANK,
   IRQ_HBLANK,
@@ -32,10 +32,10 @@ enum {
 
 typedef void (*InterruptHandler)(void);
 
-// The handler the IWRAM dispatcher calls for each interrupt source.
+/// The handler the IWRAM dispatcher calls for each interrupt source.
 extern InterruptHandler gIrqHandlers[IRQ_COUNT];
 
-// The handlers installed at power-on, copied into gIrqHandlers.
+/// The handlers installed at power-on, copied into gIrqHandlers.
 extern const u32 gRuntime_IrqHandlers[IRQ_COUNT];
 
 extern u8 IwramIrqMain[];

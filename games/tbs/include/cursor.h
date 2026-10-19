@@ -5,7 +5,7 @@
 #include "static_assert.h"
 #include "render_input.h"
 
-// Cursor that approaches its target, shared by shop, name entry and settings.
+/// Cursor that approaches its target, shared by shop, name entry and settings.
 struct ShopCursor {
   struct RenderOutput *anchor;
   u16 x;
@@ -20,8 +20,8 @@ STATIC_ASSERT(sizeof(struct ShopCursor) == 0x10);
 STATIC_ASSERT(offsetof(struct ShopCursor, targetX) == 0x08);
 STATIC_ASSERT(offsetof(struct ShopCursor, active) == 0x0c);
 
-// Screens that write only the image pointer use the union to retain store
-// order.
+/// Screens that write only the image pointer use the union to retain store
+/// order.
 union MenuCursor {
   struct RenderOutput *output;
   struct ShopCursor cursor;

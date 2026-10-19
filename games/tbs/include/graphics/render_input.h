@@ -32,7 +32,7 @@ union RenderTableValue {
   } half;
 };
 
-// Attributes zero through two copied to OAM, plus one unused word.
+/// Attributes zero through two copied to OAM, plus one unused word.
 struct RenderOam {
   u16 y : 8;
   u16 affineMode : 2;

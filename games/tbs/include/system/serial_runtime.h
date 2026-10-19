@@ -85,19 +85,19 @@ extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
-// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
-// runtime.c)
+/// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
+/// runtime.c)
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDest;
-// volatile: tagged where it steers, in BattleLink_ReceiveActions (tbs battle.c)
-// and LinkLobby_ReceivePartyRecords (tbs lobby.c)
+/// volatile: tagged where it steers, in BattleLink_ReceiveActions (tbs
+/// battle.c) and LinkLobby_ReceivePartyRecords (tbs lobby.c)
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
-// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
-// runtime.c)
+/// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
+/// runtime.c)
 extern volatile u8 gSerialBlockSequence;
 extern u8 gLinkExchangeState;
-// Link status, updated by the VBlank exchange handler.
+/// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for
  * 920, and SerialRuntime_WaitForStatusMask: differ 18, 21 for 23. */

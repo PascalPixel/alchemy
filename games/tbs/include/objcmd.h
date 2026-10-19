@@ -1,9 +1,10 @@
 #ifndef ALCHEMY_OBJCMD_H
 #define ALCHEMY_OBJCMD_H
 
-// Field object scripts: one s32 command word, then its operands, as
-// gScriptObject_CommandTable runs them. Each macro expands to the words of
-// one command. Coordinates are 16.16 fixed point (PIXELS).
+/// @file
+/// Field object scripts: one s32 command word, then its operands, as
+/// gScriptObject_CommandTable runs them. Each macro expands to the words of
+/// one command. Coordinates are 16.16 fixed point (PIXELS).
 
 #include "types.h"
 
@@ -49,7 +50,7 @@
 #define SC_CALL(fn) 0x22, (s32)(fn)
 #define SC_KEY_COUNT 0x23
 
-// Script work values for SC_SET, SC_ADD and SC_CMP
+/// Script work values for SC_SET, SC_ADD and SC_CMP
 enum ScriptWork {
   SW_SCRIPT = 0x00,
   SW_CURSOR = 0x01,

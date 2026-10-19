@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-// The axis a moving object watches to know it has arrived at its target: the
-// one along which it has the furthest to go.
+/// The axis a moving object watches to know it has arrived at its target: the
+/// one along which it has the furthest to go.
 enum ArrivalAxis {
   ARRIVAL_AXIS_NONE = 0,
   ARRIVAL_AXIS_X = 16,

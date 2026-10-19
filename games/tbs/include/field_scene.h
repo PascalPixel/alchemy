@@ -128,8 +128,8 @@ enum SceneEventKind {
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
   (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
-// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
-// is for an area.
+/// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
+/// is for an area.
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
   ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
@@ -138,8 +138,8 @@ enum SceneEventKind {
   ((u32)(phase) << 28 | (ability) << 8 | EVENT_PSYNERGY_IN_AREA |              \
    EVENT_PSYNERGY)
 
-// Using an item (one byte) on a tile code, or on an actor, as
-// Field_FindItemEvent reads them.
+/// Using an item (one byte) on a tile code, or on an actor, as
+/// Field_FindItemEvent reads them.
 #define EVENT_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (EVENT_ITEM | (item) << 8)
 #define USE_ITEM_ON_ACTOR(item) (EVENT_ITEM | EVENT_ITEM_ON_ACTOR | (item) << 8)

@@ -6,26 +6,26 @@
 #include "static_assert.h"
 #include "render_placement.h"
 
-// AnimationEntry.param: how Render_DecodeFrame colours a layer's pixels.
-// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
-// gResourceSlot_ConversionTables, then the four gRuntime_ByteRemapTable
-// ones); the solid modes paint every drawn pixel one colour of the basic
-// sprite palette. Mode 8 is a second white and mode 12 reads past the tables.
+/// AnimationEntry.param: how Render_DecodeFrame colours a layer's pixels.
+/// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
+/// gResourceSlot_ConversionTables, then the four gRuntime_ByteRemapTable
+/// ones); the solid modes paint every drawn pixel one colour of the basic
+/// sprite palette. Mode 8 is a second white and mode 12 reads past the tables.
 enum SpriteColorMode {
   SPRITE_COLOR_NORMAL = 0,
-  SPRITE_COLOR_GRB = 1,         // red and green swapped
-  SPRITE_COLOR_RBG = 2,         // green and blue swapped
-  SPRITE_COLOR_BGR = 3,         // red and blue swapped
-  SPRITE_COLOR_GBR = 4,         // red to blue, green to red, blue to green
-  SPRITE_COLOR_BRG = 5,         // red to green, green to blue, blue to red
-  SPRITE_COLOR_GREY = 6,        // greyscale
-  SPRITE_COLOR_WHITE = 7,       // solid colour 15, white
-  SPRITE_COLOR_BLUE_TINT = 9,   // blue raised to full
-  SPRITE_COLOR_RED_TINT = 10,   // red raised to full
-  SPRITE_COLOR_GREEN_TINT = 11, // green raised to full
-  SPRITE_COLOR_FILL = 13,       // solid gDecodeFillByte
-  SPRITE_COLOR_BLACK = 14,      // solid colour 1, black
-  SPRITE_COLOR_HIDDEN = 15      // solid colour 0, transparent
+  SPRITE_COLOR_GRB = 1,         ///< red and green swapped
+  SPRITE_COLOR_RBG = 2,         ///< green and blue swapped
+  SPRITE_COLOR_BGR = 3,         ///< red and blue swapped
+  SPRITE_COLOR_GBR = 4,         ///< red to blue, green to red, blue to green
+  SPRITE_COLOR_BRG = 5,         ///< red to green, green to blue, blue to red
+  SPRITE_COLOR_GREY = 6,        ///< greyscale
+  SPRITE_COLOR_WHITE = 7,       ///< solid colour 15, white
+  SPRITE_COLOR_BLUE_TINT = 9,   ///< blue raised to full
+  SPRITE_COLOR_RED_TINT = 10,   ///< red raised to full
+  SPRITE_COLOR_GREEN_TINT = 11, ///< green raised to full
+  SPRITE_COLOR_FILL = 13,       ///< solid gDecodeFillByte
+  SPRITE_COLOR_BLACK = 14,      ///< solid colour 1, black
+  SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
 struct AnimationEntry {

@@ -1,15 +1,16 @@
 #ifndef ALCHEMY_FARCALL_H
 #define ALCHEMY_FARCALL_H
 
-// Public interfaces to the engine's code banks. Each bank exposes a stable
-// jump table, so another bank can reach its routines beyond Thumb's call range.
-// These headers declare ordinary functions; the ordered assembly tables in
-// src/system/far_call own the entry names and the routines they jump to.
-// For example, UiText_DrawNumberAtOffsetFar is the window bank's entry for
-// UiText_DrawNumberAtOffset. Overlays bind their imported names to these
-// entries in src/system/overlay.inc, using the same 8-byte jump mechanism.
-// A file with a local declaration defines OWN_<name> before including this
-// header to keep that declaration in scope.
+/// @file
+/// Public interfaces to the engine's code banks. Each bank exposes a stable
+/// jump table, so another bank can reach its routines beyond Thumb's call
+/// range. These headers declare ordinary functions; the ordered assembly tables
+/// in src/system/far_call own the entry names and the routines they jump to.
+/// For example, UiText_DrawNumberAtOffsetFar is the window bank's entry for
+/// UiText_DrawNumberAtOffset. Overlays bind their imported names to these
+/// entries in src/system/overlay.inc, using the same 8-byte jump mechanism.
+/// A file with a local declaration defines OWN_<name> before including this
+/// header to keep that declaration in scope.
 
 #include "callback_scheduler.h"
 #include "effect_slot.h"

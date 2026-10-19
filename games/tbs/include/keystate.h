@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-// The keypad state. The VBlank interrupt rewrites these cells, so like the
-// hardware registers they are volatile: every read goes back to memory.
+/// The keypad state. The VBlank interrupt rewrites these cells, so like the
+/// hardware registers they are volatile: every read goes back to memory.
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own. Measured 2026-10-12 with alchemy diff on tbs-en: without it 18 functions
  * differ, most UiWork_StepChannelScript (249), Clear_CheckButtonCodes (134) and

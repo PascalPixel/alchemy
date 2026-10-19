@@ -22,7 +22,7 @@ struct EventWork {
   u16 unk172;
   u8 unk174[6];
   s16 facingTrigger;
-  u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
+  u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
   s16 psynergyRequest;
   u8 unk180[2];
   s16 raisedTrigger;
@@ -41,7 +41,7 @@ struct EventWork {
   u8 unk1da[6];
   struct FieldActor *viewCenter;
   u8 unk1e4[0xade];
-  u16 choiceMessage; // Message containing the choices.
+  u16 choiceMessage; ///< Message containing the choices.
   u16 unkcc4;
 };
 

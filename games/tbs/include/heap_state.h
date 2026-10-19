@@ -6,8 +6,8 @@
 
 extern void *gWorkSlot[64];
 
-// Read slots through their own addresses; adjacent slots are reached by
-// offsets. (gWorkSlot[n] instead addresses from the table's start.)
+/// Read slots through their own addresses; adjacent slots are reached by
+/// offsets. (gWorkSlot[n] instead addresses from the table's start.)
 #define WORK_SLOT(n) (*(gWorkSlot + (n)))
 
 union HeapState {
@@ -38,8 +38,8 @@ enum HeapSlot {
   HEAP_SLOT_BLITTER = 46,
   HEAP_SLOT_BLITTER_ALTERNATE = 47,
   HEAP_SLOT_SAVE = 51,
-  // Lives for one frame: WaitFrames builds the OAM list in it, and the field
-  // sprite decoder keeps its code there between its own uses.
+  /// Lives for one frame: WaitFrames builds the OAM list in it, and the field
+  /// sprite decoder keeps its code there between its own uses.
   HEAP_SLOT_FRAME_SCRATCH = 52,
   HEAP_SLOT_FRAME_UPLOADER = 53,
   HEAP_SLOT_MENU = 55

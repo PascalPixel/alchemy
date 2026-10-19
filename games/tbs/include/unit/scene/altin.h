@@ -9,8 +9,8 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
-// Each village door the party can walk through: its opening picture and the
-// cell it is drawn at.
+/// Each village door the party can walk through: its opening picture and the
+/// cell it is drawn at.
 struct DoorAnim {
   const u16 *steps;
   s16 x;

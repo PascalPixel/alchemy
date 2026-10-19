@@ -117,7 +117,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId);
 void BattleMotion_SpawnSlotEffectAndWait(s32 unitId);
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected);
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected);
-s32 Battle_GetObjectTableValue(s32 unitId);
+s32 BattleUnit_GetEffectHeight(s32 unitId);
 
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries);

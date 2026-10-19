@@ -485,7 +485,7 @@ BattleFx_RunSoulShatter:
 	ldr r3, [sp, #36]
 	ldr r7, [r0]
 	ldr r0, [r3, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1

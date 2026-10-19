@@ -96,7 +96,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void *UnitGet(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectScaledBattler(s32 actor,
@@ -266,7 +266,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
-  half = Battle_GetObjectTableValueFar(effect->actors[0]) / 2;
+  half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 

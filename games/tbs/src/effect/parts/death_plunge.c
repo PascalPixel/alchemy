@@ -69,8 +69,8 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   percent = 90;
   x = user->x + percent * (target->x - user->x) / 100;
   z = user->z + percent * (target->z - user->z) / 100;
-  userHeight = Battle_GetObjectTableValueFar(work->effect->actor);
-  targetHeight = Battle_GetObjectTableValueFar(work->effect->actors[0]);
+  userHeight = BattleUnit_GetEffectHeightFar(work->effect->actor);
+  targetHeight = BattleUnit_GetEffectHeightFar(work->effect->actors[0]);
   ObjectDispatch_InitFromTable6Far(user);
   Object_SetMoveTargetFar(user, x, 0, z);
   ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);

@@ -49,7 +49,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(15, 15); // 15/16 of each
   draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
-  y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
+  y = source->y + BattleUnit_GetEffectHeightFar(work->effect->actor);
   for (i = 0; i != FROTH_MOTES; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x, y, source->z);

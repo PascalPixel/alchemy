@@ -291,7 +291,7 @@ Func_0815e3ac:
 	ldr r6, [r0]
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1

@@ -96,7 +96,7 @@ Func_0814ea58:
 	mov r4, r10
 	ldr r6, [r0]
 	ldrsh r0, [r2, r4]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r1, [sp, #8]
@@ -282,7 +282,7 @@ Func_0814ea58:
 	mov r2, r10
 	mov r11, r0
 	ldr r0, [r2, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r3, [sp, #44]

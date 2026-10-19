@@ -74,7 +74,7 @@ BattleFx_RunFire:
 	mov r2, r10
 	mov r8, r0
 	ldr r0, [r2, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	mov r4, r8
 	ldr r3, [r4, #12]
 	ldr r7, .L_081510f8

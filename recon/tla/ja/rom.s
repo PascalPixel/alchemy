@@ -3508,10 +3508,10 @@ Func_0810bebc:
 BattleMotion_ApproachTargetFar:
 	.incbin "baserom.gba", 0x00118078, 0x00000008
 	.section .rom.00118080, "ax"
-	.global Battle_GetObjectTableValueFar
-	.type Battle_GetObjectTableValueFar, %function
+	.global BattleUnit_GetEffectHeightFar
+	.type BattleUnit_GetEffectHeightFar, %function
 	.thumb_func
-Battle_GetObjectTableValueFar:
+BattleUnit_GetEffectHeightFar:
 	.incbin "baserom.gba", 0x00118080, 0x00000008
 	.section .rom.00118230, "ax"
 	.incbin "baserom.gba", 0x00118230, 0x00000008

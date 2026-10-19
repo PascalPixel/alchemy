@@ -61,7 +61,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 
 struct StarTarget {
@@ -171,7 +171,7 @@ void BattleFx_RunStarMine(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       for (i = 0, star = work->particles; i != STARS; i++, star++) {
         struct StarTarget *caster = *GetBattleObjectSlotFar(effect->actor);
-        s32 height = Battle_GetObjectTableValueFar(effect->actor) / 2;
+        s32 height = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         s32 velocity;
 
         star->x = caster->x;
@@ -201,7 +201,7 @@ void BattleFx_RunStarMine(struct BattleEffectArgument *effect) {
       s32 member = i % effect->count;
       struct StarTarget *target =
           *GetBattleObjectSlotFar(effect->actors[member]);
-      s32 height = Battle_GetObjectTableValueFar(effect->actors[member]) / 2;
+      s32 height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
       s32 picture;
       s32 dx;
       s32 dy;

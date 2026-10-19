@@ -47,7 +47,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
 // The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
@@ -108,7 +108,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   // The embers leave the top of the user's body: a random heading and
   // speed across, -16 to 111 sixty-fourths of a pixel up.
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  top = user->y + Battle_GetObjectTableValueFar(effect->actor);
+  top = user->y + BattleUnit_GetEffectHeightFar(effect->actor);
   for (i = 0; i != 64; i++) {
     struct EffectStep *ember = &EMBERS[i];
     s32 angle;

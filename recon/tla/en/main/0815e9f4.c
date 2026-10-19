@@ -86,7 +86,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target,
                                                  s32 frames);
 void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object,
                                             s32 value);
 void EffectPosition_ProjectScaledBattler(s32 actor,
@@ -290,7 +290,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
-  half = Battle_GetObjectTableValueFar(effect->actors[0]) / 2;
+  half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 

@@ -86,7 +86,7 @@ BattleFx_RunBreak:
 	mov r2, r11
 	ldr r5, [r0]
 	ldrsh r0, [r4, r2]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r3, [r5, #8]

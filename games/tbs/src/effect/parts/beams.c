@@ -138,7 +138,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   // 64 sparks start at the first target's middle and fly away from the
   // centre of the field at random speeds; variant is a spark's life.
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
+  half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &work->particles[i];
 
@@ -418,7 +418,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 80;
   gBgScroll[1].x = shake;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
+  half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &work->particles[i];
 

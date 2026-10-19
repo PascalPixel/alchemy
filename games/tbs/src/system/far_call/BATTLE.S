@@ -18,7 +18,7 @@ FarCall_BattleTable:
 	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
 	overlay_veneer BattleClass_GetAttackHop
 	overlay_veneer BattleClass_IsSmall
-	export Battle_GetObjectTableValueFar, Battle_GetObjectTableValue
+	export BattleUnit_GetEffectHeightFar, BattleUnit_GetEffectHeight
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
 	overlay_veneer BattleMotion_InitializeObject
 	export BattleMotion_ApplyVariantMotionFar, BattleMotion_ApplyVariantMotion

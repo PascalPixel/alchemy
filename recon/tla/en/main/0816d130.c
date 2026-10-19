@@ -37,7 +37,7 @@ extern u16 gData_08197410[];
 void BattleFx_BeginCanvasLayer(s32 layer);
 void BattleFx_ProcessPendingGraphicsTransfer(void);
 void BattleFx_EndCanvasLayer(void);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void BattleFx_LoadBlitter(s32 slot, s32 kind);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
@@ -73,7 +73,7 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)0x05000000,
                   Resource_GetTableEntry((s32)&ResourceId_Data17F), 128);
   object = GetBattleObjectSlotFar(effect->actors[0])->object;
-  half = Battle_GetObjectTableValueFar(effect->actors[0]) / 2;
+  half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   orb = work->particles;
   orb->x = object->x;
   orb->y = object->y + half;
@@ -91,7 +91,7 @@ void BattleFx_RunNirvana(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 80; frame++) {
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
-    s32 userHalf = Battle_GetObjectTableValueFar(effect->actor) / 2;
+    s32 userHalf = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
 
     if (frame == 64)
       Func_081180e8(134);

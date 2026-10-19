@@ -46,7 +46,7 @@ BattleFx_RunNirvana:
 	ldr r5, [r0]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r3, [r5, #8]
@@ -97,7 +97,7 @@ BattleFx_RunNirvana:
 	ldr r3, [sp, #36]
 	mov r11, r0
 	ldr r0, [r3, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1

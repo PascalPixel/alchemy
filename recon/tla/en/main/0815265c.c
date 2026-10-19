@@ -77,7 +77,7 @@ void SummonFx_RunCanvasMode1(struct BattleEffectArgument *effect);
 void SummonFx_RunCanvasMode3(struct BattleEffectArgument *effect);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
 // The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The
 // Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
@@ -481,7 +481,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     s32 half;
 
     object = GetBattleObjectSlotFar(effect->actors[0])->object;
-    half = Battle_GetObjectTableValueFar(effect->actors[0]) / 2;
+    half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
     for (i = 0; i != 128; i++) {
       struct EffectStep *mote = &MOTES[i];
 
@@ -719,7 +719,7 @@ void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       s32 *camera;
 
       object = GetBattleObjectSlotFar(effect->actor)->object;
-      half = Battle_GetObjectTableValueFar(effect->actor) / 2;
+      half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
       Transform_SetLookAt(camera, camera + 3);

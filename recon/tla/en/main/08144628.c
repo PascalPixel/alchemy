@@ -61,7 +61,7 @@ void BattleFx_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Func_0815b634(void); // mode 3 only
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Audio_PlayCue(s32 cue);
@@ -120,7 +120,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     PARTICLES[i].variant = -1;
   for (k = 0; k != effect->count; k++) {
     struct MotionObject *source = GetBattleObjectSlotFar(effect->actor)->object;
-    s32 height = Battle_GetObjectTableValueFar(effect->actor);
+    s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
 
     for (i = 0; i != MOTES_PER_TARGET; i++) {
       struct EffectStep *mote = &PARTICLES[k * 128 + i];
@@ -177,7 +177,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     for (k = 0; k != effect->count; k++) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(effect->actors[k])->object;
-      s32 half = Battle_GetObjectTableValueFar(effect->actors[k]) / 2;
+      s32 half = BattleUnit_GetEffectHeightFar(effect->actors[k]) / 2;
 
       if (frame == k * 20 + 71) {
         if (mode == 0)

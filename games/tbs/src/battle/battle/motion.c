@@ -280,7 +280,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 }
 
 // Projects the point above unit id where its effects play (its class's
-// height, Battle_GetObjectTableValue) onto the screen, into projected.
+// height, BattleUnit_GetEffectHeight) onto the screen, into projected.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -294,7 +294,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   projectionScale = Render_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectionScale, record->scale);
   projectionScale =
-      Iwram_MulQ16(spriteScale, (s32)Battle_GetObjectTableValue(unitId) >> 16);
+      Iwram_MulQ16(spriteScale, (s32)BattleUnit_GetEffectHeight(unitId) >> 16);
   projected[1] -= projectionScale;
   return 0;
 }
@@ -321,7 +321,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
 // Returns the height above unit id where its effects play, 16.16: its
 // class's own (BattleClass_GetEffectHeight), else 24 for a small enemy and 48
 // for others.
-s32 Battle_GetObjectTableValue(s32 unitId) {
+s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;
 

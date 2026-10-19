@@ -52,7 +52,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
     offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-    height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
+    height = BattleUnit_GetEffectHeightFar(work->effect->actors[member]) / 2;
     SET_VECTOR(point, object->x, height, object->z);
     EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
@@ -173,7 +173,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
 
     object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
     halfHeight =
-        Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
+        BattleUnit_GetEffectHeightFar(work->effect->actors[member]) / 2;
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
       struct EffectStep *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
@@ -197,7 +197,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
     s32 halfHeight;
 
     user = GetBattleObjectSlotFar(work->effect->actor)->object;
-    halfHeight = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
+    halfHeight = BattleUnit_GetEffectHeightFar(work->effect->actor) / 2;
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(SE_133);
     EFFECT_VIEW_FROM_CAMERA(camera);

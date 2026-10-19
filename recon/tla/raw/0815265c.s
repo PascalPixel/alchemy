@@ -1155,7 +1155,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r6, [r0]
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
@@ -2392,7 +2392,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r5, [sp, #84]
 	ldr r7, [r0]
 	ldr r0, [r5, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	movs r3, #192

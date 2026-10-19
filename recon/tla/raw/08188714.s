@@ -140,12 +140,12 @@ BattleFx_RunDeathPlunge:
 	ldr r1, [sp, #56]
 	adds r5, r5, r0
 	ldr r0, [r1, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	ldr r3, [sp, #56]
 	str r0, [sp, #28]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	ldr r1, [sp, #56]
 	str r0, [sp, #24]
 	mov r2, sp

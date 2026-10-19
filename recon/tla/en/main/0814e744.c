@@ -47,7 +47,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
 void Func_081180e8(s32 phase);       // BattleEventRuntime_BeginPhaseFar
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
 // The Lost Age's blitter modes, BattleFx_LoadBlitter's high nibble: 3 minus The Broken
 // Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
@@ -107,7 +107,7 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
     object = GetBattleObjectSlotFar(effect->actors[member])->object;
-    height = Battle_GetObjectTableValueFar(effect->actors[member]) / 2;
+    height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
     point[0] = object->x;
     point[1] = height;
     point[2] = object->z;

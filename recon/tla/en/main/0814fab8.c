@@ -75,7 +75,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
 void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 void Graphics_LoadGreyRamp(void);         // a grey ramp from color 1
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
 // Seal's HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE).
@@ -323,7 +323,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(effect->actors[member])->object;
       s32 height =
-          Battle_GetObjectTableValueFar(effect->actors[member]) * 2 / 3;
+          BattleUnit_GetEffectHeightFar(effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
         Audio_PlayCue(212);

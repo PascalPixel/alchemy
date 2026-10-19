@@ -79,7 +79,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void ObjectGroup_TickMemberTimers(void);                // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void Func_081180e8(s32 phase);           // BattleEventRuntime_BeginPhaseFar
-s32 Battle_GetObjectTableValueFar(s32 actor);
+s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *position);
 void EffectPosition_ProjectBattler(
@@ -253,7 +253,7 @@ void BattleFx_RunSoulShatter(struct BattleEffectArgument *effect) {
       struct BattleCamera *camera;
 
       user = GetBattleObjectSlotFar(effect->actor)->object;
-      userHalfHeight = Battle_GetObjectTableValueFar(effect->actor) / 2;
+      userHalfHeight = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);

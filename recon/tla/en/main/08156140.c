@@ -149,7 +149,7 @@ void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void EffectPosition_ProjectBattler(s32 id,
@@ -327,7 +327,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   {
     s32 stagger = Data_08198478[mode * 5 + VOLLEY_STAGGER];
     s32 delay = Data_08198478[mode * 5 + VOLLEY_DELAY];
-    s32 height = Battle_GetObjectTableValueFar(effect->actor);
+    s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
 
     if (effect->count * shots > 63) // the shots must fit particles[64]
       effect->count = 1;
@@ -335,7 +335,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     for (i = 0; i != effect->count; i++) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(effect->actors[i])->object;
-      s32 targetHeight = Battle_GetObjectTableValueFar(effect->actors[i]);
+      s32 targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[i]);
 
       for (j = 0; j != shots; j++) {
         struct EffectStep *shot = &work->particles[i * shots + j];

@@ -9,7 +9,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 value, s32 fade);
 void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
 void BattlePresentation_SetPaletteLevelFar(s32 unused, s32 level);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 index);
-s32 Battle_GetObjectTableValueFar(s32 id);
+s32 BattleUnit_GetEffectHeightFar(s32 id);
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
                                     s32 travel_divisor, s32 initial_velocity_y);
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 variant);

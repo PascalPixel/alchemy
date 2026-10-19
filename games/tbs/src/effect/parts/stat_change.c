@@ -226,7 +226,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
       s32 height =
-          Battle_GetObjectTableValueFar(work->effect->actors[member]) * 2 / 3;
+          BattleUnit_GetEffectHeightFar(work->effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
         AudioCommand_PlayFar(SE_212);

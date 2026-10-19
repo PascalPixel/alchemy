@@ -579,7 +579,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   // 32 sparks scatter from half the target's height, variant their lifetime;
   // Aqua Sock throws its own later, and Psyphon Seal's rise more slowly.
   if (mode != CASTING_IMPACT_IMPACT_AQUA_SOCK) {
-    s32 height = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
+    s32 height = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
     for (i = 0; i != 32; i++) {
       particle = &work->particles[i];
       SET_POSITION(particle, targetActor->x, height, targetActor->z);
@@ -843,7 +843,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         struct MotionObject *caster;
         s32 height;
         caster = GetBattleObjectSlotFar(work->effect->actor)->object;
-        height = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
+        height = BattleUnit_GetEffectHeightFar(work->effect->actor) / 2;
         for (i = 0; i != 32; i++, step++) {
           if (step->variant >= 0) {
             s32 size = (i & 1) + 6;

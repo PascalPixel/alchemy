@@ -530,7 +530,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   {
     s32 stagger = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
     s32 delay = (gProjectiles_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
-    s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
+    s32 height = BattleUnit_GetEffectHeightFar(work->effect->actor);
 
     if (work->effect->count * shots > 63) // keep within particles[64]
       work->effect->count = 1;
@@ -538,7 +538,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[i])->object;
-      s32 targetHeight = Battle_GetObjectTableValueFar(work->effect->actors[i]);
+      s32 targetHeight = BattleUnit_GetEffectHeightFar(work->effect->actors[i]);
 
       for (j = 0; j != shots; j++) {
         struct EffectStep *shot = &work->particles[i * shots + j];

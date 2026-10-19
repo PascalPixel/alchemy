@@ -222,7 +222,7 @@ void Func_0801521c(s32);
 void Transform_SetLookAt(void *, void *);
 void Object_SetMode(struct BattleObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
-s32 Battle_GetObjectTableValueFar(s32);
+s32 BattleUnit_GetEffectHeightFar(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **GetBattleObjectSlotFar(s32);
 void Func_081180e8(s32);
@@ -761,7 +761,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   for (i = 0; i != 64; i++)
     work->particle[i].life = 0;
   if (kind != 44) {
-    half = Battle_GetObjectTableValueFar(action->actor) / 2;
+    half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
     p = work->particle;
     for (i = 0; i != 32; i++, p++) {
       p->x = object2->x;
@@ -1063,7 +1063,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame >= start) {
         p = SPARKS;
         object3 = *GetBattleObjectSlotFar(action->target);
-        half = Battle_GetObjectTableValueFar(action->target) / 2;
+        half = BattleUnit_GetEffectHeightFar(action->target) / 2;
         for (i = 0; i != 32; i++, p++) {
           if (p->life >= 0) {
             n = (i & 1) + 6;
@@ -2198,7 +2198,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame > 19)
         origin[1] += 0x40000;
       if (frame == 23) {
-        half = Battle_GetObjectTableValueFar(action->actor) / 2 + 0x1e0000;
+        half = BattleUnit_GetEffectHeightFar(action->actor) / 2 + 0x1e0000;
         p = work->particle;
         for (i = 0; i != 64; i++, p++) {
           p->x = object2->x;

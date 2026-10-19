@@ -61,7 +61,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleFx_FetchRectangleBlitters(s32 flip, void **out);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 
 struct StarTarget {

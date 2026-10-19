@@ -16,13 +16,13 @@ struct BattleFxWorkTail {
 };
 
 u8 *GetMotionRecordFar(s32 *object, s32 mode);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 // The Japanese, French and Italian far-call tables do not reach
-// Battle_GetObjectTableValueFar under that name (Japanese names another slot,
+// BattleUnit_GetEffectHeightFar under that name (Japanese names another slot,
 // the other two keep the slot unnamed on their scaffold); those three editions
 // keep this function on their scaffold (S4).
 #if (LANGUAGE != LANGUAGE_JAPANESE) && (LANGUAGE != LANGUAGE_FRENCH) &&                    \
@@ -40,7 +40,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   Transform_SetLookAt(camera, camera + 12);
   scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen),
                        *(s32 *)(info + 12));
-  screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
+  screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
 #endif

@@ -90,7 +90,7 @@ s32 Trig_Cos(s32 angle);
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-s32 Battle_GetObjectTableValueFar(s32 unit);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleFx_BeginTiledCanvas(s32 bgControl);
 void BattleFx_BeginTiledCanvasFilled(s32 bgControl);

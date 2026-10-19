@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Battle_GetObjectTableValueFar
+	.global BattleUnit_GetEffectHeightFar
 	.thumb_func
-Battle_GetObjectTableValueFar:
+BattleUnit_GetEffectHeightFar:
 	overlay_veneer Func_0811c37c
 	.global BattleMotion_ApproachTargetFar
 	.thumb_func

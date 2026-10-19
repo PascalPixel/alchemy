@@ -74,7 +74,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   EFFECT_FOR_EACH_TARGET(k, work->effect) {
     struct MotionObject *src =
         GetBattleObjectSlotFar(work->effect->actor)->object;
-    s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
+    s32 height = BattleUnit_GetEffectHeightFar(work->effect->actor);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
       struct EffectStep *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
@@ -115,7 +115,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     EFFECT_FOR_EACH_TARGET(k, work->effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
-      s32 half = Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
+      s32 half = BattleUnit_GetEffectHeightFar(work->effect->actors[k]) / 2;
 
       if (frame == k * 20 + 71) {
         if (mode == 0)

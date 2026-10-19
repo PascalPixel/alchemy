@@ -49,7 +49,7 @@ BattleFx_RunFroth:
 	mov r1, r8
 	ldr r6, [r0]
 	ldr r0, [r1, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	ldr r3, [r6, #12]
 	movs r2, #0
 	adds r3, r3, r0

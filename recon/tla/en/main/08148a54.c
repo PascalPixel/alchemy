@@ -74,7 +74,7 @@ s32 BattleFx_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleFx_BuildBlitte
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
-s32 Battle_GetObjectTableValueFar(s32 id);
+s32 BattleUnit_GetEffectHeightFar(s32 id);
 
 // Thirty motes rise from the caster, swirl, and home in on the targets; each
 // one that reaches the ground flashes and knocks back its target and plays a
@@ -112,7 +112,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
 
   // The motes start at the caster's chest with random velocities.
   source = GetBattleObjectSlotFar(effect->actor)->object;
-  y = source->y + Battle_GetObjectTableValueFar(effect->actor);
+  y = source->y + BattleUnit_GetEffectHeightFar(effect->actor);
   for (i = 0; i != MOTE_COUNT; i++) {
     point = &work->particles[i];
     point->x = source->x;

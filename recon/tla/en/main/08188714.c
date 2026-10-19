@@ -73,7 +73,7 @@ extern u8 gData_08199364[];
 extern s32 gData_08199210[];
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-s32 Battle_GetObjectTableValueFar(s32 objectId);
+s32 BattleUnit_GetEffectHeightFar(s32 objectId);
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 void BattleFx_LoadBlitter(s32 slot, s32 packed);
@@ -174,8 +174,8 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   percent = 90;
   x = user->x + percent * (target->x - user->x) / 100;
   z = user->z + percent * (target->z - user->z) / 100;
-  userHeight = Battle_GetObjectTableValueFar(effect->actor);
-  targetHeight = Battle_GetObjectTableValueFar(effect->actors[0]);
+  userHeight = BattleUnit_GetEffectHeightFar(effect->actor);
+  targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[0]);
   EffectPosition_ProjectBattler(effect->actors[0], &targetScreen);
   Object_ResetMotion(user);
   Object_SetPosition(user, x, 0, z);

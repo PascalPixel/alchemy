@@ -54,7 +54,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   // The embers leave the top of the user's body in a random direction and
   // speed, rising at -16 to 111 sixty-fourths of a pixel a frame.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
-  bodyTop = user->y + Battle_GetObjectTableValueFar(work->effect->actor);
+  bodyTop = user->y + BattleUnit_GetEffectHeightFar(work->effect->actor);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct EffectStep *ember = &PARTICLES[i];
     s32 angle;

@@ -187,7 +187,7 @@ BattleFx_RunStarMine:
 	ldr r2, [sp, #52]
 	ldr r5, [r0]
 	ldr r0, [r2, #8]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r3, [r5, #8]
@@ -286,7 +286,7 @@ BattleFx_RunStarMine:
 	ldr r2, [sp, #52]
 	ldr r7, [r0]
 	ldrsh r0, [r2, r5]
-	bl Battle_GetObjectTableValueFar
+	bl BattleUnit_GetEffectHeightFar
 	mov r5, r8
 	lsrs r3, r0, #31
 	adds r0, r0, r3

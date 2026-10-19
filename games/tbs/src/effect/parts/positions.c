@@ -93,7 +93,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   info = GetMotionRecordFar(object, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
-  screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
+  screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
 

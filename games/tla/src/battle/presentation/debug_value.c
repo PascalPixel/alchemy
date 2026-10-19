@@ -1,11 +1,3 @@
-// Draft, differ 11 of 114: debug choice of a battle value: with Start held,
-// the d-pad and L/R step the battle work's word at 0x854 (by 1, 10 and 100)
-// until A, which takes it; Select held instead picks 544, R held 399;
-// otherwise value comes back unchanged. No ☀️ twin found. Left: other: after
-// the Select test the native reloads gInput.held for the R test, where here
-// the held word stays in r2 and only the mask is rebuilt (gcse reuses it
-// across the join); with it, the first test loads held into r2 rather than
-// r3, and the pool sits one word nearer.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -17,6 +9,9 @@ struct DebugBattleWork {
 
 void WaitFrames(s32 frames);
 
+// A debug choice of a battle value: with Start held, the d-pad and L/R step
+// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
+// held picks 544 and R held 399; otherwise value comes back unchanged.
 s32 Func_081269f8(s32 value) {
   if (gInput.held & 8) {
     while (1) {
@@ -44,7 +39,9 @@ s32 Func_081269f8(s32 value) {
   }
   if (gInput.held & 4)
     value = 544;
-  if (gInput.held & 0x100)
+  /* FAKEMATCH(volatile): the held buttons read again for the R test; as
+   * gInput.held, 11 of 114 instructions differ in tla-en. */
+  if (*(volatile u32 *)&gInput.held & 0x100)
     value = 399;
   return value;
 }

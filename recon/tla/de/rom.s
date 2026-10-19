@@ -3323,9 +3323,6 @@ Func_08126944:
 	.thumb_func
 Func_08126978:
 	.incbin "baserom.gba", 0x00126990, 0x00000034
-	.section .rom.00126a10, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00126a10, 0x000000ec
 	.section .rom.00126be4, "ax"
 	.global Graphics_AdvancePaletteCycle
 	.type Graphics_AdvancePaletteCycle, %function

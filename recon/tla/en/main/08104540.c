@@ -4,7 +4,7 @@
 // panes of Func_08103218 for the pair's first member, page arrows over the
 // right one, left and right page through, Start leaves the menu (-2) and A,
 // B, L or R the view (-1). MsgCurrentStatus takes the twin's name (04315 in
-// the English catalog, still unnamed there). Differ 99 of 436, register
+// the English catalog, still unnamed there). Differ 95 of 436, register
 // and stack slot choice mostly: the native gives r11 the selected page's
 // address and keeps the frame's eleven spills in another order (the page
 // count's address lowest at sp+20, the redraw flag highest at sp+60). The
@@ -44,7 +44,7 @@ extern u8 gMenu_BackdropFrameTile[];
 void RenderOutput_ClearListFar(void *window);
 void RenderOutput_PrepareForRedrawFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
 void UiWindow_CloseIfOpen(void *window, s32 mode);

@@ -30,7 +30,7 @@ struct DjinnMenuWork {
 
 void RenderOutput_ClearListFar(void *window);
 void RenderOutput_PrepareForRedrawFar(void *window);
-s32 UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void UiText_DrawResourceFar(s32 message, void *window, s32 x, s32 y);
 void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,

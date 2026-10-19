@@ -10,12 +10,14 @@
 #include "edition.h"
 #include "farcall.h"
 
+/// A 16-byte record of a rectangle. In TBS it only reserves stack space in
+/// tbs-ja's glyph renderer; no TBS code reads its fields.
 struct RenderInput {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  u16 x;
-  u16 y;
+  u8 unk00[8]; ///< not named by TBS code
+  u16 width;   ///< not named by TBS code
+  u16 height;  ///< not named by TBS code
+  u16 x;       ///< not named by TBS code
+  u16 y;       ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
@@ -58,15 +60,19 @@ struct RenderOam {
 /// A render output: a sprite in a window's output list (a character, an icon
 /// or a portrait), with its VRAM cache slot and OAM attributes.
 struct RenderOutput {
-  struct RenderOutput *next;
+  struct RenderOutput *next; ///< the next output in its list
+  /// 0 for a glyph; otherwise it owns VRAM cache slot index, freed with it,
+  /// and 2 (a portrait) also its palette slot.
   s8 kind;
-  s8 active;
-  u16 x; ///< screen pixels
-  u16 y; ///< screen pixels
-  u16 unk0a;
-  u16 animStep;
-  s8 index;
-  u8 sentinel;
+  s8 active;    ///< its UI_SPRITE_ motion; 0 while free
+  u16 x;        ///< screen pixels
+  u16 y;        ///< screen pixels
+  u16 unk0a;    ///< not named by TBS code
+  u16 animStep; ///< step of its motion's animation
+  s8 index;     ///< VRAM cache slot, or a glyph's tile after glyphTiles
+  u8 sentinel;  ///< depth slot it is drawn at (254 for glyphs)
+  /// The depth queue's link: with oam it is the sprite entry queued each
+  /// frame, read as struct CursorSprite.
   u8 unk10[4];
   struct RenderOam oam;
 };

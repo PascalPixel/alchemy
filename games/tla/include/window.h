@@ -14,42 +14,48 @@ enum { UI_TEXT_ENTRY_COUNT = 512 };
 enum { UI_TEXT_ENTRY_COUNT = 256 };
 #endif
 
+/// The window system's work, as ☀️'s with its bytes before the tilemap: the
+/// windows' tilemap, the windows, the three text channels, the 64 render
+/// outputs, and the decoded message and its arguments.
 struct UiRenderWork {
-  u16 tileCursor;
-  u8 alt;
+  u16 tileCursor; ///< the text tile the next search for a free one starts at
+  u8 alt;         ///< 1 lets text use the second range of tiles
+  /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
-  u8 mode;
-  u8 menuState;
-  u8 menuBusy;
-  u8 level;
-  u16 tilemap[20][32];
+  u8 mode;      ///< nonzero widens a message window by 2
+  u8 menuState; ///< 1 from the work's setup
+  u8 menuBusy;  ///< while set, the tilemap is not uploaded
+  u8 level;     ///< text tiles' palette; 15 by default
+  u16 tilemap[20][32]; ///< the windows' BG tilemap
   struct UiWindow windows[UI_WINDOW_COUNT];
   struct UiChannelSlot channels[3];
   struct RenderOutput outputs[UI_OUTPUT_COUNT];
-  struct RenderOutputList freeOutputs;
-  u8 tileAttributes[0x100];
-  u16 lineSpacing;
-  u16 unknownAfterLineSpacing;
-  u16 outline;
-  u16 colour;
-  u16 entries[UI_TEXT_ENTRY_COUNT];
-  u16 glyphSpacing;
-  u16 count;
-  u16 unknownAfterCount;
-  u16 glyphResource;
-  u16 glyphTiles;
-  u8 unknownBeforeValues[2];
-  u32 values[8];
-  u16 names[8];
-  u16 resourceIds[2];
-  u16 outputIds[2];
-  u16 speakerVoiceSound;
-  u16 speakerVoiceCountdown;
-  u8 unk1388;
-  u8 busy;
-  u8 unk138a[2];
+  struct RenderOutputList freeOutputs; ///< the outputs not in any window
+  u8 tileAttributes[0x100];            ///< per text tile, as ☀️'s
+  u16 lineSpacing;             ///< the current channel's, copied in to draw
+  u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
+  u16 outline;                 ///< the current channel's, copied in to draw
+  u16 colour;                  ///< the current channel's, copied in to draw
+  u16 entries[UI_TEXT_ENTRY_COUNT]; ///< decoded text, a ring of codes
+  u16 glyphSpacing;      ///< 9 with the text style, as ☀️'s letterSpacing
+  u16 count;             ///< where the next code goes in entries
+  u16 unknownAfterCount; ///< not named by ⚓️ code
+  u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
+  u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
+  u8 unknownBeforeValues[2]; ///< not named by ⚓️ code
+  u32 values[8];             ///< message argument values
+  u16 names[8]; ///< the kind of each value; 0 for a free slot
+  u16 resourceIds[2]; ///< picture shown in each portrait slot; 999 when free
+  u16 outputIds[2];   ///< VRAM cache slot of each portrait slot's picture
+  u16 speakerVoiceSound;     ///< first of four voice blip sounds; 0 for none
+  u16 speakerVoiceCountdown; ///< characters until the next voice blip
+  u8 unk1388; ///< 1 while the next-page arrow is shown (☀️'s pageArrowShown)
+  u8 busy;    ///< set while a message waits on its sound
+  u8 unk138a[2]; ///< cleared together, as ☀️'s spacingBefore and spacingAfter
+  /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
+  /// glyphs by y / 320 (UiChannelSlot.unk26).
   s8 textMode;
-  u8 unk138d[3];
+  u8 unk138d[3]; ///< not named by ⚓️ code
 };
 
 STATIC_ASSERT(offsetof(struct UiRenderWork, tilemap) == 8);

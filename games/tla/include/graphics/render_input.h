@@ -5,12 +5,14 @@
 #include "static_assert.h"
 #include "edition.h"
 
+/// A window as the render functions take it: its fields sit where a
+/// UiWindow keeps its width, height and place.
 struct RenderInput {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  u16 x;
-  u16 y;
+  u8 unk00[8]; ///< not named by ⚓️ code; a UiWindow's output list here
+  u16 width;   ///< tiles
+  u16 height;  ///< tiles
+  u16 x;       ///< tiles
+  u16 y;       ///< tiles
 };
 
 STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
@@ -24,6 +26,8 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
 s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *window, s32 x, s32 y,
                                     s32 resource);
 
+/// A sprite's OAM attribute 2 (tile index, priority and palette) and the
+/// halfword after it, as one word or as fields.
 union RenderTableValue {
   u32 value;
   struct {
@@ -55,20 +59,25 @@ struct RenderOam {
   u16 high;
 };
 
+/// A render output: a sprite in a window's output list (a character, an icon
+/// or a portrait), with its VRAM cache slot and OAM attributes.
 struct RenderOutput {
-  struct RenderOutput *next;
+  struct RenderOutput *next; ///< the next output in its list
+  /// 0 for a glyph; otherwise it owns VRAM cache slot index, freed with it,
+  /// and 2 (a portrait) also its palette slot.
   s8 kind;
-  s8 active;
-  u16 x;
-  u16 y;
-  u16 unk0a;
-  u16 animStep;
-  s8 index;
-  u8 sentinel;
-  u8 unk10[4];
+  s8 active;    ///< its sprite motion; 0 while free
+  u16 x;        ///< screen pixels
+  u16 y;        ///< screen pixels
+  u16 unk0a;    ///< not named by ⚓️ code
+  u16 animStep; ///< step of its motion's animation
+  s8 index;     ///< VRAM cache slot, or a glyph's tile
+  u8 sentinel;  ///< depth slot it is drawn at
+  u8 unk10[4];  ///< with oam, the sprite entry, read through casts
   struct RenderOam oam;
 };
 
+/// A list of render outputs: its first output and the link to append after.
 struct RenderOutputList {
   struct RenderOutput *head;
   struct RenderOutput **tailLink;

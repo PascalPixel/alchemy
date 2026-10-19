@@ -10,6 +10,8 @@
 
 struct BattleUnit;
 
+/// An inventory entry's parts, and a unit's slot count.
+/// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item id
 enum InventoryEncoding {
   ITEM_ID_MASK = 0x1ff,
   INVENTORY_EQUIPPED = 0x200,
@@ -71,9 +73,9 @@ enum ItemEffectKind {
 /// One effect of an item while equipped: its kind (enum ItemEffectKind) and
 /// amount.
 struct ItemEffect {
-  u8 kind;
-  s8 amount;
-  u8 reserved02[2];
+  u8 kind;          ///< enum ItemEffectKind; 0 for none
+  s8 amount;        ///< what the kind adds or scales by
+  u8 reserved02[2]; ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct ItemEffect) == 0x04);
@@ -83,23 +85,25 @@ STATIC_ASSERT(offsetof(struct ItemEffect, amount) == 0x01);
 /// An item's definition: its price, type, who can equip it, its bonuses and
 /// unleash, its effects and the action it is used for.
 struct ItemDefinition {
-  s16 price;
-  u8 type;
-  u8 flags;
-  u16 equipMask;
-  u16 icon;
-  s16 primaryBonus;
-  s8 secondaryBonus;
-  u8 unleashChance; ///< in steps of 5 percent
+  s16 price;         ///< coins
+  u8 type;           ///< enum ItemType; 0 for an item that is not equipment
+  u8 flags;          ///< enum ItemFlags
+  u16 equipMask;     ///< one bit per character that can equip it, bit 0 Isaac
+  u16 icon;          ///< indexes gUiIcon_ItemIconPointers
+  s16 primaryBonus;  ///< Attack added while equipped
+  s8 secondaryBonus; ///< Defense added while equipped
+  u8 unleashChance;  ///< in steps of 5 percent
+  /// What using it costs (ITEM_USE_): 1 one is used up, 2 it may break, 4 it
+  /// leaves an Empty Bottle; 3 teaches actionId as Psynergy while equipped.
   u8 useType;
-  u8 reserved0d;
+  u8 reserved0d;     ///< not named by TBS code
   u16 unleashAction; ///< the action a weapon unleashes, or 0
 
-  u8 reserved10[4];
-  s32 element;
-  struct ItemEffect effects[4];
-  u16 actionId;
-  u8 reserved2a[2];
+  u8 reserved10[4];             ///< not named by TBS code
+  s32 element;                  ///< a weapon's attack element; 4 for none
+  struct ItemEffect effects[4]; ///< what it does while equipped
+  u16 actionId;                 ///< the ability used, or taught as Psynergy
+  u8 reserved2a[2];             ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct ItemDefinition) == 0x2c);

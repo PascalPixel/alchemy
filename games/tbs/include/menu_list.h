@@ -87,7 +87,7 @@ struct PartyStatusWindow {
   u16 y;      ///< tiles
   u16 width;  ///< tiles
   u16 height; ///< tiles
-  u16 flags;
+  u16 flags;  ///< PARTY_STATUS_ flags
 };
 
 STATIC_ASSERT(sizeof(struct PartyStatusWindow) == 16);
@@ -102,20 +102,26 @@ struct MenuPoint {
 /// The menu work that remembers the cursor between menus (page, row and
 /// commands chosen) and drives the Djinn tutorial's key presses.
 struct MenuCell {
-  u8 unk00[0x28];
+  u8 unk00[0x28]; ///< LinkRoundState's sprites and their flags
+  /// LinkRoundState.targetOffset: -2 or 16 by the target menu's mode, 0 after.
   s32 slideOffset;
-  u8 unk2c[4];
-  s32 row;
-  s32 page;
-  s32 preferredRow;
+  u8 unk2c[4];      ///< LinkRoundState.currentOffset; not named through here
+  s32 row;          ///< the list row chosen last
+  s32 page;         ///< the list page chosen last
+  s32 preferredRow; ///< the row to return to
+  /// The command row's choice: 0 in its first mode, 1 in the other.
   s32 commandSelection[2];
-  void *work;
-  s32 busy;
+  void *work; ///< LinkRoundState.displayHandle; not named through here
+  s32 busy;   ///< LinkRoundState.secondaryHandle; cleared by the status screen
+  /// LinkRoundState.timer, the link battle's countdown: at 0 a menu ends as
+  /// if cancelled, or takes the first command; -1 outside link battles.
   s32 active;
-  u8 unk50[0x88];
+  u8 unk50[0x88]; ///< LinkRoundState's enabled flag and lists
+  /// Set in the Djinn tutorial (LinkRoundState.hintCount): the target menu
+  /// then presses a button for the player every autoDelay frames.
   s32 autoEnabled;
   s32 autoDelay; ///< frames
-  s32 autoMode;
+  s32 autoMode;  ///< LinkRoundState.actorId; not read through here
 };
 
 STATIC_ASSERT(offsetof(struct MenuCell, slideOffset) == 0x28);

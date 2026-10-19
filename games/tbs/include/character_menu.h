@@ -19,21 +19,21 @@ struct OwnerActionSlot;
 /// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
 /// work slot.
 struct CharacterMenuState {
-  u8 unk000[8];
-  s32 selectedOwner;
-  u8 unk00c[4];
+  u8 unk000[8];      ///< not named by TBS code
+  s32 selectedOwner; ///< the party member chosen
+  u8 unk00c[4];      ///< not named by TBS code
   struct UiWindow *ownerWindow;
   struct RenderOutput *ownerCursors[2];
-  s8 ownerIndex[2];
-  s8 ownerCount[2];
+  s8 ownerIndex[2]; ///< each pane's member, in ownerIds
+  s8 ownerCount[2]; ///< members each pane chooses from
   struct UiWindow *actionWindow;
   struct UiWindow *statusWindow;
-  struct UiWindow *unknownWindow028;
+  struct UiWindow *unknownWindow028; ///< only cleared by name in TBS
   struct UiWindow *helpWindow;
-  u8 unk030[0x18];
+  u8 unk030[0x18]; ///< not named by TBS code
   struct RenderOutput *entryIcons[32];
   struct RenderOutput *categoryIcons[8];
-  u8 unk0e8[0x24];
+  u8 unk0e8[0x24]; ///< not named by TBS code
   struct UiWindow *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
@@ -46,15 +46,15 @@ struct CharacterMenuState {
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct RenderOutput *statusCursor;
-  u8 unk180[0x48];
+  u8 unk180[0x48]; ///< not named by TBS code
   u16 entries[32];
-  u16 ownerIds[8];
+  u16 ownerIds[8]; ///< the party in order (Party_ListActiveOwners)
   u8 entryCount;
   u8 partyCount;
-  u8 selectedIds[2];
+  u8 selectedIds[2]; ///< each pane's member
   struct RenderOutput *selectedIcon;
-  u16 page;
-  u8 unk222[2];
+  u16 page;     ///< 3 for the member chooser, 0 for the Status menu
+  u8 unk222[2]; ///< not named by TBS code
   struct AnimationObject *rowObjects[4];
   s16 rowX[4]; ///< screen pixels
   s16 rowY[4]; ///< screen pixels

@@ -12,18 +12,18 @@ struct SpritePlacement {
 #ifdef UBFIX
   union {
     struct {
-      s32 x;
-      s32 height;
-      s32 y;
-      s32 groundHeight;
+      s32 x;            ///< screen x of the sprite's centre
+      s32 height;       ///< how far the image is raised above y
+      s32 y;            ///< screen y at the ground; sets the depth slot
+      s32 groundHeight; ///< how far the shadow is raised above y
     };
     s32 values[4];
   };
 #else
-  s32 x;
-  s32 height;
-  s32 y;
-  s32 groundHeight;
+  s32 x;            ///< screen x of the sprite's centre
+  s32 height;       ///< how far the image is raised above y
+  s32 y;            ///< screen y at the ground; sets the depth slot
+  s32 groundHeight; ///< how far the shadow is raised above y
 #endif
 };
 
@@ -39,6 +39,7 @@ SpritePlacement_ReadValues(const struct SpritePlacement *placement) {
 #endif
 }
 
+/// Returns the placement's values as a writable array.
 static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 #ifdef UBFIX
   return placement->values;
@@ -51,8 +52,8 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 struct SpriteScale {
   union {
     struct {
-      s32 x;
-      s32 y;
+      s32 x; ///< 16.16
+      s32 y; ///< 16.16
     };
     s32 values[2];
   };

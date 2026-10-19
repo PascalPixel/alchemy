@@ -3,22 +3,29 @@
 
 #include "render_input.h"
 
+/// A window: a framed rectangle of the tilemap with its sprite outputs, its
+/// opening or closing animation and the rectangle it last drew.
 struct UiWindow {
-  struct RenderOutputList output;
-  u16 width;
-  u16 height;
-  u16 x;
-  u16 y;
-  u16 unk10;
+  struct RenderOutputList output; ///< the sprites the window carries
+  u16 width;                      ///< tiles
+  u16 height;                     ///< tiles
+  u16 x;                          ///< tiles
+  u16 y;                          ///< tiles
+  u16 unk10; ///< 1 once opened, 0 once freed; not read by name in ⚓️
+  /// The effect a message's window-state code sets, as in ☀️.
   u16 effect;
+  /// 0 while a message channel is typing into the window; nonzero once it is
+  /// done, which frees the channel for the next text.
   u16 state;
-  u16 flags;
+  u16 flags; ///< 0 once closing or free
+  /// The zoom's step: counts down while opening, up to duration while
+  /// closing.
   u16 frame;
-  s16 duration;
-  u16 previousX;
-  u16 previousY;
-  u16 previousWidth;
-  u16 previousHeight;
+  s16 duration;       ///< frames of the zoom under way; 0 when none
+  u16 previousX;      ///< tiles
+  u16 previousY;      ///< tiles
+  u16 previousWidth;  ///< tiles
+  u16 previousHeight; ///< tiles
 };
 
 STATIC_ASSERT(sizeof(struct UiWindow) == 0x24);
@@ -26,10 +33,12 @@ STATIC_ASSERT(offsetof(struct UiWindow, width) == 8);
 STATIC_ASSERT(offsetof(struct UiWindow, frame) == 0x18);
 STATIC_ASSERT(offsetof(struct UiWindow, previousHeight) == 0x22);
 
+/// A text channel, one of three, which types decoded text into a window a few
+/// characters a frame and runs its control codes.
 struct UiChannelSlot {
-  struct UiWindow *work;
-  u16 x;
-  u16 y;
+  struct UiWindow *work; ///< the window typed into; NULL when free
+  u16 x;                 ///< pen, 8.8 fixed-point pixels
+  u16 y;                 ///< pen, 8.8 fixed-point pixels
   u16 spacing[4];
   u16 line;
   u16 entry;
@@ -42,6 +51,8 @@ struct UiChannelSlot {
   u16 ended;
   u16 glyphDelay;
   u16 flags;
+  /// Copied from spacing[3] when queued; with UiRenderWork.textMode set it
+  /// places the glyphs by y / 320.
   u16 unk26;
 };
 

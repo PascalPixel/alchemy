@@ -31,50 +31,57 @@ struct DjinnMenuBackdrop {
   struct DjinnListTable list;
   u8 tiles[0x2000];
   u16 palette[64];
-  s32 tutorialTimer;
+  s32 tutorialTimer; ///< frames into the tutorial's current step
+  /// The Djinn tutorial's step: 0 outside it, else 1, 14, 27 or 28 to start,
+  /// by flags 0x16f and 0x171.
   long tutorialStep;
 };
 
 /// The Djinn menu's work, in the HEAP_SLOT_MENU work slot.
 struct DjinnMenuWork {
-  u8 unk000[8];
+  u8 unk000[8]; ///< not named by TBS code
   s32 owner;
-  u8 unk00c[4];
+  u8 unk00c[4]; ///< not named by TBS code
   struct UiWindow *statusWindow;
   struct RenderOutput *cursor;
-  u8 unk018[4];
-  s8 selectedColumn[2];
-  u8 unk01e[6];
+  u8 unk018[4];         ///< not named by TBS code
+  s8 selectedColumn[2]; ///< each pane's member, in owners
+  u8 unk01e[6];         ///< not named by TBS code
   struct UiWindow *window;
   struct UiWindow *unknownWindow028;
-  u8 unk02c[4];
+  u8 unk02c[4]; ///< not named by TBS code
   struct UiWindow *listWindow;
   struct UiWindow *secondWindow;
-  u8 unk038[0xd4];
+  u8 unk038[0xd4]; ///< not named by TBS code
   struct UiWindow *helpWindow;
-  u8 unk110[0x24];
-  s16 ownerX[8]; ///< screen pixels
-  s16 ownerY[8]; ///< screen pixels
-  u8 unk154[0x20];
-  u16 selection[2];
-  u16 pairEntries[2];
+  u8 unk110[0x24];    ///< not named by TBS code
+  s16 ownerX[8];      ///< screen pixels
+  s16 ownerY[8];      ///< screen pixels
+  u8 unk154[0x20];    ///< not named by TBS code
+  u16 selection[2];   ///< each pane's Djinni row chosen
+  u16 pairEntries[2]; ///< 255 at first
   struct RenderOutput *secondCursor;
-  u8 unk180[0x04];
+  u8 unk180[0x04]; ///< not named by TBS code
   struct DjinnMenuBackdrop *backdrop;
-  u8 unk188[0x80];
-  u16 owners[DJINN_LIST_OWNERS];
+  u8 unk188[0x80];               ///< not named by TBS code
+  u16 owners[DJINN_LIST_OWNERS]; ///< the party in order
   u8 pairCount;
   u8 ownerCount;
-  u8 shownOwner[2];
-  u8 unk21c[4];
+  u8 shownOwner[2]; ///< the member giving and the one receiving
+  u8 unk21c[4];     ///< not named by TBS code
+  /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
+  /// to be chosen
   u16 pending;
-  u8 unk222[0x12];
+  u8 unk222[0x12]; ///< not named by TBS code
   u16 slotX[4];
   u16 slotY[4];
-  u8 unk244[0x10];
+  u8 unk244[0x10]; ///< not named by TBS code
+  /// The Djinn chosen in each pane: index in their element, element, owner.
+  ///@{
   u8 pairIndex[2];
   u8 pairElement[2];
-  u8 pairOwner[2];
+  u8 pairOwner[2]; ///< not named by TBS code
+  ///@}
 };
 
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, statusWindow) == 0x10);

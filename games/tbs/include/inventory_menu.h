@@ -19,56 +19,63 @@ struct UiWindow;
 /// The item menu's work, in the HEAP_SLOT_MENU work slot: its windows, the
 /// party figures, the items listed and the two choices a command makes.
 struct InventoryMenuState {
-  u8 unk000[8];
-  s32 selectedOwner;
-  u8 unk00c[4];
+  u8 unk000[8];      ///< not named by TBS code
+  s32 selectedOwner; ///< the party member chosen
+  u8 unk00c[4];      ///< not named by TBS code
   struct UiWindow *mainWindow;
+  /// The two panes: the member whose items are shown, and the one an item is
+  /// given to.
+  ///@{
   struct RenderOutput *paneIcons[2];
-  s8 paneIndex[2];
-  s8 paneCount[2];
+  s8 paneIndex[2]; ///< the member chosen, in ownerIds; -1 for none at first
+  s8 paneCount[2]; ///< members to choose from; 1 at first
+  ///@}
   struct UiWindow *itemWindow;
   struct UiWindow *statusWindow;
   struct UiWindow *helpWindow;
   struct UiWindow *infoWindow;
   struct UiWindow *equipWindow;
   struct UiWindow *listWindow;
-  struct UiWindow *unknownWindow38;
+  struct UiWindow *unknownWindow38; ///< only closed by name in TBS
   struct UiWindow *modalWindow;
-  struct UiWindow *unknownWindow40;
-  struct RenderOutput *gridCursor;
+  struct UiWindow *unknownWindow40; ///< only closed by name in TBS
+  struct RenderOutput *gridCursor;  ///< only prepared by name in TBS
   struct RenderOutput *entryIcons[32];
   struct RenderOutput *categoryIcons[8];
-  u8 unk0e8[0x24];
+  u8 unk0e8[0x24]; ///< not named by TBS code
   struct UiWindow *messageWindow;
+  /// The cursor grid: its place and its size, 1 by 1 at first.
+  ///@{
   u8 selectedColumn;
   u8 selectedRow;
   u8 columnCount;
   u8 rowCount;
-  struct AnimationObject *ownerObjects[8];
-  s16 ownerX[8];     ///< screen pixels
-  s16 ownerY[8];     ///< screen pixels
-  s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
-  u16 selectedSlots[2];
-  u16 selectedItems[2];
+  ///@}
+  struct AnimationObject *ownerObjects[8]; ///< the party members' figures
+  s16 ownerX[8];                           ///< screen pixels
+  s16 ownerY[8];                           ///< screen pixels
+  s32 ownerScale[8];    ///< 16.16 fixed point, 0x10000 full size
+  u16 selectedSlots[2]; ///< each pane's inventory slot chosen
+  u16 selectedItems[2]; ///< each pane's inventory entry chosen
   struct RenderOutput *cursor;
-  u8 unk180[0x48];
-  u16 items[32];
-  u16 ownerIds[8];
+  u8 unk180[0x48]; ///< not named by TBS code
+  u16 items[32];   ///< the inventory entries listed
+  u16 ownerIds[8]; ///< the party in order (Party_ListActiveOwners)
   u8 itemCount;
   u8 partyCount;
-  u8 paneOwner[2];
+  u8 paneOwner[2]; ///< each pane's member
   struct RenderOutput *selectedItemIcon;
-  u16 flags;
-  s16 completionFlag;
-  u8 unk224[0x36];
-  s16 messageOffset;
-  s8 equipPreview;
-  u8 listMode;
-  u8 unk25e[2];
-  s8 selectedIndexByOwner[8];
-  u8 mode;
-  u8 unk269[0x129];
-  s16 resourceSlots[2];
+  u16 flags;          ///< 1 while the item's name and command grid are drawn
+  s16 completionFlag; ///< set to 1 as item commands end; not read by name
+  u8 unk224[0x36];    ///< not named by TBS code
+  s16 messageOffset;  ///< the item use's result, after MsgItemUseResult
+  s8 equipPreview;    ///< 1 while the stats preview a removal, not an equip
+  u8 listMode;        ///< the command chosen last; 0xff for none
+  u8 unk25e[2];       ///< not named by TBS code
+  s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
+  u8 mode;          ///< not named through this struct; PsynergyMenuState.mode
+  u8 unk269[0x129]; ///< not named by TBS code
+  s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
 STATIC_ASSERT(offsetof(struct InventoryMenuState, paneIcons) == 0x14);

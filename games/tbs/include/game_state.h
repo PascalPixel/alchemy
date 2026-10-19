@@ -12,87 +12,117 @@
 /// The game's state: play time, coins, the scene and the leader's position,
 /// the active party and the options.
 struct GameState {
+  /// Runtime_GetBuildStampTime's value when the game was last saved; its low
+  /// half goes into the file's summary.
   u32 buildStamp;
-  u32 playTime;
+  u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
+  /// Not named by TBS code. The party's struct DjinnRecoveryTable
+  /// (Djinn_GetRecoveryTable) starts at byte 4, its first 8 bytes running
+  /// over coins.
   u8 unk008[8];
   s32 coins;
+  /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
+  /// Djinn_GetRecoveryTable; not named by TBS code.
   u8 unk014[0x104];
-  s32 shopCredit;
-  s8 shopGifts;
+  s32 shopCredit; ///< spent on a Game Ticket; not written by name in TBS
+  s8 shopGifts;   ///< indexes the Game Ticket's credit cost
+  /// The slot machine's prize weights, three prizes to each of 4, 8, 16, 32
+  /// and 64 on a new game; not read by name in TBS.
   s8 prizeWeights[0x0f];
+  /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
+  /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
-  u8 unk13c[0x84];
+  u8 unk13c[0x84]; ///< not named by TBS code
   s16 scene;
   s16 entrance;
-  s16 savedScene;
-  s16 savedEntrance;
-  s16 defaultScene;
-  s16 defaultEntrance;
-  s16 sceneGroup;
-  s16 nextScene;
-  s16 nextEntrance;
-  s16 defeatScene;
-  s16 defeatEntrance;
-  s16 special;
-  u8 unk1d8[2];
-  s16 map;
-  s32 x;       ///< 16.16 fixed-point pixels
-  s32 y;       ///< 16.16 fixed-point pixels
-  s32 z;       ///< 16.16 fixed-point pixels
-  u32 heading; ///< 1/65536 turns
-  u16 turn;
-  s16 sceneCue;
-  s16 cue;
-  u8 movementMode;
-  u8 unk1f3;
-  s32 selectedActor;
-  u8 activeOwners[8];
-  u8 unk200[5];
-  u8 paletteGlow[2];
-  u8 unk207[3];
-  u8 speech;
-  u8 unk20b;
-  u8 messageSpeed;
-  u8 unk20d[2];
+  s16 savedScene;      ///< where a defeat returns to without a defeat point
+  s16 savedEntrance;   ///< where a defeat returns to without a defeat point
+  s16 defaultScene;    ///< the scene being run, kept as it starts
+  s16 defaultEntrance; ///< the entrance it was entered by
+  s16 sceneGroup;   ///< the current scene's group; a new group resets its flags
+  s16 nextScene;    ///< where the event sends the party next; -1 for none
+  s16 nextEntrance; ///< where the event sends the party next; -1 for none
+  s16 defeatScene;  ///< where a defeat returns to; -1 for none
+  s16 defeatEntrance; ///< where a defeat returns to; -1 for none
+  s16 special;        ///< the battle backdrop chosen for the scene or terrain
+  u8 unk1d8[2];       ///< not named by TBS code
+  s16 map;            ///< the scene's map; SceneId_Clear for the world map
+  s32 x;              ///< 16.16 fixed-point pixels
+  s32 y;              ///< 16.16 fixed-point pixels
+  s32 z;              ///< 16.16 fixed-point pixels
+  u32 heading;        ///< 1/65536 turns
+  u16 turn;           ///< the leader's terrainId, kept with its position
+  s16 sceneCue;       ///< the battle music chosen for the encounter
+  s16 cue;            ///< the current scene's field music
+  u8 movementMode;    ///< 1 while the leader is climbing, 0 otherwise
+  u8 unk1f3;          ///< not named by TBS code
+  s32 selectedActor;  ///< the leader: its unit and its actor
+  u8 activeOwners[8]; ///< the party in order
+  u8 unk200[5];       ///< not named by TBS code
+  u8 paletteGlow[2];  ///< window hue (0 to 24), brightness
+  u8 unk207[3];       ///< not named by TBS code
+  u8 speech;          ///< 1 shows speakers' portraits beside their messages
+  u8 unk20b;          ///< 1 on a new game; not read by name in TBS
+  u8 messageSpeed;    ///< 0 to 2; 1 on a new game
+  u8 unk20d[2];       ///< not named by TBS code
+  /// Set on saving at the end of the game; copied to the file's summary as
+  /// sendFlag.
   u8 unk20f;
-  u16 aKeys;
-  u16 bKeys;
-  u16 selectKeys;
-  u16 startKeys;
-  u16 firstShortcutKeys;
-  u16 secondShortcutKeys;
-  u16 dashKeys;
-  s16 returnCue;
+  /// The buttons for each field command, as KEY_ masks; read with gKeysPressed
+  /// except dashKeys, held.
+  ///@{
+  u16 aKeys;              ///< examine; KEY_A
+  u16 bKeys;              ///< KEY_B; not read by name in TBS
+  u16 selectKeys;         ///< the menu; KEY_SELECT
+  u16 startKeys;          ///< KEY_START
+  u16 firstShortcutKeys;  ///< firstShortcut; KEY_L
+  u16 secondShortcutKeys; ///< secondShortcut; KEY_R
+  u16 dashKeys;           ///< KEY_B
+  ///@}
+  s16 returnCue; ///< music playing when the field left; -1 for none
+  /// The shortcuts' assignments. bits: 15..14 kind (0 Psynergy, 1 an item) |
+  /// 13..0 which one.
+  ///@{
   u16 firstShortcut;
   u16 secondShortcut;
-  u8 perspectiveScene;
-  u8 unk225[5];
-  u8 idleSleepEnabled;
-  u8 battleStart;
+  ///@}
+  u8 perspectiveScene; ///< set to 1 on the world map; not read by name in TBS
+  u8 unk225[5];        ///< not named by TBS code
+  u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
+  u8 battleStart;      ///< how the next battle starts (Battle_SetStart)
+  /// Hazardous ground (the Lamakan Desert's heat): every hazardLimit steps the
+  /// party takes hazardDamage (bit 8 a flag, bits 7 to 0 the amount).
+  ///@{
   s16 hazardLimit;
-  s16 hazardMode;
+  s16 hazardMode; ///< 0 counts on hazard cells only; 1 counts every step
   s16 hazardDamage;
-  s16 hazardSteps;
+  s16 hazardSteps; ///< reset on entering a new scene group
+  ///@}
+  /// The Djinni battle pending (DJINNI_0 plus its number, flags in bits 15 to
+  /// 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
-  s16 sceneChangeReason;
-  s32 encounterSteps;
-  u16 pendingItem;
-  s16 sceneVariant;
-  s16 retreatScene;
-  s16 retreatEntrance;
-  s32 avoidDistance;
-  s8 avoidByItem;
-  s8 pausedPose;
-  s16 pausedObject;
-  s16 cloaked;
-  u8 unk24e[2];
-  u32 pausedUpdate;
-  u8 unk254[0x50];
+  s16 sceneChangeReason; ///< the last battle's result; -1 for a defeat
+  s32 encounterSteps;    ///< the encounter count, reset with a new group
+  u16 pendingItem;  ///< given on returning to the field if the party has room
+  s16 sceneVariant; ///< the current scene's variant from its record
+  s16 retreatScene; ///< where Retreat goes; the group's first entrance
+  s16 retreatEntrance; ///< where Retreat goes; the group's first entrance
+  s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
+  s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
+  s8 pausedPose;       ///< Halt: the stopped object's first animation param
+  s16 pausedObject;    ///< Halt: the stopped object; -1 for none
+  s16 cloaked;         ///< 1 under Cloak, which prevents battles
+  u8 unk24e[2];        ///< not named by TBS code
+  u32 pausedUpdate;    ///< Halt: the stopped object's update; not read by name
+  u8 unk254[0x50];     ///< not named by TBS code
+  /// The link lobby's tallies: 4 the total wins and 7 the consecutive wins it
+  /// reports, 3 cleared on choosing a monster battle; the others not named by
+  /// TBS code.
   u16 linkTallies[8];
-  u8 unk2b4[4];
-  u32 startStamp;
-  u8 unk2bc[4];
-  struct BattleUnit owners[8];
+  u8 unk2b4[4];   ///< not named by TBS code
+  u32 startStamp; ///< Runtime_GetBuildStampTime's value at a new game
+  u8 unk2bc[4];   ///< not named by TBS code
+  struct BattleUnit owners[8]; ///< the characters
 };
 
 STATIC_ASSERT(offsetof(struct GameState, buildStamp) == 0);

@@ -16,50 +16,60 @@
 /// The header of a save sector in flash: its signature, the record it holds,
 /// its checksum and its sequence number.
 struct SaveSlotHeader {
-  u8 signature[7];
+  u8 signature[7]; ///< `CAMELOT`, unterminated
+  /// File n's records are n and n + 3 (n from 0 to 2); 16 marks a free sector.
   u8 recordId;
-  u16 checksum;
-  u16 sequence;
-  u8 reserved[4];
+  u16 checksum;   ///< low half of the payload's checksum
+  u16 sequence;   ///< the highest is the current copy; restarts after 65000
+  u8 reserved[4]; ///< not named by TBS code
 };
 
 /// A save file's summary for the file screen: the leader's name, level and
 /// class, the area, play time, coins, Djinn and party.
 struct SaveSummary {
-  u8 slotHeader[16];
-  u8 name[12];
-  u8 level;
-  u8 classId;
-  u16 area;
-  u32 playTime; ///< frames
+  u8 slotHeader[16]; ///< room for the record's SaveSlotHeader
+  u8 name[12];       ///< the leader's
+  u8 level;          ///< the leader's; 0 for an empty file
+  u8 classId;        ///< the leader's
+  u16 area;          ///< area name number (Scene_GetAreaNameIndex)
+  u32 playTime;      ///< frames
   u32 coins;
-  u8 djinn[4];
-  s8 party[5];
+  u8 djinn[4]; ///< the party's Djinn of each element
+  s8 party[5]; ///< up to four party members, ended by -1
+  /// Copied from GameState.unk20f, which saving at the end of the game sets;
+  /// the file menu for cleared data lists a file without it as not cleared.
   s8 sendFlag;
-  s8 flagCount;
-  u8 hasFlag20;
-  u16 paletteGlow : 8;
-  u16 paletteGlowSub : 8;
+  s8 flagCount; ///< how many of game flags 48 to 127 are set
+  u8 hasFlag20; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
+  /// bits: 15..8 paletteGlowSub | 7..0 paletteGlow
+  ///@{
+  u16 paletteGlow : 8;    ///< GameState.paletteGlow[0]
+  u16 paletteGlowSub : 8; ///< GameState.paletteGlow[1]
+  ///@}
+  /// Low half of GameState.buildStamp; a file below the current stamp is
+  /// listed as from an older build.
   u16 frames;
+  /// Filled on reading: the play time from the file's second record. A file
+  /// whose playTime differs is listed as corrupted.
   u8 unk38[4];
-  u32 checksum;
+  u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
 /// The save work: which of the 16 flash sectors hold a record, their record
 /// ids and sequence numbers, one sector's buffer and the three files'
 /// summaries.
 struct SaveWorkspace {
-  u8 occupied[16];
-  u8 recordId[16];
-  u16 sequence[16];
+  u8 occupied[16];  ///< 1 for a sector holding the current copy of a record
+  u8 recordId[16];  ///< each sector's record; 16 for none
+  u16 sequence[16]; ///< each sector's sequence number
   union {
     struct {
       struct SaveSlotHeader header;
       u8 payload[0xff0];
     } record;
     u8 bytes[0x1000];
-  } slot;
-  struct SaveSummary summary[3];
+  } slot;                        ///< one sector, read from or written to flash
+  struct SaveSummary summary[3]; ///< each file's, read from its first record
 };
 
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);

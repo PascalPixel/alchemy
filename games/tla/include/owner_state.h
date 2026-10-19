@@ -41,17 +41,21 @@ struct OwnerDjinnState {
 
 enum { TRADE_OFFER_PENDING = -1 };
 
+/// A Djinni on standby or recovering, as ☀️'s DjinnRecoveryEntry: its element
+/// and index, its owner and its status.
 struct TradeOffer {
   u8 element;
-  u8 djinn;
+  u8 djinn;  ///< the Djinni within its element
   u8 owner;
-  s8 status;
+  s8 status; ///< TRADE_OFFER_PENDING (-1) on standby; -2 is tested apart
 };
 
+/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
+/// party's inside gPartyState from byte 0xc, the enemies' in unit 0x83.
 struct TradeOfferState {
-  u8 unk00[8];
+  u8 unk00[8]; ///< not named by ⚓️ code; the party's runs over its coins
   struct TradeOffer offers[72];
-  u32 count;
+  u32 count; ///< offers in use
 };
 
 struct ClassDefinition {

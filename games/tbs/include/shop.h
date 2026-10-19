@@ -16,38 +16,42 @@
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the particle effects.
 struct ShopRuntime {
-  u8 unk000[0x0c];
-  struct UiWindow *moneyWindow;
-  u8 unk010[0x10];
+  u8 unk000[0x0c];              ///< not named by TBS code
+  struct UiWindow *moneyWindow; ///< the coins window
+  u8 unk010[0x10];              ///< not named by TBS code
   struct UiWindow *itemWindow;
-  u8 unk024[0xf0];
-  struct AnimationObject *partyMemberIcons[8];
-  s16 partyMemberX[8];     ///< pixels
-  s16 partyMemberY[8];     ///< pixels
-  s32 partyMemberScale[8]; ///< 16.16 fixed point, 0x10000 full size
-  u8 unk174[0xf8];
-  s16 stockItemIds[129];
-  s16 partyMemberIds[9];
-  struct ShopCursor cursor;
-  u16 cursorIcon;
+  u8 unk024[0xf0];                             ///< not named by TBS code
+  struct AnimationObject *partyMemberIcons[8]; ///< the party row's sprites
+  s16 partyMemberX[8];                         ///< pixels
+  s16 partyMemberY[8];                         ///< pixels
+  s32 partyMemberScale[8];  ///< 16.16 fixed point, 0x10000 full size
+  u8 unk174[0xf8];          ///< not named by TBS code
+  s16 stockItemIds[129];    ///< the items on sale, ended by 0
+  s16 partyMemberIds[9];    ///< the party in order (Party_ListActiveOwners)
+  struct ShopCursor cursor; ///< the hand cursor
+  /// VRAM cache slots of the six cursor icons, loaded when the work is set
+  /// up and freed with it.
+  ///@{
+  u16 cursorIcon; ///< the hand
   u16 previousPageIcon;
   u16 nextPageIcon;
   u16 gemIcon;
   u16 statUpIcon;
   u16 statDownIcon;
-  u16 unk39c;
-  u16 selectedItem;
-  u8 unk3a0[4];
-  u16 keeperResource;
+  ///@}
+  u16 unk39c;         ///< not named by TBS code
+  u16 selectedItem;   ///< the item being bought, sold or repaired
+  u8 unk3a0[4];       ///< not named by TBS code
+  u16 keeperResource; ///< the shopkeeper's animation; picks the portrait
   s8 stockCount;
   s8 partyMemberCount;
-  u8 mode;
-  u8 shopType;
-  s8 partyAction;
-  s8 burstMember;
-  u8 warriorShop;
-  u8 unk3ad[3];
-  struct EffectSlot effects[24];
+  u8 mode;        ///< passed on as the hand cursor's kind; set to 12 at first
+  u8 shopType;    ///< the stock row's type: 0 items, 2 armor, else weapons
+  s8 partyAction; ///< the counter chosen (enum ShopAction)
+  s8 burstMember; ///< the sanctum's member whose pose is randomized; -1 none
+  u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
+  u8 unk3ad[3];   ///< not named by TBS code
+  struct EffectSlot effects[24]; ///< the sanctum service's particles
 };
 
 STATIC_ASSERT(sizeof(struct ShopRuntime) == 0xa70);

@@ -1,5 +1,5 @@
 // Part of field.c, the field object, compiled only through it.
-// Screen shake, the copied BG1 decoder and the ground plane scanlines.
+// Screen shake, the copied BG row drawer and the ground plane scanlines.
 
 #include "../field_internal.h"
 
@@ -36,19 +36,20 @@ void Map_WaitWorkValuesBelow256(void) {
   work->shakeDecay = 0;
 }
 
-// Runs TileMap_DrawRows from RAM on a and b, with the BG tile buffer's
-// second half and the decode buffer as its work areas.
-void Resource_RunCopiedDecoder(s32 a, s32 b) {
+// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
+// the rows that lines describes (32 bytes a row) into pixels, from the tiles
+// in the BG tile buffer's second half and the map in the decode buffer.
+void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *base;
 
   base = gDecodeBuffer;
   RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
   /* FAKEMATCH(one-pass): its loop notes keep gBgTileBuffer's address load ahead
-   * of a's move into r0, as native; as the bare call, 1 of 39 instructions
+   * of lines' move into r0, as native; as the bare call, 1 of 39 instructions
    * differs in tbs-en. */
   do {
     ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(
-        a, b, gBgTileBuffer + 0x4000, base + 0x1000);
+        lines, pixels, gBgTileBuffer + 0x4000, base + 0x1000);
   } while (0);
   Runtime_ReleaseHeapBlock(49);
 }

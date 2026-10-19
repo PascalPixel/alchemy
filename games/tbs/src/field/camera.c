@@ -69,7 +69,7 @@ void Camera_ResetSceneDefaults(void) {
 }
 
 // Multiplies two 8.8 fixed-point values, rounding toward zero.
-s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
+UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
   /* FAKEMATCH(temporary): the product built in its own variable from a copy
    * of right, then rounded into another; as product = left * right adjusted
    * in place, 4 of 14 instructions differ in tbs-en. */
@@ -91,7 +91,7 @@ s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
 }
 
 // Divides two 8.8 fixed-point values.
-s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
+UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 // UB: a signed numerator may be negative. All s16 values times 256 fit.
 #ifdef UBFIX
   return (numerator * 256) / denominator;
@@ -101,7 +101,7 @@ s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 }
 
 // The reciprocal of an 8.8 fixed-point value.
-s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
+UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
 #if !GAME_TLA
 #include "resource.h"
@@ -622,7 +622,9 @@ void LuckyDice_Run(void) {
                                      0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
-          if (index > 1) { // never true for two dice
+          // DEAD: never true with DICE_COUNT 2; a third die would start
+          // further back and higher up.
+          if (index > 1) {
             rollingDie->z = -0xb40000;
             rollingDie->y = 0x600000;
           }

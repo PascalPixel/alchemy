@@ -380,7 +380,7 @@ void MapAnimation_ApplyAffineFrame(void) {
 }
 
 // Copies one world map cell's two tile entries (top and bottom) to a BG map.
-static __inline__ void WorldMap_CopyTileColumn(u8 *cellBytes, u8 *screenTile) {
+static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   u32 metatileIndex = *(u16 *)cellBytes;
   u16 *metatileTiles = (u16 *)Ram_MapCellBuffer;
 
@@ -400,7 +400,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
   cellsCopied = 0;
   do {
-    WorldMap_CopyTileColumn(sourceCell, screenTile);
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 2;
     sourceCell += 4;
@@ -410,7 +410,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   sourceCell += 0xf80;
   cellsCopied = 0;
   do {
-    WorldMap_CopyTileColumn(sourceCell, screenTile);
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 2;
     sourceCell += 4;
@@ -427,7 +427,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
   cellsCopied = 0;
   do {
-    WorldMap_CopyTileColumn(sourceCell, screenTile);
+    WorldMap_CopyCellTiles(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 128;
     sourceCell += 128;
@@ -448,7 +448,7 @@ void WorldMap_UpdateView(void) {
   s32 height = perspective->distance;
   struct FixedPointPosition eyeOffset;
 
-  Map_UpdateCurrentTileBlockUntilBlocked();
+  Map_PreloadCurrentTileBlock();
   if (followedPosition != NULL) {
     s32 x;
     s32 y;
@@ -562,7 +562,7 @@ void Map_UpdateCurrentTileBlock(void) {
 
 // Loads the first of the 2x2 world map tiles around the player that is not
 // shown yet (at most one a frame), without drawing it.
-void Map_UpdateCurrentTileBlockUntilBlocked(void) {
+void Map_PreloadCurrentTileBlock(void) {
   struct PerspectiveWork *perspective = gMapWork[0];
   s32 firstQuarterX = 0;
   s32 firstQuarterY = 0;
@@ -614,8 +614,8 @@ void MapAnimation_Start(void) {
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   WaitFrames(1);
-  Resource_RunCopiedDecoder((s32)frameWork->pages[gFrameCount & one],
-                            (s32)gMapCellBuffer);
+  TileMap_DrawRowsFromRam((s32)frameWork->pages[gFrameCount & one],
+                          (s32)gMapCellBuffer);
   perspective->windowTop = 200;
   perspective->windowBottom = 255;
   gVBlankHook = MapAnimation_PresentFrame;

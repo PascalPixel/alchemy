@@ -60,7 +60,7 @@ void Ui_RunIconMonitor(void) {
   Dma_Fill32Cell(fillWord, 0, ring, 4);
   Dma_Fill32Cell(fillWord, 0, layers, sizeof(layers));
 
-  spriteId = Ui_FindNextNumberWithMetadata(-1, 1);
+  spriteId = Ui_FindNextSpriteWithImage(-1, 1);
   for (i = 0; i <= 3; i++) {
     layers[i].animation = 1;
     layers[i].priority = 1;
@@ -199,14 +199,14 @@ next:
       if ((*repeatedKeys & KEY_L) != 0) {
         for (i = 0; i < spriteSteps; i++) {
           layers[selectedLayer].number =
-              Ui_FindNextNumberWithMetadata(layers[selectedLayer].number, -1);
+              Ui_FindNextSpriteWithImage(layers[selectedLayer].number, -1);
         }
         changed = 1;
       }
       if ((*repeatedKeys & KEY_R) != 0) {
         for (i = 0; i < spriteSteps; i++) {
           layers[selectedLayer].number =
-              Ui_FindNextNumberWithMetadata(layers[selectedLayer].number, 1);
+              Ui_FindNextSpriteWithImage(layers[selectedLayer].number, 1);
         }
         changed = 1;
       }
@@ -315,7 +315,7 @@ next:
 
 // Finds the next sprite with an image, stepping in direction (1 or -1)
 // and wrapping within 0-511, that has an image.
-s32 Ui_FindNextNumberWithMetadata(s32 spriteId, s32 direction) {
+s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
     if (spriteId < 0) {

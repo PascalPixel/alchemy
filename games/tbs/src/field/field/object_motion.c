@@ -4,7 +4,7 @@
 #include "../field_internal.h"
 
 // SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter) {
+s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
@@ -96,7 +96,7 @@ void Object_UpdateAllThumb(void) {
   u32 command;
   u32 phase;
 
-  object = gObjectSlots;
+  object = (struct ScriptMotionObject *)gObjectSlots;
   for (objectsRemaining = 63; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
@@ -461,7 +461,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
 }
 
 // Copies Object_UpdateAll (ARM code) to the heap, runs it once and frees it.
-void Object_RunUpdateAllFromHeap(void) {
+UNUSED void Object_RunUpdateAllFromHeap(void) {
   void (*updateObjects)(void);
 
   RamCode_Load(updateObjects, Object_UpdateAll, Object_UpdateAllCodeSize);
@@ -486,7 +486,7 @@ void Object_UpdateAllMotion(void) {
   s32 ratio;
   s32 facingStep;
 
-  object = gObjectSlots;
+  object = (struct ScriptMotionObject *)gObjectSlots;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     if (object->script == 0)

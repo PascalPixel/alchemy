@@ -7,6 +7,8 @@
 // groups of four halfwords (source tile, count, destination tile, frames to
 // wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 // 0xfeff stops, and 0xffff loops to the start.
+// The retries stay gotos: as an inner for (;;) loop with continue and break,
+// loop.c reshapes the channel loop.
 void MapAnimation_Update(void) {
   // Each channel is written (mapState->anim + channelIndex): as
   // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
@@ -132,8 +134,8 @@ void Map_DisableUpdateCallback(void) {
 // Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
 // any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
 // halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-// A for (;;) retry loop with continue hoists the blendControl address and
-// changes 118 text bytes in tbs-en (2026-10-16); keep the retry edges for now.
+// The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
+// blendControl's address and 118 bytes of tbs-en's code change.
 void DisplayBlend_RunScript(void) {
   struct MapState *mapState = gMapWork[0];
   struct BlendScriptState *blend;
@@ -220,7 +222,7 @@ void DisplayBlend_DisableRunScript(void) {
 
 // Allocates the palette cycling queue (heap slot 28) with its four entries
 // cleared.
-void Runtime_AllocateAndClearQueue(void) {
+UNUSED void Runtime_AllocateAndClearQueue(void) {
   struct PaletteSnapshotWork *paletteCycles;
   struct PaletteSnapshot *cycle;
   u16 cycleIndex;
@@ -245,8 +247,8 @@ void Runtime_AllocateAndClearQueue(void) {
 // Adds a palette cycle: colorCount colours of background palette paletteBank
 // from firstColor, rotated by one every delay + 1 frames. Returns 0, or -1 when
 // all four cycles are taken.
-s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
-                     s16 colorCount) {
+UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
+                            s16 colorCount) {
   struct PaletteSnapshotWork *paletteQueue;
   struct PaletteSnapshot *cycle;
   u16 *paletteColors;
@@ -272,13 +274,13 @@ s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
 }
 
 // Stops the palette cycles and frees their queue (heap slot 28).
-void Runtime_ScheduleCallbackAndReleaseBlock28(void) {
+UNUSED void Runtime_ScheduleCallbackAndReleaseBlock28(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(28);
 }
 
 // Starts running the palette cycles each frame.
-void Scheduler_ScheduleCallbackBAfterFrames(void) {
+UNUSED void Scheduler_ScheduleCallbackBAfterFrames(void) {
   Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 

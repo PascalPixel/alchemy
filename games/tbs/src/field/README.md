@@ -16,7 +16,8 @@ in perspective, and what the ground is like under a point. Scenes (in
 | `update.c` | `Object_UpdateAll`, the ARM update of the eight script objects, run from RAM |
 | `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's ground plane into BG2's per-scanline affine values |
 | `object_script.c`, `operand.c` | the object scripts the engine starts itself, the command table, and the work value handlers |
-| `facing.c`, `curve_data.c`, `mapdata.c` | the facing tables, the terrain height tables and the height function table |
+| `facing.c` | the facing tables, then the parts' small constant tables: the tile dissolve order, the fixed camera's matrix, the float wave, the idle script, the world map's pad headings, footprint scripts and turn rates |
+| `curve_data.c`, `mapdata.c` | the terrain height tables, and the height function table with the world map's terrain behaviour and steps |
 | `world_map_resources.c`, `griddata.c` | the world map's graphics sets, and the sprite viewer's scale |
 | `camera.c` | the Lucky Dice minigame, with the camera defaults and 8.8 helpers it uses |
 | `layered.tsv`, `remap*.tsv`, `scenes.s` | the layered map table, the byte remap table and the scene table |
@@ -63,11 +64,13 @@ as other folders call them: `Sprite_` and `Render_` draw sprites,
 and `ResourceSlot_` keep sprites and layers, `ObjectSystem_`,
 `ObjectDispatch_`, `FieldObject_` and `Object_` keep objects, `Script_` are
 object script commands, `Field_` the configured keys, `Map_` and `Tilemap_`
-the layered maps and cells, `WorldMap_` the world map, `MapAnimation_`,
-`DisplayBlend_` and `PaletteQueue_` the timed map effects, `Curve_` the
-ground height functions, `Ui_` the debug sprite viewer and `LuckyDice_` the
-minigame. Names that do not yet say what their code does are listed for a
-rename across folders.
+the layered maps and cells (`TileMap_DrawRowsFromRam` after the routine it
+runs), `WorldMap_` the world map, `GetWorldMap` and `CheckWorldMap` the
+ground under a point on it, `MapAnimation_`, `DisplayBlend_` and
+`PaletteQueue_` the timed map effects, `Curve_` the ground height functions,
+`Ui_` the debug sprite viewer and `LuckyDice_` the minigame. A name other
+folders or The Lost Age's twin also use changes only in a rename across
+folders, even where it no longer says what its code does.
 
 A part's own types, macros and static helpers start with its part's or
 family's name (`ObjectCamera`, `LayeredScene`, `WorldMap`), and its macros

@@ -12,7 +12,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
   u32 i;
-  u8 *order;
+  const u8 *order;
   u32 highMask;
   u32 indexMask;
   u8 offsetMask;
@@ -162,10 +162,10 @@ void ObjectSystem_Initialize(s32 controlMode) {
 }
 
 // Does nothing.
-void ResourceTable_ReservedNoOpC0C4(void) {}
+UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 
 // Does nothing.
-void ResourceTable_ReservedNoOp2(void) {}
+UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
 // Returns the first of the 64 objects not in use (with no script), or 0.
 void *ObjectDispatch_FindFreeObject(void) {
@@ -514,6 +514,6 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
 }
 
 // Returns 1.
-s32 ObjectDispatch_ReturnTrue(void) { return 1; }
+UNUSED s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
 #undef OBJECT_DISPATCH_DEFINE_APPLY

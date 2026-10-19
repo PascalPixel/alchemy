@@ -21,7 +21,7 @@ static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
 }
 
 // Stores value in the word that the object's unk6c points at.
-void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
+UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 
   if (object != NULL)
@@ -33,7 +33,7 @@ void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 // the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
 // R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
 // request.
-u32 Field_StoreAssignedKeyValue(u32 encodedAssignment) {
+u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = 0x3FFF & encodedAssignment;
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
@@ -62,7 +62,7 @@ u32 Field_StoreAssignedKeyValue(u32 encodedAssignment) {
 
 // Checks the keys the player has configured: Select, A and Start set their
 // flag in the event work and return 1; the two shortcut keys pass on their
-// assignment (Field_StoreAssignedKeyValue). Returns 0 when none is pressed.
+// assignment (Field_RequestShortcut). Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
   s32 result = 0;
@@ -79,9 +79,9 @@ s32 Field_CheckConfiguredKeys(void) {
     fieldWork->start = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.firstShortcutKeys) {
-    result = Field_StoreAssignedKeyValue(gGameState.firstShortcut);
+    result = Field_RequestShortcut(gGameState.firstShortcut);
   } else if (gKeysPressed & gGameState.secondShortcutKeys) {
-    result = Field_StoreAssignedKeyValue(gGameState.secondShortcut);
+    result = Field_RequestShortcut(gGameState.secondShortcut);
   }
   return result;
 }
@@ -514,35 +514,35 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
     Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
 #if TBS_PATCH_1
-      if (CheckWorldMapCollisionRange((s32)object,
-                                      (struct WorldPosition *)&position) == 0) {
+      if (CheckWorldMapWalkable((s32)object,
+                                (struct WorldPosition *)&position) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
                               &testPosition);
-        if (CheckWorldMapCollisionRange(
-                (s32)object, (struct WorldPosition *)&testPosition) == 0) {
+        if (CheckWorldMapWalkable((s32)object,
+                                  (struct WorldPosition *)&testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
                                 &testPosition);
-          if (CheckWorldMapCollisionRange(
+          if (CheckWorldMapWalkable(
                   (s32)object, (struct WorldPosition *)&testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
             Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                                   &testPosition);
-            if (CheckWorldMapCollisionRange(
+            if (CheckWorldMapWalkable(
                     (s32)object, (struct WorldPosition *)&testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                                     &testPosition);
-              if (CheckWorldMapCollisionRange(
+              if (CheckWorldMapWalkable(
                       (s32)object, (struct WorldPosition *)&testPosition) == 0)
                 goto update_object;
             }
@@ -564,40 +564,40 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-        if (CheckWorldMapCollisionRange((s32)object,
-                                        (struct WorldPosition *)&position) != 0)
+        if (CheckWorldMapWalkable((s32)object,
+                                  (struct WorldPosition *)&position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
                               &testPosition);
-        if (CheckWorldMapCollisionRange(
-                (s32)object, (struct WorldPosition *)&testPosition) != 0)
+        if (CheckWorldMapWalkable((s32)object,
+                                  (struct WorldPosition *)&testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
                               &testPosition);
-        if (CheckWorldMapCollisionRange(
-                (s32)object, (struct WorldPosition *)&testPosition) != 0)
+        if (CheckWorldMapWalkable((s32)object,
+                                  (struct WorldPosition *)&testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                               &testPosition);
-        if (CheckWorldMapCollisionRange(
-                (s32)object, (struct WorldPosition *)&testPosition) != 0)
+        if (CheckWorldMapWalkable((s32)object,
+                                  (struct WorldPosition *)&testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                               &testPosition);
-        if (CheckWorldMapCollisionRange(
-                (s32)object, (struct WorldPosition *)&testPosition) != 0)
+        if (CheckWorldMapWalkable((s32)object,
+                                  (struct WorldPosition *)&testPosition) != 0)
           continue;
         angle = (s16)direction;
         goto update_object;
@@ -615,11 +615,11 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
       rightPosition.z = object->z;
       Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
                             &rightPosition);
-      if ((CheckWorldMapCollisionRange((s32)object,
-                                       (struct WorldPosition *)&position) |
-           CheckWorldMapCollisionRange((s32)object,
-                                       (struct WorldPosition *)&leftPosition) |
-           CheckWorldMapCollisionRange(
+      if ((CheckWorldMapWalkable((s32)object,
+                                 (struct WorldPosition *)&position) |
+           CheckWorldMapWalkable((s32)object,
+                                 (struct WorldPosition *)&leftPosition) |
+           CheckWorldMapWalkable(
                (s32)object, (struct WorldPosition *)&rightPosition)) != 0) {
         angleOffsets[count++] = direction + 0x1000;
         angleOffsets[count++] = direction - 0x1000;
@@ -643,11 +643,11 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
           rightPosition.z = object->z;
           Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
                                 &rightPosition);
-          if ((CheckWorldMapCollisionRange((s32)object,
-                                           (struct WorldPosition *)&position) |
-               CheckWorldMapCollisionRange(
-                   (s32)object, (struct WorldPosition *)&leftPosition) |
-               CheckWorldMapCollisionRange(
+          if ((CheckWorldMapWalkable((s32)object,
+                                     (struct WorldPosition *)&position) |
+               CheckWorldMapWalkable((s32)object,
+                                     (struct WorldPosition *)&leftPosition) |
+               CheckWorldMapWalkable(
                    (s32)object, (struct WorldPosition *)&rightPosition)) != 0)
             continue;
           angle = (s16)direction;

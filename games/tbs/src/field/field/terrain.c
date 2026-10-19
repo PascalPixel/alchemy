@@ -378,7 +378,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
 }
 
 // Returns the top two bits of the block word of the cell at pixel (x, y).
-s32 Map_GetCellHighFlags(s32 x, s32 y) {
+UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
   struct MapCell *mapCell =
@@ -499,7 +499,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
 // Returns 0 when the world map at position can be walked on (collision 5 to
 // 12), else -1.
-s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position) {
+s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
   }

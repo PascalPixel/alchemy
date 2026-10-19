@@ -1,5 +1,6 @@
 #include "script.h"
 #include "flags.h"
+#include "songs.h"
 #include "macros.h"
 // Below the decks of the ship across the Karagol Sea: the captain's cabin,
 // the passengers' hold and the rowing deck. After each monster attack the
@@ -1495,7 +1496,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   s32 actor8Speech;
 
   // Gather the cabin's attention around the argument about launching.
-  Event_PlayCue(28);
+  Event_PlayCue(MUS_028);
   Camera_SetSpeed(0x26666, 0x4ccc);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                                        0x10000014);
@@ -1637,7 +1638,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ActorSetAnimationAndWait(8, 3);
   TolbiShipInteriors_Say(8);
   Actor_FaceDirection(8, FACING_WEST, 20);
-  Event_PlayCue(19);
+  Event_PlayCue(MUS_019);
   Engine_ActorStartRepeatedMotion(8, 2);
   actor8Speech = 0x8008;
   Actor_ShowEmote(8, 0x100, 80);
@@ -1673,7 +1674,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ActorJump(8, 4, 0);
   Actor_FaceDirection(8, 0x5000, 20);
   TolbiShipInteriors_Say(8);
-  Event_PlayCue(28);
+  Event_PlayCue(MUS_028);
   Engine_ActorStartRepeatedMotion(8, 3);
   TolbiShipInteriors_Say(8);
   Actor_ShowEmote(13, 0x101, 60);
@@ -1723,7 +1724,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(9, 0xb000, 0);
   Actor_FaceDirection(12, 0x3000, 0);
   Actor_FaceDirection(11, 0xb000, 0);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   Actor_SetSpeed(10, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(10, 488, 686);
   Actor_FaceDirection(10, 0xb000, 0);
@@ -2471,7 +2472,7 @@ static void TolbiShipInteriors_CastOff(void) {
   Engine_ActorJump(8, 4, 20);
   anchorCharm = TolbiShipInteriors_PlaceAnchorCharm();
   Engine_EventWait(20);
-  Event_PlayCue(214);
+  Event_PlayCue(SE_214);
   Engine_ObjectSetScript(anchorCharm, gTolbiShipInteriors_Script01);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(8, 3);
@@ -2546,7 +2547,7 @@ static void FieldScene_RunFlagBranchedSetupCascade(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimation(9, 7);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(0xbc);
+  Engine_AudioPlayCue(SE_188);
   Engine_EventWait(30);
   TolbiShipInteriors_InstallRowingDeckActors(16);
   Engine_EventWait(0x50);
@@ -2554,13 +2555,13 @@ static void FieldScene_RunFlagBranchedSetupCascade(void) {
   Engine_EventWait(0x3c);
   Engine_ActorSetAnimation(9, 7);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(0xbc);
+  Engine_AudioPlayCue(SE_188);
   Engine_EventWait(30);
   TolbiShipInteriors_InstallRowingDeckActors(16);
   Engine_EventWait(0x50);
   TolbiShipInteriors_InstallRowingDeckActors(0);
   Engine_EventWait(0x5a);
-  Engine_AudioPlayCue(0xbc);
+  Engine_AudioPlayCue(SE_188);
   Engine_EventWait(30);
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
@@ -3494,17 +3495,17 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_InstallRowingDeckActors(16);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCENE, 1, 20);
-  Event_PlayCue(19);
-  Event_PlayCue(181);
+  Event_PlayCue(MUS_019);
+  Event_PlayCue(SE_181);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_EventWait(10);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(80);
-  Event_PlayCue(181);
+  Event_PlayCue(SE_181);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_EventWait(10);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Event_PlayCue(63);
+  Event_PlayCue(MUS_063);
   GameFlag_Set(0x11a);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(40);
@@ -3609,7 +3610,7 @@ static void TolbiShipInteriors_UpdateCueTimer(void) {
   } else {
     value = Engine_RandomNext();
     if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-      Engine_AudioPlayCue(181);
+      Engine_AudioPlayCue(SE_181);
       Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

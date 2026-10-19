@@ -8,9 +8,6 @@
 #include "flags.h"
 
 enum TolbiInteriorsFlag {
-  // A place flag (0x300 to 0x3ff), cleared when the party leaves Tolbi: the
-  // sailors' argument has played.
-  FLAG_TOLBI_INTERIORS_SAILORS_SEEN = 0x300,
   // Set at the Tolbi docks when the ticket money is returned ("I returned the
   // cost of your ticket to you").
   FLAG_TOLBI_DOCKS_TICKETS_REFUNDED = 0x8ab,

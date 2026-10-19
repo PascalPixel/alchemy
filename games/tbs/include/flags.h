@@ -79,6 +79,8 @@
 #define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc // she hid it in the barrel
 #define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  // the party took it
 #define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be // she has greeted them since
+// A place flag (0x300 to 0x3ff), cleared when the party leaves Tolbi.
+#define FLAG_TOLBI_INTERIORS_SAILORS_SEEN 0x300 // their argument has played
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 // at anchor off the island

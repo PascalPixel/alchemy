@@ -18,6 +18,7 @@
 #include "global_cells.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "songs.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_service.h"
@@ -344,7 +345,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   gTolbiShipMast_CameraCenter[1] = zero;
   Actor_SetActionScript(9, gTolbiShipMast_FollowCameraActions);
   Engine_EventWait(20);
-  Engine_AudioPlayCue(29);
+  Engine_AudioPlayCue(MUS_029);
   Engine_GameFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_ActorStop(8);
   Engine_TaskWait(1);
@@ -509,7 +510,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   // The lookout recognizes the approaching group and reports monsters.
   Engine_ActorJump(8, 4, 20);
   Engine_ActorJump(8, 6, 40);
-  Event_PlayCue(29);
+  Event_PlayCue(MUS_029);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_EventSetMessage(MsgTolbiShipMonsters2);
   Event_ShowMessageAndWait(16, 0, 20);
@@ -565,7 +566,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(300);
-  Event_PlayCue(147);
+  Event_PlayCue(SE_147);
   Engine_EventWait(100);
   // Clear the approaching group from the foreground before the landing reveal.
   TolbiShipMast_PrepareGroupDeparture();
@@ -596,7 +597,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_TaskWait(1);
   Engine_ActorRunRepeatedMotion(8, 1);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_PlayCue(29);
+  Event_PlayCue(MUS_029);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // Grow actor 18 over 32 frames before staging actor 17 beside it.
   for (frame = 0; frame < 32; frame++) {
@@ -620,7 +621,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   actor->gravity = PIXELS(3);
   Engine_EventWait(20);
   Engine_ActorJump(8, 6, 20);
-  Event_PlayCue(147);
+  Event_PlayCue(SE_147);
   Engine_EventWait(20);
   Actor_SetActionScript(8, gTolbiShipMast_WaveActions);
   Engine_EventWait(80);
@@ -629,7 +630,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
-  Event_PlayCue(153);
+  Event_PlayCue(SE_153);
   actor->velocityY = PIXELS(8);
   Actor_SetDestination(17, 132, 360);
   Actor_SetDestination(18, 132, 360);

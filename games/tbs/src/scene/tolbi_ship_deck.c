@@ -1,5 +1,6 @@
 #include "script.h"
 #include "flags.h"
+#include "songs.h"
 #include "version.h"
 // The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
 // at the Kalay dock while the replacement ship fails to come, setting sail with
@@ -124,7 +125,7 @@ TolbiShipDeck_HoverAndDiveAtActor21(struct ScriptInterpreter *interpreter) {
       if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
           obj->targetZ == obj->targetY) {
         DIVER(obj)->step++;
-        Event_PlayCue(146);
+        Event_PlayCue(SE_146);
         if (DIVER(obj)->rightSide != 0)
           Actor_FaceDirection(21, 0xd000, 0);
         else
@@ -213,7 +214,7 @@ TolbiShipDeck_HoverAndDiveAtActor22(struct ScriptInterpreter *interpreter) {
       if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
           obj->targetZ == obj->targetY) {
         DIVER(obj)->step++;
-        Event_PlayCue(146);
+        Event_PlayCue(SE_146);
         if (DIVER(obj)->rightSide != 0)
           Actor_FaceDirection(22, 0xd000, 0);
         else
@@ -383,7 +384,7 @@ static s32 TolbiShipDeck_LeapAtActor21(struct ScriptInterpreter *interpreter) {
     if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
         obj->targetZ == obj->targetY) {
       obj->timer++;
-      Engine_AudioPlayCue(152);
+      Engine_AudioPlayCue(SE_152);
       if (obj->riseEnabled != 0) {
         Actor_FaceDirection(21, 0xb000, 0);
       } else {
@@ -453,7 +454,7 @@ static s32 TolbiShipDeck_LeapAtActor22(struct ScriptInterpreter *interpreter) {
     if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
         obj->targetZ == obj->targetY) {
       obj->timer++;
-      Engine_AudioPlayCue(152);
+      Engine_AudioPlayCue(SE_152);
       if (obj->riseEnabled != 0) {
         Actor_FaceDirection(22, 0xd000, 0);
       } else {
@@ -650,7 +651,7 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
 // Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_71) == 0) {
-    Event_PlayCue(158);
+    Event_PlayCue(SE_DOOR_OPEN);
     Map_CopyCellsTo(30, 94, 13, 94, 1, 3);
     GameFlag_Set(FLAG_SCENE_TEMP_71);
   }
@@ -659,7 +660,7 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
 // Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_72) == 0) {
-    Event_PlayCue(158);
+    Event_PlayCue(SE_DOOR_OPEN);
     Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
     GameFlag_Set(FLAG_SCENE_TEMP_72);
   }
@@ -691,7 +692,7 @@ static void TolbiShipDeck_GoBelow(void) {
     FieldObjectMotion_CenterOnColumn(0, 1, -10);
     Engine_EventWait(10);
   } else {
-    Engine_AudioPlayCue(123);
+    Engine_AudioPlayCue(SE_MAP_EXIT);
   }
   Engine_EventRequestExit(work->touchedTrigger);
 }
@@ -1348,7 +1349,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   TolbiShipDeck_Say(SPEAKER(21, 10));
   Actor_SetSpeed(0, 157286, 78643);
   FieldObjectMotion_ResetAndSetPosition(0, 154, 609);
-  Engine_AudioPlayCue(146);
+  Engine_AudioPlayCue(SE_146);
   zero = 0;
   Object_GetById(24)->timer = zero;
   Object_GetById(25)->timer = zero;
@@ -1436,10 +1437,10 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetSpeed(0, 0x40000, 0x20000);
   Actor_SetDestination(0, 174, 0x26c);
   Engine_ObjectMotionSetPositionAndCommit(28, 180, 0x244);
-  Engine_AudioPlayCue(146);
+  Engine_AudioPlayCue(SE_146);
   Actor_SetActionScript(28, gTolbiShipDeck_CrewActionsC);
   Actor_SetActionScript(29, gTolbiShipDeck_CrewActionsC);
-  Engine_AudioPlayCue(240);
+  Engine_AudioPlayCue(SE_240);
   Actor_SetPosition(31, PIXELS(134), PIXELS(594));
   Actor_SetActionScript(31, gTolbiShipDeck_CrewActionsE);
   Engine_EventWait(10);
@@ -1460,7 +1461,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_EventWait(10);
   Actor_RunActionScriptAndWait(29, gTolbiShipDeck_SailorActions);
   Engine_EventWait(20);
-  Engine_AudioPlayCue(147);
+  Engine_AudioPlayCue(SE_147);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_ActorStop(24);
@@ -1524,7 +1525,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(80);
-  Engine_AudioPlayCue(147);
+  Engine_AudioPlayCue(SE_147);
   monster = Object_GetById(31);
   monster->scaleX = 0x1999;
   monster->scaleY = 0x1999;
@@ -1545,7 +1546,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   monster->bounce = 0x6666;
   monster->gravity = 0x20000;
   Engine_EventWait(80);
-  Engine_AudioPlayCue(147);
+  Engine_AudioPlayCue(SE_147);
   Engine_ActorSetPosition(31, 0, 0);
   record = Object_GetById(30);
   Engine_ActorSetSpriteFlags(record, 1);
@@ -1615,7 +1616,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 194, 624);
-  Engine_AudioPlayCue(181);
+  Engine_AudioPlayCue(SE_181);
   Map_SetShake(0x40000, 0x40000, 0x10000);
   Engine_EventWait(20);
   Map_SetShake(-1, -1, 0xe666);
@@ -1624,7 +1625,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Object_GetById(25)->motionFlags = 0;
   Actor_SetSpeed(25, 0x20000, 0x10000);
   Engine_ActorSetDestination(25, 216, 612);
-  Engine_AudioPlayCue(149);
+  Engine_AudioPlayCue(SE_149);
   Engine_ActorSetSpritePriority(22, 2);
   Engine_ActorSetAnimation(22, 5);
   actor = Object_GetById(22);
@@ -1670,7 +1671,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Engine_ActorFaceDirection(MIA, FACING_NORTH, 20);
-  Engine_AudioPlayCue(149);
+  Engine_AudioPlayCue(SE_149);
   Engine_EventWait(40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);

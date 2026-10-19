@@ -98,7 +98,7 @@ German moves a few IWRAM variables (`ram_buffer.h`).
   2 KB screen blocks (`BG_SCREEN_BLOCK(n)`) in the same 64 KB. The window
   system's tilemap is at 0x06002000 (`UI_TILEMAP_VRAM`, screen block 4) and
   its text canvas tiles at 0x06002500 (`UI_CANVAS_VRAM`,
-  `games/tbs/include/unit/window/window.h`).
+  [`unit/window/window.h`](../../include/unit/window/window.h)).
 - The BG halves: screens that load two pictures in turn use VRAM from
   0x06000000 with BG colours 0 to 127 as one half, and VRAM from 0x06008000
   with colours 128 to 255 as the other (`Graphics_LoadCharacterBlockAndPalette`,

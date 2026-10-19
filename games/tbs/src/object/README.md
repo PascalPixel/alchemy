@@ -36,7 +36,7 @@ them all. The link order of the folder's objects is in
   ScenePlacement`), from which its actors are made.
 - **scene event**: a row of the scene's event table (`struct SceneEvent`):
   talking, touching, searching, items and Psynergy, by kind.
-- **field kind**: a Psynergy's field effect, the `type` column of
+- **field kind**: the field effect of Psynergy, the `type` column of
   `games/tbs/src/game/actions.tsv`: 1 Move, 2 Mind Read, 3 Ply, 4 Force,
   5 Douse, 6 Frost, 7 Lift, 8 Reveal, 9 Halt, 10 Cloak, 11 Carry, 12 Growth,
   13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid; `enum FieldKind`

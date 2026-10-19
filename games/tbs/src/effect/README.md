@@ -1,7 +1,7 @@
 # Battle effects
 
 This folder holds The Broken Seal's battle effects: everything drawn over the
-battle while a Psynergy, a Djinni, a summon, an item or an enemy attack plays
+battle while Psynergy, a Djinni, a summon, an item or an enemy attack plays
 out. Each effect is a function that takes the effect's `BattleEffectArgument`
 (the user, the targets and the effect's own values), plays a fixed number of
 frames and returns when the effect is over.

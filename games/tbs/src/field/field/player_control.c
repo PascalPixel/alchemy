@@ -29,7 +29,7 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 }
 
 // Handles a shortcut key's assignment: its top two bits choose
-// what it requests (0 a Psynergy, 1 an item) and
+// what it requests (0 Psynergy, 1 an item) and
 // the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
 // R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
 // request.

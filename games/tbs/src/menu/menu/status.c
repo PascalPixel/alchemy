@@ -1240,7 +1240,7 @@ void Menu_BuildPatternTiles(void) {
   }
 }
 
-// Draws a Psynergy's range icon at (x, y) of window: three tiles from the
+// Draws a Psynergy range icon at (x, y) of window: three tiles from the
 // range icon tiles, the left one mirrored.
 void PsynergyMenu_DrawRange(struct UiWindow *window, s32 x, s32 y, s32 range,
                             s32 unused) {

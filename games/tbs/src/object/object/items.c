@@ -181,7 +181,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-// Returns the scene's Psynergy event (kind 5) for a Psynergy of the given
+// Returns the scene's Psynergy event (kind 5) for Psynergy of the given
 // group that applies to what the leader faces, or NULL; stores the actor the
 // Psynergy would target in *target. eventFlags gives the event's phase and
 // kind (0x70000005 for any phase). The event may apply to any target
@@ -227,7 +227,7 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   return NULL;
 }
 
-// Runs the scene's events for a Psynergy without paying its PP or showing its
+// Runs the scene's events for Psynergy without paying its PP or showing its
 // usual effect (phases 3 and 2, around the event's own effect), as for a
 // Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
 // its user (bits 10 to 13).

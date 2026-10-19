@@ -751,7 +751,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
   }
 }
 
-// Plays a Psynergy, a Djinni or an enemy's cast. The camera turns toward
+// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 // the targets from the caster's side, the caster raises its hand and glows
 // in its element (no glow for a Djinni); then the cast fails ("blocked" or
 // too little PP) or its effect plays with the events, and the targets

@@ -119,7 +119,7 @@ struct FieldWork {
   s16 effectTimerRunning;
   s16 nameMessage;    // first message of the menu's name window (0: none)
   s16 nameWidth;      // width of the name window (0: the default)
-  s8 resolvingAction; // set while a Psynergy's effect plays
+  s8 resolvingAction; // set while Psynergy takes effect
   s8 castStarted;     // set once a cast has been announced
   s16 queuedSound;
 };

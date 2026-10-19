@@ -191,7 +191,7 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   return 0;
 }
 
-// Auto battle: plays a Psynergy. The camera turns to the caster's side and
+// Auto battle: casts Psynergy. The camera turns to the caster's side and
 // the caster raises its hand; the target side fades out, its living units
 // are readied alone, the Psynergy's effect (kind action->parameter) plays
 // on them, and everyone fades back in. Returns -1 for an invalid actor or

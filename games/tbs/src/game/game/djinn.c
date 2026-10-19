@@ -183,7 +183,7 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
   return (u32 *)&recoveryList->count;
 }
 
-// Moves a Djinn from one unit to another, keeping it set or on standby.
+// Moves a Djinni from one unit to another, keeping it set or on standby.
 // Returns -1 when the source lacks it or the target has no room.
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   struct BattleUnit *sourceUnit = UnitGet(source);

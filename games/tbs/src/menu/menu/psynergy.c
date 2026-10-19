@@ -35,7 +35,7 @@
 
 // The Psynergy menu an event opens (window command 1): the field menu's
 // Psynergy screen over the field, which stops meanwhile. When the player picks
-// a Psynergy to use on the field, it is recorded in the event work's
+// Psynergy to use on the field, it is recorded in the event work's
 // psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
 // player backs out.
 s32 Menu_OpenConfirmPrompt(void) {
@@ -1003,7 +1003,7 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
 }
 
 // Draws one page of the Psynergy list into window: up to five names with their
-// icons and PP costs, a Psynergy the member cannot afford in the no-HP colour
+// icons and PP costs, Psynergy the member cannot afford in the no-HP colour
 // and one restricted here in the low-HP colour, the page numbers, and the help
 // line (how to set a shortcut while Select is held, else how to change member).
 s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
@@ -1075,7 +1075,7 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
 // The Psynergy list of the member in paneIndex, five a page. The cursor's
 // Psynergy is described in the info window and its icon animates; L and R
 // switch to the previous or next member who has Psynergy to list. In the use
-// mode (menu mode 0), A chooses a Psynergy the member can use and afford;
+// mode (menu mode 0), A chooses Psynergy the member can use and afford;
 // holding Select shows the shortcut help, and L or R with Select set the
 // Psynergy as that shortcut. In the shortcut modes (1 and 2) only field
 // Psynergy are listed and A chooses one. Returns the chosen Psynergy, or -1

@@ -3,7 +3,7 @@
 
 #include "../object_internal.h"
 
-// Uses a Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
+// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
 // user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
 // paying PP. Checks it can be used here (Reveal not on the world map, Retreat
 // where it is not blocked, after asking), pays its PP, then plays its effect
@@ -126,7 +126,7 @@ s32 Field_UsePsynergy(u32 code) {
   return 0;
 }
 
-// Returns whether the scene has a Psynergy event, in any phase, for a
+// Returns whether the scene has a Psynergy event, in any phase, for
 // Psynergy of group and what the leader faces.
 s32 BattleFx_HasMatchingEvent5(s32 group) {
   s32 target;

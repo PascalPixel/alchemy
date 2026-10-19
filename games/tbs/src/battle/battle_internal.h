@@ -199,7 +199,7 @@
 enum BattlePlanStaging {
   PLAN_SHOW_MESSAGES = 1,   // no animation: each target's events only
   PLAN_SHOW_ATTACK = 2,     // the actor runs up and strikes
-  PLAN_SHOW_CAST = 3,       // a Psynergy, and Venus, Mercury, Mars, Jupiter
+  PLAN_SHOW_CAST = 3,       // Psynergy, and Venus, Mercury, Mars, Jupiter
   PLAN_SHOW_ITEM = 4,       // an item
   PLAN_SHOW_SUMMON = 5,     // the larger summons, the actor hidden
   PLAN_SHOW_DJINNI = 6,     // a Djinni with no attack (Granite, Quartz...)

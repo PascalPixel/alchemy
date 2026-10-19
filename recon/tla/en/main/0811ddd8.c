@@ -1,8 +1,10 @@
-
-// Draft of Func_0811ddd8: turns a target list into an action plan. 10
-// instructions differ, five swapped pairs (the argument copy and the 0xfff
-// mask, the side load, the counter copy, a constant); the logic, the frame
-// and the spilled counter match.
+// Draft of Func_0811ddd8: turns a target list into an action plan. 8
+// instructions differ (10 before), four swapped pairs in the opening: the
+// argument copy and the 0xfff mask, the side load and the counter copy. The
+// loop is a guarded do-while over an id pointer whose count is read before
+// i steps behind a one-pass block (FAKEMATCH, as Func_08124cc4's), which
+// fixes the loop end; five minutes of permute found only a block around the
+// whole body (6, not kept).
 
 #include "types.h"
 #include "owner_state.h"
@@ -44,20 +46,33 @@ u32 BattleParty_IsUnitListed(u32 id);
 void Func_0811ddd8(struct ActionTargets *targets, struct ActionPlan *plan) {
   s32 count = 0;
   s32 i;
+  s32 n;
+  u8 *id;
 
   plan->zero = 0;
   plan->cue = targets->cue & 0xfff;
   plan->kind = (targets->cue & 0x3000) >> 12;
+  i = 0;
   plan->side = targets->side;
-  for (i = 0; i < targets->count; i++) {
-    if (BattleParty_IsUnitListed(targets->ids[i])) {
-      struct BattleUnit *unit = UnitGet(targets->ids[i]);
+  if (i < targets->count) {
+    id = targets->ids;
+    do {
+      if (BattleParty_IsUnitListed(*id)) {
+        struct BattleUnit *unit = UnitGet(*id);
 
-      if (unit->hp != 0 || (targets->cue & 0x10000)) {
-        plan->ids[count] = targets->ids[i];
-        count++;
+        if (unit->hp != 0 || (targets->cue & 0x10000)) {
+          plan->ids[count] = *id;
+          count++;
+        }
       }
-    }
+      n = targets->count;
+      /* FAKEMATCH(one-pass block): the count is read before i steps; as a for
+       * loop over targets->ids[i], 10 of 78 instructions differ in tla-en. */
+      do {
+      } while (0);
+      i++;
+      id++;
+    } while (i < n);
   }
   if (count == 0) {
     plan->ids[0] = targets->ids[0];

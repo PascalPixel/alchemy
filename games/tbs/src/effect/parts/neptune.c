@@ -462,7 +462,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++) {
       flameColumn = &work->particles[i];
       if (frame == i * 16 + 7) {
-        AudioCommand_PlayFar(SE_154);
+        AudioCommand_PlayFar(SE_CAST);
       }
       // A column, a scrolling shaft over a head, falls 16 pixels a frame.
       // Once on the ground it counts its frames there, shakes the screen for

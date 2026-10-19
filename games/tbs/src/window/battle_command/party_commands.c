@@ -185,7 +185,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     if (mode != 14) {
       break;
     }
-    AudioCommand_PlayFar(SE_154);
+    AudioCommand_PlayFar(SE_CAST);
     commandIndex = 0;
     if (commandIndex >= commandCount) {
       break;

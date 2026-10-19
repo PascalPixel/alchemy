@@ -386,7 +386,7 @@ void UpdateRisingParticleBurst(void *object) {
   s32 dist;
   u32 spread;
 
-  AudioCommand_PlayFar(SE_154);
+  AudioCommand_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
     src->angle += 0x2000; // 1/8 turn

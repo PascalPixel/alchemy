@@ -143,7 +143,7 @@
 #define SE_151 151
 #define SE_152 152
 #define SE_153 153
-#define SE_154 154
+#define SE_CAST 154
 #define SE_155 155
 #define SE_156 156
 #define SE_GATE_MOVE 157

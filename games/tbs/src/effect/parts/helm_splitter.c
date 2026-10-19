@@ -304,7 +304,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
-      AudioCommand_PlayFar(SE_154);
+      AudioCommand_PlayFar(SE_CAST);
     if (frame == 32)
       AudioCommand_PlayFar(SE_212);
 

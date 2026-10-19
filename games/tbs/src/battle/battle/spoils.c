@@ -221,7 +221,7 @@ void Battle_AwardSpoils(void) {
             UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
             UiWork_PushValueSlotFar(encodedAbility & OWNER_ACTION_ID_MASK,
                                     VALUE_ABILITY_NAME);
-            AudioCommand_PlayFar(SE_154);
+            AudioCommand_PlayFar(SE_CAST);
             UiText_ShowMessageAndWaitCoreFar(MsgAbilityMastered);
             BattlePresentation_WaitForAdvance();
           }

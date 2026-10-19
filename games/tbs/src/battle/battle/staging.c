@@ -278,7 +278,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     }
   }
   // The sound of a cast, as the caster raises its hand.
-  AudioCommand_PlayFar(SE_154);
+  AudioCommand_PlayFar(SE_CAST);
   BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 0, 0);
   if (mode & 1)
     BattlePres_SetActorRecordMode(actor, 1);
@@ -798,7 +798,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
   ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
   // The sound of a cast, as the caster raises its hand.
-  AudioCommand_PlayFar(SE_154);
+  AudioCommand_PlayFar(SE_CAST);
   if (mode & 2)
     BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 1, 0);
   else if (!isDjinni)

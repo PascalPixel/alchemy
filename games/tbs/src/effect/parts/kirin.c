@@ -112,13 +112,13 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_141);
     }
     if (frame == 40) {
-      AudioCommand_PlayFar(SE_154);
+      AudioCommand_PlayFar(SE_CAST);
     }
     if (frame == 72) {
-      AudioCommand_PlayFar(SE_154);
+      AudioCommand_PlayFar(SE_CAST);
     }
     if (frame == 104) {
-      AudioCommand_PlayFar(SE_154);
+      AudioCommand_PlayFar(SE_CAST);
     }
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
       break;

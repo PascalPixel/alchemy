@@ -83,7 +83,7 @@ void FieldFx_EndCloak(void) {
   anim = obj->animation;
   entry = anim->entries[0];
 
-  AudioCommand_PlayFar(SE_154);
+  AudioCommand_PlayFar(SE_CAST);
   Scheduler_RemoveCallback(FieldFx_CheckCloakTile);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
   ((struct ScriptMotionObject *)obj)->hook = 0;

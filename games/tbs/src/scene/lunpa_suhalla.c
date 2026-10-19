@@ -11,18 +11,18 @@
 // the weapon, armor and item shops, the inn and the temple. The shops and
 // the inn only trade once Lunpa has reopened.
 
-static void Innkeeper_Talk(void);
-static void Chef_Talk(void);
-static void Chef_ReadMind(void);
-static void InnClerk_Talk(void);
-static void TemplePriest_Talk(void);
-static void ItemMerchant_ReadMind(void);
-static void ItemMerchant_Talk(void);
-static void WeaponMerchant_ReadMind(void);
-static void WeaponMerchant_Talk(void);
-static void ArmorMerchant_ReadMind(void);
-static void ArmorMerchant_Talk(void);
-static void TravelingPriest_Talk(void);
+static void Event_TalkToInnkeeper(void);
+static void Event_TalkToChef(void);
+static void Event_ReadChefsThoughts(void);
+static void Event_TalkToInnClerk(void);
+static void Event_TalkToTemplePriest(void);
+static void Event_ReadItemMerchantsThoughts(void);
+static void Event_TalkToItemMerchant(void);
+static void Event_ReadWeaponMerchantsThoughts(void);
+static void Event_TalkToWeaponMerchant(void);
+static void Event_ReadArmorMerchantsThoughts(void);
+static void Event_TalkToArmorMerchant(void);
+static void Event_TalkToTravelingPriest(void);
 
 // clang-format off
 const struct SceneEntrance gInteriorEntrances[] = {
@@ -110,18 +110,18 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBSealed) },
     { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeASealed) },
     { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBSealed) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
-    { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Innkeeper_Talk) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnClerkSealed) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerSealed) },
-    { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(Chef_Talk) },
-    { EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TemplePriest_Talk) },
-    { EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TravelingPriest_Talk) },
+    { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToChef) },
+    { EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToTemplePriest) },
+    { EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToTravelingPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeASealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS,
@@ -135,17 +135,17 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeBSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WeaponMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ArmorMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WeaponMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ArmorMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ItemMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ItemMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnkeeperSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_CLERK, CONDITION_ALWAYS,
@@ -153,12 +153,12 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnWorkerSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Chef_ReadMind) },
+      EVENT_SCRIPT(Event_ReadChefsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsTemplePriestSealedThoughts) },
-    { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_INTERIOR_WOODEN_BOX,
+    { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_INTERIOR_BARREL, FIND_ITEM(ITEM_VIAL) },
+    { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
     { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
     { SCENE_EVENTS_END },
@@ -179,17 +179,17 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBReopened) },
     { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeAReopened) },
     { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBReopened) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
-    { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
-    { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Innkeeper_Talk) },
-    { EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, EVENT_SCRIPT(InnClerk_Talk) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
+    { EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnClerk) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerReopened) },
     { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsChefReopened) },
-    { EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TemplePriest_Talk) },
+    { EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToTemplePriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeAReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS,
@@ -203,17 +203,17 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeBReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WeaponMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ArmorMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WeaponMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ArmorMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ItemMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(ItemMerchant_ReadMind) },
+      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnkeeperReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_CLERK, CONDITION_ALWAYS,
@@ -224,9 +224,9 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
       MSGNO(MsgLunpaInteriorsChefReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsTemplePriestReopenedThoughts) },
-    { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_INTERIOR_WOODEN_BOX,
+    { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_INTERIOR_BARREL, FIND_ITEM(ITEM_VIAL) },
+    { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
     { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
     { SCENE_EVENTS_END },
@@ -236,7 +236,7 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
 const struct SceneEvent gSuhallaGateHouseEvents[] = {
     ROOM_DOOR(ROOM_SUHALLA_GATE_HOUSE),
     {EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TravelingPriest_Talk)},
+     EVENT_SCRIPT(Event_TalkToTravelingPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_PRIEST,
      CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsTravelingPriestThoughts)},
     {SCENE_EVENTS_END},
@@ -271,7 +271,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 // Across the counter after Lunpa reopens, a room at the inn; otherwise the
 // innkeeper offers a room or, while Lunpa is sealed, a bed at home.
-static void Innkeeper_Talk(void) {
+static void Event_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -294,7 +294,7 @@ static void Innkeeper_Talk(void) {
 
 // The chef offers the story of taking meals to the fortress; either way
 // the party has heard of the prisoner.
-static void Chef_Talk(void) {
+static void Event_TalkToChef(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaChefOffersStory);
   Engine_EventAskYesNo(ACTOR_CHEF, 0);
@@ -303,7 +303,7 @@ static void Chef_Talk(void) {
 }
 
 // Mind Read on the chef, who pities the prisoner in the dungeon.
-static void Chef_ReadMind(void) {
+static void Event_ReadChefsThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaChefThinksOfPrisoner);
   Engine_EventShowMessage(ACTOR_CHEF, 0);
@@ -312,7 +312,7 @@ static void Chef_ReadMind(void) {
 }
 
 // The inn's clerk asks whether the party is Donpa's guest.
-static void InnClerk_Talk(void) {
+static void Event_TalkToInnClerk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaInnClerkAsksAboutGuest);
   Engine_EventAskYesNo(ACTOR_INN_CLERK, 0);
@@ -321,7 +321,7 @@ static void InnClerk_Talk(void) {
 
 // Across the counter, the sanctum; otherwise the priest talks about
 // Dodonpa.
-static void TemplePriest_Talk(void) {
+static void Event_TalkToTemplePriest(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -341,7 +341,7 @@ static void TemplePriest_Talk(void) {
 }
 
 // Mind Read on the item merchant.
-static void ItemMerchant_ReadMind(void) {
+static void Event_ReadItemMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventBegin();
     Engine_EventSetMessage(MsgLunpaIsntWeaponsVendors);
@@ -356,7 +356,7 @@ static void ItemMerchant_ReadMind(void) {
 }
 
 // Across the counter, the item shop; otherwise small talk.
-static void ItemMerchant_Talk(void) {
+static void Event_TalkToItemMerchant(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -376,7 +376,7 @@ static void ItemMerchant_Talk(void) {
 }
 
 // Mind Read on the weapon merchant.
-static void WeaponMerchant_ReadMind(void) {
+static void Event_ReadWeaponMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaWeaponMerchantReopenedThoughts);
     Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
@@ -388,7 +388,7 @@ static void WeaponMerchant_ReadMind(void) {
 
 // After Lunpa reopens, across the counter, the weapon shop; otherwise
 // small talk.
-static void WeaponMerchant_Talk(void) {
+static void Event_TalkToWeaponMerchant(void) {
   struct FieldActor *leader;
   s32 facing;
 
@@ -410,7 +410,7 @@ static void WeaponMerchant_Talk(void) {
 }
 
 // Mind Read on the armor merchant.
-static void ArmorMerchant_ReadMind(void) {
+static void Event_ReadArmorMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaArmorMerchantReopenedThoughts);
     Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
@@ -422,7 +422,7 @@ static void ArmorMerchant_ReadMind(void) {
 
 // After Lunpa reopens, across the counter, the armor shop; otherwise
 // small talk.
-static void ArmorMerchant_Talk(void) {
+static void Event_TalkToArmorMerchant(void) {
   struct FieldActor *leader;
   s32 facing;
 
@@ -463,7 +463,7 @@ s32 Scene_Initialize(void) {
 
 // The traveling priest: across the counter, the temple priest's sanctum;
 // otherwise his good will.
-static void TravelingPriest_Talk(void) {
+static void Event_TalkToTravelingPriest(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);

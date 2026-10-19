@@ -5,21 +5,22 @@
 #include "field_scene.h"
 
 struct SceneEntrance;
+struct SceneRegion;
 struct SceneEvent;
 struct ScenePlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
-s32 GetEmptySceneData(void);
+const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
-s32 FieldScene_DispatchActorUpdate(void);
+s32 Scene_Initialize(void);
 extern s32 gLunpaFortressRandomPick;
-extern s32 gLunpaFortressPlacements2_1[];
-extern s32 gLunpaFortressPlacements2_0[];
-extern s32 gLunpaFortressPlacements2_3[];
-extern s32 gLunpaFortressPlacements1_Data[];
-extern s32 gLunpaFortressPlacements2_2[];
+extern s32 gSecondPatrolRoute[];
+extern s32 gFirstPatrolRoute[];
+extern s32 gDonpaSleeps[];
+extern s32 gOuterPatrolRoute[];
+extern s32 gHallPatrolRoute[];
 extern struct SceneEntrance gLunpaFortressEntrances1[];
 extern struct SceneEntrance gLunpaFortressEntrances2[];
 extern struct SceneEntrance gLunpaFortressEntrances3[];
@@ -38,9 +39,9 @@ extern struct SceneEvent gLunpaFortressEvents1[];
 extern struct SceneEvent gLunpaFortressEvents2[];
 extern struct SceneEvent gLunpaFortressEvents3[];
 extern struct SceneEvent gLunpaFortressEventsOther[];
-extern u32 gLunpaFortressPairTableA[];
-extern u32 gLunpaFortressSupportPairs[];
-extern u32 gLunpaFortressPairTableB[];
-extern u32 gLunpaFortressPairTableC[];
+extern u32 gRescueRoomDoorCells[];
+extern u32 gColumnRoomDoorCells[];
+extern u32 gGuardRoomDoorCells[];
+extern u32 gOuterDoorCells[];
 
 #endif

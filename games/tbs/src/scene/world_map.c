@@ -308,7 +308,7 @@ static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
 struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 49:
-    if (Engine_GameFlagIsSet(FLAG_PARTY_STAYED_IN_LUNPA) == 0 &&
+    if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
         Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
       return gWorldMapPlacements49;
     }
@@ -539,7 +539,7 @@ s32 WorldMap_Initialize(void) {
       }
       break;
     case 49:
-      if (Engine_GameFlagIsSet(FLAG_PARTY_STAYED_IN_LUNPA) == 0 &&
+      if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
           Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         WorldMap_BoardBunzasWagon();
       }
@@ -612,7 +612,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Battle_SetObjectFlag5bWhenMode3();
-  GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
+  GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
   Actor_SetPosition(ACTOR_BUNZA, PIXELS(5856), PIXELS(1180));
   Actor_SetDestinationOffset(ACTOR_BUNZA, 24, 8);
   Engine_ActorWaitForMove(ACTOR_BUNZA);

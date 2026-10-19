@@ -840,7 +840,7 @@ static void Party_StaysBehind(void) {
   Engine_CameraMoveToActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-  GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
+  GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
 }
 
 // Lead everyone down the passage and request the wagon departure exit.

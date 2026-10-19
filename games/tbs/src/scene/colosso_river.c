@@ -507,7 +507,7 @@ static void Event_ReachArena(void) {
 // Walking into something: a rock is pushed, anything else is checked.
 static void Event_PushRockOrCheckAhead(void) {
 
-  if (SceneActor_FindOccupantAheadOfSubject() == 0) {
+  if (Colosso_FindActorAhead() == 0) {
     Engine_LeaderCheckAhead();
   } else {
     Event_PushRock();
@@ -629,8 +629,7 @@ s32 ColossoRiver_Initialize(void) {
   // Select competition, support, explanation, or post-battle arrival.
   switch (gGameState.entrance) {
   case 1:
-    FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, PIXELS(1304),
-                                                  PIXELS(192), 24, 25);
+    Colosso_StartRaceGauge(0, 8, 4, PIXELS(1304), PIXELS(192), 24, 25);
     Map_CopyCellsLayered(127, 0, 1, 2, 19, 2);
     Engine_ActorDestroy(GUIDE);
     Engine_ActorDestroy(ROCK_ATTENDANT);
@@ -639,8 +638,8 @@ s32 ColossoRiver_Initialize(void) {
     Engine_ActorDestroy(LUMBER_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_AudioPlayCue(MUS_017);
-      Colosso_SelectSoloCompetitor(0);
-      SceneActor_PlacePartyAtSavedTiles();
+      Colosso_ControlCharacterAlone(0);
+      Colosso_PlaceFriendsAtCheeringSpots();
       ColossoRiver_MarkCourseTerrain(1);
       ColossoRiver_MarkCourseTerrain(2);
       ColossoRiver_MarkCourseTerrain(3);
@@ -649,22 +648,22 @@ s32 ColossoRiver_Initialize(void) {
     Object_LinkObjectAndSetCallback(1, 0);
     Object_LinkObjectAndSetCallback(2, 0);
     Object_LinkObjectAndSetCallback(3, 0);
-    SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
+    Colosso_StartRival((s32)&ResourceId_RivalPathA);
     break;
   case 2:
-    FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 0xc80);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      SceneActor_PlacePartyAtSavedTiles();
-      Colosso_SelectSoloCompetitor(1);
+      Colosso_PlaceFriendsAtCheeringSpots();
+      Colosso_ControlCharacterAlone(1);
       ColossoRiver_ShowRoundIntroduction(0);
     }
     break;
   case 3:
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       ColossoRiver_ExplainFinalsRules(GUIDE);
-      Colosso_ClearSavedActorPositions();
+      Colosso_ClearCheeringSpots();
     }
     break;
   case 4:
@@ -817,10 +816,10 @@ static void Event_TalkToRockAttendant(s32 scene) {
   s32 path;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(scene);
+    Colosso_AskDoneCheering(scene);
   } else {
     Engine_EventBegin();
-    path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
+    path = Colosso_GreetAtStage(scene, 1);
     if (path == 0) {
       Engine_EventSetMessage(MsgColossoCallRockChallenge);
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -838,9 +837,9 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      OverlayObject_PlaceWithScale14000(0, 296, 184);
-      OverlayObject_PlaceWithScale14000(0, 296, 152);
-      OverlayObject_PlaceWithScale14000(0, 312, 152);
+      Colosso_WalkActorToAndStand(0, 296, 184);
+      Colosso_WalkActorToAndStand(0, 296, 152);
+      Colosso_WalkActorToAndStand(0, 312, 152);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
       ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
@@ -860,12 +859,12 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ROCK_A, PIXELS(312), PIXELS(168));
-      Colosso_ShowFollowUpPrompt(scene, 1);
+      Colosso_RepeatStageNumber(scene, 1);
     } else if (path == 1) {
       Engine_EventSetMessage(MsgColossoObjectiveStageClear);
       Engine_EventShowMessage(scene, 0);
     }
-    FieldScene_RunMiddleSequence(path, scene, 1);
+    Colosso_OfferCheeringSpot(path, scene, 1);
     Engine_EventEnd();
   }
 }
@@ -887,10 +886,10 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
   struct FieldActor *first;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(attendant);
+    Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
-    path = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 2);
+    path = Colosso_GreetAtStage(attendant, 2);
     if (path == 0) {
       Engine_EventSetMessage(MsgColossoAreaCalledPipeworks);
       Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -901,12 +900,12 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
       Engine_CameraMoveTo(PIXELS(608), -1, PIXELS(216), 1);
       Engine_CameraWaitForMove();
       Engine_EventShowMessage(attendant, 0);
-      SceneEffect_SeedMarkerAndInstallTask(56, 64, 0);
+      Colosso_ShowPointer(56, 64, 0);
       Engine_EventWait(60);
-      SceneState_StartMarkerMove(160, 96, 10);
+      Colosso_MovePointer(160, 96, 10);
       Engine_EventWait(70);
       Engine_EventShowMessage(attendant, 0);
-      SceneEffect_RemoveMarkerTask();
+      Colosso_HidePointer();
       Engine_TaskWait(2);
       first = Object_GetById(PIPE_WEST);
       ColossoRiver_SetPipeHeight(first, PIXELS(8));
@@ -921,22 +920,22 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
       FieldObject_WaitForMove(second);
       Engine_EventWait(15);
       Engine_EventShowMessage(attendant, 0);
-      SceneEffect_SeedMarkerAndInstallTask(56, 64, 0);
+      Colosso_ShowPointer(56, 64, 0);
       Engine_EventWait(30);
-      SceneState_StartMarkerMove(160, 96, 10);
+      Colosso_MovePointer(160, 96, 10);
       Engine_EventWait(40);
-      SceneState_StartMarkerMove(56, 64, 10);
+      Colosso_MovePointer(56, 64, 10);
       Engine_EventWait(70);
       Engine_EventShowMessage(attendant, 0);
-      SceneEffect_RemoveMarkerTask();
+      Colosso_HidePointer();
       Engine_TaskWait(2);
       Engine_CameraFollowActor(0, 0);
-      Colosso_ShowFollowUpPrompt(attendant, 2);
+      Colosso_RepeatStageNumber(attendant, 2);
     } else if (path == 1) {
       Engine_EventSetMessage(MsgColossoObjectiveMakeGood);
       Engine_EventShowMessage(attendant, 0);
     }
-    FieldScene_RunMiddleSequence(path, attendant, 2);
+    Colosso_OfferCheeringSpot(path, attendant, 2);
     Engine_EventEnd();
   }
 }
@@ -947,10 +946,10 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
   s32 path;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(scene);
+    Colosso_AskDoneCheering(scene);
   } else {
     Engine_EventBegin();
-    path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
+    path = Colosso_GreetAtStage(scene, 3);
     if (path == 0) {
       Engine_EventSetMessage(MsgColossoTheyCallBrokenBridge);
       ColossoRiver_ResetBrokenBridge();
@@ -978,12 +977,12 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Event_ShowMessage(scene, 0);
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_ShowFollowUpPrompt(scene, 3);
+      Colosso_RepeatStageNumber(scene, 3);
     } else if (path == 1) {
       Engine_EventSetMessage(MsgColossoOperatorBridgeWillAlsoCheer);
       Event_ShowMessage(scene, 0);
     }
-    FieldScene_RunMiddleSequence(path, scene, 3);
+    Colosso_OfferCheeringSpot(path, scene, 3);
     Engine_EventEnd();
   }
 }
@@ -994,20 +993,20 @@ static void Event_TalkToLumberAttendant(s32 scene) {
   s32 path;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(scene);
+    Colosso_AskDoneCheering(scene);
     return;
   }
   Engine_EventBegin();
-  path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
+  path = Colosso_GreetAtStage(scene, 4);
   if (path == 0) {
     Engine_EventSetMessage(MsgColossoPlaceNormallyCalledLumberWater);
     Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Engine_CameraWaitForMove();
     Event_ShowMessage(scene, 0);
-    SceneEffect_SeedMarkerAndInstallTask(120, 72, 0);
+    Colosso_ShowPointer(120, 72, 0);
     Event_ShowMessage(scene, 0);
-    SceneEffect_RemoveMarkerTask();
+    Colosso_HidePointer();
     Engine_EventWait(15);
     Colosso_FadeInCompetitor(0, 984, 200);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
@@ -1015,9 +1014,9 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    OverlayObject_PlaceWithScale14000(0, 1000, 192);
-    OverlayObject_PlaceWithScale14000(0, 1000, 176);
-    OverlayObject_PlaceWithScale14000(0, 1016, 168);
+    Colosso_WalkActorToAndStand(0, 1000, 192);
+    Colosso_WalkActorToAndStand(0, 1000, 176);
+    Colosso_WalkActorToAndStand(0, 1016, 168);
     Engine_EventWait(15);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
@@ -1039,12 +1038,12 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Colosso_RestoreCompetitor(0);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
-    Colosso_ShowFollowUpPrompt(scene, 4);
+    Colosso_RepeatStageNumber(scene, 4);
   } else if (path == 1) {
     Engine_EventSetMessage(MsgColossoLogsKeyClearingStage);
     Event_ShowMessage(scene, 0);
   }
-  FieldScene_RunMiddleSequence(path, scene, 4);
+  Colosso_OfferCheeringSpot(path, scene, 4);
   Engine_EventEnd();
 }
 
@@ -1072,10 +1071,10 @@ static __inline__ void AdvanceMessage(s32 amount) {
 static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
   const s16 *script;
 
-  gColosso_ModeTaskMode = mode;
-  gColosso_ModeTaskParam = (param << 4);
+  gColosso_LetteringMode = mode;
+  gColosso_LetteringParam = (param << 4);
 
-  FieldScheduler_AddCallback(Colosso_UpdateModeTask, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateLettering, 0xc80);
 
   script = gColossoRiver_RoundSpans;
   if (mode == 2) {
@@ -1092,11 +1091,11 @@ static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
     }
   }
 
-  gColosso_ModeTaskTimer = 0;
-  gColosso_ModeTaskScript = (s16 *)script;
+  gColosso_LetteringTimer = 0;
+  gColosso_LetteringScript = (s16 *)script;
   gColosso_ModeMoveTarget = 0;
   gColosso_ModeMoveDuration = 0;
-  gColosso_ModeTaskPosition = 0;
+  gColosso_LetteringPosition = 0;
 }
 
 // The match opens: portraits of the warriors and the round announced.
@@ -1107,7 +1106,7 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_089);
-    Colosso_LoadPortrait(0);
+    Colosso_LoadLettering(0);
     ColossoRiver_SelectPresentationScript(1, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
@@ -1119,25 +1118,25 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
     gColossoRiver_RoundSpans[15] = round * 60;
     Engine_EventWait(30);
     Engine_AudioPlayCue(round + 90);
-    Colosso_LoadPortrait(round);
+    Colosso_LoadLettering(round);
     ColossoRiver_SelectPresentationScript(1, 0);
     Engine_EventWait(120);
     while (AudioCommand_GetStateByte() != 0) {
       Engine_TaskWait(1);
     }
     Engine_AudioPlayCue(SE_289);
-    Colosso_LoadPortrait(5);
+    Colosso_LoadLettering(5);
     ColossoRiver_SelectPresentationScript(2, 0);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
     ColossoRiver_SelectPresentationScript(2, 1);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
-    Colosso_LoadPortrait(6);
+    Colosso_LoadLettering(6);
     ColossoRiver_SelectPresentationScript(2, 0);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
-    Colosso_LoadPortrait(7);
+    Colosso_LoadLettering(7);
     ColossoRiver_SelectPresentationScript(4, 0);
     Engine_AudioPlayCue(SE_237);
     Audio_PlayCueFromEventWork();
@@ -1159,7 +1158,7 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
   if (result < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
-    Colosso_LoadPortrait(8);
+    Colosso_LoadLettering(8);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
      * result discarded (as call.h's Value2 did, 2026-10-13); called directly or
@@ -1173,7 +1172,7 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
   } else {
     Engine_EventWait(30);
     Engine_AudioPlayCue(result + 90);
-    Colosso_LoadPortrait(4);
+    Colosso_LoadLettering(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
      * result discarded (as call.h's Value2 did, 2026-10-13); called directly or
@@ -1447,7 +1446,7 @@ static void ColossoRiver_PushObjectAhead(void) {
 #include "common/colosso_occupant.h"
 
 // clang-format off
-const u8 gColosso_PortraitPaletteOffsets[] = {
+const u8 gColosso_LetteringPaletteOffsets[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
     0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -1621,7 +1620,7 @@ struct SceneEvent gColossoRiver_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ROCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, 0x303, EVENT_SCRIPT(Event_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), PIPE_WEST, 0x301, EVENT_SCRIPT(Event_DousePipe) },
-    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
+    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToRockAttendant) },
     { EVENT_TALK, PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPipeworksAttendant) },
     { EVENT_TALK, BRIDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBridgeAttendant) },
@@ -1631,11 +1630,11 @@ struct SceneEvent gColossoRiver_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverTheresOnlyOneFinalAndThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BRIDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverDidYouSeeHisMovesOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LUMBER_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverHowManyWarriorsHaveSwallowedTheir) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_RememberSupportPosition) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
     { SCENE_EVENTS_END },
 };
 
-s16 gColosso_PortraitSlot = -1;
+s16 gColosso_LetteringSlot = -1;
 
 s16 gColossoRiver_RoundSpans[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE

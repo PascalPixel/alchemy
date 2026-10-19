@@ -35,7 +35,7 @@
 
 // Put Garet, Ivan and Mia back at the cells where they chose to cheer, at the
 // centre of each cell.
-void SceneActor_PlacePartyAtSavedTiles(void) {
+void Colosso_PlaceFriendsAtCheeringSpots(void) {
   {
     s32 x =
         FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(GARET));
@@ -75,7 +75,7 @@ void SceneActor_PlacePartyAtSavedTiles(void) {
 // Make the character the party's only member, the one the player moves and the
 // camera follows, with full HP and PP and no poison. The gauges are the
 // battle's (0x4000 full; a character with any HP or PP left shows at least 1).
-void Colosso_SelectSoloCompetitor(s32 id) {
+void Colosso_ControlCharacterAlone(s32 id) {
   struct BattleUnit *unit;
   s32 v;
   s32 t;
@@ -119,8 +119,8 @@ void Colosso_SelectSoloCompetitor(s32 id) {
 
 // A scene callback while a friend looks around the course alone (entrance 2):
 // when the Psynergy request names that friend and flag 0x141 is set, raise
-// event 99, Colosso_RememberSupportPosition.
-void SceneState_RaiseTriggerOnPsynergyTarget(void) {
+// event 99, Colosso_TakePlaceForMatch.
+void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct EventWork *work = gEventWork;
   s32 selection = gGameState.selectedActor;
 
@@ -137,7 +137,7 @@ void SceneState_RaiseTriggerOnPsynergyTarget(void) {
 // friend on the map says "The match is about to begin. Please take your
 // places.", and the friend's cell becomes their place to cheer from. The next
 // friend then looks around, or, after Mia, the party leaves by exit 10.
-static void Colosso_RememberSupportPosition(void) {
+static void Colosso_TakePlaceForMatch(void) {
   struct EventWork *work = gEventWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
@@ -195,7 +195,7 @@ static void Colosso_RememberSupportPosition(void) {
     Engine_EventRequestExit(10);
     Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   } else {
-    Colosso_SelectSoloCompetitor(supporterId);
+    Colosso_ControlCharacterAlone(supporterId);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     *transition = 0;
@@ -208,7 +208,7 @@ static void Colosso_RememberSupportPosition(void) {
 // the friend's cell becomes their place, and the next friend looks around, or,
 // after Mia, the party leaves by exit 10. On "Nope", "Then cheer as best you
 // can!"
-void Colosso_FinishSoloRound(s32 id) {
+void Colosso_AskDoneCheering(s32 id) {
   struct EventWork *work;
   s32 slot;
   struct FieldActor *obj;
@@ -244,7 +244,7 @@ void Colosso_FinishSoloRound(s32 id) {
       Engine_EventRequestExit(10);
       Engine_GameFlagSet(FLAG_KEEP_MUSIC);
     } else {
-      Colosso_SelectSoloCompetitor(slot);
+      Colosso_ControlCharacterAlone(slot);
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
       work->startTransition = 0;
@@ -261,7 +261,7 @@ void Colosso_FinishSoloRound(s32 id) {
 // guide steps aside, Isaac walks past and the party leaves by exit 11.
 // Otherwise "Wait, shouldn't you decide where the best place to cheer for
 // Isaac is?"
-static void RunPartyCountInteraction(s32 actorId) {
+static void Colosso_AskReadyToRace(s32 actorId) {
   struct FieldActor *actor;
   s32 x;
   s32 z;
@@ -293,7 +293,7 @@ static void RunPartyCountInteraction(s32 actorId) {
 }
 
 // Forget where Garet, Ivan and Mia cheer from.
-void Colosso_ClearSavedActorPositions(void) {
+void Colosso_ClearCheeringSpots(void) {
   FieldGameFlag_SetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(GARET), 0);
   FieldGameFlag_SetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET), 0);
   FieldGameFlag_SetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(IVAN), 0);
@@ -310,7 +310,7 @@ void Colosso_ClearSavedActorPositions(void) {
 // 1: no description, then offer a friend's cheering;
 // 2: "Cheer" chosen, or a friend already cheers here;
 // 3: "Nothing", or the choice cancelled.
-s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor) {
+s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   s32 scene;
   s32 message;
   s32 choice;
@@ -349,7 +349,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor) {
 // A stage's guide, after describing the stage, says again "This is stage N of
 // the first finals match." (or the second or third): the copy of that line
 // after it in the text.
-void Colosso_ShowFollowUpPrompt(s32 speaker, s32 competitor) {
+void Colosso_RepeatStageNumber(s32 speaker, s32 competitor) {
   s32 scene;
   s32 message;
 
@@ -367,14 +367,14 @@ void Colosso_ShowFollowUpPrompt(s32 speaker, s32 competitor) {
 }
 
 // The guide at a stage, with the mode
-// SceneDialogue_RunFlagGatedPromptInteraction returned: offer a friend's
+// Colosso_GreetAtStage returned: offer a friend's
 // cheering at the stage. With Isaac alone, "All right, do your best!"; with
 // the stage taken, "Unfortunately, we have a full house."; otherwise "Would you
 // like a friend to cheer for you here?" (taken as yes in mode 2) and the
 // party's character menu. The friend chosen is led to the stage and leaves the
 // party, and their cell is kept. Mode 3, no or no choice: "If you know who you
 // want to cheer you on, please let me know!"
-void FieldScene_RunMiddleSequence(s32 mode, s32 guide, s32 stage) {
+void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   struct FieldActor *actor;
   struct FieldActor *leader;
   s32 guideX;

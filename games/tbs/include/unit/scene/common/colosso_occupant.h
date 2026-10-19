@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void *SceneActor_FindOccupantAheadOfSubject(void);
+void *Colosso_FindActorAhead(void);
 
 #endif

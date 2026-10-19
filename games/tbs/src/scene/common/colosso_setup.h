@@ -11,11 +11,9 @@
 // side, and the finish at pixel (finishX, finishZ) in 16.16, where the two
 // item actors stand. Unless the party returns to where it was, the rival is
 // put opposite Isaac across x = finishX.
-void FieldScene_BuildSceneDescriptorAndInstallTask(s32 playerActor,
-                                                   s32 rivalActor, s32 segments,
-                                                   s32 finishX, s32 finishZ,
-                                                   s32 finishItemActorA,
-                                                   s32 finishItemActorB) {
+void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
+                            s32 finishX, s32 finishZ, s32 finishItemActorA,
+                            s32 finishItemActorB) {
 
   u8 *desc;
   struct FieldActor *player;
@@ -69,7 +67,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 playerActor,
 // Decode the rival's recorded path (resource) after the gauge's work and,
 // unless the party returns to where it was, have the rival run it from the
 // start, mirrored across the finish; then start the rival's callback.
-void SceneState_InitControlWhenFlag109Clear(s32 resource) {
+void Colosso_StartRival(s32 resource) {
   u8 *work = gColossoWork;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 

@@ -9,12 +9,12 @@ void Colosso_RestoreCompetitor(s32 id);
 
 void OverlayObject_ResetMotionFields(s32 actor);
 
-// SceneEffect_SeedMarkerAndInstallTask is called before its definition with no
+// Colosso_ShowPointer is called before its definition with no
 // prototype in scope.
-void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration);
-void SceneEffect_RemoveMarkerTask(void);
-void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c);
-// OverlayObject_PlaceWithScale14000 is called before its definition with no
+void Colosso_MovePointer(u32 x, u32 y, u32 duration);
+void Colosso_HidePointer(void);
+void Colosso_WalkActorTo(s32 a, s32 b, s32 c);
+// Colosso_WalkActorToAndStand is called before its definition with no
 // prototype in scope.
 
 #endif

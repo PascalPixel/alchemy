@@ -42,7 +42,7 @@ s32 ColossoWall_Initialize(void);
 // FieldScene_BuildDescriptorAndInstallTask is called before its definition with
 // no prototype in scope.
 extern const u8 gColossoWall_RollLogScript[];
-extern const u8 gColosso_PortraitPaletteOffsets[];
+extern const u8 gColosso_LetteringPaletteOffsets[];
 extern const s16 gColossoWall_ModeRecordTwo[];
 extern const s16 gColossoWall_ModeRecordThreeAlt[];
 extern char gHexDigits[20];
@@ -55,7 +55,7 @@ extern struct ScenePlacement gColossoWallPlacements[];
 extern s32 gColossoWall_SpectatorPhase;
 extern s32 gColossoWall_SpectatorTimer;
 extern struct SceneEvent gColossoWallEvents[];
-extern s16 gColosso_PortraitSlot;
+extern s16 gColosso_LetteringSlot;
 extern s16 gColossoWall_ModeRecordDefault[];
 extern s16 gColossoWall_ModeRecordFour[];
 extern s16 gColossoWall_ModeRecordThree[];

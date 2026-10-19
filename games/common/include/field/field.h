@@ -243,7 +243,7 @@ extern s16 gColosso_ModeScaleDuration;
 extern s16 gColosso_ModeScaleStart;
 extern s16 gColosso_ModeScaleStep;
 extern s16 gColosso_ModeScaleTarget;
-extern u32 gColosso_ModeTaskSprites[];
+extern u32 gColosso_LetteringSprites[];
 extern u16 gVaultInteriors_StopTimer;
 extern u8 Object_UpdateAllCodeSize[];
 extern u8 gObjectGroup_BlinkChildValues[];

@@ -221,7 +221,7 @@ static void Colosso_UpdateMarker(void) {
 }
 
 // Show the pointer at screen pixel (x, y), drawn at priority style & 3.
-void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style) {
+void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   Colosso_EnsureMarkerSlot();
 
   gColosso_MarkerX = x;
@@ -234,7 +234,7 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style) {
 }
 
 // Glide the pointer to screen pixel (x, y) over duration frames.
-void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
+void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
   gColosso_MarkerEndX = x;
   gColosso_MarkerEndY = y;
   *(u16 *)&gColosso_MarkerStartX = gColosso_MarkerX;
@@ -246,7 +246,7 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
 }
 
 // Hide the pointer and free its VRAM block.
-void SceneEffect_RemoveMarkerTask(void) {
+void Colosso_HidePointer(void) {
 
   Engine_TaskRemoveCallback(Colosso_UpdateMarker);
   Resource_ResetEntry(gColosso_MarkerSlot);
@@ -254,7 +254,7 @@ void SceneEffect_RemoveMarkerTask(void) {
 }
 
 // Walk the actor at 2 pixels a frame towards pixel (x, z) and return at once.
-void SceneActor_StartMode5MoveToTile(s32 actorId, s32 x, s32 z) {
+void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct FieldActor *actor = Engine_ActorLookup(actorId);
 
   if (actor != 0) {
@@ -272,7 +272,7 @@ void SceneActor_StartMode5MoveToTile(s32 actorId, s32 x, s32 z) {
 
 // Walk the actor at 1.25 pixels a frame to pixel (x, z), wait until it
 // arrives and stand it there.
-void OverlayObject_PlaceWithScale14000(s32 actorId, s32 x, s32 z) {
+void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct FieldActor *actor = Engine_ActorLookup(actorId);
 
   if (actor != 0) {

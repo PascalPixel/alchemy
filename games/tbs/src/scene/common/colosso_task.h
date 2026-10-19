@@ -54,32 +54,32 @@ struct Sprite {
   u32 words[3];
 };
 
-extern s16 gColosso_ModeTaskTimer;
+extern s16 gColosso_LetteringTimer;
 extern s16 gColosso_ModeMoveTarget;
 extern s16 gColosso_ModeMoveDuration;
-extern s16 gColosso_ModeTaskMode;
-extern s16 gColosso_ModeTaskParam;
-extern s32 gColosso_ModeTaskPosition;
-extern s16 *gColosso_ModeTaskScript;
+extern s16 gColosso_LetteringMode;
+extern s16 gColosso_LetteringParam;
+extern s32 gColosso_LetteringPosition;
+extern s16 *gColosso_LetteringScript;
 
 // Load lettering picture id into the lettering's VRAM block (taken once) and
 // its palette into sprite palette 15. Picture 8 is picture 4 in another
 // palette.
-static void Colosso_LoadPortrait(s32 id) {
+static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
 
   buf = Runtime_BumpAllocateAlternatePool(0x1c00 + COLOSSO_PALETTE_BYTES);
-  if (gColosso_PortraitSlot == -1)
-    gColosso_PortraitSlot = Resource_FindFreeEntry();
-  off = gColosso_PortraitPaletteOffsets[id];
+  if (gColosso_LetteringSlot == -1)
+    gColosso_LetteringSlot = Resource_FindFreeEntry();
+  off = gColosso_LetteringPaletteOffsets[id];
   if (id == 8)
     id = 4;
   FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering),
                              buf);
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-  Vram_Load(gColosso_PortraitSlot, 0x400,
+  Vram_Load(gColosso_LetteringSlot, 0x400,
             (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
   Dma_Wait(REG_DMA3);
   Runtime_BumpFree(buf);
@@ -87,60 +87,60 @@ static void Colosso_LoadPortrait(s32 id) {
 
 // The lettering's scene callback: run its script, move, scale and fade it, and
 // draw it as double-size affine sprites blended over the screen, in the shape
-// of gColosso_ModeTaskMode (gColosso_ModeTaskParam picks the second half of a
+// of gColosso_LetteringMode (gColosso_LetteringParam picks the second half of a
 // picture):
 // 1: four 32x16 pieces in a row (Match 1 to 3, Lend a Hand);
 // 2: one 32x32 piece (3, 2, 1);
 // 3: two 32x16 pieces (Won or Lose);
 // 4: Go!, one 64x32 piece, or two 32x16 in French.
-static void Colosso_UpdateModeTask(void) {
-  u32 *write = gColosso_ModeTaskSprites;
+static void Colosso_UpdateLettering(void) {
+  u32 *write = gColosso_LetteringSprites;
   struct Sprite *sprite = (struct Sprite *)write;
-  s32 tile = gVramBlockCache[gColosso_PortraitSlot].offset >> 5;
+  s32 tile = gVramBlockCache[gColosso_LetteringSlot].offset >> 5;
   u32 flags;
   s32 scale, blend, pos;
   s32 matrix, i, x, y, left;
   struct AffineTransform work;
 
 commands:
-  if (gColosso_ModeTaskTimer == 0) {
+  if (gColosso_LetteringTimer == 0) {
     {
-      switch (*gColosso_ModeTaskScript++) {
+      switch (*gColosso_LetteringScript++) {
       case COLOSSO_LETTERING_PLACE:
-        gColosso_ModeTaskPosition = *gColosso_ModeTaskScript++ << 8;
-        gColosso_ModeMoveTarget = *gColosso_ModeTaskScript++;
+        gColosso_LetteringPosition = *gColosso_LetteringScript++ << 8;
+        gColosso_ModeMoveTarget = *gColosso_LetteringScript++;
         gColosso_ModeMoveDuration = 0;
         break;
       case COLOSSO_LETTERING_ACCELERATE:
         gColosso_ModeMoveStart = gColosso_ModeMoveTarget;
-        gColosso_ModeMoveTarget = *gColosso_ModeTaskScript++;
-        gColosso_ModeMoveDuration = *gColosso_ModeTaskScript++;
+        gColosso_ModeMoveTarget = *gColosso_LetteringScript++;
+        gColosso_ModeMoveDuration = *gColosso_LetteringScript++;
         gColosso_ModeMoveStep = 0;
         break;
       case COLOSSO_LETTERING_SCALE:
         gColosso_ModeScaleStart = gColosso_ModeScaleTarget;
-        gColosso_ModeScaleTarget = *gColosso_ModeTaskScript++;
-        gColosso_ModeScaleDuration = *gColosso_ModeTaskScript++;
+        gColosso_ModeScaleTarget = *gColosso_LetteringScript++;
+        gColosso_ModeScaleDuration = *gColosso_LetteringScript++;
         gColosso_ModeScaleStep = 0;
         break;
       case COLOSSO_LETTERING_FADE:
         gColosso_ModeBlendStart = gColosso_ModeBlendTarget;
-        gColosso_ModeBlendTarget = *gColosso_ModeTaskScript++;
-        gColosso_ModeBlendDuration = *gColosso_ModeTaskScript++;
+        gColosso_ModeBlendTarget = *gColosso_LetteringScript++;
+        gColosso_ModeBlendDuration = *gColosso_LetteringScript++;
         gColosso_ModeBlendStep = 0;
         break;
       case COLOSSO_LETTERING_WAIT:
-        gColosso_ModeTaskTimer = *gColosso_ModeTaskScript++;
+        gColosso_LetteringTimer = *gColosso_LetteringScript++;
         break;
       case COLOSSO_LETTERING_END:
-        Engine_TaskRemoveCallback(Colosso_UpdateModeTask);
-        Resource_ResetEntry(gColosso_PortraitSlot);
+        Engine_TaskRemoveCallback(Colosso_UpdateLettering);
+        Resource_ResetEntry(gColosso_LetteringSlot);
         return;
       }
     }
     goto commands;
   }
-  gColosso_ModeTaskTimer--;
+  gColosso_LetteringTimer--;
   if (gColosso_ModeScaleDuration == 0) {
     scale = gColosso_ModeScaleTarget;
   } else {
@@ -181,9 +181,9 @@ commands:
   work.scaleX = scale;
   work.scaleY = scale;
   matrix = (s16)AffineMatrix_BuildForEffect(&work);
-  gColosso_ModeTaskPosition += pos;
-  pos = gColosso_ModeTaskPosition / 256;
-  switch (gColosso_ModeTaskMode) {
+  gColosso_LetteringPosition += pos;
+  pos = gColosso_LetteringPosition / 256;
+  switch (gColosso_LetteringMode) {
   case 1: {
     u32 attr;
     i = 0;
@@ -217,7 +217,7 @@ commands:
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
+        *write++ = 0xf400 | (tile + gColosso_LetteringParam);
         Runtime_PushSlotEntry(sprite++, 236);
       }
       tile += 8;
@@ -238,7 +238,7 @@ commands:
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
+        *write++ = 0xf400 | (tile + gColosso_LetteringParam);
         Runtime_PushSlotEntry(sprite++, 236);
       }
       tile += 8;
@@ -254,7 +254,7 @@ commands:
       x = left & 511;
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
+      *write++ = 0xf400 | (tile + gColosso_LetteringParam);
       Runtime_PushSlotEntry(sprite, 236);
     }
     break;
@@ -267,7 +267,7 @@ commands:
       x = left & 511;
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
+      *write++ = 0xf400 | (tile + gColosso_LetteringParam);
       Runtime_PushSlotEntry(sprite, 236);
     }
     break;

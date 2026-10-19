@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-// FieldScene_BuildSceneDescriptorAndInstallTask is called before its definition
+// Colosso_StartRaceGauge is called before its definition
 // with no prototype in scope.
-void SceneState_InitControlWhenFlag109Clear(s32 resource);
+void Colosso_StartRival(s32 resource);
 
 #endif

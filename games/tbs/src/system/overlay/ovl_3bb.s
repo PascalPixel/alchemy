@@ -15,8 +15,8 @@ gColosso_CompetitorStartZ:
 	.global gColosso_MarkerEndX
 gColosso_MarkerEndX:
 	.space 4
-	.global gColosso_ModeTaskParam
-gColosso_ModeTaskParam:
+	.global gColosso_LetteringParam
+gColosso_LetteringParam:
 	.space 4
 	.global gColosso_ModeScaleStart
 gColosso_ModeScaleStart:
@@ -24,8 +24,8 @@ gColosso_ModeScaleStart:
 	.global gColosso_ModeMoveDuration
 gColosso_ModeMoveDuration:
 	.space 4
-	.global gColosso_ModeTaskPosition
-gColosso_ModeTaskPosition:
+	.global gColosso_LetteringPosition
+gColosso_LetteringPosition:
 	.space 4
 	.global gColosso_MarkerBlink
 gColosso_MarkerBlink:
@@ -48,8 +48,8 @@ gColosso_CompetitorStartAngle:
 	.global gColosso_MarkerSteps
 gColosso_MarkerSteps:
 	.space 4
-	.global gColosso_ModeTaskMode
-gColosso_ModeTaskMode:
+	.global gColosso_LetteringMode
+gColosso_LetteringMode:
 	.space 4
 	.global gColosso_ModeBlendTarget
 gColosso_ModeBlendTarget:
@@ -57,11 +57,11 @@ gColosso_ModeBlendTarget:
 	.global gColosso_ModeBlendStart
 gColosso_ModeBlendStart:
 	.space 4
-	.global gColosso_ModeTaskTimer
-gColosso_ModeTaskTimer:
+	.global gColosso_LetteringTimer
+gColosso_LetteringTimer:
 	.space 4
-	.global gColosso_ModeTaskScript
-gColosso_ModeTaskScript:
+	.global gColosso_LetteringScript
+gColosso_LetteringScript:
 	.space 4
 	.global gColosso_MarkerStartX
 gColosso_MarkerStartX:
@@ -75,8 +75,8 @@ gColosso_MarkerOam:
 	.global gColosso_MarkerStartY
 gColosso_MarkerStartY:
 	.space 4
-	.global gColosso_ModeTaskSprites
-gColosso_ModeTaskSprites:
+	.global gColosso_LetteringSprites
+gColosso_LetteringSprites:
 	.space 48
 	.global gColosso_ModeMoveStart
 gColosso_ModeMoveStart:

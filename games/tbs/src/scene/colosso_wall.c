@@ -910,8 +910,8 @@ s32 ColossoWall_Initialize(void) {
     Engine_ActorDestroy(BOARD_WALK_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_AudioPlayCue(MUS_017);
-      Colosso_SelectSoloCompetitor(0);
-      SceneActor_PlacePartyAtSavedTiles();
+      Colosso_ControlCharacterAlone(0);
+      Colosso_PlaceFriendsAtCheeringSpots();
       ColossoWall_ShowRoundStartLettering(2);
     }
     Object_LinkObjectAndSetCallback(1, 0);
@@ -920,19 +920,19 @@ s32 ColossoWall_Initialize(void) {
     ColossoWall_StartRivalPath((s32)&ResourceId_RivalPathB);
     break;
   case 2:
-    FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 0xc80);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      SceneActor_PlacePartyAtSavedTiles();
-      Colosso_SelectSoloCompetitor(1);
+      Colosso_PlaceFriendsAtCheeringSpots();
+      Colosso_ControlCharacterAlone(1);
       ColossoWall_ShowRoundStartLettering(0);
     }
     break;
   case 3:
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       ColossoWall_IntroduceSecondFinals(GUIDE);
-      Colosso_ClearSavedActorPositions();
+      Colosso_ClearCheeringSpots();
     }
     break;
   case 4:
@@ -1024,10 +1024,10 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   struct FieldActor *actor;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(attendant);
+    Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
-    result = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 1);
+    result = Colosso_GreetAtStage(attendant, 1);
     if (result == 0) {
       Engine_EventSetMessage(MsgColossoStageDubbedMini);
       Engine_CameraSetSpeed(0x30000, 0x6000);
@@ -1036,12 +1036,12 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
       Engine_EventShowMessage(attendant, 0);
       Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 1272, 168);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1288, 184);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1288, 216);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1224, 216);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1288, 184);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1288, 216);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 216);
       Engine_EventShowMessage(attendant, 0);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1224, 248);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1192, 248);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 248);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1192, 248);
       Engine_EventWait(3);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       actor->velocityY = 0x40000;
@@ -1051,12 +1051,12 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
       Engine_EventShowMessage(attendant, 0);
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_ShowFollowUpPrompt(attendant, 1);
+      Colosso_RepeatStageNumber(attendant, 1);
     } else if (result == 1) {
       Engine_EventSetMessage(MsgColossoMainThingStage);
       Engine_EventShowMessage(attendant, 0);
     }
-    FieldScene_RunMiddleSequence(result, attendant, 1);
+    Colosso_OfferCheeringSpot(result, attendant, 1);
     Engine_EventEnd();
   }
 }
@@ -1067,10 +1067,10 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(attendant);
+    Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
-    result = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 2);
+    result = Colosso_GreetAtStage(attendant, 2);
     if (result == 0) {
       Engine_EventSetMessage(MsgColossoShiftingFloorStage);
       ColossoWall_ResetMovingPlatforms();
@@ -1089,22 +1089,22 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
       Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 1080, 264);
       Engine_EventWait(15);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1080, 216);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1064, 216);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1080, 216);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
       ColossoWall_WaitForPlatformCrossingPhase();
       Engine_LeaderCheckAhead();
       Camera_MoveTo(-1, -1, -1, 0);
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_ShowFollowUpPrompt(attendant, 2);
+      Colosso_RepeatStageNumber(attendant, 2);
     } else {
       if (result == 1) {
         Engine_EventSetMessage(MsgColossoOperatorLiftsWillCheerFor);
         Event_ShowMessage(attendant, 0);
       }
     }
-    FieldScene_RunMiddleSequence(result, attendant, 2);
+    Colosso_OfferCheeringSpot(result, attendant, 2);
     Engine_EventEnd();
   }
 }
@@ -1115,10 +1115,10 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(attendant);
+    Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
-    result = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 3);
+    result = Colosso_GreetAtStage(attendant, 3);
     if (result == 0) {
       Engine_EventSetMessage(MsgColossoLogRollingStage);
       Camera_SetSpeed(0x30000, 0x6000);
@@ -1132,10 +1132,10 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
       Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 856, 264);
       Engine_EventWait(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 856, 264);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 856, 232);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 264);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 232);
       Event_ShowMessage(attendant, 0);
-      OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 840, 232);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
       Engine_EventWait(10);
       // UB: the void target is called through an incompatible return type.
       /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
@@ -1155,12 +1155,12 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(RIDING_LOG_SOUTH, PIXELS(840), PIXELS(232));
-      Colosso_ShowFollowUpPrompt(attendant, 3);
+      Colosso_RepeatStageNumber(attendant, 3);
     } else if (result == 1) {
       Engine_EventSetMessage(MsgColossoHereYourObjectiveRideLogs);
       Event_ShowMessage(attendant, 0);
     }
-    FieldScene_RunMiddleSequence(result, attendant, 3);
+    Colosso_OfferCheeringSpot(result, attendant, 3);
     Engine_EventEnd();
   }
 }
@@ -1172,11 +1172,11 @@ static void Event_TalkToWallAttendant(s32 attendant) {
   s32 result;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(attendant);
+    Colosso_AskDoneCheering(attendant);
     return;
   }
   Engine_EventBegin();
-  result = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 4);
+  result = Colosso_GreetAtStage(attendant, 4);
   if (result == 0) {
     Engine_EventSetMessage(MsgColossoFansJustCallWall);
     Engine_CameraSetSpeed(0x30000, 0x6000);
@@ -1205,19 +1205,19 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Camera_MoveTo(-1, -1, -1, 0);
     Event_ShowMessage(attendant, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
     FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
     Engine_CameraMoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Engine_EventShowMessage(attendant, 0);
     Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-    Colosso_ShowFollowUpPrompt(attendant, 4);
+    Colosso_RepeatStageNumber(attendant, 4);
   } else if (result == 1) {
     Engine_EventSetMessage(MsgColossoScalingWallQuickly);
     Engine_EventShowMessage(attendant, 0);
   }
-  FieldScene_RunMiddleSequence(result, attendant, 4);
+  Colosso_OfferCheeringSpot(result, attendant, 4);
   Engine_EventEnd();
 }
 
@@ -1267,11 +1267,11 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(attendant);
+    Colosso_AskDoneCheering(attendant);
     return;
   }
   Engine_EventBegin();
-  result = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 5);
+  result = Colosso_GreetAtStage(attendant, 5);
   if (result == 0) {
     Engine_EventSetMessage(MsgColossoPlaceCalledBoard);
     Engine_CameraSetSpeed(0x20000, 0x4000);
@@ -1284,25 +1284,25 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
     Engine_EventShowMessage(attendant, 0);
     Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 408, 264);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 408, 216);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 408, 216);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Engine_EventShowMessage(attendant, 0);
     ColossoWall_PushBlockToCell(ROLLING_LOG_EAST, 360, 208);
     Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 264, 45);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 216);
-    OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 248);
-    OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 312, 248);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 248);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 312, 248);
     Engine_EventShowMessage(attendant, 0);
     Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(ROLLING_LOG_EAST, PIXELS(392), PIXELS(208));
-    Colosso_ShowFollowUpPrompt(attendant, 5);
+    Colosso_RepeatStageNumber(attendant, 5);
   } else if (result == 1) {
     Engine_EventSetMessage(MsgColossoFocusRollingLogs);
     Engine_EventShowMessage(attendant, 0);
   }
-  FieldScene_RunMiddleSequence(result, attendant, 5);
+  Colosso_OfferCheeringSpot(result, attendant, 5);
   Engine_EventEnd();
 }
 
@@ -1315,12 +1315,12 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
 static void ColossoWall_StartLetteringAnimation(u32 mode, u32 tileVariant) {
   s32 script;
 
-  gColosso_ModeTaskMode = mode;
-  gColosso_ModeTaskParam = (tileVariant << 4);
+  gColosso_LetteringMode = mode;
+  gColosso_LetteringParam = (tileVariant << 4);
 
   {
     s32 priority = 0xc80;
-    FieldScheduler_AddCallback(Colosso_UpdateModeTask, priority);
+    FieldScheduler_AddCallback(Colosso_UpdateLettering, priority);
   }
 
   script = (s32)gColossoWall_ModeRecordDefault;
@@ -1338,11 +1338,11 @@ static void ColossoWall_StartLetteringAnimation(u32 mode, u32 tileVariant) {
     }
   }
 
-  gColosso_ModeTaskTimer = 0;
-  gColosso_ModeTaskScript = (s16 *)script;
+  gColosso_LetteringTimer = 0;
+  gColosso_LetteringScript = (s16 *)script;
   gColosso_ModeMoveTarget = 0;
   gColosso_ModeMoveDuration = 0;
-  gColosso_ModeTaskPosition = 0;
+  gColosso_LetteringPosition = 0;
 }
 
 // Show the course-opening lettering and play its timed audio cues.
@@ -1353,7 +1353,7 @@ static void ColossoWall_ShowRoundStartLettering(s32 mode) {
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_089);
-    Colosso_LoadPortrait(0);
+    Colosso_LoadLettering(0);
     ColossoWall_StartLetteringAnimation(1, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
@@ -1370,7 +1370,7 @@ static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   }
   Engine_EventWait(30);
   Engine_AudioPlayCue(mode + 0x5a);
-  Colosso_LoadPortrait(mode);
+  Colosso_LoadLettering(mode);
   ColossoWall_StartLetteringAnimation(1, 0);
   Engine_EventWait(120);
 
@@ -1380,18 +1380,18 @@ static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   }
 
   Engine_AudioPlayCue(SE_289);
-  Colosso_LoadPortrait(5);
+  Colosso_LoadLettering(5);
   ColossoWall_StartLetteringAnimation(2, 0);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
   ColossoWall_StartLetteringAnimation(2, 1);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  Colosso_LoadPortrait(6);
+  Colosso_LoadLettering(6);
   ColossoWall_StartLetteringAnimation(2, 0);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  Colosso_LoadPortrait(7);
+  Colosso_LoadLettering(7);
   ColossoWall_StartLetteringAnimation(4, 0);
   Engine_AudioPlayCue(SE_237);
   Audio_PlayCueFromEventWork();
@@ -1413,7 +1413,7 @@ static void ColossoWall_ShowBattleResultLettering(s32 result) {
   if (result < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
-    Colosso_LoadPortrait(8);
+    Colosso_LoadLettering(8);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
      * result discarded (as call.h's Value2 did, 2026-10-13); called directly or
@@ -1426,7 +1426,7 @@ static void ColossoWall_ShowBattleResultLettering(s32 result) {
   } else {
     Engine_EventWait(30);
     Engine_AudioPlayCue(result + 90);
-    Colosso_LoadPortrait(4);
+    Colosso_LoadLettering(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through the s32 cast like the call above; called
      * directly or through Call2 it differs 2 on tbs-en.
@@ -1769,7 +1769,7 @@ static void ColossoWall_PushAdjacentObstacle(void) {
 const u8 gColossoWall_RollLogScript[] = {2, 2, 3, 3};
 
 // clang-format off
-const u8 gColosso_PortraitPaletteOffsets[] = {
+const u8 gColosso_LetteringPaletteOffsets[] = {
     0, 32, 32, 32, 96, 64, 64,
     COLOSSO_WALL_ALTERNATE_PORTRAIT_PALETTE_OFFSET, 128, 0,
 };
@@ -1983,7 +1983,7 @@ struct SceneEvent gColossoWallEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), LIFT_OPERATOR, 0x334, EVENT_SCRIPT(Event_HaltLifts) },
-    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
+    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMiniMazeAttendant) },
     { EVENT_TALK, SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToShiftingFloorAttendant) },
     { EVENT_TALK, LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToLogRollingAttendant) },
@@ -1995,11 +1995,11 @@ struct SceneEvent gColossoWallEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_RememberSupportPosition) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
     { SCENE_EVENTS_END },
 };
 
-s16 gColosso_PortraitSlot = -1;
+s16 gColosso_LetteringSlot = -1;
 
 s16 gColossoWall_ModeRecordDefault[] = {
     0x4000, -188, 2048, 0x1000, COLOSSO_WALL_INTRO_SCALE, 1, 0x2000, 16,

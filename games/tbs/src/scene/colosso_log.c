@@ -698,7 +698,7 @@ UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
       work->transitionFrames = 15;
       Engine_EventCloseScreen();
       Engine_EventWaitForScreen();
-      Colosso_SelectSoloCompetitor(competitorId);
+      Colosso_ControlCharacterAlone(competitorId);
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
     } else {
@@ -754,14 +754,14 @@ static void Event_ReachArena(void) {
 
 // Walking into something: unless it is an actor, it is checked.
 static void Event_CheckAhead(void) {
-  if (SceneActor_FindOccupantAheadOfSubject() == 0) {
+  if (Colosso_FindActorAhead() == 0) {
     Engine_LeaderCheckAhead();
   }
 }
 
 // Walking into something: the weight is pushed, anything else is checked.
 static void Event_PushWeightOrCheckAhead(void) {
-  if (SceneActor_FindOccupantAheadOfSubject() == 0) {
+  if (Colosso_FindActorAhead() == 0) {
     Engine_LeaderCheckAhead();
   } else {
     Event_PushWeight();
@@ -929,8 +929,7 @@ s32 ColossoLog_Initialize(void) {
   // Enter the race, solo practice, course tour or post-battle reunion.
   switch (gGameState.entrance) {
   case 1:
-    FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 6, PIXELS(1512),
-                                                  PIXELS(192), 39, 40);
+    Colosso_StartRaceGauge(0, 8, 6, PIXELS(1512), PIXELS(192), 39, 40);
     Map_CopyCellsLayered(127, 0, 1, 2, 5, 2);
     Engine_ActorDestroy(GUIDE);
     Engine_ActorDestroy(SCALES_ATTENDANT);
@@ -941,26 +940,26 @@ s32 ColossoLog_Initialize(void) {
     Engine_ActorDestroy(LOG_ROLLING_ATTENDANT);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Engine_AudioPlayCue(MUS_017);
-      Colosso_SelectSoloCompetitor(0);
-      SceneActor_PlacePartyAtSavedTiles();
+      Colosso_ControlCharacterAlone(0);
+      Colosso_PlaceFriendsAtCheeringSpots();
       Object_LinkObjectAndSetCallback(1, 0);
       ColossoLogRollingStage_RunScriptedTransition(3);
     }
     Object_LinkObjectAndSetCallback(1, 0);
     Object_LinkObjectAndSetCallback(2, 0);
     Object_LinkObjectAndSetCallback(3, 0);
-    SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathC);
+    Colosso_StartRival((s32)&ResourceId_RivalPathC);
     break;
 
   case 2:
-    FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
+    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 3200);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
-    SceneActor_PlacePartyAtSavedTiles();
-    Colosso_SelectSoloCompetitor(1);
+    Colosso_PlaceFriendsAtCheeringSpots();
+    Colosso_ControlCharacterAlone(1);
     ColossoLogRollingStage_RunScriptedTransition(0);
     break;
 
@@ -969,7 +968,7 @@ s32 ColossoLog_Initialize(void) {
       break;
     }
     ColossoLog_IntroduceFinalCourse(GUIDE);
-    Colosso_ClearSavedActorPositions();
+    Colosso_ClearCheeringSpots();
     break;
 
   case 4:
@@ -1333,11 +1332,11 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
   s32 promptResult;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(guideId);
+    Colosso_AskDoneCheering(guideId);
     return;
   }
   Engine_EventBegin();
-  promptResult = SceneDialogue_RunFlagGatedPromptInteraction(guideId, 1);
+  promptResult = Colosso_GreetAtStage(guideId, 1);
   if (promptResult == 0) {
     // Point out the pans, demonstrate both heights, then restore the course.
     Engine_EventSetMessage(MsgColossoStageCalledScales);
@@ -1346,12 +1345,12 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Engine_EventShowMessage(guideId, 0);
-    SceneEffect_SeedMarkerAndInstallTask(104, 68, 0);
+    Colosso_ShowPointer(104, 68, 0);
     Engine_EventWait(60);
-    SceneState_StartMarkerMove(168, 96, 10);
+    Colosso_MovePointer(168, 96, 10);
     Engine_EventWait(70);
     Engine_EventShowMessage(guideId, 0);
-    SceneEffect_RemoveMarkerTask();
+    Colosso_HidePointer();
     Engine_TaskWait(2);
     pan1 = Object_GetById(SCALE_PAN_WEST);
     pan1->motionFlags = 0;
@@ -1370,22 +1369,22 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
     FieldObject_WaitForMove(back2);
     Engine_EventWait(15);
     Engine_EventShowMessage(guideId, 0);
-    SceneEffect_SeedMarkerAndInstallTask(104, 68, 0);
+    Colosso_ShowPointer(104, 68, 0);
     Engine_EventWait(30);
-    SceneState_StartMarkerMove(168, 96, 10);
+    Colosso_MovePointer(168, 96, 10);
     Engine_EventWait(40);
-    SceneState_StartMarkerMove(104, 68, 10);
+    Colosso_MovePointer(104, 68, 10);
     Engine_EventWait(70);
     Engine_EventShowMessage(guideId, 0);
-    SceneEffect_RemoveMarkerTask();
+    Colosso_HidePointer();
     Engine_TaskWait(2);
     Engine_CameraFollowActor(0, 0);
-    Colosso_ShowFollowUpPrompt(guideId, 1);
+    Colosso_RepeatStageNumber(guideId, 1);
   } else if (promptResult == 1) {
     Engine_EventSetMessage(MsgColossoObjectiveGetAcross);
     Engine_EventShowMessage(guideId, 0);
   }
-  FieldScene_RunMiddleSequence(promptResult, guideId, 1);
+  Colosso_OfferCheeringSpot(promptResult, guideId, 1);
   Engine_EventEnd();
 }
 
@@ -1396,11 +1395,11 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 x;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(guideId);
+    Colosso_AskDoneCheering(guideId);
     return;
   }
   Engine_EventBegin();
-  promptResult = SceneDialogue_RunFlagGatedPromptInteraction(guideId, 2);
+  promptResult = Colosso_GreetAtStage(guideId, 2);
   if (promptResult == 0) {
     Engine_EventSetMessage(MsgColossoSteppingStoneStage);
     Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -1411,8 +1410,8 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Event_ShowMessage(guideId, 0);
     Colosso_FadeInCompetitor(0, x, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    OverlayObject_PlaceWithScale14000(0, x, 152);
-    OverlayObject_PlaceWithScale14000(0, 296, 152);
+    Colosso_WalkActorToAndStand(0, x, 152);
+    Colosso_WalkActorToAndStand(0, 296, 152);
     Engine_EventWait(10);
     Engine_LeaderCheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -1424,23 +1423,23 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Camera_MoveTo(-1, -1, -1, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
     Event_ShowMessage(guideId, 0);
-    SceneEffect_SeedMarkerAndInstallTask(96, 40, 0);
-    SceneState_StartMarkerMove(128, 40, 10);
+    Colosso_ShowPointer(96, 40, 0);
+    Colosso_MovePointer(128, 40, 10);
     Engine_EventWait(30);
-    SceneState_StartMarkerMove(160, 40, 10);
+    Colosso_MovePointer(160, 40, 10);
     Engine_EventWait(30);
-    SceneState_StartMarkerMove(160, 72, 10);
+    Colosso_MovePointer(160, 72, 10);
     Engine_EventWait(30);
     Event_ShowMessage(guideId, 0);
-    SceneEffect_RemoveMarkerTask();
+    Colosso_HidePointer();
     Colosso_RestoreCompetitor(0);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-    Colosso_ShowFollowUpPrompt(guideId, 2);
+    Colosso_RepeatStageNumber(guideId, 2);
   } else if (promptResult == 1) {
     Engine_EventSetMessage(MsgColossoYourGoalInStageSimple);
     Event_ShowMessage(guideId, 0);
   }
-  FieldScene_RunMiddleSequence(promptResult, guideId, 2);
+  Colosso_OfferCheeringSpot(promptResult, guideId, 2);
   Engine_EventEnd();
 }
 
@@ -1451,10 +1450,10 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   s32 promptResult;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(guideId);
+    Colosso_AskDoneCheering(guideId);
   } else {
     Engine_EventBegin();
-    promptResult = SceneDialogue_RunFlagGatedPromptInteraction(guideId, 3);
+    promptResult = Colosso_GreetAtStage(guideId, 3);
     if (promptResult == 0) {
       // Show the pattern cycle before demonstrating a timed passage.
       work = gEventWork;
@@ -1480,7 +1479,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       COLOSSO_LOG_FACE_DIRECTION(0, 0, 0);
       ColossoLogRollingStage_WaitForSceneTask();
       Actor_SetSpeed(0, PIXELS(3) / 2, PIXELS(3) / 4);
-      SceneActor_StartMode5MoveToTile(0, 680, 200);
+      Colosso_WalkActorTo(0, 680, 200);
       if (work->raisedTrigger != 5) {
         do {
           Engine_TaskWait(1);
@@ -1495,13 +1494,13 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       Engine_EventShowMessage(guideId, 0);
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(0, 0);
-      Colosso_ShowFollowUpPrompt(guideId, 3);
+      Colosso_RepeatStageNumber(guideId, 3);
       work->raisedTrigger = 0;
     } else if (promptResult == 1) {
       Engine_EventSetMessage(MsgColossoOperatorWallsCheer);
       Engine_EventShowMessage(guideId, 0);
     }
-    FieldScene_RunMiddleSequence(promptResult, guideId, 3);
+    Colosso_OfferCheeringSpot(promptResult, guideId, 3);
     Engine_EventEnd();
   }
 }
@@ -1517,10 +1516,10 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   s32 shiftedX;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(guideId);
+    Colosso_AskDoneCheering(guideId);
   } else {
     Engine_EventBegin();
-    result = SceneDialogue_RunFlagGatedPromptInteraction(guideId, 4);
+    result = Colosso_GreetAtStage(guideId, 4);
     if (result == 0) {
       Engine_EventSetMessage(MsgColossoPlaceNormallyCalledFreeClimb);
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -1559,12 +1558,12 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       Event_ShowMessage(guideId, 0);
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_ShowFollowUpPrompt(guideId, 4);
+      Colosso_RepeatStageNumber(guideId, 4);
     } else if (result == 1) {
       Engine_EventSetMessage(MsgColossoClearStageMustAbleChange);
       Event_ShowMessage(guideId, 0);
     }
-    FieldScene_RunMiddleSequence(result, guideId, 4);
+    Colosso_OfferCheeringSpot(result, guideId, 4);
     Engine_EventEnd();
   }
 }
@@ -1604,10 +1603,10 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   struct FieldActor *actor;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(guideId);
+    Colosso_AskDoneCheering(guideId);
   } else {
     Engine_EventBegin();
-    result = SceneDialogue_RunFlagGatedPromptInteraction(guideId, 5);
+    result = Colosso_GreetAtStage(guideId, 5);
     if (result == 0) {
       // Walk against the sidewalk, then show how its current pushes the rider.
       Engine_EventSetMessage(MsgColossoCalledMovingSidewalkStage);
@@ -1645,12 +1644,12 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       gGameState.movementMode = 1;
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_ShowFollowUpPrompt(guideId, 5);
+      Colosso_RepeatStageNumber(guideId, 5);
     } else if (result == 1) {
       Engine_EventSetMessage(MsgColossoInStageMustTryOutpace);
       Event_ShowMessage(guideId, 0);
     }
-    FieldScene_RunMiddleSequence(result, guideId, 5);
+    Colosso_OfferCheeringSpot(result, guideId, 5);
     Engine_EventEnd();
   }
 }
@@ -1661,12 +1660,12 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
   s32 state;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(actor);
+    Colosso_AskDoneCheering(actor);
     return;
   }
 
   Engine_EventBegin();
-  state = SceneDialogue_RunFlagGatedPromptInteraction(actor, 6);
+  state = Colosso_GreetAtStage(actor, 6);
 
   if (state == 0) {
     Engine_EventSetMessage(MsgColossoAnotherLogRollingArea);
@@ -1675,25 +1674,25 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Engine_EventShowMessage(actor, 0);
-    SceneEffect_SeedMarkerAndInstallTask(180, 88, 0);
+    Colosso_ShowPointer(180, 88, 0);
     Engine_EventWait(60);
     Engine_EventShowMessage(actor, 0);
-    SceneState_StartMarkerMove(32, 84, 10);
+    Colosso_MovePointer(32, 84, 10);
     Engine_EventWait(30);
     Engine_EventShowMessage(actor, 0);
-    SceneState_StartMarkerMove(96, 84, 30);
+    Colosso_MovePointer(96, 84, 30);
     Engine_EventWait(60);
     Engine_EventShowMessage(actor, 0);
-    SceneEffect_RemoveMarkerTask();
+    Colosso_HidePointer();
     Engine_EventWait(2);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-    Colosso_ShowFollowUpPrompt(actor, 6);
+    Colosso_RepeatStageNumber(actor, 6);
   } else if (state == 1) {
     Engine_EventSetMessage(MsgColossoHereMustFigureOutHow);
     Engine_EventShowMessage(actor, 0);
   }
 
-  FieldScene_RunMiddleSequence(state, actor, 6);
+  Colosso_OfferCheeringSpot(state, actor, 6);
   Engine_EventEnd();
 }
 
@@ -1706,12 +1705,12 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
   s32 handler;
 
-  gColosso_ModeTaskMode = mode;
-  gColosso_ModeTaskParam = (parameter << 4);
+  gColosso_LetteringMode = mode;
+  gColosso_LetteringParam = (parameter << 4);
 
   {
     s32 budget = 0xc80;
-    SchedulerCallback task = Colosso_UpdateModeTask;
+    SchedulerCallback task = Colosso_UpdateLettering;
     FieldScheduler_AddCallback(task, budget);
   }
 
@@ -1730,11 +1729,11 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
     }
   }
 
-  gColosso_ModeTaskTimer = 0;
-  gColosso_ModeTaskScript = (s16 *)handler;
+  gColosso_LetteringTimer = 0;
+  gColosso_LetteringScript = (s16 *)handler;
   gColosso_ModeMoveTarget = 0;
   gColosso_ModeMoveDuration = 0;
-  gColosso_ModeTaskPosition = 0;
+  gColosso_LetteringPosition = 0;
 }
 
 // Play the countdown portraits and the start-of-race transition.
@@ -1745,7 +1744,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_089);
-    Colosso_LoadPortrait(0);
+    Colosso_LoadLettering(0);
     ColossoLogRollingStage_InitializeModeTask(1, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
@@ -1762,7 +1761,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
   }
   Engine_EventWait(30);
   Engine_AudioPlayCue(mode + 0x5a);
-  Colosso_LoadPortrait(mode);
+  Colosso_LoadLettering(mode);
   ColossoLogRollingStage_InitializeModeTask(1, 0);
   Engine_EventWait(120);
 
@@ -1771,18 +1770,18 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
   }
 
   Engine_AudioPlayCue(SE_289);
-  Colosso_LoadPortrait(5);
+  Colosso_LoadLettering(5);
   ColossoLogRollingStage_InitializeModeTask(2, 0);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
   ColossoLogRollingStage_InitializeModeTask(2, 1);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  Colosso_LoadPortrait(6);
+  Colosso_LoadLettering(6);
   ColossoLogRollingStage_InitializeModeTask(2, 0);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  Colosso_LoadPortrait(7);
+  Colosso_LoadLettering(7);
   ColossoLogRollingStage_InitializeModeTask(4, 0);
   Engine_AudioPlayCue(SE_237);
   Audio_PlayCueFromEventWork();
@@ -1803,7 +1802,7 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
   if (countdown < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
-    Colosso_LoadPortrait(8);
+    Colosso_LoadLettering(8);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
      * result discarded (as call.h's Value2 did, 2026-10-13); Call2 changes
@@ -1818,7 +1817,7 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
   } else {
     Engine_EventWait(30);
     Engine_AudioPlayCue(countdown + 90);
-    Colosso_LoadPortrait(4);
+    Colosso_LoadLettering(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through the s32 cast, its result discarded, as in the
      * first arm.
@@ -2111,7 +2110,7 @@ const s32 gColossoSceneEventEffect[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-const u8 gColosso_PortraitPaletteOffsets[] = {
+const u8 gColosso_LetteringPaletteOffsets[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
     0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -2333,7 +2332,7 @@ struct SceneEvent gColossoLogEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x50000000, SIDEWALK_BLOCK, 0x363, EVENT_SCRIPT(Event_ForceSidewalkBlock) },
     { EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassNorthWallOpening) },
     { EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassSouthWallOpening) },
-    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
+    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToScalesAttendant) },
     { EVENT_TALK, STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSteppingStoneAttendant) },
     { EVENT_TALK, WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWallWedgeAttendant) },
@@ -2347,7 +2346,7 @@ struct SceneEvent gColossoLogEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_RememberSupportPosition) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
     { SCENE_EVENTS_END },
 };
 
@@ -2452,7 +2451,7 @@ s32 gColossoParticleKinds[] = {
     SC_END,
 };
 
-s16 gColosso_PortraitSlot = -1;
+s16 gColosso_LetteringSlot = -1;
 
 s16 gColossoModeScriptDefault[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE

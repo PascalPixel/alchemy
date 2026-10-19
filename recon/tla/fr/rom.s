@@ -4541,7 +4541,7 @@ ReelGame_Run:
 	.type Func_081b8180, %function
 	.thumb_func
 Func_081b8180:
-	.incbin "baserom.gba", 0x001b8180, 0x00000244
+	.incbin "baserom.gba", 0x001b8180, 0x000001cc
 	.section .rom.001b83c4, "ax"
 	.global Func_081b83c4
 	.type Func_081b83c4, %function

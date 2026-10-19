@@ -6577,18 +6577,18 @@ main	rom_main_14	games/tla/src/field/common/camera/camera	.text
 main	rom_main_14	games/tla/src/graphics/palette/scale_rgb555_buffer_b	.text
 main	rom_main_14	games/tla/src/graphics/palette/brighten	.text
 main	rom_main_14	recon/tla/it/rom	.rom.001b8180	it
-main	rom_main_14	recon/tla/it/rom	.rom.001b83c4	it
 main	rom_main_14	recon/tla/fr/rom	.rom.001b8180	fr
-main	rom_main_14	recon/tla/fr/rom	.rom.001b83c4	fr
 main	rom_main_14	recon/tla/es/rom	.rom.001b8180	es
-main	rom_main_14	recon/tla/es/rom	.rom.001b83c4	es
 main	rom_main_14	recon/tla/de/rom	.rom.001b8180	de
-main	rom_main_14	recon/tla/de/rom	.rom.001b83c4	de
 main	rom_main_14	recon/tla/raw/081b8180	.text	en
 main	rom_main_14	recon/tla/raw/081b8274	.text	en
-main	rom_main_14	recon/tla/raw/081b834c	.text	en
-main	rom_main_14	recon/tla/raw/081b83c4	.text	en
 main	rom_main_14	recon/tla/ja/rom	.rom.001b8180	ja
+main	rom_main_14	games/tla/src/graphics/lucky_dice/dice_game	.text
+main	rom_main_14	recon/tla/it/rom	.rom.001b83c4	it
+main	rom_main_14	recon/tla/fr/rom	.rom.001b83c4	fr
+main	rom_main_14	recon/tla/es/rom	.rom.001b83c4	es
+main	rom_main_14	recon/tla/de/rom	.rom.001b83c4	de
+main	rom_main_14	recon/tla/raw/081b83c4	.text	en
 main	rom_main_14	recon/tla/ja/rom	.rom.001b83c4	ja
 main	rom_main_14	games/tla/src/graphics/lucky_dice/dice_game	.rodata
 main	rom_main_15	games/tla/src/system/far_call/audio_engine

@@ -9,6 +9,11 @@
 // storing it to Data_0202a64c (this draft reuses the registers), and the last
 // OAM words and Data_0202a62c stores are ordered differently. Mostly order and
 // register choice; the reload is a difference of shape not yet found.
+// 2026-10-19: the clamp bounds as locals, as in Func_080ed0a0
+// (games/tla/src/battle/effect/world_map_scroll.c), bring it to 100. Left
+// there: the native zero for the clamps is the r6 the OAM stores reuse, and the
+// native reloads the work's x and z for Data_0202a64c after the clamps, as if
+// the stores to the address-taken screen values could alias them.
 #include "types.h"
 #include "dma.h"
 #include "mem.h"
@@ -52,6 +57,8 @@ void Func_080ebf94(void) {
   s32 tileAttributes;
   u32 i;
   u32 tile;
+  s32 right;
+  s32 bottom;
 
   markerTiles = Runtime_BumpAllocateAlternatePool(32);
   oam = work->markers;
@@ -93,14 +100,16 @@ void Func_080ebf94(void) {
   }
   screenX = work->x - (120 << 16);
   screenY = work->z - (80 << 16);
+  right = 272 << 16;
+  bottom = 224 << 16;
   if (screenX < 0)
     screenX = 0;
-  if (screenX > 272 << 16)
-    screenX = 272 << 16;
+  if (screenX > right)
+    screenX = right;
   if (screenY < 0)
     screenY = 0;
-  if (screenY > 224 << 16)
-    screenY = 224 << 16;
+  if (screenY > bottom)
+    screenY = bottom;
   Data_0202a64c[0] = work->x;
   Data_0202a64c[1] = work->z;
   work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();

@@ -103,11 +103,9 @@ void WaitFrames(s32 frames) {
 
     gSavedStackSize = top - base;
     Dma_Set(base, gSavedStack,
-            (gSavedStackSize >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
-    /* FAKEMATCH: the tied top operand retains its DMA lifetime; an input-only
-     * operand adds a copy through ip. */
+            (DMA_ENABLE | DMA_32BIT) << 16 | (gSavedStackSize >> 2), REG_DMA3);
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
-    __asm__ volatile("mov sp, %0" : "+r"(top) : : "sp", "memory");
+    __asm__ volatile("mov sp, %0" : : "r"(top) : "sp", "memory");
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
@@ -242,7 +240,9 @@ void WaitFrames(s32 frames) {
 
     if (*size) {
       /* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte
-       * frame and removes an extra copy through ip. */
+       * frame and removes an extra copy through ip. As an output only ("=r"),
+       * the frame is 4 bytes for 8 and the registers shift (differ 67 in
+       * tbs-en). */
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
       __asm__ volatile("mov %0, sp" : "+r"(base));
       /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
@@ -268,7 +268,7 @@ void WaitFrames(s32 frames) {
         if (!sp)
           nextSize = &gSavedStackSize;
         Dma_Set(gSavedStack, base,
-                (*nextSize >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+                (DMA_ENABLE | DMA_32BIT) << 16 | (*nextSize >> 2), REG_DMA3);
       }
       while (DMA3->control & (DMA_ENABLE << 16))
         ;

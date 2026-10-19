@@ -158,7 +158,7 @@ void Title_UpdateIntroSprites(void) {
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 14);
   Dma_Set(&INTRO_OBJ(0), OAM,
-          ((spriteCount * 8) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | ((spriteCount * 8) >> 2), REG_DMA3);
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
   INTRO_OBJ(12).attr01 = stripY | 0xc05c2000;
@@ -739,7 +739,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
-            (((colorCount - 1) * 6) >> 1) | (DMA_ENABLE << 16), REG_DMA3);
+            DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), REG_DMA3);
   } else if (mode < PALETTE_TRANSFORM_FLAGS) {
     switch (mode) {
     case PALETTE_TRANSFORM_GREY:
@@ -968,7 +968,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     if (paletteHalf == 2)
       mode += 0x600;
     Dma_Set((const void *)mode, destination,
-            ((colorCount * 6) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+            (DMA_ENABLE | DMA_32BIT) << 16 | ((colorCount * 6) >> 2), REG_DMA3);
   }
 }
 

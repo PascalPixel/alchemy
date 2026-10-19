@@ -4,7 +4,10 @@
 // place earlier: the sparks' base before the work pointer's copy, the halfword
 // zero before 155's shift, and the bet message before 0x4cc's shift. A greedy
 // search over one-pass blocks, barriers, swaps and block temporaries (103
-// tries) found nothing better. The message is 3432 in the English edition, 3434
+// tries) found nothing better; nor did the message pinned to r5 (9), set
+// before the window's store (6), or five permuter minutes. Two of the three
+// loads fall between the halves of a split constant, which no barrier can
+// reach. The message is 3432 in the English edition, 3434
 // in the Japanese and 3893 in the others: adopting needs msgctxt "MsgSlotsBet"
 // (☀️'s name) on those entries of the six catalogs.
 #include "types.h"

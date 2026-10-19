@@ -1,20 +1,24 @@
-// Draft, differ 86 of 119: draws a number as digit sprites into the slot
+// Draft, differ 12 of 119: draws a number as digit sprites into the slot
 // machine's sprite table, right-aligned to end at x: each of digits places
 // takes value's digit there, leading zeros skipped but the last digit always
 // drawn, tiles 816 + 4 * digit in the given palette. Returns the next free
-// sprite. Left: register choice and addressing: the native keeps the work
-// pointer and the sprite count in stack slots and addresses the two words
-// with two offset givs (sprite * 8 + 196 in r7, + 200 in r10, each str
-// [work, offset]); here loop.c folds work into one pointer giv (r6) stored
-// at +0 and +4, the count stays in r11, the frame is 16 bytes not 24, and
-// the remaining registers rotate. Control flow and the divisions match.
-// Tried: the divide loop guarded by its own digits - i != 1 test (differ 88).
+// sprite. The sprite words are volatile, as ☀️'s ReelGame_RunFrame has its
+// OAM shadow (FAKEMATCH(volatile) when adopted): loop.c then keeps the two
+// offset givs (sprite * 8 + 196 in r7, + 200 in r10) and the work pointer
+// and sprite count in stack slots, as the native does; as plain u32 words,
+// 86 of 119 instructions differ in tla-en. Left: instruction order only, six
+// single moves, each a stack store or load the native issues a place
+// earlier (the sprite argument's spill, the y byte's slot, the sprite
+// count's store) or a register copy (mov r9, r3). Tried: an empty asm at the
+// top of the body (16), after the work load (12) and after sprite++ (12);
+// the divide loop guarded by its own digits - i != 1 test (88, before the
+// volatile words); six permuter minutes (12).
 #include "types.h"
 #include "ram_buffer.h"
 
 struct ReelSprite {
-  u32 attr01;
-  u32 attr2;
+  volatile u32 attr01;
+  volatile u32 attr2;
 };
 
 struct ReelWork {

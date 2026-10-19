@@ -6184,20 +6184,25 @@ main	rom_main_13	games/tla/src/system/far_call/resource_e	.text
 main	rom_main_13	games/tla/src/graphics/palette/scale_rgb555	.text
 main	rom_main_13	games/tla/src/battle/effect/darken	.text
 main	rom_main_13	recon/tla/it/rom	.rom.001b21ec	it
-main	rom_main_13	recon/tla/it/rom	.rom.001b34a8	it
 main	rom_main_13	recon/tla/fr/rom	.rom.001b21ec	fr
-main	rom_main_13	recon/tla/fr/rom	.rom.001b34a8	fr
 main	rom_main_13	recon/tla/es/rom	.rom.001b21ec	es
-main	rom_main_13	recon/tla/es/rom	.rom.001b34e8	es
 main	rom_main_13	recon/tla/de/rom	.rom.001b21ec	de
-main	rom_main_13	recon/tla/de/rom	.rom.001b34a8	de
 main	rom_main_13	recon/tla/raw/081b21ec	.text	en
 main	rom_main_13	recon/tla/raw/081b22b8	.text	en
 main	rom_main_13	recon/tla/raw/081b243c	.text	en
-main	rom_main_13	recon/tla/raw/081b3294	.text	en
+main	rom_main_13	recon/tla/ja/rom	.rom.001b21ec	ja
+main	rom_main_13	games/tla/src/graphics/slots/reel_game	.text
+main	rom_main_13	recon/tla/it/rom	.rom.001b336c	it
+main	rom_main_13	recon/tla/it/rom	.rom.001b34a8	it
+main	rom_main_13	recon/tla/fr/rom	.rom.001b336c	fr
+main	rom_main_13	recon/tla/fr/rom	.rom.001b34a8	fr
+main	rom_main_13	recon/tla/es/rom	.rom.001b33ac	es
+main	rom_main_13	recon/tla/es/rom	.rom.001b34e8	es
+main	rom_main_13	recon/tla/de/rom	.rom.001b336c	de
+main	rom_main_13	recon/tla/de/rom	.rom.001b34a8	de
 main	rom_main_13	recon/tla/raw/081b336c	.text	en
 main	rom_main_13	recon/tla/raw/081b34a8	.text	en
-main	rom_main_13	recon/tla/ja/rom	.rom.001b21ec	ja
+main	rom_main_13	recon/tla/ja/rom	.rom.001b3228	ja
 main	rom_main_13	recon/tla/ja/rom	.rom.001b3364	ja
 main	rom_main_13	games/tla/src/sound/reset_slot_buckets	.text
 main	rom_main_13	games/tla/src/sound/track_slot_buffer	.text
@@ -6215,18 +6220,18 @@ main	rom_main_14	games/tla/src/field/common/camera/camera	.text
 main	rom_main_14	games/tla/src/graphics/palette/scale_rgb555_buffer_b	.text
 main	rom_main_14	games/tla/src/graphics/palette/brighten	.text
 main	rom_main_14	recon/tla/it/rom	.rom.001b8180	it
-main	rom_main_14	recon/tla/it/rom	.rom.001b83c4	it
 main	rom_main_14	recon/tla/fr/rom	.rom.001b8180	fr
-main	rom_main_14	recon/tla/fr/rom	.rom.001b83c4	fr
 main	rom_main_14	recon/tla/es/rom	.rom.001b8180	es
-main	rom_main_14	recon/tla/es/rom	.rom.001b83c4	es
 main	rom_main_14	recon/tla/de/rom	.rom.001b8180	de
-main	rom_main_14	recon/tla/de/rom	.rom.001b83c4	de
 main	rom_main_14	recon/tla/raw/081b8180	.text	en
 main	rom_main_14	recon/tla/raw/081b8274	.text	en
-main	rom_main_14	recon/tla/raw/081b834c	.text	en
-main	rom_main_14	recon/tla/raw/081b83c4	.text	en
 main	rom_main_14	recon/tla/ja/rom	.rom.001b8180	ja
+main	rom_main_14	games/tla/src/graphics/lucky_dice/dice_game	.text
+main	rom_main_14	recon/tla/it/rom	.rom.001b83c4	it
+main	rom_main_14	recon/tla/fr/rom	.rom.001b83c4	fr
+main	rom_main_14	recon/tla/es/rom	.rom.001b83c4	es
+main	rom_main_14	recon/tla/de/rom	.rom.001b83c4	de
+main	rom_main_14	recon/tla/raw/081b83c4	.text	en
 main	rom_main_14	recon/tla/ja/rom	.rom.001b83c4	ja
 main	rom_main_14	games/tla/src/graphics/lucky_dice/dice_game	.rodata
 main	rom_main_15	games/tla/src/system/far_call/audio_engine
@@ -6306,12 +6311,7 @@ main	rom_main_15	games/tla/src/sound/music_set_volume	.text
 main	rom_main_15	games/tla/src/sound/wait_for_completion	.text
 main	rom_main_15	games/tla/src/system/sound_driver_mode
 main	rom_main_15	games/tla/src/sound/noop_stub	.text
-main	rom_main_15	recon/tla/it/rom	.rom.001c1014	it
-main	rom_main_15	recon/tla/fr/rom	.rom.001c1014	fr
-main	rom_main_15	recon/tla/es/rom	.rom.001c1014	es
-main	rom_main_15	recon/tla/de/rom	.rom.001c1014	de
-main	rom_main_15	recon/tla/raw/081c1014	.text	en
-main	rom_main_15	recon/tla/ja/rom	.rom.001c1014	ja
+main	rom_main_15	games/tla/src/sound/audio_test	.text
 main	rom_main_15	games/tla/src/sound/update_toggle_mask	.text
 main	rom_main_15	games/tla/src/sound/song_flag	.text
 main	rom_main_15	games/tla/src/sound/pcm_rate	.text
@@ -6343,19 +6343,8 @@ main	rom_tail_00	games/tla/src/sound/music_track_set_voice_release	.text
 main	rom_tail_00	games/tla/src/sound/tail	.text
 main	rom_tail_00	games/tla/src/sound/music_track_set_voice_length	.text
 main	rom_tail_00	games/tla/src/sound/music_track_set_voice_pan_or_sweep	.text
-main	rom_tail_00	recon/tla/it/rom	.rom.001c342a	it
-main	rom_tail_00	recon/tla/fr/rom	.rom.001c342a	fr
-main	rom_tail_00	recon/tla/es/rom	.rom.001c342a	es
-main	rom_tail_00	recon/tla/de/rom	.rom.001c342a	de
-main	rom_tail_00	recon/tla/raw/081c342a	.text	en
-main	rom_tail_00	recon/tla/ja/rom	.rom.001c342a	ja
 main	rom_tail_00	games/tla/src/sound/empty_callback	.text
-main	rom_tail_00	recon/tla/it/rom	.rom.001c3430	it
-main	rom_tail_00	recon/tla/fr/rom	.rom.001c3430	fr
-main	rom_tail_00	recon/tla/es/rom	.rom.001c3430	es
-main	rom_tail_00	recon/tla/de/rom	.rom.001c3430	de
-main	rom_tail_00	recon/tla/unidentified	.unidentified.081c3430	en
-main	rom_tail_00	recon/tla/ja/rom	.rom.001c3430	ja
+main	rom_tail_00	games/tla/src/sound/audio_test	.rodata
 main	rom_tail_00	games/common/src/sound/tables	.rodata
 main	rom_tail_00	games/tla/sound/voices	.rodata
 main	rom_tail_00	games/tla/sound/cgb_waves	.rodata

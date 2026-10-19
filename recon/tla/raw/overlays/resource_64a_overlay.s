@@ -10109,70 +10109,6 @@ Func_02000e44:
 	.4byte IwramClearWords
 	.endif
 	.endif
-	.section .text.x02009804,"ax",%progbits
-	.global Func_02001804
-	.thumb_func
-Func_02001804:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r7, r0, #0
-	movs r3, #192
-	movs r0, #192
-	lsls r3, r3, #18
-	lsls r0, r0, #2
-	ldr r5, [r3, #60]
-	adds r6, r1, #0
-	bl Runtime_BumpAllocateAlternatePool
-	mov r8, r0
-	mov r1, r8
-	adds r0, r6, #0
-	bl Func_020021f8
-	movs r1, #14
-	ldrsh r3, [r7, r1]
-	movs r1, #12
-	ldrsh r2, [r7, r1]
-	lsls r3, r3, #5
-	adds r3, r3, r2
-	ldr r2, .L_0200986c
-	lsls r3, r3, #1
-	adds r5, r5, r3
-	adds r1, r3, r2
-	adds r5, #8
-	movs r4, #0
-.L_0200983e:
-	movs r0, #0
-.L_02009840:
-	ldrh r3, [r7, #8]
-	ldr r2, .L_02009868
-	muls r3, r4
-	adds r3, r3, r0
-	orrs r3, r2
-	lsls r3, r3, #16
-	asrs r3, r3, #16
-	adds r0, #1
-	strh r3, [r1]
-	strh r3, [r5]
-	adds r1, #2
-	adds r5, #2
-	cmp r0, #15
-	ble .L_02009840
-	adds r4, #1
-	adds r1, #32
-	adds r5, #32
-	cmp r4, #7
-	ble .L_0200983e
-	b .L_02009870
-.L_02009868:
-	.4byte 0xfffff000
-.L_0200986c:
-	.4byte 0x06002000
-.L_02009870:
-	mov r0, r8
-	bl MemFree
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .text.x0200987c,"ax",%progbits
 	.global Func_0200187c
 	.thumb_func
@@ -11866,48 +11802,6 @@ Func_02002068:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .text.x0200a17c,"ax",%progbits
-	.global Func_0200217c
-	.thumb_func
-Func_0200217c:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	movs r0, #255
-	lsls r0, r0, #8
-	adds r0, #255
-	movs r5, #0
-	cmp r6, #0
-	beq .L_0200a1b4
-.L_0200a18c:
-	ldrb r3, [r1]
-	movs r4, #0
-	lsls r3, r3, #8
-	eors r0, r3
-.L_0200a194:
-	movs r3, #128
-	ldr r7, .L_0200a1bc
-	lsls r3, r3, #8
-	ands r3, r0
-	lsls r2, r0, #1
-	adds r4, #1
-	adds r0, r2, r7
-	cmp r3, #0
-	bne .L_0200a1a8
-	adds r0, r2, #0
-.L_0200a1a8:
-	cmp r4, #8
-	bne .L_0200a194
-	adds r5, #1
-	adds r1, #1
-	cmp r5, r6
-	bne .L_0200a18c
-.L_0200a1b4:
-	mvns r0, r0
-	lsls r0, r0, #16
-	lsrs r0, r0, #16
-	pop {r5, r6, r7, pc}
-.L_0200a1bc:
-	.4byte 0xffffefdf
 	.section .bss,"aw",%nobits
 	.global Data_0200274a
 Data_0200274a:

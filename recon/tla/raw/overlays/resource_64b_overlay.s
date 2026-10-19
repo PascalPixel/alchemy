@@ -1,57 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200850c,"ax",%progbits
-	.global Func_0200050c
-	.thumb_func
-Func_0200050c:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_02008570
-	movs r1, #128
-	lsls r1, r1, #2
-	adds r1, #18
-	adds r3, r3, r1
-	movs r2, #7
-	strb r2, [r3]
-	bl Func_02003c3c
-	bl Func_02004a1c
-	movs r0, #8
-	bl Object_GetById
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	bl Party_CountActiveOwners
-	movs r6, #0
-	adds r7, r0, #0
-	movs r5, #0
-	cmp r6, r7
-	bge .L_02008558
-.L_0200853e:
-	ldr r2, .L_02008570
-	movs r1, #134
-	lsls r1, r1, #2
-	adds r3, r5, r1
-	ldrb r0, [r2, r3]
-	bl UnitGet
-	movs r2, #58
-	ldrsh r3, [r0, r2]
-	adds r5, #1
-	adds r6, r6, r3
-	cmp r5, r7
-	blt .L_0200853e
-.L_02008558:
-	cmp r6, #0
-	bne .L_0200856c
-	ldr r3, .L_02008570
-	movs r1, #133
-	lsls r1, r1, #2
-	adds r3, r3, r1
-	ldr r0, [r3]
-	movs r1, #1
-	bl Unit_AddPp
-.L_0200856c:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008570:
-	.4byte gPartyState
 	.section .text.x02008574,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.global Func_02000574

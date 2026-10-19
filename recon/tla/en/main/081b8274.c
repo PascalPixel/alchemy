@@ -1,19 +1,21 @@
-// Draft, differ 114 of 105: draws a number as large digit sprites into the
+// Draft, differ 10 of 105: draws a number as large digit sprites into the
 // slot machine's sprite table, as Func_081b8180 does: digits places from x,
 // 22 pixels apart, leading zeros skipped, tiles 640 + 16 * digit in the given
-// palette. Returns the next free sprite. Left: other: the native multiplies
-// i by 22 in each pass (muls) where loop.c here strength-reduces x + i * 22
-// into a register giv, keeps the work pointer in a stack slot and addresses
-// the two words with two offset givs (+196 in r7, +200 in r10), and keeps
-// the sprite count in r11; here one pointer giv carries both words, so the
-// frame (12 bytes, not 20) and every register differ. Control flow and the
-// divisions match.
+// palette. Returns the next free sprite. The sprite words are volatile, as
+// ☀️'s ReelGame_RunFrame has its OAM shadow (FAKEMATCH(volatile) when
+// adopted), which gives the native's two offset givs, the per-pass muls and
+// the stack slots; as plain u32 words, 114 of 105 instructions differ in
+// tla-en. Left: instruction order only, five single moves, each a stack
+// store or load the native issues a place earlier (the x argument's spill,
+// the y byte's slot, x's reload before the muls) or the constant 1's movs.
+// Tried: x + i * 22 written i * 22 + x (12) or x + 512 + i * 22 (10); six
+// permuter minutes (10).
 #include "types.h"
 #include "ram_buffer.h"
 
 struct ReelSprite {
-  u32 attr01;
-  u32 attr2;
+  volatile u32 attr01;
+  volatile u32 attr2;
 };
 
 struct ReelWork {

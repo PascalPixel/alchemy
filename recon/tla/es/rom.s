@@ -5346,7 +5346,9 @@ Palette_Transform:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
 	.section .rom.001b21ec, "ax"
-	.incbin "baserom.gba", 0x001b21ec, 0x000012fc
+	.incbin "baserom.gba", 0x001b21ec, 0x000010e8
+	.section .rom.001b33ac, "ax"
+	.incbin "baserom.gba", 0x001b33ac, 0x0000013c
 	.section .rom.001b34e8, "ax"
 	.global ReelGame_Run
 	.type ReelGame_Run, %function
@@ -5361,7 +5363,7 @@ ReelGame_Run:
 	.type Func_081b8180, %function
 	.thumb_func
 Func_081b8180:
-	.incbin "baserom.gba", 0x001b8180, 0x00000244
+	.incbin "baserom.gba", 0x001b8180, 0x000001cc
 	.section .rom.001b83c4, "ax"
 	.global Func_081b83c4
 	.type Func_081b83c4, %function
@@ -5411,18 +5413,6 @@ Func_081c08a4:
 	.thumb_func
 MusicPlayer_Tick:
 	.incbin "baserom.gba", 0x001c09d0, 0x00000248
-	.section .rom.001c1014, "ax"
-	.balign 4
-	.global Func_081c1014
-	.type Func_081c1014, %function
-	.thumb_func
-Func_081c1014:
-	.incbin "baserom.gba", 0x001c1014, 0x00000144
-	.section .rom.001c342a, "ax"
-	.incbin "baserom.gba", 0x001c342a, 0x00000002
-	.section .rom.001c3430, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x001c3430, 0x0000000c
 	.section .rom.006a5a6e, "ax"
 	.incbin "baserom.gba", 0x006a5a6e, 0x00000002
 	.section .rom.00859579, "ax"

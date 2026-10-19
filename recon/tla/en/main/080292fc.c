@@ -1,3 +1,14 @@
+// Near miss, differ 30 of 300, all instruction order but one register (127
+// is built in r0, the native r1): script command 0x1c, a sibling of
+// Object_MoveByKeys that moves an object along the nearest rail point within
+// 32 pixels of the direction pad's step. The native issues the opening
+// loads and constant halves in source order where sched2 here interleaves
+// them, and copies positions as in Func_08025698. Measured: the spilled
+// locals take their stack slots in reverse declaration order (declared in
+// code order, differ 66); the rail loop counts up (counting down, loop.c
+// keeps IwramMulQ16 in fp and spills the count, differ 128); the turn is an
+// s32 (as u16, differ 141). Permute 18 minutes: a one-pass block after the
+// sprite load, differ 26 by weight only.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -64,22 +75,26 @@ s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 s32 Func_080292fc(struct ObjectRuntime *object) {
   struct FieldPosition position;
-  struct SpriteAngle *sprite = object->animation;
-  struct RailWork *rail = RAIL_WORK;
-  s32 speed = 0x10000;
-  s32 collisionFlags = 0;
-  s32 value;
+  s32 collisionFlags;
+  struct SpriteAngle *sprite;
+  struct RailWork *rail;
   s32 bestDistance;
+  s32 value;
+  s32 speed;
   struct RailPoint *best;
   struct RailPoint *point;
   struct RailPair *pair;
   s32 count;
   u16 angle;
-  u16 turn;
+  s32 turn;
   struct ObjectRuntime *first;
   struct ObjectRuntime *second;
   struct KeyMoveWork *work;
 
+  sprite = object->animation;
+  rail = RAIL_WORK;
+  speed = 0x10000;
+  collisionFlags = 0;
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = collisionFlags;
@@ -102,7 +117,7 @@ s32 Func_080292fc(struct ObjectRuntime *object) {
     bestDistance = 0x10000000;
     if (rail == NULL)
       goto stop;
-    for (count = 127; count >= 0; count--, point++) {
+    for (count = 0; count < 128; count++, point++) {
       if (point->active == 1) {
         s32 dx = (position.x - point->x) >> 8;
         s32 dy = (position.y - point->y) >> 8;

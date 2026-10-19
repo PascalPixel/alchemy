@@ -17,7 +17,7 @@ its palette.
 | `credits/credits.c` | the credits: the backdrops that slide and crossfade, and the scrolling text |
 | `text/numwords.c` | the counted nouns the German message decoder writes after a number |
 | `text/genders.s` | the grammatical gender of item names, by language |
-| `text/decode_symbol.s`, `render/decode.s`, `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
+| `text/decode_symbol.s`, [`render/decode.s`](render/decode.s), `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
 | `battle_fx/` | the battle effects' sheets and masks (`BattleFx_`), loaded by resource id |
 | `ui/` | window tiles, the small font, icons and menu sprites |
 | `world_map/` | the world map's tiles, palettes and the story frames |
@@ -29,7 +29,7 @@ The unit headers are in `games/tbs/include/unit/graphics/`. Link order is in
 `games/tbs/objects.tsv`; a picture an effect or scene loads by number is an
 entry of the resource directory (`games/tbs/src/system/resource/directory.s`).
 
-## Words used here
+## Words
 
 - **half**: the credits load their backdrops into one of two halves of BG
   tile memory and the BG palette (`alternate`): 0 is VRAM from 0x06000000 and

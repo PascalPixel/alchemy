@@ -129,7 +129,7 @@ Event_SpawnObjectTable:
 	mov r2, r8
 	movs r1, #0
 	ldrsh r0, [r2, r1]
-	bl Func_080ca6a4
+	bl Party_RemapCharacterIdByFlags
 	adds r7, r0, #0
 	mov r0, r11
 	bl ObjectTable_Get

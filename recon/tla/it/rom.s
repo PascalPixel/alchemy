@@ -1624,12 +1624,6 @@ Func_080b1088:
 	.thumb_func
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000b1204, 0x00000084
-	.section .rom.000b1f34, "ax"
-	.incbin "baserom.gba", 0x000b1f34, 0x00000004
-	.section .rom.000c8000, "ax"
-	.global Resource_FarCall006
-Resource_FarCall006:
-	.incbin "baserom.gba", 0x000c8000, 0x00000008
 	.section .rom.000c8008, "ax"
 	.global Game_ResetForNewGameFar
 	.type Game_ResetForNewGameFar, %function
@@ -2364,12 +2358,6 @@ EffectSlot_SetObjectModeFar:
 	.thumb_func
 EffectSlot_SetCallbackFar:
 	.incbin "baserom.gba", 0x000c85b8, 0x00000008
-	.section .rom.000c85c0, "ax"
-	.global Camera_WorldToScreenFar
-	.type Camera_WorldToScreenFar, %function
-	.thumb_func
-Camera_WorldToScreenFar:
-	.incbin "baserom.gba", 0x000c85c0, 0x00000008
 	.section .rom.000c8628, "ax"
 	.global Object_BuildRecordSnapshotFar
 	.type Object_BuildRecordSnapshotFar, %function
@@ -2536,8 +2524,8 @@ Func_080c8938:
 	.thumb_func
 Func_080c8940:
 	.incbin "baserom.gba", 0x000c8950, 0x00000008
-	.section .rom.000c9694, "ax"
-	.incbin "baserom.gba", 0x000c9694, 0x0000028c
+	.section .rom.000c977c, "ax"
+	.incbin "baserom.gba", 0x000c977c, 0x000001a4
 	.section .rom.000c9944, "ax"
 	.global Game_ResetForNewGame
 	.type Game_ResetForNewGame, %function
@@ -2549,12 +2537,6 @@ Game_ResetForNewGame:
 	.section .rom.000c9e48, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000c9e48, 0x000000e4
-	.section .rom.000c9f2c, "ax"
-	.global Encounter_ResolveWorldMapZoneAndBackdrop
-	.type Encounter_ResolveWorldMapZoneAndBackdrop, %function
-	.thumb_func
-Encounter_ResolveWorldMapZoneAndBackdrop:
-	.incbin "baserom.gba", 0x000c9f2c, 0x000000ac
 	.section .rom.000c9fd8, "ax"
 	.global Encounter_SelectEnemyGroup
 	.type Encounter_SelectEnemyGroup, %function
@@ -2562,21 +2544,11 @@ Encounter_ResolveWorldMapZoneAndBackdrop:
 Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000c9fd8, 0x0000018c
 	.section .rom.000ca2fc, "ax"
-	.incbin "baserom.gba", 0x000ca2fc, 0x00000198
+	.incbin "baserom.gba", 0x000ca2fc, 0x0000006c
 	.section .rom.000ca4a8, "ax"
 	.incbin "baserom.gba", 0x000ca4a8, 0x0000006c
-	.section .rom.000ca5d8, "ax"
-	.global BattleFx_SelectBattleCue
-	.type BattleFx_SelectBattleCue, %function
-	.thumb_func
-BattleFx_SelectBattleCue:
-	.incbin "baserom.gba", 0x000ca5d8, 0x000000cc
-	.section .rom.000ca6a4, "ax"
-	.global Event_SelectSpawnObjectMode
-	.type Event_SelectSpawnObjectMode, %function
-	.thumb_func
-Event_SelectSpawnObjectMode:
-	.incbin "baserom.gba", 0x000ca6a4, 0x00000044
+	.section .rom.000ca6e4, "ax"
+	.incbin "baserom.gba", 0x000ca6e4, 0x00000004
 	.section .rom.000ca6e8, "ax"
 	.global Event_SpawnObjectTable
 	.type Event_SpawnObjectTable, %function
@@ -2599,6 +2571,10 @@ Func_080caa4c:
 	.balign 4
 	.incbin "baserom.gba", 0x000cb09c, 0x0000062c
 	.section .rom.000cb91c, "ax"
+	.global Field_RunScene
+	.type Field_RunScene, %function
+	.thumb_func
+Field_RunScene:
 	.incbin "baserom.gba", 0x000cb91c, 0x00000d60
 	.section .rom.000cc67c, "ax"
 	.global Func_080cc67c

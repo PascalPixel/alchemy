@@ -1,8 +1,10 @@
 #ifndef ALCHEMY_SCENE_IDS_H
 #define ALCHEMY_SCENE_IDS_H
 
+extern char SceneId_Title;
 extern char SceneId_WorldMap;
 extern char SceneId_Ov64a;
+extern char SceneId_VenusLighthouseEntrance;
 extern char SceneId_VenusLighthouse;
 extern char SceneId_DailaInteriors1;
 extern char SceneId_DailaInteriors2;
@@ -146,6 +148,7 @@ extern char SceneId_Ov686Room6;
 extern char SceneId_Ov686Room7;
 extern char SceneId_Ov686Room8;
 extern char SceneId_Ov6b1Room1;
+extern char SceneId_Ov6b4;
 extern char SceneId_Ov6b8Room1;
 extern char SceneId_Ov697Room1;
 extern char SceneId_Ov697Room2;

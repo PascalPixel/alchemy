@@ -533,15 +533,7 @@ Func_0200494c:
 	.global Func_02004954
 	.thumb_func
 Func_02004954:
-	.ifdef TLA_EDITION_ES
 	overlay_veneer Camera_WorldToScreenFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Camera_WorldToScreenFar
-	.else
-	overlay_veneer Func_080c85c0
-	.endif
-	.endif
 	.ifndef TLA_EDITION_JA
 	.global Event_ClearInvalidPackedValues
 	.thumb_func

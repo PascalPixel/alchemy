@@ -160,8 +160,8 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
         if (i != 0)
           return 0;
 
-        gPartyState.scene = *(u16 *)&gPartyState.unk25e[2];
-        gPartyState.entrance = *(u16 *)&gPartyState.unk25e[4];
+        gPartyState.scene = *(u16 *)&gPartyState.retreatScene;
+        gPartyState.entrance = *(u16 *)&gPartyState.retreatEntrance;
         runtime->exit = 999;
       }
 

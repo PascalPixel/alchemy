@@ -70,6 +70,91 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Alpine Crossing and Lama Temple
+#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 // the temple's Psynergy Stone
+// Feizhi has found the road blocked and run ahead to look for Hsu.
+#define FLAG_FEIZHI_SAW_ROCKSLIDE 0x8b0
+// Hama has reached Hsu and spoken with him and Feizhi.
+#define FLAG_HAMA_REACHED_HSU 0x8b1
+// Hsu was freed without the party: set with FLAG_HSU_RESCUED when the party
+// comes back from Lama Temple after Xian has heard of the accident. While it
+// is set, Xian's people do not thank the party for the rescue.
+#define FLAG_HSU_RESCUED_WITHOUT_PARTY 0x8b3
+#define FLAG_ALPINE_CROSSING_POWER_BREAD 0xf71 // the crossing's chest
+#define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a   // the temple's chest
+
+// Altin
+#define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff // jumped back into the flood
+#define FLAG_ALTIN_BLOCK_MOVED 0x906      // pushed to its place by Move
+#define FLAG_ALTIN_NUT 0xf73              // a barrel in the houses
+#define FLAG_ALTIN_COINS 0xf74            // a barrel in the houses
+#define FLAG_ALTIN_SLEEP_BOMB 0xf75       // a bed in the houses
+// Scene flags: Altin keeps its water level in them, set on entry.
+#define FLAG_SCENE_TEMP_40 0x240
+#define FLAG_SCENE_TEMP_41 0x241
+#define FLAG_SCENE_TEMP_42 0x242
+
+// Altin Peak, numbered by its rooms (SceneId_AltinPeak1 to 11)
+// A room's floor switch has been flipped from its first position.
+#define FLAG_ALTIN_PEAK_ROOM_3_SWITCH 0x323
+#define FLAG_ALTIN_PEAK_ROOM_5_SWITCH 0x325
+#define FLAG_ALTIN_PEAK_ROOM_6_SWITCH 0x326
+#define FLAG_ALTIN_PEAK_ROOM_7_SWITCH 0x327
+// Room 1's water beast has been seen hopping along its first and its second
+// route.
+#define FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN 0x904
+#define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
+// Room 9's boulder has fallen and rolled down after the party leader.
+#define FLAG_ALTIN_PEAK_BOULDER_FALLEN 0x908
+#define FLAG_ALTIN_PEAK_COOKIE 0xf76        // room 3's chest
+#define FLAG_ALTIN_PEAK_DRAGON_SHIELD 0xf77 // room 5's chest
+#define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78   // room 8's chest
+#define FLAG_ALTIN_PEAK_VIAL 0xf79          // room 11's chest
+#define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07   // room 7's chest
+#define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08   // room 10's chest
+
+// Altmiller Cave
+#define FLAG_MET_INVISIBLE_BABI 0x960 // Babi has asked for his draught
+// Babi has called the party back once as it made to leave without him.
+#define FLAG_BABI_CALLED_PARTY_BACK 0x961
+// The party has saved Babi in Altmiller Cave with his Mystic Draught.
+#define FLAG_BABI_RESCUED 0x962
+#define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30 // behind the rocks' wall
+#define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           // room 3's chest
+#define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d         // room 5's chest
+
+// Babi Lighthouse
+// The stone door that Reveal's switch opens stands open.
+#define FLAG_BABI_LIGHTHOUSE_DOOR_OPEN 0x985
+// Iodem and Faran have asked the party to follow Sheba's kidnappers.
+#define FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED 0x988
+// The party has opened the door before Iodem and Faran, who stay behind.
+#define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
+#define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc // the building site's chest
+
+// Babi Palace
+#define FLAG_COLOSSO_OVER 0x950 // the Colosso finals have been fought
+#define FLAG_WON_COLOSSO 0x951  // the party won the finals
+// The attendant has offered the beds for the night before the finals.
+#define FLAG_BABI_PALACE_FINALS_REST_OFFERED 0x966
+// While set, the beds can be used during the finals.
+#define FLAG_BABI_PALACE_FINALS_BEDS_OPEN 0x967
+// Sheba has felt the party read her mind.
+#define FLAG_SHEBA_NOTICED_MIND_READ 0x968
+// While set, the beds can be used before the finals.
+#define FLAG_BABI_PALACE_BEDS_OPEN 0x969
+#define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a // the party has slept there once
+// The soldiers have come back from Altmiller Cave to Iodem without Babi.
+#define FLAG_IODEM_HEARD_SOLDIERS 0x96b
+// A courtyard guard has passed on Babi's word to go to the colosseum.
+#define FLAG_BABI_PALACE_GUARD_GAVE_WORD 0x96c
+// The other courtyard guard has thanked the party for saving Babi.
+#define FLAG_BABI_PALACE_GUARD_THANKED_PARTY 0x96d
+// Babi and Iodem have spoken with the party after Colosso.
+#define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
+#define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  // lent by Babi after Colosso
+#define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f // in a barrel
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

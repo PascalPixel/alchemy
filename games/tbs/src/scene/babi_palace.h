@@ -1,5 +1,5 @@
-#ifndef BABI_PALACE_H
-#define BABI_PALACE_H
+#ifndef ALCHEMY_BABI_PALACE_H
+#define ALCHEMY_BABI_PALACE_H
 
 #include "keystate.h"
 extern struct EventWork *gEventWork;
@@ -15,6 +15,7 @@ static __inline__ void SetHalf(u16 *at, s32 value) {
   ((union WorkCell *)at)->h = value;
 }
 
+// The Cloak Ball Babi lends the party after Colosso.
 enum { ITEM_CLOAK_BALL = 205 };
 
 #endif

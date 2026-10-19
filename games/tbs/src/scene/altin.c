@@ -83,18 +83,11 @@ enum AltinHouseActor {
   ACTOR_MINE_WORKER = 21
 };
 
-enum {
-  // The water beast has jumped back into the flood.
-  FLAG_WATER_BEAST_LEFT = 0x8ff,
-  // The movable block stands in the cell it was pushed to.
-  FLAG_BLOCK_MOVED = 0x906
-};
-
 // The village's water level, set on entry from the mine's drain flags.
 enum {
-  FLAG_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_00 + 0x40,
-  FLAG_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_00 + 0x41,
-  FLAG_WATER_DRAINED = FLAG_SCENE_TEMP_00 + 0x42
+  FLAG_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_40,
+  FLAG_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_41,
+  FLAG_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 
 enum {
@@ -111,14 +104,6 @@ enum {
   DOOR_MINE = 1,
   DOOR_WITH_WINDOW = 3,
   DOOR_STRAIGHT_IN = 6
-};
-
-enum {
-  SE_BEAST_HOP = 152,
-  SE_BEAST_SPLASH = 229,
-  SE_BEAST_CRY = 147,
-  SE_MINE_DOOR = 188,
-  MUS_WATER_BEAST = 170
 };
 
 enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
@@ -255,7 +240,7 @@ static void Village_TalkToThirstyVillager(void) {
     Engine_ActorSetAnimation(ACTOR_THIRSTY_VILLAGER, ANIM_SHAKE_HEAD);
     Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
     Event_ShowMessageAndWait(ACTOR_THIRSTY_VILLAGER, 0, 10);
-    if (GameFlag_IsSet(FLAG_WATER_BEAST_LEFT) == 0) {
+    if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
       beast = Object_GetById(ACTOR_WATER_BEAST);
 
       Camera_GetEventObject()->motionFlags = 0;
@@ -470,7 +455,8 @@ static void Village_EnterDoor(void) {
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_MINE) {
-    Event_PlayCue(SE_MINE_DOOR);
+    // The mine's door slides open with SE_188, as Lama Temple's does.
+    Event_PlayCue(SE_188);
     Map_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     Map_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
@@ -537,7 +523,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->y += -0x18000;
     if (beast->y < beast->ground) {
       if (beast->counter != 0) {
-        Event_PlayCue(SE_BEAST_SPLASH);
+        Event_PlayCue(SE_229);
         beast->counter = 0;
         beast->shakeFrames = 4;
         Map_SetShake(0, 0x10000, 0x10000);
@@ -549,7 +535,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->onGround = 0;
   }
   if (beast->timer == 0) {
-    Event_PlayCue(SE_BEAST_HOP);
+    Event_PlayCue(SE_152);
     beast->counter = 1;
     Object_SetMode(beast, 2);
     beast->velocityY = 0x30000;
@@ -570,7 +556,7 @@ static void Beast_HopAway(void) {
   Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
-  Event_PlayCue(SE_BEAST_SPLASH);
+  Event_PlayCue(SE_229);
   Engine_ActorDestroy(ACTOR_WATER_BEAST);
   Map_SetShake(0, 0x10000, 0x10000);
   Engine_EventWait(4);
@@ -585,9 +571,9 @@ static void Village_CheckBlockMoved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_MOVABLE_BLOCK);
 
   if ((block->x.fixed >> 20) == 22) {
-    Engine_GameFlagSet(FLAG_BLOCK_MOVED);
+    Engine_GameFlagSet(FLAG_ALTIN_BLOCK_MOVED);
   } else {
-    Engine_GameFlagClear(FLAG_BLOCK_MOVED);
+    Engine_GameFlagClear(FLAG_ALTIN_BLOCK_MOVED);
   }
 }
 
@@ -652,20 +638,21 @@ static void Village_ApplyWaterLevel(void) {
     Engine_ActorDestroy(ACTOR_RETURNING_VILLAGER_B);
     Engine_ActorDestroy(ACTOR_RETURNING_VILLAGER_C);
   }
-  // Restore the remaining beast and its scheduled water spray.
-  if (GameFlag_IsSet(FLAG_WATER_BEAST_LEFT) != 0) {
+  // Restore the remaining beast spitting water, with its sound (SE_170) and
+  // its spray.
+  if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     Engine_ActorDestroy(ACTOR_WATER_BEAST);
   } else {
-    BattleFx_SetQueuedSoundAndPlay(MUS_WATER_BEAST);
+    BattleFx_SetQueuedSoundAndPlay(SE_170);
     Actor_SetChildValue(ACTOR_WATER_BEAST, 2);
     Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_BEAST_SPIT);
-    FieldScheduler_AddCallback(Beast_SpawnSpray, 0xc80);
+    FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
   if (gGameState.entrance == ENTRANCE_FROM_MINE) {
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
   }
   Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
-  if (GameFlag_IsSet(FLAG_BLOCK_MOVED) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_BLOCK_MOVED) != 0) {
     Actor_SetPosition(ACTOR_MOVABLE_BLOCK, PIXELS(360), PIXELS(168));
   }
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVABLE_BLOCK), 0);
@@ -794,6 +781,7 @@ static void Village_ScareOffBeast(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
   Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  // The spitting stops: its sound and its spray end.
   BattleFx_SetQueuedSoundAndPlay(-1);
   Engine_TaskRemoveCallback(Beast_SpawnSpray);
   Engine_EventWait(20);
@@ -801,7 +789,7 @@ static void Village_ScareOffBeast(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
-  Event_PlayCue(SE_BEAST_CRY);
+  Event_PlayCue(SE_147);
   Engine_ActorRunRepeatedMotion(ACTOR_WATER_BEAST, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTHWEST + FACING_STEP, 40);
@@ -809,7 +797,7 @@ static void Village_ScareOffBeast(void) {
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
   Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_VILLAGER, ANIM_SHAKE_HEAD);
-  GameFlag_Set(FLAG_WATER_BEAST_LEFT);
+  GameFlag_Set(FLAG_ALTIN_WATER_BEAST_LEFT);
   Engine_EventEnd();
 }
 
@@ -997,8 +985,8 @@ struct SceneEvent gAltinVillage_Events[] = {
     {TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
     {EVENT_TALK, ACTOR_GREETING_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Village_AskAboutFirstVisit)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
-    {EVENT_TALK, 9, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
+    {EVENT_TALK, ACTOR_GREETING_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
+    {EVENT_TALK, ACTOR_CURIOUS_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
     {EVENT_TALK, ACTOR_CURIOUS_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutHydros)},
     {EVENT_TALK, 10, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowHorribleMyHouseIsTotally)},
     {EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAltinOnceTheMineOpensAgainWell)},
@@ -1017,12 +1005,12 @@ struct SceneEvent gAltinVillage_Events[] = {
     {EVENT_TALK, ACTOR_RETURNING_VILLAGER_C, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutRuins)},
     {EVENT_TALK, ACTOR_FLOODED_ARMOR_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorSeller)},
     {EVENT_TALK, ACTOR_FLOODED_ITEM_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemSeller)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinYouCameToAltinAtA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinYouCameToAltinAtA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_VILLAGER, CONDITION_ALWAYS,
         MSGNO(MsgAltinWeCanGoBackToWork)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CURIOUS_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinItsAlmostLikeTheyreTurningThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CURIOUS_VILLAGER, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWasAfraidMoreWaterWould)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImGladISavedMyVery)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
@@ -1057,7 +1045,7 @@ struct SceneEvent gAltinVillage_Events[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FLOODED_ITEM_SELLER, CONDITION_ALWAYS,
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Village_CheckBlockMoved)},
-    {EVENT_TOUCH, TRIGGER_NEAR_BEAST, FLAG_WATER_BEAST_LEFT, EVENT_SCRIPT(Village_ScareOffBeast)},
+    {EVENT_TOUCH, TRIGGER_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT_SCRIPT(Village_ScareOffBeast)},
     {SCENE_EVENTS_END},
 };
 
@@ -1155,9 +1143,9 @@ struct SceneEvent gAltinHouses_Events[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINE_WORKER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItLooksLikeTheWaterHas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINE_WORKER, CONDITION_ALWAYS,
         MSGNO(MsgAltinItWillTakeSomeTimeBefore)},
-    {SEARCH(SEARCH_BARREL), 100, 0xf73, FIND_ITEM(ITEM_NUT)},
-    {SEARCH(SEARCH_BARREL), 101, 0xf74, FIND_COINS(9)},
-    {SEARCH(SEARCH_BED), 102, 0xf75, FIND_ITEM(ITEM_SLEEP_BOMB)},
+    {SEARCH(SEARCH_BARREL), 100, FLAG_ALTIN_NUT, FIND_ITEM(ITEM_NUT)},
+    {SEARCH(SEARCH_BARREL), 101, FLAG_ALTIN_COINS, FIND_COINS(9)},
+    {SEARCH(SEARCH_BED), 102, FLAG_ALTIN_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},
     {SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinThePotsAndPansAreRusted))},
     {SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS,

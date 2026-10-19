@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_STAGED_ACTOR_EFFECT_H
 #define ALCHEMY_STAGED_ACTOR_EFFECT_H
 
+/// @file
+/// A staged actor's effect and its request.
+
 #include "types.h"
 #include "static_assert.h"
 

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_GLYPH_H
 #define ALCHEMY_GLYPH_H
 
+/// @file
+/// Font glyphs and their palettes.
+
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"

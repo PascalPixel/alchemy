@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_TRANSFORM_H
 #define ALCHEMY_TRANSFORM_H
 
+/// @file
+/// The 3D transform and its stack.
+
 #include "edition.h"
 #include "types.h"
 

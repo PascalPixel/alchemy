@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_METADATA_LOOKUP_H
 #define ALCHEMY_METADATA_LOOKUP_H
 
+/// @file
+/// Animation metadata and its lookup by resource.
+
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_SYSTEM_H
 #define ALCHEMY_SYSTEM_H
 
+/// @file
+/// The system's routines and globals: interrupts, BIOS sound bias, random
+/// numbers and sleep.
+
 #include "types.h"
 #include "mem.h"
 #include "edition.h"
@@ -12,8 +16,6 @@ void Bios_SoundBiasOn(void);
 extern u32 gRandomState;
 
 extern u16 gSleepActive;
-
-// SYSTEM
 
 #include "types.h"
 #include "edition.h"

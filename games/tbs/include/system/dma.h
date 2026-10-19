@@ -1,6 +1,9 @@
 #ifndef GUARD_DMA_H
 #define GUARD_DMA_H
 
+/// @file
+/// DMA channel registers, and the DMA and CPU fills.
+
 #include "io_reg.h"
 #include "types.h"
 

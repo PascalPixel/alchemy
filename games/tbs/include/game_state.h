@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_GAME_STATE_H
 #define ALCHEMY_GAME_STATE_H
 
+/// @file
+/// GameState, the game's state: play time, coins, the scene and the leader's
+/// position, the active party and the options.
+
 #include "types.h"
 #include "static_assert.h"
 #include "battle_unit.h"

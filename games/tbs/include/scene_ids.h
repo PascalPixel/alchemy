@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SCENE_IDS_H
 #define ALCHEMY_SCENE_IDS_H
 
+/// @file
+/// Scene numbers, named after their places.
+
 extern char SceneId_Clear;
 extern char SceneId_Title;
 

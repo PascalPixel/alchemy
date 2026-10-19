@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_DJINN_PREVIEW_H
 #define ALCHEMY_DJINN_PREVIEW_H
 
+/// @file
+/// The Djinn preview's sprites and arrow tiles.
+
 #include "output.h"
 #include "resource.h"
 

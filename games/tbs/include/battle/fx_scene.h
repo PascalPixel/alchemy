@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FX_SCENE_H
 #define ALCHEMY_FX_SCENE_H
 
+/// @file
+/// BattleFxScene, the work of a battle or field Psynergy effect scene, and its
+/// arc objects.
+
 #include "types.h"
 #include "static_assert.h"
 #include "effect_slot.h"

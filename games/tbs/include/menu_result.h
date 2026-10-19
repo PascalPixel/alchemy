@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MENU_RESULT_H
 #define ALCHEMY_MENU_RESULT_H
 
+/// @file
+/// MenuResult, what a menu returns.
+
 #include "unit/menu/menu.h"
 #include "types.h"
 

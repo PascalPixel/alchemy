@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_COORDINATE_H
 #define ALCHEMY_FIELD_COORDINATE_H
 
+/// @file
+/// FieldCoordinate, a position on the field.
+
 #include "types.h"
 #include "static_assert.h"
 

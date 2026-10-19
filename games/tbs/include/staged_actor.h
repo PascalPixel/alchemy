@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_STAGED_ACTOR_H
 #define ALCHEMY_STAGED_ACTOR_H
 
+/// @file
+/// Staged actors: their coordinates, probes and footprints.
+
 #include "types.h"
 #include "animspr.h"
 #include "static_assert.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_COLOSSO_GAUGE_H
 #define ALCHEMY_COLOSSO_GAUGE_H
 
+/// @file
+/// The Colosso race gauge's sprites and work.
+
 #include "types.h"
 #include "static_assert.h"
 

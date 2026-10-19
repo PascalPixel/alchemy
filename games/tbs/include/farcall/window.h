@@ -1,6 +1,8 @@
+/// @file
 /// Window construction, text drawing and selection interfaces.
 /// Far-call interfaces; their ordered jump stubs live in
 /// games/tbs/src/system/far_call/WINDOW.S.
+
 void UiWork_InitializeWithResourceCountersFar(void);
 void UiWork_InitializeFar(s32 kind);
 #ifndef OWN_UiWindow_CreateFar

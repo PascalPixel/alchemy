@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FLASH_H
 #define ALCHEMY_FLASH_H
 
+/// @file
+/// Flash memory: erasing, programming and reading sectors.
+
 #include "types.h"
 
 u16 EraseFlashSector(u16 sector);

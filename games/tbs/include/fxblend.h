@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FXBLEND_H
 #define ALCHEMY_FXBLEND_H
 
+/// @file
+/// FieldBlendWork, the field's colour blend work.
+
 #include "types.h"
 #include "static_assert.h"
 

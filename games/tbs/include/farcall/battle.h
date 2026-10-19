@@ -1,6 +1,8 @@
+/// @file
 /// Battle state, unit motion and presentation services.
 /// Far-call interfaces; their ordered jump stubs live in
 /// games/tbs/src/system/far_call/BATTLE.S.
+
 void DebugBattle_RunMenuFar(void);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 refresh);
 void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 zoom);

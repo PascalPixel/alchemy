@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_OVERLAY_OBJECT_H
 #define ALCHEMY_OVERLAY_OBJECT_H
 
+/// @file
+/// Overlay objects and their records.
+
 #include "types.h"
 #include "static_assert.h"
 

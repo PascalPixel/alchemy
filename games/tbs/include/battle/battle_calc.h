@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_CALC_H
 #define ALCHEMY_BATTLE_CALC_H
 
+/// @file
+/// The battle calculation tables: hit chances, HP and PP damage and recovery.
+
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

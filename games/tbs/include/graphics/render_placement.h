@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RENDER_PLACEMENT_H
 #define ALCHEMY_RENDER_PLACEMENT_H
 
+/// @file
+/// A sprite's screen position and scale.
+
 #include "types.h"
 #include "static_assert.h"
 

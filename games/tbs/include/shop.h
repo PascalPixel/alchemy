@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SHOP_H
 #define ALCHEMY_SHOP_H
 
+/// @file
+/// ShopRuntime, a shop's work, and the shop screen's tiles.
+
 #include "unit/shop/shop.h"
 #include "global_cells.h"
 #include "item.h"

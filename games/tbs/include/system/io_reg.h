@@ -1,6 +1,9 @@
 #ifndef GUARD_IO_REG_H
 #define GUARD_IO_REG_H
 
+/// @file
+/// The hardware's I/O registers and their bits, as pret names them.
+
 #include "types.h"
 
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)

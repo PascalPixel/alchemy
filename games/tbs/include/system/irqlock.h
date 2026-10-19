@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_IRQLOCK_H
 #define ALCHEMY_IRQLOCK_H
 
+/// @file
+/// Saving, disabling and restoring the interrupt master enable.
+
 #include "io_reg.h"
 #include "types.h"
 

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_DISPLAY_H
 #define ALCHEMY_BATTLE_DISPLAY_H
 
+/// @file
+/// The battle camera and the presentation's transition, background and affine
+/// work.
+
 #include "battle_session.h"
 #include "battle_effect_argument.h"
 

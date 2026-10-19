@@ -1,6 +1,16 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
+/// @file
+/// The scene script layer: the engine services a scene's events call, declared
+/// once (Engine_EventBegin, Engine_ActorJump, Engine_EventSetMessage and the
+/// rest), with the constants and small inlines scenes share.
+///
+/// It is a habit of the whole game written once, as declarations and macros: a
+/// layer, not a compiler-steering device (AGENTS.md S2). The event.h commands
+/// and field_service.h are written over it. A scene's event reads `EV_BEGIN();
+/// Engine_ActorStop(9); OBJ_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
+
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "mapcopy.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ORBIT_H
 #define ALCHEMY_ORBIT_H
 
+/// @file
+/// The views of an orbiting scene object's sprite.
+
 #include "types.h"
 
 typedef struct OrbitingSceneObjectSprite {

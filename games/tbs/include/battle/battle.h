@@ -2,7 +2,7 @@
 #define BATTLE_H
 
 /// @file
-/// BATTLE
+/// The battle bank's routines and globals, as the other banks see them.
 
 #include "types.h"
 #include "edition.h"

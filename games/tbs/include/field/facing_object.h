@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FACING_OBJECT_H
 #define ALCHEMY_FACING_OBJECT_H
 
+/// @file
+/// FacingObject, the view of an object that turns to face a target.
+
 #include "types.h"
 #include "static_assert.h"
 

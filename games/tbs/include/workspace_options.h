@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_WORKSPACE_OPTIONS_H
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
+/// @file
+/// The options screen's work and the selection work.
+
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "types.h"

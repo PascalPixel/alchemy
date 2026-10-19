@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_H
 #define ALCHEMY_BATTLE_EFFECT_H
 
+/// @file
+/// The battle effect argument and the rectangle-drawing routines effects call.
+
 #include "edition.h"
 #include "types.h"
 

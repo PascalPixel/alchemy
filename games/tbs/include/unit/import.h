@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_UNIT_IMPORT_H
 #define ALCHEMY_UNIT_IMPORT_H
 
+/// @file
+/// The main-image routines scene overlays import.
+
 #include "types.h"
 
 struct FieldPosition;

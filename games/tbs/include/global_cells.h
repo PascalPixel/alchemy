@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_GLOBAL_CELLS_H
 #define ALCHEMY_GLOBAL_CELLS_H
 
+/// @file
+/// The work slots of gWorkSlot, read through their own names.
+
 #include "types.h"
 #include "effect_step.h"
 

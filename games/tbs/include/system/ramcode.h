@@ -1,6 +1,9 @@
 #ifndef GUARD_RAMCODE_H
 #define GUARD_RAMCODE_H
 
+/// @file
+/// Copying ARM routines to RAM to run them there.
+
 #include "dma.h"
 #include "io_reg.h"
 #include "mem.h"

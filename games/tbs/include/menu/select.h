@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SELECT_H
 #define ALCHEMY_SELECT_H
 
+/// @file
+/// The selection screen's sprites and nodes.
+
 #include "types.h"
 #include "static_assert.h"
 #include "window.h"

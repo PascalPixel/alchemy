@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
+/// @file
+/// Ability numbers, named from the English release.
+
 /// Ability numbers. Each ability's name is message 819 plus its number in the
 /// game's text (Frost is message 843, Mind Read 960).
 enum AbilityId {

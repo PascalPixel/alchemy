@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_DJINN_MENU_H
 #define ALCHEMY_DJINN_MENU_H
 
+/// @file
+/// The Djinn menu: its list tables, backdrop and work, and the fields of a
+/// Djinni's list entry.
+
 #include "types.h"
 #include "global_cells.h"
 #include "render_input.h"

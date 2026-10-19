@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_UIWINDOW_H
 #define ALCHEMY_UIWINDOW_H
 
+/// @file
+/// UiWindow, a window's work, and marking its tilemap rows for transfer.
+
 #include "render_input.h"
 
 struct UiWindow {

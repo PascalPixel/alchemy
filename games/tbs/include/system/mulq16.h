@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MULQ16_H
 #define ALCHEMY_MULQ16_H
 
+/// @file
+/// MulQ16, the 16.16 fixed-point multiply.
+
 #include "types.h"
 
 /// Multiplies 16.16 fixed-point values, returning the middle 32 product bits.

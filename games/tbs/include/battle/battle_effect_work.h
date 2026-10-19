@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_WORK_H
 #define ALCHEMY_BATTLE_EFFECT_WORK_H
 
+/// @file
+/// BattleEffectWork, the running battle effect's work, and its animation
+/// objects.
+
 #include "effect_step.h"
 #include "battle_effect_argument.h"
 #include "static_assert.h"

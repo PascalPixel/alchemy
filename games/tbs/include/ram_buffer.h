@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RAM_BUFFER_H
 #define ALCHEMY_RAM_BUFFER_H
 
+/// @file
+/// The work pointers in the gWorkSlot table, by name.
+
 #include "types.h"
 #include "version.h"
 

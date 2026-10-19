@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RESOURCE_IDS_H
 #define ALCHEMY_RESOURCE_IDS_H
 
+/// @file
+/// Resource numbers, named where their contents are known.
+
 extern char ResourceId_BuildStamp;
 extern char ResourceId_PaletteFarCalls;
 extern char ResourceId_EffectFarCalls;

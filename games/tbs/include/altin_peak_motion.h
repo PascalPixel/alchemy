@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ALTIN_PEAK_MOTION_H
 #define ALCHEMY_ALTIN_PEAK_MOTION_H
 
+/// @file
+/// The hopping motion Altin Peak's scene code reads from an actor's work.
+
 #include "types.h"
 #include "static_assert.h"
 

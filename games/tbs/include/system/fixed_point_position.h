@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIXED_POINT_POSITION_H
 #define ALCHEMY_FIXED_POINT_POSITION_H
 
+/// @file
+/// FixedPointPosition, a position in 16.16 fixed point.
+
 #include "types.h"
 #include "static_assert.h"
 

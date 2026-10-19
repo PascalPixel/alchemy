@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RESOURCE_MENU_H
 #define ALCHEMY_RESOURCE_MENU_H
 
+/// @file
+/// The resource menu's entries and work.
+
 #include "types.h"
 #include "static_assert.h"
 #include "window.h"

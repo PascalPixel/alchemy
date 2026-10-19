@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_COMMAND_H
 #define ALCHEMY_BATTLE_COMMAND_H
 
+/// @file
+/// The battle command names: auto battle and the battle options (aliases of
+/// debug and key globals), and the actions' flag and status tables.
+
 #include "battle_system.h"
 #include "item.h"
 #include "keystate.h"

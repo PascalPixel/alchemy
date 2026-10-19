@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_EFFECT_SLOT_H
 #define ALCHEMY_EFFECT_SLOT_H
 
+/// @file
+/// Effect slots: the particles Psynergy effects move and draw.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

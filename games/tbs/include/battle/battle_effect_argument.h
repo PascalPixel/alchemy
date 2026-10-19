@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_ARGUMENT_H
 #define ALCHEMY_BATTLE_EFFECT_ARGUMENT_H
 
+/// @file
+/// BattleEffectArgument, the command an effect's caller, dispatcher and
+/// handlers share, and the macros that define effect kinds.
+
 #include "types.h"
 #include "static_assert.h"
 

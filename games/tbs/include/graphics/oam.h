@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_OAM_H
 #define ALCHEMY_OAM_H
 
+/// @file
+/// OAM usage counts.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

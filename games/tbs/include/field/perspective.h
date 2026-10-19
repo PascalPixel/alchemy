@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_PERSPECTIVE_H
 #define ALCHEMY_PERSPECTIVE_H
 
+/// @file
+/// The world map's perspective view work.
+
 #include "types.h"
 #include "static_assert.h"
 

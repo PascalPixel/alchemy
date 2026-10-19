@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_NODE_CHAIN_H
 #define ALCHEMY_NODE_CHAIN_H
 
+/// @file
+/// NodeChain, a chain of menu nodes.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

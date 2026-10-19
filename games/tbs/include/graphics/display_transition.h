@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_DISPLAY_TRANSITION_H
 #define ALCHEMY_DISPLAY_TRANSITION_H
 
+/// @file
+/// The display transition's frames, windows and state.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_PSYNERGY_MENU_H
 #define ALCHEMY_PSYNERGY_MENU_H
 
+/// @file
+/// The Psynergy menu's state.
+
 #include "unit/menu/menu.h"
 #include "global_cells.h"
 #include "static_assert.h"

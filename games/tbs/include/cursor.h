@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_CURSOR_H
 #define ALCHEMY_CURSOR_H
 
+/// @file
+/// The cursor that approaches its target, shared by shops, name entry and
+/// settings.
+
 #include "types.h"
 #include "static_assert.h"
 #include "render_input.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FLAGS_H
 #define ALCHEMY_FLAGS_H
 
+/// @file
+/// Game flags, named where their meaning is shown.
+
 /// Flags 0 to 7: the character with that id (character_ids.h) is in the party
 /// (Party_AddActiveOwner).
 #define FLAG_IN_PARTY(character) (character)

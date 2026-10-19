@@ -1,6 +1,8 @@
+/// @file
 /// Field actors, movement, map drawing and scene services.
 /// Far-call interfaces; their ordered jump stubs live in
 /// games/tbs/src/system/far_call/FIELD.S.
+
 void ObjectSystem_ConfigureFar(s32 mode);
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite,
                                        const struct SpritePlacement *position,

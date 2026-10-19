@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
+/// @file
+/// The battle animation state, render objects and effect entries, and the
+/// palette buffer work.
+
 #include "unit/object/object.h"
 #include "object_lookup.h"
 #include "types.h"

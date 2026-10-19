@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SCRIPT_MOTION_H
 #define ALCHEMY_SCRIPT_MOTION_H
 
+/// @file
+/// ScriptMotionObject, an object moved by a field script.
+
 #include "types.h"
 #include "static_assert.h"
 

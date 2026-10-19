@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_RESOURCE_388_RUNTIME_H
 #define ALCHEMY_RESOURCE_388_RUNTIME_H
 
+/// @file
+/// The views a scene overlay takes of its runtime work and slots; most fields
+/// are still unnamed.
+
 #include "global_cells.h"
 #include "static_assert.h"
 

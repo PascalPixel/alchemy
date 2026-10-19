@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_STATIC_ASSERT_H
 #define ALCHEMY_STATIC_ASSERT_H
 
+/// @file
+/// STATIC_ASSERT, a compile-time check that emits nothing.
+
 #include "types.h"
 #include "stddef.h"
 

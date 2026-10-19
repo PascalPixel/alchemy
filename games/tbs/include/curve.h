@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_CURVE_H
 #define ALCHEMY_CURVE_H
 
+/// @file
+/// The step counts and value shift of a curve table.
+
 #include "types.h"
 
 enum {

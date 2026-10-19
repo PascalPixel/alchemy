@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MAP_SCROLL_H
 #define ALCHEMY_MAP_SCROLL_H
 
+/// @file
+/// The map layers' scroll work and the background scroll values.
+
 #include "types.h"
 #include "global_cells.h"
 #include "static_assert.h"

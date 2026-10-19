@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_KEYSTATE_H
 #define ALCHEMY_KEYSTATE_H
 
+/// @file
+/// The keypad state the VBlank interrupt keeps.
+
 #include "types.h"
 
 /// The keypad state. The VBlank interrupt rewrites these cells, so like the

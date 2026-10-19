@@ -1,6 +1,15 @@
 #ifndef FIELD_SERVICE_H
 #define FIELD_SERVICE_H
 
+/// @file
+/// The scene service layer: one typed inline for each engine service a scene
+/// calls by its own name, passing it on to the main image's import (Actor_Jump
+/// calls Engine_ActorJump).
+///
+/// It is a habit of the whole game written once: a layer, not a
+/// compiler-steering device (AGENTS.md S2). A scene writes
+/// `Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);` and the inline makes the call.
+
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_EVENT_WORK_H
 #define ALCHEMY_EVENT_WORK_H
 
+/// @file
+/// EventWork, the running scene's event work.
+
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"

@@ -2,7 +2,7 @@
 #define MENU_H
 
 /// @file
-/// MENU
+/// The menus' list orders, sign strings and routines.
 
 #include "types.h"
 #include "edition.h"

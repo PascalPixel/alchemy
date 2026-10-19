@@ -1,6 +1,9 @@
 #ifndef GUARD_PRESET_TABLE_H
 #define GUARD_PRESET_TABLE_H
 
+/// @file
+/// PresetValues, a row of preset values.
+
 #include "types.h"
 
 struct PresetValues {

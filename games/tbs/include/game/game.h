@@ -2,7 +2,7 @@
 #define GAME_H
 
 /// @file
-/// GAME
+/// The item and summon tables and the game bank's routines.
 
 #include "types.h"
 #include "edition.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_EFFECT_H
 #define ALCHEMY_FIELD_EFFECT_H
 
+/// @file
+/// Field effects, their scripts and the flags that spawn them.
+
 #include "edition.h"
 #include "field_event.h"
 #include "vector3.h"

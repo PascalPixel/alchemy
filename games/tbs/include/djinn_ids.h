@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_DJINN_IDS_H
 #define ALCHEMY_DJINN_IDS_H
 
+/// @file
+/// Djinn numbers, named from the English release.
+
 /// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINNI_0 count them:
 /// 20 to an element, in the order Venus, Mercury, Mars, Jupiter. A Djinni's
 /// English name is message 1119 + its number.

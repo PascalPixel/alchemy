@@ -1,6 +1,9 @@
 #ifndef GUARD_FIELD_SCRIPT_H
 #define GUARD_FIELD_SCRIPT_H
 
+/// @file
+/// The field object script interpreter and the operands its commands read.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

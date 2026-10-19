@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RESOURCE_H
 #define ALCHEMY_RESOURCE_H
 
+/// @file
+/// The parts of a battle sprite id.
+
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

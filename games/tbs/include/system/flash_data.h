@@ -1,6 +1,9 @@
 #ifndef GUARD_FLASH_DATA_H
 #define GUARD_FLASH_DATA_H
 
+/// @file
+/// The flash chips: sector size and count, and each chip type's routines.
+
 #include "types.h"
 
 typedef u16 (*FlashWaitProc)(u8 timingIndex, volatile u8 *address, u8 expected);

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_HEAP_STATE_H
 #define ALCHEMY_HEAP_STATE_H
 
+/// @file
+/// The heap's work slots and HeapState.
+
 #include "types.h"
 #include "static_assert.h"
 

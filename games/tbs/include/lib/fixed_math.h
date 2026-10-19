@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIXED_MATH_H
 #define ALCHEMY_FIXED_MATH_H
 
+/// @file
+/// 16.16 fixed-point constants, sine and cosine, and the library division.
+
 #include "types.h"
 
 /// One in the engine's signed 16.16 fixed-point format.

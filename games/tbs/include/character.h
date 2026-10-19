@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_CHARACTER_H
 #define ALCHEMY_CHARACTER_H
 
+/// @file
+/// The definitions of characters, classes, Djinn and enemies, and a level up's
+/// result.
+
 #include "unit/game/game.h"
 #include "types.h"
 #include "owner_value.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RUNTIME_MEM_H
 #define ALCHEMY_RUNTIME_MEM_H
 
+/// @file
+/// The heaps: allocating and freeing blocks.
+
 #include "edition.h"
 #include "types.h"
 

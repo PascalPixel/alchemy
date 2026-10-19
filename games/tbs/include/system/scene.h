@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SCENE_H
 #define ALCHEMY_SCENE_H
 
+/// @file
+/// FIELD_AT_OFFSET and the entity and camera views older scene code reads.
+
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

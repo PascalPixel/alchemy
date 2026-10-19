@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MENU_LIST_H
 #define ALCHEMY_MENU_LIST_H
 
+/// @file
+/// Menu lists: sprites, cursors, the party status window and paged selections.
+
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "types.h"

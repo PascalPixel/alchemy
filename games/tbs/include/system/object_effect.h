@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_OBJECT_EFFECT_H
 #define ALCHEMY_OBJECT_EFFECT_H
 
+/// @file
+/// The fade overlay, the weather particles and the actor effect work.
+
 #include "types.h"
 #include "edition.h"
 

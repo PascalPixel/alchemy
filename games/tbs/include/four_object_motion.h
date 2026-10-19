@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FOUR_OBJECT_MOTION_H
 #define ALCHEMY_FOUR_OBJECT_MOTION_H
 
+/// @file
+/// FourObjectMotion, the row of four figures the Status and Djinn menus show.
+
 #include "types.h"
 #include "global_cells.h"
 #include "static_assert.h"

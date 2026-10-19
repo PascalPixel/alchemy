@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_OBJECT_DISPATCH_H
 #define ALCHEMY_OBJECT_DISPATCH_H
 
+/// @file
+/// The object dispatcher's scripts: key checks, the player, the world map and
+/// the camera.
+
 #include "unit/field/field.h"
 #include "types.h"
 

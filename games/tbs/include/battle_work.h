@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_WORK_H
 #define ALCHEMY_BATTLE_WORK_H
 
+/// @file
+/// BattleWork, the battle's own work, and the battle display work.
+
 #include "unit/battle/battle.h"
 #include "types.h"
 #include "static_assert.h"

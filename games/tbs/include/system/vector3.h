@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_VECTOR3_H
 #define ALCHEMY_VECTOR3_H
 
+/// @file
+/// Vector3, a three-coordinate vector.
+
 #include "types.h"
 #include "static_assert.h"
 

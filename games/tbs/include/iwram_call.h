@@ -1,6 +1,16 @@
 #ifndef ALCHEMY_IWRAM_CALL_H
 #define ALCHEMY_IWRAM_CALL_H
 
+/// @file
+/// The IWRAM call layer: the routines the game keeps resident in IWRAM, each at
+/// its fixed address, and one typed inline per routine that every call goes
+/// through.
+///
+/// It is a habit of the whole game written once: a layer, not a
+/// compiler-steering device (AGENTS.md S2). Code writes `Iwram_Sqrt(value)` or
+/// `Iwram_SignedDivide(dividend, divisor)`, and the inline calls the routine at
+/// its fixed address.
+
 #include "types.h"
 
 // Fixed addresses of IWRAM-resident routines.

@@ -1,6 +1,9 @@
 #ifndef GUARD_SAVE_STATE_H
 #define GUARD_SAVE_STATE_H
 
+/// @file
+/// The save workspace: slot headers and summaries.
+
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "types.h"

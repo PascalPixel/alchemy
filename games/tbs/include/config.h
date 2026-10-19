@@ -1,9 +1,9 @@
-// Build switches
-// Build switches, as pret's config.h: BUGFIX opts in to fixes of the
-// original game's bugs, and UBFIX gives undefined behaviour its defined
-// form. The matching build defines neither; the modern build defines UBFIX.
 #ifndef ALCHEMY_CONFIG_H
 #define ALCHEMY_CONFIG_H
+
+/// @file
+/// Build switches, as pret's config.h: BUGFIX opts in to fixes of the original
+/// game's bugs, and UBFIX gives undefined behaviour its defined form.
 
 // Uncomment to fix some identified minor bugs
 // #define BUGFIX

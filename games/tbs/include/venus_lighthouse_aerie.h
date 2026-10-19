@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_VENUS_LIGHTHOUSE_AERIE_H
 #define ALCHEMY_VENUS_LIGHTHOUSE_AERIE_H
 
+/// @file
+/// Venus Lighthouse aerie's actors, entrances and exits.
+
 #include "field_scene.h"
 #include "types.h"
 

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_PARTY_H
 #define ALCHEMY_BATTLE_PARTY_H
 
+/// @file
+/// Which units are in a battle, and the Djinn recovery list.
+
 #include "edition.h"
 #include "static_assert.h"
 

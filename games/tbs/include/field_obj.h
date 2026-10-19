@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_OBJ_H
 #define ALCHEMY_FIELD_OBJ_H
 
+/// @file
+/// Field objects and actors, and the scene transition styles.
+
 #include "types.h"
 #include "static_assert.h"
 

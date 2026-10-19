@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ITEM_IDS_H
 #define ALCHEMY_ITEM_IDS_H
 
+/// @file
+/// Item numbers, named from the English release.
+
 /// Item ids, named from the English release: an item's name is message
 /// 386 + its id. Only items the code names are listed.
 enum ItemId {

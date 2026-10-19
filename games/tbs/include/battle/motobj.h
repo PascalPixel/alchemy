@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MOTION_OBJECT_H
 #define ALCHEMY_MOTION_OBJECT_H
 
+/// @file
+/// MotionObject, an effect object that moves and draws one sprite.
+
 #include "types.h"
 #include "static_assert.h"
 #include "battle_session.h"

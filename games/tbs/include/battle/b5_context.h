@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_B5_CONTEXT_H
 #define ALCHEMY_B5_CONTEXT_H
 
+/// @file
+/// B5Context, the object context a battle routine reads; most of its fields are
+/// still unnamed.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

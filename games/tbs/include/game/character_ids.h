@@ -1,6 +1,8 @@
-// Character numbers, with each character's Japanese name
 #ifndef CHARACTER_IDS_H
 #define CHARACTER_IDS_H
+
+/// @file
+/// Character numbers, with each character's Japanese name.
 
 #define ISAAC 0 ///< Robin
 #define GARET 1 ///< Jerald

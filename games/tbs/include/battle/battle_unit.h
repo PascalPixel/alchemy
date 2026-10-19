@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_UNIT_H
 #define ALCHEMY_BATTLE_UNIT_H
 
+/// @file
+/// BattleUnit, a party member's or enemy's battle state, with the elements,
+/// abilities and actions it uses.
+
 #include "edition.h"
 #include "static_assert.h"
 

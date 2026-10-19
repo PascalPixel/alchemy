@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MAP_H
 #define ALCHEMY_MAP_H
 
+/// @file
+/// Maps: their cells, layers, animations and blend scripts, and the map state.
+
 #include "unit/field/field.h"
 #include "types.h"
 #include "static_assert.h"

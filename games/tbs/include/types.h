@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_TYPES_H
 #define ALCHEMY_TYPES_H
 
+/// @file
+/// The integer types, TRUE, UNUSED and the fixed-address macros.
+
 #include "version.h"
 #include "config.h"
 

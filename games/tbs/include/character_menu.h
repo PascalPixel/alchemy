@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_CHARACTER_MENU_H
 #define ALCHEMY_CHARACTER_MENU_H
 
+/// @file
+/// The character menu's state, and the ailments it shows.
+
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "unit/menu/menu.h"

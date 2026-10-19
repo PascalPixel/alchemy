@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_RENDER_INPUT_H
 #define ALCHEMY_RENDER_INPUT_H
 
+/// @file
+/// The sprite renderer's inputs and outputs: render inputs, OAM attributes and
+/// render output lists.
+
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"

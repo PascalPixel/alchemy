@@ -1,6 +1,9 @@
 #ifndef GUARD_SERIAL_RUNTIME_H
 #define GUARD_SERIAL_RUNTIME_H
 
+/// @file
+/// The link cable's runtime: serial packets, registers and transfer state.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

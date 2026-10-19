@@ -1,6 +1,9 @@
 #ifndef FIELD_H
 #define FIELD_H
 
+/// @file
+/// The field engine's shared routines, globals and object scripts.
+
 #include "types.h"
 #include "edition.h"
 #include "object_runtime.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_TBS_IOWRITE_H
 #define ALCHEMY_TBS_IOWRITE_H
 
+/// @file
+/// Io_Write16, a 16-bit write to a register or memory.
+
 #include "types.h"
 
 /// Writes a value to a 16-bit register or memory location.

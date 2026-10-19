@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_CALL_H
 #define ALCHEMY_CALL_H
 
+/// @file
+/// Calls through a function pointer, by argument count.
+
 #include "types.h"
 
 static __inline__ void Call1(void (*f)(), s32 a0) {

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_INN_RUNTIME_H
 #define ALCHEMY_INN_RUNTIME_H
 
+/// @file
+/// InnRuntimeState, an inn's work.
+
 #include "global_cells.h"
 #include "static_assert.h"
 #include "types.h"

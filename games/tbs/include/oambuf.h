@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_OAMBUF_H
 #define ALCHEMY_OAMBUF_H
 
+/// @file
+/// OamShadow, a sprite entry a routine builds by hand and DMA copies to OAM.
+
 #include "types.h"
 
 /// OAM buffer: sprite entries a routine builds by hand and DMA copies to OAM.

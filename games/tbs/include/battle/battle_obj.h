@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_OBJ_H
 #define ALCHEMY_BATTLE_OBJ_H
 
+/// @file
+/// Actor_Place, which places a battle object for a unit.
+
 #include "edition.h"
 #include "types.h"
 

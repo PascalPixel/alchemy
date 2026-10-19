@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_EFFECT_STEP_H
 #define ALCHEMY_EFFECT_STEP_H
 
+/// @file
+/// EffectStep and EffectPosition, the positions effects move through.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_INVENTORY_MENU_H
 #define ALCHEMY_INVENTORY_MENU_H
 
+/// @file
+/// The item menu's state and commands.
+
 #include "unit/menu/menu.h"
 #include "global_cells.h"
 #include "static_assert.h"

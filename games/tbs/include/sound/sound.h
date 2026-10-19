@@ -2,7 +2,8 @@
 #define SOUND_H
 
 /// @file
-/// SOUND
+/// The sound tables (CGB codes, frequency steps, frame lengths) and the sound
+/// routines.
 
 #include "types.h"
 #include "edition.h"

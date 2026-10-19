@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EVENT_H
 #define ALCHEMY_BATTLE_EVENT_H
 
+/// @file
+/// The battle event queue: the events BattleEvPush queues and the playback
+/// phases that play them.
+
 #include "edition.h"
 #include "static_assert.h"
 

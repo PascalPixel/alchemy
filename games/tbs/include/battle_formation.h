@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_FORMATION_H
 #define ALCHEMY_BATTLE_FORMATION_H
 
+/// @file
+/// The enemy formation records.
+
 #include "types.h"
 
 struct BattleFormationRecord {

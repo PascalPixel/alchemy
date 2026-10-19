@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_SESSION_H
 #define ALCHEMY_BATTLE_SESSION_H
 
+/// @file
+/// A battle's objects and sprites, each unit's command and action record, and
+/// the spoils.
+
 #include "types.h"
 #include "static_assert.h"
 

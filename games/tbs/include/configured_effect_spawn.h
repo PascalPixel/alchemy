@@ -1,6 +1,10 @@
 #ifndef GUARD_CONFIGURED_EFFECT_SPAWN_H
 #define GUARD_CONFIGURED_EFFECT_SPAWN_H
 
+/// @file
+/// The sprite and effect views and the options a scene's configured effect
+/// spawner uses.
+
 #include "types.h"
 
 struct Sprite {

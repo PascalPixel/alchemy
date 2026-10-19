@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_ANIMSPR_H
 #define ALCHEMY_ANIMSPR_H
 
+/// @file
+/// Animated sprites: their layers, frames and colour modes, and the resource
+/// slots they draw from.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_AUDIO_ENGINE_TYPES_H
 #define ALCHEMY_AUDIO_ENGINE_TYPES_H
 
+/// @file
+/// The sound driver's types, registers and work.
+
 #include "types.h"
 #include "../lib/static_assert.h"
 

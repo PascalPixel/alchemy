@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_AFFINE_H
 #define ALCHEMY_AFFINE_H
 
+/// @file
+/// Sprite rotation and scale, and the affine matrices handed out each frame.
+
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "static_assert.h"

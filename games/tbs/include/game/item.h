@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ITEM_H
 #define ALCHEMY_ITEM_H
 
+/// @file
+/// Items: their definitions, types, flags and effects.
+
 #include "static_assert.h"
 #include "edition.h"
 #include "farcall.h"

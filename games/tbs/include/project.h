@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_PROJECT_H
 #define ALCHEMY_PROJECT_H
 
+/// @file
+/// The 3D projection.
+
 #include "types.h"
 #include "static_assert.h"
 

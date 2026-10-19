@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RESOURCE_3A8_EFFECT_H
 #define ALCHEMY_RESOURCE_3A8_EFFECT_H
 
+/// @file
+/// The view a scene overlay takes of an effect; most fields are still unnamed.
+
 #include "types.h"
 #include "static_assert.h"
 

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SCROLL_H
 #define ALCHEMY_SCROLL_H
 
+/// @file
+/// The display scroll work, the HBlank scroll work and its wave.
+
 #include "map_scroll.h"
 #include "static_assert.h"
 

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_TEXT_READER_H
 #define ALCHEMY_TEXT_READER_H
 
+/// @file
+/// TextReader, a cursor through message text.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

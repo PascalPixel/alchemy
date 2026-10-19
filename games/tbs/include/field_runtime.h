@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FIELD_RUNTIME_H
 #define ALCHEMY_FIELD_RUNTIME_H
 
+/// @file
+/// The field's runtime work: map cells, scene records and regions, map markers
+/// and FieldWork.
+
 #include "types.h"
 #include "static_assert.h"
 #include "object_runtime.h"

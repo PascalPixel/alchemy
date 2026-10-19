@@ -1,6 +1,9 @@
 #ifndef GUARD_EDITION_H
 #define GUARD_EDITION_H
 
+/// @file
+/// The edition's language, for C to compare (LANGUAGE == LANGUAGE_GERMAN).
+
 #if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN) +                       \
      defined(TBS_EDITION_DE) + defined(TBS_EDITION_ES) +                       \
      defined(TBS_EDITION_FR) + defined(TBS_EDITION_IT)) > 1

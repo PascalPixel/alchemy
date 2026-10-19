@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SCRIPT_OBJECT_RUNTIME_H
 #define ALCHEMY_SCRIPT_OBJECT_RUNTIME_H
 
+/// @file
+/// ScriptObjectRuntime, the work of an object a script moves.
+
 #include "types.h"
 #include "static_assert.h"
 

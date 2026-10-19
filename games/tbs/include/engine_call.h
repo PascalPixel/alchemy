@@ -2,15 +2,22 @@
 #define ALCHEMY_ENGINE_CALL_H
 
 /// @file
-/// Engine call layer: one typed inline for each of the thirteen main-image
+/// The engine call layer: one typed inline for each of the thirteen main-image
 /// routines below that the scene, menu and debug overlays import; every overlay
-/// call of them goes through it. Main-image code calls them as ordinary
-/// functions; only the shared scene/common/scroll_initialize_hblank_dma.h,
-/// which object/psynergy_effects.c includes as lemurian_ship.c does, reaches
-/// the layer there. Overlays call main-image routines through these inline
-/// functions; their calls resolve to import stubs. Passing arguments through
-/// inline parameters rematerializes constants at each call. field_service.h
-/// includes this layer; rooms without the scene command layer use it directly.
+/// call of them goes through it.
+///
+/// It is a habit of the whole game written once: a layer, not a
+/// compiler-steering device (AGENTS.md S2). An overlay writes
+/// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_SCENE)` and the inline
+/// calls Scheduler_AddOrUpdateCallback, which resolves to the overlay's import
+/// stub. Main-image code calls the routines as ordinary functions; only the
+/// shared scene/common/scroll_initialize_hblank_dma.h, which
+/// object/psynergy_effects.c includes as lemurian_ship.c does, reaches the
+/// layer there. field_service.h includes this layer; rooms without the scene
+/// command layer use it directly.
+
+// Passing arguments through inline parameters rematerializes constants at each
+// call.
 
 #include "types.h"
 #include "unit/object/psynergy_effects.h"

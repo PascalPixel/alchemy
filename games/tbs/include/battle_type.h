@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_TYPE_H
 #define ALCHEMY_BATTLE_TYPE_H
 
+/// @file
+/// BattlePlan, an action planned for its targets: the hits, criticals and
+/// multipliers rolled.
+
 #include "static_assert.h"
 #include "battle_unit.h"
 

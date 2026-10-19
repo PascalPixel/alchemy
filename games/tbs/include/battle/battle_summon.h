@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_SUMMON_H
 #define ALCHEMY_BATTLE_SUMMON_H
 
+/// @file
+/// Summons and the battle sprite definitions of the enemy classes.
+
 #include "static_assert.h"
 
 #include "types.h"

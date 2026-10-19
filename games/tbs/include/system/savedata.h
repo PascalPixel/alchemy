@@ -1,6 +1,9 @@
 #ifndef GUARD_SAVEDATA_H
 #define GUARD_SAVEDATA_H
 
+/// @file
+/// The save data's signature and header template, and the link test words.
+
 #include "types.h"
 
 extern const u8 gSave_Signature[];

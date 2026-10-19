@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_IO_WRITE_QUEUE_H
 #define ALCHEMY_IO_WRITE_QUEUE_H
 
+/// @file
+/// The I/O write queue that VBlank carries out frames later.
+
 #include "edition.h"
 #include "irqlock.h"
 #include "types.h"

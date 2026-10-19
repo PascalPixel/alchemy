@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FIELD_SCENE_H
 #define ALCHEMY_FIELD_SCENE_H
 
+/// @file
+/// The scene table formats: entrances, exits, placements and events, and the
+/// macros that write them.
+
 #include "static_assert.h"
 #include "scene_ids.h"
 #include "character_ids.h"

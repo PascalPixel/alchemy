@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_WINDOW_H
 #define ALCHEMY_WINDOW_H
 
+/// @file
+/// The window renderer's work.
+
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "types.h"

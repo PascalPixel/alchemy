@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_VRAM_TAB_H
 #define ALCHEMY_VRAM_TAB_H
 
+/// @file
+/// The sprite VRAM block cache and its owners.
+
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"

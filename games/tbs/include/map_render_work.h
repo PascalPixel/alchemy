@@ -1,3 +1,6 @@
+/// @file
+/// MapRenderWork, the map renderer's work.
+
 #include "global_cells.h"
 #ifndef ALCHEMY_MAP_RENDER_WORK_H
 #define ALCHEMY_MAP_RENDER_WORK_H

@@ -2,7 +2,7 @@
 #define GRAPHICS_H
 
 /// @file
-/// GRAPHICS
+/// The screen blend's globals and the graphics routines.
 
 #include "types.h"
 #include "edition.h"

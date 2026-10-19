@@ -2,7 +2,7 @@
 #define DEBUG_H
 
 /// @file
-/// DEBUG
+/// The engine calls the debug menus import, and their palette swatch tiles.
 
 #include "unit/object/object.h"
 #include "types.h"

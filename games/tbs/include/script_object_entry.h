@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 #define ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 
+/// @file
+/// ScriptObjectEntry, an entry in the script objects' table.
+
 #include "unit/field/field.h"
 #include "types.h"
 #include "static_assert.h"

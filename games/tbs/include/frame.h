@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FRAME_H
 #define ALCHEMY_FRAME_H
 
+/// @file
+/// The frame loop's globals: lag counts, the CPU load display and the VBlank
+/// flags.
+
 #include "types.h"
 
 extern u8 gFrameRenderPending;

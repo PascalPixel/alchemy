@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_PALQUEUE_H
 #define ALCHEMY_PALQUEUE_H
 
+/// @file
+/// Palette snapshots and their work.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_UI_H
 #define ALCHEMY_UI_H
 
+/// @file
+/// UiWork, the window system's work, and the status screen's cursors.
+
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"

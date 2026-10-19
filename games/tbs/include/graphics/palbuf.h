@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_PALBUF_H
 #define ALCHEMY_PALBUF_H
 
+/// @file
+/// Palette fades, the battle effect palette buffers and the colour channel
+/// curves.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

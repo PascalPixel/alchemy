@@ -2,7 +2,7 @@
 #define MINIGAME_H
 
 /// @file
-/// MINIGAME
+/// The reel game's title lettering.
 
 #include "types.h"
 #include "edition.h"

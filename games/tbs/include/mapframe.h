@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MAPFRAME_H
 #define ALCHEMY_MAPFRAME_H
 
+/// @file
+/// The map frame's scanlines and affine lines.
+
 #include "unit/field/field.h"
 #include "types.h"
 #include "static_assert.h"

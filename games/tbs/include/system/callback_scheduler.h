@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_CALLBACK_SCHEDULER_H
 #define ALCHEMY_CALLBACK_SCHEDULER_H
 
+/// @file
+/// The task scheduler: tasks, their order and the scheduler's state.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

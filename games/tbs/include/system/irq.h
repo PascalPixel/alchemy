@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_IRQ_H
 #define ALCHEMY_IRQ_H
 
+/// @file
+/// The hardware's interrupt sources and the interrupt handler table.
+
 #include "edition.h"
 #include "types.h"
 

@@ -2,48 +2,6 @@
 	.thumb
 	.section .text.x020080c6,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x020080c8,"ax",%progbits
-	.global Func_020000c8
-	.thumb_func
-Func_020000c8:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r5, r0, #0
-	bl Object_GetById
-	adds r6, r0, #0
-	bl Func_020026f4
-	ldr r3, .L_0200811c
-	adds r7, r6, #0
-	str r3, [r6, #108]
-	movs r3, #0
-	mov r8, r3
-	mov r3, r8
-	adds r7, #35
-	movs r2, #96
-	strb r3, [r7]
-	adds r0, r5, #0
-	movs r1, #96
-	negs r2, r2
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r1, #96
-	adds r0, r5, #0
-	negs r1, r1
-	movs r2, #96
-	bl ObjectMotion_CommitPositionAndActivate
-	mov r3, r8
-	str r3, [r6, #108]
-	movs r3, #1
-	strb r3, [r7]
-	movs r0, #30
-	bl FieldEvent_WaitFrames
-	bl VenusLighthouseEntrance_StopSparks
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200811c:
-	.4byte VenusLighthouseEntrance_UpdateSparkTrail
 	.section .text.x02008128,"ax",%progbits
 	.global Func_02000128
 	.thumb_func

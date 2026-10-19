@@ -3431,14 +3431,8 @@ Func_080f89a4:
 	.thumb_func
 Func_080f8ab4:
 	.incbin "baserom.gba", 0x000f8a5c, 0x00000108
-	.section .rom.000f8c8e, "ax"
-	.incbin "baserom.gba", 0x000f8c8e, 0x00000002
-	.section .rom.000f8c90, "ax"
-	.global Func_080f8ce8
-	.type Func_080f8ce8, %function
-	.thumb_func
-Func_080f8ce8:
-	.incbin "baserom.gba", 0x000f8c90, 0x00000228
+	.section .rom.000f8d80, "ax"
+	.incbin "baserom.gba", 0x000f8d80, 0x00000138
 	.section .rom.000f8f14, "ax"
 	.incbin "baserom.gba", 0x000f8f14, 0x0000016c
 	.section .rom.000f9254, "ax"

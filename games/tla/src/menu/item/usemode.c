@@ -74,7 +74,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 u32 Random16(void);
 void Inventory_BreakFar(s32 owner, s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_080f8ce8(const u8 *message, s32 a, s32 b);
+void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 extern const u8 MsgItBroke[];
 void RenderOutput_RedrawSavedRectFar(void *window);
 
@@ -92,7 +92,7 @@ void Func_080fb6d4(void) {
   if (((u8 *)Item_Get(mask))[12] == 2 && Random16() < 0x2000) {
     Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
     Audio_PlayCue(138);
-    Func_080f8ce8(MsgItBroke, 0, -1);
+    InventoryMenu_ShowModalMessage((s32)MsgItBroke, 0, -1);
     RenderOutput_RedrawSavedRectFar(*(void **)(work + 0x30));
   }
 }

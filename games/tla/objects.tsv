@@ -4440,19 +4440,13 @@ main	rom_main_06	games/tla/src/menu/ability/refresh	.text
 main	rom_main_06	games/tla/src/menu/ability/owner_entries	.text
 main	rom_main_06	games/tla/src/menu/position_owner_entry	.text
 main	rom_main_06	games/tla/src/menu/item/refresh_entry	.text
-main	rom_main_06	recon/tla/it/rom	.rom.000f8ce6	it
-main	rom_main_06	recon/tla/it/rom	.rom.000f8ce8	it
-main	rom_main_06	recon/tla/fr/rom	.rom.000face6	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000face8	fr
-main	rom_main_06	recon/tla/es/rom	.rom.000fecda	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fecdc	es
-main	rom_main_06	recon/tla/de/rom	.rom.00102ce6	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102ce8	de
-main	rom_main_06	recon/tla/raw/080f8ce6	.text	en
-main	rom_main_06	recon/tla/raw/080f8ce8	.text	en
+main	rom_main_06	games/tla/src/menu/item/modal_message	.text
+main	rom_main_06	recon/tla/it/rom	.rom.000f8e08	it
+main	rom_main_06	recon/tla/fr/rom	.rom.000fae08	fr
+main	rom_main_06	recon/tla/es/rom	.rom.000fedfc	es
+main	rom_main_06	recon/tla/de/rom	.rom.00102e08	de
 main	rom_main_06	recon/tla/raw/080f8e08	.text	en
-main	rom_main_06	recon/tla/ja/rom	.rom.000f8c8e	ja
-main	rom_main_06	recon/tla/ja/rom	.rom.000f8c90	ja
+main	rom_main_06	recon/tla/ja/rom	.rom.000f8d80	ja
 main	rom_main_06	games/tla/src/menu/copy_list_order	.text
 main	rom_main_06	recon/tla/it/rom	.rom.000f8f9c	it
 main	rom_main_06	recon/tla/fr/rom	.rom.000faf9c	fr

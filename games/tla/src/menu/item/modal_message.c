@@ -1,16 +1,7 @@
-// First draft of Func_080f8ce8: shows a message in the item menu with the hand
-// cursor hidden meanwhile, the twin of ☀️'s InventoryMenu_ShowModalMessage
-// (games/tbs/src/menu/menu.c) in its TBS_PATCH_1 form, less the redraw after
-// the wait: with y == -1 the message goes into the info window, otherwise into
-// a modal window sized to it at (x, y); with x == -1 it stays and flag 337 is
-// set, otherwise it waits for A, B or Start and clears it. Differ 76 of 127
-// (draft 115). Left: the native reads gInput.pressed afresh for each of the
-// three key tests, as a volatile read would, where this draft tests the word
-// once against 11 (separate if-breaks keep three tests but one load, differ
-// 119); and register choice from the prologue on: the native keeps message,
-// x and y in r7, r10 and r9 and the window in r6, saving r8 to r10.
 #include "types.h"
+#include "edition.h"
 #include "input.h"
+#include "io_reg.h"
 #include "flag_call.h"
 #include "render_input.h"
 #include "ram_buffer.h"
@@ -41,7 +32,21 @@ void UiText_DrawResourceFar(s32 message, struct RenderInput *window, s32 x,
 void UiWindow_CloseIfOpen(struct RenderInput **handle, s32 mode);
 void WaitFrames(s32 frames);
 
-void Func_080f8ce8(s32 message, s32 x, s32 y) {
+/* FAKEMATCH(volatile): the keys read through a volatile view of gInput, so
+ * that each of the three tests loads them afresh from its base; as
+ * gInput.pressed & KEY_A and so on, 76 of 127 instructions differ in tla-en
+ * (the three tests fold into one against 11). */
+#define INPUT ((volatile struct InputState *)&gInput)
+
+// Shows message in the item menu, with the hand cursor hidden meanwhile, as
+// The Broken Seal's InventoryMenu_ShowModalMessage: in Japanese its first
+// form, elsewhere its TBS_PATCH_1 form less the redraw after the wait.
+//
+// With y == -1 the message goes into the info window; otherwise a modal
+// window sized to the message opens at (x, y). With x == -1 the message stays
+// up and flag 337 records that the info window holds it; otherwise it waits
+// for A, B or Start and clears it again.
+void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
   struct RenderInput *window;
@@ -62,22 +67,28 @@ void Func_080f8ce8(s32 message, s32 x, s32 y) {
   }
   RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar(window);
+#if LANGUAGE == LANGUAGE_JAPANESE
+  UiText_DrawResourceFar(message, window, 0, 0);
+#else
   if (y == -1)
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
   else
     UiText_DrawResourceFar(message, window, 0, 0);
+#endif
   if (x != -1) {
     WaitFrames(1);
     do {
       WaitFrames(1);
-    } while (!(gInput.pressed & 1) && !(gInput.pressed & 2) &&
-             !(gInput.pressed & 8));
+    } while (!(INPUT->pressed & KEY_A) && !(INPUT->pressed & KEY_B) &&
+             !(INPUT->pressed & KEY_START));
     RenderOutput_ClearListFar(window);
   } else {
     GameFlag_SetBit(337);
   }
   menu->completionFlag = 1;
   menu->paneIcons[0]->active = 1;
+#if LANGUAGE != LANGUAGE_JAPANESE
   if (y != -1)
     UiWindow_CloseIfOpen(&menu->modalWindow, 1);
+#endif
 }

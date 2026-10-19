@@ -5,6 +5,35 @@
 #include "ram_buffer.h"
 
 struct BattleUnit *UnitGet(s32 unitId);
+u32 BattleRandomFar(void);
+
+// Picks a random living target on one side: the party (target codes 0x100 +
+// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
+// lives. No ☀️ twin found.
+s32 Func_0811f4d4(s32 party) {
+  struct BattleWork *work;
+  u16 targets[6];
+  s32 count;
+  s32 i;
+
+  count = 0;
+  work = Ram_HeapSlots->battleWork;
+
+  if (party != 0) {
+    for (i = 0; work->partyUnits[i] != 255; i++) {
+      if (work->partyUnits[i] != 254 && UnitGet(work->partyUnits[i])->hp != 0)
+        targets[count++] = i | 0x100;
+    }
+  } else {
+    for (i = 0; work->enemyIds[i] != 255; i++) {
+      if (work->enemyIds[i] != 254 && UnitGet(work->enemyIds[i])->hp != 0)
+        targets[count++] = i | 0x180;
+    }
+  }
+  if (count == 0)
+    return 0;
+  return targets[(count * BattleRandomFar()) >> 16];
+}
 
 // Finds the living unit with the highest Attack on unitId's side (the party
 // for ids 0 to 7, else the enemies), other than unitId itself; unitId when no

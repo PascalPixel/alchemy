@@ -15255,7 +15255,7 @@ msgctxt "MsgBuffsReset"
 msgid "03779"
 msgstr "{argument_actor_name:1}{possessive_suffix} Stärke normalisiert sich!"
 
-msgctxt "message"
+msgctxt "MsgDjinnIsSet"
 msgid "03780"
 msgstr "{argument_ability_name} verbündet sich mit {argument_actor_name:1}!"
 

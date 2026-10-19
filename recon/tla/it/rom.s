@@ -4288,12 +4288,6 @@ BattlePresentation_AppendLinkedActions:
 	.section .rom.0011f0a0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011f0a0, 0x000002a8
-	.section .rom.0011f4ec, "ax"
-	.global Func_0811f4d4
-	.type Func_0811f4d4, %function
-	.thumb_func
-Func_0811f4d4:
-	.incbin "baserom.gba", 0x0011f4ec, 0x000000d0
 	.section .rom.0011f684, "ax"
 	.balign 4
 	.global Func_0811f66c
@@ -4337,9 +4331,9 @@ BattleEvent_Playback:
 	.thumb_func
 Func_08123574:
 	.incbin "baserom.gba", 0x0012358c, 0x0000129c
-	.section .rom.00124cdc, "ax"
+	.section .rom.00124e38, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00124cdc, 0x00000ddc
+	.incbin "baserom.gba", 0x00124e38, 0x00000c80
 	.global Func_08125aa0
 	.type Func_08125aa0, %function
 	.thumb_func
@@ -4402,6 +4396,10 @@ Func_08126e00:
 	.incbin "baserom.gba", 0x00127080, 0x00000248
 	.section .rom.00127320, "ax"
 	.balign 4
+	.global Func_08127308
+	.type Func_08127308, %function
+	.thumb_func
+Func_08127308:
 	.incbin "baserom.gba", 0x00127320, 0x00000264
 	.section .rom.001275a0, "ax"
 	.balign 4

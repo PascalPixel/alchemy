@@ -13347,7 +13347,7 @@ msgctxt "message"
 msgid "03320"
 msgstr "{argument_actor_name:233} つよさがもとにもどった!"
 
-msgctxt "message"
+msgctxt "MsgDjinnIsSet"
 msgid "03321"
 msgstr "{argument_ability_name}が {argument_actor_name:230}セットされた!"
 

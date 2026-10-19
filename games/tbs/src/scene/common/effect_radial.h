@@ -2,6 +2,11 @@
 #include "field_obj.h"
 #include "field_effect.h"
 
+// The Tunnel Ruins and Venus Lighthouse.
+
+// Burst nine particles out from the actor in a ring (the ninth on the first),
+// flung a third further east and west, slowing as they go
+// (Effect_AdvanceMotion).
 static void SceneEffect_SpawnNineRadialEffects(s32 actor) {
   struct FieldActor *object;
   struct Vec vec;
@@ -25,6 +30,8 @@ static void SceneEffect_SpawnNineRadialEffects(s32 actor) {
     x += Math_Divide(x, 3);
     vec.x = x;
     Effect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z,
-                 0x01030001, &params);
+                 EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
+                     1,
+                 &params);
   }
 }

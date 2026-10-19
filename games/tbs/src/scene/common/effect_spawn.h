@@ -4,6 +4,11 @@
 #include "field_scene.h"
 #include "fixed_math.h"
 
+// Twenty-four scenes, and the main image's Psynergy effects (whirlwind.c, with
+// EFFECT_SPAWN_RESIDENT): Effect_Spawn, which places a small effect moving at
+// a velocity, its script one of gEffectScripts and its options chosen by the
+// EFFECT_USE_ flags.
+
 // Integrate linear motion, scale changes and rotation once per effect frame.
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
   object->effect.x += object->effect.velocity.x;

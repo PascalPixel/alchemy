@@ -1,3 +1,4 @@
+// Goma Cave: the room with two pillars, a stump and the Djinni Forge.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -34,16 +35,29 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 
+#include "flags.h"
+
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
+
+// The room's actors, in placement order.
+#define WEST_PILLAR 8
+#define STUMP 9
+#define EAST_PILLAR 10
+#define FORGE 12
+#define WITNESS 13 // the man who fought Forge and lost it
+
+// Forge's Djinni number; its name is message 1119 plus the number.
+#define DJINNI_FORGE 40
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
 
-// Actor 13 reacts before actor 12 starts Djinni battle 40.
-static void GomaCavePillar_StartDjinniBattle(void) {
-  Actor_ShowEmote(13, EMOTE_IN_FRONT, 0);
-  Engine_ActorJump(13, 2, 0);
-  Field_RequestDjinnBattle(12, 40);
+// Talking to Forge: the man beside it jumps in surprise, and the battle with
+// the Djinni begins.
+static void Event_FightForge(void) {
+  Actor_ShowEmote(WITNESS, EMOTE_IN_FRONT, 0);
+  Engine_ActorJump(WITNESS, 2, 0);
+  Field_RequestDjinnBattle(FORGE, DJINNI_FORGE);
 }
 
 // Advances the fragment's selected coordinate plane and keeps its targets in
@@ -95,7 +109,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   u32 priority;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  table = gGomaCavePillar_PillarScripts;
+  table = gGomaCavePillar_FragmentScripts;
   fragment = Engine_ObjectCreate(222, x, y, z);
   if (fragment == 0)
     return;
@@ -123,50 +137,48 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   }
 }
 
-// Return the entrances to the pillar rooms.
-const struct SceneEntrance *GomaCavePillar_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gGomaCavePillar_Entrances;
 }
 
-// These rooms have no region table.
-const struct SceneRegion *GomaCavePillar_GetRegions(void) { return NULL; }
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Return the exits to the surrounding Goma Cave rooms.
-const u32 *GomaCavePillar_GetExits(void) { return gGomaCavePillar_Exits; }
+const u32 *Scene_GetExits(void) { return gGomaCavePillar_Exits; }
 
-// Return the placed pillar, Djinni and witness actors.
-const struct ScenePlacement *GomaCavePillar_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCavePillar_Placements;
 }
 
-// Restore the collision tiles for either side of the moved pillar.
-static inline void GomaCavePillar_CopyMovedPillarCollision(s32 sourceColumn) {
+// Copy the map cells for the west pillar on either side of its track.
+static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
   Map_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
 }
 
-// Copies the moved pillar's collision pattern and records its selected side.
-static void GomaCavePillar_UpdateMovedPillarCollision(void) {
+// Move on the west pillar: it slides between its two places, and the map
+// cells follow it.
+static void Event_MoveWestPillar(void) {
   struct FieldActor *actor;
   s32 x;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(WEST_PILLAR);
   x = actor->x.fixed;
   if (x < 0)
     x += 0xfffff;
   x >>= 20;
   Engine_EventBegin();
   if (x == 20) {
-    GomaCavePillar_CopyMovedPillarCollision(18);
-    Engine_GameFlagClear(0x302);
+    GomaCavePillar_CopyWestPillarCells(18);
+    Engine_GameFlagClear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   } else {
-    GomaCavePillar_CopyMovedPillarCollision(24);
-    Engine_GameFlagSet(0x302);
+    GomaCavePillar_CopyWestPillarCells(24);
+    Engine_GameFlagSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   }
   Engine_EventEnd();
 }
 
-// Emits falling fragments every eighth frame, twice on each sixteenth frame.
-static void GomaCavePillar_SpawnFallingFragments(void) {
+// While the stump teeters, dust falls from it: one fragment every eighth
+// frame, two on every sixteenth.
+static void GomaCavePillar_SpawnStumpDust(void) {
   s32 framePhase;
   s32 fixedX;
   s32 fixedZ;
@@ -180,13 +192,13 @@ static void GomaCavePillar_SpawnFallingFragments(void) {
 
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
-    firstXSource = Object_GetById(9);
+    firstXSource = Object_GetById(STUMP);
     firstRandomX = Engine_RandomNext();
     fixedX = firstXSource->x.fixed;
     fixedX +=
         ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
-    heightSource = Object_GetById(9);
-    firstZSource = Object_GetById(9);
+    heightSource = Object_GetById(STUMP);
+    firstZSource = Object_GetById(STUMP);
     fixedZ = firstZSource->z.fixed;
     fixedZ += PIXELS(6);
     firstRandomSpeed = Engine_RandomNext();
@@ -204,13 +216,13 @@ static void GomaCavePillar_SpawnFallingFragments(void) {
                                  firstFallingSpeed, firstStyle, framePhase);
     framePhase = gFrameCount & 15;
     if (framePhase == 0) {
-      secondXSource = Object_GetById(9);
+      secondXSource = Object_GetById(STUMP);
       secondRandomX = Engine_RandomNext();
       fixedX = secondXSource->x.fixed;
       fixedX +=
           ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
-      heightSource = Object_GetById(9);
-      secondZSource = Object_GetById(9);
+      heightSource = Object_GetById(STUMP);
+      secondZSource = Object_GetById(STUMP);
       fixedZ = secondZSource->z.fixed;
       fixedZ += PIXELS(6);
       secondRandomSpeed = Engine_RandomNext();
@@ -231,17 +243,19 @@ static void GomaCavePillar_SpawnFallingFragments(void) {
   }
 }
 
-s32 gGomaCavePillar_DjinniWitnessFrames;
+s32 gGomaCavePillar_WitnessFrames;
 
-// Breaks actor 9's pillar only after it has moved into column 25.
-static void GomaCavePillar_BreakMovedPillar(void) {
+// Move on the stump: once it is pushed to the edge (column 25), it teeters
+// shedding dust, tips over and falls into the room below with a crash that
+// shakes the screen.
+static void Event_PushStumpOver(void) {
   s32 column;
   s32 zero;
   void (*fragmentCallback)(void);
   s32 fixedX;
   s32 fixedZ;
   struct FieldActor *heightSource;
-  struct FieldActor *pillar;
+  struct FieldActor *stump;
   struct FieldActor *spriteActor;
   struct FieldActor *blendActor;
   struct FieldActor *bounceActor, *gravityActor;
@@ -250,8 +264,8 @@ static void GomaCavePillar_BreakMovedPillar(void) {
   s32 randomX, randomSpeed, style, speedBand, speedTimes13, fallingSpeed;
   struct FieldActor *overlayActor;
 
-  pillar = Object_GetById(9);
-  column = pillar->x.fixed / PIXELS(16);
+  stump = Object_GetById(STUMP);
+  column = stump->x.fixed / PIXELS(16);
   Engine_EventBegin();
   if (column == 25) {
     overlayActor = Object_GetById(11);
@@ -264,39 +278,40 @@ static void GomaCavePillar_BreakMovedPillar(void) {
     Engine_ObjectSetBlendMode(blendActor, 1);
     Engine_ActorSetPosition(11, PIXELS(414), PIXELS(240));
     Engine_EventWait(10);
-    // Start the falling fragments before moving the pillar out of the way.
-    fragmentCallback = GomaCavePillar_SpawnFallingFragments;
+    // Dust falls while the stump rocks on the edge.
+    fragmentCallback = GomaCavePillar_SpawnStumpDust;
     FieldScheduler_AddCallback(fragmentCallback, 3200);
     Engine_AudioPlayCue(141);
-    Engine_ActorSetDestinationOffset(9, 1, 0);
-    Engine_ActorWaitForMove(9);
+    Engine_ActorSetDestinationOffset(STUMP, 1, 0);
+    Engine_ActorWaitForMove(STUMP);
     Engine_EventWait(10);
-    Engine_ActorSetDestinationOffset(9, 2, 0);
-    Engine_ActorWaitForMove(9);
-    bounceActor = Object_GetById(9);
+    Engine_ActorSetDestinationOffset(STUMP, 2, 0);
+    Engine_ActorWaitForMove(STUMP);
+    bounceActor = Object_GetById(STUMP);
     bounceActor->bounce = zero;
-    gravityActor = Object_GetById(9);
+    gravityActor = Object_GetById(STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
     Engine_EventWait(3);
-    Engine_ActorSetSpeed(9, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
+    // It tips over the edge.
+    Engine_ActorSetSpeed(STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Engine_AudioPlayCue(288);
-    Engine_ActorSetDestination(9, 416, 200);
-    movedActor = Object_GetById(9);
+    Engine_ActorSetDestination(STUMP, 416, 200);
+    movedActor = Object_GetById(STUMP);
     Engine_ActorSetSpriteFlags(movedActor, 0);
     Engine_TaskRemoveCallback(fragmentCallback);
     Engine_EventWait(12);
     Engine_AudioPlayCue(189);
-    xSource = Object_GetById(9);
+    xSource = Object_GetById(STUMP);
     randomX = Engine_RandomNext();
     fixedX = xSource->x.fixed;
     fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
-    heightSource = Object_GetById(9);
-    zSource = Object_GetById(9);
+    heightSource = Object_GetById(STUMP);
+    zSource = Object_GetById(STUMP);
     fixedZ = zSource->z.fixed;
     fixedZ += PIXELS(6);
     randomSpeed = Engine_RandomNext();
     speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
-    // The final fragment uses the same tenth-pixel speed bands.
+    // A last piece of dust, with the same tenth-pixel speed bands.
     speedTimes13 = (((speedBand << 1) + speedBand) << 2) + speedBand;
     fallingSpeed = speedTimes13 << 6;
     fallingSpeed -= speedTimes13;
@@ -307,72 +322,77 @@ static void GomaCavePillar_BreakMovedPillar(void) {
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
                                  fallingSpeed, style, zero);
     Engine_EventWait(20);
-    // Let the landing shake decay before replacing the map cells.
+    // It lands below; the shake dies down before the map cells change.
     Engine_AudioPlayCue(154);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
-    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorSetPosition(STUMP, 0, 0);
     Engine_ActorSetPosition(11, 0, 0);
-    Engine_GameFlagSet(0x300);
+    Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   Engine_EventEnd();
 }
 
-// At cell (38,14), bursts actor 10's pillar into six planar fragments.
-static void GomaCavePillar_BurstPillarAtCrossing(void) {
+// Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
+// into the floor and six fragments fly out around it.
+static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
 
-  x = Object_GetById(10)->x.fixed / PIXELS(16);
-  z = Object_GetById(10)->z.fixed / PIXELS(16);
+  x = Object_GetById(EAST_PILLAR)->x.fixed / PIXELS(16);
+  z = Object_GetById(EAST_PILLAR)->z.fixed / PIXELS(16);
   if (x == 38 && z == 14) {
-    Object_GetById(10)->y.fixed = -PIXELS(2);
-    Object_GetById(10)->targetY = Object_GetById(10)->y.fixed;
+    Object_GetById(EAST_PILLAR)->y.fixed = -PIXELS(2);
+    Object_GetById(EAST_PILLAR)->targetY = Object_GetById(EAST_PILLAR)->y.fixed;
     Engine_AudioPlayCue(188);
-    GomaCavePillar_SpawnFragment(
-        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, PIXELS(1) / 2, 0, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(
-        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(10)->x.fixed,
-                                 Object_GetById(10)->y.fixed,
-                                 Object_GetById(10)->z.fixed, -PIXELS(2) / 5,
-                                 PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(
-        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, -PIXELS(1) / 2, 0, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(10)->x.fixed,
-                                 Object_GetById(10)->y.fixed,
-                                 Object_GetById(10)->z.fixed, PIXELS(2) / 5,
-                                 -PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(10)->x.fixed,
-                                 Object_GetById(10)->y.fixed,
-                                 Object_GetById(10)->z.fixed, -PIXELS(2) / 5,
-                                 -PIXELS(2) / 5, 0, PLANE_XZ);
-    Engine_GameFlagSet(0x301);
+    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
+                                 Object_GetById(EAST_PILLAR)->y.fixed,
+                                 Object_GetById(EAST_PILLAR)->z.fixed,
+                                 PIXELS(1) / 2, 0, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
+                                 Object_GetById(EAST_PILLAR)->y.fixed,
+                                 Object_GetById(EAST_PILLAR)->z.fixed,
+                                 PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
+                                 Object_GetById(EAST_PILLAR)->y.fixed,
+                                 Object_GetById(EAST_PILLAR)->z.fixed,
+                                 -PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
+                                 Object_GetById(EAST_PILLAR)->y.fixed,
+                                 Object_GetById(EAST_PILLAR)->z.fixed,
+                                 -PIXELS(1) / 2, 0, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
+                                 Object_GetById(EAST_PILLAR)->y.fixed,
+                                 Object_GetById(EAST_PILLAR)->z.fixed,
+                                 PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
+                                 Object_GetById(EAST_PILLAR)->y.fixed,
+                                 Object_GetById(EAST_PILLAR)->z.fixed,
+                                 -PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
+    Engine_GameFlagSet(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
   }
 }
 
-// Runs the pillar burst as an event after Psynergy moves it into place.
-static void GomaCavePillar_CheckMovedPillarBurst(void) {
+// Move on the east pillar.
+static void Event_MoveEastPillar(void) {
   Engine_EventBegin();
-  GomaCavePillar_BurstPillarAtCrossing();
+  GomaCavePillar_SettleEastPillar();
   Engine_EventEnd();
 }
 
-// Advances the staged movement, then checks the same pillar burst position.
-static void GomaCavePillar_MovePillarAndCheckBurst(void) {
+// Walking into the east pillar pushes it a step.
+static void Event_PushEastPillar(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
-  GomaCavePillar_BurstPillarAtCrossing();
+  GomaCavePillar_SettleEastPillar();
   Engine_EventEnd();
 }
 
-// Jump the west-facing gap; later patches use the shared forward-jump routine.
-static void GomaCavePillar_JumpGapWest(void) {
+// Walking west at the gap: the leader jumps across it. Later patches use the
+// shared forward jump.
+static void Event_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
 #else
@@ -410,104 +430,105 @@ static void GomaCavePillar_JumpGapWest(void) {
 #endif
 }
 
-// Return the talk, Psynergy and raised-event table.
-const struct SceneEvent *GomaCavePillar_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCavePillar_Events;
 }
 
-// Times actor 13's idle reactions until the Djinni event is no longer pending.
-static void GomaCavePillar_UpdateDjinniWitness(void) {
+// While the battle with Forge runs, the man reacts on a timer; once the
+// Djinni event is over, it raises event 99.
+static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
 
   work = gEventWork;
-  frame = ++gGomaCavePillar_DjinniWitnessFrames;
+  frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
-    Actor_FaceDirection(13, FACING_SOUTHEAST, 0);
-    Engine_ActorShowEmote(13, 2, 0);
+    Actor_FaceDirection(WITNESS, FACING_SOUTHEAST, 0);
+    Engine_ActorShowEmote(WITNESS, 2, 0);
     break;
   case 180:
-    Engine_ActorStartRepeatedMotion(13, 3);
+    Engine_ActorStartRepeatedMotion(WITNESS, 3);
     break;
   case 240:
   case 270:
-    Engine_ActorJump(13, 4, 0);
+    Engine_ActorJump(WITNESS, 4, 0);
     break;
   case 480:
-    Engine_ActorSetAnimation(13, 4);
+    Engine_ActorSetAnimation(WITNESS, 4);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
     work->raisedTrigger = 99;
 }
 
-// Ends the idle callback, shows actor 13's reaction and walks the actor away.
-static void GomaCavePillar_WitnessDjinniCapture(void) {
-  Engine_TaskRemoveCallback(GomaCavePillar_UpdateDjinniWitness);
+// Raised once Forge is caught: the man is amazed, then walks off.
+static void Event_WitnessCheersForgeCaught(void) {
+  Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
   Engine_EventBegin();
-  Actor_ShowEmote(13, EMOTE_IN_FRONT, 30);
-  Engine_ActorRunRepeatedMotion(13, 2);
+  Actor_ShowEmote(WITNESS, EMOTE_IN_FRONT, 30);
+  Engine_ActorRunRepeatedMotion(WITNESS, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Engine_EventSetMessage(MsgGomaGotWowThatsPrettyImpressive);
-  Event_ShowMessage(13, 0);
-  Engine_ActorSetAnimationAndWait(13, 3);
+  Event_ShowMessage(WITNESS, 0);
+  Engine_ActorSetAnimationAndWait(WITNESS, 3);
   Engine_EventWait(30);
-  Object_GetById(10)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpeed(13, PIXELS(2), PIXELS(1));
-  Actor_WalkToAndWait(13, 600, 216);
-  Actor_WalkToAndWait(13, 600, 248);
-  Actor_WalkToAndWait(13, 568, 296);
-  Actor_SetPosition(13, 0, 0);
-  Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  GameFlag_Set(0x869);
+  Object_GetById(EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_SetSpeed(WITNESS, PIXELS(2), PIXELS(1));
+  Actor_WalkToAndWait(WITNESS, 600, 216);
+  Actor_WalkToAndWait(WITNESS, 600, 248);
+  Actor_WalkToAndWait(WITNESS, 568, 296);
+  Actor_SetPosition(WITNESS, 0, 0);
+  Object_GetById(EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  GameFlag_Set(FLAG_GOMA_CAVE_WITNESS_LEFT);
   Engine_EventEnd();
 }
 
-// Restores moved/broken pillars and starts the post-Djinni reaction if needed.
-s32 GomaCavePillar_Initialize(void) {
+// Put the pillars and the stump where the party left them. Entrance 99 shows
+// the stump falling again; after a Djinni battle, the man's reaction starts.
+s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork *work;
 
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 24;
-  Object_GetById(9)->collisionFlags |= 16;
-  if (GameFlag_IsSet(0x302) != 0) {
-    Actor_SetPosition(8, PIXELS(344), PIXELS(104));
-    GomaCavePillar_CopyMovedPillarCollision(24);
+  Object_GetById(STUMP)->collisionFlags |= 16;
+  if (GameFlag_IsSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
+    Actor_SetPosition(WEST_PILLAR, PIXELS(344), PIXELS(104));
+    GomaCavePillar_CopyWestPillarCells(24);
   } else {
-    GomaCavePillar_CopyMovedPillarCollision(18);
+    GomaCavePillar_CopyWestPillarCells(18);
   }
-  if (GameFlag_IsSet(0x300) != 0) {
-    Actor_SetPosition(9, 0, 0);
+  if (GameFlag_IsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
+    Actor_SetPosition(STUMP, 0, 0);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
-  if (GameFlag_IsSet(0x301) != 0) {
-    Actor_SetPosition(10, PIXELS(616), PIXELS(232));
+  if (GameFlag_IsSet(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
+    Actor_SetPosition(EAST_PILLAR, PIXELS(616), PIXELS(232));
     if (gGameState.entrance == 2 || gGameState.entrance == 3) {
-      Object_GetById(10)->terrainId = 2;
-      actor = Object_GetById(10);
+      Object_GetById(EAST_PILLAR)->terrainId = 2;
+      actor = Object_GetById(EAST_PILLAR);
       actor->y.fixed--;
-      Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      Object_GetById(EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
-  // Entrance 99 reenacts moving and breaking the middle pillar.
+  // Entrance 99 shows the stump being pushed to the edge and falling.
   if (gGameState.entrance == 99) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Actor_SetPosition(9, PIXELS(384), PIXELS(192));
+    Actor_SetPosition(STUMP, PIXELS(384), PIXELS(192));
     Engine_EventWait(60);
-    Object_GetById(9)->terrainId = 2;
-    Actor_MoveToAndWait(9, 408, 192);
+    Object_GetById(STUMP)->terrainId = 2;
+    Actor_MoveToAndWait(STUMP, 408, 192);
     Engine_EventWait(60);
-    GomaCavePillar_BreakMovedPillar();
+    Event_PushStumpOver();
   }
-  // Keep the witness occupied until the Djinni encounter resolves.
+  // Coming back from a Djinni battle: the man reacts until it is over.
   if (gGameState.pendingDjinnEvent != 0) {
-    gGomaCavePillar_DjinniWitnessFrames = 0;
-    Task_AddCallback(GomaCavePillar_UpdateDjinniWitness, 3200);
+    gGomaCavePillar_WitnessFrames = 0;
+    Task_AddCallback(GomaCavePillar_FidgetWhileForgeFights, 3200);
   }
   return 0;
 }
@@ -538,13 +559,13 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-struct GomaCavePillarFragmentScripts gGomaCavePillar_PillarScripts = {{
-    gGomaCavePillar_PillarScript0,
-    gGomaCavePillar_PillarScript1,
-    gGomaCavePillar_PillarScript2,
+struct GomaCavePillarFragmentScripts gGomaCavePillar_FragmentScripts = {{
+    gGomaCavePillar_FragmentScript0,
+    gGomaCavePillar_FragmentScript1,
+    gGomaCavePillar_FragmentScript2,
 }};
 
-s32 gGomaCavePillar_PillarScript0[] = {
+s32 gGomaCavePillar_FragmentScript0[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
@@ -552,7 +573,7 @@ s32 gGomaCavePillar_PillarScript0[] = {
     SC_FREE,
 };
 
-s32 gGomaCavePillar_PillarScript1[] = {
+s32 gGomaCavePillar_FragmentScript1[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
@@ -560,7 +581,7 @@ s32 gGomaCavePillar_PillarScript1[] = {
     SC_FREE,
 };
 
-s32 gGomaCavePillar_PillarScript2[] = {
+s32 gGomaCavePillar_FragmentScript2[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
@@ -594,8 +615,8 @@ struct ScenePlacement gGomaCavePillar_Placements[] = {
     {212, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {211, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {223, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {92, 0x58, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {134, 0x869, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
+    {92, FLAG_DJINNI_0 + DJINNI_FORGE, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {134, FLAG_GOMA_CAVE_WITNESS_LEFT, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
     {SCENE_TABLE_END},
 };
 
@@ -605,18 +626,18 @@ struct SceneEvent gGomaCavePillar_Events[] = {
     { 0x31, 7, CONDITION_ALWAYS, 3 },
     { 0x31, 8, CONDITION_ALWAYS, 4 },
     { 0x21, 9, CONDITION_ALWAYS, 5 },
-    { 0x202, 10, 0x301, EVENT_SCRIPT(GomaCavePillar_MovePillarAndCheckBurst) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_JumpGapWest) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_StartDjinniBattle) },
-    { EVENT_TALK, 13, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_UpdateMovedPillarCollision) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x300, EVENT_SCRIPT(GomaCavePillar_BreakMovedPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x301, EVENT_SCRIPT(GomaCavePillar_CheckMovedPillarBurst) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_PushEastPillar) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpGapWest) },
+    { EVENT_TALK, FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightForge) },
+    { EVENT_TALK, WITNESS, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
+    { EVENT_TALK, WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), WITNESS, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT_SCRIPT(Event_PushStumpOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_MoveEastPillar) },
     { SEARCH(SEARCH_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_WitnessDjinniCapture) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WitnessCheersForgeCaught) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

@@ -1,5 +1,4 @@
-
-
+// Goma Cave: the room the stump in the room above falls into.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -20,39 +19,45 @@
 #include "field_obj.h"
 
 #include "field_event.h"
+#include "flags.h"
 
-u8 *SceneData_GetPrimaryTable(void) { return (u8 *)gGomaCavePond_SceneTable0; }
+// The stump the party pushes over in the room above, lying in this room.
+#define FALLEN_STUMP 8
 
-s32 SceneData_ReturnZero(void) { return 0; }
-
-u8 *SceneData_GetSecondaryTable(void) {
-  return (u8 *)gGomaCavePond_SceneTable1;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gGomaCavePondEntrances;
 }
 
-u8 *SceneData_GetTertiaryTable(void) { return (u8 *)gGomaCavePond_SceneTable2; }
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-u8 *SceneData_GetQuaternaryTable(void) {
-  return (u8 *)gGomaCavePond_SceneTable3;
+const u32 *Scene_GetExits(void) { return gGomaCavePondExits; }
+
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  return gGomaCavePondPlacements;
 }
 
-s32 Scene_PlaceActor8OnGate300(void) {
-  struct Resource388Runtime *work;
+const struct SceneEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
 
-  work = (struct Resource388Runtime *)gEventWork;
-  work->setupRequest1c0 = 0x204;
-  work->setupValue1c8 = 0x18;
-  if (Engine_GameFlagIsSet(0x300) != 0) {
-    Actor_SetPosition(8, 0xD80000, 0x880000);
-    Engine_ActorSetAnimation(8, 2);
-    Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
-    ((struct Resource388SlotView *)Object_GetById(8))->unk23 = 2;
-    ((struct Resource388SlotView *)Object_GetById(8))->unk59 = 0;
-    Map_CopyCellAttributes(0xB, 0x24, 5, 5, 0xB, 6);
+// Once the stump in the room above has been pushed over, it lies fallen
+// here: put it in place and copy the map cells it covers.
+s32 Scene_Initialize(void) {
+  struct EventWork *work;
+
+  work = gEventWork;
+  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transitionFrames = 24;
+  if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
+    Actor_SetPosition(FALLEN_STUMP, PIXELS(216), PIXELS(136));
+    Engine_ActorSetAnimation(FALLEN_STUMP, 2);
+    Engine_ActorSetSpriteFlags(Object_GetById(FALLEN_STUMP), 0);
+    Object_GetById(FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(FALLEN_STUMP)->collisionFlags = 0;
+    Map_CopyCellAttributes(11, 36, 5, 5, 11, 6);
   }
   return 0;
 }
 
-struct SceneEntrance gGomaCavePond_SceneTable0[] = {
+struct SceneEntrance gGomaCavePondEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 120, 0, 88, FACING_SOUTH, 0, 24, 8, 504, 424, 0},
     {2, CONDITION_ALWAYS, 424, 0, 344, FACING_SOUTH, 0, 24, 8, 504, 424, 0},
@@ -60,20 +65,20 @@ struct SceneEntrance gGomaCavePond_SceneTable0[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gGomaCavePond_SceneTable1[] = {
+u32 gGomaCavePondExits[] = {
     SCENE_EXITS(26),      SCENE_EXIT(1, 27, 4), SCENE_EXIT(2, 27, 5),
     SCENE_EXIT(3, 27, 3), SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ScenePlacement gGomaCavePond_SceneTable2[] = {
+struct ScenePlacement gGomaCavePondPlacements[] = {
     { 0xd4, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 // clang-format on
 
-struct SceneEvent gGomaCavePond_SceneTable3[] = {
+struct SceneEvent gGomaCavePondEvents[] = {
     {0x21, 5, CONDITION_ALWAYS, 1},
     {0x21, 6, CONDITION_ALWAYS, 2},
     {0x21, 7, CONDITION_ALWAYS, 3},

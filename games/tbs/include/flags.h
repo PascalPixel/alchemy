@@ -97,4 +97,18 @@
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 
+// Goma Cave
+#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 // pushed over into the room below
+#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 // sunk into its place
+#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302    // one step east of its start
+#define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED 0x860
+#define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP 0x861
+#define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS 0x862
+#define FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE 0x863
+#define FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED 0x864
+// Ivan has blown the ivy off the stump and rejoined the party.
+#define FLAG_GOMA_CAVE_IVAN_REJOINED 0x865
+#define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
+#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 // after the party caught Forge
+
 #endif

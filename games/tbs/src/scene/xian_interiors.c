@@ -31,6 +31,15 @@ enum {
   XIAN_INN = 5
 };
 
+// The room reached from Master Feh's school (scene 61's exit 4), where Master
+// Feh, Feizhi and Hsu wait once Hsu is back: its own actors and events.
+enum { XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL = 8 };
+
+// The actors placed in that room, as its dialogue shows them: Master Feh
+// says Feizhi's prediction came true, Feizhi welcomes the party, and Hsu was
+// injured on his way from Lama Temple.
+enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
+
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -49,10 +58,10 @@ const struct SceneRegion *XianInteriors_GetRegions(void) { return NULL; }
 // Return the connections to Xian and the surrounding rooms.
 const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
 
-// Prepare normal villagers or select the actors for entrance 8.
+// The room behind the school places only Master Feh, Feizhi and Hsu.
 const struct ScenePlacement *XianInteriors_GetPlacements(void) {
-  if (gGameState.entrance == 8) {
-    return gXianInteriors_PlacementsEntrance8;
+  if (gGameState.entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
+    return gXianInteriors_SchoolRoomPlacements;
   }
   SceneTable_Prepare(gXianInteriors_Placements);
   return gXianInteriors_Placements;
@@ -156,32 +165,31 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-// Welcome the party and thank them for helping rescue Hsu.
-static void XianInteriors_WelcomeHsusRescuers(void) {
-
+// Feizhi, when the party helped free Hsu: "Oh, warrior! Welcome!", a look at
+// Hsu, then her thanks to the party and Master Hama.
+static void XianInteriors_FeizhiThanksParty(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorWelcome);
-  // Acknowledge Hsu before thanking the party for his rescue.
-  Engine_EventShowMessageAndWait(9, 0, 20);
-  Engine_ActorFaceActor(9, 10, 0);
+  Engine_EventShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
+  Engine_ActorFaceActor(ACTOR_FEIZHI, ACTOR_HSU, 0);
   Engine_EventWait(60);
-  Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorFaceActor(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Engine_EventShowMessage(9, 0);
+  Engine_EventShowMessage(ACTOR_FEIZHI, 0);
   Engine_EventEnd();
 }
 
-// Select normal town dialogue or the interactions for entrance 8.
+// The room behind the school has its own events.
 const struct SceneEvent *XianInteriors_GetEvents(void) {
-  if (gGameState.entrance == 8) {
-    return gXianInteriors_EventsEntrance8;
+  if (gGameState.entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
+    return gXianInteriors_SchoolRoomEvents;
   }
   return gXianInteriors_Events;
 }
 
-// Restore interior effects and the arrival state for entrance 8.
+// Places the interiors' effect objects; in the room behind the school, Hsu
+// takes his pose.
 s32 XianInteriors_Initialize(void) {
-
   s16 entrance;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -192,9 +200,9 @@ s32 XianInteriors_Initialize(void) {
   } else if (entrance == 6) {
     OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), 20);
     OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568), 20);
-  } else if (entrance == 8) {
+  } else if (entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
     Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
-    Engine_ActorSetAnimation(10, 6);
+    Engine_ActorSetAnimation(ACTOR_HSU, 6);
   }
   return 0;
 }
@@ -269,7 +277,7 @@ struct ScenePlacement gXianInteriors_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gXianInteriors_PlacementsEntrance8[] = {
+struct ScenePlacement gXianInteriors_SchoolRoomPlacements[] = {
     { 0x28, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x27, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
@@ -335,8 +343,8 @@ struct SceneEvent gXianInteriors_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsCaravansCannotBringMerchantsHereWhen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheMerchantsDoNotComeBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsEatWarriorIWillAddMany) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf6f, FIND_ITEM(ITEM_ELIXIR) },
-    { SEARCH(SEARCH_JAR), 101, 0xf70, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_XIAN_INTERIORS_ELIXIR_BARREL, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_XIAN_INTERIORS_SLEEP_BOMB_JAR, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsTheyreMakingStirFryTheCabbage)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsItsTheXianGourmetTheBest)) },
     { SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsTheyreSteamedDumplingsTheyreGreatPiping)) },
@@ -349,20 +357,20 @@ struct SceneEvent gXianInteriors_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gXianInteriors_EventsEntrance8[] = {
+struct SceneEvent gXianInteriors_SchoolRoomEvents[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_TALK, 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
-    { EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(XianInteriors_WelcomeHsusRescuers) },
-    { EVENT_TALK, 10, 0x8b3, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisAbilityToSenseTroubleIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b3, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b3, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhen) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowIBelieve) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHsuWasTrappedUnderTheRocks) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIWasInjuredByBouldersOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhisAbilityToForeseeIsReal) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerSome) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhenI) },
+    { EVENT_TALK, ACTOR_FEH, 0x8b3, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
+    { EVENT_TALK, ACTOR_FEIZHI, 0x8b3, EVENT_SCRIPT(XianInteriors_FeizhiThanksParty) },
+    { EVENT_TALK, ACTOR_HSU, 0x8b3, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, 0x8b3, MSGNO(MsgXianInteriorsFeizhisAbilityToSenseTroubleIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, 0x8b3, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HSU, 0x8b3, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhen) },
+    { EVENT_TALK, ACTOR_FEH, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowIBelieve) },
+    { EVENT_TALK, ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHsuWasTrappedUnderTheRocks) },
+    { EVENT_TALK, ACTOR_HSU, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIWasInjuredByBouldersOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhisAbilityToForeseeIsReal) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerSome) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HSU, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhenI) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

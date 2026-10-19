@@ -70,6 +70,13 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Xian: set once the jar's Lucky Medal is taken.
+#define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e
+
+// Xian interiors: set once each find is taken.
+#define FLAG_XIAN_INTERIORS_ELIXIR_BARREL 0xf6f
+#define FLAG_XIAN_INTERIORS_SLEEP_BOMB_JAR 0xf70
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

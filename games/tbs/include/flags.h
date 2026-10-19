@@ -111,4 +111,9 @@
 #define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
 #define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 // after the party caught Forge
 
+// Hammet's palace
+#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 // that Hammet is still in Lunpa
+#define FLAG_LAYANA_SCOLDED_LUNPA_VISIT 0x913
+#define FLAG_HAMMET_HOMECOMING_SEEN 0x914
+
 #endif

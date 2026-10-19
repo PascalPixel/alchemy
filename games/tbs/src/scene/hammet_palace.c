@@ -1,3 +1,5 @@
+// Hammet's palace in Kalay: Lady Layana hears that Hammet is still held in
+// Lunpa, and later welcomes him home.
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/hammet_palace.h"
@@ -20,13 +22,21 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "flags.h"
+
+// The palace's actors: the party keeps its slots, the rest follow the
+// placement table from 8.
+#define LAYANA 8
+#define HAMMET 9
+#define SOLDIER_1 10 // the soldiers of Kalay in the meeting
+#define SOLDIER_2 11
 
 // Entrance setup and the two long conversations use the helpers below.
-static void FieldScene_DispatchSceneByIndex(void);
-static void RunEventScript01(void);
+static void HammetPalace_SetUpEntrance(void);
+static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);
 static void HammetPalace_FacePartyNorth(s32 waitFrames);
-static void Scene_RunPartySequence(void);
+static void HammetPalace_HammetsHomecoming(void);
 
 // Advance within the current conversation's consecutive message block.
 static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
@@ -44,11 +54,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gHammetPalaceEntrancesOther;
 }
 
-// The overlay supplies no clipping regions.
-s32 SceneData_ReturnZero(void) { return 0; }
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Return the packed exit data through this overlay's legacy entry point.
-u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
+const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 
 // Apply placement clipping before returning the palace's actor rows.
 const struct ScenePlacement *Scene_GetPlacements(void) {
@@ -69,41 +77,46 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gHammetPalaceEventsOther;
 }
 
-// Ask whether Lord Hammet will be released soon.
-static void EV13_TALK(void) {
+// Talking to a resident (actor 13) before Hammet is rescued: "Lord Hammet
+// will be released soon. Right?"
+static void Event_AskWhetherHammetWillBeReleased(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayLordHammetWillReleasedSoon);
   Engine_EventAskYesNo(13, 0);
   Engine_EventEnd();
 }
 
-// Ask about Lord Hammet's silk-trading legacy.
-static void EV16_TALK(void) {
+// Talking to a resident (actor 16) before Hammet is rescued: "Has the legacy
+// of Lord Hammet's silk trading come to an end?"
+static void Event_AskWhetherSilkTradeHasEnded(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayHasLegacyLordHammetsSilk);
   Engine_EventAskYesNo(16, 0);
   Engine_EventEnd();
 }
 
-// Respond to Isaac's visit to Lunpa, then record this conversation.
-static void EV08_TALK(void) {
+// Talking to Layana once the party has been to Lunpa: "Isaac, you sneaked into
+// Lunpa? That's far too dangerous!" She is glad Hammet is unhurt, but asks
+// the party not to go back, and to fulfill their quest.
+static void Event_LayanaScoldsLunpaVisit(void) {
 
   Engine_EventBegin();
-  Engine_ActorShowEmote(8, 0x100, 0x3C);
+  Engine_ActorShowEmote(LAYANA, EMOTE_IN_FRONT, 60);
   Engine_EventSetMessage(MsgKalayIsaacSneakedIntoLunpaThats);
-  Engine_EventShowMessageAndWait(8, 0, 0xA);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Engine_EventShowMessageAndWait(8, 0, 0xA);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Engine_EventShowMessageAndWait(8, 0, 0xA);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_EventShowMessageAndWait(8, 0, 0xA);
-  Engine_GameFlagSet(0x913);
+  Engine_EventShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 2);
+  Engine_EventShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Engine_EventShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Engine_EventShowMessageAndWait(LAYANA, 0, 10);
+  Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
   Engine_EventEnd();
 }
 
-// Hide the doorway layers while Isaac walks through the selected exit.
-static void HammetPalace_LeaveThroughDoor(void) {
+// Walking north into a door (triggers 2, 3, 4 and 14): it opens, and Isaac
+// walks through it to the next room.
+static void Event_LeaveThroughDoor(void) {
 
   struct EventWork *work;
 
@@ -118,8 +131,8 @@ static void HammetPalace_LeaveThroughDoor(void) {
   Map_ClearLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
   Engine_EventWait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->touchedTrigger == 4) {
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
@@ -137,37 +150,39 @@ static void HammetPalace_LeaveThroughDoor(void) {
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gGameState.scene == (u32)&SceneId_HammetPalace) {
-    FieldScene_DispatchSceneByIndex();
+    HammetPalace_SetUpEntrance();
   }
   return 0;
 }
 
-// Restore the doorway and actors, or begin a pending arrival conversation.
-static void FieldScene_DispatchSceneByIndex(void) {
+// Set up the room the party enters by: Layana and Hammet in the audience
+// hall (entrance 9), the opened door (10 and 11), or Ivan's report (20).
+static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
   s32 facing;
-  s32 waitingX = 0x038a0000;
-  s32 waitingZ = 0x01a60000;
+  s32 waitingX = PIXELS(906);
+  s32 waitingZ = PIXELS(422);
 
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
 
   switch (gGameState.entrance) {
   case 9:
-    if (Engine_GameFlagIsSet(0x941) != 0) {
-      actor = Object_GetById(8);
-      facing = 0x1000;
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+      // Hammet is home.
+      actor = Object_GetById(LAYANA);
+      facing = FACING_EAST + FACING_STEP;
       actor->facing = facing;
 
-      if (Engine_GameFlagIsSet(0x914) == 0) {
-        Scene_RunPartySequence();
+      if (Engine_GameFlagIsSet(FLAG_HAMMET_HOMECOMING_SEEN) == 0) {
+        HammetPalace_HammetsHomecoming();
       }
     } else {
-      Engine_ActorSetPosition(9, 0, 0);
+      Engine_ActorSetPosition(HAMMET, 0, 0);
       if (Engine_GameFlagIsSet(0x321) != 0) {
-        Engine_ActorSetPosition(8, waitingX, waitingZ);
-        actor = Object_GetById(8);
-        facing = 0xd000;
+        Engine_ActorSetPosition(LAYANA, waitingX, waitingZ);
+        actor = Object_GetById(LAYANA);
+        facing = FACING_NORTH + FACING_STEP;
         actor->facing = facing;
       }
     }
@@ -186,9 +201,9 @@ static void FieldScene_DispatchSceneByIndex(void) {
     break;
 
   case 20:
-    Engine_ActorSetPosition(9, 0, 0);
-    if (Engine_GameFlagIsSet(0x109) == 0) {
-      RunEventScript01();
+    Engine_ActorSetPosition(HAMMET, 0, 0);
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+      HammetPalace_IvanReportsToLayana();
     }
     break;
 
@@ -197,8 +212,12 @@ static void FieldScene_DispatchSceneByIndex(void) {
   }
 }
 
-// Stage the party's return conversation after hearing the news about Ivan.
-static void RunEventScript01(void) {
+// Ivan brings the party to Layana: she had hoped Hammet came back with him.
+// The ransom was paid long ago, yet Dodonpa holds Hammet still; Layana will
+// not risk him by sending the soldiers, nor the party. She tells of the
+// prophecy, the Jupiter Adept who gave Hammet the Shaman's Rod and Ivan, and
+// what the rod is to find, then sends everyone back to their posts.
+static void HammetPalace_IvanReportsToLayana(void) {
 
   struct EventWork *work;
   s32 advanceAfterReply;
@@ -215,157 +234,157 @@ static void RunEventScript01(void) {
   work = gEventWork;
   work->transitionFrames = 24;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  Actor_SetPosition(8, 0x3580000, 0x1b80000);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3580000, 0x1e60000);
-  Actor_SetPosition(GARET, 0x3500000, 0x1f60000);
-  Actor_SetPosition(IVAN, 0x3680000, 0x1e60000);
-  Actor_SetPosition(MIA, 0x3700000, 0x1f60000);
-  Actor_SetPosition(10, 0x3480000, 0x2060000);
-  Actor_SetPosition(11, 0x3780000, 0x2060000);
-  Camera_MoveTo(0x3600000, -1, 0x1d80000, 0);
+  Actor_SetPosition(LAYANA, PIXELS(856), PIXELS(440));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(856), PIXELS(486));
+  Actor_SetPosition(GARET, PIXELS(848), PIXELS(502));
+  Actor_SetPosition(IVAN, PIXELS(872), PIXELS(486));
+  Actor_SetPosition(MIA, PIXELS(880), PIXELS(502));
+  Actor_SetPosition(SOLDIER_1, PIXELS(840), PIXELS(518));
+  Actor_SetPosition(SOLDIER_2, PIXELS(888), PIXELS(518));
+  Camera_MoveTo(PIXELS(864), -1, PIXELS(472), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Actor_FaceDirection(IVAN, FACING_WEST, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   HammetPalace_FacePartyNorth(20);
-  Actor_SetAttachedEffect(8, 0x102);
-  Engine_ActorStartRepeatedMotion(8, 2);
+  Actor_SetAttachedEffect(LAYANA, 0x102);
+  Engine_ActorStartRepeatedMotion(LAYANA, 2);
   Engine_EventWait(60);
-  Actor_FaceDirection(8, 0x5000, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Actor_ShowEmote(10, 0x100, 0);
-  Engine_ActorStartRepeatedMotion(10, 2);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Actor_ShowEmote(SOLDIER_1, EMOTE_IN_FRONT, 0);
+  Engine_ActorStartRepeatedMotion(SOLDIER_1, 2);
   Engine_EventWait(60);
-  Actor_FaceDirection(10, 0xf000, 20);
-  Engine_ActorRunRepeatedMotion(11, 2);
-  Actor_FaceDirection(11, 0x9000, 40);
-  Actor_FaceDirection(10, 0xd000, 0);
-  Actor_FaceDirection(11, 0xb000, 20);
-  Engine_ActorSetAnimationAndWait(11, 3);
+  Actor_FaceDirection(SOLDIER_1, FACING_NORTHEAST + FACING_STEP, 20);
+  Engine_ActorRunRepeatedMotion(SOLDIER_2, 2);
+  Actor_FaceDirection(SOLDIER_2, FACING_WEST + FACING_STEP, 40);
+  Actor_FaceDirection(SOLDIER_1, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(SOLDIER_2, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_NOD);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Actor_FaceDirection(8, 0x3000, 10);
-  Actor_ShowEmote(8, 0x105, 60);
-  Engine_ActorRunRepeatedMotion(11, 2);
-  Engine_ActorSetAnimationAndWait(11, 4);
-  Engine_ActorSetAnimationAndWait(11, 4);
+  Engine_ActorRunRepeatedMotion(LAYANA, 2);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
+  Engine_ActorRunRepeatedMotion(SOLDIER_2, 2);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_SHAKE_HEAD);
   ColorBuffer_ApplyTarget(0x10000, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_TaskWait(60);
-  Actor_ShowEmote(8, 0x105, 60);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
   Engine_EventSetMessage(MsgKalayWhenHeardWereBackIvan);
   // The following replies advance through this conversation's message block.
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorRunRepeatedMotion(10, 2);
-  Event_ShowMessageAndWait(10, 0, 10);
-  Engine_ActorSetAnimationAndWait(11, 4);
-  Event_ShowMessageAndWait(11, 0, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorRunRepeatedMotion(SOLDIER_1, 2);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 10);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(SOLDIER_2, 0, 10);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
-  Event_ShowMessageAndWait(0x6002, 0, 10);
-  Engine_ActorRunRepeatedMotion(11, 2);
-  Event_ShowMessageAndWait(11, 0, 10);
-  Engine_ActorSetAnimation(10, 4);
-  Event_ShowMessageAndWait(10, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 0x2000 | IVAN, 0, 10);
+  Engine_ActorRunRepeatedMotion(SOLDIER_2, 2);
+  Event_ShowMessageAndWait(SOLDIER_2, 0, 10);
+  Engine_ActorSetAnimation(SOLDIER_1, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Actor_ShowEmote(8, 0x101, 60);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorRunRepeatedMotion(11, 2);
-  Event_ShowMessageAndWait(11, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Actor_ShowEmote(LAYANA, 0x101, 60);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorRunRepeatedMotion(SOLDIER_2, 2);
+  Event_ShowMessageAndWait(SOLDIER_2, 0, 10);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 10);
-  Engine_ActorSetAnimationAndWait(10, 3);
-  Event_ShowMessageAndWait(10, 0, 10);
+  Engine_ActorSetAnimationAndWait(SOLDIER_1, ANIM_NOD);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 10);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
   Engine_ActorStartRepeatedMotion(IVAN, 1);
-  Event_ShowMessageAndWait(0x6002, 0, 10);
-  Engine_ActorSetAnimationAndWait(10, 3);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(SOLDIER_1, ANIM_NOD);
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
-  Event_AskYesNo(0x6002, 0);
-  Actor_SetAttachedEffect(8, 0x102);
+  Event_AskYesNo(SPEAKER_WINDOW_ABOVE | 0x2000 | IVAN, 0);
+  Actor_SetAttachedEffect(LAYANA, 0x102);
   Engine_EventWait(60);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Actor_ShowEmote(8, 0x105, 60);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 40);
-  Actor_FaceDirection(8, 0x1000, 40);
-  Actor_SetSpeed(8, 0x6666, 0x3333);
-  Actor_WalkToAndWait(8, 0x37c, 0x1b8);
+  Actor_FaceDirection(LAYANA, FACING_EAST + FACING_STEP, 40);
+  Actor_SetSpeed(LAYANA, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
+  Actor_WalkToAndWait(LAYANA, 892, 440);
   Engine_EventWait(40);
-  Actor_FaceDirection(8, 0xd000, 20);
-  Actor_ShowEmote(8, 0x105, 60);
+  Actor_FaceDirection(LAYANA, FACING_NORTH + FACING_STEP, 20);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
   HammetPalace_FacePartyOutward(60);
   HammetPalace_FacePartyNorth(40);
-  Actor_WalkToAndWait(8, 0x358, 0x1b8);
+  Actor_WalkToAndWait(LAYANA, 856, 440);
   Engine_EventWait(40);
-  Actor_FaceDirection(8, 0x9000, 20);
-  Actor_ShowEmote(8, 0x105, 60);
-  Actor_FaceDirection(10, 0xf000, 0);
-  Actor_FaceDirection(11, 0x9000, 40);
-  Actor_FaceDirection(10, 0xd000, 0);
-  Actor_FaceDirection(11, 0xb000, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorRunRepeatedMotion(10, 2);
-  Event_ShowMessageAndWait(10, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Actor_FaceDirection(8, 0x5000, 10);
+  Actor_FaceDirection(LAYANA, FACING_WEST + FACING_STEP, 20);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
+  Actor_FaceDirection(SOLDIER_1, FACING_NORTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(SOLDIER_2, FACING_WEST + FACING_STEP, 40);
+  Actor_FaceDirection(SOLDIER_1, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(SOLDIER_2, FACING_NORTHWEST + FACING_STEP, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
+  Engine_ActorRunRepeatedMotion(SOLDIER_1, 2);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 2);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(11, 0x9000, 40);
-  Actor_FaceDirection(10, 0xf000, 20);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Engine_ActorRunRepeatedMotion(11, 2);
+  Actor_FaceDirection(SOLDIER_2, FACING_WEST + FACING_STEP, 40);
+  Actor_FaceDirection(SOLDIER_1, FACING_NORTHEAST + FACING_STEP, 20);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 20);
+  Engine_ActorRunRepeatedMotion(SOLDIER_2, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(11, 0xb000, 20);
-  Engine_ActorSetAnimationAndWait(11, 3);
-  Event_ShowMessageAndWait(11, 0, 10);
-  Actor_FaceDirection(11, 0x9000, 40);
-  Engine_ActorSetAnimation(10, 3);
-  Engine_ActorSetAnimationAndWait(11, 3);
-  Actor_FaceDirection(10, 0xd000, 0);
-  Actor_FaceDirection(11, 0xb000, 10);
-  Engine_ActorRunRepeatedMotion(10, 2);
-  Event_ShowMessageAndWait(10, 0, 20);
+  Actor_FaceDirection(SOLDIER_2, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_NOD);
+  Event_ShowMessageAndWait(SOLDIER_2, 0, 10);
+  Actor_FaceDirection(SOLDIER_2, FACING_WEST + FACING_STEP, 40);
+  Engine_ActorSetAnimation(SOLDIER_1, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_NOD);
+  Actor_FaceDirection(SOLDIER_1, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(SOLDIER_2, FACING_NORTHWEST + FACING_STEP, 10);
+  Engine_ActorRunRepeatedMotion(SOLDIER_1, 2);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 20);
   HammetPalace_FacePartyNorth(20);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(LAYANA, 2);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Actor_SetAttachedEffect(8, 0x102);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Actor_SetAttachedEffect(LAYANA, 0x102);
   Engine_EventWait(60);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 4);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(8, 4);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimation(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
   Event_OpenMessage(GARET, 0);
@@ -382,33 +401,33 @@ static void RunEventScript01(void) {
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(60);
-  Actor_ShowEmote(8, 0x101, 0);
-  Actor_FaceDirection(8, 0x3000, 40);
-  Actor_FaceDirection(8, 0x5000, 20);
-  Actor_FaceDirection(8, 0x3000, 20);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_ShowEmote(LAYANA, 0x101, 0);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 20);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 10);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Actor_ShowEmote(8, 0x107, 60);
-  Engine_EventShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_OpenMessage(8, 0);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Actor_ShowEmote(LAYANA, 0x107, 60);
+  Engine_EventShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_OpenMessage(LAYANA, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Event_ShowMessageAndWait(8, 0, 10);
+    Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+    Event_ShowMessageAndWait(LAYANA, 0, 10);
     gEventWork->message++;
   } else {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(8, 4);
+    Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
     gEventWork->message++;
-    Event_ShowMessageAndWait(8, 0, 10);
+    Event_ShowMessageAndWait(LAYANA, 0, 10);
   }
   HammetPalace_FacePartyNorth(20);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
@@ -416,37 +435,37 @@ static void RunEventScript01(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 10);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_ShowEmote(8, 0x105, 60);
-  Event_ShowMessageAndWait(8, 0, 40);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(8, 0, 40);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
+  Event_ShowMessageAndWait(LAYANA, 0, 40);
+  Engine_ActorRunRepeatedMotion(LAYANA, 2);
+  Event_ShowMessageAndWait(LAYANA, 0, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(IVAN, 0x364, 0x1d8);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_SetSpeed(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_WalkToAndWait(IVAN, 868, 472);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   HammetPalace_FacePartyNorth(20);
-  Actor_ShowEmote(8, 0x105, 60);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Actor_FaceDirection(8, 0x5000, 10);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Actor_FaceDirection(8, 0x3000, 10);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_OpenMessage(8, 0);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_OpenMessage(LAYANA, 0);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorStartRepeatedMotion(IVAN, 1);
   Engine_ActorRunRepeatedMotion(MIA, 1);
@@ -455,153 +474,153 @@ static void RunEventScript01(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(LAYANA, 0x102);
     Engine_EventWait(40);
-    Event_ShowMessageAndWait(8, 0, 10);
+    Event_ShowMessageAndWait(LAYANA, 0, 10);
     gEventWork->message += 2;
   } else {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     gEventWork->message++;
     Event_ShowMessageAndWait(GARET, 0, 10);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(LAYANA, 0x102);
     Engine_EventWait(40);
-    Event_ShowMessageAndWait(8, 0, 10);
+    Event_ShowMessageAndWait(LAYANA, 0, 10);
   }
   Actor_ShowEmote(MIA, 0x101, 40);
   Actor_FaceDirection(MIA, FACING_NORTH, 10);
   Event_ShowMessage(MIA, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   HammetPalace_FacePartyNorth(10);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-  Engine_ActorSetAnimation(GARET, 4);
-  Engine_ActorSetAnimation(IVAN, 4);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
-  Actor_SetAttachedEffect(8, 0x102);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(GARET, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  Actor_SetAttachedEffect(LAYANA, 0x102);
   Engine_EventWait(60);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   HammetPalace_FacePartyNorth(20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_ShowEmote(MIA, 0x101, 60);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Actor_ShowEmote(8, 0x108, 60);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Actor_ShowEmote(LAYANA, 0x108, 60);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_ShowEmote(GARET, 0x101, 40);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Actor_FaceDirection(8, 0x5000, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorRunRepeatedMotion(10, 2);
-  Engine_ActorSetAnimationAndWait(10, 4);
-  Event_ShowMessageAndWait(10, 0, 10);
-  Actor_ShowEmote(8, 0x105, 40);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Actor_FaceDirection(8, 0x3000, 10);
-  Engine_ActorSetAnimation(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Actor_FaceDirection(8, 0x5000, 10);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorRunRepeatedMotion(SOLDIER_1, 2);
+  Engine_ActorSetAnimationAndWait(SOLDIER_1, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 10);
+  Actor_ShowEmote(LAYANA, 0x105, 40);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Engine_ActorSetAnimation(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Actor_ShowEmote(8, 0x100, 40);
-  Actor_FaceDirection(8, 0x3000, 10);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Actor_ShowEmote(LAYANA, EMOTE_IN_FRONT, 40);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   HammetPalace_FacePartyNorth(20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimation(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimation(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Engine_ActorStartRepeatedMotion(IVAN, 1);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimation(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_ShowEmote(IVAN, 0x105, 60);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 10);
-  Engine_ActorSetAnimation(IVAN, 4);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Engine_ActorSetAnimation(IVAN, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Actor_FaceDirection(MIA, FACING_NORTH, 10);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorStartRepeatedMotion(10, 2);
-  Event_ShowMessageAndWait(10, 0, 10);
-  Engine_ActorSetAnimationAndWait(11, 3);
-  Event_ShowMessageAndWait(11, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, 4);
-  Engine_ActorSetAnimation(IVAN, 4);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
-  Engine_EventShowMessageAndWait(1, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Event_OpenMessage(8, 0);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorStartRepeatedMotion(SOLDIER_1, 2);
+  Event_ShowMessageAndWait(SOLDIER_1, 0, 10);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_NOD);
+  Event_ShowMessageAndWait(SOLDIER_2, 0, 20);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(IVAN, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_EventShowMessageAndWait(GARET, 0, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
+  Event_OpenMessage(LAYANA, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
     HammetPalace_FacePartyNorth(10);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimation(IVAN, 3);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
+    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(GARET, 0, 10);
     gEventWork->message += 2;
@@ -611,79 +630,82 @@ static void RunEventScript01(void) {
     gEventWork->message++;
     Event_ShowMessageAndWait(GARET, 0, 10);
     HammetPalace_FacePartyNorth(10);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimation(IVAN, 3);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
+    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(GARET, 0, 10);
   }
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 40);
-  Actor_FaceDirection(8, 0x5000, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 40);
+  Actor_FaceDirection(LAYANA, FACING_SOUTH + FACING_STEP, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(10, 1);
+  Engine_ActorRunRepeatedMotion(SOLDIER_1, 1);
   Engine_EventWait(20);
-  Actor_FaceDirection(8, 0x3000, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(11, 1);
+  Engine_ActorRunRepeatedMotion(SOLDIER_2, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimation(10, 3);
-  Engine_ActorSetAnimationAndWait(11, 3);
-  Actor_SetSpeed(10, 0x10000, 0x8000);
-  Actor_SetSpeed(11, 0x10000, 0x8000);
-  Actor_WalkTo(10, 0x350, 0x21c);
-  Actor_WalkToAndWait(11, 0x370, 0x21c);
-  Actor_SetPosition(10, 0, 0);
-  Actor_SetPosition(11, 0, 0);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimation(SOLDIER_1, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(SOLDIER_2, ANIM_NOD);
+  Actor_SetSpeed(SOLDIER_1, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(SOLDIER_2, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(SOLDIER_1, 848, 540);
+  Actor_WalkToAndWait(SOLDIER_2, 880, 540);
+  Actor_SetPosition(SOLDIER_1, 0, 0);
+  Actor_SetPosition(SOLDIER_2, 0, 0);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   partyScript = gHammetPalace_PartyActions;
   Actor_SetActionScript(GARET, partyScript);
-  Actor_SetActionScript(2, partyScript);
-  Actor_RunActionScriptAndWait(3, partyScript);
+  Actor_SetActionScript(IVAN, partyScript);
+  Actor_RunActionScriptAndWait(MIA, partyScript);
   work = gEventWork;
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-  GameFlag_Set(0x912);
+  GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
   Engine_EventEnd();
 }
 
 // Turn the party outward from the group, then optionally wait.
 static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(2, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(3, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   if (waitFrames != 0) {
     Engine_EventWait(waitFrames);
   }
 }
 
-// Turn all four party members north, then optionally wait.
+// Turn all four party members north toward Layana, then optionally wait.
 static void HammetPalace_FacePartyNorth(s32 waitFrames) {
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(MIA, FACING_NORTH, 0);
   if (waitFrames != 0) {
     Engine_EventWait(waitFrames);
   }
 }
 
-// Bring the party into the audience and play the alternate Ivan conversation.
-static void Scene_RunPartySequence(void) {
+// Back with Hammet, the party walks into the audience hall: Hammet welcomes
+// them, Layana scolds Ivan for going to Lunpa against her word, and Ivan
+// decides to leave at once on the quest. Hammet sends them to Hesperia with
+// the Shaman's Rod, as the Jupiter Adept said.
+static void HammetPalace_HammetsHomecoming(void) {
 
   struct FieldActor *leader;
   struct EventWork *work;
@@ -693,113 +715,113 @@ static void Scene_RunPartySequence(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  Camera_MoveTo(0x3600000, -1, 0x2180000, 0);
+  Camera_MoveTo(PIXELS(864), -1, PIXELS(536), 0);
   // Pan from the entrance while the party walks into its speaking positions.
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3600000, 0x2760000);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(864), PIXELS(630));
   gEventWork->startTransition = v5 = 0x100;
   gEventWork->transitionFrames = 40;
   Engine_EventOpenScreen();
   Camera_SetSpeed(0x6666, 0xccc);
-  Camera_MoveTo(0x3600000, -1, 0x1d80000, 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_SetSpeed(MIA, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x360, 0x1f2);
-  leader = Object_GetById(0);
+  Camera_MoveTo(PIXELS(864), -1, PIXELS(472), 1);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(MIA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 864, 498);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
   }
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x358, 0x1e6);
-  Actor_WalkTo(GARET, 0x350, 0x1f6);
-  Actor_WalkTo(IVAN, 0x368, 0x1e6);
-  Actor_WalkToAndWait(MIA, 0x370, 0x1f6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorSetAnimation(GARET, 1);
-  Engine_ActorSetAnimation(IVAN, 1);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 856, 486);
+  Actor_WalkTo(GARET, 848, 502);
+  Actor_WalkTo(IVAN, 872, 486);
+  Actor_WalkToAndWait(MIA, 880, 502);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(IVAN, ANIM_STAND);
   Engine_EventWait(10);
   HammetPalace_FacePartyNorth(10);
-  Actor_ShowEmote(9, v5, 20);
-  Actor_FaceDirection(9, 0x5000, 20);
+  Actor_ShowEmote(HAMMET, v5, 20);
+  Actor_FaceDirection(HAMMET, FACING_SOUTH + FACING_STEP, 20);
   Engine_EventSetMessage(MsgKalayItsIvanHisCompanionsPerfect);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
-  Actor_ShowEmote(8, v5, 20);
-  Actor_FaceDirection(8, 0x3000, 20);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Actor_ShowEmote(8, 0x107, 60);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
+  Actor_ShowEmote(LAYANA, v5, 20);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 20);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
+  Actor_ShowEmote(LAYANA, 0x107, 60);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(60);
-  Actor_ShowEmote(9, 0x102, 60);
-  Actor_FaceDirection(9, 0x7000, 10);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
-  Actor_FaceDirection(8, 0x1000, 10);
-  Actor_ShowEmote(8, 0x108, 20);
-  Event_ShowMessageAndWait(8, 0, 40);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(8, 0, 20);
-  Actor_FaceDirection(8, 0x3000, 10);
-  Event_OpenMessage(8, 0);
+  Actor_ShowEmote(HAMMET, 0x102, 60);
+  Actor_FaceDirection(HAMMET, FACING_SOUTHWEST + FACING_STEP, 10);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
+  Actor_FaceDirection(LAYANA, FACING_EAST + FACING_STEP, 10);
+  Actor_ShowEmote(LAYANA, 0x108, 20);
+  Event_ShowMessageAndWait(LAYANA, 0, 40);
+  Engine_ActorRunRepeatedMotion(LAYANA, 2);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Event_OpenMessage(LAYANA, 0);
   v5 = 1;
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(10);
-    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimation(LAYANA, ANIM_NOD);
   } else {
     Engine_EventWait(10);
     HammetPalace_AdvanceMessage(1);
-    Engine_ActorSetAnimation(8, 4);
+    Engine_ActorSetAnimation(LAYANA, ANIM_SHAKE_HEAD);
     v5 = 0;
   }
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   if (v5 != 0) {
     HammetPalace_AdvanceMessage(1);
   }
-  Engine_ActorStartRepeatedMotion(9, 2);
-  Actor_SetAttachedEffect(9, 0x102);
+  Engine_ActorStartRepeatedMotion(HAMMET, 2);
+  Actor_SetAttachedEffect(HAMMET, 0x102);
   Engine_EventWait(80);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
-  Actor_FaceDirection(8, 0x1000, 10);
-  Actor_ShowEmote(8, 0x107, 40);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
+  Actor_FaceDirection(LAYANA, FACING_EAST + FACING_STEP, 10);
+  Actor_ShowEmote(LAYANA, 0x107, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 3);
-  Event_ShowMessageAndWait(0x2002, 0, 20);
-  Actor_ShowEmote(8, 0x105, 60);
-  Actor_FaceDirection(8, 0x3000, 60);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 20);
+  Actor_ShowEmote(LAYANA, 0x105, 60);
+  Actor_FaceDirection(LAYANA, FACING_SOUTHEAST + FACING_STEP, 60);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Actor_FaceDirection(9, 0x5000, 0);
+  Actor_FaceDirection(HAMMET, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Event_ShowMessageAndWait(0x6002, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 0x2000 | IVAN, 0, 10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Event_ShowMessageAndWait(0x2002, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 20);
+  Engine_ActorSetAnimationAndWait(LAYANA, ANIM_NOD);
+  Event_ShowMessageAndWait(LAYANA, 0, 20);
   Actor_FaceDirection(IVAN, FACING_WEST, 20);
-  Event_ShowMessageAndWait(0x6002, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 0x2000 | IVAN, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
   Actor_ShowEmote(MIA, 0x105, 40);
   Event_ShowMessageAndWait(MIA, 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
-  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
@@ -808,44 +830,44 @@ static void Scene_RunPartySequence(void) {
     Engine_EventWait(20);
     Event_ShowMessageAndWait(GARET, 0, 10);
   }
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   HammetPalace_FacePartyNorth(20);
-  Engine_ActorRunRepeatedMotion(9, 2);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
+  Engine_ActorRunRepeatedMotion(HAMMET, 2);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Actor_FaceDirection(9, 0x3000, 10);
-  Engine_ActorSetAnimationAndWait(9, 3);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
+  Actor_FaceDirection(HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
+  Engine_ActorSetAnimationAndWait(HAMMET, ANIM_NOD);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
   Actor_ShowEmote(IVAN, 0x101, 60);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
-  Engine_ActorRunRepeatedMotion(9, 1);
-  Actor_FaceDirection(9, 0x5000, 10);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | IVAN, 0, 10);
+  Engine_ActorRunRepeatedMotion(HAMMET, 1);
+  Actor_FaceDirection(HAMMET, FACING_SOUTH + FACING_STEP, 10);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(9, 4);
-  Event_ShowMessageAndWait(0x2009, 0, 10);
+  Engine_ActorSetAnimationAndWait(HAMMET, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(0x2000 | HAMMET, 0, 10);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_ActorRunRepeatedMotion(LAYANA, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Event_ShowMessageAndWait(LAYANA, 0, 10);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   partyScript = gHammetPalace_PartyActions;
   Actor_SetActionScript(GARET, partyScript);
-  Actor_SetActionScript(2, partyScript);
-  Actor_RunActionScriptAndWait(3, partyScript);
+  Actor_SetActionScript(IVAN, partyScript);
+  Actor_RunActionScriptAndWait(MIA, partyScript);
   work = gEventWork;
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-  GameFlag_Set(0x914);
+  GameFlag_Set(FLAG_HAMMET_HOMECOMING_SEEN);
   Engine_EventEnd();
 }
 
@@ -881,7 +903,7 @@ struct SceneEntrance gHammetPalaceEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gPlacement_Messages[] = {
+u32 gHammetPalaceExits[] = {
     SCENE_EXITS(103),        SCENE_EXIT(1, 102, 2),  SCENE_EXIT(2, 103, 6),
     SCENE_EXIT(3, 103, 7),   SCENE_EXIT(4, 103, 9),  SCENE_EXIT(5, 103, 13),
     SCENE_EXIT(6, 103, 2),   SCENE_EXIT(7, 103, 3),  SCENE_EXIT(8, 103, 10),
@@ -929,9 +951,9 @@ struct SceneEvent gHammetPalaceEventsOther[] = {
 
 struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
@@ -941,35 +963,35 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { 0x31, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
-    { EVENT_TALK, 8, 0x321, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
-    { EVENT_TALK, 8, 0x913, EVENT_SCRIPT(EV08_TALK) },
-    { EVENT_TALK, 8, 0x941, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTakeYourShamansRodAndSet) },
-    { EVENT_TALK, 12, 0x941, MSGNO(MsgHammetPalaceTheTownsfolkDontKnowAboutLord) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
+    { EVENT_TALK, LAYANA, 0x321, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
+    { EVENT_TALK, LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT, EVENT_SCRIPT(Event_LayanaScoldsLunpaVisit) },
+    { EVENT_TALK, LAYANA, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
+    { EVENT_TALK, LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },
+    { EVENT_TALK, HAMMET, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTakeYourShamansRodAndSet) },
+    { EVENT_TALK, 12, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceTheTownsfolkDontKnowAboutLord) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIHearHammetWasSavedBy) },
-    { EVENT_TALK, 13, 0x941, EVENT_SCRIPT(EV13_TALK) },
+    { EVENT_TALK, 13, FLAG_LUNPA_TRADE_REOPENED, EVENT_SCRIPT(Event_AskWhetherHammetWillBeReleased) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheySayHammetsReturnIsSupposed) },
-    { EVENT_TALK, 14, 0x941, MSGNO(MsgHammetPalaceLayanaIsPuttingUpAStrong) },
+    { EVENT_TALK, 14, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceLayanaIsPuttingUpAStrong) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceILeftTheDoorToThe) },
-    { EVENT_TALK, 15, 0x941, MSGNO(MsgHammetPalaceMerchantsAreSupposedToBeProtected) },
+    { EVENT_TALK, 15, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceMerchantsAreSupposedToBeProtected) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIWonderIfAnyOfDodonpas) },
-    { EVENT_TALK, 16, 0x941, EVENT_SCRIPT(EV16_TALK) },
+    { EVENT_TALK, 16, FLAG_LUNPA_TRADE_REOPENED, EVENT_SCRIPT(Event_AskWhetherSilkTradeHasEnded) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheSecretPassageIsLockedBecause) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x941, MSGNO(MsgHammetPalaceIDontCareAboutTheMoney) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoHappyHammetMadeIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanasWordsPainHerMoreThan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x941, MSGNO(MsgHammetPalaceImSureTheVillagersWouldPanic) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LAYANA, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceIDontCareAboutTheMoney) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoHappyHammetMadeIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), HAMMET, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanasWordsPainHerMoreThan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceImSureTheVillagersWouldPanic) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoRelievedHammetMadeIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x941, MSGNO(MsgHammetPalaceEveryonesWorriedAboutLordHammetBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceEveryonesWorriedAboutLordHammetBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceICantLetOnToThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x941, MSGNO(MsgHammetPalaceLadyLayanaWasCryingAgainLast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceLadyLayanaWasCryingAgainLast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanaOrderedTheDoorToThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x941, MSGNO(MsgHammetPalaceAndToThinkIAlmostWent) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceAndToThinkIAlmostWent) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceWeWillNeverLetDodonpasHenchmen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x941, MSGNO(MsgHammetPalaceLordHammetIsALegendAmong) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceLordHammetIsALegendAmong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheKeyToTheSecretPassage) },
     { SEARCH(SEARCH_CHEST), 100, 0xf86, FIND_ITEM(0x5f) },
     { SEARCH(SEARCH_BARREL), 101, 0xf87, FIND_ITEM(ITEM_NUT) },

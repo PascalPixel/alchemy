@@ -6,9 +6,6 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-#define DONPA_ROOM_DONPA 24
-#define DONPA_ROOM_ATTENDANT 25
-
 #include "staged_actor.h"
 #include "object_runtime.h"
 #include "field_obj.h"

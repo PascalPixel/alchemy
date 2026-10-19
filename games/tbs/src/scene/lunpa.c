@@ -852,16 +852,17 @@ s32 Scene_Initialize(void) {
 #endif
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty,
                                TASK_PRIORITY_SCENE);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 1);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 2);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 3);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 4);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 5);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 6);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 7);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 8);
-    Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 9);
+    // The fortress's puzzles and beaten guards are reset.
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
   }
   return 0;
 }

@@ -83,6 +83,34 @@
 #define FLAG_LUNPA_BARREL_VIAL 0xf8b            // in the town's buildings
 #define FLAG_LUNPA_NUT_CAUGHT 0xfd1 // the nut floating over the town
 
+// Lunpa Fortress. From FLAG_LUNPA_FORTRESS_COLUMN_LOWERED to
+// FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, the fortress's state is cleared
+// whenever the party comes back to the gate below it.
+// The party has seen Hammet's rescue up to Dodonpa's trap; a retry after
+// losing the battle skips to the trap.
+#define FLAG_LUNPA_FORTRESS_TRAP_SEEN 0x942
+#define FLAG_LUNPA_FORTRESS_COLUMN_LOWERED 0x943
+// Whirlwind has blown away what hid the first switch, the passage and the
+// second switch.
+#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED 0x944
+#define FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED 0x945
+#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED 0x946
+#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED 0x947
+#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED 0x948
+#define FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN 0x949
+#define FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN 0x94a
+#define FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN 0x94b
+#define FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN 0x94c
+// Donpa's reward, the Djinni in his room, has joined the party.
+#define FLAG_LUNPA_FORTRESS_REWARD_TAKEN 0x94e
+#define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR 0xfa2
+#define FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL 0xfa3
+#define FLAG_LUNPA_FORTRESS_THIRD_CHEST 0xfa4 // item 0xaa
+#define FLAG_LUNPA_FORTRESS_CHEST_COINS 0xfa5
+#define FLAG_LUNPA_FORTRESS_BARREL_VIAL 0xfa6
+#define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
+#define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e // caught or taken from its hook
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200
@@ -107,6 +135,13 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_15 0x215 // Lunpa Fortress: set with FLAG_SCENE_TEMP_14
+#define FLAG_SCENE_TEMP_17 0x217 // Lunpa Fortress: the first switch is hidden
+#define FLAG_SCENE_TEMP_18 0x218 // Lunpa Fortress: the second switch is hidden
+#define FLAG_SCENE_TEMP_24 0x224 // Lunpa Fortress: thrown out at the entrance
+#define FLAG_SCENE_TEMP_25 0x225 // Lunpa Fortress: the sentries saw the party
+#define FLAG_SCENE_TEMP_26 0x226 // Lunpa Fortress: the resident keeps quiet
+#define FLAG_SCENE_TEMP_27 0x227 // Lunpa Fortress: the resident was startled
 #define FLAG_SCENE_TEMP_40 0x240 // Lunpa gate: the guards block the gateway
 #define FLAG_SCENE_TEMP_41 0x241 // Lunpa gate: Cloak is cast
 #define FLAG_SCENE_TEMP_42 0x242 // Lunpa gate: the party enters the fortress
@@ -114,5 +149,6 @@
 #define FLAG_SCENE_TEMP_44 0x244 // Lunpa gate: the guards caught the party
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
+#define FLAG_SCENE_TEMP_70 0x270 // Lunpa Fortress: Hammet's rescue has begun
 
 #endif

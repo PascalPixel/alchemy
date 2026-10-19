@@ -1,12 +1,17 @@
-// Draft, differ 151 of 273, from The Broken Seal's
+// Near miss, differ 41 of 273 (151 before), from The Broken Seal's
 // BattleActor_UpdateSpritePriorities (games/tbs/src/battle/battle/
 // objects.c): this game lists both sides at once, reads each object through
 // BattleObjGet inlined and keeps it, stops when the battle work's byte at
 // 0x866 is set, and marks a guarding unit's sprite (flag 2) as it sets the
-// side priority. The shape and frame match (the priorities are two scalars;
-// an array adds 8 bytes); left is register choice: the native keeps the
-// motion record in r0 and the slot in r5, and its later loops' counters and
-// bases differ. Six minutes of permute found nothing usable.
+// side priority. The two-part loops take each part into its own pointer
+// before the shared record (151 to 47), and the counts declared before the
+// priorities give the native's spill slots (41). Left: the battle work's
+// load before sub sp (the prologue pattern), the motion record copied to r1
+// here where the native keeps it in r0 (one extra row, and the effect and
+// priority in r0 and r2 for r2 and r1), and the pool rows those shift.
+// Tried: the priority set either way and as a conditional (41, 43), the
+// effect read twice (41), five minutes of permute (only a rewrite that
+// changes the comparison).
 #include "types.h"
 #include "motobj.h"
 #include "animspr.h"
@@ -68,9 +73,9 @@ void Func_0811b9fc(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[14];
   struct MotionObject *objects[14];
-  s32 partyPriority, enemyPriority;
   s32 partyCount;
   s32 enemyCount;
+  s32 partyPriority, enemyPriority;
   s32 unitIndex;
   s32 recordIndex;
   struct MotionObject *object;
@@ -139,9 +144,12 @@ void Func_0811b9fc(void) {
       case 2:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
-          record = *records++;
-          if (record != 0)
+          struct TlaSpriteRecord *part = *records++;
+
+          if (part != 0) {
+            record = part;
             record->image.priority = partyPriority;
+          }
         }
         break;
       }
@@ -164,9 +172,12 @@ void Func_0811b9fc(void) {
       case 2:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
-          record = *records++;
-          if (record != 0)
+          struct TlaSpriteRecord *part = *records++;
+
+          if (part != 0) {
+            record = part;
             record->image.priority = enemyPriority;
+          }
         }
         break;
       }

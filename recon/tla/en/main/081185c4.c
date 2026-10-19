@@ -1,14 +1,16 @@
-// Draft, differ 113 of 176: restores the five units Func_0811843c
-// snapshotted: for each one still in the battle party and listed, the first
-// three's four bytes at unit+300, the 25 bytes at unit+304, and the last two's
-// HP and PP through Unit_SetHpFar and Unit_SetPpFar. Left: other: the native
-// keeps the snapshot's base in r9 for the whole loop with i*4 as its own giv
-// in r10 (the tag copy's source is base + i*4 + 8), and reloads the base from
-// the pool only for PP; here the base is reloaded at each use and i*4 is
-// recomputed, so r9 and r10 are not saved. The 25 copies differ only in
-// where each adds r1, #1 sits (one slot before its load here, after it
-// natively). Tried: the tag copy indexed (137) and as a pointer countdown
-// (113).
+// Near miss, differ 8 of 176 (113 before): restores the five units
+// Func_0811843c snapshotted: for each one still in the battle party and
+// listed, the first three's four bytes at unit+300, the 25 bytes at
+// unit+304, and the last two's HP and PP through Unit_SetHpFar and
+// Unit_SetPpFar. The snapshot and the copies read through local pointers
+// (in r9 and r7, as natively) and the tag copy as an indexed loop (i*4 its
+// own giv in r10); HP goes through the snapshot and PP through the global,
+// which reloads the base from the pool as the native does. Left: three
+// reordered rows: the copies' address loads before the zero and 148 in the
+// prologue, the first copy's load before its offset 304 is built, and the
+// copies pointer steps after the i*4 giv at the loop's end. Permute found a
+// one-pass block over the first twelve copies (6, not taken: a device for
+// one row).
 #include "types.h"
 
 struct SnapshotVitals {
@@ -41,46 +43,45 @@ void Unit_SetPpFar(struct SnapshotUnit *unit, s32 pp);
 void Func_081185c4(void) {
   s32 i;
   s32 j;
+  struct Snapshot *snap = &Data_0200ff58;
+  u8 (*copies)[28] = Data_0200ff6c;
 
   for (i = 0; i <= 4; i++) {
     struct SnapshotUnit *unit = UnitGet(Data_0812a16c[i]);
 
     if (BattleParty_IsUnitListed(Data_0812a16c[i]) &&
-        Data_0200ff58.listed[i] != 0) {
+        snap->listed[i] != 0) {
       if (i <= 2) {
-        u8 *dst = unit->tags;
-        u8 *src = Data_0200ff58.tags[i];
-
-        for (j = 3; j >= 0; j--)
-          *dst++ = *src++;
+        for (j = 0; j < 4; j++)
+          unit->tags[j] = snap->tags[i][j];
       }
-      unit->snapshot[0] = Data_0200ff6c[i][0];
-      unit->snapshot[1] = Data_0200ff6c[i][1];
-      unit->snapshot[2] = Data_0200ff6c[i][2];
-      unit->snapshot[3] = Data_0200ff6c[i][3];
-      unit->snapshot[4] = Data_0200ff6c[i][4];
-      unit->snapshot[5] = Data_0200ff6c[i][5];
-      unit->snapshot[6] = Data_0200ff6c[i][6];
-      unit->snapshot[7] = Data_0200ff6c[i][7];
-      unit->snapshot[8] = Data_0200ff6c[i][8];
-      unit->snapshot[9] = Data_0200ff6c[i][9];
-      unit->snapshot[10] = Data_0200ff6c[i][10];
-      unit->snapshot[11] = Data_0200ff6c[i][11];
-      unit->snapshot[12] = Data_0200ff6c[i][12];
-      unit->snapshot[13] = Data_0200ff6c[i][13];
-      unit->snapshot[14] = Data_0200ff6c[i][14];
-      unit->snapshot[15] = Data_0200ff6c[i][15];
-      unit->snapshot[16] = Data_0200ff6c[i][16];
-      unit->snapshot[17] = Data_0200ff6c[i][17];
-      unit->snapshot[18] = Data_0200ff6c[i][18];
-      unit->snapshot[19] = Data_0200ff6c[i][19];
-      unit->snapshot[20] = Data_0200ff6c[i][20];
-      unit->snapshot[21] = Data_0200ff6c[i][21];
-      unit->snapshot[22] = Data_0200ff6c[i][22];
-      unit->snapshot[23] = Data_0200ff6c[i][23];
-      unit->snapshot[24] = Data_0200ff6c[i][24];
+      unit->snapshot[0] = copies[i][0];
+      unit->snapshot[1] = copies[i][1];
+      unit->snapshot[2] = copies[i][2];
+      unit->snapshot[3] = copies[i][3];
+      unit->snapshot[4] = copies[i][4];
+      unit->snapshot[5] = copies[i][5];
+      unit->snapshot[6] = copies[i][6];
+      unit->snapshot[7] = copies[i][7];
+      unit->snapshot[8] = copies[i][8];
+      unit->snapshot[9] = copies[i][9];
+      unit->snapshot[10] = copies[i][10];
+      unit->snapshot[11] = copies[i][11];
+      unit->snapshot[12] = copies[i][12];
+      unit->snapshot[13] = copies[i][13];
+      unit->snapshot[14] = copies[i][14];
+      unit->snapshot[15] = copies[i][15];
+      unit->snapshot[16] = copies[i][16];
+      unit->snapshot[17] = copies[i][17];
+      unit->snapshot[18] = copies[i][18];
+      unit->snapshot[19] = copies[i][19];
+      unit->snapshot[20] = copies[i][20];
+      unit->snapshot[21] = copies[i][21];
+      unit->snapshot[22] = copies[i][22];
+      unit->snapshot[23] = copies[i][23];
+      unit->snapshot[24] = copies[i][24];
       if (i > 2) {
-        Unit_SetHpFar(unit, Data_0200ff58.vitals[i].hp);
+        Unit_SetHpFar(unit, snap->vitals[i].hp);
         Unit_SetPpFar(unit, Data_0200ff58.vitals[i].pp);
       }
     }

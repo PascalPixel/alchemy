@@ -1202,7 +1202,7 @@ static void Event_MeetFlint(void) {
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
     djinni->work = 1;
-    Actor_FaceActor(ACTOR_VENUS_DJINNI, 0, 0);
+    Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Task_Wait(16);
     Event_SetMessage(MsgWorldMapOh);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1222,7 +1222,7 @@ static void Event_MeetFlint(void) {
       djinni->scaleY += Q16_ONE / 32;
       Task_Wait(1);
     }
-    Actor_FaceActor(ACTOR_VENUS_DJINNI, 0, 0);
+    Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Task_Wait(16);
     djinni->update = 0;
@@ -1279,11 +1279,12 @@ static void Event_MeetFlint(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | 2, 30);
-    Actor_FaceActor(ACTOR_VENUS_DJINNI, 0, 0);
+    Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 30);
     Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
+    // Each "No" makes Flint plead again; the seventh time he gives up asking.
     count = 0;
   plead:
     if (Event_ChooseYesNo(0, 0) == 1) {
@@ -1325,7 +1326,7 @@ static void Event_MeetFlint(void) {
   FieldObject_SetPosition(djinni, x, 0, z);
   Event_Wait(30);
   Battle_SetObjectFlag5bWhenMode3();
-  Actor_FaceActor(ACTOR_VENUS_DJINNI, 0, 0);
+  Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
   // Offer the tutorial again, then demonstrate setting and standby.
@@ -1344,7 +1345,7 @@ static void Event_MeetFlint(void) {
   FieldObject_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
   Event_Wait(30);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  Actor_FaceActor(ACTOR_VENUS_DJINNI, 0, 0);
+  Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
   if (Event_ChooseYesNo(0, 0) == 1) {

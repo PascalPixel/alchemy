@@ -11,6 +11,15 @@
 // 2026-10-18: the flags as a plain u8 cleared with &= ~1 (3), each of the ten
 // stores moved to every other place (2 at best), the call's result held in a
 // local and stored after the flag clear (14), alchemy permute 4 minutes (2).
+// 2026-10-19, with FAKEMATCH devices allowed: the flag byte read into an s32
+// held by an empty asm and cleared with &= ~1 puts the ldrb between the
+// halves (sched2 ranks the asm link at 0) but swaps the and's registers
+// (mask r2, flags r3: differ 6); stored as flags & ~1 (13), through
+// "=r"/"0" (13), as a u8 (5: movs r2, #254), as an s8 (8: sign extension).
+// The flags and the mask pinned to r2 and r3 (mask &= flags) give the native's
+// registers but the ldrb after the shift again (2); with the asm as well the
+// ldrb drops below movs r3, #2 (2): a load feeding an asm costs 0 in sched2,
+// so the asm lowers the load's priority instead of raising it.
 #include "types.h"
 #include "animspr.h"
 #include "ram_buffer.h"

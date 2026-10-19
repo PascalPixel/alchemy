@@ -6,10 +6,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum {
-
-  ITEM_DRAGONS_EYE = 230
-};
+enum { ITEM_DRAGONS_EYE = 230 };
 
 extern void *gWorkSlot[];
 

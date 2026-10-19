@@ -165,6 +165,38 @@
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
 #define FLAG_COLOSSO_OVER 0x950       // the colosseum is closed until next year
 #define FLAG_COLOSSO_FINALS_DAY 0x962 // the trials are over: the finals day
+// Kalay
+// The inn's guests told the party about the Colosso tour to Tolbi.
+#define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
+#define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 // the tour group has left town
+#define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916   // the Nut circling in the town
+
+// Imil
+// Mia's second apprentice told the party Mia went to the old couple's house.
+#define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
+// Mia healed the old man, and the party saw the Mercury Lighthouse lit.
+#define FLAG_IMIL_MET_MIA 0x82b
+// Her apprentice told the party she can act as its healer in the sanctum.
+#define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
+#define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e // to her two apprentices
+
+// Fuchin Falls
+// The Dragon's Eye is set in the dragon statue, which opened the hidden path.
+#define FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET 0x820
+
+// Kalay and Tolbi docks
+#define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5
+// The father on the Kalay docks asked the party to take a message to his
+// daughter in Tolbi, and the party agreed.
+#define FLAG_KALAY_DOCKS_CARRYING_MESSAGE 0x8a6
+#define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7 // the party may board
+#define FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED 0x8a8
+#define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9 // off the ship after boarding
+// A passenger on the Tolbi docks walked up to the party as it arrived.
+#define FLAG_TOLBI_DOCKS_PASSENGER_MET_PARTY 0x8aa
+// The passengers confronted the tour guides and their bodyguard.
+#define FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN 0x8ab
+#define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

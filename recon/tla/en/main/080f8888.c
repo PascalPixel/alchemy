@@ -2,6 +2,9 @@
 // byte 21 before it stores byte 23 (ldrb r2, [r0, #21]; strb r3, [r0, #23]);
 // sched2 ranks the store first here, as it depends on the last instruction
 // scheduled.
+// 2026-10-19: affineMode before matrix moves all of byte 21 first (worse); a
+// byte view of the OAM entry loading byte 21 into a local first is differ 30;
+// four minutes of permuter found nothing.
 #include "m7_interfaces.h"
 
 void UiIcon_PrepareObject(struct RenderOutput *object) {

@@ -4,6 +4,7 @@
 // only: the native copies the window to ip and loads the 0xffff mask before
 // the x sum is finished (before lsls r3, r3, #3 and adds r2, #8); here both
 // come one step later.
+// 2026-10-19: three minutes of permuter found nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"

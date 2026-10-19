@@ -4,6 +4,10 @@
 // loaded right after; this form reads the sprite's x before those stores.
 // Direct oam fields address it at +20 and +22 from a copy of the output (differ
 // 25).
+// 2026-10-19: an empty asm with a memory clobber after the output's y store
+// keeps the sprite's x load after the stores (20), but the sprite pointer and x
+// then take r0 and r1 the other way round and the next link still loads last;
+// four minutes of permuter found nothing better.
 #include "types.h"
 #include "render_input.h"
 

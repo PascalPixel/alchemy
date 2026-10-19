@@ -42,7 +42,7 @@ struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 struct BattleUnit *UnitGet(s32 unitId);
 s32 SummonSlot_RegisterActorSprites(s32 unitId);
 s32 BattleClass_GetSprite(s32 index);
-s32 Summon_GetEntryFlag1Field(s32 index);
+s32 BattleClass_GetPalette(s32 index);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 s32 ArcTan2(s32 y, s32 x);
@@ -69,7 +69,7 @@ void BattleObjMake(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   if (unit->classIndex == 0) {
     sprite = BattleClass_GetSprite(unit->enemyId);
     if (registeredSprite == 0)
-      palette = Summon_GetEntryFlag1Field(unit->enemyId);
+      palette = BattleClass_GetPalette(unit->enemyId);
     else
       sprite = registeredSprite;
   } else {

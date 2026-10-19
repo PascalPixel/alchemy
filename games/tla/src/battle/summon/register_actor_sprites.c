@@ -13,7 +13,7 @@ extern u8 Data_02018000[];
 struct BattleUnit *UnitGet(s32 unit);
 s32 BattleClass_IsSmall(s32 index);
 s32 BattleClass_GetSprite(s32 index);
-s32 Summon_GetEntryFlag1Field(s32 index);
+s32 BattleClass_GetPalette(s32 index);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 // Loads the battle sprites of a unit into free sprite slots: one slot, or
@@ -64,7 +64,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
      * sum, 6 of 134 instructions differ in tla-en. */
     slotBuffers = (s32)Data_02018000;
     {
-      s32 flag = Summon_GetEntryFlag1Field(actor->enemyId);
+      s32 flag = BattleClass_GetPalette(actor->enemyId);
       s32 bufferAddr = (slot << 14) + slotBuffers;
 
       if (ResourceSlot_LoadFar(slot, (u32 *)bufferAddr, spriteValue + pass,

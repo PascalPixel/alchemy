@@ -94,7 +94,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
       break;
 
     {
-      s32 palette = Summon_GetEntryFlag1Field(unit->classId);
+      s32 palette = BattleClass_GetPalette(unit->classId);
       s32 spriteBuffer = (slot << 14) + (s32)Ram_ActorSpriteSlots;
 
       if (ResourceSlot_LoadFar(slot, (u32 *)spriteBuffer, sprite + spritePart,

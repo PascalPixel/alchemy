@@ -49,7 +49,7 @@ BattleObjMake:
 	bne .L_0811a81a
 	ldrh r0, [r5]
 	str r1, [sp, #0]
-	bl Summon_GetEntryFlag1Field
+	bl BattleClass_GetPalette
 	mov r11, r0
 	ldr r1, [sp, #0]
 	b .L_0811a88c

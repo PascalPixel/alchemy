@@ -15,7 +15,7 @@ s32 BattleClass_GetSprite(s32 index) {
   return gSummon_EntryTable[index].animation;
 }
 
-s32 Summon_GetEntryFlag1Field(s32 index) {
+s32 BattleClass_GetPalette(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].layoutBits1;

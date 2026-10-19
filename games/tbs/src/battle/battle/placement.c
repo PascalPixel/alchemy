@@ -42,7 +42,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   if (unit->classIndex == 0) {
     sprite = BattleClass_GetSprite(unit->classId);
     if (registeredSprite == 0)
-      palette = Summon_GetEntryFlag1Field(unit->classId);
+      palette = BattleClass_GetPalette(unit->classId);
     else
       sprite = registeredSprite;
   } else {

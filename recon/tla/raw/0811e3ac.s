@@ -395,7 +395,7 @@ Func_0811e3ac:
 	mov r3, r9
 	adds r5, r0, #0
 	ldrh r0, [r3, #52]
-	bl Summon_GetEntryFlag1Field
+	bl BattleClass_GetPalette
 	mov r2, r9
 	adds r3, r0, #0
 	ldr r1, [r2, #44]

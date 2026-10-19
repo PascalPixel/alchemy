@@ -26,7 +26,7 @@ s32 BattleClass_GetSprite(s32 index) {
 
 // Returns the enemy-class palette/layout bits. An invalid class returns row
 // zero's animation field.
-s32 Summon_GetEntryFlag1Field(s32 index) {
+s32 BattleClass_GetPalette(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].layoutBits1;

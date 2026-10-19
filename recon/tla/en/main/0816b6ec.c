@@ -1,7 +1,25 @@
-// Draft of Func_0816b6ec, decompiled from the listing: differ 509 of 609 (draft
-// 606), the same 48 calls and control flow; allocation differs.
+// Draft of Func_0816b6ec, decompiled from the listing: differ 196 of 609 (draft
+// 607), the same 48 calls and control flow.
+// Left (2026-10-19): r6 and r7 trade places for the vertex pointer, the
+// funnel count j and Aroma's target loop; the funnel's segment length is
+// chosen by a set and a conditional set where the native branches to two
+// moves, and the funnel's -length is hoisted out of the segment loop where
+// the native negates it in each pass; the tail copy loop's counter and
+// pointer take r6 and r5 for r1 and r2; the rest is scheduling.
+// Tried (differ):
+// first draft                                                       509
+// other declared before screen (their native stack order)          509
+// the blitter as The Broken Seal's pair (FAKEMATCH below)           487
+// the blitter declared before camera (the native's slot order)      477
+// no phase variable: the bob and the scale read frame << 11, which
+// loop.c turns into the native's late induction variable          469
+// a segment's y as -length - k * 24 (an induction variable of k, as
+// the native's), not a y counted down                              196
+// the vertex pointer in a local set after the model list (the native
+// loads it there into r6): 196 used in both places, 482 at the store
+// only; the length as an if (196), mode != 0 ? 30 : 80 (196), y as s8
+// or s16 (468, 268), -(length + k * 24) (209)
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +27,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +49,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +69,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -119,18 +139,22 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
+  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
+   * though only the first is used; its second word is the unused word at
+   * sp 40 of the native's 84-byte frame. As one DrawRectangle the frame is
+   * 80 bytes and every stack offset moves (differ 509). */
+  DrawRectangle blit[2];
   s32 *camera;
-  DrawRectangle blit;
-  struct EffectPosition screen;
   struct EffectPosition other;
+  struct EffectPosition screen;
   struct ModelTexture texture;
   struct RenderModel *model;
-  s32 frames;
-  s32 frame;
   s32 yaw;
-  s32 phase;
+  s32 frame;
+  s32 frames;
   s32 i;
   s32 k;
+  u8 *vertices;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -145,14 +169,14 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
                   (s32 *)&other);
   }
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    BattleFx_LoadBlitter(
+        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
     BattleFx_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                        COMPOSITE_FLIP_X));
+                         BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                                               COMPOSITE_FLIP_X));
   }
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
@@ -168,7 +192,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
                              work->sheet + 0x2000, 1, 1);
   Render_BuildQuadStrip(Data_02010318, 4, 32, 32);
 
-  for (frame = 0, phase = 0; frame != frames; frame++, phase += 0x800) {
+  for (frame = 0; frame != frames; frame++) {
     s32 shade;
     s32 height;
     s32 angle;
@@ -181,14 +205,11 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       yaw = 0;
       length = mode == 0 ? 80 : 30;
       for (i = 0; i != WAFT_SEGMENTS; i++) {
-        s32 y = -length;
-
         corner = (s8 *)gMapCellBuffer + i * 8;
         for (k = 0; k != 2; k++) {
-          corner[1] = y;
+          corner[1] = -length - k * 24;
           corner[0] = 0;
           corner[2] = 32;
-          y -= 24;
           corner += 4;
         }
       }
@@ -204,15 +225,15 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     // The djinni, bobbing over the caster and rising from frame 8.
     if (frame <= 79) {
-      s32 x = ((Trig_Sin(phase) << 3) >> 16) + screen.x / 2;
-      s32 y = ((Trig_Cos(phase) << 2) >> 16) + screen.y;
+      s32 x = ((Trig_Sin(frame << 11) << 3) >> 16) + screen.x / 2;
+      s32 y = ((Trig_Cos(frame << 11) << 2) >> 16) + screen.y;
 
       x -= 10;
       y -= 24;
       if (frame > 7) {
         y = y - frame * 4 + 32;
       }
-      blit(canvas, work->sheet + 0x2000, x, y, 20, 40);
+      blit[0](canvas, work->sheet + 0x2000, x, y, 20, 40);
     }
 
     // The funnel's tail trails its head.
@@ -270,6 +291,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     Transform_SetLookAt(camera, camera + 3);
     model = Render_AllocateModelList(1);
+    vertices = Data_02010108;
     shade = 0;
     if (frame <= 15) {
       shade = frame * 4 - 64;
@@ -291,7 +313,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     model->scrollU = 0;
     model->scrollV = 0;
     gCameraSceneParameters[4] = 104;
-    model->vertices = Data_02010108;
+    model->vertices = vertices;
     model->shade = shade;
     for (j = 0; j != Data_08198b24[mode]; j++) {
       s32 scale;
@@ -303,7 +325,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         SceneTransform_ApplyYaw(j * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
         if (frame > 27) {
-          scale = scale + phase - 0xe000;
+          scale = scale + (frame << 11) - 0xe000;
         }
         Func_080151e4(scale * 3 / 2, 0x10000, scale * 3 / 2);
       } else {
@@ -312,11 +334,11 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         SceneTransform_ApplyYaw(j * 21000 + yaw);
         scale = 0x10000 - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
-          scale = scale + phase - 0xe000;
+          scale = scale + (frame << 11) - 0xe000;
         }
         Func_080151e4(scale * 2, 0x10000, scale * 2);
       }
-      Render_TransformVertices(gMapCellBuffer, Data_02010108, 66);
+      Render_TransformVertices(gMapCellBuffer, vertices, 66);
       Render_DrawModelList(model);
     }
     gCameraSceneParameters[3] = 120;

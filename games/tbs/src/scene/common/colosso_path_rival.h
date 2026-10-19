@@ -16,7 +16,14 @@
 #include "dma.h"
 #include "vram_block.h"
 #include "io_reg.h"
+#include "flags.h"
 
+// The Colosso finals' three courses (Colosso Log, River and Wall): the rival
+// who races Isaac by running a recorded path, and the race gauge that shows
+// how near each of them is to the finish.
+
+// The race's work: the gauge (struct ColossoGaugeWork) and then the path, in
+// pixels, as pairs of x and z, one pair a frame, ending with (0, 0).
 struct PathWork {
   u8 unk00[224];
   u16 rivalActor;
@@ -28,6 +35,13 @@ struct PathWork {
   s16 path[0x3840];
 };
 
+// The rival's scene callback. Mode 1 plays the path back: each frame the rival
+// steps to the next point (mirrored across the finish when asked), turning by
+// at most a sixteenth of a turn, and stands once still for three frames. At
+// the path's end the rival walks to the finish, beside the first finisher's
+// item actor or the second's, and sets FLAG_SCENE_TEMP_11 (a racer has
+// finished). Mode 2 records the actor's own path instead, up to 0x383e
+// halfwords, then plays it back with the rival.
 static void Colosso_UpdatePathRival(void) {
   struct PathWork *work = (struct PathWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
@@ -51,7 +65,7 @@ static void Colosso_UpdatePathRival(void) {
       } else {
         x = work->finishX - 0xc0000;
       }
-      if (Engine_GameFlagIsSet(0x211)) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_11)) {
         fz = work->finishZ + 0x100000;
         itemActor = &work->finishItemActorB;
       } else {
@@ -62,7 +76,7 @@ static void Colosso_UpdatePathRival(void) {
       obj->acceleration = 0x4000;
       obj->speed = 0x10000;
       Engine_ObjectSetPosition(obj, x, 0, fz);
-      Engine_GameFlagSet(0x211);
+      Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
       Engine_ObjectSetScript(obj, gColosso_RivalFinishScript);
       return;
     }
@@ -111,6 +125,10 @@ static void Colosso_UpdatePathRival(void) {
 
 extern u8 gColosso_GaugeGraphics[];
 
+// The race gauge's scene callback: a bar across the top of the screen, with
+// the finish at its centre and blinking marks for the rival and Isaac at their
+// distances from it (a pixel of bar for 14 of course). It slides down when the
+// race starts and back up while flag 0x106 is set; hold keeps it down.
 static void Colosso_DrawGauge(void) {
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
   s32 *dst = (s32 *)gauge;

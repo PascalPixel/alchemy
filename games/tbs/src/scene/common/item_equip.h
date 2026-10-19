@@ -1,14 +1,18 @@
+// Colosso Log, River and Wall, and Goma Cave's entrance: giving a character an
+// item and putting it on.
 #include "types.h"
 #include "inventory.h"
 
-static void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b) {
-  struct BattleUnit *t = UnitGet(a);
+// Give the character the item, then equip every slot of their 15 that holds
+// it.
+static void SceneActor_ApplyValueAndMatchingSlots(s32 character, s32 item) {
+  struct BattleUnit *unit = UnitGet(character);
   s32 i;
 
-  Inventory_AddItem(a, b);
+  Inventory_AddItem(character, item);
   for (i = 0; i <= 14; i++) {
-    if (t->inventory[i] == b) {
-      Inventory_Equip(a, i);
+    if (unit->inventory[i] == item) {
+      Inventory_Equip(character, i);
     }
   }
 }

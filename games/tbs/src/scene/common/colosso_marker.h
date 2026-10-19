@@ -19,6 +19,12 @@
 #include "field_obj.h"
 #include "callback_scheduler.h"
 #include "vram_block.h"
+#include "songs.h"
+
+// The Colosso finals' three courses (Colosso Log, River and Wall): what a
+// stage's guide uses to describe the stage. Isaac appears on the stage to show
+// how it is crossed, a blinking pointer moves over the screen, and Isaac is
+// put back where he stood.
 
 struct CompetitorState {
   u8 unk00[6];
@@ -26,6 +32,10 @@ struct CompetitorState {
   u8 stage;
 };
 
+// Isaac (id) appears at pixel (x, z) on the stage, facing south: he fades in
+// through the backgrounds while he stretches from thin and tall to his own
+// shape, settles and nods. His position and facing are kept for
+// Colosso_RestoreCompetitor.
 void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   struct CompetitorState *state;
   struct FieldActor *actor;
@@ -48,17 +58,20 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   Object_SetMode(actor, 1);
   Engine_ActorSetPosition(id, x << 16, z << 16);
   Engine_ActorFaceActor(0, 0x4000, 0);
-  IO_WRITE_QUEUE_PUSH(0x4000050, 0xf00, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
+                          BLDCNT_TGT2_BG3,
+                      0x20000);
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
-  Engine_AudioPlayCue(252);
+  Engine_AudioPlayCue(SE_252);
   for (i = 0; i <= 15; i += 2) {
     actor->scaleX = (i << 12) + 0x1000;
     actor->scaleY = 0x1f000 - (i << 12);
-    IO_WRITE_QUEUE_PUSH(0x4000052, ((15 - i) << 8) | (i + 1), 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1), 0x20000);
     Engine_TaskWait(1);
   }
-  IO_WRITE_QUEUE_PUSH(0x4000052, 16, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), 0x20000);
   actor->scaleX = 0x11000;
   actor->scaleY = 0xf000;
   Engine_EventWait(1);
@@ -71,6 +84,9 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   Engine_EventWait(20);
 }
 
+// Put Isaac (id) back where Colosso_FadeInCompetitor found him: he stands
+// (or turns south, nods and waits half a second), then returns to his kept
+// position and facing with his motion stopped.
 void Colosso_RestoreCompetitor(s32 id) {
   struct CompetitorState *state;
   struct FieldActor *actor;
@@ -115,6 +131,7 @@ void Colosso_RestoreCompetitor(s32 id) {
   Engine_TaskWait(1);
 }
 
+// Stop the actor where it is: no velocity and no destination.
 void OverlayObject_ResetMotionFields(s32 actor) {
   struct FieldActor *o = Object_GetById(actor);
 
@@ -125,6 +142,10 @@ void OverlayObject_ResetMotionFields(s32 actor) {
   o->targetZ = ACTOR_NO_TARGET;
 }
 
+// The guide's pointer: one 16x16 sprite centred on a point of the screen,
+// shown for 13 frames of every 20, that can glide from point to point.
+
+// Load the pointer's picture into a free VRAM block, once.
 static void Colosso_EnsureMarkerSlot(void) {
 
   if (gColosso_MarkerSlot == -1) {
@@ -148,6 +169,8 @@ extern s16 gColosso_MarkerEndY;
 extern s16 gColosso_MarkerBlink;
 extern s16 gColosso_MarkerPriority;
 
+// The pointer's scene callback: glide one step, then draw it while it blinks
+// on (a glide keeps it on).
 static void Colosso_UpdateMarker(void) {
   s32 tile;
   s32 total;
@@ -199,6 +222,7 @@ static void Colosso_UpdateMarker(void) {
   }
 }
 
+// Show the pointer at screen pixel (x, y), drawn at priority style & 3.
 void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style) {
   Colosso_EnsureMarkerSlot();
 
@@ -211,6 +235,7 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style) {
   FieldScheduler_AddCallback(Colosso_UpdateMarker, 0xc80);
 }
 
+// Glide the pointer to screen pixel (x, y) over duration frames.
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
   gColosso_MarkerEndX = x;
   gColosso_MarkerEndY = y;
@@ -222,6 +247,7 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
   FieldScheduler_AddCallback(Colosso_UpdateMarker, 0xc80);
 }
 
+// Hide the pointer and free its VRAM block.
 void SceneEffect_RemoveMarkerTask(void) {
 
   Engine_TaskRemoveCallback(Colosso_UpdateMarker);
@@ -229,36 +255,39 @@ void SceneEffect_RemoveMarkerTask(void) {
   gColosso_MarkerSlot = -1;
 }
 
-void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c) {
-  struct FieldActor *o = Engine_ActorLookup(a);
+// Walk the actor at 2 pixels a frame towards pixel (x, z) and return at once.
+void SceneActor_StartMode5MoveToTile(s32 actorId, s32 x, s32 z) {
+  struct FieldActor *actor = Engine_ActorLookup(actorId);
 
-  if (o != 0) {
-    s32 v = 0x20000;
-    s32 z = 0;
+  if (actor != 0) {
+    s32 speed = 0x20000;
+    s32 zero = 0;
 
-    o->speed = v;
-    o->acceleration = v >> 1;
-    o->paused = z;
-    ObjectDispatch_InitFromTable6(o);
-    Object_SetMode(o, 5);
-    Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
+    actor->speed = speed;
+    actor->acceleration = speed >> 1;
+    actor->paused = zero;
+    ObjectDispatch_InitFromTable6(actor);
+    Object_SetMode(actor, 5);
+    Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
   }
 }
 
-void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c) {
-  struct FieldActor *o = Engine_ActorLookup(a);
+// Walk the actor at 1.25 pixels a frame to pixel (x, z), wait until it
+// arrives and stand it there.
+void OverlayObject_PlaceWithScale14000(s32 actorId, s32 x, s32 z) {
+  struct FieldActor *actor = Engine_ActorLookup(actorId);
 
-  if (o != 0) {
-    s32 v = 0x14000;
-    s32 z = 0;
+  if (actor != 0) {
+    s32 speed = 0x14000;
+    s32 zero = 0;
 
-    o->speed = v;
-    o->acceleration = v >> 1;
-    o->paused = z;
-    ObjectDispatch_InitFromTable6(o);
-    Object_SetMode(o, 5);
-    Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
-    FieldObject_WaitForMove(o);
-    Object_SetMode(o, 1);
+    actor->speed = speed;
+    actor->acceleration = speed >> 1;
+    actor->paused = zero;
+    ObjectDispatch_InitFromTable6(actor);
+    Object_SetMode(actor, 5);
+    Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
+    FieldObject_WaitForMove(actor);
+    Object_SetMode(actor, 1);
   }
 }

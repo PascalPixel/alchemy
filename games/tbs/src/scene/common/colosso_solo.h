@@ -16,10 +16,31 @@
 #include "animspr.h"
 #include "text/msg_ids.h"
 
+// The Colosso finals' three courses (Colosso Log, River and Wall): before
+// Isaac runs, Garet, Ivan and Mia each look around the course on their own and
+// choose where to cheer from, and the guide at each stage describes it and
+// offers a friend's cheering there.
+
+// Byte flags (eight flags each) holding where a friend cheers from: the cell
+// column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
+// COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
+#define COLOSSO_CHEER_COLUMN 0x370
+#define COLOSSO_CHEER_ROW 0x378
+#define COLOSSO_CHEER_SLOT(character) ((character) << 4)
+
+// Scene flags, by stage number: a friend cheers at the stage (the guide says
+// "Unfortunately, we have a full house."), and its description was heard.
+#define COLOSSO_STAGE_CHEERED 0x200
+#define COLOSSO_STAGE_DESCRIBED 0x208
+
+// Put Garet, Ivan and Mia back at the cells where they chose to cheer, at the
+// centre of each cell.
 void SceneActor_PlacePartyAtSavedTiles(void) {
   {
-    s32 x = FieldGameFlag_GetByte(896);
-    s32 y = FieldGameFlag_GetByte(904);
+    s32 x =
+        FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(GARET));
+    s32 y =
+        FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET));
 
     x <<= 20;
     x += 0x80000;
@@ -28,8 +49,9 @@ void SceneActor_PlacePartyAtSavedTiles(void) {
     Engine_ActorSetPosition(GARET, x, y);
   }
   {
-    s32 x = FieldGameFlag_GetByte(912);
-    s32 y = FieldGameFlag_GetByte(920);
+    s32 x =
+        FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(IVAN));
+    s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(IVAN));
 
     x <<= 20;
     x += 0x80000;
@@ -38,8 +60,9 @@ void SceneActor_PlacePartyAtSavedTiles(void) {
     Engine_ActorSetPosition(IVAN, x, y);
   }
   {
-    s32 x = FieldGameFlag_GetByte(928);
-    s32 y = FieldGameFlag_GetByte(936);
+    s32 x =
+        FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(MIA));
+    s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA));
 
     x <<= 20;
     x += 0x80000;
@@ -49,6 +72,9 @@ void SceneActor_PlacePartyAtSavedTiles(void) {
   }
 }
 
+// Make the character the party's only member, the one the player moves and the
+// camera follows, with full HP and PP and no poison. The gauges are the
+// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
 void Colosso_SelectSoloCompetitor(s32 id) {
   struct BattleUnit *unit;
   s32 v;
@@ -91,20 +117,26 @@ void Colosso_SelectSoloCompetitor(s32 id) {
   Engine_EventClearInvalidPackedValues();
 }
 
+// A scene callback while a friend looks around the course alone (entrance 2):
+// when the Psynergy request names that friend and flag 0x141 is set, raise
+// event 99, Colosso_RememberSupportPosition.
 void SceneState_RaiseTriggerOnPsynergyTarget(void) {
   struct EventWork *work = gEventWork;
   s32 selection = gGameState.selectedActor;
 
   if (selection != 0 && (work->psynergyRequest >> 10) == selection &&
-      Engine_GameFlagIsSet(321) != 0) {
-    u16 *p = (u16 *)&work->raisedTrigger;
-    s32 val = 99;
+      Engine_GameFlagIsSet(0x141) != 0) {
+    u16 *raised = (u16 *)&work->raisedTrigger;
+    s32 trigger = 99;
 
-    *p = val;
+    *raised = trigger;
   }
 }
 
-// Remember this supporter's position and advance to the next party member.
+// Raised event 99: the nearest actor with animation 165 level with or below the
+// friend on the map says "The match is about to begin. Please take your
+// places.", and the friend's cell becomes their place to cheer from. The next
+// friend then looks around, or, after Mia, the party leaves by exit 10.
 static void Colosso_RememberSupportPosition(void) {
   struct EventWork *work = gEventWork;
   s32 speakerId = 8;
@@ -149,18 +181,19 @@ static void Colosso_RememberSupportPosition(void) {
   Engine_EventWait(20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  // Each supporter has one saved map cell in the scene flags.
-  flagBase = supporterId << 4;
-  FieldGameFlag_SetByte(flagBase + 880, supporter->x.fixed >> 20);
+  // Each supporter has one saved map cell in the group's byte flags.
+  flagBase = COLOSSO_CHEER_SLOT(supporterId);
+  FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_COLUMN,
+                        supporter->x.fixed >> 20);
   {
     s32 cellRow = supporter->z.fixed >> 20;
 
-    FieldGameFlag_SetByte(flagBase + 888, cellRow);
+    FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_ROW, cellRow);
   }
   supporterId++;
-  if (supporterId > 3) {
+  if (supporterId > MIA) {
     Engine_EventRequestExit(10);
-    Engine_GameFlagSet(282);
+    Engine_GameFlagSet(0x11a);
   } else {
     Colosso_SelectSoloCompetitor(supporterId);
     Engine_EventOpenScreen();
@@ -170,6 +203,11 @@ static void Colosso_RememberSupportPosition(void) {
   Engine_EventEnd();
 }
 
+// A stage's guide, talking to a friend who looks around alone: "Huh? Are you
+// done cheering?" On "Yeah", "Then please wait here until the match begins.":
+// the friend's cell becomes their place, and the next friend looks around, or,
+// after Mia, the party leaves by exit 10. On "Nope", "Then cheer as best you
+// can!"
 void Colosso_FinishSoloRound(s32 id) {
   struct EventWork *work;
   s32 slot;
@@ -197,10 +235,12 @@ void Colosso_FinishSoloRound(s32 id) {
     work->transitionFrames = 15;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    FieldGameFlag_SetByte((slot << 4) + 0x370, obj->x.fixed >> 20);
-    FieldGameFlag_SetByte((slot << 4) + 0x378, obj->z.fixed >> 20);
+    FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
+                          obj->x.fixed >> 20);
+    FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
+                          obj->z.fixed >> 20);
     slot++;
-    if (slot > 3) {
+    if (slot > MIA) {
       Engine_EventRequestExit(10);
       Engine_GameFlagSet(0x11a);
     } else {
@@ -216,7 +256,11 @@ void Colosso_FinishSoloRound(s32 id) {
   Engine_EventEnd();
 }
 
-// Ask Isaac to choose this support position when his companions have split up.
+// The guide at the course's start. Once the friends have all gone to cheer
+// (Isaac is the party), "Isaac, did you get a good look around?": on yes the
+// guide steps aside, Isaac walks past and the party leaves by exit 11.
+// Otherwise "Wait, shouldn't you decide where the best place to cheer for
+// Isaac is?"
 static void RunPartyCountInteraction(s32 actorId) {
   struct FieldActor *actor;
   s32 x;
@@ -248,22 +292,31 @@ static void RunPartyCountInteraction(s32 actorId) {
   Engine_EventEnd();
 }
 
+// Forget where Garet, Ivan and Mia cheer from.
 void Colosso_ClearSavedActorPositions(void) {
-  FieldGameFlag_SetByte(896, 0);
-  FieldGameFlag_SetByte(904, 0);
-  FieldGameFlag_SetByte(912, 0);
-  FieldGameFlag_SetByte(920, 0);
-  FieldGameFlag_SetByte(928, 0);
-  FieldGameFlag_SetByte(936, 0);
+  FieldGameFlag_SetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(GARET), 0);
+  FieldGameFlag_SetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET), 0);
+  FieldGameFlag_SetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(IVAN), 0);
+  FieldGameFlag_SetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(IVAN), 0);
+  FieldGameFlag_SetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(MIA), 0);
+  FieldGameFlag_SetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA), 0);
 }
 
+// A stage's guide: "This is stage N of the first finals match." (Colosso
+// River; the second is Colosso Wall and the third Colosso Log). Returns what
+// the guide does next:
+// 0: describe the stage (yes to "Would you like to hear a description of this
+//    stage?", asked the first time, or "Descriptions" afterwards);
+// 1: no description, then offer a friend's cheering;
+// 2: "Cheer" chosen, or a friend already cheers here;
+// 3: "Nothing", or the choice cancelled.
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor) {
   s32 scene;
   s32 message;
   s32 choice;
 
   Battle_ResetEffectCounter();
-  UiWork_PushValueSlot(competitor, 5);
+  UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColossoRiver) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -274,10 +327,10 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor) {
   }
   Engine_EventSetMessage(message);
   Engine_EventShowMessage(speaker, 0);
-  if (Engine_GameFlagIsSet(competitor + 512) != 0) {
+  if (Engine_GameFlagIsSet(competitor + COLOSSO_STAGE_CHEERED) != 0) {
     return 2;
   }
-  if (Engine_GameFlagIsSet(competitor + 520) != 0) {
+  if (Engine_GameFlagIsSet(competitor + COLOSSO_STAGE_DESCRIBED) != 0) {
     choice = PartyTalkMenu_Choose(0);
     if (choice == 1) {
       return 2;
@@ -287,17 +340,20 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor) {
     }
     return choice;
   }
-  Engine_GameFlagSet(competitor + 520);
+  Engine_GameFlagSet(competitor + COLOSSO_STAGE_DESCRIBED);
   Engine_EventSetMessage(MsgColossoWouldYouLikeHearDescription);
   Engine_EventOpenMessage(speaker, 0);
   return Engine_EventChooseYesNo(0, 0);
 }
 
+// A stage's guide, after describing the stage, says again "This is stage N of
+// the first finals match." (or the second or third): the copy of that line
+// after it in the text.
 void Colosso_ShowFollowUpPrompt(s32 speaker, s32 competitor) {
   s32 scene;
   s32 message;
 
-  UiWork_PushValueSlot(competitor, 5);
+  UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColossoRiver) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -310,107 +366,122 @@ void Colosso_ShowFollowUpPrompt(s32 speaker, s32 competitor) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base) {
-  struct FieldActor *rec;
-  struct FieldActor *record;
-  s32 p9;
-  s32 p11;
-  s32 count;
-  s32 state;
-  s32 obj;
-  s32 hi;
-  s32 lo;
-  s32 tail;
-  s32 sx;
-  s32 sy;
+// The guide at a stage, with the mode
+// SceneDialogue_RunFlagGatedPromptInteraction returned: offer a friend's
+// cheering at the stage. With Isaac alone, "All right, do your best!"; with
+// the stage taken, "Unfortunately, we have a full house."; otherwise "Would you
+// like a friend to cheer for you here?" (taken as yes in mode 2) and the
+// party's character menu. The friend chosen is led to the stage and leaves the
+// party, and their cell is kept. Mode 3, no or no choice: "If you know who you
+// want to cheer you on, please let me know!"
+void FieldScene_RunMiddleSequence(s32 mode, s32 guide, s32 stage) {
+  struct FieldActor *actor;
+  struct FieldActor *leader;
+  s32 guideX;
+  s32 guideZ;
+  s32 memberCount;
+  s32 answer;
+  s32 friendId;
+  s32 frontZ;
+  s32 besideX;
+  s32 behindZ;
+  s32 column;
+  s32 row;
   s32 i;
-  u8 buf[8];
+  u8 members[8];
 
-  rec = Object_GetById(owner);
-  p9 = rec->x.part.pixel;
-  p11 = rec->z.part.pixel;
+  actor = Object_GetById(guide);
+  guideX = actor->x.part.pixel;
+  guideZ = actor->z.part.pixel;
   if (mode != 3) {
-    count = GetPartyMemberCount();
-    for (i = 0; i < count; i++) {
-      buf[i] = gGameState.activeOwners[i];
+    memberCount = GetPartyMemberCount();
+    for (i = 0; i < memberCount; i++) {
+      members[i] = gGameState.activeOwners[i];
     }
-    if (count <= 1) {
+    if (memberCount <= 1) {
       Engine_EventSetMessage(MsgColossoDoYourBest);
-      Event_ShowMessage(owner, 0);
+      Event_ShowMessage(guide, 0);
       return;
     }
-    if (GameFlag_IsSet(base + 512) != 0) {
+    if (GameFlag_IsSet(stage + COLOSSO_STAGE_CHEERED) != 0) {
       Engine_EventSetMessage(MsgColossoUnfortunatelyWeHaveFullHouse);
-      Event_ShowMessage(owner, 0);
+      Event_ShowMessage(guide, 0);
       return;
     }
     if (mode == 2) {
-      state = 0;
+      answer = 0;
       Engine_TaskWait(6);
     } else {
       Engine_EventSetMessage(MsgColossoWouldLikeFriendCheerFor);
-      Event_OpenMessage(owner, 0);
-      state = Engine_EventChooseYesNo(0, 0);
+      Event_OpenMessage(guide, 0);
+      answer = Engine_EventChooseYesNo(0, 0);
     }
-    if (state == 0) {
-      if (state < count) {
-        for (i = 0; i < count; i++) {
-          Party_RemoveActiveOwner((s8)buf[i]);
+    if (answer == 0) {
+      if (answer < memberCount) {
+        for (i = 0; i < memberCount; i++) {
+          Party_RemoveActiveOwner((s8)members[i]);
         }
       }
-      for (i = 0; i < count; i++) {
-        if ((s8)buf[i] != 0) {
-          Party_AddActiveOwner((s8)buf[i]);
+      for (i = 0; i < memberCount; i++) {
+        if ((s8)members[i] != 0) {
+          Party_AddActiveOwner((s8)members[i]);
         }
       }
-      obj = Menu_OpenCharacterSelector();
-      for (i = 0; i < count; i++) {
-        Party_RemoveActiveOwner((s8)buf[i]);
+      friendId = Menu_OpenCharacterSelector();
+      for (i = 0; i < memberCount; i++) {
+        Party_RemoveActiveOwner((s8)members[i]);
       }
-      for (i = 0; i < count; i++) {
-        Party_AddActiveOwner((s8)buf[i]);
+      for (i = 0; i < memberCount; i++) {
+        Party_AddActiveOwner((s8)members[i]);
       }
-      if (obj != -1) {
+      if (friendId != -1) {
         goto L_main;
       }
     }
   }
   Engine_EventSetMessage(MsgColossoIfKnowWhoWantCheer);
-  Event_ShowMessage(owner, 0);
+  Event_ShowMessage(guide, 0);
   return;
 L_main:
-  UiWork_PushValueSlot(obj, 1);
+  UiWork_PushValueSlot(friendId, MSG_ARG_ACTOR);
   Engine_EventSetMessage(MsgColossoIsaacWillCheerForWay);
-  Event_ShowMessage(owner, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  Actor_SetSpeed(obj, 0x10000, 0x8000);
-  Actor_SetSpeed(owner, 0x10000, 0x8000);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
+  Event_ShowMessage(guide, 0);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetPosition(friendId, leader->x.fixed, leader->z.fixed);
   }
-  hi = p11 + 16;
-  Actor_WalkToAndWait(obj, p9, hi);
-  lo = p9 + 16;
-  Engine_ActorWalkToAndWait(0, lo, hi);
-  Engine_ActorFaceEachOther(obj, ACTOR_PARTY_LEADER, 30);
-  Engine_ActorSetAnimation(obj, 3);
-  tail = hi - 32;
+  frontZ = guideZ + 16;
+  Actor_WalkToAndWait(friendId, guideX, frontZ);
+  besideX = guideX + 16;
+  Engine_ActorWalkToAndWait(0, besideX, frontZ);
+  Engine_ActorFaceEachOther(friendId, ACTOR_PARTY_LEADER, 30);
+  Engine_ActorSetAnimation(friendId, 3);
+  behindZ = frontZ - 32;
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Actor_WalkToAndWait(owner, p9, tail);
-  Engine_ActorWalkTo(owner, lo, tail);
-  Object_LinkObjectAndSetCallback(0, obj);
-  Actor_WalkToAndWait(obj, p9, tail);
-  Engine_ActorSetAnimation(owner, 1);
-  Actor_FaceDirection(owner, 0x8000, 0);
-  Actor_WalkToAndWait(obj, p9, p11 - 48);
-  Actor_WalkToAndWait(owner, p9, tail);
-  Actor_WalkToAndWait(owner, p9, p11);
-  Party_RemoveActiveOwner(obj);
-  GameFlag_Set(base + 512);
-  rec = Object_GetById(obj);
-  sx = rec->x.fixed >> 20;
-  FieldGameFlag_SetByte((obj << 4) + 880, sx);
-  sy = rec->z.fixed >> 20;
-  FieldGameFlag_SetByte((obj << 4) + 888, sy);
+  Actor_WalkToAndWait(guide, guideX, behindZ);
+  Engine_ActorWalkTo(guide, besideX, behindZ);
+  Object_LinkObjectAndSetCallback(0, friendId);
+  Actor_WalkToAndWait(friendId, guideX, behindZ);
+  Engine_ActorSetAnimation(guide, 1);
+  Actor_FaceDirection(guide, FACING_WEST, 0);
+  Actor_WalkToAndWait(friendId, guideX, guideZ - 48);
+  Actor_WalkToAndWait(guide, guideX, behindZ);
+  Actor_WalkToAndWait(guide, guideX, guideZ);
+  Party_RemoveActiveOwner(friendId);
+  GameFlag_Set(stage + COLOSSO_STAGE_CHEERED);
+  actor = Object_GetById(friendId);
+  column = actor->x.fixed >> 20;
+  FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_COLUMN,
+                        column);
+  row = actor->z.fixed >> 20;
+  FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_ROW, row);
 }
+
+#undef COLOSSO_CHEER_COLUMN
+#undef COLOSSO_CHEER_ROW
+#undef COLOSSO_CHEER_SLOT
+#undef COLOSSO_STAGE_CHEERED
+#undef COLOSSO_STAGE_DESCRIBED

@@ -12,8 +12,8 @@ screen, the file select screen and the Battle Arena's lobby.
 | `menu.c` | the guide to the menu object: it includes `menu_internal.h`, then the parts in `menu/` in ROM order |
 | `menu_internal.h` | the includes, macros and types more than one part uses; it places no bytes |
 | `menudata.c`, `menustr.s` | the menu object's tables (cursor bob, sort orders, highlight widths) and its short strings ("Lv", "HP", "/") |
-| `title.c`, `title.h` | the title overlay; `title.h` names the Golden Sun logo the title and file select screens share |
-| `clear.c`, `keyboard.s` | the file select overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
+| `title.c`, [`title.h`](title.h) | the title overlay; [`title.h`](title.h) names the Golden Sun logo the title and file select screens share |
+| `clear.c`, [`keyboard.s`](keyboard.s) | the file select overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
 | `lobby.c` | the Battle Arena overlay: the link and monster battles, their records and the attendant |
 | `entry/`, `import/` | each overlay's entry veneers and the main-image functions it calls |
 
@@ -25,29 +25,14 @@ in `games/tbs/objects.tsv`, from `menu/menu` (the main image) and from
 `menu/entry/title`, `menu/entry/clear` and `menu/entry/lobby` (overlays 36f,
 370 and 3cb).
 
-The unit headers are in `games/tbs/include/unit/menu/`: `menu.h` for the menu
-object, and `title.h`, `clear.h` and `lobby.h` for the overlays. The menu
+The unit headers are in `games/tbs/include/unit/menu/`:
+[`unit/menu/menu.h`](../../include/unit/menu/menu.h) for the menu object,
+and [`unit/menu/title.h`](../../include/unit/menu/title.h), `clear.h` and
+`lobby.h` for the overlays. The menu
 work's views (`struct InventoryMenuState` and its kin) are in the shared
 headers under `games/tbs/include`, such as `inventory_menu.h`.
 
-## Entry points
-
-The field menu's four icons reach the menu object through the far-call table
-`system/far_call/MENU.S`, in `window/window/selection.c`'s order:
-
-| Icon | Function | Part |
-| --- | --- | --- |
-| 1 Psynergy | `PsynergyMenu_Run` | `psynergy.c` |
-| 2 Djinn | `DjinnMenu_Run` | `djinn.c` |
-| 3 Item | `ItemMenu_Run` | `item.c` |
-| 4 Status | `StatusMenu_Run` | `status.c` |
-
-These names are older than the parts and do not say which screen they open;
-they cross folders, so they wait for a rename of their own.
-`Menu_OpenCharacterSelector` (`status.c`) is the member chooser the Colosso
-scenes open.
-
-## Words used here
+## Words
 
 - **menu work**: the heap block `HEAP_SLOT_MENU` (0xa70 bytes), reached as
   `gMenuWork`. Each screen reads it through its own view:
@@ -108,7 +93,24 @@ differently:
 - A function whose result nothing reads keeps its `s32` return where `void`
   changes its epilogue; `UBFIX` gives the `void` form.
 
-## Changing a screen
+## How the field menu opens a screen
+
+The field menu's four icons reach the menu object through the far-call table
+`system/far_call/MENU.S`, in `window/window/selection.c`'s order:
+
+| Icon | Function | Part |
+| --- | --- | --- |
+| 1 Psynergy | `PsynergyMenu_Run` | [`menu/psynergy.c`](menu/psynergy.c) |
+| 2 Djinn | `DjinnMenu_Run` | [`menu/djinn.c`](menu/djinn.c) |
+| 3 Item | `ItemMenu_Run` | `menu/item.c` |
+| 4 Status | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) |
+
+These names are older than the parts and do not say which screen they open;
+they cross folders, so they wait for a rename of their own.
+`Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) is the member
+chooser the Colosso scenes open.
+
+## How to change a screen
 
 - A screen's windows are tiles (`UiWindow_UpdateOrCreate(&handle, x, y, w, h,
   style)`); its text offsets are pixels inside the window.
@@ -119,3 +121,11 @@ differently:
 - The sort orders of the item list are `gMenu_ListOrder*` in `menudata.c`:
   one item type a byte, `LIST_ORDER_EQUIPPED` for equipped items only, ending
   with `LIST_ORDER_END`.
+
+## Limits
+
+- The menu work is one heap block of 0xa70 bytes (`HEAP_SLOT_MENU`), shared
+  by every screen's view of it.
+- A unit's inventory has 15 slots (`INVENTORY_SLOTS`).
+- The title, file select and Battle Arena screens are overlays, loaded into
+  the 32 KB at 0x2008000 (`../system/README.md`).

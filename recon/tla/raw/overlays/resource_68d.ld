@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_palace/scene_tables.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/s00c8.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/scene_events.o"(.text)
-        "*/resource_68d_overlay.o"(.text.x020080f4)
+        "*/games/tla/src/scene/lemuria_palace/s00f4.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/prepare.o"(.text)
         "*/resource_68d_overlay.o"(.text.x020081d8)
         "*/resource_68d_overlay.o"(.text.x020082b4)

@@ -46,12 +46,12 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 playerActor,
   *(u16 *)(desc + 218) = 0;
   *(u16 *)(desc + 220) = 0;
 
-  FieldResource_DecodeType01(gColosso_GaugeGraphics, handle);
+  FieldResource_DecodeType01(gColosso_GaugeGraphics, (void *)handle);
 
   // vramBlock
   pal = Resource_FindFreeEntry();
   *(u16 *)(desc + 216) = pal;
-  Engine_VramLoad((s16)pal, 512, handle);
+  Engine_VramLoad((s16)pal, 512, (const void *)handle);
 
   // The native object stores this local Thumb symbol with an even value and
   // adds the state bit here. Modern GCC already includes that bit in a
@@ -63,7 +63,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 playerActor,
                              0xc76);
 #endif
 
-  Runtime_BumpFree(handle);
+  Runtime_BumpFree((void *)handle);
 }
 
 // Decode the rival's recorded path (resource) after the gauge's work and,

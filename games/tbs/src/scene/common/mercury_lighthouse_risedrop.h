@@ -33,7 +33,7 @@ static void SceneActor_RunActorZeroHandledMotion(s32 exit) {
 // Unused: the leader moves north with the passages' sound and vanishes, then
 // is put at pixel (8 * a0 + 8, 0).
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 a0) {
-  s32 record;
+  struct FieldActor *record;
 
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_228);

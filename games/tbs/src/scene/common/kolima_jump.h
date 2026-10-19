@@ -15,7 +15,8 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
   struct StagedActorEffect *actor = (void *)Object_GetById(0);
   u8 *flags = &actor->motionFlags;
   u8 saved = *flags;
-  s32 ret = FieldObject_CheckMovementCollision(actor, request);
+  s32 ret = FieldObject_CheckMovementCollision((struct FieldActor *)actor,
+                                               (struct FieldPosition *)request);
 
   if (ret == 0) {
     Engine_EventBegin();

@@ -39,7 +39,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       base += 0x400;
       Dma_Fill32(none, (void *)base, 0x80);
       ItemIcon_LoadTilesFar(item);
-      tile = Engine_VramLoad(spr->slot, 128, base);
+      tile = Engine_VramLoad(spr->slot, 128, (const void *)base);
       Runtime_ReleaseHeapBlock(17);
       obj->unk5c = one;
       ResourceMetadata_ClearRecord(spr->entries[0]);

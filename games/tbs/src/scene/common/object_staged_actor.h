@@ -107,7 +107,8 @@ static void StagedActor_AdvancePair(void) {
   dst[1] = next->y;
   step <<= 16;
   dst[2] = next->z.value + step;
-  if (FieldObject_CheckMovementCollision(next, dst) > 0)
+  if (FieldObject_CheckMovementCollision((struct FieldActor *)next,
+                                         (struct FieldPosition *)dst) > 0)
     return;
 
   if (next->transitionBusy != 0)
@@ -202,7 +203,8 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
   probe.y = actor->y;
   step <<= 16;
   probe.z = actor->z.value + step;
-  if (FieldObject_CheckMovementCollision(actor, (s32 *)&probe) > 0) {
+  if (FieldObject_CheckMovementCollision((struct FieldActor *)actor,
+                                         (struct FieldPosition *)&probe) > 0) {
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->targetX = 0x80000000;
@@ -333,7 +335,9 @@ static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
           position[0] +
           (gStagedActor_FootprintBounds[probe->footprintIndex * 4] << 16);
       for (column = 0; column < width; column++) {
-        if (FieldObject_CheckMovementCollision(actor, &probe->positionX) == 2) {
+        if (FieldObject_CheckMovementCollision(
+                (struct FieldActor *)actor,
+                (struct FieldPosition *)&probe->positionX) == 2) {
           goto found;
         }
         probe->positionX += 0x100000;

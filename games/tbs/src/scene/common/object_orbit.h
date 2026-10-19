@@ -38,7 +38,7 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id) {
 
   zero = 0;
   sprite->state = zero;
-  Engine_ActorSetSpriteFlags(actor, zero);
+  Engine_ActorSetSpriteFlags((struct FieldActor *)actor, zero);
   actor->active = zero;
   actor->mode = zero;
 

@@ -1604,9 +1604,9 @@ struct ScenePlacement gColossoRiver_Placements[] = {
 s32 gColossoRiver_Countdown = 0;
 
 struct SceneEvent gColossoRiver_Events[] = {
-    { 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockOrCheckAhead) },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
-    { 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
+    { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockOrCheckAhead) },
+    { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
+    { TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { TOUCH_WALKING_INTO(FACING_WEST), 12, 0x302, EVENT_SCRIPT(Event_PushPipeworksBlock) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },

@@ -106,10 +106,6 @@ enum {
   TRIGGER_SENTRIES_SPOTTED
 };
 
-// Touching a trigger while facing a way, and walking into one.
-#define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
-#define TOUCH_WALKING (EVENT_TOUCH | EVENT_TOUCH_WALKING)
-
 // Reveal's phases: the hidden things show, and hide again.
 enum { REVEAL_SHOWN = 5, REVEAL_FADED = 4 };
 

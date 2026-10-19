@@ -995,7 +995,7 @@ struct ScenePlacement gKolimaForestTreePlacements[] = {
 struct SceneEvent gKolimaForestTreeEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     // Hermes' Water (item 0xb8) used on Tret.
-    { 0xb814, 12, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(KolimaForestTree_UseHermesWater) },
+    { USE_ITEM_ON_ACTOR(ITEM_HERMES_WATER), 12, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(KolimaForestTree_UseHermesWater) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToLaurel) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_ReadLaurelThoughts) },

@@ -2004,7 +2004,7 @@ struct SceneEvent gImilFuchinFalls_DragonRoomEvents[] = {
      EVENT_SCRIPT(Fuchin_StopLightFollowingLeader)},
     {SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_ReadShadowInscription)},
-    {0xe604, 20, FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
+    {USE_ITEM(ITEM_DRAGONS_EYE), 20, FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
      EVENT_SCRIPT(Fuchin_LightDragonWithEye)},
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_SearchDragonStatue)},

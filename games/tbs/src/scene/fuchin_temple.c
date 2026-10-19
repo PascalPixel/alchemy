@@ -2483,7 +2483,7 @@ struct SceneEvent gFuchinTempleEvents1[] = {
 };
 
 struct SceneEvent gFuchinTempleEvents[] = {
-    { 0x4402, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTemple) },
+    { TOUCH_FACING(FACING_SOUTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTemple) },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenLockedDoor) },
     { EVENT_TALK, NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },

@@ -826,11 +826,11 @@ struct ScenePlacement gMercuryLighthouseEntrance_Placements[] = {
 };
 
 struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
-    { 0x202, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_TryPillarStep) },
+    { TOUCH_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_TryPillarStep) },
     { EVENT_TOUCH, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_ReleaseRaisedPillar) },
     { 0xa02, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_TryPillarStep) },
     { EVENT_TOUCH, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_SpawnTimedRiseEffect) },
-    { 0x202, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_TryPillarStep) },
+    { TOUCH_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_TryPillarStep) },
     { EVENT_TOUCH, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouseEntrance_RaiseTouchedPillar) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReturnToDoorway) },
     { EVENT_TOUCH, 40, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT_SCRIPT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },

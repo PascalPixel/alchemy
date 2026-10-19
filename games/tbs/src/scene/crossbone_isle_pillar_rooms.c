@@ -61,11 +61,6 @@
 #define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
 #define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04
 
-// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
-// is for an area.
-#define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
-  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
-
 struct MapCellFields {
   u32 tile : 12;
   u32 layer : 2;

@@ -57,9 +57,6 @@ enum {
   ACTOR_WATER_OF_LIFE_CHEST = 24
 };
 
-// Touching a trigger while facing a way.
-#define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
-
 // Forward declarations.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag);

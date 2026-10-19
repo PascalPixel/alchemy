@@ -939,7 +939,8 @@ struct SceneEvent gLemurianShipEvents[] = {
      EVENT_SCRIPT(Ripple_StopForReveal)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
      EVENT_SCRIPT(Ripple_Start)},
-    {0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(RaiseTheShip)},
+    {USE_ITEM(ITEM_BLACK_ORB), 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(RaiseTheShip)},
     {SCENE_EVENTS_END},
 };
 

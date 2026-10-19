@@ -130,9 +130,6 @@ enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
   (((timer) << 12) + ((wobble) << 15))
 #endif
 
-// Touching a trigger while facing the given way.
-#define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
-
 enum { TRIGGER_NEAR_BEAST = 20 };
 
 // The highest actor slot.

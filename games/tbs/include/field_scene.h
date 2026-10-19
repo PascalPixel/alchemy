@@ -113,23 +113,36 @@ enum SceneEventKind {
   EVENT_EXIT = 1,
   EVENT_TOUCH = 2,
   EVENT_SEARCH = 3,
+  EVENT_ITEM = 4,
   EVENT_PSYNERGY = 5,
   EVENT_RAISED = 6
 };
 
 #define EVENT_TOUCH_WALKING 0x200
 #define EVENT_TOUCH_FACING 0x400
+#define TOUCH_WALKING (EVENT_TOUCH | EVENT_TOUCH_WALKING)
+#define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
 #define TOUCH_WALKING_INTO(facing)                                             \
   (EVENT_TOUCH | EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING | (facing))
 
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
   (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
+// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
+// is for an area.
+#define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
+  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
 #define EVENT_PSYNERGY_IN_AREA 0x80
 #define PSYNERGY_IN_AREA(ability, phase)                                       \
   ((u32)(phase) << 28 | (ability) << 8 | EVENT_PSYNERGY_IN_AREA |              \
    EVENT_PSYNERGY)
+
+// Using an item (one byte) on a tile code, or on an actor, as
+// Field_FindItemEvent reads them.
+#define EVENT_ITEM_ON_ACTOR 0x10
+#define USE_ITEM(item) (EVENT_ITEM | (item) << 8)
+#define USE_ITEM_ON_ACTOR(item) (EVENT_ITEM | EVENT_ITEM_ON_ACTOR | (item) << 8)
 
 #define SEARCH(target) (EVENT_SEARCH | (target) << 4)
 

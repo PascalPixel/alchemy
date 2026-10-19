@@ -3410,7 +3410,7 @@ struct SceneEvent gVaultInteriors_Events[] = {
     { EVENT_RAISED, 203, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
     { EVENT_RAISED, 250, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GaretRefusesToLeave) },
     { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbToAttic) },
-    { 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossRoofGap) },
+    { TOUCH_WALKING, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossRoofGap) },
     { EVENT_TALK, 2, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
     { EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetIvan) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },

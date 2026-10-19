@@ -60,8 +60,9 @@ void Func_080dda30(s32 unused) {
     Object_SetMode(target, 2);
     ObjectDispatch_SetSingleChildFlagsFar(target, 0);
     target->collisionFlags = 0;
-    /* FAKEMATCH: the native copies the priority address after the collision
-     * store (differ 2 without the barrier). */
+    /* FAKEMATCH(barrier): an empty asm after the collision store, which the
+     * priority address is copied after; as plain statements, 2 of 113
+     * instructions differ in tla-en. */
     asm("");
     target->priorityFlags |= 2;
     WaitFrames(10);

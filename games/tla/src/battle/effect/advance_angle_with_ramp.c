@@ -18,18 +18,19 @@ void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object) {
 void BattleFx_UpdateDescendingObject(struct ObjectRuntime *obj) {
   u32 scale;
   u32 scaleX;
-  /* FAKEMATCH: the shrink step pinned to r1 behind a volatile barrier: the
-   * native loads it from the pool before it reads scaleY (plainly the whole
-   * function differs by 8; with the barrier but no pin, 24). */
+  /* FAKEMATCH(pin): the shrink step pinned to r1 and held by a volatile
+   * barrier, loaded from the pool before scaleY is read; as a plain s32 step
+   * = -0x280, 2 of 27 instructions differ in tla-en (24 with the barrier and
+   * no pin). */
   register s32 step asm("r1") = -0x280;
 
   asm volatile("" : "+r"(step));
   obj->scaleY += step;
   scaleX = obj->scaleX;
-  /* FAKEMATCH: memory barriers after the scaleX read and after the spin: the
-   * native loads the angle before it subtracts the step from scaleX, and y
-   * before it builds 1 << 16 (differ 2 without the first, 4 without the
-   * second). */
+  /* FAKEMATCH(barrier): memory barriers after the scaleX read and after the
+   * spin, so the angle loads before the step is subtracted from scaleX and y
+   * before 1 << 16 is built; as plain statements, 2 (first) and 4 (second) of
+   * 27 instructions differ in tla-en. */
   asm("" : : : "memory");
   scale = scaleX + step;
   obj->angle += 0x2000;
@@ -37,9 +38,9 @@ void BattleFx_UpdateDescendingObject(struct ObjectRuntime *obj) {
   obj->y += 1 << 16;
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {
-    /* FAKEMATCH: the zero pinned to r3 behind a barrier that holds r2, as in
-     * canvas.c: the native loads it from the pool before it starts the
-     * field's address (differ 2 without it). */
+    /* FAKEMATCH(pin): the zero pinned to r3 behind a barrier holding r2, as in
+     * canvas.c, so it loads from the pool before the field's address; as
+     * obj->animationKind = 0, 2 of 27 instructions differ in tla-en. */
     register u16 none asm("r3") = 0;
 
     asm("" : "+l"(none) : : "r2");

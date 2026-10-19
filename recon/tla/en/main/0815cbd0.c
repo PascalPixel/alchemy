@@ -36,6 +36,14 @@
 // declaration order, a greedy sweep                          166
 // ☀️'s other device (the frame pinned to r9) does not apply:
 // the native frame is in r7
+// 2026-10-19 (devices allowed), differ 59 of 223: the empty asm on work at
+// the top of the frame loop stops the sheet's hoisting (166 to 107), the
+// blend register through a local pointer (psynergy permute's find; 107 to
+// 67), and the canvas read before the work (67 to 59: the native loads
+// [r6, #96] first). Left: the native rebuilds work + 0x700 for each draw
+// and 0x3c00 for each clear, where agscc keeps them across the calls in r5
+// (CSE shares the constant; an asm on each use only moves the sharing to
+// the asm's input: 158), and the stores and loads that shift with them.
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -86,13 +94,14 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
   void *canvas;
   struct BattleEffectWork *work;
+  volatile u16 *blend;
   s32 size;
   s32 frame;
   s32 i;
 
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleFx_BeginCanvasLayer(2);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1000;
@@ -104,15 +113,20 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   Audio_PlayCue(143);
+  blend = &REG_BLDALPHA;
 
   frame = 0;
   size = 32;
   do {
+    /* FAKEMATCH(asm): work passes through an empty asm each frame, so loop.c
+     * cannot hoist the sheet (work + 0x700) out of the frame loop; as plain
+     * C, 168 of 232 instructions differ in tla-en (here 59). */
+    __asm__("" : "+r"(work));
     // It fades in over nine frames and out over the last ten.
     if (frame <= 8)
-      REG_BLDALPHA = (frame << 1) | 0x1000;
+      *blend = (frame << 1) | 0x1000;
     if (frame > 53)
-      REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
+      *blend = (0x7c - (frame << 1)) | 0x1000;
 
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both.

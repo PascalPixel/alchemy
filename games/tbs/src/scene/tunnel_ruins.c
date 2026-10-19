@@ -1715,9 +1715,11 @@ struct SceneEntrance gTunnelRuinsEntrances2[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gTunnelRuinsRegions2[] = {
-    624, 16, 336, 640, 32, 352, -1, 15, 816, 16, 336, 832, 32, 352, -1, 16,
-    832, 16, 112, 848, 32, 128, -1, 17, -1,  0,  0,   0,   0,  0,   0,  0,
+struct SceneRegion gTunnelRuinsRegions2[] = {
+    {624, 16, 336, 640, 32, 352, -1, 15},
+    {816, 16, 336, 832, 32, 352, -1, 16},
+    {832, 16, 112, 848, 32, 128, -1, 17},
+    {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
 u32 gTunnelRuinsExits[] = {

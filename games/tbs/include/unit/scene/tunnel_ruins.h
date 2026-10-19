@@ -4,6 +4,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "field_coordinate.h"
+#include "field_runtime.h"
 
 struct SceneEntrance;
 struct SceneRegion;
@@ -30,7 +31,7 @@ extern u16 gTunnelRuins_DoorCloseSteps[];
 extern struct SceneEntrance gTunnelRuinsEntrancesOther[];
 extern struct SceneEntrance gTunnelRuinsEntrances1[];
 extern struct SceneEntrance gTunnelRuinsEntrances2[];
-extern s16 gTunnelRuinsRegions2[];
+extern struct SceneRegion gTunnelRuinsRegions2[];
 extern u32 gTunnelRuinsExits[];
 extern struct ScenePlacement gTunnelRuinsPlacements1[];
 extern struct ScenePlacement gTunnelRuinsPlacementsOther[];

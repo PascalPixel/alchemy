@@ -65,7 +65,6 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/puzzle_mode.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s44d0.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s45d8.o"(.text)
-        "*/resource_671_overlay.o"(.text.x0200c620)
         "*/games/tla/src/scene/gabomba_statue/s46c8.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200c710)
         "*/games/tla/src/scene/gabomba_statue/s48a4.o"(.text)

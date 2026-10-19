@@ -111,3 +111,5 @@ void InventorySnapshot_Restore(void) {
     GameFlag_ClearBit(0x952);
   }
 }
+
+#undef INVENTORY_SNAPSHOT_SENTINEL

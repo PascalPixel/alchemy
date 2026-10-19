@@ -23,7 +23,7 @@ struct StatWork {
   s32 unk5c;
 };
 
-#define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
+#define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 // Starts a new game: clears the game state and restarts at the opening.
 void Game_Restart(void) {
@@ -162,8 +162,8 @@ void UnitCalc(s32 owner) {
   }
 
   // Repair stale gauges before preserving their fractions of the new maxima.
-  if (STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
-      STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
+  if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
+      UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
     unit->hpGauge = 0x4000;
     unit->ppGauge = 0x4000;
     unit->hp = unit->maxHp;
@@ -758,3 +758,5 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
   UnitRatio(owner);
   return unit->pp;
 }
+
+#undef UNIT_STAT_DIFF

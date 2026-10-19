@@ -284,3 +284,5 @@ NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
   }
   return node;
 }
+
+#undef SHOP_DEBUG_STOCK_ROW

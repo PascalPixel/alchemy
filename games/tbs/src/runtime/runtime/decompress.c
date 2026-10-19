@@ -1,5 +1,5 @@
 // Part of runtime.c, the runtime object, compiled only through it.
-// Halfword LZ decoding and colour buffer halving, through RAM copies of code.
+// Resource decoding and pixel buffer shading, through RAM copies of ARM code.
 
 #include "../runtime_internal.h"
 
@@ -15,7 +15,7 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
 
 // Each decoder copies its ARM routine `code` to RAM, runs it and frees the
 // copy, and returns the number of bytes it decoded.
-#define DEFINE_RESOURCE_DECODE(name, code, bytes)                              \
+#define RESOURCE_DEFINE_DECODE(name, code, bytes)                              \
   s32 name(const void *source, void *destination) {                            \
     s32 (*routine)(const void *, void *);                                      \
     s32 result;                                                                \
@@ -27,13 +27,13 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
   }
 
 // Decodes a type-01 resource and returns its unpacked byte count.
-DEFINE_RESOURCE_DECODE(Resource_DecodeType01, Resource_DecodeType01Arm,
+RESOURCE_DEFINE_DECODE(Resource_DecodeType01, Resource_DecodeType01Arm,
                        Resource_DecodeType01CodeSize)
 // Decodes a type-02 resource and returns its unpacked byte count.
-DEFINE_RESOURCE_DECODE(Resource_DecodeType2, Resource_Decode2,
+RESOURCE_DEFINE_DECODE(Resource_DecodeType2, Resource_Decode2,
                        Resource_Decode2CodeSize)
 // Decodes a byte-oriented LZ resource and returns its unpacked byte count.
-DEFINE_RESOURCE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
+RESOURCE_DEFINE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
                        Resource_DecodeByteLzCodeSize)
 
 // Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
@@ -120,3 +120,5 @@ void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
           (DMA_ENABLE | DMA_32BIT) << 16 | words, REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
+
+#undef RESOURCE_DEFINE_DECODE

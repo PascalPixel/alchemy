@@ -7,7 +7,7 @@
 // 0x10000): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
 // Iwram_TransformMatrix multiplies the matrix it is given into gTransform.
 
-#define MTX_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | 12) // one matrix
+#define TRANSFORM_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | 12) // one matrix
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
@@ -22,18 +22,20 @@ void Render_ResetTransformState(void) {
 // Saves the transform (one level deep; a second save is ignored).
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
-    Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
+    Dma_Set(gTransform, gTransformStackTop, TRANSFORM_DMA, REG_DMA3);
     gTransformStackDepth++;
     gTransformStackTop += sizeof(gTransform);
   }
 }
 
 // Copies the transform to `dst`.
-void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
+void Transform_Store(void *dst) {
+  Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
+}
 
 // Makes the matrix at `src` the transform.
 void Transform_Load(const void *src) {
-  Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
+  Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }
 
 // Restores the saved transform.
@@ -41,7 +43,7 @@ void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
     gTransformStackTop -= sizeof(gTransform);
-    Dma_Set(gTransformStackTop, gTransform, MTX_DMA, REG_DMA3);
+    Dma_Set(gTransformStackTop, gTransform, TRANSFORM_DMA, REG_DMA3);
   }
 }
 
@@ -366,3 +368,5 @@ s32 Render_ProjectPoint(const void *point, s32 *screen) {
   }
   return result;
 }
+
+#undef TRANSFORM_DMA

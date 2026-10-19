@@ -4,7 +4,7 @@
 #include "../runtime_internal.h"
 
 #if TBS_PATCH_2
-#define HALT_ON_GAMEPAK_IRQ 1
+#define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
 #endif
 
 // Powers the game up: stops any HBlank DMA left running, sets the cartridge
@@ -34,7 +34,7 @@ void System_Initialize(void) {
   DebugText_Clear();
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
-#if defined(HALT_ON_GAMEPAK_IRQ)
+#if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
   Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, IwramHalt);
 #endif
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
@@ -241,10 +241,12 @@ void Runtime_InstallIwramAndIrqs(void) {
   // Keypad interrupt only when all ten keys are down: in effect off until
   // System_Initialize arms the soft-reset combination.
   Io_Write16(0xc3ff, &REG_KEYCNT);
-#if defined(HALT_ON_GAMEPAK_IRQ)
+#if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
   Io_Write16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD | INTR_FLAG_GAMEPAK, &REG_IE);
 #else
   Io_Write16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD, &REG_IE);
 #endif
   Io_Write16(1, &REG_IME);
 }
+
+#undef SYSTEM_HALT_ON_GAMEPAK_IRQ

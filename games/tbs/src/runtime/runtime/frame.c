@@ -278,11 +278,11 @@ void WaitFrames(s32 frames) {
 }
 
 // Frames a key is held before it first repeats, and between later repeats
-#define KEY_REPEAT_FIRST 19
-#define KEY_REPEAT_NEXT 6
+#define INPUT_KEY_REPEAT_FIRST 19
+#define INPUT_KEY_REPEAT_NEXT 6
 
 // Restarts the key repeat delay, so held keys wait the full delay again.
-void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = KEY_REPEAT_FIRST; }
+void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
 // Runs once a frame after VBlank. When the repeat timer has run out, the held
 // keys repeat into gKeysRepeat. gKeysRepeatDirected is the same keys with at
@@ -300,9 +300,9 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     gKeysRepeat = gKeysHeld;
     keys = gKeysRepeat;
     if (delay == 0)
-      gKeyRepeatTimer = KEY_REPEAT_NEXT;
+      gKeyRepeatTimer = INPUT_KEY_REPEAT_NEXT;
     else
-      gKeyRepeatTimer = KEY_REPEAT_FIRST;
+      gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST;
   } else {
     gKeysRepeat = 0;
     keys = gKeysRepeat;
@@ -412,7 +412,7 @@ void System_VBlankHandler(void) {
   }
   gKeysHeld = keys;
   if (keys == 0) {
-    gKeyRepeatTimer = KEY_REPEAT_FIRST;
+    gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST;
     gKeysRepeat = keys;
   } else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff)) {
     gKeyRepeatTimer = -1;
@@ -456,3 +456,9 @@ void Input_HandleKeyInterrupt(void) {
     gResetRequested = 1;
   }
 }
+
+#undef VBlankIntrWait
+#undef INPUT_KEY_REPEAT_FIRST
+#undef INPUT_KEY_REPEAT_NEXT
+#undef SOUND_PRESET_COUNT
+#undef SOUND_PRESET_SIZE

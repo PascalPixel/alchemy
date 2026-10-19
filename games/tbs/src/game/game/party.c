@@ -202,7 +202,7 @@ struct TradeFlags {
 
 // Each adds `amount` to a game state counter, kept between 0 and `max`, and
 // returns the new value.
-#define DEFINE_PARTY_ADJUST(name, field, max)                                  \
+#define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
     struct GameState *progress = &gGameState;                                  \
@@ -217,8 +217,8 @@ struct TradeFlags {
     return value;                                                              \
   }
 
-DEFINE_PARTY_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
-DEFINE_PARTY_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
+PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
+PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 // Writes the summons whose bit is set in the first word of the party's Djinn
 // table to `output`, in menu order, ending with 32. Returns how many.
@@ -245,3 +245,7 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
     return NULL;
   return &gSummon_DefinitionTable[summonId];
 }
+
+#undef ENEMY_SUFFIX_FIRST
+#undef ENEMY_SUFFIX_LAST
+#undef PARTY_DEFINE_ADJUST

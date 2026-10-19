@@ -63,7 +63,7 @@ void Fade_Update(void) {
 
 // Fades BG1 to BG3, the sprites and the backdrop (0x3e) from the current
 // target brightness to `level` over `frames` frames.
-#define DEFINE_BLEND_FADE(name, brighten, level)                               \
+#define FADE_DEFINE_BLEND(name, brighten, level)                               \
   void name(s32 frames) {                                                      \
     gBlendBrighten = brighten;                                                 \
     gBlendLayers = FADE_GAME_LAYERS;                                           \
@@ -74,16 +74,16 @@ void Fade_Update(void) {
   }
 
 // Fades out to black.
-DEFINE_BLEND_FADE(Fade_ToBlack, 0, FADE_LEVEL_MAX)
+FADE_DEFINE_BLEND(Fade_ToBlack, 0, FADE_LEVEL_MAX)
 
 // Fades in from black.
-DEFINE_BLEND_FADE(Fade_FromBlack, 0, 0)
+FADE_DEFINE_BLEND(Fade_FromBlack, 0, 0)
 
 // Fades out to white.
-DEFINE_BLEND_FADE(Fade_ToWhite, 1, FADE_LEVEL_MAX)
+FADE_DEFINE_BLEND(Fade_ToWhite, 1, FADE_LEVEL_MAX)
 
 // Fades in from white.
-DEFINE_BLEND_FADE(Fade_FromWhite, 1, 0)
+FADE_DEFINE_BLEND(Fade_FromWhite, 1, 0)
 
 // Starts a fade of any layers.
 //   bright : 0 toward black, 1 toward white
@@ -111,3 +111,5 @@ void Fade_Wait(void) {
     } while (gBlendDuration != 0);
   }
 }
+
+#undef FADE_DEFINE_BLEND

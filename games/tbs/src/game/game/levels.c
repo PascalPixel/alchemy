@@ -416,3 +416,5 @@ void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
   }
   UnitCalc(owner);
 }
+
+#undef PSYNERGY_ACTION_AT

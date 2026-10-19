@@ -266,3 +266,8 @@ void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
     }
   }
 }
+
+#undef SHOP_USE_PRICE_LABEL_X
+#undef SHOP_USE_PRICE_NUMBER_X
+#undef SHOP_USE_COIN_LABEL_X
+#undef SHOP_USE_COIN_MESSAGE_OFFSET

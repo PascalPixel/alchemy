@@ -449,7 +449,7 @@ s32 SerialRuntime_BeginReceive(void *destination) {
 
 // Each waits a frame at a time until `pending` is 0, giving up after 600000
 // frames: the send, then the receive.
-#define DEFINE_SERIAL_WAIT(name, pending)                                      \
+#define SERIAL_DEFINE_WAIT(name, pending)                                      \
   void name(void) {                                                            \
     u32 count = 0;                                                             \
                                                                                \
@@ -462,9 +462,9 @@ s32 SerialRuntime_BeginReceive(void *destination) {
   }
 
 // Waits for the current send, up to the protocol's frame timeout.
-DEFINE_SERIAL_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
+SERIAL_DEFINE_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
 // Waits for the current receive, up to the protocol's frame timeout.
-DEFINE_SERIAL_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
+SERIAL_DEFINE_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
 
 // Waits until both the send and the receive have finished, giving up after
 // 600000 frames.
@@ -667,3 +667,5 @@ restart:
     WaitFrames(1);
   }
 }
+
+#undef SERIAL_DEFINE_WAIT

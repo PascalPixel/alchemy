@@ -67,7 +67,7 @@ crosses folders.
 | `Scheduler_` | the task scheduler |
 | `Transform_`, `SceneTransform_`, `Projection_` | the 3D transform and projection |
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
-| `ColorBuffer_` | halving the colours of a buffer, keeping a copy |
+| `ColorBuffer_` | shading a buffer of pixels, keeping a copy |
 | `SaveState_` | saving |
 | `SerialRuntime_`, `SerialTest_`, `BattleLink_` | the link cable |
 | `RuntimeDispatch_` | empty far-call exports nothing calls |

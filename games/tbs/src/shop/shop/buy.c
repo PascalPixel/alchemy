@@ -779,3 +779,6 @@ s32 Shop_SalePrice(s32 inventoryEntry) {
   }
   return salePrice;
 }
+
+#undef SHOP_QUANTITY_NUMBER_X
+#undef SHOP_QUANTITY_COIN_LABEL_X

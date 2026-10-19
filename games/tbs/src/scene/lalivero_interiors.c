@@ -25,6 +25,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "songs.h"
+#include "flags.h"
 // Lalivero's buildings, on two maps. The first holds the shops, the
 // sanctum and the houses along the streets; the second holds Faran's house
 // and the inn, where the party reports to Faran after Venus Lighthouse and
@@ -56,13 +57,9 @@ enum {
   ACTOR_15 = 15 // posed in animation 6
 };
 
-enum {
-  FLAG_SCENE_TEMP_00 = 0x300, // the maid has apologized
-  FLAG_RETURNED_FROM_LIGHTHOUSE = 0x9a7,
-  FLAG_IODEM_FAREWELL_SEEN = 0x9ba,
-  FLAG_IODEM_ASKED_TO_MEET = 0x9bc,
-  FLAG_SAW_SHIP_FROM_LIGHTHOUSE = 0x9bf
-};
+// Flag 0x300, which several places use for a passing state as they use the
+// scene flags from 0x200: the maid has apologized.
+enum { FLAG_MAID_APOLOGIZED = 0x300 };
 
 // A speaker flag the two "Haven't we, Isaac?" questions add to Ivan's
 // number; what it changes is not known.
@@ -98,7 +95,7 @@ const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroExits; }
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
     // Faran's house and the inn.
-    if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
       return gFaranHousePlacementsAfterLighthouse;
     }
     return gFaranHousePlacements;
@@ -123,7 +120,7 @@ static void TalkToShopkeeper32(s32 keeper) {
 
   if (side == FACING_NORTH) {
     Shop_Run(32, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     Engine_EventSetMessage(MsgLaliveroWentOceanLook);
     Engine_EventShowMessage(keeper, 0);
   } else {
@@ -145,7 +142,7 @@ static void TalkToShopkeeper32(s32 keeper) {
 static void TalkToShopkeeper33(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(33, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     Engine_EventSetMessage(MsgLaliveroWantedSendShips);
     Engine_EventShowMessage(keeper, 0);
   } else {
@@ -158,7 +155,7 @@ static void TalkToShopkeeper33(s32 keeper) {
 static void TalkToShopkeeper34(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(34, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     Engine_EventSetMessage(MsgLaliveroImpossibleGoOcean);
     Engine_EventShowMessage(keeper, 0);
   } else {
@@ -171,7 +168,7 @@ static void TalkToShopkeeper34(s32 keeper) {
 static void TalkToPriest(s32 priest) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_ConfirmAct(priest);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     Engine_EventSetMessage(MsgLaliveroBabiLighthouseStruck);
     Engine_EventShowMessage(priest, 0);
   } else {
@@ -184,7 +181,7 @@ static void TalkToPriest(s32 priest) {
 static void TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Inn_CheckIn(11, innkeeper);
-  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {
+  } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     Engine_EventSetMessage(MsgLaliveroDidntKnowTime);
     Engine_EventShowMessage(innkeeper, 0);
   } else {
@@ -200,7 +197,7 @@ static void TalkToMaid(void) {
   s16 side;
 
   side = Leader_GetSide();
-  GameFlag_Set(FLAG_SCENE_TEMP_00);
+  GameFlag_Set(FLAG_MAID_APOLOGIZED);
   Engine_EventBegin();
   Engine_ResetSceneEffectCounter();
   Engine_EventSetMessage(MsgLaliveroImSorry);
@@ -271,12 +268,12 @@ static void LeaveBuilding(void) {
 // after Venus Lighthouse.
 const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
-    if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
       return gFaranHouseEventsAfterLighthouse;
     }
     return gFaranHouseEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
     return gLaliveroEventsAfterLighthouse;
   }
   return gLaliveroEvents;
@@ -340,7 +337,7 @@ static void ReportToFaran(void) {
   Engine_EventShowMessage(FARAN, 0);
   // The party tells what became of Felix; the version that saw the ship from
   // the lighthouse knows Idejima was swept away with it.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_LIGHTHOUSE) == 0) {
+  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE) == 0) {
     TellFaranAboutFelix();
   } else {
     Engine_EventWait(20);
@@ -690,7 +687,7 @@ s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-    Engine_GameFlagSet(FLAG_RETURNED_FROM_LIGHTHOUSE);
+    Engine_GameFlagSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   scene = gGameState.scene;
@@ -720,7 +717,7 @@ s32 Scene_Initialize(void) {
     actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
-    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_MAID_APOLOGIZED) != 0) {
       Actor_SetActionScript(MAID, gLaliveroMaidChores);
     }
     if (gGameState.entrance == ENTRANCE_REPORT_TO_FARAN) {
@@ -1026,8 +1023,8 @@ struct SceneEvent gFaranHouseEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { EVENT_TALK, 14, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(TalkToMaid) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(TalkToMaid) },
+    { EVENT_TALK, 14, FLAG_MAID_APOLOGIZED, EVENT_SCRIPT(TalkToMaid) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, FLAG_MAID_APOLOGIZED, EVENT_SCRIPT(TalkToMaid) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToInnkeeper) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },

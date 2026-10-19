@@ -21,6 +21,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "songs.h"
+#include "flags.h"
 
 // Lalivero, the desert town below Babi Lighthouse.
 //
@@ -40,14 +41,6 @@ enum {
   ENTRANCE_FROM_AERIE_QUIETLY = 91
 };
 
-enum {
-  FLAG_RETURNED_FROM_LIGHTHOUSE = 0x9a7,
-  FLAG_WOUNDED_SOLDIERS_SEEN = 0x9b8,
-  FLAG_IODEM_FAREWELL_SEEN = 0x9ba,
-  FLAG_WHARF_OPEN = 0x9bb,
-  FLAG_SAW_SHIP_FROM_LIGHTHOUSE = 0x9bf
-};
-
 // The actors this scene's code moves, by their place in the placement tables.
 enum {
   SOLDIER_WEST = 8, // Tolbi's soldiers, wounded on the first visit
@@ -65,9 +58,6 @@ enum {
 // The door at trigger 6 is a gate two cells wide.
 enum { GATE_TRIGGER = 6 };
 
-// Played as a door shuts, after SE_DOOR_OPEN.
-enum { SOUND_DOOR_CLOSE = 159 };
-
 enum {
   HEAP_ITEM_ICON = 17,
   ITEM_ICON_BUFFER_SIZE = 0x608,
@@ -79,20 +69,20 @@ enum {
 static void TalkToTorch(void) { Djinn_JoinParty(TORCH, 2, 6); }
 
 // Where the party can enter Lalivero.
-const struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *Lalivero_GetEntrances(void) {
   return gLaliveroEntrances;
 }
 
 // Lalivero has no regions.
-const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
+const struct SceneRegion *Lalivero_GetRegions(void) { return NULL; }
 
 // Where each exit leads.
-const u32 *Scene_GetExits(void) { return gLaliveroExits; }
+const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 
 // The townsfolk, who stand differently once the party is back from Venus
 // Lighthouse.
-const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE) != 0) {
+const struct ScenePlacement *Lalivero_GetPlacements(void) {
+  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
     return gLaliveroPlacementsAfterLighthouse;
   }
   return gLaliveroPlacements;
@@ -135,7 +125,7 @@ static void TalkToVillagerAskingIfLeaving(s32 actor) {
 // party through and steps aside.
 static void TalkToWharfGuard(void) {
 
-  Engine_GameFlagSet(FLAG_WHARF_OPEN);
+  Engine_GameFlagSet(FLAG_LALIVERO_WHARF_OPEN);
   Engine_EventSetMessage(MsgLaliveroWasToldLetInIf);
   Engine_EventShowMessage(WHARF_GUARD, 0);
   Actor_SetSpeed(WHARF_GUARD, 0x10000, 0x8000);
@@ -446,8 +436,9 @@ static void ReceiveBlackOrb(void) {
 #else
   Actor_WalkByAndWait(IODEM, 0, 16);
 #endif
+  // The door shuts.
   Engine_MapCopyCellsLayered(32, 0, 1, 2, 4, 18);
-  Event_PlayCue(SOUND_DOOR_CLOSE);
+  Event_PlayCue(SE_159);
   Engine_EventWait(20);
   Event_ShowMessage(IODEM, 0);
   Engine_EventWait(10);
@@ -544,7 +535,7 @@ static void ReceiveBlackOrb(void) {
   Event_ShowMessage(IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
   // from the lighthouse.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_LIGHTHOUSE) != 0) {
+  if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE) != 0) {
     TalkToIodemAboutTheShip();
   }
   Engine_EventSetMessage(MsgLaliveroBabiToldMeShipAncients);
@@ -610,8 +601,9 @@ static void ReceiveBlackOrb(void) {
   Actor_WalkByAndWait(IODEM, 0, -16);
   Actor_SetPosition(IODEM, 0, 0);
   Engine_EventWait(10);
+  // The door shuts.
   Engine_MapCopyCellsLayered(32, 0, 1, 2, 4, 18);
-  Event_PlayCue(SOUND_DOOR_CLOSE);
+  Event_PlayCue(SE_159);
   Engine_EventWait(50);
   // The others are eager to sail, then walk back into the leader.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -716,8 +708,8 @@ static void TurnBackFromTheGate(void) {
 
 // What the party can talk to, touch and search, which changes once they are
 // back from Venus Lighthouse.
-const struct SceneEvent *Scene_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_LIGHTHOUSE) != 0) {
+const struct SceneEvent *Lalivero_GetEvents(void) {
+  if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
     return gLaliveroEventsAfterLighthouse;
   }
   return gLaliveroEvents;
@@ -726,18 +718,18 @@ const struct SceneEvent *Scene_GetEvents(void) {
 // Sets Lalivero up as the party enters: the Black Orb prop, the wounded
 // soldiers of the first visit (and its cutscene), or the north exit closed
 // after Venus Lighthouse.
-s32 Scene_Initialize(void) {
+s32 Lalivero_Initialize(void) {
   union FieldObject *object;
   struct AnimationObject *sprite;
   u8 *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-    GameFlag_Set(FLAG_RETURNED_FROM_LIGHTHOUSE);
-    GameFlag_Set(FLAG_SAW_SHIP_FROM_LIGHTHOUSE);
+    GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
+    GameFlag_Set(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE);
   }
   if (gGameState.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
-    GameFlag_Set(FLAG_RETURNED_FROM_LIGHTHOUSE);
+    GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 24;
@@ -769,7 +761,7 @@ s32 Scene_Initialize(void) {
   Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
   Engine_HeapRelease(HEAP_ITEM_ICON);
 
-  if (GameFlag_IsSet(FLAG_RETURNED_FROM_LIGHTHOUSE)) {
+  if (GameFlag_IsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     // Something now stands at the north exit, and its three cells take the
     // attributes of cell (20, 23).
     Engine_ActorSetSpriteFlags(Actor_Get(NORTH_EXIT_SPRITE), 0);
@@ -777,7 +769,7 @@ s32 Scene_Initialize(void) {
     Map_CopyCellAttributes(20, 23, 1, 1, 14, 4);
     Map_CopyCellAttributes(20, 23, 1, 1, 15, 4);
     Map_CopyCellAttributes(20, 23, 1, 1, 16, 4);
-    if (GameFlag_IsSet(FLAG_WHARF_OPEN)) {
+    if (GameFlag_IsSet(FLAG_LALIVERO_WHARF_OPEN)) {
       Actor_SetPosition(WHARF_GUARD, PIXELS(56), PIXELS(184));
     }
   } else {
@@ -801,8 +793,8 @@ s32 Scene_Initialize(void) {
     Map_CopyCellAttributes(20, 23, 1, 1, 18, 23);
     if ((gGameState.entrance == ENTRANCE_WORLD_MAP_SOUTH ||
          gGameState.entrance == ENTRANCE_WORLD_MAP_NORTH) &&
-        !GameFlag_IsSet(FLAG_WOUNDED_SOLDIERS_SEEN)) {
-      GameFlag_Set(FLAG_WOUNDED_SOLDIERS_SEEN);
+        !GameFlag_IsSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
+      GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The two villagers who wander stay put during the cutscene.
       object = (union FieldObject *)Actor_Get(WANDERER_EAST);
       object->actor.paused = 1;
@@ -1029,8 +1021,8 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TakeTouchedExit) },
-    { EVENT_TALK, 18, FLAG_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x412, FLAG_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
+    { EVENT_TALK, 18, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x412, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },

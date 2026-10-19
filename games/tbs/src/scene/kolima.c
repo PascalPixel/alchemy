@@ -32,6 +32,8 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "field_runtime.h"
+#include "songs.h"
+#include "item_ids.h"
 
 // Forward declarations.
 static void Kolima_WitnessForestCurse(void);
@@ -193,7 +195,7 @@ static void Kolima_AnimateSwitchOrExit(void) {
   s32 y = 0;
 
   Engine_EventBegin();
-  Engine_AudioPlayCue(158);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   switch (work->touchedTrigger) {
   case 5:
     x = 71;
@@ -254,11 +256,11 @@ static void Kolima_ShowBridgeCollapse(void) {
   Actor_SetSpeed(8, PIXELS(2), PIXELS(1));
   Engine_ActorJump(8, 2, 0);
   Engine_ObjectMotionSetPositionAndCommit(8, 224, 197);
-  Engine_AudioPlayCue(176);
+  Engine_AudioPlayCue(SE_176);
   Engine_EventWait(10);
   Engine_ObjectMotionSetPositionAndCommit(8, 234, 200);
   Engine_EventWait(10);
-  Engine_AudioPlayCue(198);
+  Engine_AudioPlayCue(SE_198);
   Engine_EventWait(30);
   // Animate the bridge in progressively shorter collapse steps.
   Map_CopyCellsTo(91, 0, 72, 9, 5, 4);
@@ -270,7 +272,7 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_EventWait(6);
   Map_CopyCellsTo(91, 13, 72, 9, 5, 6);
   Engine_EventWait(3);
-  Engine_AudioPlayCue(188);
+  Engine_AudioPlayCue(SE_188);
   // Scatter ten fragments with alternating horizontal velocities.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
     struct FieldActor *debris =
@@ -301,12 +303,12 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_EventWait(20);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  // Let the stranded villager follow the party after the bridge falls.
+  // From now on the villager on the far side turns to keep facing the leader.
   FieldObject_SetTargetAndCallback(
-      8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKolima_Actor8Path);
+      8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKolima_FaceLeaderScript);
   Engine_EventWait(60);
   Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
-  Engine_GameFlagSet(0x847);
+  Engine_GameFlagSet(FLAG_KOLIMA_BRIDGE_COLLAPSED);
   Engine_EventEnd();
 }
 
@@ -348,13 +350,13 @@ s32 Kolima_Initialize(void) {
     Map_CopyCellAttributes(13, 9, 1, 1, 14, 9);
   }
 
-  if (Engine_GameFlagIsSet(0x843) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
     if (gGameState.entrance == 1) {
       Kolima_WitnessForestCurse();
     }
   }
 
-  if (Engine_GameFlagIsSet(0x843) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_WITNESSED) != 0) {
     Engine_ActorDestroy(GARET);
     Engine_ActorDestroy(IVAN);
     Engine_ActorDestroy(MIA);
@@ -435,6 +437,7 @@ static void Kolima_WitnessForestCurse(void) {
   // Enter the deserted village and let Ivan inspect one of its trees.
   Engine_EventBegin();
   partyLayout = &gKolima_LayoutFlag;
+  // Flag 3: Mia is in the party.
   *partyLayout = GameFlag_IsSet(3);
   actor = Object_GetById(19);
   Engine_ActorSetSpriteFlags(actor, 0);
@@ -613,8 +616,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 20);
   Kolima_FaceActorAndWait(IVAN, FACING_NORTH, 10);
-  Event_PlayCue(17);
-  Event_PlayCue(206);
+  Event_PlayCue(MUS_017);
+  Event_PlayCue(SE_206);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
@@ -699,7 +702,7 @@ static void Kolima_WitnessForestCurse(void) {
   *firstCurtainState = 1;
   FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
   Engine_EventWait(180);
-  Event_PlayCue(21);
+  Event_PlayCue(MUS_021);
   Kolima_ShowMessageAndWait(GARET, 80);
   Kolima_ShowMessageAndWait(IVAN, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -744,7 +747,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(MIA, 3);
   gKolima_PendingPose = stagingValue;
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights, 0xc80);
-  Event_PlayCue(220);
+  Event_PlayCue(SE_220);
   Object_GetById(19)->priorityFlags &= 254;
   Engine_ActorSetSpritePriority(19, 2);
   Actor_SetPosition(19, PIXELS(120), PIXELS(248));
@@ -772,7 +775,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventWait(300);
   Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
   Engine_EventWait(120);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
@@ -982,7 +985,7 @@ static void Kolima_WitnessForestCurse(void) {
     gEventWork->message++;
   }
   Event_ShowMessage(GARET, 0);
-  Event_PlayCue(21);
+  Event_PlayCue(MUS_021);
   ColorBuffer_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
@@ -1015,7 +1018,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(IVAN, 3);
   Engine_ActorSetSpritePriority(MIA, 3);
   *secondCurtainState = 2;
-  Event_PlayCue(220);
+  Event_PlayCue(SE_220);
   Actor_SetPosition(19, PIXELS(120), PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
   Actor_SetActionScript(19, growFieldActions);
@@ -1276,7 +1279,7 @@ static void Kolima_WitnessForestCurse(void) {
     }
   }
   // Reunite the party and remember that the first visit has played.
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1305,7 +1308,7 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ActorWaitForMove(MIA);
     Actor_SetPosition(MIA, 0, 0);
   }
-  GameFlag_Set(0x843);
+  GameFlag_Set(FLAG_KOLIMA_CURSE_WITNESSED);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
 }
@@ -1341,7 +1344,7 @@ static void Kolima_SpawnCurseSparkle(void) {
     return;
   }
   if (gKolima_EffectActive != 0) {
-    Engine_AudioPlayCue(200);
+    Engine_AudioPlayCue(SE_200);
   }
   sparkle = Engine_ObjectCreate(26, spawnX, 0, spawnZ);
   if (sparkle == 0) {
@@ -1373,7 +1376,7 @@ static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
          actor->z.fixed > PIXELS(211) && actor->z.fixed < PIXELS(257)) ||
         (actor->x.fixed > PIXELS(69) && actor->x.fixed < PIXELS(122) &&
          actor->z.fixed > PIXELS(194) && actor->z.fixed < PIXELS(277))) {
-      Engine_AudioPlayCue(106);
+      Engine_AudioPlayCue(SE_106);
       Engine_ObjectSetScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }
@@ -1384,7 +1387,7 @@ static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
          actor->z.fixed > PIXELS(216) && actor->z.fixed < PIXELS(250)) ||
         (actor->x.fixed > PIXELS(78) && actor->x.fixed < PIXELS(122) &&
          actor->z.fixed > PIXELS(241) && actor->z.fixed < PIXELS(277))) {
-      Engine_AudioPlayCue(106);
+      Engine_AudioPlayCue(SE_106);
       Engine_ObjectSetScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }
@@ -1410,7 +1413,7 @@ static void Kolima_RestoreBridgeState(void) {
   } else {
     Engine_ActorSetPosition(9, 0, 0);
   }
-  if (Engine_GameFlagIsSet(0x847) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_COLLAPSED) != 0) {
     {
       Map_CopyCellsTo(91, 19, 72, 9, 5, 7);
     }
@@ -1503,7 +1506,7 @@ s32 gKolima_DebrisScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gKolima_Actor8Path[] = {
+s32 gKolima_FaceLeaderScript[] = {
     SC_CALL(OverlayObject_UpdateFacingTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -1596,17 +1599,17 @@ struct ScenePlacement gKolimaPlacements1[] = {
         PIXELS(248), 0, PIXELS(264), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x37, 0x843, ACTOR_STAND,
+    { 0x37, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x38, 0x843, ACTOR_STAND,
+    { 0x38, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xdc, 0x843, ACTOR_STAND,
+    { 0xdc, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xdc, 0x843, ACTOR_STAND,
+    { 0xdc, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xdc, 0x843, ACTOR_STAND,
+    { 0xdc, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xdc, 0x843, ACTOR_STAND,
+    { 0xdc, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1681,7 +1684,8 @@ struct SceneEvent gKolimaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
-    { SEARCH(SEARCH_JAR), 100, 0xf57, FIND_ITEM(0xc1) },
+    { SEARCH(SEARCH_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
+    // A Herb (item 0xb4).
     { SEARCH(SEARCH_JAR), 101, 0xf58, FIND_ITEM(0xb4) },
     { SCENE_EVENTS_END },
 };
@@ -1689,7 +1693,7 @@ struct SceneEvent gKolimaEvents[] = {
 struct SceneEvent gKolimaEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH, 10, 0x847, EVENT_SCRIPT(Kolima_ShowBridgeCollapse) },
+    { EVENT_TOUCH, 10, FLAG_KOLIMA_BRIDGE_COLLAPSED, EVENT_SCRIPT(Kolima_ShowBridgeCollapse) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },
     { SCENE_EVENTS_END },

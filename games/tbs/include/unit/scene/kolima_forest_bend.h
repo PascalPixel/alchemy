@@ -4,12 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *KolimaForestBend_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *KolimaForestBend_GetExits(void);
-u8 *KolimaForestBend_GetPlacements(void);
-u8 *KolimaForestBend_GetEvents(void);
-s32 KolimaForestBend_SetupBoard(void);
+const struct SceneEntrance *KolimaForestBend_GetEntrances(void);
+const struct SceneRegion *KolimaForestBend_GetRegions(void);
+const u32 *KolimaForestBend_GetExits(void);
+const struct ScenePlacement *KolimaForestBend_GetPlacements(void);
+const struct SceneEvent *KolimaForestBend_GetEvents(void);
+s32 KolimaForestBend_Initialize(void);
 // State_StampRecordCells is called before its definition with no prototype in
 // scope.
 extern u32 gKolimaForestBend_DefaultRecords[];

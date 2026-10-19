@@ -42,6 +42,7 @@
 #include "field_scene.h"
 #include "objcmd.h"
 #include "item_ids.h"
+#include "songs.h"
 
 #if TBS_PATCH_3
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30
@@ -459,7 +460,7 @@ static void SetSail(void) {
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
-  Engine_AudioPlayCue(17);
+  Engine_AudioPlayCue(MUS_017);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -504,7 +505,7 @@ static void SetSail(void) {
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
   // The ship sails east and the curtains close.
-  Engine_AudioPlayCue(67);
+  Engine_AudioPlayCue(MUS_067);
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
   Engine_EventWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
@@ -576,7 +577,7 @@ static void RaiseTheShip(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(40);
-  Event_PlayCue(140);
+  Event_PlayCue(SE_140);
   for (i = 0; i <= 15; i++) {
     Io_Write16((i << 11) | (i << 5), &PLTT_BACKDROP);
     Event_Wait(10);
@@ -590,7 +591,7 @@ static void RaiseTheShip(void) {
     u16 bright = 0x1010;
 
     for (flash = 0; flash < 3; flash++) {
-      Event_PlayCue(212);
+      Event_PlayCue(SE_212);
       REG_BLDALPHA = bright;
       Event_Wait(3);
       Io_Write16(0x810, &REG_BLDALPHA);
@@ -604,7 +605,7 @@ static void RaiseTheShip(void) {
   FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_SCENE);
   gSprayActive = 1;
   Event_Wait(20);
-  Event_PlayCue(163);
+  Event_PlayCue(SE_163);
   Map_SetShake(0x10000, 0x10000, 0x10000);
   Event_Wait(60);
   gSprayActive = 1;
@@ -627,10 +628,10 @@ static void RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
   REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
   gOrbGlowActive = 0;
-  Event_PlayCue(288);
+  Event_PlayCue(SE_288);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
-  Event_PlayCue(145);
+  Event_PlayCue(SE_145);
   Io_Write16(191, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;
@@ -646,7 +647,7 @@ static void RaiseTheShip(void) {
     Event_Wait(8);
   }
   FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_SCENE);
-  Event_PlayCue(80);
+  Event_PlayCue(MUS_PUZZLE_SOLVED);
   AudioCommand_WaitForStateByteClear();
   Event_Wait(20);
   Event_End();

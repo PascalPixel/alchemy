@@ -197,6 +197,28 @@
 // The passengers confronted the tour guides and their bodyguard.
 #define FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN 0x8ab
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
+// Kolima
+// The party has seen the curse fall, in Kolima or on the forest bridge.
+#define FLAG_KOLIMA_CURSE_WITNESSED 0x843
+// Kolima's bridge fell as the party crossed it.
+#define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
+
+// Kolima Forest
+#define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3 // Catch took the clearing's Nut
+
+// Lamakan Desert
+#define FLAG_LAMAKAN_SAND_MONSTER_BEATEN 0x90a // on the third map
+
+// Lalivero
+// The party is back from Venus Lighthouse, by the aerie's exit.
+#define FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE 0x9a7
+// The party saw the ship from Venus Lighthouse before coming back.
+#define FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE 0x9bf
+#define FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN 0x9b8
+#define FLAG_IODEM_FAREWELL_SEEN 0x9ba // Iodem gave the Black Orb
+#define FLAG_LALIVERO_WHARF_OPEN 0x9bb // the guard lets the party to the ship
+// Iodem asked the party to wait for him outside.
+#define FLAG_IODEM_ASKED_TO_MEET 0x9bc
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

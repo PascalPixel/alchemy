@@ -25,39 +25,56 @@
 #include "game_state.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "songs.h"
+
+// Kolima Forest's river, between the clearing and the bend. Of its three
+// logs, the one pushed west to the bank tips into the river and floats
+// there, a bridge to the far side.
+//
+// FLAG_SCENE_TEMP_01: the log is in the river.
+
+// Actors 8 to 10 are the logs; 10 is the one that can reach the river.
+enum { RIVER_LOG = 10 };
 
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-u8 *MapStagedScene_SelectPrimaryData(void) {
+// Where the party enters from the clearing and the bend.
+const struct SceneEntrance *KolimaForestRiver_GetEntrances(void) {
   return gKolimaForestRiverEntrances;
 }
 
-s32 MapStagedScene_GetEmptyData(void) { return 0; }
+// The river has no regions.
+const struct SceneRegion *KolimaForestRiver_GetRegions(void) { return 0; }
 
-u8 *MapStagedScene_SelectSecondaryData(void) { return gKolimaForestRiverExits; }
+// The paths to the bend and back to the clearing.
+const u32 *KolimaForestRiver_GetExits(void) { return gKolimaForestRiverExits; }
 
-u8 *MapStagedScene_SelectTertiaryData(void) {
+// The three logs.
+const struct ScenePlacement *KolimaForestRiver_GetPlacements(void) {
   return gKolimaForestRiverPlacements;
 }
 
-static void EV10_SCRIPT(void) {
+// Walking into a log: it rolls ahead until something stops it. The river
+// log, stopped at the bank (cell column 12), tips over with a splash and
+// floats in the water; its cells become ground the party can cross.
+static void KolimaForestRiver_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
   if (StagedActor_FindClearPosition(&result)) {
     SceneActor_MoveAndRedraw(result);
-    if (result.actorSlot == 10 && (result.positionX >> 20) == 12) {
+    if (result.actorSlot == RIVER_LOG && (result.positionX >> 20) == 12) {
       struct FieldActor *actor;
-      Engine_ActorSetAnimation(10, 3);
-      Engine_ActorSetDestinationOffset(10, -18, 6);
+      Engine_ActorSetAnimation(RIVER_LOG, 3);
+      Engine_ActorSetDestinationOffset(RIVER_LOG, -18, 6);
       Engine_EventWait(30);
-      Engine_AudioPlayCue(240);
-      Engine_ActorSetAnimation(10, 8);
-      Object_GetById(10)->priorityFlags = 2;
+      Engine_AudioPlayCue(SE_240);
+      Engine_ActorSetAnimation(RIVER_LOG, 8);
+      Object_GetById(RIVER_LOG)->priorityFlags = 2;
       Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-      Engine_GameFlagSet(0x201);
-      actor = Object_GetById(10);
+      Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+      actor = Object_GetById(RIVER_LOG);
       Engine_ActorSetSpriteFlags(actor, 0);
     }
   }
@@ -67,19 +84,25 @@ static void EV10_SCRIPT(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_jump.h"
 
-u8 *KolimaForestRiver_GetEvents(void) { return gKolimaForestRiverEvents; }
+// The logs, the two paths and the jump east from the bank.
+const struct SceneEvent *KolimaForestRiver_GetEvents(void) {
+  return gKolimaForestRiverEvents;
+}
 
-s32 KolimaForestRiver_PrepareWindowTransition(void) {
+// On entry a log already in the river floats there again, the logs mark the
+// cells they cover, and the forest keeps its cursed colours until the curse
+// is lifted.
+s32 KolimaForestRiver_Initialize(void) {
   struct EventWork *work = gEventWork;
 
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  FieldScene_RedrawActorFootprint(10);
+  FieldScene_RedrawActorFootprint(RIVER_LOG);
 
-  if (Engine_GameFlagIsSet(0x201) != 0) {
-    Object_GetById(10)->priorityFlags = 2;
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
+    Object_GetById(RIVER_LOG)->priorityFlags = 2;
     Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
     StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(RIVER_LOG), 0);
   }
 
   FieldScene_RedrawActorFootprint(8);
@@ -127,6 +150,7 @@ struct SceneEntrance gKolimaForestRiverEntrances[] = {
     { SCENE_TABLE_END },
 };
 
+// Exit 1 to the bend (scene 43), exit 2 to the clearing (scene 41).
 u32 gKolimaForestRiverExits[] = {
     SCENE_EXITS(42),
     SCENE_EXIT(1, 43, 1),
@@ -148,7 +172,8 @@ struct ScenePlacement gKolimaForestRiverPlacements[] = {
 struct SceneEvent gKolimaForestRiverEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(KolimaForestRiver_PushLog)},
     {TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(EV11_TOUCH)},
     {SCENE_EVENTS_END},

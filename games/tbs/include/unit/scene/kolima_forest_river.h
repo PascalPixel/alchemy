@@ -4,12 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *MapStagedScene_SelectPrimaryData(void);
-s32 MapStagedScene_GetEmptyData(void);
-u8 *MapStagedScene_SelectSecondaryData(void);
-u8 *MapStagedScene_SelectTertiaryData(void);
-u8 *KolimaForestRiver_GetEvents(void);
-s32 KolimaForestRiver_PrepareWindowTransition(void);
+const struct SceneEntrance *KolimaForestRiver_GetEntrances(void);
+const struct SceneRegion *KolimaForestRiver_GetRegions(void);
+const u32 *KolimaForestRiver_GetExits(void);
+const struct ScenePlacement *KolimaForestRiver_GetPlacements(void);
+const struct SceneEvent *KolimaForestRiver_GetEvents(void);
+s32 KolimaForestRiver_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];

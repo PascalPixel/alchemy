@@ -3954,19 +3954,13 @@ main	rom_main_05	recon/tla/raw/080e0cec	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e0ca8	ja
 main	rom_main_05	games/tla/src/battle/effect/launch	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000e0f34	it
-main	rom_main_05	recon/tla/it/rom	.rom.000e1148	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e5f34	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000e6148	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e9f34	es
-main	rom_main_05	recon/tla/es/rom	.rom.000ea148	es
 main	rom_main_05	recon/tla/de/rom	.rom.000edf40	de
-main	rom_main_05	recon/tla/de/rom	.rom.000ee154	de
 main	rom_main_05	recon/tla/raw/080e0f40	.text	en
 main	rom_main_05	recon/tla/raw/080e0fb0	.text	en
 main	rom_main_05	recon/tla/raw/080e1024	.text	en
-main	rom_main_05	recon/tla/raw/080e1154	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e0efc	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000e1110	ja
 main	rom_main_05	games/tla/src/battle/effect/arcmsg	.text
 main	rom_main_05	games/tla/src/battle/effect/flicker_object_and_tick	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000e143c	it

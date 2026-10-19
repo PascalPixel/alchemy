@@ -3145,13 +3145,12 @@ Func_080e09c0:
 Func_080e0cec:
 	.incbin "baserom.gba", 0x000e0ca8, 0x000000e8
 	.section .rom.000e0efc, "ax"
-	.incbin "baserom.gba", 0x000e0efc, 0x00000214
-	.section .rom.000e1110, "ax"
-	.global Func_080e1154
-	.type Func_080e1154, %function
+	.incbin "baserom.gba", 0x000e0efc, 0x000000e4
+	.global Func_080e1024
+	.type Func_080e1024, %function
 	.thumb_func
-Func_080e1154:
-	.incbin "baserom.gba", 0x000e1110, 0x00000068
+Func_080e1024:
+	.incbin "baserom.gba", 0x000e0fe0, 0x00000130
 	.section .rom.000e1404, "ax"
 	.global BattleFx_SpawnScaledArcObjects
 	.type BattleFx_SpawnScaledArcObjects, %function

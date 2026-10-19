@@ -1166,13 +1166,13 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Clear(0x16f);
   GameFlag_Clear(0x171);
-  ItemMenu_Open();
+  DjinnMenu_Open();
   Engine_ActorJump(ACTOR_VENUS_DJINNI, 4, 30);
   Engine_EventSetMessage(MsgWorldMapNextIllShowHowCan);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   GameFlag_Clear(0x16f);
   GameFlag_Set(0x171);
-  ItemMenu_Open();
+  DjinnMenu_Open();
   Engine_EventWait(30);
   Field_RequestBattleFromEncounterTable(12, 6);
 }
@@ -1345,7 +1345,7 @@ static void Event_MeetFlint(void) {
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Set(0x16f);
   GameFlag_Clear(0x171);
-  ItemMenu_Open();
+  DjinnMenu_Open();
   Event_SetMessage(MsgWorldMapGoSetStandby);
   FieldObject_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
   Event_Wait(30);
@@ -1375,7 +1375,7 @@ static void Event_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   GameFlag_Set(0x16f);
   GameFlag_Set(0x171);
-  ItemMenu_Open();
+  DjinnMenu_Open();
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Battle_ClearObjectFlag5bWhenMode3();

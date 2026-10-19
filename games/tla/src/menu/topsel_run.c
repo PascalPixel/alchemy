@@ -5,7 +5,7 @@
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 s32 Menu_SelectTopEntry(s32);
 s32 UiWork_CloseAndRelease(void);
-s32 ItemMenu_Open(void);
+s32 DjinnMenu_Open(void);
 s32 Object_GetTriggerTileAheadOfCurrentFar(void);
 s32 Menu_OpenConfirmPromptFar(void);
 s32 Func_080f8000(void);
@@ -38,7 +38,7 @@ loop:
       goto loop;
     break;
   case 2:
-    ret = ItemMenu_Open();
+    ret = DjinnMenu_Open();
     if (ret != 0)
       goto loop;
     break;

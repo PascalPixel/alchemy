@@ -733,7 +733,7 @@ Func_02004e20:
 	.global Func_02004e28
 	.thumb_func
 Func_02004e28:
-	overlay_veneer ItemMenu_Open
+	overlay_veneer DjinnMenu_Open
 	.global Func_02004e30
 	.thumb_func
 Func_02004e30:

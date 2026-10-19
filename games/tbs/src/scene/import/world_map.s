@@ -101,6 +101,6 @@
 	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_ScheduleRatioTransition, 1
 	.set import.Event_WaitForZoomTransition, 1
-	.set import.ItemMenu_Open, 1
+	.set import.DjinnMenu_Open, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

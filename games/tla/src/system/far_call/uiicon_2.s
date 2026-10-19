@@ -5,9 +5,9 @@
 	.thumb_func
 UiIcon_PrepareObjectFar:
 	overlay_veneer UiIcon_PrepareObject
-	.global ItemMenu_Open
+	.global DjinnMenu_Open
 	.thumb_func
-ItemMenu_Open:
+DjinnMenu_Open:
 	overlay_veneer Func_08100e7c
 	.global ItemMenu_DrawItemDetailsFar
 	.thumb_func

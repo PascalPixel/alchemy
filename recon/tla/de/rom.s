@@ -2319,10 +2319,10 @@ Data_080f3984:
 UiIcon_PrepareObjectFar:
 	.incbin "baserom.gba", 0x00102028, 0x00000008
 	.section .rom.00102030, "ax"
-	.global ItemMenu_Open
-	.type ItemMenu_Open, %function
+	.global DjinnMenu_Open
+	.type DjinnMenu_Open, %function
 	.thumb_func
-ItemMenu_Open:
+DjinnMenu_Open:
 	.incbin "baserom.gba", 0x00102030, 0x00000008
 	.section .rom.00102038, "ax"
 	.global ItemMenu_DrawItemDetailsFar

@@ -1354,7 +1354,7 @@ s32 Menu_RunTopSelection(void) {
         continue;
       break;
     case 2:
-      ret = ItemMenu_RunFar();
+      ret = DjinnMenu_RunFar();
       if (ret != 0)
         continue;
       break;

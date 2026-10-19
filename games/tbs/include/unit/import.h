@@ -32,7 +32,7 @@ void Engine_UiTextDrawQuantity(u32 value, u32 kind);
 void Event_LoadAreaScript(const struct SceneEvent *events);
 s32 GetPartyMemberCount(void);
 void InventorySnapshot_Take(void);
-s32 ItemMenu_Open(void);
+s32 DjinnMenu_Open(void);
 s32 Object_CheckMovementCollision(struct ObjectRuntime *object,
                                   struct FieldPosition *position);
 void SceneEvents_UpdateInView(struct ScenePlacement *entry);

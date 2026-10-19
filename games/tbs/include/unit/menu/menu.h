@@ -234,7 +234,7 @@ void Ability_PlayUseAnimation(s32 action);
 s32 Menu_ReservedStatusZero(void);
 s32 Menu_WrapIndex(s32 value, s32 modulus);
 s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset);
-s32 ItemMenu_Run(void);
+s32 DjinnMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
 void Graphics_AdjustPaletteBank(s32 brightnessDelta);
 #ifdef UBFIX

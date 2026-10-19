@@ -409,7 +409,7 @@
 	import BattleFx_PlayQueuedSound, BattleFx_PlayQueuedSoundFar
 @ Menu bank (far_call/MENU.S)
 	import Menu_OpenCharacterSelector, Menu_OpenCharacterSelectorFar
-	import ItemMenu_Open, ItemMenu_RunFar
+	import DjinnMenu_Open, DjinnMenu_RunFar
 	import Engine_DebugDrawItemDetails, ItemMenu_DrawItemDetailsFar
 @ Shop bank (far_call/SHOP.S)
 	import Battle_ApplyPresetItemsAndFlags, Battle_ApplyPresetItemsAndFlagsFar

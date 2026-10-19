@@ -64,7 +64,7 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
 }
 
 // Runs the Djinn menu, preserving field tiles and the message speed.
-s32 ItemMenu_Run(void) {
+s32 DjinnMenu_Run(void) {
   struct DjinnMenuWork *menu;
   u32 savedMessageSpeed;
   s32 enabled;

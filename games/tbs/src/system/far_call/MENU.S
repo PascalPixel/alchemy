@@ -12,5 +12,5 @@ FarCall_MenuTable:
 	export PsynergyMenu_InitializeEntryObjectsFar, PsynergyMenu_InitializeEntryObjects
 	export Menu_ReleaseEntryObjectsFar, Menu_ReleaseEntryObjects
 	export UiIcon_PrepareObjectFar, UiIcon_PrepareObject
-	export ItemMenu_RunFar, ItemMenu_Run
+	export DjinnMenu_RunFar, DjinnMenu_Run
 	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails

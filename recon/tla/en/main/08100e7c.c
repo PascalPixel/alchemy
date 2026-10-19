@@ -1,5 +1,5 @@
 // Draft of Func_08100e7c: runs the Djinn menu, keeping the field's tiles and
-// the party's event mode; the twin of The Broken Seal's ItemMenu_Run
+// the party's event mode; the twin of The Broken Seal's DjinnMenu_Run
 // (games/tbs/src/menu/menu/djinn.c), rewritten with ⚓️'s heap block (220,
 // 0xcec), menu work and calls (Func_0810106c is the screen loop).
 // Near miss, differ 10 of 201 (2026-10-19), instruction order only: the native

@@ -4953,17 +4953,17 @@ main	rom_main_07	recon/tla/raw/0810abf0	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010aa90	ja
 main	rom_main_07	games/tla/src/menu/shop/reset_state_by_mode	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010af08	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b0a0	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b14c	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010af28	fr
 main	rom_main_07	recon/tla/es/rom	.rom.0010ef28	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f0c0	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f16c	es
 main	rom_main_07	recon/tla/de/rom	.rom.00112f28	de
 main	rom_main_07	recon/tla/raw/0810af24	.text	en
-main	rom_main_07	recon/tla/raw/0810b04c	.text	en
-main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text	en de fr
 main	rom_main_07	recon/tla/ja/rom	.rom.0010af34	ja
+main	rom_main_07	games/tla/src/menu/shop/select_msg	.text
+main	rom_main_07	recon/tla/it/rom	.rom.0010b0a0	it
+main	rom_main_07	recon/tla/it/rom	.rom.0010b14c	it
+main	rom_main_07	recon/tla/es/rom	.rom.0010f0c0	es
+main	rom_main_07	recon/tla/es/rom	.rom.0010f16c	es
+main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text	en de fr
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b0cc	ja
 main	rom_main_07	games/tla/src/menu/shop/fx_update	.text	ja en de fr
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b1b8	fr

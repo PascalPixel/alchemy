@@ -4203,7 +4203,7 @@ Forge_FindRecipe:
 Func_0810aa80:
 	.incbin "baserom.gba", 0x0010ea84, 0x00000424
 	.section .rom.0010ef28, "ax"
-	.incbin "baserom.gba", 0x0010ef28, 0x00000198
+	.incbin "baserom.gba", 0x0010ef28, 0x00000128
 	.section .rom.0010f0c0, "ax"
 	.global BattleFx_UpdateRadialMotion
 BattleFx_UpdateRadialMotion:

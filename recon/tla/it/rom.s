@@ -4316,7 +4316,7 @@ Forge_FindRecipe:
 	.balign 4
 	.incbin "baserom.gba", 0x0010aa84, 0x00000404
 	.section .rom.0010af08, "ax"
-	.incbin "baserom.gba", 0x0010af08, 0x00000198
+	.incbin "baserom.gba", 0x0010af08, 0x00000128
 	.section .rom.0010b0a0, "ax"
 	.global BattleFx_UpdateRadialMotion
 BattleFx_UpdateRadialMotion:

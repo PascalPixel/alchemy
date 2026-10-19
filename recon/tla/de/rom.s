@@ -2873,7 +2873,7 @@ Forge_FindRecipe:
 Func_0810aa80:
 	.incbin "baserom.gba", 0x00112a84, 0x00000424
 	.section .rom.00112f28, "ax"
-	.incbin "baserom.gba", 0x00112f28, 0x00000198
+	.incbin "baserom.gba", 0x00112f28, 0x00000128
 	.section .rom.001131b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001131b8, 0x000001c4

@@ -186,7 +186,7 @@ Func_0810abf0:
 	bl Func_0810af24
 	mov r1, r8
 	ldr r0, [sp, #8]
-	bl Func_0810b04c
+	bl Shop_DrawSelectMsg
 	movs r1, #0
 	mov r9, r1
 .L_0810ad68:

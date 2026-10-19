@@ -302,13 +302,6 @@ Func_0802254c:
 	.thumb_func
 InitializeAnimationObjects:
 	.incbin "baserom.gba", 0x000228e0, 0x0000008c
-	.section .rom.00022bd8, "ax"
-	.balign 4
-	.global Func_08022bd8
-	.type Func_08022bd8, %function
-	.thumb_func
-Func_08022bd8:
-	.incbin "baserom.gba", 0x00022bd8, 0x000000a0
 	.section .rom.00022d40, "ax"
 	.global ResourceObject_Create
 	.type ResourceObject_Create, %function

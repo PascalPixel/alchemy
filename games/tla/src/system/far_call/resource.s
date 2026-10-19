@@ -7,7 +7,7 @@ Resource_FarCall003:
 	.thumb_func
 Resource_GetMetadataRecordFarFar:
 	overlay_veneer Resource_GetMetadataRecordFar
-	.global Func_08020008
+	.global ObjectSystem_ConfigureFar
 	.thumb_func
-Func_08020008:
-	overlay_veneer Func_08022bd8
+ObjectSystem_ConfigureFar:
+	overlay_veneer ObjectSystem_Configure

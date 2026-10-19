@@ -11,7 +11,7 @@ struct MapAnimationWork {
   u8 unk08[84];
 };
 
-void Func_08022bd8(s32 mode);
+void ObjectSystem_Configure(s32 mode);
 void Func_0802493c(void);
 void Func_08023f9c(void);
 void Func_080246b8(void);
@@ -33,7 +33,7 @@ void Func_080230e0(s32 mode) {
 
   work = Runtime_AllocateBlock(24, sizeof(*work));
   buffer = Runtime_AllocateBlock(20, 0x2000);
-  Func_08022bd8(mode);
+  ObjectSystem_Configure(mode);
   zero = 0;
   Dma_Set((const void *)&zero, buffer, 0x85000000 | (0x2000 / 4), REG_DMA3);
   zero = 0;

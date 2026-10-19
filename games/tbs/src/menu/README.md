@@ -5,6 +5,10 @@ This folder holds The Broken Seal's field menu, the screens it opens
 events open, and three scene overlays that are mostly menus: the title
 screen, the file select screen and the Battle Arena's lobby.
 
+See also: [Windows](../window/README.md), whose windows and messages every
+screen is made of, and [Shops](../shop/README.md), which share the menu's
+work block.
+
 ## Files
 
 | File | What it holds |
@@ -76,22 +80,35 @@ Several prefixes are older than the parts and do not match the screen a
 function belongs to (`PsynergyMenu_InitializeEntryObjects` sets up the party
 figures every screen uses).
 
-## Spellings
+The spellings some sites keep to match, and the comment markers, are in
+[Matching](../MATCHING.md).
 
-Each site keeps the form it matches with. These are one idea and can compile
-differently:
+## Design
 
-- A unit copied with the resident IWRAM routine as `Iwram_CopyWords`, through
-  `_call_via_r3(..., IwramCopyWords)` (`Owner_Copy`), or through `Item_CopyWords`
-  (tagged).
-- A message after a named one as `MsgName + n`, such as
-  `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds
-  to the register holding the first.
-- A neighbouring heap block as `cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL]`
-  from the menu control slot.
-- Palette RAM through `BG_PLTT_COLOR`, or through a plain pointer to it.
-- A function whose result nothing reads keeps its `s32` return where `void`
-  changes its epilogue; `UBFIX` gives the `void` form.
+### One block, one view per screen
+
+Every screen of the field menu works in the same heap block,
+`HEAP_SLOT_MENU` (0xa70 bytes), and each reads it through its own struct:
+`InventoryMenuState` for the item screen and the pieces the screens share,
+`PsynergyMenuState`, `CharacterMenuState`, `DjinnMenuWork` and
+`FourObjectMotionState`. Only one screen's loop runs at a time, so the block
+is the screen's while it runs. As with the field objects' five views, the
+views stay separate structs because each is what its screen's code matches
+with. The shops take the same slot for
+`struct ShopRuntime`, so a shop and the field menu are never open together.
+
+### Start closes every screen at once
+
+Screens nest: the field menu runs a screen, the screen runs its own command
+loop with `WaitFrames`, and a command may run another loop inside that.
+Pressing Start must close all of them. `Menu_CancelSoundReset` schedules
+`Menu_CancelSoundTick`, a task that watches for Start while any screen runs;
+when Start is pressed it plays the cancel sound, sets
+`FLAG_MENU_START_PRESSED` and removes itself. The screens' loops test that
+flag and return as if cancelled, so the nested loops unwind one by one to
+the field without any of them knowing how deep it was. It is a game flag,
+not a variable, so code in other banks can test it with the flag calls they
+already import. XXX: that last reason is an inference.
 
 ## How the field menu opens a screen
 
@@ -129,3 +146,17 @@ chooser the Colosso scenes open.
 - A unit's inventory has 15 slots (`INVENTORY_SLOTS`).
 - The title, file select and Battle Arena screens are overlays, loaded into
   the 32 KB at 0x2008000 (`../system/README.md`).
+
+## Evidence and open questions
+
+Screen and prefix names follow what each screen shows in the English
+release; the menu's two flags are named from what sets and tests them; the
+sort orders from the item types they list.
+
+Still unknown:
+
+- XXX: the four icons' functions (`PsynergyMenu_Run` and the rest) and
+  several prefixes are older than the parts and do not say which screen they
+  open; they cross folders and wait for a rename of their own.
+- XXX: the `unk` fields of the menu work's views.
+- XXX: why the menu's Start watch is a game flag rather than a variable.

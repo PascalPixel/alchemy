@@ -27,12 +27,12 @@ void Func_080ae5fc(u8 *save) {
   s32 i;
   s32 count = 8;
 
-  gPartyState.unk220[5] = party->unk220[5];
-  gPartyState.unk220[6] = party->unk220[6];
+  gPartyState.paletteGlow[0] = party->paletteGlow[0];
+  gPartyState.paletteGlow[1] = party->paletteGlow[1];
   gPartyState.eventMode = party->eventMode;
   gPartyState.battleFxEnabled = party->battleFxEnabled;
   gPartyState.unk244[6] = party->unk244[6];
-  Func_08038348(gPartyState.unk220[5], gPartyState.unk220[6]);
+  Func_08038348(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
   for (i = 0; i < count; i++) {
     struct BattleUnit *unit = UnitGet(i);
     struct BattleUnit *saved = &units[i];

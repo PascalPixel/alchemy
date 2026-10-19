@@ -31,7 +31,9 @@ struct PartyState {
   u8 unk213;
   s32 currentOwner;
   u8 activeOwners[8];
-  u8 unk220[0xa];
+  u8 unk220[5];
+  u8 paletteGlow[2];
+  u8 unk227[3];
   u8 battleFxEnabled;
   u8 unk22b;
   u8 eventMode;
@@ -40,16 +42,20 @@ struct PartyState {
   u16 unk232;
   u16 keys234;
   u16 keys236;
-  u8 unk238[8];
+  u8 unk238[6];
+  s16 returnCue; // the music to play on returning, -1 for the scene's own
   u16 packedEvents[2];
   u8 unk244[7];
   u8 battleRule24b;
-  u8 unk24c[8];
+  u8 unk24c[6];
+  u16 hazardSteps;
   s16 pendingDjinnEvent;
   s16 unk256;
   s32 encounterSteps;
   u16 tally25c;
-  u8 unk25e[6];
+  s16 sceneVariant;
+  s16 retreatScene;
+  s16 retreatEntrance;
   s32 avoidDistance;
   s8 avoidByItem;
   u8 savedByte;

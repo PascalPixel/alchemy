@@ -124,7 +124,7 @@ s32 Func_0200005c(void) {
     if (gPartyState.entrance == 2) {
       Func_02000644(40);
       Func_0200063c(0);
-      Func_020005dc(gPartyState.unk220[5], gPartyState.unk220[6]);
+      Func_020005dc(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
       Func_020005e4();
       Func_02000604((s32)&SceneId_VenusLighthouse, 99);
     }
@@ -136,7 +136,7 @@ s32 Func_0200005c(void) {
     if (gPartyState.entrance == 3) {
       Func_02000644(75);
       Func_02000624(0);
-      Func_020005dc(gPartyState.unk220[5], gPartyState.unk220[6]);
+      Func_020005dc(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
       Func_020005ec();
       Func_02000604((s32)&SceneId_Ov650, 13);
     }

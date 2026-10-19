@@ -80,7 +80,7 @@ s32 Func_08044558(s32 member) {
   u16 *palette;
 
   Ui_LoadWindowGraphics();
-  Func_0803f9c0(gPartyState.unk220[5], gPartyState.unk220[6]);
+  Func_0803f9c0(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
   keyboardWindow = UiWindow_Create(3, 6, 24, 9, 2);
   nameWindow = UiWindow_Create(8, 3, 8, 3, 2);
   Func_0803d3c0(member, 0, 3, 1);

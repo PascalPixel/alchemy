@@ -1,6 +1,9 @@
-// Near miss, differ 16: the native starts the 0x100000 radius (movs r0, #128)
-// before it copies y, builds the mode and cell-table offsets in r0 where this
-// uses r2 and r1, and keeps the cell address in r1.
+// Near miss, differ 10 of 75 (16 before the cell was written as byte
+// offsets from u8 tables, as Object_GetTriggerTileAheadOfCurrent's draft
+// 080cc54c is): the native starts the 0x100000 radius (movs r0, #128)
+// before it copies y, and outside the world map builds the cell table's
+// offset (movs #156) in r0 where agscc takes r1; reading x before the cell
+// table changes nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -14,7 +17,7 @@ struct DisplayBlock {
   u8 *object;
 };
 
-extern struct MapCell gMapBlocks[];
+extern u8 gMapBlocks[];
 
 struct ObjectRuntime *Func_080cb8e8(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
@@ -24,7 +27,7 @@ s32 Func_080cb09c(void) {
   struct ObjectRuntime *object = Func_080cb8e8();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 position[3];
-  struct MapCell *cell;
+  u8 *cell;
 
   if (object == NULL)
     return 0;
@@ -33,16 +36,19 @@ s32 Func_080cb09c(void) {
   position[2] = object->z;
   Vector_AddPolarOffset(0x100000, object->angle, position);
   if (block->mode == 3) {
-    s32 x = position[0];
-    s32 z = position[2];
+    s32 x, z;
 
-    cell = &gMapBlocks[((x / 0x200000) & 31) + ((z / 0x200000) & 31) * 32];
+    x = position[0];
+    z = position[2];
+    cell = gMapBlocks +
+           ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
   } else {
-    s32 x = position[0];
-    struct MapCell *cells = map->layers[0].cells;
-    s32 z = position[2];
+    s32 x, z;
 
-    cell = &cells[x / 0x100000 + z / 0x100000 * 128];
+    x = position[0];
+    cell = (u8 *)map->layers[0].cells;
+    z = position[2];
+    cell += (((x / 0x100000) + ((z / 0x100000) << 7)) << 2);
   }
-  return cell->collisionCode;
+  return cell[2];
 }

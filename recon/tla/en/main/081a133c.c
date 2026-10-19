@@ -1,15 +1,18 @@
-// Draft, differ 8 of 212: the scrolling picture scene's per-frame callback
+// Draft, differ 4 of 212: the scrolling picture scene's per-frame callback
 // (Func_081a150c adds it). Fades BLDALPHA in over 64 frames, eases the
 // position toward the target at most the speed a frame, eases the 16.16
 // scroll toward the position, and when the scroll crosses an 8-pixel column
 // copies the newly visible column of 15 rows into the wrapping tilemap, as
 // Func_081a1294 does for the whole map; then writes the scroll to BG2 and BG3.
 // The native reads the scroll word at every use (volatile here; plain, differ
-// 80) except where one read serves a compare and its arm (the locals). Left:
-// instruction order only: the native loads the scroll word's address before
-// the position's ldrsh, Data_02007518 after the r4 copy, and the backward
-// loop's 14 after its two step constants. A pin and barrier for the address
-// moves the allocation (differ 156); five permuter minutes found nothing.
+// 80) except where one read serves a compare and its arm (the locals). A
+// block pointer to the scroll word loads its address before the position's
+// ldrsh (differ 8 without it; at function scope for the later reads too,
+// differ 32). Left: instruction order only: the native copies the pointer to
+// r0 for the column test where the draft reloads it from the pool, and sets
+// the backward loop's 14 after its two step constants. A pin and barrier for
+// the address moves the allocation (differ 156); five permuter minutes found
+// nothing.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -60,8 +63,10 @@ void Func_081a133c(void) {
     gData_02007520 += d;
   }
   {
+    volatile s32 *word = &gData_0200751c;
     s32 target = gData_02007520 << 16;
-    scroll = gData_0200751c;
+
+    scroll = *word;
     if (scroll != target) {
     d = target - scroll;
     if (ABS(d) > Data_02007524 << 14)
@@ -72,7 +77,7 @@ void Func_081a133c(void) {
       else
         d = -(Data_02007524 << 16);
     }
-    gData_0200751c += d;
+    *word += d;
     Data_02007518 += d;
   }
   }

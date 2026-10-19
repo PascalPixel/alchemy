@@ -1,84 +1,63 @@
-// Draft of Func_0811ddd8: turns a target list into an action plan. 8
-// instructions differ (10 before), four swapped pairs in the opening: the
-// argument copy and the 0xfff mask, the side load and the counter copy. The
-// loop is a guarded do-while over an id pointer whose count is read before
-// i steps behind a one-pass block (FAKEMATCH, as Func_08124cc4's), which
-// fixes the loop end; five minutes of permute found only a block around the
-// whole body (6, not kept).
-
+// Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattlePres_BuildTargetList
+// (games/tbs/src/battle/battle/staging.c) with ⚓️'s added test that the
+// target is in the battle (BattleParty_IsUnitListed); void, as its callers
+// load r0 before r1 for it. Left: the opening, the plan's copy into r6 one
+// slot ahead of the flags' store, and sub sp four slots early (the one-pass
+// block that places mov sl, r1 moves it). Devices: one-pass blocks (tagged);
+// without them 12 differ (10 for the old for-loop draft).
 #include "types.h"
-#include "owner_state.h"
+#include "battle_type.h"
+#include "battle_display.h"
 
-struct ActionTargets {
-  u8 side;
-  s8 count;
-  u8 unk02;
-  u8 ids[14];
-  u8 stateA[14];
-  u8 stateB[14];
-  u8 stateC[14];
-  u8 stateD[14];
-  u16 value4a;
-  s32 message;
-  s32 value50;
-  s32 value54;
-  u32 cue;
-  s32 unk5c;
-  s32 extra;
-  s32 unk64;
-};
-
-struct ActionPlan {
-  s32 cue;
-  s32 unk04;
-  s32 side;
-  s32 first;
-  s32 one;
-  s32 count;
-  s32 kind;
-  s32 zero;
-  s32 unk20;
-  u16 ids[14];
-};
-
+struct BattleUnit *UnitGet(s32 unitId);
 u32 BattleParty_IsUnitListed(u32 id);
 
-void Func_0811ddd8(struct ActionTargets *targets, struct ActionPlan *plan) {
-  s32 count = 0;
-  s32 i;
-  s32 n;
-  u8 *id;
+void BattlePres_BuildTargetList(struct BattlePlan *plan,
+                                struct BattlePresentationWork *effect) {
+  s16 *outputTarget;
+  u32 flags;
+  s32 livingTargets;
+  s32 targetIndex;
+  s32 count;
+  u8 *inputTarget;
 
-  plan->zero = 0;
-  plan->cue = targets->cue & 0xfff;
-  plan->kind = (targets->cue & 0x3000) >> 12;
-  i = 0;
-  plan->side = targets->side;
-  if (i < targets->count) {
-    id = targets->ids;
+  livingTargets = 0;
+  effect->flags = 0;
+  flags = plan->presentationFlags;
+  /* FAKEMATCH(one-pass): the kind's store ends a CSE block, so
+   * targetIndex's zero is copied before the actor's store; as a plain
+   * statement, 8 of 78 instructions differ in tla-en. */
+  do {
+    effect->kind = flags & 0xfff;
+  } while (0);
+  effect->variant = (flags & 0x3000) >> 12;
+  effect->actor = plan->actorId;
+  targetIndex = 0;
+  if (targetIndex < plan->targetCount) {
+    inputTarget = plan->targetIds;
+    outputTarget = effect->actors;
     do {
-      if (BattleParty_IsUnitListed(*id)) {
-        struct BattleUnit *unit = UnitGet(*id);
-
-        if (unit->hp != 0 || (targets->cue & 0x10000)) {
-          plan->ids[count] = *id;
-          count++;
-        }
+      if (BattleParty_IsUnitListed(*inputTarget) &&
+          (UnitGet(*inputTarget)->hp != 0 ||
+           (plan->presentationFlags & 0x10000))) {
+        *outputTarget++ = *inputTarget;
+        livingTargets++;
       }
-      n = targets->count;
-      /* FAKEMATCH(one-pass block): the count is read before i steps; as a for
-       * loop over targets->ids[i], 10 of 78 instructions differ in tla-en. */
+      count = plan->targetCount;
+      /* FAKEMATCH(one-pass): the count is read before targetIndex
+       * steps; as while (targetIndex < plan->targetCount), 10 of 78
+       * instructions differ in tla-en. */
       do {
       } while (0);
-      i++;
-      id++;
-    } while (i < n);
+      targetIndex++;
+      inputTarget++;
+    } while (targetIndex < count);
   }
-  if (count == 0) {
-    plan->ids[0] = targets->ids[0];
-    count = 1;
+  if (livingTargets == 0) {
+    effect->actors[0] = plan->targetIds[0];
+    livingTargets = 1;
   }
-  plan->first = targets->ids[0];
-  plan->count = count;
-  plan->one = 1;
+  effect->firstTarget = plan->targetIds[0];
+  effect->count = livingTargets;
+  effect->initialValue = 1;
 }

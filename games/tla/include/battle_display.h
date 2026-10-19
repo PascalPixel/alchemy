@@ -88,8 +88,8 @@ STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 struct BattlePlan;
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);
 
-s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
-                               struct BattlePresentationWork *work);
+void BattlePres_BuildTargetList(struct BattlePlan *plan,
+                                struct BattlePresentationWork *work);
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 

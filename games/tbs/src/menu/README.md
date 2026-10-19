@@ -40,7 +40,7 @@ The field menu's four icons reach the menu object through the far-call table
 | 1 Psynergy | `PsynergyMenu_Run` | `psynergy.c` |
 | 2 Djinn | `DjinnMenu_Run` | `djinn.c` |
 | 3 Item | `ItemMenu_Run` | `item.c` |
-| 4 Status | `ActionMenu_Open` | `status.c` |
+| 4 Status | `StatusMenu_Run` | `status.c` |
 
 These names are older than the parts and do not say which screen they open;
 they cross folders, so they wait for a rename of their own.

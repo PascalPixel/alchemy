@@ -1364,7 +1364,7 @@ s32 Menu_RunTopSelection(void) {
         continue;
       break;
     case 4:
-      ret = Menu_OpenActionFlow();
+      ret = StatusMenu_RunFar();
       if (ret == -1)
         continue;
       break;

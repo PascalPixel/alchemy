@@ -3,7 +3,7 @@
 // games/tbs/src/system/far_call/MENU.S.
 s32 ItemMenu_RunFar(void);
 s32 PsynergyMenu_RunFar(void);
-s32 Menu_OpenActionFlow(void);
+s32 StatusMenu_RunFar(void);
 s32 Menu_OpenCharacterSelectorFar(void);
 void PsynergyMenu_InitializeEntryObjectsFar(void *source, s32 originX,
                                             s32 originY, s32 spacing,

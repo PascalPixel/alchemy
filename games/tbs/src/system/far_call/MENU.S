@@ -6,7 +6,7 @@
 FarCall_MenuTable:
 	export ItemMenu_RunFar, ItemMenu_Run
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
-	export Menu_OpenActionFlow, ActionMenu_Open
+	export StatusMenu_RunFar, StatusMenu_Run
 	export Menu_OpenCharacterSelectorFar, Menu_OpenCharacterSelector
 	overlay_veneer UiIcon_CreateWithResourceVariant
 	export PsynergyMenu_InitializeEntryObjectsFar, PsynergyMenu_InitializeEntryObjects

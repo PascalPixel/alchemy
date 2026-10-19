@@ -167,7 +167,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
 s32 Menu_OpenCharacterSelector(void);
 s32 CharacterSelector_Run(void);
-s32 ActionMenu_Open(void);
+s32 StatusMenu_Run(void);
 s32 Menu_RunActionFlow(void);
 s32 CharacterMenu_SelectOwner(s32 slot);
 s32 DjinnMenu_ShowCurrentList(void);

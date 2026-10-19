@@ -142,7 +142,7 @@ s32 CharacterSelector_Run(void) {
 // first two background palettes and the window tiles it draws over, sets up
 // the party row and, when the party has Djinn, the four Djinn sprites, runs
 // the status pages, then puts everything back. Returns their result.
-s32 ActionMenu_Open(void) {
+s32 StatusMenu_Run(void) {
   struct CharacterMenuState *state =
       Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = Runtime_BumpAllocateAlternatePool(64);

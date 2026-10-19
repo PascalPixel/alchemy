@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 216: the twin of The Broken Seal's ActionMenu_Open.
+// Near miss, differ 4 of 216: the twin of The Broken Seal's StatusMenu_Run.
 // Two pairs are in the other order: the native stores the result's -1 to its
 // stack slot before it starts the heap slots' address (str r2, [sp, #8]; movs
 // r3, #192), and loads the page's zero before it builds the page's offset (ldr

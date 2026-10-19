@@ -1070,7 +1070,7 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   }
   Actor_SetActionScript(OPPONENT, gColossoLog_Actor8Action);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1504), PIXELS(192));
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   {
     u16 shown = 0;
 
@@ -1112,15 +1112,15 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventWait(60);
   leaderScaleScript = gColossoMultiPhaseData;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderScaleScript);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->scaleX = Q16_ONE;
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->scaleY = Q16_ONE;
   Engine_ActorSetAnimationAndWait(0, 36);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->x.fixed += PIXELS(3);
   Engine_EventWait(10);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_EventWait(20);
   Actor_SetActionScript(0, gColossoLog_LeaderActionB);
@@ -1128,7 +1128,7 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
   Actor_WalkToAndWait(1, 1504, 176);
-  Actor_FaceDirection(GARET, 0x4000, 10);
+  Actor_FaceDirection(GARET, FACING_SOUTH, 10);
   Engine_ActorShowEmote(1, 0x100, 20);
   Event_ShowMessage(IVAN, 0);
   Object_LinkObjectAndSetCallback(1, 2);
@@ -1137,8 +1137,8 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   Actor_WalkTo(GARET, 1520, 184);
   Actor_WalkToAndWait(IVAN, 1504, 176);
   Engine_ActorSetAnimation(GARET, 1);
-  Actor_FaceDirection(GARET, 0x6000, 0);
-  Actor_FaceDirection(IVAN, 0x4000, 10);
+  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(IVAN, FACING_SOUTH, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(10);
   Object_LinkObjectAndSetCallback(2, 1);
@@ -1268,7 +1268,8 @@ static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(2, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(3, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetPosition(0, PIXELS(guideX), (PIXELS(guideZ) - PIXELS(48)));
+  Engine_ActorSetPosition(ACTOR_PARTY_LEADER, PIXELS(guideX),
+                          (PIXELS(guideZ) - PIXELS(48)));
   Engine_ActorSetPosition(1, PIXELS(guideX) - PIXELS(16),
                           PIXELS(guideZ) - PIXELS(40));
   Engine_ActorSetPosition(2, PIXELS(guideX) + PIXELS(16),
@@ -1276,8 +1277,8 @@ static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   Engine_ActorSetPosition(3, PIXELS(guideX), (PIXELS(guideZ) - PIXELS(32)));
   Engine_ActorSetPosition(guideId, PIXELS(guideX),
                           (PIXELS(guideZ) - PIXELS(80)));
-  actor = Object_GetById(0);
-  actor->facing = 0xc000;
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
+  actor->facing = FACING_NORTH;
   Engine_CameraFollowActor(0, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1296,17 +1297,17 @@ static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   Engine_ActorSetAnimationAndWait(0, 3);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(1, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(1, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(2, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(2, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(3, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(3, actor->x.part.pixel, actor->z.part.pixel);
   }
@@ -1316,7 +1317,7 @@ static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   Engine_ActorSetPosition(3, 0, 0);
   Engine_ActorWalkToAndWait(guideId, (guideX - 16), (guideZ - 16));
   Engine_ActorWalkToAndWait(guideId, guideX, guideZ);
-  Engine_ActorFaceDirection(guideId, 0xc000, 10);
+  Engine_ActorFaceDirection(guideId, FACING_NORTH, 10);
   Engine_EventEnd();
 }
 
@@ -1413,13 +1414,13 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Engine_EventWait(10);
     Engine_LeaderCheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
-    Engine_ActorFaceDirection(0, 0xc000, 15);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 15);
     Engine_LeaderCheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
-    Engine_ActorFaceDirection(0, 0, 15);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 15);
     Engine_LeaderCheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
     Event_ShowMessage(guideId, 0);
     SceneEffect_SeedMarkerAndInstallTask(96, 40, 0);
     SceneState_StartMarkerMove(128, 40, 10);
@@ -1487,7 +1488,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
         } while (work->raisedTrigger != 5);
       }
       Event_PassSouthWallOpening();
-      Actor_FaceDirection(0, 0xc000, 20);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Actor_ShowEmote(0, 0x103, 60);
       Engine_EventShowMessage(guideId, 0);
       Colosso_RestoreCompetitor(0);
@@ -1529,11 +1530,11 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       Colosso_FadeInCompetitor(0, 816, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
-      Engine_ActorFaceDirection(0, 0xc000, 20);
+      Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
       Camera_MoveTo(-1, -1, -1, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-      actor = Object_GetById(0);
+      actor = Object_GetById(ACTOR_PARTY_LEADER);
       y = actor->y.fixed;
       x = actor->x.fixed;
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1628,7 +1629,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
 #endif
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-      actor = Object_GetById(0);
+      actor = Object_GetById(ACTOR_PARTY_LEADER);
       for (i = 119; i >= 0; i--) {
         if (actor->x.fixed > PIXELS(992)) {
           actor->x.fixed -= PIXELS(6) / 5;

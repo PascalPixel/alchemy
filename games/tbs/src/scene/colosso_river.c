@@ -693,13 +693,13 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetPosition(0, x << 16, (z << 16) - PIXELS(48));
+  Engine_ActorSetPosition(ACTOR_PARTY_LEADER, x << 16, (z << 16) - PIXELS(48));
   Actor_SetPosition(GARET, (x << 16) - PIXELS(16), (z << 16) - PIXELS(40));
   Actor_SetPosition(IVAN, (x << 16) + PIXELS(16), (z << 16) - PIXELS(40));
   Actor_SetPosition(MIA, x << 16, (z << 16) - PIXELS(32));
   Actor_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
-  actor = Object_GetById(0);
-  actor->facing = 0xc000;
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
+  actor->facing = FACING_NORTH;
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -733,7 +733,7 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
       Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
       Engine_ActorSetAnimationAndWait(guide, 3);
       Event_ShowMessage(guide, 0);
-      Actor_FaceDirection(guide, 0xa000, 0);
+      Actor_FaceDirection(guide, FACING_NORTHWEST, 0);
       Engine_EventWait(20);
       Event_ShowMessage(guide, 0);
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -767,8 +767,8 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   Engine_EventSetMessage(MsgColossoIsaacYoureContestantInFinals);
   Engine_ActorRunRepeatedMotion(guide, 2);
   Event_ShowMessage(guide, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-  Actor_FaceDirection(GARET, 0, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(GARET, FACING_EAST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessage(GARET, 0);
@@ -785,17 +785,17 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(GARET, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(IVAN, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(MIA, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
@@ -805,7 +805,7 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   Actor_SetPosition(MIA, 0, 0);
   Actor_WalkToAndWait(guide, x - 16, z - 16);
   Actor_WalkToAndWait(guide, x, z);
-  Actor_FaceDirection(guide, 0xc000, 10);
+  Actor_FaceDirection(guide, FACING_NORTH, 10);
   Engine_EventEnd();
 }
 
@@ -833,13 +833,13 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Engine_EventShowMessage(scene, 0);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
       Engine_EventWait(30);
-      Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       OverlayObject_PlaceWithScale14000(0, 296, 184);
       OverlayObject_PlaceWithScale14000(0, 296, 152);
       OverlayObject_PlaceWithScale14000(0, 312, 152);
-      Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
       ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
       ColossoRiver_PushObjectAhead();
@@ -848,7 +848,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
-      Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 15);
+      Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 15);
       ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
       ColossoRiver_PushObjectAhead();
@@ -1008,9 +1008,9 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     SceneEffect_RemoveMarkerTask();
     Engine_EventWait(15);
     Colosso_FadeInCompetitor(0, 984, 200);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Event_ShowMessage(scene, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     OverlayObject_PlaceWithScale14000(0, 1000, 192);

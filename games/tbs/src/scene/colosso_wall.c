@@ -960,7 +960,7 @@ static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(2, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(3, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetPosition(0, (attendantX << 16),
+  Engine_ActorSetPosition(ACTOR_PARTY_LEADER, (attendantX << 16),
                           ((attendantZ << 16) - 0x300000));
   Engine_ActorSetPosition(1, (attendantX << 16) - 0x100000,
                           (attendantZ << 16) - 0x280000);
@@ -970,8 +970,8 @@ static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
                           ((attendantZ << 16) - 0x200000));
   Engine_ActorSetPosition(attendantId, (attendantX << 16),
                           ((attendantZ << 16) - 0x500000));
-  actor = Object_GetById(0);
-  actor->facing = 0xc000;
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
+  actor->facing = FACING_NORTH;
   Engine_CameraFollowActor(0, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -991,17 +991,17 @@ static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(1, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(1, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(2, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(2, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(3, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Engine_ActorSetDestination(3, actor->x.part.pixel, actor->z.part.pixel);
   }
@@ -1011,7 +1011,7 @@ static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
   Engine_ActorSetPosition(3, 0, 0);
   Engine_ActorWalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 16));
   Engine_ActorWalkToAndWait(attendantId, attendantX, attendantZ);
-  Engine_ActorFaceDirection(attendantId, 0xc000, 10);
+  Engine_ActorFaceDirection(attendantId, FACING_NORTH, 10);
   Engine_EventEnd();
 }
 

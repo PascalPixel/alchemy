@@ -747,9 +747,10 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 // Icon numbers refer to ResourceId_CommandIcons.
 // Each shows the name of the icon under the cursor in a window.
 
-// Select icons 0x11-0x14 centered on row 17.
+// Select a shop command, icons 0x11-0x14 (Buy, Sell, Artifacts, Repair),
+// centered on row 17.
 // selection: initial position; return the selected position.
-s32 Menu_SelectEntry11To14(s32 selection) {
+s32 Menu_SelectShopCommand(s32 selection) {
   s32 result;
 
   AffineEffect_InitializeWork();
@@ -763,8 +764,9 @@ s32 Menu_SelectEntry11To14(s32 selection) {
   return result;
 }
 
-// Select icons 0x19-0x1c centered on row 17.
-s32 Menu_SelectEntry19To1c(s32 selection) {
+// Select a sanctum service, icons 0x19-0x1c (Revive, Cure Poison, Repel
+// Evil, Remove Curse), centered on row 17.
+s32 Menu_SelectSanctumService(s32 selection) {
   s32 result;
 
   AffineEffect_InitializeWork();
@@ -835,9 +837,9 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-// Select icons 0x20 and 0x21 centered on row 17.
+// Select icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17.
 // selection: initial position; return the selected position.
-s32 Menu_SelectEntry20To21(s32 selection) {
+s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 
   AffineEffect_InitializeWork();

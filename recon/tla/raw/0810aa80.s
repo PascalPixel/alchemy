@@ -139,7 +139,7 @@ Func_0810aa80:
 	bl Func_0810a9ac
 .L_0810aba4:
 	mov r0, r10
-	bl Menu_SelectEntry19To1cFar
+	bl Menu_SelectSanctumServiceFar
 	movs r1, #1
 	mov r10, r0
 	mov r3, r10

@@ -166,7 +166,7 @@ Func_020001e4:
 	adds r0, r6, #0
 	bl UiText_DrawCharacterAtOffset
 	mov r0, r8
-	bl Menu_SelectEntry20To21
+	bl Menu_SelectCoinsOrMedals
 	movs r1, #2
 	mov r8, r0
 	adds r0, r7, #0
@@ -503,7 +503,7 @@ Func_020001e4:
 	mov r0, r10
 	bl UiText_DrawNumberInWindow
 	adds r0, r7, #0
-	bl Menu_SelectEntry20To21
+	bl Menu_SelectCoinsOrMedals
 	movs r1, #2
 	adds r7, r0, #0
 	adds r0, r6, #0

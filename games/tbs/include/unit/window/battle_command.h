@@ -188,11 +188,11 @@ s32 Menu_SelectSaveSlotAction(void);
 void Menu_DrawModeLabel(void);
 void Menu_DrawModeIndicator(void);
 s32 Menu_SelectResourceLayout(s32 mode);
-s32 Menu_SelectEntry11To14(s32 selection);
-s32 Menu_SelectEntry19To1c(s32 selection);
+s32 Menu_SelectShopCommand(s32 selection);
+s32 Menu_SelectSanctumService(s32 selection);
 s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection);
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection);
-s32 Menu_SelectEntry20To21(s32 selection);
+s32 Menu_SelectCoinsOrMedals(s32 selection);
 
 void DebugMenu_ScheduleSceneSelector(void);
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second);

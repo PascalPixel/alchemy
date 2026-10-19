@@ -14,7 +14,7 @@ s32 Menu_RunResourceSelectionLoop(s32);
 void Menu_AppendResourceEntry(s32 arg0);
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
-s32 Menu_SelectEntry20To21(s32 arg0) {
+s32 Menu_SelectCoinsOrMedals(s32 arg0) {
   s32 ret;
 
   AffineEffect_InitializeWork();

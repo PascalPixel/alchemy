@@ -121,7 +121,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   shop->cursor.anchor = anchor;
   UiMessage_ShowAndWait(MsgWeaponShopWelcome);
   while (1) {
-    action = Menu_SelectEntry11To14Far(action);
+    action = Menu_SelectShopCommandFar(action);
     shop->partyAction = action;
     if (action == SHOP_ACTION_BUY) {
       shop->stockCount = EventTable_CopyRowHeader(stockRow, shop->stockItemIds);

@@ -116,10 +116,10 @@ FarCall_WindowTable:
 	overlay_veneer Menu_RunWorkspaceOptions
 	export Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop
 	overlay_veneer UiWindow_FillScreenBlockRect
-	export Menu_SelectEntry11To14Far, Menu_SelectEntry11To14
-	export Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c
+	export Menu_SelectShopCommandFar, Menu_SelectShopCommand
+	export Menu_SelectSanctumServiceFar, Menu_SelectSanctumService
 	export Menu_RunConfirmSelectionFar, Menu_RunConfirmSelection
-	export Menu_SelectEntry20To21Far, Menu_SelectEntry20To21
+	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
 	export PartyTalkMenu_ChooseFar, PartyTalkMenu_Choose
 	overlay_veneer RenderResource_LoadTableEntry
 	export Menu_RunConfirmSelectionAtFar, Menu_RunConfirmSelectionAt

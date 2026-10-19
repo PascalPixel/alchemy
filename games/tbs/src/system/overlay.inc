@@ -182,7 +182,7 @@
 	import DebugMenu_BrowseEntryGlyphs, DebugMenu_BrowseEntryGlyphsFar
 	import PaletteGlow_Update, PaletteGlow_UpdateFar
 	import Menu_RunConfirmSelection, Menu_RunConfirmSelectionFar
-	import Menu_SelectEntry20To21, Menu_SelectEntry20To21Far
+	import Menu_SelectCoinsOrMedals, Menu_SelectCoinsOrMedalsFar
 	import PartyTalkMenu_Choose, PartyTalkMenu_ChooseFar
 	import Resource_LoadFixedBlockBIntoFreeSlot, Resource_LoadFixedBlockBIntoFreeSlotFar
 	import Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar

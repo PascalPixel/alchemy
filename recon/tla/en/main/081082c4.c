@@ -41,7 +41,7 @@ struct RenderInput *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 style);
 void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
-s32 Menu_SelectEntry11To14Far(s32 action);
+s32 Menu_SelectShopCommandFar(s32 action);
 s32 Func_0810a6b8(s32 row, u16 *items);
 void Func_08108b70(void);
 void Func_08109ad8(void);
@@ -76,7 +76,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   shop->cursor.anchor = anchor;
   Func_081084f4((s32)MsgWeaponShopWelcome);
   while (1) {
-    action = Menu_SelectEntry11To14Far(action);
+    action = Menu_SelectShopCommandFar(action);
     shop->partyAction = action;
     if (action == 0) {
       shop->stockCount = Func_0810a6b8(stockRow, shop->stockItemIds);

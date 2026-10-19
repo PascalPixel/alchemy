@@ -60,7 +60,7 @@ void Func_0810a9ac(s32 message);
 void Func_08109188(void);
 s32 Shop_CountUnits(void);
 void Func_0810abf0(void);
-s32 Menu_SelectEntry19To1cFar(s32 prev);
+s32 Menu_SelectSanctumServiceFar(s32 prev);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void Func_0810824c(void);
 
@@ -99,7 +99,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   Func_08109188();
 
   for (;;) {
-    partyAction = Menu_SelectEntry19To1cFar(partyAction);
+    partyAction = Menu_SelectSanctumServiceFar(partyAction);
     shop->partyAction = partyAction;
     if (partyAction == -1)
       break;

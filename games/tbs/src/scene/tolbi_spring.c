@@ -512,7 +512,7 @@ prompt:
     UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
     UiText_DrawNumberInWindow(medals, 6, window, NUMBER_X, 8);
   }
-  choice = Menu_SelectEntry20To21(choice);
+  choice = Menu_SelectCoinsOrMedals(choice);
   UiWork_Finalize(window, 2);
   UiWork_FinalizePendingCore();
   if (choice == cancel) {
@@ -586,7 +586,7 @@ prompt:
     UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
     UiText_DrawNumberInWindow(medals, 6, window, NUMBER_X, 8);
     UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 8);
-    choice = Menu_SelectEntry20To21(choice);
+    choice = Menu_SelectCoinsOrMedals(choice);
     UiWork_Finalize(window, 2);
     UiWork_FinalizePendingCore();
     if (choice == cancel) {

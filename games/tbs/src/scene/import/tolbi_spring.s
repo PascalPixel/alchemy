@@ -16,7 +16,7 @@
 	.set import.UiText_DrawNumberInWindow, 1
 	.set import.UiWork_PushValueSlot, 1
 	.set import.UiWork_FinalizePendingCore, 1
-	.set import.Menu_SelectEntry20To21, 1
+	.set import.Menu_SelectCoinsOrMedals, 1
 	.set import.PartyInventory_Remove, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

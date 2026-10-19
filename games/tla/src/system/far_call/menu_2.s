@@ -1,22 +1,22 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Menu_SelectEntry11To14Far
+	.global Menu_SelectShopCommandFar
 	.thumb_func
-Menu_SelectEntry11To14Far:
-	overlay_veneer Menu_SelectEntry11To14
-	.global Menu_SelectEntry19To1cFar
+Menu_SelectShopCommandFar:
+	overlay_veneer Menu_SelectShopCommand
+	.global Menu_SelectSanctumServiceFar
 	.thumb_func
-Menu_SelectEntry19To1cFar:
-	overlay_veneer Menu_SelectEntry19To1c
+Menu_SelectSanctumServiceFar:
+	overlay_veneer Menu_SelectSanctumService
 	.global Menu_RunConfirmSelectionFar
 	.thumb_func
 Menu_RunConfirmSelectionFar:
 	overlay_veneer Menu_RunConfirmSelection
-	.global Menu_SelectEntry20To21Far
+	.global Menu_SelectCoinsOrMedalsFar
 	.thumb_func
-Menu_SelectEntry20To21Far:
-	overlay_veneer Menu_SelectEntry20To21
+Menu_SelectCoinsOrMedalsFar:
+	overlay_veneer Menu_SelectCoinsOrMedals
 	.global Func_08038388
 	.thumb_func
 Func_08038388:

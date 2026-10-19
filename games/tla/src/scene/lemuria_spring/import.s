@@ -82,10 +82,10 @@ UiWork_FinalizePendingCore:
 	.thumb_func
 Func_02001338:
 	overlay_veneer Func_08038340
-	.global Menu_SelectEntry20To21
+	.global Menu_SelectCoinsOrMedals
 	.thumb_func
-Menu_SelectEntry20To21:
-	overlay_veneer Menu_SelectEntry20To21Far
+Menu_SelectCoinsOrMedals:
+	overlay_veneer Menu_SelectCoinsOrMedalsFar
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:

@@ -6,7 +6,7 @@ s32 Menu_RunResourceSelectionLoop(s32);
 void Menu_AppendResourceEntry(s32 entry);
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
-s32 Menu_SelectEntry11To14(s32 arg0) {
+s32 Menu_SelectShopCommand(s32 arg0) {
   s32 ret;
 
   AffineEffect_InitializeWork();

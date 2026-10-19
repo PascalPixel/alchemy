@@ -147,7 +147,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   Shop_DrawMoney();
 
   for (;;) {
-    serviceSelection = Menu_SelectEntry19To1cFar(serviceSelection);
+    serviceSelection = Menu_SelectSanctumServiceFar(serviceSelection);
     shop->partyAction = serviceSelection;
     if (serviceSelection == -1)
       break;

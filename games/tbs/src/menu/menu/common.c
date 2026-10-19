@@ -1,8 +1,8 @@
 /// @file
-/// Part of menu.c, the menu object, compiled only through it.
 /// The pieces the menu screens share: windows, the status panel, numbers,
 /// icons, the party figures, the hand cursor, paged lists, palettes and the
 /// Start watch.
+/// Part of menu.c, the menu object, compiled only through it.
 
 #include "../menu_internal.h"
 

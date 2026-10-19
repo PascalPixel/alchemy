@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// Screen shake, the copied BG row drawer and the ground plane scanlines.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

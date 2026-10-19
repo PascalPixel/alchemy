@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// The object cameras, which place every object's sprite each frame.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

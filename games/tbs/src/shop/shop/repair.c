@@ -1,6 +1,6 @@
 /// @file
-/// Part of shop.c, the shop object, compiled only through it.
 /// Repairing broken items.
+/// Part of shop.c, the shop object, compiled only through it.
 
 #include "../shop_internal.h"
 

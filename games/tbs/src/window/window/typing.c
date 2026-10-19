@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// The per-frame message update: typing text and running its control codes.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

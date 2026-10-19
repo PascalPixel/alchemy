@@ -1,6 +1,6 @@
 /// @file
-/// Part of runtime.c, the runtime object, compiled only through it.
 /// The register write queue that VBlank carries out frames later.
+/// Part of runtime.c, the runtime object, compiled only through it.
 
 #include "../runtime_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of runtime.c, the runtime object, compiled only through it.
 /// The sprite VRAM cache: blocks, entries and loading pictures.
+/// Part of runtime.c, the runtime object, compiled only through it.
 
 #include "../runtime_internal.h"
 

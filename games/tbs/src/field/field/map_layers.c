@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// Layered maps: loading, drawing and scrolling, and copying cells.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

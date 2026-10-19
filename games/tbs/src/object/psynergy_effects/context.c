@@ -1,6 +1,6 @@
 /// @file
-/// Part of psynergy_effects.c, compiled only through it.
 /// An actor's screen position, the encounter transition, context effects.
+/// Part of psynergy_effects.c, compiled only through it.
 
 #include "../psynergy_effects_internal.h"
 

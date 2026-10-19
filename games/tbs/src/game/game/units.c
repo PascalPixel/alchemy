@@ -1,6 +1,6 @@
 /// @file
-/// Part of game.c, the game object, compiled only through it.
 /// The party's units and their stats, a new game, the prologue, HP and PP.
+/// Part of game.c, the game object, compiled only through it.
 
 #include "../game_internal.h"
 

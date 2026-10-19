@@ -1,6 +1,6 @@
 /// @file
-/// Part of effect.c, the battle effect object, compiled only through it.
 /// Meteor and Outer Space.
+/// Part of effect.c, the battle effect object, compiled only through it.
 
 #include "../effect_internal.h"
 

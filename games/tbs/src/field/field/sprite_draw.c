@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// Drawing sprites: composing their layers and placing them on screen.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of game.c, the game object, compiled only through it.
 /// Element levels and classes.
+/// Part of game.c, the game object, compiled only through it.
 
 #include "../game_internal.h"
 

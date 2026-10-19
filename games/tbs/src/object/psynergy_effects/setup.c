@@ -1,6 +1,6 @@
 /// @file
-/// Part of psynergy_effects.c, compiled only through it.
 /// An effect's work: setting it up, its caster and target, cleaning up.
+/// Part of psynergy_effects.c, compiled only through it.
 
 #include "../psynergy_effects_internal.h"
 

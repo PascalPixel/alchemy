@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Window colours, the option screen and the system menu.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

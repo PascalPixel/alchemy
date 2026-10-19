@@ -1,6 +1,6 @@
 /// @file
-/// Part of runtime.c, the runtime object, compiled only through it.
 /// Random numbers, angles and square roots.
+/// Part of runtime.c, the runtime object, compiled only through it.
 
 #include "../runtime_internal.h"
 

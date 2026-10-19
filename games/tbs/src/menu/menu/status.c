@@ -1,7 +1,7 @@
 /// @file
-/// Part of menu.c, the menu object, compiled only through it.
 /// The member chooser and the Status menu: its member row, status page,
 /// Psynergy page and equipment page.
+/// Part of menu.c, the menu object, compiled only through it.
 
 #include "../menu_internal.h"
 

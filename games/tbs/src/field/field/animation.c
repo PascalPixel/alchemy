@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// Sprites, their animation layers and the resource slots they draw from.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

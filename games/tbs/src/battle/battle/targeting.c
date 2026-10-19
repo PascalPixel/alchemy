@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// The targets an enemy's or a confused unit's ability picks.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

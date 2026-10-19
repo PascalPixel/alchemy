@@ -1,6 +1,6 @@
 /// @file
-/// Part of runtime.c, the runtime object, compiled only through it.
 /// Saving: flash sectors, records and the save workspace.
+/// Part of runtime.c, the runtime object, compiled only through it.
 
 #include "../runtime_internal.h"
 

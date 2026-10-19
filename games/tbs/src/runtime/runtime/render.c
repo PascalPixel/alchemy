@@ -1,6 +1,6 @@
 /// @file
-/// Part of runtime.c, the runtime object, compiled only through it.
 /// The frame's sprite lists: affine matrices, depth slots and the OAM build.
+/// Part of runtime.c, the runtime object, compiled only through it.
 
 #include "../runtime_internal.h"
 

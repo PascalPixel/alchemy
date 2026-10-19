@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// The fade overlay drawn on the ground beside an actor.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

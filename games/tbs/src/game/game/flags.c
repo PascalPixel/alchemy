@@ -1,6 +1,6 @@
 /// @file
-/// Part of game.c, the game object, compiled only through it.
 /// The game flags: bits, bytes and nibbles.
+/// Part of game.c, the game object, compiled only through it.
 
 #include "../game_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// Finding and running a scene's events: talking, touching, searching.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

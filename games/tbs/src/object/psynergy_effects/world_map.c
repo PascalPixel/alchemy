@@ -1,6 +1,6 @@
 /// @file
-/// Part of psynergy_effects.c, compiled only through it.
 /// The world map screen: place markers, the cursor and the place name.
+/// Part of psynergy_effects.c, compiled only through it.
 
 #include "../psynergy_effects_internal.h"
 

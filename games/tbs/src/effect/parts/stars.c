@@ -1,6 +1,6 @@
 /// @file
-/// Part of effect.c, the battle effect object, compiled only through it.
 /// Astral Blast and Shining Star.
+/// Part of effect.c, the battle effect object, compiled only through it.
 
 #include "../effect_internal.h"
 

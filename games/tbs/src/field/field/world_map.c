@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// The world map: its perspective view, its tiles and its BG1 animation.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

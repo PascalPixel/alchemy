@@ -1,6 +1,6 @@
 /// @file
-/// Part of effect.c, the battle effect object, compiled only through it.
 /// Thrash, Quick Strike and Vorpal Slash.
+/// Part of effect.c, the battle effect object, compiled only through it.
 
 #include "../effect_internal.h"
 

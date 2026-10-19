@@ -1,6 +1,6 @@
 /// @file
-/// Part of shop.c, the shop object, compiled only through it.
 /// The item picker scenes and Psynergy use to choose a member's item.
+/// Part of shop.c, the shop object, compiled only through it.
 
 #include "../shop_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle_command.c, the menu object, compiled only through it.
 /// Save files and the save file menu.
+/// Part of battle_command.c, the menu object, compiled only through it.
 
 #include "../battle_command_internal.h"
 

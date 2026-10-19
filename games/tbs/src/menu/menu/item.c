@@ -1,7 +1,7 @@
 /// @file
-/// Part of menu.c, the menu object, compiled only through it.
 /// The item menu: the item picker events open, the command loop, the member
 /// and item lists, and Use, Equip, Give, Drop, Remove and Details.
+/// Part of menu.c, the menu object, compiled only through it.
 
 #include "../menu_internal.h"
 

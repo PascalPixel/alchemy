@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// LZ decompression.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

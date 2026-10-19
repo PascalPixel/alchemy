@@ -1,6 +1,6 @@
 /// @file
-/// Part of effect.c, the battle effect object, compiled only through it.
 /// Ice and Douse: shards and bolts falling on the targets' side.
+/// Part of effect.c, the battle effect object, compiled only through it.
 
 #include "../effect_internal.h"
 

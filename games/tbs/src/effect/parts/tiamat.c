@@ -1,6 +1,6 @@
 /// @file
-/// Part of effect.c, the battle effect object, compiled only through it.
 /// Dragon Driver and the Tiamat summon.
+/// Part of effect.c, the battle effect object, compiled only through it.
 
 #include "../effect_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle_command.c, the menu object, compiled only through it.
 /// Sprite outputs, portraits and the window spans.
+/// Part of battle_command.c, the menu object, compiled only through it.
 
 #include "../battle_command_internal.h"
 

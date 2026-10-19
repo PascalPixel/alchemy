@@ -1,7 +1,7 @@
 /// @file
-/// Part of menu.c, the menu object, compiled only through it.
 /// FourObjectMotion: the row of four figures the Status and Djinn menus show,
 /// placed by a scheduler callback and eased in and out.
+/// Part of menu.c, the menu object, compiled only through it.
 
 #include "../menu_internal.h"
 

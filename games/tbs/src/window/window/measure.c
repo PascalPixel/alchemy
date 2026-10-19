@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Sizing windows to their text and fitting them on the screen.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

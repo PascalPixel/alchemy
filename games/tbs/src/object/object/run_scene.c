@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// Running a field scene until the party leaves it, and its entrance.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

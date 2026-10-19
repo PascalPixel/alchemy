@@ -1,6 +1,6 @@
 /// @file
-/// Part of psynergy_effects.c, compiled only through it.
 /// Event commands: waits, received items, questions and destinations.
+/// Part of psynergy_effects.c, compiled only through it.
 
 #include "../psynergy_effects_internal.h"
 

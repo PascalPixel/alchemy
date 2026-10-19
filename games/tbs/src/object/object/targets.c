@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// The actor a field action aims at, and the helpers that follow it.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

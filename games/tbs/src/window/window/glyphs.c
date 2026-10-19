@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Characters rendered into tiles, string widths and number formatting.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

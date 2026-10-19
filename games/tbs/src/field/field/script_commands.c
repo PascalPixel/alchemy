@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// Object script commands: waits, jumps, flags, moves and work values.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

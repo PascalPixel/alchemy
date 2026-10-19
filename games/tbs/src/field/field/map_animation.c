@@ -1,6 +1,6 @@
 /// @file
-/// Part of field.c, the field object, compiled only through it.
 /// Timed map effects: tile animation, the blend script, palette cycles.
+/// Part of field.c, the field object, compiled only through it.
 
 #include "../field_internal.h"
 

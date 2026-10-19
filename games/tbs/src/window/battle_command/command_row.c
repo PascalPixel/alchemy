@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle_command.c, the menu object, compiled only through it.
 /// The row of command icons the player picks a command from.
+/// Part of battle_command.c, the menu object, compiled only through it.
 
 #include "../battle_command_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Window zoom and frames, and opening and waiting on message windows.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

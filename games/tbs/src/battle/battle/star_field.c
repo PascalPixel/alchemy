@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// A unit's elemental glow: the star field and the other glows.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

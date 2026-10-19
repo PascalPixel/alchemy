@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// The map's markers: chests and Psynergy stones.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

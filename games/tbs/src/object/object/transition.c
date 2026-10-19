@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// Window transitions and dissolves between scenes.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// Link battles: the parties and Djinn exchanged, and the turn handshake.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

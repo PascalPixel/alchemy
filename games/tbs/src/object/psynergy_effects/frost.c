@@ -1,6 +1,6 @@
 /// @file
-/// Part of psynergy_effects.c, compiled only through it.
 /// Frost.
+/// Part of psynergy_effects.c, compiled only through it.
 
 #include "../psynergy_effects_internal.h"
 

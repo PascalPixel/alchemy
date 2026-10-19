@@ -1,6 +1,6 @@
 /// @file
-/// Part of game.c, the game object, compiled only through it.
 /// Battle arithmetic: element multipliers, random rolls and success rates.
+/// Part of game.c, the game object, compiled only through it.
 
 #include "../game_internal.h"
 

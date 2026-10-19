@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Message strings and arguments, symbol decoding and portrait windows.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

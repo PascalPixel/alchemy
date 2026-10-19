@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle_command.c, the menu object, compiled only through it.
 /// The preview of what setting or removing a Djinni changes.
+/// Part of battle_command.c, the menu object, compiled only through it.
 
 #include "../battle_command_internal.h"
 

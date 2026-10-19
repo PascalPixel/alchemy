@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// An action announced and planned, BattleCommand_BuildPlan.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

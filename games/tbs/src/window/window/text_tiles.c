@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Text drawn as tiles, text tile ownership and divider lines.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

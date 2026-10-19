@@ -1,6 +1,6 @@
 /// @file
-/// Part of shop.c, the shop object, compiled only through it.
 /// The inn: room prices, checking in and the night's sleep.
+/// Part of shop.c, the shop object, compiled only through it.
 
 #include "../shop_internal.h"
 

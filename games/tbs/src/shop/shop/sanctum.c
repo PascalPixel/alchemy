@@ -1,6 +1,6 @@
 /// @file
-/// Part of shop.c, the shop object, compiled only through it.
 /// The sanctum's services, their prices and their sparkles.
+/// Part of shop.c, the shop object, compiled only through it.
 
 #include "../shop_internal.h"
 

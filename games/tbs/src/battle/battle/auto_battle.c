@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// Auto battle: the actions it builds and plays, without the command menu.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

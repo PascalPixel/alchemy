@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// Field requests and each step of the leader: exits, encounters, damage.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

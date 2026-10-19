@@ -1,6 +1,6 @@
 /// @file
-/// Part of object.c, the field object, compiled only through it.
 /// The party's sprites, placing a scene's actors, and the actor table.
+/// Part of object.c, the field object, compiled only through it.
 
 #include "../object_internal.h"
 

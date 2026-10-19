@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Characters drawn into windows, and the per-frame sprite update.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

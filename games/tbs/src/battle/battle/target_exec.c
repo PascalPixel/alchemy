@@ -1,7 +1,7 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// An ability applied to one target, BattleTargetExec: damage, healing and
 /// its added effect.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

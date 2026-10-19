@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// The opening transition: the curtain, or the Venus Lighthouse storm.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

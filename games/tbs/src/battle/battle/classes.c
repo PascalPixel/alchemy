@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// The enemy classes' battle sprite table, gSummon_EntryTable.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

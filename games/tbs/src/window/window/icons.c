@@ -1,6 +1,6 @@
 /// @file
-/// Part of window.c, the window object, compiled only through it.
 /// Item, Psynergy and command icons.
+/// Part of window.c, the window object, compiled only through it.
 
 #include "../window_internal.h"
 

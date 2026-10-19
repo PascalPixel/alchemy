@@ -1,7 +1,7 @@
 /// @file
-/// Part of effect.c, the battle effect object, compiled only through it.
 /// Death Plunge, the blade rain, the element pillar, the element burst and
 /// the shattering picture.
+/// Part of effect.c, the battle effect object, compiled only through it.
 
 #include "../effect_internal.h"
 

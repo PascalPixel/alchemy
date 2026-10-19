@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// Battle events: waiting for the player, and the queued events played at once.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
-/// Part of battle.c, the battle object, compiled only through it.
 /// Enemy formations: the enemies chosen, levelled and lettered.
+/// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 

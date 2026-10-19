@@ -246,6 +246,21 @@ enum KeyMask {
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012)
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
+// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
+// sound channel's speakers, timer and FIFO reset.
+#define SOUND_CGB_MIX_FULL 0x0002
+#define SOUND_A_MIX_FULL 0x0004
+#define SOUND_B_MIX_FULL 0x0008
+#define SOUND_ALL_MIX_FULL                                                     \
+  (SOUND_CGB_MIX_FULL | SOUND_A_MIX_FULL | SOUND_B_MIX_FULL)
+#define SOUND_A_RIGHT_OUTPUT 0x0100
+#define SOUND_A_LEFT_OUTPUT 0x0200
+#define SOUND_A_TIMER_0 0x0000
+#define SOUND_A_FIFO_RESET 0x0800
+#define SOUND_B_RIGHT_OUTPUT 0x1000
+#define SOUND_B_LEFT_OUTPUT 0x2000
+#define SOUND_B_TIMER_0 0x0000
+#define SOUND_B_FIFO_RESET 0x8000
 #define REG_SOUNDBIAS (*(volatile u16 *)0x04000088)
 #define REG_FIFO_A (*(volatile u32 *)0x040000a0)
 #define REG_FIFO_B (*(volatile u32 *)0x040000a4)

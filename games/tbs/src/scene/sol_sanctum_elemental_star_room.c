@@ -1955,6 +1955,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringActor;
 
   Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  // Retreat does not work here (flag 0x144).
   Engine_GameFlagSet(0x144);
   ringActor = 15;
   do {

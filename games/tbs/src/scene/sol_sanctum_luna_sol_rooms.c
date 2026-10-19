@@ -386,6 +386,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolSanctum(void) {
     }
     Engine_ActorWaitForMove(JENNA);
     Engine_ActorSetPosition(JENNA, 0, 0);
+    // Retreat does not work here (flag 0x144).
     Engine_GameFlagSet(0x144);
     Engine_GameFlagSet(FLAG_SOL_SANCTUM_FOUND);
     Engine_EventEnd();
@@ -1147,6 +1148,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FOUND) != 0 &&
       Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) == 0 &&
       Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
+    // Retreat does not work here (flag 0x144).
     Engine_GameFlagSet(0x144);
   }
   Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);

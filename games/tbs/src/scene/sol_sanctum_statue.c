@@ -30,6 +30,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "ability_ids.h"
 
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
@@ -654,6 +655,7 @@ s32 SolSanctumStatue_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   SolSanctumStatue_InitializeScrollingSprites();
+  // Retreat does not work here (flag 0x144).
   GameFlag_Set(0x144);
   centerEffect = Object_GetById(18);
   centerEffect->collisionFlags = 0;
@@ -1493,13 +1495,13 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
     {0x202, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
-    {PSYNERGY_ON_ACTOR(0x8c), 9, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TryNorthwestSeal)},
-    {PSYNERGY_ON_ACTOR(0x8c), 11, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TryNortheastSeal)},
-    {PSYNERGY_ON_ACTOR(0x8c), 13, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TrySouthwestSeal)},
-    {PSYNERGY_ON_ACTOR(0x8c), 15, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TrySoutheastSeal)},
     {TOUCH_WALKING_INTO(FACING_EAST), 5, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_PushNorthwestStatue)},
@@ -1511,11 +1513,11 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(SolSanctumStatue_PushSoutheastStatue)},
     {0x10008c15, 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_BlockLeftTriggerCell)},
-    {PSYNERGY_ON_ACTOR(0x8c), 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_TryLeftBeam)},
     {0x10008c15, 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_BlockRightTriggerCell)},
-    {PSYNERGY_ON_ACTOR(0x8c), 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_TryRightBeam)},
     {TOUCH_WALKING_INTO(FACING_EAST), 20, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueEast)},
@@ -1539,7 +1541,7 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueNorth)},
     {0x10008c15, 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(SolSanctumStatue_BlockCenterTriggerCells)},
-    {PSYNERGY_ON_ACTOR(0x8c), 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(SolSanctumStatue_UpdateCenterStatue)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 32, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(SolSanctumStatue_PushCenterStatueBack)},

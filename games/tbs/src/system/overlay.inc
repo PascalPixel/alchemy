@@ -95,7 +95,7 @@
 	import Engine_ObjectDispatchRelease, ObjectDispatch_ReleaseFar
 	import Object_Destroy, ObjectDispatch_ReleaseFar
 	import ObjectDispatch_InitFromTable4WithArgument, ObjectDispatch_InitFromTable4WithArgumentFar
-	import Engine_MapRedraw, Map_ApplyWorkOriginAndSpanFar
+	import Engine_MapRedraw, Map_CenterOnFollowedPointFar
 	import ObjectDispatch_InitFromTable6, ObjectDispatch_InitFromTable6Far
 	import ObjectDispatch_WaitForValue16, ObjectDispatch_WaitForValue16Far
 	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
@@ -130,7 +130,7 @@
 	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
 	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
 	import ObjectGroup_SetChildValueUnlessFifteen, ObjectGroup_SetChildValueUnlessFifteenFar
-	import Engine_MapSetWorkFlagBits9To11, Map_SetWorkFlagBits9To11Far
+	import Engine_MapSetWorkFlagBits9To11, Map_SetShownLayersFar
 	import SetMapCellCollision, SetMapCellCollisionFar
 @ Window bank (far_call/WINDOW.S)
 	import Engine_DebugCreateWindow, UiWindow_CreateFar

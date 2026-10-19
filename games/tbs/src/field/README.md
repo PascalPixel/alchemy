@@ -88,7 +88,7 @@ equivalent; those sites keep it, untagged, with their measure in a comment:
   (`MapAnimation_Update`).
 - `Scheduler_AddOrUpdateCallback` called through a cast to a `void`
   function (`Map_LoadLayeredScene`, with the declared call behind `UBFIX`).
-- `(u16)~(...)` for a halfword mask (`Map_SetWorkFlagBits9To11`).
+- `(u16)~(...)` for a halfword mask (`Map_SetShownLayers`).
 - Three loops written with `goto` (`Sprite_ComposeAnimationFrame`,
   `AnimationObjects_SelectAnimation`), with their loop forms measured in the
   comments beside them. The other `goto`s (the wander retries, the step

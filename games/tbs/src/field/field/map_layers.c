@@ -339,7 +339,7 @@ s32 Map_LoadLayeredScene(s32 index) {
 
 // Centres the camera on the point the map follows (origin: x, height, z),
 // or on (0, 0) when there is none, and scrolls the layers there.
-void Map_ApplyWorkOriginAndSpan(void) {
+void Map_CenterOnFollowedPoint(void) {
   struct MapScrollWork *work = gMapWork[0];
   s32 x;
   s32 depth;
@@ -956,7 +956,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 
 // Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
 // REG_DISPCNT) from layerFlags, keeping its other flags.
-void Map_SetWorkFlagBits9To11(u32 layerFlags) {
+void Map_SetShownLayers(u32 layerFlags) {
   struct MapState *mapState = gMapWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 flags = mapState->flags;

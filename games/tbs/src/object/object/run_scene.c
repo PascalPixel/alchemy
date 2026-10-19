@@ -59,7 +59,7 @@ s32 Field_RunScene(s32 entrance) {
     Map_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gGameState.x, gGameState.z);
   } else {
-    Map_ApplyWorkOriginAndSpanFar();
+    Map_CenterOnFollowedPointFar();
   }
   Field_PlaceMapMarkers();
   BattleEffect_InitializeBuffers();

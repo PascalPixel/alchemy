@@ -93,7 +93,7 @@ GameFlag_SetByte:
 	.global Func_0200197c
 	.thumb_func
 Func_0200197c:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Func_02001984
 	.thumb_func
 Func_02001984:

@@ -69,7 +69,7 @@ Func_02002808:
 	.global Func_02002810
 	.thumb_func
 Func_02002810:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Func_02002818
 	.thumb_func
 Func_02002818:

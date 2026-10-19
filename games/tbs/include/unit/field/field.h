@@ -236,7 +236,7 @@ void Tilemap_DecodeStagedBuffer(s32 size);
 void Tilemap_NumberPlaceholderBlocks(void);
 void Tilemap_ConvertBuffer(void);
 s32 Map_LoadLayeredScene(s32 index);
-void Map_ApplyWorkOriginAndSpan(void);
+void Map_CenterOnFollowedPoint(void);
 void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);
 void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY);
 void Map_UpdateLayerScroll(void);
@@ -251,7 +251,7 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY);
 void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                            s32 dstY);
-void Map_SetWorkFlagBits9To11(u32 layerFlags);
+void Map_SetShownLayers(u32 layerFlags);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 s32 Map_InitializePerspectiveScene(void);

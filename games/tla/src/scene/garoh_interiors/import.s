@@ -17,7 +17,7 @@ GameFlag_ClearBit:
 	.global Func_020007bc
 	.thumb_func
 Func_020007bc:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	overlay_veneer Map_CenterOnFollowedPointFar
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

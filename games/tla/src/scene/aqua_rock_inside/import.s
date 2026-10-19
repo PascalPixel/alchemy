@@ -93,7 +93,7 @@ Engine_ObjectCreate:
 	.global Func_02003cdc
 	.thumb_func
 Func_02003cdc:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Func_02003ce4
 	.thumb_func
 Func_02003ce4:

@@ -186,7 +186,7 @@ Field_RunScene:
 	ldr r0, [r6, #52]
 	mov lr, r0
 	.2byte 0xf800
-	bl Map_ApplyWorkOriginAndSpanFar
+	bl Map_CenterOnFollowedPointFar
 .L_080cbaaa:
 	movs r0, #32
 	adds r0, #255

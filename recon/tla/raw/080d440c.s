@@ -116,7 +116,7 @@ Camera_MoveWithinMapBounds:
 	asrs r3, r3, #24
 	cmp r3, #3
 	beq .L_080d44f6
-	bl Map_ApplyWorkOriginAndSpanFar
+	bl Map_CenterOnFollowedPointFar
 	b .L_080d44f6
 .L_080d44ea:
 	adds r0, r5, #0

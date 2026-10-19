@@ -374,7 +374,7 @@ void Object_SetSquareSprite(u32 objectId);
 void BattleFx_DropObjectAtAnchor(u32 objectId);
 void Func_081b83c4(void);
 void GameFlag_RefreshLureCapFar(void);
-void Map_ApplyWorkOriginAndSpanFar(void);
+void Map_CenterOnFollowedPointFar(void);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 s32 Object_IsTargetUnset(void *arg0);

@@ -23,7 +23,7 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
       SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
       if (work->mode != MODE_WORLD_MAP) {
-        Map_ApplyWorkOriginAndSpanFar();
+        Map_CenterOnFollowedPointFar();
       }
     }
   }
@@ -99,7 +99,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     SET_POSITION(camera, positionX, positionY, positionZ);
     WaitFrames(1U);
     if (runtimeBlock->mode != MODE_WORLD_MAP) {
-      Map_ApplyWorkOriginAndSpanFar();
+      Map_CenterOnFollowedPointFar();
     }
   } else {
     Object_SetMoveTargetFar(camera, positionX, positionY, positionZ);

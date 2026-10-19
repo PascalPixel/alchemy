@@ -73,7 +73,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     object->z = positionZ;
     WaitFrames(1);
     if (runtimeBlock->controlMode != 3) {
-      Map_ApplyWorkOriginAndSpanFar();
+      Map_CenterOnFollowedPointFar();
     }
   } else {
     Object_SetPosition(object, positionX, positionY, positionZ);

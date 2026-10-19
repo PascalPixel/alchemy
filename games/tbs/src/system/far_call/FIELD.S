@@ -41,7 +41,7 @@ FarCall_FieldTable:
 	export Map_LoadLayeredSceneFar, Map_LoadLayeredScene
 	export Map_InitializePerspectiveSceneFar, Map_InitializePerspectiveScene
 	overlay_veneer Map_SetCameraCenter
-	export Map_ApplyWorkOriginAndSpanFar, Map_ApplyWorkOriginAndSpan
+	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
 	export Map_UpdateCurrentTileBlockFar, Map_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
 	export ObjectDispatch_InitFromTable6Far, ObjectDispatch_InitFromTable6
@@ -79,7 +79,7 @@ FarCall_FieldTable:
 	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
 	export ObjectGroup_SetChildValueUnlessFifteenFar, ObjectGroup_SetChildValueUnlessFifteen
 	export ScriptObject_CheckOverlapFar, ScriptObject_CheckOverlap
-	export Map_SetWorkFlagBits9To11Far, Map_SetWorkFlagBits9To11
+	export Map_SetShownLayersFar, Map_SetShownLayers
 	export ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths
 	export GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior
 	export ResourceSlot_LoadFar, ResourceSlot_Load

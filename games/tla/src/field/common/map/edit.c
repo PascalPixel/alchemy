@@ -35,7 +35,7 @@ void Func_0802b590(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-void Map_SetWorkFlagBits9To11(u32 v) {
+void Map_SetShownLayers(u32 v) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
   u32 mask = v & 0xe00;
   u32 flags = state->flags;

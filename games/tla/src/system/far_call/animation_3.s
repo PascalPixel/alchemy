@@ -32,4 +32,4 @@ ScriptObject_CheckOverlapFar:
 	.global Func_080202a0
 	.thumb_func
 Func_080202a0:
-	overlay_veneer Map_SetWorkFlagBits9To11
+	overlay_veneer Map_SetShownLayers

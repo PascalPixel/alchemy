@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Map_ApplyWorkOriginAndSpanFar
+	.global Map_CenterOnFollowedPointFar
 	.thumb_func
-Map_ApplyWorkOriginAndSpanFar:
+Map_CenterOnFollowedPointFar:
 	overlay_veneer Func_0802aa74
 	.global Map_UpdateCurrentTileBlockFar
 	.thumb_func

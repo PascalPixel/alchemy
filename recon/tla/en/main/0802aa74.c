@@ -1,5 +1,5 @@
 // Near miss, differ 185 of 157 (2026-10-18), first pass: The Broken Seal's
-// Map_ApplyWorkOriginAndSpan, with this game's list of camera rectangles
+// Map_CenterOnFollowedPoint, with this game's list of camera rectangles
 // (s16 pixels, ended by -1, the pointer at map work 0xfc) that push the
 // followed point out to the nearest edge. Left: the native keeps the
 // followed pointer in a stack slot (sub sp, #4, stored after each read) and

@@ -33,7 +33,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
       SET_POSITION(target, obj->x, obj->y, obj->z);
       WaitFrames(1);
       if (work->controlMode != 3)
-        Map_ApplyWorkOriginAndSpanFar();
+        Map_CenterOnFollowedPointFar();
     }
   }
 }

@@ -37,7 +37,7 @@ void Map_RenderAnimatedTileFramesForObjectFar(u8 *obj);
 void Map_RenderAllAnimatedTileFramesFar(u8 **table, s32 cnt);
 s32 Map_LoadLayeredSceneFar(s32 index);
 s32 Map_InitializePerspectiveSceneFar(void);
-void Map_ApplyWorkOriginAndSpanFar(void);
+void Map_CenterOnFollowedPointFar(void);
 void Map_UpdateCurrentTileBlockFar(void);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 void ObjectDispatch_InitFromTable6Far(struct DispatchObject *obj);
@@ -81,7 +81,7 @@ void Map_LoadAreaGraphicsFar(void);
 void Animation_ApplyChildValuesFar(struct DispatchObject *obj, u32 val);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);
 s32 ScriptObject_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
-void Map_SetWorkFlagBits9To11Far(u32 v);
+void Map_SetShownLayersFar(u32 v);
 s32 ResourceMetadata_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
 s32 GetWorldMapTerrainBehaviorFar(struct WorldPosition *position,
                                   s32 *terrain_kind);

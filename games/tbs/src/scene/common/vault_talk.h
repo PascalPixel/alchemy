@@ -1,16 +1,19 @@
+// Vault and its interiors: a villager's thought read with Mind Read.
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
 
-static void SceneActor_RunActorCommandWithFlag91(s32 x) {
-  u8 *flag = &Object_GetById(x)->paused;
+// Show the message already set as the actor's thought: the actor stops and
+// stands while the thought is shown.
+static void SceneActor_RunActorCommandWithFlag91(s32 actorId) {
+  u8 *paused = &Object_GetById(actorId)->paused;
   s32 zero = 0;
 
-  *flag = 1;
+  *paused = 1;
   Engine_EventBegin();
-  Engine_ActorSetAnimation(x, 1);
+  Engine_ActorSetAnimation(actorId, ANIM_STAND);
   Engine_EventWait(2);
-  Engine_EventShowMessage(x, 0);
+  Engine_EventShowMessage(actorId, 0);
   Engine_EventEnd();
-  *flag = zero;
+  *paused = zero;
 }

@@ -16,7 +16,6 @@ SECTIONS
         "*/resource_654_overlay.o"(.text.x02008688)
         "*/resource_654_overlay.o"(.text.x0200887c)
         "*/games/tla/src/scene/shrine_of_the_sea_god/eventa.o"(.text)
-        "*/resource_654_overlay.o"(.text.x0200894c)
         "*/resource_654_overlay.o"(.text.x02008994)
         "*/resource_654_overlay.o"(.text.x02008ce8)
         "*/resource_654_overlay.o"(.text.x02008e38)

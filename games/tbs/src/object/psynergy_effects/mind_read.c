@@ -147,7 +147,8 @@ void BattleFx_ArmBg0HBlankDma(void) {
     dma[5] &= ~DMA_ENABLE;
     (void)dma[5];
     // One halfword at each HBlank (repeating, destination reloaded).
-    Dma_Set(line, REG_BG0HOFS, 0xa2600001, (volatile u32 *)dma);
+    Dma_Set(line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
+            (volatile u32 *)dma);
   }
 }
 

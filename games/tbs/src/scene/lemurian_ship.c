@@ -742,7 +742,7 @@ void DisplayScroll_ArmHBlankDma(void) {
   dma0[5];
 
   *destination = *source++;
-  Dma_Set(source, destination, 0xa6600001, (volatile u32 *)dma0);
+  Dma_Set(source, destination, DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)dma0);
 }
 
 // Each frame: builds the other ripple page and swaps it in.

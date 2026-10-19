@@ -24,7 +24,8 @@ void BattleFx_StartWindowHBlankDma(void) {
   Io_Write16(WIN_RANGE(0, 160), &REG_WIN0V);
   Io_Write16(WIN_RANGE(0, 160), &REG_WIN1V);
   // HBlank repeats one word: both horizontal window bounds for the next line.
-  Dma_Set(scanlineData, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)dma0);
+  Dma_Set(scanlineData, (void *)&REG_WIN0H, DMA_HBLANK_WORD_PER_LINE,
+          (volatile u32 *)dma0);
 }
 
 struct TransitionSpan {

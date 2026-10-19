@@ -55,8 +55,6 @@
 // The fragments' registers and modes are described at the top of
 // battle_effect_composite.s.
 
-#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
-
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
@@ -412,4 +410,3 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 #undef BLITTER_PARTIAL_RUN
 #undef BLITTER_WALK
 #undef BRANCH_FIELD
-#undef DMA_COPY_WORDS

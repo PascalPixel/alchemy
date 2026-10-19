@@ -100,14 +100,6 @@
 // Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
-// DMA control word that copies one halfword per HBlank, repeating, with the
-// destination reloaded each line: the scanline table that drives a window
-// edge or a scroll register.
-#define DMA_HBLANK_HALFWORD_PER_LINE 0xa2600001
-
-// The same a word at a time: a BG2X value for each line.
-#define DMA_HBLANK_WORD_PER_LINE 0xa6600001
-
 // DMA control word that fills n words from one fixed source word.
 #define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
 

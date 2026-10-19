@@ -81,8 +81,6 @@ Measured ones:
 
 - `((16 - blend) << 8) | blend` in `world_map.c` is `BLEND_ALPHA(blend,
   16 - blend)` with its operands swapped; the macro changes the registers.
-- The HBlank DMA control words (`0xa2600001`, `0xa6600001`) stay literals
-  until a shared name exists for them.
 
 `/* FAKEMATCH(kind): ... */` marks a device that steers the compiler, with
 the instructions that differ without it (AGENTS.md, S2).

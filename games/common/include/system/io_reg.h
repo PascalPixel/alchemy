@@ -189,6 +189,18 @@ enum DisplayControl {
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
   (DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT)
 
+// DMA control words: copy n words or halfwords at once, or one halfword or
+// word each HBlank to a register reloaded every line (a scanline table that
+// drives a window edge, a scroll or an affine register).
+#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
+#define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
+#define DMA_HBLANK_HALFWORD_PER_LINE                                           \
+  ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
+#define DMA_HBLANK_WORD_PER_LINE                                               \
+  ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)  \
+       << 16 |                                                                 \
+   1)
+
 // BIOS CpuSet control flags, above its count.
 #define CPU_SET_SRC_FIXED 0x01000000
 #define CPU_SET_32BIT 0x04000000

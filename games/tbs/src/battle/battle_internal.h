@@ -94,13 +94,6 @@
 #include "unit/object/psynergy_effects.h"
 #include "macros.h"
 
-// DMA control words, as io_reg.h composes them: copy n words or halfwords
-// at once, or one halfword each HBlank to a register reloaded every line.
-#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
-#define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
-#define DMA_HBLANK_HALFWORD_PER_LINE                                           \
-  ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
-
 // The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
 // window 1 BG0, BG2, sprites and blending, and outside them only BG0 and
 // blending.

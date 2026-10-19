@@ -379,8 +379,8 @@ void ReelGame_RunFrame(void) {
   dma[5] &= ~DMA_ENABLE;
   (void)dma[5];
   // One halfword at each HBlank (repeating, destination reloaded).
-  Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY, 0xa2600001,
-          (volatile u32 *)dma);
+  Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY,
+          DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
 
   keys = gKeysHeld;
   dpad = gKeysHeld & KEYS_DPAD;

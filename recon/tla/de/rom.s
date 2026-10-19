@@ -3095,10 +3095,6 @@ Func_08118158:
 	.incbin "baserom.gba", 0x00118230, 0x00000008
 	.section .rom.00118244, "ax"
 	.incbin "baserom.gba", 0x00118244, 0x00000040
-	.section .rom.00118394, "ax"
-	.global ColorBuffer_ScaleKernelCode
-ColorBuffer_ScaleKernelCode:
-	.incbin "baserom.gba", 0x00118394, 0x0000007c
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011843c, 0x000002fc

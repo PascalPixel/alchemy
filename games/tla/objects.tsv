@@ -5081,12 +5081,7 @@ main	rom_main_08	recon/tla/de/rom	.rom.00118244	de
 main	rom_main_08	recon/tla/raw/08118244		en
 main	rom_main_08	recon/tla/ja/rom	.rom.00118244	ja
 main	rom_main_08	games/tla/src/graphics/tile/model_bit_commands
-main	rom_main_08	recon/tla/it/rom	.rom.00118394	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118394	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00118394	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118394	de
-main	rom_main_08	recon/tla/raw/08118394		en
-main	rom_main_08	recon/tla/ja/rom	.rom.00118394	ja
+main	rom_main_08	games/tla/src/graphics/palette/color_scale_kernel
 main	rom_main_08	games/tla/src/graphics/palette/color_scale_loader
 main	rom_main_08	games/tla/src/battle/presentation/m8118430	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011843c	it

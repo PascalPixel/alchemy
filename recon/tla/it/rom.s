@@ -801,14 +801,6 @@ Ui_BuildPairedPatternsToSlot:
 	.thumb_func
 ItemIcon_Compose:
 	.incbin "baserom.gba", 0x0003d6d8, 0x0000022c
-	.section .rom.0003da12, "ax"
-	.incbin "baserom.gba", 0x0003da12, 0x00000002
-	.section .rom.0003da14, "ax"
-	.global UiIcon_BuildAbilityIconTiles
-	.type UiIcon_BuildAbilityIconTiles, %function
-	.thumb_func
-UiIcon_BuildAbilityIconTiles:
-	.incbin "baserom.gba", 0x0003da14, 0x000000bc
 	.section .rom.0003dc74, "ax"
 	.balign 4
 	.global Func_0803dc1c

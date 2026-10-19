@@ -1144,18 +1144,6 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0003d7b4	ja
 main	rom_main_02	games/tla/src/graphics/tile/copy_resource_to_slot	.text
 main	rom_main_02	games/tla/src/graphics/render/build_pattern_to_slot	.text
 main	rom_main_02	games/tla/src/graphics/tile/ability_glyph	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003da12	it
-main	rom_main_02	recon/tla/it/rom	.rom.0003da14	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0003d9fe	fr
-main	rom_main_02	recon/tla/fr/rom	.rom.0003da00	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0003da1a	es
-main	rom_main_02	recon/tla/es/rom	.rom.0003da1c	es
-main	rom_main_02	recon/tla/de/rom	.rom.0003da0e	de
-main	rom_main_02	recon/tla/de/rom	.rom.0003da10	de
-main	rom_main_02	recon/tla/raw/0803d9ba	.text	en
-main	rom_main_02	recon/tla/raw/0803d9bc	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0003daee	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0003daf0	ja
 main	rom_main_02	games/tla/src/graphics/glyph/glyph	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003dc74	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003dc60	fr

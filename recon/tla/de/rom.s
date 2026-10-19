@@ -1339,12 +1339,6 @@ Game_ResetForNewGame:
 	.section .rom.000d6e48, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000d6e48, 0x000000e4
-	.section .rom.000d6f2c, "ax"
-	.global Encounter_ResolveWorldMapZoneAndBackdrop
-	.type Encounter_ResolveWorldMapZoneAndBackdrop, %function
-	.thumb_func
-Encounter_ResolveWorldMapZoneAndBackdrop:
-	.incbin "baserom.gba", 0x000d6f2c, 0x000000ac
 	.section .rom.000d6fd8, "ax"
 	.global Encounter_SelectEnemyGroup
 	.type Encounter_SelectEnemyGroup, %function

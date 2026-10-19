@@ -2751,22 +2751,17 @@ main	rom_main_04	recon/tla/ja/rom	.rom.000c9c38	ja
 main	rom_main_04	games/tla/src/field/common/play_saved_music	.text
 main	rom_main_04	games/tla/src/field/common/find_entry_value	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000c9e48	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c9f2c	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c9fd8	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000cee48	fr
-main	rom_main_04	recon/tla/fr/rom	.rom.000cef2c	fr
-main	rom_main_04	recon/tla/fr/rom	.rom.000cefd8	fr
 main	rom_main_04	recon/tla/es/rom	.rom.000d2e48	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d2f2c	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d2fd8	es
 main	rom_main_04	recon/tla/de/rom	.rom.000d6e48	de
-main	rom_main_04	recon/tla/de/rom	.rom.000d6f2c	de
-main	rom_main_04	recon/tla/de/rom	.rom.000d6fd8	de
 main	rom_main_04	recon/tla/raw/080c9e48	.text	en
-main	rom_main_04	recon/tla/raw/080c9f2c	.text	en
-main	rom_main_04	recon/tla/raw/080c9fd8	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000c9e48	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c9f2c	ja
+main	rom_main_04	games/tla/src/battle/effect/world_map_zone	.text
+main	rom_main_04	recon/tla/it/rom	.rom.000c9fd8	it
+main	rom_main_04	recon/tla/fr/rom	.rom.000cefd8	fr
+main	rom_main_04	recon/tla/es/rom	.rom.000d2fd8	es
+main	rom_main_04	recon/tla/de/rom	.rom.000d6fd8	de
+main	rom_main_04	recon/tla/raw/080c9fd8	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000c9fd8	ja
 main	rom_main_04	games/tla/src/battle/effect/data_lookup_routines	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000ca2fc	it

@@ -61,3 +61,50 @@ void Func_020045d0(void) {
   ObjectMotion_Launch(17, 4, 10);
   Kibombo_MessagePut(0x8000 + 17, 0);
 }
+
+void Func_020047e4(void) {
+  /* FAKEMATCH(pin): the slot in r5, outside global CSE, so the loop loads its
+   * address each pass, as the native does; as a plain local, 12 of 71
+   * instructions differ in tla-en. */
+  register struct KibomboObject **slot asm("r5");
+  struct KibomboObject *object;
+
+  Func_02004524();
+  Func_02005c9c(161);
+  Func_02003640(0, 1);
+  FieldEvent_WaitFrames(20);
+  Func_02005b4c((s32)MsgYouAreStillNot);
+  Func_02005b64(17, 0);
+  object = gData_02007950;
+  if (object != 0) {
+    // Lowers the object 0x4000 a frame down to y 0x240000.
+    object->motionFlags = 0;
+    {
+      /* FAKEMATCH(pin): 0x240000 built as 144 << 14 in r1, held by the
+       * barrier below; as a plain local behind the barrier, 10 of 71
+       * instructions differ in tla-en. */
+      register s32 limit asm("r1") = 144;
+
+      /* FAKEMATCH(barrier): the limit is started before y is loaded and
+       * finished after it, as the native does; as object->y > 0x240000, 2 of
+       * 71 instructions differ in tla-en. */
+      __asm__("" : "+l"(limit), "+l"(object));
+      if (object->y > limit << 14) {
+        do {
+          Kibombo_ObjArm(17, 0xd000, 0);
+          slot = &gData_02007950;
+          object = *slot;
+          object->y += 0xffffc000;
+          WaitFrames(1);
+        } while ((*slot)->y > 0x240000);
+      }
+    }
+  }
+  Motion_SetModeAndWaitAnimation(17, 4);
+  Func_02005b64(17, 0);
+  Kibombo_ObjTurn(17, 0x3000);
+  Func_02005b64(0x4011, 0);
+  GameFlag_SetBit(0x8fc);
+  GameFlag_SetBit(265);
+  Func_02005bc4(12);
+}

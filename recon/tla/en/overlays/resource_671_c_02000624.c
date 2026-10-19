@@ -1,4 +1,4 @@
-// Draft, differ 47 of 63: ported from Func_020005b4 (find_near.c). The native
+// Draft, differ 24 of 63 (was 47): ported from Func_020005b4 (find_near.c). The native
 // rebuilds the vector's stack address (mov r4, sp) inside the loop and keeps
 // only i and the id in r5 and r6; here GCSE's PRE carries the first block's
 // address pseudo across the loop in a callee-saved register (r5), which shifts
@@ -10,6 +10,11 @@
 // pointer pinned by an empty asm (40: it copies the hoisted register); a goto
 // loop (71, where <= 0x17ffff becomes < 0x180000). The gcse dump shows PRE
 // making the loop's (sfp - 12) redundant with the one before the call.
+// Now the loop's vector pointer is pinned to r4 (a hard register is outside
+// global CSE), so the loop reads through r4 as the native does; but the pin is
+// set from the address pseudo PRE still carries across the loop (adds r4, r6),
+// which keeps id in r7. Pinning the first block's pointer to r2 too does not
+// free it (24).
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -65,8 +70,12 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
-      if (DIFF_WITHIN(object->x, position[0], 0x17ffff) &&
-          DIFF_WITHIN(object->z, position[2], 0x17ffff))
+      /* FAKEMATCH(pin): the vector's address in r4 inside the loop; as the plain
+       * array, 47 of 63 instructions differ in tla-en. */
+      register s32 *pos asm("r4") = position;
+
+      if (DIFF_WITHIN(object->x, pos[0], 0x17ffff) &&
+          DIFF_WITHIN(object->z, pos[2], 0x17ffff))
         return object;
     }
   }

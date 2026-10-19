@@ -3,6 +3,11 @@
 // offset to r11 and adds 85; this draft copies it to r11 before the reload. A
 // local for the work, a cast and plain pointer arithmetic give the same code,
 // and an empty loop note there changes the allocation (differ 34).
+// Trial (6): the heap base pinned to r9 for the whole function and to r2
+// where the work is read, behind an asm that clobbers r3, builds the base,
+// starts 428 and copies the base to r9 as the native does; the offset's
+// shift and r11 copy still come before the work is loaded. Without the asm, 8;
+// with the base pinned only to r9, 9.
 #include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02002830(void) {

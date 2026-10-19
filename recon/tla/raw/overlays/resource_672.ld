@@ -24,7 +24,6 @@ SECTIONS
         "*/resource_672_overlay.o"(.text.x020090d4)
         "*/resource_672_overlay.o"(.text.x02009710)
         "*/games/tla/src/scene/gabomba_statue_chamber/prepare.o"(.text)
-        "*/resource_672_overlay.o"(.text.x02009b14)
         "*/resource_672_overlay.o"(.text.x02009ba8)
         "*/resource_672_overlay.o"(.text.x02009c44)
         "*/games/tla/src/scene/gabomba_statue_chamber/import.o"(.text)

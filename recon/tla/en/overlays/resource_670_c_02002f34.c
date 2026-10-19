@@ -24,7 +24,7 @@ void Func_02002f34(void) {
     if (object != 0) {
       object->field44 = Math_Cosine(((Random16Far() << 13) >> 16) + 0x3000);
       object->field48 = 0x10000;
-      *(s32 *)object->unk4c = 0x40000 - (u16)Random16Far();
+      object->field4c = 0x40000 - (u16)Random16Far();
       value = (u16)Random16Far() + 0xffff8000;
       /* FAKEMATCH: an empty asm after the sum moves the literal pool one
        * instruction toward the native's place (still one late). */

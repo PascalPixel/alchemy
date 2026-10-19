@@ -141,7 +141,18 @@
 #define FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE 0x9c8
 #define FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE 0x9c9
 #define FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE 0x9ca
+// The ivy in the first room: four flags from this one.
+#define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
+// The nine guarded rooms: one flag each from these, in room order.
+#define FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED 0x8c8
+#define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
+#define FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED 0x8d1
 // Crossbone Isle's pursuer room: a pursuer is after the leader.
 #define FLAG_SCENE_TEMP_20 0x220
+// Crossbone Isle's first room: its four plants have grown.
+#define FLAG_SCENE_TEMP_40 0x240
+#define FLAG_SCENE_TEMP_41 0x241
+#define FLAG_SCENE_TEMP_42 0x242
+#define FLAG_SCENE_TEMP_43 0x243
 
 #endif

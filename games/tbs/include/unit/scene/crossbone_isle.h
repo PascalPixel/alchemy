@@ -9,12 +9,12 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-const struct SceneEntrance *CrossboneIsle_GetEntrances(void);
-const struct SceneRegion *CrossboneIsle_GetRegions(void);
-const u32 *CrossboneIsle_GetExits(void);
-const struct ScenePlacement *CrossboneIsle_GetPlacements(void);
-const struct SceneEvent *CrossboneIsle_GetEvents(void);
-s32 CrossboneIsle_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];

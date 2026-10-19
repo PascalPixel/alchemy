@@ -1,3 +1,5 @@
+// Crossbone Isle: the first room's plants, ivy and Nut, the sliding-block
+// room, the nine guarded rooms with their Move puzzles, and the last guards.
 #include "game_state.h"
 #include "version.h"
 #include "global_cells.h"
@@ -32,11 +34,12 @@
 #include "objcmd.h"
 #include "field_obj.h"
 #include "fixed_math.h"
+#include "flags.h"
 
 // Forward declarations.
 static void CrossboneIsle_RestoreMovedRoomBlock(void);
 static void CrossboneIsle_LeaveClearedRoom(void);
-static void CrossboneIsle_RestoreRoomActors(void);
+static void CrossboneIsle_RestoreIvy(void);
 static void CrossboneIsle_DrawBlockPuzzleFootprints(void);
 
 // Shared source is included here in ROM order.
@@ -47,10 +50,10 @@ static void CrossboneIsle_DrawBlockPuzzleFootprints(void);
 #include "common/effect_spawn.h"
 
 // Unused callback with no effect.
-UNUSED static void NoOpEffectCallback(void) {}
+UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
 // Select the entrance list for the current island room.
-const struct SceneEntrance *CrossboneIsle_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsle1) {
@@ -72,13 +75,13 @@ const struct SceneEntrance *CrossboneIsle_GetEntrances(void) {
 }
 
 // These rooms have no region table.
-const struct SceneRegion *CrossboneIsle_GetRegions(void) { return NULL; }
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 // Return the connections between island rooms.
-const u32 *CrossboneIsle_GetExits(void) { return gCrossboneIsleExits; }
+const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 
 // Choose the actors for the current room.
-const struct ScenePlacement *CrossboneIsle_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsle1) {
@@ -123,8 +126,9 @@ static void CrossboneIsle_SpawnBlockMovedBurst(s32 objectId) {
   }
 }
 
-// Return to this entrance after the final guard encounter.
-static void CrossboneIsle_StartFinalGuardBattle(void) {
+// Stepping on trigger 10 in the fifth room: the last guards attack, and the
+// party comes back to this room's entrance 5.
+static void Event_FightFinalGuards(void) {
 
   Engine_EventBegin();
   Event_SetNextDestination(gGameState.scene, 5);
@@ -134,7 +138,7 @@ static void CrossboneIsle_StartFinalGuardBattle(void) {
 }
 
 // Choose the interactions for the current room.
-const struct SceneEvent *CrossboneIsle_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsle1) {
@@ -155,18 +159,18 @@ const struct SceneEvent *CrossboneIsle_GetEvents(void) {
   return gCrossboneIsleEventsOther;
 }
 
-// Catch the nut and remove it from the room.
-static void CrossboneIsle_CatchNut(void) {
+// Catch on the Nut circling in the first room: the party gets it.
+static void Event_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(8, 0, 0);
-  Engine_GameFlagSet(4055);
+  Engine_GameFlagSet(0xfd7);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
   Engine_EventEnd();
 }
 
 // Restore puzzle changes and handle returning from a guard battle.
-s32 CrossboneIsle_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   s32 scene;
   s32 current;
@@ -187,11 +191,11 @@ s32 CrossboneIsle_Initialize(void) {
     }
     if (gGameState.scene == scene) {
       if (gGameState.entrance != 5) {
-        if (GameFlag_IsSet(0x8d1) == 0) {
+        if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED) == 0) {
           return 0;
         }
       }
-      GameFlag_Set(0x8d1);
+      GameFlag_Set(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED);
       Map_CopyCellAttributes(0, 1, 1, 1, 13, 30);
       MapObject_SetPosition(100, PIXELS(216), PIXELS(488));
       return 0;
@@ -199,11 +203,11 @@ s32 CrossboneIsle_Initialize(void) {
   }
   current = gGameState.scene;
   if (current == (s32)&SceneId_CrossboneIsle1) {
-    CrossboneIsle_RestoreRoomActors();
+    CrossboneIsle_RestoreIvy();
     Actor_Get(8)->targetX = PIXELS(129);
     FieldScene_RedrawActorFootprint(9);
     FieldScene_RedrawActorFootprint(10);
-    if (GameFlag_IsSet(0x240) != 0) {
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_40) != 0) {
       actor = Actor_Get(11);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -212,7 +216,7 @@ s32 CrossboneIsle_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(304), PIXELS(368), 253);
     }
-    if (GameFlag_IsSet(0x241) != 0) {
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_41) != 0) {
       actor = Actor_Get(12);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -221,7 +225,7 @@ s32 CrossboneIsle_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(80), PIXELS(368), 253);
     }
-    if (GameFlag_IsSet(0x242) != 0) {
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_42) != 0) {
       actor = Actor_Get(13);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -230,7 +234,7 @@ s32 CrossboneIsle_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(96), PIXELS(336), 253);
     }
-    if (GameFlag_IsSet(0x243) != 0) {
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_43) != 0) {
       actor = Actor_Get(14);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -266,14 +270,16 @@ s32 CrossboneIsle_Initialize(void) {
   return 0;
 }
 
-// Restore the passage and hidden block when its room flag is set.
+// In a guarded room whose Move puzzle is solved, the block stays sunk in its
+// place.
 static void CrossboneIsle_RestoreMovedRoomBlock(void) {
   struct FieldActor *actor;
   s32 cleared;
 
   actor = Actor_Get(8);
   cleared = GameFlag_IsSet(
-      (gGameState.scene + (0x8d2 - (s32)&SceneId_CrossboneIsle6)));
+      (gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                           (s32)&SceneId_CrossboneIsle6)));
   if (cleared != 0) {
     Actor_SetPosition(8, PIXELS(650), PIXELS(168));
     actor->y.fixed = -PIXELS(32);
@@ -287,8 +293,9 @@ static void CrossboneIsle_RestoreMovedRoomBlock(void) {
   }
 }
 
-// Open the passage when Move brings the block to column 40.
-static void CrossboneIsle_OpenPassageWithMovedBlock(void) {
+// Move on a guarded room's block, and after each push: once it reaches column
+// 40 it sinks into the floor in a ring of dust, and the way on is open.
+static void Event_MoveBlock(void) {
   /* FAKEMATCH: retain the scalar scene-slot address calculation; direct
    * &gGameState.scene folds the address and removes eight bytes in tbs-en. */
   struct FieldActor *block;
@@ -307,7 +314,8 @@ static void CrossboneIsle_OpenPassageWithMovedBlock(void) {
     sceneNumber = (s16 *)((u8 *)&gGameState + sceneOffset);
   }
   if (Engine_GameFlagIsSet(*sceneNumber +
-                           (0x8d2 - (s32)&SceneId_CrossboneIsle6)) != 0) {
+                           (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                            (s32)&SceneId_CrossboneIsle6)) != 0) {
     return;
   }
 #endif
@@ -335,28 +343,32 @@ static void CrossboneIsle_OpenPassageWithMovedBlock(void) {
     sceneNumber = (s16 *)((u8 *)&gGameState + sceneOffset);
   }
 #endif
-  Engine_GameFlagSet(*sceneNumber + (0x8d2 - (s32)&SceneId_CrossboneIsle6));
+  Engine_GameFlagSet(*sceneNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                     (s32)&SceneId_CrossboneIsle6));
 }
 
-// Complete the staged Move action, then test the passage.
-static void CrossboneIsle_MoveBlockAndCheckPassage(void) {
+// Walking into a guarded room's block (trigger 20): push it a step.
+static void Event_PushBlock(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
   Engine_EventEnd();
-  CrossboneIsle_OpenPassageWithMovedBlock();
+  Event_MoveBlock();
 }
 
-// Animate the left room door and enter its exit.
-static void CrossboneIsle_OpenLeftRoomDoor(void) {
+// Walking north into the western door (trigger 4): it opens, and the party
+// goes through.
+static void Event_OpenWestDoor(void) {
   Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
   Engine_AudioPlayCue(183);
   Engine_EventRequestExit(4);
 }
 
-// Fight this room's guards once, then open its door on later visits.
-static void CrossboneIsle_EnterGuardedRoom(void) {
+// Walking north into a guarded room's door (trigger 3): the first time, the
+// room's guards attack; once they are beaten, the door opens.
+static void Event_EnterGuardedRoom(void) {
   if (Engine_GameFlagIsSet(gGameState.scene +
-                           (0x8c8 - (s32)&SceneId_CrossboneIsle6)) == 0) {
+                           (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
+                            (s32)&SceneId_CrossboneIsle6)) == 0) {
     Engine_EventBegin();
     Event_SetNextDestination(gGameState.scene, 5);
     Battle_SetStart(3);
@@ -398,13 +410,15 @@ static void CrossboneIsle_EnterGuardedRoom(void) {
   }
 }
 
-// Record the guard victory and walk through the opened doorway.
+// Back from beating a room's guards: the door opens, and the party walks
+// through.
 static void CrossboneIsle_LeaveClearedRoom(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set((gGameState.scene + (0x8c8 - (s32)&SceneId_CrossboneIsle6)));
+  GameFlag_Set((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
+                                    (s32)&SceneId_CrossboneIsle6)));
   Engine_EventWait(30);
   Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -412,8 +426,8 @@ static void CrossboneIsle_LeaveClearedRoom(void) {
   Engine_EventEnd();
 }
 
-// Remove the collision at the passage opened by Growth on actor 11.
-static void CrossboneIsle_OpenGrowthPassage11(s32 actorId) {
+// Growth on the first plant (actor 11): it grows, and its cell can be crossed.
+static void Event_GrowPlant11(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
   struct FieldActor *actor = Object_GetById(11);
@@ -423,11 +437,11 @@ static void CrossboneIsle_OpenGrowthPassage11(s32 actorId) {
   }
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
-  Engine_GameFlagSet(576);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_40);
 }
 
-// Remove the collision at the passage opened by Growth on actor 12.
-static void CrossboneIsle_OpenGrowthPassage12(s32 actorId) {
+// Growth on the second plant (actor 12).
+static void Event_GrowPlant12(s32 actorId) {
   s32 fixedX = PIXELS(80);
   s32 fixedZ = PIXELS(368);
   struct FieldActor *actor = Object_GetById(12);
@@ -437,11 +451,11 @@ static void CrossboneIsle_OpenGrowthPassage12(s32 actorId) {
   }
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
-  Engine_GameFlagSet(577);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_41);
 }
 
-// Remove the collision at the passage opened by Growth on actor 13.
-static void CrossboneIsle_OpenGrowthPassage13(s32 actorId) {
+// Growth on the third plant (actor 13).
+static void Event_GrowPlant13(s32 actorId) {
   s32 fixedX = PIXELS(96);
   s32 fixedZ = PIXELS(336);
   struct FieldActor *actor = Object_GetById(13);
@@ -451,11 +465,11 @@ static void CrossboneIsle_OpenGrowthPassage13(s32 actorId) {
   }
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
-  Engine_GameFlagSet(578);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_42);
 }
 
-// Remove the collision at the passage opened by Growth on actor 14.
-static void CrossboneIsle_OpenGrowthPassage14(s32 actorId) {
+// Growth on the fourth plant (actor 14), which opens two cells.
+static void Event_GrowPlant14(s32 actorId) {
   s32 fixedX = PIXELS(144);
   s32 fixedZ = PIXELS(320);
   s32 secondFixedX = PIXELS(752);
@@ -468,57 +482,57 @@ static void CrossboneIsle_OpenGrowthPassage14(s32 actorId) {
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
   SetMapCellCollision(0, fixedX, fixedZ, 253);
   SetMapCellCollision(0, secondFixedX, secondFixedZ, 253);
-  Engine_GameFlagSet(579);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_43);
 }
 
-// Remember that Whirlwind cleared obstacle 15.
-static void CrossboneIsle_ClearWhirlwindObstacle15(void) {
-  Engine_GameFlagSet(2244);
+// Whirlwind on the first ivy (actor 15): it is blown away for good.
+static void Event_BlowAwayIvy15(void) {
+  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
   {
 
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
   }
 }
 
-// Remember that Whirlwind cleared obstacle 16.
-static void CrossboneIsle_ClearWhirlwindObstacle16(void) {
-  Engine_GameFlagSet(2245);
+// Whirlwind on the second ivy (actor 16).
+static void Event_BlowAwayIvy16(void) {
+  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
-// Remember that Whirlwind cleared obstacle 17.
-static void CrossboneIsle_ClearWhirlwindObstacle17(void) {
-  Engine_GameFlagSet(2246);
+// Whirlwind on the third ivy (actor 17).
+static void Event_BlowAwayIvy17(void) {
+  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
-// Remember that Whirlwind cleared obstacle 18.
-static void CrossboneIsle_ClearWhirlwindObstacle18(void) {
-  Engine_GameFlagSet(2247);
+// Whirlwind on actor 18, a fourth ivy.
+static void Event_BlowAwayIvy18(void) {
+  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
-// Restore the Whirlwind obstacles from their persistent flags.
-static void CrossboneIsle_RestoreRoomActors(void) {
+// Ivy blown away stays gone; the rest stands tall.
+static void CrossboneIsle_RestoreIvy(void) {
   struct FieldActor *actor;
 
-  if (GameFlag_IsSet(0x8c4) != 0) {
+  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     Actor_SetPosition(15, PIXELS(968), PIXELS(968));
   } else {
     actor = Actor_Get(15);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
-  if (GameFlag_IsSet(0x8c5) != 0) {
+  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
     Actor_SetPosition(16, PIXELS(968), PIXELS(968));
   } else {
     actor = Actor_Get(16);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
-  if (GameFlag_IsSet(0x8c6) != 0) {
+  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
     Actor_SetPosition(17, PIXELS(968), PIXELS(968));
   } else {
     actor = Actor_Get(17);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
-  if (GameFlag_IsSet(0x8c7) != 0) {
+  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
     Actor_SetPosition(18, PIXELS(968), PIXELS(968));
   } else {
     actor = Actor_Get(18);
@@ -526,8 +540,9 @@ static void CrossboneIsle_RestoreRoomActors(void) {
   }
 }
 
-// Move the selected staged actor when a clear destination exists.
-static void CrossboneIsle_MoveSelectedStagedActor(void) {
+// Walking into one of the first room's blocks: push it if the cell beyond is
+// clear.
+static void Event_PushFirstRoomBlock(void) {
   struct StagedActorProbe probe;
 
   Engine_EventBegin();
@@ -651,65 +666,45 @@ static void CrossboneIsle_DrawBlockPuzzleFootprints(void) {
   CrossboneIsle_DrawVerticalBlockFootprint(16, 6, 30, 36);
 }
 
-// Animate puzzle block 8 when its footprint is touched.
-static void ActivateSceneActor8(void) { CrossboneIsle_AnimateTouchedBlock(8); }
+// Stepping onto block 8: its animation plays from the start.
+static void Event_StepOnBlock8(void) { CrossboneIsle_AnimateTouchedBlock(8); }
 
-// Animate puzzle block 10 when its footprint is touched.
-static void ActivateSceneActor10(void) {
-  CrossboneIsle_AnimateTouchedBlock(10);
-}
+// Stepping onto block 10: its animation plays from the start.
+static void Event_StepOnBlock10(void) { CrossboneIsle_AnimateTouchedBlock(10); }
 
-// Animate puzzle block 11 when its footprint is touched.
-static void ActivateSceneActor11(void) {
-  CrossboneIsle_AnimateTouchedBlock(11);
-}
+// Stepping onto block 11: its animation plays from the start.
+static void Event_StepOnBlock11(void) { CrossboneIsle_AnimateTouchedBlock(11); }
 
-// Animate puzzle block 12 when its footprint is touched.
-static void ActivateSceneActor12(void) {
-  CrossboneIsle_AnimateTouchedBlock(12);
-}
+// Stepping onto block 12: its animation plays from the start.
+static void Event_StepOnBlock12(void) { CrossboneIsle_AnimateTouchedBlock(12); }
 
-// Animate puzzle block 13 when its footprint is touched.
-static void ActivateSceneActor13(void) {
-  CrossboneIsle_AnimateTouchedBlock(13);
-}
+// Stepping onto block 13: its animation plays from the start.
+static void Event_StepOnBlock13(void) { CrossboneIsle_AnimateTouchedBlock(13); }
 
-// Animate puzzle block 15 when its footprint is touched.
-static void ActivateSceneActor15(void) {
-  CrossboneIsle_AnimateTouchedBlock(15);
-}
+// Stepping onto block 15: its animation plays from the start.
+static void Event_StepOnBlock15(void) { CrossboneIsle_AnimateTouchedBlock(15); }
 
-// Animate puzzle block 17 when its footprint is touched.
-static void ActivateSceneActor17(void) {
-  CrossboneIsle_AnimateTouchedBlock(17);
-}
+// Stepping onto block 17: its animation plays from the start.
+static void Event_StepOnBlock17(void) { CrossboneIsle_AnimateTouchedBlock(17); }
 
-// Animate puzzle block 18 when its footprint is touched.
-static void ActivateSceneActor18(void) {
-  CrossboneIsle_AnimateTouchedBlock(18);
-}
+// Stepping onto block 18: its animation plays from the start.
+static void Event_StepOnBlock18(void) { CrossboneIsle_AnimateTouchedBlock(18); }
 
-// Animate puzzle block 9 when its footprint is touched.
-static void ActivateSceneActor9(void) { CrossboneIsle_AnimateTouchedBlock(9); }
+// Stepping onto block 9: its animation plays from the start.
+static void Event_StepOnBlock9(void) { CrossboneIsle_AnimateTouchedBlock(9); }
 
-// Animate puzzle block 19 when its footprint is touched.
-static void ActivateSceneActor19(void) {
-  CrossboneIsle_AnimateTouchedBlock(19);
-}
+// Stepping onto block 19: its animation plays from the start.
+static void Event_StepOnBlock19(void) { CrossboneIsle_AnimateTouchedBlock(19); }
 
-// Animate puzzle block 14 when its footprint is touched.
-static void ActivateSceneActor14(void) {
-  CrossboneIsle_AnimateTouchedBlock(14);
-}
+// Stepping onto block 14: its animation plays from the start.
+static void Event_StepOnBlock14(void) { CrossboneIsle_AnimateTouchedBlock(14); }
 
-// Animate puzzle block 16 when its footprint is touched.
-static void ActivateSceneActor16(void) {
-  CrossboneIsle_AnimateTouchedBlock(16);
-}
+// Stepping onto block 16: its animation plays from the start.
+static void Event_StepOnBlock16(void) { CrossboneIsle_AnimateTouchedBlock(16); }
 
 // Test a step, then move the leader with the block-pushing animation.
-static s32 TryPushBlockingSceneActor(struct FieldActor *actor,
-                                     struct FieldPosition *requested) {
+static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
+                                struct FieldPosition *requested) {
   u8 *motionFlags = &actor->motionFlags;
   s32 savedMotionFlags = *motionFlags;
 #if TBS_PATCH_1
@@ -761,52 +756,57 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor,
   return 0;
 }
 
-// Try a step 32 pixels toward smaller Z coordinates.
-static s32 CheckActorPathSouth(void) {
+// Walking north against a block's edge: hop 32 pixels north if the landing is
+// clear.
+static s32 Event_HopNorth(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed;
   destination.y = actor->y.fixed;
   destination.z = actor->z.fixed + -PIXELS(32);
-  return TryPushBlockingSceneActor(actor, &destination);
+  return CrossboneIsle_TryHop(actor, &destination);
 }
 
-// Try a step 32 pixels toward larger Z coordinates.
-static s32 CheckActorPathNorth(void) {
+// Walking south against a block's edge: hop 32 pixels south if the landing is
+// clear.
+static s32 Event_HopSouth(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed;
   destination.y = actor->y.fixed;
   destination.z = actor->z.fixed + PIXELS(32);
-  return TryPushBlockingSceneActor(actor, &destination);
+  return CrossboneIsle_TryHop(actor, &destination);
 }
 
-// Try a step 32 pixels toward smaller X coordinates.
-static s32 CheckActorPathWest(void) {
+// Walking west against a block's edge: hop 32 pixels west if the landing is
+// clear.
+static s32 Event_HopWest(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed + -PIXELS(32);
   destination.y = actor->y.fixed;
   destination.z = actor->z.fixed;
-  return TryPushBlockingSceneActor(actor, &destination);
+  return CrossboneIsle_TryHop(actor, &destination);
 }
 
-// Try a step 32 pixels toward larger X coordinates.
-static s32 CheckActorPathEast(void) {
+// Walking east against a block's edge: hop 32 pixels east if the landing is
+// clear.
+static s32 Event_HopEast(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed + PIXELS(32);
   destination.y = actor->y.fixed;
   destination.z = actor->z.fixed;
-  return TryPushBlockingSceneActor(actor, &destination);
+  return CrossboneIsle_TryHop(actor, &destination);
 }
 
-// Move block 8 toward smaller Z, accounting for blocks 12 and 15.
-static void UpdateEscapeRouteForActorPositions(void) {
+// Walking north onto block 8: it slides north with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock8North(void) {
   s32 actorX = Object_GetById(8)->x.fixed >> 20;
   s32 actorZ = Object_GetById(8)->z.fixed >> 20;
   s32 actor12X = Object_GetById(12)->x.fixed >> 20;
@@ -837,7 +837,7 @@ static void UpdateEscapeRouteForActorPositions(void) {
     }
     CrossboneIsle_MoveSelectedActorAndBlock(8, 0, -48);
   } else {
-    CheckActorPathSouth();
+    Event_HopNorth();
     return;
   }
   Engine_TaskWait(2);
@@ -880,8 +880,9 @@ static inline void CrossboneIsle_RedrawVerticalBlockRoute(s32 actorId,
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-// Move block 8 along its return route and redraw its footprint.
-static void UpdateActor8ReturnRoute(void) {
+// Walking south onto block 8: it slides south with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock8South(void) {
   s32 column = Object_GetById(8)->x.fixed >> 20;
   s32 row = Object_GetById(8)->z.fixed >> 20;
   s32 block12Column = Object_GetById(12)->x.fixed >> 20;
@@ -906,8 +907,9 @@ static void UpdateActor8ReturnRoute(void) {
   CrossboneIsle_RedrawHorizontalBlockRoute(8, column, row);
 }
 
-// Move block 10 along its retreat route and redraw its footprint.
-static void UpdateActor10RetreatRoute(void) {
+// Walking north onto block 10: it slides north with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock10North(void) {
   s32 column = Object_GetById(10)->x.fixed >> 20;
   s32 row = Object_GetById(10)->z.fixed >> 20;
   s32 block13Column = Object_GetById(13)->x.fixed >> 20;
@@ -936,8 +938,9 @@ static void UpdateActor10RetreatRoute(void) {
   CrossboneIsle_RedrawHorizontalBlockRoute(10, column, row);
 }
 
-// Move block 10 along its advance route and redraw its footprint.
-static void UpdateActor10AdvanceRoute(void) {
+// Walking south onto block 10: it slides south with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock10South(void) {
   s32 column = Object_GetById(10)->x.fixed >> 20;
   s32 row = Object_GetById(10)->z.fixed >> 20;
 
@@ -952,8 +955,9 @@ static void UpdateActor10AdvanceRoute(void) {
   }
 }
 
-// Move block 11 along its west route and redraw its footprint.
-static void UpdateActor11WestRoute(void) {
+// Walking west onto block 11: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock11West(void) {
   s32 column = Object_GetById(11)->x.fixed >> 20;
   s32 row = Object_GetById(11)->z.fixed >> 20;
 
@@ -974,8 +978,9 @@ static void UpdateActor11WestRoute(void) {
   }
 }
 
-// Move block 11 along its east route and redraw its footprint.
-static void UpdateActor11EastRoute(void) {
+// Walking east onto block 11: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock11East(void) {
   s32 column = Object_GetById(11)->x.fixed >> 20;
   s32 row = Object_GetById(11)->z.fixed >> 20;
 
@@ -992,8 +997,9 @@ static void UpdateActor11EastRoute(void) {
   }
 }
 
-// Move block 12 along its west route and redraw its footprint.
-static void UpdateActor12WestRoute(void) {
+// Walking west onto block 12: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock12West(void) {
   s32 column = Object_GetById(12)->x.fixed >> 20;
   s32 row = Object_GetById(12)->z.fixed >> 20;
 
@@ -1009,8 +1015,9 @@ static void UpdateActor12WestRoute(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(12, column, row);
 }
 
-// Move block 12 along its east route and redraw its footprint.
-static void UpdateActor12EastRoute(void) {
+// Walking east onto block 12: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock12East(void) {
   s32 column = Object_GetById(12)->x.fixed >> 20;
   s32 row = Object_GetById(12)->z.fixed >> 20;
 
@@ -1025,8 +1032,9 @@ static void UpdateActor12EastRoute(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(12, column, row);
 }
 
-// Move block 13 along its west route and redraw its footprint.
-static void UpdateActor13WestRoute(void) {
+// Walking west onto block 13: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock13West(void) {
   s32 column = Object_GetById(13)->x.fixed >> 20;
   s32 row = Object_GetById(13)->z.fixed >> 20;
   s32 block10Row = Object_GetById(10)->z.fixed >> 20;
@@ -1075,8 +1083,9 @@ static void UpdateActor13WestRoute(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(13, column, row);
 }
 
-// Move block 13 along its east route and redraw its footprint.
-static void UpdateActor13EastRoute(void) {
+// Walking east onto block 13: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock13East(void) {
   s32 column = Object_GetById(13)->x.fixed >> 20;
   s32 row = Object_GetById(13)->z.fixed >> 20;
 
@@ -1096,8 +1105,9 @@ static void UpdateActor13EastRoute(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(13, column, row);
 }
 
-// Move block 15 along its west route and redraw its footprint.
-static void UpdateActor15WestRoute(void) {
+// Walking west onto block 15: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock15West(void) {
   s32 column = Object_GetById(15)->x.fixed >> 20;
   s32 row = Object_GetById(15)->z.fixed >> 20;
   s32 block8Row = Object_GetById(8)->z.fixed >> 20;
@@ -1130,8 +1140,9 @@ static void UpdateActor15WestRoute(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(15, column, row);
 }
 
-// Move block 15 along its east route and redraw its footprint.
-static void UpdateActor15EastRoute(void) {
+// Walking east onto block 15: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock15East(void) {
   s32 column = Object_GetById(15)->x.fixed >> 20;
   s32 row = Object_GetById(15)->z.fixed >> 20;
   s32 block10Row = Object_GetById(10)->z.fixed >> 20;
@@ -1178,8 +1189,9 @@ static void UpdateActor15EastRoute(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(15, column, row);
 }
 
-// Move block 17 along its south route and redraw its footprint.
-static void UpdateActor17SouthRoute(void) {
+// Walking north onto block 17: it slides north with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock17North(void) {
   s32 column = Object_GetById(17)->x.fixed >> 20;
   s32 row = Object_GetById(17)->z.fixed >> 20;
   s32 block19Column = Object_GetById(19)->x.fixed >> 20;
@@ -1201,8 +1213,9 @@ static void UpdateActor17SouthRoute(void) {
   CrossboneIsle_RedrawHorizontalBlockRoute(17, column, row);
 }
 
-// Move block 17 along its north route and redraw its footprint.
-static void UpdateActor17NorthRoute(void) {
+// Walking south onto block 17: it slides south with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock17South(void) {
   s32 column = Object_GetById(17)->x.fixed >> 20;
   s32 row = Object_GetById(17)->z.fixed >> 20;
 
@@ -1219,8 +1232,9 @@ static void UpdateActor17NorthRoute(void) {
 // These three columns form the crossing lane for the vertical blocks.
 #define IS_IN_BLOCK_CROSSING_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
-// Move block 18 toward smaller Z until another block stops it.
-static void CrossboneIsle_MoveBlock18North(void) {
+// Walking north onto block 18: it slides north with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock18North(void) {
   s32 column;
   s32 row;
   s32 block19Column;
@@ -1293,8 +1307,9 @@ static void CrossboneIsle_MoveBlock18North(void) {
 
 #undef IS_IN_BLOCK_CROSSING_COLUMNS
 
-// Advance block 18 along the route selected by neighboring blocks.
-static void AdvanceActor18AlongEscapeRoute(void) {
+// Walking south onto block 18: it slides south with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock18South(void) {
   s32 column;
   s32 row;
   s32 companion19Column;
@@ -1352,8 +1367,9 @@ static void AdvanceActor18AlongEscapeRoute(void) {
 #undef IS_IN_BLOCK_CROSSING_COLUMNS
 #define IS_IN_BLOCK_CROSSING_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
-// Move block 9 toward smaller Z until another block stops it.
-static void CrossboneIsle_MoveBlock9North(void) {
+// Walking north onto block 9: it slides north with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock9North(void) {
   s32 column;
   s32 row;
   s32 block19Column;
@@ -1427,8 +1443,9 @@ static void CrossboneIsle_MoveBlock9North(void) {
 
 #undef IS_IN_BLOCK_CROSSING_COLUMNS
 
-// Advance block 9 along the route selected by neighboring blocks.
-static void AdvanceActor9AlongEscapeRoute(void) {
+// Walking south onto block 9: it slides south with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock9South(void) {
   s32 column;
   s32 row;
   s32 companion19Column;
@@ -1489,8 +1506,9 @@ static void AdvanceActor9AlongEscapeRoute(void) {
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-// Move block 19 toward smaller X until another block stops it.
-static void CrossboneIsle_MoveBlock19West(void) {
+// Walking west onto block 19: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock19West(void) {
   s32 column;
   s32 row;
   s32 block17Row;
@@ -1559,8 +1577,9 @@ static void CrossboneIsle_MoveBlock19West(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-// Move block 19 toward larger X until another block stops it.
-static void CrossboneIsle_MoveBlock19East(void) {
+// Walking east onto block 19: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock19East(void) {
   s32 column;
   s32 row;
   s32 block18Row;
@@ -1610,8 +1629,9 @@ static void CrossboneIsle_MoveBlock19East(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-// Retreat with block 14 along the route selected by neighboring blocks.
-static void RetreatActor14AlongEscapeRoute(void) {
+// Walking west onto block 14: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock14West(void) {
   s32 column;
   s32 row;
   s32 companion18Row;
@@ -1662,8 +1682,9 @@ static void RetreatActor14AlongEscapeRoute(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-// Advance block 14 along the route selected by neighboring blocks.
-static void AdvanceActor14AlongEscapeRoute(void) {
+// Walking east onto block 14: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock14East(void) {
   s32 column;
   s32 row;
   s32 companion18Row;
@@ -1707,8 +1728,9 @@ static void AdvanceActor14AlongEscapeRoute(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-// Retreat with block 16 along the route selected by neighboring blocks.
-static void RetreatActor16AlongEscapeRoute(void) {
+// Walking west onto block 16: it slides west with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock16West(void) {
   s32 column;
   s32 row;
   s32 companion18Row;
@@ -1756,8 +1778,9 @@ static void RetreatActor16AlongEscapeRoute(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-// Advance block 16 along the route selected by neighboring blocks.
-static void AdvanceActor16AlongEscapeRoute(void) {
+// Walking east onto block 16: it slides east with the leader on it until
+// another block or the wall stops it.
+static void Event_SlideBlock16East(void) {
   s32 column;
   s32 row;
   s32 companionRow;
@@ -2036,10 +2059,10 @@ struct ScenePlacement gCrossboneIslePlacements6To14[] = {
 struct SceneEvent gCrossboneIsleEventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_EnterGuardedRoom) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_OpenLeftRoomDoor) },
-    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveBlockAndCheckPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_OpenPassageWithMovedBlock) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGuardedRoom) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestDoor) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveBlock) },
     { SEARCH(SEARCH_CHEST), 100, 0xef4, 0x500004 },
     { SCENE_EVENTS_END },
 };
@@ -2051,19 +2074,19 @@ struct SceneEvent gCrossboneIsleEvents2[] = {
 };
 
 struct SceneEvent gCrossboneIsleEvents1[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, 0xfd7, EVENT_SCRIPT(CrossboneIsle_CatchNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 11, 0x240, EVENT_SCRIPT(CrossboneIsle_OpenGrowthPassage11) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, 0x241, EVENT_SCRIPT(CrossboneIsle_OpenGrowthPassage12) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, 0x242, EVENT_SCRIPT(CrossboneIsle_OpenGrowthPassage13) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 14, 0x243, EVENT_SCRIPT(CrossboneIsle_OpenGrowthPassage14) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, 0x8c4, EVENT_SCRIPT(CrossboneIsle_ClearWhirlwindObstacle15) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, 0x8c5, EVENT_SCRIPT(CrossboneIsle_ClearWhirlwindObstacle16) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x8c6, EVENT_SCRIPT(CrossboneIsle_ClearWhirlwindObstacle17) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, 0x8c7, EVENT_SCRIPT(CrossboneIsle_ClearWhirlwindObstacle18) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, 0xfd7, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 11, FLAG_SCENE_TEMP_40, EVENT_SCRIPT(Event_GrowPlant11) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, FLAG_SCENE_TEMP_41, EVENT_SCRIPT(Event_GrowPlant12) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, FLAG_SCENE_TEMP_42, EVENT_SCRIPT(Event_GrowPlant13) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 14, FLAG_SCENE_TEMP_43, EVENT_SCRIPT(Event_GrowPlant14) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayIvy15) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(Event_BlowAwayIvy16) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(Event_BlowAwayIvy17) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_BlowAwayIvy18) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveSelectedStagedActor) },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveSelectedStagedActor) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushFirstRoomBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushFirstRoomBlock) },
     { 0x8413, 100, 0xec0, FIND_COINS(1) },
     { 0xc413, 100, 0xec0, FIND_COINS(1) },
     { 0xa413, 100, 0xec0, FIND_COINS(1) },
@@ -2076,70 +2099,70 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
 struct SceneEvent gCrossboneIsleEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 43, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateEscapeRouteForActorPositions) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor8ReturnRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor10RetreatRoute) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor10AdvanceRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor11WestRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor11EastRoute) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor12WestRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor12EastRoute) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor13WestRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor13EastRoute) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor15WestRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor15EastRoute) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor17SouthRoute) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor17NorthRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveBlock18North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(AdvanceActor18AlongEscapeRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveBlock9North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(AdvanceActor9AlongEscapeRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveBlock19West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_MoveBlock19East) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(RetreatActor14AlongEscapeRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(AdvanceActor14AlongEscapeRoute) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(RetreatActor16AlongEscapeRoute) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(AdvanceActor16AlongEscapeRoute) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor8) },
-    { EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor10) },
-    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor11) },
-    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor12) },
-    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor13) },
-    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor15) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor17) },
-    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor18) },
-    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor9) },
-    { EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor19) },
-    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor14) },
-    { EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(ActivateSceneActor16) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 43, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock8North) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock8South) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock10North) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock10South) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock11West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock11East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock12West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock12East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock13West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock13East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock15West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock15East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock17North) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock17South) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock18North) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock18South) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock9North) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock9South) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock19West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock19East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock14West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock14East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock16West) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideBlock16East) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock8) },
+    { EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock10) },
+    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock11) },
+    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock12) },
+    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock13) },
+    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock15) },
+    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock17) },
+    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock18) },
+    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock9) },
+    { EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock19) },
+    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock14) },
+    { EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnBlock16) },
     { SEARCH(SEARCH_CHEST), 100, 0xee2, FIND_COINS(999) },
     { SEARCH(SEARCH_CHEST), 101, 0xee3, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { SEARCH(SEARCH_CHEST), 102, 0xee4, FIND_ITEM(0xb) },
@@ -2156,9 +2179,10 @@ struct SceneEvent gCrossboneIsleEvents4[] = {
 
 struct SceneEvent gCrossboneIsleEvents5[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_TOUCH, 10, 0x8d1, EVENT_SCRIPT(CrossboneIsle_StartFinalGuardBattle)},
+    {EVENT_TOUCH, 10, FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED,
+     EVENT_SCRIPT(Event_FightFinalGuards)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
-     EVENT_SCRIPT(CheckActorPathNorth)},
+     EVENT_SCRIPT(Event_HopSouth)},
     {SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(0x53)},
     {SEARCH(SEARCH_CHEST), 101, 0xef7, 0x500007},
     {SCENE_EVENTS_END},

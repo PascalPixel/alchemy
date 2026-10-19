@@ -6,6 +6,10 @@ actors and events, the leader's steps, using items and Psynergy on the
 field, the commands scene scripts run, Djinn joining the party, the world
 map screen, and the slot machine.
 
+See also: [Field](../field/README.md), the engine these scenes run on;
+[Scenes](../scene/README.md), the overlays that give each place its events;
+and [Maps](../map/README.md).
+
 ## Files
 
 | File | What it holds |
@@ -66,27 +70,51 @@ runner named for its Psynergy (`FieldFx_RunCatch`). `BattleFx_`,
 Psynergy code that other folders or ⚓️'s twins also use; they keep them
 until a rename across folders.
 
-## Spellings
+The spellings some sites keep to match (the field work, the effect scene and
+the map's view are each reached three ways), and the comment markers, are in
+[Matching](../MATCHING.md).
 
-One idea is written in several ways, and the sites have not all been
-measured; each keeps its spelling until it is:
+## Design
 
-- the field work: `(struct FieldWork *)gEventWork`,
-  `WORK_SLOT(HEAP_SLOT_EVENT)`, or `Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-  sizeof(struct FieldWork))`, which returns the existing block;
-- the effect scene: `gEffectWork` or `*(gWorkSlot + HEAP_SLOT_FX)`;
-- the map's view: `gMapWork[0]` or `WORK_SLOT(8)`.
+### A scene runs as a loop of requests
 
-Measured ones:
+`Field_RunScene` ([`object/run_scene.c`](object/run_scene.c)) sets a scene
+up, runs its initialization, fades it in, and then alternates between two
+states. While nothing is pending, it hands the leader to the player and
+calls `Field_ProcessStep` once a frame. Anything that should interrupt
+walking (the leader stepping on a cell with an event, a random battle, the
+A button, the menu, an exit) does not act at once: it raises a request,
+which is a field of the field work (`work->exit`, `work->event`,
+`work->battle` and the rest), and walking stops as soon as
+`Field_CountRequests` is not zero.
 
-- `((16 - blend) << 8) | blend` in
-  [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) is
-  `BLEND_ALPHA(blend, 16 - blend)` with its operands swapped; the macro
-  changes the registers.
+The loop then handles the requests one at a time, in a fixed order: the exit
+(`exit`), a raised event (`event`), a random battle (`battle`), a touched or
+exit cell (`action`), a pushed tile (`input`), the A button (`examine`), the
+menu (`menu`), talking to an actor (`descriptor`), searching a tile
+(`tile`), Psynergy (`command`), an item (`item`) and the pause menu
+(`start`). After each one it starts again from the top, so an exit always
+wins: when an event's script takes an exit, the scene ends before any other
+request that was raised with it is handled. The exit's kind is what
+`Field_RunScene` returns, and `Scene_TakeExit` loads the next scene from it.
 
-`/* FAKEMATCH(kind): ... */` marks a device that steers the compiler towards
-the original instructions (an unused variable, a block that runs once), with
-the number of instructions that differ without it.
+A random battle is an exit too. Its handler snapshots the actors
+(`ObjectTable_Snapshot`), sets the next scene to `SCENE_BATTLE` and raises
+the exit `EXIT_NONE` (999), so the next pass of the loop leaves the scene;
+the battle runs as a scene of its own, and the field scene is loaded again
+afterwards, with the party where it was.
+
+Because requests are fields, not a queue, each kind holds at most one, and
+raising one twice before it is handled is the same as raising it once. An
+event's value is the event to run, or a negative code: -1 when characters
+fell to poison or hazardous ground, -888 to show the world map picture
+(`Map_ShowWorldMap`) and -889 for `BattleFx_RunVisibilityTransition`.
+
+This shape is why scene code can be written as straight-line cutscenes: a
+handler runs a script to its end, waiting with `WaitFrames` as it goes, and
+the walking loop resumes only when every request is done. What must move
+during a cutscene runs as tasks and object scripts (see
+[Runtime](../runtime/README.md) and [Field](../field/README.md)).
 
 ## How to find a field Psynergy
 
@@ -128,3 +156,24 @@ asks for (`Field_RequestBattleFromEncounterTable`), the mimic chests (zone
 
 - 104 encounter zones of eight groups each.
 - The field work holds 66 actor slots; the effect scene 24 effect slots.
+
+## Evidence and open questions
+
+The field kinds are named from the `type` column of `actions.tsv` and the
+Psynergy the English release gives each; the requests from what the loop
+does with each; the encounter columns from what `Encounter_SelectEnemyGroup`
+computes with them. The zone names in `encounter.tsv` are the places whose
+rules select them.
+
+Still unknown:
+
+- XXX: `Field_CountRequests` adds the requests together (`descriptor`
+  twice) and tests the sum. A negative event code raised together with a
+  positive request could sum to zero and stop the loop from seeing either;
+  whether that ever happens is not known.
+- XXX: the request fields' names (`descriptor` for talking, `command` for
+  Psynergy, `input` for a pushed tile) say less than their handlers do; they
+  are shared with other folders and wait for a rename.
+- XXX: the `BattleFx_`, `BattleEffect_` and `RunBattleEffectNN` names on field
+  Psynergy code are older than the `FieldFx_` prefix and wait for a rename
+  across folders.

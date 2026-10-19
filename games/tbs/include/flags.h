@@ -84,8 +84,8 @@
 #define FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED 0x875
 // All three channel blocks are in place and the water runs.
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
-// The pushed pillar has fallen through to the floor below.
-#define FLAG_MERCURY_LIGHTHOUSE_PILLAR_FELL 0x877
+// The sliding statue has fallen through to the floor below.
+#define FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL 0x877
 // The block rests on the stair gate's floor switch and holds it open.
 #define FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN 0x878
 // The aerie's confrontation with Saturos, the battle and Alex's visit are

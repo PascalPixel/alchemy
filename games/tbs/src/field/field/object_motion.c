@@ -96,7 +96,7 @@ void Object_UpdateAllThumb(void) {
   u32 command;
   u32 phase;
 
-  object = gObjectSlots;
+  object = (struct ScriptMotionObject *)gObjectSlots;
   for (objectsRemaining = 63; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
@@ -486,7 +486,7 @@ void Object_UpdateAllMotion(void) {
   s32 ratio;
   s32 facingStep;
 
-  object = gObjectSlots;
+  object = (struct ScriptMotionObject *)gObjectSlots;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     if (object->script == 0)

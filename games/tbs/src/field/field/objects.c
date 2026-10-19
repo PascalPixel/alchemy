@@ -12,7 +12,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
   u32 i;
-  u8 *order;
+  const u8 *order;
   u32 highMask;
   u32 indexMask;
   u8 offsetMask;

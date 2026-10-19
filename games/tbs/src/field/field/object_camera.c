@@ -227,9 +227,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
   if (GameFlag_TestFar(363)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
-    Transform_ApplyLookAt(eye, target);
+    Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {
-    Transform_SetLookAt(eye, target);
+    Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
   object = (struct ObjectCameraObject *)gObjectSlots;
   object += 63;

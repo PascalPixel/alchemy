@@ -18,9 +18,11 @@ struct WaveFxWork {
   u8 counter;   // particle spawn cycle (0 to 60)
 };
 
-// Starts the wave effect (kind 2) of caster sourceId on target targetId:
-// fades the palettes toward a hue that shifts with the frame counter, and
-// starts its per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
+// Abilities: Mind Read (field kind 2).
+//
+// Starts the wave effect of caster sourceId on target targetId: fades the
+// palettes toward a hue that shifts with the frame counter, and starts its
+// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
 void RunSceneTransitionEffect(s32 x, s32 y) {
   struct WaveFxWork *work;
 

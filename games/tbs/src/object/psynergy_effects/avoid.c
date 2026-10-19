@@ -61,11 +61,12 @@ void FieldEvent_ShowStatusMessage(void) {
   UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }
 
-// Psynergy effect 16, Avoid: the caster spins shedding falling arcs and
-// flashes 20 times, then blinks for 55 frames; encounters are kept away
-// (avoidDistance 0x9600000) until it wears off, and the game says
-// "Monsters won't attack so often now.". Flag 0x145 marks it as cast from the
-// Sacred Feather.
+// Abilities: Avoid (field kind 16), and the Sacred Feather.
+//
+// The caster spins shedding falling arcs and flashes 20 times, then blinks for
+// 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears
+// off, and the game says "Monsters won't attack so often now.". Flag 0x145
+// marks it as cast from the Sacred Feather.
 void FieldFx_RunAvoid(void) {
   struct BattleFxScene *scene;
   struct ArcEffectObject *object;

@@ -3,8 +3,10 @@
 
 #include "../psynergy_effects_internal.h"
 
-// Effect 7 cast on a target: an object appears 32 pixels to either side,
-// each moves 14 pixels in, and they lift the target 32 pixels with them.
+// Abilities: Lift (field kind 7), cast on a target.
+//
+// An object appears 32 pixels to either side, each moves 14 pixels in, and they
+// lift the target 32 pixels with them.
 void BattleEffect_RunTargetedItemBreak(s32 unused) {
   struct BattleFxScene *work;
   struct DispatchObject *caster;
@@ -62,7 +64,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-// Effect 7 cast with no target.
+// Abilities: Lift (field kind 7), cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect07, BattleFx_SpawnItemBreakMode3)
 
 // Spawns object 215 and grows it, spinning, from a quarter to full size over

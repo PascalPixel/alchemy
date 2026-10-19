@@ -85,14 +85,18 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   }
 }
 
-// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
+// Abilities: Ply, Ply Well, Pure Ply (field kind 3), cast on a target.
+//
+// Runs RunBattleEffect03, then stops the caster's hook.
 void BattleFx_CallEffect03AndStop(s32 unused) {
   RunBattleEffect03();
   EffectRuntime_StopCurrentObject();
 }
 
-// Psynergy effect 3: eight particles spiral into the centre, where one
-// appears, sheds sparks and flies far away.
+// Abilities: Ply, Ply Well, Pure Ply (field kind 3).
+//
+// Eight particles spiral into the centre, where one appears, sheds sparks and
+// flies far away.
 void RunBattleEffect03(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;

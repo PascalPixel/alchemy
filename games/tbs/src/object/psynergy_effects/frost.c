@@ -70,8 +70,9 @@ void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
   FieldFx_UpdateSpiralParticle(fieldObject, 1);
 }
 
-// Effect 6 cast on a target (scene->child); with childMode the target is
-// left as it is and only the particles appear.
+// Abilities: Frost (field kind 6), cast on a target (scene->child).
+//
+// With childMode the target is left as it is and only the particles appear.
 void BattleFx_StartOrbitingParticles(s32 unused) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->child;
@@ -85,9 +86,10 @@ void BattleFx_StartOrbitingParticles(s32 unused) {
   }
 }
 
-// Psynergy effect 6: 16 particles spiral in on the effect's position and
-// make the target flash 16 times; without childOption the target takes
-// mode 2.
+// Abilities: Frost (field kind 6).
+//
+// 16 particles spiral in on the effect's position and make the target flash 16
+// times; without childOption the target takes mode 2.
 void BattleFx_RunOrbitingParticles(void) {
   s32 eventTarget;
   struct EffectVector pos;

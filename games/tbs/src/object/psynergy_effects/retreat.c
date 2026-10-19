@@ -80,8 +80,9 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   }
 }
 
-// Psynergy effect 15: spins the main object and shrinks it while 24
-// particles fly out, one a frame.
+// Abilities: Retreat (field kind 15).
+//
+// Spins the main object and shrinks it while 24 particles fly out, one a frame.
 void BattleFx_RunEffect15(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;

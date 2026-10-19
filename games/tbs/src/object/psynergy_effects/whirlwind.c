@@ -140,13 +140,14 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   }
 }
 
-// Effect 14 cast on a target.
+// Abilities: Whirlwind, Gale (field kind 14), cast on a target.
 void BattleFx_CallEffect14(s32 unused) { RunBattleEffect14(); }
 
-// Psynergy effect 14: an orb is carried from the caster to 4 pixels above
-// the effect's position over 10 frames, growing from 0.25. Without
-// scene->enabled the target shrinks, and 16 particles appear round the orb,
-// one every 6 frames, and circle it.
+// Abilities: Whirlwind, Gale (field kind 14).
+//
+// An orb is carried from the caster to 4 pixels above the effect's position
+// over 10 frames, growing from 0.25. Without scene->enabled the target shrinks,
+// and 16 particles appear round the orb, one every 6 frames, and circle it.
 void RunBattleEffect14(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *src = scene->mainObject;

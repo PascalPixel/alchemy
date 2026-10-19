@@ -10,6 +10,29 @@ struct SceneEvent;
 struct ScenePlacement;
 union FieldObject;
 
+// A field Psynergy's effect, as the field kind: the type column of
+// games/tbs/src/game/actions.tsv, named for the abilities that have it. The
+// effect scene keeps it as its animation.
+enum FieldKind {
+  FIELD_KIND_MOVE = 1,
+  FIELD_KIND_MIND_READ = 2,
+  FIELD_KIND_PLY = 3,
+  FIELD_KIND_FORCE = 4,
+  FIELD_KIND_DOUSE = 5,
+  FIELD_KIND_FROST = 6,
+  FIELD_KIND_LIFT = 7,
+  FIELD_KIND_REVEAL = 8,
+  FIELD_KIND_HALT = 9,
+  FIELD_KIND_CLOAK = 10,
+  FIELD_KIND_CARRY = 11,
+  FIELD_KIND_GROWTH = 12,
+  FIELD_KIND_CATCH = 13,
+  // Whirlwind and Gale.
+  FIELD_KIND_WHIRLWIND = 14,
+  FIELD_KIND_RETREAT = 15,
+  FIELD_KIND_AVOID = 16
+};
+
 // One frame of a sparkle: its height offset and tile (fxdata.c).
 struct SparkleFrame {
   s16 dy;

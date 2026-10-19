@@ -39,7 +39,9 @@ them all. The link order of the folder's objects is in
 - **field kind**: a Psynergy's field effect, the `type` column of
   `games/tbs/src/game/actions.tsv`: 1 Move, 2 Mind Read, 3 Ply, 4 Force,
   5 Douse, 6 Frost, 7 Lift, 8 Reveal, 9 Halt, 10 Cloak, 11 Carry, 12 Growth,
-  13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid.
+  13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid; `enum FieldKind`
+  (`FIELD_KIND_CATCH`) in `unit/object/psynergy_effects.h` names them, and
+  the effect scene keeps it as its `animation`.
 - **effect scene**: `struct BattleFxScene` in `gEffectWork` (heap slot
   `HEAP_SLOT_FX`, 56): the Psynergy being used, its caster and target, and
   its 24 effect slots.
@@ -91,4 +93,9 @@ the instructions that differ without it (AGENTS.md, S2).
 Psynergy events and plays the effect of the ability's field kind:
 `psynergy_effects/dispatch.c` runs the kind's handler, cast with no target
 (`BattleFx_Run`) or on one (`BattleFx_DispatchRequestKind`). Each kind's
-effect is the part named for it, such as `psynergy_effects/reveal.c`.
+effect is the part named for it, such as `psynergy_effects/reveal.c`, and
+each of its entry points opens with the abilities that reach it:
+
+```c
+// Abilities: Catch (field kind 13), cast on a target.
+```

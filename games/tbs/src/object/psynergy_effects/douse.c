@@ -91,13 +91,15 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   }
 }
 
-// Effect 5 cast on a target.
+// Abilities: Douse (field kind 5), cast on a target.
 void BattleFx_CallEffect05(s32 unused) { RunBattleEffect05(); }
 
-// Psynergy effect 5: an orb of light rises from 16 pixels above the target
-// to 32 pixels above the destination (80 with variant) over 10 frames,
-// growing as it goes, rains particles, and returns. With no destination yet,
-// the destination is 16 pixels from the target toward angle.
+// Abilities: Douse (field kind 5).
+//
+// An orb of light rises from 16 pixels above the target to 32 pixels above the
+// destination (80 with variant) over 10 frames, growing as it goes, rains
+// particles, and returns. With no destination yet, the destination is 16 pixels
+// from the target toward angle.
 void RunBattleEffect05(void) {
   struct EffectVector pos;
   struct EffectVector start;

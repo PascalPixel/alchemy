@@ -250,75 +250,6 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x0200842c,"ax",%progbits
-	.global Func_0200042c
-	.thumb_func
-Func_0200042c:
-	push {r5, lr}
-	adds r5, r1, #0
-	adds r0, r5, #0
-	sub sp, #8
-	bl Object_GetById
-	adds r2, r0, #0
-	cmp r5, #10
-	bne .L_02008486
-	ldr r3, [r2, #16]
-	asrs r5, r3, #20
-	cmp r5, #12
-	bne .L_020084ac
-	adds r1, r2, #0
-	adds r1, #85
-	movs r3, #0
-	strb r3, [r1]
-	ldr r1, .L_020084b0
-	ldr r3, [r2, #12]
-	movs r0, #144
-	adds r3, r3, r1
-	lsls r0, r0, #4
-	str r3, [r2, #12]
-	adds r0, #90
-	bl GameFlag_SetBit
-	movs r3, #9
-	str r3, [sp, #0]
-	movs r0, #0
-	movs r1, #12
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl Func_02003d1c
-	movs r3, #13
-	str r3, [sp, #0]
-	movs r0, #0
-	movs r1, #12
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl Func_02003d1c
-	b .L_020084ac
-.L_02008486:
-	cmp r5, #11
-	bne .L_020084ac
-	ldr r3, [r2, #8]
-	asrs r3, r3, #20
-	cmp r3, #51
-	bne .L_020084ac
-	adds r1, r2, #0
-	adds r1, #85
-	movs r3, #0
-	strb r3, [r1]
-	ldr r1, .L_020084b0
-	ldr r3, [r2, #12]
-	movs r0, #144
-	adds r3, r3, r1
-	lsls r0, r0, #4
-	str r3, [r2, #12]
-	adds r0, #91
-	bl GameFlag_SetBit
-.L_020084ac:
-	add sp, #8
-	pop {r5, pc}
-.L_020084b0:
-	.4byte 0xffff0000
 	.section .text.x020087d4,"ax",%progbits
 	.global Func_020007d4
 	.thumb_func
@@ -634,49 +565,6 @@ Func_02000cc8:
 	.4byte 0xfff80000
 .L_02008de0:
 	.4byte 0xffff0000
-	.section .text.x0200907c,"ax",%progbits
-	.global Func_0200107c
-	.thumb_func
-Func_0200107c:
-	push {r5, r6, lr}
-	subs r1, #10
-	sub sp, #8
-	cmp r1, #1
-	bhi .L_020090ca
-	movs r0, #10
-	bl Object_GetById
-	adds r3, r0, #0
-	adds r3, #85
-	movs r5, #0
-	strb r5, [r3]
-	movs r1, #33
-	ldr r3, [r0, #8]
-	movs r2, #1
-	asrs r3, r3, #20
-	str r3, [sp, #0]
-	movs r6, #34
-	movs r3, #1
-	movs r0, #8
-	str r6, [sp, #4]
-	bl Func_02003d1c
-	movs r0, #11
-	bl Object_GetById
-	adds r3, r0, #0
-	adds r3, #85
-	strb r5, [r3]
-	movs r1, #33
-	ldr r3, [r0, #8]
-	movs r2, #1
-	asrs r3, r3, #20
-	str r3, [sp, #0]
-	movs r0, #8
-	movs r3, #1
-	str r6, [sp, #4]
-	bl Func_02003d1c
-.L_020090ca:
-	add sp, #8
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x020093bc,"ax",%progbits
 	.global Func_020013bc
 	.thumb_func

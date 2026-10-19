@@ -6,6 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/yallam/s0038.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/resource_676_overlay.o"(.text.x02008088)
+        "*/games/tla/src/scene/yallam/s014c.o"(.text)
         "*/resource_676_overlay.o"(.text.x0200814c)
         "*/games/tla/src/scene/yallam/scene_tables.o"(.text)
         "*/games/tla/src/scene/yallam/s0218.o"(.text)

@@ -5544,12 +5544,6 @@ main	rom_main_08	recon/tla/de/rom	.rom.00127af4	de
 main	rom_main_08	recon/tla/raw/08127adc	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00127ad8	ja
 main	rom_main_08	games/tla/src/battle/summon/charge	.text
-main	rom_main_08	recon/tla/it/rom	.rom.00127c96	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00127c96	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00127c96	es
-main	rom_main_08	recon/tla/de/rom	.rom.00127c96	de
-main	rom_main_08	recon/tla/raw/08127c7e	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.00127c7a	ja
 main	rom_main_08	games/tla/src/battle/formation_select_random_available_member	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00127cec	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00127cec	fr

@@ -4015,8 +4015,6 @@ Func_08126e00:
 	.thumb_func
 EnemyCountDecrement:
 	.incbin "baserom.gba", 0x00127ad8, 0x000000c4
-	.section .rom.00127c7a, "ax"
-	.incbin "baserom.gba", 0x00127c7a, 0x00000002
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.001281e6, "ax"

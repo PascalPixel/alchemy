@@ -193,7 +193,7 @@ static void Colosso_RememberSupportPosition(void) {
   supporterId++;
   if (supporterId > MIA) {
     Engine_EventRequestExit(10);
-    Engine_GameFlagSet(0x11a);
+    Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   } else {
     Colosso_SelectSoloCompetitor(supporterId);
     Engine_EventOpenScreen();
@@ -242,7 +242,7 @@ void Colosso_FinishSoloRound(s32 id) {
     slot++;
     if (slot > MIA) {
       Engine_EventRequestExit(10);
-      Engine_GameFlagSet(0x11a);
+      Engine_GameFlagSet(FLAG_KEEP_MUSIC);
     } else {
       Colosso_SelectSoloCompetitor(slot);
       Engine_EventOpenScreen();

@@ -676,7 +676,7 @@ s32 SolSanctumStatue_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   SolSanctumStatue_InitializeScrollingSprites();
   // Retreat does not work here (flag 0x144).
-  GameFlag_Set(0x144);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   centerEffect = Object_GetById(ACTOR_MOVED_CENTER_STATUE);
   centerEffect->collisionFlags = 0;
   {

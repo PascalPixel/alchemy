@@ -158,7 +158,7 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
     if (gGameState.entrance == 5) {
       Engine_GameFlagSet(FLAG_LAMAKAN_SAND_MONSTER_BEATEN);
 #if TBS_PATCH_3
-      Engine_GameFlagSet(0x87a);
+      Engine_GameFlagSet(FLAG_REACHED_KALAY);
 #endif
     }
   }
@@ -179,10 +179,10 @@ static void LeaveForTheWorldMap(void) {
   // Flags 0x8b2 and 0x8b3 are set together the first time; what reads them
   // is not known.
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x8b2) == 0) {
-    if (GameFlag_IsSet(0x8b3) == 0) {
-      GameFlag_Set(0x8b3);
-      GameFlag_Set(0x8b2);
+  if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
+    if (GameFlag_IsSet(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
+      GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
+      GameFlag_Set(FLAG_HSU_RESCUED);
     }
   }
   Event_PlayCue(SE_MAP_EXIT);

@@ -1134,7 +1134,7 @@ s32 ImilFuchinFalls_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gGameState.scene == (s32)&SceneId_ImilFuchinFalls1) {
-    Engine_GameFlagSet(0x144);
+    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardDjinni();
   } else {
     ImilFuchinFalls_PrepareRoom();

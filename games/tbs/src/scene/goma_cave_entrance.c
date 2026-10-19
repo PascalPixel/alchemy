@@ -200,7 +200,7 @@ s32 Scene_Initialize(void) {
   struct FieldActor *movedObject;
   s32 v5;
 
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   WAIT(10);
   BattleFx_SetQueuedSoundAndPlay(SE_170);
   OBJ_MODE(11, 2);

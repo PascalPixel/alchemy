@@ -501,7 +501,7 @@ static void Event_ReachArena(void) {
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoRiver, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoRiver, 5);
-  GameFlag_Set(0x11a);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
 // Walking into something: a rock is pushed, anything else is checked.
@@ -568,7 +568,7 @@ s32 ColossoRiver_Initialize(void) {
   s32 col;
 
   gEventWork->startTransition = 0;
-  GameFlag_Set(0x144);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   actor = Object_GetById(ROCK_A);
   hit = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
   if (actor->y.fixed == 0 && hit == 0) {

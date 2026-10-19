@@ -43,6 +43,7 @@
 #include "objcmd.h"
 #include "item_ids.h"
 #include "songs.h"
+#include "flags.h"
 
 #if TBS_PATCH_3
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30
@@ -68,9 +69,6 @@ enum {
 // An entrance the table does not list; arriving by it hands the leader the
 // Black Orb.
 enum { ENTRANCE_99 = 99 };
-
-// Set before a scene change whose next scene should not start its music.
-enum { FLAG_SKIP_SCENE_MUSIC = 0x11a };
 
 // The sprite's two priority bits of a ship piece or a party actor: 9 sets
 // the first, any other the second. ACTOR_SPRITE reads actor->sprite through
@@ -530,7 +528,7 @@ static void SetSail(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
-  Engine_GameFlagSet(FLAG_SKIP_SCENE_MUSIC);
+  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   Event_SetDestination((s32)&SceneId_Title, 9);
 }
 

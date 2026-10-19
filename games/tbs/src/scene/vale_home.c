@@ -571,7 +571,7 @@ s32 ValeHome_Initialize(void) {
         Event_TravelersLeaveAfterBattle();
       } else {
         if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0 &&
-            (flag = Engine_GameFlagIsSet(0x842)) != 0) {
+            (flag = Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT)) != 0) {
           Event_MeetSurvivingTravelers();
         } else {
           if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -898,7 +898,7 @@ static void ValeHome_FightTravelers(void) {
     Event_SetDefeatDestination((s32)message, 19);
   }
   Field_RequestBattleFromEncounterTable(12, 4);
-  Engine_GameFlagSet(0x11a);
+  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
 // After the battle the travelers leave Isaac and his companion lying in the
@@ -1453,30 +1453,30 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_SANCTUM_VISIT_PLANNED);
   Engine_GameFlagSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_ENTERED);
-  Engine_GameFlagSet(0xf01);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED);
   Engine_GameFlagSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
-  Engine_GameFlagSet(0xf02);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED);
-  Engine_GameFlagSet(0x825);
-  Engine_GameFlagSet(0x809);
-  Engine_GameFlagSet(0x80a);
-  Engine_GameFlagSet(0x818);
-  Engine_GameFlagSet(0x80b);
-  Engine_GameFlagSet(0x80c);
-  Engine_GameFlagSet(0x80d);
-  Engine_GameFlagSet(0x80e);
-  Engine_GameFlagSet(0x80f);
-  Engine_GameFlagSet(0x813);
-  Engine_GameFlagSet(0x810);
-  Engine_GameFlagSet(0x811);
-  Engine_GameFlagSet(0x819);
-  Engine_GameFlagSet(0x83b);
-  Engine_GameFlagSet(0x83c);
-  Engine_GameFlagSet(0x83d);
-  Engine_GameFlagSet(0x83e);
-  Engine_GameFlagSet(0x83f);
-  Engine_GameFlagSet(0x814);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FOUND);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_ERUPTED);
   Engine_GameFlagSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
   Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
   Engine_GameFlagSet(FLAG_VALE_FAREWELL_HERB_RECEIVED);

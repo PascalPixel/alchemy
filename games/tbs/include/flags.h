@@ -8,11 +8,18 @@
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
 #define FLAG_MARS_LIGHTHOUSE_LIT 0x112
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
+// The next scene keeps the music that is playing; scene.c clears
+// FLAG_KEEP_MUSIC as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
+#define FLAG_KEEP_MUSIC 0x11a
+#define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_NOT_ON_MAP 0x11c // the current place is not on the world map
 // Set before an action on the field; still set afterwards, nothing came of it
 // and the game says "But nothing happens.". An event that acts clears it.
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 // the item just used is removed afterwards
+// Retreat "does not work here", from Psynergy or an item. Cleared on every
+// scene entrance; the scenes that forbid Retreat set it.
+#define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145     // the Psynergy comes from an item
 #define FLAG_DEBUG_BATTLE 0x162 // set before every debug battle
 // Set while the Lure Cap is worn: random encounters come twice as fast.
@@ -663,10 +670,6 @@
 #define FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED 0x987
 
 // Venus Lighthouse aerie
-// Set where Retreat does nothing (items.c skips the Retreat item's move).
-#define FLAG_NO_RETREAT 0x144
-// The next scene keeps the music that is playing (scene.c clears it).
-#define FLAG_KEEP_MUSIC 0x11a
 // Also uses FLAG_SCENE_TEMP_34.
 // Also uses FLAG_SCENE_TEMP_35.
 #define FLAG_SCENE_TEMP_36 0x236

@@ -143,7 +143,7 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
   if (gGameState.scene == ((s32)&SceneId_Imil2)) {
     script = gImil_InteriorPlacements;
     FieldScene_PrepareActors(script);
-    if (Engine_GameFlagIsSet(0x881) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       /* FAKEMATCH: retain row 10's talk-facing byte access (10 * 24 + 22).
        * Direct script[10].talkFacing shortens tbs-en by two bytes
        * (2026-10-16). */
@@ -155,7 +155,7 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
     return script;
   }
 
-  if (Engine_GameFlagIsSet(0x881) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     return gImil_TownPlacementsCured;
   }
   return gImil_TownPlacements;
@@ -216,7 +216,7 @@ static void Imil_GreetVisitor(void) {
 static void Imil_TalkToCountingChild(void) {
   Engine_EventBegin();
 
-  if (GameFlag_IsSet(0x881) != 0) {
+  if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilCountingAfterDeparture));
     Event_ShowMessage(ACTOR_COUNTING_CHILD, 0);
     Actor_SetAttachedEffect(ACTOR_COUNTING_CHILD, EMOTE_IN_FRONT | 2);
@@ -253,7 +253,7 @@ static void Imil_TalkToOldMan(void) {
   struct FieldActor *oldMan;
   struct FieldActor *oldWoman;
 
-  if (GameFlag_IsSet(2177) != 0) {
+  if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Engine_EventBegin();
     Actor_FaceActor(ACTOR_OLD_MAN, 0, 0);
     Engine_EventWait(10);
@@ -447,7 +447,7 @@ static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
   facing = (s16)Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  if (Engine_GameFlagIsSet(0x881) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
       Engine_ShopOpen(10, ACTOR_WEAPON_MERCHANT);
       return;
@@ -482,7 +482,7 @@ static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
   facing = (s16)Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  if (Engine_GameFlagIsSet(0x881) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
       Engine_ShopOpen(11, ACTOR_ARMOR_MERCHANT);
       return;
@@ -517,7 +517,7 @@ static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
   facing = (s16)Object_GetById(ACTOR_PARTY_LEADER)->facing;
-  if (Engine_GameFlagIsSet(0x881) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
       Engine_ShopOpen(12, ACTOR_ITEM_MERCHANT);
       return;
@@ -562,7 +562,7 @@ static void Imil_TalkToInnkeeper(void) {
   } else {
     Engine_EventBegin();
     Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
-    if (GameFlag_IsSet(0x881) != 0) {
+    if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilItsAlmostTimeForLeave));
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
     } else {
@@ -592,7 +592,7 @@ static void Imil_TalkToApprentice(void) {
     Engine_SanctumOpen(ACTOR_APPRENTICE);
   } else {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x881) != 0) {
+    if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
       Event_ShowMessage(ACTOR_APPRENTICE, 0);
     } else if (GameFlag_IsSet(3) != 0) {
@@ -642,7 +642,7 @@ s32 Imil_Initialize(void) {
       Engine_ActorSetChildValue(21, 15);
       Object_GetById(21)->collisionFlags |= 8;
       Engine_ActorSetSpritePriority(21, 1);
-      if (Engine_GameFlagIsSet(0x881)) {
+      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
         Engine_MapRedraw();
@@ -676,12 +676,12 @@ s32 Imil_Initialize(void) {
         }
       }
     } else if (entrance == 2) {
-      if (!Engine_GameFlagIsSet(0x881)) {
+      if (!Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Object_GetById(11)->work = 1;
         Actor_SetActionScript(11, gImil_ShiverScript);
       }
     } else if (entrance == 4) {
-      if (Engine_GameFlagIsSet(0x881)) {
+      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(364), PIXELS(578));
         Engine_ActorSetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
         Object_GetById(ACTOR_WEAPON_MERCHANT)->collisionFlags |= 4;
@@ -698,7 +698,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, 5);
       }
     } else if (entrance == 3) {
-      if (Engine_GameFlagIsSet(0x881)) {
+      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_SetPosition(ACTOR_ITEM_MERCHANT, PIXELS(460), PIXELS(258));
         Engine_ActorSetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
         Object_GetById(ACTOR_ITEM_MERCHANT)->collisionFlags |= 4;
@@ -716,7 +716,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, 5);
       }
     } else if (entrance == 7) {
-      if (Engine_GameFlagIsSet(0x881)) {
+      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Object_GetById(ACTOR_SECOND_APPRENTICE)->facing =
             FACING_SOUTHEAST + FACING_STEP;
         if (!Engine_GameFlagIsSet(FLAG_IMIL_MIA_SAID_FAREWELL)) {

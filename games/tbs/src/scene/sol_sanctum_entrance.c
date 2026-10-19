@@ -500,13 +500,13 @@ s32 SolSanctumEntrance_Initialize(void) {
 // Restore the approach's rumbling, collision and actor positions.
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here (flag 0x144).
-  GameFlag_Set(0x144);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gEventWork->startTransition = 0x100;
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
   }
-  if (GameFlag_IsSet(0x879) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
     Map_CopyCellAttributes(5, 6, 1, 1, 6, 6);
     Map_CopyCellAttributes(5, 6, 1, 1, 7, 6);
     Map_CopyCellAttributes(5, 6, 1, 1, 8, 6);

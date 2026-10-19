@@ -383,7 +383,7 @@ s32 TolbiShipInteriors_SelectPlacements(void) {
         placementBytes[94] = 2;
       }
       return (s32)gTolbiShipInteriors_HoldPlacementsAtSea;
-    } else if (Engine_GameFlagIsSet(0x911) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
         gTolbiShipInteriors_HoldPlacements[0].talkFacing = 2;
         gTolbiShipInteriors_HoldPlacements[4].talkFacing = 2;
@@ -422,7 +422,7 @@ s32 TolbiShipInteriors_SelectPlacements(void) {
   case 5:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return (s32)gTolbiShipInteriors_CabinPlacementsArrived;
-    } else if (Engine_GameFlagIsSet(0x911) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (GameFlag_IsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
           gTolbiShipInteriors_CabinPlacementsWarriors[1].talkFacing = 1;
@@ -1391,7 +1391,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   s32 seanSpeaker;
   const s32 *action;
 
-  if (GameFlag_IsSet(0x911) == 0) {
+  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
     // Not yet: the party has not heard of the delay.
   } else {
     Engine_EventBegin();
@@ -2005,7 +2005,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
 // Restore the room or play the event selected by this entrance.
 s32 TolbiShipInteriors_ApplyEntryState(void) {
   Engine_TaskWait(1);
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   switch (gGameState.entrance) {
   case 1:
@@ -2014,7 +2014,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
         Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
       Engine_ActorSetChildValue(9, 2);
-    } else if (Engine_GameFlagIsSet(0x911) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Engine_ActorSetChildValue(12, 2);
     }
     break;
@@ -2033,7 +2033,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     break;
   case 5:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
-        Engine_GameFlagIsSet(0x911) != 0) {
+        Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Engine_ActorSetChildValue(13, 2);
     }
     break;
@@ -2170,7 +2170,7 @@ static void TolbiShipInteriors_SetUpCabin(void) {
   s32 heading;
   u16 zero;
 
-  if (!Engine_GameFlagIsSet(0x911)) {
+  if (!Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     TolbiShipInteriors_PlaceAnchorCharm();
     return;
   }
@@ -2251,7 +2251,7 @@ static void TolbiShipInteriors_SetUpHold(void) {
     return;
   }
 
-  if (Engine_GameFlagIsSet(0x911) != 0 &&
+  if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0 &&
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_ACTORS_13_AND_14, 0, 0);
     Engine_ActorSetPosition(12, 0, 0);
@@ -3533,7 +3533,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Engine_EventWait(10);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_PlayCue(MUS_063);
-  GameFlag_Set(0x11a);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(40);
   TolbiShipInteriors_Turn(3, 0x6000);

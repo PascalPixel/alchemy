@@ -746,7 +746,8 @@ static void Event_FreezePuddleB(void) {
 static void Event_ReadFirstStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
-  if (FLAG_CHECK(0x982) != 0 || FLAG_CHECK(0x983) != 0) {
+  if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
+      FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
   } else {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksIsaacSoulYe), 1);
@@ -1309,7 +1310,7 @@ s32 FieldScene_InitializeActorGroups(void) {
     switch (gGameState.entrance) {
     case 1:
     case 2:
-      if (FLAG_CHECK(0x982)) {
+      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
         Map_CopyCellsTo(18, 83, 9, 73, 3, 2);
         Map_CopyCellsTo(18, 81, 9, 75, 3, 2);
@@ -1318,7 +1319,7 @@ s32 FieldScene_InitializeActorGroups(void) {
         Map_CopyCellsTo(18, 83, 11, 78, 3, 2);
         Map_CopyCellsTo(18, 83, 13, 79, 3, 2);
       } else {
-        if (!FLAG_CHECK(0x983))
+        if (!FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
           break;
         Map_CopyCellsTo(121, 13, 74, 9, 5, 8);
         Map_CopyCellsTo(18, 85, 11, 74, 3, 2);
@@ -1343,9 +1344,9 @@ s32 FieldScene_InitializeActorGroups(void) {
     case 5:
     case 6:
     case 7:
-      if (FLAG_CHECK(0x982))
+      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         Map_CopyCells(23, 17, 1, 2, 30, 8);
-      if (FLAG_CHECK(0x983))
+      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         Map_CopyCells(23, 17, 1, 2, 32, 10);
       break;
     case 8:
@@ -1516,9 +1517,9 @@ s32 FieldScene_InitializeActorGroups(void) {
     case 9:
     case 10:
     case 11:
-      if (FLAG_CHECK(0x982))
+      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         Map_CopyCells(10, 30, 1, 2, 16, 30);
-      if (FLAG_CHECK(0x983))
+      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         Map_CopyCells(10, 30, 1, 2, 22, 30);
       FLAG_SET(0x973);
       break;

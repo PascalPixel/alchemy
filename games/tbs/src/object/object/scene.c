@@ -264,8 +264,9 @@ void Game_ResetForNewGame(s32 mode) {
     Scene_ResolveInteractionResult();
     if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
       // Flags 0x11a and 0x11b keep the music that is playing.
-      if (GameFlag_TestFar(0x11a) || GameFlag_TestFar(0x11b))
-        GameFlag_ClearBitFar(0x11a);
+      if (GameFlag_TestFar(FLAG_KEEP_MUSIC) ||
+          GameFlag_TestFar(FLAG_KEEP_MUSIC_HELD))
+        GameFlag_ClearBitFar(FLAG_KEEP_MUSIC);
       else
         Audio_PlayCueFromEventWork();
     } else if (gGameState.returnCue != -1) {
@@ -320,7 +321,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
     for (flag = 0x80; flag <= 0xdf; flag++)
       GameFlag_ClearBitFar(flag);
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
-    GameFlag_ClearBitFar(0x144);
+    GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
     GameFlag_ClearBitFar(0x161);
     GameFlag_ClearBitFar(0x123);
     GameFlag_ClearBitFar(FLAG_NOT_ON_MAP);

@@ -1436,13 +1436,13 @@ s32 MogallForest_Initialize(void) {
     case 13:
       Actor_SetActionScript(ACTOR_THIRD_AREA_EAST_APE,
                             gMogallForest_ActorScript);
-      if (Engine_GameFlagIsSet(0x893) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_NYUNPA_TAUGHT_FORCE) == 0) {
         break;
       }
       if (Engine_GameFlagIsSet(FLAG_MOGALL_FOREST_KILLER_APE_BEATEN) == 0) {
         break;
       }
-      Engine_GameFlagSet(0x88f);
+      Engine_GameFlagSet(FLAG_NYUNPA_ENLIGHTENED);
       break;
 
     case 15:

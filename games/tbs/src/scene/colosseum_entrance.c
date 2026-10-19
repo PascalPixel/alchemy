@@ -1053,7 +1053,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     ColosseumEntrance_WalkToEastExit();
     break;
   case 12:
-    Engine_GameFlagSet(324);
+    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     ColosseumEntrance_InitializeContestants();
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0)
       break;

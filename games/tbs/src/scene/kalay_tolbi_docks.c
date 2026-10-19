@@ -95,24 +95,24 @@ const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_KalayTolbiDocks1) {
-    if (Engine_GameFlagIsSet(0x93e) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayPlacementsShipGone;
     }
     return gKalayTolbiDocks_KalayPlacements;
   }
 
   if (scene == (s32)&SceneId_KalayTolbiDocks3) {
-    if (Engine_GameFlagIsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiPlacementsStranded;
     }
     return gKalayTolbiDocks_TolbiPlacements;
   }
 
   if (scene == (s32)&SceneId_KalayTolbiDocks2) {
-    if (Engine_GameFlagIsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TicketOfficePlacementsStranded;
     }
-    if (Engine_GameFlagIsSet(0x93e) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_TicketOfficePlacementsShipGone;
     }
     return gKalayTolbiDocks_TicketOfficePlacements;
@@ -139,24 +139,24 @@ const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_KalayTolbiDocks1) {
-    if (Engine_GameFlagIsSet(0x93e) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayEventsShipGone;
     }
     return gKalayTolbiDocks_KalayEvents;
   }
 
   if (scene == (s32)&SceneId_KalayTolbiDocks3) {
-    if (Engine_GameFlagIsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiEventsStranded;
     }
     return gKalayTolbiDocks_TolbiEvents;
   }
 
   if (scene == (s32)&SceneId_KalayTolbiDocks2) {
-    if (Engine_GameFlagIsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TicketOfficeEventsStranded;
     }
-    if (Engine_GameFlagIsSet(0x93e) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_TicketOfficeEventsShipGone;
     }
     return gKalayTolbiDocks_TicketOfficeEvents;
@@ -458,7 +458,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 // which leaves the tour's passengers stranded on the Tolbi docks.
 s32 KalayTolbiDocks_Initialize(void) {
   if (gGameState.entrance == 90) {
-    Engine_GameFlagSet(0x950);
+    Engine_GameFlagSet(FLAG_COLOSSO_OVER);
   }
   if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1) {
     KalayTolbiDocks_PrepareKalayDocks();
@@ -502,7 +502,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   u8 zero;
 
   KalayTolbiDocks_UpdateBlockCells();
-  if (GameFlag_IsSet(0x950)) {
+  if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
     Engine_ActorSetChildValue(12, 2);
   }
   if (gGameState.entrance == 3) {
@@ -536,7 +536,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     ((u8 *)actor->sprite)[9] |= 12;
     ((u8 *)actor->sprite)[21] |= 12;
   }
-  if (Engine_GameFlagIsSet(0x950)) {
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER)) {
     Map_CopyCellAttributes(18, 18, 1, 1, 14, 18);
     Map_CopyCellAttributes(18, 18, 1, 1, 15, 18);
   }

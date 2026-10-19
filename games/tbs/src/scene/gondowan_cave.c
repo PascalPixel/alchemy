@@ -83,7 +83,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
-    if (Engine_GameFlagIsSet(0x96f) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanCavePlacements1WithIodem;
     }
     return gGondowanCavePlacements1;
@@ -102,7 +102,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
-    if (Engine_GameFlagIsSet(0x96f) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanCaveEvents1WithIodem;
     }
     return gGondowanCaveEvents1;
@@ -206,8 +206,8 @@ static void Event_SoldierAsksAboutCrossing(void) {
   MESSAGE_SET(firstMessage);
   MESSAGE_OPEN(SOLDIER_1, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    if (Engine_GameFlagIsSet(0x950) != 0) {
-      if (Engine_GameFlagIsSet(0x96f) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
         // The shorter answer, without the advice to watch Colosso.
         MESSAGE_SET(firstMessage + 8);
       }
@@ -223,7 +223,8 @@ static void Event_SoldierAsksAboutCrossing(void) {
 // waits here, he grumbles that guard duty made him miss all of Colosso;
 // before, that the warriors fight while he guards the bridge.
 static void Event_ReadSoldierMind(void) {
-  if (Engine_GameFlagIsSet(0x950) != 0 && Engine_GameFlagIsSet(0x96f) == 0)
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0 &&
+      Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
     MESSAGE_SET(MsgKaragolWeMissedColossoBecauseWe);
   else
     MESSAGE_SET(MsgKaragolWarriorsHaveBeenFightingWhile);
@@ -391,7 +392,7 @@ s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.scene == (s32)&SceneId_GondowanCave1) {
-    FLAG_SET(0x144);
+    FLAG_SET(FLAG_RETREAT_BLOCKED);
     if (FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       OBJ_POS_SET(IODEM, 0, 0);
     }

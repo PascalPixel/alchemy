@@ -734,7 +734,7 @@ s32 Scene_Initialize(void) {
 
   // Later in the story (flag 0x87a, set in Kalay and the Lamakan Desert) the
   // town is replaced by its revisit scene.
-  if (Engine_GameFlagIsSet(0x87a) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     Engine_EventRequestExit(14);
   }
   // Restore the passage cells and the two walkers' proximity callbacks.

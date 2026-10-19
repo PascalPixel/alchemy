@@ -1971,7 +1971,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
 
   Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   // Retreat does not work here (flag 0x144).
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   ringActor = 15;
   do {
     Object_GetById(ringActor)->collisionFlags = 0;

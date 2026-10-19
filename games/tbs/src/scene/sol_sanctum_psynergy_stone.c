@@ -56,7 +56,7 @@ s32 Scene_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   // Retreat does not work here (flag 0x144).
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Resource37c_QueueSoundCue(SE_141);
     Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, decay);

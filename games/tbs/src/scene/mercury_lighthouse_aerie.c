@@ -126,7 +126,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseAerie1) {
-    Engine_GameFlagSet(0x144);
+    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon, 0xc80);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Engine_ActorSetSpritePriority(GARET, 1);

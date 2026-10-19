@@ -71,7 +71,7 @@ s32 Field_RunScene(s32 entrance) {
   work->walkingDistance = 0;
   if (gGameState.sceneVariant == 2) {
     work->walkingDistanceScale = 0;
-    GameFlag_SetBitFar(0x144);
+    GameFlag_SetBitFar(FLAG_RETREAT_BLOCKED);
   }
   work->previousTile = (struct MapCell *)Ram_MapCellBuffer;
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {

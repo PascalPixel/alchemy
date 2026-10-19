@@ -2394,7 +2394,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Object_GetById(9)->scaleX = -0x10000;
       // Flag 0x82b: Mia has run off to the lighthouse in Imil (imil.c);
       // until then she is not here and the door stays shut.
-      if (!Engine_GameFlagIsSet(0x82b)) {
+      if (!Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA)) {
         Engine_ActorSetPosition(MIA, 0, 0);
         Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));
         Engine_ActorSetSpritePriority(ACTOR_DOOR_STATUE, 1);

@@ -749,7 +749,7 @@ static void Event_ReachArena(void) {
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoLog, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoLog, 5);
-  Engine_GameFlagSet(0x11a);
+  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
 // Walking into something: unless it is an actor, it is checked.
@@ -780,7 +780,7 @@ s32 ColossoLog_Initialize(void) {
   s32 column;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_GameFlagSet(324);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   // Restore the scale pans, movable weight and supporting collision cells.
   FieldScheduler_AddCallback(ColossoLog_UpdateEastEndCollision, 3200);
   Map_CopyCellAttributes(74, 60, 8, 6, 120, 60);
@@ -975,14 +975,14 @@ s32 ColossoLog_Initialize(void) {
   case 4:
     ColossoLog_PlayPostBattleReunion(1);
     Engine_EventRequestExit(4);
-    Engine_GameFlagSet(2384);
-    Engine_GameFlagSet(2385);
+    Engine_GameFlagSet(FLAG_COLOSSO_OVER);
+    Engine_GameFlagSet(FLAG_WON_COLOSSO);
     break;
 
   case 5:
     ColossoLog_PlayPostBattleReunion(-1);
     Engine_EventRequestExit(5);
-    Engine_GameFlagSet(2384);
+    Engine_GameFlagSet(FLAG_COLOSSO_OVER);
     break;
   }
   return 0;

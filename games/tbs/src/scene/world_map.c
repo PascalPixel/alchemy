@@ -252,7 +252,7 @@ static s32
 WorldMap_ApplyMapRotationAndMode(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   WorldMap_ApplyMapRotation(interpreter);
-  if (Engine_GameFlagIsSet(0x847) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_COLLAPSED) != 0) {
     Object_SetMode(actor, 2);
   }
   return 1;
@@ -288,7 +288,7 @@ WorldMap_InitializeProgressMarker(struct ScriptInterpreter *interpreter) {
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ObjectSetPartPalettes(actor, 10);
   actor->collisionFlags = 0;
-  if (Engine_GameFlagIsSet(0x8A0) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_F1);
     actor->x.fixed = 0;
     actor->y.fixed = 0;
@@ -314,7 +314,7 @@ struct ScenePlacement *WorldMap_GetPlacements(void) {
     }
     break;
   case 64:
-    if (Engine_GameFlagIsSet(0x85a) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
       return gWorldMapPlacements64;
     }
     break;
@@ -468,7 +468,7 @@ static void WorldMap_UpdateLocationContacts(void) {
 // Walking onto this spot: the first time the travel scene plays, later it is
 // an ordinary entrance.
 static void Event_EnterTransferRoute(void) {
-  if (Engine_GameFlagIsSet(0x85a) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventRequestExit(101);
   } else {
     Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -504,14 +504,14 @@ s32 WorldMap_Initialize(void) {
     PartyInventory_Discard(242);
     Engine_EventRequestExit(112);
   } else {
-    Engine_GameFlagSet(FLAG_NO_RETREAT);
+    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     gEventWork->startTransition = 0x400;
     gEventWork->transitionFrames = 16;
     Engine_TaskWait(1);
     Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     FieldScheduler_AddCallback(WorldMap_UpdateLocationContacts, 0xc80);
-    if (Engine_GameFlagIsSet(0x90a) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_LAMAKAN_SAND_MONSTER_BEATEN) == 0) {
       FieldMap_SetWindowCellTile(128, 256, 176, 56);
     }
     // Each special entrance resumes its travel or story sequence.
@@ -533,7 +533,8 @@ s32 WorldMap_Initialize(void) {
           WorldMap_ActivateSite138(gWorldMapTriggerActor);
         }
       } else if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
-                 Engine_GameFlagIsSet(0x9b8) == 0) {
+                 Engine_GameFlagIsSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) ==
+                     0) {
         WorldMap_RunBlackOrbScene();
       }
       break;
@@ -544,7 +545,7 @@ s32 WorldMap_Initialize(void) {
       }
       break;
     case 64:
-      if (Engine_GameFlagIsSet(0x85a) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
         WorldMap_DepartWithTravelers();
       }
       break;
@@ -927,7 +928,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5848, 1576);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x85a);
+  GameFlag_Set(FLAG_GUARDS_SUSPECT_KALAY);
   Engine_EventRequestExit(3);
   Engine_EventEnd();
 }
@@ -1007,7 +1008,7 @@ static void WorldMap_TransferToExit102(void) {
   Actor_WalkToAndWait(8, 5288, 2328);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x927);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(102);
   Engine_EventEnd();
 }
@@ -1035,7 +1036,7 @@ static void WorldMap_TransferToExit103(void) {
   } while (actor->timer == 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x927);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(103);
   Engine_EventEnd();
 }
@@ -1063,7 +1064,7 @@ static void WorldMap_TransferToExit104(void) {
   } while (actor->timer == 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x927);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(104);
   Engine_EventEnd();
 }
@@ -1091,7 +1092,7 @@ static void WorldMap_TransferToTolbiShipInteriors(void) {
   } while (actor->timer == 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x927);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(105);
   Engine_EventEnd();
 }
@@ -1123,7 +1124,7 @@ static void WorldMap_TransferToExit106(void) {
   } while (actor->timer == 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x927);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(106);
   Engine_EventEnd();
 }
@@ -1147,8 +1148,8 @@ static void WorldMap_CompleteTransfer(void) {
   Actor_WalkToAndWait(8, 5064, 2328);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(0x93e);
-  GameFlag_Clear(0x927);
+  GameFlag_Set(FLAG_TOLBI_SHIP_REACHED_TOLBI);
+  GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(107);
   Engine_EventEnd();
 }
@@ -1523,7 +1524,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   BattleFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
-  Engine_GameFlagSet(0x9bf);
+  Engine_GameFlagSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE);
   gGameState.savedScene = (s32)&SceneId_WorldMap;
   gGameState.savedEntrance = 78;
   Engine_EventEnd();
@@ -2886,7 +2887,7 @@ struct ScenePlacement gWorldMapPlacements[] = {
         PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xa1, IF_FLAG_SET(0x8a0), (s32)gWorldMapPlacement1,
+    { 0xa1, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapPlacement1,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x121, FLAG_SCENE_TEMP_F1, (s32)gWorldMapPlacement3,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3054,7 +3055,7 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_EXIT, 138, CONDITION_ALWAYS, 33 },
     { EVENT_EXIT, 131, CONDITION_ALWAYS, 31 },
     { EVENT_TOUCH, 125, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassThroughFourthNorthSouthPassage) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(0x8a0), EVENT_SCRIPT(Event_LeaveEastward) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(Event_LeaveEastward) },
     { 0xc401, 75, CONDITION_ALWAYS, 75 },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), 54, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingTravelMarker) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 54, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_DouseTravelMarker) },

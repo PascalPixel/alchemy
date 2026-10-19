@@ -2,10 +2,11 @@
 #include "types.h"
 #include "field_obj.h"
 #include "songs.h"
+#include "flags.h"
 
 // The scene opens in the window transition over 16 frames. Once Mt. Aleph has
-// erupted (flag 0x814), the rooms rumble (SE_141), the map shakes without end
-// and sparkles start.
+// erupted (FLAG_SOL_SANCTUM_ERUPTED), the rooms rumble (SE_141), the map shakes
+// without end and sparkles start.
 s32 Scene_InitSceneRequestAndCameraZoom(void) {
   struct FieldWork *work;
 
@@ -16,7 +17,7 @@ s32 Scene_InitSceneRequestAndCameraZoom(void) {
   work = (struct FieldWork *)gEventWork;
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;
-  if (Engine_GameFlagIsSet(0x814) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     QueueSceneSound(SE_141);
     Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, shakeDecay);
     InitializeSceneRecordBuffer();

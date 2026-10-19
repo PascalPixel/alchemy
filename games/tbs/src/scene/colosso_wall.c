@@ -737,7 +737,7 @@ static void Event_ReachArena(void) {
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoWall, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoWall, 5);
-  Engine_GameFlagSet(0x11a);
+  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
 // Return the course's obstacle interactions and attendant dialogue.
@@ -781,7 +781,7 @@ s32 ColossoWall_Initialize(void) {
 
   gEventWork->startTransition = 0;
   // Restore the collision templates before applying saved puzzle progress.
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   Map_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   Map_CopyCellAttributes(48, 10, 5, 6, 120, 10);
   for (obstacleId = 26; obstacleId <= 30; obstacleId++) {

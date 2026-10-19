@@ -203,7 +203,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 s32 TolbiShipMast_Initialize(void) {
   struct FieldActor *leader;
 
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if ((Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING) != 0 ||
        Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) &&

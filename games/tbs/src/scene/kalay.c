@@ -915,7 +915,7 @@ static void Kalay_CatchTownNut(void) {
 s32 Kalay_Initialize(void) {
   s32 scene;
 
-  Engine_GameFlagSet(0x87a);
+  Engine_GameFlagSet(FLAG_REACHED_KALAY);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_Kalay1) {
     Kalay_PrepareTown();
@@ -941,8 +941,8 @@ static void Kalay_PrepareTown(void) {
 
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_GameFlagSet(0x321);
-    Engine_GameFlagSet(0x913);
-    Engine_GameFlagSet(0x912);
+    Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
+    Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(0x915);
   }
   if (Engine_GameFlagIsSet(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
@@ -983,15 +983,15 @@ static void Kalay_PrepareTown(void) {
 static void Kalay_PreparePalaceGate(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_GameFlagSet(0x321);
-    Engine_GameFlagSet(0x913);
-    Engine_GameFlagSet(0x912);
+    Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
+    Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(0x915);
   }
   if (Engine_GameFlagIsSet(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     Engine_GameFlagSet(0x321);
   }
   if (gGameState.entrance != 0) {
-    if (Engine_GameFlagIsSet(0x912) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
     }
   }

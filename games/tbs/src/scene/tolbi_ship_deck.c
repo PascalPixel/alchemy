@@ -574,7 +574,7 @@ u8 *TolbiShipDeck_GetPlacements(void) {
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
   if (afterFirstAttack != 0)
     return gTolbiShipDeckPlacementsAtSea;
-  if (Engine_GameFlagIsSet(0x911)) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
       STORE_CONST(gTolbiShipDeckPlacementsWaiting[13].talkFacing) =
           afterFirstAttack;
@@ -739,7 +739,7 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct FieldActor *record;
 
-  if (GameFlag_IsSet(0x911) != 0) {
+  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Actor_FaceActor(ACTOR_PARTY_LEADER, KALAY_CREWMAN, 10);
@@ -855,7 +855,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
 
-  if (GameFlag_IsSet(0x911) != 0) {
+  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
@@ -900,7 +900,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   u8 bits;
 
-  if (GameFlag_IsSet(0x911) != 0) {
+  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
@@ -993,7 +993,7 @@ s32 TolbiShipDeck_Initialize(void) {
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
-  Engine_GameFlagSet(0x144);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_71);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_72);
@@ -1076,7 +1076,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_SetUpUnderSail();
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     TolbiShipDeck_PlacePassengersAgreedToRow();
-  } else if (Engine_GameFlagIsSet(0x911) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     TolbiShipDeck_PlaceWaitingPassengers();
   }
 }

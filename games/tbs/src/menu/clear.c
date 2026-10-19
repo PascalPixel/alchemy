@@ -334,7 +334,7 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
 static s32 Clear_GetSaveRecoveryBlockMask(void) {
   s32 sceneDifference;
 
-  if (Engine_GameFlagIsSet(324) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
   if (gGameState.sceneVariant == 2) {

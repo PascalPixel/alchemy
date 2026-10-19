@@ -693,7 +693,7 @@ s32 Xian_Initialize(void) {
   }
   // Gone once she has found the road blocked (Alpine Crossing's
   // FLAG_FEIZHI_SAW_ROCKSLIDE).
-  if (Engine_GameFlagIsSet(0x8b0)) {
+  if (Engine_GameFlagIsSet(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
     Engine_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
   }
   // Keep the three decorative actors below the moving characters.

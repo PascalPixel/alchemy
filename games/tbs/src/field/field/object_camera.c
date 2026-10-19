@@ -224,7 +224,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
   Render_ResetTransformState();
-  if (GameFlag_TestFar(363)) {
+  if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
@@ -244,7 +244,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
       scale[0] = object->scaleX;
       scale[1] = object->scaleY;
       sprite = object->sprite;
-      if (GameFlag_TestFar(363)) {
+      if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
         scale[0] = fixedScale;
         scale[1] = fixedScale;
       }
@@ -254,7 +254,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
     case 2:
       groupScale[0] = object->scaleX;
       groupScale[1] = object->scaleY;
-      if (GameFlag_TestFar(363)) {
+      if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
         groupScale[0] = fixedScale;
         groupScale[1] = fixedScale;
       }

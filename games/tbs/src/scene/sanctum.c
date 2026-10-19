@@ -148,7 +148,7 @@ struct SceneEvent *Sanctum_GetEvents(void) {
     break;
   }
 
-  if (Engine_GameFlagIsSet(0x87a) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gSanctum_SceneTableF;
   }
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -1890,7 +1890,7 @@ static void Event_TalkToHealer(void) {
   }
 
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(0x87a) != 0)
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     Engine_EventSetMessage(MsgSanctumPathSolSanctumStillClosed);
   else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
     Engine_EventSetMessage(MsgSanctumMyControlOverPsynergyHas);

@@ -304,7 +304,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
   s16 entrance;
   struct FieldActor *pillar;
 
-  Engine_GameFlagSet(FLAG_NO_RETREAT);
+  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   Engine_TaskWait(1);
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_LIT);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_AERIE_WEST_SECTION_A), 0);
@@ -2005,7 +2005,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   VenusLighthouseAerie_PlayShebasFall();
-  GameFlag_Set(0x9a7);
+  GameFlag_Set(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
   Engine_EventRequestExit(AERIE_EXIT_AFTER_SHEBAS_FALL);
 }
 

@@ -120,7 +120,7 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
 // palace); Vale's villagers follow the storm and the story.
 struct SceneEvent *ValeBabi_GetEvents(void) {
   if (gGameState.entrance == 19) {
-    if (Engine_GameFlagIsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gValeBabi_ScholarsLaterEvents;
     }
     return gValeBabi_ScholarsEvents;

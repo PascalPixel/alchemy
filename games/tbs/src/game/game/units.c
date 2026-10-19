@@ -594,8 +594,8 @@ void Party_EndChildhood(void) {
   GameFlag_SetBit(0x901);
   Unit_UpdateClass(JENNA);
   UnitCalc(JENNA);
-  GameFlag_ClearBit(0x11b);
-  GameFlag_SetBit(0x11a);
+  GameFlag_ClearBit(FLAG_KEEP_MUSIC_HELD);
+  GameFlag_SetBit(FLAG_KEEP_MUSIC);
 
   for (owner = 0; owner <= 1; owner++) {
     struct BattleUnit *unit = UnitGet(owner);

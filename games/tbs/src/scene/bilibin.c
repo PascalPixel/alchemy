@@ -478,7 +478,8 @@ static void Bilibin_RestoreVillageActors(void) {
     }
   }
   Bilibin_UpdateVillageBlockCells();
-  if (GameFlag_IsSet(0x84a) != 0 && GameFlag_IsSet(0x84b) == 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
+      GameFlag_IsSet(FLAG_MCCOY_PALACE_VISITED) == 0) {
     GameFlag_Set(0x304);
   }
 }
@@ -572,7 +573,7 @@ static void Bilibin_RestoreRiverActors(void) {
     // Once 0x881 is set ("They crossed the river after pushing us down"), a
     // tree lies on its side at the crossing and Jill is in the water, or on the
     // bank where she was pulled ashore.
-    crossingState = GameFlag_IsSet(0x881);
+    crossingState = GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY);
     if (crossingState != 0) {
       Object_GetById(9)->collisionFlags |= 16;
       Object_GetById(16)->collisionFlags |= 16;
@@ -968,7 +969,7 @@ struct SceneEvent gBilibinEvents3[] = {
     { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
     { EVENT_TALK, JILL_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x881), MSGNO(MsgBilibinTheyCrossedTheRiverAfterPushing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgBilibinTheyCrossedTheRiverAfterPushing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyreSoHeavy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinOhItLooksLikeSheIs) },

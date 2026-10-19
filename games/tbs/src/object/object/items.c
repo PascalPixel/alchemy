@@ -136,7 +136,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
       GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
 
-      if (actionId == ABILITY_RETREAT && !GameFlag_TestFar(0x144)) {
+      if (actionId == ABILITY_RETREAT &&
+          !GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
         UiWork_PushValueSlotFar(itemId, 2);
         UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
         /* FAKEMATCH(temporary): the answer kept in partyIndex, which ranks it

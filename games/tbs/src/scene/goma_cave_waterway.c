@@ -26,6 +26,7 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 #include "item_ids.h"
 #include "ability_ids.h"
 
@@ -98,7 +99,7 @@ s32 Scene_Initialize(void) {
         stump = Object_GetById(STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
         Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        Engine_ActorSetAnimation(STUMP, 2);
+        OBJ_MODE(STUMP, 2);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -164,7 +165,7 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
     work->fields.field38 = 0x80000000;
   }
   work->fields.callback = (u32)GomaCaveWaterway_SpinStump;
-  Actor_SetSpeed(no, PIXELS(3), 3 * PIXELS(1) / 2);
+  OBJ_SPEED(no, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(no, 376, 288);
   work->fields.velocityY = 0xcccc;
   work->fields.mode = 3;
@@ -198,7 +199,7 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
   Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0,
                0x1c0000, &opt.fields);
   Engine_AudioPlayCue(SE_CAST);
-  Engine_ActorSetAnimation(no, 3);
+  OBJ_MODE(no, 3);
   Map_WaitWorkValuesBelow256();
 }
 

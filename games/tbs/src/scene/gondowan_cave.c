@@ -28,6 +28,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 
 // The first room's actors: the soldiers who guard the bridge, and Iodem.
 #define SOLDIER_1 8
@@ -121,9 +122,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 static void Event_IodemAsksWhyTurningBack(void) {
   struct FieldActor *leader;
 
-  if (GameFlag_IsSet(0x98a) == 0 &&
-      GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-    Engine_EventBegin();
+  if (FLAG_CHECK(0x98a) == 0 && FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+    EV_BEGIN();
     // Bring Iodem out of the party before opening his question.
     Engine_ActorSetSpeed(IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -132,19 +132,19 @@ static void Event_IodemAsksWhyTurningBack(void) {
     }
     Engine_ActorSetDestinationOffset(IODEM, -8, 16);
     Engine_ActorWaitForMove(IODEM);
-    Actor_FaceDirection(IODEM, FACING_NORTH + FACING_STEP, 0);
-    Engine_EventWait(10);
+    OBJ_DIR(IODEM, FACING_NORTH + FACING_STEP, 0);
+    WAIT(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IODEM, 0);
-    Engine_EventSetMessage(MsgKaragolWhyGoingBackIsaacDo);
+    MESSAGE_SET(MsgKaragolWhyGoingBackIsaacDo);
     Event_OpenMessage(IODEM, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       // "I see... In that case, I shall wait here for you to return." The
       // saved place becomes Tolbi's.
       Event_ShowMessage(IODEM, 0);
-      Actor_WalkTo(IODEM, 152, 232);
+      OBJ_WALK(IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
       Engine_ActorWaitForMove(IODEM);
-      Engine_ActorSetAnimation(IODEM, ANIM_STAND);
+      OBJ_MODE(IODEM, ANIM_STAND);
       gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
       gGameState.savedEntrance = 30;
     } else {
@@ -152,20 +152,20 @@ static void Event_IodemAsksWhyTurningBack(void) {
       // the party, and Isaac steps away from the trigger.
       gEventWork->message += 1;
       Event_ShowMessage(IODEM, 0);
-      Engine_ActorSetAnimation(IODEM, ANIM_WALK);
+      OBJ_MODE(IODEM, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
         Actor_SetDestination(IODEM, leader->x.part.pixel, leader->z.part.pixel);
       }
       Engine_ActorWaitForMove(IODEM);
-      Actor_SetPosition(IODEM, 0, 0);
-      Engine_EventWait(30);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      OBJ_POS_SET(IODEM, 0, 0);
+      WAIT(30);
+      OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
       Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
     }
-    Engine_EventEnd();
+    EV_END();
   }
 }
 
@@ -173,15 +173,15 @@ static void Event_IodemAsksWhyTurningBack(void) {
 // been waiting for you, Isaac! We should go to Babi Lighthouse soon." He
 // joins the party again.
 static void Event_IodemRejoins(void) {
-  Engine_EventBegin();
-  Engine_ActorFaceActor(IODEM, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IODEM, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Engine_EventWait(10);
+  EV_BEGIN();
+  OBJ_FACE(IODEM, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, IODEM, 0);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  WAIT(10);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IODEM, 0);
-  Engine_EventSetMessage(MsgKaragolIveBeenWaitingForIsaac);
-  Engine_EventShowMessage(IODEM, 0);
-  Engine_ActorSetAnimation(IODEM, ANIM_WALK);
+  MESSAGE_SET(MsgKaragolIveBeenWaitingForIsaac);
+  MESSAGE_PUT(IODEM, 0);
+  OBJ_MODE(IODEM, ANIM_WALK);
   {
     struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -191,9 +191,9 @@ static void Event_IodemRejoins(void) {
   }
   Engine_ActorWaitForMove(IODEM);
   Engine_ActorSetPosition(IODEM, 0, 0);
-  Engine_EventWait(20);
+  WAIT(20);
   Engine_GameFlagSet(FLAG_IODEM_FOLLOWING_PARTY);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Talking to the first soldier: "Do you wish to cross into Gondowan?" Yes:
@@ -203,19 +203,19 @@ static void Event_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
-  Engine_EventSetMessage(firstMessage);
-  Engine_EventOpenMessage(SOLDIER_1, 0);
+  MESSAGE_SET(firstMessage);
+  MESSAGE_OPEN(SOLDIER_1, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
       if (Engine_GameFlagIsSet(0x96f) == 0) {
         // The shorter answer, without the advice to watch Colosso.
-        Engine_EventSetMessage(firstMessage + 8);
+        MESSAGE_SET(firstMessage + 8);
       }
     }
-    Engine_EventShowMessage(SOLDIER_1, 0);
+    MESSAGE_PUT(SOLDIER_1, 0);
   } else {
     gEventWork->message++;
-    Engine_EventShowMessage(SOLDIER_1, 0);
+    MESSAGE_PUT(SOLDIER_1, 0);
   }
 }
 
@@ -224,10 +224,10 @@ static void Event_SoldierAsksAboutCrossing(void) {
 // before, that the warriors fight while he guards the bridge.
 static void Event_ReadSoldierMind(void) {
   if (Engine_GameFlagIsSet(0x950) != 0 && Engine_GameFlagIsSet(0x96f) == 0)
-    Engine_EventSetMessage(MsgKaragolWeMissedColossoBecauseWe);
+    MESSAGE_SET(MsgKaragolWeMissedColossoBecauseWe);
   else
-    Engine_EventSetMessage(MsgKaragolWarriorsHaveBeenFightingWhile);
-  Engine_EventShowMessage(SOLDIER_2, 0);
+    MESSAGE_SET(MsgKaragolWarriorsHaveBeenFightingWhile);
+  MESSAGE_PUT(SOLDIER_2, 0);
 }
 
 // Leaving the third room by its first exit (trigger 1). With temporary flag
@@ -236,19 +236,19 @@ static void Event_LeaveThroughEntrance(void) {
   struct EventWork *event;
 
   event = gEventWork;
-  Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_SCENE_TEMP_04) != 0) {
+  EV_BEGIN();
+  if (FLAG_CHECK(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     GameFlag_Clear(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
     GameFlag_Clear(0x9a4);
     GameFlag_Clear(0x9a6);
-    GameFlag_Set(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
-    GameFlag_Set(0x9a4);
+    FLAG_SET(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    FLAG_SET(0x9a4);
   }
   Engine_EventRequestExit(event->touchedTrigger);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into the second object from the east or the west (triggers 10
@@ -259,7 +259,7 @@ static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 // freeing the cell where it stood.
 static void Event_MoveFirstObject(void) {
   Object_GetById(FIRST_OBJECT);
-  Engine_EventBegin();
+  EV_BEGIN();
   {
     struct FieldActor *actor = Object_GetById(FIRST_OBJECT);
 
@@ -269,7 +269,7 @@ static void Event_MoveFirstObject(void) {
       Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE);
     }
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Pushing the second object (trigger 50): it moves a step, then may have
@@ -281,26 +281,26 @@ static void Event_PushSecondObject(void) {
 
 // Hide the second object and show the one that stands in for it in its place.
 static inline void GondowanCave_PlaceMovedSecondObject(s32 animation) {
-  Actor_SetPosition(SECOND_OBJECT, 0, 0);
-  Actor_SetPosition(SECOND_OBJECT_MOVED, PIXELS(696), PIXELS(288));
-  Engine_ActorSetAnimation(SECOND_OBJECT_MOVED, animation);
+  OBJ_POS_SET(SECOND_OBJECT, 0, 0);
+  OBJ_POS_SET(SECOND_OBJECT_MOVED, 696, 288);
+  OBJ_MODE(SECOND_OBJECT_MOVED, animation);
 }
 
 // Move on the second object, and after each push: past column 42 it drops
 // into its place for good.
 static void Event_MoveSecondObject(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   if ((Object_GetById(SECOND_OBJECT)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
 
     Map_CopyCellAttributes(108, 17, 1, 1, destinationCellX, destinationCellZ);
-    Engine_EventWait(8);
+    WAIT(8);
     GondowanCave_PlaceMovedSecondObject(3);
-    Event_PlayCue(SE_CAST);
-    GameFlag_Set(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    SE(SE_CAST);
+    FLAG_SET(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Unused empty actor callback retained with the overlay's routines.
@@ -345,7 +345,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
   Engine_AudioPlayCue(SE_136);
-  Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
+  OBJ_SPEED(actorId, PIXELS(2), PIXELS(1));
   Actor_SetDestination(actorId, 472, 288);
   actor->gravity = 4 * PIXELS(1) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -373,10 +373,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
-  Engine_ActorSetAnimation(actorId, 3);
+  OBJ_MODE(actorId, 3);
   Map_WaitWorkValuesBelow256();
-  Engine_EventWait(10);
-  Engine_ActorSetAnimation(actorId, 2);
+  WAIT(10);
+  OBJ_MODE(actorId, 2);
 }
 
 // Unused empty scene callback retained with the overlay's routines.
@@ -391,21 +391,21 @@ s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.scene == (s32)&SceneId_GondowanCave1) {
-    GameFlag_Set(0x144);
-    if (GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-      Actor_SetPosition(IODEM, 0, 0);
+    FLAG_SET(0x144);
+    if (FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+      OBJ_POS_SET(IODEM, 0, 0);
     }
   }
   if (gGameState.scene == (s32)&SceneId_GondowanCave3) {
     if (gGameState.entrance == 1) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
-    if (GameFlag_IsSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
-      Actor_SetPosition(FIRST_OBJECT, PIXELS(440), PIXELS(308));
-      Engine_ActorSetAnimation(FIRST_OBJECT, 2);
+    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
+      OBJ_POS_SET(FIRST_OBJECT, 440, 308);
+      OBJ_MODE(FIRST_OBJECT, 2);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
-    if (GameFlag_IsSet(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED) != 0) {
+    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED) != 0) {
       GondowanCave_PlaceMovedSecondObject(2);
     }
     actor = Actor_Get(12);

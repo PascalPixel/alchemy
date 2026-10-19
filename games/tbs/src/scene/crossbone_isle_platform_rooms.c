@@ -44,6 +44,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 
 #if TBS_PATCH_1
 #define CROSSBONE_PURSUER_STEP_Z 16
@@ -165,23 +166,23 @@ static s32 CrossboneIslePlatformRooms_FaceBaneTowardLeader(
 static void Event_BaneFirstEscape(void) {
   struct FieldActor *djinni;
 
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
-    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
-    Engine_EventBegin();
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
+    FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
+    EV_BEGIN();
     Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveToActor(BANE, 1);
     Engine_CameraWaitForMove();
-    Actor_FaceDirection(BANE, FACING_EAST, 20);
+    OBJ_DIR(BANE, FACING_EAST, 20);
     Actor_SetAttachedEffect(BANE, 0x102);
     Engine_ActorRunRepeatedMotion(15, 2);
-    Engine_EventWait(20);
-    Actor_SetSpeed(BANE, PIXELS(1), PIXELS(1) / 2);
-    Event_PlayCue(SE_152);
+    WAIT(20);
+    OBJ_SPEED(BANE, PIXELS(1), PIXELS(1) / 2);
+    SE(SE_152);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(BANE, 584, 680);
-    Actor_FaceDirection(BANE, FACING_SOUTH, 20);
-    Engine_EventEnd();
+    OBJ_DIR(BANE, FACING_SOUTH, 20);
+    EV_END();
   }
 }
 
@@ -192,50 +193,50 @@ static void Event_BaneSecondEscape(void) {
   s32 escapeComplete;
   struct FieldActor *jumpingDjinni;
 
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-    escapeComplete = GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
+    escapeComplete = FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
     if (escapeComplete == 0) {
-      GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
-      Engine_EventBegin();
+      FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
+      EV_BEGIN();
 
       // Focus on the Djinni before its next jump away.
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Engine_CameraMoveToActor(BANE, 1);
       Engine_CameraWaitForMove();
-      Actor_FaceDirection(BANE, FACING_SOUTH, 20);
+      OBJ_DIR(BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(BANE, 0x102);
       Engine_ActorRunRepeatedMotion(15, 2);
-      Engine_EventWait(20);
-      Actor_SetSpeed(BANE, PIXELS(1), PIXELS(1) / 2);
-      Event_PlayCue(SE_152);
+      WAIT(20);
+      OBJ_SPEED(BANE, PIXELS(1), PIXELS(1) / 2);
+      SE(SE_152);
       jumpingDjinni = Object_GetById(BANE);
       jumpingDjinni->velocityY = PIXELS(10);
       Actor_WalkToAndWait(BANE, 584, 664);
-      Actor_FaceDirection(BANE, FACING_SOUTH, 20);
+      OBJ_DIR(BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(BANE, 0x102);
-      Engine_EventWait(30);
+      WAIT(30);
 
       // Dash across the platforms, then shake the room on landing.
-      Actor_SetSpeed(BANE, PIXELS(8), PIXELS(1) / 4);
+      OBJ_SPEED(BANE, PIXELS(8), PIXELS(1) / 4);
       Actor_WalkToAndWait(BANE, 664, 664);
       Actor_WalkToAndWait(BANE, 744, 664);
       Actor_WalkToAndWait(BANE, 824, 664);
-      Engine_EventWait(10);
-      Event_PlayCue(SE_208);
+      WAIT(10);
+      SE(SE_208);
       Map_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
-      Engine_EventWait(20);
+      WAIT(20);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_EventWait(30);
+      WAIT(30);
 
       // Leave the Djinni tilted while its scale animation continues.
-      Actor_SetPosition(BANE, PIXELS(888), PIXELS(664));
+      OBJ_POS_SET(BANE, 888, 664);
       spinningDjinni = Object_GetById(BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
       ObjectDispatch_ApplyValueToChildren(spinningDjinni, 0);
       Engine_ObjectSetScript(spinningDjinni,
                              gCrossboneIslePlatformRooms_BaneSquashScript);
-      Engine_EventEnd();
+      EV_END();
     }
   }
 }
@@ -245,30 +246,30 @@ static void Event_BaneSecondEscape(void) {
 static void Event_BaneLastEscape(void) {
   struct FieldActor *djinni;
 
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
-      GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
-    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
-    Engine_EventBegin();
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
+      FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
+    FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
+    EV_BEGIN();
 
     // Restore the sprite before the last jump and winding escape path.
     djinni = Object_GetById(BANE);
     djinni->sprite->rotation = 0;
     ObjectDispatch_ApplyValueToChildren(djinni, 16);
-    Event_PlayCue(SE_152);
+    SE(SE_152);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(8);
-    Actor_FaceDirection(BANE, FACING_WEST, 30);
+    OBJ_DIR(BANE, FACING_WEST, 30);
     Actor_SetAttachedEffect(BANE, 0x102);
     Engine_ActorRunRepeatedMotion(15, 2);
-    Engine_EventWait(20);
-    Actor_SetSpeed(BANE, PIXELS(1), PIXELS(1) / 2);
-    Event_PlayCue(SE_152);
+    WAIT(20);
+    OBJ_SPEED(BANE, PIXELS(1), PIXELS(1) / 2);
+    SE(SE_152);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(4);
     Actor_WalkToAndWait(BANE, 880, 680);
-    Engine_EventWait(10);
+    WAIT(10);
     Actor_SetAttachedEffect(BANE, 0x101);
-    Actor_SetSpeed(BANE, PIXELS(2), PIXELS(1));
+    OBJ_SPEED(BANE, PIXELS(2), PIXELS(1));
     Actor_WalkToAndWait(BANE, 880, 696);
     Actor_WalkToAndWait(BANE, 882, 704);
     Actor_WalkToAndWait(BANE, 880, 712);
@@ -278,9 +279,9 @@ static void Event_BaneLastEscape(void) {
     Actor_WalkToAndWait(BANE, 880, 744);
     Actor_WalkToAndWait(BANE, 878, 752);
     Actor_WalkToAndWait(BANE, 880, 760);
-    Actor_SetPosition(BANE, PIXELS(856), PIXELS(824));
-    Engine_EventWait(10);
-    Actor_FaceDirection(BANE, FACING_NORTH, 20);
+    OBJ_POS_SET(BANE, 856, 824);
+    WAIT(10);
+    OBJ_DIR(BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(BANE, 0x100);
     djinni = Object_GetById(BANE);
 #ifdef UBFIX
@@ -289,7 +290,7 @@ static void Event_BaneLastEscape(void) {
     djinni->update = (void (*)(
         union FieldObject *))CrossboneIslePlatformRooms_FaceBaneTowardLeader;
 #endif
-    Engine_EventEnd();
+    EV_END();
   }
 }
 
@@ -326,9 +327,9 @@ static void Event_BaneKeepsAway(void) {
 
 // Halt on Bane: it freezes in place.
 static void Event_HaltBane(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(15, 0);
-  Engine_EventEnd();
+  EV_BEGIN();
+  OBJ_MODE(15, 0);
+  EV_END();
 }
 
 // Select events for the current platform room.
@@ -371,7 +372,7 @@ static void CrossboneIslePlatformRooms_OpenPassage(s32 passageInfo) {
 // Open the red-key passage, optionally playing its opening.
 static void CrossboneIslePlatformRooms_OpenPlatformPassage(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
-    Event_PlayCue(SE_GATE_MOVE);
+    SE(SE_GATE_MOVE);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Map_CopyCells(84, 29, 1, 3, 70, 49);
@@ -389,9 +390,9 @@ static void Event_UseRedKey(void) {
 
   leader = Object_GetById(0);
   if (leader->facing == FACING_NORTH) {
-    if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
+    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
       if (PartyInventory_FindOwner(ITEM_RED_KEY) != -1) {
-        GameFlag_Set(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
+        FLAG_SET(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
         CrossboneIslePlatformRooms_OpenPlatformPassage(PASSAGE_PLAY_OPENING);
         PartyInventory_Remove(ITEM_RED_KEY);
       }
@@ -477,13 +478,13 @@ static void Event_ShowRedKey(void) {
   Map_CopyCells(25, 45, 1, 2, 25, 48);
   if (Engine_GameFlagIsSet(0xeeb) == 0)
     Engine_ActorSetPosition(keyActorId, x, z);
-  Engine_EventWait(1);
+  WAIT(1);
 }
 
 // Reveal wears off: the Red Key's tile is hidden again.
 static void Event_HideRedKey(void) {
   Map_CopyCells(24, 48, 1, 2, 25, 48);
-  Actor_SetPosition(12, PIXELS(8), PIXELS(8));
+  OBJ_POS_SET(12, 8, 8);
 }
 
 // Collect the selected key, hide its actor and remember it was taken.
@@ -491,7 +492,7 @@ static inline void CrossboneIslePlatformRooms_CollectKey(s32 actorId,
                                                          s32 itemId,
                                                          s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_PartyGiveItem(itemId, 0);
   Engine_ActorSetPosition(actorId, 0, 0);
   Engine_GameFlagSet(collectedFlag);
@@ -529,7 +530,7 @@ static void CrossboneIslePlatformRooms_CheckFirstPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *event = gEventWork;
 
-  if (!GameFlag_IsSet(FLAG_SCENE_TEMP_20) && gGameState.cloaked == 0 &&
+  if (!FLAG_CHECK(FLAG_SCENE_TEMP_20) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != 8 && (u32)(column - 21) <= 2 && row >= 10 &&
       row <= 11) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_20);
@@ -541,23 +542,23 @@ static void CrossboneIslePlatformRooms_CheckFirstPursuerTrigger(void) {
 static void Event_DodgeFirstPursuer(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
-  Actor_SetSpeed(8, PIXELS(19) / 10, PIXELS(19) / 20);
-  Event_PlayCue(SE_188);
+  EV_BEGIN();
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
+  OBJ_SPEED(8, PIXELS(19) / 10, PIXELS(19) / 20);
+  SE(SE_188);
   leader = Object_GetById(0);
   if (leader != 0) {
     Actor_SetDestination(8, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(8);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-  Engine_EventWait(4);
-  Event_PlayCue(SE_188);
+  WAIT(4);
+  SE(SE_188);
   Actor_SetDestinationOffset(8, 0, CROSSBONE_PURSUER_STEP_Z);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetDestination(8, 360, 152);
   Engine_ActorWaitForMove(8);
-  Engine_EventEnd();
+  EV_END();
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
 
@@ -568,9 +569,9 @@ static void CrossboneIslePlatformRooms_CheckSecondPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *work = gEventWork;
 
-  if (GameFlag_IsSet(FLAG_SCENE_TEMP_20) == 0 && gGameState.cloaked == 0 &&
+  if (FLAG_CHECK(FLAG_SCENE_TEMP_20) == 0 && gGameState.cloaked == 0 &&
       gGameState.pausedObject != 9 && column == 10 && (u32)(row - 16) <= 2) {
-    GameFlag_Set(FLAG_SCENE_TEMP_20);
+    FLAG_SET(FLAG_SCENE_TEMP_20);
     SceneState_StoreStep(&work->raisedTrigger, 92);
   }
 }
@@ -579,23 +580,23 @@ static void CrossboneIslePlatformRooms_CheckSecondPursuerTrigger(void) {
 static void Event_DodgeSecondPursuer(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  Actor_SetSpeed(9, PIXELS(17) / 10, PIXELS(17) / 20);
-  Event_PlayCue(SE_188);
+  EV_BEGIN();
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJ_SPEED(9, PIXELS(17) / 10, PIXELS(17) / 20);
+  SE(SE_188);
   leader = Object_GetById(0);
   if (leader != 0) {
     Actor_SetDestination(9, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(9);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-  Event_PlayCue(SE_188);
-  Engine_EventWait(4);
+  SE(SE_188);
+  WAIT(4);
   Actor_SetDestinationOffset(9, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetDestination(9, 168, 264);
   Engine_ActorWaitForMove(9);
-  Engine_EventEnd();
+  EV_END();
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
 
@@ -644,24 +645,24 @@ static void Event_DodgeThirdPursuer(void) {
   struct FieldActor *leader;
 
   if (gGameState.pausedObject != 10) {
-    Engine_EventBegin();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    Actor_SetSpeed(10, PIXELS(17) / 10, PIXELS(17) / 20);
-    Event_PlayCue(SE_188);
+    EV_BEGIN();
+    OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+    OBJ_SPEED(10, PIXELS(17) / 10, PIXELS(17) / 20);
+    SE(SE_188);
     leader = Object_GetById(0);
     if (leader != 0) {
       Actor_SetDestination(10, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-    Engine_EventWait(4);
-    Event_PlayCue(SE_188);
+    WAIT(4);
+    SE(SE_188);
     Actor_SetDestinationOffset(10, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(10, 264, 360);
     Engine_ActorWaitForMove(10);
-    Engine_EventWait(10);
-    Engine_EventEnd();
+    WAIT(10);
+    EV_END();
   }
 }
 
@@ -671,8 +672,8 @@ static void Event_DodgeFourthPursuer(void) {
   s32 leaderColumn;
 
   if (gGameState.pausedObject != 11) {
-    Engine_EventBegin();
-    Actor_SetSpeed(0, PIXELS(17) / 10, PIXELS(17) / 20);
+    EV_BEGIN();
+    OBJ_SPEED(0, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_ActorSetSpeed(11, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_AudioPlayCue(SE_188);
     leaderColumn = Object_GetById(0)->x.fixed / PIXELS(16);
@@ -691,14 +692,14 @@ static void Event_DodgeFourthPursuer(void) {
     }
     Engine_ActorWaitForMove(11);
     Engine_ActorSetDestinationOffset(0, 0, CROSSBONE_LEADER_STEP_Z);
-    Engine_EventWait(4);
+    WAIT(4);
     Engine_AudioPlayCue(SE_188);
     Engine_ActorSetDestinationOffset(11, 0, 16);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetDestination(11, 344, 360);
     Engine_ActorWaitForMove(11);
-    Engine_EventWait(10);
-    Engine_EventEnd();
+    WAIT(10);
+    EV_END();
   }
 }
 
@@ -710,9 +711,9 @@ static void CrossboneIslePlatformRooms_CheckFifthPursuerTrigger(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
 
-  if (state->pausedObject != 12 && GameFlag_IsSet(FLAG_SCENE_TEMP_20) == 0 &&
+  if (state->pausedObject != 12 && FLAG_CHECK(FLAG_SCENE_TEMP_20) == 0 &&
       state->cloaked == 0 && column == 19 && (u32)(row - 15) <= 1) {
-    GameFlag_Set(FLAG_SCENE_TEMP_20);
+    FLAG_SET(FLAG_SCENE_TEMP_20);
     SceneState_StoreStep(&work->raisedTrigger, 96);
   }
 }
@@ -721,22 +722,22 @@ static void CrossboneIslePlatformRooms_CheckFifthPursuerTrigger(void) {
 static void Event_DodgeFifthPursuer(void) {
   struct FieldActor *leader;
 
-  Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  Actor_SetSpeed(12, PIXELS(17) / 10, PIXELS(17) / 20);
-  Event_PlayCue(SE_188);
+  EV_BEGIN();
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJ_SPEED(12, PIXELS(17) / 10, PIXELS(17) / 20);
+  SE(SE_188);
   leader = Object_GetById(0);
   if (leader != 0) {
     Actor_SetDestination(12, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(12);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-  Event_PlayCue(SE_188);
+  SE(SE_188);
   Actor_SetDestinationOffset(12, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetDestination(12, 312, 232);
   Engine_ActorWaitForMove(12);
-  Engine_EventEnd();
+  EV_END();
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
 
@@ -913,14 +914,14 @@ static void Event_PushFirstBlock(void) {
 // Detach the second block follower and restore the ladder cell.
 static void CrossboneIslePlatformRooms_ReleaseSecondBlockPlatform(void) {
   Scheduler_RemoveCallback(CrossboneIslePlatformRooms_FollowSecondBlock);
-  Actor_SetPosition(14, 0, 0);
-  if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) != 0) {
+  OBJ_POS_SET(14, 0, 0);
+  if (FLAG_CHECK(FLAG_SCENE_TEMP_07) != 0) {
     Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     Map_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }
   CrossboneIslePlatformRooms_PositionSecondBlockMapObject();
-  GameFlag_Set(FLAG_SCENE_TEMP_06);
+  FLAG_SET(FLAG_SCENE_TEMP_06);
 }
 
 // Release the second block platform when it reaches the ladder cell.
@@ -969,7 +970,7 @@ static void Event_UpdateThirdBlockTerrain(void) {
   s32 column = block->x.fixed / PIXELS(16);
   s32 row = block->z.fixed / PIXELS(16);
 
-  if (!GameFlag_IsSet(FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED) &&
+  if (!FLAG_CHECK(FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED) &&
       heightCells <= 2) {
     CrossboneIslePlatformRooms_RestoreThirdBlockWestCell();
     Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED);
@@ -1118,16 +1119,16 @@ UNUSED static void CrossboneIslePlatformRooms_UpdateItemIcons(void) {
   switch (gCrossboneIslePlatformRooms_IconTimer) {
   case 12:
     if (Engine_GameFlagIsSet(0xee7) == 0) {
-      Actor_SetPosition(8, PIXELS(232), PIXELS(872));
+      OBJ_POS_SET(8, 232, 872);
     }
     if (Engine_GameFlagIsSet(0xee8) == 0) {
-      Actor_SetPosition(9, PIXELS(296), PIXELS(824));
+      OBJ_POS_SET(9, 296, 824);
     }
     if (Engine_GameFlagIsSet(0xee9) == 0) {
-      Actor_SetPosition(10, PIXELS(328), PIXELS(760));
+      OBJ_POS_SET(10, 328, 760);
     }
     if (Engine_GameFlagIsSet(0xeea) == 0) {
-      Actor_SetPosition(11, PIXELS(360), PIXELS(872));
+      OBJ_POS_SET(11, 360, 872);
     }
     break;
   case 10:
@@ -1159,31 +1160,31 @@ static void CrossboneIslePlatformRooms_InitializeScene1(void) {
   Colosso_ShowItemIcon(10, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(9, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(8, ITEM_BLUE_KEY);
-  if (GameFlag_IsSet(0xee7) == 0) {
-    Actor_SetPosition(8, PIXELS(232), PIXELS(872));
+  if (FLAG_CHECK(0xee7) == 0) {
+    OBJ_POS_SET(8, 232, 872);
   }
-  if (GameFlag_IsSet(0xee8) == 0) {
-    Actor_SetPosition(9, PIXELS(296), PIXELS(824));
+  if (FLAG_CHECK(0xee8) == 0) {
+    OBJ_POS_SET(9, 296, 824);
   }
-  if (GameFlag_IsSet(0xee9) == 0) {
-    Actor_SetPosition(10, PIXELS(328), PIXELS(760));
+  if (FLAG_CHECK(0xee9) == 0) {
+    OBJ_POS_SET(10, 328, 760);
   }
-  if (GameFlag_IsSet(0xeea) == 0) {
-    Actor_SetPosition(11, PIXELS(360), PIXELS(872));
+  if (FLAG_CHECK(0xeea) == 0) {
+    OBJ_POS_SET(11, 360, 872);
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
     CrossboneIslePlatformRooms_OpenPassage(0);
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 1) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 1) != 0) {
     CrossboneIslePlatformRooms_OpenPassage(1);
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 2) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 2) != 0) {
     CrossboneIslePlatformRooms_OpenPassage(2);
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 3) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 3) != 0) {
     CrossboneIslePlatformRooms_OpenPassage(3);
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) != 0) {
     CrossboneIslePlatformRooms_OpenPlatformPassage(0);
   }
 }
@@ -1220,8 +1221,8 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
   FieldScheduler_AddCallback(CrossboneIslePlatformRooms_UpdateBlockPriorities,
                              0xc80);
   MapObject_SetPosition(107, 0, 0);
-  if (GameFlag_IsSet(0xed9) != 0) {
-    Engine_ActorSetAnimation(14, 2);
+  if (FLAG_CHECK(0xed9) != 0) {
+    OBJ_MODE(14, 2);
   }
   Event_UpdateFirstBlockTerrain();
   Event_UpdateSecondBlockTerrain();
@@ -1234,15 +1235,15 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
   Object_GetById(11)->motionFlags = 0;
   Object_GetById(12)->motionFlags = 0;
   CrossboneIslePlatformRooms_RepaintFourthAndFifthBlockCells();
-  if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) != 0) {
+  if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
     Event_FreezePuddle();
-    Engine_ActorSetAnimation(13, 5);
+    OBJ_MODE(13, 5);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-      Actor_SetPosition(BANE, PIXELS(856), PIXELS(824));
+  if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
+      OBJ_POS_SET(BANE, 856, 824);
       djinni = Object_GetById(BANE);
 #ifdef UBFIX
       djinni->update = CrossboneIslePlatformRooms_FaceBaneTowardLeader;
@@ -1250,15 +1251,15 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
       djinni->update = (void (*)(
           union FieldObject *))CrossboneIslePlatformRooms_FaceBaneTowardLeader;
 #endif
-    } else if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
-      Actor_SetPosition(BANE, PIXELS(888), PIXELS(664));
+    } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
+      OBJ_POS_SET(BANE, 888, 664);
       djinni = Object_GetById(BANE);
       djinni->sprite->rotation = 0;
       ObjectDispatch_ApplyValueToChildren(djinni, 16);
-    } else if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-      Actor_SetPosition(BANE, PIXELS(584), PIXELS(680));
+    } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
+      OBJ_POS_SET(BANE, 584, 680);
     } else {
-      Actor_SetPosition(BANE, PIXELS(584), PIXELS(664));
+      OBJ_POS_SET(BANE, 584, 664);
     }
   }
 }

@@ -37,6 +37,7 @@
 
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
@@ -56,7 +57,7 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 // Talking to Forge: the man beside it jumps in surprise, and the battle with
 // the Djinni begins.
 static void Event_FightForge(void) {
-  Actor_ShowEmote(WITNESS, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(WITNESS, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(WITNESS, 2, 0);
   Field_RequestDjinnBattle(FORGE, DJINNI_FORGE);
 }
@@ -166,7 +167,7 @@ static void Event_MoveWestPillar(void) {
   if (x < 0)
     x += 0xfffff;
   x >>= 20;
-  Engine_EventBegin();
+  EV_BEGIN();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
     Engine_GameFlagClear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
@@ -174,7 +175,7 @@ static void Event_MoveWestPillar(void) {
     GomaCavePillar_CopyWestPillarCells(24);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // While the stump teeters, dust falls from it: one fragment every eighth
@@ -267,7 +268,7 @@ static void Event_PushStumpOver(void) {
 
   stump = Object_GetById(STUMP);
   column = stump->x.fixed / PIXELS(16);
-  Engine_EventBegin();
+  EV_BEGIN();
   if (column == 25) {
     overlayActor = Object_GetById(11);
     zero = 0;
@@ -278,21 +279,21 @@ static void Event_PushStumpOver(void) {
     blendActor = Object_GetById(11);
     Engine_ObjectSetBlendMode(blendActor, 1);
     Engine_ActorSetPosition(11, PIXELS(414), PIXELS(240));
-    Engine_EventWait(10);
+    WAIT(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     FieldScheduler_AddCallback(fragmentCallback, 3200);
     Engine_AudioPlayCue(SE_141);
     Engine_ActorSetDestinationOffset(STUMP, 1, 0);
     Engine_ActorWaitForMove(STUMP);
-    Engine_EventWait(10);
+    WAIT(10);
     Engine_ActorSetDestinationOffset(STUMP, 2, 0);
     Engine_ActorWaitForMove(STUMP);
     bounceActor = Object_GetById(STUMP);
     bounceActor->bounce = zero;
     gravityActor = Object_GetById(STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
-    Engine_EventWait(3);
+    WAIT(3);
     // It tips over the edge.
     Engine_ActorSetSpeed(STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Engine_AudioPlayCue(SE_288);
@@ -300,7 +301,7 @@ static void Event_PushStumpOver(void) {
     movedActor = Object_GetById(STUMP);
     Engine_ActorSetSpriteFlags(movedActor, 0);
     Engine_TaskRemoveCallback(fragmentCallback);
-    Engine_EventWait(12);
+    WAIT(12);
     Engine_AudioPlayCue(SE_189);
     xSource = Object_GetById(STUMP);
     randomX = Engine_RandomNext();
@@ -322,7 +323,7 @@ static void Event_PushStumpOver(void) {
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
                                  fallingSpeed, style, zero);
-    Engine_EventWait(20);
+    WAIT(20);
     // It lands below; the shake dies down before the map cells change.
     Engine_AudioPlayCue(SE_CAST);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -333,7 +334,7 @@ static void Event_PushStumpOver(void) {
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
@@ -378,17 +379,17 @@ static void GomaCavePillar_SettleEastPillar(void) {
 
 // Move on the east pillar.
 static void Event_MoveEastPillar(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   GomaCavePillar_SettleEastPillar();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into the east pillar pushes it a step.
 static void Event_PushEastPillar(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
   GomaCavePillar_SettleEastPillar();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking west at the gap: the leader jumps across it. Later patches use the
@@ -411,7 +412,7 @@ static void Event_JumpGapWest(void) {
   destination->y = Object_GetById(0)->y.fixed;
   destination->z = Object_GetById(0)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
-    Engine_EventBegin();
+    EV_BEGIN();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_152);
@@ -426,7 +427,7 @@ static void Event_JumpGapWest(void) {
     Object_SetMode(leader, 6);
     Engine_ActorSetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
-    Engine_EventEnd();
+    EV_END();
   }
 #endif
 }
@@ -445,7 +446,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
-    Actor_FaceDirection(WITNESS, FACING_SOUTHEAST, 0);
+    OBJ_DIR(WITNESS, FACING_SOUTHEAST, 0);
     Engine_ActorShowEmote(WITNESS, 2, 0);
     break;
   case 180:
@@ -456,7 +457,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Engine_ActorJump(WITNESS, 4, 0);
     break;
   case 480:
-    Engine_ActorSetAnimation(WITNESS, ANIM_SHAKE_HEAD);
+    OBJ_MODE(WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
@@ -466,23 +467,23 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 // Raised once Forge is caught: the man is amazed, then walks off.
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
-  Engine_EventBegin();
-  Actor_ShowEmote(WITNESS, EMOTE_IN_FRONT, 30);
+  EV_BEGIN();
+  OBJ_EMOTE(WITNESS, EMOTE_IN_FRONT, 30);
   Engine_ActorRunRepeatedMotion(WITNESS, 2);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Engine_EventSetMessage(MsgGomaGotWowThatsPrettyImpressive);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+  MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);
   Event_ShowMessage(WITNESS, 0);
   Engine_ActorSetAnimationAndWait(WITNESS, ANIM_NOD);
-  Engine_EventWait(30);
+  WAIT(30);
   Object_GetById(EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpeed(WITNESS, PIXELS(2), PIXELS(1));
+  OBJ_SPEED(WITNESS, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(WITNESS, 600, 216);
   Actor_WalkToAndWait(WITNESS, 600, 248);
   Actor_WalkToAndWait(WITNESS, 568, 296);
-  Actor_SetPosition(WITNESS, 0, 0);
+  OBJ_POS_SET(WITNESS, 0, 0);
   Object_GetById(EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  GameFlag_Set(FLAG_GOMA_CAVE_WITNESS_LEFT);
-  Engine_EventEnd();
+  FLAG_SET(FLAG_GOMA_CAVE_WITNESS_LEFT);
+  EV_END();
 }
 
 // Put the pillars and the stump where the party left them. Entrance 99 shows
@@ -495,18 +496,18 @@ s32 Scene_Initialize(void) {
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 24;
   Object_GetById(STUMP)->collisionFlags |= 16;
-  if (GameFlag_IsSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
-    Actor_SetPosition(WEST_PILLAR, PIXELS(344), PIXELS(104));
+  if (FLAG_CHECK(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
+    OBJ_POS_SET(WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
-  if (GameFlag_IsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    Actor_SetPosition(STUMP, 0, 0);
+  if (FLAG_CHECK(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
+    OBJ_POS_SET(STUMP, 0, 0);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
-  if (GameFlag_IsSet(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
-    Actor_SetPosition(EAST_PILLAR, PIXELS(616), PIXELS(232));
+  if (FLAG_CHECK(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
+    OBJ_POS_SET(EAST_PILLAR, 616, 232);
     if (gGameState.entrance == 2 || gGameState.entrance == 3) {
       Object_GetById(EAST_PILLAR)->terrainId = 2;
       actor = Object_GetById(EAST_PILLAR);
@@ -519,11 +520,11 @@ s32 Scene_Initialize(void) {
   if (gGameState.entrance == 99) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Actor_SetPosition(STUMP, PIXELS(384), PIXELS(192));
-    Engine_EventWait(60);
+    OBJ_POS_SET(STUMP, 384, 192);
+    WAIT(60);
     Object_GetById(STUMP)->terrainId = 2;
     Actor_MoveToAndWait(STUMP, 408, 192);
-    Engine_EventWait(60);
+    WAIT(60);
     Event_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.

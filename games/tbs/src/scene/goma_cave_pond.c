@@ -20,6 +20,7 @@
 
 #include "field_event.h"
 #include "flags.h"
+#include "event.h"
 
 // The stump the party pushes over in the room above, lying in this room.
 #define FALLEN_STUMP 8
@@ -47,8 +48,8 @@ s32 Scene_Initialize(void) {
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    Actor_SetPosition(FALLEN_STUMP, PIXELS(216), PIXELS(136));
-    Engine_ActorSetAnimation(FALLEN_STUMP, 2);
+    OBJ_POS_SET(FALLEN_STUMP, 216, 136);
+    OBJ_MODE(FALLEN_STUMP, 2);
     Engine_ActorSetSpriteFlags(Object_GetById(FALLEN_STUMP), 0);
     Object_GetById(FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Object_GetById(FALLEN_STUMP)->collisionFlags = 0;

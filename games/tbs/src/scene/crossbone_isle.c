@@ -36,6 +36,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 
 // Forward declarations.
 static void CrossboneIsle_RestoreMovedRoomBlock(void);
@@ -131,11 +132,11 @@ static void CrossboneIsle_SpawnBlockMovedBurst(s32 objectId) {
 // party comes back to this room's entrance 5.
 static void Event_FightFinalGuards(void) {
 
-  Engine_EventBegin();
+  EV_BEGIN();
   Event_SetNextDestination(gGameState.scene, 5);
   Battle_SetStart(3);
   Field_RequestBattleFromEncounterTable(84, 5);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Choose the interactions for the current room.
@@ -162,12 +163,12 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 // Catch on the Nut circling in the first room: the party gets it.
 static void Event_CatchNut(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   Engine_ActorSetPosition(8, 0, 0);
   Engine_GameFlagSet(0xfd7);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Restore puzzle changes and handle returning from a guard battle.
@@ -185,18 +186,18 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   if (scene == (s32)&SceneId_CrossboneIsle5) {
-    if (GameFlag_IsSet(0xef7) == 0) {
+    if (FLAG_CHECK(0xef7) == 0) {
       Map_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       Map_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       MapObject_SetPosition(101, PIXELS(216), PIXELS(648));
     }
     if (gGameState.scene == scene) {
       if (gGameState.entrance != 5) {
-        if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED) == 0) {
+        if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED) == 0) {
           return 0;
         }
       }
-      GameFlag_Set(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED);
+      FLAG_SET(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED);
       Map_CopyCellAttributes(0, 1, 1, 1, 13, 30);
       MapObject_SetPosition(100, PIXELS(216), PIXELS(488));
       return 0;
@@ -208,7 +209,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(8)->targetX = PIXELS(129);
     FieldScene_RedrawActorFootprint(9);
     FieldScene_RedrawActorFootprint(10);
-    if (GameFlag_IsSet(FLAG_SCENE_TEMP_40) != 0) {
+    if (FLAG_CHECK(FLAG_SCENE_TEMP_40) != 0) {
       actor = Actor_Get(11);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -217,7 +218,7 @@ s32 Scene_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(304), PIXELS(368), 253);
     }
-    if (GameFlag_IsSet(FLAG_SCENE_TEMP_41) != 0) {
+    if (FLAG_CHECK(FLAG_SCENE_TEMP_41) != 0) {
       actor = Actor_Get(12);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -226,7 +227,7 @@ s32 Scene_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(80), PIXELS(368), 253);
     }
-    if (GameFlag_IsSet(FLAG_SCENE_TEMP_42) != 0) {
+    if (FLAG_CHECK(FLAG_SCENE_TEMP_42) != 0) {
       actor = Actor_Get(13);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -235,7 +236,7 @@ s32 Scene_Initialize(void) {
       }
       Field_SetMapCellCollision(0, PIXELS(96), PIXELS(336), 253);
     }
-    if (GameFlag_IsSet(FLAG_SCENE_TEMP_43) != 0) {
+    if (FLAG_CHECK(FLAG_SCENE_TEMP_43) != 0) {
       actor = Actor_Get(14);
       if (actor != 0) {
         actor->collisionFlags = 0;
@@ -245,7 +246,7 @@ s32 Scene_Initialize(void) {
       Field_SetMapCellCollision(0, PIXELS(144), PIXELS(320), 253);
       Field_SetMapCellCollision(0, PIXELS(752), PIXELS(320), 253);
     }
-    if (GameFlag_IsSet(0xfd7) != 0) {
+    if (FLAG_CHECK(0xfd7) != 0) {
       return 0;
     }
     InitializeStagedActorSceneOrbitingEffect(8);
@@ -254,7 +255,7 @@ s32 Scene_Initialize(void) {
   // Rooms 6-14 share the guard, moved-block, and return-entrance protocol.
   first = (s32)&SceneId_CrossboneIsle6;
   if (current == first) {
-    if (GameFlag_IsSet(0xef4) == 0) {
+    if (FLAG_CHECK(0xef4) == 0) {
       Map_CopyCellAttributes(0, 0, 1, 1, 37, 10);
       MapObject_SetPosition(100, PIXELS(600), PIXELS(168));
     }
@@ -278,11 +279,11 @@ static void CrossboneIsle_RestoreMovedRoomBlock(void) {
   s32 cleared;
 
   actor = Actor_Get(8);
-  cleared = GameFlag_IsSet(
-      (gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                           (s32)&SceneId_CrossboneIsle6)));
+  cleared =
+      FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                      (s32)&SceneId_CrossboneIsle6)));
   if (cleared != 0) {
-    Actor_SetPosition(8, PIXELS(650), PIXELS(168));
+    OBJ_POS_SET(8, 650, 168);
     actor->y.fixed = -PIXELS(32);
     Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
     Engine_ActorSetSpritePriority(8, 3);
@@ -324,10 +325,10 @@ static void Event_MoveBlock(void) {
   // Play the moved-block reaction before hiding it and opening the passage.
   block->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
-  Engine_EventWait(8);
+  WAIT(8);
   CrossboneIsle_SpawnBlockMovedBurst(8);
   Engine_AudioPlayCue(SE_136);
-  Engine_EventWait(40);
+  WAIT(40);
 
   Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
   Engine_ActorSetSpritePriority(8, 3);
@@ -350,9 +351,9 @@ static void Event_MoveBlock(void) {
 
 // Walking into a guarded room's block (trigger 20): push it a step.
 static void Event_PushBlock(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
-  Engine_EventEnd();
+  EV_END();
   Event_MoveBlock();
 }
 
@@ -370,7 +371,7 @@ static void Event_EnterGuardedRoom(void) {
   if (Engine_GameFlagIsSet(gGameState.scene +
                            (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
                             (s32)&SceneId_CrossboneIsle6)) == 0) {
-    Engine_EventBegin();
+    EV_BEGIN();
     Event_SetNextDestination(gGameState.scene, 5);
     Battle_SetStart(3);
     // The first four rooms use encounter table 63; the next five use 84.
@@ -403,7 +404,7 @@ static void Event_EnterGuardedRoom(void) {
       Field_RequestBattleFromEncounterTable(84, 4);
       break;
     }
-    Engine_EventEnd();
+    EV_END();
   } else {
     Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
     Engine_AudioPlayCue(SE_183);
@@ -414,17 +415,17 @@ static void Event_EnterGuardedRoom(void) {
 // Back from beating a room's guards: the door opens, and the party walks
 // through.
 static void CrossboneIsle_LeaveClearedRoom(void) {
-  Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  EV_BEGIN();
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
-                                    (s32)&SceneId_CrossboneIsle6)));
-  Engine_EventWait(30);
+  FLAG_SET((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
+                                (s32)&SceneId_CrossboneIsle6)));
+  WAIT(30);
   Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   Engine_EventRequestExit(3);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Growth on the first plant (actor 11): it grows, and its cell can be crossed.
@@ -514,27 +515,27 @@ static void Event_BlowAwayIvy18(void) {
 static void CrossboneIsle_RestoreIvy(void) {
   struct FieldActor *actor;
 
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-    Actor_SetPosition(15, PIXELS(968), PIXELS(968));
+    OBJ_POS_SET(15, 968, 968);
   } else {
     actor = Actor_Get(15);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
-    Actor_SetPosition(16, PIXELS(968), PIXELS(968));
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
+    OBJ_POS_SET(16, 968, 968);
   } else {
     actor = Actor_Get(16);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
-    Actor_SetPosition(17, PIXELS(968), PIXELS(968));
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
+    OBJ_POS_SET(17, 968, 968);
   } else {
     actor = Actor_Get(17);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
-  if (GameFlag_IsSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
-    Actor_SetPosition(18, PIXELS(968), PIXELS(968));
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
+    OBJ_POS_SET(18, 968, 968);
   } else {
     actor = Actor_Get(18);
     actor->scaleY = 8 * Q16_ONE / 5;
@@ -546,11 +547,11 @@ static void CrossboneIsle_RestoreIvy(void) {
 static void Event_PushFirstRoomBlock(void) {
   struct StagedActorProbe probe;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Move the selected actor and puzzle block by the same pixel offset.
@@ -563,7 +564,7 @@ static void CrossboneIsle_MoveSelectedActorAndBlock(s32 actorId, s32 xOffset,
 
   selectedActor = Object_GetById(gGameState.selectedActor);
   block = Object_GetById(actorId);
-  Engine_EventBegin();
+  EV_BEGIN();
   {
     fixedX = ((selectedActor->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
@@ -596,7 +597,7 @@ static void CrossboneIsle_MoveSelectedActorAndBlock(s32 actorId, s32 xOffset,
   Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(selectedActor);
   Engine_AudioPlayCue(SE_288);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Draw the three-cell horizontal footprint centered on this block.
@@ -647,8 +648,8 @@ static void CrossboneIsle_DrawVerticalBlockFootprint(s32 actorId,
 
 // Run the two animation changes used when touching a puzzle block.
 static void CrossboneIsle_AnimateTouchedBlock(int actorId) {
-  Engine_ActorSetAnimation(actorId, 1);
-  Engine_ActorSetAnimation(actorId, 2);
+  OBJ_MODE(actorId, 1);
+  OBJ_MODE(actorId, 2);
 }
 
 // Draw all twelve block footprints in the sliding-block room.
@@ -726,7 +727,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
 #endif
     s32 movingFlags;
 
-    Engine_EventBegin();
+    EV_BEGIN();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_152);
@@ -751,7 +752,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
     *motionFlags = (u8)savedMotionFlags;
-    Engine_EventEnd();
+    EV_END();
     return 1;
   }
   return 0;

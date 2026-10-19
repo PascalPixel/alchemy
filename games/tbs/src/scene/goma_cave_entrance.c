@@ -32,6 +32,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 #include "item_ids.h"
 
 // The room's actors: Garet and Ivan take their party slots, the rest follow
@@ -98,8 +99,8 @@ struct Item_387 {
 
 // Show the next message over the speaker, then pause.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
-  Engine_EventShowMessage(actorId, 0);
-  Engine_EventWait(frames);
+  MESSAGE_PUT(actorId, 0);
+  WAIT(frames);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -128,10 +129,10 @@ static void Event_MoveWestPillar(void) {
     Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
   } else if (column == 16) {
     Map_CopyCellAttributes(48, 18, 1, 2, column, 18);
-    GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
+    FLAG_SET(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   } else {
     Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
-    GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
+    FLAG_SET(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   }
 }
 
@@ -144,7 +145,7 @@ static void Event_MoveEastPillar(void) {
   pillar = Object_GetById(EAST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   if (column == 23) {
-    Engine_EventWait(10);
+    WAIT(10);
     Object_GetById(EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Object_GetById(EAST_PILLAR)->motionFlags = 0;
     Engine_ActorSetSpriteFlags(Object_GetById(EAST_PILLAR), 0);
@@ -160,23 +161,23 @@ static void Event_PushWestPillar(void) {
   s32 offsetX;
 
   work = gEventWork;
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
-  Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-  Actor_SetSpeed(WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Event_PlayCue(SE_185);
+  EV_BEGIN();
+  OBJ_MODE(ACTOR_PARTY_LEADER, 8);
+  WAIT(20);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  OBJ_SPEED(WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
+  SE(SE_185);
   // 16 pixels east from trigger 5, west from trigger 6.
   offsetX = (11 - (work->touchedTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(WEST_PILLAR, offsetX, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorWaitForMove(WEST_PILLAR);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  WAIT(20);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_MoveWestPillar();
   BattleFx_PlayQueuedSound();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Reserved overlay hook; no current scene calls it.
@@ -187,9 +188,9 @@ UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
 // Whirlwind on the other ivy: it is blown away for good.
 static void Event_BlowAwayIvy(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
-  Engine_EventEnd();
+  EV_END();
 }
 
 const struct SceneEvent *Scene_GetEvents(void) {
@@ -203,9 +204,9 @@ s32 Scene_Initialize(void) {
   s32 v5;
 
   Engine_GameFlagSet(0x144);
-  Engine_EventWait(10);
+  WAIT(10);
   BattleFx_SetQueuedSoundAndPlay(SE_170);
-  Engine_ActorSetAnimation(11, 2);
+  OBJ_MODE(11, 2);
   Object_GetById(11)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
     struct FieldActor *record = Object_GetById(STUMP);
@@ -224,17 +225,17 @@ s32 Scene_Initialize(void) {
     Engine_ActorSetPosition(STUMP, PIXELS(136), PIXELS(196));
     Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     v5 = 12;
-    Engine_ActorSetAnimation(STUMP, 2);
+    OBJ_MODE(STUMP, 2);
     Map_CopyCellAttributes(39, 12, 3, 1, 8, v5);
     Map_CopyCellAttributes(43, 11, 3, 1, v5, 11);
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
-    Actor_SetPosition(WEST_PILLAR, PIXELS(264), PIXELS(312));
+    OBJ_POS_SET(WEST_PILLAR, 264, 312);
     Map_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
     if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) !=
         0) {
-      Actor_SetPosition(WEST_PILLAR, PIXELS(280), PIXELS(312));
+      OBJ_POS_SET(WEST_PILLAR, 280, 312);
       Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
     }
   }
@@ -261,202 +262,202 @@ static void Event_IvanRejoins(void) {
 #if TBS_PATCH_1
   BattleFx_PlayQueuedSound();
 #endif
-  Engine_EventBegin();
-  Engine_EventWait(30);
-  Engine_EventSetMessage(MsgGomaNoUsePsynergy);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  Actor_SetSpeed(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
+  EV_BEGIN();
+  WAIT(30);
+  MESSAGE_SET(MsgGomaNoUsePsynergy);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJ_SPEED(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(GARET, 264, 168);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Engine_EventWait(20);
+  OBJ_DIR(GARET, FACING_SOUTHWEST, 20);
+  WAIT(20);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-  Engine_EventWait(20);
+  WAIT(20);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_EventWait(20);
-  if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  WAIT(20);
+  if (FLAG_CHECK(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
-    Engine_ActorSetAnimation(GARET, ANIM_WALK);
+    OBJ_MODE(GARET, ANIM_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(GARET);
-    Actor_SetPosition(GARET, 0, 0);
-    Engine_EventEnd();
+    OBJ_POS_SET(GARET, 0, 0);
+    EV_END();
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
-    Actor_SetPosition(IVAN, PIXELS(360), PIXELS(248));
-    Actor_SetSpeed(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    OBJ_POS_SET(IVAN, 360, 248);
+    OBJ_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkToAndWait(IVAN, 272, 248);
     Actor_WalkToAndWait(IVAN, 272, 208);
-    Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
+    OBJ_DIR(IVAN, FACING_NORTHWEST, 20);
     Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
+    WAIT(20);
     Event_ShowMessageAndWait(IVAN, 0, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-    Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 60);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+    OBJ_DIR(GARET, FACING_SOUTH, 0);
+    WAIT(20);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     Actor_WalkToAndWait(IVAN, 264, 200);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 168);
+    OBJ_WALK(ACTOR_PARTY_LEADER, 248, 168);
     Actor_WalkToAndWait(IVAN, 248, 184);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
     Actor_WalkToAndWait(IVAN, 232, 184);
-    Engine_EventWait(20);
-    Actor_ShowEmote(IVAN, 0x105, 60);
-    Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
+    WAIT(20);
+    OBJ_EMOTE(IVAN, 0x105, 60);
+    OBJ_DIR(IVAN, FACING_NORTHEAST, 20);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
-    Engine_EventWait(20);
+    WAIT(20);
     Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-    Engine_EventWait(20);
-    Actor_FaceDirection(IVAN, FACING_WEST, 20);
+    WAIT(20);
+    OBJ_DIR(IVAN, FACING_WEST, 20);
     Event_ShowMessageAndWait(IVAN, 0, 120);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(GARET, 0x105, 60);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x105, 0);
+    OBJ_EMOTE(GARET, 0x105, 60);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
-    Engine_EventWait(60);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-    Engine_EventWait(60);
-    Actor_ShowEmote(IVAN, 0x106, 0);
+    WAIT(60);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
+    WAIT(60);
+    OBJ_EMOTE(IVAN, 0x106, 0);
     Engine_ActorStartRepeatedMotion(IVAN, 1);
-    Engine_EventWait(30);
+    WAIT(30);
     Event_ShowMessageAndWait(IVAN, 0, 30);
-    Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
+    OBJ_DIR(IVAN, FACING_NORTHEAST, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
+    WAIT(20);
     Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-    Engine_EventWait(20);
+    WAIT(20);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Engine_EventWait(20);
-    Actor_FaceDirection(IVAN, FACING_WEST, 20);
+    WAIT(20);
+    OBJ_DIR(IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
-    Engine_ActorSetAnimation(IVAN, ANIM_STAND);
-    Engine_EventWait(20);
+    OBJ_MODE(IVAN, ANIM_STAND);
+    WAIT(20);
 #if TBS_PATCH_1
     BattleFx_PlayQueuedSound();
 #endif
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 60);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 60);
     Engine_ActorJump(GARET, 2, 0);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(GARET, 20);
     Actor_WalkToAndWait(IVAN, 264, 184);
-    Engine_EventWait(10);
+    WAIT(10);
     Actor_FaceActor(IVAN, GARET, 0);
     Actor_FaceActor(GARET, IVAN, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-    Engine_EventWait(20);
+    WAIT(20);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 60);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(GARET, 0x105, 60);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(GARET, 0x101, 0);
-    Engine_EventWait(60);
-    Actor_FaceDirection(GARET, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Engine_EventWait(60);
-    Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    Engine_EventWait(10);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x105, 0);
+    OBJ_EMOTE(GARET, 0x105, 60);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
+    OBJ_EMOTE(GARET, 0x101, 0);
+    WAIT(60);
+    OBJ_DIR(GARET, FACING_WEST, 0);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    WAIT(60);
+    OBJ_DIR(GARET, FACING_SOUTH, 0);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+    WAIT(10);
     GomaCaveEntrance_SayThenWait(GARET, 20);
-    Actor_ShowEmote(IVAN, 0x105, 0);
-    Engine_EventWait(60);
+    OBJ_EMOTE(IVAN, 0x105, 0);
+    WAIT(60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Actor_ShowEmote(GARET, 0x102, 0);
-    Engine_EventWait(60);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x102, 0);
+    OBJ_EMOTE(GARET, 0x102, 0);
+    WAIT(60);
     Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 30);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(GARET, 0x101, 0);
-    Engine_EventWait(80);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
+    OBJ_EMOTE(GARET, 0x101, 0);
+    WAIT(80);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorStartRepeatedMotion(GARET, 1);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Actor_SetAttachedEffect(GARET, 0x102);
-    Engine_EventWait(60);
+    WAIT(60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Actor_FaceDirection(GARET, FACING_WEST, 0);
-    Engine_EventWait(80);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    OBJ_DIR(GARET, FACING_WEST, 0);
+    WAIT(80);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
-    Engine_EventWait(30);
+    WAIT(30);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 30);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
+    WAIT(20);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 40);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-    Engine_EventWait(20);
+    WAIT(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
     Event_PrepareObjectAndApplyValue(IVAN, 1);
-    Engine_EventWait(60);
+    WAIT(60);
     GomaCaveEntrance_GiveShamansRod();
     Engine_ActorRunRepeatedMotion(IVAN, 1);
-    Engine_EventWait(20);
+    WAIT(20);
     Actor_WalkToAndWait(IVAN, 248, 184);
-    Engine_EventWait(20);
+    WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Actor_FaceDirection(GARET, FACING_WEST, 0);
-    Engine_EventWait(120);
+    OBJ_DIR(ACTOR_PARTY_LEADER, FACING_WEST, 0);
+    OBJ_DIR(GARET, FACING_WEST, 0);
+    WAIT(120);
     GomaCaveEntrance_SayThenWait(IVAN, 30);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
     Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Engine_ActorSetAnimation(GARET, ANIM_NOD);
+    WAIT(20);
+    OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+    OBJ_MODE(GARET, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Engine_EventWait(50);
-    Actor_SetSpeed(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    Actor_SetSpeed(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    Actor_WalkTo(GARET, 248, 168);
+    WAIT(50);
+    OBJ_SPEED(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    OBJ_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    OBJ_WALK(GARET, 248, 168);
     Actor_WalkToAndWait(IVAN, 248, 168);
-    Actor_SetPosition(IVAN, 0, 0);
+    OBJ_POS_SET(IVAN, 0, 0);
     Engine_ActorWaitForMove(GARET);
-    Actor_SetPosition(GARET, 0, 0);
+    OBJ_POS_SET(GARET, 0, 0);
     Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
-    GameFlag_Set(FLAG_GOMA_CAVE_IVAN_REJOINED);
-    Engine_EventEnd();
+    FLAG_SET(FLAG_GOMA_CAVE_IVAN_REJOINED);
+    EV_END();
   }
 }
 
@@ -466,7 +467,7 @@ static void Event_MoveStump(void) {
   s32 depth;
   struct OverlayActorState *state;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   depth =
       ((struct OverlayActorPosition *)Object_GetById(STUMP))->depthFixed >> 20;
   if (depth == 11) {
@@ -477,7 +478,7 @@ static void Event_MoveStump(void) {
     Map_CopyCellAttributes(43, 11, 3, 1, 12, depth);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Ivan casts Whirlwind on the stump's ivy, and the scene waits for it.
@@ -532,7 +533,7 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
     actor->hover = 0x80000000;
   }
   actor->callback = (s32)GomaCaveEntrance_SpinStump;
-  Actor_SetSpeed(id, PIXELS(3), 3 * PIXELS(1) / 2);
+  OBJ_SPEED(id, PIXELS(3), 3 * PIXELS(1) / 2);
   Engine_ActorSetDestination(id, 160, 192);
   actor->accel = 0xcccc;
   actor->layer = 3;
@@ -564,7 +565,7 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
   p->targetScaleY = 0x13333;
   Effect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0, 0x1c0000, p);
   Engine_AudioPlayCue(SE_CAST);
-  Engine_ActorSetAnimation(id, 3);
+  OBJ_MODE(id, 3);
   Engine_MapWaitWorkValuesBelow256();
 }
 

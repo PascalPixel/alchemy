@@ -1428,24 +1428,25 @@ static void ValeHome_UpdateActor20Psynergy(void) {
   ValeHome_CyclePsynergyPalette(Object_GetById(20));
 }
 
-// Set this edition's progress preset and leave through exit 40.
+// Arriving by entrance 99, a debug entrance: set a preset of story flags,
+// which differs by edition, and leave by exit 40.
 static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(352);
   Engine_GameFlagSet(0x16d);
 #if TBS_PATCH_3
-  Engine_GameFlagSet(0x830);
-  Engine_GameFlagSet(0x831);
-  Engine_GameFlagSet(0x832);
-  Engine_GameFlagSet(0x833);
-  Engine_GameFlagSet(0x835);
-  Engine_GameFlagSet(0x836);
-  Engine_GameFlagSet(0x837);
-  Engine_GameFlagSet(0x838);
+  Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
+  Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
+  Engine_GameFlagSet(FLAG_VALE_STORM_THIRD_ROCK_FELL);
+  Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
+  Engine_GameFlagSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
+  Engine_GameFlagSet(FLAG_VALE_STORM_HEARD_GARET);
+  Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
+  Engine_GameFlagSet(FLAG_VALE_BOULDER_FELL);
   Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
-  Engine_GameFlagSet(0x83a);
+  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE);
   Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
-  Engine_GameFlagSet(0x841);
-  Engine_GameFlagSet(0x842);
+  Engine_GameFlagSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN);
+  Engine_GameFlagSet(FLAG_VALE_STORM_GARET_LEFT);
   Engine_GameFlagSet(0x806);
   Engine_GameFlagSet(0x807);
   Engine_GameFlagSet(FLAG_MET_SATUROS_AND_MENARDI);
@@ -1477,11 +1478,11 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(0x83e);
   Engine_GameFlagSet(0x83f);
   Engine_GameFlagSet(0x814);
-  Engine_GameFlagSet(0x879);
-  Engine_GameFlagSet(0x815);
-  Engine_GameFlagSet(0x81b);
-  Engine_GameFlagSet(0x81d);
-  Engine_GameFlagSet(0x87a);
+  Engine_GameFlagSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
+  Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
+  Engine_GameFlagSet(FLAG_VALE_FAREWELL_HERB_RECEIVED);
+  Engine_GameFlagSet(FLAG_GARET_CAME_HOME);
+  Engine_GameFlagSet(FLAG_REACHED_KALAY);
 #else
   Engine_GameFlagSet(FLAG_TRET_DEFEATED);
   Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);

@@ -1,6 +1,5 @@
-// Near misses of overlay 664 (Func_02002bd0 of this draft is adopted in
-// s2bd0.c). Func_02002c40 (56 instructions, 2 differ): the native loads the
-// phase before it starts the radius constant 0xc0000. Func_02003b08 (47, 4):
+// Near misses of overlay 664 (Func_02002bd0 and Func_02002c40 of this draft
+// are adopted in s2bd0.c and s2c40.c). Func_02003b08 (47, 4):
 // the native loads the flags into r2 and builds the bit 1 in r3 for the second
 // flag update; a plain |= and an inline parameter both give the reverse.
 // Func_02003cac (62, 30): the native keeps the event work pointer in r5 and
@@ -17,34 +16,6 @@ void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 s32 Func_02000690(u32 layer, s32 x, s32 y);
 void Func_02002790(void);
 void Func_02003b7c(s32 x, s32 y);
-
-void Func_02002bd0(struct FieldActor *object) {
-  s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
-
-  object->x =
-      WORD_AT(object, 68) +
-      Iwram_MulQ16(Math_Cosine((WORD_AT(object, 48) & 255) << 11), radius);
-  object->z =
-      WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius) / 3;
-  object->y += WORD_AT(object, 72);
-  WORD_AT(object, 48)++;
-}
-
-void Func_02002c40(struct FieldActor *object) {
-  s32 y = object->y;
-  s32 phase = WORD_AT(object, 48);
-  s32 radius = (y >> 2) + 0xc0000;
-
-  object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Math_Cosine((phase & 255) << 11), radius) * 2;
-  object->z =
-      WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
-  object->y += WORD_AT(object, 72);
-  WORD_AT(object, 48)++;
-  Object_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
-}
 
 static inline void FlagOn(u8 *flags, s32 bit) {
   /* FAKEMATCH: the bit passes through an inline parameter: the native builds it

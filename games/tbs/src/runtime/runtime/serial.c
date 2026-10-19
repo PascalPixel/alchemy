@@ -27,9 +27,8 @@ void SerialRuntime_Initialize(void) {
   struct SerialRuntime *state;
 
   /* FAKEMATCH: IRQ_LOCK written out with the IME address set inside the save
-   * statement; through IRQ_LOCK, whose pointer is initialized first, the IME
-   * load is scheduled after sub sp, #4 where the native loads it before (differ
-   * 2 in tbs-en, 123 instructions either way). */
+   * statement, so the IME load comes before sub sp, #4; as IRQ_LOCK, 2 of 123
+   * instructions differ in tbs-en. */
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
   // Replace both interrupt handlers before configuring multiplayer transfers.
@@ -49,10 +48,9 @@ void SerialRuntime_Initialize(void) {
   REG_SIOCNT16 = REG_SIOCNT16 | SIO_INTR_ENABLE | SIO_115200_BPS;
   state = &gSerialRuntime;
   REG_IME = 1;
-  /* FAKEMATCH: the fill word is volatile, now Dma_Fill32's own word rather than
-   * a local, so the zero is stored through its address (mov r0, sp; str r3,
-   * [r0]). 2026-10-13: as a plain u32 the zero is stored to [sp, #0] before the
-   * address is formed (differ 6). */
+  /* FAKEMATCH: Dma_Fill32's fill word is volatile, so the zero is stored
+   * through its address (mov r0, sp; str r3, [r0]); as a plain u32, 6
+   * instructions differ in tbs-en. */
   Dma_Fill32(0, state, sizeof(*state));
   state->sendIndex = -1;
   state->sendBuffer[0] = (u16 *)(state->storage + 0);
@@ -324,8 +322,8 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
 /// halfword received from each console; a console's fourteenth halfword
 /// completes its packet.
 void SerialRuntime_HandleTransferInterrupt(void) {
-  // Measured plain do/while for the two receive channels adds 50 bytes to this
-  // function in tbs-en, so the matching single-backedge form remains.
+  // The receive channels share one backedge; a do/while for each adds 50 bytes
+  // in tbs-en.
   struct SerialRuntime *sendState;
   struct SerialRuntime *receiveState;
   struct SerialRuntime *tailState;
@@ -509,17 +507,15 @@ struct OneCell {
 /// rewinds and sends the missed blocks again.
 void SerialRuntime_StepBlockTransfer(void) {
   /* FAKEMATCH: gSerialSendSize and gSerialBlockSequence are volatile
-   * (serial_runtime.h), so every access here is a load or store of its own.
-   * Measured on tbs-en: without the first qualifier differ 2, 257 instructions
-   * either way; without the second differ 258, 249 for 257. */
+   * (serial_runtime.h), so every access is its own load or store; as a plain
+   * gSerialBlockSequence, 258 instructions differ in tbs-en. */
   struct SerialTransferState *peer;
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
-  /* FAKEMATCH: the halfword record is a HImode 1, which Thumb movhi loads from
-   * the literal pool into r8 at entry, as native; it is not protocol state.
-   * 2026-10-13: the constant 1 at both stores differs 55 (252 instructions
-   * for 257), as does a u16 local, which is promoted to SImode. */
+  /* FAKEMATCH: the halfword record is a HImode 1 loaded from the pool into r8
+   * at entry; it is not protocol state. As the constant 1 at both stores, 55
+   * of 257 instructions differ in tbs-en. */
   struct OneCell one;
 
   id = ~((REG_SIOCNT << 26) >> 30) & 1;
@@ -627,9 +623,8 @@ void SerialTest_Delay(void) {}
 /// into the map cell buffer and shows them as tiles, and sends a part of the
 /// ROM when A or B is held. It never returns.
 void SerialTest_Run(void) {
-  // Measured outer receive loop with an inner completion break changes 9 text
-  // bytes in tbs-en: the key-address load is hoisted and the restart
-  // retargeted.
+  // An outer receive loop with an inner completion break changes 9 bytes in
+  // tbs-en: the key-address load is hoisted and the restart retargeted.
   u16 *tile;
   s32 value;
   s32 n;

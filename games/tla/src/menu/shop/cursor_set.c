@@ -86,11 +86,8 @@ void Func_081089e4(struct ShopCursor *cursor) {
     }
     {
       /* FAKEMATCH: the barrier reloads x before the 0x1ff mask is built, and x
-       * pinned to r3 leaves the mask r2, as native. Plain, as The Broken Seal
-       * writes the update in each branch, the mask starts first (differ 2;
-       * three minutes of alchemy permute found nothing better); the barrier
-       * alone swaps the two registers (differ 8); devices in each branch keep
-       * the two copies apart (differ 82), so both moves share this one. */
+       * pinned to r3 leaves the mask r2, as native; plain, as The Broken Seal
+       * writes it in each branch, 2 instructions differ in tla-en. */
       register u32 x asm("r3") = sprite->x;
 
       asm volatile("");

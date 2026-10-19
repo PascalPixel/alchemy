@@ -147,10 +147,9 @@ void FieldFx_RunPly(void) {
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(temporary): a redundant copy that keeps object as a second
-       * register copy of the spark (r5 beside r6), which gcse would otherwise
-       * propagate away; without it, 129 of 177 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(temporary): a redundant copy keeps object as a second
+       * register copy of the spark (r5 beside r6); without it, 129 of 177
+       * instructions differ in tbs-en. */
       target = object;
       if (i & 3)
         Animation_ApplyChildValuesFar(object, 9);

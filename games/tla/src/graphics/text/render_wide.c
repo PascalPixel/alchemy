@@ -25,16 +25,14 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
     canvas->entries[canvas->count] = 0;
     {
       // ⚓️ loads the mask 0x1ff from the pool before it rereads the count.
-      /* FAKEMATCH(pin): the mask pinned to the r2 it takes, as in
-       * UiText_RenderWideStringInWindow, so it loads from the pool; as a
-       * plain u16 local, 14 of 50 instructions differ in tla-en (a split
-       * constant). */
+      /* FAKEMATCH(pin): the mask pinned to the r2 it takes, so it loads from
+       * the pool; as a plain u16 local, 14 of 50 instructions differ in
+       * tla-en. */
       register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
 
       /* FAKEMATCH(one-pass): the count update in a one-pass block, which
        * keeps the reread after the mask's load; as a plain statement, 2 of 50
-       * instructions differ in tla-en (an empty asm barrier instead moves the
-       * literal pool). */
+       * instructions differ in tla-en. */
       do {
         canvas->count = (canvas->count + 1) & mask;
       } while (0);
@@ -69,12 +67,9 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
     text = work->entries;
     work->entries[work->count] = 0;
     {
-      /* FAKEMATCH: ⚓️ loads the mask 0x1ff from the pool before it rereads the
-       * count; plainly, as a u32 or u16 temporary, or with a barrier between
-       * the two statements, the count is reread first (differ 2) or the mask
-       * becomes a split constant (differ 18). Only a halfword register loads
-       * from the pool and a u16 local is widened, so the mask is pinned to the
-       * r2 it takes, as in mode6.c. */
+      /* FAKEMATCH: the mask pinned to the r2 it takes, so 0x1ff loads from the
+       * pool before the count is reread; as a plain temporary, 2 instructions
+       * differ in tla-en. */
       register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
 
       /* FAKEMATCH: the barrier of the pin above: it holds r3 until the mask is

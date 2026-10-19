@@ -539,9 +539,8 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
     u8 *flags = &Object_GetById(ACTOR_FELIX_MASKED)->priorityFlags;
 
     /* FAKEMATCH: the bit held in the loop counter itemSlot keeps the 1 in r5
-     * ahead of the actor 8 call's arguments; a plain |= loads it after. Plain
-     * |=: differ 31, one instruction shorter; *flags = ACTOR_PRIORITY_AUTOMATIC
-     * | *flags, either operand itemSlot, differ 35. */
+     * ahead of the actor 8 call's arguments; as a plain |=, 31 instructions
+     * differ in tbs-en. */
     i = ACTOR_PRIORITY_AUTOMATIC;
     i |= *flags;
     *flags = i;

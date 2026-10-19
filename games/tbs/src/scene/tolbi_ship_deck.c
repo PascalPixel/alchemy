@@ -1399,10 +1399,8 @@ static void TolbiShipDeck_MonstersBoard(void) {
     Engine_TaskWait(1);
   } while (Object_GetById(24)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
-  /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. Plain
-   * call: differ 2; Engine_ActorWalkTo directly: differ 4. Measured 2026-10-13:
-   * Actor_WalkTo as a do/while statement macro at every use changes 111
-   * functions in the six editions, so the block is this site's alone. */
+  /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call; as a
+   * plain call, 2 instructions differ in tbs-en. */
   do {
     Actor_WalkTo(21, 196, 612);
   } while (0);
@@ -1797,13 +1795,9 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetPosition(21, PIXELS(184), PIXELS(632));
   record = Object_GetById(21);
   record->facing = 0xb000;
-  /* FAKEMATCH: needed to match: the work pointer is read as a word, which may
-   * alias the facing stores, so they stay ahead of its load.
-   * gEventWork->startTransition: differ 2; the records held as union
-   * FieldObject: differ 2. Measured 2026-10-13: with gEventWork declared a word
-   * (u32, cast at each use) the plain store matches and, in all six editions,
-   * only ValeHome_RunActorPairEffectScene changes (differ 2); this word view on
-   * every startTransition store changes 49 functions. */
+  /* FAKEMATCH: the work pointer read as a word may alias the facing stores, so
+   * they stay ahead of its load; as gEventWork->startTransition, 2
+   * instructions differ in tbs-en. */
   ((struct EventWork *)*(u32 *)&gEventWork)->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();

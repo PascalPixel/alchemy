@@ -157,11 +157,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           alreadySelected = 1;
         } else {
           for (;;) {
-            /* FAKEMATCH: needed to match: isUsed is zero on every search-loop
-             * continuation. Its step dependency prevents loop.c from
-             * strength-reducing k into a pointer; CSE later removes the flag
-             * term. Plain k differs 35 instructions in EN; this form restores
-             * the native reload and indexing (differ 0). */
+            /* FAKEMATCH: the flag, zero on every continuation, keeps k an
+             * index rather than a pointer; as k++, 35 instructions differ in
+             * tbs-en. */
             k += 1 - alreadySelected;
             if (k > 7)
               break;
@@ -472,16 +470,14 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       s32 cx;
 
       /* FAKEMATCH(one-pass): the x computed in a block of its own keeps the
-       * row's reload after the x shift; as no block, mov r2, r10 fills the
-       * ldrh delay slot before lsls and 2 of 1201 instructions differ in
-       * tbs-en. */
+       * row's reload after the x shift; as no block, 2 of 1201 instructions
+       * differ in tbs-en. */
       do {
         cx = listWindow->x * 8;
       } while (0);
-      /* FAKEMATCH(barrier): an empty asm reading the row in a low register,
-       * so it is reloaded before the subtract and row * 2 inherits that
-       * reload: mov r2, r10 precedes subs r3, #2 as native; without it, 2 of
-       * 1201 instructions differ in tbs-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the row in a low register
+       * reloads it before the subtract; without it, 2 of 1201 instructions
+       * differ in tbs-en. */
       asm("" : : "l"(selectedRow));
       cursorPos.x = cx - 2;
     }

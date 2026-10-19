@@ -28,11 +28,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   s32 zone;
   struct PartyState *party = &gPartyState;
 
-  /* FAKEMATCH(empty asm): the barrier, holding the address and clobbering
-   * r1, loads gPartyState before renderMode's offset is built in r1, as the
-   * native does; as a plain declaration the offset comes first, 2 of 74
-   * instructions differ in tla-en (6 as a one-pass block, which also moves
-   * the frame's sub sp). */
+  /* FAKEMATCH(empty asm): the barrier clobbering r1 loads gPartyState before
+   * renderMode's offset is built in r1; as a plain declaration, 2 of 74
+   * instructions differ in tla-en. */
   asm("" : "+l"(party) : : "r1");
   if (party->renderMode == 8)
     return 0;

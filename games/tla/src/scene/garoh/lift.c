@@ -14,10 +14,9 @@ void Func_02000e78(s32 id, struct ObjectRuntime *object) {
 
   object->motionFlags = 0;
   {
-    /* FAKEMATCH: the id is read through r0 into a second variable after the
-     * motion flag store: the native copies it into r7 after the strb, where
-     * plainly the copy comes first (one reordered pair, differ 2; a barrier, a
-     * one-pass block or a goto loop leave it first). */
+    /* FAKEMATCH: the id read through r0 into a second variable is copied after
+     * the motion flag store; as a plain copy, 2 instructions differ in
+     * tla-en. */
     register s32 arg asm("r0") = id;
     saved = arg;
   }

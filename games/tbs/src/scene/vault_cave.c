@@ -167,10 +167,8 @@ struct DirectionSteps {
 /// Pushes the faced block one cell unless another actor or terrain blocks it.
 static void VaultCave_PushBlockAhead(void) {
   /* FAKEMATCH: DIRECTION_STEP reads the s16-pair table (x high, z low) as one
-   * word per heading through an array reference, as native; through a plain s32
-   * pointer cast the address is summed once into a register and no longer
-   * matches, the table as const s32 words indexed directly differs 79 (143
-   * instructions for 146), a const s32 local pointer 94. */
+   * word per heading through an array reference; as const s32 words indexed
+   * directly, 79 of 146 instructions differ in tbs-en. */
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 direction = leader->facing >> 12;
   struct FieldActor *block;

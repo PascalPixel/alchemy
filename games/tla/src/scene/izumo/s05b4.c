@@ -82,11 +82,9 @@ void Func_0200060c(void) {
   s16 saved;
   s32 index;
 
-  /* FAKEMATCH: the three rotations are goto loops: the native's loops are not
-   * touched by loop.c (the palette base rebuilt each pass, nothing
-   * strength-reduced, the index counted down to 1 and compared), as only loops
-   * without loop notes compile; as do-while, while or for loops (the last over
-   * a PLTT index) each differs by 90. */
+  /* FAKEMATCH: the three rotations are goto loops, which loop.c leaves alone,
+   * as the native's are; as do-while, while or for loops, 90 instructions
+   * differ in tla-en. */
   if ((gFrameCount & 3) == 0) {
     saved = *(volatile u16 *)0x0500007c;
     index = 14;

@@ -88,12 +88,9 @@ void BattleMotion_DestroyAllSlotObjects(void) {
 /// Writes a battle object's anchor to out, at height 0.
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   struct BattleWork *state = Ram_HeapSlots->battleWork;
-  /* FAKEMATCH: the native sets the return value between the two stores and the
-   * last load; plainly the load comes first (one reordered row, differ 2). The
-   * value is pinned to the r0 it returns in, and the barrier, which also orders
-   * memory, holds the load until it is set. Measured against it: the anchor
-   * read into a local, the pin without the memory clobber and the memory
-   * clobber alone (differ 4). */
+  /* FAKEMATCH: the return value, pinned to r0, is set between the two stores
+   * and the last load, which a memory barrier holds back; as plain C, 2
+   * instructions differ in tla-en. */
   register s32 result asm("r0");
 
   out->x = state->slots[no].anchorX;

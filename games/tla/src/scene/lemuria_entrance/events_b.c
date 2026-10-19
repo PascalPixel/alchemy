@@ -73,10 +73,9 @@ static __inline__ void Show(s32 kind, s32 frames) {
 
 void Func_02000060(s32 arg) {
   struct PartyState *party = &gPartyState;
-  /* FAKEMATCH: the native loads gPartyState's address before it copies the
-   * countdown to r6. The entry copy of a plain parameter comes first; pinned
-   * and assigned after the barrier, the copy follows the load (differ 2 with
-   * neither or with the pin alone, 6 with the barrier alone). */
+  /* FAKEMATCH: pinned to r6 and assigned after the barrier, the countdown's
+   * copy follows gPartyState's address, as native; as a plain parameter, 2
+   * instructions differ in tla-en. */
   register s32 countdown asm("r6");
 
   asm("");

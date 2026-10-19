@@ -141,9 +141,8 @@ void BattleFx_SpinUpAngle(void *obj) {
 /// its scale falls below 0x3000.
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj) {
   /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
-   * scales load, so its literal loads first, as the native's does; without
-   * the pin the registers rotate (differ 18) and without the asm the literal
-   * loads after scaleY (differ 2). */
+   * scales load, so its literal loads first; without the pin, 18 instructions
+   * differ in tla-en. */
   register s32 step asm("r1") = 0xFFFFFE40;
   s32 scaleY;
   s32 scale;

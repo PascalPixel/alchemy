@@ -132,11 +132,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // is 1 when the mode 1 user stands on side 1, otherwise -1.
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0x2000);
-  /* FAKEMATCH: test through direction so CSE retains the mode reload
-   * in this arm. Testing mode directly replaces ldr r4,[sp,#76] with
-   * movs r4,#1 (1532 instructions, two differing rows). 2026-10-13:
-   * a switch on mode, side tested by if/else or `side != 1 ? -1 : mode`
-   * differ the same 2; direction = -1 first and set in the arm 58. */
+  /* FAKEMATCH: test through direction so CSE retains the mode reload in this
+   * arm; testing mode directly, 2 of 1532 instructions differ in tbs-en. */
   direction = mode;
   if (direction == 1) {
     struct MotionObject *object =
@@ -277,22 +274,12 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     frame = 0;
     do {
       s32 angle = frame << 8;
-      /* FAKEMATCH: count fixed in r2, as in the reference; as a hard register
-       * it leaves the division temp canonical in cse, so the compare and +3 use
-       * the temp as in the reference. Unpinned, it differs 10 (tbs-en,
-       * 2026-10-18). */
+      /* FAKEMATCH: count fixed in r2 keeps the division temp canonical in cse
+       * for the compare and +3, as in the reference; unpinned, 10 instructions
+       * differ in tbs-en. */
       register s32 count asm("r2") = work->frame;
       /* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1.
-       * 2026-10-11: plain `heat = work->frame / 4` with a plain line pointer
-       * differs 69: combine merges count's copy, the 0x778c reload and work
-       * swap r0/r1, and the halfword zero becomes a literal-pool load once its
-       * reload scratch moves. An ordinary base alone leaves 8 aligned
-       * differences in 1532 instructions. Integer/word/halfword carriers, a
-       * typed inline line helper and general or early-clobber barrier outputs
-       * keep that residual. A two-minute exact-stack/branch search (seed 353,
-       * nested helpers ignored) found no improvement in 1241 compiled
-       * candidates. Changing count alone differs 10, both count and base differ
-       * 74, and level alone differs 42. */
+       * As an ordinary base, 8 of 1532 instructions differ in tbs-en. */
       register u8 *base asm("r0") = (u8 *)work;
       s32 heat = count / 4;
       u16 *line;
@@ -300,10 +287,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH: count read and base passed through; reading count after the
-       * division keeps its load apart from the division temp (no combine);
-       * through base the asm is not volatile, so no sched2 barrier, and the
-       * mode reload lands after movs r2, #252 as in the reference (38 -> 2). */
+      /* FAKEMATCH: count read and base passed through keep count's load apart
+       * from the division temp, with no sched2 barrier, so the mode reload
+       * lands after movs r2, #252 as in the reference. */
       asm("" : "=r"(base) : "0"(base), "r"(count));
       line = (u16 *)(base + 0x1f80);
       if (mode == 1) {
@@ -316,12 +302,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       {
         s32 hold;
 
-        /* FAKEMATCH: hold takes r7 across the call; with line in r5, hold in r7
-         * and r6 clobbered, heat takes r4 and its sp+8 caller-save as in the
-         * reference (222 -> 89); global.c ignores hard conflicts with r7, the
-         * frame pointer, so r7 needs a pseudo. 2026-10-11: a plain call differs
-         * 354, heat in r6 with no caller-save and the frame 280 instead of 284.
-         */
+        /* FAKEMATCH: hold takes r7 across the call, so heat takes r4 and its
+         * sp+8 caller-save as in the reference; as a plain call, 354
+         * instructions differ in tbs-en. */
         asm("" : "=r"(hold));
         /* FAKEMATCH: r6 is clobbered across the call. */
         asm("" : : : "r6");
@@ -342,17 +325,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
          * separate quotient coalesces with level; the explicit bias
          * keeps the native r3 copy and shift (four register rows). */
         s32 blue = green;
-        /* FAKEMATCH: level in r2; unbinding it changes ten register/order rows.
-         * 2026-10-11: the natural `level = green / 4 + heat` differs 18, a
-         * level/blue r3/r2 swap only (local-alloc hands level r3 first); a use
-         * of level after the first blue clamp matches, and moving green's
-         * computation there differs 4; no plain statement survives to
-         * allocation there. Ordinary level differs 42 in EN (1532
-         * native/built). A generic output boundary after its sum reduces this
-         * to 26, retaining the quotient/level r2/r3 exchange. A blue input
-         * retains 26; also unbinding count differs 36, with either an input or
-         * output count operand on the existing base boundary. Reversing the sum
-         * or deriving green as blue - 48 retains 42. */
+        /* FAKEMATCH: level in r2; as an ordinary local, 42 of 1532
+         * instructions differ in tbs-en. */
         register s32 level asm("r2");
 
         if (green < 0)

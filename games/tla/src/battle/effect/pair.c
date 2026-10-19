@@ -42,9 +42,7 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
     u8 terrain;
 
     /* FAKEMATCH: the one-pass block reads the terrain byte before the scene
-     * offset is started; stored directly the offset is started first (differ
-     * 2), and an empty asm barrier moves the literal pool ahead of this block.
-     */
+     * offset is started; stored directly, 2 instructions differ in tla-en. */
     do {
       terrain = user->priorityFlags;
     } while (0);

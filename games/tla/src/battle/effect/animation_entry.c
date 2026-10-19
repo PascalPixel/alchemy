@@ -8,10 +8,9 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
   struct AnimationEntry *entry = Ram_HeapSlots->unk0c[0];
   struct AnimationEntry *found = NULL;
   s32 i = 0;
-  /* FAKEMATCH: the script field's zero held from the start lives longest,
-   * so the word zero takes r3 and the byte zero the pool load in r2 as the
-   * native does; stored as plain NULLs the two zeros trade registers
-   * (differ 24). */
+  /* FAKEMATCH: the script field's zero held from the start lives longest, so
+   * the word zero takes r3 and the byte zero r2; as plain NULLs, 24
+   * instructions differ in tla-en. */
   void *none = NULL;
 
   while (i <= 63) {

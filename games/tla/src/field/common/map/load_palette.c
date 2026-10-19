@@ -11,10 +11,9 @@ extern char ResourceId_Map000;
 /// and copies its 224 colors to destination, keeping the current backdrop
 /// color in the first entry.
 void Func_0802a650(s32 map, void *destination) {
-  /* FAKEMATCH: the table address is a word local added after the row offset,
-   * as in Map_GetHeaderSize; the native loads it before it scales the row. An
-   * empty asm that passes both through ranks the load first; without it the
-   * scaling comes first (differ 2). */
+  /* FAKEMATCH: the table address, a word local passed through an empty asm,
+   * loads before the row is scaled, as in Map_GetHeaderSize; without the asm,
+   * 2 instructions differ in tla-en. */
   u32 table = (u32)gData_0802f380;
   const u16 *entry;
   u16 *buffer;

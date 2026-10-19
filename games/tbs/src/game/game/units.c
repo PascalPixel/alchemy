@@ -71,17 +71,9 @@ struct BattleUnit *UnitGet(u32 owner) {
   {
     void *caller = __builtin_return_address(0);
 
-    /* Native copies the unused return
-     * address from lr into r3 at entry. This existing empty asm use
-     * requires a Thumb low register, so allocation chooses r3 without
-     * a pin (28/28 instructions, differ 0). With an unrestricted "r"
-     * operand or no use, only that copy is absent (28/27, differ 1,
-     * same 0x44-byte English extent with a final alignment nop). */
-    /* FAKEMATCH: needed to match: low-register use preserves mov r3,lr; without
-     * it, 28/27 instructions, differ 1. 2026-10-11: arm_return_addr emits the
-     * lr copy after the argument copies and flow deletes it without a codeless
-     * use; every plain use (compare, store, fold) either emits code or folds
-     * away (differ 7). */
+    // The native copies the unused return address from lr into r3 at entry.
+    /* FAKEMATCH: a low-register use keeps mov r3, lr; without it, 1 of 28
+     * instructions differs in tbs-en. */
     asm("" : : "l"(caller));
   }
   states = gGameState.owners;
@@ -188,8 +180,8 @@ void UnitCalc(s32 owner) {
       if (stats->item->flags & ITEM_CURSED)
         unit->restraint |= 3;
       /* FAKEMATCH: the one-pass block keeps the defense load after the
-       * item's second bonus load, as the ROM schedules it. Measured:
-       * plain, the scheduler lifts stats->def above that load (differ 2). */
+       * item's second bonus load; as plain statements, 2 instructions differ
+       * in tbs-en. */
       do {
         stats->atk += stats->item->primaryBonus;
       } while (0);

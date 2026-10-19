@@ -175,10 +175,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 /// Spins an object 1/8 turn and shrinks it by 0x400 a frame, destroying it once
 /// its scale falls below 0x3000.
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj) {
-  /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
-   * scales load, so its literal loads first, as the native's does; without
-   * the pin the registers rotate (differ 18) and without the asm the literal
-   * loads after scaleY (differ 2). */
+  /* FAKEMATCH: the step pinned to r1 and used by an empty asm loads its literal
+   * before the scales; as a plain local, 18 instructions differ in tla-en. */
   register s32 step asm("r1") = 0xFFFFFC00;
   s32 scaleY;
   s32 scale;

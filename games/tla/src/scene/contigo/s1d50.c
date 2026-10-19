@@ -12,11 +12,9 @@ extern const u8 gData_02006030[];
 void Func_02001d50(void) {
   struct ContigoObject *object;
   s32 answer;
-  /* FAKEMATCH: the native reloads the leader into r5, the register of the
-   * pointer it came through, after each yes/no prompt and copies it to r0 in
-   * each branch; unpinned, the answer moves to r3 and the leader loads straight
-   * into r0 (28 differ), and a load of the leader in each branch measured 18.
-   */
+  /* FAKEMATCH: the native reloads the leader into r5 after each yes/no prompt
+   * and copies it to r0 in each branch; unpinned, 28 instructions differ in
+   * tla-en. */
   register s32 owner __asm__("r5");
   s32 angle;
 

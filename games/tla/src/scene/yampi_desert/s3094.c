@@ -18,10 +18,9 @@ s32 Func_02003094(void) {
   s16 scene;
 
   Func_020021d4();
-  /* FAKEMATCH: the one-pass block ends the scheduling block after the store, so
-   * the party state address is loaded before the scene field offset is built
-   * (differ 2 plainly; an s32 scene does not help, an empty asm barrier does
-   * the same). */
+  /* FAKEMATCH: a one-pass block loads the party state address before the
+   * scene field offset; as plain statements, 2 instructions differ in tla-en.
+   */
   do {
     gData_0200480c = 0;
   } while (0);

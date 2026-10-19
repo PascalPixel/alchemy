@@ -36,10 +36,9 @@ void Func_080ca3f4(s32 scene, s32 entrance) {
   if (GameFlag_Test(0x8de) == 0)
     return;
   party = &gPartyState;
-  /* FAKEMATCH(one-pass block): the empty block after taking gPartyState's
-   * address loads it before ownerOverride's offset is built, as the native
-   * does; as plain statements the offset comes first, 2 of 73 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(one-pass block): the empty block loads gPartyState's address
+   * before ownerOverride's offset, as native; as plain statements, 2 of 73
+   * instructions differ in tla-en. */
   do {
   } while (0);
   party->ownerOverride = 0;

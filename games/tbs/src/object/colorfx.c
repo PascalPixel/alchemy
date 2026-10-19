@@ -349,10 +349,9 @@ struct ReelSave {
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the reel symbols, the lever and the bottom bar.
 void ReelGame_RunFrame(void) {
-  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
-   * words are volatile (oambuf.h), so loop.c keeps the offset givs of every
-   * loop over the list; as plain u32 words, 675 of 1729 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(volatile): struct OamShadow's volatile words (oambuf.h) keep
+   * each list loop's offset givs; as plain u32 words, 675 of 1729
+   * instructions differ in tbs-en. */
   struct ReelWork *work;
   struct BattleEffectWork *fx;
   volatile u16 *dma;

@@ -25,10 +25,9 @@ void BattleFx_AdvanceBg2OnInterval(void) {
   } while (0);
 
   if (++work->counter == work->period) {
-    /* FAKEMATCH: the native loads x before it starts the affine reference
-     * register's address; the plain store starts the address first (one
-     * reordered pair, differ 2). The value is pinned to the r3 it already
-     * takes: in a plain local the two registers trade places (differ 16). */
+    /* FAKEMATCH: x pinned to r3 loads before the affine reference register's
+     * address starts, as the native does; as a plain store, 2 instructions
+     * differ in tla-en. */
     register s32 x __asm__("r3") = work->x;
 
     /* FAKEMATCH: the one-pass block's loop note holds the address until the

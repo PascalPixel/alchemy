@@ -476,9 +476,8 @@ UNUSED void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
 void RenderOutput_AppendToList(struct RenderOutputList *list,
                                struct RenderOutput *node) {
   /* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in
-   * one alias set, so they stay in order. The typed list->tailLink =
-   * &node->next lets the scheduler put the tail store first (differ 2 in all
-   * six editions). */
+   * one alias set and in order; as list->tailLink = &node->next, 2
+   * instructions differ in tbs-en. */
   if (list != NULL) {
     *list->tailLink = node;
 #ifdef UBFIX

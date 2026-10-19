@@ -1796,12 +1796,9 @@ static void Event_CarryFloatingBlock(void) {
     }
     if (block->sprite->image.priority == 3 &&
         !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + blockIndex)) {
-      /* FAKEMATCH: forced temporary: the zero is the search counter's, set
-       * before the priority call, so movs r5, #0 follows the call as the bytes
-       * do. Plain forms measured 2026-10-13: block->bounce = 0 after the call
-       * differ 6 (CSE reuses GameFlag_IsSet's zero result, copied to r5 before
-       * the test); the same with the flag test firstPassageEffect differ 18;
-       * the zero stored before the call differ 23. */
+      /* FAKEMATCH: forced temporary: the search counter's zero, set before the
+       * priority call, puts movs r5, #0 after the call; as block->bounce = 0
+       * after the call, 6 instructions differ in tbs-en. */
       earlierIndex = 0;
       Engine_ActorSetSpritePriority(blockIndex + 10, 1);
       block->bounce = earlierIndex;
@@ -2464,15 +2461,9 @@ s32 Scene_RunEntrySetup(void) {
       {
         s32 zero = 0;
 
-        /* FAKEMATCH: the one-pass block's loop notes keep movs r3, #0 before
-         * the register address load and the store before the next call's
-         * argument (sched2 barriers); the empty asm's in/out operand gives the
-         * zero four refs so local-alloc allocates it r3 ahead of the address
-         * (differ 6 without it, registers swapped). Plain forms measured
-         * 2026-10-11: REG_BLDCNT = 0 differ 95 (halfword constant from the
-         * pool); an s32 or u16 zero, an inline helper, Io_Set16 or a
-         * function-top zero differ 6; pointer-first forms differ 4; Io_Write16
-         * differ 6. */
+        /* FAKEMATCH: the empty asm gives the zero the refs that put it in r3
+         * ahead of the register address; as REG_BLDCNT = 0, 95 instructions
+         * differ in tbs-en. */
         asm("" : "+l"(zero));
         /* FAKEMATCH: needed to match: this CSE block keeps the blend
          * store before the next call setup, at the same size and frame. */
@@ -2533,10 +2524,9 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 4:
     case 5:
-      /* FAKEMATCH: called through a value-returning cast where the bytes keep
-       * this call apart; called by its void prototype, cross-jumping merges it
-       * into the identical call before it and two instructions go (differ 42,
-       * 2026-10-13). */
+      /* FAKEMATCH: a value-returning cast keeps this call from cross-jumping
+       * into the identical one before it; as a call by its void prototype, 42
+       * instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;

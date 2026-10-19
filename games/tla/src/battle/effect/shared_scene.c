@@ -25,10 +25,8 @@ void BattleEffect_InitializeSharedScene(void) {
 
   tint = gFrameCount & 7;
   raw = *(u16 *)&scene->fieldKind;
-  /* FAKEMATCH: ⚓️ reads the animation twice, unsigned (ldrh) and signed
-   * (ldrsh), and tests the unsigned copy's low half against 30 by shifts;
-   * without the barrier the signed read is derived from the unsigned one
-   * (differ 7). */
+  /* FAKEMATCH: the barrier keeps the unsigned (ldrh) and signed (ldrsh) reads
+   * of the animation apart; without it, 7 instructions differ in tla-en. */
   asm("" : "+r"(raw));
   animation = scene->fieldKind;
   if (animation == 18)

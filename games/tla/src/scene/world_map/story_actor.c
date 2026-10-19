@@ -59,9 +59,8 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
     marker->y.fixed = y + rise;
     marker->z.fixed = z;
     /* FAKEMATCH: after this one-pass block the radius, a forced temporary, is
-     * copied to its argument before the angle is read, as in the native
-     * (passing the rise itself, the copy is the last argument set up: differ
-     * 2). */
+     * copied to its argument before the angle is read; passing the rise
+     * itself, 2 instructions differ in tla-en. */
     do {
     } while (0);
     radius = rise;

@@ -123,10 +123,9 @@ void BattleFx_RunEffect16(void) {
   flags = group->flags;
   slot = Resource_FindFreeEntry();
   {
-    /* FAKEMATCH: forced temporaries and a one-pass block: ⚓️ reloads the
-     * scene before it builds 0x710, and loads the tile address between
-     * the two shifts of the slot's sign extension (one reordered row each
-     * without them). */
+    /* FAKEMATCH: forced temporaries and a one-pass block reload the scene
+     * before 0x710 and load the tiles between the slot's two shifts; without
+     * them, one row each is reordered in tla-en. */
     struct ArcScene *work = scene;
     const u8 *tiles;
     s32 id;
@@ -176,11 +175,9 @@ void BattleFx_RunEffect16(void) {
     WaitFrames(1);
   }
   {
-    /* FAKEMATCH: the flags go back through a pointer, ahead of the dirty
-     * mark, and one-pass blocks stand on both sides of the wait: ⚓️ copies
-     * the flags out of r11 before it sets the zero, stores the entry's
-     * param before the wait's argument, and reloads the scene before it
-     * builds 0x710 (one reordered row each without them). */
+    /* FAKEMATCH: the flags restored through a pointer and one-pass blocks
+     * around the wait keep the native's order of the r11 copy, the param
+     * store and the scene reload; without them, one row each is reordered. */
     u8 *restore = &group->flags;
 
     *restore = flags;

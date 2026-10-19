@@ -5,12 +5,9 @@
 /// Frees every VRAM block and every cache entry.
 void VramCache_Reset(void) {
   u32 count;
-  /* FAKEMATCH: ⚓️ loads the block owners' address between the first two
-   * instructions of the split limit 511; plainly the shift comes first (differ
-   * 2), since sched2 ranks the load and the shift equal and takes the shift.
-   * The limit's first part is pinned to the r0 the native builds it in, and a
-   * barrier holds it until the address is loaded; as a free temporary the limit
-   * takes r3 and the address r2 (differ 16). */
+  /* FAKEMATCH: the split limit 511 pinned to r0 and held by a barrier, so the
+   * block owners' address loads between its two instructions; as a plain
+   * constant, 2 instructions differ in tla-en. */
   register u32 limit asm("r0") = 128;
   u8 *marker = gResourceBlockOwners;
 
@@ -42,12 +39,9 @@ s32 Resource_FindFreeEntry(void) {
 
   for (no = 0; no < VRAM_CACHE_ENTRY_COUNT; no++, entry++) {
     u32 offset = entry->offset;
-    /* FAKEMATCH: ⚓️ reads the entry's offset between the first two instructions
-     * of the split constant 0xffff; plainly the shift comes first (differ 4,
-     * once in each copy of the test). The constant's first part is pinned to
-     * the r4 the native builds it in (as a free temporary the loop takes other
-     * registers, differ 32), and an empty asm that also reads the offset ranks
-     * the load ahead of the shift. */
+    /* FAKEMATCH: 0xffff's first part pinned to r4 and an empty asm reading the
+     * offset load the offset between its two instructions; as a plain
+     * constant, 4 instructions differ in tla-en. */
     register u32 free asm("r4") = 0xff00;
 
     /* FAKEMATCH: the barrier of the pin above. */

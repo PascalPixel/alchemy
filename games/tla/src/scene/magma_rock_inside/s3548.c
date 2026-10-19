@@ -43,10 +43,9 @@ void Func_02003548(void) {
 
 void Func_02003630(struct ObjectRuntime *arg) {
   struct PartyState *party = &gPartyState;
-  /* FAKEMATCH: the native loads gPartyState's address before it copies the
-   * object to r5. The entry copy of a plain parameter ties with that load and
-   * comes first; pinned and assigned after the barrier, the copy follows it
-   * (differ 2 with either device alone). */
+  /* FAKEMATCH: the object pinned to r5 and assigned after the barrier is
+   * copied after gPartyState's address loads; as a plain parameter, 2
+   * instructions differ in tla-en. */
   register struct ObjectRuntime *object asm("r5");
   struct ObjectRuntime *owner;
   s16 ownerY;

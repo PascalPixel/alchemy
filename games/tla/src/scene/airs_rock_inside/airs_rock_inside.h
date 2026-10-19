@@ -69,11 +69,9 @@ void Func_02005db4(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX,
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
-  /* FAKEMATCH: forwarding through the inline puts every argument in a register
-   * before the stack arguments are stored, as the native does; called directly,
-   * the two stack constants share r3 and the second call loads its last
-   * argument first (differ 24 in Func_02002980; six instructions move in
-   * Func_02003d40). */
+  /* FAKEMATCH: forwarding inline puts every argument in a register before the
+   * stack arguments are stored; called directly, 24 instructions differ in
+   * Func_02002980 in tla-en. */
   Func_02005db4(srcX, srcZ, width, height, destX, destZ);
 }
 

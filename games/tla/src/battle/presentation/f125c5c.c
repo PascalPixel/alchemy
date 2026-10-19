@@ -76,12 +76,9 @@ void BattlePres_DrawTransitionRows(void) {
     else
       aligned = frame + 7;
     {
-      /* FAKEMATCH: the native loads the tilemap's address after the 13 and
-       * before it subtracts the row from it; plainly the subtraction comes
-       * first (one reordered row, differ 2). Both values are pinned to the
-       * registers they already take and the barrier holds them until both are
-       * loaded. Measured against it: the base in a local, in the pointer first,
-       * as an array index, and pinned alone with and without the barrier. */
+      /* FAKEMATCH: both values pinned and held by the barrier load the
+       * tilemap's address after the 13 and before the row is subtracted; as
+       * plain C, 2 instructions differ in tla-en. */
       register s32 start asm("r2") = 13;
       /* FAKEMATCH: the second pin of the barrier above. */
       register u32 base asm("r5") = 0x06006000;

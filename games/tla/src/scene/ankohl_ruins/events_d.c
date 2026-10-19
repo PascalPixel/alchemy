@@ -11,10 +11,8 @@ void Func_020011c0(void) {
   object->actionFlags = 0;
   {
     /* FAKEMATCH: the zero pinned to r1 and set just before the call comes
-     * before the owner's load and the 8, as the native has; as a plain argument
-     * the 8 comes before the owner (one reordered row), set at its declaration
-     * it rises above the stores, behind a one-pass block or empty asm the
-     * stores' addresses swap (differ 2 and 4). */
+     * before the owner's load and the 8, as native; as a plain argument, one
+     * row is reordered in tla-en. */
     register s32 zero asm("r1");
 
     zero = 0;

@@ -32,10 +32,9 @@ void UiText_DrawResourceFar(s32 message, struct RenderInput *window, s32 x,
 void UiWindow_CloseIfOpen(struct RenderInput **handle, s32 mode);
 void WaitFrames(s32 frames);
 
-/* FAKEMATCH(volatile): the keys read through a volatile view of gInput, so
- * that each of the three tests loads them afresh from its base; as
- * gInput.pressed & KEY_A and so on, 76 of 127 instructions differ in tla-en
- * (the three tests fold into one against 11). */
+/* FAKEMATCH(volatile): a volatile view of gInput makes each of the three tests
+ * load the keys afresh; as gInput.pressed & KEY_A and so on, 76 of 127
+ * instructions differ in tla-en. */
 #define INPUT ((volatile struct InputState *)&gInput)
 
 /// Shows message in the item menu, with the hand cursor hidden meanwhile.

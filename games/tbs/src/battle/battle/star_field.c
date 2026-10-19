@@ -319,10 +319,9 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
   struct EffectPosition position2;
   struct BattlePresentationWork launch;
   struct BattlePresentationWork launch2;
-  /* FAKEMATCH(temporary): one variable holds work slot 12's address, from
-   * which the battle work three words below is read, and later IME's; as
-   * battle = gWorkSlot[9] with ime set only in the loop, 61 of 249
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): one variable holds slot 12's address, the battle
+   * work's base and later IME's; as battle = gWorkSlot[9] with ime set only
+   * in the loop, 61 of 249 instructions differ in tbs-en. */
   volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
   struct BattleWork *battle = *(struct BattleWork **)((u8 *)ime - 12);
   struct SparkWork *work;

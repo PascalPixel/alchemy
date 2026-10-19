@@ -73,9 +73,9 @@ static void ValeHome_SetProgressFlagsAndExit(void);
 /// Turns and waits by calling ValeHome_FaceDirectionAndWait through this
 /// inline.
 static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
-  /* FAKEMATCH: forwarding inline for Event_DepartForQuest's three
-   * calls (call.h's Call3 did the same); called directly the function grows by
-   * 4 bytes and builds its stack arguments in other registers (2026-10-13). */
+  /* FAKEMATCH: forwarding inline for Event_DepartForQuest's three calls;
+   * called directly, the function grows by 4 bytes in tbs-en and builds its
+   * stack arguments in other registers. */
   ValeHome_FaceDirectionAndWait(actor, facing, frames);
 }
 
@@ -84,13 +84,8 @@ static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
 #else
 static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH: forwarding inline called as returning a value, its result
-   * discarded (call.h's Value3 did the same); through ValeHome_TurnAndWait the
-   * argument allocation changes, called directly differ 30 (r5 and r6 swap),
-   * and through a plain s32 cast Event_SentToAidElders differs 15 halfwords
-   * (2026-10-13). Forced tbs-en on 2026-10-16: a direct void call changes 15
-   * Thumb halfwords across Event_SentToAidElders (15 text bytes), with r5
-   * and r6 swapped.
-   */
+   * discarded; called directly, 30 instructions differ in tbs-en (r5 and r6
+   * swap). */
   return ((s32 (*)())ValeHome_FaceDirectionAndWait)(actor, facing, frames);
 }
 #define VALE_HOME_TURN_AND_WAIT ValeHome_TurnAndWaitValue

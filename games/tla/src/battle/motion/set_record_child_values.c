@@ -24,10 +24,9 @@ void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
   struct ChildRecord *record;
   struct RecordChild *child;
   struct RecordChild **children;
-  /* FAKEMATCH: The Broken Seal's two: the mask is a value and the first frame
-   * is read into a temporary, so 255 stays in a register across the call and
-   * the frame is or-ed with it (child->frame |= 0xff differs 18, |= mask 28).
-   */
+  /* FAKEMATCH: as in The Broken Seal, the mask and the first frame in locals
+   * keep 255 in a register across the call; as child->frame |= 0xff, 18
+   * instructions differ in tla-en. */
   u8 mask = 0xff;
   u8 frame;
   /* FAKEMATCH: the count read through a pointer taken first loads it before the

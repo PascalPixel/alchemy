@@ -32,9 +32,8 @@ void Func_02000288(void) {
 
   object->y += offset;
   /* FAKEMATCH: a one-pass block around the last three statements and an empty
-   * asm that takes the step after them: ⚓️ loads the layer word between the
-   * halves of 0x200 (permute; without the block or the asm differ 4, plain
-   * differ 4). */
+   * asm taking the step load the layer word between the halves of 0x200; as
+   * plain statements, 4 instructions differ in tla-en. */
   do {
     step = 0x200;
     LAYER_WORD(layer, 12) += offset;

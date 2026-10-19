@@ -45,10 +45,9 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter
-     word fills four bytes of the frame. Measured (2026-10-14): declared as one
-     DrawRectangle, the frame is 52 bytes for 56 (differ 20, frame offsets
-     only). */
+  /* FAKEMATCH: only draw[0] is used; the unused second word fills four bytes
+   * of the frame; as one DrawRectangle, 20 instructions differ in tbs-en, each
+   * a frame offset. */
   BlitterPair draw;
   s32 variant;
   struct EffectPosition screen;

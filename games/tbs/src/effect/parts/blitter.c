@@ -347,12 +347,8 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 #undef PATCH
 
   /* FAKEMATCH: one-pass blocks keep each writing step together and in list
-   * order while allowing scheduling within it. Measured 2026-10-13 in all six
-   * editions, written as plain statements: PUT differs 38, COPY 12 and PATCH 2,
-   * so each of the three carries a tag and counts at its uses: 54 PUT, 4 COPY
-   * and 5 PATCH, written once in BLITTER_WALK, which both walks expand (the
-   * counting walk's definitions are no device). COPY_FROM, COPY_TWICE and
-   * PUT_BRANCH match without a block and have none. */
+   * order while allowing scheduling within it; written as plain statements,
+   * PUT differs 38 in all six editions. */
 #define PUT(word)                                                              \
   do {                                                                         \
     *codeWords++ = (word);                                                     \

@@ -53,11 +53,8 @@ void Func_02001880(void) {
   do {
     WaitFrames(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
-  /* FAKEMATCH: one more use of the shaman's flag ranks its address ahead of the
-   * owner's, so it takes r5 and the owner's r6 as the native has; plain, the
-   * owner's address, tested in both natural loops, is allocated first (differ
-   * 36). Measured against it: explicit pointers in either order, a for loop
-   * with break, nested do loops and a goto loop. */
+  /* FAKEMATCH: one more use of the shaman's flag gives its address r5 and the
+   * owner's r6; as plain C, 36 instructions differ in tla-en. */
   __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
   ShamanVillage_CamSpeed(0xcccc, 0x1999);

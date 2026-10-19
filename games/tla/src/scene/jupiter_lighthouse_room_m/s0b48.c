@@ -63,9 +63,8 @@ void Func_02000c08(void) {
   ObjectMotion_EnableActionAndSetCallback(1, gData_02005524);
   {
     /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is
-     * built before the callback's address is loaded (as an argument: differ 2
-     * of 57; tried an unprototyped call, an s32 or u16 priority, a callback
-     * temporary and a forwarding inline). */
+     * built before the callback's address is loaded; as an argument, 2 of 57
+     * instructions differ in tla-en. */
     s32 priority = 0x480;
 
     Scheduler_AddOrUpdateCallback((void (*)(void))Func_02000a78, priority);

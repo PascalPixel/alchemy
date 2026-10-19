@@ -30,9 +30,8 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   scaleRateX = effect->scaleRateX;
   effect->scaleX += scaleRateX;
   /* FAKEMATCH: the volatile Y scale store and sprite load keep the sprite's
-   * load after the store, as the native has it (plain: differ 2, the load moves
-   * above the store); a barrier there instead moves the building of 0x1000
-   * after it (differ 4). */
+   * load after the store, as native; plainly, 2 instructions differ in
+   * tla-en. */
   *(volatile s32 *)&effect->scaleY += effect->scaleRateY;
   (*(struct FieldSprite *volatile *)&effect->sprite)->rotation += 0x1000;
 }

@@ -1965,10 +1965,8 @@ s32 AltmillerCave_Initialize(void) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     /* FAKEMATCH: the three callbacks are stored as s32, so the entrance read
-     * after them may alias them and stays below the last store. 2026-10-13:
-     * stored through the update field itself (with a cast of the function) or
-     * as void *, 2 of 403 differ: the last store moves below the entrance's
-     * ldrsh. */
+     * after them stays below the last store; as stores through the update
+     * field, 2 of 403 instructions differ in tbs-en. */
 #ifdef UBFIX
     Object_GetById(ACTOR_FIRST_OBSTACLE)->update =
         AltmillerCave_MatchLeaderPriority;

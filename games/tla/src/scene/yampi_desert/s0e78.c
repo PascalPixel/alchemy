@@ -36,10 +36,9 @@ void Func_02000f24(void) {
   for (pass = 0; pass <= 1; pass++) {
     u16 *cell;
 
-    /* FAKEMATCH: the one-pass block's loop-end note keeps the table address
-     * loaded before the counter's zero at the top of the outer loop (plainly
-     * the zero and its copy to r8 come first, differ 2; the pointer set in the
-     * for initializer, before or after the counter, does the same). */
+    /* FAKEMATCH: the one-pass block keeps the table address loaded before the
+     * outer loop's counter is zeroed; as no block, 2 instructions differ in
+     * tla-en. */
     do {
       cell = (u16 *)gData_020042b4;
     } while (0);

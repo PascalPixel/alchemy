@@ -15,9 +15,8 @@ s32 Func_0200014c(struct ObjectRuntime *object) {
   s32 force = 0;
 
   /* FAKEMATCH(barrier): holding the party state's address with r2 clobbered
-   * loads it before the owner offset 0x214 is built; as
-   * Object_GetById(gPartyState.currentOwner), 4 of 82 instructions differ in
-   * tla-en (2 without this barrier alone). */
+   * loads it before the owner offset is built; as Object_GetById(gPartyState.
+   * currentOwner), 4 of 82 instructions differ in tla-en. */
   asm("" : "+l"(party) : : "r2");
   leader = Object_GetById(party->currentOwner);
 
@@ -25,8 +24,7 @@ s32 Func_0200014c(struct ObjectRuntime *object) {
     u8 *state = &object->movementState;
     /* FAKEMATCH(temporary): the call's argument copied before the barrier
      * below; as object->movementState = force; Func_02002448(object, 2), 4 of
-     * 82 instructions differ in tla-en (2 without the temporary and its
-     * barrier). */
+     * 82 instructions differ in tla-en. */
     struct ObjectRuntime *arg = object;
 
     /* FAKEMATCH(barrier): the state's address and the argument are both

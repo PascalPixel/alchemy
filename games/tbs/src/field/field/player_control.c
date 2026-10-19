@@ -764,9 +764,8 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
 
   struct FieldPosition position;
   /* FAKEMATCH(dead): an unused local for the 68 bytes of native frame no
-   * instruction touches, the size of the probe locals of Object_MoveOnWorldMap
-   * (which, declared here instead, also match); without it, 4 of 213
-   * instructions differ in tbs-en. */
+   * instruction touches, the size of Object_MoveOnWorldMap's probe locals;
+   * without it, 4 of 213 instructions differ in tbs-en. */
   u8 unusedProbeFrame[68];
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;

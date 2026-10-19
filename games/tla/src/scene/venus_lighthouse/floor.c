@@ -120,10 +120,8 @@ void Func_020006ac(void) {
   {
     void *none;
 
-    /* FAKEMATCH: the one-pass block builds the null callback after
-     * the wait. A plain unbound initializer hoists it into r5,
-     * saves another register and differs 46 of 85 instructions.
-     * Reusing z here still changes the store register (differ 4). */
+    /* FAKEMATCH: the one-pass block builds the null callback after the wait;
+     * as a plain initializer, 46 of 85 instructions differ in tla-en. */
     do {
       none = 0;
     } while (0);

@@ -39,10 +39,9 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
 /// the matching string writer.
 void UiText_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
-  /* FAKEMATCH: the value is pinned to the r4 it takes: the native loads the
-     fifth argument from the stack before it copies the first, and the plain
-     parameter copies the first ahead of the load (one reordered pair,
-     differ 2). */
+  /* FAKEMATCH: the value is pinned to the r4 it takes, so the fifth argument
+   * loads from the stack before the first is copied; as the plain parameter,
+   * 2 instructions differ in tla-en. */
   register s32 pinned asm("r4") = value;
 
   UiText_DrawString(UiText_FormatNumber(data, pinned, width), output, x, y);

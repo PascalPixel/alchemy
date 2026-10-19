@@ -327,10 +327,9 @@ static __inline__ void Func_020052d0_(s32 id, s32 value) {
 #define ObjectMotion_SetActionVariantValue(id, variant)                        \
   (((s32 (*)(u32, s32))ObjectMotion_SetActionVariant)((id), (variant)))
 
-/* FAKEMATCH: the native schedules a store to this byte as one that cannot alias
- * the party state's words, so its lvalue is not a char: a whole-byte bit-field
- * has the struct's alias set. As u8 priorityFlags the next load is scheduled
- * one step early. */
+/* FAKEMATCH: a whole-byte bit-field keeps the struct's alias set, so the store
+ * cannot alias the party state's words, as native; as u8 priorityFlags, the
+ * next load is scheduled one step early in tla-en. */
 struct ObjectFlags23 {
   u8 unk00[0x23];
   u8 flags : 8;

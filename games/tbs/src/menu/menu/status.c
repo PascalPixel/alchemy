@@ -125,10 +125,9 @@ s32 CharacterSelector_Run(void) {
   struct CharacterMenuState *work = gMenuWork;
   s32 result = 0;
 
-  /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block, which ends
-   * the schedule after the work's load so that the zero is stored before the
-   * slot's offset is built; as a plain statement, 4 of 23 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block stores the
+   * zero before the slot's offset is built; as a plain statement, 4 of 23
+   * instructions differ in tbs-en. */
   do {
     work->selectedSlots[0] = result;
   } while (0);
@@ -2041,10 +2040,9 @@ s32 Menu_CreateEightEntryObjects(struct UiWindow *window) {
 
 /// Shows enabled category icons down the left edge, sixteen pixels apart.
 void ItemMenu_ApplyFlags(const u8 *flags) {
-  /* FAKEMATCH(temporary): y stored through a pointer to the field, one more
-   * instruction in the loop before combine, which keeps the flag index a
-   * counter instead of a walking pointer as the ROM does; as
-   * entry->y = nextY, 11 of 33 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): y stored through a pointer to the field keeps the
+   * flag index a counter instead of a walking pointer; as entry->y = nextY,
+   * 11 of 33 instructions differ in tbs-en. */
   struct InventoryMenuState *menu;
   struct RenderOutput **slot;
   struct RenderOutput *entry;

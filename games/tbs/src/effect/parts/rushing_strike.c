@@ -64,10 +64,9 @@ void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
 /// effect: the user and the targets.
 /// mode   : the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
 void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
-  /* FAKEMATCH: the blitter/camera declarations and independent
-   * store order preserve spill slots and loop preheader order 2026-10-11: the
-   * camera read is the plain slot now; Ram_MapCellBuffer at the two uses of
-   * cells differs 2 (its load moves ahead of lsls r3 at the packing call). */
+  /* FAKEMATCH: the blitter and camera declarations and store order keep the
+   * spill slots and loop preheader order; as Ram_MapCellBuffer at the two
+   * uses of cells, 2 instructions differ in tbs-en. */
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;

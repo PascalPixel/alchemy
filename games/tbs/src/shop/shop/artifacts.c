@@ -337,9 +337,8 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
     src = sStockTable[stockRow];
     do {
       /* FAKEMATCH: only the copy read is volatile, so its lifetime stays
-       * separate from the signed sentinel read. Without volatile: differ 41;
-       * indexed and while forms: 34 to 54; read or copied as u16 (2026-10-13):
-       * differ 41, the sentinel read is reused for the copy. */
+       * separate from the signed sentinel read; without volatile, 41
+       * instructions differ in tbs-en. */
       *dst = *(const volatile s16 *)src;
       count++;
       src++;

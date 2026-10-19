@@ -29,10 +29,8 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
     v += 0x04040404;
   } while (n >= 0 && n <= 55);
 
-  /* FAKEMATCH: the routine is called through a local pointer to its fixed
-   * entry; a plain call matches The Broken Seal through its IWRAM call layer
-   * but not The Lost Age, whose header calls the entry directly (all six of its
-   * editions differ). */
+  /* FAKEMATCH: called through a local pointer to its fixed entry; as a plain
+   * call through the header, all six ⚓️ editions differ. */
   fill = Iwram_FillWordsEntry;
   fill(dst, 544, -1);
 }

@@ -27,10 +27,9 @@ void Func_02001164(s32 value);
 void Func_02000af0(void) {
   s32 owner = gPartyState.currentOwner;
 
-  /* FAKEMATCH: the placements go through call.h's Call3 and Func_0200111c
-   * through Value3, as in Func_02000960, which build each call's constants
-   * again and set its arguments up in the native's order (all direct: differ
-   * 126; the placements direct: 64; Func_0200111c direct: 12). */
+  /* FAKEMATCH: Call3 and Value3, as in Func_02000960, build each call's
+   * constants again in the native's argument order; as direct calls, 126
+   * instructions differ in tla-en. */
   Func_02001084();
   Func_02001164(0);
   Call3((void (*)())Func_020010d4, 23, 0xf80000, 0x1d80000);

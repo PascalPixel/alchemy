@@ -35,10 +35,9 @@ s32 Func_02000be0(void) {
   struct MapModeBits bits = map->bits;
 
   bits.mode = 1;
-  /* FAKEMATCH: the mode goes through a one-byte copy with the loop note before
-   * its store: the native loads the party state address between the or and the
-   * store. As map->bits.mode = 1 the load comes right after the store (differ
-   * 2), and with the note after that store two rows early. */
+  /* FAKEMATCH: a one-byte copy with the loop note before its store loads the
+   * party state address between the or and the store; as map->bits.mode = 1,
+   * 2 instructions differ in tla-en. */
   do {
   } while (0);
   party = &gPartyState;
@@ -48,7 +47,7 @@ s32 Func_02000be0(void) {
   } else {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
     /* FAKEMATCH: the loop note ends the scheduling block after the store;
-     * without it the ROM differs (measured by make compare-tla-en). */
+     * without it, tla-en differs. */
     do {
     } while (0);
     Object_GetById(party->currentOwner)->priorityFlags |= 0x20;

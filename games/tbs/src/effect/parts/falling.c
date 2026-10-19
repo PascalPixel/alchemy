@@ -126,7 +126,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   /* FAKEMATCH: the slot read through union HeapState keeps its load and
    * spill before the next two instructions; as gWorkSlot[n] both move two
-   * later (4 lines of tbs-en effect.s, 2026-10-18). */
+   * later (4 lines of tbs-en effect.s). */
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 

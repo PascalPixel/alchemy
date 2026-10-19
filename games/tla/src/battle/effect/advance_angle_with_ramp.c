@@ -19,18 +19,16 @@ void BattleFx_UpdateDescendingObject(struct ObjectRuntime *obj) {
   u32 scale;
   u32 scaleX;
   /* FAKEMATCH(pin): the shrink step pinned to r1 and held by a volatile
-   * barrier, loaded from the pool before scaleY is read; as a plain s32 step
-   * = -0x280, 2 of 27 instructions differ in tla-en (24 with the barrier and
-   * no pin). */
+   * barrier loads from the pool before scaleY is read; as a plain s32 step =
+   * -0x280, 2 of 27 instructions differ in tla-en. */
   register s32 step asm("r1") = -0x280;
 
   asm volatile("" : "+r"(step));
   obj->scaleY += step;
   scaleX = obj->scaleX;
-  /* FAKEMATCH(barrier): memory barriers after the scaleX read and after the
-   * spin, so the angle loads before the step is subtracted from scaleX and y
-   * before 1 << 16 is built; as plain statements, 2 (first) and 4 (second) of
-   * 27 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): memory barriers load the angle before the step is
+   * subtracted and y before 1 << 16 is built; as plain statements, 4 of 27
+   * instructions differ in tla-en. */
   asm("" : : : "memory");
   scale = scaleX + step;
   obj->angle += 0x2000;

@@ -80,12 +80,8 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
   s32 result = 0;
 
   if (slot >= 0) {
-    /* FAKEMATCH: the native loads the equipped item before it starts the id
-     * mask 0x1ff; plainly the mask is started first (one reordered row, differ
-     * 2). The item is pinned to the r3 it takes there and the barrier holds the
-     * mask until it is loaded; the barrier alone gives the item r0 and the mask
-     * r3 (differ 8), as does a one-pass block, and the pin alone or with an
-     * operand barrier differs 2 and 4. */
+    /* FAKEMATCH: the item pinned to r3 loads before the id mask 0x1ff starts,
+     * as the native does; plainly, 2 instructions differ in tla-en. */
     register u32 item __asm__("r3") = unit->inventory[slot];
     s32 index;
 

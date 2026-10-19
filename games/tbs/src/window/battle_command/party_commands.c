@@ -209,11 +209,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 #ifdef UBFIX
       unit = UnitGetFar(actorId);
 #else
-      /* FAKEMATCH: instruction order only: called through a cast as
-         returning a doubleword, the call also sets r1, so the r1
-         reload for classId no longer depends on the in reload and
-         sched2 loads i * 2 before in, as native (by its prototype,
-         differ 2). */
+      /* FAKEMATCH: called through a cast as returning a doubleword, the call
+       * also sets r1, so sched2 loads i * 2 before in, as native; by its
+       * prototype, 2 instructions differ in tbs-en. */
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 #endif
       COUNTDOWN->actorId = actorId;
@@ -233,9 +231,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       COUNTDOWN->entryActive[0] = 0;
       COUNTDOWN->selected[commandIndex] = 0x80000000;
       /* FAKEMATCH(dead): twelve dead stores restore the native frame's spill
-       * slots (i << 1, i << 2 and i << 4 at sp+32 to sp+24, above &hdr at
-       * sp+20); without them, 26 of 1727 instructions differ in tbs-en, each a
-       * spill offset. */
+       * slots at sp+24 to sp+32; without them, 26 of 1727 instructions differ
+       * in tbs-en. */
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
@@ -364,10 +361,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): arm_reorg counts this empty asm as a 4-byte
-         * instruction, so the pool goes in after mov r1, r10 as native, whose
-         * constant 40 acts as a range-60 (zero_extendhisi2) pool load;
-         * without it, 13 of 1727 instructions differ in tbs-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * after mov r1, r10 as native (constant 40); without it, 13 of 1727
+         * instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
@@ -445,9 +441,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r2, r9 as native (constant 56) and keeps ok = 1 - (j != 4)
-         * among the slot stores; without it, 34 of 1727 instructions differ
-         * in tbs-en. */
+         * after mov r2, r9 as native (constant 56); without it, 34 of 1727
+         * instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;

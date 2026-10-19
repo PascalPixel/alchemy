@@ -29,11 +29,8 @@ void Func_02001364(void) {
     case 1: {
       s32 back = -0x10000;
 
-      /* FAKEMATCH: this case calls directly, as its twin in ☀️ does, and the
-       * barrier holds the -0x10000 in a register first: the native loads it
-       * before it builds the 0x10000 of x; as one expression the load comes two
-       * rows late (differ 2), and a loop note in the barrier's place changes
-       * nothing. */
+      /* FAKEMATCH: the barrier loads -0x10000 before the 0x10000 of x is
+       * built; as one expression, 2 instructions differ in tla-en. */
       __asm__("" : : "l"(back));
       Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1, (z << 16) + back, 1);
       break;

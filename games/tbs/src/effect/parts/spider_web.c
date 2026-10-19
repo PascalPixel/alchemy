@@ -137,17 +137,14 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
   // Plain, the counter's priority (20 refs over 232 insns) ties size and
   // outranks transparent (13 over 240).
-  /* FAKEMATCH: pins the frame counter to r9, as native; plain it takes sl and
-   * transparent r9 (differ 30), and no plain shape ranks transparent above it
-   * (for/while/u32, declaration order, a bound variable, early init, argument
-   * use, 19k permuter candidates). */
+  /* FAKEMATCH: pins the frame counter to r9, as native; plain, it takes sl and
+   * transparent r9, and 30 instructions differ in tbs-en. */
   register s32 frame __asm__("r9");
   s32 i;
 
-  /* FAKEMATCH: size and transparent first hold the slot
-   * table and blend register addresses, sharing their registers 2026-10-11:
-   * plain slot reads and REG_BLDALPHA differ 56; the reads alone 40, the
-   * register alone 50. */
+  /* FAKEMATCH: size and transparent first hold the slot table and blend
+   * register addresses, sharing their registers; as plain slot reads and
+   * REG_BLDALPHA, 56 instructions differ in tbs-en. */
   size = (s32)&Ram_WorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = *(void **)size;
   work = *(struct BattleEffectWork **)(size - 4);

@@ -64,11 +64,9 @@ s32 Func_02002614(void) {
       Func_0200461c(1);
     } else {
       {
-        /* FAKEMATCH: the native loads the blend value from the pool before it
-         * starts the register address; the plain store starts the address first
-         * (one reordered row). Only a halfword register loads from the pool and
-         * a u16 local is widened, so the value is pinned to the r3 it already
-         * takes, as in overlay 696's s43f8.c. */
+        /* FAKEMATCH: the value pinned to r3 loads from the pool before the
+         * register address starts, as the native does; as a plain store, one
+         * row is reordered in tla-en. */
         register u16 alpha __asm__("r3") = 0xc08;
 
         /* FAKEMATCH: the one-pass block's loop note holds the address until the

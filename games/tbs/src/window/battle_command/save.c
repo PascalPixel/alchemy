@@ -109,11 +109,9 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// gTitleSendOptionEnabled when a file has its send flag set and R and Left are
 /// held.
 s32 SaveState_ScanRecordFlags(void) {
-  /* FAKEMATCH: the signed cursor from the party tail keeps the native
-   * literal base 0x1070 and the flag offsets 1 and 2. Measured: the
-   * fields read as summary[i].sendFlag and .flagCount, or through a
-   * walking summary pointer, base the cursor on sendFlag (0x1071)
-   * with offsets 0 and 1 (differ 4). */
+  /* FAKEMATCH: the signed cursor from the party tail keeps the native literal
+   * base 0x1070 and flag offsets 1 and 2; as summary[i].sendFlag and
+   * .flagCount, 4 instructions differ in tbs-en. */
   s32 error;
   s32 sentCount;
   s32 fileCount;
@@ -213,10 +211,9 @@ u32 SaveState_BuildSummaryHeader(void) {
     u32 frames;
 
     n = 242;
-    /* FAKEMATCH(one-pass): a null arm that is never taken, its assignment in a
-     * block that runs once, ends CSE with the bound constant ahead of the
-     * frame load and emits nothing; as a plain assignment in it, or with no
-     * arm at all, 2 of 174 instructions differ in tbs-en. */
+    /* FAKEMATCH(one-pass): a never-taken null arm's one-pass block ends CSE
+     * with the bound constant ahead of the frame load; with no arm, 2 of 174
+     * instructions differ in tbs-en. */
     if (!frame) {
       do {
         n = 242;

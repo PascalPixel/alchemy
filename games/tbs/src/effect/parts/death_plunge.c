@@ -33,10 +33,8 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: frame local: an unused second blitter word fills the
-     frame's 8-byte draw slot, as this file's two-blitter effects declare
-     the pair. Measured (2026-10-13): with draw[1] the frame is 80 bytes
-     for 84 (differ 14, stack offsets only). */
+  /* FAKEMATCH: frame local: an unused second blitter word fills the frame's
+   * 8-byte draw slot; with draw[1], 14 instructions differ in tbs-en. */
   BlitterPair draw;
   struct BattleObj *first;
   struct BattleObj *second;
@@ -382,9 +380,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
     PARTICLES[i].variant = -i;
   }
   /* FAKEMATCH: the cancelling pointer updates retain work's allocation
-   * priority without operand asm. Without them, work and the cell index
-   * exchange r9/r11 and two spill slots swap (420 instructions, 50 rows).
-   * The adjacent scheduling asm is unnecessary with these updates. */
+   * priority; without them, 50 of 420 instructions differ in tbs-en. */
   work++;
   work--;
   // Trails keep 3/4 a frame.
@@ -470,10 +466,8 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  /* FAKEMATCH: cancelling frame updates preserve the allocation lifetimes
-   * without the two trailing asm statements. Deleting both swaps the
-   * ground and camera-position pointers at sp+8/sp+12 (420 instructions,
-   * 18 differing rows); one dead increment leaves the same swap. */
+  /* FAKEMATCH: cancelling frame updates preserve the allocation lifetimes;
+   * without them, 18 of 420 instructions differ in tbs-en. */
   frame ^= 1;
   frame ^= 1;
 }
@@ -506,9 +500,9 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 /// for 128 frames and allocates its own work, canvas and sheet.
 /// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
-  /* FAKEMATCH: never read: the native frame keeps 12 unused
-   * bytes at sp+44..55, exactly this struct 2026-10-11: without it only the
-   * frame shrinks (differ 4). */
+  /* FAKEMATCH: never read: the native frame keeps 12 unused bytes at
+   * sp+44..55, this struct's size; without it, 4 instructions differ in
+   * tbs-en. */
   struct EffectPosition position;
   struct BattleEffectWork *work;
   void *canvas;

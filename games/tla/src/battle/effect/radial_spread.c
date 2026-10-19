@@ -48,10 +48,9 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
 
     x = position.x;
     magnitude = 240;
-    /* FAKEMATCH: ⚓️ starts the distance (240 << 15) after it loads x
-       and the angle (192 << 8) after it stores it, and shifts both after
-       it loads z; as plain constants both halves follow the z load
-       (differ 6). */
+    /* FAKEMATCH: ⚓️ starts the distance after it loads x and the angle
+     * after it stores it, and shifts both after it loads z; as plain
+     * constants, 6 instructions differ in tla-en. */
     asm volatile("" : "+l"(magnitude));
     effect->originX = x;
     angle = 192;

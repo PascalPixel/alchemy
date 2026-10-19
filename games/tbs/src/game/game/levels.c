@@ -188,12 +188,9 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   if (found < 0) {
-    /* FAKEMATCH: the scalar member-address walk: the slot offset is index * 4 +
-     * 88 from state, recomputed each pass as the bytes do. Plain forms measured
-     * 2026-10-13: state->actionSlots[index].encodedAction differ 22 (75
-     * instructions, loop.c walks the slot address); the slot through a u16
-     * pointer, a struct OwnerActionSlot pointer or a u16 view of the array
-     * differ 22 (79 instructions). */
+    /* FAKEMATCH: the slot offset index * 4 + 88 is recomputed each pass as the
+     * bytes do; as state->actionSlots[index].encodedAction, 22 instructions
+     * differ in tbs-en. */
     for (index = 0; index <= 30; index++) {
       s32 offset = index * sizeof(state->actionSlots[0]) +
                    (s32)&((struct BattleUnit *)0)->actionSlots;

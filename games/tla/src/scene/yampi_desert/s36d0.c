@@ -23,10 +23,8 @@ void Func_0200371c(void) {
     Func_02002ebc();
   } else {
     /* FAKEMATCH: the memory clobber keeps GCSE from carrying the party state's
-     * address from the first test into this one, which reloads it (plainly PRE
-     * keeps it in r5 across the flag test, differ 13; a one-pass block, an
-     * empty asm without the clobber and the scene layer's flag tests leave it).
-     */
+     * address from the first test into this one, which reloads it; plainly,
+     * 13 instructions differ in tla-en. */
     asm("" ::: "memory");
     if (gPartyState.entrance == 2 && !GameFlag_Test(0x88c))
       Func_02001bec();

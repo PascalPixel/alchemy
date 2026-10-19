@@ -140,13 +140,9 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     if (output) {
       output->active = 1;
       output->kind = 1;
-      /* FAKEMATCH: instruction order only: a char store (alias set 0) keeps
-         the index store ahead of the attribute word in sched2. Plain forms
-         measured (2026-10-13) for this and the two typed stores below:
-         output->index, entry->attributes.word or entry->tile.value alone
-         differ 2, 2 and 4; all three plain differ 2 (the entry copy moves
-         after the x and y stores), with entry set first or after the
-         sentinel still 2, after x or y 38. */
+      /* FAKEMATCH: this char store and the two typed stores below keep the
+         index store ahead of the attribute word; as plain stores, 2
+         instructions differ in tbs-en. */
       *(s8 *)&output->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)((u8 *)output + 16);
       output->sentinel = 240;

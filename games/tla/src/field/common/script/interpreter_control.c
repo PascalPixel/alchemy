@@ -18,12 +18,9 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   u8 *delay = &interpreter->delay;
 
   if (*delay > 59) {
-    /* FAKEMATCH: two forced temporaries. The 0 in a variable: both byte stores
-     * share its register (r2), as the native; with the plain constant each
-     * store builds its own 0 and the second address is derived from the first
-     * (differ 16). The delay through a byte pointer: its store stays ahead of
-     * the target stores; through the field the scheduler moves it after them
-     * (differ 2). */
+    /* FAKEMATCH: the 0 in a variable shares r2 between both byte stores, and
+     * the delay's byte pointer keeps its store first; as the constant, 16
+     * differ in tla-en, and through the field, 2. */
     u32 zero = 0;
 
     *delay = zero;

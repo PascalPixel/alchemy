@@ -38,13 +38,9 @@ void Func_020043f8(void) {
   if (GameFlag_Test(0x205))
     Func_02002878();
   {
-    /* FAKEMATCH: the native loads the blend value from the pool before it
-     * starts the register address; the plain store starts the address first
-     * (one reordered row). Only a halfword register loads from the pool and a
-     * u16 local is widened, so the value is pinned to the r3 it already takes
-     * and the barrier holds r2 until it is loaded. Measured against it: the
-     * plain store, a struct field store, a pointer local and a struct temporary
-     * (which becomes static data). */
+    /* FAKEMATCH: the value pinned to r3 loads from the pool before the register
+     * address starts, as the native does; as a plain store, one row is
+     * reordered in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;
 
     /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
@@ -58,8 +54,7 @@ void Func_020043f8(void) {
 
     /* FAKEMATCH: the barrier holds r0 until the priority is complete, so the
      * callback is loaded last as the native has; through the inline alone it
-     * comes one row early, and a plain temporary shares one register between
-     * the two calls. */
+     * comes one row early in tla-en. */
     __asm__("" : "+l"(priority) : : "r0");
     Scheduler_AddOrUpdateCallback(Func_020043c8, priority);
   }

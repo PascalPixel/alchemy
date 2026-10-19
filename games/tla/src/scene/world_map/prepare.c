@@ -44,9 +44,8 @@ void Func_020011fc(void) {
     s32 base = (s32)MsgNextILl;
 
     /* FAKEMATCH: the empty asm ties the flag to the message base, so the base
-     * loads before the multiply as in the native (plain, sched2 multiplies
-     * first: differ 2; a one-pass block or asm volatile there moves
-     * ObjectMotion_Launch's argument setup instead: differ 2). */
+     * loads before the multiply; as plain C, 2 instructions differ in tla-en.
+     */
     asm("" : "+r"(flag) : "r"(base));
     Func_02004cd8(
         flag * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +

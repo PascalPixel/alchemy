@@ -61,10 +61,8 @@ void Func_02000ad8(void) {
   {
     s32 anim = 0x80;
     s32 zero = 0;
-    /* FAKEMATCH: ⚓️ loads the zero before 0x100's shift and the actor id after
-     * it; plain constants load the id before the shift (differ 2), 0x100 forced
-     * whole shifts before the zero (differ 2), the zero alone forced comes
-     * first (differ 4). */
+    /* FAKEMATCH: forced temporaries load the zero before 0x100's shift and the
+     * actor id after it; as plain constants, 2 differ in tla-en. */
     __asm__ volatile("" : "+l"(anim));
     /* FAKEMATCH: the second forced temporary of the same call, as above. */
     __asm__ volatile("" : "+l"(zero));

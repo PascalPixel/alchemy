@@ -9,12 +9,8 @@ s32 Func_020005c0(struct ObjectRuntime *object) {
     s32 step = -0x40000;
 
     /* FAKEMATCH: the object passes through an asm that reads the step, so the
-     * step's pool load comes before the y load as the native has; plain, the y
-     * load comes first (one reordered row). Measured against it: +=
-     * (s32)0xfffc0000, the constant first, y and constant temporaries, the y
-     * update before the motionFlags store (differ 13), the step behind its own
-     * "+l" barrier (differ 2 and 4), the step pinned to r2 behind a one-pass
-     * block (differ 2). */
+     * step's pool load comes before the y load; as plain C, the y load comes
+     * first. */
     __asm__("" : "+l"(object) : "l"(step));
     object->y += step;
   }

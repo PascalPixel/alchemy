@@ -12,10 +12,8 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 /// and starts Func_02000d18.
 void Func_02000df0(void) {
   u32 *buffer = MemAlloc(0x100);
-  /* FAKEMATCH: ⚓️ keeps the fill pointer in r1 and the count in r2; unpinned,
-   * global-alloc ranks the pointer first and gives it r2 (differ 10). Measured
-   * against it: the two declared or set in either order, the decrement split,
-   * the store and step split, and alchemy permute for 3 minutes. */
+  /* FAKEMATCH: ⚓️ keeps the fill pointer in r1 and the count in r2;
+   * unpinned, the pointer takes r2 and 10 instructions differ in tla-en. */
   register u32 *word asm("r1") = buffer;
   s32 count = 63;
 

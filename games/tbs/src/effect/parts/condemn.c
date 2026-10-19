@@ -29,9 +29,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   void *cells;
   BlitterPair draw;
   struct MotionObject *target;
-  /* FAKEMATCH: the second position is never used: it gives the
-   * frame its native 76 bytes 2026-10-11: a single position shrinks only the
-   * frame (differ 4). */
+  /* FAKEMATCH: the unused second position gives the frame its native 76
+   * bytes; as a single position, 4 instructions differ in tbs-en. */
   struct EffectPosition pos[2];
   s32 swing[2];
   s32 drawPanel;

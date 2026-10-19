@@ -16,10 +16,9 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
    * twice; a plain read is shared. */
   volatile u32 *held;
 
-  /* FAKEMATCH: ⚓️ loads the render work before it starts the busy flag's offset
-   * 0x1389 in r2; the empty asm holds r2 until the work is loaded. Plainly the
-   * offset is started first (differ 2); a one-pass block after the load moves
-   * the parameter copy and the cleared result up instead (differ 4). */
+  /* FAKEMATCH: the empty asm holds r2 until the render work is loaded, then
+   * starts the busy flag's offset 0x1389; as plain C, 2 instructions differ in
+   * tla-en. */
   asm("" : "+l"(work) : : "r2");
   if (work->busy != 0 && Audio_Check() == 0)
     cancel = 1;

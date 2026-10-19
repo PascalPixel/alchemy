@@ -9,10 +9,8 @@ void Func_02001cc8(void) {
     object->motionFlags = 3;
     do {
       WaitFrames(1);
-      /* FAKEMATCH: one more use of the object inside the loop ranks it ahead of
-       * the speed it reads, so the object takes r5 and the speed r6 as the
-       * native has; plain, the two trade registers (differ 14, with or without
-       * a named speed and a flags pointer). */
+      /* FAKEMATCH: one more use of the object in the loop gives it r5 and the
+       * speed r6; without it, 14 instructions differ in tla-en. */
       __asm__("" : : "l"(object));
     } while (object->velocityY != 0);
     Engine_AudioPlayCue(188);

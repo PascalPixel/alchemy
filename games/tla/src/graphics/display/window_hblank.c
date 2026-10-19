@@ -30,19 +30,17 @@ void BattleFx_StartWindowHBlankDma(void) {
   {
     u16 control;
 
-    /* FAKEMATCH(temporary): REG_DISPCNT's high bits (128, shifted by 19
-     * below) started in a variable of their own, after the page load as the
-     * native does; as `REG_DISPCNT |= ...`, 2 of 68 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(temporary): REG_DISPCNT's high bits start in a variable of
+     * their own, after the page load as the native does; as
+     * `REG_DISPCNT |= ...`, 2 of 68 instructions differ in tla-en. */
     dispHigh = 128;
     /* FAKEMATCH(barrier): the asm on dispHigh raises its start to the slot
      * after the page load; without it, 2 of 68 instructions differ in
      * tla-en. */
     __asm__("" : "+r"(dispHigh));
-    /* FAKEMATCH(temporary): DMA 0's control read into its own variable, so
-     * the barrier below can stand between the read and the mask; as
-     * `channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT`, 2 of 68 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): DMA 0's control read into its own variable for
+     * the barrier below; as `channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT`, 2
+     * of 68 instructions differ in tla-en. */
     control = channel[5];
     /* FAKEMATCH(barrier): the control read before the first mask is
      * started, as the native does; without the barrier, 2 of 68

@@ -33,9 +33,8 @@ s32 Func_080fcf14(void) {
   s32 diff;
   s32 ret;
   /* FAKEMATCH: the barrier keeps the action's load ahead of the 0x3fff mask,
-   * and the action pinned to r3 keeps its register, as native; plain, the mask
-   * starts first (differ 2), the barrier alone loads into r0 (differ 8), and
-   * the pin alone changes nothing (differ 2). */
+   * and the pin keeps it in r3; as plain C, 2 instructions differ in
+   * tla-en. */
   register u32 action asm("r3");
 
   menu = Ram_HeapSlots->menuRuntime;

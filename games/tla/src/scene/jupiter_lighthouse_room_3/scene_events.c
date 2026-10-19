@@ -6,10 +6,9 @@ void Func_02000134(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 placed = 0;
   s32 i;
-  /* FAKEMATCH: the mode pinned to r2 and set before an empty asm barrier builds
-   * it right after the motion flag store, before the position loads, as the
-   * native has it (plain, through Lift_ too: differ 2, built after both loads;
-   * a one-pass block on the store or the pin alone: differ 2). */
+  /* FAKEMATCH: the mode pinned to r2 before an empty asm is built after the
+   * motion flag store, before the position loads; as a plain constant, 2
+   * instructions differ in tla-en. */
   register s32 mode asm("r2");
 
   if (object->x >> 20 == 20 && object->z >> 20 == 36) {

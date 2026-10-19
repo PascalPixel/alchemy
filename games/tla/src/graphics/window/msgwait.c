@@ -28,11 +28,9 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument) {
    * bytes, not 16 (differ 4). */
   u16 entries[4];
 
-  /* FAKEMATCH: ⚓️ loads the render work right after the heap slot base, before
-   * it starts the result offset 0x1384 in r2; the empty asm holds r2 until the
-   * work is loaded. Plainly the offset is started first (differ 2); a one-pass
-   * block or a bare barrier after the load moves the stack adjustment and the
-   * argument copies up instead (differ 6). */
+  /* FAKEMATCH: the empty asm holds r2 until the render work is loaded, as
+   * ⚓️ does before it starts the result offset 0x1384; plainly, 2
+   * instructions differ in tla-en. */
   asm("" : "+l"(work) : : "r2");
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;

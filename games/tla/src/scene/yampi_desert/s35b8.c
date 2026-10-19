@@ -45,10 +45,8 @@ void Func_020035d8(void) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   else if (gPartyState.entrance == 4) {
     if (GameFlag_Test(0xa29)) {
-      /* FAKEMATCH: each one-pass block ends a scheduling block after the scene
-       * id's load, which the native places before the field offset (plainly the
-       * offset comes first, differ 19 with the tails cross-jumped differently).
-       */
+      /* FAKEMATCH: each one-pass block loads the scene id before the field
+       * offset; as plain assignments, 19 instructions differ in tla-en. */
       do {
         scene = (s32)&SceneId_Ov661Room1;
       } while (0);

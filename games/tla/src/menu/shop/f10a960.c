@@ -41,11 +41,9 @@ void WaitFrames(s32 frames);
 void Func_0810a9ac(s32 value) {
   u8 *shop;
   s32 portrait;
-  /* FAKEMATCH: the barrier keeps the shop work's load ahead of the keeper's
-   * offset 0x4fa, and the message pinned to r6 keeps its copy from the
-   * parameter below the barrier, as native; without both the offset starts
-   * first (differ 2), and the barrier alone lifts the copy to the top (differ
-   * 2). */
+  /* FAKEMATCH: the barrier loads the shop work before the keeper's offset, and
+   * the message pinned to r6 is copied below it; without both, 2 instructions
+   * differ in tla-en. */
   register s32 message asm("r6");
 
   shop = Ram_HeapSlots->menuRuntime;

@@ -23,10 +23,9 @@ void Func_02000810(s32 actor, s32 target) {
       struct FieldActor *object = Object_GetById(target);
       u32 facing = object->facing;
 
-      /* FAKEMATCH: a forced temporary and the loop note after it: the native
-       * reads the facing before it starts the step 0x1000; as facing += 0x1000
-       * the step's first half comes before the read (differ 2: one reordered
-       * pair). */
+      /* FAKEMATCH: a forced temporary and the loop note after it read the
+       * facing before the step 0x1000 starts, as native; as facing += 0x1000,
+       * 2 instructions differ in tla-en. */
       do {
       } while (0);
       object->facing = facing + 0x1000;

@@ -24,8 +24,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   {
     /* FAKEMATCH(pin): the BG map address held in r5, loaded right after the
      * cell address is formed; as the plain constant added to the row offset,
-     * 10 of 57 instructions differ in tla-en (4 with the step below plain
-     * too: it loads into r2 two rows later). */
+     * 10 of 57 instructions differ in tla-en. */
     register u32 screenBase asm("r5") = 0x06004000;
 
     /* FAKEMATCH(barrier): the pin's empty asm, which keeps the load where it
@@ -70,8 +69,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   u32 row;
   /* FAKEMATCH(pin): the BG map address held in r5, loaded between the cell
    * offset's shift and add; as the plain constant added to the column offset,
-   * 4 of 32 instructions differ in tla-en (it loads into r2 just before its
-   * own add). */
+   * 4 of 32 instructions differ in tla-en. */
   register u32 screenBase asm("r5") = 0x06004000;
 
   cellBytes = gMapBlocks + ((((s32)tileColumn / 2) & 31) << 2);

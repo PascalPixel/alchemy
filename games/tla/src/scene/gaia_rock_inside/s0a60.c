@@ -76,13 +76,9 @@ void Func_02000aac(struct ObjectRuntime *object) {
 void Func_02000af8(s32 unused, u32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   u32 direction;
-  /* FAKEMATCH: the state pointer is pinned to r8, loaded through its own
-   * variable into r3 behind an empty asm, and the direction is read from r0
-   * after it: the native loads the pointer first after the direction call,
-   * where plainly sched2 ranks the mask's movs above it (one reordered pair,
-   * differ 2); without the r8 pin the pointer and the flag's address swap r7
-   * and r8 (16), and without the r0 read the direction's copy moves ahead of
-   * the mask (2). */
+  /* FAKEMATCH: the state pointer pinned to r8 and loaded behind an empty asm,
+   * with the direction read from r0 after it, loads first after the call;
+   * without the r8 pin, 16 instructions differ in tla-en. */
   register s32 *state asm("r8");
 
   {

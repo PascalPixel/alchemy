@@ -91,9 +91,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
-  /* FAKEMATCH: the one-pass block keeps the table address
-   * after the second read 2026-10-11: without the block differ 2 (mov r2, sp
-   * moves ahead of the first store). */
+  /* FAKEMATCH: the one-pass block keeps the table address after the second
+   * read; as no block, 2 instructions differ in tbs-en. */
   do {
     draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_BACKGROUND];
   } while (0);
@@ -238,11 +237,9 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
               // the later releases move them 16 pixels down.
 #if !TBS_PATCH_1
               {
-                /* FAKEMATCH: the named result pointer is a pseudo of its own,
-                 * which gives the Japanese frame its 124 bytes and keeps the
-                 * trail counter j in a stack slot, as native. 2026-10-13: the
-                 * plain &screen argument, as the other editions pass it,
-                 * gives a 120-byte frame and j in r9 (tbs-ja differ 372). */
+                /* FAKEMATCH: the named result pointer gives the 124-byte frame
+                 * and j in a stack slot, as native; as the plain &screen
+                 * argument, 372 instructions differ in tbs-ja. */
                 struct EffectPosition *out = &screen;
 
                 EffectPosition_ProjectPoint(point, out);

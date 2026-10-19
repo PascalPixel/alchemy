@@ -21,8 +21,7 @@ void Func_02002a20(void);
 void Func_02002f20(s32 modeArg, s32 paramArg) {
   /* FAKEMATCH: the parameter pointer and the two pins copy the arguments into
    * r5 and r6 after both store addresses load, as the native does; as plain
-   * parameters the copies tie with the second address load and come first
-   * (differ 2). */
+   * parameters, 2 instructions differ in tla-en. */
   u16 *paramPtr = &gData_02006494;
   register s32 mode asm("r5") = modeArg;
   register s32 param asm("r6") = paramArg;

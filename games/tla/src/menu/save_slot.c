@@ -55,11 +55,9 @@ s32 Menu_SelectSaveSlotAction(void) {
   if (ret >= 0) {
     u32 twice = group * 2;
 
-    /* FAKEMATCH: the one-pass block makes the table's pool load wait for
-       group * 2, as the native issues it between the shift and the add;
-       written plainly as ret + group * 6 the load comes after the add
-       (differ 2), and without the block the split index measures the
-       same. */
+    /* FAKEMATCH: the one-pass block issues the table's pool load between the
+       shift and the add; as ret + group * 6, 2 instructions differ in
+       tla-en. */
     do {
     } while (0);
     ret = gMenu_SaveSlotActionByPosition[ret + (twice + group) * 2];

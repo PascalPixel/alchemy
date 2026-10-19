@@ -43,10 +43,8 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 i;
   s32 frame;
-  /* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter
-     word fills four bytes of the frame. Measured (2026-10-14): declared as one
-     DrawRectangle, the frame is 60 bytes for 64 (differ 66, frame offsets
-     only). */
+  /* FAKEMATCH: frame local: the unused second blitter word fills four bytes of
+   * the frame; as one DrawRectangle, 66 instructions differ in tbs-en. */
   BlitterPair draw;
   u8 *sprites;
   struct EffectPosition screen;

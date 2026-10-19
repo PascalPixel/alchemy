@@ -445,10 +445,8 @@ static void CollapseFromHeat(void) {
   // 0.70) and offset (7/34, 0.41) and hands out r5, r6 and r7 in that
   // order; the native needs offset between the other two (8 or 9 refs).
   /* FAKEMATCH: pins the byte offset to r6, where the game keeps it with the
-   * countdown in r7; unpinned, the countdown takes r6. Plain shapes (u32 types,
-   * while/for countdowns, offset = 0 before the guard, count reused after the
-   * loop) differ 22-112; only an extra reference to offset in the loop
-   * preheader (an input barrier) reaches 0. */
+   * countdown in r7; unpinned, the countdown takes r6 and 22 to 112
+   * instructions differ in tbs-en. */
   register s32 offset asm("r6");
   const s32 *point;
   s32 nearest;

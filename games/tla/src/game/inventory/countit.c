@@ -9,9 +9,8 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   u16 counter;
 
   /* FAKEMATCH: the barrier keeps the table's load between the mask constant and
-   * its and, and the index is doubled apart so the table stays the base
-   * register; without them the and comes first (one reordered pair, differ 2).
-   */
+   * its and, the index doubled apart keeps the table the base register; without
+   * them, 2 instructions differ in tla-en. */
   asm volatile("");
   index &= itemId;
   index <<= 1;

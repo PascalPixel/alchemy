@@ -610,7 +610,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   s32 screenY = 80 - map->viewY / PIXELS(1);
 #else
   // UB: viewX and viewY are separate scalar members, not an array. Reading
-  // them by name adds four bytes in the native EN build (2026-10-16).
+  // them by name adds four bytes in tbs-en.
   s32 *view = &map->viewX;
   s32 cameraX = view[0] / PIXELS(1);
   s32 screenY = 80 - view[1] / PIXELS(1);

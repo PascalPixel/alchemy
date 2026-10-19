@@ -10,9 +10,8 @@ void Func_020004bc(s32 unused, s32 id) {
   s32 i;
   s32 column;
   /* FAKEMATCH: the id pinned to r5 copies it after the map work load and keeps
-   * the stack adjustment after the first call's argument; plain, the copy comes
-   * first (differ 2), and Func_02000574's one-pass block moves the stack
-   * adjustment to the start instead (differ 2). */
+   * the stack adjustment after the first call's argument; as a plain id, 2
+   * instructions differ in tla-en. */
   register s32 objectId asm("r5") = id;
 
   layer = (s32 *)(map + 0x140);

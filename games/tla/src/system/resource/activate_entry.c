@@ -15,11 +15,9 @@ s32 Resource_ResetEntry(u32 resourceIndex) {
   if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   offset = entry->offset;
-  /* FAKEMATCH: ⚓️ reads the offset between the first two instructions of the
-   * split constant 0xffff; plainly the shift comes first (differ 2), as sched2
-   * ranks the two equal and the shift has more dependents. An empty asm that
-   * reads the offset gives the load a second dependent, and it is taken first.
-   */
+  /* FAKEMATCH: an empty asm reading the offset gives its load a second
+   * dependent, so sched2 takes it inside the split constant 0xffff; plainly,
+   * 2 instructions differ in tla-en. */
   asm("" : "+l"(entry) : "l"(offset));
   if (offset != VRAM_CACHE_OFFSET_FREE) {
     VramCache_FreeBlocks(resourceIndex);
@@ -55,11 +53,9 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   {
     struct VramBlockCacheEntry *table = gResourceTableEntries;
 
-    /* FAKEMATCH: ⚓️ loads the table's address before it copies no to r5;
-     * plainly the copy comes first (differ 2), as sched2 ranks the two equal in
-     * priority and in dependents and takes the earlier. Two empty asms that
-     * read the address give its load two more dependents, and it is taken
-     * first; one alone leaves the tie (differ 2). */
+    /* FAKEMATCH: two empty asms reading the address give its load two more
+     * dependents, so it comes before the copy of no to r5; plainly, 2
+     * instructions differ in tla-en. */
     asm("" : "+r"(src) : "l"(table));
     /* FAKEMATCH: the second of the pair above. */
     asm("" : "+l"(no) : "l"(table));

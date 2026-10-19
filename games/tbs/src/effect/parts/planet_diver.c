@@ -165,8 +165,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
           s32 angle;
 
           /* FAKEMATCH: the mask set before the Random16() call it masks; as
-           * Random16() & 0x3ff, 5 lines of tbs-en effect.s differ (2026-10-18).
-           */
+           * Random16() & 0x3ff, 5 lines of tbs-en effect.s differ. */
           speed = 0x3ff;
           speed &= Random16();
           angle = Random16() & 0xffff;

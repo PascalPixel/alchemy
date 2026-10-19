@@ -8,10 +8,8 @@ void Func_02002084(s32 fade) {
   Func_02002828();
   if (fade) {
     Blend_SetAlpha(0xe06);
-    /* FAKEMATCH: the one-pass block ends the scheduling block after the first
-     * blend write: ⚓️ finishes the value (adds r3, #6) before the register
-     * address (adds r5, #82); without it the address, which the later writes
-     * share, is finished first (differ 2). */
+    /* FAKEMATCH: the one-pass block finishes the blend value before the shared
+     * register address; without it, 2 instructions differ in tla-en. */
     do {
     } while (0);
     WaitFrames(10);

@@ -406,10 +406,9 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
       // The distance in the XZ plane: dy is computed as in
       // Object_SetMoveTarget but not used for the distance.
       dx = (x - cameraObject->x) / 0x10000;
-      /* FAKEMATCH(dead): this dy is overwritten below, as in
-       * Object_SetMoveTarget's three-axis delta, but its references rank y
-       * above the bounds in global allocation and keep it in r5 as native;
-       * without it, 52 of 224 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
+       * in global allocation and keeps it in r5 as native; without it, 52 of
+       * 224 instructions differ in tbs-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
@@ -559,11 +558,11 @@ retry:
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
         0)
       goto retry;
+    // The retry gotos stay: as for (;;) with continue, loop.c hoists the two
+    // positions' addresses, which the native recomputes each try.
     /* FAKEMATCH(one-pass): it ends cse2's block, so the division works on the
-     * loaded x and the copy outlives it into the move target call; as plain
-     * statements, 8 of 184 instructions differ in tbs-en. The retry gotos stay:
-     * as for (;;) with continue, loop.c hoists the two positions' addresses,
-     * which the native recomputes each try. */
+     * loaded x; as plain statements, 8 of 184 instructions differ in tbs-en.
+     */
     do {
       dx = candidatePosition.x / 0x10000 - object->homeX;
       dz = candidatePosition.z / 0x10000 - object->homeZ;

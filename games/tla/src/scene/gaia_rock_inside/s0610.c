@@ -25,10 +25,9 @@ void Func_0200062c(struct ObjectRuntime *object) {
   s32 bias;
   s32 limit;
 
-  /* FAKEMATCH: the native loads the scale and then the pooled -0x800 before it
-   * shifts the random value; without these two barriers the shifts come before
-   * the pool load (one reordered instruction, differ 2), and with only the
-   * second the pool load rises above the call. */
+  /* FAKEMATCH: two barriers load the scale and then the pooled -0x800 before
+   * the random value is shifted; without them, 2 instructions differ in
+   * tla-en. */
   __asm__ volatile("");
   bias = -0x800;
   /* FAKEMATCH: second barrier of the pair above: the pool load stays before the
@@ -70,10 +69,8 @@ s32 Func_02000678(void) {
   Func_02004dac(object, gData_020050d0);
   object->scaleX = 0x6666;
   object->scaleY = 0x6666;
-  /* FAKEMATCH: the native stores both scales before it loads the sprite;
-   * without the object passed through this asm the sprite is loaded while the
-   * scale is built (two reordered instructions, differ 4). A volatile barrier
-   * here swaps the two arguments of the call above instead. */
+  /* FAKEMATCH: the object passed through this asm stores both scales before
+   * the sprite is loaded; without it, 4 instructions differ in tla-en. */
   __asm__("" : "+r"(object));
   sprite = object->animation;
   sprite->priority = 1;

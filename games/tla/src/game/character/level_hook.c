@@ -19,13 +19,9 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
       s32 row = state->enemyId * 99 + level;
       s32 offset;
 
-      /* FAKEMATCH: ⚓️ loads the table's address after the level is added to the
-       * row and before the sum is scaled; written as
-       * gOwner_ExperienceThresholds[state->enemyId * 99 + level - 1] the load's
-       * priority is one below the add's and it comes after it (one reordered
-       * pair, differ 2). The table and the sum are forced temporaries held at
-       * the barrier, and the offset is spelled out because a table in a
-       * register is indexed as (table + sum * 4) - 4 (differ 29). */
+      /* FAKEMATCH: the table and sum held at a barrier load the table between
+       * the add and the scaling; as gOwner_ExperienceThresholds[state->enemyId
+       * * 99 + level - 1], 2 instructions differ in tla-en. */
       asm volatile("" : "+l"(table));
       offset = row * 4 - 4;
       return *(u32 *)((u8 *)table + offset);

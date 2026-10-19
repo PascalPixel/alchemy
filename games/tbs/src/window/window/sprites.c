@@ -247,10 +247,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// The Japanese UiWindow_PutGlyph, which also places the kana marks.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
-  /* FAKEMATCH: needed to match: this XOR pair changes no pointer bits and folds
-   * without instructions, preserving work and base as independent lifetimes. A
-   * direct copy merges both into r8, omits the native r8/r12 copy, and differs
-   * 17 aligned instructions (0x144 versus 0x148 bytes). */
+  /* FAKEMATCH: this XOR pair folds away but keeps work and base as separate
+   * lifetimes, with the native r8/r12 copy; as a direct copy, 17 instructions
+   * differ in tbs-en. */
   u8 *base = (u8 *)((unsigned long)work ^ tile);
   struct SpriteOutput *out;
   s32 idx;

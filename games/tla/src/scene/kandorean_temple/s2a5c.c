@@ -29,13 +29,9 @@ void Func_0200290c(void) {
   Object_SetModeById(11, 4);
   Func_020053b8(gData_020054dc);
   {
-    /* FAKEMATCH: the native loads the blend value from the pool before it
-     * starts the register address; the plain store starts the address first
-     * (one reordered row). Only a halfword register loads from the pool and a
-     * u16 local is widened, so the value is pinned to the r3 it already takes,
-     * as in overlay 6a8's s2614.c. Measured against it: one-pass blocks around
-     * the two stores, a value temporary, struct and plain pointer forms (differ
-     * 2), Io_Write16 (differ 26). */
+    /* FAKEMATCH: the blend value pinned to r3, so it loads from the pool
+     * before the register address is started; as a plain store, 2
+     * instructions differ in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;
 
     /* FAKEMATCH: the one-pass block's loop note holds the address until the

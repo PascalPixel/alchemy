@@ -36,10 +36,8 @@ void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants
-   * and loads the routine once into a callee-saved register, as the native
-   * does: called directly, the two clears share one 0x4000 and the effect
-   * work's zeros reuse an earlier register (differ 24 in
-   * BattleFx_OpenCanvasLayer). */
+   * and the routine in a callee-saved register; called directly, 24
+   * instructions of BattleFx_OpenCanvasLayer differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -60,10 +58,9 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   display->secondMode = 1;
   WaitFrames(1);
   {
-    /* FAKEMATCH: the native loads the zero from the pool before it starts the
-     * register address, as in BattleFx_EndCanvasLayer: pinned to the r3 it takes behind a
-     * barrier that holds r2. The plain store starts the address first (differ
-     * 2), as does the pin without its barrier. */
+    /* FAKEMATCH: the zero pinned to r3 behind a barrier loads from the pool
+     * before the register address, as native; as a plain store, 2
+     * instructions differ in tla-en. */
     register u16 zero asm("r3") = 0;
     struct IoWriteQueue *q;
     u32 saved;
@@ -72,11 +69,9 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
 
     /* FAKEMATCH: the barrier of the pin above. */
     __asm__("" : "+l"(zero) : : "r2");
-    /* FAKEMATCH: IO_WRITE_QUEUE_PUSH written out, so that the queue's address
-     * is taken before the BLDCNT store: the native loads it between the halves
-     * of the register address; through the macro, or with the store after the
-     * queue's address as the macro orders them, it loads after them (differ 2).
-     */
+    /* FAKEMATCH: IO_WRITE_QUEUE_PUSH written out, so the queue's address is
+     * taken before the BLDCNT store; through the macro, 2 instructions differ
+     * in tla-en. */
     q = &gIoWriteQueue;
     count_ = &q->count;
     REG_BLDCNT = zero;
@@ -108,10 +103,9 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
 
   Func_0814355c();
   {
-    /* FAKEMATCH: the native loads WININ's value from the pool before it starts
-     * the register address; plainly, or pinned without the barrier, the address
-     * starts first (differ 2). Pinned to the r2 it takes, behind a barrier that
-     * holds r3. */
+    /* FAKEMATCH: WININ's value pinned to r2 behind a barrier loads from the
+     * pool before the register address, as native; as a plain store, 2
+     * instructions differ in tla-en. */
     register u16 inside asm("r2") = 0x3537;
 
     /* FAKEMATCH: the barrier of the pin above. */
@@ -200,10 +194,9 @@ void BattleFx_EndCanvasLayer(void) {
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
   {
-    /* FAKEMATCH: the native loads the control word from the pool before it
-     * starts the register address; the plain store starts the address first
-     * (differ 2), as does a pin without the barrier. Pinned to the r3 it takes,
-     * as in f18284c.c. */
+    /* FAKEMATCH: the control word pinned to r3 behind a barrier loads from the
+     * pool before the register address, as native; as a plain store, 2
+     * instructions differ in tla-en. */
     register u16 control asm("r3") = 0x787;
 
     /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
@@ -215,12 +208,9 @@ void BattleFx_EndCanvasLayer(void) {
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
-  /* FAKEMATCH: the native loads the zero from the pool between the first two
-   * instructions of the register address; after the push (whose IME restore is
-   * a one-pass block) the plain store loads it one instruction later (differ
-   * 2), as does a pinned zero with or without its own barrier. With the push
-   * written out and a plain restore, the load falls right but the restore sinks
-   * below the address. */
+  /* FAKEMATCH: the barrier loads the zero between the first two instructions
+   * of the register address, as native; as a plain store, 2 instructions
+   * differ in tla-en. */
   __asm__ volatile("");
   REG_BLDCNT = 0;
   WaitFrames(1);

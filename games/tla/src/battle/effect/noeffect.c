@@ -50,10 +50,9 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
   channel[5] = control & 0xc5ff;
   channel[5] &= 0x7fff;
   io = 0x80;
-  /* FAKEMATCH: ⚓️ starts the I/O base (0x80 << 19) before the dummy read of the
-   * control word and finishes the address after it; as the plain constant
-   * 0x04000028, or a local or register pin holding it, the dummy read comes
-   * first (differ 2) */
+  /* FAKEMATCH: the barrier starts the I/O base (0x80 << 19) before the dummy
+   * read and finishes the address after it; as the plain constant 0x04000028,
+   * 2 instructions differ in tla-en. */
   asm volatile("" : "+l"(io));
   (void)channel[5];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28), 0xa6600001,

@@ -56,13 +56,9 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   Camera_ApplyTransformByFlag();
   {
     s32 *pos = position;
-    /* FAKEMATCH: the native copies projected to its argument register r1
-     * between the first store of the position and the second load; plainly the
-     * load comes first (one reordered row, differ 2). The pointer is pinned to
-     * r1 and the barrier, which uses it and the position, holds the rest of the
-     * position after the copy. Measured against it: the barrier alone (differ
-     * 2), the pin alone (2), the barrier on the pin alone (4, the position's
-     * base moves). */
+    /* FAKEMATCH: projected is copied to r1 between the position's first store
+     * and second load, as the native does; plainly, 2 instructions differ in
+     * tla-en. */
     register s32 *out __asm__("r1");
 
     pos[0] = object->x;

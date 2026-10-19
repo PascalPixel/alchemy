@@ -25,10 +25,9 @@ s32 Func_02001a60(s32 topic) {
   variant = (cursor + (s32)((u32)(Random16Far() * 2) >> 16) + 4) % 3;
   state->cursor[topic] = variant;
   index = topic * 2;
-  /* FAKEMATCH: a forced temporary and the loop note after it: the native loads
-   * the table address between the doubling of the topic and the rest of the
-   * index (two rows late as one expression, one row early with the note alone).
-   */
+  /* FAKEMATCH: a forced temporary and the loop note after it load the table
+   * address between the topic's doubling and the rest of the index; as one
+   * expression, it loads two rows late in tla-en. */
   do {
   } while (0);
   return gData_02004630[index + topic + variant];

@@ -898,10 +898,10 @@ void BattleActor_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  /* FAKEMATCH(one-pass): the enemy scan in a one-pass block, which keeps the
-   * party loop's shape (its first test not peeled ahead of it); without the
-   * block, 12 of 53 instructions differ in tbs-en. The scan itself is a label
-   * loop, the form its branches match with. */
+  // The scan is a label loop, the form its branches match with.
+  /* FAKEMATCH(one-pass): the block keeps the party loop's first test from
+   * being peeled ahead of it; without the block, 12 of 53 instructions differ
+   * in tbs-en. */
   do {
     enemyOrActionIndex = 0;
   again:

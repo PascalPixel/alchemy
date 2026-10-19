@@ -142,10 +142,8 @@ void BattleFx_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the
-   * seed counter is set before its pointer 2026-10-11: without it differ 2
-   * (movs r4, #0 falls behind the particle offset); i = 0 ahead of the store
-   * differs 170. */
+  /* FAKEMATCH: a one-pass block sets the seed counter before its pointer; as
+   * a plain store, 2 instructions differ in tbs-en. */
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
@@ -170,16 +168,9 @@ void BattleFx_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
-        /* FAKEMATCH: pins rec to r0 so the point is filled through r0 and
-         * loop.c cannot hoist its address into fp, as native; plain differs 118
-         * (hoisted into fp, frame 92), loads before stores 12, one-pass blocks
-         * around the fill and the apply 2 (add r5, sp, #64 after the last
-         * store). Ordinary pointer differs 118 in EN (265 native, 269 built). A
-         * generic output barrier before filling differs 155 (272 built); after
-         * filling it differs 118 (267 built). Keeping rec live after the call
-         * differs 179 (270 built). None keeps the native loop layout. loop.c's
-         * second pass hoists the invariant &point when 15 x savings x life 8
-         * reaches the loop's insn count (about 100 after giv reduction). */
+        /* FAKEMATCH: pins rec to r0 so loop.c cannot hoist the point's address
+         * into fp; as an ordinary pointer, 118 of 265 instructions differ in
+         * tbs-en. */
         register s32 *rec asm("r0");
 
         // The object's projection is computed, but nothing reads it.
@@ -187,9 +178,9 @@ void BattleFx_RunOrbitingSkulls(void) {
         rec = point;
         SET_VECTOR(rec, object->x, object->y, object->z);
         EffectPosition_ProjectPoint(rec, &center);
-        /* FAKEMATCH: sched2 barrier, so this store precedes
-         * the spark counter as in the reference 2026-10-11: without it differ 2
-         * (movs r4, #0 moves ahead of the store). */
+        /* FAKEMATCH: a one-pass block puts this store before the spark
+         * counter's movs r4, #0; as a plain store, 2 instructions differ in
+         * tbs-en. */
         do {
           center.x += xOffset;
         } while (0);

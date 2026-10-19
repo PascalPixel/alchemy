@@ -311,10 +311,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): arm_reorg counts this empty asm as 4 bytes, so the
-     * gFrameCount literal falls past the face x literal's 64-byte ldrh range
-     * and opens the next pool, as native (in tbs-es and tbs-it it orders the
-     * stores only); without it, 13 of 1392 instructions differ in tbs-en. */
+    /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts gFrameCount's
+     * literal in the next pool, as native; without it, 13 of 1392
+     * instructions differ in tbs-en. */
     asm("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gResource_FixedBlockBTiles);

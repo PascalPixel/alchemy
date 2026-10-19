@@ -45,9 +45,8 @@ void Func_02004d50(s32 a, s32 b);
                                                                                \
     party = &gPartyState;                                                      \
     /* FAKEMATCH: an empty asm after gPartyState's address keeps it            \
-       ahead of the 0x212 offset and the work load, as in the native;          \
-       plain, the offset and the work start first (differ 2), and a            \
-       one-pass block in its place starts the work first (differ 2). */        \
+       ahead of the 0x212 offset and the work load; as no asm, 2               \
+       instructions differ in tla-en. */                                       \
     asm("");                                                                   \
     work = Ram_HeapSlots->eventWork;                                           \
     if (party->renderMode == 1) {                                              \

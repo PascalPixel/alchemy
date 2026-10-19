@@ -660,9 +660,8 @@ static void RaiseTheShip(void) {
 s32 LemurianShip_SetupScene(void) {
   struct WaveMap *map;
   /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2
-   * and each step is stored there with strh (a 4-byte frame for none). Without
-   * it (2026-10-13, the BGxCNT writes chained as in RaiseTheShip) differ 23,
-   * 158 instructions for 165. */
+   * and each step is stored there with strh; without it, 23 of 165
+   * instructions differ in tbs-en. */
   volatile u16 cnt;
 
   map = gMapWork[0];

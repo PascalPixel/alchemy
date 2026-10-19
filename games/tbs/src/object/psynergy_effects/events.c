@@ -287,10 +287,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       // one.
       UnitGetFar(member);
       {
-        /* FAKEMATCH(temporary): the slot copied to a block local, so it loads
-         * before the member as the bytes have it; as
-         * Shop_GetSelectionState(member, slot), 2 of 181 instructions differ
-         * in tbs-en. */
+        /* FAKEMATCH(temporary): the slot copied to a block local loads before
+         * the member; as Shop_GetSelectionState(member, slot), 2 of 181
+         * instructions differ in tbs-en. */
         s32 selectedSlot = slot;
 
         discardQuantity = Shop_GetSelectionState(member, selectedSlot);

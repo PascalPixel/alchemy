@@ -40,13 +40,9 @@ void Fade_Update(void) {
       level = gBlendTargetLevel;
       delta = gBlendStartLevel - gBlendTargetLevel;
       step = *remaining;
-      /* FAKEMATCH: an explicit libgcc call, which clobbers memory, so the zero
-       * test reloads *remaining after it as the native does. With the /
-       * operator the division is a libcall block CSE sees through: the test
-       * reuses the step's load and the registers shift (differ 37 in all six
-       * editions). The operator matches only if every read of *remaining is
-       * forced to memory by its qualifier, which trades this call for that
-       * device. */
+      /* FAKEMATCH: an explicit libgcc call clobbers memory, so the zero test
+       * reloads *remaining after it as the native does; with the / operator,
+       * 37 instructions differ in every edition. */
       level += __divsi3(delta * step, gBlendDuration);
       REG_BLDY = level;
       if (*remaining == 0)

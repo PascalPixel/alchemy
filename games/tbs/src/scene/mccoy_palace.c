@@ -104,10 +104,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
     FieldScene_PrepareActors(placements);
 
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      /* FAKEMATCH: retain the existing byte-facing view of placement rows
-       * 6..9. Direct talkFacing fields change native address decomposition
-       * from base+166 to base+144/member+22; a true member cursor and a
-       * sizeof/offsetof byte span each remove four native bytes. */
+      /* FAKEMATCH: a byte view of placement rows 6 to 9 keeps the native
+       * base+166 addressing; as direct talkFacing fields, it splits into
+       * base+144 and member+22. */
       struct PalacePlacementTalkFacingView *facings =
           (struct PalacePlacementTalkFacingView *)placements;
 

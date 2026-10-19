@@ -2665,10 +2665,8 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
     if (angleDifference < 0)
       angleDifference = -angleDifference;
     /* FAKEMATCH: the used-stop test reads the stopIndex through a volatile
-     * lvalue, so the stopIndex is loaded again for the result. 2026-10-13: the
-     * plain test reuses its load (48 instructions for 49, differ 9);
-     * node->connections[connectionIndex].stopIndex in the arm reloads it
-     * through a second strength-reduced pointer (differ 54). */
+     * lvalue, so it is loaded again for the result; as a plain test, 9
+     * instructions differ in tbs-en. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
@@ -2781,10 +2779,8 @@ static void VaultInteriors_UpdateActorStops(void) {
         (facingDifference = (u16)facing - angle) > -0x1000 &&
         facingDifference < 0x1000) {
       /* FAKEMATCH: a dead store keeps this empty branch through the first jump
-       * optimization, as the native lays out its jumps (bge to the else, then b
-       * past it). Measured: an empty branch, an empty statement, the negated
-       * test with || and a self-assignment all give the inverted blt (tbs-en 4
-       * differ); Japanese matches all of them. */
+       * optimization (bge to the else, then b past it); as an empty branch, 4
+       * instructions differ in tbs-en. */
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {

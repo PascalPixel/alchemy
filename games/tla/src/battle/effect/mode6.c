@@ -3,11 +3,9 @@
 
 /// BG2 back to one texel per pixel across.
 void Graphics_ResetBg2Pa(void) {
-  /* FAKEMATCH: the native loads the halfword from the pool before it starts the
-   * register address; the plain store starts the address first (one reordered
-   * pair, differ 2). Only a halfword register loads from the pool and a u16
-   * local is widened, so the value is pinned to the r3 it already takes, as in
-   * f18284c.c. */
+  /* FAKEMATCH: the value pinned to r3, as in f18284c.c, loads the halfword
+   * from the pool before the register address is started; as a plain store, 2
+   * instructions differ in tla-en. */
   register u16 value __asm__("r3") = Q_8_8(1);
 
   /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is

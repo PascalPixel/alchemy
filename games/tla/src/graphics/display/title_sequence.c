@@ -176,10 +176,9 @@ row:
   j = 0;
 column:
   {
-    /* FAKEMATCH(temporary): the s16 step written as its high-half wrap, as
-     * in Title_ShowSplashScreen (splash.c), with the loops as gotos, so that
-     * loop.c neither hoists the step nor strength-reduces it; as
-     * *tilemap++ = tile; tile++, 94 of 254 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the s16 step as its high-half wrap, with goto
+     * loops, so loop.c leaves it alone; as *tilemap++ = tile; tile++, 94 of
+     * 254 instructions differ in tla-en. */
     s32 old = tile;
 
     tile = ((old << 16) + 0x10000) >> 16;

@@ -3,12 +3,9 @@
 #include "iwram_call.h"
 
 void Func_081269ac(void) {
-  /* FAKEMATCH: the native loads the blend value from the pool before it starts
-   * the register address; the plain store starts the address first (one
-   * reordered row, differ 2). Only a halfword register loads from the pool and
-   * a u16 local is widened, so the value is pinned to the r3 it already takes,
-   * as in f18284c.c. Measured against it: a pointer local, the address as base
-   * and offset, and the value in a local of each width. */
+  /* FAKEMATCH: the blend value pinned to r3, so it loads from the pool before
+   * the register address is started; as a plain store, 2 instructions differ
+   * in tla-en. */
   register u16 blend __asm__("r3") = 0xbf;
 
   /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is

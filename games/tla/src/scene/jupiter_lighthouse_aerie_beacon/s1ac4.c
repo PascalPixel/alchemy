@@ -34,12 +34,9 @@ void Func_02001ac4(s32 a0, s32 a1) {
 /// Func_02001bc4, which calls it with its frame in r9.
 // As ☀️'s Party_RestoreHpPp does with HP and PP.
 void Func_02001b04(s32 clearStatus) {
-  /* FAKEMATCH: a nested function's static chain spill. Func_02001bc4 passes its
-   * frame base in r9, and function.c stores it to the first frame slot before
-   * the parameters are copied; read through the two pins, r9 is stored before
-   * r0 is copied, as the native does (a plain clearStatus copies r0 between the
-   * chain's load and its store: differ 2). The pins go when the parent is
-   * adopted with it. */
+  /* FAKEMATCH: pins on r0 and r9 store the nested function's static chain
+   * before the parameter is copied; as a plain clearStatus, 2 instructions
+   * differ in tla-en. The pins go when the parent is adopted with it. */
   register s32 incoming asm("r0");
   register u32 chain asm("r9");
   volatile u32 frame;

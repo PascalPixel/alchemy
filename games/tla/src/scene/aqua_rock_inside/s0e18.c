@@ -12,10 +12,8 @@ void Func_02000e18(s32 value) {
   flags = &object->motionFlags;
   speed = 0;
   *flags = 0;
-  /* FAKEMATCH: the native stores the motion flags before it starts the priority
-   * address; without the barrier the copy for that address comes first (differ
-   * 2), and with it the zero comes before the flags address unless that address
-   * is taken first, into flags (differ 2). */
+  /* FAKEMATCH: the barrier stores the motion flags before the priority address
+   * is started; without it, 2 instructions differ in tla-en. */
   __asm__("");
   object->priorityFlags |= 0x20;
   Func_02003cc4(object, 18);

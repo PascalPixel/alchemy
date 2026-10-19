@@ -1479,10 +1479,9 @@ UNUSED void InventoryMenu_NoOp(void) {}
 /// target's inventory for the preview, making room first if it is full, and
 /// target is restored after. mode 1 redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
-  /* FAKEMATCH(temporary): the saved unit kept in owner once owner is no
-   * longer needed, and in Psynergy items' case also in buffer, which keeps
-   * owner in r8 and panelStyle in r10; as a separate void *saved in both
-   * cases, 22 of 172 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the saved unit reuses owner (and buffer for
+   * Psynergy items), keeping owner in r8 and panelStyle in r10; as a separate
+   * void *saved, 22 of 172 instructions differ in tbs-en. */
   struct InventoryMenuState *menu = gMenuWork;
   s32 panelStyle = 0;
   struct BattleUnit *unit = UnitGetFar(owner);

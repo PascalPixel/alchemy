@@ -16,11 +16,9 @@ void BattleFx_ArmBg0HBlankDma(void) {
   struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 
   if (!work->delay) {
-    /* FAKEMATCH: ⚓️ stores the stopped control word before it starts the
-     * destination address and before the line offset's last shift; written as
-     * work->lines[work->page] the address is started ahead of the store (differ
-     * 2), and with the barrier alone the whole offset is (differ 2). The
-     * temporary holds the page's offset in words until the barrier. */
+    /* FAKEMATCH: the temporary holds the page's offset in words until the
+     * barrier, so the stopped control word is stored first; as
+     * work->lines[work->page], 2 instructions differ in tla-en. */
     s32 line = work->page * 81;
     volatile u16 *dma = (volatile u16 *)0x040000b0;
 
@@ -82,10 +80,9 @@ void BattleFx_AdvanceHueCycle(void) {
   work->green = (g / 4 + 4) & 31;
   work->blue = (b / 4 + 4) & 31;
   limit = 359 << 16;
-  /* FAKEMATCH: ⚓️ loads the wrap limit from the pool before it reads the hue;
-   * written as work->hue += 4; if (work->hue >= 360) the same instructions come
-   * with the hue read first (differ 2). The temporary holds the limit as the
-   * compare uses it, 359 degrees in the high half. */
+  /* FAKEMATCH: the limit, 359 degrees in the high half, loads before the hue;
+   * as work->hue += 4; if (work->hue >= 360), 2 instructions differ in
+   * tla-en. */
   asm volatile("" : "+l"(limit));
   if ((u32)((work->hue += 4) << 16) > limit)
     work->hue = 0;

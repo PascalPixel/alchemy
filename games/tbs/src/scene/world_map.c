@@ -1664,18 +1664,9 @@ static void Event_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH: a second clear of motionFlags through a byte pointer.
-     * Post-reload cse removes it as a no-op (the sprite stores are in
-     * another alias set, so the first store's value is still known),
-     * and the first store survives flow's dead-store pass because the
-     * byte-pointer store conflicts with those sprite stores. Until then
-     * it keeps the zero and the address alive across the attribute
-     * clears, so the zero takes r1 and the address r0, as the game has
-     * them. As plain stores the zero takes r3 and the address a copy in
-     * r2 (differ 20 in EN); a repeated struct-field store deletes the
-     * first store instead and leaves the clear at the end (differ 6). Held as
-     * union FieldObject, as lalivero.c holds the Black Orb, the
-     * plain store still differs 20 (2026-10-13). */
+    /* FAKEMATCH: a second clear through a byte pointer, removed after reload,
+     * keeps the zero in r1 and the address in r0, as native; as plain stores,
+     * 20 instructions differ in tbs-en. */
     motion = &orb->motionFlags;
     *motion = 0;
     buffer = Heap_Allocate(17, 0x608);

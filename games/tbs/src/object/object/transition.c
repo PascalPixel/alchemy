@@ -68,8 +68,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
   u16 *scanlineData;
 #ifndef UBFIX
   // UB: viewX is a scalar, so indexing its address cannot reach viewY.
-  // Four direct named-member pairs change 0x90c to 0x914 native bytes
-  // (English, 2026-10-16). Modern code reads the actual members below.
+  // Direct named members grow the English function from 0x90c to 0x914
+  // bytes. Modern code reads the actual members below.
   s32 *view7;
   s32 *view8;
   s32 *view9;
@@ -805,7 +805,7 @@ void DisplayTransition_UpdateScanline(void) {
   state = gMapWork[0];
 
   // Keep the same VCount sample across phase changes. A for/switch retry loop
-  // changes this function from 0xd2 to 0xba bytes (English, 2026-10-16).
+  // shrinks the English function from 0xd2 to 0xba bytes.
 again:
   switch (state->irqPhase) {
   case 3:

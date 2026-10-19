@@ -15,12 +15,9 @@ s32 Func_0200086c(void) {
   ((struct YallamInteriorsEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x209;
   {
-    /* FAKEMATCH: the party address pinned to r3 for the first scene read.
-     * Unpinned, gcse gives both scene reads one pseudo and this read takes r1,
-     * the store's offset r0 (differ 26); plain forms measured against it: a
-     * scene local, a work local, a party local, an inline read, a one-pass
-     * block or an empty asm after the store (all 26), a volatile read (15 or
-     * 18). */
+    /* FAKEMATCH: the party address pinned to r3 for the first scene read;
+     * unpinned, gcse merges both scene reads and 26 instructions differ in
+     * tla-en. */
     register struct PartyState *party asm("r3") = &gPartyState;
 
     scene = party->scene;

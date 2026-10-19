@@ -22,8 +22,8 @@ void Func_02000090(struct FieldActor *self) {
   z += sine * 2;
   self->z = z;
   self->targetX = x;
-  /* FAKEMATCH: the target z store stays ahead of the timer load; without it the
-   * store falls behind (6 differ; placed by alchemy permute) */
+  /* FAKEMATCH: the target z store stays ahead of the timer load; without it,
+   * 6 instructions differ in tla-en. */
   asm volatile("");
   self->targetZ = z;
   *(s16 *)&self->timer += -0x800;
@@ -39,10 +39,8 @@ void Func_020000ec(struct FieldActor *self) {
   u16 angle = self->timer;
   s32 cosine = Math_Cosine(angle);
   s32 radius = self->speed + BYTE_AT(self, 98);
-  /* FAKEMATCH: the centre pinned to r1 and held by an empty asm before the
-   * radius is finished copies it out of r8 ahead of the + 6, as the native
-   * does; plain, sched2 ranks the + 6 above the reload of the centre (differ
-   * 2). */
+  /* FAKEMATCH: the centre pinned to r1 behind an empty asm is copied out of r8
+   * ahead of the + 6, as native; plainly, 2 instructions differ in tla-en. */
   register struct FieldActor *anchor asm("r1") = centre;
 
   asm volatile("" : "+r"(anchor));

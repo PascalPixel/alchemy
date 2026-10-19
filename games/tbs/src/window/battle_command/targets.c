@@ -78,10 +78,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
 #if TBS_PATCH_4
-  /* FAKEMATCH: register choice only: this value-preserving null
-   * initializer is needed to match infoWin in r10; a direct zero swaps
-   * high registers and spill slots (2026-10-13: infoWin = 0 differs 94
-   * in ES and IT). */
+  /* FAKEMATCH: this value-preserving null initializer keeps infoWin in r10;
+   * as infoWin = 0, 94 instructions differ in tbs-es. */
   conditionWindow = (struct UiWindow *)((u32)(u16)selection >> 16);
 #else
   conditionWindow = 0;
@@ -191,14 +189,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     {
       s32 t = targetIndex * 2;
 
-      /* FAKEMATCH: the separate switch arms end CSE before the
-       * projection call, keeping the scaled offset reload ahead of
-       * the ids load. Sharing their block reverses two rows; no
-       * switch branch remains in any edition. Plain forms measured
-       * (2026-10-13, EN and ES alike): ids[cursor] or a block-local
-       * t = cursor * 2 reload ids before cursor * 2 (differ 2);
-       * cursor[ids], *(cursor + ids) and (u8 *)ids + cursor * 2
-       * differ 24; the call ahead of head and pending 12 to 24. */
+      /* FAKEMATCH: the separate switch arms, which emit no branch, end CSE
+       * before the call and keep the offset reload ahead of the ids load; as
+       * ids[cursor], 2 instructions differ in tbs-en. */
       switch (t) {
       case 0:
         t = targetIndex * 2;
@@ -254,9 +247,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
 #if !(LANGUAGE == LANGUAGE_SPANISH) && !(LANGUAGE == LANGUAGE_ITALIAN)
     /* FAKEMATCH(dead): seventeen dead stores restore the native frame's spill
-     * slots (table, entries, ids and cursor * 2 at sp+36 to sp+24, above
-     * &effect and selectionSlot); without them, 65 of 1585 instructions
-     * differ in tbs-en, each a spill offset. */
+     * slots at sp+36 to sp+24; without them, 65 of 1585 instructions differ
+     * in tbs-en, each a spill offset. */
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;

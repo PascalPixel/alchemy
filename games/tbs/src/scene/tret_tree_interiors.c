@@ -864,10 +864,8 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   counter = &sSparkFrame;
   frame = *counter;
   previousResourceEntry = 0;
-  /* FAKEMATCH: the explicit libgcc call keeps the final count's reload
-   * in r3. Measured: (s32)frame / 10, or frame declared s32 and
-   * divided with /, reload it into r5 (differ 6); the division moved
-   * above previousResourceEntry = 0 differs 10. */
+  /* FAKEMATCH: the explicit libgcc call keeps the final count's reload in r3;
+   * as (s32)frame / 10, 6 instructions differ in tbs-en. */
   wave = __divsi3(frame, 10);
   switch (frame) {
   case 0:
@@ -901,10 +899,9 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // fall through
   case 44:
     SE(SE_289);
-    /* FAKEMATCH: the counter pointer is taken again here so it is dead
-     * across the spark loop, where the loop index takes its register.
-     * Measured: without it, differ 36; with the division also written
-     * with /, differ 51. */
+    /* FAKEMATCH: the counter pointer is taken again here so it is dead across
+     * the spark loop, which frees its register for the loop index; without
+     * it, 36 instructions differ in tbs-en. */
     counter = &sSparkFrame;
     break;
   }

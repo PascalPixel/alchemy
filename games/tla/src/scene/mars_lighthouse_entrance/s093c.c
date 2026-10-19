@@ -58,11 +58,9 @@ void Func_0200096c(s32 unused, s32 id) {
     y = object->y;
     Func_02004bf8(object, 0x980000, y, 0x3180000);
   }
-  /* FAKEMATCH: a volatile read of x, the y loads ahead of each call and the
-   * second call's object and constants pinned to r0, r1 and r3 give the
-   * native's reload of x on both paths and its argument order; plainly GCSE
-   * keeps x across the first branch and sched2 builds the constants before
-   * loading y (differ 14). */
+  /* FAKEMATCH: a volatile read of x and pins on r0, r1 and r3 reload x on both
+   * paths and keep the argument order; as plain reads and constants, 14
+   * instructions differ in tla-en. */
   if (*(volatile s32 *)&object->x >> 20 == 10) {
     s32 y;
 

@@ -90,10 +90,9 @@ s32 Scene_RunTouchOrExit(s32 value) {
         break;
       }
       {
-        /* FAKEMATCH(temporary): the destination loaded into its own
-         * variable, so the barrier below can follow the load; as
-         * `work->exit = event->u.result`, 2 of 87 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(temporary): the destination in its own variable, so the
+         * barrier below follows the load; as `work->exit = event->u.result`,
+         * 2 of 87 instructions differ in tla-en. */
         s32 destination = event->u.result;
 
         /* FAKEMATCH(barrier): the destination's load kept ahead of the exit

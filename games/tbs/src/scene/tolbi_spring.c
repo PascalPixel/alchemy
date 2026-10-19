@@ -574,10 +574,8 @@ prompt:
   }
   UiWork_Finalize(window, 2);
 #else
-  /* FAKEMATCH: whole marker ids swap message/label registers; keep message in
-   * r10 and label in r9. 2026-10-11: writing the marker as text + 2 matches in
-   * tbs-ja (the pool word becomes MsgTolbiCoins+2) but the id gate refuses an
-   * id with an addend (O3), so both barriers stay. */
+  /* FAKEMATCH: keep message in r10 and label in r9; as whole marker ids, the
+   * two swap registers. */
   asm("" : "+r"(message));
   for (;;) {
     text = MsgTolbiCoins;
@@ -715,21 +713,14 @@ prompt:
 #endif
 
 #if TBS_PATCH_1
-      /* FAKEMATCH: the pointer pair keeps the native prize-weight base
-       * recomputation in r0 after the call. Without it, the earlier
-       * roulette base survives in r5 (280 -> 278 instructions, 42 rows
-       * differ in the international editions). */
+      /* FAKEMATCH: the pointer pair recomputes the prize-weight base in r0
+       * after the call; without it, 42 rows differ in tbs-en. */
       state++;
       state--;
       {
 
-        /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. 2026-10-11:
-         * plain forms share state + 1 with the roulette's peeled first
-         * iteration through GCSE PRE (struct field 42/96, s8 pointer 57/107,
-         * direct global 38/100 rows in EN/JA); the ++/-- pair breaks the
-         * sharing, but then global allocation gives the later-defined pointer
-         * r1 before the slot (differ 10) or, pointer first, sched2 keeps adds
-         * r0, #1 ahead of adds r1, r6, r3 by RTL order (differ 2). */
+        /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0; as a plain
+         * struct field, 42 rows differ in tbs-en. */
         register s32 slot asm("r1") = prizeIndex + 284;
         s8 *prizeWeight = (s8 *)state + 1;
 

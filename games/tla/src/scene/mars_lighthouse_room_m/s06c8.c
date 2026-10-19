@@ -25,10 +25,9 @@ void Func_020006c8(s32 state) {
    * copied for the next index, as in the native (in the test itself: differ
    * 12). */
   odd = state & 1;
-  /* FAKEMATCH: through a pointer taken here, the flash's address loads before
-   * 20 is subtracted and the odd case is the branch's fall-through, as in the
-   * native (a direct store in each arm: differ 17; one store of a conditional
-   * value: differ 4). */
+  /* FAKEMATCH: a pointer taken here loads the flash's address before 20 is
+   * subtracted; as a direct store in each arm, 17 instructions differ in
+   * tla-en. */
   flash = (u16 *)&gData_02003a7e;
   next = state - 20;
   if (odd)

@@ -69,12 +69,9 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
 
 static inline void CastingImpact_LoadResource(const void *id, void *dest,
                                               s32 skip, s32 copy) {
-  /* FAKEMATCH: inline scope keeps each resource call's
-   * arguments local; only BattleFx_RunCastingImpact loads through it: with its
-   * 24 loads called directly it differs throughout and is 2 instructions longer
-   * (tbs-en, 2026-10-14), and the same inline as a layer for the whole effect
-   * family breaks BattleFx_RunProjectileVolley and BattleFx_RunBurstScene
-   * (measured 2026-10-14) */
+  /* FAKEMATCH: inline scope keeps each resource call's arguments local for
+   * BattleFx_RunCastingImpact; with its 24 loads called directly, it differs
+   * throughout in tbs-en. */
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
@@ -82,8 +79,7 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                           s32 height) {
   /* FAKEMATCH: keep packing arguments within their own inline scope;
-   * called directly, BattleFx_RunCastingImpact differs 202 (tbs-en,
-   * 2026-10-18). */
+   * called directly, 202 instructions differ in tbs-en. */
   Graphics_PackTileRows(src, dest, width, height);
 }
 
@@ -92,8 +88,7 @@ static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
                                            s32 x, s32 y, s32 width, s32 height,
                                            DrawRectangle *draw) {
   /* FAKEMATCH: inline scope reloads each image address at its drawing
-   * call; called directly, BattleFx_RunCastingImpact differs 938 (tbs-en,
-   * 2026-10-18). */
+   * call; called directly, 938 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
@@ -101,10 +96,8 @@ static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
 static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
                                                s32 x, s32 y, s32 width,
                                                DrawRectangle *draw) {
-  /* FAKEMATCH: derive height inside the inline scope so the
-   * dimension stores reuse one register instead of keeping two argument
-   * temporaries alive; called directly, BattleFx_RunCastingImpact differs 128
-   * (tbs-en, 2026-10-18). */
+  /* FAKEMATCH: derive height inside the inline scope so the dimension stores
+   * reuse one register; called directly, 128 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
@@ -115,8 +108,7 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                    s32 scroll,
                                                    DrawRectangle *draw) {
   /* FAKEMATCH: subtract the scrolled part inside the drawing scope;
-   * called directly, BattleFx_RunCastingImpact differs 60 (tbs-en,
-   * 2026-10-18). */
+   * called directly, 60 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
@@ -126,9 +118,7 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
                                                   s32 y, s32 width,
                                                   DrawRectangle *draw) {
   /* FAKEMATCH: forwarding inline; the cropped height stays inside its scope.
-   * Both calls made through the blitter directly with 91 differ 16 on tbs-en:
-   * the stack arguments 128 and 91 go through r0 instead of r1 and the pixels
-   * pool load moves ahead of them. */
+   * As direct blitter calls with 91, 16 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
@@ -284,9 +274,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   CastingImpact_LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
   CastingImpact_LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1,
                              0);
-  /* FAKEMATCH: local dimensions preserve the packing argument
-   * order 2026-10-11: literal 40 and 288 differ 4 (movs r2, #40 and the buffer
-   * load move ahead of lsls r3). */
+  /* FAKEMATCH: local dimensions preserve the packing argument order; as
+   * literal 40 and 288, 4 instructions differ in tbs-en. */
   {
     s32 width = 40;
     s32 height = 288;
@@ -400,9 +389,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  /* FAKEMATCH: retain each output pointer while preparing its
-   * call 2026-10-11: the pointers set in statements before the calls differ 38,
-   * after the calls 142. */
+  /* FAKEMATCH: retain each output pointer while preparing its call; as
+   * pointers set in statements before the calls, 38 instructions differ in
+   * tbs-en. */
   EffectPosition_ProjectScaledBattler(work->effect->actors[0],
                                       targetScreen = &targetPos);
   EffectPosition_ProjectScaledBattler(work->effect->actor,
@@ -491,10 +480,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_PRESENT_FRAME(work);
     frame++;
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
-  /* FAKEMATCH: restart the pointer's lifetime after gathering
-   * so the projection above uses the stack position directly 2026-10-11: direct
-   * djinnPos stores above, with this as the only assignment, differ 114, as
-   * does removing it. */
+  /* FAKEMATCH: restart the pointer's lifetime after gathering so the
+   * projection above uses the stack position directly; without it, 114
+   * instructions differ in tbs-en. */
   position = &djinnPos;
 
   //------------------------------------------------------------------
@@ -1208,10 +1196,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       {
         struct EffectStep *step = CASTING_IMPACT_IMPACT_PARTICLES;
         struct EffectPosition *origin;
-        /* FAKEMATCH: a zero offset known only after gcse keeps the origin copy,
-         * hoisted after the projection address. origin = targetScreen, or
-         * targetScreen->x and ->y read directly, differ 64 on tbs-en, two
-         * instructions fewer. */
+        /* FAKEMATCH: a zero offset known only after gcse keeps the origin copy
+         * after the projection address; as origin = targetScreen, 64
+         * instructions differ in tbs-en. */
         s32 bias = 0;
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++, step++) {
           if (step->x >= 0 && frame >= i / 2) {
@@ -1260,9 +1247,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       s32 imageX;
       s32 imageY;
       if (frame <= 5) {
-        /* FAKEMATCH: calculate each center before the shared
-         * centered draw 2026-10-11: targetScreen->x / 2 in each arm differs
-         * 147; with offset set first 129; hoisted out of the arms 146. */
+        /* FAKEMATCH: calculate each center before the shared centered draw;
+         * as targetScreen->x / 2 in each arm, 147 instructions differ in
+         * tbs-en. */
         if (work->effect->side == 0) {
           imageX = targetScreen->x;
           imageX += (u32)imageX >> 31;

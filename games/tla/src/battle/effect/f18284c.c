@@ -12,11 +12,9 @@ void Func_0818284c(s32 arg) {
 
   BattleFx_BeginCanvasLayer(0);
   {
-    /* FAKEMATCH: the native loads the blend word from the pool before it starts
-     * the register address; the plain store starts the address first (one
-     * reordered pair, differ 2). Only a halfword register loads from the pool
-     * and a u16 local is widened, so the value is pinned to the r3 it already
-     * takes, as in overlay 696's s43f8.c. */
+    /* FAKEMATCH: the blend word pinned to r3 as a halfword loads from the pool
+     * before the register address, as native; as a plain store, 2
+     * instructions differ in tla-en. */
     register u16 blend __asm__("r3") = 0x3f44;
 
     /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is

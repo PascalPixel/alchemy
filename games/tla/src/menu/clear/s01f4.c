@@ -18,12 +18,9 @@ void Func_02002408(s32 cue);
 /// the sequence unlocks the code with a sound.
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
-    /* FAKEMATCH: the held keys are read through a volatile pointer pinned to
-     * r4, and the key that clears the held flag is pinned to r3; unpinned, the
-     * pointer takes r0 and the progress value r4 (differ 24), and with the
-     * pointer pinned alone the key read takes r4 (differ 12). The one-pass
-     * block keeps the held flag's store beside the progress store (differ 32
-     * without it). */
+    /* FAKEMATCH: the held keys pointer pinned to r4, the key to r3, and a
+     * one-pass block keeping the two stores together; unpinned, 24
+     * instructions differ in tla-en. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_020024fe != 0) {

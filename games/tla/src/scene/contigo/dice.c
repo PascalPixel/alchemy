@@ -41,10 +41,8 @@ void Func_02001abc(void) {
   Func_0200403c(price, 5);
   UiText_OpenMessageAtObject(14, 0);
   if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
-    /* FAKEMATCH: the native loads the scene state's address into r3 before the
-     * coins; stored plainly the two registers swap (6 differ), and with the
-     * coins in a temporary the two loads come in the other order (2 differ);
-     * pointer locals and one-pass blocks measured 2 or 6. */
+    /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
+     * the coins; as a plain store, 6 instructions differ in tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gPartyState.coins;
@@ -76,10 +74,8 @@ void Func_02001b84(void) {
   Func_0200412c((s32)MsgContigo23);
   UiText_OpenMessageAtObject(8, 0);
   if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
-    /* FAKEMATCH: the native loads the scene state's address into r3 before the
-     * coins; stored plainly the two registers swap (6 differ), and with the
-     * coins in a temporary the two loads come in the other order (2 differ);
-     * pointer locals and one-pass blocks measured 2 or 6. */
+    /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
+     * the coins; as a plain store, 6 instructions differ in tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gPartyState.coins;

@@ -17,9 +17,8 @@ void Object_ShakeAngle(u32 objectId) {
     u32 cur;
 
     /* FAKEMATCH: the one-pass block reads the angle before either random value
-     * is shifted; added in place the first shift comes before the read (differ
-     * 2). The second value is shifted first, as the native does (differ 2 the
-     * other way round). */
+     * is shifted, the second first; added in place, 2 instructions differ in
+     * tla-en. */
     do {
       cur = object->angle;
     } while (0);

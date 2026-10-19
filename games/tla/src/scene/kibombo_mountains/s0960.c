@@ -28,10 +28,8 @@ void Func_02001164(s32 value);
 
 void Func_02000960(void) {
   /* FAKEMATCH: the Call3 and Value3 calls of call.h keep each call's own
-   * constants and argument order, as in overlay 666's twin scene (direct
-   * SetPositionAndReset calls share their constants in saved registers, differ
-   * 42; direct Func_0200111c calls, 12; a direct Func_020010d4 or
-   * ResetAndSetPositionInMode2 call, 2 each). */
+   * constants and argument order; as direct SetPositionAndReset calls, 42
+   * instructions differ in tla-en. */
   Func_02001084();
   Func_02001164(0);
   Func_02001104(MsgIsTheWay);

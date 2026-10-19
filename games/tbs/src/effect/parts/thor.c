@@ -38,8 +38,7 @@
          index++, spark++) {                                                   \
       if (spark->variant == 0) {                                               \
         /* FAKEMATCH: the mask set before the Random16() call it masks; as     \
-         * Random16() & 0x3ff, 14 lines of tbs-en effect.s differ              \
-         * (2026-10-18). */                                                    \
+         * Random16() & 0x3ff, 14 lines of tbs-en effect.s differ. */          \
         s32 speed = 0x3ff;                                                     \
         s32 angle;                                                             \
         speed &= Random16();                                                   \
@@ -84,10 +83,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  /* FAKEMATCH: frame local: only blit[0] is used; the unused second blitter
-     word fills four bytes of the frame. Measured (2026-10-14): declared as one
-     DrawRectangle, the frame is 332 bytes for 336 (differ 202, frame offsets
-     only). */
+  /* FAKEMATCH: frame local: the unused second blitter word fills four bytes of
+   * the frame; as one DrawRectangle, 202 instructions differ in tbs-en. */
   BlitterPair blit;
   s32 size;
   s32 count;
@@ -332,12 +329,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         // the frame loop, where it loses its register and later reloads rotate:
         // after an earlier move its threshold is 12, and savings 2 x life 19 x
         // 12 = 456 reaches the loop's 448 insns.
-        /* FAKEMATCH: the barrier keeps fullWidth's 32 in this
-         * loop's preheader, as native, and its two codeless preheader
-         * insns lengthen i's life (1292), so dotCount (28 refs/106) ranks
-         * before i (195 refs) and takes r9; sinkFrame 96 local before the ramp
-         * loops also defeats the hoist (432 < 448) but lacks those insns, so i
-         * takes r9 and sinkFrame slot appears at [sp, #60] (differ 699). */
+        /* FAKEMATCH: the barrier keeps fullWidth's 32 in this loop's
+         * preheader, as native, and lengthens i's life so that dotCount ranks
+         * before i and takes r9. */
         asm("" : "+r"(fullWidth));
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);

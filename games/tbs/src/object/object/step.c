@@ -123,7 +123,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// value for Field_RunScene, plays the exit sound and starts leaving the scene.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
-  // tbs-en, 2026-10-16); keep the sentinel backedge until that form matches.
+  // tbs-en); keep the sentinel backedge until that form matches.
   s32 exitValue;
   struct FieldWork *work;
   s32 fixedZ;
@@ -175,10 +175,9 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// and hazardous ground, and wears Avoid off. When this hurts the party, the
 /// leader flinches and characters who fall are listed in the field work.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): the party read through struct StepOwner, the prefix
-   * of struct BattleUnit this reads, whose own alias set keeps the party-load
-   * order and the 44-byte frame; as struct BattleUnit, 2 of 472 instructions
-   * differ in tbs-en. */
+  /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
+   * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
+   * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
   struct MapState *map = WORK_SLOT(8);
   s32 leaderId = gGameState.selectedActor;
@@ -188,7 +187,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 #ifdef UBFIX
   // UnitGet returns the real BattleUnit; the native prefix aliases that owner
   // through an unrelated struct type. The plain owner keeps 0x41c bytes but
-  // changes allocation from .text+0x1c90 in English (2026-10-16).
+  // changes allocation from .text+0x1c90 in English.
   struct BattleUnit *unitVitals;
 #else
   struct StepOwner *unitVitals;

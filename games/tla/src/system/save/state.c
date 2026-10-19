@@ -44,10 +44,9 @@ s32 SaveState_LoadSummaryRecords(void) {
   s32 count;
   u32 group;
 
-  /* FAKEMATCH: ⚓️ loads the workspace before it starts the summary offset
-   * 0x303c in r2; the empty asm holds r2 until the workspace is loaded. Plainly
-   * the offset is started first (differ 2); a volatile barrier after the load
-   * holds the prologue's sub sp ahead of the offset instead (differ 2). */
+  /* FAKEMATCH: the empty asm holds r2 until the workspace is loaded, as ⚓️
+   * does before it starts the summary offset 0x303c; plainly, 2 instructions
+   * differ in tla-en. */
   asm("" : "+l"(work) : : "r2");
   summary = work->summary;
   count = 0;

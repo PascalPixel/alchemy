@@ -107,13 +107,8 @@ static __inline__ void Func_0200578c_(s32 id, s32 a, s32 b) {
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   /* FAKEMATCH: the second and third arguments pinned to r1 and r2 are set
-   * before the id, as the native does at four of Func_020027cc's five calls;
-   * through Func_0200578c_ the id is set before the third argument (one
-   * reordered pair a call, differ 8), called directly the 256 is shared in r5
-   * (differ 24), an empty asm barrier on the two values cuts the scheduler's
-   * dependence counts so the speed at the top finishes a row early (differ 2),
-   * and the same pins in a do-while macro move the next owner load (differ 4).
-   */
+   * before the id at four of Func_020027cc's five calls; as direct calls, 24
+   * instructions differ in tla-en. */
   register s32 a_ asm("r1") = a;
   register s32 b_ asm("r2") = b;
 

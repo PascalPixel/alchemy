@@ -373,10 +373,9 @@ void Func_02000838(void) {
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
   } else {
     {
-      /* FAKEMATCH: the native keeps the count in r2 and the work pointer in r3.
-       * local-alloc ranks the count (4 references over 2 insns) ahead of the
-       * pointer (5 over 5) and gives it r3; five plain forms of the statement
-       * and input-operand barriers left it there (differ 14). */
+      /* FAKEMATCH: the native keeps the count in r2 and the work pointer in r3;
+       * plain, local-alloc gives the count r3 and 14 instructions differ in
+       * tla-en. */
       register u32 n asm("r2");
 
       n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;

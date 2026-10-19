@@ -39,10 +39,9 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   case 1: {
     record = object->records;
     record->part[0].objectMode = mode;
-    /* FAKEMATCH: the native stores the first part before it starts the second
-     * part's address; plainly the address comes first (one reordered row here
-     * and in the loop, differ 4). A one-pass block on the store moves only this
-     * one (differ 2). */
+    /* FAKEMATCH: the barrier stores the first part before the second part's
+     * address, here and in the loop, as native; plainly, 4 instructions differ
+     * in tla-en. */
     __asm__ volatile("");
     record->part[1].objectMode = mode;
     break;

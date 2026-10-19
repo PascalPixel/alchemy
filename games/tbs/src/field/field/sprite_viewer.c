@@ -42,10 +42,9 @@ void Ui_RunIconMonitor(void) {
     u8 *flags;
   } spriteWork;
   s32 changed;
-  /* FAKEMATCH(temporary): the native keeps only the addresses of gKeysHeld and
-   * gKeysRepeat in fp and r9, read through these pointers, and reloads every
-   * other key address from the pool; as gKeysHeld and gKeysRepeat directly, 135
-   * of 672 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): only gKeysHeld and gKeysRepeat are held, in fp and
+   * r9, read through these pointers; as gKeysHeld and gKeysRepeat directly,
+   * 135 of 672 instructions differ in tbs-en. */
   volatile u32 *heldKeys;
   volatile u32 *repeatedKeys;
   u32 i;

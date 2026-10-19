@@ -40,12 +40,7 @@ void PaletteGlow_UpdateSine(void) {
       g += 16;
       col += 20;
       /* FAKEMATCH: one-pass block; its loop notes hold the blue shift after the
-       * three adds, where the native schedules it. Without it differ 6 on
-       * tbs-en and tla-ja (the red add sinks below the shifts), as also with r,
-       * g and b locals stored as (b << 10) | (g << 5) | r; one expression ((col
-       * + 20) << 10) | ((col + 16) << 5) | (col * 2 + 22) differs 25, red first
-       * 14 (tbs-en). An unsigned blue shift also differs 6 in both; a separate
-       * unsigned blue local differs 27 in tbs-en and 25 in tla-ja. */
+       * three adds; as a plain shift, 6 instructions differ in tla-ja. */
       do {
         col <<= 10;
       } while (0);
@@ -54,11 +49,7 @@ void PaletteGlow_UpdateSine(void) {
       col |= r;
     }
     /* FAKEMATCH: one-pass block; it keeps the store ahead of the loop counter
-     * increment. Without it differ 2 on tbs-en and tla-ja (the increment moves
-     * above the strh). Indexed and advancing-pointer for loops also differ 2
-     * in both; unsigned indexing differs 4. A pointer-bound loop differs 21
-     * in tbs-en and 19 in tla-ja; an explicit last-index exit differs 11 and
-     * 9, respectively. */
+     * increment; as a plain store, 2 instructions differ in tla-ja. */
     do {
       *pal++ = col;
     } while (0);

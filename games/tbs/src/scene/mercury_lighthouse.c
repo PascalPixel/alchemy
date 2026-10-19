@@ -563,11 +563,9 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     Map_CopyCellsTo(39, 51, sourceColumn, 32, 1, copyHeight);
     column = step + 106;
     stripHeight = 4;
-    /* FAKEMATCH: width and height go through locals copyWidth and stripHeight,
-     * and loop.c hoists copyWidth's 2 into r9 as the native has it. As the
-     * literals 2 and 4: differ 26, through Map_CopyCellsTo: differ 35;
-     * copyWidth = 2 set before the loop: differ 8; stripHeight as the literal
-     * 4: differ 20. */
+    /* FAKEMATCH: width and height in locals, so loop.c hoists copyWidth's 2
+     * into r9 as native; as the literals 2 and 4, 26 instructions differ in
+     * tbs-en. */
     Engine_MapCopyCellsTo(105, 51, column, 32, copyWidth, stripHeight);
     if (delayFrames != 0) {
       Map_SetShake(0x50000, 0x50000, 0x10000);
@@ -1286,7 +1284,7 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
   // Palette RAM is hardware (its volatile is source, not a device): volatile
   // makes each read of palette RAM a load of its own: the native reads every
   // color with three ldrh, one per component; without it one load is shifted
-  // for all three and the function is 104 bytes for 106 in tbs-en (2026-10-13).
+  // for all three and the function is 104 bytes for 106 in tbs-en.
   volatile u16 *palette;
   u32 colorIndex;
   u32 whiteColors;
@@ -1494,7 +1492,7 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   // makes each read of palette RAM a load of its own: the native reads every
   // color with three ldrh, one per component, and again after the store;
   // without it one load is shifted for all three and the function is 98 bytes
-  // for 100 in tbs-en (2026-10-13).
+  // for 100 in tbs-en.
   volatile u16 *palette;
   u32 colorIndex;
   s32 blackColors;
@@ -2477,10 +2475,8 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     Engine_EventOpenMessage(MIA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
       Engine_EventWait(20);
-      /* FAKEMATCH: called through a cast to the unprototyped call the bytes
-       * show, which loads r1 before r0; called by its prototype, also through
-       * the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2
-       * at each site. */
+      /* FAKEMATCH: called through an unprototyped cast, which loads r1 before
+       * r0; called by its prototype, 2 instructions differ in tbs-en. */
       MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, 4);
       Engine_EventWait(20);
       questionMessage = firstMessage + 5;
@@ -2491,10 +2487,9 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
           break;
         }
         Engine_EventWait(20);
-        /* FAKEMATCH: called through a cast to the unprototyped call the bytes
-         * show, which loads r1 before r0; called by its prototype, also through
-         * the script layer's Actor_SetAnimationAndWait, r0 loads first: differ
-         * 2 at each site. */
+        /* FAKEMATCH: called through an unprototyped cast, which loads r1
+         * before r0; called by its prototype, 2 instructions differ in tbs-en.
+         */
         MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, 4);
         Engine_EventWait(20);
         questionMessage = MsgMercuryDontHideTruth;

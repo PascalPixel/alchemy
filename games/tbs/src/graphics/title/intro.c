@@ -763,11 +763,8 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
         /* FAKEMATCH: the reversible XOR initialization of green folds late,
-         * keeping the native blue-first add/copy and separate lower test; green
-         * = blue before the two XORs exchanges the add/copy registers (four
-         * aligned differences), plain clamps with green = blue, or both set to
-         * colorWork * 3 + 5, 202 (green takes the computed register, blue the
-         * copy, green's test not threaded into blue's). */
+         * keeping blue's add first and its separate lower test; as green =
+         * blue, 4 instructions differ in tbs-en. */
         green = blue ^ red;
         green ^= red;
         if (red < 8)

@@ -68,10 +68,8 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
       }
 
       if (prev != anim || slot->animationEntry == 0) {
-        /* FAKEMATCH: the native stores the condition before it sets changed;
-         * plainly changed is set first (one reordered row, differ 2). The
-         * one-pass block ends the store's scheduling block, as an empty barrier
-         * would, without its 4 estimated bytes. */
+        /* FAKEMATCH: the one-pass block stores the condition before changed is
+         * set; as plain statements, 2 instructions differ in tla-en. */
         do {
           slot->selectedCondition = anim;
         } while (0);

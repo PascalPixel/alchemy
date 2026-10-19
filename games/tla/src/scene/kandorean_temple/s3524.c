@@ -34,10 +34,9 @@ void Func_02003584(void) {
   object->angle = 0;
   {
     s32 *owner = &gPartyState.currentOwner;
-    /* FAKEMATCH: the mode is pinned to r1 and read by an asm that passes the
-     * owner's address through, so the mode is set before the owner is loaded as
-     * the native has; plain, through the inline layer, value-returning or
-     * pinned alone, the owner's load comes first (one reordered row). */
+    /* FAKEMATCH: the mode pinned to r1 and read by an asm is set before the
+     * owner is loaded; as a plain constant, the owner's load comes first (one
+     * reordered row in tla-en). */
     register s32 mode asm("r1") = 16;
 
     __asm__("" : "+l"(owner) : "l"(mode));
@@ -51,10 +50,9 @@ void Func_02003584(void) {
   FieldEvent_WaitFrames_(20);
   party = &gPartyState;
   object->angle = 0x4000;
-  /* FAKEMATCH: the native loads the party state's address among the angle's
-   * stores and builds the owner's offset after them, as overlay 671's
-   * Func_02000a20 does; plain, the offset is built before the store (differ 4),
-   * behind an empty asm after the store the address loads late (differ 2). */
+  /* FAKEMATCH: the barrier loads the party state's address among the angle's
+   * stores and builds the owner's offset after them; as plain C, 4
+   * instructions differ in tla-en. */
   asm volatile("" : "+l"(party));
   Func_020052d0(party->currentOwner, 258);
   Object_SetModeById_(party->currentOwner, 27);
@@ -67,9 +65,8 @@ void Func_02003584(void) {
       s32 scale = object->scaleX;
 
       /* FAKEMATCH: one variable set twice in the loop keeps both constants
-       * inside it, as the native loads them on every pass and as overlay 671's
-       * Func_02000a20 does; as plain constants loop.c moves -0x400 above the
-       * loop (differ 8). */
+       * loaded on every pass; as plain constants, 8 instructions differ in
+       * tla-en. */
       delta = -0x400;
       object->scaleX = scale + delta;
     }

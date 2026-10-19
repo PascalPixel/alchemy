@@ -17,9 +17,8 @@ void Func_02001e1c(struct ObjectRuntime *object, s32 part) {
     s32 three = 3;
 
     /* FAKEMATCH: an empty asm holding a 3 builds the part mask before the
-     * sprite loads, as the native does; plain, sched2 ranks the sprite load
-     * above the mask (differ 4). The asm ends CSE's memory of constants, so the
-     * zero is a variable. */
+     * sprite loads, and the zero stays a variable; as plain C, 4 instructions
+     * differ in tla-en. */
     asm volatile("" : : "r"(three));
     ((struct SpriteParts *)object->animation)->part = part;
   }

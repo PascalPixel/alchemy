@@ -51,9 +51,7 @@ void Func_02002e00(void) {
   Func_02004d20(0x40000, 0x8000);
   {
     /* FAKEMATCH: pinned, the mode starts right after the 1 negated for y,
-     * before x loads, as in the native (plain: differ 2; the CameraMove inline
-     * of s3ca8.c, a value-returning or u8-mode prototype and a tied empty asm:
-     * no closer). */
+     * before x loads; as a plain constant, 2 instructions differ in tla-en. */
     register s32 mode asm("r3") = 1;
 
     Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);

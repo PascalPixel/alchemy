@@ -966,12 +966,9 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Event_ShowMessage(scene, 0);
       Colosso_FadeInCompetitor(0, 736, 200);
       // UB: the void target is called through an incompatible return type.
-      /* FAKEMATCH: called as returning a value, the discarded result's call
-       * sets r0 after both other arguments, as the native does. Called
-       * directly, through Actor_FaceDirection or through Call3, r0 is set first
-       * (differ 2 in tbs-en).
-       * Direct prototype rechecked 2026-10-16: 3 argument instructions
-       * differ in tbs-en. */
+      /* FAKEMATCH: called as returning a value, the call sets r0 after both
+       * other arguments; as a direct call, 3 instructions differ in
+       * tbs-en. */
       COLOSSO_RIVER_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColossoRiver_WaitForBridgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1024,11 +1021,8 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Engine_EventWait(15);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
-     * result discarded (as call.h's Value3 did, 2026-10-13); called directly or
-     * through Call3 the argument moves come in another order (differ 2 in
-     * tbs-en).
-     * Direct prototype rechecked 2026-10-16: 3 argument instructions
-     * differ in tbs-en. */
+     * result discarded, for the native argument order; as a direct call, 3
+     * instructions differ in tbs-en. */
     COLOSSO_RIVER_PLACE_STAGED_PAIR(LOG_EAST_WEST, 160, 0);
     Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1164,11 +1158,8 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
     Colosso_LoadLettering(8);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
-     * result discarded (as call.h's Value2 did, 2026-10-13); called directly or
-     * through Call2 the argument moves come in another order (differ 2 in
-     * tbs-en).
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+     * result discarded, for the native argument order; as a direct call, 2
+     * instructions differ in tbs-en. */
     COLOSSO_RIVER_SELECT_MODE_BLOCK(3, 1);
     Engine_EventWait(-result * 60 + 60);
     kind = 0;
@@ -1178,11 +1169,8 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
     Colosso_LoadLettering(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
-     * result discarded (as call.h's Value2 did, 2026-10-13); called directly or
-     * through Call2 the argument moves come in another order (differ 2 in
-     * tbs-en).
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+     * result discarded, for the native argument order; as a direct call, 2
+     * instructions differ in tbs-en. */
     COLOSSO_RIVER_SELECT_MODE_BLOCK(3, 0);
     Engine_EventWait(result * 60 + 60);
     kind = 8;
@@ -1331,18 +1319,13 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
   if (flag == 0) {
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: the void function is called as returning s32, the call the
-     * bytes show; called by its prototype the argument moves come in another
-     * order (differ 2 in tbs-en).
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+     * bytes show; by its prototype, 2 instructions differ in tbs-en. */
     COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
     UiWork_PushValueSlot(firstItem, 2);
   } else {
     // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: the same call as returning s32; by its prototype: differ 2 in
-     * tbs-en.
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+    /* FAKEMATCH: the same call as returning s32; by its prototype, 2
+     * instructions differ in tbs-en. */
     COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }

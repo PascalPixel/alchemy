@@ -149,9 +149,8 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
     script = gImil_InteriorPlacements;
     FieldScene_PrepareActors(script);
     if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      /* FAKEMATCH: retain row 10's talk-facing byte access (10 * 24 + 22).
-       * Direct script[10].talkFacing shortens tbs-en by two bytes
-       * (2026-10-16). */
+      /* FAKEMATCH: retain row 10's talk-facing byte access (10 * 24 + 22);
+       * as script[10].talkFacing, tbs-en is two bytes shorter. */
       ((u8 *)script)[262] = 0;
       script[3].x = PIXELS(182);
       script[3].z = PIXELS(564);
@@ -540,11 +539,8 @@ static void Imil_TalkToItemMerchant(void) {
       Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
       Engine_EventShowMessage(ACTOR_ITEM_SHOP_CHILD, 0);
       /* FAKEMATCH: called through a cast to the value-returning call the bytes
-       * show; called by its void prototype, the two argument moves swap (differ
-       * 2). Forced tbs-en on 2026-10-16 confirms the two argument moves swap
-       * (four text bytes). A prototyped s32 (*)(s32, s32) cast also matches
-       * (2026-10-13).
-       */
+       * show; as a call by its void prototype, the two argument moves swap and
+       * 2 instructions differ in tbs-en. */
       IMIL_OPEN_SHOP(12, 14);
       Engine_EventEnd();
     } else {
@@ -1297,9 +1293,9 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_WalkToAndWait(ACTOR_SECOND_APPRENTICE, 644, 166);
   Engine_EventWait(1);
   // Restore the student's steering after the farewell walk.
-  /* FAKEMATCH: retain the byte access to steeringFlags; the direct field
-   * form swaps the following gGameState load and constant move (two
-   * instructions differ in tbs-en, 2026-10-16). */
+  /* FAKEMATCH: retain the byte access to steeringFlags; as the direct field,
+   * the next gGameState load and constant move swap and 2 instructions differ
+   * in tbs-en. */
   *(u8 *)(((s32)Object_GetById(ACTOR_SECOND_APPRENTICE)) + 90) |=
       ACTOR_FACES_MOTION;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

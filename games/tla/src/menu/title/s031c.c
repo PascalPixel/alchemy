@@ -28,10 +28,9 @@ void Func_0200031c(void) {
   IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x4000052, 0x1010, 0x20000);
   FieldEvent_WaitFrames(120);
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes reload the queue and the interrupt register addresses on every
-   * pass; a for or do/while loop keeps them from the pushes above (differ 90).
-   */
+  /* FAKEMATCH: a goto loop carries no loop notes, so each pass reloads the
+   * queue and interrupt register addresses; as a for or do/while loop, 90
+   * instructions differ in tla-en. */
   i = 0;
 fade:
   IO_WRITE_QUEUE_PUSH(0x4000054, 16 - i, 0x20000);

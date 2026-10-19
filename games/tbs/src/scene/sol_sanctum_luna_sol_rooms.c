@@ -1088,11 +1088,9 @@ static void Event_RiseToElementalStarRoom(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-    /* FAKEMATCH: register choice only: the zero goes through the sprite
-       variable, whose pseudo has r7, as native. Plain forms measured
-       (2026-10-13): motionFlags = 0 puts the zero in r2 (differ 4), also
-       with the actor held as union FieldObject and with FieldActor's
-       coordinates as s32. */
+    /* FAKEMATCH: the zero goes through the sprite variable, whose pseudo has
+       r7; as motionFlags = 0, the zero is in r2 and 4 instructions differ in
+       tbs-en. */
     sprite = 0;
     actor->motionFlags = (u32)sprite;
     Engine_AudioPlayCue(SE_201);
@@ -1123,12 +1121,9 @@ static void Event_RiseToElementalStarRoom(void) {
     // Repeat the ascent for Kraden before closing the room transition.
     Engine_ActorSetSpeed(ACTOR_KRADEN, PIXELS(3) / 10, PIXELS(3) / 20);
     actor = Object_GetById(ACTOR_KRADEN);
-    /* FAKEMATCH: register choice and order only: the mask temporary
-       gives the cleared flags r2 and the motion address r3, so both
-       byte stores wait past the zero, as native. Plain forms measured
-       (2026-10-13): &= ~ACTOR_FACES_MOTION with frame = 0 and the
-       store before, after or chained puts the flags in r3, stored at
-       once (differ 10); motionFlags = 0 before frame = 0, 23. */
+    /* FAKEMATCH: the mask temporary puts the flags in r2 and the motion
+       address in r3, so both byte stores wait past the zero; as &=
+       ~ACTOR_FACES_MOTION, 10 instructions differ in tbs-en. */
     {
       s32 steeringFlags = 254;
 

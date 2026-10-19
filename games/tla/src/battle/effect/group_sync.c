@@ -32,11 +32,7 @@ void ViewMove_SaveNearbySprites(void) {
   group->count = 0;
   objects = work->objects;
   /* FAKEMATCH: the empty asm barrier keeps the walk pointer's spill ahead of
-   * the counter's zero, as the native stores it; without it the zero comes
-   * first (one reordered pair, differ 2). Measured against it: the three work
-   * pointers in each order, the walk pointer in the for and before the count,
-   * indexed work->objects[i], a do-while, and the assignments in a one-pass
-   * block (differ 2 to 18). */
+   * the counter's zero; without it, 2 instructions differ in tla-en. */
   asm("");
   for (i = 0; i < 80; i++) {
     obj = *objects++;

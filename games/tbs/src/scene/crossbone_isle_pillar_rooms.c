@@ -339,10 +339,9 @@ static s32 CrossboneIslePillarRooms_LowerActorToLedge(s32 id, s32 far) {
         y = top << 20;
         kind = 253;
       }
-      /* FAKEMATCH: a one-pass block around the object and height lets sched2
-       * issue the height arithmetic first, as the native does. Without it:
-       * differ 2; with height computed before the call it reallocates the
-       * function (differ 99, tbs-en). */
+      /* FAKEMATCH: a one-pass block around the object and height issues the
+       * height arithmetic first; as no block, 2 instructions differ in
+       * tbs-en. */
       do {
         temporaryActor = OverlayObject_PrepareObject(x, y, z, kind);
         height = actor->z.fixed - z + y;
@@ -967,10 +966,8 @@ static void Event_MovePillar(void) {
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P).
         /* FAKEMATCH: the u8 view keeps these flag updates out of the record's
-         * alias set, as native; field stores reallocate the loop (score 2573,
-         * differ 217), a priority bit-field differs 65, the record as struct
-         * FieldActor with the view kept 2 (it matches once FieldActor's x, y
-         * and z are s32; then this PillarActor view can go). */
+         * alias set; as field stores, the loop is reallocated and 217
+         * instructions differ in tbs-en. */
         *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;

@@ -71,10 +71,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   // Move usable summons to the front in reverse traversal; keep others in
   // order.
   count = Summon_ListLearnedFar(learnedSummons);
-  /* FAKEMATCH(one-pass): with the first scan's exit inside a block that runs
-   * once, loop.c's find_and_verify_loops finds no barrier at depth 0 and
-   * leaves the main loop's select block in place, as the native has it; as a
-   * plain block, 88 of 946 instructions differ in tbs-en. */
+  /* FAKEMATCH(one-pass): the first scan's exit inside a block that runs once
+   * leaves the main loop's select block in place; as a plain block, 88 of 946
+   * instructions differ in tbs-en. */
   do {
     s32 i;
 
@@ -228,11 +227,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         VramCache_Reload((u16)cursorHandle, (s32)gResource_FixedBlockBTiles);
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    /* FAKEMATCH: register choice and order: the cursor is pushed through
-       sprite, re-pointed at it here as a struct MenuSprite *, which keeps
-       the frame loop's registers as the native allocates them. Measured
-       (2026-10-13): pushing &cursor or cur directly gives 947
-       instructions for 946, differ 87 in all six editions. */
+    /* FAKEMATCH: the cursor pushed through sprite, re-pointed at it here, keeps
+     * the frame loop's registers; as &cursor or cur pushed directly, 87
+     * instructions differ in tbs-en. */
     sprite = (struct MenuSprite *)&cursor;
     Runtime_PushSlotEntry(sprite, 242);
 

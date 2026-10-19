@@ -584,10 +584,9 @@ struct MetatileCopyEntry {
 
 extern const struct MetatileCopyEntry gData_02003308[];
 
-/* FAKEMATCH: a one-pass block around each mode change, so it starts its own
- * scheduling region (as plain calls Func_020019d8 loads arguments in other
- * orders, differ 88 of 1565; four mode changes stay plain calls, where the
- * native has no such break). */
+/* FAKEMATCH: a one-pass block around each mode change starts its own
+ * scheduling region; as plain calls, 88 of 1565 instructions differ in
+ * tla-en. */
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
     Object_SetModeById(id, mode);                                              \

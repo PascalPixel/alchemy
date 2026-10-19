@@ -89,9 +89,8 @@ void Func_02000b40(void) {
     keys = &gInput.held;
     table = gData_02005f18;
     /* FAKEMATCH: the barrier loads the table's address before the direction
-     * mask's 15, where plainly sched2 builds the 15 first (differ 4); reading
-     * through a byte offset keeps the table as the base register (indexed
-     * plainly, differ 2). */
+     * mask's 15, and the byte offset keeps the table as the base register; as
+     * no barrier, 4 instructions differ in tla-en. */
     asm volatile("" : "+l"(table));
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {

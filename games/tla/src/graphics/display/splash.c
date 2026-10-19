@@ -89,9 +89,8 @@ col:
     x = 0;
   row:
     {
-      /* FAKEMATCH(temporary): the s16 step written as its high-half wrap,
-       * with the loops as gotos, so that loop.c neither hoists nor
-       * strength-reduces it; as an s16 tile stored and stepped, 37 of 192
+      /* FAKEMATCH(temporary): the s16 step as its high-half wrap keeps loop.c
+       * from hoisting it; as an s16 tile stored and stepped, 37 of 192
        * instructions differ in tla-en. */
       s32 old = tile;
 

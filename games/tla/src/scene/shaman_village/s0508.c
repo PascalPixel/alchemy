@@ -11,10 +11,8 @@ void Func_02000508(struct ShamanVillageObject *object) {
   object->z += *(s32 *)((u8 *)object + 76);
   if (object->x >> 16 < 168) {
     object->field44 += 0x18000;
-    /* FAKEMATCH: ⚓️ builds the 0xccc step around the scale load, its first byte
-     * before it; without the barrier sched2 builds the step ahead of the
-     * velocity store (differ 4). Measured against it: the scale and its step in
-     * locals, the step added after the branch, one-pass blocks (2 to 23). */
+    /* FAKEMATCH: the barrier builds the 0xccc step around the scale load, its
+     * first byte before it; without it, 4 instructions differ in tla-en. */
     asm("");
     object->scaleY = object->scaleX += 0xccc;
   } else {

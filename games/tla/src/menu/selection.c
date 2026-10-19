@@ -32,14 +32,9 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
   *widthp = width + 2;
   work->resourceBase = resourceBase;
   work->row = y;
-  /* FAKEMATCH: the empty asm that reads the row back and passes the work
-     pointer on makes the count's address wait for the row's store, as the
-     native does; plainly the count's address (movs r7, #142) is started
-     first (one reordered pair, differ 2). The width is read back through
-     a pointer taken before it, which the asm leaves alone (differ 43
-     through the work pointer). Measured against it: operand-tied asms
-     with a memory clobber on x (differ 2), y (20) and the work pointer
-     (43). */
+  /* FAKEMATCH: the empty asm reading the row back makes the count's address
+     wait for the row's store; without it, 2 instructions differ in
+     tla-en. */
   asm("" : "+r"(work) : "m"(work->row));
   for (i = 0; i < work->count; i++) {
     entry = &work->entries[i];

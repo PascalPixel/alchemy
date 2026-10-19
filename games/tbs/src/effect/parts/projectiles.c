@@ -710,12 +710,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               if (target->x < 0) {
                 hit = x < 0;
                 /* FAKEMATCH: cancelling updates under if (target) end CSE
-                 * before the hit test and emit nothing, keeping the native sign
-                 * result and duplicated side check (per-side test, goto
-                 * native); unguarded 77 (3 English insns lost), one test after
-                 * an if/else 65, ?: of both sign tests 65 (77 tested whole),
-                 * hit preset 0 then nested ifs 53, tests on shot->x 65, these
-                 * guards plus one test after the if/else 55. */
+                 * before the hit test and emit nothing; without them, 77
+                 * instructions differ in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;
@@ -724,10 +720,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   goto drawShot;
               } else {
                 hit = x >= 0;
-                /* FAKEMATCH: the same CSE block end keeps the
-                 * opposite sign result before its side check;
-                 * the cancelling updates emit no instructions. Without
-                 * this second pair it differs 14 (tbs-en, 2026-10-18). */
+                /* FAKEMATCH: the same CSE block end keeps the opposite sign
+                 * result before its side check; without this second pair, 14
+                 * instructions differ in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;

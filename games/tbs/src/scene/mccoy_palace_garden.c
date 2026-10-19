@@ -195,16 +195,12 @@ static void Event_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
       Garden_OpenPalaceGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
-      /* FAKEMATCH: instruction order only: called through a cast with no
-         prototype that returns a value, the call sets r0, so sched2 loads
-         the actor id after the two zeros, as native. Plain forms measured
-         (2026-10-13): Engine_ActorSetPosition or Actor_SetPosition by
-         their prototype load r0 first (differ 2). */
+      /* FAKEMATCH: a value-returning cast loads the actor id after the two
+         zeros; as Actor_SetPosition by its prototype, 2 instructions differ
+         in tbs-en. */
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH: instruction order only: the one-pass block's loop note
-         after the call above is a scheduling barrier; with the cast it
-         keeps r0 last among that call's arguments. A plain call or
-         GameFlag_Set here loads r0 first (differ 2). */
+      /* FAKEMATCH: the one-pass block keeps r0 last among the call above's
+         arguments; as a plain call, 2 instructions differ in tbs-en. */
       do {
         Engine_GameFlagSet(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);

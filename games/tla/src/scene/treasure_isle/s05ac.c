@@ -114,9 +114,8 @@ void Func_02000760(s32 unused, s32 id) {
       GameFlag_SetBit(0x302);
   }
   /* FAKEMATCH: the memory barriers before the second, third and fourth room
-   * tests keep GCSE's PRE from moving their party state loads onto the edges
-   * after the calls, so each test loads it again as the native does (with any
-   * two of the three: differ 29). */
+   * tests make each reload the party state, as the native does; with any two
+   * of the three, 29 instructions differ in tla-en. */
   __asm__ volatile("" : : : "memory");
   if (gPartyState.scene == (s32)&SceneId_Ov6afRoom2) {
     if (id == 10 && object->x >> 19 == 33)

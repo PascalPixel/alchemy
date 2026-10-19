@@ -32,10 +32,9 @@ s32 Summon_ListLearned(u8 *output) {
        bit trade registers (differ 10). */
     register u32 flags asm("r3") = *Djinn_GetRecoveryTable(0);
 
-    /* FAKEMATCH: the barrier loads the word before the bit is started,
-       as the native does; plainly the copy of the one is scheduled
-       first, as it does not wait for the call's result (one reordered
-       pair, differ 2). */
+    /* FAKEMATCH: the barrier loads the word before the bit is started; as
+       plain C, the copy of the one comes first and 2 instructions differ
+       in tla-en. */
     asm("");
     source++;
     flags &= one << value;
@@ -56,10 +55,8 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
 
 void Func_080aff94(s32 bit) {
   u32 *state = Djinn_GetRecoveryTable(0);
-  /* FAKEMATCH: the native loads the flags word before it builds the bit; the
-   * plain form builds the bit first (one reordered pair, differ 2). The word is
-   * pinned to the r3 it already takes: in a plain local the two registers trade
-   * places (differ 10). */
+  /* FAKEMATCH: the word pinned to r3 is loaded before the bit is built; in a
+   * plain local, 10 instructions differ in tla-en. */
   register u32 flags __asm__("r3") = *state;
 
   /* FAKEMATCH: the one-pass block's loop note holds the bit until the pinned

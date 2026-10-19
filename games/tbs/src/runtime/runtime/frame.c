@@ -240,10 +240,9 @@ void WaitFrames(s32 frames) {
     u32 *size = &gSavedStackSize;
 
     if (*size) {
-      /* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte
-       * frame and removes an extra copy through ip. As an output only ("=r"),
-       * the frame is 4 bytes for 8 and the registers shift (differ 67 in
-       * tbs-en). */
+      /* FAKEMATCH: tying the old base to the hardware read keeps the 8-byte
+       * frame and no copy through ip; as an output only ("=r"), 67
+       * instructions differ in tbs-en. */
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
       __asm__ volatile("mov %0, sp" : "+r"(base));
       /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
@@ -254,12 +253,9 @@ void WaitFrames(s32 frames) {
       CAMELOT_ASM(
           "restore the hardware stack pointer after the proven stack copy")
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
-      /* FAKEMATCH: clearing the old address and restoring a separate
-       * pointer in complementary conditions ends the restore CSE block.
-       * The conditions vanish, retaining the size-address reload in r3
-       * and its load into r2. Reusing size instead of nextSize changes
-       * that pair to r2/r2 (4 aligned differences, same 0x434 extent);
-       * deleting the empty barrier alone gives 24 differences. */
+      /* FAKEMATCH: complementary conditions, which emit nothing, end the
+       * restore CSE block and keep the size-address reload in r3; reusing size
+       * for nextSize, 4 instructions differ in tbs-en. */
       size = NULL;
       {
         u32 *nextSize = NULL;

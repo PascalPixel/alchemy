@@ -12,10 +12,9 @@ struct GlyphCursor {
 
 /// Clears a selection record's cursor.
 static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
-  /* FAKEMATCH: the helper takes the node's base field as its record, so each
-   * row store forms base + 372 and stores the cursor at #2, as the native does.
-   * A plain work->records[7].kind = 0 folds the offset into 374 and stores at
-   * #0 (differ 6). The typed SelectionNode helper also changes these stores. */
+  /* FAKEMATCH: the helper takes the node's base field, so each row store forms
+   * base + 372 and stores at #2; as work->records[7].kind = 0, 6 instructions
+   * differ in tbs-en. */
   cursor->cursor = 0;
 }
 
@@ -525,10 +524,9 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
 
   state->records[side].kind = 0;
   if (side != 0) {
-    /* FAKEMATCH(temporary): the tile pointer in a local of its own, loaded
-     * early into r5 and copied late, as the native does; as
-     * gMenu_CursorObjectTiles assigned where right is read, 35 of 136
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the tile pointer in a local, loaded early into r5;
+     * as gMenu_CursorObjectTiles where right is read, 35 of 136 instructions
+     * differ in tbs-en. */
     const u8 *right = gMenu_CursorObjectTiles;
 
     count = state->count;

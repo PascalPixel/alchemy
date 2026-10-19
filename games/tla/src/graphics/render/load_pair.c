@@ -64,10 +64,9 @@ void Func_08045018(struct BobPairObject *object) {
 
   value = object->baseY + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
   object->y = value;
-  /* FAKEMATCH: tying the object to an empty asm after the first store
-     loads the next object before the second tick is shifted, as the
-     native does; plain, the shift comes first (one reordered row,
-     differ 2). */
+  /* FAKEMATCH: tying the object to an empty asm loads the next object before
+   * the second tick is shifted, as native; plainly, 2 instructions differ in
+   * tla-en. */
   asm("" : "+r"(object));
   object = object->next;
   value = object->baseY + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];

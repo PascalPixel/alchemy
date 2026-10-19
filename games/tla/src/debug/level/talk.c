@@ -27,10 +27,8 @@ void Func_0200073c(s32 cue);
 static inline u32 Input_PressedFenced(u32 mask) {
   u32 keys = KEYS_PRESSED & mask;
 
-  /* FAKEMATCH: the empty asm's memory clobber ends the test's block, so GCSE's
-   * PRE does not carry gInput's address on to the next test, which loads it
-   * again as the native does (without it, one load for all tests: differ 11 in
-   * Func_020001a8). */
+  /* FAKEMATCH: the memory clobber makes each test load gInput's address again;
+   * without it, 11 instructions of Func_020001a8 differ in tla-en. */
   __asm__ volatile("" : "+r"(keys) : : "memory");
   return keys;
 }

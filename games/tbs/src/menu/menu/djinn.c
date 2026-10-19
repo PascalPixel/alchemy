@@ -134,10 +134,9 @@ s32 DjinnMenu_Run(void) {
 }
 
 /// Finds the moved Djinni in the list and selects its new position.
-/* FAKEMATCH(one-pass): a statement macro of DjinnMenu_RunScreen's, used at
- * its two places, whose do { } while (0) ends the selection store's
- * scheduling region; as a plain { } block, 4 of 560 instructions differ in
- * tbs-en. */
+/* FAKEMATCH(one-pass): the do { } while (0) ends the selection store's
+ * scheduling region at both uses; as a plain { } block, 4 of 560 instructions
+ * differ in tbs-en. */
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \
     s32 column;                                                                \
@@ -1479,10 +1478,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairIndex[mode] = entry % 32;
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairOwner[mode] = DJINN_OWNER(entry);
-    /* FAKEMATCH(barrier): an empty asm that keeps entry live past the owner's
-     * extraction and passes result through it, so the owner mask keeps its
-     * register (ands r3, r2); without it, 48 of 2058 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(barrier): an empty asm keeps entry live past the owner's
+     * extraction, so the owner mask keeps its register; without it, 48 of
+     * 2058 instructions differ in tbs-en. */
     asm("" : "+r"(result) : "r"(entry));
   }
   menu->selection[mode] = ownerColumn + djinnRow * 10;

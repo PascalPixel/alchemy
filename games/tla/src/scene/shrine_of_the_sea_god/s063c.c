@@ -18,9 +18,8 @@ void Func_0200063c(s32 x, s32 y) {
     s32 frames = 1;
 
     /* FAKEMATCH(barrier): the step loaded from the pool and WaitFrames' 1 set
-     * in each pass, as the native does; as layer0->y += -0x2000 and
-     * layer1->y += -0x2000 with WaitFrames(1), 10 of 33 instructions differ
-     * in tla-en (the step hoisted and spilled). */
+     * in each pass; as layer0->y += -0x2000 and layer1->y += -0x2000 with
+     * WaitFrames(1), 10 of 33 instructions differ in tla-en. */
     asm volatile("" : "+r"(step), "+r"(frames));
     layer0->y = y0 + step;
     layer1->y += step;

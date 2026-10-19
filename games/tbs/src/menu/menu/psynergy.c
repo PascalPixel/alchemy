@@ -142,10 +142,9 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMessage(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH(dead): a redundant copy of -1 into cancelled and a test of
-       * equality as an XOR, which end the CSE block so that -1 and done's 1
-       * take the ROM's registers; as if (chosen == -1) setting done and
-       * useResult to -1, 6 of 317 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 and 1
+       * the ROM's registers; as if (chosen == -1) setting done and useResult,
+       * 6 of 317 instructions differ in tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -167,10 +166,8 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         {
           struct PsynergyMenuState *savedWork = menu;
 
-          /* FAKEMATCH(dead): menu cleared and restored under a test that is
-           * never true here, which puts labels between the psynergyCount and
-           * mode loads, so that the mode's offset is built from its own
-           * constant (movs #154, lsls #2) as the bytes do; without the two
+          /* FAKEMATCH(dead): menu cleared and restored under a false test, so
+           * the mode's offset is built from its own constant; without the two
            * tests, 2 of 317 instructions differ in tbs-en. */
           if (done)
             menu = NULL;
@@ -332,11 +329,9 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 /// from the one chosen last, with each member's Psynergy shown as the cursor
 /// passes. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  /* FAKEMATCH(temporary): the pane's tab, icon and owner reached through
-   * byte offsets from the work held in scalars, which keeps partySlot in its
-   * own register beside the icon's offset; as menu->paneIcon[partySlot],
-   * menu->tabIndex[partySlot] and menu->ownerTable[ownerIndex], 19 of 75
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): byte offsets held in scalars keep partySlot in its
+   * own register; as menu->paneIcon[partySlot] and the other indexed fields,
+   * 19 of 75 instructions differ in tbs-en. */
   struct PsynergyMenuState *menu = gMenuWork;
   s32 tabOffset = partySlot + ((u8 *)menu->tabIndex - (u8 *)menu);
   s32 iconOffset = partySlot * sizeof(menu->paneIcon[0]) +

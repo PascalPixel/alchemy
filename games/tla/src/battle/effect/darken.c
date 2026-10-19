@@ -42,9 +42,8 @@ void BattlePres_ProcessPendingTileTransfer(void) {
       Dma_Set(buf, (void *)0x06003500, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000,
               REG_DMA3);
       /* FAKEMATCH: the fill goes through the inline wrapper
-       * BattlePres_FillWords, as ☀️'s IWRAM call layer; called directly, the
-       * size's split constant is finished before the buffer copy and the
-       * entry's pool load (differ 4). */
+       * BattlePres_FillWords, as ☀️'s IWRAM call layer; called directly, 4
+       * instructions differ in tla-en. */
       BattlePres_FillWords(buf, 0x8000, work->transferValue);
       break;
     case 2: // Afterimage: nonzero colour numbers drop to 1/2 or 3/4.

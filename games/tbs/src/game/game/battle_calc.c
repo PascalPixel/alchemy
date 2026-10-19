@@ -267,12 +267,9 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// Some effects get three tries.
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
-  /* FAKEMATCH: three status reads (psySeal after the effect 4 test, confusion
-   * in it, haunt for effect 0x40) go through the byte view state[offset], so
-   * each builds its address from a fresh offset constant as the native does;
-   * read as unit fields, CSE reuses a neighbouring address. All eleven reads as
-   * fields differ 120 (184 instructions for 204); every other read is a field
-   * at no cost. */
+  /* FAKEMATCH: the psySeal, confusion and haunt reads go through state[offset]
+   * so each builds its address afresh, as native; as unit fields, 120
+   * instructions differ in tbs-en. */
   u8 *state = (u8 *)UnitGet(target);
   struct BattleUnit *unit = (struct BattleUnit *)state;
   s32 attempts = 1;

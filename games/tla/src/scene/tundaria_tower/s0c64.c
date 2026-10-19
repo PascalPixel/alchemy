@@ -18,10 +18,9 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   s32 dx;
   s32 dz;
 
-  /* FAKEMATCH: an empty asm after the event work load, with the actor taken as
-   * s32 and narrowed after it, so the load comes before the 0xcbc offset is
-   * built, as in the native. Without the asm, plain or with the actor narrowed
-   * late: differ 2; a one-pass block there: differ 2 or 6. */
+  /* FAKEMATCH: an empty asm after the event work load, with the actor narrowed
+   * after it, loads the work before the 0xcbc offset is built; without the
+   * asm, 2 instructions differ in tla-en. */
   asm("");
   actor = actorArg;
   object = *(struct ObjectRuntime **)(work + 0xcbc);

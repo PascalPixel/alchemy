@@ -90,10 +90,9 @@ void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   }
   if (music == 0) {
     party = &gPartyState;
-    /* FAKEMATCH(one-pass block): the empty block after taking gPartyState's
-     * address loads it before ownerOverride's offset is built, as the native
-     * does; as plain statements the offset comes first, 2 of 92 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(one-pass block): loads gPartyState's address before
+     * ownerOverride's offset; as plain statements, 2 of 92 instructions differ
+     * in tla-en. */
     do {
     } while (0);
     if (party->ownerOverride != 0 && !GameFlag_Test(0x8df))
@@ -108,10 +107,8 @@ void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
       music = 50;
   }
   party = &gPartyState;
-  /* FAKEMATCH(one-pass block): the empty block after taking gPartyState's
-   * address loads it before sceneCue's offset is built, as the native does;
-   * as plain statements the offset comes first, 2 of 92 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(one-pass block): loads gPartyState's address before sceneCue's
+   * offset; as plain statements, 2 of 92 instructions differ in tla-en. */
   do {
   } while (0);
   party->sceneCue = music;

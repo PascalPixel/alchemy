@@ -32,10 +32,9 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
     Func_02003100(object, 1);
     Func_02003108(object, gData_02003720);
     object->motionFlags = 0;
-    /* FAKEMATCH: the empty asm ends the scheduling block: the native reads the
-     * fifth argument from the stack before it loads the zero for nextFrame (ldr
-     * r3, [sp, #16]; ldr r1, =0), and without it the zero comes first (differ
-     * 2; a signed or unsigned field measures the same). */
+    /* FAKEMATCH: the empty asm reads the fifth argument from the stack before
+     * the zero for nextFrame, as native; without it, 2 instructions differ in
+     * tla-en. */
     __asm__("");
     object->unk5e = fifth;
     sprite->nextFrame = 0;

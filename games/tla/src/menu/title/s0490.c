@@ -29,10 +29,8 @@ void Func_02000490(void) {
   u8 *res;
   s32 id;
   u16 *map;
-  /* FAKEMATCH: the column counter is pinned to r4: the native keeps the row
-   * counter in r0 and the column counter in r4, where this C (like ☀️'s native)
-   * gives the column counter r0 (differ 20 unpinned; for loops with the pin,
-   * 17). */
+  /* FAKEMATCH: the column counter pinned to r4 and the row counter left in
+   * r0, as native; unpinned, 20 instructions differ in tla-en. */
   register u32 x asm("r4");
   u32 y;
   u16 tile;
@@ -42,10 +40,9 @@ void Func_02000490(void) {
   id = (s32)&ResourceId_LogoOnBlack;
   Fade_ToBlack(0);
   {
-    /* FAKEMATCH: the control value is pinned to r3 as a halfword, and a
-     * one-pass block keeps it ahead of the register's address: the native loads
-     * 0x681 before it builds BG2CNT's address (plainly, one reordered row; an
-     * empty asm moves more). */
+    /* FAKEMATCH: the control value pinned to r3 in a one-pass block loads
+     * 0x681 before BG2CNT's address, as native; plainly, one row is reordered
+     * in tla-en. */
     register u16 control asm("r3");
 
     control = 0x681;

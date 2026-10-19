@@ -109,10 +109,9 @@ void FieldFx_StartGroundParticles(void) {
   u32 *words;
   u32 i;
 
-  /* FAKEMATCH(temporary): one pointer, words, holds the fill's zero, the
-   * decode buffer and each particle's cell cursor, all in r6 as the bytes
-   * have them; as Dma_Fill32(0, work, ...), 4 of 93 instructions differ in
-   * tbs-en. */
+  /* FAKEMATCH(temporary): words holds the fill's zero, the decode buffer and
+   * each cell cursor, all in r6; as Dma_Fill32(0, work, ...), 4 of 93
+   * instructions differ in tbs-en. */
   work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
   leader = ((struct MapScrollWork *)gMapWork[0])->origin;
   BattleFx_SetQueuedSoundAndPlay(SE_170);
@@ -390,10 +389,9 @@ void FieldEffect_InitSparkles(void) {
   do {
     struct MapScrollWork *view = gMapWork[0];
     s32 *leader;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
-     * the height's x keeps the view load order and the leader in r2; as a
-     * u32 * cursor and an x of its own, 14 of 74 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the stores and the x keeps
+     * the leader in r2; as a u32 * cursor and an x of its own, 14 of 74
+     * instructions differ in tbs-en. */
     u32 attr;
     s32 z;
 

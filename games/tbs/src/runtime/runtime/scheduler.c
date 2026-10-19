@@ -40,13 +40,9 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 /// Bubble-sorts the task table by order, highest first, so each pass runs its
 /// tasks from the highest order down.
 void Scheduler_SortTasks(void) {
-  /* FAKEMATCH: the declaration initializer repeats the first pass's assignment;
-   * the native loads the table before the loop and again at the top of every
-   * pass. Without it the table address is hoisted into r5 (push r7): differ 28.
-   * Reusing the swap cursor, a leading pass test or the reload at the end of a
-   * pass: differ 11 to 26. Ordinary struct assignment for all three copies
-   * differs 60 (33 instructions for 39); without the initializer as well,
-   * it differs 64 (31 for 39), measured in tbs-en. */
+  /* FAKEMATCH: the initializer repeats the first pass's assignment, so the
+   * table loads before the loop and at the top of every pass; without it, 28
+   * instructions differ in tbs-en. */
   struct SchedulerTask saved;
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 pass;

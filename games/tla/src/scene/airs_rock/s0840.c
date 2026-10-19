@@ -16,10 +16,8 @@ void Func_02000840(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
 
-  /* FAKEMATCH: the barrier keeps both loads ahead of the radius; plainly the
-   * radius's 0x100000 is built before the step is loaded (differ 2; a one-pass
-   * block around the radius, the step through an asm operand and 3 minutes of
-   * alchemy permute did not help). */
+  /* FAKEMATCH: the barrier keeps both loads ahead of the radius's 0x100000; as
+   * no barrier, 2 instructions differ in tla-en. */
   __asm__("");
   radius >>= 1;
   radius += 0x100000;

@@ -50,10 +50,8 @@ static void ColosseumEntrance_InitializeContestants(void);
 /// Turns over ten frames by calling ColosseumEntrance_FaceDirection
 /// through the inline helper.
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
-  /* FAKEMATCH: forwarding inline for Event_CrowdRecognizesIsaac's
-   * one call (call.h's Call2 did the same); called directly
-   * Event_CrowdRecognizesIsaac's later message skip swaps r2 and r3
-   * (7 halfwords differ in tbs-en, 2026-10-13). */
+  /* FAKEMATCH: forwarded inline for Event_CrowdRecognizesIsaac's one call;
+   * called directly, r2 and r3 swap and 7 instructions differ in tbs-en. */
   ColosseumEntrance_FaceDirection(actor, facing);
 }
 

@@ -23,10 +23,9 @@ s32 Func_02002ec8(void) {
   Scheduler_AddOrUpdateCallback(Func_02001558, 0xc80);
   Scheduler_AddOrUpdateCallback(Func_020015a0, 0x480);
   {
-    /* FAKEMATCH: the party address pinned to r3 for the switch's read.
-     * Unpinned, gcse's PRE merges it with case 4's (inserting it on case 2's
-     * two edges) and the one pseudo takes r1 (differ 8; a one-pass block around
-     * the switch only reorders, permute found nothing below 8). */
+    /* FAKEMATCH: the party address pinned to r3 for the switch's read, apart
+     * from case 4's; unpinned, gcse merges the two into r1 and 8 instructions
+     * differ in tla-en. */
     register struct PartyState *party asm("r3") = &gPartyState;
 
     entrance = party->entrance;
@@ -38,10 +37,9 @@ s32 Func_02002ec8(void) {
   case 4: {
     struct PartyState *party = &gPartyState;
 
-    /* FAKEMATCH: a one-pass block after the party address: the native loads the
-     * scene id before it builds the saved scene's offset; without it the
-     * offset's first half comes first (differ 2, also with the id in a local).
-     */
+    /* FAKEMATCH: a one-pass block after the party address loads the scene id
+     * before the saved scene's offset; without it, 2 instructions differ in
+     * tla-en. */
     do {
     } while (0);
     party->savedScene = (s32)&SceneId_DailaInteriors2;

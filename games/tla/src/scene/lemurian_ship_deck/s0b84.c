@@ -81,10 +81,9 @@ void Func_020002cc(void) {
   Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
   Call4((void (*)())Func_02001fcc, gPartyState.currentOwner, 0x2280000,
         0x1780000, 0);
-  /* FAKEMATCH: an angle that takes two instructions is set before its call: the
-   * native builds it ahead of the position arguments, which it does after them
-   * as a constant argument (differ 4 each). The 0x2000 stays in r8 for actor
-   * 9's later turn, so that call is direct. */
+  /* FAKEMATCH: the two-instruction angle set before its call is built ahead
+   * of the position arguments; as a constant argument, 4 instructions differ
+   * in tla-en. */
   angle = 0xd000;
   Call4((void (*)())Func_02001fcc, 9, 0x22e0000, 0x1590000, angle);
   Call4((void (*)())Func_02001fcc, 7, 0x2160000, 0x1940000, 0);

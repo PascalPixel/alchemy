@@ -23,10 +23,8 @@ s32 Func_020007fc(s32 *p) {
     s32 angle;
 
     /* FAKEMATCH: the barriers keep the first random value's shift after the
-     * second call and the angle's load between the two shifts; plainly the
-     * shift is scheduled before the call (differ 2), and with the first barrier
-     * alone after both shifts (differ 2). A one-pass block or a temporary alone
-     * does not do it. */
+     * second call and the angle's load between the two shifts; plainly, 2
+     * instructions differ in tla-en. */
     __asm__("");
     x = (u32)a << 9;
     angle = p[12];

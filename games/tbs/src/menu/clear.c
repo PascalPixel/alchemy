@@ -375,11 +375,8 @@ s32 SaveMenu_Run(void) {
   s32 windowHandle;
   s32 passwordColumn;
   s32 tileValue;
-  // Integer-only phase splits also change the native output: separate new-game
-  // name count/index/result, save-answer/write-result, or transfer variables
-  // reorder instructions at the same extent; separate password redraw/index/
-  // divider variables shorten the function by four bytes. These three scalars
-  // retain those measured cross-phase relationships for now.
+  // These three scalars each serve several phases: separate per-phase
+  // variables reorder the instructions or shorten the function.
   s32 v5;
   s32 v7;
   s32 v6;
@@ -802,9 +799,8 @@ menu_top:;
           }
           for (v7 = pageIndex * PASSWORD_SYMBOLS_PER_PAGE, pageGlyphIndex = 0;
                v7 != v6; v7++, pageGlyphIndex++) {
-            /* FAKEMATCH(one-pass): the glyph's decoding in a one-pass block,
-             * which ends the CSE path so that each draw call rebuilds the
-             * glyph's address as the ROM does; without the block, 98 of 921
+            /* FAKEMATCH(one-pass): the block makes each draw call rebuild the
+             * glyph's address as the ROM does; without it, 98 of 921
              * instructions differ in tbs-en. */
             do {
               Clear_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,

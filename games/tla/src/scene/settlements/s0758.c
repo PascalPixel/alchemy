@@ -9,10 +9,9 @@ void Func_02000714(struct ObjectRuntime *object) {
   do {
   } while (0);
   object->y += 0x8000;
-  /* FAKEMATCH: the loop note ends the scheduling block: the native stores y
-   * before it starts the step, and loads scaleX between the step's first byte
-   * and its shift (4 differ without it; the step as a local alone changes
-   * nothing). */
+  /* FAKEMATCH: the loop note ends the scheduling block, so y is stored before
+   * the step starts and scaleX loads inside it; without it, 4 instructions
+   * differ in tla-en. */
   do {
   } while (0);
   step = 0x51e;

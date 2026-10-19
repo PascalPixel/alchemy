@@ -18,11 +18,9 @@ void Func_02000f0c(s32 actor);
 s32 Func_0200079c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: the turns and placements go through call.h's Call2 and Call3,
-   * which build each call's constants again (direct: differ 2, 8 and 18), and a
-   * one-pass block between the two entrance tests keeps the second a load of
-   * its own, as in overlay 657's s0b84.c (without it gcse shares one halfword
-   * load, differ 18). */
+  /* FAKEMATCH: Call2 and Call3 rebuild each call's constants, and a one-pass
+   * block gives the second entrance test its own load; without the block, 18
+   * instructions differ in tla-en. */
   *(s32 *)(work + 428) = 0x100;
   work[3383] = 0;
   work[3382] = 0;

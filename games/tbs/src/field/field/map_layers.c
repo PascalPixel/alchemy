@@ -790,11 +790,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
             u32 tmp10;
             u32 tmp14;
             u32 tmp16;
-            /* FAKEMATCH(temporary): restoring the unscaled cell keeps loop.c's
-             * shift inside the successful layer branch, and the copy chain
-             * through tmp2 to tmp17 sets the registers and stack slots of the
-             * native 36-byte frame; as two plain word stores, 65 of 137
-             * instructions differ in tbs-en. */
+            /* FAKEMATCH(temporary): the copy chain through tmp2 to tmp17 sets
+             * the registers and slots of the 36-byte frame; as two plain word
+             * stores, 65 of 137 instructions differ in tbs-en. */
             u32 bytes = metatileId * 8;
             u32 tmp8;
             u32 tmp17;

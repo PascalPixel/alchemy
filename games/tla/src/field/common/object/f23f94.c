@@ -6,10 +6,9 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   s32 second;
 
   if (object->motionFlags == 0) {
-    /* FAKEMATCH: the one-pass block's end is a scheduling barrier: the native
-     * loads targetX before it builds 0x80000000, here and in the other arm (two
-     * reordered pairs, differ 4 without; an empty asm on the loaded value does
-     * not move them). */
+    /* FAKEMATCH: the one-pass block's end loads targetX before 0x80000000 is
+     * built, as native, here and in the other arm; without it, 4 instructions
+     * differ in tla-en. */
     do {
       second = object->targetX;
     } while (0);

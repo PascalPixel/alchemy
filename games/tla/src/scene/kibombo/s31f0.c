@@ -18,10 +18,9 @@ void Func_02003220(void) {
 
 void Func_0200324c(void) {
   u32 i;
-  /* FAKEMATCH: the zero is pinned to r6 and passes an empty asm on every pass:
-   * the native builds it in the loop and stores it again after the loop; with
-   * the pin alone it is copied before the byte store (differ 9), and as a plain
-   * 0 loop.c hoists it (differ 17). */
+  /* FAKEMATCH: the zero pinned to r6 behind an empty asm is built in the loop
+   * and stored again after it; as a plain 0, 17 instructions differ in tla-en.
+   */
   register s32 zero asm("r6");
 
   for (i = 0; i <= 1; i++) {

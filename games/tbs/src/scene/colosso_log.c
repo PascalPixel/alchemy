@@ -1474,12 +1474,8 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       Colosso_FadeInCompetitor(0, 504, 200);
       // UB: the void target is called through an incompatible return type.
       /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
-       * its result discarded (as call.h's Value3 did, 2026-10-13); Call3
-       * changes argument allocation. 2026-10-13: the guideId layer's
-       * Actor_FaceDirection loads r0 before r1 and r2, where native loads it
-       * last (differ 2).
-       * Direct prototype rechecked 2026-10-16: 3 argument instructions
-       * differ in tbs-en. */
+       * its result discarded, so r0 loads last; as a direct call, 3
+       * instructions differ in tbs-en. */
       COLOSSO_LOG_FACE_DIRECTION(0, 0, 0);
       ColossoLogRollingStage_WaitForSceneTask();
       Actor_SetSpeed(0, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1808,12 +1804,8 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
     Colosso_LoadLettering(8);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
-     * result discarded (as call.h's Value2 did, 2026-10-13); Call2 changes
-     * argument allocation. 2026-10-13: called directly, as elsewhere in this
-     * file, each of these two sites loads r0 before r1, where native loads r1
-     * first (differ 4).
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+     * result discarded, so r1 loads before r0; as a direct call, 2
+     * instructions differ in tbs-en. */
     COLOSSO_LOG_INITIALIZE_MODE_TASK(3, 1);
     Engine_EventWait(-countdown * 60 + 60);
     actorId = 0;
@@ -1823,9 +1815,7 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
     Colosso_LoadLettering(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through the s32 cast, its result discarded, as in the
-     * first arm.
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+     * first arm; as a direct call, 2 instructions differ in tbs-en. */
     COLOSSO_LOG_INITIALIZE_MODE_TASK(3, 0);
     Engine_EventWait(countdown * 60 + 60);
     actorId = 8;
@@ -1968,17 +1958,13 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   if (rivalFinishedFirst == 0) {
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: the void function is called as returning s32, which loads r1
-     * before r0 as native. 2026-10-13: called by its prototype at both
-     * sites, each loads r0 first (differ 4).
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+     * before r0; by its prototype, 2 instructions differ in tbs-en. */
     COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
     UiWork_PushValueSlot(firstItem, 2);
   } else {
     // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called as returning s32, as in the first arm.
-     * Direct prototype rechecked 2026-10-16: 2 argument instructions
-     * differ in tbs-en. */
+    /* FAKEMATCH: called as returning s32, as in the first arm; by its
+     * prototype, 2 instructions differ in tbs-en. */
     COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }

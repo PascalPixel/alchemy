@@ -21,10 +21,9 @@ void BattleFx_ArmMeteorBlowPaletteDma(void) {
     channel[5] &= 0x7fff; // stop the channel
   } while (0);
   palette = 0xa0;
-  /* FAKEMATCH: the empty asm holds the palette address's first half, so it is
-   * started before the control word is read and shifted after, as the native
-   * does; as a plain constant both halves follow the work offset (one
-   * reordered row, differ 2 without it). */
+  /* FAKEMATCH: the empty asm starts the palette address before the control
+   * word is read and shifts it after, as the native does; as a plain
+   * constant, 2 instructions differ in tla-en. */
   __asm__("" : "+l"(palette));
   (void)channel[5];
   Dma_Set(work + 0x7640, (void *)(palette << 19), 0xa2600001,

@@ -18,10 +18,9 @@ void *UnitGet(s32 owner) {
   struct BattleUnit *unit;
 
   if ((u32)owner < 8) {
-    /* FAKEMATCH: the record size as a forced temporary is built first, and a
-     * one-pass block loads the table before the size is scaled; indexed
-     * straight the scaling comes before the load (differ 2), and either device
-     * alone leaves the same two rows apart. */
+    /* FAKEMATCH: the record size as a forced temporary and a one-pass block
+     * load the table before the size is scaled; indexed straight, 2
+     * instructions differ in tla-en. */
     s32 offset = sizeof(struct BattleUnit);
 
     do {

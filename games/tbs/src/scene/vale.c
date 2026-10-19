@@ -1590,11 +1590,8 @@ static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
 static void Event_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH: repairActor's dead zero initializer and the stoppedMotionFlags
-   * temporary preserve register allocation throughout the scene. Without the
-   * initializer 170 instructions differ; a plain 0 for stoppedMotionFlags is
-   * born two instructions later, outranks the callback address and exchanges r9
-   * and r10 with it (14 differ).
-   */
+   * temporary preserve register allocation throughout the scene; without the
+   * initializer, 170 instructions differ in tbs-en. */
   struct FieldActor *repairActor = NULL;
   struct FieldActor *leader;
   struct FieldActor *dustEmitter;

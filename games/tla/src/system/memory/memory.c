@@ -170,12 +170,8 @@ void *MemAlloc(s32 size) {
   u32 address;
   u32 words;
   u32 limit;
-  /* FAKEMATCH: the r4 bound capture preserves the heap/head registers.
-   * 2026-10-11: plain forms (any statement order, >> 2 << 2 or & ~3, a limit
-   * local anywhere) have the registers right and differ 6 in scheduling; a
-   * one-pass block around `words = size + 3; address = state[1];` reaches
-   * differ 2 (ldr r4, =0x3006fbf and lsls r0 swapped). Without the pin the asm
-   * output takes r1 and state moves to r4 (22 rows). */
+  /* FAKEMATCH: the bound captured in r4 keeps the heap and head registers;
+   * as plain C, 6 instructions differ in tla-en. */
   register u32 held asm("r4");
 
   words = (u32)size + 3;

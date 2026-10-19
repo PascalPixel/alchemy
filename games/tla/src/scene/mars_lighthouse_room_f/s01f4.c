@@ -60,9 +60,8 @@ void Func_020002b8(s32 unused, s32 id) {
 
   table = gData_02005b5c;
   /* FAKEMATCH: the barrier and the byte offset load the table's address first
-   * and let x's load fall between the offset's shift and subtraction; plainly
-   * the table read is scheduled whole before x (differ 6), and in a one-pass
-   * block it ends before x (differ 4). */
+   * and x between the offset's shift and subtraction; plainly, 6 instructions
+   * differ in tla-en. */
   asm volatile("" : "+l"(table));
   x = object->x;
   offset = (id - 18) * 2;

@@ -7,9 +7,8 @@
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer does: called directly, CSE shares one 0x1000 in r6
-   * across the first call (differ 16); BattleFx_ProcessPendingGraphicsTransfer called directly
-   * differs 58. */
+   * as the scene layer does; called directly, 16 instructions differ in
+   * tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
@@ -70,9 +69,7 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
       break;
     }
     /* FAKEMATCH: the native reads the counter before it stores 1, a load
-     * nothing uses (ldr r2, [r3]; movs r2, #1); a plain store leaves it out and
-     * the two counter updates share one store, which moves the literal pool
-     * (differ 38). */
+     * nothing uses; as a plain store, 38 instructions differ in tla-en. */
     (void)*(volatile s32 *)&work->framesSinceTransfer;
     work->framesSinceTransfer = 1;
   } else {

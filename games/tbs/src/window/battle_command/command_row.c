@@ -125,23 +125,16 @@ s32 Menu_RunCommandRow(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
-              /* FAKEMATCH: vram, offset and mask restore two forms the bytes
-               * prove. Set ahead of the index, they are three more moves out of
-               * the column loop in loop.c's first pass, which drops its
-               * threshold so the tile pattern's row part stays in the column
-               * loop until the second pass: the row loop reduces the index giv
-               * first and copies it first (inits index r6, pattern r5; per row
-               * mov ip, r6 and str r5, [sp, #4]). volatile keeps the VRAM base
-               * add apart from the store it addresses. Without the three 24,
-               * without offset 564, without mask 470, without volatile 112. */
+              /* FAKEMATCH: vram, offset and mask keep the row loop's index
+               * and tile pattern in the order the bytes show; as constants in
+               * place, 24 instructions differ in tbs-en. */
               volatile u16 *vram =
                   (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
               s32 offset = 0x100;
               s32 mask = 3;
-              /* FAKEMATCH: needed to match: tmp, set twice (the tile, then the
-               * column's index), is no giv, so the tile is recomputed in the
-               * column loop as the bytes show (adds r3, r7, r0; adds r3, r3,
-               * r7); 267 differ without it, 846 in both modes. */
+              /* FAKEMATCH: tmp, set twice, is no giv, so the tile is
+               * recomputed in the column loop as the bytes show; as no tmp,
+               * 267 instructions differ in tbs-en. */
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;
@@ -162,10 +155,9 @@ s32 Menu_RunCommandRow(s32 mode) {
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          /* FAKEMATCH(one-pass): an empty block restores the CSE block
-           * boundary at the panel body's head, so the exit test compares count
-           * instead of reloading work->count; as no block, 99 of 1037
-           * instructions differ in tbs-en. */
+          /* FAKEMATCH(one-pass): the exit test compares count instead of
+           * reloading work->count; as no block, 99 of 1037 instructions
+           * differ in tbs-en. */
           do {
           } while (0);
           count = selectionUi->iconCount;
@@ -309,9 +301,8 @@ s32 Menu_RunCommandRow(s32 mode) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
         /* FAKEMATCH(volatile): the add of 0x44a stays apart from the store it
-         * addresses (adds r3, r7; strh r6, [r3]); as a plain store, combine
-         * folds it into strh r6, [r3, r7] and 2 of 1037 instructions differ
-         * in tbs-en. */
+         * addresses; as a plain store, 2 of 1037 instructions differ in
+         * tbs-en. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(render->tilemap + (entryIndex + 17) * 32 +
                             panel * 3 + 5 + (col & 3)) = UI_TILE(0x7f);

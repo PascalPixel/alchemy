@@ -445,10 +445,8 @@ s32 DebugMenu_BrowseEntryGlyphs(void) {
   }
   entryCount = characterCount + i;
 
-  /* FAKEMATCH: the count-derived mask is needed to match the native mask
-   * in r9 and work in fp; a direct constant swaps them (four instructions).
-   * 2026-10-13: cancel = KEY_B differs 12 of 179, KEY_B tested directly
-   * 20, cancel = KEY_B set first in the function 48. */
+  /* FAKEMATCH: the count-derived mask keeps the mask in r9 and work in fp; as
+   * cancel = KEY_B, 12 of 179 instructions differ in tbs-en. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
   /* FAKEMATCH: defining the offset before the loop keeps its load in r1;
    * defining it inside redraw uses r3 (4 instructions differ in all six
@@ -484,10 +482,9 @@ s32 DebugMenu_BrowseEntryGlyphs(void) {
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
       {
-        /* FAKEMATCH(temporary): the slot loaded through a word temporary and
-         * the palette in a local keep the palette in r2 through the slot
-         * store; as the slot assigned directly and 15 passed, 4 of 179
-         * instructions differ in tbs-en. */
+        /* FAKEMATCH(temporary): a word temporary for the slot keeps the
+         * palette in r2 through the slot store; as the slot assigned directly
+         * and 15 passed, 4 of 179 instructions differ in tbs-en. */
         s32 palette;
         s32 loadedSlot = *(u16 *)((u8 *)work + slotOffset);
         palette = 15;

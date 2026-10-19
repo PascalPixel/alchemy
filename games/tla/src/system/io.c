@@ -12,29 +12,18 @@
     u32 saved;                                                                 \
     s32 count;                                                                 \
                                                                                \
-    /* FAKEMATCH: the one-pass IME read preserves queue-load, saved-copy and   \
-     * IME-store */                                                            \
-    /* order. */                                                               \
+    /* FAKEMATCH: the one-pass IME read keeps the queue load, saved copy and   \
+     * IME store in the native order. */                                       \
     q = &gIoWriteQueue;                                                        \
     do {                                                                       \
-      /* FAKEMATCH: removing this one-pass boundary changes measured           \
-       * instruction */                                                        \
-      /* scheduling. */                                                        \
+      /* FAKEMATCH: the one-pass block is a barrier for the IME read. */       \
       ime = &REG_IME;                                                          \
       saved = *ime;                                                            \
     } while (0);                                                               \
     *ime = (u16)(u32)ime;                                                      \
     /* FAKEMATCH: the repeated IME address ends its first lifetime after the   \
-     * store; */                                                               \
-    /* without it IME/queue exchange r1/r4 (14 aligned differences per         \
-     * function). CSE */                                                       \
-    /* removes the assignment. 2026-10-13, tla-ja: written through irqlock.h   \
-     * (IRQ_LOCK */                                                            \
-    /* and IRQ_UNLOCK, or IME_SAVE, IME_DISABLE and IME_RESTORE, the address   \
-     * set inside */                                                           \
-    /* the save or before it) the exchange remains (differ 16); on             \
-     * gIoWriteQueue directly */                                               \
-    /* 38; the count through a u16 pointer 20. */                              \
+     * store, so IME and the queue keep r1 and r4; without it, 14              \
+     * instructions differ per function. */                                    \
     ime = &REG_IME;                                                            \
     count = q->count;                                                          \
     if (count <= 31) {                                                         \

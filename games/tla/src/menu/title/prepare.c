@@ -129,10 +129,9 @@ s32 Func_0200005c(void) {
       Func_020005e4();
       Func_02000604((s32)&SceneId_VenusLighthouse, 99);
     }
-    /* FAKEMATCH: an empty asm with a memory clobber: the native reads the
-     * entrance again for the third test on both paths, where plainly GCSE's PRE
-     * carries the first read on the path that skips the second entrance's calls
-     * (differ 74 with the cascade). */
+    /* FAKEMATCH: an empty asm with a memory clobber reads the entrance again
+     * for the third test on both paths; as plain C, 74 instructions differ in
+     * tla-en. */
     __asm__ volatile("" : : : "memory");
     if (gPartyState.entrance == 3) {
       Func_02000644(75);
@@ -176,10 +175,9 @@ void Title_LoadSprites(s32 unused) {
 void Func_02000278(void) {
   u32 *w;
   struct TitleSprite *p;
-  /* FAKEMATCH: the tile is pinned to r5 and the block's offset read into r3:
-   * the native keeps the tile in r5, the cursor in r6 and the index in r7,
-   * where plainly the cursor takes r5 and the tile r7 (differ 26); pinned alone
-   * the tile is loaded straight into r5 (differ 4). */
+  /* FAKEMATCH: the tile is pinned to r5 and the block's offset read into r3,
+   * keeping the cursor in r6 and the index in r7; as plain locals, 26
+   * instructions differ in tla-en. */
   register s32 tile asm("r5");
   s32 i;
   s32 n;

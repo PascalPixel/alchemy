@@ -147,7 +147,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 #ifndef UBFIX
   // UB: these are separate work-pointer globals. The native sequence reaches
   // the event slot through the particle slot; named globals add four bytes
-  // and change this scene's register allocation (EN, 2026-10-16).
+  // and change this scene's register allocation in tbs-en.
   eventWorkSlot = (struct EventWork **)((u8 *)particleWorkSlot - 8);
 #endif
   Camera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);

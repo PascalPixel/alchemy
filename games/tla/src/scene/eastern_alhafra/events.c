@@ -455,9 +455,8 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     object->motionFlags = 0;
     {
       /* FAKEMATCH: the 64-bit copy loads the timer argument before the pooled
-       * zero for nextFrame; stored directly the zero loads first (differ 2),
-       * and overlay 65f's barrier here swaps the next call's arguments (differ
-       * 4). */
+       * zero for nextFrame; stored directly, 2 instructions differ in
+       * tla-en. */
       s64 wide = timer;
 
       object->unk5e = wide;

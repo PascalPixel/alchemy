@@ -5,7 +5,8 @@
 // region 18 tints -6 until flag 0x8ef; flag 0x106 holds the tint. Left: four
 // instruction-order spots where the native issues a load (the map work, a
 // tint byte, a queue entry's address) a step earlier. Six minutes of
-// permute: differ 8 at best, by a block around one queue push.
+// permute: differ 8 at best, by a block around one queue push; eight more
+// minutes (2026-10-19) found the same.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

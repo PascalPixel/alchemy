@@ -5,7 +5,9 @@
 // addressed afresh for each, the cell base advanced to the source in place.
 // Left: the native loads the attribute mask 0xfffff000 one step earlier, and
 // in the loop builds the column step 0x10000 before reading the shape byte;
-// here the read comes first.
+// here the read comes first. The step is the loop's col << 16 counter, so
+// moving col++ ahead of the shape copy, with or without an empty asm before
+// the read, leaves 4; eight minutes of permute: no better (2026-10-19).
 #include "types.h"
 #include "ram_buffer.h"
 

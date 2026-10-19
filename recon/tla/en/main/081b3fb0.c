@@ -1,4 +1,4 @@
-// Near miss: differ 2 of 31, The Broken Seal's AudioTrack_CopyBufferedBytes. In
+// Near miss: differ 2 of 31, The Broken Seal's LzPack_CopyBufferedBytes. In
 // the loop the native steps the source pointer (adds r1, #1) before it reloads
 // outTotal after the byte store; sched2 here reloads first, as the
 // store-to-load dependence costs it one cycle. One-pass blocks or empty asm
@@ -12,10 +12,10 @@
 // explicit source pointer pinned to r1 with a barrier (the loop matches, but
 // the pointer is set up before the guard: differ 21; set up inside the
 // guard, 31 to 45).
-#include "trackbuf.h"
+#include "lzpack.h"
 
-void AudioTrack_CopyBufferedBytes(u8 *destination) {
-  struct AudioTrackSlotWork *work = gFlash_Handler3;
+void LzPack_CopyBufferedBytes(u8 *destination) {
+  struct LzPackWork *work = gFlash_Handler3;
   s32 index;
 
   for (index = 0; index != work->outCnt; index++) {

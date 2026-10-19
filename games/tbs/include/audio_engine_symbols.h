@@ -26,8 +26,8 @@ s32 Sound_LoadPresetParameters(s32 preset);
 void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct SoundPlayer;
-struct AudioTrackSlotWork;
-extern struct AudioTrackSlotWork *gFlash_Handler3;
+struct LzPackWork;
+extern struct LzPackWork *gFlash_Handler3;
 extern struct SoundPlayer gMusicPlayerBgm;
 extern struct SoundPlayer gMusicPlayerFanfare;
 extern struct SoundPlayer gSound_Player3;

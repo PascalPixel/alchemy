@@ -1,4 +1,4 @@
-// Near miss: differ 6 of 102, The Broken Seal's AudioTrack_ConsumeSlotBytes.
+// Near miss: differ 6 of 102, The Broken Seal's LzPack_ConsumeSlotBytes.
 // The two one-pass blocks (found by a greedy device search, differ 10 without
 // them) fix the byte read and the removal call; three swaps remain, each a load
 // the native issues earlier: the cursor store before the limit offset's shift,
@@ -6,9 +6,9 @@
 // the bucket offset's split constant. Also tried: the root pinned to r9 (16)
 // or, declared before the mask, to r0 (29), and declared before the mask
 // unpinned (16).
-#include "trackbuf.h"
+#include "lzpack.h"
 
-void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
+void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   s32 limit = count;
   s32 current = 0;
   u32 base = start;
@@ -19,12 +19,12 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
     do {
       u32 slot = base + current;
-      struct AudioTrackSlotWork *state;
+      struct LzPackWork *state;
       u32 readOffset;
       u32 nextOffset;
       u8 value;
 
-      AudioTrack_RemoveSlotNode(removal & mask);
+      LzPack_RemoveSlotNode(removal & mask);
       state = gFlash_Handler3;
       readOffset = state->inputCursor;
       do {
@@ -39,7 +39,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
       state->bucketBySlot[slot & mask] = value;
       current++;
-      AudioTrack_InsertSlotNode(slot & mask);
+      LzPack_InsertSlotNode(slot & mask);
       removal++;
     } while (current < limit);
   }
@@ -47,15 +47,15 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   current++;
   if (current < limit) {
     u32 mask = 0x3ff;
-    struct AudioTrackSlotWork **root = &gFlash_Handler3;
+    struct LzPackWork **root = &gFlash_Handler3;
     s32 empty = -1;
 
     do {
       u32 slot = (base + current) & mask;
-      struct AudioTrackSlotWork *state;
+      struct LzPackWork *state;
 
       do {
-        AudioTrack_RemoveSlotNode(slot);
+        LzPack_RemoveSlotNode(slot);
       } while (0);
       state = *root;
       current++;

@@ -16,11 +16,11 @@ extern const u8 gReelGame_FrameSpriteY[];
 void ReelGame_RunFrame(void);
 void ReelGame_InitTitle(void);
 void ReelGame_Run(void);
-void AudioTrack_ResetSlotBuckets(void);
-void AudioTrack_InsertSlotNode(s32 index);
-void AudioTrack_RemoveSlotNode(s32 slot);
-void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input);
-void AudioTrack_CopyBufferedBytes(u8 *destination);
-s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size);
+void LzPack_ResetSlotBuckets(void);
+void LzPack_InsertSlotNode(s32 index);
+void LzPack_RemoveSlotNode(s32 slot);
+void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input);
+void LzPack_CopyBufferedBytes(u8 *destination);
+s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size);
 
 #endif

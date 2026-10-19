@@ -4,8 +4,8 @@
 #include "types.h"
 
 struct SoundPlayer;
-struct AudioTrackSlotWork;
-extern struct AudioTrackSlotWork *gFlash_Handler3;
+struct LzPackWork;
+extern struct LzPackWork *gFlash_Handler3;
 extern struct SoundPlayer gMusicPlayerBgm;
 
 enum AudioCommandMask {

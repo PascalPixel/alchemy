@@ -31,7 +31,7 @@
 #include "resource_ids.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
-#include "trackbuf.h"
+#include "lzpack.h"
 #include "frame.h"
 #include "oambuf.h"
 #include "item_ids.h"
@@ -1286,9 +1286,9 @@ void ReelGame_Run(void) {
 
 // The LZ packer below: empties its 256 hash chains (one per byte value) and
 // numbers its 1024 window nodes.
-void AudioTrack_ResetSlotBuckets(void) {
+void LzPack_ResetSlotBuckets(void) {
   s32 index;
-  struct AudioSlotNode **bucket;
+  struct LzPackNode **bucket;
 
   for (index = 0; index < 0x400; index++) {
     gFlash_Handler3->nodes[index].slot = index;
@@ -1301,11 +1301,11 @@ void AudioTrack_ResetSlotBuckets(void) {
 }
 
 // Adds window position index to the chain of the byte it holds.
-void AudioTrack_InsertSlotNode(s32 index) {
-  struct AudioTrackSlotWork *work = gFlash_Handler3;
+void LzPack_InsertSlotNode(s32 index) {
+  struct LzPackWork *work = gFlash_Handler3;
 
   work->nodes[index].prev =
-      (struct AudioSlotNode *)&work->bucket[work->bucketBySlot[index]];
+      (struct LzPackNode *)&work->bucket[work->bucketBySlot[index]];
   work->nodes[index].next = work->bucket[work->bucketBySlot[index]];
   work->bucket[work->bucketBySlot[index]] = &work->nodes[index];
   if (work->nodes[index].next != NULL)
@@ -1313,7 +1313,7 @@ void AudioTrack_InsertSlotNode(s32 index) {
 }
 
 // Removes window position slot from its chain.
-void AudioTrack_RemoveSlotNode(s32 slot) {
+void LzPack_RemoveSlotNode(s32 slot) {
   if (gFlash_Handler3->nodes[slot].prev != NULL) {
     if (gFlash_Handler3->nodes[slot].next != NULL)
       gFlash_Handler3->nodes[slot].next->prev =
@@ -1325,7 +1325,7 @@ void AudioTrack_RemoveSlotNode(s32 slot) {
 // Reads count more input bytes into the window from position start, dropping
 // the bytes they replace from their chains; past the end of the input the
 // positions are marked empty (-1).
-void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
+void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   s32 limit = count;
   s32 current = 0;
   u32 base = start;
@@ -1336,12 +1336,12 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
     do {
       u32 slot = base + current;
-      struct AudioTrackSlotWork *state;
+      struct LzPackWork *state;
       u32 readOffset;
       u32 nextOffset;
       u8 value;
 
-      AudioTrack_RemoveSlotNode(removal & mask);
+      LzPack_RemoveSlotNode(removal & mask);
       state = gFlash_Handler3;
       readOffset = state->inputCursor;
       value = input[readOffset];
@@ -1354,7 +1354,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
       state->bucketBySlot[slot & mask] = value;
       current++;
-      AudioTrack_InsertSlotNode(slot & mask);
+      LzPack_InsertSlotNode(slot & mask);
       removal++;
     } while (current < limit);
   }
@@ -1362,14 +1362,14 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   current++;
   if (current < limit) {
     u32 mask = PACK_WINDOW_MASK;
-    struct AudioTrackSlotWork **root = &gFlash_Handler3;
+    struct LzPackWork **root = &gFlash_Handler3;
     s32 empty = -1;
 
     do {
       u32 slot = (base + current) & mask;
-      struct AudioTrackSlotWork *state;
+      struct LzPackWork *state;
 
-      AudioTrack_RemoveSlotNode(slot);
+      LzPack_RemoveSlotNode(slot);
       state = *root;
       current++;
       state->bucketBySlot[slot] = empty;
@@ -1379,8 +1379,8 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
 // Appends the finished group (a flag byte and up to eight items) to the
 // output.
-void AudioTrack_CopyBufferedBytes(u8 *destination) {
-  struct AudioTrackSlotWork *work = gFlash_Handler3;
+void LzPack_CopyBufferedBytes(u8 *destination) {
+  struct LzPackWork *work = gFlash_Handler3;
   s32 index;
 
   for (index = 0; index != work->outCnt; index++) {
@@ -1392,8 +1392,8 @@ void AudioTrack_CopyBufferedBytes(u8 *destination) {
 // Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
 // PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
 // stays 1 for none.
-static __inline__ void AudioTrack_FindWindowMatch(s32 start) {
-  struct AudioSlotNode *node;
+static __inline__ void LzPack_FindWindowMatch(s32 start) {
+  struct LzPackNode *node;
   s32 len;
 
   gFlash_Handler3->matchLen = 1;
@@ -1453,7 +1453,7 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start) {
 // two bytes of distance and length (lengths 2 to 16), or three for lengths up
 // to 272; a match is put off by one byte when the next position matches
 // further. A zero match ends the stream. Nothing in this game calls it.
-UNUSED s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
+UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s32 defer;
   s32 len;
   s32 saveOffset;
@@ -1462,8 +1462,8 @@ UNUSED s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s16 code;
 
   defer = 0;
-  gFlash_Handler3 = (struct AudioTrackSlotWork *)gMapCellBuffer;
-  AudioTrack_ResetSlotBuckets();
+  gFlash_Handler3 = (struct LzPackWork *)gMapCellBuffer;
+  LzPack_ResetSlotBuckets();
   gFlash_Handler3->inputLimit = size;
   gFlash_Handler3->pos = 0;
   gFlash_Handler3->inputCursor = 0;
@@ -1471,21 +1471,20 @@ UNUSED s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
   gFlash_Handler3->flagMask = 0x80;
   gFlash_Handler3->outBuf[0] = 0;
   gFlash_Handler3->outCnt = 1;
-  AudioTrack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
+  LzPack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
 
   while (gFlash_Handler3->bucketBySlot[gFlash_Handler3->pos] != -1) {
-    AudioTrack_FindWindowMatch(gFlash_Handler3->pos);
+    LzPack_FindWindowMatch(gFlash_Handler3->pos);
     if (defer == 0) {
       len = gFlash_Handler3->matchLen;
       if (gFlash_Handler3->matchLen > 1) {
         saveOffset = gFlash_Handler3->matchOffset;
         saveLen = len;
-        AudioTrack_FindWindowMatch((gFlash_Handler3->pos + 1) &
-                                   PACK_WINDOW_MASK);
+        LzPack_FindWindowMatch((gFlash_Handler3->pos + 1) & PACK_WINDOW_MASK);
         if (gFlash_Handler3->matchLen > 2) {
           reach[0] = gFlash_Handler3->matchLen + 1;
-          AudioTrack_FindWindowMatch((gFlash_Handler3->pos + len) &
-                                     PACK_WINDOW_MASK);
+          LzPack_FindWindowMatch((gFlash_Handler3->pos + len) &
+                                 PACK_WINDOW_MASK);
           reach[1] = gFlash_Handler3->matchLen + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
@@ -1520,13 +1519,13 @@ UNUSED s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
       gFlash_Handler3->matchLen = 1;
     }
 
-    AudioTrack_ConsumeSlotBytes(gFlash_Handler3->pos + PACK_LOOKAHEAD,
-                                gFlash_Handler3->matchLen, input);
+    LzPack_ConsumeSlotBytes(gFlash_Handler3->pos + PACK_LOOKAHEAD,
+                            gFlash_Handler3->matchLen, input);
     gFlash_Handler3->pos =
         (gFlash_Handler3->pos + gFlash_Handler3->matchLen) & PACK_WINDOW_MASK;
     gFlash_Handler3->flagMask >>= 1;
     if (gFlash_Handler3->flagMask == 0) {
-      AudioTrack_CopyBufferedBytes(dst);
+      LzPack_CopyBufferedBytes(dst);
       gFlash_Handler3->flagMask = 0x80;
       gFlash_Handler3->outBuf[0] = 0;
       gFlash_Handler3->outCnt = 1;
@@ -1536,6 +1535,6 @@ UNUSED s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size) {
   gFlash_Handler3->outBuf[0] |= gFlash_Handler3->flagMask;
   gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = 0;
   gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = 0;
-  AudioTrack_CopyBufferedBytes(dst);
+  LzPack_CopyBufferedBytes(dst);
   return gFlash_Handler3->outTotal;
 }

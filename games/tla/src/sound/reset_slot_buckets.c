@@ -1,6 +1,6 @@
-#include "trackbuf.h"
+#include "lzpack.h"
 
-void AudioTrack_ResetSlotBuckets(void) {
+void LzPack_ResetSlotBuckets(void) {
   /* FAKEMATCH: signed word stores preserve register allocation and the 60-byte
    * body; typed fields use 56. */
   s32 index;
@@ -14,10 +14,10 @@ void AudioTrack_ResetSlotBuckets(void) {
   zero = 0;
   record = (u8 *)&gFlash_Handler3->nodes[0].prev;
   do {
-    *(s32 *)(record + sizeof(struct AudioSlotNode *)) = index;
+    *(s32 *)(record + sizeof(struct LzPackNode *)) = index;
     index++;
     *(s32 *)record = zero;
-    record += sizeof(struct AudioSlotNode);
+    record += sizeof(struct LzPackNode);
   } while (index <= limit);
   slot = (s32 *)gFlash_Handler3->bucket;
   {

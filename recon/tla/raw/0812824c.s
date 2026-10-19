@@ -302,7 +302,7 @@ Func_0812824c:
 .L_08128482:
 	ldrh r0, [r6]
 	adds r6, #2
-	bl Item_EncodeBankedId
+	bl BattleSpoils_RankItem
 	cmp r0, r8
 	bge .L_08128492
 	mov r8, r0
@@ -314,7 +314,7 @@ Func_0812824c:
 	mov r1, r9
 	movs r5, #0
 	ldrsh r0, [r1, r5]
-	bl Item_EncodeBankedId
+	bl BattleSpoils_RankItem
 	cmp r0, r8
 	ble .L_081284b2
 	mov r2, r10

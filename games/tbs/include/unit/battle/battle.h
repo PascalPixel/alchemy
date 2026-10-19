@@ -280,7 +280,7 @@ u32 BattleClass_GetAttackHop(u32 index);
 s32 Summon_IsEntrySecondaryFlagged(s32 index);
 s32 BattleClass_GetEffectHeight(s32 index);
 
-u32 Item_EncodeBankedId(u32 inventoryEntry);
+u32 BattleSpoils_RankItem(u32 inventoryEntry);
 void Summon_ClearWorkFields(void);
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus);
 void Battle_AwardSpoils(void);

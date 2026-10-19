@@ -44,7 +44,7 @@ void Audio_PlayCue(s32 cue);
 void UiWork_ClearValueNameTablesFar(void);
 s32 Func_080ad0b0(s32 unitId, s16 *gains);
 void Party_AdjustCoinsFar(s32 amount);
-s32 Item_EncodeBankedId(s32 item);
+s32 BattleSpoils_RankItem(s32 item);
 s32 PartyInventory_AddFar(s32 item);
 
 void Battle_AwardSpoils(void) {
@@ -156,7 +156,7 @@ void Battle_AwardSpoils(void) {
     best = -1;
     for (slot = 0; slot <= 3; slot++) {
       if (spoils->items[slot] != 0) {
-        value = Item_EncodeBankedId(spoils->items[slot]);
+        value = BattleSpoils_RankItem(spoils->items[slot]);
         if (value >= best) {
           best = value;
           bestSlot = slot;

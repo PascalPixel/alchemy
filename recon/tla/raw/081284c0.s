@@ -287,7 +287,7 @@ Func_081284c0:
 	cmp r3, #0
 	beq .L_08128736
 	adds r0, r3, #0
-	bl Item_EncodeBankedId
+	bl BattleSpoils_RankItem
 	cmp r0, r8
 	blt .L_08128736
 	mov r8, r0

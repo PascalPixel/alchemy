@@ -5,7 +5,7 @@
 
 // Ranks a spoil item by its indispensable flag, flag 4 and item ID; an empty
 // entry ranks zero.
-u32 Item_EncodeBankedId(u32 inventoryEntry) {
+u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & ITEM_ID_MASK;
   if (itemId == 0)
@@ -151,13 +151,13 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
     for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-      itemPriority = Item_EncodeBankedId(spoils->items[itemOrClassIndex]);
+      itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
       if (itemPriority < lowestItemPriority) {
         lowestItemPriority = itemPriority;
         lowestSlot = itemOrClassIndex;
       }
     }
-    if ((s32)Item_EncodeBankedId(enemy->item) > lowestItemPriority)
+    if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
       spoils->items[lowestSlot] = enemy->item;
   }
   return 0;
@@ -272,7 +272,7 @@ void Battle_AwardSpoils(void) {
     highestItemPriority = -1;
     for (slot = 0; slot <= 3; slot++) {
       if (spoils->items[slot] != 0) {
-        itemPriority = Item_EncodeBankedId(spoils->items[slot]);
+        itemPriority = BattleSpoils_RankItem(spoils->items[slot]);
         if (itemPriority >= highestItemPriority) {
           highestItemPriority = itemPriority;
           highestItemSlot = slot;

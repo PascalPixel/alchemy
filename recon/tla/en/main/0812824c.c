@@ -50,7 +50,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct EnemyDefinition *Enemy_GetDefinitionFar(s32 id);
 s32 BattleRandomFar(void);
-u32 Item_EncodeBankedId(u32 value);
+u32 BattleSpoils_RankItem(u32 value);
 u32 Random16(void);
 s32 Func_08128228(u8 *s);
 
@@ -163,13 +163,13 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
     for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-      itemPriority = Item_EncodeBankedId(spoils->items[itemOrClassIndex]);
+      itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
       if (itemPriority < lowestItemPriority) {
         lowestItemPriority = itemPriority;
         lowestSlot = itemOrClassIndex;
       }
     }
-    if ((s32)Item_EncodeBankedId(enemy->item) > lowestItemPriority)
+    if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
       spoils->items[lowestSlot] = enemy->item;
   }
   return 0;

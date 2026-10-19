@@ -2,7 +2,7 @@
 
 u8 *Item_Get(u32);
 
-u32 Item_EncodeBankedId(u32 value) {
+u32 BattleSpoils_RankItem(u32 value) {
   u32 bank = 0;
   u32 base = value & 0x1ff;
   if (base == 0)

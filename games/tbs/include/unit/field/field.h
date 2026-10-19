@@ -181,21 +181,21 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Object_RunUpdateAllFromHeap(void);
 void Object_UpdateAllMotion(void);
-s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter);
-s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter);
+s32 Script_Wait(struct ScriptInterpreter *interpreter);
+s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter);
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter);
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey);
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter);
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter);
 s32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter);
 s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter);
-s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter);
+s32 Script_End(struct ScriptInterpreter *interpreter);
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter);
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter);
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter);
 s32 Script_FreeObject(struct ScriptInterpreter *interpreter);
-s32 Script_SkipCommand(struct ScriptInterpreter *interpreter);
-s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter);
+s32 Script_Nop(struct ScriptInterpreter *interpreter);
+s32 Script_PlaySound(struct ScriptInterpreter *interpreter);
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values);
 struct ScriptObjectEntry *
 ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,

@@ -3,7 +3,7 @@
 
 s32 Object_IsTargetUnset(struct ObjectRuntime *object);
 
-s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
+s32 Script_Wait(struct ScriptInterpreter *interpreter) {
   s16 cursor = interpreter->cursor;
 
   interpreter->lookupResult = interpreter->script[cursor + 1] - 1;
@@ -13,7 +13,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
 
 // Waits until the object reaches its target or 60 frames pass; on the
 // timeout the target is cleared. Returns 1 when the script moves on.
-s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
+s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
   u8 *delay = &interpreter->delay;
 

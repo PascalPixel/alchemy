@@ -15,8 +15,8 @@ struct ScriptOperands;
 typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
                             s32 value);
 
-s32 Script_StoreLookupResult();
-s32 Script_WaitForEvent();
+s32 Script_Wait();
+s32 Script_WaitForArrival();
 s32 Func_08024fe0();
 s32 Func_08025038();
 s32 Func_08025078();
@@ -32,7 +32,7 @@ s32 Script_RepeatOrJump();
 s32 Script_JumpToLabel();
 u32 Script_JumpIfTrue();
 u32 Script_JumpIfFalse();
-s32 Script_LoadMainScript();
+s32 Script_End();
 s32 Script_TestFlag();
 s32 Script_SetFlagAndTest();
 s32 Script_ClearFlagAndTest();
@@ -55,8 +55,8 @@ s32 Func_080267bc();
 s32 Func_08027e0c();
 s32 ObjectDispatch_ReleaseAndClear();
 s32 Script_ApplyArgumentToChildren();
-s32 Script_SkipCommand();
-s32 Script_PlayAudioCue();
+s32 Script_Nop();
+s32 Script_PlaySound();
 s32 Script_CallWithOperand();
 s32 Script_JumpToNextOperandPointer();
 s32 Script_ClearByte54();
@@ -240,8 +240,8 @@ const s32 gObjectDispatch_Table6[] = {
 
 // The handler of each command. 0x31 to 0x35 repeat SC_END's.
 const ScriptCommandFn gData_0802f204[54] = {
-    Script_StoreLookupResult,            // 0x00 SC_WAIT
-    Script_WaitForEvent,                 // 0x01 SC_SYNC
+    Script_Wait,            // 0x00 SC_WAIT
+    Script_WaitForArrival,                 // 0x01 SC_SYNC
     Func_08024fe0,                       // 0x02 SC_POS
     Func_08025038,                       // 0x03 SC_CMD_03
     Func_08025078,                       // 0x04 SC_MOVE
@@ -257,7 +257,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_JumpToLabel,                  // 0x0e SC_JUMP
     (ScriptCommandFn)Script_JumpIfTrue,  // 0x0f SC_IF
     (ScriptCommandFn)Script_JumpIfFalse, // 0x10 SC_IFNOT
-    Script_LoadMainScript,               // 0x11 SC_END
+    Script_End,               // 0x11 SC_END
     Script_TestFlag,                     // 0x12 SC_FLAG_CHECK
     Script_SetFlagAndTest,               // 0x13 SC_FLAG_ON
     Script_ClearFlagAndTest,             // 0x14 SC_FLAG_OFF
@@ -280,8 +280,8 @@ const ScriptCommandFn gData_0802f204[54] = {
     Func_08027e0c,                       // 0x25 SC_CMD_25
     ObjectDispatch_ReleaseAndClear,      // 0x26 SC_FREE
     Script_ApplyArgumentToChildren,      // 0x27 SC_ARG
-    Script_SkipCommand,                  // 0x28 SC_NOP
-    Script_PlayAudioCue,                 // 0x29 SC_SE
+    Script_Nop,                  // 0x28 SC_NOP
+    Script_PlaySound,                 // 0x29 SC_SE
     Script_CallWithOperand,              // 0x2a SC_CMD_2A
     Script_JumpToNextOperandPointer,     // 0x2b SC_GOTO
     Script_ClearByte54,                  // 0x2c SC_B54_OFF
@@ -289,11 +289,11 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_InvokeCallback,               // 0x2e SC_CALL
     Func_08025428,                       // 0x2f SC_CMD_2F
     Func_0802509c,                       // 0x30 SC_MOVE_XZ
-    Script_LoadMainScript,               // 0x31
-    Script_LoadMainScript,               // 0x32
-    Script_LoadMainScript,               // 0x33
-    Script_LoadMainScript,               // 0x34
-    Script_LoadMainScript,               // 0x35
+    Script_End,               // 0x31
+    Script_End,               // 0x32
+    Script_End,               // 0x33
+    Script_End,               // 0x34
+    Script_End,               // 0x35
 };
 
 // The handler of each work value (enum ScriptWork in objcmd.h).

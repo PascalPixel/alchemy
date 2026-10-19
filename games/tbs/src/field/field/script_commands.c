@@ -5,7 +5,7 @@
 
 // SC_WAIT(n): waits n frames; this frame counts as the first. Returns 0 to
 // end the object's commands for this frame.
-s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
+s32 Script_Wait(struct ScriptInterpreter *interpreter) {
   s16 commandCursor = interpreter->cursor;
 
   interpreter->lookupResult = interpreter->script[commandCursor + 1] - 1;
@@ -16,7 +16,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
 // SC_SYNC: waits until the object arrives at its target, or until a solid
 // object has blocked it for 60 frames (delay is the blocked count, which
 // the update raises). Returns 1 (run on) once it has, 0 (wait) until then.
-s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
+s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   if (interpreter->delay > 0x3B) {
     interpreter->delay = 0;
     interpreter->cursor++;
@@ -134,7 +134,7 @@ s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_END: hands the object back to the idle script. Returns 0.
-s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter) {
+s32 Script_End(struct ScriptInterpreter *interpreter) {
   s32 result;
 
   interpreter->script = gScript_MainScript;
@@ -199,13 +199,13 @@ s32 Script_FreeObject(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_NOP(v): does nothing with its operand.
-s32 Script_SkipCommand(struct ScriptInterpreter *interpreter) {
+s32 Script_Nop(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
 
 // SC_SE(n): sends sound command n (a sound effect).
-s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter) {
+s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
   AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;

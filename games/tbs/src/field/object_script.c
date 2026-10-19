@@ -56,8 +56,8 @@ const s32 gObjectDispatch_Table6Script[] = {
 
 // The handler for each script command number; 0x24 onwards act as SC_END.
 const ScriptCommand gScriptObject_CommandTable[47] = {
-    Script_StoreLookupResult,          // 0x00 SC_WAIT
-    Script_WaitForEvent,               // 0x01 SC_SYNC
+    Script_Wait,                       // 0x00 SC_WAIT
+    Script_WaitForArrival,             // 0x01 SC_SYNC
     Script_SetPositionAndResetMotion,  // 0x02 SC_POS
     Script_ApplyAbsolutePosition,      // 0x03 SC_MOVE
     Script_ApplyRelativePosition,      // 0x04 SC_MOVE_BY
@@ -72,7 +72,7 @@ const ScriptCommand gScriptObject_CommandTable[47] = {
     Script_JumpToLabel,                // 0x0d SC_JUMP
     Script_JumpIfTrue,                 // 0x0e SC_IF
     Script_JumpIfFalse,                // 0x0f SC_IFNOT
-    Script_LoadMainScript,             // 0x10 SC_END
+    Script_End,                        // 0x10 SC_END
     Script_TestFlag,                   // 0x11 SC_FLAG_CHECK
     Script_SetFlagAndTest,             // 0x12 SC_FLAG_ON
     Script_ClearFlagAndTest,           // 0x13 SC_FLAG_OFF
@@ -85,22 +85,22 @@ const ScriptCommand gScriptObject_CommandTable[47] = {
     Object_MoveOnWorldMap,             // 0x1a SC_WORLD
     Script_FreeObject,                 // 0x1b SC_FREE
     Script_SetAnimation,               // 0x1c SC_ARG
-    Script_SkipCommand,                // 0x1d SC_NOP
-    Script_PlayAudioCue,               // 0x1e SC_SE
+    Script_Nop,                        // 0x1d SC_NOP
+    Script_PlaySound,                  // 0x1e SC_SE
     Script_SetBase,                    // 0x1f SC_BASE
     Script_ClearByte54,                // 0x20 SC_B54_OFF
     Script_SetByte54,                  // 0x21 SC_B54_ON
     Script_InvokeCallback,             // 0x22 SC_CALL
     Field_CheckConfiguredKeysAndCount, // 0x23 SC_KEY_COUNT
-    Script_LoadMainScript,             // 0x24
-    Script_LoadMainScript,             // 0x25
-    Script_LoadMainScript,             // 0x26
-    Script_LoadMainScript,             // 0x27
-    Script_LoadMainScript,             // 0x28
-    Script_LoadMainScript,             // 0x29
-    Script_LoadMainScript,             // 0x2a
-    Script_LoadMainScript,             // 0x2b
-    Script_LoadMainScript,             // 0x2c
-    Script_LoadMainScript,             // 0x2d
-    Script_LoadMainScript,             // 0x2e
+    Script_End,                        // 0x24
+    Script_End,                        // 0x25
+    Script_End,                        // 0x26
+    Script_End,                        // 0x27
+    Script_End,                        // 0x28
+    Script_End,                        // 0x29
+    Script_End,                        // 0x2a
+    Script_End,                        // 0x2b
+    Script_End,                        // 0x2c
+    Script_End,                        // 0x2d
+    Script_End,                        // 0x2e
 };

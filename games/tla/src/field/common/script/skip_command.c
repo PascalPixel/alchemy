@@ -8,7 +8,7 @@ s32 ObjectDispatch_ReleaseAndClear(void *object) {
   return 0;
 }
 
-s32 Script_SkipCommand(struct ScriptInterpreter *interpreter) {
+s32 Script_Nop(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }

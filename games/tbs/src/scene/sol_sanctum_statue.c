@@ -46,7 +46,7 @@
 
 // Forward declarations.
 static void SolSanctumStatue_InitializeScrollingSprites(void);
-static void SolSanctumStatue_UpdateCenterStatue(void);
+static void Event_CenterStatueMoved(void);
 static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
                                         s32 statueRow, s32 leaderColumn,
                                         s32 leaderRow);
@@ -87,7 +87,20 @@ struct SealScene {
   s32 unkc4[3];
 };
 
-enum StatueHallActor { ACTOR_KRADEN = ACTOR_FIRST_PLACED };
+// The placed actors: Kraden, the eight statues, and the centre statue in its
+// two places. Of the statues, four are pushed onto seals and two shine beams
+// at the centre; the other two never move.
+enum StatueHallActor {
+  ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  ACTOR_NORTHWEST_STATUE,
+  ACTOR_LEFT_BEAM_STATUE,
+  ACTOR_NORTHEAST_STATUE,
+  ACTOR_RIGHT_BEAM_STATUE,
+  ACTOR_SOUTHWEST_STATUE,
+  ACTOR_SOUTHEAST_STATUE = ACTOR_FIRST_PLACED + 7,
+  ACTOR_CENTER_STATUE = ACTOR_FIRST_PLACED + 9,
+  ACTOR_MOVED_CENTER_STATUE
+};
 
 // bss in this order: as commons of one object the linker would sort them itself
 static struct SealScene sSealScene;
@@ -155,7 +168,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
     Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   }
   Engine_GameFlagSet(FLAG_SCENE_TEMP_07);
-  SolSanctumStatue_UpdateCenterStatue();
+  Event_CenterStatueMoved();
 }
 
 // Show Kraden discovering the hall and examining its two sides.
@@ -316,22 +329,22 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Engine_ActorSetPosition(8, PIXELS(576), PIXELS(296));
+  Engine_ActorSetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(296));
   Engine_EventWait(1);
   Engine_EventSetMessage(MsgSolSanctumWait);
   // Kraden returns to the statues and demonstrates the puzzle's layout.
-  Event_SayThenWait(8, 6);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
-  Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(8, 576, 216);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Engine_EventWait(20);
-  Engine_ActorJump(5, 2, 0);
+  Engine_ActorJump(JENNA, 2, 0);
   Engine_EventWait(30);
-  Event_SayThenWait(5, 6);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Event_SayThenWait(JENNA, 6);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(6);
-  Engine_ActorFaceDirection(8, FACING_WEST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_WEST + FACING_STEP, 0);
   Engine_EventWait(10);
   Engine_CameraSetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
   Camera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
@@ -340,152 +353,154 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(10);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(10);
-  Engine_ActorJump(8, 6, 0);
-  Actor_SetSpeed(8, PIXELS(3), PIXELS(2));
-  Actor_WalkToAndWait(8, 576, 184);
+  Engine_ActorJump(ACTOR_KRADEN, 6, 0);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
+  Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_SayThenWait(8, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(5, 3);
-  Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
+  Engine_ActorSetAnimation(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(8, 3);
-  Event_SayThenWait(8, 6);
-  Engine_ActorJump(0, 2, 0);
-  Engine_ActorJump(1, 2, 0);
-  Engine_ActorJump(5, 2, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
+  Engine_ActorJump(GARET, 2, 0);
+  Engine_ActorJump(JENNA, 2, 0);
   Engine_EventWait(30);
-  Engine_ActorRunRepeatedMotion(1, 2);
-  Event_SayThenWait(1, 6);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_SayThenWait(8, 6);
+  Engine_ActorRunRepeatedMotion(GARET, 2);
+  Event_SayThenWait(GARET, 6);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
   Engine_EventWait(40);
-  Engine_ActorFaceActor(8, 0, 0);
-  Actor_FaceActor(8, JENNA, 0);
+  Engine_ActorFaceActor(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_KRADEN, JENNA, 0);
   Engine_EventWait(40);
-  Engine_ActorJump(8, 6, 0);
-  Actor_WalkToAndWait(8, 576, 216);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Engine_ActorJump(ACTOR_KRADEN, 6, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Engine_EventWait(10);
-  Actor_SetSpeed(8, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ActorWalkTo(8, 432, 200);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Engine_ActorWalkTo(ACTOR_KRADEN, 432, 200);
   Engine_EventWait(20);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(8, 1);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_EventWait(20);
-  Engine_ActorFaceDirection(8, FACING_EAST, 0);
+  Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Engine_EventWait(30);
-  Actor_WalkToAndWait(8, 576, 216);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(0, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(574), -1, PIXELS(171), 1);
-  Engine_ActorJump(8, 6, 0);
-  Actor_SetSpeed(8, PIXELS(3), PIXELS(2));
-  Engine_ActorWalkToAndWait(8, 576, 184);
+  Engine_ActorJump(ACTOR_KRADEN, 6, 0);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
+  Engine_ActorWalkToAndWait(ACTOR_KRADEN, 576, 184);
   Engine_EventWait(80);
-  Event_SayThenWait(8, 6);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_SayThenWait(8, 20);
-  Engine_ActorShowEmote(5, EMOTE_IN_FRONT | 2, 0);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_SayThenWait(ACTOR_KRADEN, 20);
+  Engine_ActorShowEmote(JENNA, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Event_SayThenWait(5, 6);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_ActorFaceDirection(8, FACING_WEST, 0);
+  Event_SayThenWait(JENNA, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Engine_EventWait(40);
-  Engine_ActorFaceDirection(8, FACING_NORTH, 0);
+  Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Event_SayThenWait(8, 6);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(1, EMOTE_IN_FRONT | 1, 0);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_SayThenWait(8, 6);
-  Engine_ActorFaceEachOther(1, 0, 0);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(40);
   Engine_ActorFaceEachOther(JENNA, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(40);
-  UiText_OpenMessageAtObject(8, 0);
+  UiText_OpenMessageAtObject(ACTOR_KRADEN, 0);
   // Ask whether Isaac understands, then finish the explanation.
-  Actor_FaceDirection(0, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(1, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolSanctumHonestlyDoubtUnderstand);
   } else {
     Engine_EventSetMessage(MsgSolSanctumHmphWellTold);
   }
-  Event_SayThenWait(8, 6);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_EventSetMessage(MsgSolSanctumTryFindSolution);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Event_SayThenWait(8, 6);
-  Engine_ActorShowEmote(1, EMOTE_IN_FRONT | 2, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(60);
-  Event_SayThenWait(1, 6);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_SayThenWait(8, 6);
-  Engine_ActorFaceDirection(8, FACING_SOUTH, 0);
+  Event_SayThenWait(GARET, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorJump(8, 6, 0);
-  Actor_WalkToAndWait(8, 576, 216);
+  Engine_ActorJump(ACTOR_KRADEN, 6, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Engine_EventWait(40);
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
-  Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorWalkToAndWait(8, 576, 232);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Engine_ActorWalkToAndWait(ACTOR_KRADEN, 576, 232);
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(40);
-  Event_SayThenWait(8, 6);
-  Engine_ActorFaceDirection(8, FACING_NORTH, 0);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Event_SayThenWait(8, 6);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Event_SayThenWait(ACTOR_KRADEN, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Camera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
-  Actor_WalkToAndWait(8, 574, 323);
-  Engine_ActorSetPosition(8, 0, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 574, 323);
+  Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
   // Leave Isaac in control after Jenna and Garet rejoin him.
   Camera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(136), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorFaceDirection(5, FACING_EAST, 0);
+  Engine_ActorFaceDirection(JENNA, FACING_EAST, 0);
   Engine_EventWait(10);
-  Event_SayThenWait(5, 6);
-  Engine_ActorSetAnimation(1, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(5, 3);
-  Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(5, PIXELS(1), PIXELS(1) / 2);
+  Event_SayThenWait(JENNA, 6);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetAnimation(JENNA, 2);
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Engine_ActorSetDestination(5, leader->x.part.pixel, leader->z.part.pixel);
+    Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
+                               leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(5);
-  Engine_ActorSetPosition(5, 0, 0);
-  Engine_ActorSetAnimation(1, ANIM_WALK);
-  leader = Object_GetById(0);
+  Engine_ActorWaitForMove(JENNA);
+  Engine_ActorSetPosition(JENNA, 0, 0);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Engine_ActorSetDestination(1, leader->x.part.pixel, leader->z.part.pixel);
+    Engine_ActorSetDestination(GARET, leader->x.part.pixel,
+                               leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(1);
-  Engine_ActorSetPosition(1, 0, 0);
+  Engine_ActorWaitForMove(GARET);
+  Engine_ActorSetPosition(GARET, 0, 0);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -503,11 +518,11 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
   s32 frame;
 
   map = gMapWork[0];
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Temporarily follow a local point, panning from the leader toward the seal.
   if (leader->z.fixed < PIXELS(179)) {
-    Actor_WalkToAndWait(0, 575, 132);
-    Actor_FaceDirection(0, FACING_SOUTH, 0);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 575, 132);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Engine_EventWait(30);
     savedOrigin = map->origin;
     SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
@@ -520,8 +535,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
     Engine_EventWait(40);
     approachSide = 1;
   } else {
-    Actor_WalkToAndWait(0, 577, 222);
-    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 577, 222);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_EventWait(30);
     SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
                leader->z.fixed);
@@ -622,17 +637,17 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   gSolSanctumStatue_ScrollPhase += 128;
 }
 
-// Check the passage ahead when the leader is facing north.
-static void SolSanctumStatue_CheckNorthPassage(void) {
-  struct FieldActor *leader = Object_GetById(0);
+// Walking north over trigger 10: the way ahead is checked as on any field.
+static void Event_CheckAheadFacingNorth(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
     Engine_LeaderCheckAhead();
   }
 }
 
-// Check the passage ahead when the leader is facing south.
-static void SolSanctumStatue_CheckSouthPassage(void) {
-  struct FieldActor *leader = Object_GetById(0);
+// Walking south over trigger 11: the way ahead is checked as on any field.
+static void Event_CheckAheadFacingSouth(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
     Engine_LeaderCheckAhead();
   }
@@ -642,9 +657,9 @@ static void SolSanctumStatue_CheckSouthPassage(void) {
 UNUSED static void SolSanctumStatue_MoveUnusedNorthwestStatue(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
     Engine_EventBegin();
-    Object_GetById(9);
-    Actor_SetSpeed(9, PIXELS(1) / 5, PIXELS(1) / 10);
-    Actor_WalkToAndWait(9, 504, 152);
+    Object_GetById(ACTOR_NORTHWEST_STATUE);
+    Actor_SetSpeed(ACTOR_NORTHWEST_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
+    Actor_WalkToAndWait(ACTOR_NORTHWEST_STATUE, 504, 152);
     Engine_EventEnd();
   }
 }
@@ -657,73 +672,73 @@ s32 SolSanctumStatue_Initialize(void) {
   SolSanctumStatue_InitializeScrollingSprites();
   // Retreat does not work here (flag 0x144).
   GameFlag_Set(0x144);
-  centerEffect = Object_GetById(18);
+  centerEffect = Object_GetById(ACTOR_MOVED_CENTER_STATUE);
   centerEffect->collisionFlags = 0;
   {
     u8 flags = centerEffect->priorityFlags | 2;
 
     centerEffect->priorityFlags = flags;
   }
-  Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
-  Object_GetById(18)->priorityFlags &= 254;
-  Engine_ActorSetSpritePriority(18, 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVED_CENTER_STATUE), 0);
+  Object_GetById(ACTOR_MOVED_CENTER_STATUE)->priorityFlags &= 254;
+  Engine_ActorSetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
   // Only arrivals 3 and 4 keep Jenna and Garet staged for their conversations.
   if ((u16)(gGameState.entrance - 3) > 1) {
     Actor_SetPosition(JENNA, 0, 0);
     Actor_SetPosition(GARET, 0, 0);
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
-    Actor_SetPosition(18, PIXELS(288), PIXELS(178));
-    Actor_SetPosition(17, PIXELS(1608), PIXELS(1608));
-    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
-    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
-    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, PIXELS(288), PIXELS(178));
+    Actor_SetPosition(ACTOR_CENTER_STATUE, PIXELS(1608), PIXELS(1608));
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
     Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
     Map_CopyCellAttributes(0, 1, 2, 1, 17, 7);
   } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
              GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
-    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
-    Actor_SetPosition(10, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
     Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    Actor_SetPosition(12, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
     Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
-      Actor_SetPosition(10, PIXELS(232), PIXELS(120));
+      Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
       Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
     }
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-      Actor_SetPosition(12, PIXELS(344), PIXELS(120));
+      Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
       Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(9, PIXELS(504), PIXELS(152));
+    Actor_SetPosition(ACTOR_NORTHWEST_STATUE, PIXELS(504), PIXELS(152));
     Map_CopyCellsTo(2, 28, 34, 10, 2, 1);
     Map_CopyCellsTo(2, 30, 16, 10, 2, 1);
     Map_CopyCellsTo(0, 55, 32, 40, 4, 3);
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(11, PIXELS(648), PIXELS(152));
+    Actor_SetPosition(ACTOR_NORTHEAST_STATUE, PIXELS(648), PIXELS(152));
     Map_CopyCellsTo(4, 28, 36, 10, 2, 1);
     Map_CopyCellsTo(4, 30, 18, 10, 2, 1);
     Map_CopyCellsTo(4, 55, 36, 40, 4, 3);
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(13, PIXELS(504), PIXELS(200));
+    Actor_SetPosition(ACTOR_SOUTHWEST_STATUE, PIXELS(504), PIXELS(200));
     Map_CopyCellsTo(2, 29, 34, 11, 2, 1);
     Map_CopyCellsTo(2, 31, 16, 11, 2, 1);
     Map_CopyCellsTo(0, 58, 32, 43, 4, 1);
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(15, PIXELS(648), PIXELS(200));
+    Actor_SetPosition(ACTOR_SOUTHEAST_STATUE, PIXELS(648), PIXELS(200));
     Map_CopyCellsTo(4, 29, 36, 11, 2, 1);
     Map_CopyCellsTo(4, 31, 18, 11, 2, 1);
     Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
@@ -800,59 +815,61 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   }
 }
 
-// Open the northwest seal when its statue reaches the target cell.
-static void SolSanctumStatue_TryNorthwestSeal(void) {
-  if (SolSanctumStatue_IsActorAtCell(9, 31, 9) != 0) {
+// Moving the northwest statue with Move: on its seal, the seal opens.
+static void Event_NorthwestStatueMoved(void) {
+  if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHWEST_STATUE, 31, 9) != 0) {
     SolSanctumStatue_OpenNorthwestSeal();
   }
 }
 
-// Open the northeast seal when its statue reaches the target cell.
-static void SolSanctumStatue_TryNortheastSeal(void) {
-  if (SolSanctumStatue_IsActorAtCell(11, 40, 9) != 0) {
+// Moving the northeast statue with Move: on its seal, the seal opens.
+static void Event_NortheastStatueMoved(void) {
+  if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHEAST_STATUE, 40, 9) != 0) {
     SolSanctumStatue_OpenNortheastSeal();
   }
 }
 
-// Open the southwest seal when its statue reaches the target cell.
-static void SolSanctumStatue_TrySouthwestSeal(void) {
-  if (SolSanctumStatue_IsActorAtCell(13, 31, 12) != 0) {
+// Moving the southwest statue with Move: on its seal, the seal opens.
+static void Event_SouthwestStatueMoved(void) {
+  if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHWEST_STATUE, 31, 12) != 0) {
     SolSanctumStatue_OpenSouthwestSeal();
   }
 }
 
-// Open the southeast seal when its statue reaches the target cell.
-static void SolSanctumStatue_TrySoutheastSeal(void) {
-  if (SolSanctumStatue_IsActorAtCell(15, 40, 12) != 0) {
+// Moving the southeast statue with Move: on its seal, the seal opens.
+static void Event_SoutheastStatueMoved(void) {
+  if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHEAST_STATUE, 40, 12) != 0) {
     SolSanctumStatue_OpenSoutheastSeal();
   }
 }
 
-// Release the left trigger cell and check the beam statue position.
-static void SolSanctumStatue_TryLeftBeam(void) {
+// Moving the left beam statue with Move: its cell is freed, and in front of
+// the centre it shines its beam.
+static void Event_LeftBeamStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(208), PIXELS(112), 0);
-  if (SolSanctumStatue_IsActorAtCell(10, 14, 7) != 0) {
+  if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
     SolSanctumStatue_ShineLeftBeam();
   }
 }
 
-// Release the right trigger cell and check the beam statue position.
-static void SolSanctumStatue_TryRightBeam(void) {
+// Moving the right beam statue with Move: as the left one.
+static void Event_RightBeamStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(352), PIXELS(112), 0);
-  if (SolSanctumStatue_IsActorAtCell(12, 21, 7) != 0) {
+  if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
     SolSanctumStatue_ShineRightBeam();
   }
 }
 
-// Block the central statue cells while the leader occupies their row.
-static void SolSanctumStatue_BlockCenterTriggerCells(void) {
+// Starting Move beside the centre statue: its cells are blocked while the
+// leader stands in their row.
+static void Event_BlockCenterTriggerCells(void) {
   struct FieldActor *leaderPosition;
   s32 column;
   struct FieldActor *leader;
 
-  leaderPosition = Object_GetById(0);
+  leaderPosition = Object_GetById(ACTOR_PARTY_LEADER);
   column = leaderPosition->x.fixed >> 20;
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((leader->z.fixed >> 20) == 8) {
     if ((u32)(column - 17) <= 1) {
       Field_SetMapCellCollision(2, PIXELS(272), PIXELS(128), 255);
@@ -861,33 +878,36 @@ static void SolSanctumStatue_BlockCenterTriggerCells(void) {
   }
 }
 
-// Block the left beam trigger while the leader is beside its statue.
-static void SolSanctumStatue_BlockLeftTriggerCell(void) {
-  s32 column = Object_GetById(0)->x.fixed >> 20;
-  s32 row = Object_GetById(0)->z.fixed >> 20;
+// Starting Move beside the left beam statue: its cell is blocked while the
+// leader stands beside it.
+static void Event_BlockLeftTriggerCell(void) {
+  s32 column = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 13) <= 1) {
     Field_SetMapCellCollision(2, PIXELS(208), PIXELS(112), 255);
   }
 }
 
-// Block the right beam trigger while the leader is beside its statue.
-static void SolSanctumStatue_BlockRightTriggerCell(void) {
-  s32 column = Object_GetById(0)->x.fixed >> 20;
-  s32 row = Object_GetById(0)->z.fixed >> 20;
+// Starting Move beside the right beam statue: as the left one.
+static void Event_BlockRightTriggerCell(void) {
+  s32 column = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 21) <= 1) {
     Field_SetMapCellCollision(2, PIXELS(352), PIXELS(112), 255);
   }
 }
 
-// Move the central statue and shake the hall once both beams are lit.
-static void SolSanctumStatue_UpdateCenterStatue(void) {
+// Moving the centre statue with Move, or a beam completing the pair: with both
+// beams shining the statue slides into the opened floor, the hall shakes, and
+// "Something clicked!"
+static void Event_CenterStatueMoved(void) {
   struct FieldActor *statue;
   struct FieldActor *leader;
   s32 statueZ;
 
-  statue = Object_GetById(17);
+  statue = Object_GetById(ACTOR_CENTER_STATUE);
   Field_SetMapCellCollision(2, PIXELS(272), PIXELS(128), 0);
   Field_SetMapCellCollision(2, PIXELS(288), PIXELS(128), 0);
   if (statue != NULL) {
@@ -895,10 +915,10 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
     Engine_EventBegin();
     if ((statueZ >> 20) == 8) {
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_07) == 0) {
-        leader = Object_GetById(0);
+        leader = Object_GetById(ACTOR_PARTY_LEADER);
         if ((u32)(leader->z.fixed >> 19) <= 17) {
-          Actor_WalkToAndWait(0, 289, 158);
-          leader = Object_GetById(0);
+          Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 289, 158);
+          leader = Object_GetById(ACTOR_PARTY_LEADER);
           leader->facing = FACING_NORTH;
         }
       }
@@ -908,14 +928,15 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
         Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         Engine_CameraWaitForMove();
-        Object_GetById(17)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        Actor_SetSpeed(17, PIXELS(3), PIXELS(1));
+        Object_GetById(ACTOR_CENTER_STATUE)->steeringFlags &=
+            ~ACTOR_FACES_MOTION;
+        Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(3), PIXELS(1));
         statue->motionFlags = 0;
-        Engine_ActorSetSpritePriority(17, 3);
+        Engine_ActorSetSpritePriority(ACTOR_CENTER_STATUE, 3);
         Engine_AudioPlayCue(SE_189);
-        Engine_ActorSetDestination(17, 288, 178);
+        Engine_ActorSetDestination(ACTOR_CENTER_STATUE, 288, 178);
         Engine_EventWait(8);
-        Actor_SetPosition(18, PIXELS(288), PIXELS(178));
+        Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, PIXELS(288), PIXELS(178));
         statue->targetX = ACTOR_NO_TARGET;
         statue->targetY = ACTOR_NO_TARGET;
         statue->targetZ = ACTOR_NO_TARGET;
@@ -923,7 +944,7 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         statue->y.fixed = 0;
         statue->z.fixed = 0;
         SET_VELOCITY(statue, 0, 0, 0);
-        Engine_ActorSetPosition(17, 0, 0);
+        Engine_ActorSetPosition(ACTOR_CENTER_STATUE, 0, 0);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);
         Engine_AudioPlayCue(SE_141);
@@ -959,62 +980,63 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
   }
 }
 
-// Push the central statue north while backing the leader away.
-static void SolSanctumStatue_PushCenterStatueBack(void) {
+// Walking into the centre statue from the south: the leader pushes it north.
+static void Event_PushCenterStatueNorth(void) {
   struct FieldActor *movingActor;
 
-  movingActor = Object_GetById(17);
+  movingActor = Object_GetById(ACTOR_CENTER_STATUE);
   if (movingActor != 0) {
     if ((movingActor->z.fixed >> 20) == 8) {
       Engine_EventBegin();
       Event_PlayCue(SE_185);
-      Actor_SetSpeed(17, PIXELS(1) / 5, PIXELS(1) / 10);
+      Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-      Object_GetById(17)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Object_GetById(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
-      movingActor = Object_GetById(0);
+      movingActor = Object_GetById(ACTOR_PARTY_LEADER);
       Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
-      Actor_SetDestination(17, 288, 120);
-      Engine_ActorWaitForMove(17);
+      Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
+      Engine_ActorWaitForMove(ACTOR_CENTER_STATUE);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Engine_EventEnd();
     }
   }
 }
 
-// Push the northwest statue into place, then animate its seal.
-static void SolSanctumStatue_PushNorthwestStatue(void) {
-  SolSanctumStatue_PushStatue(9, 31, 9, 30, 9);
+// Walking into the northwest statue: the leader pushes it onto its seal.
+static void Event_PushNorthwestStatue(void) {
+  SolSanctumStatue_PushStatue(ACTOR_NORTHWEST_STATUE, 31, 9, 30, 9);
   SolSanctumStatue_OpenNorthwestSeal();
 }
 
-// Push the northeast statue into place, then animate its seal.
-static void SolSanctumStatue_PushNortheastStatue(void) {
-  SolSanctumStatue_PushStatue(11, 40, 9, 41, 9);
+// Walking into the northeast statue: the leader pushes it onto its seal.
+static void Event_PushNortheastStatue(void) {
+  SolSanctumStatue_PushStatue(ACTOR_NORTHEAST_STATUE, 40, 9, 41, 9);
   SolSanctumStatue_OpenNortheastSeal();
 }
 
-// Push the southwest statue into place, then animate its seal.
-static void SolSanctumStatue_PushSouthwestStatue(void) {
-  SolSanctumStatue_PushStatue(13, 31, 12, 30, 12);
+// Walking into the southwest statue: the leader pushes it onto its seal.
+static void Event_PushSouthwestStatue(void) {
+  SolSanctumStatue_PushStatue(ACTOR_SOUTHWEST_STATUE, 31, 12, 30, 12);
   SolSanctumStatue_OpenSouthwestSeal();
 }
 
-// Push the southeast statue into place, then animate its seal.
-static void SolSanctumStatue_PushSoutheastStatue(void) {
-  SolSanctumStatue_PushStatue(15, 40, 12, 41, 12);
+// Walking into the southeast statue: the leader pushes it onto its seal.
+static void Event_PushSoutheastStatue(void) {
+  SolSanctumStatue_PushStatue(ACTOR_SOUTHEAST_STATUE, 40, 12, 41, 12);
   SolSanctumStatue_OpenSoutheastSeal();
 }
 
-// Push the left statue east into the light beam position.
-static void SolSanctumStatue_PushLeftBeamStatueEast(void) {
-  SolSanctumStatue_PushStatue(10, 14, 7, 13, 7);
+// Walking into the left beam statue from the west: it slides east in front
+// of the centre and shines its beam.
+static void Event_PushLeftBeamStatueEast(void) {
+  SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 14, 7, 13, 7);
   SolSanctumStatue_ShineLeftBeam();
 }
 
-// Push the left beam statue one cell south.
-static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
-  struct FieldActor *statue = Object_GetById(10);
+// Walking into the left beam statue from the north: it slides one cell south.
+static void Event_PushLeftBeamStatueSouth(void) {
+  struct FieldActor *statue = Object_GetById(ACTOR_LEFT_BEAM_STATUE);
   s32 row;
 
   if (statue == 0) {
@@ -1022,39 +1044,39 @@ static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
   }
 
   row = statue->z.fixed >> 20;
-  SolSanctumStatue_PushStatue(10, 13, row + 1, 13, row);
+  SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 13, row + 1, 13, row);
 }
 
-// Push the left beam statue one cell north.
-static void SolSanctumStatue_PushLeftBeamStatueNorth(void) {
-  struct FieldActor *statue = Object_GetById(10);
+// Walking into the left beam statue from the south: it slides one cell north.
+static void Event_PushLeftBeamStatueNorth(void) {
+  struct FieldActor *statue = Object_GetById(ACTOR_LEFT_BEAM_STATUE);
   if (statue != NULL) {
     s32 row = statue->z.fixed >> 20;
-    SolSanctumStatue_PushStatue(10, 13, row - 1, 13, row);
+    SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 13, row - 1, 13, row);
   }
 }
 
-// Push the right statue west into the light beam position.
-static void SolSanctumStatue_PushRightBeamStatueWest(void) {
-  SolSanctumStatue_PushStatue(12, 21, 7, 22, 7);
+// Walking into the right beam statue from the east: as the left one.
+static void Event_PushRightBeamStatueWest(void) {
+  SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 21, 7, 22, 7);
   SolSanctumStatue_ShineRightBeam();
 }
 
-// Push the right beam statue one cell south.
-static void SolSanctumStatue_PushRightBeamStatueSouth(void) {
-  struct FieldActor *statue = Object_GetById(12);
+// Walking into the right beam statue from the north: it slides one cell south.
+static void Event_PushRightBeamStatueSouth(void) {
+  struct FieldActor *statue = Object_GetById(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
     s32 row = statue->z.fixed >> 20;
-    SolSanctumStatue_PushStatue(12, 22, row + 1, 22, row);
+    SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 22, row + 1, 22, row);
   }
 }
 
-// Push the right beam statue one cell north.
-static void SolSanctumStatue_PushRightBeamStatueNorth(void) {
-  struct FieldActor *statue = Object_GetById(12);
+// Walking into the right beam statue from the south: it slides one cell north.
+static void Event_PushRightBeamStatueNorth(void) {
+  struct FieldActor *statue = Object_GetById(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
     s32 row = statue->z.fixed >> 20;
-    SolSanctumStatue_PushStatue(12, 22, row - 1, 22, row);
+    SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 22, row - 1, 22, row);
   }
 }
 
@@ -1068,15 +1090,16 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_185);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
-  Engine_ActorSetSpeed(0, PIXELS(1) / 5, PIXELS(1) / 10);
+  Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(0, 8);
-  Engine_ActorSetDestination(0, (leaderColumn << 4) + 8, (leaderRow << 4) + 8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
+  Engine_ActorSetDestination(ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8,
+                             (leaderRow << 4) + 8);
   statueX = statueColumn << 4;
   statueZ = statueRow << 4;
   Engine_ActorSetDestination(statueId, statueX + 8, statueZ + 8);
   Engine_ActorWaitForMove(statueId);
-  Engine_ActorSetAnimation(0, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventEnd();
 }
 
@@ -1141,7 +1164,7 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
   scene->stairs[2].destY = 10;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->actor = 9;
+  scene->actor = ACTOR_NORTHWEST_STATUE;
   scene->actorX = 488;
   scene->actorZ = 152;
   SolSanctumStatue_OpenSeal();
@@ -1196,7 +1219,7 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
   scene->stairs[2].destY = 10;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->actor = 11;
+  scene->actor = ACTOR_NORTHEAST_STATUE;
   scene->actorX = 664;
   scene->actorZ = 152;
   SolSanctumStatue_OpenSeal();
@@ -1251,7 +1274,7 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
   scene->stairs[2].destY = 11;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->actor = 13;
+  scene->actor = ACTOR_SOUTHWEST_STATUE;
   scene->actorX = 488;
   scene->actorZ = 200;
   SolSanctumStatue_OpenSeal();
@@ -1306,7 +1329,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   scene->stairs[2].destY = 11;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->actor = 15;
+  scene->actor = ACTOR_SOUTHEAST_STATUE;
   scene->actorX = 664;
   scene->actorZ = 200;
   SolSanctumStatue_OpenSeal();
@@ -1347,19 +1370,21 @@ static void SolSanctumStatue_OpenSeal(void) {
     // Keep the statue reusable until the central statue has moved.
     if (exitResult == -1) {
       if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
-        Engine_CameraFollowActor(0, 1);
-        Object_GetById(0)->facing = scene->facing;
-        Actor_SetSpeed(0, PIXELS(2), PIXELS(2));
-        Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        Engine_ActorJump(0, 4, 0);
-        Engine_ActorSetDestination(0, scene->destX, scene->destZ);
+        Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
+        Object_GetById(ACTOR_PARTY_LEADER)->facing = scene->facing;
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
+        Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &=
+            ~ACTOR_FACES_MOTION;
+        Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
+        Engine_ActorSetDestination(ACTOR_PARTY_LEADER, scene->destX,
+                                   scene->destZ);
         COPY_CELLS(scene->stairs[0]);
         COPY_CELLS(scene->stairs[1]);
         COPY_CELLS(scene->stairs[2]);
         Object_GetById(scene->actor)->steeringFlags &= ~ACTOR_FACES_MOTION;
         Engine_ObjectMotionSetPositionAndCommit(scene->actor, scene->actorX,
                                                 scene->actorZ);
-        Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+        Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
         Engine_GameFlagClear(scene->flag);
       }
     } else if (exitResult == 0 &&
@@ -1491,60 +1516,58 @@ struct ScenePlacement gSolSanctumStatue_Placements[] = {
 struct SceneEvent gSolSanctumStatue_Events[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
-    {0x202, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
+    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAheadFacingNorth)},
+    {0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAheadFacingSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_TryNorthwestSeal)},
+     EVENT_SCRIPT(Event_NorthwestStatueMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_TryNortheastSeal)},
+     EVENT_SCRIPT(Event_NortheastStatueMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_TrySouthwestSeal)},
+     EVENT_SCRIPT(Event_SouthwestStatueMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_TrySoutheastSeal)},
+     EVENT_SCRIPT(Event_SoutheastStatueMoved)},
     {TOUCH_WALKING_INTO(FACING_EAST), 5, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_PushNorthwestStatue)},
+     EVENT_SCRIPT(Event_PushNorthwestStatue)},
     {TOUCH_WALKING_INTO(FACING_WEST), 6, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_PushNortheastStatue)},
+     EVENT_SCRIPT(Event_PushNortheastStatue)},
     {TOUCH_WALKING_INTO(FACING_EAST), 7, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_PushSouthwestStatue)},
+     EVENT_SCRIPT(Event_PushSouthwestStatue)},
     {TOUCH_WALKING_INTO(FACING_WEST), 8, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
-     EVENT_SCRIPT(SolSanctumStatue_PushSoutheastStatue)},
+     EVENT_SCRIPT(Event_PushSoutheastStatue)},
     {0x10008c15, 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_BlockLeftTriggerCell)},
+     EVENT_SCRIPT(Event_BlockLeftTriggerCell)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_TryLeftBeam)},
+     EVENT_SCRIPT(Event_LeftBeamStatueMoved)},
     {0x10008c15, 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_BlockRightTriggerCell)},
+     EVENT_SCRIPT(Event_BlockRightTriggerCell)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_TryRightBeam)},
+     EVENT_SCRIPT(Event_RightBeamStatueMoved)},
     {TOUCH_WALKING_INTO(FACING_EAST), 20, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueEast)},
+     EVENT_SCRIPT(Event_PushLeftBeamStatueEast)},
     {TOUCH_WALKING_INTO(FACING_EAST), 21, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueEast)},
+     EVENT_SCRIPT(Event_PushLeftBeamStatueEast)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 21, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueSouth)},
+     EVENT_SCRIPT(Event_PushLeftBeamStatueSouth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 23, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueNorth)},
+     EVENT_SCRIPT(Event_PushLeftBeamStatueNorth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 24, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueNorth)},
+     EVENT_SCRIPT(Event_PushLeftBeamStatueNorth)},
     {TOUCH_WALKING_INTO(FACING_WEST), 25, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueWest)},
+     EVENT_SCRIPT(Event_PushRightBeamStatueWest)},
     {TOUCH_WALKING_INTO(FACING_WEST), 26, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueWest)},
+     EVENT_SCRIPT(Event_PushRightBeamStatueWest)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 26, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueSouth)},
+     EVENT_SCRIPT(Event_PushRightBeamStatueSouth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 28, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueNorth)},
+     EVENT_SCRIPT(Event_PushRightBeamStatueNorth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 29, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueNorth)},
+     EVENT_SCRIPT(Event_PushRightBeamStatueNorth)},
     {0x10008c15, 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
-     EVENT_SCRIPT(SolSanctumStatue_BlockCenterTriggerCells)},
+     EVENT_SCRIPT(Event_BlockCenterTriggerCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
-     EVENT_SCRIPT(SolSanctumStatue_UpdateCenterStatue)},
+     EVENT_SCRIPT(Event_CenterStatueMoved)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 32, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
-     EVENT_SCRIPT(SolSanctumStatue_PushCenterStatueBack)},
+     EVENT_SCRIPT(Event_PushCenterStatueNorth)},
     {SCENE_EVENTS_END},
 };
 

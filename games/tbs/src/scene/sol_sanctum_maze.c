@@ -19,7 +19,8 @@
 #include "field_event.h"
 #include "flags.h"
 
-// A maze of Sol Sanctum, scene 14: two exits to scene 16 and one chest.
+// A maze of Sol Sanctum, scene 14: two exits to scene 16 and the chest that
+// holds the second Small Jewel (item 0xe1).
 
 // Where the party can enter the maze.
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -37,7 +38,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumMazePlacements;
 }
 
-// The exits, and the maze's chest.
+// The exits, and the Small Jewel's chest.
 const struct SceneEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
 
 // Shared scene code, included where the ROM places it.

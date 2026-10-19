@@ -12,7 +12,8 @@ extern u8 gData_020023c4[];
 void Func_02005854(s32 sound);
 s32 Math_Cosine(s32 angle);
 
-/// Convert remaining frames into "MM:SS:T" digits.
+/// Converts the remaining frames into minutes, seconds and tenths
+/// (`MM:SS:T`).
 void Func_02004f84(s32 time, u8 *text) {
   if (time < 0)
     time = 0;

@@ -13,8 +13,9 @@
 #include "system.h"
 #include "types.h"
 
-/// Copy the order table for modes 0-2, or the default table, into order.
-/// Tables end with 0xff. Copy at most 32 bytes, including the terminator.
+/// Copies the order table for modes 0-2, or the default table, into order.
+/// Tables end with 0xff; at most 32 bytes are copied, the terminator
+/// included.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "scene.h"
 
-/// Clear *p if nonzero and return p.
+/// Clears *p if nonzero and returns p.
 s32 *Runtime_ClearWordIfSet(s32 *p) {
   if (*p != 0) {
     *p = 0;

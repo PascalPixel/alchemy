@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-/// Write the lowest count digits of value (up to five), most significant first,
-/// to out as uppercase hexadecimal, without a terminating zero.
+/// Writes the lowest count digits of value (up to five), most significant
+/// first, to out as uppercase hexadecimal, without a terminating zero.
 void Text_FormatHex(u32 value, u32 count, u8 *out) {
   u8 buf[8];
   u32 i;

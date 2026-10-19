@@ -12,8 +12,8 @@
 // There are 96 cache entries; byte offset 0xffff marks a free entry.
 // Entries with size <= 16 do not own VRAM.
 
-/// Copy src into cache no again, retaining its current size.
-/// Return the OBJ tile index.
+/// Copies src into cache no again, keeping its current size. Returns the OBJ
+/// tile index.
 s32 VramCache_Reload(s32 no, s32 src) {
   return VramCache_Load(no, gResourceTableEntries[no].size, (const void *)src);
 }

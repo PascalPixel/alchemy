@@ -23,7 +23,7 @@
 //   gBlendLayers: BLDCNT target layers (the four helpers below use 0x3e:
 //   BG1-3, OBJ, and backdrop). gBlendFramesLeft: remaining frame count.
 
-/// Fade out to black.
+/// Fades out to black.
 /// frames: fade duration in frames.
 void Fade_ToBlack(s32 frames) {
   gBlendBrighten = 0;
@@ -34,7 +34,7 @@ void Fade_ToBlack(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-/// Fade in from black.
+/// Fades in from black.
 void Fade_FromBlack(s32 frames) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
@@ -44,7 +44,7 @@ void Fade_FromBlack(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-/// Fade out to white.
+/// Fades out to white.
 void Fade_ToWhite(s32 frames) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
@@ -54,7 +54,7 @@ void Fade_ToWhite(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-/// Fade in from white.
+/// Fades in from white.
 void Fade_FromWhite(s32 frames) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
@@ -64,7 +64,7 @@ void Fade_FromWhite(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-/// Configure a fade.
+/// Configures a fade.
 /// bright: 0 for black; 1 for white.
 /// layer: BLDCNT target layers, in the low six bits.
 /// start: initial brightness; values above 16 use the current target brightness.
@@ -82,7 +82,7 @@ void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendFramesLeft = (gBlendDuration = frames);
 }
 
-/// Wait for the fade to finish.
+/// Waits for the fade to finish.
 void Fade_Wait(void) {
   if (gBlendDuration != 0) {
     do {

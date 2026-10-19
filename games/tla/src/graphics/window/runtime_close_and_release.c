@@ -12,5 +12,5 @@
 #include "sound.h"
 #include "system.h"
 
-/// Close the window in heap slot 16 and release its block.
+/// Closes the window in heap slot 16 and releases its block.
 void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }

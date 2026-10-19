@@ -40,7 +40,7 @@ void Func_080c8698(void);
 #define COPYING_X 84
 #endif
 
-/// Open the progress screen: 0 saves, 1 erases, 2 copies.
+/// Opens the progress screen: 0 saves, 1 erases, 2 copies.
 struct UiWindow *SaveProgress_Open(u32 kind) {
   struct UiWindow *window;
   void *tiles;
@@ -71,7 +71,7 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
   return window;
 }
 
-/// Close the progress screen.
+/// Closes the progress screen.
 struct UiWindow *SaveProgress_Close(struct UiWindow *window) {
   WaitFrames(10);
   Func_080c8698();

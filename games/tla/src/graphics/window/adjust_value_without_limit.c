@@ -10,7 +10,7 @@
 
 void UiText_BuildRenderEntries(s32 key, s32 mode);
 
-/// Expand message into buf without an upper length bound.
+/// Expands message into buf without an upper length bound.
 void Ui_AdjustValueWithoutLimit(s32 message, s32 buf) {
   UiText_DecodeMessage(message, buf, 0x7fffffff);
 }

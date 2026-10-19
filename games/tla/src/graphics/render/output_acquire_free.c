@@ -8,7 +8,8 @@
 
 #define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
-/// Remove the first entry from the free list, or return NULL if empty.
+/// Removes and returns the first entry of the free list, or NULL if it is
+/// empty.
 struct RenderOutput *RenderOutput_AcquireFree(void) {
   struct UiRenderWork *work = UI_WORK;
   struct RenderOutput *out = work->freeOutputs.head;
@@ -22,7 +23,8 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
   return out;
 }
 
-/// Return an entry to the free-list tail; reject entries outside outputs[].
+/// Puts an entry back at the free list's tail; entries outside outputs[] are
+/// ignored.
 void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   struct UiRenderWork *work = UI_WORK;
 

@@ -19,7 +19,7 @@
 extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_Decompress4bppCodeSize[];
 
-/// Return gUi_FixedTileBlocks[0], treating every no value as zero.
+/// Returns gUi_FixedTileBlocks[0], whatever no is.
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)
     no = 0;

@@ -15,7 +15,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-/// Every three frames, shake the camera diagonally by one pixel.
+/// Shakes the camera diagonally by one pixel every three frames.
 void Func_02003ca8(void) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
   s32 x = *(s16 *)((u8 *)object + 10);

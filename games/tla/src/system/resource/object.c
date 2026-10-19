@@ -5,7 +5,7 @@
 #include "animspr.h"
 #include "io_reg.h"
 
-/// Zero one AnimationEntry; do nothing for NULL.
+/// Zeroes one AnimationEntry; does nothing for NULL.
 void ResourceMetadata_ClearRecord(void *dst) {
   if (dst != 0) {
     volatile u32 zero;

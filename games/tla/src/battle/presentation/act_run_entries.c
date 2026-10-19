@@ -10,8 +10,8 @@
 
 void BattlePresentation_WaitForAdvance(void);
 
-/// Clear highlights, apply each target's effect, and run the events.
-/// With no targets, only wait for message advancement.
+/// Clears the highlights, applies each target's effect and runs the events.
+/// With no targets, only waits for the message to advance.
 /// plan: action and target information.
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 i;

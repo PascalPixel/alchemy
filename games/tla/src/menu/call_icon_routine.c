@@ -13,7 +13,7 @@
 #include "system.h"
 #include "types.h"
 
-/// Load the character's graphics into slot 0.
+/// Loads the character's graphics into slot 0.
 /// menu: calling menu (unused).
 /// unit: character ID.
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {

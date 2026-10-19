@@ -14,7 +14,7 @@ struct IoReg16 {
 
 #define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
 
-/// Increase translucency intensity farther inside.
+/// Makes the scene more translucent the farther inside the object is.
 void Func_02002074(void) {
   s32 blend;
   struct ObjectRuntime *object =

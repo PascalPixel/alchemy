@@ -19,10 +19,10 @@
 
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
-/// Icons are indices into ResourceId_CommandIcons.
-/// Show the selected command's name in a window.
-/// Select centered icons 0x11-0x14 on row 17.
-/// selection: initial selection; return the selected position.
+/// Selects a shop command from icons 0x11-0x14, centred on row 17, showing
+/// the selected command's name in a window. Icons are indices into
+/// ResourceId_CommandIcons.
+/// selection: initial selection. Returns the selected position.
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 ret;
 
@@ -43,7 +43,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   return ret;
 }
 
-/// Select centered icons 0x19-0x1c on row 17.
+/// Selects a sanctum service from icons 0x19-0x1c, centred on row 17.
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 ret;
 
@@ -62,7 +62,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   return ret;
 }
 
-/// Select Yes/No (icons 5 and 6). Cancel returns 1 (No).
+/// Selects Yes or No (icons 5 and 6). Cancel returns 1 (No).
 /// low: row 0 if zero, otherwise row 17.
 /// message: first name message, or 0 for command names.
 /// w: name window width, or 3 if zero.
@@ -93,7 +93,7 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
   return selection;
 }
 
-/// Select Yes/No at (x, y). Cancel returns 1 (No).
+/// Selects Yes or No at (x, y). Cancel returns 1 (No).
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = (s32)MsgCommandYes;
 
@@ -127,8 +127,8 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-/// Select centered icons 0x20 and 0x21 on row 17.
-/// selection: initial selection; return the selected position.
+/// Selects coins or medals from icons 0x20 and 0x21, centred on row 17.
+/// selection: initial selection. Returns the selected position.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 ret;
 

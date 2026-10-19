@@ -17,8 +17,8 @@ struct BattleUnit *UnitGet(s32);
 
 void Animation_ApplyChildArgumentFar(void *, s32);
 
-/// Remove the unit from ally/enemy formations and planned actions.
-/// Return 0 on removal, or -1 if absent from both formations.
+/// Removes the unit from the ally and enemy formations and the planned
+/// actions. Returns 0 on removal, or -1 if absent from both formations.
 /// id: unit ID.
 s32 BattleActor_RemoveFromLists(s32 id) {
   struct BattleWork *work;

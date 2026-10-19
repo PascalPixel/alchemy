@@ -14,16 +14,16 @@
 #include "item.h"
 #include "edition.h"
 
-/// Return the item's definition.
-/// item: item ID; ignore inventory equipment and quantity bits.
+/// Returns the item's definition.
+/// item: item ID; the inventory's equipment and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
   return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 #include "owner_state.h"
 #include "battle_unit.h"
 
-/// Test whether a character can equip the item.
-/// Check equipMask bit classId; return 0 for classId >= 8.
+/// Returns whether a character can equip the item: bit classId of its
+/// equipMask, or 0 for classId 8 and up.
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
   struct OwnerInventoryState *st = UnitGet(unit);
   struct ItemDefinition *def = Item_GetDirect(item);
@@ -35,8 +35,8 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
   return (mask >> st->classId) & 1;
 }
 
-/// Return 1 for non-equipment, or the character's equipment eligibility
-/// otherwise.
+/// Returns 1 for an item that is not equipment, otherwise whether the
+/// character can equip it.
 s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == 0) {
     return 1;

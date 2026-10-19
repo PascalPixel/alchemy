@@ -28,7 +28,7 @@ s32 Func_080c8638(s32 scene, s32 entrance);
 #endif
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 
-/// Open the area-name window, then close it after ninety frames.
+/// Opens the area-name window, which closes after ninety frames.
 void UiTimedNotice_Create(void) {
   struct TimedNoticeWork *work;
   s32 height;

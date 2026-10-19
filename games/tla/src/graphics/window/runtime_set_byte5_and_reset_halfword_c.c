@@ -4,8 +4,8 @@
 #include "types.h"
 #include "render_input.h"
 
-/// Set active to mode and reset the animation step (animStep) to zero.
-/// out: sprite output; do nothing if NULL.
+/// Sets active to mode and resets the animation step (animStep) to zero.
+/// out: sprite output; nothing happens if NULL.
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
   if (out != NULL) {
     out->active = mode;

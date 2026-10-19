@@ -5,7 +5,7 @@
 #include "motobj.h"
 #include "resource.h"
 
-/// Release all graphics owned by the object and mark it as having none.
+/// Releases all graphics the object owns and marks it as having none.
 /// no: object ID.
 void ReleaseBattleObjectRecords(s32 no) {
   struct BattleObj *slot;

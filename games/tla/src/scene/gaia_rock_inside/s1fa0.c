@@ -34,7 +34,7 @@ void Func_02001fa0(void) {
   Call1(Func_02004f8c, 0x1042);
 }
 
-/// Examine the altar.
+/// Examines the altar.
 void Func_02001fd8(void) {
   const u8 *message = MsgCheckedTheAltar;
   const u8 *next;

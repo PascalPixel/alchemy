@@ -28,7 +28,7 @@ static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   Func_02005674(a, b, c, d, e, f);
 }
 
-/// Prepare the current room.
+/// Prepares the current room.
 s32 Func_02003398(void) {
   s16 scene;
   struct PartyState *party;

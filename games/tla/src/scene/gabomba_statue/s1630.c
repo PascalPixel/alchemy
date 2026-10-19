@@ -49,7 +49,7 @@ static __inline__ void Actor_Place(struct ObjectRuntime *object, s32 x, s32 y,
   Func_0200565c(object, x, y, z);
 }
 
-/// Jump down the hole.
+/// Jumps down the hole.
 void Func_02001630(void) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
   s32 x = object->x >> 20;

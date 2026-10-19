@@ -104,7 +104,7 @@ void Field_DispatchTypeHandler(s32 kind) {
 // three editions keep both dispatchers on their scaffold (S4).
 #if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_FRENCH) &&                    \
     (LANGUAGE != LANGUAGE_ITALIAN)
-/// Run the field Psynergy animation the scene names, with no target chosen
+/// Runs the field Psynergy animation the scene names, with no target chosen
 /// yet: each kind runs its effect to the end.
 void BattleFx_Run(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
@@ -204,7 +204,7 @@ void BattleFx_Run(void) {
   }
 }
 
-/// Run the field Psynergy animation the scene names on the target the player
+/// Runs the field Psynergy animation the scene names on the target the player
 /// chose (BattleFxScene.secondObjectId).
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;

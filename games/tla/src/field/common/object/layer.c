@@ -11,7 +11,7 @@ struct ObjectLayerAnimation {
   u8 shadowLayer : 2;
 };
 
-/// Use the same display layer as the party leader.
+/// Gives the object the party leader's display layer.
 s32 Func_080d4ab4(struct ObjectRuntime *object) {
   struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
   s32 layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;

@@ -8,8 +8,8 @@
 #include "battle_party.h"
 #include "battle_display.h"
 
-/// Prepare all units' battle graphics, releasing those of departed units,
-/// and reset everyone's display mode and motion.
+/// Readies every unit's battle graphics, releasing those of departed units,
+/// and resets everyone's display mode and motion.
 void BattleObjPut(void) {
   s16 list[14];
 
@@ -25,7 +25,8 @@ void BattleObjPut(void) {
 
 //--------------------------------------------------------------------------
 
-/// Prepare battle graphics for all units, releasing those of departed units.
+/// Readies every unit's battle graphics, releasing those of departed units,
+/// and keeps their display modes and motions.
 void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 list[14];
 

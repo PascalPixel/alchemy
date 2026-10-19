@@ -5,7 +5,7 @@
 #include "battle_system.h"
 #include "scene.h"
 
-/// Classify an ability's effect for target selection.
+/// Classifies an ability's effect for target selection.
 /// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,
 /// 5 revive, 6 cure all ailments.
 /// act: ability data.

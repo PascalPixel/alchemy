@@ -12,10 +12,10 @@ extern const u32 gData_080f3954[8];
 /// Flags 0x148-0x14f each force one tint, the last set one winning.
 #define FLAG_TINT_FIRST 0x148
 
-/// Tint the field for a Psynergy animation: a tint chosen by the frame counter
-/// (so each cast looks a little different), fixed for some animations, and
-/// forced by the tint flags; then fade towards it over eight frames. The
-/// palettes are copied by Field_BeginColorTransition (palfade.c).
+/// Tints the field for a Psynergy animation: a tint chosen by the frame
+/// counter (so each cast looks a little different), fixed for some
+/// animations, and forced by the tint flags; then fades towards it over eight
+/// frames. The palettes are copied by Field_BeginColorTransition (palfade.c).
 // ☀️'s function of the same name also copies the palettes.
 void BattleEffect_InitializeSharedScene(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;

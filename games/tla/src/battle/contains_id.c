@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// Return 1 if the unit at this formation position is in the list.
+/// Returns 1 if the unit at this formation position is in the list.
 /// list: unit IDs, terminated by 0xff, at most 14 entries.
 /// no: formation position (0-7 allies, 8-13 enemies).
 s32 BattlePlacement_ContainsId(s16 *list, s32 no) {

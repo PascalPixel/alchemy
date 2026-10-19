@@ -16,8 +16,8 @@
 #include "resource.h"
 #include "vram_tab.h"
 
-/// Load the icon into a free VRAM cache slot and draw a 16x16 sprite.
-/// Do nothing if no slot is free.
+/// Loads the icon into a free VRAM cache slot and draws a 16x16 sprite;
+/// does nothing if no slot is free.
 /// input: destination window.
 /// x, y: position within the window, in pixels.
 /// ability: ability index.

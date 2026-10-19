@@ -21,13 +21,13 @@ s32 Encounter_RollTerrain(u32 index, s32 steps) {
   return Encounter_SelectEnemyGroup(table[index], steps);
 }
 
-/// Choose a world-map encounter from the terrain zone and step weight.
+/// Chooses a world-map encounter from the terrain zone and step weight.
 s32 Encounter_RollWorldMap(s32 position, s32 steps) {
   return Encounter_SelectEnemyGroup(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)position), steps);
 }
 
-/// Return the selected group from a fourteen-halfword encounter row.
+/// Returns the selected group from a fourteen-halfword encounter row.
 u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
   u16 *table;
   s32 byteOffset;
@@ -42,7 +42,7 @@ u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
   return *(u16 *)((u8 *)table + byteOffset);
 }
 
-/// Resolve the Djinni table's zone/slot pair to its enemy group.
+/// Resolves the Djinni table's zone and slot pair to its enemy group.
 u16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
   u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 

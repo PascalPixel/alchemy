@@ -5,8 +5,8 @@
 #include "iwram_call.h"
 #include "scene.h"
 
-/// Write consecutive bytes 0-255 followed by 0-223,
-/// then fill the remaining 544 bytes with 0xff (1024 bytes total).
+/// Writes consecutive bytes 0-255 followed by 0-223, then fills the remaining
+/// 544 bytes with 0xff (1024 bytes in all).
 void Graphics_BuildSequentialTileTable(s32 *dst) {
   s32 v;
   s32 n;

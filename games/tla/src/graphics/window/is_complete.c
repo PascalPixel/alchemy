@@ -6,8 +6,8 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-/// Return zero if any of the three channels has a window still writing
-/// (state is zero); otherwise return one.
+/// Returns 0 if any of the three channels has a window still writing (state
+/// is zero), else 1.
 s32 UiWork_IsComplete(void) {
   struct UiChannelSlot *ch;
   s32 i;

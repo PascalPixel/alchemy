@@ -18,7 +18,7 @@ struct ResourceMenuWork {
   s16 previousMode;
 };
 
-/// Redraw the selected method's description in the lower window.
+/// Redraws the selected method's description in the lower window.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = Ram_HeapSlots->menuSelectWork;
   s16 *shown = &state->previousMode;

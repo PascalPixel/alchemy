@@ -18,7 +18,7 @@ void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
 }
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-/// Japanese edition: give each of four characters a Djinni set starting at 7.
+/// Gives each of four characters a set of Djinn from 7 (Japanese edition).
 void Func_02000638(void) {
   s32 djinn;
 

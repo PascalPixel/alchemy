@@ -65,7 +65,7 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   }
 }
 
-/// Make all unit graphics except except translucent (OBJ mode 1).
+/// Makes every unit's graphics but except's translucent (OBJ mode 1).
 /// except: unit ID to leave unchanged.
 void BattlePres_SetOtherActorRecordModes(s32 except) {
   s16 list[14];
@@ -78,7 +78,7 @@ void BattlePres_SetOtherActorRecordModes(s32 except) {
   }
 }
 
-/// Restore normal rendering (OBJ mode 0) for all units.
+/// Restores normal rendering (OBJ mode 0) for all units.
 void BattlePres_ClearAllActorRecordModes(void) {
   s16 list[14];
   s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);

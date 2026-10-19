@@ -11,7 +11,8 @@ void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
-/// Teach the ability, play a sound, show a message, and wait for advancement.
+/// Teaches the ability, plays a sound, shows a message and waits for it to
+/// advance.
 /// unit: character ID (message name 1).
 /// ability: ability ID (message ability 4).
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability) {

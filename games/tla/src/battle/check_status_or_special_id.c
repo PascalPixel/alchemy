@@ -3,7 +3,7 @@
 
 #include "battle_system.h"
 
-/// Return 1 for PP-consuming abilities; Psy Drain returns 1 regardless of PP.
+/// Returns 1 for abilities that cost PP, and for Psy Drain whatever its cost.
 /// abilityId: ability ID.
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;

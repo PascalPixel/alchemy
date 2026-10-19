@@ -5,7 +5,7 @@
 #include "motobj.h"
 #include "battle_display.h"
 
-/// Center the camera on two objects' midpoint in x and z.
+/// Centres the camera on two objects' midpoint in x and z.
 /// a, b: object IDs.
 /// zoom: scale in percent.
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {

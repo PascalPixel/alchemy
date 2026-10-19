@@ -6,7 +6,8 @@
 
 void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 
-/// Set palette brightness. Level 0 transfers the original colors unchanged.
+/// Sets the palette brightness. Level 0 transfers the original colours
+/// unchanged.
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *screen = Ram_HeapSlots->battleWork;
   u16 *palette = screen->palette;

@@ -3,8 +3,9 @@
 
 #include "types.h"
 
-/// Add d to the 16 colors' RGB components in BG palettes 15, 5, and 7, clamping
-/// to 0-31; write palettes 14, 4, and 6. Palette 7 uses -12 instead of d.
+/// Adds d to the RGB components of the 16 colours of BG palettes 15, 5 and 7,
+/// clamped to 0-31, and writes palettes 14, 4 and 6. Palette 7 uses -12
+/// instead of d.
 void Graphics_AdjustPaletteBank(s32 d) {
   s32 n;
   s32 bank;

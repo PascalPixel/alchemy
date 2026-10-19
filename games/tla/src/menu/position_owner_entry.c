@@ -13,8 +13,8 @@
 #include "system.h"
 #include "m7_interfaces.h"
 
-/// Place item i (or 0 if above 15) in a grid with cols columns
-/// of 24x16-pixel cells.
+/// Places item i (or 0 if above 15) in a grid with cols columns of
+/// 24x16-pixel cells.
 /// x0, y0: top left of the grid.
 void ItemMenu_PlaceIcon(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
                        s32 cols) {

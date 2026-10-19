@@ -11,7 +11,7 @@ struct WaveFxScroll {
   u8 delay;
 };
 
-/// Apply BG0 scanline scrolling with HBlank DMA.
+/// Applies BG0 scanline scrolling with HBlank DMA.
 void BattleFx_ArmBg0HBlankDma(void) {
   struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 
@@ -61,7 +61,7 @@ struct WaveFxWork {
   u16 hue; ///< Degrees.
 };
 
-/// Advance hue by four degrees and calculate its color.
+/// Advances the hue by four degrees and calculates its colour.
 void BattleFx_AdvanceHueCycle(void) {
   struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
   s16 r;

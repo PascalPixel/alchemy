@@ -4,7 +4,7 @@
 
 extern u8 gMapCellBuffer[];
 
-/// Replace a cell's collision code and attributes, returning the old value.
+/// Replaces a cell's collision code and attributes, returning the old value.
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u8 *cell;

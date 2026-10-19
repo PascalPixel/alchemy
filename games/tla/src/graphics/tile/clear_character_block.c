@@ -5,10 +5,11 @@
 #include "io_reg.h"
 #include "types.h"
 
-/// Fill 30K bytes of 256-color characters with color 1; clear 128 palette
-/// colors. alt: 0 selects the first half (VRAM 0x06000000, palette colors
-/// 0-127).
-///      1 selects the second (VRAM 0x06008000, colors 128-255, fill color 129).
+/// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
+/// palette colours.
+/// alt: 0 selects the first half (VRAM 0x06000000, palette colours 0-127);
+///      1 selects the second (VRAM 0x06008000, colours 128-255, fill colour
+///      129).
 void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
   u32 v;
   u32 vram;

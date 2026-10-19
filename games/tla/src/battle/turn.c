@@ -29,7 +29,8 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
   Iwram_CopyWords(b, &temporary, sizeof(struct BattleActionRecord));
 }
 
-/// Sort actions by descending priority.
+/// Sorts the actions by descending priority, after raising the priority of
+/// the Djinn with effects 46, 47, 53, 72, 74, 76, 79 and 88 by 10000.
 void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   s32 i;
   s32 j;

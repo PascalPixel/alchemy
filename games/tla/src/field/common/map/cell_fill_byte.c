@@ -14,7 +14,7 @@ struct MapLayers {
 
 extern u8 gMapCellBuffer[];
 
-/// Fill the third byte of each cell in a layer rectangle with value.
+/// Fills the third byte of each cell in a layer rectangle with value.
 /// Layers 3 and above use the shared buffer.
 s32 Map_FillLayerRectByte2(u32 layer, u32 x, u32 y, u32 width, u32 height,
                            s32 value) {

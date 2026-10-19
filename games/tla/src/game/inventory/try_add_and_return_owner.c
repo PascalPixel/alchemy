@@ -6,8 +6,8 @@
 
 s32 Inventory_AddItemFar(s32, s32);
 
-/// Give the item.
-/// Return the character ID on success, or -1 if the inventory is full.
+/// Gives the item. Returns the character ID on success, or -1 if the
+/// inventory is full.
 /// item: item ID.
 /// unused: unused.
 /// owner: recipient character ID.
@@ -17,5 +17,5 @@ s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner) {
   return -1;
 }
 
-/// Do nothing.
+/// Does nothing.
 void Inventory_NoOpCallback(void) {}

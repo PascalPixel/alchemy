@@ -28,7 +28,7 @@ s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
-/// Select a file and load it.
+/// Selects a file and loads it.
 s32 SaveState_SelectAndLoad(s32 mode) {
   s32 result = 0;
   s32 slot;
@@ -62,7 +62,7 @@ s32 SaveProgress_Open(s32 arg0);
 void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 
-/// Select a file and copy it to a free slot.
+/// Selects a file and copies it to a free slot.
 s32 SaveState_CopySlot(void) {
   s32 result = 0;
   s32 value;
@@ -119,7 +119,7 @@ void UiWork_FinalizePendingCore(void);
 #define ERASE_CONFIRM_X 8
 #endif
 
-/// Select a file and erase it.
+/// Selects a file and erases it.
 s32 SaveState_DeleteSelectedSlot(void) {
   s32 result = 0;
   s32 value;

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "scene.h"
 
-/// Copy 288 rows of 40 bytes, reducing each horizontal pair to one byte.
+/// Copies 288 rows of 40 bytes, reducing each horizontal pair to one byte.
 /// The second byte, from the odd column, survives.
 /// stride: source bytes per row; destination uses half as many.
 void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride) {

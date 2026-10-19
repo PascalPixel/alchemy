@@ -3,8 +3,9 @@
 
 #include "types.h"
 
-/// Return 1 if the additional effect applies even when the target is defeated.
-/// Drain effects return damage dealt to the user.
+/// Returns 1 for an effect that still applies when the ability's damage has
+/// just knocked its target out: the drains, which give the damage they dealt
+/// back to the user.
 /// effect: effect ID.
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {

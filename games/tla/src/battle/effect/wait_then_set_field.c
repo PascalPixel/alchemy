@@ -9,7 +9,8 @@
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 s32 BattleFx_RunSparkGroups(void *, s32);
 
-/// Jump the user toward the first target and emit type 4 sparks after 29 frames.
+/// Jumps the user toward the first target and emits type 4 sparks after 29
+/// frames.
 /// effect: effect arguments.
 void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical

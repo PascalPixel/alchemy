@@ -59,7 +59,7 @@ s32 ArcTan2(s32 y, s32 x);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-/// Approach the target by speed; clamp to it on overshoot.
+/// Moves toward the target by speed, stopping on it on overshoot.
 void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
   s32 dx = chase->targetX - chase->x;
   s32 dz = chase->targetZ - chase->z;

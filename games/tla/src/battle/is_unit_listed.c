@@ -4,7 +4,7 @@
 #include "types.h"
 #include "battle_party.h"
 
-/// Return 1 if the unit is in its side's formation.
+/// Returns 1 if the unit is in its side's formation.
 /// id: unit ID (0-7 allies, all others enemies).
 u32 BattleParty_IsUnitListed(u32 id) {
   u16 list[8];

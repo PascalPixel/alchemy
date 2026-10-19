@@ -8,8 +8,8 @@ void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
 void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
 void Func_020022c8(s32 cue);
 
-/// On cell (6, 14): set flag 0xa18, wait until the object finishes falling and
-/// stops (at most 30 frames), then release it.
+/// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
+/// and stops (at most 30 frames), then releases it.
 void Func_02000094(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 i;

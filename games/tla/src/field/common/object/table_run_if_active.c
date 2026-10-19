@@ -16,7 +16,8 @@ s32 UiWork_IsIdleFar(s32 window);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 
-/// If the actor has graphics, use its graphics ID as speaker and end the window.
+/// If the actor has graphics, ends the window of the speaker its graphics ID
+/// names.
 /// id: actor ID.
 void ObjectTable_RunIfActive(s32 id) {
   s32 no;

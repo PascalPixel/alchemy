@@ -5,7 +5,7 @@ extern s32 gData_0200751c;
 
 void WaitFrames(s32 frames);
 
-/// Wait for the values to agree, for at most 300 frames.
+/// Waits for the values to agree, for at most 300 frames.
 void Func_081a17d0(void) {
   s32 frames = 0;
 

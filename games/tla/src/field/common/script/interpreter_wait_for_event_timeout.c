@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 
-/// Poll the common movement target of a field object for up to 600 frames.
+/// Waits up to 600 frames for a field object's movement target to be unset.
 void Script_WaitForEventTimeout(void *fieldObject) {
   s32 waitedFrames;
 

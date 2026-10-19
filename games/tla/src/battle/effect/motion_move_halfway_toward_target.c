@@ -3,7 +3,7 @@
 
 #include "object_runtime.h"
 
-/// Halve the distance to the linked object along x, y, and z.
+/// Halves the distance to the linked object along x, y and z.
 /// obj: object to move.
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
   struct ObjectRuntime *target = obj->linkedObject;

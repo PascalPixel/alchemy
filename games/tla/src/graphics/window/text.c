@@ -24,8 +24,8 @@ struct NumberRow {
   s8 values[4]; ///< Djinn count for each element.
 };
 
-/// Draw four two-digit numbers 24 pixels apart at y = 16.
-/// win: destination; do nothing if zero.
+/// Draws four two-digit numbers 24 pixels apart at y = 16.
+/// win: destination; nothing is drawn if zero.
 void UiText_DrawFourNumbersInRow(struct RenderInput *win,
                                  struct NumberRow *row) {
   s32 i;

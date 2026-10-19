@@ -31,7 +31,7 @@ void ObjectTable_SnapshotFar(void);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
-/// Save to the file specified by index.
+/// Saves the game to slot (at most 2).
 s32 SaveState_SaveToSlot(u32 slot) {
   s32 result = 0;
   s32 found;

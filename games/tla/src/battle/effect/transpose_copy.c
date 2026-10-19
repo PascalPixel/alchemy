@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// Rotate w-by-h src clockwise into h-by-w dst.
+/// Rotates w-by-h src clockwise into h-by-w dst.
 /// The top row of src becomes the rightmost column of dst.
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;

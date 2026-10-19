@@ -21,7 +21,8 @@
 
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 
-/// Open a 6x4 window at the upper left, draw its label, and return its handle.
+/// Opens a 6x4 window at the upper left, draws its label and returns its
+/// handle.
 s32 Link_CreateCountdownLabelWindow(void) {
   s32 win = UiWindow_Create(0, 0, 6, 4, 6);
 

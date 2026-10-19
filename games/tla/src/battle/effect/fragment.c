@@ -41,9 +41,9 @@ extern s32 ArcTan2(s32, s32);
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 
-/// Update the broken item's main object.
-/// If a facing target exists, turn toward it by at most 0x1000 (22.5 degrees),
-/// then emit one fragment particle nearby.
+/// Updates the broken item's main object: with a facing target it turns toward
+/// it by at most 0x1000 (22.5 degrees), then emits one fragment particle
+/// nearby.
 /// src: main object.
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   struct ItemBreakFragmentSource *target;

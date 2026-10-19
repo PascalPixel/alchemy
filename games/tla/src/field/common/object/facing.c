@@ -6,7 +6,8 @@
 
 s32 ArcTan2(s32, s32);
 
-/// If a facing target exists, turn toward it by at most 0x1000 (22.5 degrees).
+/// Turns the object toward its facing target, if it has one, by at most
+/// 0x1000 (22.5 degrees).
 /// obj: object to turn.
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj) {
   s32 turn;

@@ -2488,7 +2488,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "Bola roja procedente de roca volcánica."
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 

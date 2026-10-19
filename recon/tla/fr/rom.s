@@ -3039,12 +3039,6 @@ Func_080ff370:
 	.incbin "baserom.gba", 0x001014c0, 0x00000570
 	.section .rom.00101a9c, "ax"
 	.incbin "baserom.gba", 0x00101a9c, 0x00000b8c
-	.section .rom.001026b0, "ax"
-	.global ItemMenu_DrawEquippedItemNames
-	.type ItemMenu_DrawEquippedItemNames, %function
-	.thumb_func
-ItemMenu_DrawEquippedItemNames:
-	.incbin "baserom.gba", 0x001026b0, 0x000000a4
 	.section .rom.001028a8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001028a8, 0x00000608

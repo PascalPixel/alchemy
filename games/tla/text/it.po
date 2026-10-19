@@ -2485,7 +2485,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "Una sfera ardente di roccia vulcanica"
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 

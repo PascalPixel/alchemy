@@ -2477,7 +2477,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "火山の力をとじこめた あかく光るふしぎな石"
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 

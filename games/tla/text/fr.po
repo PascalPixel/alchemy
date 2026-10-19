@@ -2493,7 +2493,7 @@ msgctxt "message"
 msgid "00606"
 msgstr "Boule magma rougeoyante"
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00607"
 msgstr "???"
 

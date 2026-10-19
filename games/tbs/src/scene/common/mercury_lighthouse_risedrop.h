@@ -1,18 +1,23 @@
+// Mercury Lighthouse and its entrance: leaving a floor through one of its
+// sparkling passages.
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
+#include "songs.h"
 
-static void SceneActor_RunActorZeroHandledMotion(s32 a) {
+// Touch a passage: the leader moves north with the trail of sparks, vanishes,
+// and after half a second the screen fades and the party takes exit.
+static void SceneActor_RunActorZeroHandledMotion(s32 exit) {
   struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
-  Engine_AudioPlayCue(0xe4);
+  Engine_AudioPlayCue(SE_228);
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
   v->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
 #endif
   v->speed = 0x3333;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -21,15 +26,17 @@ static void SceneActor_RunActorZeroHandledMotion(s32 a) {
   Engine_EventWait(30);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(a);
+  Engine_EventRequestExit(exit);
   Engine_EventEnd();
 }
 
-static void MercuryLighthouse_DropLeaderToColumn(s32 a0) {
+// Unused: the leader moves north with the passages' sound and vanishes, then
+// is put at pixel (8 * a0 + 8, 0).
+static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 a0) {
   s32 record;
 
   Engine_EventBegin();
-  Engine_AudioPlayCue(228);
+  Engine_AudioPlayCue(SE_228);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);

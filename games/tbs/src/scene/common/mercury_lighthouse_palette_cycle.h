@@ -11,6 +11,13 @@
 #include "frame.h"
 #include "io_reg.h"
 
+// Mercury Lighthouse and its entrance: the shimmer of the pool once it is
+// woken (flag 0x875), in colours 9 to 15 of background palette 6.
+
+// A scene callback: every fifth frame colour 9's red level steps on by 4, and
+// each of colours 10 to 15 takes the red level of the colour below it (13 to
+// 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
+// stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
   /* FAKEMATCH: volatile restores the form the bytes prove: cur lives at sp+2,
    * stored with strh and loaded again with ldrh for v (a 4-byte frame and r7
@@ -37,6 +44,7 @@ static void MercuryLighthouse_CyclePalette(void) {
   BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | bits;
 }
 
+// While the pool sleeps: colours 9 to 15 of background palette 6 are black.
 static void MercuryLighthouse_ClearPalette(void) {
   u32 i;
 

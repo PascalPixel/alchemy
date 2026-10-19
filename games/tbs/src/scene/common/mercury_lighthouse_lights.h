@@ -16,7 +16,15 @@
 #include "animspr.h"
 #include "map.h"
 #include "io_reg.h"
+#include "flags.h"
 
+// Mercury Lighthouse and its entrance: the lights that carry the leader over
+// the pool (mercury_lighthouse_pillar.h).
+
+// Keep the lights' state st in work slot 35 for the floor's region, the pool's
+// collision code. On an ordinary entrance the leader has no lights. When the
+// party returns to where it was, the column of lights over the leader and the
+// light under them in the pool are made again.
 void MercuryLighthouse_SpawnLightObjects(s32 region,
                                          struct MercuryLighthouseLights *st) {
   struct FieldActor *actor;
@@ -28,7 +36,7 @@ void MercuryLighthouse_SpawnLightObjects(s32 region,
 
   *(struct MercuryLighthouseLights **)Runtime_AllocateBlock(35, sizeof(st)) =
       st;
-  flag = Engine_GameFlagIsSet(0x109);
+  flag = Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     Dma_Fill32(flag, st, sizeof(*st));
     st->terrainCode = region;

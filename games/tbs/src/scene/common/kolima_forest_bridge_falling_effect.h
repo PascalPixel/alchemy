@@ -10,6 +10,10 @@
 #include "global_cells.h"
 #include "types.h"
 #include "field_event.h"
+#include "songs.h"
+
+// Kolima and its forest bridge: the sparkling dust that falls over the party
+// when Tret's curse strikes ("Watch out! It's happening again!").
 
 struct SceneEffectOrigin {
   s32 x;
@@ -24,6 +28,12 @@ s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));
 u32 gFallingEffectState __attribute__((section(".bss")));
 
+// A scene callback: every eighth frame a speck (object 285, its script
+// gFallingEffectScript) starts 160 pixels up at a random point near the map
+// work's origin, with SE_246 every 64 frames. gFallingEffectState shapes the
+// fall: 0 within 128 pixels of the origin; 1 and 2 over a band that widens
+// (by 50 a frame, to 15000 and 30000) as it moves towards the origin; 3
+// drifting on until it is far past, then back to 0.
 void FieldScene_UpdateFallingEffect(void) {
   struct FieldActor *object = NULL;
   struct SceneEffectOrigin *origin;
@@ -56,7 +66,7 @@ void FieldScene_UpdateFallingEffect(void) {
       (object = Engine_ObjectCreate(285, 0, 0, 0)) != 0) {
     origin = ((struct SceneEffectWork *)gMapWork[0])->origin;
     if ((gFrameCount & 63) == 0)
-      Engine_AudioPlayCue(246);
+      Engine_AudioPlayCue(SE_246);
     if (gFallingEffectState != 0)
       x = origin->x +
           (((u32)Engine_RandomNext() * gFallingEffectWidth >> 16) << 8) +

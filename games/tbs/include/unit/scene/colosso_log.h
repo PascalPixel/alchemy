@@ -46,7 +46,7 @@ typedef struct LinkedStageEffect {
 } LinkedStageEffect;
 
 struct SceneEntrance *ColossoLog_GetEntrances(void);
-s32 ColossoLog_ReturnZero(void);
+const struct SceneRegion *ColossoLog_GetRegions(void);
 u32 *ColossoLog_GetExits(void);
 struct ScenePlacement *ColossoLog_GetPlacements(void);
 struct SceneEvent *ColossoLog_GetEvents(void);

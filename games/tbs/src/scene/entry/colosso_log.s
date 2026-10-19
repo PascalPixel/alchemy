@@ -5,4 +5,4 @@
 	overlay_veneer ColossoLog_GetExits
 	overlay_veneer ColossoLog_GetPlacements
 	overlay_veneer ColossoLog_GetEvents
-	overlay_veneer ColossoLog_ReturnZero
+	overlay_veneer ColossoLog_GetRegions

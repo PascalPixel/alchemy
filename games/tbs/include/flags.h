@@ -154,6 +154,17 @@
 #define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
 #define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  // lent by Babi after Colosso
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f // in a barrel
+// Bilibin
+#define FLAG_BILIBIN_JILL_RESCUED 0x848 // Jill, a tree, pulled from the river
+#define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849 // her thanks, a Hard Nut
+
+// Colosso
+#define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3  // a warrior failed his trial
+#define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 // a warrior cleared his trial
+#define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
+#define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
+#define FLAG_COLOSSO_OVER 0x950       // the colosseum is closed until next year
+#define FLAG_COLOSSO_FINALS_DAY 0x962 // the trials are over: the finals day
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
@@ -179,6 +190,10 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_15 0x215 // Colosso log course: the second rock settled
+#define FLAG_SCENE_TEMP_16 0x216 // Colosso log course: the third rock settled
+#define FLAG_SCENE_TEMP_34 0x234 // Colosseum waiting room: stepped to the line
+#define FLAG_SCENE_TEMP_35 0x235 // Colosseum waiting room: asked at the line
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 

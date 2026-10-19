@@ -4,15 +4,17 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetPrimaryTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetSecondaryTable(void);
-s32 BilibinInteriors_PreparePlacements(void);
-u8 *SceneData_GetTertiaryTable(void);
-s32 FieldScene_SetupActor27OnEntry(void);
-extern struct SceneEntrance gBilibinInteriors_PrimaryTable[];
-extern u32 gBilibinInteriors_SecondaryTable[];
+struct SceneRegion;
+
+const struct SceneEntrance *BilibinInteriors_GetEntrances(void);
+const struct SceneRegion *BilibinInteriors_GetRegions(void);
+const u32 *BilibinInteriors_GetExits(void);
+const struct ScenePlacement *BilibinInteriors_GetPlacements(void);
+const struct SceneEvent *BilibinInteriors_GetEvents(void);
+s32 BilibinInteriors_Initialize(void);
+extern struct SceneEntrance gBilibinInteriorsEntrances[];
+extern u32 gBilibinInteriorsExits[];
 extern struct ScenePlacement gBilibinInteriorsPlacements[];
-extern struct SceneEvent gBilibinInteriors_TertiaryTable[];
+extern struct SceneEvent gBilibinInteriorsEvents[];
 
 #endif

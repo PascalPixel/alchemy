@@ -31,6 +31,7 @@
 #include "objcmd.h"
 #include "facing_object.h"
 #include "field_obj.h"
+#include "songs.h"
 
 // Forward declarations.
 static void Bilibin_RestoreVillageActors(void);
@@ -38,21 +39,41 @@ static void Bilibin_UpdateVillageBlockCells(void);
 static void Bilibin_RestoreRiverActors(void);
 static void Bilibin_UpdateRiverBlockCells(void);
 static void Bilibin_RestoreRaisedEntrance(void);
-static void Bilibin_UpdateCornerSpawn(void);
-static void Bilibin_SpawnTransientCornerEffect(struct FieldActor *actor);
+static void Bilibin_UpdateRiverEffect(void);
+static void Bilibin_SpawnRiverEffect(struct FieldActor *actor);
 static void Bilibin_UpdateRaisedBlockCells(void);
+
+// Actors of the village (Bilibin1), numbered from its placement rows.
+enum {
+  TREE_MAN = 9,        // the cursed traveler, a tree at the village entrance
+  VILLAGE_BLOCK = 20,  // the block moved with Move
+  FORMER_TREE_MAN = 21 // the same man once the curse is lifted
+};
+
+// Actors of the river south of the village (Bilibin3).
+enum {
+  RIVER_BLOCK = 8,
+  JILL_TREE = 11, // Jill as a tree, about to be swept downstream
+  // Jill's two friends: with her they were the "Gang of Three".
+  GANG_MEMBER_WEST = 12,
+  GANG_MEMBER_EAST = 13,
+  JILL = 14
+};
+
+// Actors of the warehouse approach (Bilibin2).
+enum { RAISED_BLOCK = 8, GUST = 9 };
 
 struct SpawnCounter {
   s16 frames;
 };
 
-struct SpawnCounter gCornerSpawnCounter;
+struct SpawnCounter gBilibin_RiverEffectTimer;
 
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 // Selects the entrance positions for the current part of Bilibin.
-const struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin1) {
@@ -68,7 +89,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 // Only the raised approach supplies exit-region boxes.
-const struct SceneRegion *Scene_GetRegions(void) {
+const struct SceneRegion *Bilibin_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_Bilibin2) {
     return (const struct SceneRegion *)gBilibinRegions2;
   }
@@ -76,15 +97,13 @@ const struct SceneRegion *Scene_GetRegions(void) {
 }
 
 // Returns the packed exit destinations shared by the three maps.
-u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
+const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
-// Adds the Jupiter Djinni found beyond the warehouse approach.
-static void Bilibin_RecruitJupiterDjinni(void) {
-  Djinn_JoinParty(9, ELEMENT_JUPITER, 0);
-}
+// Gust, Jupiter Djinni 0, joins the party on the warehouse approach.
+static void Event_GustJoins(void) { Djinn_JoinParty(GUST, ELEMENT_JUPITER, 0); }
 
 // Selects the village, river or raised-approach actors.
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ScenePlacement *Bilibin_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin1) {
@@ -100,7 +119,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 // Reads the two-part description of the deep well.
-static void Bilibin_InspectWell(void) {
+static void Event_InspectWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgBilibinBottomNotVisibleLooksVery, 1);
@@ -108,7 +127,7 @@ static void Bilibin_InspectWell(void) {
 }
 
 // Selects the dialogue, searches and interactions for the current map.
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct SceneEvent *Bilibin_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin1) {
@@ -124,41 +143,41 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 // Reads the sign restricting entry without permission.
-static void Bilibin_ReadRestrictedAreaSign(void) {
+static void Event_ReadRestrictedAreaSign(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinAreaOffLimitsThoseWithout, 1);
   Engine_EventEnd();
 }
 
 // Reads McCoy's warning on the hidden warehouse.
-static void Bilibin_ReadWarehouseSign(void) {
+static void Event_ReadWarehouseSign(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
   Engine_EventEnd();
 }
 
 // Describes the human shape shared by the river's transformed villagers.
-static void Bilibin_InspectHumanShapedTree(void) {
+static void Event_InspectHumanShapedTree(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinThereTreeLooksLikePerson, 1);
   Engine_EventEnd();
 }
 
-// Examines the tree near the village entrance, with a later line on repeat
-// visits.
-static void Bilibin_ExamineTreeResemblingMan(void) {
+// The tree at the village entrance almost looks like a man; looked at again,
+// like a living person. 0x301 remembers the first look while in the village.
+static void Event_ExamineTreeMan(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinItsTreeButAlmostLooks);
   if (GameFlag_IsSet(0x301) != 0) {
     gEventWork->message++;
   }
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(TREE_MAN, 0);
   GameFlag_Set(0x301);
   Engine_EventEnd();
 }
 
 // Asks whether the party saw the strange tree at the entrance.
-static void Bilibin_AskAboutEntranceTree(void) {
+static void Event_AskAboutEntranceTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDidSeeTreeAtEntrance);
   Engine_EventAskYesNo(12, 0);
@@ -166,23 +185,24 @@ static void Bilibin_AskAboutEntranceTree(void) {
 }
 
 // Asks whether the party tried the route southeast from Bilibin.
-static void Bilibin_AskAboutSoutheastRoute(void) {
+static void Event_AskAboutSoutheastRoute(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveTriedHeadingSoutheastFrom);
   Engine_EventAskYesNo(14, 0);
   Engine_EventEnd();
 }
 
-// Asks the party to believe the speaker was turned into a tree.
-static void Bilibin_AskAboutTreeTransformation(void) {
+// Once the curse is lifted, the man who was the entrance tree asks whether the
+// party can believe it.
+static void Event_AskAboutBeingATree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasTurnedIntoTreeFor);
-  Engine_EventAskYesNo(21, 0);
+  Engine_EventAskYesNo(FORMER_TREE_MAN, 0);
   Engine_EventEnd();
 }
 
 // Asks whether the party are the three warriors who broke the curse.
-static void Bilibin_AskAboutCurseBreakers(void) {
+static void Event_AskAboutCurseBreakers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinCurseWasBrokenThanksEfforts);
   Engine_EventAskYesNo(16, 0);
@@ -190,16 +210,17 @@ static void Bilibin_AskAboutCurseBreakers(void) {
 }
 
 // Asks whether the party has visited Imil to the north.
-static void Bilibin_AskAboutImil(void) {
+static void Event_AskAboutImil(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveEverBeenVillageImil);
   Engine_EventAskYesNo(18, 0);
   Engine_EventEnd();
 }
 
-// Stops wandering actors, animates the touched entrance and walks through its
-// exit.
-static void Bilibin_AnimateExitCells(void) {
+// Walking into a door: everyone stops, the door opens and the leader walks
+// through it. Doors 3 to 8 lead into the houses and shops, door 9 into the
+// Sanctum, whose door sounds and is stepped through differently.
+static void Event_OpenDoorAndLeave(void) {
 
   u32 actorSlot;
   struct FieldActor *actor;
@@ -222,17 +243,17 @@ static void Bilibin_AnimateExitCells(void) {
   }
   exitIndex = (((u16)work->touchedTrigger - 3) << 16) >> 16;
   if (exitIndex == 6) {
-    Event_PlayCue(188);
+    Event_PlayCue(SE_188);
   } else {
-    Engine_AudioPlayCue(158);
+    Engine_AudioPlayCue(SE_DOOR_OPEN);
   }
-  // Each touched trigger selects one cell origin and animation script.
+  // Each door has its cell and the steps that draw it opening.
   originOffset = exitIndex << 2;
-  originBytes = (u8 *)gVillage_DoorCellOrigins;
+  originBytes = (u8 *)gBilibin_DoorCells;
   column = *(s16 *)(originBytes + originOffset);
   rowOffset = originOffset + 2;
   row = *(s16 *)(originBytes + rowOffset);
-  Engine_MapAnimateCells(gVillage_DoorCellSteps[exitIndex], column, row);
+  Engine_MapAnimateCells(gBilibin_DoorSteps[exitIndex], column, row);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Object_GetById(0)->motionFlags = 0;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -252,168 +273,173 @@ static void Bilibin_AnimateExitCells(void) {
   Engine_EventEnd();
 }
 
-// Pulls the stranded villager clear of the river in three stages.
-static void Bilibin_RescueVillagerFromRiver(void) {
+// Move on Jill, a tree caught in the river: from cell column 6, by the bank,
+// the leader pulls her ashore in three tugs, and she thanks the party for
+// saving her from being washed downstream.
+static void Event_PullJillFromRiver(void) {
   struct FieldActor *leader;
-  struct FieldActor *rescueTarget;
+  struct FieldActor *jillTree;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  rescueTarget = Object_GetById(11);
-  if ((rescueTarget->x.fixed >> 20) == 6) {
+  jillTree = Object_GetById(JILL_TREE);
+  if ((jillTree->x.fixed >> 20) == 6) {
     Engine_EventBegin();
-    Engine_ActorSetSpritePriority(11, 1);
+    Engine_ActorSetSpritePriority(JILL_TREE, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-    Actor_SetSpeed(11, 0x3333, 0x1999);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+    Actor_SetSpeed(JILL_TREE, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    rescueTarget->motionFlags = 0;
-    // Alternate the pulling animation with short moves along the bank.
+    jillTree->motionFlags = 0;
+    // Each tug: the leader faces about, strains and draws her in, then steps
+    // on.
     leader->scaleX = -0x10000;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-    Actor_MoveToAndWait(11, 111, 196);
+    Actor_MoveToAndWait(JILL_TREE, 111, 196);
     leader->scaleX = 0x10000;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
     Engine_EventWait(20);
     leader->scaleX = -0x10000;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-    Actor_MoveToAndWait(11, 121, 190);
+    Actor_MoveToAndWait(JILL_TREE, 121, 190);
     leader->scaleX = 0x10000;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
     Engine_EventWait(20);
     leader->scaleX = -0x10000;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-    Actor_MoveToAndWait(11, 132, 186);
+    Actor_MoveToAndWait(JILL_TREE, 132, 186);
     leader->scaleX = 0x10000;
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-    Engine_ActorSetSpritePriority(11, 2);
-    RunSceneTransitionEffect(0, 11);
+    Engine_ActorSetSpritePriority(JILL_TREE, 2);
+    RunSceneTransitionEffect(0, JILL_TREE);
     Engine_TaskWait(10);
-    // Restore the rescued villager's presentation before the thank-you line.
     Engine_EventSetMessage(MsgBilibinThankSavedMeFromBeing);
-    Event_ShowMessage(11, 0);
+    Event_ShowMessage(JILL_TREE, 0);
     Engine_PsynergyCancel();
     Engine_TaskWait(10);
-    GameFlag_Set(0x848);
+    GameFlag_Set(FLAG_BILIBIN_JILL_RESCUED);
     Engine_EventEnd();
   }
 }
 
 // Checks the blocked direction before allowing another movement step.
-static void Bilibin_CheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
+static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-// After the rescue, Jill thanks the party with a Hard Nut.
-static void Bilibin_ReceiveJillsHardNut(void) {
+// Back on the riverbank once the curse is lifted, Jill and her friends
+// recognize the party: "Remember me? I was that tree!" She gives the leader a
+// Hard Nut in thanks.
+static void Event_JillGivesHardNut(void) {
   struct FieldActor *leader;
-  struct FieldActor *nearbyVillager;
+  struct FieldActor *westMember;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
-      GameFlag_IsSet(0x848) == 0)
+      GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) == 0)
     return;
 
   Engine_EventBegin();
-  // Bring the three villagers and the leader into the reward conversation.
-  Camera_SetSpeed(0x26666, 0x4ccc);
-  Camera_MoveTo(0x1070000, -1, 0xad0000, 1);
+  // The camera moves over to the three; the friend nearer the leader speaks
+  // first.
+  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  Camera_MoveTo(PIXELS(263), -1, PIXELS(173), 1);
   Engine_CameraWaitForMove();
-  nearbyVillager = Actor_Get(12);
-  if (nearbyVillager->x.fixed > leader->x.fixed) {
-    Actor_FaceDirection(13, FACING_SOUTH + FACING_STEP, 20);
-    Actor_ShowEmote(13, EMOTE_IN_FRONT, 20);
+  westMember = Actor_Get(GANG_MEMBER_WEST);
+  if (westMember->x.fixed > leader->x.fixed) {
+    Actor_FaceDirection(GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 20);
+    Actor_ShowEmote(GANG_MEMBER_EAST, EMOTE_IN_FRONT, 20);
     Engine_EventSetMessage(MsgBilibinYoureGuy);
-    Event_ShowMessageAndWait(13, 0, 10);
-    Actor_ShowEmote(12, EMOTE_IN_FRONT, 0);
+    Event_ShowMessageAndWait(GANG_MEMBER_EAST, 0, 10);
+    Actor_ShowEmote(GANG_MEMBER_WEST, EMOTE_IN_FRONT, 0);
   } else {
-    Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 20);
-    Actor_ShowEmote(12, EMOTE_IN_FRONT, 20);
+    Actor_FaceDirection(GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP, 20);
+    Actor_ShowEmote(GANG_MEMBER_WEST, EMOTE_IN_FRONT, 20);
     Engine_EventSetMessage(MsgBilibinYoureGuy);
-    Event_ShowMessageAndWait(12, 0, 10);
-    Actor_ShowEmote(13, EMOTE_IN_FRONT, 0);
+    Event_ShowMessageAndWait(GANG_MEMBER_WEST, 0, 10);
+    Actor_ShowEmote(GANG_MEMBER_EAST, EMOTE_IN_FRONT, 0);
   }
-  Actor_ShowEmote(14, EMOTE_IN_FRONT, 0);
-  Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(13, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ShowEmote(JILL, EMOTE_IN_FRONT, 0);
+  Actor_FaceDirection(JILL, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(GANG_MEMBER_WEST, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(GANG_MEMBER_EAST, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-  Engine_ActorRunRepeatedMotion(13, 2);
-  Event_ShowMessageAndWait(13, 0, 10);
-  Actor_FaceDirection(13, FACING_EAST, 0);
-  Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_FaceDirection(12, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(12, ANIM_NOD);
-  Actor_SetAttachedEffect(14, 0x102);
+  Engine_ActorRunRepeatedMotion(GANG_MEMBER_EAST, 2);
+  Event_ShowMessageAndWait(GANG_MEMBER_EAST, 0, 10);
+  Actor_FaceDirection(GANG_MEMBER_EAST, FACING_EAST, 0);
+  Actor_FaceDirection(JILL, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(GANG_MEMBER_WEST, FACING_WEST, 20);
+  Engine_ActorSetAnimationAndWait(GANG_MEMBER_WEST, ANIM_NOD);
+  Actor_SetAttachedEffect(JILL, 0x102);
   Engine_EventWait(40);
-  Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(13, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ActorRunRepeatedMotion(14, 1);
-  Event_ShowMessageAndWait(14, 0, 10);
-  Engine_ActorSetAnimation(12, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(13, ANIM_NOD);
+  Actor_FaceDirection(JILL, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(GANG_MEMBER_WEST, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(GANG_MEMBER_EAST, FACING_SOUTHEAST + FACING_STEP, 10);
+  Engine_ActorRunRepeatedMotion(JILL, 1);
+  Event_ShowMessageAndWait(JILL, 0, 10);
+  Engine_ActorSetAnimation(GANG_MEMBER_WEST, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GANG_MEMBER_EAST, ANIM_NOD);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
-  Actor_SetSpeed(14, 0x9999, 0x4ccc);
-  Object_GetById(14)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(14, 266, 172);
+  Event_ShowMessage(JILL, 0);
+  Actor_SetSpeed(JILL, PIXELS(3) / 5, PIXELS(3) / 10);
+  Object_GetById(JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(JILL, 266, 172);
   Engine_EventWait(1);
-  Object_GetById(14)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(JILL)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(14, ANIM_NOD);
-  Event_ShowMessageAndWait(14, 0, 10);
+  Engine_ActorSetAnimationAndWait(JILL, ANIM_NOD);
+  Event_ShowMessageAndWait(JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   Engine_MessageShowCentered(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gEventWork->message++;
   Engine_ItemShowFound(ITEM_HARD_NUT, 3);
   Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
-  Engine_ActorSetAnimationAndWait(14, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JILL, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_SetSpeed(14, 0x10000, 0x8000);
-  Object_GetById(14)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(14, 262, 156);
+  Actor_SetSpeed(JILL, PIXELS(1), PIXELS(1) / 2);
+  Object_GetById(JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(JILL, 262, 156);
   Engine_EventWait(1);
   {
-    struct FieldActor *jill = Actor_Get(14);
+    struct FieldActor *jill = Actor_Get(JILL);
     u8 steeringFlags = jill->steeringFlags | ACTOR_FACES_MOTION;
 
     jill->steeringFlags = steeringFlags;
   }
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(12, 2);
-  Event_ShowMessageAndWait(12, 0, 10);
-  Engine_ActorSetAnimation(12, ANIM_NOD);
-  Engine_ActorSetAnimation(13, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(14, ANIM_NOD);
-  // Let the villagers resume their shared facing script after the gift.
-  FieldObject_SetTargetAndCallback(12,
+  Engine_ActorRunRepeatedMotion(GANG_MEMBER_WEST, 2);
+  Event_ShowMessageAndWait(GANG_MEMBER_WEST, 0, 10);
+  Engine_ActorSetAnimation(GANG_MEMBER_WEST, ANIM_NOD);
+  Engine_ActorSetAnimation(GANG_MEMBER_EAST, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JILL, ANIM_NOD);
+  // From now on the three turn to face the leader wherever he goes.
+  FieldObject_SetTargetAndCallback(GANG_MEMBER_WEST,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                   gVillage_VillagerActions);
-  FieldObject_SetTargetAndCallback(13,
+                                   gBilibin_FaceLeaderScript);
+  FieldObject_SetTargetAndCallback(GANG_MEMBER_EAST,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                   gVillage_VillagerActions);
-  FieldObject_SetTargetAndCallback(14,
+                                   gBilibin_FaceLeaderScript);
+  FieldObject_SetTargetAndCallback(JILL,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                   gVillage_VillagerActions);
-  GameFlag_Set(0x849);
+                                   gBilibin_FaceLeaderScript);
+  GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
   Engine_EventEnd();
 }
 
 // Restores the current map's actors, collision cells and opening transition.
-s32 Scene_Initialize(void) {
+s32 Bilibin_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.scene == (s32)&SceneId_Bilibin1) {
     Bilibin_RestoreVillageActors();
   } else if (gGameState.scene == (s32)&SceneId_Bilibin3) {
     Bilibin_RestoreRiverActors();
-    FieldScheduler_AddCallback(Bilibin_UpdateCornerSpawn, 0xc80);
+    FieldScheduler_AddCallback(Bilibin_UpdateRiverEffect, 0xc80);
   } else if (gGameState.scene == (s32)&SceneId_Bilibin2) {
     Bilibin_RestoreRaisedEntrance();
   }
@@ -427,13 +453,13 @@ static void Bilibin_RestoreVillageActors(void) {
   s16 entrance;
 
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorSetPosition(TREE_MAN, 0, 0);
     Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(15, FACING_SOUTH + FACING_STEP, 0);
   } else {
-    actor = Actor_Get(9);
+    actor = Actor_Get(TREE_MAN);
     Engine_ActorSetSpriteFlags(actor, 0);
-    Actor_SetPosition(21, 0, 0);
+    Actor_SetPosition(FORMER_TREE_MAN, 0, 0);
   }
   // Apply arrival-specific changes after restoring the population.
   actor = Actor_Get(8);
@@ -444,10 +470,10 @@ static void Bilibin_RestoreVillageActors(void) {
   } else if (entrance == 9) {
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
   }
-  if (GameFlag_IsSet(0x109) == 0) {
+  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     entrance = gGameState.entrance;
     if (entrance == 11) {
-      Actor_SetPosition(20, PIXELS(248), PIXELS(216));
+      Actor_SetPosition(VILLAGE_BLOCK, PIXELS(248), PIXELS(216));
     }
   }
   Bilibin_UpdateVillageBlockCells();
@@ -467,7 +493,7 @@ static void Bilibin_UpdateVillageBlockCells(void) {
   s32 blockRow;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  block = Object_GetById(20);
+  block = Object_GetById(VILLAGE_BLOCK);
   blockRow = block->z.fixed >> 20;
   leaderColumn = (leader->x.fixed >> 20);
   leaderRow = (leader->z.fixed >> 20);
@@ -485,7 +511,7 @@ static void Bilibin_UpdateVillageBlockCells(void) {
     if (leaderRow == 13) {
       Engine_EventBegin();
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 20);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
       Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
       if (blockRow == 13) {
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);
@@ -499,71 +525,74 @@ static void Bilibin_UpdateVillageBlockCells(void) {
   }
 }
 
-// Restores the river actors and crossing after movement, rescue or reward
-// events.
+// Sets up the river: before the curse is lifted, Jill and her friends are
+// trees here; afterwards they are people again on the bank.
 static void Bilibin_RestoreRiverActors(void) {
-  struct FieldActor *rescueTarget;
+  struct FieldActor *jillTree;
   s32 populationState;
-  struct FieldActor *riverActor;
+  struct FieldActor *fallenTree;
   struct FieldActor *actor;
   s32 crossingState;
 
-  riverActor = Object_GetById(10);
-  rescueTarget = Object_GetById(11);
-  actor = Actor_Get(8);
+  fallenTree = Object_GetById(10);
+  jillTree = Object_GetById(JILL_TREE);
+  actor = Actor_Get(RIVER_BLOCK);
   Engine_ActorSetSpriteFlags(actor, 0);
   populationState = GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED);
   if (populationState != 0) {
-    // Hide the old actor arrangement and restore the crossing's map cells.
+    // The trees are gone; the bank is mended where one had fallen.
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(11, 0, 0);
+    Actor_SetPosition(JILL_TREE, 0, 0);
     Map_CopyCellsTo(56, 15, 40, 15, 1, 2);
     Map_CopyCellAttributes(26, 15, 1, 3, 10, 15);
-    if (GameFlag_IsSet(0x849) == 0) {
-      if (GameFlag_IsSet(0x848) == 0) {
-        Engine_ActorSetPosition(14, 0, 0);
-        Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
-        Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
+    if (GameFlag_IsSet(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
+      if (GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) == 0) {
+        Engine_ActorSetPosition(JILL, 0, 0);
+        Actor_FaceDirection(GANG_MEMBER_WEST, FACING_NORTH + FACING_STEP, 0);
+        Actor_FaceDirection(GANG_MEMBER_EAST, FACING_NORTHWEST + FACING_STEP,
+                            0);
       }
     } else {
-      Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
-      Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(GANG_MEMBER_WEST, FACING_NORTH + FACING_STEP, 0);
+      Actor_FaceDirection(GANG_MEMBER_EAST, FACING_NORTHWEST + FACING_STEP, 0);
     }
   } else {
-    Actor_SetPosition(12, 0, 0);
-    Actor_SetPosition(13, 0, 0);
-    Actor_SetPosition(14, 0, 0);
+    Actor_SetPosition(GANG_MEMBER_WEST, 0, 0);
+    Actor_SetPosition(GANG_MEMBER_EAST, 0, 0);
+    Actor_SetPosition(JILL, 0, 0);
     actor = Actor_Get(9);
     Engine_ActorSetSpriteFlags(actor, 0);
     actor = Actor_Get(10);
     Engine_ActorSetSpriteFlags(actor, 0);
-    actor = Actor_Get(11);
+    actor = Actor_Get(JILL_TREE);
     Engine_ActorSetSpriteFlags(actor, 0);
-    riverActor->motionFlags = populationState;
-    // Restore the moved crossing and the villager's remembered rescue position.
+    fallenTree->motionFlags = populationState;
+    // Once 0x881 is set ("They crossed the river after pushing us down"), a
+    // tree lies on its side at the crossing and Jill is in the water, or on the
+    // bank where she was pulled ashore.
     crossingState = GameFlag_IsSet(0x881);
     if (crossingState != 0) {
       Object_GetById(9)->collisionFlags |= 16;
       Object_GetById(16)->collisionFlags |= 16;
-      Object_GetById(11)->collisionFlags |= 16;
+      Object_GetById(JILL_TREE)->collisionFlags |= 16;
       Actor_SetPosition(16, PIXELS(142), PIXELS(156));
       actor = Actor_Get(16);
       Engine_ActorSetSpriteFlags(actor, 0);
       Actor_SetPosition(10, PIXELS(142), PIXELS(156));
-      riverActor->sprite->rotation = 0x4000;
-      riverActor->y.fixed += -0x80000;
-      if (GameFlag_IsSet(0x848) != 0) {
-        Actor_SetPosition(11, PIXELS(132), PIXELS(186));
+      fallenTree->sprite->rotation = 0x4000;
+      fallenTree->y.fixed += -0x80000;
+      if (GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) != 0) {
+        Actor_SetPosition(JILL_TREE, PIXELS(132), PIXELS(186));
       } else {
-        Actor_SetPosition(11, PIXELS(88), PIXELS(196));
-        Engine_ActorSetSpritePriority(11, 3);
-        rescueTarget->collisionFlags |= 4;
+        Actor_SetPosition(JILL_TREE, PIXELS(88), PIXELS(196));
+        Engine_ActorSetSpritePriority(JILL_TREE, 3);
+        jillTree->collisionFlags |= 4;
       }
     } else {
-      riverActor->y.fixed = PIXELS(32);
-      rescueTarget->motionFlags = crossingState;
-      rescueTarget->y.fixed = PIXELS(48);
+      fallenTree->y.fixed = PIXELS(32);
+      jillTree->motionFlags = crossingState;
+      jillTree->y.fixed = PIXELS(48);
     }
   }
   Bilibin_UpdateRiverBlockCells();
@@ -576,14 +605,14 @@ static void Bilibin_UpdateRiverBlockCells(void) {
   s32 blockRow;
   u32 cellOffset;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(RIVER_BLOCK);
   blockColumn = actor->x.fixed >> 20;
   blockRow = actor->z.fixed >> 20;
 
   // The packed table stores ten byte-sized column/row pairs.
   for (cellOffset = 0; cellOffset < 20; cellOffset += 2) {
-    s32 column = ((u8 *)gVillage_RepaintCells)[cellOffset];
-    s32 row = ((u8 *)gVillage_RepaintCells)[cellOffset + 1];
+    s32 column = ((u8 *)gBilibin_RiverBlockCells)[cellOffset];
+    s32 row = ((u8 *)gBilibin_RiverBlockCells)[cellOffset + 1];
     Map_CopyCellAttributes(1, 0, 1, 1, column, row);
   }
 
@@ -597,7 +626,7 @@ static void Bilibin_RestoreRaisedEntrance(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Bilibin_UpdateRaisedBlockCells();
   if (gGameState.entrance == 3 || gGameState.entrance == 4) {
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
       leader->y.fixed = PIXELS(16);
@@ -612,15 +641,15 @@ static void Bilibin_RestoreRaisedEntrance(void) {
 // Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
-// Pushes the faced block one cell, moves the leader with it and refreshes
-// collision.
-static void Bilibin_PushFacedBlock(void) {
+// Pushing a block: it slides one cell ahead with the leader behind it, if the
+// cell is free.
+static void Event_PushBlock(void) {
   struct FieldActor *leader;
   struct FieldActor *block;
   u32 direction;
   union FieldCoordinate destination[3];
 
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   block = SceneActor_FindActorAtCell(
       (leader->x.part.pixel + (gBilibin_FacingCellSteps[direction] >> 16)) >> 4,
@@ -633,16 +662,16 @@ static void Bilibin_PushFacedBlock(void) {
     destination[2].fixed =
         block->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(block, destination) <= 0) {
-      // Commit the block and leader together, then restore the standing mode.
+      // The leader leans on the block, then both move together.
       Object_SetMode(leader, 8);
       Engine_TaskWait(15);
-      Engine_AudioPlayCue(185);
-      block->speed = 0x3333;
-      block->acceleration = 0x3333;
+      Engine_AudioPlayCue(SE_185);
+      block->speed = PIXELS(1) / 5;
+      block->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(block, destination[0].fixed,
                                destination[1].fixed, destination[2].fixed);
-      leader->speed = 0x3333;
-      leader->acceleration = 0x3333;
+      leader->speed = PIXELS(1) / 5;
+      leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination[0].fixed,
                                destination[1].fixed, destination[2].fixed);
       FieldObject_WaitForMove(block);
@@ -662,27 +691,26 @@ static void Bilibin_PushFacedBlock(void) {
   }
 }
 
-// Spawns a corner effect every thirty frames while the selected actor is low
-// enough.
-static void Bilibin_UpdateCornerSpawn(void) {
+// Runs every frame in the river: while the controlled actor is west of x 142
+// and below 8 pixels high, an effect appears at it every thirty frames.
+static void Bilibin_UpdateRiverEffect(void) {
   struct FieldActor *actor;
 
   actor = Object_GetById(gGameState.selectedActor);
   if (actor->x.fixed < PIXELS(142)) {
     if (actor->y.fixed < PIXELS(8)) {
-      if (gCornerSpawnCounter.frames == 0)
-        Bilibin_SpawnTransientCornerEffect(actor);
-      if (++gCornerSpawnCounter.frames == 30)
-        gCornerSpawnCounter.frames = 0;
+      if (gBilibin_RiverEffectTimer.frames == 0)
+        Bilibin_SpawnRiverEffect(actor);
+      if (++gBilibin_RiverEffectTimer.frames == 30)
+        gBilibin_RiverEffectTimer.frames = 0;
     } else {
-      gCornerSpawnCounter.frames = 0;
+      gBilibin_RiverEffectTimer.frames = 0;
     }
   }
 }
 
-// Spawns the blended corner effect, whose script deletes it after thirty
-// frames.
-static void Bilibin_SpawnTransientCornerEffect(struct FieldActor *actor) {
+// Spawns the semi-transparent effect, which frees itself after thirty frames.
+static void Bilibin_SpawnRiverEffect(struct FieldActor *actor) {
   struct FieldActor *effect;
   struct AnimationObject *sprite;
 
@@ -692,7 +720,7 @@ static void Bilibin_SpawnTransientCornerEffect(struct FieldActor *actor) {
     return;
 
   sprite = effect->sprite;
-  Engine_ObjectSetScript(effect, gVillage_SpawnScript);
+  Engine_ObjectSetScript(effect, gBilibin_TransientEffectScript);
   effect->motionFlags = 0;
   effect->terrainId = 1;
   effect->priorityFlags = 2;
@@ -709,7 +737,7 @@ static void Bilibin_SpawnTransientCornerEffect(struct FieldActor *actor) {
 static void Bilibin_UpdateRaisedBlockCells(void) {
   struct FieldActor *block;
 
-  block = Actor_Get(8);
+  block = Actor_Get(RAISED_BLOCK);
   if (block == NULL)
     return;
 
@@ -724,7 +752,7 @@ static void Bilibin_UpdateRaisedBlockCells(void) {
     Map_CopyCellAttributes(1, 0, 1, 1, 14, 9);
 }
 
-s32 gVillage_VillagerActions[] = {
+s32 gBilibin_FaceLeaderScript[] = {
     SC_CALL(OverlayObject_UpdateFacingTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -773,7 +801,7 @@ s16 gBilibinRegions2[] = {
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gPlacement_Messages[] = {
+u32 gBilibinExits[] = {
     SCENE_EXITS(30),
     SCENE_EXIT(1, 2, 5),
     SCENE_EXIT(2, 34, 1),
@@ -858,7 +886,7 @@ struct ScenePlacement gBilibinPlacements3[] = {
 struct ScenePlacement gBilibinPlacements2[] = {
     { 0xf3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x5d, 0x6c, ACTOR_STAND,
+    { 0x5d, FLAG_DJINNI_0 + ELEMENT_JUPITER * 20, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -872,37 +900,37 @@ struct SceneEvent gBilibinEvents1[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_ExamineTreeResemblingMan) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AskAboutTreeTransformation) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
+    { EVENT_TALK, TREE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExamineTreeMan) },
+    { EVENT_TALK, FORMER_TREE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutBeingATree) },
     { EVENT_TALK, 10, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinWelcomeToBilibinWellForgetThat) },
     { EVENT_TALK, 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIHearALargeGroupCrossed) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinIfYoureTalkingAboutTheTravelers) },
-    { EVENT_TALK, 12, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Bilibin_AskAboutEntranceTree) },
+    { EVENT_TALK, 12, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_AskAboutEntranceTree) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinYoureWonderingAboutTheTreeNear) },
     { EVENT_TALK, 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLordMccoyHasBeenQuiteFrightened) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinISawLordMccoyTheChief) },
-    { EVENT_TALK, 14, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Bilibin_AskAboutSoutheastRoute) },
+    { EVENT_TALK, 14, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_AskAboutSoutheastRoute) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIHearTheBarricadeGateThat) },
     { EVENT_TALK, 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBilibinThoseThreeKidsVanishedDuringAll) },
     { EVENT_TALK, 16, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AskAboutCurseBreakers) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCurseBreakers) },
     { EVENT_TALK, 17, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIsItTrueThatAMountain) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoysMenSaidTheySaw) },
     { EVENT_TALK, 18, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheresATowerAtTheTip) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AskAboutImil) },
+    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutImil) },
     { EVENT_TALK, 19, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinSomethingChangedInTheEruptionNow) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBilibinTheEruptionOnTheOtherSide) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinHelpMeSomebody) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgBilibinINeverWantToBeTurned) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TREE_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinHelpMeSomebody) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORMER_TREE_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinINeverWantToBeTurned) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouGuysAreSoUnluckyArriving) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinNotManyLumberjacksAreWillingTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouMustBeMadItsAlmost) },
@@ -923,110 +951,110 @@ struct SceneEvent gBilibinEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillageBlockCells) },
-    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), VILLAGE_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillageBlockCells) },
+    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_JAR), 100, 0xf50, FIND_ITEM(0xb4) },
     { SEARCH(SEARCH_JAR), 101, 0xf51, FIND_COINS(5) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_InspectWell) },
+    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectWell) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gBilibinEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_InspectHumanShapedTree) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_InspectHumanShapedTree) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_InspectHumanShapedTree) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_InspectHumanShapedTree) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
+    { EVENT_TALK, JILL_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x881), MSGNO(MsgBilibinTheyCrossedTheRiverAfterPushing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyreSoHeavy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x848, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinOhItLooksLikeSheIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x848, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinOhItLooksLikeSheIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x848, MSGNO(MsgBilibinAhhhhPleaseAnyonePleaseHelp) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinThankSavedMeFromBeing) },
-    { EVENT_TALK, 12, 0x848, MSGNO(MsgBilibinIHeardWeWereOnceCalled) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinItWasAwfulLuckBeingTurned) },
-    { EVENT_TALK, 13, 0x848, MSGNO(MsgBilibinIfOnlyWeHadntTriedGetting) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinIReallyLikeThisSpotBy) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillThinkOfYouWhenever) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x848, MSGNO(MsgBilibinWeWorkedSoHardIfOnly) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinWhoseIdeaWasItToPick) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x848, MSGNO(MsgBilibinWhatACruelWorldWeJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinWellItWasntMyIdeaTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinThesePersimmonsAreJustLikeMy) },
-    { SEARCH(SEARCH_UNNAMED), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_ReadRestrictedAreaSign) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinAhhhhPleaseAnyonePleaseHelp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), JILL_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinThankSavedMeFromBeing) },
+    { EVENT_TALK, GANG_MEMBER_WEST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinIHeardWeWereOnceCalled) },
+    { EVENT_TALK, GANG_MEMBER_WEST, CONDITION_ALWAYS, MSGNO(MsgBilibinItWasAwfulLuckBeingTurned) },
+    { EVENT_TALK, GANG_MEMBER_EAST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinIfOnlyWeHadntTriedGetting) },
+    { EVENT_TALK, GANG_MEMBER_EAST, CONDITION_ALWAYS, MSGNO(MsgBilibinIReallyLikeThisSpotBy) },
+    { EVENT_TALK, JILL, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillThinkOfYouWhenever) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GANG_MEMBER_WEST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinWeWorkedSoHardIfOnly) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GANG_MEMBER_WEST, CONDITION_ALWAYS, MSGNO(MsgBilibinWhoseIdeaWasItToPick) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GANG_MEMBER_EAST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinWhatACruelWorldWeJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GANG_MEMBER_EAST, CONDITION_ALWAYS, MSGNO(MsgBilibinWellItWasntMyIdeaTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), JILL, CONDITION_ALWAYS, MSGNO(MsgBilibinThesePersimmonsAreJustLikeMy) },
+    { SEARCH(SEARCH_UNNAMED), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRestrictedAreaSign) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
-    { EVENT_TOUCH, 13, 0x849, EVENT_SCRIPT(Bilibin_ReceiveJillsHardNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x848, EVENT_SCRIPT(Bilibin_RescueVillagerFromRiver) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_CheckLeaderAhead) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_CheckLeaderAhead) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },
-    { 0x202, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRiverBlockCells) },
+    { EVENT_TOUCH, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT_SCRIPT(Event_JillGivesHardNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT_SCRIPT(Event_PullJillFromRiver) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { 0x202, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), RIVER_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRiverBlockCells) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gBilibinEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_ReadWarehouseSign) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_RecruitJupiterDjinni) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRaisedBlockCells) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },
-    { 0x202, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_CheckLeaderAhead) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_CheckLeaderAhead) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_CheckLeaderAhead) },
+    { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadWarehouseSign) },
+    { EVENT_TALK, GUST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GustJoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), RAISED_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRaisedBlockCells) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { 0x202, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { SCENE_EVENTS_END },
 };
 
-u16 gVillage_DoorCellStep6[] = {
+u16 gBilibin_DoorSteps6[] = {
     MAP_CELL_STEP(37, 33, 4, 2, 5), MAP_CELL_STEP(33, 33, 4, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gVillage_DoorCellStep4[] = {
+u16 gBilibin_DoorSteps4[] = {
     MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gVillage_DoorCellStep5[] = {
+u16 gBilibin_DoorSteps5[] = {
     MAP_CELL_STEP(35, 52, 2, 2, 5), MAP_CELL_STEP(33, 52, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gVillage_DoorCellStep1[] = {
+u16 gBilibin_DoorSteps1[] = {
     MAP_CELL_STEP(35, 54, 2, 2, 5), MAP_CELL_STEP(33, 54, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gVillage_DoorCellStep0[] = {
+u16 gBilibin_DoorSteps0[] = {
     MAP_CELL_STEP(35, 48, 2, 2, 5), MAP_CELL_STEP(33, 48, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gVillage_DoorCellStep2[] = {
+u16 gBilibin_DoorSteps2[] = {
     MAP_CELL_STEP(35, 46, 2, 2, 5), MAP_CELL_STEP(33, 46, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gVillage_DoorCellStep3[] = {
+u16 gBilibin_DoorSteps3[] = {
     MAP_CELL_STEP(35, 50, 2, 2, 5), MAP_CELL_STEP(33, 50, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 *gVillage_DoorCellSteps[] = {
-    gVillage_DoorCellStep0,
-    gVillage_DoorCellStep1,
-    gVillage_DoorCellStep2,
-    gVillage_DoorCellStep3,
-    gVillage_DoorCellStep4,
-    gVillage_DoorCellStep5,
-    gVillage_DoorCellStep6,
+u16 *gBilibin_DoorSteps[] = {
+    gBilibin_DoorSteps0,
+    gBilibin_DoorSteps1,
+    gBilibin_DoorSteps2,
+    gBilibin_DoorSteps3,
+    gBilibin_DoorSteps4,
+    gBilibin_DoorSteps5,
+    gBilibin_DoorSteps6,
 };
 
-u32 gVillage_DoorCellOrigins[] = {
+u32 gBilibin_DoorCells[] = {
     0x140036, 0x12002b, 0x130025, 0xb0029, 0xb0023, 0x90031, 0x60037,
 };
 
-u32 gVillage_RepaintCells[] = {
+u32 gBilibin_RiverBlockCells[] = {
     0x12091208, 0x1308120a, 0x130a1309, 0x1409130b, 0x140b140a,
 };
 // clang-format on
@@ -1043,7 +1071,7 @@ s32 gBilibin_FacingCellSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-s32 gVillage_SpawnScript[] = {
+s32 gBilibin_TransientEffectScript[] = {
     SC_WAIT(30),
     SC_FREE,
 };

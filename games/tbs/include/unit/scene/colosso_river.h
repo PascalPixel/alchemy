@@ -11,11 +11,11 @@ typedef struct Position3 {
 } Position3;
 
 struct SceneEntrance *ColossoRiver_GetEntrances(void);
-s32 get_default_result(void);
+const struct SceneRegion *ColossoRiver_GetRegions(void);
 u32 *ColossoRiver_GetExits(void);
 struct ScenePlacement *ColossoRiver_GetPlacements(void);
 struct SceneEvent *ColossoRiver_GetEvents(void);
-s32 ColossoRiver_ApplyEntryState(void);
+s32 ColossoRiver_Initialize(void);
 extern const u8 gColosso_PortraitPaletteOffsets[];
 extern const s16 gColossoRiver_ModeRecordTwo[];
 extern const s16 gColossoRiver_SpanB[];

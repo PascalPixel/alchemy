@@ -8,7 +8,7 @@ BattleLayout_HighlightPartyPanelsFar:
 	.global UiIcon_BuildItemIconTilesFar
 	.thumb_func
 UiIcon_BuildItemIconTilesFar:
-	overlay_veneer Func_0803d5c4
+	overlay_veneer UiIcon_BuildItemIconTiles
 	.global UiIcon_BuildAbilityIconTilesFar
 	.thumb_func
 UiIcon_BuildAbilityIconTilesFar:

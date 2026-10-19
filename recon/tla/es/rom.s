@@ -656,16 +656,6 @@ Func_0803c274:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x0003c550, 0x00000464
-	.section .rom.0003ca28, "ax"
-	.global UiText_DecodeMessage
-	.type UiText_DecodeMessage, %function
-	.thumb_func
-UiText_DecodeMessage:
-	.incbin "baserom.gba", 0x0003ca28, 0x00000144
-	.section .rom.0003cb7a, "ax"
-	.incbin "baserom.gba", 0x0003cb7a, 0x00000002
-	.section .rom.0003cc06, "ax"
-	.incbin "baserom.gba", 0x0003cc06, 0x00000002
 	.section .rom.0003cd68, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003cd68, 0x00000054
@@ -702,27 +692,12 @@ UiWork_SetTwoEntriesTo999:
 	.thumb_func
 Ui_BuildPairedPatternsToSlot:
 	.incbin "baserom.gba", 0x0003d544, 0x000000b0
-	.section .rom.0003d624, "ax"
-	.balign 4
-	.global Func_0803d5c4
-	.type Func_0803d5c4, %function
-	.thumb_func
-Func_0803d5c4:
-	.incbin "baserom.gba", 0x0003d624, 0x000000bc
 	.section .rom.0003d6e0, "ax"
 	.global ItemIcon_Compose
 	.type ItemIcon_Compose, %function
 	.thumb_func
 ItemIcon_Compose:
 	.incbin "baserom.gba", 0x0003d6e0, 0x0000022c
-	.section .rom.0003da1a, "ax"
-	.incbin "baserom.gba", 0x0003da1a, 0x00000002
-	.section .rom.0003da1c, "ax"
-	.global UiIcon_BuildAbilityIconTiles
-	.type UiIcon_BuildAbilityIconTiles, %function
-	.thumb_func
-UiIcon_BuildAbilityIconTiles:
-	.incbin "baserom.gba", 0x0003da1c, 0x000000bc
 	.section .rom.0003dc7c, "ax"
 	.balign 4
 	.global Func_0803dc1c

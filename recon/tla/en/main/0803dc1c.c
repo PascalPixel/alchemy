@@ -1,3 +1,7 @@
+// Draft, differ 4 of 126 (2026-10-18): the block is heap slot 72, and the
+// cursors of rows 7 and 8 are cleared inline. Left: in the bit-field updates
+// at the end the native loads byte 5 before it builds -13, and byte 7 before
+// it ORs in 32 (the lane's load-earlier near misses).
 #include "resource.h"
 #include "mem.h"
 #include "types.h"
@@ -70,7 +74,7 @@ void UiGlyph_ResetWorkState(void) {
   s32 i;
   u16 clear = 0;
 
-  work = Runtime_AllocateBlock(18, 996);
+  work = Runtime_AllocateBlock(72, 996);
   work->field348 = clear;
   work->field34c = clear;
   work->field350 = clear;
@@ -86,8 +90,13 @@ void UiGlyph_ResetWorkState(void) {
     work->rows[i + 9].index.cursor = 0;
     i++;
   } while (i != 5);
-  ResetCursor(&work->rows[7].index);
-  ResetCursor(&work->rows[8].index);
+  {
+    struct GlyphCursor *cursor = &work->rows[7].index;
+
+    cursor->cursor = 0;
+    cursor = &work->rows[8].index;
+    cursor->cursor = 0;
+  }
   work->rows[0].index.cursor = 0;
   work->rows[1].index.cursor = 0;
   work->rows[0].state = 0;

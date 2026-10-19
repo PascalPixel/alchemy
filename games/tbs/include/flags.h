@@ -83,6 +83,17 @@
 #define FLAG_ALPINE_CROSSING_POWER_BREAD 0xf71 // the crossing's chest
 #define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a   // the temple's chest
 
+// Altin
+#define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff // jumped back into the flood
+#define FLAG_ALTIN_BLOCK_MOVED 0x906      // pushed to its place by Move
+#define FLAG_ALTIN_NUT 0xf73              // a barrel in the houses
+#define FLAG_ALTIN_COINS 0xf74            // a barrel in the houses
+#define FLAG_ALTIN_SLEEP_BOMB 0xf75       // a bed in the houses
+// Scene flags: Altin keeps its water level in them, set on entry.
+#define FLAG_SCENE_TEMP_40 0x240
+#define FLAG_SCENE_TEMP_41 0x241
+#define FLAG_SCENE_TEMP_42 0x242
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

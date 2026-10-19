@@ -26,10 +26,10 @@ Field_Map257:
 	.incbin "games/tla/src/map/map_257/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map257_ANIMATION:
-	.incbin "games/common/src/map/map_052/animation.script.lz"
+	.incbin "games/tla/src/map/map_206/animation.script.lz"
 	.balign 4, 0
 .LField_Map257_BLEND:
-	.incbin "games/common/src/map/map_018/blend.script.lz"
+	.incbin "games/tla/src/map/map_010/blend.script.lz"
 	.balign 4, 0
 .LField_Map257_SCENE:
 	.incbin "games/tla/src/map/map_257/scene.parts.lz"

@@ -13,16 +13,16 @@ Field_Map171:
 	map_block Field_Map171, .LField_Map171_BLEND
 	map_block Field_Map171, .LField_Map171_MARKERS
 .LField_Map171_METATILES:
-	.incbin "games/common/src/map/map_171/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_171/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map171_SHAPES:
-	.incbin "games/common/src/map/map_171/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_171/shapes.table.lz"
 	.balign 4, 0
 .LField_Map171_GRID:
 	.incbin "games/tbs/src/map/map_171/grid.parts.lz"
 	.balign 4, 0
 .LField_Map171_ANIMATION:
-	.incbin "games/common/src/map/map_171/animation.script.lz"
+	.incbin "games/tbs/src/map/map_171/animation.script.lz"
 	.balign 4, 0
 .LField_Map171_BLEND:
 	.incbin "games/tbs/src/map/map_020/blend.script.lz"

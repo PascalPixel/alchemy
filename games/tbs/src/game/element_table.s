@@ -27,4 +27,4 @@ gElement_PowerResistByLevel:
 	.global gEnemy_ElementPresetTable
 gEnemy_ElementPresetTable:
 	.incbin "games/tbs/src/game/elempre.table"
-	.include "games/common/src/game/element_curve.s"
+	.include "games/tbs/src/game/element_curve.s"

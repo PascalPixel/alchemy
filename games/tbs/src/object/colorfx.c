@@ -336,7 +336,7 @@ struct ReelSave {
   s8 wonPrizes[16];
 };
 
-#include "../../../common/src/graphics/slots/reel_tables.h"
+#include "../graphics/slots/reel_tables.h"
 
 // The slot machine's frame callback: reads the keys, runs the game's state
 // (betting, spinning and stopping the reels, scoring the paylines, choosing

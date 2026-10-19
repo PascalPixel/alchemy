@@ -18,7 +18,7 @@ screen, the battle menus and the debug menus.
 | `scales.c` | sprite scales, motion curves and the window colour wheel |
 | `text_speed.c` | the message speed tables |
 | `windata.s`, `keyboard.s` | glyph widths, text colours, the party status columns, the name entry keyboards |
-| `cursor.s`, `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `games/common/src` |
+| `cursor.s`, `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `games/tbs/src/menu` and `games/tbs/src/graphics` |
 
 Each guide's comment says where to start, and each part's second line says
 what it holds: `head -2 window/*.c battle_command/*.c` lists them. A part

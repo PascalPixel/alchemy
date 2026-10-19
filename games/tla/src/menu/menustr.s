@@ -65,7 +65,7 @@ gUi_PpRowString:
 @ The frame tile the cancel prompt blinks; ⚓️ drops ☀️'s "x" string here
 	.global gData_08105948
 gData_08105948:
-	.incbin "games/common/src/menu/backdrop.4bpp"
+	.incbin "games/tla/src/menu/backdrop.4bpp"
 	.if EDITION_INTERNATIONAL
 	.else
 	.global gItemMenu_ArrangeKeysString
@@ -177,7 +177,7 @@ gMenu_PatternRowMasks:
 	.4byte 0x05055050, 0x05050505
 	.global gMenu_BackdropFrameTile
 gMenu_BackdropFrameTile:
-	.incbin "games/common/src/menu/backdrop.4bpp"
+	.incbin "games/tla/src/menu/backdrop.4bpp"
 	.ifdef TLA_EDITION_ES
 	.global gDjinnMenu_TextLevel
 gDjinnMenu_TextLevel:

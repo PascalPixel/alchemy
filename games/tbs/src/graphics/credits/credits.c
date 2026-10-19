@@ -880,7 +880,7 @@ const void *gDisplayScroll_LineTable[] = {
 };
 // clang-format on
 
-#include "../../../../common/src/graphics/display/glyph_widths.h"
+#include "../display/glyph_widths.h"
 
 // Moves the sixteen visible credits rows through the 32-row tile ring and
 // copies their sprites to OAM. End-of-text holds the scroll position.

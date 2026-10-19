@@ -44,7 +44,7 @@ gCamera_FlagTransformWork:
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x500000, 0x0, 0x0
-	.include "games/common/src/battle/battle_calc.s"
+	.include "games/tbs/src/battle/battle_calc.s"
 	.global gBattleCommand_SelectionWeights
 gBattleCommand_SelectionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32

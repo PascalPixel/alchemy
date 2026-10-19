@@ -67,11 +67,11 @@ main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
 main	rom_main_02	games/tbs/src/window/window	.text
 main	rom_main_02	games/tbs/src/window/battle_command	.text
 main	rom_main_02	games/tbs/src/window/slider	.rodata
-main	rom_main_02	games/common/src/graphics/ui/marks	.rodata
+main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/menu_icons	.rodata
 main	rom_main_02	games/tbs/src/window/fixed_block	.rodata
 main	rom_main_02	games/tbs/src/graphics/render/labels	.rodata
-main	rom_main_02	games/common/src/graphics/font/text	.rodata
+main	rom_main_02	games/tbs/src/graphics/font/text	.rodata
 main	rom_main_02	games/tbs/src/window/articles	.rodata
 main	rom_main_02	games/tbs/src/window/cursor	.rodata
 main	rom_main_02	games/tbs/src/window/scales	.rodata
@@ -138,7 +138,7 @@ main	rom_main_09	games/tbs/src/graphics/credits/credits	.rodata
 main	rom_main_09	games/tbs/src/graphics/credits/credits	.data
 main	rom_main_09	games/tbs/src/graphics/display/credits	.rodata
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE
-main	rom_main_10	games/common/src/graphics/title/prompt
+main	rom_main_10	games/tbs/src/graphics/title/prompt
 main	rom_main_10	games/tbs/src/graphics/title/intro
 main	rom_main_11	games/tbs/src/system/far_call/BLANK_RUN
 main	rom_main_11	games/tbs/src/field/lucky_dice
@@ -443,7 +443,7 @@ main	rom_tail_02	games/tbs/src/graphics/battle_fx/battlefx
 main	rom_tail_02	games/tbs/src/map/map
 main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap
 main	rom_tail_02	games/tbs/src/map/colosso/colosso
-main	rom_tail_02	games/common/src/graphics/shop/cursor
+main	rom_tail_02	games/tbs/src/graphics/shop/cursor
 main	rom_tail_02	games/tbs/src/graphics/ui/icons
 main	rom_tail_02	games/tbs/src/graphics/monster/monster
 main	rom_tail_02	games/tbs/src/map/map_001/map

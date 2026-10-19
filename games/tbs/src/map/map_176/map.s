@@ -13,10 +13,10 @@ Field_Map176:
 	map_block Field_Map176
 	map_block Field_Map176, .LField_Map176_MARKERS
 .LField_Map176_METATILES:
-	.incbin "games/common/src/map/map_001/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_001/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map176_SHAPES:
-	.incbin "games/common/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
 	.balign 4, 0
 .LField_Map176_GRID:
 	.incbin "games/tbs/src/map/map_001/grid.parts.lz"
@@ -26,21 +26,21 @@ Field_Map176:
 	.balign 4, 0
 	.global Tileset_Set72Palette
 Tileset_Set72Palette:
-	.incbin "games/common/src/graphics/tileset/set_68/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_68/palette.gbapal.lz"
 	.byte 0x00	@ PACKER: left in the buffer by Field_Map176+0xb
 	.global Tileset_Set72TilesA
 Tileset_Set72TilesA:
-	.incbin "games/common/src/graphics/tileset/set_68/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_a.4bpp.mtf"
 	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_Map176+0x14e
 	.global Tileset_Set72TilesB
 Tileset_Set72TilesB:
-	.incbin "games/common/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set72TilesA+0x13f
 	.global Tileset_Set72TilesC
 Tileset_Set72TilesC:
-	.incbin "games/common/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set72TilesA+0x13f
 	.global Tileset_Set72TilesD
 Tileset_Set72TilesD:
-	.incbin "games/common/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set72TilesA+0x13f

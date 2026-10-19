@@ -14,7 +14,7 @@ Field_Map296:
 	map_block Field_Map296
 	map_block Field_Map296, .LField_Map296_SCENE
 .LField_Map296_METATILES:
-	.incbin "games/common/src/map/map_001/metatiles.delta0.lz"
+	.incbin "games/tla/src/map/map_000/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map296_SHAPES:
 	.incbin "games/tla/src/map/map_099/shapes.table.lz"

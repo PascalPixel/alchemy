@@ -253,8 +253,8 @@ encodeCatalog(Catalog *catalog, const char *mapPath)
 	{
 		if (!mapPath)
 			mapPath = !strcmp(catalog->target, "tbs-ja")
-						  ? "games/common/src/graphics/font/charmap_ja.tsv"
-						  : "games/common/src/graphics/font/charmap_tla_ja.tsv";
+						  ? "games/tbs/src/graphics/font/charmap_ja.tsv"
+						  : "games/tla/src/graphics/font/charmap_tla_ja.tsv";
 		map = charmap(mapPath);
 	}
 	for (size_t i = 0; i < catalog->count; i++)

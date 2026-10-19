@@ -16,13 +16,13 @@ Field_Map142:
 	.incbin "games/tbs/src/map/map_142/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map142_SHAPES:
-	.incbin "games/common/src/map/map_062/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_062/shapes.table.lz"
 	.balign 4, 0
 .LField_Map142_GRID:
 	.incbin "games/tbs/src/map/map_142/grid.parts.lz"
 	.balign 4, 0
 .LField_Map142_ANIMATION:
-	.incbin "games/common/src/map/map_029/animation.script.lz"
+	.incbin "games/tbs/src/map/map_029/animation.script.lz"
 	.balign 4, 0
 .LField_Map142_BLEND:
 	.incbin "games/tbs/src/map/map_139/blend.script.lz"

@@ -4,4 +4,4 @@
 #include "types.h"
 #include "edition.h"
 
-#include "../../../../common/src/graphics/lucky_dice/tables.h"
+#include "tables.h"

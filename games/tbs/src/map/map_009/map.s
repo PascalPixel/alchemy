@@ -46,5 +46,5 @@ Tileset_Set08TilesC:
 	.incbin "games/tbs/src/graphics/tileset/set_08/tiles_c.4bpp.mtf"
 	.global Tileset_Set08TilesD
 Tileset_Set08TilesD:
-	.incbin "games/common/src/graphics/tileset/set_08/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_08/tiles_d.4bpp.mtf"
 	.byte 0xe1, 0x71	@ PACKER: left in the buffer by Tileset_Set08TilesC+0x842

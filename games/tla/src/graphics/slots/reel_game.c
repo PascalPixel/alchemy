@@ -81,4 +81,4 @@ void Func_081b3294(void) {
             REG_DMA3);
 }
 
-#include "../../../../common/src/graphics/slots/reel_tables.h"
+#include "reel_tables.h"

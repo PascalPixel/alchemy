@@ -1567,13 +1567,13 @@ UiIcon_Psynergy090:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_090.icon4"
 UiIcon_Psynergy091:
 	.ifdef TLA_EDITION_DE
-	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_091_de.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_091_de.icon4"
 	.else
 	.ifdef TLA_EDITION_ES
-	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
 	.else
 	.ifdef TLA_EDITION_FR
-	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
 	.else
 	.ifdef TLA_EDITION_IT
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_091_it.icon4"
@@ -1588,13 +1588,13 @@ UiIcon_Psynergy092:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092_ja.icon4"
 	.else
 	.ifdef TLA_EDITION_ES
-	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.ifdef TLA_EDITION_FR
-	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.ifdef TLA_EDITION_IT
-	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092.icon4"
 	.endif

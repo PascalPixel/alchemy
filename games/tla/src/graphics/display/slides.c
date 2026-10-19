@@ -489,4 +489,4 @@ const void *gDisplayScroll_LineTable[] = {
 };
 // clang-format on
 
-#include "../../../../common/src/graphics/display/glyph_widths.h"
+#include "glyph_widths.h"

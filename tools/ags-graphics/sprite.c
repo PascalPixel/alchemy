@@ -295,13 +295,14 @@ static void
 frames(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
 {
 	char *name = formatString("%s.png", sprite->files);
+	// pictures.tsv draws a sprite with another sprite's picture.
 	for (size_t i = 1; i < bank->pictures.len; i++)
 	{
 		Strings f = split(bank->pictures.items[i], '\t');
 		if (f.len == 2 && !strcmp(f.items[0], sprite->files))
 		{
 			free(name);
-			name = formatString("common/%s.png", f.items[1]);
+			name = formatString("%s.png", f.items[1]);
 		}
 		freeStrings(&f);
 	}

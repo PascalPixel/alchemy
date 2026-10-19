@@ -1,0 +1,2 @@
+top_left:u16	top_right:u16	bottom_left:u16	bottom_right:u16
+0x200	0x200	0x200	0x200

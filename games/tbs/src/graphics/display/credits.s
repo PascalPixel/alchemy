@@ -2,4 +2,4 @@
 	.section .rodata
 	.global gDisplayScroll_Font
 gDisplayScroll_Font:
-	.incbin "games/common/src/graphics/display/credits.1bpp"
+	.incbin "games/tbs/src/graphics/display/credits.1bpp"

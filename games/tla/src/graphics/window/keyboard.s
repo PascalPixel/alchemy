@@ -27,18 +27,18 @@ Data_080aa1b8:
 	.global gNameEntry_KeyboardTilemap
 gNameEntry_KeyboardTilemap:
 	.ifdef TLA_EDITION_JA
-	.incbin "games/common/src/graphics/window/keyboard_ja.table.lz"
+	.incbin "games/tla/src/graphics/window/keyboard_ja.table.lz"
 	.global gNameEntry_AlternateKeyboardTilemap
 gNameEntry_AlternateKeyboardTilemap:
-	.incbin "games/common/src/graphics/window/keyboard_j2.table.lz"
+	.incbin "games/tla/src/graphics/window/keyboard_j2.table.lz"
 	.global NameEntry_KeyboardTilemap3
 NameEntry_KeyboardTilemap3:
-	.incbin "games/common/src/graphics/window/keyboard_j3.table.lz"
+	.incbin "games/tla/src/graphics/window/keyboard_j3.table.lz"
 	.else
 	.ifdef TLA_EDITION_ES
-	.incbin "games/common/src/graphics/window/keyboard_es.table.lz"
+	.incbin "games/tla/src/graphics/window/keyboard_es.table.lz"
 	.else
-	.incbin "games/common/src/graphics/window/keyboard.table.lz"
+	.incbin "games/tla/src/graphics/window/keyboard.table.lz"
 	.endif
 	.endif
 	.balign 4, 0

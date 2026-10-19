@@ -18,16 +18,16 @@ Field_Map163:
 	.incbin "games/tbs/src/map/map_163/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
-	.incbin "games/common/src/map/map_163/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_163/shapes.table.lz"
 	.balign 4, 0
 .LField_Map163_GRID:
 	.incbin "games/tbs/src/map/map_163/grid_ja.parts.lz"
 	.balign 4, 0
 .LField_Map163_ANIMATION:
-	.incbin "games/common/src/map/map_163/animation.script.lz"
+	.incbin "games/tbs/src/map/map_163/animation.script.lz"
 	.balign 4, 0
 .LField_Map163_BLEND:
-	.incbin "games/common/src/map/map_054/blend.script.lz"
+	.incbin "games/tbs/src/map/map_054/blend.script.lz"
 	.balign 4, 0
 .LField_Map163_MARKERS:
 	.incbin "games/tbs/src/map/map_163/markers_ja.table"
@@ -46,16 +46,16 @@ Field_Map163:
 	.incbin "games/tbs/src/map/map_163/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
-	.incbin "games/common/src/map/map_163/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_163/shapes.table.lz"
 	.balign 4, 0
 .LField_Map163_GRID:
 	.incbin "games/tbs/src/map/map_163/grid.parts.lz"
 	.balign 4, 0
 .LField_Map163_ANIMATION:
-	.incbin "games/common/src/map/map_163/animation.script.lz"
+	.incbin "games/tbs/src/map/map_163/animation.script.lz"
 	.balign 4, 0
 .LField_Map163_BLEND:
-	.incbin "games/common/src/map/map_054/blend.script.lz"
+	.incbin "games/tbs/src/map/map_054/blend.script.lz"
 	.balign 4, 0
 .LField_Map163_MARKERS:
 	.incbin "games/tbs/src/map/map_163/markers.table"
@@ -63,4 +63,4 @@ Field_Map163:
 	.balign 4, 0
 	.global Tileset_Palette50
 Tileset_Palette50:
-	.incbin "games/common/src/graphics/tileset/palettes/pal_50.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_50.gbapal.lz"

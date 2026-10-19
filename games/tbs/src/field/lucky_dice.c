@@ -183,7 +183,7 @@ struct LuckyDiceSprites {
 
 #include "version.h"
 #include "keystate.h"
-#include "../../../common/src/graphics/lucky_dice/tables.h"
+#include "../graphics/lucky_dice/tables.h"
 
 #define DICE_COUNT 2
 #define DICE_FACE_COUNT 6

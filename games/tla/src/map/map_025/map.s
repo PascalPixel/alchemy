@@ -17,7 +17,7 @@ Field_Map025:
 	.incbin "games/tla/src/map/map_025/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map025_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tla/src/map/map_025/shapes.table.lz"
 	.balign 4, 0
 .LField_Map025_GRID:
 	.incbin "games/tla/src/map/map_025/grid.parts.lz"

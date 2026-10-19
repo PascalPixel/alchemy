@@ -1,6 +1,6 @@
 	.section .rodata
 	.balign 4
-	.include "games/common/src/battle/presentation/highlight_ramp.s"
+	.include "games/tla/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 38
 @ 660 enemy formations.
 	.global gBattleFormation_Records

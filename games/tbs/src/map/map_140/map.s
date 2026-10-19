@@ -18,13 +18,13 @@ Field_Map140:
 	.incbin "games/tbs/src/map/map_140/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map140_SHAPES:
-	.incbin "games/common/src/map/map_062/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_062/shapes.table.lz"
 	.balign 4, 0
 .LField_Map140_GRID:
 	.incbin "games/tbs/src/map/map_140/grid_ja.parts.lz"
 	.balign 4, 0
 .LField_Map140_ANIMATION:
-	.incbin "games/common/src/map/map_029/animation.script.lz"
+	.incbin "games/tbs/src/map/map_029/animation.script.lz"
 	.balign 4, 0
 .LField_Map140_BLEND:
 	.incbin "games/tbs/src/map/map_139/blend.script.lz"
@@ -46,13 +46,13 @@ Field_Map140:
 	.incbin "games/tbs/src/map/map_140/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map140_SHAPES:
-	.incbin "games/common/src/map/map_062/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_062/shapes.table.lz"
 	.balign 4, 0
 .LField_Map140_GRID:
 	.incbin "games/tbs/src/map/map_140/grid.parts.lz"
 	.balign 4, 0
 .LField_Map140_ANIMATION:
-	.incbin "games/common/src/map/map_029/animation.script.lz"
+	.incbin "games/tbs/src/map/map_029/animation.script.lz"
 	.balign 4, 0
 .LField_Map140_BLEND:
 	.incbin "games/tbs/src/map/map_139/blend.script.lz"

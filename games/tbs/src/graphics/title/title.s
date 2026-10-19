@@ -39,8 +39,8 @@ Title_IntroGraphicsB:
 	.endif
 	.endif
 	.balign 4, 0
-	.include "games/common/src/graphics/title/intro_peak.s"
-	.include "games/common/src/graphics/title/nintendo_splash.s"
+	.include "games/tbs/src/graphics/title/intro_peak.s"
+	.include "games/tbs/src/graphics/title/nintendo_splash.s"
 	.global Title_CamelotLogo
 Title_CamelotLogo:
 	.ifeq EDITION_INTERNATIONAL
@@ -93,7 +93,7 @@ Title_IntroTilesB:
 	.incbin "games/tbs/src/graphics/title/to_be_continued_it.8bpp.lz"
 	.byte 0x8a	@ PACKER: left in the buffer by Field_WorldMapPicture+0x687
 	.else
-	.incbin "games/common/src/graphics/title/to_be_continued.parts.lz"
+	.incbin "games/tbs/src/graphics/title/to_be_continued.parts.lz"
 	.endif
 	.endif
 	.endif

@@ -227,8 +227,8 @@ $(BUILD)/overlays/resource_%_overlay.o: $$(OVERLAY_SOURCE) $(OVERLAY_ROM)
 	$(AS) $(EDITION_ASFLAGS) -o $@ $(or $(filter %.s,$^),/dev/null)
 
 # The edition's messages (A6). Japanese glyphs follow the editable font map.
-CHARMAP_tbs := games/common/src/graphics/font/charmap_ja.tsv
-CHARMAP_tla := games/common/src/graphics/font/charmap_tla_ja.tsv
+CHARMAP_tbs := games/tbs/src/graphics/font/charmap_ja.tsv
+CHARMAP_tla := games/tla/src/graphics/font/charmap_tla_ja.tsv
 CHARMAP := $(if $(filter ja,$(LANG)),$(CHARMAP_$(GAME)))
 # ags-text rewrites a file only when its contents change, so a .po edit
 # recompiles only what it affects; the stamp records when it last ran.

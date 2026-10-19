@@ -60,7 +60,7 @@ gData_08128868:
 	.4byte 0x10000, 0x0, 0x0, -0xcccc
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
-	.include "games/common/src/battle/battle_calc.s"
+	.include "games/tla/src/battle/battle_calc.s"
 	.global Data_08128960
 Data_08128960:
 	.2byte 0xda, 0xdb, 0xdc, 0, 0, 0

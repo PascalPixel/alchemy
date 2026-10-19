@@ -17,7 +17,7 @@ Field_Map003:
 	.incbin "games/tla/src/map/map_003/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map003_SHAPES:
-	.incbin "games/common/src/map/map_163/shapes.table.lz"
+	.incbin "games/tla/src/map/map_003/shapes.table.lz"
 	.balign 4, 0
 .LField_Map003_GRID:
 	.incbin "games/tla/src/map/map_003/grid.parts.lz"
@@ -26,10 +26,10 @@ Field_Map003:
 	.incbin "games/tla/src/map/map_003/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map003_ANIMATION:
-	.incbin "games/common/src/map/map_163/animation.script.lz"
+	.incbin "games/tla/src/map/map_003/animation.script.lz"
 	.balign 4, 0
 .LField_Map003_BLEND:
-	.incbin "games/common/src/map/map_054/blend.script.lz"
+	.incbin "games/tla/src/map/map_003/blend.script.lz"
 	.balign 4, 0
 .LField_Map003_SCENE:
 	.incbin "games/tla/src/map/map_003/scene.parts.lz"

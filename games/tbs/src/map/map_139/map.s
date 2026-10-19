@@ -22,7 +22,7 @@ Field_Map139:
 	.incbin "games/tbs/src/map/map_139/grid.parts.lz"
 	.balign 4, 0
 .LField_Map139_ANIMATION:
-	.incbin "games/common/src/map/map_029/animation.script.lz"
+	.incbin "games/tbs/src/map/map_029/animation.script.lz"
 	.balign 4, 0
 .LField_Map139_BLEND:
 	.incbin "games/tbs/src/map/map_139/blend.script.lz"

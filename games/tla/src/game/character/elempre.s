@@ -3,7 +3,7 @@
 	.global gData_080c6684
 gData_080c6684:
 	.incbin "games/tla/src/game/character/elempre.table"
-	.include "games/common/src/game/element_curve.s"
+	.include "games/tla/src/game/element_curve.s"
 @ The classes Battle_IsEffect90Class and Battle_IsEffect91Class look for.
 	.global gBattle_Effect90Classes
 gBattle_Effect90Classes:

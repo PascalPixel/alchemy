@@ -25,7 +25,7 @@ Field_Map094:
 	.incbin "games/tbs/src/map/map_094/animation.script.lz"
 	.balign 4, 0
 .LField_Map094_BLEND:
-	.incbin "games/common/src/map/map_018/blend.script.lz"
+	.incbin "games/tbs/src/map/map_018/blend.script.lz"
 	.balign 4, 0
 .LField_Map094_MARKERS:
 	.incbin "games/tbs/src/map/map_094/markers.table"

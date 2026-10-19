@@ -32,11 +32,11 @@ gBattleMotion_VariantDistancePercent:
 	.4byte 0, 20, 27
 	.global gBattlePres_TileVariants
 gBattlePres_TileVariants:
-	.incbin "games/common/src/battle/presentation/tilevar.4bpp"
+	.incbin "games/tbs/src/battle/presentation/tilevar.4bpp"
 	.global gBattlePres_CurtainTiles
 gBattlePres_CurtainTiles:
-	.incbin "games/common/src/battle/presentation/curtain.4bpp"
-	.include "games/common/src/battle/presentation/highlight_ramp.s"
+	.incbin "games/tbs/src/battle/presentation/curtain.4bpp"
+	.include "games/tbs/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 27
 @ 380 enemy formations.
 	.global gBattleFormation_Records

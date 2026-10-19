@@ -17,7 +17,7 @@ Field_Map134:
 	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
@@ -46,7 +46,7 @@ Field_Map134:
 	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
@@ -75,7 +75,7 @@ Field_Map134:
 	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
@@ -104,7 +104,7 @@ Field_Map134:
 	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
@@ -132,7 +132,7 @@ Field_Map134:
 	.incbin "games/tbs/src/map/map_134/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "games/tbs/src/map/map_134/grid.parts.lz"

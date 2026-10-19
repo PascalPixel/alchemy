@@ -3,7 +3,7 @@
 @ The width of each main font glyph in pixels, from the space (0x20)
 	.global gUiText_GlyphWidths
 gUiText_GlyphWidths:
-	.include "games/common/src/graphics/window/glyph_widths.inc"
+	.include "games/tbs/src/graphics/window/glyph_widths.inc"
 	.global gUiText_ColourPens
 gUiText_ColourPens:
 	.byte 0, 3
@@ -136,7 +136,7 @@ gMenu_BarPatternRows:
 	.4byte 0x05055050, 0x05050505
 	.global gRomShiftedTilePair
 gRomShiftedTilePair:
-	.incbin "games/common/src/graphics/window/shiftpr.4bpp"
+	.incbin "games/tbs/src/graphics/window/shiftpr.4bpp"
 	.global gGraphics_ExpandNibbleTable
 gGraphics_ExpandNibbleTable:
 	.2byte 0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
@@ -157,7 +157,7 @@ gLink_TimeLabelString:
 	.endif
 	.global gDjinnMenu_BlinkTile
 gDjinnMenu_BlinkTile:
-	.incbin "games/common/src/menu/djinn/blink.4bpp"
+	.incbin "games/tbs/src/menu/djinn/blink.4bpp"
 @ Each cursor stop: item, column, row, highlight column, highlight row,
 @ highlight width
 	.global gOwnerStatus_StatCursors

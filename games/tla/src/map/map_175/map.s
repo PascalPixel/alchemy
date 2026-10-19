@@ -28,7 +28,7 @@ Field_Map175:
 	.incbin "games/tla/src/map/map_175/shape_grid_ja.plane.lz"
 	.balign 4, 0
 .LField_Map175_ANIMATION:
-	.incbin "games/common/src/map/map_029/animation.script.lz"
+	.incbin "games/tla/src/map/map_175/animation.script.lz"
 	.balign 4, 0
 .LField_Map175_BLEND:
 	.incbin "games/tla/src/map/map_057/blend.script.lz"
@@ -60,7 +60,7 @@ Field_Map175:
 	.incbin "games/tla/src/map/map_175/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map175_ANIMATION:
-	.incbin "games/common/src/map/map_029/animation.script.lz"
+	.incbin "games/tla/src/map/map_175/animation.script.lz"
 	.balign 4, 0
 .LField_Map175_BLEND:
 	.incbin "games/tla/src/map/map_057/blend.script.lz"

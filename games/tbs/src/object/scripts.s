@@ -319,13 +319,13 @@ gObjectMotion_LinkedActionScript:
 @ Ground particles, motes of light and sparkles
 	.global gFieldFx_GroundParticleTiles
 gFieldFx_GroundParticleTiles:
-	.incbin "games/common/src/field/common/effect/ground.4bpp16x16.plz"
+	.incbin "games/tbs/src/field/common/effect/ground.4bpp16x16.plz"
 	.global gFieldFx_MoteTiles
 gFieldFx_MoteTiles:
 	.incbin "games/tbs/src/object/mote.4bpp16x16.plz"
 	.global gFieldFx_SparkleTiles
 gFieldFx_SparkleTiles:
-	.incbin "games/common/src/field/common/effect/sparkle.4bpp16x16.plz"
+	.incbin "games/tbs/src/field/common/effect/sparkle.4bpp16x16.plz"
 	.balign 4, 0
 	.global gBattleFx_TargetColors
 gBattleFx_TargetColors:

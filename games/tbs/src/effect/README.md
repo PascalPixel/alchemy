@@ -239,10 +239,10 @@ An effect loads its pictures by resource id: `ResourceId_FirePillarSheetB` is
 an entry in the resource directory
 (`games/tbs/src/system/resource/directory.s`) that points at
 `BattleFx_FirePillarSheetB`. That label is defined in
-`games/tbs/src/graphics/battle_fx/battlefx.s`, or in a file of its own under
-`games/common/src/graphics/battle_fx/` when both games use it, and its data is
-built from an indexed PNG beside it (`fire_pillar_b.png`, with a `.tsv` part
-list where it has one). Edit the PNG and its palette; the build packs them.
+`games/tbs/src/graphics/battle_fx/battlefx.s` or in a file of its own beside
+it, and its data is built from an indexed PNG beside it (`fire_pillar_b.png`,
+with a `.tsv` part list where it has one). Edit the PNG and its palette; the
+build packs them.
 
 Each runner decodes its pictures at fixed offsets in `work->sheet`. Pixel
 values are levels: a picture drawn with additive or max compositing needs its

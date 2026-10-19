@@ -10,8 +10,8 @@
 #include <ctype.h>
 
 /*
- * Lowercase resource names match the asset tree. A common/ reference resolves
- * within the shared source tree and must not escape through dot components.
+ * Lowercase resource names match the asset tree, relative to the recipe's own
+ * folder (`../MAP_000/GRID_METATILE` reaches a neighbouring map's file).
  */
 char *
 sibling(const char *input, const char *name)
@@ -19,34 +19,7 @@ sibling(const char *input, const char *name)
 	char *lower = copyString(name);
 	for (char *p = lower; *p; p++)
 		*p = tolower((unsigned char) *p);
-	if (strncmp(lower, "common/", 7))
-	{
-		char *path = beside(input, lower);
-		free(lower);
-		return path;
-	}
-	const char *shared = lower + 7;
-	Strings parts = split(shared, '/');
-	for (size_t i = 0; i < parts.len; i++)
-		if (!*parts.items[i] || !strcmp(parts.items[i], ".") ||
-			!strcmp(parts.items[i], "..") || strchr(parts.items[i], '\\'))
-			fail("invalid common asset path: %s", name);
-	freeStrings(&parts);
-	char *folder = beside(input, "");
-	char *src = strstr(folder, "/src/");
-	if (!src)
-		fail("%s lies under no game's src", input);
-	char *suffix = copyString(src + 1);
-	*src = 0;
-	char *game = strrchr(folder, '/');
-	if (!game)
-		fail("invalid game path: %s", input);
-	*game = 0;
-	char *path = strchr(shared, '/')
-					 ? formatString("%s/common/src/%s", folder, shared)
-					 : formatString("%s/common/%s%s", folder, suffix, shared);
-	free(folder);
-	free(suffix);
+	char *path = beside(input, lower);
 	free(lower);
 	return path;
 }

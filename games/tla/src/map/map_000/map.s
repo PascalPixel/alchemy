@@ -14,10 +14,10 @@ Field_Map000:
 	map_block Field_Map000
 	map_block Field_Map000, .LField_Map000_SCENE
 .LField_Map000_METATILES:
-	.incbin "games/common/src/map/map_001/metatiles.delta0.lz"
+	.incbin "games/tla/src/map/map_000/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map000_SHAPES:
-	.incbin "games/common/src/map/map_001/shapes.table.lz"
+	.incbin "games/tla/src/map/map_000/shapes.table.lz"
 	.balign 4, 0
 .LField_Map000_GRID:
 	.incbin "games/tla/src/map/map_000/grid.parts.lz"

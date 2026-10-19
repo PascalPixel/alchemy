@@ -3,8 +3,8 @@
 	.global Slots_JackpotBanner
 Slots_JackpotBanner:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "games/common/src/graphics/slots/jackpot_ja.gbapal"
-	.incbin "games/common/src/graphics/slots/jackpot_ja.4bpp32x32.lz"
+	.incbin "games/tla/src/graphics/slots/jackpot_ja.gbapal"
+	.incbin "games/tla/src/graphics/slots/jackpot_ja.4bpp32x32.lz"
 	.else
 	.ifdef TLA_EDITION_ES
 	.incbin "games/tla/src/graphics/slots/jackpot_es.gbapal"

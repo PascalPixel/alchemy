@@ -1,0 +1,58 @@
+cell:u8	grid:128x128	fill:0	at:1,5
+0 0 0 0 0 0 f3 ff 0 0 0 0 0 0 0 0 0 ff ff 0 f3
+0 0 ff ff
+0 0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff
+0 0 0 0 0 0 ff ff 0 ff ff ff ff ff ff ff ff 0 0 0 ff ff
+0 f3 0 0 0 0 ff ff 0 0 0 0 0 0 0 0 0 f3
+
+0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 ff
+0 ff ff 0 0 0 0 0 0 0 ff 0 a 0 0 ff 0 0 0 ff 0 0 ff ff
+0 0 0 0 0 0 0 ff ff ff ff 0 0 0 0 ff ff ff
+
+0 0 0 ff f3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 f3 f3
+0 0 0 f3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+
+0 0 0 0 0 0 0 ff ff ff ff ff 0 ff ff ff ff ff
+0 0 0 ff ff ff ff ff ff ff ff ff 1 ff ff ff ff ff ff ff ff ff
+0 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+0 0 0 ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 ff ff ff ff
+
+0 0 0 0 ff ff 0 ff ff 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff ff ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff ff ff ff 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff ff ff 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 ff
+0 0 0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 ff
+0 0 0 0 ff ff 0 ff ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 ff
+0 0 0 0 0 ff 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff ff ff ff ff ff ff
+0 0 0 0 0 ff ff ff
+0 ff ff ff
+ff ff 0 ff ff
+ff 0 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff ff
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff 0 0 0 ff
+ff 0 0 0 ff
+ff ff 0 ff ff
+0 ff 0 ff
+0 ff ff ff

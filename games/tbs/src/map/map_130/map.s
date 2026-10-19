@@ -16,7 +16,7 @@ Field_Map130:
 	.incbin "games/tbs/src/map/map_130/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map130_SHAPES:
-	.incbin "games/common/src/map/map_130/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map130_GRID:
 	.incbin "games/tbs/src/map/map_130/grid.parts.lz"

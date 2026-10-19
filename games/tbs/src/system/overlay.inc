@@ -5,7 +5,7 @@
 	.syntax unified
 	.thumb
 	.balign 4
-	.include "games/common/src/system/overlay.s"
+	.include "games/tbs/src/system/overlay.s"
 @ The stubs an overlay imports, in the order every overlay keeps them:
 @ Camelot's four divide routines, then the far-call entries in the order of
 @ the main image (games/tbs/src/system/far_call, by bank). The list is here, in

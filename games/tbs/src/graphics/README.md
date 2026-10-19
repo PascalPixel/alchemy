@@ -7,8 +7,7 @@ fade, the credits, and the handwritten decoders that unpack tiles and frames.
 Most of it is data. A picture is an indexed PNG beside the `.s` that places
 it; the build packs the PNG (and the `.tsv` beside it, where it has one) into
 the form the game reads, and the `.s` gives it its label. Edit the PNG and
-its palette. A picture both games share is under `games/common/src/graphics`,
-which the `.s` here includes.
+its palette.
 
 ## Files
 

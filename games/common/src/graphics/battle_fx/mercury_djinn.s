@@ -1,6 +1,0 @@
-	.section .rodata
-	.global BattleFx_MercuryDjinnSheet
-BattleFx_MercuryDjinnSheet:
-	.incbin "games/common/src/graphics/battle_fx/mercury_djinn.gbapal"
-	.incbin "games/common/src/graphics/battle_fx/mercury_djinn.bitmap.lz"
-	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes

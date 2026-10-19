@@ -14,7 +14,7 @@ gDisplayScroll_Font:
 	.ifdef TLA_EDITION_IT
 	.incbin "games/tla/src/graphics/display/credits_it.1bpp"
 	.else
-	.incbin "games/common/src/graphics/display/credits.1bpp"
+	.incbin "games/tla/src/graphics/display/credits.1bpp"
 	.endif
 	.endif
 	.endif

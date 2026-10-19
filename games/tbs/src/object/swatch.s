@@ -3,4 +3,4 @@
 @ Colour swatch and lettering tiles
 	.global gDebug_PaletteSwatchTiles
 gDebug_PaletteSwatchTiles:
-	.incbin "games/common/src/debug/swatch.4bpp.hlz"
+	.incbin "games/tbs/src/debug/swatch.4bpp.hlz"

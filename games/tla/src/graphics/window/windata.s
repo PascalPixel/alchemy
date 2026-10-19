@@ -2,7 +2,7 @@
 	.section .rodata
 	.global gUiText_GlyphWidths
 gUiText_GlyphWidths:
-	.include "games/common/src/graphics/window/glyph_widths.inc"
+	.include "games/tla/src/graphics/window/glyph_widths.inc"
 @ {background, foreground} pens of the eight text colours
 	.global gUiText_ColourPens
 gUiText_ColourPens:
@@ -137,7 +137,7 @@ gMenu_BarPatternRows:
 	.4byte 0x05055050, 0x05050505
 	.global gRomShiftedTilePair
 gRomShiftedTilePair:
-	.incbin "games/common/src/graphics/window/shiftpr.4bpp"
+	.incbin "games/tla/src/graphics/window/shiftpr.4bpp"
 	.global gGraphics_ExpandNibbleTable
 gGraphics_ExpandNibbleTable:
 	.2byte 0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
@@ -160,7 +160,7 @@ gLink_TimeLabelString:
 	.balign 4, 0
 	.global gDjinnMenu_BlinkTile
 gDjinnMenu_BlinkTile:
-	.incbin "games/common/src/menu/djinn/blink.4bpp"
+	.incbin "games/tla/src/menu/djinn/blink.4bpp"
 @ Item, column, row, highlight column, highlight row, highlight width
 	.global gOwnerStatus_StatCursors
 gOwnerStatus_StatCursors:

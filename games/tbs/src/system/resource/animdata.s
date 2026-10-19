@@ -1,7 +1,7 @@
 	.section .rodata
 	.global gObject_ShadowTiles
 gObject_ShadowTiles:
-	.incbin "games/common/src/system/resource/shadow.8bpp"
+	.incbin "games/tbs/src/system/resource/shadow.8bpp"
 
 @ Enemy sprite resource IDs and enemy IDs
 	.global gResourceSlot_NumberTable

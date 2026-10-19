@@ -25,7 +25,7 @@ Field_Map161:
 	.incbin "games/tbs/src/map/map_161/animation.script.lz"
 	.balign 4, 0
 .LField_Map161_BLEND:
-	.incbin "games/common/src/map/map_018/blend.script.lz"
+	.incbin "games/tbs/src/map/map_018/blend.script.lz"
 	.balign 4, 0
 .LField_Map161_MARKERS:
 	.incbin "games/tbs/src/map/map_161/markers.table"

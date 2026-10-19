@@ -8,6 +8,33 @@ extern u8 gMapShapeGrid[];
 typedef s32 (*TerrainHeightFn)(u8 *shape, s32 x, s32 z);
 extern TerrainHeightFn gMap_TerrainHeightHandlers[16];
 
+// The height of the ground at (px, pz) (16.16 pixels) on the given layer,
+// less base; a layer past 2 reads the shape grid. With no map, or while the
+// event mode is 3, it is 0.
+s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
+  s32 x = px >> 16;
+  s32 z = pz >> 16;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  u8 *event = Ram_HeapSlots->eventWork;
+  u8 *shapes;
+  u8 *code;
+
+  if (map == NULL)
+    return 0;
+  if (*(s8 *)(event + 0x18a) == 3)
+    return 0;
+  if (layer <= 2)
+    shapes = map->layers[layer].terrainIds;
+  else
+    shapes = gMapShapeGrid;
+  code = Ram_MapCollision + shapes[x / 16 + ((z / 16) << 7)] * 4;
+  /* FAKEMATCH(barrier): an empty asm, which keeps the shape kind's load
+   * ahead of the 15 mask as in the twins below, where the mask register is
+   * not free; as the plain call, 2 of 66 instructions differ in tla-en. */
+  __asm__ volatile("");
+  return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) - base;
+}
+
 // How the ground at (px, pz) (16.16 pixels) on the given layer stands to
 // height: 2 when the cell has no tile, 1 when the ground rises more than 8
 // pixels above it, -1 when it falls more than 12 below, else 0. A layer past

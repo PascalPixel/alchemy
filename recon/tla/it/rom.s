@@ -582,12 +582,6 @@ MapAnimation_Update:
 	.thumb_func
 Func_0802d45c:
 	.incbin "baserom.gba", 0x0002d45c, 0x0000007c
-	.section .rom.0002d71c, "ax"
-	.global Func_0802d71c
-	.type Func_0802d71c, %function
-	.thumb_func
-Func_0802d71c:
-	.incbin "baserom.gba", 0x0002d71c, 0x00000094
 	.section .rom.0002dd70, "ax"
 	.incbin "baserom.gba", 0x0002dd70, 0x0000011c
 	.section .rom.0002de8c, "ax"

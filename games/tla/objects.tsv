@@ -780,12 +780,6 @@ main	rom_main_01	recon/tla/de/rom	.rom.0002d45c	de
 main	rom_main_01	recon/tla/raw/0802d45c	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002d3d8	ja
 main	rom_main_01	games/tla/src/field/common/map/cell_collision	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002d71c	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002d71c	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002d71c	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002d71c	de
-main	rom_main_01	recon/tla/raw/0802d71c	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002d698	ja
 main	rom_main_01	games/tla/src/field/common/map/cell_open	.text
 main	rom_main_01	games/tla/src/field/common/map/world_collision	.text
 main	rom_main_01	games/tla/src/field/common/map/terrain	.text

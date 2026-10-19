@@ -13353,7 +13353,7 @@ msgctxt "MsgBuffsReset"
 msgid "03318"
 msgstr "{argument_actor_name:1}'s strength returns to normal!"
 
-msgctxt "message"
+msgctxt "MsgDjinnIsSet"
 msgid "03319"
 msgstr "{argument_ability_name} is set to {argument_actor_name:1}!"
 

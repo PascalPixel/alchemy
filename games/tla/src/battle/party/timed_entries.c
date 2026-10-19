@@ -11,6 +11,7 @@
 #include "owner_state.h"
 #include "battle_party.h"
 #include "b5_context.h"
+#include "motobj.h"
 
 struct PlacementList {
   struct DjinnRecoveryEntry entries[72];
@@ -150,3 +151,86 @@ s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void) {
 }
 
 void Func_08124cc0(void) {}
+
+extern char MsgDjinnIsSet;
+
+void BattleEvPush(u32 opcode, u32 operand);
+u32 BattleParty_IsUnitListed(u32 id);
+s32 BattleEventRuntime_SchedulePhase(s32 frames);
+void BattleEventRuntime_WaitForReady(void);
+void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
+
+// Ticks one side's Djinn recovery at the round's end, as ☀️'s
+// BattlePlacement_UpdateTimedEntries with ⚓️'s presentation: an owner must be
+// in the battle; each Djinni that comes back plays its event (its icon, sound
+// 175, the flash and "... is set to ...!") before it is Set. Returns 1 when a
+// count fell, 2 when one was Set, else 0.
+s32 Func_08124cc4(s32 side) {
+  struct PlacementList *list;
+  struct DjinnRecoveryEntry *timedEntry;
+  struct DjinnRecoveryEntry *entry;
+  s32 result = 0;
+  s32 i;
+  s32 count;
+
+  list = &Djinn_GetRecoveryTableFar(side)->list;
+  i = 0;
+  if (i < list->count) {
+    timedEntry = list->entries;
+    do {
+      if (timedEntry->turns > 0 &&
+          BattleParty_IsUnitListed(timedEntry->unitId) &&
+          ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+        timedEntry->turns--;
+        result = 1;
+      }
+      count = list->count;
+      /* FAKEMATCH(one-pass block): the count is read before i steps; as
+       * i++; timedEntry++; } while (i < list->count);, 2 of 149 instructions
+       * differ in tla-en. */
+      do {
+      } while (0);
+      i++;
+      timedEntry++;
+    } while (i < count);
+  }
+  i = 0;
+  if (i < list->count) {
+    entry = list->entries;
+    do {
+      if (entry->turns == 0) {
+        u8 id = entry->unitId;
+
+        if (BattleParty_IsUnitListed(id)) {
+          u8 element;
+
+          result = 2;
+          BattleEventRuntime_Reset();
+          BattleEventRuntime_SchedulePhase(30);
+          BattleEvPush(0, id);
+          BattleEvPush(3, entry->element * 20 + entry->index + 300);
+          BattleEvPush(14, 175);
+          BattleEvPush(10, 0);
+          BattleEvPush(4, (u32)&MsgDjinnIsSet);
+          BattleEvPush(11, id);
+          if (BattleParty_IsUnitListed(id)) {
+            Object_SetMode((struct ObjectRuntime *)BattleObjGet(id)->object, 3);
+            ObjectDispatch_ApplyValueToChildrenFar(
+                (struct DispatchObject *)BattleObjGet(id)->object, 32);
+          }
+          element = entry->element;
+          Djinn_ActivateFar(id, element, entry->index);
+          DjinnRecovery_RemoveFar(id, entry->element, entry->index);
+          UnitCalcFar(id);
+          if (BattleParty_IsUnitListed(id))
+            Func_08127308(id, element, 3, 0);
+          BattleEventRuntime_WaitForReady();
+        }
+      } else {
+        entry++;
+        i++;
+      }
+    } while (i < list->count);
+  }
+  return result;
+}

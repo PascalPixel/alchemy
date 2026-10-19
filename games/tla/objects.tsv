@@ -5418,16 +5418,15 @@ main	rom_main_08	recon/tla/raw/0812381c	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00123570	ja
 main	rom_main_08	games/tla/src/battle/party/roll_counter_early_end	.text
 main	rom_main_08	games/tla/src/battle/party/timed_entries	.text
-main	rom_main_08	recon/tla/it/rom	.rom.00124cdc	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00124cdc	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00124cdc	es
-main	rom_main_08	recon/tla/de/rom	.rom.00124cdc	de
-main	rom_main_08	recon/tla/raw/08124cc4	.text	en
+main	rom_main_08	recon/tla/it/rom	.rom.00124e38	it
+main	rom_main_08	recon/tla/fr/rom	.rom.00124e38	fr
+main	rom_main_08	recon/tla/es/rom	.rom.00124e38	es
+main	rom_main_08	recon/tla/de/rom	.rom.00124e38	de
 main	rom_main_08	recon/tla/raw/08124e20	.text	en
 main	rom_main_08	recon/tla/raw/08125390	.text	en
 main	rom_main_08	recon/tla/raw/0812561c	.text	en
 main	rom_main_08	recon/tla/raw/08125aa0	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.00124cc0	ja
+main	rom_main_08	recon/tla/ja/rom	.rom.00124e1c	ja
 main	rom_main_08	games/tla/src/battle/build_sequential_table	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00125bd0	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00125bd0	fr

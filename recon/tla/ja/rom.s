@@ -3939,9 +3939,9 @@ BattleEvent_Playback:
 	.thumb_func
 Func_08123574:
 	.incbin "baserom.gba", 0x00123570, 0x0000129c
-	.section .rom.00124cc0, "ax"
+	.section .rom.00124e1c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00124cc0, 0x00000eb4
+	.incbin "baserom.gba", 0x00124e1c, 0x00000d58
 	.section .rom.00125bb4, "ax"
 	.incbin "baserom.gba", 0x00125bb4, 0x00000054
 	.section .rom.00125d70, "ax"
@@ -3999,6 +3999,10 @@ Func_08126e00:
 	.incbin "baserom.gba", 0x00127064, 0x00000248
 	.section .rom.00127304, "ax"
 	.balign 4
+	.global Func_08127308
+	.type Func_08127308, %function
+	.thumb_func
+Func_08127308:
 	.incbin "baserom.gba", 0x00127304, 0x00000264
 	.section .rom.00127584, "ax"
 	.balign 4

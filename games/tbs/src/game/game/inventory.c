@@ -39,7 +39,7 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
 
   item = Item_GetDirect(itemId);
   group = 0;
-  if (item->type == 1)
+  if (item->type == ITEM_TYPE_WEAPON)
     group = 1;
   else if (item->type == 2)
     group = 2;

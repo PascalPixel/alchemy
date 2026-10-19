@@ -27,6 +27,13 @@ enum ItemFlags {
   ITEM_STACKABLE = 0x10
 };
 
+// An item's type (struct ItemDefinition's type), where it is known.
+enum ItemType {
+  ITEM_TYPE_WEAPON = 1,
+  // The items that teach Psynergy while held: Orb of Force to Catch Beads.
+  ITEM_TYPE_PSYNERGY = 6
+};
+
 enum ItemEffectKind {
   ITEM_EFFECT_NONE,
   ITEM_EFFECT_ADD_HP,
@@ -57,7 +64,7 @@ enum ItemEffectKind {
   ITEM_EFFECT_24,                 // summed by UnitCalc; TBS never reads it
   ITEM_EFFECT_25,                 // sets restraint bit 3, which lifts bit 0
   ITEM_EFFECT_ADD_TURNS,          // more actions each round
-  ITEM_EFFECT_27                  // sets flag 0x167 while worn
+  ITEM_EFFECT_LURE // sets FLAG_LURE_CAP while worn: encounters come faster
 };
 
 struct ItemEffect {

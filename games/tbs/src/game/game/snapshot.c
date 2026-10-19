@@ -24,7 +24,7 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
 // Saves the first four characters' inventories, shortcuts and party order,
-// then keeps only the Psynergy-granting items (type 6), gives Isaac the Short
+// then keeps only the Psynergy-granting items, gives Isaac the Short
 // Sword, sets FLAG_INVENTORY_SNAPSHOT and restores everyone. Nothing
 // happens when a snapshot is already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
@@ -47,7 +47,7 @@ void InventorySnapshot_Save(void) {
       for (slot = 0; slot < INVENTORY_SLOTS; slot++)
         *save++ = unit->inventory[slot];
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-        if (Item_GetDirect(unit->inventory[slot])->type != 6)
+        if (Item_GetDirect(unit->inventory[slot])->type != ITEM_TYPE_PSYNERGY)
           unit->inventory[slot] = 0;
       }
       inventory = unit->inventory;

@@ -421,7 +421,7 @@ void UnitCalc(s32 owner) {
 }
 
 // Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
-// with equipment effect 27) equipped, and clears it otherwise.
+// with ITEM_EFFECT_LURE) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -444,7 +444,7 @@ void GameFlag_RefreshLureCap(void) {
 
           effectKind = effect->kind;
           effect++;
-          if (effectKind == ITEM_EFFECT_27) {
+          if (effectKind == ITEM_EFFECT_LURE) {
             GameFlag_SetBit(FLAG_LURE_CAP);
           }
         }

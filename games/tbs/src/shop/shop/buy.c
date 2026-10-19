@@ -411,7 +411,8 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     }
     if (index == INVENTORY_SLOTS) {
       for (index = 0; index < INVENTORY_SLOTS; index++) {
-        if (Item_GetDirectFar(unit->inventory[index])->type == 6)
+        if (Item_GetDirectFar(unit->inventory[index])->type ==
+            ITEM_TYPE_PSYNERGY)
           break;
       }
       if (index == INVENTORY_SLOTS)
@@ -753,7 +754,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
     return 0;
   }
   itemId = unit->inventory[slot] & ITEM_ID_MASK;
-  if (Item_GetDirectFar(itemId)->type == 6) {
+  if (Item_GetDirectFar(itemId)->type == ITEM_TYPE_PSYNERGY) {
     return 0;
   }
   if (Item_GetDirectFar(itemId)->flags & ITEM_INDISPENSABLE) {

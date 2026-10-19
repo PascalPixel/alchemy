@@ -535,10 +535,15 @@ main	rom_main_01	recon/tla/es/rom	.rom.00025160	es
 main	rom_main_01	recon/tla/de/rom	.rom.00025160	de
 main	rom_main_01	recon/tla/raw/08025160	.text	en
 main	rom_main_01	recon/tla/raw/08025428	.text	en
-main	rom_main_01	recon/tla/raw/08025608	.text	en
+main	rom_main_01	recon/tla/ja/rom	.rom.00025160	ja
+main	rom_main_01	games/tla/src/field/common/script/approach_link	.text
+main	rom_main_01	recon/tla/it/rom	.rom.00025698	it
+main	rom_main_01	recon/tla/fr/rom	.rom.00025698	fr
+main	rom_main_01	recon/tla/es/rom	.rom.00025698	es
+main	rom_main_01	recon/tla/de/rom	.rom.00025698	de
 main	rom_main_01	recon/tla/raw/08025698	.text	en
 main	rom_main_01	recon/tla/raw/08025830	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00025160	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.00025698	ja
 main	rom_main_01	games/tla/src/field/common/script/operands	.text
 main	rom_main_01	games/tla/src/field/common/script/script_operand_position	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00025c8a	it

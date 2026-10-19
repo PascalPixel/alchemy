@@ -13,7 +13,7 @@ extern const s8 gBattlePlacement_StepPairs[];
 void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 s32 BattleParty_PrepareReserveOwners(u16 *ids);
-void Func_0811b180(u16 *unit_ids, s32 count, s32 *x, s32 *z);
+void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
 struct BattleObj *BattleObjGet(s32 id);
 
 void BattleUnit_RefreshPlacement(void) {
@@ -49,7 +49,7 @@ void BattleUnit_RefreshPlacement(void) {
   for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
     ids[i] = work->enemyIds[i];
   count = i;
-  Func_0811b180(ids, count, x, z);
+  Summon_LayoutPositions(ids, count, x, z);
   for (i = 0; i < count; i++, stand++) {
     s32 id = work->enemyIds[i];
 

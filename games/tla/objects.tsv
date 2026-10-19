@@ -5180,12 +5180,7 @@ main	rom_main_08	recon/tla/de/rom	.rom.0011a7c4	de
 main	rom_main_08	recon/tla/raw/0811a7ac	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011a7a8	ja
 main	rom_main_08	games/tla/src/battle/party/get_step_pair	.text
-main	rom_main_08	recon/tla/it/rom	.rom.0011b198	it
-main	rom_main_08	recon/tla/fr/rom	.rom.0011b198	fr
-main	rom_main_08	recon/tla/es/rom	.rom.0011b198	es
-main	rom_main_08	recon/tla/de/rom	.rom.0011b198	de
-main	rom_main_08	recon/tla/raw/0811b180	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.0011b17c	ja
+main	rom_main_08	games/tla/src/battle/summon/layout_positions	.text
 main	rom_main_08	games/tla/src/battle/summon/find_slot	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011b2dc	it
 main	rom_main_08	recon/tla/fr/rom	.rom.0011b2dc	fr

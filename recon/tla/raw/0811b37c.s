@@ -119,7 +119,7 @@ Func_0811b37c:
 	adds r1, r5, #0
 	mov r2, r9
 	mov r3, r10
-	bl Func_0811b180
+	bl Summon_LayoutPositions
 	cmp r5, #0
 	ble .L_0811b49a
 	movs r3, #0

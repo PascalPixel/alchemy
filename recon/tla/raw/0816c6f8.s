@@ -276,7 +276,7 @@ BattleFx_RunGeode:
 .L_0816c920:
 	.4byte 0x0000001f
 .L_0816c924:
-	.4byte Func_08143424
+	.4byte Display_ApplyBg2Affine
 .L_0816c928:
 	.4byte gBgScroll
 .L_0816c92c:
@@ -685,7 +685,7 @@ BattleFx_RunGeode:
 .L_0816cc34:
 	.4byte 0x000000d0
 .L_0816cc38:
-	.4byte Func_08143424
+	.4byte Display_ApplyBg2Affine
 .L_0816cc3c:
 	.4byte BattleFx_ProcessPendingBlock2Transfer
 .L_0816cc40:

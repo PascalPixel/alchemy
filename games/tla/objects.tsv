@@ -5693,7 +5693,6 @@ main	rom_main_09	recon/tla/es/rom	.rom.00143354	es
 main	rom_main_09	recon/tla/de/rom	.rom.00143354	de
 main	rom_main_09	recon/tla/raw/08143354	.text	en
 main	rom_main_09	recon/tla/raw/081433b4	.text	en
-main	rom_main_09	recon/tla/raw/08143424	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00143354	ja
 main	rom_main_09	games/tla/src/battle/effect/display_registers	.text
 main	rom_main_09	games/tla/src/battle/effect/palette_fade_step	.text

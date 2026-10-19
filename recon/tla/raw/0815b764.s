@@ -439,7 +439,7 @@ BattleFx_RunUlysses:
 .L_0815bac8:
 	.4byte BattleFx_ProcessPendingBlock2Transfer
 .L_0815bacc:
-	.4byte Func_08143424
+	.4byte Display_ApplyBg2Affine
 .L_0815bad0:
 	.4byte 0x000000c7
 .L_0815bad4:
@@ -882,7 +882,7 @@ BattleFx_RunUlysses:
 .L_0815be28:
 	.4byte BattleFx_ProcessPendingBlock2Transfer
 .L_0815be2c:
-	.4byte Func_08143424
+	.4byte Display_ApplyBg2Affine
 .L_0815be30:
 	.4byte BattleFx_ProcessPendingGraphicsTransfer
 .L_0815be34:

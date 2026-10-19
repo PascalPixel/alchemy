@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/s1e38.o"(.text)
         "*/resource_6a3_overlay.o"(.text.x02009ed0)
         "*/resource_6a3_overlay.o"(.text.x0200ac54)
-        "*/resource_6a3_overlay.o"(.text.x0200ae3c)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_m/s2e3c.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_6a3_overlay.o"(.text.x0200aefa)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/lighton.o"(.text)

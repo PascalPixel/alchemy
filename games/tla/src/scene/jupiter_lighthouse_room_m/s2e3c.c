@@ -1,12 +1,3 @@
-
-// Draft of overlay 6a3 Func_02002e3c, the scene's map preparation. 2
-// instructions differ: the listing builds the last call's zero argument
-// (movs r2, #0) right after the motion flag store and before the two position
-// loads, the draft after them. The six-argument calls go through Call6 and
-// the three-argument one through Call3 (direct calls: 12 differ). Tried for
-// the last call: Call4, a prototyped direct call (both 2), a named zero
-// shared with the flag store (4), a barrier on the zero (10).
-
 #include "types.h"
 #include "field_event.h"
 #include "call.h"
@@ -22,6 +13,7 @@ void Func_0200474c();
 void Func_020049ac();
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
+// The scene's map preparation.
 s32 Func_02002e3c(void) {
   struct FieldActor *object;
 
@@ -37,6 +29,13 @@ s32 Func_02002e3c(void) {
     Func_020049ac(0x4100000, 0xa00000, 2, 236);
   }
   object->motionFlags = 0;
-  Func_02004774(object->x, object->z, 0, -6);
+  {
+    s32 zero = 0;
+
+    /* FAKEMATCH(barrier): the last call's zero is built before the position
+     * loads; as a plain 0 argument, 2 of 62 instructions differ in tla-en. */
+    __asm__("" : : "r"(zero));
+    Func_02004774(object->x, object->z, zero, -6);
+  }
   return 0;
 }

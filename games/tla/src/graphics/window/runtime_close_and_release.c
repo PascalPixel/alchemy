@@ -17,4 +17,4 @@
 //--------------------------------------------------------------------------
 // Close the window in heap slot 16 and release its block.
 //--------------------------------------------------------------------------
-void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }
+void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }

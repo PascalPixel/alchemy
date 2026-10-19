@@ -64,7 +64,7 @@ void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(u32 value, u32 kind);
 void UiWindow_CreateWithLayoutBoundsFar(s32 flags);
 void PartyStatusDrawFar(s32 flags);
-void UiWork_FinalizeAndReleaseBlock16Far(void);
+void PartyStatus_CloseFar(void);
 void UiWork_FinalizePendingCoreFar(void);
 void UiWork_DrainPendingFar(s32 unused);
 s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *out, u16 *in,

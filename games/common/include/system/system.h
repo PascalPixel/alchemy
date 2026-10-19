@@ -73,7 +73,7 @@ void DebugText_Print(const u8 *src);
 void StartFlashTimer(u8 index);
 #endif
 #if GAME_TLA
-void UiWork_FinalizeAndReleaseBlock16(void);
+void PartyStatus_Close(void);
 #endif
 
 #if !GAME_TLA

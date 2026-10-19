@@ -33,10 +33,10 @@ UiWindow_CreateWithLayoutBoundsFar:
 	.thumb_func
 PartyStatusDrawFar:
 	overlay_veneer PartyStatusDraw
-	.global UiWork_FinalizeAndReleaseBlock16Far
+	.global PartyStatus_CloseFar
 	.thumb_func
-UiWork_FinalizeAndReleaseBlock16Far:
-	overlay_veneer UiWork_FinalizeAndReleaseBlock16
+PartyStatus_CloseFar:
+	overlay_veneer PartyStatus_Close
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:

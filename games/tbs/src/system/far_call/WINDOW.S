@@ -43,7 +43,7 @@ FarCall_WindowTable:
 	export UiWork_PushValueSlotFar, UiWork_PushValueSlot
 	export UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds
 	export PartyStatusDrawFar, PartyStatusDraw
-	export UiWork_FinalizeAndReleaseBlock16Far, UiWork_FinalizeAndReleaseBlock16
+	export PartyStatus_CloseFar, PartyStatus_Close
 	export UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore
 	export UiWork_DrainPendingFar, UiWork_DrainPending
 	overlay_veneer UiGlyph_ResetWorkState

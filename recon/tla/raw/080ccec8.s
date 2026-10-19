@@ -223,7 +223,7 @@ Func_080ccec8:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
 .L_080cd08e:
-	bl UiWork_FinalizeAndReleaseBlock16Far
+	bl PartyStatus_CloseFar
 	movs r3, #0
 	str r3, [r5, #108]
 	movs r1, #2

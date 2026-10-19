@@ -43,7 +43,7 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
                                 s32 length);
 #endif
 void PartyStatusDraw(s32 flags);
-void UiWork_FinalizeAndReleaseBlock16(void);
+void PartyStatus_Close(void);
 void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
                                       s32 y, s32 width, s32 height, u32 set);
 

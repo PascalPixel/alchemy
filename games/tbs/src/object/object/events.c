@@ -461,7 +461,7 @@ s32 Field_SearchTile(s32 tile) {
               AudioCommand_PlayFar(SE_RECOVERY);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);
-              UiWork_FinalizeAndReleaseBlock16Far();
+              PartyStatus_CloseFar();
               ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
               AudioCommand_PlayFar(SE_246);
               FieldEvent_WaitFrames(30);

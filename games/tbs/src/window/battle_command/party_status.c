@@ -359,7 +359,7 @@ void PartyStatusDraw(s32 flags) {
 }
 
 // Closes the party status window and frees its heap block.
-void UiWork_FinalizeAndReleaseBlock16(void) {
+void PartyStatus_Close(void) {
   UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
   Runtime_ReleaseHeapBlock(PARTY_STATUS_BLOCK);
 }

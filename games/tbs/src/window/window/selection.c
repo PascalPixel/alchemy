@@ -1387,7 +1387,7 @@ void UiWindow_OpenMode1AndWaitFrame(void) {
 }
 
 // Closes the window kept in heap block 16 and frees the block.
-void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }
+void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }
 
 // Sets up an empty selection screen and waits a frame.
 // Nothing calls it.

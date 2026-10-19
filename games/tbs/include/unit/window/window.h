@@ -55,6 +55,16 @@ enum {
 // Two copies of a tilemap entry, for filling a run of entries a word at a time.
 #define UI_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
+// The two page arrows beside a paged list's page numbers, in the menus and
+// the clear menu: tiles 0x128 and 0x129 of character block 0, which
+// Link_DrawShiftedTilePair slides back and forth each frame, and their
+// tilemap entries.
+#define UI_PAGE_ARROW_TILE 0x128
+#define UI_PAGE_ARROW_VRAM                                                     \
+  ((s32)BG_CHAR_BLOCK(0) + UI_PAGE_ARROW_TILE * TILE_SIZE_4BPP)
+#define UI_PAGE_ARROW_LEFT UI_TILE(UI_PAGE_ARROW_TILE)
+#define UI_PAGE_ARROW_RIGHT UI_TILE(UI_PAGE_ARROW_TILE + 1)
+
 // The window frame's tiles. While UiRenderWork.mode is set (a battle effect
 // sets it while it greys palette 15 and scrolls BG0 by scanline) the corners
 // are one rounded tile, flipped for each corner.

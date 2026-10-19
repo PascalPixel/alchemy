@@ -116,7 +116,7 @@ s32 RunAssetSelectionScreen(void) {
   ItemMenu_Init(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenBankHighlight(14);
-  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
+  Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.

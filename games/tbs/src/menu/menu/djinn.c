@@ -97,7 +97,7 @@ s32 ItemMenu_Run(void) {
   }
   Scheduler_EnableOverlayCallbacksWithFlags();
   UiWork_SetAltFlagAndClearTableFar(1);
-  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
+  Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Init(0, 3, 0, 7);

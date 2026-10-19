@@ -718,7 +718,7 @@ menu_top:;
       Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
       RenderOutput_PrepareForRedraw(pageWindow);
       for (;;) {
-        Link_DrawShiftedTilePair(0x6002500);
+        Link_DrawShiftedTilePair(UI_PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
           Engine_AudioPlayCue(SE_MENU_CANCEL);
           RenderOutput_PrepareForRedraw(pageWindow);
@@ -783,9 +783,10 @@ menu_top:;
               } while (v7 != pageCount);
             }
             v5 = 0;
-            UiWindow_SetTilemapEntry(pageWindow, 0xf128, (17 - (s32)pageCount),
-                                     -1, 0);
-            UiWindow_SetTilemapEntry(pageWindow, 0xf129, 18, -1, 0);
+            UiWindow_SetTilemapEntry(pageWindow, UI_PAGE_ARROW_LEFT,
+                                     (17 - (s32)pageCount), -1, 0);
+            UiWindow_SetTilemapEntry(pageWindow, UI_PAGE_ARROW_RIGHT, 18, -1,
+                                     0);
             UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
                              ((struct UiWindow *)pageWindow)->y);
           }

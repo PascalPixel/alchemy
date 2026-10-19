@@ -186,7 +186,7 @@ s32 ActionMenu_Open(void) {
     state->rowX[index] = 130 + index * 32;
     state->rowY[index] = 128;
   }
-  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
+  Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
   state->page = 0;

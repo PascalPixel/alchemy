@@ -68,7 +68,7 @@ scenes open.
 - **entry icons**: the item or Psynergy icons laid out in a grid
   (`entryIcons`); **party figures**: the walking members in the top window.
 - **page arrows**: the two tiles beside a paged list's page numbers
-  (`MENU_PAGE_ARROW_`), which each screen's loop slides back and forth.
+  (`UI_PAGE_ARROW_`), which each screen's loop slides back and forth.
 - `unk<offset>`, such as `unk180`: a field whose meaning is not known yet.
 
 ## Prefixes

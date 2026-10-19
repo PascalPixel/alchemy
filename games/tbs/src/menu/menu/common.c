@@ -941,7 +941,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   if (count == 0)
     return result;
   // Animate the page arrows.
-  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
+  Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   pages = count / pageSize;
   if (count % pageSize != 0)
     pages++;
@@ -1054,7 +1054,7 @@ void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
 
   x -= pageCount;
   if (pageCount > 1) {
-    UiWindow_SetTilemapEntryFar(window, MENU_PAGE_ARROW_LEFT, x - 1, -1, 0);
+    UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_LEFT, x - 1, -1, 0);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
@@ -1065,7 +1065,7 @@ void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
       x++;
     }
 
-    UiWindow_SetTilemapEntryFar(window, MENU_PAGE_ARROW_RIGHT, x, -1, 0);
+    UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_RIGHT, x, -1, 0);
   }
 }
 

@@ -405,10 +405,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
               list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
         }
         top = -1;
-        UiWindow_SetTilemapEntryFar(list, MENU_PAGE_ARROW_LEFT,
+        UiWindow_SetTilemapEntryFar(list, UI_PAGE_ARROW_LEFT,
                                     list->width - pageCounts[page] - 3, top, 0);
-        UiWindow_SetTilemapEntryFar(list, MENU_PAGE_ARROW_RIGHT,
-                                    list->width - 2, top, 0);
+        UiWindow_SetTilemapEntryFar(list, UI_PAGE_ARROW_RIGHT, list->width - 2,
+                                    top, 0);
         UiRender_MarkRow(render, list->y);
       }
     }
@@ -614,9 +614,9 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
         UiWindow_SetTilemapEntryFar(
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
       }
-      UiWindow_SetTilemapEntryFar(window, MENU_PAGE_ARROW_LEFT,
+      UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_LEFT,
                                   window->width - counts[side] - 3, -1, 0);
-      UiWindow_SetTilemapEntryFar(window, MENU_PAGE_ARROW_RIGHT,
+      UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_RIGHT,
                                   window->width - 2, -1, 0);
       UiRender_MarkRow(render, window->y);
     }

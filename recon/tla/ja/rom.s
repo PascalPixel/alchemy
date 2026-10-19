@@ -3690,8 +3690,6 @@ Func_0810a108:
 	.thumb_func
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a71c, 0x0000003c
-	.section .rom.0010a8fc, "ax"
-	.incbin "baserom.gba", 0x0010a8fc, 0x00000074
 	.section .rom.0010aa90, "ax"
 	.balign 4
 	.global Func_0810aa80
@@ -3708,12 +3706,6 @@ BattleFx_UpdateRadialMotion:
 	.section .rom.0010b1c4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0010b1c4, 0x000001c4
-	.section .rom.0010b388, "ax"
-	.global Func_0810b378
-	.type Func_0810b378, %function
-	.thumb_func
-Func_0810b378:
-	.incbin "baserom.gba", 0x0010b388, 0x00000074
 	.section .rom.0010b428, "ax"
 	.balign 4
 	.global Func_0810b418

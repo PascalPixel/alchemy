@@ -2,7 +2,7 @@
 // then on yes and enough coins closes the windows, plays the night
 // (Inn_PlaySleep) and greets the party in the morning. ☀️'s Inn_CheckIn in
 // games/tbs/src/shop/shop.c, written with ⚓️'s calls (Func_08108148 for the
-// cursor work, Func_080380f8 for the keeper's window, Func_0810b378 for the
+// cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
 // room price, UiText_DrawQuantity, Func_081084f4 to show a message,
 // Func_08108630 for the choice, Func_08109188 for the coins, Func_0810824c to
 // clean up) and its work-block offsets; ⚓️ has no special-inn flag. Messages
@@ -47,7 +47,7 @@ void Func_08108148(void);
 void Func_0810824c(void);
 struct InnObject *Object_GetByIdFar(s32 id);
 s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
-s32 Func_0810b378(s32 mode);
+s32 Inn_RoomPrice(s32 mode);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void Func_081084f4(s32 message);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -71,7 +71,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   state->resourceId = *object->component->resourceId;
   win = Func_080380f8(state->resourceId, 0, 0, 0);
 
-  amount = Func_0810b378(mode);
+  amount = Inn_RoomPrice(mode);
   UiText_DrawQuantity(amount, 5);
   messageBase = (s32)Msg04813;
   Func_081084f4(messageBase);

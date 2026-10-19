@@ -1,50 +1,62 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "object_runtime.h"
-#include "dma.h"
-#include "io_reg.h"
 
-struct MenuFlagWork {
-  u8 unk000[0x506];
+// The inn's view of the shop work (heap slot 220).
+struct InnRuntime {
+  u8 unk000[0x4ca];
+  s16 partyMemberIds[8];
+  u8 unk4da[0x2a];
+  s8 partyMemberCount;
+  u8 unk505;
   u8 busy;
 };
 
-struct FxGroup {
-  u8 unk00[32];
-  struct ObjectRuntime *objects[8];
-  u16 values[8];
-  s32 count;
+struct InnUnit {
+  u8 unk00[0x38];
+  s16 hp;
 };
 
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern void *gOverlayArea[];
-extern struct DescriptorEntry gData_080eff28[];
-
-void BattleFx_BeginTiledCanvas(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void Func_0814ea58(void *effect, s32 mode);
-void UiWindow_CreateWithLayoutBounds(s32 flags);
-void WaitFrames(s32 frames);
-s32 Func_08020310(s32 x, s32 z, s32 layer);
-s32 Func_080dbde8(s32 x, s32 z, s32 layer);
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
+struct InnUnit *UnitGet(s32 unitId);
 void Func_08108148(void);
-s32 Func_0810b378(s32 value);
 void Func_0810824c(void);
 
+// The price per guest of each inn.
+extern const s8 gData_0810cf2c[];
+
+// Multiplies the inn's price per guest by the number of living party members,
+// as ☀️'s Inn_RoomPrice.
+s32 Inn_RoomPrice(s32 innId) {
+  /* FAKEMATCH(pin): the work kept in r6 and the member offset in r5 under the
+   * barrier below, which gives the work one more use; as a plain local, 16 of
+   * 55 instructions differ in tla-en. */
+  register struct InnRuntime *inn asm("r6");
+  s32 guestCount;
+  s32 pricePerGuest;
+  s32 memberIndex;
+
+  inn = Ram_HeapSlots->menuRuntime;
+  /* FAKEMATCH(barrier): the work loaded before the count's offset is built
+   * in r1, as native; the clobber keeps that build below the load. As plain
+   * C without the barrier and the pin, 4 of 55 instructions differ in tla-en. */
+  asm("" : "+l"(inn) : : "r1");
+  guestCount = 0;
+  pricePerGuest = gData_0810cf2c[innId];
+  for (memberIndex = 0; memberIndex < inn->partyMemberCount; memberIndex++) {
+    if (UnitGet(inn->partyMemberIds[memberIndex])->hp != 0)
+      guestCount++;
+  }
+  return pricePerGuest * guestCount;
+}
+
 s32 Func_0810b3ec(s32 value) {
-  struct MenuFlagWork *work;
+  struct InnRuntime *work;
 
   Func_08108148();
   work = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH: ⚓️ loads the menu work before it builds the flag offset */
   asm volatile("");
   work->busy = 1;
-  value = Func_0810b378(value);
+  value = Inn_RoomPrice(value);
   Func_0810824c();
   return value;
 }

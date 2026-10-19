@@ -3178,8 +3178,6 @@ Func_0810a108:
 	.thumb_func
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a710, 0x0000003c
-	.section .rom.0010a8f0, "ax"
-	.incbin "baserom.gba", 0x0010a8f0, 0x00000074
 	.section .rom.0010aa84, "ax"
 	.balign 4
 	.global Func_0810aa80
@@ -3192,12 +3190,6 @@ Func_0810aa80:
 	.section .rom.0010b1b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0010b1b8, 0x000001c4
-	.section .rom.0010b37c, "ax"
-	.global Func_0810b378
-	.type Func_0810b378, %function
-	.thumb_func
-Func_0810b378:
-	.incbin "baserom.gba", 0x0010b37c, 0x00000074
 	.section .rom.0010b41c, "ax"
 	.balign 4
 	.global Func_0810b418

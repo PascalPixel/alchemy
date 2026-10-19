@@ -25,7 +25,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x02008a48)
         "*/games/tla/src/scene/magma_rock/s0c08.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008c40)
-        "*/resource_691_overlay.o"(.text.x02008d40)
+        "*/games/tla/src/scene/magma_rock/s0d40.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008dc0)
         "*/resource_691_overlay.o"(.text.x02008ee4)
         "*/games/tla/src/scene/magma_rock/blink.o"(.text)

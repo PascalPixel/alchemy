@@ -1,10 +1,3 @@
-// Near miss, differ 2 of 55: a frame-timed spawn of effect 403 at the object,
-// as ☀️'s SceneEffect_SpawnPeriodicEffect. The native loads the object's z
-// before it stores the z velocity to the stack; here the store goes first (in
-// sched2 the store has priority 5, the load 4). Measured: alchemy permute for
-// 3 minutes (2), a "+r" asm on the velocity (2), the z load and the velocity
-// before an empty volatile asm (4: the offset's subs and lsls must then come
-// ahead of it too), a one-pass block around them (17).
 #include "types.h"
 #include "frame.h"
 #include "object_runtime.h"
@@ -28,6 +21,8 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);
 
+// Every fourth frame, spawns effect 403 at the object with a random z offset
+// and z velocity.
 void Func_02000d40(struct ObjectRuntime *object) {
   u32 frame = gFrameCount;
 
@@ -35,6 +30,7 @@ void Func_02000d40(struct ObjectRuntime *object) {
     struct MagmaRockEffectConfig config;
     s32 dz;
     s32 velocityZ;
+    s32 z;
 
     config.id = 403;
     config.kind = 2;
@@ -43,7 +39,13 @@ void Func_02000d40(struct ObjectRuntime *object) {
       Func_02003c4c(object, 136);
     dz = ((Random16Far() & 15) - 8) << 15;
     velocityZ = ((Random16Far() & 31) - 16) << 12;
-    Func_0200015c(object->x, object->y, object->z + dz, 0, 0, velocityZ,
-                  0x320001, &config);
+    z = object->z;
+    /* FAKEMATCH(barrier): an empty asm reads the z velocity into the z, so the
+     * object's z loads after the velocity's shift and before its store, as
+     * native; as object->z + dz in the call, 2 of 55 instructions differ in
+     * tla-en. */
+    asm("" : "+r"(z) : "r"(velocityZ));
+    Func_0200015c(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
+                  &config);
   }
 }

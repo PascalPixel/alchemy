@@ -5190,12 +5190,7 @@ main	rom_main_08	recon/tla/raw/0811b2c4	.text	en
 main	rom_main_08	recon/tla/raw/0811b37c	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011b2c0	ja
 main	rom_main_08	games/tla/src/battle/contains_id	.text
-main	rom_main_08	recon/tla/it/rom	.rom.0011b4f0	it
-main	rom_main_08	recon/tla/fr/rom	.rom.0011b4f0	fr
-main	rom_main_08	recon/tla/es/rom	.rom.0011b4f0	es
-main	rom_main_08	recon/tla/de/rom	.rom.0011b4f0	de
-main	rom_main_08	recon/tla/raw/0811b4d8	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.0011b4d4	ja
+main	rom_main_08	games/tla/src/battle/status_flags	.text
 main	rom_main_08	games/tla/src/battle/presentation/set_actor_mode_and_action	.text
 main	rom_main_08	games/tla/src/battle/presentation/release_battle_object_records	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011b772	it

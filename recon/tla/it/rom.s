@@ -4420,13 +4420,6 @@ BattleObjMake:
 	.thumb_func
 EnemyUpdate:
 	.incbin "baserom.gba", 0x0011b2dc, 0x000001e8
-	.section .rom.0011b4f0, "ax"
-	.balign 4
-	.global BattleUnit_BuildStatusFlags
-	.type BattleUnit_BuildStatusFlags, %function
-	.thumb_func
-BattleUnit_BuildStatusFlags:
-	.incbin "baserom.gba", 0x0011b4f0, 0x000000c0
 	.section .rom.0011b772, "ax"
 	.incbin "baserom.gba", 0x0011b772, 0x00000002
 	.section .rom.0011b774, "ax"

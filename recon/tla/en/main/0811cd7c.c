@@ -1,11 +1,12 @@
-// Near miss, differ 6 of 87 (27 before): The Broken Seal's
-// Camera_ConfigureScene with this game's heap slots. Left: the native builds
-// the 1 it stores to the transition's active and flag words (movs r5, #1)
-// right after the camera's last use, before the two IWRAM calls, and keeps it
-// in r5 across them; this draft builds it just before the stores, which
-// moves the distance load and one pool row. Measured: the 1 in a local set
-// there, at the declaration or before the transform call (differ 42: the
-// local is propagated and a register spills).
+// Near miss, differ 4 of 87 (27, then 6 before): The Broken Seal's
+// Camera_ConfigureScene with this game's heap slots. The 1 stored to the
+// transition's active and flag words is a temporary behind a barrier after
+// the transform call, which keeps it in r5 across the calls (6 to 4). Left:
+// the native builds it before that call, right after the camera's last use
+// (movs r5, #1 after ldr r3, [r5, #32]), and copies the camera into r1
+// before it loads the distance. Tried: the barrier before the call (50: the
+// camera can no longer pass in r5), the plain 1 in a local set there, at
+// the declaration or before the call (42: propagated, a register spills).
 #include "types.h"
 #include "battle_display.h"
 #include "iwram_call.h"
@@ -25,6 +26,7 @@ void Camera_ConfigureScene(s32 pos) {
       Ram_HeapSlots->transitionWork;
   struct FixedPointPosition local;
   u32 result;
+  s32 one;
 
   state->pos[1] = 160 << 11;
   state->pos[0] = 0;
@@ -45,13 +47,15 @@ void Camera_ConfigureScene(s32 pos) {
   local.y = 0;
   local.z = state->distance;
   Iwram_TransformVector(&local, (s32 *)state);
+  one = 1;
+  __asm__ volatile("" : "+l"(one));
 
   result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
   Projection_Set(0, result, 0x07920000);
 
   gCameraSceneParameters[4] = pos + 120;
-  secondary->active = 1;
+  secondary->active = one;
   BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
-  secondary->flag = 1;
+  secondary->flag = one;
   secondary->active = 0;
 }

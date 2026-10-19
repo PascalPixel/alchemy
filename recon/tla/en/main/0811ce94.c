@@ -1,3 +1,10 @@
+// Near miss, differ 6 of 126 (three moved rows; 8 before the barrier):
+// the chance to run from battle. Left: escaped lives in a stack slot from
+// the start (str r2, [sp, #4]), and the native stores it before it builds
+// the heap base; it builds the list call's 1 before it reads the failed
+// attempts; and it keeps the level total's 0 in r6 across the first list
+// call where here it is set after the call. Tried: the total's 0 behind a
+// barrier (11: CSE takes escaped's zero from its slot).
 #include "types.h"
 #include "battle_party.h"
 #include "battle_escape.h"
@@ -23,6 +30,7 @@ s32 BattleEscape_CheckSuccess(void) {
   s32 unitIndex;
   s32 chance;
   struct BattleEscapeState *escapeState;
+  struct PartyState *party;
 
   escaped = 0;
   escapeState = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
@@ -49,7 +57,12 @@ s32 BattleEscape_CheckSuccess(void) {
     }
     *failedAttempts += 1;
   }
-  if (gPartyState.battleRule24b == 2) {
+  party = &gPartyState;
+  /* FAKEMATCH(barrier): the party state's address loaded before 0x24b is
+   * built; as gPartyState.battleRule24b, 8 of 126 instructions differ in
+   * tla-en. */
+  __asm__ volatile("" : "+l"(party));
+  if (party->battleRule24b == 2) {
     escaped = 0;
   }
   return escaped;

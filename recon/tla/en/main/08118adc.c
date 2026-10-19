@@ -1,73 +1,72 @@
+// Near miss, differ 4 of 108 (two reordered rows): The Broken Seal's
+// BattlePresentation_UpdateCamera (games/tbs/src/battle/battle/setup.c) with
+// this game's heap slots, the battle work read from its slot at each use,
+// and this game's view calls (rewind the transform stack, yaw, pitch, then
+// the position). Left: the native reads the link side (ldrb r2) before the
+// SIO shift (lsls r3, #26), and copies the camera into r1 for the vector
+// call before it loads the distance. Tried: the side read first (10), the
+// distance through a word index (4), z set first (10), four minutes of
+// permute (no gain).
 #include "fixed_point_position.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "battle_display.h"
+#include "battle_work.h"
+#include "ram_buffer.h"
+#include "serial_runtime.h"
 
-extern u8 gLinkStatus[];
-
-struct LinkWork {
-  u8 pad0[0x44];
-  u8 enabled;
-  u8 pad1[0x0b];
-  u8 side;
-  u8 miss;
-  u8 paused;
-};
-
-#define LINK_STAT (*(u16 *)gLinkStatus)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyYaw(s32);
+void SceneTransform_RewindStack(void);
+void SceneTransform_SetPosition(s32 *position);
+void Func_080150ac(s32 yaw);
 void SceneTransform_ApplyPitch(s32);
 
 void BattlePresentation_UpdateCamera(void) {
-  void **slot = (void **)&gCameraWork;
-  struct BattleCamera *state = slot[0];
-  struct BattlePresentationTransition *transition = slot[32];
-  struct LinkWork *work = slot[-3];
-  struct FixedPointPosition local;
-  s32 *pos;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattlePresentationTransition *transition =
+      Ram_HeapSlots->transitionWork;
+  struct FixedPointPosition eyeOffset;
+  s32 *focus;
   s16 delta;
-  u32 id;
+  u32 linkId;
 
-  if (work->enabled != 0) {
-    if ((LINK_STAT & 3) != 3) {
-      work->miss++;
-      if (work->miss > 24) {
-        work->paused = 1;
+  if (Ram_HeapSlots->battleWork->twoSided != 0) {
+    if ((gLinkStatus & 3) != 3) {
+      Ram_HeapSlots->battleWork->unk051++;
+      if (Ram_HeapSlots->battleWork->unk051 > 24) {
+        Ram_HeapSlots->battleWork->linkPaused = 1;
       }
     } else {
-      id = (REG_SIOCNT << 0x1A) >> 0x1E;
-      if (work->side != id) {
-        work->paused = 1;
+      linkId = (REG_SIOCNT << 26) >> 30;
+      if (Ram_HeapSlots->battleWork->linkSide != linkId) {
+        Ram_HeapSlots->battleWork->linkPaused = 1;
       }
-      work->miss = 0;
+      Ram_HeapSlots->battleWork->unk051 = 0;
     }
   }
 
   if (transition->frames != 0) {
-    delta = transition->targetYaw - state->yaw;
+    delta = transition->targetYaw - camera->yaw;
     delta /= 16;
-    state->yaw += delta;
+    camera->yaw += delta;
     transition->frames--;
   }
 
-  pos = state->pos;
-  if (state->followPos != 0) {
-    pos = state->followPos;
+  focus = camera->pos;
+  if (camera->followPos != 0) {
+    focus = camera->followPos;
   }
 
-  Render_ResetTransformState();
-  SceneTransform_ApplyPosition(pos);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  SceneTransform_RewindStack();
+  Func_080150ac((s16)camera->yaw);
+  SceneTransform_ApplyPitch((s16)camera->pitch);
+  SceneTransform_SetPosition(focus);
 
-  local.x = 0;
-  local.y = 0;
-  local.z = state->distance;
-  Iwram_TransformVector(&local.x, (s32 *)state);
+  eyeOffset.x = 0;
+  eyeOffset.y = 0;
+  eyeOffset.z = camera->distance;
+  Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   if (transition->flag == 0) {
     BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);

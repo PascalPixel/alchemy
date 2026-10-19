@@ -8,7 +8,7 @@
 #include "battle_work.h"
 #include "battle_session.h"
 
-void Func_0811b180(u16 *unit_ids, s32 count, s32 *x, s32 *z);
+void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
 struct BattleObj *BattleObjGet(s32 id);
 
 void EnemyUpdate(void) {
@@ -32,7 +32,7 @@ void EnemyUpdate(void) {
     count++;
   }
   total = last + 1;
-  Func_0811b180(unitIds, total, x, z);
+  Summon_LayoutPositions(unitIds, total, x, z);
   for (i = 0; i < total; i++) {
     s32 id = unitIds[i];
 

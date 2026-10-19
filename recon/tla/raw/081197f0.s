@@ -121,7 +121,7 @@ Func_081197f0:
 	bl UiWork_InitializeFar
 .L_081198f8:
 	mov r5, r9
-	bl Func_081196fc
+	bl BattleCamera_Create
 	ldr r0, [r5]
 	bl Func_08127cd4
 	adds r6, r0, #0

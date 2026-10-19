@@ -3543,38 +3543,25 @@ Func_08118958:
 Func_08118f6c:
 	.incbin "baserom.gba", 0x00118f6c, 0x000000e8
 	.section .rom.001195ec, "ax"
-	.incbin "baserom.gba", 0x001195ec, 0x00000148
+	.incbin "baserom.gba", 0x001195ec, 0x00000110
 	.section .rom.001197f0, "ax"
 	.global Func_081197f0
 	.type Func_081197f0, %function
 	.thumb_func
 Func_081197f0:
 	.incbin "baserom.gba", 0x001197f0, 0x00000844
-	.section .rom.0011a4da, "ax"
-	.incbin "baserom.gba", 0x0011a4da, 0x0000011e
-	.section .rom.0011a71c, "ax"
-	.incbin "baserom.gba", 0x0011a71c, 0x0000008c
 	.section .rom.0011a7a8, "ax"
 	.global BattleObjMake
 	.type BattleObjMake, %function
 	.thumb_func
 BattleObjMake:
 	.incbin "baserom.gba", 0x0011a7a8, 0x000009c0
-	.section .rom.0011b17c, "ax"
-	.incbin "baserom.gba", 0x0011b17c, 0x00000114
 	.section .rom.0011b2c0, "ax"
 	.global EnemyUpdate
 	.type EnemyUpdate, %function
 	.thumb_func
 EnemyUpdate:
 	.incbin "baserom.gba", 0x0011b2c0, 0x000001e8
-	.section .rom.0011b4d4, "ax"
-	.balign 4
-	.global BattleUnit_BuildStatusFlags
-	.type BattleUnit_BuildStatusFlags, %function
-	.thumb_func
-BattleUnit_BuildStatusFlags:
-	.incbin "baserom.gba", 0x0011b4d4, 0x000000c0
 	.section .rom.0011b756, "ax"
 	.incbin "baserom.gba", 0x0011b756, 0x00000002
 	.section .rom.0011b758, "ax"

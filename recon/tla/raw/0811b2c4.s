@@ -67,7 +67,7 @@ EnemyUpdate:
 	adds r1, r5, #0
 	mov r3, r8
 	mov r9, r2
-	bl Func_0811b180
+	bl Summon_LayoutPositions
 	cmp r5, #0
 	ble .L_0811b36c
 	mov r7, r11

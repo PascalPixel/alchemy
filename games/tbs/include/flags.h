@@ -407,4 +407,83 @@
 #define FLAG_SCENE_TEMP_42 0x242
 #define FLAG_SCENE_TEMP_43 0x243
 
+// Sol Sanctum
+// Kraden has said "This is it! We've found it!" in the hall of statues.
+#define FLAG_SOL_SANCTUM_FOUND 0x809
+// Kraden has seen the Luna and Sol rooms and asked the party to search on.
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN 0x80a
+// A statue stands on its seal and the seal's light shines.
+#define FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN 0x80b
+#define FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN 0x80c
+#define FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN 0x80d
+#define FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN 0x80e
+#define FLAG_SOL_SANCTUM_ALL_SEALS_OPEN 0x80f
+// Kraden has seen the picture of Luna change to Sol.
+#define FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED 0x810
+// Kraden has seen the symbol on the floor change.
+#define FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN 0x811
+// The statues' lights have flashed and fallen through the Luna room.
+#define FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN 0x812
+// The statues' lights have flashed as Kraden stood among them.
+#define FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG 0x813
+// Mt. Aleph has erupted: the sanctum's rooms rumble and shake.
+#define FLAG_SOL_SANCTUM_ERUPTED 0x814
+// The statues beside the hall's centre shine their beams.
+#define FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING 0x816
+#define FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING 0x817
+#define FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED 0x818
+// The floor has opened over the way up to the Elemental Star room.
+#define FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN 0x819
+// Kraden has said "You found it, Isaac." after the seals' lights flashed.
+#define FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT 0x822
+// Kraden has seen the statues out of his reach behind the blocks.
+#define FLAG_SOL_SANCTUM_INNER_STATUES_SEEN 0x825
+// The light each seal shows in the Luna and Sol rooms, lit or dark.
+#define FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN 0x826
+#define FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN 0x827
+#define FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN 0x828
+#define FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN 0x829
+#define FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED 0x83b
+#define FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED 0x83c
+#define FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED 0x83d
+// The Jupiter Star is bagged and Alex holds the four Elemental Stars.
+#define FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX 0x83e
+#define FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED 0x83f
+// Isaac agreed to look farther on while Kraden studies the rooms.
+#define FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN 0x896
+// The column each movable block stands in, east or west of its pair.
+#define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST 0x300
+#define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST 0x301
+#define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST 0x302
+#define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_WEST 0x303
+#define FLAG_SOL_SANCTUM_FLOATING_EYE_SEEN 0x309
+#define FLAG_SOL_SANCTUM_STATUE_HALL_VISITED 0x30a
+#define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST 0x310
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_1_WEST 0x311
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST 0x312
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_2_WEST 0x313
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST 0x314
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_3_WEST 0x315
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST 0x316
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_4_WEST 0x317
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST 0x318
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_5_WEST 0x319
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
+#define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
+// The chests: the Small Jewel for each minotaur relief, and a Herb.
+#define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND 0xf01
+#define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND 0xf02
+#define FLAG_SOL_SANCTUM_HERB_FOUND 0xf40
+// The entrance hall: the party has entered the inner block room, and the
+// outer blocks no longer move.
+#define FLAG_SCENE_TEMP_34 0x234
+// The eruption: Saturos's group has gone, and the embers fall silently.
+#define FLAG_SCENE_TEMP_46 0x246
+
+// Sanctum
+// Isaac accepted the Great Healer's request to go to Sol Sanctum.
+#define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
+
 #endif

@@ -16,13 +16,11 @@
 #include "field_scene.h"
 
 #include "field_event.h"
+#include "flags.h"
+#include "songs.h"
+#include "fixed_math.h"
 
-// The Sol Sanctum room that holds a psynergy stone, scene 13.
-
-enum {
-  FLAG_144 = 0x144, // set on every entry; what reads it is not known
-  FLAG_814 = 0x814  // when set, the room hums and sparkles on entry
-};
+// The Sol Sanctum room that holds a Psynergy Stone, scene 13.
 
 // Where the party can enter the room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -45,18 +43,19 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }
 
-// Open with a window transition and restore the stone's sparkle effect.
+// The room opens through a window. After the eruption it rumbles and shakes
+// gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
-  s32 scaleX = 0x10000;
-  s32 scaleY = 0x10000;
-  s32 scaleZ = 0x10000;
+  s32 shakeX = PIXELS(1);
+  s32 shakeY = PIXELS(1);
+  s32 decay = Q16_ONE;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Engine_GameFlagSet(FLAG_144);
-  // The persistent flag enables both the sound and the initialized sparkles.
-  if (Engine_GameFlagIsSet(FLAG_814) != 0) {
-    Resource37c_QueueSoundCue(141);
-    Engine_WorkSetValuesIfNonNegative(scaleX, scaleY, scaleZ);
+  // Retreat does not work here (flag 0x144).
+  Engine_GameFlagSet(0x144);
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+    Resource37c_QueueSoundCue(SE_141);
+    Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, decay);
     Resource37c_FinalizeSetup();
   }
   return 0;
@@ -80,6 +79,7 @@ struct ScenePlacement gSolSanctumPsynergyStonePlacements[] = {
 
 struct SceneEvent gSolSanctumPsynergyStoneEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE},
+    {SEARCH(SEARCH_UNNAMED), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN,
+     FIND_PSYNERGY_STONE},
     {SCENE_EVENTS_END},
 };

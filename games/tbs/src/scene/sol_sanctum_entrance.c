@@ -24,6 +24,7 @@
 #include "field_obj.h"
 #include "fixed_math.h"
 #include "macros.h"
+#include "songs.h"
 
 // Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
@@ -34,7 +35,7 @@ static void SolSanctumEntrance_InspectInnerStatues(void);
 static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors);
 static void SolSanctumEntrance_UpdateEruptionRumbles(void);
 
-s32 gSolSanctumEntrance_CueTimer __attribute__((section(".bss")));
+s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
@@ -106,16 +107,16 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   return gSolSanctumEntranceEventsOther;
 }
 
-// Animate the doorway opening, then walk the leader through it.
-static void SolSanctumEntrance_OpenDoorAndEnter(void) {
+// Walking up to the sanctum's door: it slides open and the leader walks in.
+static void Event_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
 
   Engine_EventBegin();
-  // Open the three doorway frames before moving the leader inside.
+  // The door opens over three frames.
   width = 3;
   height = 2;
-  Event_PlayCue(181);
+  Event_PlayCue(SE_181);
   Map_CopyCellsTo(16, 28, 21, 3, width, height);
   Engine_TaskWait(10);
   Map_CopyCellsTo(16, 30, 21, 3, width, height);
@@ -134,8 +135,11 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Engine_EventEnd();
 }
 
-// Describe the first relief and offer its missing-eye interaction.
-static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
+// Searching the first minotaur relief: "The right eye is sparkling, but
+// there's a hole where the left eye should be.", or both eyes sparkle once
+// the Small Jewel is set. Holding the jewel sets the event work's unk172;
+// what reads it is not known.
+static void Event_InspectFirstMinotaurRelief(void) {
 
   Engine_EventBegin();
 
@@ -143,7 +147,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
-    if (Engine_GameFlagIsSet(0xf01) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
       u16 *stateSlot = &gEventWork->unk172;
       u16 value = 1;
       *stateSlot = value;
@@ -153,7 +157,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   Engine_EventEnd();
 }
 
-// Let the leader react as the gem opens a passage and the room shakes.
+// The room shakes as stone shifts; the leader looks around and jumps.
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(20);
@@ -170,21 +174,23 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Engine_EventWait(40);
 }
 
-// Place the first Small Gem and reveal the passage it opens.
-static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
+// Using the Small Jewel on the first relief: the leader "set the small gem
+// into the empty socket.", "You hear the sound of shifting stone." and a
+// passage opens.
+static void Event_SetFirstSmallJewel(void) {
   s32 message;
   s32 oneCell;
   s32 reliefWidth;
 
-  if (GameFlag_IsSet(0xf01) == 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     } else {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
-      // Place the gem in the relief, then replace the doorway cells.
+      // The eye sparkles, then the wall opens.
       oneCell = 1;
-      Event_PlayCue(182);
+      Event_PlayCue(SE_182);
       Map_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       Engine_MapRedraw();
       Engine_EventWait(40);
@@ -192,7 +198,7 @@ static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
       Engine_MessageShowCentered(message, 1);
       Engine_EventWait(20);
       reliefWidth = 3;
-      Event_PlayCue(183);
+      Event_PlayCue(SE_183);
       Map_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
       Map_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
       Map_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
@@ -206,8 +212,8 @@ static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
   }
 }
 
-// Describe the second relief and offer its missing-eye interaction.
-static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
+// Searching the second minotaur relief, as the first.
+static void Event_InspectSecondMinotaurRelief(void) {
 
   struct EventWork *work;
 
@@ -215,7 +221,8 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
-  } else if (Engine_GameFlagIsSet(0xf02) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) !=
+             0) {
     work = gEventWork;
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
@@ -231,23 +238,24 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   Engine_EventEnd();
 }
 
-// Place the second Small Gem and open the inner doorway.
-static void SolSanctumEntrance_PlaceSecondSmallGem(void) {
+// Using the Small Jewel on the second relief: as the first, and the inner
+// doorway opens.
+static void Event_SetSecondSmallJewel(void) {
   s32 message;
 
-  if (GameFlag_IsSet(3842) != 0 &&
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
       GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) == 0) {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
-    // Place the second gem and open the inner doorway.
-    Engine_AudioPlayCue(182);
+    // The eye sparkles, then the doorway opens.
+    Engine_AudioPlayCue(SE_182);
     Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
     Engine_MapRedraw();
     Engine_EventWait(40);
     message = MsgSolSanctumSetSmallGem;
     Engine_MessageShowCentered(message, 1);
     Engine_EventWait(20);
-    Engine_AudioPlayCue(183);
+    Engine_AudioPlayCue(SE_183);
     Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
     Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     Engine_MapRedraw();
@@ -273,118 +281,126 @@ static inline void SolSanctumEntrance_RecordBlockColumn(s32 column,
   }
 }
 
-// Record the left outer block's current destination.
-static void SolSanctumEntrance_UpdateOuterLeftBlock(void) {
-  struct FieldActor *block = Object_GetById(9);
+// Moving the outer left block with Move: the column it stops in is saved.
+static void Event_OuterLeftBlockMoved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_OUTER_LEFT_BLOCK);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x302, 93, 95);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST, 93, 95);
 }
 
-// Record the right outer block's current destination.
-static void SolSanctumEntrance_UpdateOuterRightBlock(void) {
-  struct FieldActor *block = Object_GetById(10);
+// Moving the outer right block with Move: the column it stops in is saved.
+static void Event_OuterRightBlockMoved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_OUTER_RIGHT_BLOCK);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  GameFlag_Clear(0x300);
-  GameFlag_Clear(0x301);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST);
   if (column == 115) {
-    Engine_GameFlagSet(0x300);
+    Engine_GameFlagSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST);
   } else if (column == 113) {
-    Engine_GameFlagSet(0x301);
+    Engine_GameFlagSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST);
   }
 }
 
-// Record the first inner block and refresh the puzzle collision.
-static void SolSanctumEntrance_UpdateFirstInnerBlock(void) {
-  struct FieldActor *block = Object_GetById(9);
+// Moving an inner block with Move: the column it stops in is saved and the
+// floor under all six is set again.
+static void Event_InnerBlock1Moved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_1);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x310, 99, 101);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST, 99, 101);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// Record the second inner block and refresh the puzzle collision.
-static void SolSanctumEntrance_UpdateSecondInnerBlock(void) {
-  struct FieldActor *block = Object_GetById(10);
+// As Event_InnerBlock1Moved, for the second block.
+static void Event_InnerBlock2Moved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_2);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x312, 103, 105);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST, 103, 105);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// Record the third inner block and refresh the puzzle collision.
-static void SolSanctumEntrance_UpdateThirdInnerBlock(void) {
-  struct FieldActor *block = Object_GetById(11);
+// As Event_InnerBlock1Moved, for the third block.
+static void Event_InnerBlock3Moved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_3);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x314, 107, 109);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST, 107, 109);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// Record the fourth inner block and refresh the puzzle collision.
-static void SolSanctumEntrance_UpdateFourthInnerBlock(void) {
-  struct FieldActor *block = Object_GetById(12);
+// As Event_InnerBlock1Moved, for the fourth block.
+static void Event_InnerBlock4Moved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_4);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x316, 111, 113);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST, 111, 113);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// Record the fifth inner block and refresh the puzzle collision.
-static void SolSanctumEntrance_UpdateFifthInnerBlock(void) {
-  struct FieldActor *block = Object_GetById(13);
+// As Event_InnerBlock1Moved, for the fifth block.
+static void Event_InnerBlock5Moved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_5);
   s32 column;
 
   if (block == NULL) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x318, 115, 117);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST, 115, 117);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// Record the sixth inner block and refresh the puzzle collision.
-static void SolSanctumEntrance_UpdateSixthInnerBlock(void) {
-  struct FieldActor *block = Object_GetById(14);
+// As Event_InnerBlock1Moved, for the sixth block.
+static void Event_InnerBlock6Moved(void) {
+  struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_6);
   s32 column;
 
   if (block == NULL)
     return;
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x31a, 119, 121);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST, 119, 121);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
 // Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
-// Push the block in front of the leader and save its puzzle position.
-static void SolSanctumEntrance_PushFacedBlock(void) {
+// Walking into a block: the leader pushes it one cell, and its column is saved.
+static void Event_PushBlock(void) {
   struct FieldActor *leader;
   struct FieldActor *block;
   s32 stoppedVelocity;
@@ -410,7 +426,7 @@ static void SolSanctumEntrance_PushFacedBlock(void) {
     if (FieldObject_CheckMovementCollision(block, destination) <= 0) {
       Object_SetMode(leader, 8);
       Engine_TaskWait(15);
-      Engine_AudioPlayCue(185);
+      Engine_AudioPlayCue(SE_185);
       block->speed = PIXELS(1) / 5;
       block->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(block, destination->x, destination->y,
@@ -430,18 +446,18 @@ static void SolSanctumEntrance_PushFacedBlock(void) {
       case 11:
       case 12:
       case 13:
-        SolSanctumEntrance_UpdateOuterLeftBlock();
-        SolSanctumEntrance_UpdateOuterRightBlock();
+        Event_OuterLeftBlockMoved();
+        Event_OuterRightBlockMoved();
         break;
       case 14:
       case 15:
       case 16:
-        SolSanctumEntrance_UpdateFirstInnerBlock();
-        SolSanctumEntrance_UpdateSecondInnerBlock();
-        SolSanctumEntrance_UpdateThirdInnerBlock();
-        SolSanctumEntrance_UpdateFourthInnerBlock();
-        SolSanctumEntrance_UpdateFifthInnerBlock();
-        SolSanctumEntrance_UpdateSixthInnerBlock();
+        Event_InnerBlock1Moved();
+        Event_InnerBlock2Moved();
+        Event_InnerBlock3Moved();
+        Event_InnerBlock4Moved();
+        Event_InnerBlock5Moved();
+        Event_InnerBlock6Moved();
         break;
       }
     }
@@ -462,10 +478,11 @@ s32 SolSanctumEntrance_Initialize(void) {
 
 // Restore the approach's rumbling, collision and actor positions.
 static void SolSanctumEntrance_ApplyEntryState(void) {
+  // Retreat does not work here (flag 0x144).
   GameFlag_Set(0x144);
   gEventWork->startTransition = 0x100;
-  if (GameFlag_IsSet(0x814) != 0) {
-    gSolSanctumEntrance_CueTimer = 0;
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+    gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
   }
   if (GameFlag_IsSet(0x879) != 0) {
@@ -486,8 +503,8 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (Engine_GameFlagIsSet(0x814) != 0) {
-    BattleFx_SetQueuedSoundAndPlay(141);
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+    BattleFx_SetQueuedSoundAndPlay(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
   }
@@ -533,14 +550,14 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
     if (Engine_GameFlagIsSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
-    if (Engine_GameFlagIsSet(0x303) != 0)
-      Actor_SetPosition(9, PIXELS(1496), PIXELS(136));
-    else if (GameFlag_IsSet(0x302) != 0)
-      Actor_SetPosition(9, PIXELS(1528), PIXELS(136));
-    if (Engine_GameFlagIsSet(0x301) != 0)
-      Actor_SetPosition(10, PIXELS(1816), PIXELS(136));
-    else if (Engine_GameFlagIsSet(0x300) != 0)
-      Actor_SetPosition(10, PIXELS(1848), PIXELS(136));
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_WEST) != 0)
+      Actor_SetPosition(ACTOR_OUTER_LEFT_BLOCK, PIXELS(1496), PIXELS(136));
+    else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST) != 0)
+      Actor_SetPosition(ACTOR_OUTER_LEFT_BLOCK, PIXELS(1528), PIXELS(136));
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST) != 0)
+      Actor_SetPosition(ACTOR_OUTER_RIGHT_BLOCK, PIXELS(1816), PIXELS(136));
+    else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST) != 0)
+      Actor_SetPosition(ACTOR_OUTER_RIGHT_BLOCK, PIXELS(1848), PIXELS(136));
     break;
 
   case 14:
@@ -553,10 +570,10 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-    if (Engine_GameFlagIsSet(0x825) == 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN) == 0)
       SolSanctumEntrance_InspectInnerStatues();
     SolSanctumEntrance_RestoreInnerBlockCells(1);
-    Engine_GameFlagSet(0x234);
+    Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
       Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
       Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
@@ -617,7 +634,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Engine_ActorJump(ACTOR_KRADEN, 4, 20);
   // Ask whether this is the party's first visit, then rejoin the leader.
   Engine_EventSetMessage(MsgSolSanctumKradenFirstTimeAtSol);
-  Event_AskYesNo(0x4008, 0);
+  Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Engine_EventWait(20);
   Camera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
@@ -891,11 +908,11 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
   Engine_EventSetMessage(MsgSolSanctumMoreStatuesOutOfReach);
-  Event_ShowMessageAndWait(0x4008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(0x4008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -904,7 +921,7 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   }
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  GameFlag_Set(0x825);
+  GameFlag_Set(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN);
   Engine_EventEnd();
 }
 
@@ -917,100 +934,100 @@ static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   Map_CopyCellAttributes(122, 20, 1, 1, 112, 32);
   Map_CopyCellAttributes(122, 20, 1, 1, 116, 32);
   Map_CopyCellAttributes(122, 20, 1, 1, 120, 32);
-  if (GameFlag_IsSet(0x311) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_1_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(9, PIXELS(1592), PIXELS(520));
+      Actor_SetPosition(ACTOR_INNER_BLOCK_1, PIXELS(1592), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x310) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(9, PIXELS(1624), PIXELS(520));
+        Actor_SetPosition(ACTOR_INNER_BLOCK_1, PIXELS(1624), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x313) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_2_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(10, PIXELS(1656), PIXELS(520));
+      Actor_SetPosition(ACTOR_INNER_BLOCK_2, PIXELS(1656), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x312) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(10, PIXELS(1688), PIXELS(520));
+        Actor_SetPosition(ACTOR_INNER_BLOCK_2, PIXELS(1688), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x315) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_3_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(11, PIXELS(1720), PIXELS(520));
+      Actor_SetPosition(ACTOR_INNER_BLOCK_3, PIXELS(1720), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x314) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(11, PIXELS(1752), PIXELS(520));
+        Actor_SetPosition(ACTOR_INNER_BLOCK_3, PIXELS(1752), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x317) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_4_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(12, PIXELS(1784), PIXELS(520));
+      Actor_SetPosition(ACTOR_INNER_BLOCK_4, PIXELS(1784), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x316) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(12, PIXELS(1816), PIXELS(520));
+        Actor_SetPosition(ACTOR_INNER_BLOCK_4, PIXELS(1816), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x319) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_5_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(13, PIXELS(1848), PIXELS(520));
+      Actor_SetPosition(ACTOR_INNER_BLOCK_5, PIXELS(1848), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x318) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(13, PIXELS(1880), PIXELS(520));
+        Actor_SetPosition(ACTOR_INNER_BLOCK_5, PIXELS(1880), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x31b) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(14, PIXELS(1912), PIXELS(520));
+      Actor_SetPosition(ACTOR_INNER_BLOCK_6, PIXELS(1912), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x31a) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(14, PIXELS(1944), PIXELS(520));
+        Actor_SetPosition(ACTOR_INNER_BLOCK_6, PIXELS(1944), PIXELS(520));
       }
     }
   }
 }
 
-// Explain that the inner door is tightly locked.
-static void SolSanctumEntrance_InspectLockedDoor(void) {
+// Searching the door beside the way in: "The door is tightly locked."
+static void Event_DoorTightlyLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }
 
-// Schedule occasional rumbles and let each shake decay.
+// After the eruption the approach rumbles now and then, and each shake fades.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   s32 randomValue;
   s32 *timer;
   s32 remainingFrames;
 
-  timer = &gSolSanctumEntrance_CueTimer;
+  timer = &gSolSanctumEntrance_RumbleTimer;
   if (*timer != 0) {
     remainingFrames = (*timer - 1);
     *timer = (*timer - 1);
@@ -1020,7 +1037,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   } else {
     randomValue = Engine_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
-      Event_PlayCue(138);
+      Event_PlayCue(SE_ITEM_BREAK);
       Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
       *timer = 80;
     }
@@ -1071,8 +1088,8 @@ struct SceneEntrance gSolSanctumEntranceEntrances1[] = {
 
 u32 gSolSanctumEntrance_Exits[] = {
     SCENE_EXITS(19),
-    SCENE_EXIT_IF(1, 4, 2, 0x814),
-    SCENE_EXIT_IF(1, 10, 15, 0x815),
+    SCENE_EXIT_IF(1, 4, 2, FLAG_SOL_SANCTUM_ERUPTED),
+    SCENE_EXIT_IF(1, 10, 15, FLAG_PARTY_LEFT_VALE),
     SCENE_EXIT_IF(1, 4, 2, 0xffffffff),
     SCENE_EXIT_IF(2, 16, 8, 0xffffffff),
     SCENE_EXIT(0, 16, 0),
@@ -1178,8 +1195,8 @@ struct SceneEvent gSolSanctumEntranceEventsOther[] = {
 
 struct SceneEvent gSolSanctumEntranceEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_OpenDoorAndEnter) },
-    { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_InspectLockedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndEnter) },
+    { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DoorTightlyLocked) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { SCENE_EVENTS_END },
@@ -1202,9 +1219,9 @@ struct SceneEvent gSolSanctumEntranceEvents1[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { SEARCH(SEARCH_CHEST), 100, 0xf01, FIND_ITEM(0xe1) },
-    { 0xe104, 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PlaceFirstSmallGem) },
-    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_InspectFirstMinotaurRelief) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(0xe1) },
+    { 0xe104, 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetFirstSmallJewel) },
+    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectFirstMinotaurRelief) },
     { SCENE_EVENTS_END },
 };
 
@@ -1225,11 +1242,11 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances11To13[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, 0x234, EVENT_SCRIPT(SolSanctumEntrance_UpdateOuterLeftBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x234, EVENT_SCRIPT(SolSanctumEntrance_UpdateOuterRightBlock) },
-    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_OuterLeftBlockMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_OuterRightBlockMoved) },
+    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
     { SCENE_EVENTS_END },
 };
 
@@ -1250,15 +1267,15 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances14To16[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_UpdateFirstInnerBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_UpdateSecondInnerBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_UpdateThirdInnerBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_UpdateFourthInnerBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_UpdateFifthInnerBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_UpdateSixthInnerBlock) },
-    { 0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },
-    { 0xe104, 0x415, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PlaceSecondSmallGem) },
-    { SEARCH(SEARCH_UNNAMED), 21, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_InspectSecondMinotaurRelief) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InnerBlock1Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InnerBlock2Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InnerBlock3Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InnerBlock4Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InnerBlock5Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InnerBlock6Moved) },
+    { 0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { 0xe104, 0x415, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetSecondSmallJewel) },
+    { SEARCH(SEARCH_UNNAMED), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectSecondMinotaurRelief) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

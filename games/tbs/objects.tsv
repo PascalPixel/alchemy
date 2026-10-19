@@ -133,13 +133,13 @@ main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/graphics/tile/dot_product
 main	rom_main_09	games/tbs/src/graphics/tile/expand	.rodata
 main	rom_main_09	games/tbs/src/graphics/tile/expand	.text .data .text.battle_effect_expand_commands
-main	rom_main_09	games/tbs/src/graphics/tile/slides	.text
-main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
-main	rom_main_09	games/tbs/src/graphics/tile/slides	.data
+main	rom_main_09	games/tbs/src/graphics/credits/credits	.text
+main	rom_main_09	games/tbs/src/graphics/credits/credits	.rodata
+main	rom_main_09	games/tbs/src/graphics/credits/credits	.data
 main	rom_main_09	games/tbs/src/graphics/display/credits	.rodata
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE
 main	rom_main_10	games/common/src/graphics/title/prompt
-main	rom_main_10	games/tbs/src/graphics/palette/palette
+main	rom_main_10	games/tbs/src/graphics/title/intro
 main	rom_main_11	games/tbs/src/system/far_call/BLANK_RUN
 main	rom_main_11	games/tbs/src/field/lucky_dice
 main	rom_main_12	games/tbs/src/system/far_call/BLANK_LOAD

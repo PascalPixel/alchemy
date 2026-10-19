@@ -14,8 +14,8 @@ which the `.s` here includes.
 
 | File | What it holds |
 | --- | --- |
-| `palette/palette.c` | the title intro, the Nintendo and Camelot logos, and the palette fade (`PaletteFade_`) |
-| `tile/slides.c` | the credits: the backdrops that slide and crossfade, and the scrolling text |
+| `title/intro.c` | the title intro, the Nintendo and Camelot logos, and the palette fade (`PaletteFade_`) |
+| `credits/credits.c` | the credits: the backdrops that slide and crossfade, and the scrolling text |
 | `text/numwords.c` | the counted nouns the German message decoder writes after a number |
 | `text/genders.s` | the grammatical gender of item names, by language |
 | `text/decode_symbol.s`, `render/decode.s`, `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |

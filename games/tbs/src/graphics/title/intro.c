@@ -1,5 +1,5 @@
 #include "battle_effect_runtime.h"
-#include "unit/graphics/palette/palette.h"
+#include "unit/graphics/title/intro.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"

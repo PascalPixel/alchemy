@@ -1,5 +1,5 @@
 // Draft, differ 84 of 138: ⚓️'s Graphics_LoadCharacterBlockAndPalette,
-// ☀️'s in games/tbs/src/graphics/tile/slides.c: loads a backdrop's tiles
+// ☀️'s in games/tbs/src/graphics/credits/credits.c: loads a backdrop's tiles
 // into one half of BG VRAM through the BattleEffect_Expand kernel (copied
 // into a heap block by DMA here, not a RAM-code slot), then queues its
 // palette, but first greys it: each colour channel becomes

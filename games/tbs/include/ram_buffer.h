@@ -26,7 +26,7 @@
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b20, gVramBlockCache)
 /* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant
  * (build-checked): read through gWorkSlot, effect.c
- * (BattleFx_HideBg1AndRestoreBackdrop, BattleFx_RunSpiderWeb) and palette.c
+ * (BattleFx_HideBg1AndRestoreBackdrop, BattleFx_RunSpiderWeb) and intro.c
  * (Title_UpdateIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
  * tbs-en. */
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e60, gWorkSlot)
@@ -35,7 +35,7 @@
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b10, gVramBlockCache)
 /* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant
  * (build-checked): read through gWorkSlot, effect.c
- * (BattleFx_HideBg1AndRestoreBackdrop, BattleFx_RunSpiderWeb) and palette.c
+ * (BattleFx_HideBg1AndRestoreBackdrop, BattleFx_RunSpiderWeb) and intro.c
  * (Title_UpdateIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
  * tbs-en. */
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e50, gWorkSlot)

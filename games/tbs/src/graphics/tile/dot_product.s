@@ -7,7 +7,7 @@
 @ BattleEffect_Expand(source, destination, offset): decodes a credits slide's
 @ packed picture (r0) into 8bpp tiles (r1), 15 bands of 8 tiles of 32 rows,
 @ adding offset (r2, the same palette offset in every byte) to each pixel.
-@ Graphics_LoadCharacterBlockAndPalette (slides.c) copies it into a heap slot
+@ Graphics_LoadCharacterBlockAndPalette (credits.c) copies it into a heap slot
 @ and calls it there, so its first loop relocates the table of decoder
 @ commands (expand.s) for wherever the copy landed.
 @

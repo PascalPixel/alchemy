@@ -1,4 +1,4 @@
-#include "unit/graphics/tile/slides.h"
+#include "unit/graphics/credits/credits.h"
 #include "unit/runtime/runtime.h"
 #include "dma.h"
 #include "io_reg.h"

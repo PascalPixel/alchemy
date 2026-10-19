@@ -1,6 +1,6 @@
 // The staff credits font's advance widths in pixels, characters 0x20 to
-// 0x7f, beside the font (credits.png). Both games' slides.c include it
-// after their line tables.
+// 0x7f, beside the font (credits.png). ☀️'s credits.c and ⚓️'s
+// slides.c include it after their line tables.
 // clang-format off
 #include "edition.h"
 const u8 gDisplayScroll_GlyphWidths[96] = {

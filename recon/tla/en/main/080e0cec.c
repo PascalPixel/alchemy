@@ -1,10 +1,15 @@
-// Near miss, differ 4 (two reordered rows, same instructions): the twin of The
-// Broken Seal's BattleFx_UpdateRadialLaunch; this game stores x and z to the
-// slot's origin and position together and does not write them back to pos.
-// After a store, the listing puts one other instruction before the next load
-// through another base: it copies sp to r0 for the camera call before it
-// loads y, and shifts the 8-pixel constant before it loads pos.z. This source
-// loads first both times. The same row is in 0811bd50.
+// Near miss, differ 2 of 105 (2026-10-18; plainly 4): the twin of The Broken
+// Seal's BattleFx_UpdateRadialLaunch; this game stores x and z to the slot's
+// origin and position together and does not write them back to pos. After a
+// store, the listing puts one other instruction before the next load through
+// another base: it copies sp to r0 for the camera call before it loads y, and
+// shifts the 8-pixel constant before it loads pos.z. The camera argument
+// through an empty asm with a memory clobber fixes the first (tagged). Left:
+// the shift. Measured for it: the 8 << 16 forced through an empty asm after the
+// x stores, with a memory clobber, orders it but moves 0xc000 later to r2
+// (differ 6; pinned to r3 behind its own asm, differ 2 in the subtract); a
+// volatile barrier or a one-pass block there, differ 4; operand and store
+// order, 2. The same row is in 0811bd50.
 #include "types.h"
 #include "ram_buffer.h"
 #include "effect_slot.h"
@@ -40,15 +45,21 @@ void Func_080e0cec(struct EffectSlot *slot) {
   struct LaunchObject *src;
   s32 state;
   u32 r;
+  struct LaunchVector *arg;
+  s32 lift;
 
   src = ((struct LaunchScene *)Ram_HeapSlots->effectWork)->mainObject;
   state = slot->state;
 
   if (state == 0) {
     pos.x = src->x;
+    /* FAKEMATCH: the native copies the camera argument before it loads y
+     * (differ 4 without the barrier). */
+    arg = &pos;
+    asm("" : "+r"(arg) : : "memory");
     pos.y = src->y;
     pos.z = src->z;
-    Camera_WorldToScreen(&pos);
+    Camera_WorldToScreen(arg);
 
     slot->x = slot->originX = pos.x;
     slot->z = slot->originZ = pos.z + (8 << 16);

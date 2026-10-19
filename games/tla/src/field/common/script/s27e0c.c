@@ -1,9 +1,9 @@
 #include "types.h"
 
-void Func_08026e60();
+s32 Field_CheckConfiguredKeys(void);
 
 s32 Func_08027e0c(u16 *state) {
-  Func_08026e60();
+  Field_CheckConfiguredKeys();
   state[2]++;
   return 1;
 }

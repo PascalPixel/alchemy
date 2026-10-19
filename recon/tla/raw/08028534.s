@@ -689,7 +689,7 @@ Func_08028534:
 	mov r2, r8
 	strh r3, [r2]
 .L_08028a8c:
-	bl Func_08026e60
+	bl Field_CheckConfiguredKeys
 	ldrh r3, [r7, #4]
 	movs r0, #1
 	adds r3, #1

@@ -42,7 +42,7 @@ s32 Script_ApplyOperandAdd();
 s32 Script_ApplyOperandCompare();
 s32 Func_08027064();
 s32 Func_080279b0();
-s32 Func_080290f4();
+s32 Object_MoveByKeys();
 s32 Func_080292fc();
 s32 Func_08029570();
 s32 Func_080298c0();
@@ -267,7 +267,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_ApplyOperandCompare,          // 0x18 SC_CMP
     Func_08027064,                       // 0x19 SC_PLAYER
     Func_080279b0,                       // 0x1a SC_CMD_1A
-    Func_080290f4,                       // 0x1b SC_CMD_1B
+    Object_MoveByKeys,                   // 0x1b SC_KEYS
     Func_080292fc,                       // 0x1c SC_CMD_1C
     Func_08029570,                       // 0x1d SC_CMD_1D
     Func_080298c0,                       // 0x1e SC_CMD_1E

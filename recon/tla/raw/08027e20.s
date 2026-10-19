@@ -887,7 +887,7 @@ Func_08027e20:
 	adds r0, #8
 	bl GetWorldMapCollision
 .L_08028500:
-	bl Func_08026e60
+	bl Field_CheckConfiguredKeys
 	mov r2, r8
 	ldrh r3, [r2, #4]
 	mov r0, r8

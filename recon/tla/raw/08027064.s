@@ -1187,7 +1187,7 @@ Func_08027064:
 .L_0802798c:
 	.4byte 0x00000001
 .L_08027990:
-	bl Func_08026e60
+	bl Field_CheckConfiguredKeys
 	mov r1, r8
 	ldrh r3, [r1, #4]
 	mov r2, r8

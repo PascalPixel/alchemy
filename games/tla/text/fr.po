@@ -19250,7 +19250,7 @@ msgctxt "MsgItBroke"
 msgid "04739"
 msgstr "Cassé!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04740"
 msgstr "{button_icon:3}+{button_icon:1}:Organiser inv."
 

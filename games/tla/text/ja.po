@@ -17368,7 +17368,7 @@ msgctxt "MsgItBroke"
 msgid "04276"
 msgstr "こわれてしまった!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04277"
 msgstr "アイテムをせいとん"
 

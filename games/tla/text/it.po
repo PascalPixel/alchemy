@@ -19221,7 +19221,7 @@ msgctxt "MsgItBroke"
 msgid "04739"
 msgstr "Strum. rotto!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04740"
 msgstr "{button_icon:3}+{button_icon:1}:Ordina strum."
 

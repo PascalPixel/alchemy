@@ -9,7 +9,11 @@
 
 struct InputState {
   u32 held;
-  u32 pressed;
+  /* FAKEMATCH(volatile): pressed read afresh at each test, as the native
+   * reloads it between two tests with no call between them; as plain u32,
+   * ItemMenu_RunOwnerSelection: 12 of 307 instructions differ in tla-en (and
+   * the draft Func_080fc2e0 32 rather than 15 of 179). */
+  volatile u32 pressed;
   u32 previousVblankHeld;
   /* FAKEMATCH: volatile steers The Lost Age only: without it, in tla-en,
    * WaitFrames: differ 57, Menu_WaitForSelectionInput: 24, Func_02000e4c: 17

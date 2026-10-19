@@ -3464,10 +3464,10 @@ Func_080f94a4:
 	.section .rom.000fa27c, "ax"
 	.incbin "baserom.gba", 0x000fa27c, 0x0000006c
 	.section .rom.000fa4b8, "ax"
-	.global Func_080fa5a4
-	.type Func_080fa5a4, %function
+	.global ItemMenu_RunOwnerSelection
+	.type ItemMenu_RunOwnerSelection, %function
 	.thumb_func
-Func_080fa5a4:
+ItemMenu_RunOwnerSelection:
 	.incbin "baserom.gba", 0x000fa4b8, 0x000002cc
 	.section .rom.000fa7a8, "ax"
 	.balign 4

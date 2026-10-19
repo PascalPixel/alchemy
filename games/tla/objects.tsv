@@ -4512,11 +4512,6 @@ main	rom_main_06	recon/tla/fr/rom	.rom.000fc494	fr
 main	rom_main_06	recon/tla/es/rom	.rom.00100478	es
 main	rom_main_06	recon/tla/de/rom	.rom.00104484	de
 main	rom_main_06	games/tla/src/menu/item/close	.text
-main	rom_main_06	recon/tla/it/rom	.rom.000fa5ec	it
-main	rom_main_06	recon/tla/fr/rom	.rom.000fc5fc	fr
-main	rom_main_06	recon/tla/es/rom	.rom.001005e0	es
-main	rom_main_06	recon/tla/de/rom	.rom.001045ec	de
-main	rom_main_06	recon/tla/raw/080fa5a4	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000fa4b8	ja
 main	rom_main_06	games/tla/src/menu/item/redraw_category	.text
 main	rom_main_06	recon/tla/it/rom	.rom.000fa8b8	it

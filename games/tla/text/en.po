@@ -17391,7 +17391,7 @@ msgctxt "MsgItBroke"
 msgid "04279"
 msgstr "It broke!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "04280"
 msgstr "{button_icon:3}+{button_icon:1}:Arrange items"
 

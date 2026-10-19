@@ -156,7 +156,7 @@ void UnitCalc(s32 owner) {
   stats->turns = unit->baseActionCount & 15;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
-  for (index = 0; index < 4; index++) {
+  for (index = 0; index < NUM_ELEMENTS; index++) {
     stats->element[index][0] = unit->baseElement[index].power;
     stats->element[index][1] = unit->baseElement[index].resistance;
   }
@@ -262,7 +262,7 @@ void UnitCalc(s32 owner) {
       unit->restraint &= ~9;
 
     // Only set Djinn contribute their stat bonuses.
-    for (elementIndex = 0; elementIndex < 4; elementIndex++) {
+    for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++) {
       u32 activeDjinn = unit->djinnActive[elementIndex];
 
       for (index = 0; index < 20; index++) {
@@ -335,12 +335,12 @@ void UnitCalc(s32 owner) {
   stats->atk = stats->atk * (unit->attackStage + 8) / 8;
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
-  for (index = 0; index < 4; index++)
+  for (index = 0; index < NUM_ELEMENTS; index++)
     stats->element[index][0] +=
         (unit->elementLevels[index] * unit->elementLevels[index] +
          unit->elementLevels[index]) *
         5;
-  for (index = 0; index < 4; index++)
+  for (index = 0; index < NUM_ELEMENTS; index++)
     stats->element[index][1] += unit->resistanceStage * 20;
 
   if (unit->classIndex) {
@@ -374,7 +374,7 @@ void UnitCalc(s32 owner) {
   CLAMP(stats->turns, 0, 2);
   CLAMP(stats->hpRegen, 0, 10000);
   CLAMP(stats->ppRegen, 0, 200);
-  for (index = 0; index < 4; index++) {
+  for (index = 0; index < NUM_ELEMENTS; index++) {
     CLAMP(stats->element[index][0], 0, 200);
     CLAMP(stats->element[index][1], 0, 200);
   }
@@ -386,7 +386,7 @@ void UnitCalc(s32 owner) {
   unit->actionEntryCount = stats->turns;
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
-  for (index = 0; index < 4; index++) {
+  for (index = 0; index < NUM_ELEMENTS; index++) {
     unit->element[index].power = stats->element[index][0];
     unit->element[index].resistance = stats->element[index][1];
   }
@@ -605,7 +605,7 @@ void Party_EndChildhood(void) {
     unit->pp = unit->maxPp;
     Unit_UpdateGauges(unit);
 
-    for (slot = 0; slot <= 14; slot++) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
       if ((unit->inventory[slot] & ITEM_ID_MASK) == 15) {
         unit->inventory[slot] = 16;
         Inventory_Equip(owner, slot);

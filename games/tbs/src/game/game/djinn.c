@@ -36,7 +36,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
     if (unit->djinnOwnedCounts[element] <= 9) {
       s32 ownedDjinn = 0;
 
-      for (elementIndex = 0; elementIndex < 4; elementIndex++)
+      for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++)
         ownedDjinn += unit->djinnOwnedCounts[elementIndex];
       if (fewestDjinn > ownedDjinn) {
         fewestDjinn = ownedDjinn;

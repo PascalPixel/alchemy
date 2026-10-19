@@ -405,16 +405,16 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   }
   previewSlot = Inventory_FindEquippedFar(unitId, item->type);
   if (previewSlot == -1) {
-    for (index = 0; index <= 14; index++) {
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         break;
     }
-    if (index == 15) {
-      for (index = 0; index <= 14; index++) {
+    if (index == INVENTORY_SLOTS) {
+      for (index = 0; index < INVENTORY_SLOTS; index++) {
         if (Item_GetDirectFar(unit->inventory[index])->type == 6)
           break;
       }
-      if (index == 15)
+      if (index == INVENTORY_SLOTS)
         index = 0;
     }
     previewSlot = index;

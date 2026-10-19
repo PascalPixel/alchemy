@@ -66,7 +66,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   for (i = 0; i < 4; i++) {
     if (enemy->items[i] != 0) {
       for (q = 0; q < enemy->counts[i]; q++) {
-        if (count < 15)
+        if (count < INVENTORY_SLOTS)
           unit->inventory[count++] = enemy->items[i];
       }
     }

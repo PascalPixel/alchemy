@@ -214,7 +214,7 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
           y += 16;
         }
         slot++;
-      } while (slot <= 14);
+      } while (slot < INVENTORY_SLOTS);
     }
   }
 }

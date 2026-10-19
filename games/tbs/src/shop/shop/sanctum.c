@@ -317,7 +317,7 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
     s32 inventorySlot;
 
-    for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
+    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         if (Item_GetDirectFar(unit->inventory[inventorySlot])->flags &
             ITEM_CURSED) {

@@ -251,7 +251,7 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   item = Item_GetDirect(inventoryEntry);
   type = item->type;
   if (type != 6) {
-    for (equippedSlot = 0; equippedSlot <= 14; equippedSlot++) {
+    for (equippedSlot = 0; equippedSlot < INVENTORY_SLOTS; equippedSlot++) {
       if ((unit->inventory[equippedSlot] & INVENTORY_EQUIPPED) == 0)
         continue;
       if (Item_GetDirect(unit->inventory[equippedSlot])->type == type)

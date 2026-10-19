@@ -767,7 +767,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_WalkToAndWait(8, 5640, 1784);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(0x2008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 60);
   Actor_FaceDirection(8, FACING_WEST, 10);
   Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
@@ -777,15 +777,15 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_ActorStartRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(0x2008, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 40);
   Engine_ActorRunRepeatedMotion(9, 1);
   Actor_FaceDirection(9, 0, 10);
   Event_ShowMessageAndWait(9, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 60);
-  Event_ShowMessageAndWait(0x2008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
   Engine_ActorRunRepeatedMotion(8, 1);
   Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(0x2008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 60);
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorSetAnimationAndWait(8, 3);
@@ -853,16 +853,16 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetPosition(15, 0, 0);
   Actor_FaceDirection(8, FACING_WEST, 10);
   Engine_ActorJump(8, 4, 40);
-  Event_ShowMessageAndWait(0x2008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
   Actor_FaceDirection(9, 0, 10);
   Event_ShowMessageAndWait(9, 0, 20);
   Actor_FaceDirection(8, FACING_NORTH, 40);
-  Event_ShowMessageAndWait(0x2008, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 20);
   Engine_ActorJump(9, 4, 20);
   Event_ShowMessageAndWait(9, 0, 10);
   Engine_ActorRunRepeatedMotion(8, 1);
   Actor_FaceDirection(8, FACING_WEST, 10);
-  Event_ShowMessageAndWait(0x2008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
   Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(8, 3);
@@ -1470,7 +1470,8 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_ActorShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT, 60);
   Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
   Engine_EventSetMessage(MsgWorldMapLook);
-  Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 10);
+  Engine_EventShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT,
+                                 0, 10);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Battle_ClearObjectFlag5bWhenMode3();
   BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
@@ -1721,7 +1722,8 @@ static void Event_UseBlackOrb(void) {
   Actor_SetAnimation(SITE, 1);
   Actor_FaceDirection(gWorldMapTriggerActor, FACING_SOUTH + FACING_STEP, 10);
   Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
-  Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 20);
+  Event_ShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT, 0,
+                           20);
   Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(1), PIXELS(1) / 2);
   Object_GetById(SITE)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(SITE, 2);
@@ -1875,7 +1877,7 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ActorRunRepeatedMotion(8, 1);
   Event_ShowMessageAndWait(8, 0, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Event_ShowMessageAndWait(0x1005, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 40);
   Actor_FaceDirection(8, FACING_WEST, 20);
   Engine_ActorStartRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 60);

@@ -1185,7 +1185,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
                            10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(0x2003, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(20);
   Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
@@ -1213,7 +1213,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(MIA, FACING_SOUTHWEST, 80);
-  Event_ShowMessageAndWait(0x2003, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 20);
   Actor_FaceDirection(ACTOR_SECOND_APPRENTICE, FACING_NORTHEAST + FACING_STEP,
                       0);
   Actor_FaceDirection(ACTOR_APPRENTICE, FACING_SOUTHWEST + FACING_STEP, 40);
@@ -1232,7 +1232,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
-  Event_ShowMessageAndWait(0x2003, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 40);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
@@ -1240,7 +1240,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(0x2003, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_APPRENTICE, 1);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 40);
@@ -1254,7 +1254,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
-  Event_ShowMessageAndWait(0x2003, 0, 80);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 80);
   Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 5, 0);
   Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 5, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_SHAKE_HEAD);
@@ -1263,7 +1263,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            20);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
-  Event_ShowMessageAndWait(0x2003, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
@@ -1275,7 +1275,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
-  Event_ShowMessageAndWait(0x2003, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   Engine_ActorSetAnimation(ACTOR_APPRENTICE, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(40);

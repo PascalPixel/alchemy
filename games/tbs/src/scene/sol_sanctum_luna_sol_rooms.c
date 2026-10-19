@@ -296,7 +296,8 @@ static void Event_KradenFindsHall(void) {
     Actor_SetAttachedEffect(JENNA, 0x102);
     Engine_EventWait(40);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(0x2000 | JENNA, 10);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
+                                              10);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST, 20);
@@ -350,7 +351,8 @@ static void Event_KradenFindsHall(void) {
     Engine_EventSetMessage(MsgSolSanctumPutWayDont);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(JENNA, 4);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(0x2000 | JENNA, 6);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
+                                              6);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 20);
     Engine_ActorJump(ACTOR_KRADEN, 6, 20);
@@ -421,7 +423,8 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Camera_MoveTo(PIXELS(575), -1, PIXELS(181), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(120);
-  SolSanctumLunaSolRooms_ShowMessageAndWait(0x1000 | ACTOR_KRADEN, 80);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(
+      SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 80);
   Camera_MoveTo(PIXELS(492), -1, PIXELS(168), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
@@ -734,7 +737,8 @@ static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
-  SolSanctumLunaSolRooms_ShowMessageAndWait(0x8000 | ACTOR_KRADEN, 20);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
+                                            20);
   // Shorten each flash interval as the statue-light sequence accelerates.
   for (twelveFrameFlashes = 0; twelveFrameFlashes != 4; twelveFrameFlashes++) {
     SolSanctumLunaSolRooms_FlashCurrentStatueLights(12);
@@ -753,7 +757,8 @@ static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   }
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
   Engine_EventWait(6);
-  SolSanctumLunaSolRooms_ShowMessageAndWait(0x8000 | ACTOR_KRADEN, 6);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
+                                            6);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -780,11 +785,13 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(30);
-  SolSanctumLunaSolRooms_ShowMessageAndWait(0x8000 | ACTOR_KRADEN, 20);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
+                                            20);
   for (flash = 0; flash != 4; flash++) {
     SolSanctumLunaSolRooms_FlashCurrentStatueLights(12);
   }
-  SolSanctumLunaSolRooms_ShowMessageAndWait(0x8000 | ACTOR_KRADEN, 6);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
+                                            6);
   gSolSanctumLunaSolRooms_Light1Timer =
       (((u32)Engine_RandomNext() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_Light2Timer =
@@ -814,7 +821,8 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   }
   Map_CopyCellsTo(45, 30, 34, 10, 4, 2);
   Engine_ActorJump(ACTOR_KRADEN, 6, 40);
-  SolSanctumLunaSolRooms_ShowMessageAndWait(0x8000 | ACTOR_KRADEN, 6);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
+                                            6);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
   // Stop all light callbacks before leaving this room.
@@ -897,7 +905,7 @@ static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Engine_EventWait(6);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT) == 0) {
-    speaker = 0x8000 | ACTOR_KRADEN;
+    speaker = SPEAKER_WINDOW_BELOW | ACTOR_KRADEN;
     Engine_EventSetMessage(MsgSolSanctumYouFoundIt);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
@@ -1054,10 +1062,11 @@ static void Event_RiseToElementalStarRoom(void) {
     Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage(MsgSolSanctumHa);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(0x8000 | ACTOR_KRADEN, 6);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(
+        SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 6);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
     Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
-    Engine_EventShowMessage(0x8000 | ACTOR_KRADEN, 0);
+    Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_EventWait(60);
     // Raise Isaac first, then shrink his sprite into the passage.

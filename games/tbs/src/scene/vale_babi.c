@@ -456,12 +456,12 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
-  Event_OpenMessage(0x8000 | ACTOR_DORA, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     (*eventSlot)->message++;
   }
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x8000 | ACTOR_DORA, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
@@ -546,7 +546,7 @@ static void Event_HurryToThePlaza(void) {
   Engine_ActorWalkToAndWait(9, 427, 483);
   Engine_CameraWaitForMove();
   Engine_EventSetMessage(MsgValeDoraHurryBoulder);
-  Engine_EventShowMessageAndWait(0x8000 | 9, 0, 10);
+  Engine_EventShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0, 10);
   Engine_CameraSetSpeed(0x18000, 0x3000);
   Engine_CameraMoveTo(PIXELS(480), -1, PIXELS(444), 1);
   Engine_CameraWaitForMove();

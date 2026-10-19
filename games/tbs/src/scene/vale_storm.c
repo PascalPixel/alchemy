@@ -1307,7 +1307,7 @@ static void Event_WitnessRiverRescue(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
   Engine_TaskWait(3);
   Engine_EventSetMessage(MsgValeNoBrother);
-  Engine_EventShowMessage(0x201a, 0);
+  Engine_EventShowMessage(SPEAKER_PORTRAIT_RIGHT | 26, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 1094);
   {
@@ -1432,7 +1432,7 @@ static void Event_WitnessRiverRescue(void) {
   Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(25, FACING_WEST, 10);
   Engine_ActorSetAnimation(24, ANIM_SHAKE_HEAD);
-  Engine_EventShowMessageAndWait(0x8018, 0, 10);
+  Engine_EventShowMessageAndWait(SPEAKER_WINDOW_BELOW | 24, 0, 10);
   Actor_FaceDirection(10, FACING_NORTH, 20);
   Engine_ActorFaceDirection(10, FACING_EAST, 10);
   Engine_ActorSetAnimation(10, ANIM_SHAKE_HEAD);
@@ -1573,7 +1573,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_EventSetMessage(northMessage);
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
-  Event_ShowMessageAndWait(0x201a, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 40);
   Engine_ActorSetAnimation(9, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
   Engine_EventWait(30);
@@ -1590,7 +1590,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_FaceDirection(22, FACING_WEST, 10);
   Actor_WalkToAndWait(9, 105, 1086);
   Engine_ActorRunRepeatedMotion(9, 2);
-  Event_OpenMessage(0x8009, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirection(22, FACING_EAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
@@ -1599,16 +1599,16 @@ static void ValeStorm_RunRiverSearch(void) {
     Engine_ActorRunRepeatedMotion(9, 2);
     Engine_EventSetMessage((northMessage + 5));
   }
-  Event_ShowMessage(0x8009, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirection(22, FACING_WEST, 40);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | 0, 30);
   helpMessage = MsgValeDontSupposeTwo;
   Engine_EventSetMessage(helpMessage);
-  Event_OpenMessage(0x8009, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
     Engine_EventSetMessage((helpMessage + 1));
-    Event_ShowMessageAndWait(0x8009, 0, 30);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0, 30);
     Actor_FaceDirection(22, FACING_WEST, 20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimation(22, ANIM_NOD);
@@ -1619,7 +1619,7 @@ static void ValeStorm_RunRiverSearch(void) {
     Actor_ShowEmote(9, EMOTE_IN_FRONT | 3, 40);
     Engine_ActorSetAnimation(9, ANIM_SHAKE_HEAD);
     Engine_EventSetMessage((helpMessage + 2));
-    Event_ShowMessage(0x8009, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   }
   Actor_SetActionScript(9, gValeStorm_ActorNineScriptD);
   Engine_EventWait(90);
@@ -1724,7 +1724,7 @@ static void Event_GatherAfterRiverRescue(void) {
       Engine_EventShowMessageAndWait(26, 0, 40);
       Actor_SetPosition(9, PIXELS(101), PIXELS(1197));
       Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-      Engine_EventShowMessageAndWait(0x1009, 0, 10);
+      Engine_EventShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
       Actor_FaceDirection(26, FACING_NORTHWEST, 0);
       Engine_CameraSetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
       Camera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
@@ -1738,7 +1738,7 @@ static void Event_GatherAfterRiverRescue(void) {
       Engine_ActorRunRepeatedMotion(26, 2);
       Engine_EventShowMessageAndWait(26, 0, 20);
       Engine_ActorRunRepeatedMotion(9, 2);
-      Engine_EventShowMessageAndWait(0x4009, 0, 20);
+      Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0, 20);
       Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
       Engine_ActorFaceActor(0, 8, 0);
@@ -2324,7 +2324,7 @@ static void ValeStorm_GaretLeavesIsaac(void) {
   Actor_SetPosition(ACTOR_GARET, PIXELS(249), PIXELS(1240));
   Engine_TaskWait(1);
   Engine_EventSetMessage(MsgValeIsaac);
-  Event_ShowMessage(0x1016, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 22, 0);
   Actor_SetPosition(ACTOR_GARET, PIXELS(172), PIXELS(1278));
   Engine_TaskWait(1);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
@@ -2332,10 +2332,10 @@ static void ValeStorm_GaretLeavesIsaac(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(0x1016, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 22, 0, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARET, 2);
-  Event_ShowMessageAndWait(0x1016, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 22, 0, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));

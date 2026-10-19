@@ -408,7 +408,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   if (leader->x.fixed < jenna->x.fixed) {
     Event_ShowMessageAndWait(0xa005, 0, 2);
   } else {
-    Event_ShowMessageAndWait(0x8005, 0, 2);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 5, 0, 2);
   }
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(2);
@@ -1327,40 +1327,40 @@ static void Event_GaretMeetsHisSister(void) {
   }
   Actor_WalkToAndWait(GARET, 402, 608);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
-  Event_ShowMessage(0x1001, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 1, 0);
   Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(8, ANIM_NOD);
-  Event_ShowMessage(0x4008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(8, 2);
-  Event_OpenMessage(0x4008, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message++;
     Engine_ActorStartRepeatedMotion(8, 1);
   }
-  Event_ShowMessageAndWait(0x4008, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 40);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 60);
   Engine_EventSetMessage(msg + 6);
-  Event_ShowMessageAndWait(0x4008, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(0x1001, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 1, 0, 40);
   Engine_ActorRunRepeatedMotion(8, 1);
   Actor_FaceDirection(8, FACING_NORTH + FACING_STEP, 20);
-  Event_ShowMessage(0x4008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Event_ShowMessageAndWait(0x1001, 0, 120);
-  Event_ShowMessageAndWait(0x4008, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 1, 0, 120);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
-  Event_ShowMessageAndWait(0x1001, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 1, 0, 40);
   Engine_ActorSetAnimationAndWait(8, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(0x4008, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(0x4008, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
@@ -1687,7 +1687,7 @@ static void Event_MendingTheRoof(void) {
   Engine_CameraWaitForMove();
   Engine_ActorJump(10, 2, 20);
   Engine_EventSetMessage(message + 1);
-  Event_ShowMessageAndWait(0x100a, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 10, 0, 10);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
@@ -1697,7 +1697,7 @@ static void Event_MendingTheRoof(void) {
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(10, 2);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(0x100a, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 10, 0, 40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   Engine_CameraFollowActor(JENNA, 1);
@@ -1731,7 +1731,7 @@ static void Event_MendingTheRoof(void) {
   // Garet's repair effect trails dust across the house.
   SceneState_SetValue140Mode0();
   Engine_ActorSetAnimation(GARET, 17);
-  Event_ShowMessageAndWait(0x2001, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 1, 0, 20);
   Event_PlayCue(SE_131);
   for (i = 0; i < 60; i++) {
     Vale_FlashActorAndSpawnEffects(Object_GetById(GARET));
@@ -1760,7 +1760,7 @@ static void Event_MendingTheRoof(void) {
   Engine_ObjectSetPosition(dustEmitter, PIXELS(392), PIXELS(208), PIXELS(584));
   Actor_MoveToAndWait(9, 378, 584);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x2005, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 10);
   dustEmitter->update = (void (*)(union FieldObject *))stoppedMotionFlags;
   Engine_ActorSetSpritePriority(GARET, 2);
   Actor_Get(GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -1802,7 +1802,7 @@ static void Event_MendingTheRoof(void) {
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 20);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
@@ -1817,13 +1817,13 @@ static void Event_MendingTheRoof(void) {
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 20);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
@@ -1831,14 +1831,14 @@ static void Event_MendingTheRoof(void) {
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 80);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(0x1005, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 10);
   Actor_FaceDirection(JENNA, FACING_EAST + FACING_STEP, 40);
   Actor_FaceActor(JENNA, GARET, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
   Actor_WalkToAndWait(JENNA, 380, 620);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(0x1005, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 10);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
@@ -1855,17 +1855,17 @@ static void Event_MendingTheRoof(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
   Engine_ActorJump(JENNA, 4, 30);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x6001, 0, 20);
   Engine_EventWait(30);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 40);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 3, 40);
   Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1884,7 +1884,7 @@ static void Event_MendingTheRoof(void) {
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(0x2005, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 20);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(0x5001, 0, 20);

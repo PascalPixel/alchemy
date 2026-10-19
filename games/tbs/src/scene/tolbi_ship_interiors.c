@@ -1562,7 +1562,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Actor_ShowEmote(12, 0x101, 60);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x400b, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 11, 0, 40);
   Engine_ActorRunRepeatedMotion(11, 2);
   Actor_FaceDirection(11, 0xd000, 0);
   TolbiShipInteriors_Say(0x100b);
@@ -1596,7 +1596,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Actor_ShowEmote(8, 0x102, 40);
   Event_ShowMessage(8, 0);
   Engine_ActorStartRepeatedMotion(11, 2);
-  Event_ShowMessageAndWait(0x100b, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 11, 0, 40);
   Actor_ShowEmote(9, 0x100, 0);
   Actor_FaceDirection(9, 0x5000, 20);
   Engine_ActorStartRepeatedMotion(9, 2);
@@ -1808,7 +1808,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(12, 1);
   TolbiShipInteriors_Turn(12, 0x3000);
-  Event_ShowMessageAndWait(0x100c, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 12, 0, 20);
   Actor_FaceDirection(11, 0xb000, 20);
   Actor_ShowEmote(11, 0x101, 40);
   TolbiShipInteriors_Say(11);
@@ -1932,10 +1932,10 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Actor_FaceDirection(13, (value << 8), 0);
   Actor_FaceDirection(10, (value << 8), 20);
   Engine_ActorRunRepeatedMotion(12, 1);
-  Event_ShowMessageAndWait(0x100c, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 12, 0, 20);
   Actor_ShowEmote(8, 0x101, 40);
   TolbiShipInteriors_Turn(8, 0xd000);
-  Event_OpenMessage(0x1008, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(8, 3);
     TolbiShipInteriors_Say(0x1008);

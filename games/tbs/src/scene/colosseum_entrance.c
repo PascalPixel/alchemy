@@ -601,13 +601,13 @@ static void Event_FinalsBegin(void) {
     Actor_FaceDirection(FINALS_OFFICIAL, FACING_SOUTHEAST + FACING_STEP, 20);
     Engine_ActorRunRepeatedMotion(FINALS_OFFICIAL, 1);
     Engine_EventSetMessage(MsgColosseumYouReadyForFinals);
-    Event_OpenMessage(0x8008, 0);
+    Event_OpenMessage(SPEAKER_WINDOW_BELOW | 8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventWait(20);
       ColosseumEntrance_FaceDirection(MORGAN, FACING_NORTH + FACING_STEP);
       Engine_ActorRunRepeatedMotion(MORGAN, 1);
       Engine_EventSetMessage(MsgColosseumDayTiredWaiting);
-      ColosseumEntrance_ShowMessageAndPause(0x400c);
+      ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE | 12);
       ColosseumEntrance_FaceDirection(NAVAMPA, FACING_EAST);
       ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST);
       Engine_ActorSetAnimationAndWait(NAVAMPA, 3);
@@ -620,15 +620,15 @@ static void Event_FinalsBegin(void) {
       Engine_ActorSetAnimationAndWait(DEKKA, 3);
       Engine_ActorRunRepeatedMotion(NAVAMPA, 2);
       ColosseumEntrance_FaceDirection(NAVAMPA, FACING_NORTHWEST);
-      ColosseumEntrance_ShowMessageAndPause(0x4011);
+      ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE | 17);
       ColosseumEntrance_FaceDirection(BUFORD, FACING_NORTHWEST + FACING_STEP);
       Engine_ActorStartRepeatedMotion(BUFORD, 2);
-      ColosseumEntrance_ShowMessageAndPause(0x4012);
+      ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE | 18);
       ColosseumEntrance_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP);
       Engine_ActorSetAttachedEffect(11, 0x102);
       Engine_EventWait(60);
       Engine_ActorStartRepeatedMotion(11, 2);
-      ColosseumEntrance_ShowMessageAndPause(0x800b);
+      ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_BELOW | 11);
       Engine_ActorStop(AZART);
       Engine_TaskWait(1);
       Engine_ActorStartRepeatedMotion(AZART, 2);
@@ -703,7 +703,7 @@ static void Event_FinalsBegin(void) {
       Engine_EventRequestExit(66);
     } else {
       gEventWork->message++;
-      Engine_EventShowMessage(0x8008, 0);
+      Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
     }
     Engine_EventEnd();
   }

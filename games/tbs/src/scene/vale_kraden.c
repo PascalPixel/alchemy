@@ -527,7 +527,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
-  Event_OpenMessage(0x1000 | ACTOR_MENARDI, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0);
 
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(strangersMessage + 10);
@@ -535,7 +535,7 @@ static void Event_MeetSaturosAndMenardi(void) {
     Engine_EventSetMessage(strangersMessage + 11);
   }
 
-  Event_ShowMessageAndWait(0x1000 | ACTOR_MENARDI, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
 
   // Garet challenges the pair, who question what the party overheard.
@@ -549,10 +549,10 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
-  Event_ShowMessageAndWait(0x1000 | ACTOR_MENARDI, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
-  Event_ShowMessageAndWait(0x1000 | JENNA, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST, 20);
   Event_OpenMessage(ACTOR_SATUROS, 0);
@@ -584,10 +584,10 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTH, 10);
-  Event_ShowMessageAndWait(0x1000 | JENNA, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
-  Event_ShowMessageAndWait(0x1000 | ACTOR_MENARDI, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);

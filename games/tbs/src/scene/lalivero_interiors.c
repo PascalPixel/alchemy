@@ -61,10 +61,6 @@ enum {
 // scene flags from 0x200: the maid has apologized.
 enum { FLAG_MAID_APOLOGIZED = 0x300 };
 
-// A speaker flag the two "Haven't we, Isaac?" questions add to Ivan's
-// number; what it changes is not known.
-#define SPEAKER_FLAG_2000 0x2000
-
 // Behind a counter: the actor is drawn under the counter's top and the
 // party talks across it.
 #define ACTOR_BEHIND_COUNTER 4
@@ -384,7 +380,7 @@ static void ReportToFaran(void) {
     Engine_EventShowMessage(IVAN, 0);
     Engine_EventWait(10);
     Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
-    Event_OpenMessage(IVAN | SPEAKER_FLAG_2000, 0);
+    Event_OpenMessage(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
   }
   // Will the party keep searching? Faran answers either way.
   Engine_EventSetMessage(MsgLaliveroDoNotWorryAboutSheba);
@@ -674,7 +670,7 @@ static void TellFaranAboutFelix(void) {
   Engine_EventWait(10);
 
   Engine_ActorFaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
-  Engine_EventOpenMessage(IVAN | SPEAKER_FLAG_2000, 0);
+  Engine_EventOpenMessage(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
 // Sets the maps up as the party enters: shopkeepers and the innkeeper

@@ -38,7 +38,13 @@ enum ActorAnimation {
 
 #define EMOTE_IN_FRONT 0x100
 
+// Speaker bits above the actor id in a message command, as
+// UiText_OpenMessageAtObject reads them: the portrait left or right of the
+// speaker, and the message window above it or never above it.
+#define SPEAKER_PORTRAIT_LEFT 0x1000
+#define SPEAKER_PORTRAIT_RIGHT 0x2000
 #define SPEAKER_WINDOW_ABOVE 0x4000
+#define SPEAKER_WINDOW_BELOW 0x8000
 
 #define MAP_CELL_STEP(srcX, srcY, width, height, frames)                       \
   (srcX), (srcY), (width), (height), (frames)

@@ -170,7 +170,7 @@ static void Event_AskAboutDora(void) {
 static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeHopeDidntGet);
-  Engine_EventShowMessage(0x8000 | ACTOR_GARETS_MOTHER, 0);
+  Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARETS_MOTHER, 0);
   Engine_EventEnd();
 }
 
@@ -446,18 +446,18 @@ static void Event_GaretComesHome(void) {
   Engine_ActorStop(IVAN);
   Engine_ActorStop(MIA);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | 0, 40);
-  Event_ShowMessageAndWait(0x2000 | ACTOR_GARETS_MOTHER, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(0x9000 | ACTOR_GARETS_FATHER, 0, 10);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 10);
-  Event_ShowMessageAndWait(0x2000 | ACTOR_GARETS_MOTHER, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(0x9000 | ACTOR_GARETS_FATHER, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | 6, 40);
-  Event_ShowMessageAndWait(0x2000 | ACTOR_GARETS_MOTHER, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | 2, 20);
   Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
@@ -481,7 +481,7 @@ static void Event_GaretComesHome(void) {
                            40);
   Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_MOTHER, 2);
-  Event_ShowMessageAndWait(0x2000 | ACTOR_GARETS_MOTHER, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 2);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
@@ -510,7 +510,7 @@ static void Event_GaretComesHome(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Event_ShowMessageAndWait(0x1000 | GARET, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   // Stop the drifting sprites before the camera returns to the party.
   Engine_TaskRemoveCallback(timedUpdate);
@@ -559,7 +559,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(20);
   // Ask about leaving again and give the companions their individual replies.
   Engine_EventSetMessage(MsgValeYoureLeavingAgainSoon);
-  Event_ShowMessage(0x2000 | ACTOR_GARETS_MOTHER, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0);
   Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
@@ -618,7 +618,7 @@ static void Event_GaretComesHome(void) {
   Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 835, 388);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | 8, 40);
-  Event_ShowMessageAndWait(0x2000 | ACTOR_GARETS_MOTHER, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 20);
   Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_EventWait(40);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST + FACING_STEP, 0);

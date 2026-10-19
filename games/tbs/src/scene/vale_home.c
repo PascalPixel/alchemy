@@ -774,25 +774,25 @@ static void Event_MeetSurvivingTravelers(void) {
                                 FACING_SOUTHWEST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
-  Event_ShowMessage(0x2000 | ACTOR_SECOND_TRAVELER, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
-  Event_SayThenWait(0x8000 | ACTOR_FIRST_TRAVELER, 30);
+  Event_SayThenWait(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 30);
   ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
                                 FACING_NORTHWEST + FACING_STEP, 20);
-  Event_SayThenWait(0x2000 | ACTOR_SECOND_TRAVELER, 10);
+  Event_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 10);
   ValeHome_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
                                 FACING_NORTHWEST + FACING_STEP, 40);
-  Engine_EventShowMessage(0x8000 | ACTOR_FIRST_TRAVELER, 0);
+  Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
-  Engine_EventShowMessage(0x2000 | ACTOR_SECOND_TRAVELER, 0);
+  Engine_EventShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   ValeHome_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
                                 FACING_NORTHEAST + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
-  Engine_EventShowMessage(0x8000 | ACTOR_FIRST_TRAVELER, 0);
+  Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTHWEST, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
   Engine_EventWait(20);
-  Event_SayThenWait(0x2000 | ACTOR_SECOND_TRAVELER, 20);
+  Event_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 20);
   ValeHome_FightTravelers();
   Engine_EventEnd();
 }
@@ -811,7 +811,7 @@ static void ValeHome_FightTravelers(void) {
   Engine_ActorSetSpriteFlags(actor, 0);
   Actor_SetPosition(25, 0, PIXELS(331));
   Engine_TaskWait(1);
-  Event_ShowMessage(0x1019, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 25, 0);
   Actor_ShowEmote(ACTOR_FIRST_TRAVELER, EMOTE_IN_FRONT | 0, 0);
   Actor_ShowEmote(ACTOR_SECOND_TRAVELER, EMOTE_IN_FRONT | 0, 40);
   Engine_ActorSetPosition(25, 0, 0);
@@ -858,7 +858,7 @@ static void ValeHome_FightTravelers(void) {
   westFacing = FACING_WEST;
   ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 20);
   Engine_ActorRunRepeatedMotion(25, 2);
-  Event_SayThenWait(0x1019, 10);
+  Event_SayThenWait(SPEAKER_PORTRAIT_LEFT | 25, 10);
   FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 25,
                                    gValeHome_FaceTargetActions);
   Actor_WalkToAndWait(25, 93, 361);
@@ -873,7 +873,7 @@ static void ValeHome_FightTravelers(void) {
   ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                 30);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
-  Engine_EventShowMessage(0x2000 | ACTOR_SECOND_TRAVELER, 0);
+  Engine_EventShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   ValeHome_FaceDirectionAndWait(0, northNortheastFacing, 30);
   ValeHome_FaceDirectionAndWait(0, FACING_SOUTH, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);

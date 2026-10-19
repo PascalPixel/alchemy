@@ -47,8 +47,9 @@ enum {
   SPRITE_TRET_FACE = 0x37
 };
 
-// The speaker of a message; every speaker in this scene has the 0x8000 bit.
-#define SPEAKER(actor) (0x8000 | (actor))
+// The speaker of a message; every speaker in this scene has
+// SPEAKER_WINDOW_BELOW.
+#define SPEAKER(actor) (SPEAKER_WINDOW_BELOW | (actor))
 
 // The scene's temporary flags: FLAG_SCENE_TEMP_00 to _14 are set the first
 // time each cracked floor tile is stepped on; the next step makes it give

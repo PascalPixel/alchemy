@@ -226,13 +226,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(200);
-  Event_OpenMessage(0x1000 | GARET, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolSanctumIKnowItsARock);
   } else {
     Engine_EventSetMessage(MsgSolSanctumSomeoneIsLiftingIt);
   }
-  Event_ShowMessageAndWait(0x1000 | GARET, 0, 80);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 80);
   Engine_EventSetMessage(MsgSolSanctumKradenCouldThatBeThe);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
@@ -249,7 +249,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_NORTHWEST, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
-  Event_ShowMessageAndWait(0x1000 | GARET, 0, 30);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 30);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST + FACING_STEP, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
@@ -349,12 +349,12 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Event_ShowMessageAndWait(0x2000 | ACTOR_ALEX, 0, 30);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 40);
-  Event_ShowMessageAndWait(0x2000 | JENNA, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 0);
@@ -382,7 +382,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
-  Event_ShowMessage(0x2000 | ACTOR_MENARDI, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI, 0);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(8) / 5, PIXELS(4) / 5);
   // Stage Menardi and Jenna for the hostage exchange.
   Actor_SetSpeed(JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -403,7 +403,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 332);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
-  Event_ShowMessage(0x2000 | ACTOR_MENARDI, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 2);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
@@ -423,7 +423,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(0x1000 | ACTOR_SATUROS, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SATUROS, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
@@ -461,7 +461,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   SolSanctumEruption_RaiseAndShrinkActor(11);
   Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 40);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
-  Event_ShowMessageAndWait(0x2000 | JENNA, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);

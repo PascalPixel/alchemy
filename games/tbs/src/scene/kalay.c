@@ -1548,7 +1548,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetActionScript(IVAN, motionActions);
   Actor_SetActionScript(MIA, motionActions);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 0, 40);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
@@ -1565,7 +1565,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
-  Event_ShowMessageAndWait(0x2003, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
@@ -1593,12 +1593,12 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Event_ShowMessageAndWait(0x2002, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_BUNZA, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
-  Event_ShowMessageAndWait(0x2003, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 8, 20);
   Event_ShowMessageAndWait(ACTOR_HAMMET, 0, 10);
@@ -1636,7 +1636,7 @@ static void Kalay_HammetReturnsToPalace(void) {
     Event_ShowMessageAndWait(ACTOR_BUNZA, 0, 10);
     Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 6, 40);
     Actor_FaceDirection(MIA, FACING_NORTH, 20);
-    Event_ShowMessageAndWait(0x2003, 0, 10);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   }
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);

@@ -106,7 +106,7 @@ s32 RunAssetSelectionScreen(void) {
   size = 0x2000;
   backup = Runtime_BumpAllocateAlternatePool(size);
 #endif
-  screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+  screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_MENU_CONTROL];
   ((struct ObjectSystemWork *)cache[0])->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);

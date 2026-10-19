@@ -93,7 +93,7 @@
 // use it). Returns the chosen member's id, or -1 when the player backs out.
 s32 Menu_OpenCharacterSelector(void) {
   struct CharacterMenuState *state =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
 
@@ -144,7 +144,7 @@ s32 CharacterSelector_Run(void) {
 // the status pages, then puts everything back. Returns their result.
 s32 ActionMenu_Open(void) {
   struct CharacterMenuState *state =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = Runtime_BumpAllocateAlternatePool(64);
   void *tiles = Runtime_BumpAllocateAlternatePool(STATUS_SAVED_TILE_BYTES);
   s32 result;

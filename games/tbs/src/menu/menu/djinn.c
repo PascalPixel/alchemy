@@ -71,7 +71,7 @@ s32 ItemMenu_Run(void) {
   struct DjinnMenuBackdrop *backdrop;
   s32 zero;
 
-  menu = Runtime_AllocateHeapBlock(55, 0xa70);
+  menu = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   savedMessageSpeed = gGameState.messageSpeed;
   gGameState.messageSpeed = 2;
   enabled = gMenuCtrlWork->suspended = 1;
@@ -126,7 +126,7 @@ s32 ItemMenu_Run(void) {
   Scheduler_DisableOverlayCallbacksWithFlags();
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   MemFree(menu->backdrop);
-  Runtime_ReleaseHeapBlock(55);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   Event_ClearInvalidPackedValuesFar();
   gGameState.messageSpeed = savedMessageSpeed;
   return 1;

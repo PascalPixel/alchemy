@@ -43,7 +43,7 @@ s32 Menu_OpenConfirmPrompt(void) {
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
 #endif
   struct PsynergyMenuState *state =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 owner;
   s32 unused;
   s32 psynergy;

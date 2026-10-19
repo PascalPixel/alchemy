@@ -53,12 +53,12 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   return Scheduler_SuspendOverlayTasks();
 }
 
-// Clears the whole menu work area (0x29c words) and sets its defaults: no
-// pane selected, one entry in each pane, and a 1x1 cursor grid.
+// Clears the whole menu work and sets its defaults: no pane selected, one
+// entry in each pane, and a 1x1 cursor grid.
 void UiWindow_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = gMenuWork;
 
-  Dma_Fill32(0, work, 0x29c * 4);
+  Dma_Fill32(0, work, MENU_WORK_SIZE);
   work->paneIndex[0] = -1;
   work->paneCount[0] = 1;
   work->paneCount[1] = 1;

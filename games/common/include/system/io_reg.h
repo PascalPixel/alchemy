@@ -159,6 +159,10 @@ enum DisplayControl {
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 
+// TMxCNT_H flags, as pret names them.
+#define TIMER_INTR_ENABLE 0x0040
+#define TIMER_ENABLE 0x0080
+
 #define REG_SIODATA32 ((volatile u32 *)0x04000120)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 #define REG_SIOCNT16 (*(volatile u16 *)0x04000128)
@@ -166,6 +170,18 @@ enum DisplayControl {
 #define REG_KEYINPUT (*(volatile u16 *)0x04000130)
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)
 #define REG_RCNT (*(volatile u16 *)0x04000134)
+
+// SIOCNT flags, as pret names them.
+#define SIO_115200_BPS 0x0003
+#define SIO_START 0x0080
+#define SIO_32BIT_MODE 0x1000
+#define SIO_MULTI_MODE 0x2000
+#define SIO_INTR_ENABLE 0x4000
+
+// RCNT's mode: 0 leaves the port to SIOCNT's serial modes; bit 15 alone
+// makes it general-purpose pins.
+#define RCNT_SIO_MODE 0x0000
+#define RCNT_GPIO_MODE 0x8000
 
 // DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
 // shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.

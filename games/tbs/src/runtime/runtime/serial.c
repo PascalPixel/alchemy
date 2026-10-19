@@ -35,17 +35,17 @@ void SerialRuntime_Initialize(void) {
   Runtime_SetIrqHandler(IRQ_SERIAL, 0, SerialRuntime_HandleTransferInterrupt);
   Runtime_SetIrqHandler(IRQ_TIMER3, 0, SerialRuntime_HandleTransferInterrupt);
   REG_IME = 0;
-  REG_IE &= 0xff3f;
-  if ((REG_IF & 0x80) != 0)
-    REG_IF = 0x80;
-  if ((REG_IF & 0x40) != 0)
-    REG_IF = 0x40;
-  REG_RCNT = 0x8000;
-  REG_RCNT = 0;
-  REG_SIOCNT = 0x1000;
-  REG_RCNT = 0;
-  REG_SIOCNT = 0x2000;
-  REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
+  REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
+  if ((REG_IF & INTR_FLAG_SERIAL) != 0)
+    REG_IF = INTR_FLAG_SERIAL;
+  if ((REG_IF & INTR_FLAG_TIMER3) != 0)
+    REG_IF = INTR_FLAG_TIMER3;
+  REG_RCNT = RCNT_GPIO_MODE;
+  REG_RCNT = RCNT_SIO_MODE;
+  REG_SIOCNT = SIO_32BIT_MODE;
+  REG_RCNT = RCNT_SIO_MODE;
+  REG_SIOCNT = SIO_MULTI_MODE;
+  REG_SIOCNT16 = REG_SIOCNT16 | SIO_INTR_ENABLE | SIO_115200_BPS;
   state = &gSerialRuntime;
   REG_IME = 1;
   /* FAKEMATCH: the fill word is volatile, now Dma_Fill32's own word rather than
@@ -63,7 +63,7 @@ void SerialRuntime_Initialize(void) {
     state->pendingBuffer[index] = (u16 *)(state->storage + 128 + index * 96);
   }
   REG_IME = 0;
-  REG_IE |= 0x80;
+  REG_IE |= INTR_FLAG_SERIAL;
   REG_IME = 1;
   gSerialExchangeActive = 1;
   gLinkExchangeState = 0;
@@ -88,11 +88,11 @@ void SerialRuntime_DisableTransfer(void) {
   struct SerialRuntime *state;
 
   REG_IME = 0;
-  REG_IE &= 0xff3f;
+  REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
   REG_IME = 1;
-  REG_SIOCNT16 = 0x2003;
+  REG_SIOCNT16 = SIO_MULTI_MODE | SIO_115200_BPS;
   REG_TM3CNT = 0x0000c963;
-  REG_IF = 0xc0;
+  REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
   state = &gSerialRuntime;
   state->transferEnabled = 0;
 }
@@ -122,10 +122,10 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
 
         Io_Write16(0, &REG_IME);
         ie = REG_IE;
-        Io_Write16((ie & ~0x80) | 0x40, &REG_IE);
+        Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
         Io_Write16(1, &REG_IME);
         *((volatile s8 *)siocnt + 1) &= ~0x40;
-        REG_IF = 0xc0;
+        REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
         REG_TM3CNT = 0xc963;
         gSerialRuntime.mode = mode;
       }
@@ -172,10 +172,10 @@ s32 SerialRuntime_PollStatus(void) {
 
         Io_Write16(0, &REG_IME);
         ie = REG_IE;
-        Io_Write16((ie & ~0x80) | 0x40, &REG_IE);
+        Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
         Io_Write16(1, &REG_IME);
         *((volatile s8 *)siocnt + 1) &= ~0x40;
-        REG_IF = 0xc0;
+        REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
         REG_TM3CNT = 0xc963;
         gSerialRuntime.mode = mode;
       }
@@ -274,7 +274,7 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
     REG_TM3CNT_H = 0;
   sr->sendIndex = -1;
   if (sr->mode != 0 && sr->transferEnabled != 0)
-    REG_TM3CNT_H = 0xc0; // start, with its interrupt
+    REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
 }
 
 // Swaps in the packets the interrupt handler finished, then copies the
@@ -388,8 +388,8 @@ receive_loop:
 
   if (tailState->mode == 8) {
     REG_TM3CNT_H = 0;
-    REG_SIOCNT16 |= 0x80;
-    REG_TM3CNT_H = 0xc0;
+    REG_SIOCNT16 |= SIO_START;
+    REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
   }
 }
 
